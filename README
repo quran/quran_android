@@ -11,8 +11,8 @@ width of 480, i haven't yet optimized it for smaller screens.
 
 due to the limited resources on the android phone and the relatively large
 size of the images (27mb for the whole mus7af), the best way to run this is
-to first download the images (http://labs.quran.com/androidquran/images.zip) 
-and extract them to a quran directory in the root of your sd card.
+to first download the images ( http://labs.quran.com/androidquran/images.zip ) 
+and then extract them to a quran directory in the root of your sd card.
 
 the current behavior is that if you *don't* copy the images, then every page
 will have to download from the server in order to be displayed.  upon
