@@ -3,6 +3,7 @@ package com.quran.labs.androidquran;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -10,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 
 public class QuranUtils {
+	public static boolean wroteNoMedia = false;
 	public static boolean failedToWrite = false;
 	
 	public static Drawable getImageFromSD(String filename){
@@ -21,6 +23,7 @@ public class QuranUtils {
 			boolean exists = f.exists();
 			if (exists){
 				try {
+					if (!wroteNoMedia) QuranUtils.writeNoMediaFile();
 					FileInputStream is = new FileInputStream(f);
 					return Drawable.createFromStream(is, filename);
 				}
@@ -33,13 +36,27 @@ public class QuranUtils {
 		else return null;
 	}
 	
+	public static void writeNoMediaFile(){
+		File f = new File(Environment.getExternalStorageDirectory() +
+				"/" + QuranInfo.QURAN_DIR +
+				"/.nomedia");
+		if (f.exists()){
+			wroteNoMedia = true;
+			return;
+		}
+		
+		try {
+			wroteNoMedia = f.createNewFile();
+		} catch (IOException e) {}
+	}
+	
 	public static boolean makeQuranDirectory(){
 		String path = Environment.getExternalStorageDirectory() + "/" + 
 			QuranInfo.QURAN_DIR;
 		File directory = new File(path);
 		if (directory.exists() && directory.isDirectory())
 			return true;
-		else return directory.mkdir();
+		else return directory.mkdirs();
 	}
 	
 	public static Drawable getImageFromWeb(String filename){
