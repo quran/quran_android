@@ -40,4 +40,12 @@ public class QuranInfo {
 		599, 600, 600, 601, 601, 601, 602, 602, 602, 603, 603, 603, 604, 604,
 		604
 	};
+	
+	public static String getSuraNameFromPage(int page){
+		for (int i = 0; i < 115; i++){
+			if (SURA_PAGE_START[i] > page)
+				return SURA_NAMES[i-1];
+		}
+		return "";
+	}
 }
