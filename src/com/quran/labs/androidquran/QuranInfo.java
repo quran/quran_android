@@ -42,8 +42,10 @@ public class QuranInfo {
 	};
 	
 	public static String getSuraNameFromPage(int page){
-		for (int i = 0; i < 115; i++){
-			if (SURA_PAGE_START[i] > page)
+		for (int i = 0; i < 114; i++){
+			if (SURA_PAGE_START[i] == page)
+				return SURA_NAMES[i];
+			else if (SURA_PAGE_START[i] > page)
 				return SURA_NAMES[i-1];
 		}
 		return "";

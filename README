@@ -28,8 +28,10 @@ patches, comments, etc are welcome.
 
 todo
 ----
-- add the page number and sura name somewhere on the page
 - optimize for smaller screens
+- fix landscape mode
+- change the screen shutoff timeout
 - add the ability to browse by juz'
 - add bookmarking functionality
 - perhaps add transliteration search
+- perhaps add batch downloading option
