@@ -3,13 +3,18 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Window;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 
 public class QuranView extends Activity {
 
@@ -18,10 +23,13 @@ public class QuranView extends Activity {
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     private GestureDetector gestureDetector;
+    private AsyncTask<?, ?, ?> currentTask;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		
 		setContentView(R.layout.quran_view);
 		
 		page = savedInstanceState != null?
@@ -36,7 +44,21 @@ public class QuranView extends Activity {
 	}
 	
 	@Override
+	protected void onDestroy(){
+		super.onDestroy();
+		if ((currentTask != null) && (currentTask.getStatus() == Status.RUNNING))
+			currentTask.cancel(true);
+	}
+	
+	@Override
 	public boolean onTouchEvent(MotionEvent event){
+		return gestureDetector.onTouchEvent(event);
+	}
+	
+	// this function lets this activity handle the touch event before the ScrollView
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent event){
+		super.dispatchTouchEvent(event);
 		return gestureDetector.onTouchEvent(event);
 	}
 	
@@ -72,20 +94,53 @@ public class QuranView extends Activity {
 		nf.setMinimumIntegerDigits(3);
 		
 		String filename = "page" + nf.format(page) + ".png";
-
-		Drawable drawable = QuranUtils.getImageFromSD(filename);
-		if (drawable == null)
-			drawable = QuranUtils.getImageFromWeb(filename);
-		if (drawable == null){
-			setContentView(R.layout.quran_error);
-			return;
-		}
-		
-		ImageView imageView = (ImageView)findViewById(R.id.pageview);
-		imageView.setImageDrawable(drawable);
 		String title = "Quran, page " + page +
 			" - [Surat " + QuranInfo.getSuraNameFromPage(page) + "]";
 		setTitle(title);
+
+		Bitmap bitmap = QuranUtils.getImageFromSD(filename);
+		if (bitmap == null){
+			Log.d("quran_view", "need to download " + filename);
+			if (currentTask != null)
+				currentTask.cancel(true);
+			setProgressBarIndeterminateVisibility(true);
+			currentTask = new DownloadPageTask().execute(filename);
+		}
+		else drawPage(bitmap);
+	}
+		
+	private void doneDownloadingPage(Bitmap bitmap){
+		Log.d("quran_view", "done downloading page");
+		setProgressBarIndeterminateVisibility(false);
+		drawPage(bitmap);
+	}
+	
+	private void drawPage(Bitmap bitmap){
+		ImageView imageView = (ImageView)findViewById(R.id.pageview);
+		if ((bitmap != null) && (imageView != null)){
+			imageView.setImageBitmap(bitmap);
+			
+			ScrollView scrollView = (ScrollView)findViewById(R.id.PageScrollView);
+			if ((scrollView != null) && (scrollView.isEnabled()))
+				scrollView.scrollTo(0, 0);
+		}
+		else setContentView(R.layout.quran_error);
+	}
+	
+	private class DownloadPageTask extends AsyncTask<String, Void, Bitmap>{
+
+		@Override
+		protected Bitmap doInBackground(String... arg0) {
+			String filename = arg0[0];
+			return QuranUtils.getImageFromWeb(filename);
+		}
+		
+		@Override
+		protected void onPostExecute(Bitmap b){
+			currentTask = null;
+			doneDownloadingPage(b);
+		}
+		
 	}
 	
 	@Override

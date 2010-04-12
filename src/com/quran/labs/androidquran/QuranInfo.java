@@ -1,8 +1,6 @@
 package com.quran.labs.androidquran;
 
 public class QuranInfo {
-	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
-	public static String QURAN_DIR = "quran/images";
 	
 	public static String[] SURA_NAMES = {
 		"Al-Fatiha", "Al-Baqara", "Aal-E-Imran", "An-Nisa", "Al-Maeda",

@@ -2,4 +2,14 @@
 <resources>
     <string name="errorString">Could not download Quran Pages!</string>
     <string name="app_name">Quran</string>
+    <string name="downloadPrompt_title">Download Required Files?</string>
+    <string name="downloadPrompt">For optimal performance, some files must be downloaded to the sd card.
+    	If you choose not to do this now, each page will take significantly longer to load.  Would you
+    	like to download the required files now?</string>
+    <string name="downloadPrompt_ok">Yes</string>
+    <string name="downloadPrompt_no">No</string>
+    <string name="downloading_title">Downloading...</string>
+    <string name="downloading_message">Please wait for the files to download.</string>
+    <string name="extracting_title">Processing...</string>
+    <string name="extracting_message">Please wait the files are processed.</string>
 </resources>
