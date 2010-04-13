@@ -120,9 +120,11 @@ public class QuranView extends Activity {
 		if ((bitmap != null) && (imageView != null)){
 			imageView.setImageBitmap(bitmap);
 			
-			ScrollView scrollView = (ScrollView)findViewById(R.id.PageScrollView);
+			final ScrollView scrollView = (ScrollView)findViewById(R.id.pageScrollView);
 			if ((scrollView != null) && (scrollView.isEnabled()))
-				scrollView.scrollTo(0, 0);
+				scrollView.post(new Runnable(){
+					public void run(){ scrollView.scrollTo(0, 0); }
+				});
 		}
 		else setContentView(R.layout.quran_error);
 	}

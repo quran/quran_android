@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--  note: use wrap_content (make items as big as needed) vs
-                fill_parent (make items fill the screen) -->
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
-  
-  <ImageView android:id="@+id/pageview"
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pageview"
     android:background="#ffffffff"
   	android:layout_width="fill_parent"
   	android:layout_height="fill_parent" />
-</LinearLayout>

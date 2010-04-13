@@ -13,12 +13,10 @@ patches, comments, etc are welcome.
 todo
 ----
 - code cleanup
-- fix bugs
-    . on device, 'processing' dialog doesn't appear until unzipping is done.
-    . scroll to top on page switch isn't working on the device.
 - what if there is not enough memory on the sd card?
 - test on smaller screens
 - change the screen shutoff timeout
 - add the ability to browse by juz'
 - add bookmarking functionality
 - perhaps add transliteration search
+- perhaps add simple animation during page transmission

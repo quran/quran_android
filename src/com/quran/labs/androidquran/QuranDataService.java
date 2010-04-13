@@ -12,7 +12,6 @@ import java.util.zip.ZipInputStream;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -57,7 +56,7 @@ public class QuranDataService extends Service {
 
 	public void handleStart(Intent intent, int startId){
 		QuranDataService.isRunning = true;
-		new DownloadQuranTask(this).execute();
+		new DownloadQuranThread(this).start();
 	}
 
 	@Override
@@ -74,15 +73,15 @@ public class QuranDataService extends Service {
 		return this.progress;
 	}
 
-	private class DownloadQuranTask extends AsyncTask<Void, Integer, Long> {
+	private class DownloadQuranThread extends Thread {
 		private QuranDataService service;
 
-		DownloadQuranTask(QuranDataService service){
+		DownloadQuranThread(QuranDataService service){
 			this.service = service;
 		}
 
 		@Override
-		protected Long doInBackground(Void... arg0) {
+		public void run(){
 			try {
 				String urlStr = QuranUtils.getZipFileUrl();
 				Log.d("quran_srv", "zip url: " + urlStr);
@@ -104,7 +103,7 @@ public class QuranDataService extends Service {
 							file.length());
 						file.delete();
 					}
-					else return new Long(0);
+					else unzipFile();
 				}
 
 				FileOutputStream f = new FileOutputStream(file);
@@ -121,59 +120,56 @@ public class QuranDataService extends Service {
 				}
 			}
 			catch (IOException ioe){
-				return new Long(1);
+				return;
 			}
 
-			return new Long(0);
+			unzipFile();
 		}
 
-		@Override
-		protected void onPostExecute(Long result){
-			if (result == 0){
-				try {
-					service.updateProgress(0);
-					QuranDataService.phase++;
-					
-					// success, unzip the file...
-					FileInputStream is = new FileInputStream(
-							QuranUtils.getQuranBaseDirectory() + "/images.zip");
-					ZipInputStream zis = new ZipInputStream(is);
-					String base = QuranUtils.getQuranBaseDirectory();
+		protected void unzipFile(){
+			try {
+				service.updateProgress(0);
+				QuranDataService.phase++;
 
-					int ctr = 0;
-					ZipEntry entry;
-					while ((entry = zis.getNextEntry()) != null){
-						if (entry.isDirectory()){
-							zis.closeEntry();
-							continue;
-						}
-						
-						double percentage = 100.0 * ((1.0 * ctr++) / 604.0);
-						
-						// ignore files that already exist
-						File f = new File(base + entry.getName());
-						if (!f.exists()){
-							FileOutputStream ostream = new FileOutputStream(base + entry.getName());
+				// success, unzip the file...
+				FileInputStream is = new FileInputStream(
+						QuranUtils.getQuranBaseDirectory() + "/images.zip");
+				ZipInputStream zis = new ZipInputStream(is);
+				String base = QuranUtils.getQuranBaseDirectory();
 
-							int size;
-							byte[] buf = new byte[1024];
-							while ((size = zis.read(buf)) > 0)
-								ostream.write(buf, 0, size);
-							ostream.close();
-						}
+				int ctr = 0;
+				ZipEntry entry;
+				while ((entry = zis.getNextEntry()) != null){
+					if (entry.isDirectory()){
 						zis.closeEntry();
-						service.updateProgress((int)percentage);
+						continue;
 					}
 
-					zis.close();
-					is.close();
-					
-					File file = new File(QuranUtils.getQuranBaseDirectory(), "images.zip");
-					file.delete();
+					double percentage = 100.0 * ((1.0 * ctr++) / 604.0);
+
+					// ignore files that already exist
+					File f = new File(base + entry.getName());
+					if (!f.exists()){
+						FileOutputStream ostream = new FileOutputStream(base + entry.getName());
+
+						int size;
+						byte[] buf = new byte[1024];
+						while ((size = zis.read(buf)) > 0)
+							ostream.write(buf, 0, size);
+						ostream.close();
+					}
+					zis.closeEntry();
+					service.updateProgress((int)percentage);
 				}
-				catch (IOException ioe){
-					Log.d("quran_srv", "io exception: " + ioe.toString());
-				}
+
+				zis.close();
+				is.close();
+
+				File file = new File(QuranUtils.getQuranBaseDirectory(), "images.zip");
+				file.delete();
+			}
+			catch (IOException ioe){
+				Log.d("quran_srv", "io exception: " + ioe.toString());
 			}
 
 			service.stopSelf();

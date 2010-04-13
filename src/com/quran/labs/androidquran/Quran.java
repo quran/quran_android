@@ -13,10 +13,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
+import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -27,7 +27,7 @@ import android.widget.SimpleAdapter;
 public class Quran extends ListActivity {
 	ProgressDialog pDialog = null;
 	private QuranDataService boundService;
-	private Handler handler;
+	private AsyncTask<?, ?, ?> currentTask = null;
 	private boolean starting = true;
 	
     /** Called when the activity is first created. */
@@ -69,6 +69,13 @@ public class Quran extends ListActivity {
     public void onConfigurationChanged(Configuration newConfig){
     	super.onConfigurationChanged(newConfig);
     	Log.d("quran", "configuration changed...");
+    }
+    
+    @Override
+    protected void onDestroy(){
+    	super.onDestroy();
+    	if ((currentTask != null) && (currentTask.getStatus() == Status.RUNNING))
+    		currentTask.cancel(true);
     }
         
     private void promptForDownload(){
@@ -118,34 +125,54 @@ public class Quran extends ListActivity {
     	}
     };
     
-    class ProgressBarUpdateTask extends Thread {
-    	public void run(){
+    class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {	
+		@Override
+		protected Void doInBackground(Void... params) {
     		int iters = 0;
     		while (starting || QuranDataService.phase == 1){
     			try {
     				Thread.sleep(1000);
     				if ((conn != null) && (boundService != null)){
     					int progress = boundService.getProgress();
-    					pDialog.setProgress(progress);
+    					publishProgress(progress);
     				}
     				iters++;
     			}
     			catch (InterruptedException ie){}
     		}
     		
-    		handler.sendEmptyMessage(1);
+    		publishProgress(-1);
     		while (QuranDataService.isRunning){
     			try {
     				Thread.sleep(1000);
     				if ((conn != null) && (boundService != null)){
     					int progress = boundService.getProgress();
-    					pDialog.setProgress(progress);
+    					publishProgress(progress);
     				}
     			}
     			catch (InterruptedException ie){}
     		}
     		
-    		handler.sendEmptyMessage(0);
+    		return null;
+    	}
+    	
+		@Override
+    	public void onProgressUpdate(Integer...integers){
+    		int progress = integers[0];
+    		if (progress == -1){
+    			pDialog.setTitle(R.string.extracting_title);
+				pDialog.setMessage(getString(R.string.extracting_message));
+				pDialog.setProgress(0);
+    		}
+    		else pDialog.setProgress(progress);
+    	}
+    	
+    	@Override
+    	public void onPostExecute(Void val){
+    		pDialog.dismiss();
+			pDialog = null;
+			currentTask = null;
+			showSuras();
     	}
     }
     
@@ -157,20 +184,7 @@ public class Quran extends ListActivity {
     	pDialog.setMessage(getString(R.string.downloading_message));
     	pDialog.show();
     	
-    	handler = new Handler(){
-    		public void handleMessage(Message msg){
-    			if (msg.what == 0){
-    				pDialog.dismiss();
-    				pDialog = null;
-    				showSuras();
-    			}
-    			else {
-    				pDialog.setTitle(R.string.extracting_title);
-    				pDialog.setMessage(getString(R.string.extracting_message));
-    			}
-    		}
-    	};
-    	new ProgressBarUpdateTask().start();
+    	currentTask = new ProgressBarUpdateTask().execute();
     }
     
     private void showSuras(){
