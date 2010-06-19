@@ -24,6 +24,8 @@ public class QuranView extends Activity {
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     private GestureDetector gestureDetector;
     private AsyncTask<?, ?, ?> currentTask;
+    private float pageWidth, pageHeight;
+    private QuranScreenInfo qsi;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -38,6 +40,10 @@ public class QuranView extends Activity {
 			Bundle extras = getIntent().getExtras();
 			page = extras != null? extras.getInt("page") : 1;
 		}
+		
+		pageWidth = 0;
+		pageHeight = 0;
+		qsi = QuranScreenInfo.getInstance();
 		
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 		showSura();
@@ -87,6 +93,37 @@ public class QuranView extends Activity {
 			
 			return false;
 		}
+		
+		@Override
+		public boolean onDoubleTap(MotionEvent e){
+			handleDoubleTap(e.getX(), e.getY());
+			return false;
+		}
+	}
+
+	public void handleDoubleTap(float x, float y){
+		ImageView imageView = (ImageView)findViewById(R.id.pageview);
+
+		// just in case...
+		if ((pageWidth == 0) || (pageHeight == 0) || (qsi == null)) return;
+		
+		float xScale = pageWidth / imageView.getWidth();
+		float yScale = pageHeight / imageView.getHeight();
+		
+		float scrollY = 0;
+		ScrollView scrollView = (ScrollView)findViewById(R.id.pageScrollView);
+		if ((scrollView != null) && (scrollView.isEnabled())){
+			scrollY = scrollView.getScrollY();
+		}
+		else {
+			// take into account offset from the top of the screen
+			x = x - (qsi.getWidth() - imageView.getWidth());
+			y = y - (qsi.getHeight() - imageView.getHeight());
+		}
+		
+		x = x * xScale;
+		y = (y * yScale) + scrollY;
+		Log.d("quran_view", "position of dbl tap: " + x + ", " + y);
 	}
 	
 	private void showSura(){
@@ -116,6 +153,9 @@ public class QuranView extends Activity {
 	}
 	
 	private void drawPage(Bitmap bitmap){
+		pageWidth = bitmap.getWidth();
+		pageHeight = bitmap.getHeight();
+		
 		ImageView imageView = (ImageView)findViewById(R.id.pageview);
 		if ((bitmap != null) && (imageView != null)){
 			imageView.setImageBitmap(bitmap);
@@ -171,11 +211,13 @@ public class QuranView extends Activity {
 	@Override
 	protected void onPause(){
 		super.onPause();
+		QuranUtils.releaseScreen();
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
 		showSura();
+		QuranUtils.makeScreenOn();
 	}
 }

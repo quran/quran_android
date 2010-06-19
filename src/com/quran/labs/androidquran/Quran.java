@@ -16,7 +16,9 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.AsyncTask.Status;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -35,6 +37,10 @@ public class Quran extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quran_list);			
+        
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);  
+        WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
+        QuranUtils.setWakeLockAndKeyLock(wl);
 		
         /*
         // remove files for debugging purposes
@@ -63,8 +69,8 @@ public class Quran extends ListActivity {
         	else showSuras();
         }
     }
-    
-    /* easiest way i could find to fix the crash on orientation change bug */
+
+	/* easiest way i could find to fix the crash on orientation change bug */
     @Override
     public void onConfigurationChanged(Configuration newConfig){
     	super.onConfigurationChanged(newConfig);

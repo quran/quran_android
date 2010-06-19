@@ -9,7 +9,7 @@ public class QuranInfo {
 		"Al-Kahf", "Maryam", "Ta-Ha", "Al-Anbiya", "Al-Hajj", "Al-Mumenoon",
 		"An-Noor", "Al-Furqan", "Ash-Shu'ara", "An-Naml", "Al-Qasas",
 		"Al-Ankaboot", "Ar-Room", "Luqman", "As-Sajda", "Al-Ahzab", "Saba",
-		"Fatir", "Ya-Seen", "As-Saaffat", "Sad", "Az-Zumar", "Al-Ghafir",
+		"Fatir", "Ya-Seen", "As-Saaffat", "Sad", "Az-Zumar", "Ghafir",
 		"Fussilat", "Ash-Shura", "Az-Zukhruf", "Ad-Dukhan", "Al-Jathiya",
 		"Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujraat", "Qaf",
 		"Adh-Dhariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman",
