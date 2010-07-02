@@ -1,11 +1,7 @@
 package com.quran.labs.androidquran;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,17 +10,21 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.AsyncTask.Status;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
-public class Quran extends ListActivity {
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.service.QuranDataService;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranUtils;
+
+public class QuranDataActivity extends Activity {
 	ProgressDialog pDialog = null;
 	private QuranDataService boundService;
 	private AsyncTask<?, ?, ?> currentTask = null;
@@ -33,8 +33,11 @@ public class Quran extends ListActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.quran_list);			
+        super.onCreate(savedInstanceState);		
+        
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);  
+        WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
+        QuranUtils.setWakeLockAndKeyLock(wl);
 		
         /*
         // remove files for debugging purposes
@@ -60,11 +63,11 @@ public class Quran extends ListActivity {
         			(!QuranUtils.haveAllImages())){
         		promptForDownload();
         	}
-        	else showSuras();
+        	else runListView();
         }
     }
-    
-    /* easiest way i could find to fix the crash on orientation change bug */
+
+	/* easiest way i could find to fix the crash on orientation change bug */
     @Override
     public void onConfigurationChanged(Configuration newConfig){
     	super.onConfigurationChanged(newConfig);
@@ -95,7 +98,7 @@ public class Quran extends ListActivity {
     			new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
     					dialog.cancel();
-    					showSuras();
+    					runListView();
     				}
     	});
     	
@@ -172,12 +175,12 @@ public class Quran extends ListActivity {
     		pDialog.dismiss();
 			pDialog = null;
 			currentTask = null;
-			showSuras();
+			runListView();
     	}
     }
     
     private void showProgressDialog(){
-    	pDialog = new ProgressDialog(Quran.this);
+    	pDialog = new ProgressDialog(QuranDataActivity.this);
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);
     	pDialog.setCancelable(false);
@@ -187,30 +190,9 @@ public class Quran extends ListActivity {
     	currentTask = new ProgressBarUpdateTask().execute();
     }
     
-    private void showSuras(){
-    	ArrayList< Map<String, String> > suraList =
-    		new ArrayList< Map<String, String> >();
-    	for (int i=0; i<114; i++){
-    		String suraStr = (i+1) + ". Surat " + QuranInfo.SURA_NAMES[i];
-    		Map<String, String> map = new HashMap<String, String>();
-    		map.put("suraname", suraStr);
-    		suraList.add(map);
-    	}
-    	
-    	String[] from = new String[]{ "suraname" };
-    	int[] to = new int[]{ R.id.surarow };
-    	
-    	SimpleAdapter suraAdapter =
-    		new SimpleAdapter(this, suraList, R.layout.quran_row, from, to);
-    	
-    	setListAdapter(suraAdapter);
-    }
-    
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id){
-    	super.onListItemClick(l, v, position, id);
-    	Intent i = new Intent(this, QuranView.class);
-    	i.putExtra("page", QuranInfo.SURA_PAGE_START[(int)id]);
-    	startActivity(i);
+    protected void runListView(){
+		Intent i = new Intent();
+		setResult(RESULT_OK, i);
+		finish();
     }
 }

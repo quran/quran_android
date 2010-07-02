@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran;
+package com.quran.labs.androidquran.service;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +9,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.app.Service;
 import android.content.Intent;
@@ -23,7 +25,7 @@ public class QuranDataService extends Service {
 	public static int phase = 1;
 
 	public class QuranDownloadBinder extends Binder {
-		QuranDataService getService(){
+		public QuranDataService getService(){
 			return QuranDataService.this;
 		}
 	}

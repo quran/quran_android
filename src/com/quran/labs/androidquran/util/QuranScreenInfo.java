@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran;
+package com.quran.labs.androidquran.util;
 
 public class QuranScreenInfo {
 
