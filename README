@@ -11,6 +11,10 @@ patches, comments, etc are welcome.
 
 changelog
 ---------
+07.02.2010
+- some initial refactoring and packaging of code
+- added a simple initial implementation of "go to page"
+
 06.19.2010
 - added Hussein's patch to keep the screen alive while reading
 - fixed sura name of Surat Ghafir (thx Hussein)
