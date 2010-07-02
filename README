@@ -2,20 +2,25 @@ quran for android
 a simple quran client for android
 ==================================
 
-this is a simple quran app for android (mainly was written as a 
-learning project to learn android development).
+this is a simple (madani based) quran app for android.
 
 for details about the images used, please see:
    http://github.com/quran/quran_images
 
 patches, comments, etc are welcome.
 
+changelog
+---------
+06.19.2010
+- added Hussein's patch to keep the screen alive while reading
+- fixed sura name of Surat Ghafir (thx Hussein)
+- added a function to see where double taps occur for future integration
+
 todo
 ----
 - code cleanup
 - what if there is not enough memory on the sd card?
 - test on smaller screens
-- change the screen shutoff timeout
 - add the ability to browse by juz'
 - add bookmarking functionality
 - perhaps add transliteration search
