@@ -3,6 +3,7 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
@@ -10,6 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -21,16 +25,21 @@ import com.quran.labs.androidquran.common.QuranInfo;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-public class QuranViewActivity extends Activity {
+public class QuranViewActivity extends Activity implements AnimationListener {
 
+	private static final int PAGES_MIN = 1;
+	private static final int PAGES_MAX = 604;
 	private int page;
 	private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    // Duration in MS
+    private static final int ANIMATION_DURATION = 350; 
     private GestureDetector gestureDetector;
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
     private QuranScreenInfo qsi;
+    private ImageView imageView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -39,16 +48,17 @@ public class QuranViewActivity extends Activity {
 		
 		setContentView(R.layout.quran_view);
 		
-		page = savedInstanceState != null?
-				savedInstanceState.getInt("page") : 1;
-		if (page == 1){
+		page = savedInstanceState != null ? savedInstanceState.getInt("page") : PAGES_MIN;
+		if (page == PAGES_MIN){
 			Bundle extras = getIntent().getExtras();
-			page = extras != null? extras.getInt("page") : 1;
+			page = extras != null? extras.getInt("page") : PAGES_MIN;
 		}
 		
 		pageWidth = 0;
 		pageHeight = 0;
 		qsi = QuranScreenInfo.getInstance();
+		imageView = (ImageView)findViewById(R.id.pageview);
+		imageView.setKeepScreenOn(true);
 		
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 		showSura();
@@ -83,17 +93,11 @@ public class QuranViewActivity extends Activity {
 			// previous page swipe
 			if ((e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE) && 
 			    (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				if (page != 1){
-					page--;
-					showSura();
-				}
+				goToPreviousPage();
 			}
 			else if ((e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE) &&
 				(Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				if (page < 604){
-					page++;
-					showSura();
-				}
+				goToNextPage();
 			}
 			
 			return false;
@@ -107,8 +111,6 @@ public class QuranViewActivity extends Activity {
 	}
 
 	public void handleDoubleTap(float x, float y){
-		ImageView imageView = (ImageView)findViewById(R.id.pageview);
-
 		// just in case...
 		if ((pageWidth == 0) || (pageHeight == 0) || (qsi == null)) return;
 		
@@ -131,6 +133,20 @@ public class QuranViewActivity extends Activity {
 		Log.d("quran_view", "position of dbl tap: " + x + ", " + y);
 	}
 	
+	private void goToNextPage() {
+		if (page < PAGES_MAX) {
+			page++;
+			animateSwappinPages(true);
+		}
+	}
+
+	private void goToPreviousPage() {
+		if (page != PAGES_MIN) {
+			page--;
+			animateSwappinPages(false);
+		}
+	}	
+
 	private void showSura(){
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(3);
@@ -161,8 +177,7 @@ public class QuranViewActivity extends Activity {
 		pageWidth = bitmap.getWidth();
 		pageHeight = bitmap.getHeight();
 		
-		ImageView imageView = (ImageView)findViewById(R.id.pageview);
-		if ((bitmap != null) && (imageView != null)){
+		if (bitmap != null) {
 			imageView.setImageBitmap(bitmap);
 			
 			final ScrollView scrollView = (ScrollView)findViewById(R.id.pageScrollView);
@@ -174,7 +189,7 @@ public class QuranViewActivity extends Activity {
 		else setContentView(R.layout.quran_error);
 	}
 	
-	private class DownloadPageTask extends AsyncTask<String, Void, Bitmap>{
+	private class DownloadPageTask extends AsyncTask<String, Void, Bitmap> {
 
 		@Override
 		protected Bitmap doInBackground(String... arg0) {
@@ -193,16 +208,10 @@ public class QuranViewActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
-			if (page != 604){
-				page++;
-				showSura();
-			}
+			goToNextPage();
 		}
 		else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
-			if (page != 1){
-				page--;
-				showSura();
-			}
+			goToPreviousPage();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -216,13 +225,42 @@ public class QuranViewActivity extends Activity {
 	@Override
 	protected void onPause(){
 		super.onPause();
-		QuranUtils.releaseScreen();
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
 		showSura();
-		QuranUtils.makeScreenOn();
+	}
+	
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		QuranScreenInfo.getInstance().setOrientation(newConfig.orientation);
+	}
+	
+	private void animateSwappinPages(boolean toDirection) {
+		int translationWidth = qsi.isLandscapeOrientation() ? qsi.getHeight() : qsi.getWidth();
+		translationWidth = toDirection ? translationWidth : -translationWidth;
+		
+		TranslateAnimation t = new TranslateAnimation(0, translationWidth, 0, 0);
+        t.setStartOffset(0);
+        t.setDuration(ANIMATION_DURATION);
+        t.setFillAfter(false);
+        t.setFillBefore(false);
+        
+        t.setAnimationListener(this);
+        imageView.startAnimation(t);
+	}
+
+	public void onAnimationEnd(Animation animation) {
+		showSura();
+	}
+
+	public void onAnimationRepeat(Animation animation) {
+		
+	}
+
+	public void onAnimationStart(Animation animation) {
+		
 	}
 }

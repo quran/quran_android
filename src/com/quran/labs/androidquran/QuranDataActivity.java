@@ -13,8 +13,6 @@ import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -35,10 +33,6 @@ public class QuranDataActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);		
         
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);  
-        WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "DoNotDimScreen");
-        QuranUtils.setWakeLockAndKeyLock(wl);
-		
         /*
         // remove files for debugging purposes
         QuranUtils.debugRmDir(QuranUtils.getQuranBaseDirectory(), false);
@@ -86,12 +80,12 @@ public class QuranDataActivity extends Activity {
     	dialog.setMessage(R.string.downloadPrompt);
     	dialog.setCancelable(false);
     	dialog.setPositiveButton(R.string.downloadPrompt_ok,
-    			new DialogInterface.OnClickListener() {
-    				public void onClick(DialogInterface dialog, int id) {
-    					dialog.cancel();
-    					startService();
-    					showProgressDialog();
-    				}
+			new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+					startService();
+					showProgressDialog();
+				}
     	});
     	
     	dialog.setNegativeButton(R.string.downloadPrompt_no, 

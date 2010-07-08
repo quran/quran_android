@@ -10,26 +10,13 @@ import java.net.URL;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
 public class QuranUtils {
-	private static WakeLock wl = null;
+
 	public static boolean failedToWrite = false;
 	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
 	private static String QURAN_BASE = "/quran/";
-	
-	public static void setWakeLockAndKeyLock(WakeLock wl) {
-		QuranUtils.wl = wl;
-	}
-	
-	public static void makeScreenOn() {
-		wl.acquire();
-	}
-	
-	public static void releaseScreen() {
-		wl.release();
-	}
 	
 	public static boolean debugRmDir(String dir, boolean deleteDirectory){
 		File directory = new File(dir);
