@@ -3,7 +3,6 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
@@ -231,11 +230,6 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	protected void onResume(){
 		super.onResume();
 		showSura();
-	}
-	
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		QuranScreenInfo.getInstance().setOrientation(newConfig.orientation);
 	}
 	
 	private void animateSwappinPages(boolean toDirection) {

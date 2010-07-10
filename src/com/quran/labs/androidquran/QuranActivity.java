@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.res.Configuration;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import android.widget.SimpleAdapter;
 
 import com.quran.labs.androidquran.common.ApplicationConstants;
 import com.quran.labs.androidquran.common.QuranInfo;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 public class QuranActivity extends ListActivity {
 
@@ -30,6 +32,11 @@ public class QuranActivity extends ListActivity {
         Intent i = new Intent(this, QuranDataActivity.class);
 		this.startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
     }
+    
+    public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		QuranScreenInfo.getInstance().setOrientation(newConfig.orientation);
+	}
     
     public void onActivityResult(int requestCode, int resultCode, Intent data){
 		if (requestCode == ApplicationConstants.DATA_CHECK_CODE){ showSuras(); }
