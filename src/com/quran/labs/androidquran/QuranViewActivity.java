@@ -33,13 +33,18 @@ public class QuranViewActivity extends Activity implements AnimationListener {
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     // Duration in MS
-    private static final int ANIMATION_DURATION = 350; 
+    private static final int ANIMATION_DURATION = 500; 
     private GestureDetector gestureDetector;
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
     private QuranScreenInfo qsi;
     private ImageView imageView;
-	
+	private ImageView bgImageView;
+	private boolean animate;
+	private boolean rightTransitionSwap;
+	private ScrollView scrollView;
+	private Bitmap bitmap;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -55,12 +60,15 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		
 		pageWidth = 0;
 		pageHeight = 0;
+		animate = false;
 		qsi = QuranScreenInfo.getInstance();
 		imageView = (ImageView)findViewById(R.id.pageview);
+		bgImageView = (ImageView)findViewById(R.id.bgPageview);
+		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
 		imageView.setKeepScreenOn(true);
 		
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
-		showSura();
+		showPage();
 	}
 	
 	@Override
@@ -117,11 +125,9 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		float yScale = pageHeight / imageView.getHeight();
 		
 		float scrollY = 0;
-		ScrollView scrollView = (ScrollView)findViewById(R.id.pageScrollView);
-		if ((scrollView != null) && (scrollView.isEnabled())){
+		if (scrollView != null && scrollView.isEnabled()) {
 			scrollY = scrollView.getScrollY();
-		}
-		else {
+		} else {
 			// take into account offset from the top of the screen
 			x = x - (qsi.getWidth() - imageView.getWidth());
 			y = y - (qsi.getHeight() - imageView.getHeight());
@@ -133,61 +139,82 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	}
 	
 	private void goToNextPage() {
+		animate = true;
 		if (page < PAGES_MAX) {
 			page++;
-			animateSwappinPages(true);
+			rightTransitionSwap = true;
+			showPage();
 		}
 	}
 
 	private void goToPreviousPage() {
+		animate = true;
 		if (page != PAGES_MIN) {
 			page--;
-			animateSwappinPages(false);
+			rightTransitionSwap = false;
+			showPage();
 		}
-	}	
-
-	private void showSura(){
+	}
+	
+	private String getPageFileName() {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(3);
-		
-		String filename = "page" + nf.format(page) + ".png";
+		return "page" + nf.format(page) + ".png";
+	}
+
+	private void showPage(){
 		String title = "Quran, page " + page +
 			" - [Surat " + QuranInfo.getSuraNameFromPage(page) + "]";
 		setTitle(title);
-
+		
+		String filename = getPageFileName();
 		Bitmap bitmap = QuranUtils.getImageFromSD(filename);
 		if (bitmap == null){
 			Log.d("quran_view", "need to download " + filename);
-			if (currentTask != null)
-				currentTask.cancel(true);
+			if (currentTask != null) {
+				currentTask.cancel(true);	
+			}
 			setProgressBarIndeterminateVisibility(true);
 			currentTask = new DownloadPageTask().execute(filename);
+		} else  {
+			showBitmap(bitmap);
 		}
-		else drawPage(bitmap);
 	}
 		
 	private void doneDownloadingPage(Bitmap bitmap){
 		Log.d("quran_view", "done downloading page");
 		setProgressBarIndeterminateVisibility(false);
-		drawPage(bitmap);
+		showBitmap(bitmap);
 	}
 	
-	private void drawPage(Bitmap bitmap){
+	private void showBitmap(Bitmap bitmap){
+		this.bitmap = bitmap;
+		if (bitmap == null) {
+			setContentView(R.layout.quran_error);
+			return;
+		}
+		
 		pageWidth = bitmap.getWidth();
 		pageHeight = bitmap.getHeight();
 		
-		if (bitmap != null) {
+		if (animate) {
+			bgImageView.setImageBitmap(bitmap);
+			animateSwappingPages();
+		} else {
 			imageView.setImageBitmap(bitmap);
-			
-			final ScrollView scrollView = (ScrollView)findViewById(R.id.pageScrollView);
-			if ((scrollView != null) && (scrollView.isEnabled()))
-				scrollView.post(new Runnable(){
-					public void run(){ scrollView.scrollTo(0, 0); }
-				});
 		}
-		else setContentView(R.layout.quran_error);
+		
+		resetScroller();
 	}
 	
+	private void resetScroller() {
+		if (scrollView != null && scrollView.isEnabled()) {
+			scrollView.post(new Runnable(){
+				public void run(){ scrollView.scrollTo(0, 0); }
+			});	
+		}
+	}
+
 	private class DownloadPageTask extends AsyncTask<String, Void, Bitmap> {
 
 		@Override
@@ -229,12 +256,21 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	@Override
 	protected void onResume(){
 		super.onResume();
-		showSura();
+		animate = false;
+		showPage();
 	}
 	
-	private void animateSwappinPages(boolean toDirection) {
+	private void animateSwappingPages() {
+		// In case
+		if (!animate) {
+			imageView.setImageBitmap(bitmap);
+			resetScroller();
+			return;
+		}
+		
+		animate = false;
 		int translationWidth = qsi.isLandscapeOrientation() ? qsi.getHeight() : qsi.getWidth();
-		translationWidth = toDirection ? translationWidth : -translationWidth;
+		translationWidth = rightTransitionSwap ? translationWidth : -translationWidth;
 		
 		TranslateAnimation t = new TranslateAnimation(0, translationWidth, 0, 0);
         t.setStartOffset(0);
@@ -247,7 +283,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	}
 
 	public void onAnimationEnd(Animation animation) {
-		showSura();
+		imageView.setImageBitmap(bitmap);
 	}
 
 	public void onAnimationRepeat(Animation animation) {
@@ -255,6 +291,6 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	}
 
 	public void onAnimationStart(Animation animation) {
-		
+
 	}
 }
