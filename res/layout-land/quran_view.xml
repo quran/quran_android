@@ -8,7 +8,7 @@
   android:layout_width="fill_parent" 
   android:layout_height="wrap_content">                
   
-	<LinearLayout
+	<FrameLayout
   		android:layout_width="fill_parent"
   		android:layout_height="wrap_content">
   
@@ -16,5 +16,10 @@
 	    	android:background="#FFF4CB"
 	  		android:layout_width="fill_parent"
 	  		android:layout_height="wrap_content" />
-	</LinearLayout>
+	  		
+  		<ImageView android:id="@+id/bgPageview"
+	    	android:background="#FFF4CB"
+	  		android:layout_width="fill_parent"
+	  		android:layout_height="wrap_content" />
+	</FrameLayout>
 </ScrollView>
