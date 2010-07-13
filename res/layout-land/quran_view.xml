@@ -12,12 +12,12 @@
   		android:layout_width="fill_parent"
   		android:layout_height="wrap_content">
   
-  		<ImageView android:id="@+id/pageview"
+  		<ImageView android:id="@+id/bgPageview"
 	    	android:background="#FFF4CB"
 	  		android:layout_width="fill_parent"
 	  		android:layout_height="wrap_content" />
 	  		
-  		<ImageView android:id="@+id/bgPageview"
+  		<ImageView android:id="@+id/pageview"
 	    	android:background="#FFF4CB"
 	  		android:layout_width="fill_parent"
 	  		android:layout_height="wrap_content" />
