@@ -13,9 +13,11 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 
@@ -38,7 +40,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
     private QuranScreenInfo qsi;
-    private ImageView imageView;
+    private QuranImageView imageView;
 	private ImageView bgImageView;
 	private boolean animate;
 	private boolean rightTransitionSwap;
@@ -61,14 +63,24 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		pageWidth = 0;
 		pageHeight = 0;
 		animate = false;
-		qsi = QuranScreenInfo.getInstance();
-		imageView = (ImageView)findViewById(R.id.pageview);
+		initializeQsi();
+		imageView = (QuranImageView)findViewById(R.id.pageview);
 		bgImageView = (ImageView)findViewById(R.id.bgPageview);
 		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
 		imageView.setKeepScreenOn(true);
 		
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 		showPage();
+	}
+	
+	private void initializeQsi() {
+		qsi = QuranScreenInfo.getInstance();
+        WindowManager w = getWindowManager();
+        Display d = w.getDefaultDisplay();
+        int width = d.getWidth();
+        int height = d.getHeight();
+        Log.d("quran", "screen size: width [" + width + "], height: [" + height + "]");
+        QuranScreenInfo.initialize(width, height); 
 	}
 	
 	@Override
@@ -269,7 +281,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		}
 		
 		animate = false;
-		int translationWidth = qsi.isLandscapeOrientation() ? qsi.getHeight() : qsi.getWidth();
+		int translationWidth = qsi.getWidth();
 		translationWidth = rightTransitionSwap ? translationWidth : -translationWidth;
 		
 		TranslateAnimation t = new TranslateAnimation(0, translationWidth, 0, 0);

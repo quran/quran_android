@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.quran.labs.androidquran.R;
@@ -28,10 +29,15 @@ public class QuranDataActivity extends Activity {
 	private AsyncTask<?, ?, ?> currentTask = null;
 	private boolean starting = true;
 	
+	protected static Thread splashThread = null;
+	protected boolean _active = true;
+	protected int _splashTime = 3000; // time to display the splash screen in ms
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);		
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash_screen);
         
         /*
         // remove files for debugging purposes
@@ -40,6 +46,36 @@ public class QuranDataActivity extends Activity {
         System.exit(0);
         */
         
+        initializeQuranScreen();
+        showSplashScreen();
+    }
+    
+	private void showSplashScreen() {
+		if (splashThread == null) {
+			// http://www.droidnova.com/how-to-create-a-splash-screen,561.html
+			splashThread = new Thread() {
+				@Override
+				public void run() {
+					try {
+						int waited = 0;
+						while (_active && (waited < _splashTime)) {
+							sleep(100);
+							if (_active) {
+								waited += 100;
+							}
+						}
+					} catch (InterruptedException e) {
+					} finally {
+						checkDataStatus();
+					}
+				}
+			};
+
+			splashThread.start();
+		}
+	}
+
+	private void initializeQuranScreen() {
         // get the screen size
         WindowManager w = getWindowManager();
         Display d = w.getDefaultDisplay();
@@ -47,18 +83,27 @@ public class QuranDataActivity extends Activity {
         int height = d.getHeight();
         Log.d("quran", "screen size: width [" + width + "], height: [" + height + "]");
         QuranScreenInfo.initialize(width, height); 
-        
+	}
+
+	public void checkDataStatus(){
         if (QuranDataService.isRunning){
         	startService();
         	showProgressDialog();
-        }
-        else {
+        } else {
         	if ((QuranUtils.getQuranDirectory() != null) &&
         			(!QuranUtils.haveAllImages())){
         		promptForDownload();
         	}
         	else runListView();
         }
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+     	if (event.getAction() == MotionEvent.ACTION_DOWN) {
+     		_active = false;
+       	}
+       	return true;
     }
 
 	/* easiest way i could find to fix the crash on orientation change bug */
