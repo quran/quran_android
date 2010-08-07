@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Display;
@@ -29,8 +30,8 @@ public class QuranDataActivity extends Activity {
 	private AsyncTask<?, ?, ?> currentTask = null;
 	private boolean starting = true;
 	
-	protected static Thread splashThread = null;
-	protected boolean _active = true;
+	protected Handler splashHandler = null;
+	protected Runnable splashRunner = null;
 	protected int _splashTime = 3000; // time to display the splash screen in ms
 	
     /** Called when the activity is first created. */
@@ -51,28 +52,14 @@ public class QuranDataActivity extends Activity {
     }
     
 	private void showSplashScreen() {
-		if (splashThread == null) {
-			// http://www.droidnova.com/how-to-create-a-splash-screen,561.html
-			splashThread = new Thread() {
-				@Override
-				public void run() {
-					try {
-						int waited = 0;
-						while (_active && (waited < _splashTime)) {
-							sleep(100);
-							if (_active) {
-								waited += 100;
-							}
-						}
-					} catch (InterruptedException e) {
-					} finally {
-						checkDataStatus();
-					}
-				}
-			};
-
-			splashThread.start();
-		}
+		splashHandler = new Handler();
+		splashRunner = new Runnable(){
+			@Override
+			public void run(){
+				checkDataStatus();
+			}
+		};
+		splashHandler.postDelayed(splashRunner, _splashTime);
 	}
 
 	private void initializeQuranScreen() {
@@ -101,7 +88,8 @@ public class QuranDataActivity extends Activity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
      	if (event.getAction() == MotionEvent.ACTION_DOWN) {
-     		_active = false;
+     		splashHandler.removeCallbacks(splashRunner);
+     		checkDataStatus();
        	}
        	return true;
     }
