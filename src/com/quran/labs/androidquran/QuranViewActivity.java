@@ -24,6 +24,7 @@ import android.widget.ScrollView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranInfo;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranViewActivity extends Activity implements AnimationListener {
@@ -51,6 +52,11 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		if (QuranSettings.getInstance().isHideTitle()) {
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);  
+		}
 		
 		setContentView(R.layout.quran_view);
 		
@@ -175,8 +181,8 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	}
 
 	private void showPage(){
-		String title = "Quran, page " + page +
-			" - [Surat " + QuranInfo.getSuraNameFromPage(page) + "]";
+		String title = QuranInfo.getPageTitle() + page +
+			" - [" + QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraNameFromPage(page) + "]";
 		setTitle(title);
 		
 		String filename = getPageFileName();

@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.common;
 
+import com.quran.labs.androidquran.util.QuranSettings;
+
 public class QuranInfo {
 	
 	public static String[] SURA_NAMES = {
@@ -27,6 +29,43 @@ public class QuranInfo {
 		"An-Nas"
 	};
 	
+	public static String[] SURA_NAMES_AR = {
+		"الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة",
+		"اﻷنعام", "اﻷعراف", "اﻷنفال", "التوبة", "يونس", "هود",
+		"يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "اﻹسراء",
+		"الكهف", "مريم", "طه", "اﻷنبياء", "الحج", "المؤمنون",
+		"النور", "الفرقان", "الشعراء", "النمل", "القصص",
+		"العنكبوت", "الروم", "لقمان", "السجدة", "اﻷحزاب", "سبأ",
+		"فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
+		"فصلت", "الشعراء", "الزخرف", "الدخان", "الجاثية",
+		"الحاقة", "محمد", "الفتح", "الحجرات", "ق",
+		"الذاريات", "الطور", "النجم", "القمر", "الرحمن",
+		"الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
+		"الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق",
+		"التحريم", "الملك", "القلم", "الحاقة", "المعارج", "نوح",
+		"الجن", "المزمل", "المدثر", "القيامة", "اﻹنسان",
+		"المرسلات", "النبأ", "النازعات", "عبس", "التكوير",
+		"الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق",
+		"اﻷعلى", "الغاشية", "الفجر", "البلد", "الشمس",
+		"الليل", "الضحى", "الشرح", "التين", "العلق", "القدر",
+		"البينة", "الزلزلة", "العاديات", "القارعة", "التكاثر",
+		"العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر",
+		"الكافرون", "النصر", "المسد", "اﻹخلاص", "الفلق",
+		"الناس"
+	};
+	
+	public static String getSuraTitle() {
+		return QuranSettings.getInstance().isArabicNames() ? "سورة" : "Surat";
+	}
+	
+	public static String getSuraName(int index) {
+		return QuranSettings.getInstance().isArabicNames() ? SURA_NAMES_AR[index] : SURA_NAMES[index];
+	}
+	
+	public static String getPageTitle() {
+		return QuranSettings.getInstance().isArabicNames() ? "القرآن الكريم، صفحة " : "Quran, page ";
+	}
+	
 	public static int[] SURA_PAGE_START = {
 		1, 2, 50, 77, 106, 128, 151, 177, 187, 208, 221, 235, 249, 255, 262,
 		267, 282, 293, 305, 312, 322, 332, 342, 350, 359, 367, 377, 385, 396,
@@ -42,9 +81,9 @@ public class QuranInfo {
 	public static String getSuraNameFromPage(int page){
 		for (int i = 0; i < 114; i++){
 			if (SURA_PAGE_START[i] == page)
-				return SURA_NAMES[i];
+				return getSuraName(i);
 			else if (SURA_PAGE_START[i] > page)
-				return SURA_NAMES[i-1];
+				return getSuraName(i-1);
 		}
 		return "";
 	}

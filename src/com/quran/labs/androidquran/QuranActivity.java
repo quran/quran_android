@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
@@ -20,6 +21,7 @@ import android.widget.SimpleAdapter;
 import com.quran.labs.androidquran.common.ApplicationConstants;
 import com.quran.labs.androidquran.common.QuranInfo;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranActivity extends ListActivity {
 
@@ -28,6 +30,7 @@ public class QuranActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quran_list);
+        QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
         
         Intent i = new Intent(this, QuranDataActivity.class);
 		this.startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
@@ -39,7 +42,10 @@ public class QuranActivity extends ListActivity {
 	}
     
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-		if (requestCode == ApplicationConstants.DATA_CHECK_CODE){ showSuras(); }
+		if (requestCode == ApplicationConstants.DATA_CHECK_CODE 
+			|| requestCode == ApplicationConstants.SETTINGS_CODE) { 
+			showSuras(); 
+		}
     }
     
     @Override
@@ -64,20 +70,27 @@ public class QuranActivity extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		MenuItem item;
-		item = menu.add(0, ApplicationConstants.JUMP_MENU_ID, 0, R.string.menu_jump);
-		item.setIcon(android.R.drawable.ic_menu_set_as);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.option_menu, menu);	  
 		return true;
 	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		Intent intent;
 		switch (item.getItemId()){
-		case ApplicationConstants.JUMP_MENU_ID:
-			showDialog(ApplicationConstants.JUMP_DIALOG);
+			case R.id.menu_item_jump:
+				showDialog(ApplicationConstants.JUMP_DIALOG);
+			break;
+			case R.id.menu_item_about_us:
+		    	intent = new Intent(getApplicationContext(), AboutUsActivity.class);
+		        startActivity(intent);
+		    break;
+			case R.id.menu_item_settings:
+		    	intent = new Intent(getApplicationContext(), SettingsActivity.class);
+		        startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
 		}
-
 		return super.onMenuItemSelected(featureId, item);
 	}
 
@@ -85,7 +98,7 @@ public class QuranActivity extends ListActivity {
 		ArrayList< Map<String, String> > suraList =
 			new ArrayList< Map<String, String> >();
 		for (int i=0; i<114; i++){
-			String suraStr = (i+1) + ". Surat " + QuranInfo.SURA_NAMES[i];
+			String suraStr = (i+1) + ". " + QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(i);
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("suraname", suraStr);
 			suraList.add(map);

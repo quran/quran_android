@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="errorString">Could not download Quran Pages!</string>
-    <string name="app_name">Quran</string>
-    <string name="downloadPrompt_title">Download Required Files?</string>
-    <string name="downloadPrompt">For optimal performance, some files must be downloaded to the sd card.
-    	If you choose not to do this now, each page will take significantly longer to load.  Would you
-    	like to download the required files now?</string>
-    <string name="downloadPrompt_ok">Yes</string>
-    <string name="downloadPrompt_no">No</string>
-    <string name="downloading_title">Downloading...</string>
-    <string name="downloading_message">Please wait for the files to download.</string>
-    <string name="extracting_title">Processing...</string>
-    <string name="extracting_message">Please wait the files are processed.</string>
-    <string name="menu_jump">Jump</string>
-    <string name="jump_dialog_title">Jump To Page</string>
-    <string name="page_hint">Page Number</string>
-    <string name="go">Go</string>
-    <string name="cancel">Cancel</string>
+	<string name="errorString">Could not download Quran Pages!</string>
+	<string name="app_name">Quran Android</string>
+	<string name="downloadPrompt_title">Download Required Files?</string>
+	<string name="downloadPrompt">For optimal performance, some files must be
+		downloaded to the sd card.
+		If you choose not to do this now, each page will take significantly
+		longer to load. Would you
+		like to download the required files now?</string>
+	<string name="downloadPrompt_ok">Yes</string>
+	<string name="downloadPrompt_no">No</string>
+	<string name="downloading_title">Downloading...</string>
+	<string name="downloading_message">Please wait for the files to download.</string>
+	<string name="extracting_title">Processing...</string>
+	<string name="extracting_message">Please wait the files are processed.</string>
+	<string name="menu_jump">Jump</string>
+	<string name="menu_about">About Us</string>
+	<string name="menu_settings">Settings</string>
+	<string name="jump_dialog_title">Jump To Page</string>
+	<string name="page_hint">Page Number</string>
+	<string name="go">Go</string>
+	<string name="cancel">Cancel</string>
+	<string name="developedBy">Quran Android - Muslim Developers</string>
+	<string name="copyRights">Copy Rights - All Muslims</string>
+	<string name="email_subject">Feedback</string>
+	<string name="email_to">quran.android@gmail.com</string>
+	<string name="aboutUs">Quran Android is a free, open source Quran
+		application for Android.\nUpcoming features include:\n- Bookmarks.\n-
+		Translations.\n- Search.\n- And more..\n\nLa tansawna men saleh el
+		doaa.</string>
+	<string name="use_arabic_names">Use arabic names</string>
+	<string name="hide_title">Full Screen Mode.\nHave a larger view area for pages.</string>
 </resources>

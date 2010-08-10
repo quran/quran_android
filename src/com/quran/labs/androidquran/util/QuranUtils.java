@@ -16,7 +16,7 @@ public class QuranUtils {
 
 	public static boolean failedToWrite = false;
 	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
-	private static String QURAN_BASE = "/quran/";
+	private static String QURAN_BASE = "/quran_android/";
 	
 	public static boolean debugRmDir(String dir, boolean deleteDirectory){
 		File directory = new File(dir);

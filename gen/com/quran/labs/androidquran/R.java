@@ -11,43 +11,72 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
-        public static final int list=0x7f020001;
-        public static final int splash=0x7f020002;
+        public static final int about=0x7f020000;
+        public static final int icon=0x7f020001;
+        public static final int jump=0x7f020002;
+        public static final int list=0x7f020003;
+        public static final int settings=0x7f020004;
+        public static final int splash=0x7f020005;
     }
     public static final class id {
-        public static final int bgPageview=0x7f050004;
-        public static final int cancelButton=0x7f050001;
-        public static final int jumpButton=0x7f050002;
-        public static final int pageScrollView=0x7f050006;
-        public static final int page_field=0x7f050000;
-        public static final int pageview=0x7f050005;
-        public static final int splashview=0x7f050007;
-        public static final int surarow=0x7f050003;
+        public static final int bgPageview=0x7f06000b;
+        public static final int btnAboutBack=0x7f060005;
+        public static final int btnEmailUs=0x7f060006;
+        public static final int cancelButton=0x7f060008;
+        public static final int chkArbaicNames=0x7f06000e;
+        public static final int chkHideTitle=0x7f06000f;
+        public static final int jumpButton=0x7f060009;
+        public static final int linear=0x7f060000;
+        public static final int menu_item_about_us=0x7f060012;
+        public static final int menu_item_jump=0x7f060011;
+        public static final int menu_item_settings=0x7f060013;
+        public static final int pageScrollView=0x7f06000d;
+        public static final int page_field=0x7f060007;
+        public static final int pageview=0x7f06000c;
+        public static final int splashview=0x7f060010;
+        public static final int surarow=0x7f06000a;
+        public static final int txtAbout=0x7f060001;
+        public static final int txtCopyRights=0x7f060004;
+        public static final int txtDevelopedBy=0x7f060003;
+        public static final int txtSupport=0x7f060002;
     }
     public static final class layout {
-        public static final int jump_to=0x7f030000;
-        public static final int quran_error=0x7f030001;
-        public static final int quran_list=0x7f030002;
-        public static final int quran_row=0x7f030003;
-        public static final int quran_view=0x7f030004;
-        public static final int splash_screen=0x7f030005;
+        public static final int about_us=0x7f030000;
+        public static final int jump_to=0x7f030001;
+        public static final int quran_error=0x7f030002;
+        public static final int quran_list=0x7f030003;
+        public static final int quran_row=0x7f030004;
+        public static final int quran_view=0x7f030005;
+        public static final int settings=0x7f030006;
+        public static final int splash_screen=0x7f030007;
+    }
+    public static final class menu {
+        public static final int option_menu=0x7f050000;
     }
     public static final class string {
+        public static final int aboutUs=0x7f040015;
         public static final int app_name=0x7f040001;
-        public static final int cancel=0x7f04000e;
+        public static final int cancel=0x7f040010;
+        public static final int copyRights=0x7f040012;
+        public static final int developedBy=0x7f040011;
         public static final int downloadPrompt=0x7f040003;
         public static final int downloadPrompt_no=0x7f040005;
         public static final int downloadPrompt_ok=0x7f040004;
         public static final int downloadPrompt_title=0x7f040002;
         public static final int downloading_message=0x7f040007;
         public static final int downloading_title=0x7f040006;
+        public static final int email_subject=0x7f040013;
+        public static final int email_to=0x7f040014;
         public static final int errorString=0x7f040000;
         public static final int extracting_message=0x7f040009;
         public static final int extracting_title=0x7f040008;
-        public static final int go=0x7f04000d;
-        public static final int jump_dialog_title=0x7f04000b;
+        public static final int go=0x7f04000f;
+        public static final int hide_title=0x7f040017;
+        public static final int jump_dialog_title=0x7f04000d;
+        public static final int menu_about=0x7f04000b;
         public static final int menu_jump=0x7f04000a;
-        public static final int page_hint=0x7f04000c;
+        public static final int menu_settings=0x7f04000c;
+        public static final int page_hint=0x7f04000e;
+        public static final int use_arabic_names=0x7f040016;
     }
 }
