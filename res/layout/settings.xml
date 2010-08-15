@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"    
-    android:background="@drawable/list"    
-    >
-    <CheckBox android:id="@+id/chkArbaicNames"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/use_arabic_names" />
-        
-   <CheckBox android:id="@+id/chkHideTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hide_title" />
-</LinearLayout>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/settingsScrollView" android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:background="@drawable/list">
+		<CheckBox android:id="@+id/chkArbaicNames"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="@string/settings_use_arabic_names" />
+
+		<CheckBox android:id="@+id/chkFullScreen"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="@string/settings_full_screen" />
+
+		<CheckBox android:id="@+id/chkShowClock"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="@string/settings_show_clock" />
+
+	</LinearLayout>
+</ScrollView>

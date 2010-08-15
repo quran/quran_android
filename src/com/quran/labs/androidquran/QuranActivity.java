@@ -42,10 +42,19 @@ public class QuranActivity extends ListActivity {
 	}
     
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-		if (requestCode == ApplicationConstants.DATA_CHECK_CODE 
-			|| requestCode == ApplicationConstants.SETTINGS_CODE) { 
-			showSuras(); 
-		}
+    	switch (requestCode) {
+    		case ApplicationConstants.DATA_CHECK_CODE:
+    		case ApplicationConstants.SETTINGS_CODE:
+    			showSuras();
+    			jumpTo(QuranSettings.getInstance().getLastPage());
+			break;
+    		case ApplicationConstants.BOOKMARKS_CODE:
+    			if (resultCode == RESULT_OK) {
+    				int page = data.getIntExtra("page", 0);
+    				jumpTo(page);
+    			} 
+			break;
+    	}
     }
     
     @Override
@@ -90,11 +99,15 @@ public class QuranActivity extends ListActivity {
 		    	intent = new Intent(getApplicationContext(), SettingsActivity.class);
 		        startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
+			case R.id.menu_item_bookmarks:
+		    	intent = new Intent(getApplicationContext(), BookmarksActivity.class);
+		        startActivityForResult(intent, ApplicationConstants.BOOKMARKS_CODE);
+			break;
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
 
-	private void showSuras(){
+	private void showSuras() {
 		ArrayList< Map<String, String> > suraList =
 			new ArrayList< Map<String, String> >();
 		for (int i=0; i<114; i++){

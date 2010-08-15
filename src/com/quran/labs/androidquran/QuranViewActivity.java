@@ -3,6 +3,7 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
@@ -10,27 +11,32 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.View.OnLongClickListener;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.ApplicationConstants;
 import com.quran.labs.androidquran.common.QuranInfo;
+import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranViewActivity extends Activity implements AnimationListener {
 
-	private static final int PAGES_MIN = 1;
-	private static final int PAGES_MAX = 604;
+	public static final int PAGES_MIN = 1;
+	public static final int PAGES_MAX = 604;
 	private int page;
 	private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
@@ -51,32 +57,56 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		adjustDisplaySettings();
+		initializeViewElements();
+		initializeQsi();
+		loadPageState(savedInstanceState);
+		registerListeners();
+		pageWidth = 0;
+		pageHeight = 0;
+		animate = false;
+		showPage();
+	}
+	
+	private void adjustDisplaySettings() {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		if (QuranSettings.getInstance().isHideTitle()) {
+		if (QuranSettings.getInstance().isFullScreen()) {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);  
-		}
-		
+			if (!QuranSettings.getInstance().isShowClock()) {
+				getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			}
+		}				
+	}
+	
+	private void initializeViewElements() {
 		setContentView(R.layout.quran_view);
+		imageView = (QuranImageView)findViewById(R.id.pageview);
+		imageView.setKeepScreenOn(true);
+		bgImageView = (ImageView)findViewById(R.id.bgPageview);
+		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
+	}
+	
+	private void registerListeners() {
+		imageView.setOnLongClickListener(new OnLongClickListener() {
+			public boolean onLongClick(View v) {
+				SharedPreferences preferences = getSharedPreferences(ApplicationConstants.PREFERNCES, 0);
+				boolean added = BookmarksManager.toggleBookmarkState(page, preferences);
+				String msg = "Bookmark " + (added ? "Saved" : "Removed");
+				Toast.makeText(v.getContext(), msg, Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
 		
+		gestureDetector = new GestureDetector(new QuranGestureDetector());
+	}
+	
+	private void loadPageState(Bundle savedInstanceState) {
 		page = savedInstanceState != null ? savedInstanceState.getInt("page") : PAGES_MIN;
 		if (page == PAGES_MIN){
 			Bundle extras = getIntent().getExtras();
 			page = extras != null? extras.getInt("page") : PAGES_MIN;
 		}
-		
-		pageWidth = 0;
-		pageHeight = 0;
-		animate = false;
-		initializeQsi();
-		imageView = (QuranImageView)findViewById(R.id.pageview);
-		bgImageView = (ImageView)findViewById(R.id.bgPageview);
-		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
-		imageView.setKeepScreenOn(true);
-		
-		gestureDetector = new GestureDetector(new QuranGestureDetector());
-		showPage();
 	}
 	
 	private void initializeQsi() {
@@ -181,9 +211,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	}
 
 	private void showPage(){
-		String title = QuranInfo.getPageTitle() + page +
-			" - [" + QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraNameFromPage(page) + "]";
-		setTitle(title);
+		setTitle(QuranInfo.getPageTitle(page));
 		
 		String filename = getPageFileName();
 		Bitmap bitmap = QuranUtils.getImageFromSD(filename);
@@ -212,6 +240,8 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 			return;
 		}
 		
+		QuranSettings.getInstance().setLastPage(page);
+		QuranSettings.save(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
 		pageWidth = bitmap.getWidth();
 		pageHeight = bitmap.getHeight();
 		

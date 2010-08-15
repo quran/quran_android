@@ -62,8 +62,12 @@ public class QuranInfo {
 		return QuranSettings.getInstance().isArabicNames() ? SURA_NAMES_AR[index] : SURA_NAMES[index];
 	}
 	
-	public static String getPageTitle() {
+	private static String getPageTitle() {
 		return QuranSettings.getInstance().isArabicNames() ? "القرآن الكريم، صفحة " : "Quran, page ";
+	}
+	
+	private static String getPageTitleNoPrefix() {
+		return QuranSettings.getInstance().isArabicNames() ? "صفحة " : "Page ";
 	}
 	
 	public static int[] SURA_PAGE_START = {
@@ -86,5 +90,15 @@ public class QuranInfo {
 				return getSuraName(i-1);
 		}
 		return "";
+	}
+
+	public static String getPageTitleNoPrefix(int page) {
+		return getPageTitleNoPrefix() + page +
+		" - [" + getSuraTitle() + " " + getSuraNameFromPage(page) + "]";
+	}
+	
+	public static String getPageTitle(int page) {
+		return getPageTitle() + page +
+		" - [" + getSuraTitle() + " " + getSuraNameFromPage(page) + "]";
 	}
 }

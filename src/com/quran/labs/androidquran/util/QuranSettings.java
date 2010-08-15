@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.util;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.common.ApplicationConstants;
 
 
@@ -10,12 +11,30 @@ public class QuranSettings {
 	
 	private static QuranSettings instance = new QuranSettings();
 	private boolean arabicNames = false;
-	private boolean hideTitle = false;
+	private boolean showClock = false;
+	private boolean fullScreen = false;
+	private int lastPage = 0;
 	
 	private QuranSettings() {
 		
 	}
+
+	public int getLastPage() {
+		return lastPage;
+	}
+
+	public void setLastPage(int lastPage) {
+		this.lastPage = lastPage;
+	}
 	
+	public boolean isFullScreen() {
+		return fullScreen;
+	}
+
+	public void setFullScreen(boolean fullScreen) {
+		this.fullScreen = fullScreen;
+	}
+
 	public static QuranSettings getInstance(){
 		return instance;
 	}
@@ -27,27 +46,28 @@ public class QuranSettings {
 	public void setArabicNames(boolean useArabicNames) {
 		this.arabicNames = useArabicNames;
 	}
-	
-	
 
-	public boolean isHideTitle() {
-		return hideTitle;
+	public boolean isShowClock() {
+		return showClock;
 	}
 
-	public void setHideTitle(boolean hideTitle) {
-		this.hideTitle = hideTitle;
+	public void setShowClock(boolean showClock) {
+		this.showClock = showClock;
 	}
 
 	public static void load(SharedPreferences preferences) {
-		instance.arabicNames = preferences.getBoolean(ApplicationConstants.USE_ARABIC_NAMES, false);
-		instance.hideTitle = preferences.getBoolean(ApplicationConstants.HIDE_TITLE, false);
+		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
+		instance.fullScreen = preferences.getBoolean(ApplicationConstants.PREF_FULL_SCREEN, false);
+		instance.showClock = preferences.getBoolean(ApplicationConstants.PREF_SHOW_CLOCK, false);
+		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, QuranViewActivity.PAGES_MIN);
 	}
 	
 	public static void save(SharedPreferences preferences) {
 		Editor editor = preferences.edit();
-		editor.putBoolean(ApplicationConstants.USE_ARABIC_NAMES, instance.arabicNames);
-		editor.putBoolean(ApplicationConstants.HIDE_TITLE, instance.hideTitle);
+		editor.putBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, instance.arabicNames);
+		editor.putBoolean(ApplicationConstants.PREF_FULL_SCREEN, instance.fullScreen);
+		editor.putBoolean(ApplicationConstants.PREF_SHOW_CLOCK, instance.showClock);
+		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
 		editor.commit();
 	}
-
 }

@@ -11,7 +11,8 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 public class SettingsActivity extends Activity implements OnCheckedChangeListener {
 	protected CheckBox chkArabicNames;
-	protected CheckBox chkHideTitle;
+	protected CheckBox chkFullScreen;
+	protected CheckBox chkShowClock;
 	private QuranSettings settings;
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -20,14 +21,18 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
         settings = QuranSettings.getInstance();
         chkArabicNames = (CheckBox)findViewById(R.id.chkArbaicNames);
         chkArabicNames.setOnCheckedChangeListener(this);
-        chkHideTitle = (CheckBox)findViewById(R.id.chkHideTitle);
-        chkHideTitle.setOnCheckedChangeListener(this);
+        chkFullScreen = (CheckBox)findViewById(R.id.chkFullScreen);
+        chkFullScreen.setOnCheckedChangeListener(this);
+        chkShowClock = (CheckBox)findViewById(R.id.chkShowClock);
+        chkShowClock.setOnCheckedChangeListener(this);        
         loadSettings();
 	}
 	
 	private void loadSettings() {
 		chkArabicNames.setChecked(settings.isArabicNames());
-		chkHideTitle.setChecked(settings.isHideTitle());
+		chkFullScreen.setChecked(settings.isFullScreen());
+		chkShowClock.setChecked(settings.isShowClock());
+		chkShowClock.setEnabled(settings.isFullScreen());
 	}
 
 	@Override
@@ -36,8 +41,13 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 			case R.id.chkArbaicNames:
 				settings.setArabicNames(isChecked);
 			break;
-			case R.id.chkHideTitle:
-				settings.setHideTitle(isChecked);
+			case R.id.chkFullScreen:
+				settings.setFullScreen(isChecked);
+				chkShowClock.setChecked(false);
+				chkShowClock.setEnabled(isChecked);
+			break;
+			case R.id.chkShowClock:
+				settings.setShowClock(isChecked);
 			break;
 		}
 		QuranSettings.save(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));

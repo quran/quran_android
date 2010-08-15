@@ -9,5 +9,8 @@
           
     <item android:id="@+id/menu_item_settings"          
           android:icon="@drawable/settings" android:title="@string/menu_settings"/>
+  	
+  	<item android:id="@+id/menu_item_bookmarks"          
+          android:icon="@drawable/bookmarks" android:title="@string/menu_bookmarks"/>
       
 </menu>
