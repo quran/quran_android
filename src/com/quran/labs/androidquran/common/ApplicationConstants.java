@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.common;
 
-import android.graphics.Color;
 
 
 public class ApplicationConstants {
