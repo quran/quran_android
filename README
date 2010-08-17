@@ -11,21 +11,15 @@ patches, comments, etc are welcome.
 
 changelog
 ---------
-07.02.2010
-- some initial refactoring and packaging of code
-- added a simple initial implementation of "go to page"
+current version
+- added bookmarks (thanks Hussein)
+- updated browse to allow browsing by juz'
 
-06.19.2010
-- added Hussein's patch to keep the screen alive while reading
-- fixed sura name of Surat Ghafir (thx Hussein)
-- added a function to see where double taps occur for future integration
+version 1.0
+- initial release
 
 todo
 ----
-- code cleanup
-- what if there is not enough memory on the sd card?
-- test on smaller screens
-- add the ability to browse by juz'
-- add bookmarking functionality
-- perhaps add transliteration search
-- perhaps add simple animation during page transmission
+- add translation for verses
+- add transliteration search
+- code cleanup [strings localization, comments, etc]

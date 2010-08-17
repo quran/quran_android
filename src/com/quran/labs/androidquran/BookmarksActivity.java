@@ -43,7 +43,7 @@ public class BookmarksActivity extends ListActivity {
 		}
 		
 		String[] from = new String[]{ "suraname" };
-		int[] to = new int[]{ R.id.surarow };
+		int[] to = new int[]{ R.id.sura_title };
 
 		SimpleAdapter suraAdapter = new SimpleAdapter(this, bookmarkList, R.layout.quran_row, from, to);
 		setListAdapter(suraAdapter);
