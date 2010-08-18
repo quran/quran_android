@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -186,7 +185,6 @@ public class QuranActivity extends ListActivity {
 			holder.page.setText("" + elements[position].page);
 			holder.text.setText(elements[position].text);
 			if (elements[position].isJuz){
-				holder.text.setTextColor(Color.WHITE);
 				holder.metadata.setVisibility(View.GONE);
 			}
 			else {

@@ -6,7 +6,8 @@
   android:layout_height="wrap_content">
   
   <EditText android:id="@+id/page_field"
-  			android:inputType="number"
+  			android:inputType="phone"
+  			android:digits="1234567890"
   			android:hint="@string/page_hint"
   			android:layout_width="fill_parent"
   			android:layout_height="wrap_content" />
