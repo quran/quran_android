@@ -10,19 +10,21 @@ import java.net.URLConnection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.quran.labs.androidquran.util.QuranUtils;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranUtils;
+
 public class QuranDataService extends Service {
 
 	private int progress;
 	public static boolean isRunning = false;
 	public static int phase = 1;
+	public static QuranScreenInfo qsi = null;
 
 	public class QuranDownloadBinder extends Binder {
 		public QuranDataService getService(){
@@ -86,6 +88,7 @@ public class QuranDataService extends Service {
 		public void run(){
 			try {
 				String urlStr = QuranUtils.getZipFileUrl();
+				if (urlStr == null) return;
 				Log.d("quran_srv", "zip url: " + urlStr);
 
 				URL url = new URL(urlStr);

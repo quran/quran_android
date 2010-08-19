@@ -69,7 +69,8 @@ public class QuranDataActivity extends Activity {
         int width = d.getWidth();
         int height = d.getHeight();
         Log.d("quran", "screen size: width [" + width + "], height: [" + height + "]");
-        QuranScreenInfo.initialize(width, height); 
+        QuranScreenInfo.initialize(width, height);
+        QuranDataService.qsi = QuranScreenInfo.getInstance();
 	}
 
 	public void checkDataStatus(){

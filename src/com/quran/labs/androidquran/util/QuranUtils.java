@@ -149,13 +149,17 @@ public class QuranUtils {
 	
 	public static String getQuranDirectory(){
 		String base = getQuranBaseDirectory();
+		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+		if (qsi == null) return null;
 		return (base == null)? null : base + "width" +
-			QuranScreenInfo.getInstance().getWidthParam();
+			qsi.getWidthParam();
 	}
 	
 	public static String getZipFileUrl(){
 		String url = IMG_HOST;
-		url += "images" + QuranScreenInfo.getInstance().getWidthParam() + ".zip";
+		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+		if (qsi == null) return null;
+		url += "images" + qsi.getWidthParam() + ".zip";
 		return url;
 	}
 }
