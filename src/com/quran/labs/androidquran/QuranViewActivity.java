@@ -174,16 +174,13 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	}
 	
 	private void initializeQsi() {
+		WindowManager w = getWindowManager();
+		Display d = w.getDefaultDisplay();
+		int width = d.getWidth();
+		int height = d.getHeight();
+		Log.d("quran", "screen size: width [" + width + "], height: [" + height + "]");
+		QuranScreenInfo.initialize(width, height); 
 		qsi = QuranScreenInfo.getInstance();
-		if (qsi == null){
-			WindowManager w = getWindowManager();
-			Display d = w.getDefaultDisplay();
-			int width = d.getWidth();
-			int height = d.getHeight();
-			Log.d("quran", "screen size: width [" + width + "], height: [" + height + "]");
-			QuranScreenInfo.initialize(width, height); 
-			qsi = QuranScreenInfo.getInstance();
-		}
 	}
 	
 	@Override
