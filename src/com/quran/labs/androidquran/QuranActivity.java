@@ -4,8 +4,8 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +24,8 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranActivity extends ListActivity {
+	
+	private QuranMenuListener qml;
 		
     /** Called when the activity is first created. */
     @Override
@@ -31,6 +33,7 @@ public class QuranActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quran_list);
         QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+        qml = new QuranMenuListener(this);
         
         Intent i = new Intent(this, QuranDataActivity.class);
 		this.startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
@@ -42,19 +45,7 @@ public class QuranActivity extends ListActivity {
 	}
     
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-    	switch (requestCode) {
-    		case ApplicationConstants.DATA_CHECK_CODE:
-    		case ApplicationConstants.SETTINGS_CODE:
-    			showSuras();
-    			jumpTo(QuranSettings.getInstance().getLastPage());
-			break;
-    		case ApplicationConstants.BOOKMARKS_CODE:
-    			if (resultCode == RESULT_OK) {
-    				int page = data.getIntExtra("page", 0);
-    				jumpTo(page);
-    			} 
-			break;
-    	}
+    	qml.onActivityResult(requestCode, resultCode, data);
     }
     
     @Override
@@ -67,7 +58,7 @@ public class QuranActivity extends ListActivity {
     				Integer page = dlg.getPage();
     				removeDialog(ApplicationConstants.JUMP_DIALOG);
     				if (page != null)
-    					jumpTo(page);
+    					qml.jumpTo(page);
     			}
 
     		});
@@ -86,49 +77,27 @@ public class QuranActivity extends ListActivity {
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		Intent intent;
-		switch (item.getItemId()){
-			case R.id.menu_item_jump:
-				showDialog(ApplicationConstants.JUMP_DIALOG);
-			break;
-			case R.id.menu_item_about_us:
-		    	intent = new Intent(getApplicationContext(), AboutUsActivity.class);
-		        startActivity(intent);
-		    break;
-			case R.id.menu_item_settings:
-		    	intent = new Intent(getApplicationContext(), SettingsActivity.class);
-		        startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
-			break;
-			case R.id.menu_item_bookmarks:
-		    	intent = new Intent(getApplicationContext(), BookmarksActivity.class);
-		        startActivityForResult(intent, ApplicationConstants.BOOKMARKS_CODE);
-			break;
-		}
+		qml.onMenuItemSelected(featureId, item);
 		return super.onMenuItemSelected(featureId, item);
 	}
 
-	private void showSuras() {
+	public void showSuras() {
 		int pos = 0;
 		int sura = 1;
 		int next = 1;
 		QuranElement[] elements = new QuranElement[114+30];
 		
-		for (int juz=1; juz<=30; juz++){
-			elements[pos++] = new QuranElement(
-					"Juz' " + juz, true, juz, QuranInfo.JUZ_PAGE_START[juz-1]);
-			next = (juz == 30)? 604 : QuranInfo.JUZ_PAGE_START[juz];
-			while ((sura <= 114) && (QuranInfo.SURA_PAGE_START[sura-1] < next)){
-				String title = (sura) + ". " + QuranInfo.getSuraTitle() + " " + 
-					QuranInfo.getSuraName(sura-1);
-				elements[pos++] = new QuranElement(title, false, sura,
-						QuranInfo.SURA_PAGE_START[sura-1]);
+		for (int juz=1; juz <= ApplicationConstants.JUZ2_COUNT; juz++){
+			elements[pos++] = new QuranElement("Juz' " + juz, true, juz, QuranInfo.JUZ_PAGE_START[juz-1]);
+			next = (juz == ApplicationConstants.JUZ2_COUNT) ? ApplicationConstants.PAGES_LAST : QuranInfo.JUZ_PAGE_START[juz];
+			while ((sura <= ApplicationConstants.SURAS_COUNT) && (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
+				String title = (sura) + ". " + QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(sura-1);
+				elements[pos++] = new QuranElement(title, false, sura, QuranInfo.SURA_PAGE_START[sura-1]);
 				sura++;
 			}
 		}
 
-		EfficientAdapter suraAdapter =
-			new EfficientAdapter(this, elements);
-
+		EfficientAdapter suraAdapter = new EfficientAdapter(this, elements);
 		setListAdapter(suraAdapter);
 	}
 	
@@ -207,17 +176,10 @@ public class QuranActivity extends ListActivity {
 		}
 	}
 
-
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id){
 		super.onListItemClick(l, v, position, id);
 		QuranElement elem = (QuranElement)getListAdapter().getItem((int)id);
-		jumpTo(elem.page);
-	}
-
-	public void jumpTo(int page){
-		Intent i = new Intent(this, QuranViewActivity.class);
-		i.putExtra("page", page);
-		startActivity(i);
+		qml.jumpTo(elem.page);
 	}
 }

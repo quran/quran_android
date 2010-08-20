@@ -203,7 +203,8 @@ public class QuranInfo {
 	
 	public static int getPageFromSuraAyah(int sura, int ayah){
 		// basic bounds checking
-		if ((sura < 1) || (sura > 114) || (ayah < 1) || (ayah > 286))
+		if ((sura < 1) || (sura > ApplicationConstants.SURAS_COUNT) 
+				|| (ayah < ApplicationConstants.AYA_MIN) || (ayah > ApplicationConstants.AYA_MAX))
 			return -1;
 		
 		// what page does the sura start on?

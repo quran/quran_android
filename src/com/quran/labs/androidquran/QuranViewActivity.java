@@ -3,29 +3,36 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.View.OnLongClickListener;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.view.animation.Animation.AnimationListener;
+import android.view.ContextMenu;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.View.OnCreateContextMenuListener;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.ApplicationConstants;
 import com.quran.labs.androidquran.common.QuranInfo;
 import com.quran.labs.androidquran.util.BookmarksManager;
@@ -35,14 +42,14 @@ import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranViewActivity extends Activity implements AnimationListener {
 
-	public static final int PAGES_MIN = 1;
-	public static final int PAGES_MAX = 604;
 	private int page;
 	private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     // Duration in MS
-    private static final int ANIMATION_DURATION = 500; 
+    private static final int ANIMATION_DURATION = 500;
+	private static final int CONTEXT_MENU_REMOVE = 0;
+	private static final int CONTEXT_MENU_ADD = 1;
     private GestureDetector gestureDetector;
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
@@ -53,10 +60,12 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	private boolean rightTransitionSwap;
 	private ScrollView scrollView;
 	private Bitmap bitmap;
+	private QuranMenuListener qml;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		qml = new QuranMenuListener(this);
 		adjustDisplaySettings();
 		initializeViewElements();
 		initializeQsi();
@@ -87,25 +96,80 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
 	}
 	
-	private void registerListeners() {
-		imageView.setOnLongClickListener(new OnLongClickListener() {
-			public boolean onLongClick(View v) {
-				SharedPreferences preferences = getSharedPreferences(ApplicationConstants.PREFERNCES, 0);
-				boolean added = BookmarksManager.toggleBookmarkState(page, preferences);
-				String msg = "Bookmark " + (added ? "Saved" : "Removed");
-				Toast.makeText(v.getContext(), msg, Toast.LENGTH_SHORT).show();
-				return false;
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.option_menu, menu);	  
+		return true;
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		qml.onMenuItemSelected(featureId, item);
+		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
+    protected Dialog onCreateDialog(int id){
+		if (id == ApplicationConstants.JUMP_DIALOG){
+    		Dialog dialog = new QuranJumpDialog(this);
+    		dialog.setOnCancelListener(new OnCancelListener(){
+    			public void onCancel(DialogInterface dialog) {
+    				QuranJumpDialog dlg = (QuranJumpDialog)dialog;
+    				Integer page = dlg.getPage();
+    				removeDialog(ApplicationConstants.JUMP_DIALOG);
+    				if (page != null) {
+    					animate = false;
+    					QuranViewActivity.this.page = page.intValue();
+    					showPage();
+    				}
+    			}
+
+    		});
+    		return dialog;
+    	}
+    	return null;
+    }
+	
+	private void registerListeners() {	
+		imageView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+				int menuType;
+				int menuTitle;
+				if (BookmarksManager.getInstance().contains(page)) {
+					menuType = CONTEXT_MENU_REMOVE;
+					menuTitle = R.string.menu_bookmarks_remove;
+				} else {
+					menuType = CONTEXT_MENU_ADD;
+					menuTitle = R.string.menu_bookmarks_add;
+				}
+				menu.add(0, menuType, 0, menuTitle);
 			}
 		});
 		
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 	}
 	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+			case CONTEXT_MENU_ADD:
+			case CONTEXT_MENU_REMOVE:
+				SharedPreferences preferences = getSharedPreferences(ApplicationConstants.PREFERNCES, 0);
+				boolean added = BookmarksManager.toggleBookmarkState(page, preferences);
+				int msgId = added ? R.string.menu_bookmarks_saved : R.string.menu_bookmarks_removed;
+				Toast.makeText(getApplicationContext(), msgId, Toast.LENGTH_SHORT).show();
+			break;
+		}
+		return true;
+	}
+	
 	private void loadPageState(Bundle savedInstanceState) {
-		page = savedInstanceState != null ? savedInstanceState.getInt("page") : PAGES_MIN;
-		if (page == PAGES_MIN){
+		page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
+		if (page == ApplicationConstants.PAGES_FIRST){
 			Bundle extras = getIntent().getExtras();
-			page = extras != null? extras.getInt("page") : PAGES_MIN;
+			page = extras != null? extras.getInt("page") : ApplicationConstants.PAGES_FIRST;
 		}
 	}
 	
@@ -191,7 +255,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	
 	private void goToNextPage() {
 		animate = true;
-		if (page < PAGES_MAX) {
+		if (page < ApplicationConstants.PAGES_LAST) {
 			page++;
 			rightTransitionSwap = true;
 			showPage();
@@ -200,7 +264,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 
 	private void goToPreviousPage() {
 		animate = true;
-		if (page != PAGES_MIN) {
+		if (page != ApplicationConstants.PAGES_FIRST) {
 			page--;
 			rightTransitionSwap = false;
 			showPage();

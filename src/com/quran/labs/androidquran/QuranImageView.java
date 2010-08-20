@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran;
 
+import com.quran.labs.androidquran.common.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import android.content.Context;
@@ -28,7 +29,7 @@ public class QuranImageView extends ImageView {
 		
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
         Paint p = new Paint();
-        p.setColor(Color.parseColor("#802A2A"));
+        p.setColor(Color.parseColor(ApplicationConstants.PAGE_BORDER_COLOR));
         int length = qsi.getHeight();
         int width = qsi.getWidth();
         canvas.drawLine(0, 0, 0, length, p);

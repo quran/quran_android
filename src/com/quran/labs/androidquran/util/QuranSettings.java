@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.util;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.common.ApplicationConstants;
 
 
@@ -59,7 +58,7 @@ public class QuranSettings {
 		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
 		instance.fullScreen = preferences.getBoolean(ApplicationConstants.PREF_FULL_SCREEN, false);
 		instance.showClock = preferences.getBoolean(ApplicationConstants.PREF_SHOW_CLOCK, false);
-		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, QuranViewActivity.PAGES_MIN);
+		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.PAGES_FIRST);
 	}
 	
 	public static void save(SharedPreferences preferences) {
