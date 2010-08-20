@@ -12,6 +12,7 @@ public class QuranSettings {
 	private boolean arabicNames = false;
 	private boolean showClock = false;
 	private boolean fullScreen = false;
+	private boolean keepScreenOn = false;
 	private int lastPage = 0;
 	
 	private QuranSettings() {
@@ -54,8 +55,17 @@ public class QuranSettings {
 		this.showClock = showClock;
 	}
 
+	public boolean isKeepScreenOn() {
+		return keepScreenOn;
+	}
+
+	public void setKeepScreenOn(boolean keepScreenOn) {
+		this.keepScreenOn = keepScreenOn;
+	}
+
 	public static void load(SharedPreferences preferences) {
 		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
+		instance.keepScreenOn = preferences.getBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, true);
 		instance.fullScreen = preferences.getBoolean(ApplicationConstants.PREF_FULL_SCREEN, false);
 		instance.showClock = preferences.getBoolean(ApplicationConstants.PREF_SHOW_CLOCK, false);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.PAGES_FIRST);
@@ -64,6 +74,7 @@ public class QuranSettings {
 	public static void save(SharedPreferences preferences) {
 		Editor editor = preferences.edit();
 		editor.putBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, instance.arabicNames);
+		editor.putBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, instance.keepScreenOn);
 		editor.putBoolean(ApplicationConstants.PREF_FULL_SCREEN, instance.fullScreen);
 		editor.putBoolean(ApplicationConstants.PREF_SHOW_CLOCK, instance.showClock);
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);

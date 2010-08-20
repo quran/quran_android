@@ -91,7 +91,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	private void initializeViewElements() {
 		setContentView(R.layout.quran_view);
 		imageView = (QuranImageView)findViewById(R.id.pageview);
-		imageView.setKeepScreenOn(true);
+		imageView.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 		bgImageView = (ImageView)findViewById(R.id.bgPageview);
 		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
 	}

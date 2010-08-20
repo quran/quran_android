@@ -38,4 +38,5 @@
 	<string name="settings_use_arabic_names">Arabic sura names.</string>
 	<string name="settings_full_screen">Full Screen Mode.\nHave a larger view area for pages.</string>
 	<string name="settings_show_clock">Show Clock in full screen mode.</string>
+	<string name="settings_keep_screen_on">Keep screen on.</string>
 </resources>

@@ -33,4 +33,5 @@ public class ApplicationConstants {
 	public static final String PREF_SHOW_CLOCK = "showClock";
 	public static final String PREF_LAST_PAGE = "lastPage";
 	public static final String PREF_BOOKMARKS = "bookmarks";
+	public static final String PREF_KEEP_SCREEN_ON = "keepScreenOn";
 }

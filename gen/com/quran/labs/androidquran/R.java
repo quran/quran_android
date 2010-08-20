@@ -25,19 +25,20 @@ public final class R {
         public static final int btnEmailUs=0x7f060006;
         public static final int cancelButton=0x7f060008;
         public static final int chkArbaicNames=0x7f060010;
-        public static final int chkFullScreen=0x7f060011;
-        public static final int chkShowClock=0x7f060012;
+        public static final int chkFullScreen=0x7f060012;
+        public static final int chkKeepScreenOn=0x7f060011;
+        public static final int chkShowClock=0x7f060013;
         public static final int jumpButton=0x7f060009;
         public static final int linear=0x7f060000;
-        public static final int menu_item_about_us=0x7f060015;
-        public static final int menu_item_bookmarks=0x7f060017;
-        public static final int menu_item_jump=0x7f060014;
-        public static final int menu_item_settings=0x7f060016;
+        public static final int menu_item_about_us=0x7f060016;
+        public static final int menu_item_bookmarks=0x7f060018;
+        public static final int menu_item_jump=0x7f060015;
+        public static final int menu_item_settings=0x7f060017;
         public static final int pageScrollView=0x7f06000f;
         public static final int page_field=0x7f060007;
         public static final int page_info=0x7f06000c;
         public static final int pageview=0x7f06000e;
-        public static final int splashview=0x7f060013;
+        public static final int splashview=0x7f060014;
         public static final int sura_info=0x7f06000b;
         public static final int sura_title=0x7f06000a;
         public static final int txtAbout=0x7f060001;
@@ -88,6 +89,7 @@ public final class R {
         public static final int menu_settings=0x7f04000c;
         public static final int page_hint=0x7f040014;
         public static final int settings_full_screen=0x7f04001d;
+        public static final int settings_keep_screen_on=0x7f04001f;
         public static final int settings_show_clock=0x7f04001e;
         public static final int settings_use_arabic_names=0x7f04001c;
     }

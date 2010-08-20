@@ -13,6 +13,7 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 	protected CheckBox chkArabicNames;
 	protected CheckBox chkFullScreen;
 	protected CheckBox chkShowClock;
+	protected CheckBox chkKeepScreenOn;
 	private QuranSettings settings;
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -24,12 +25,15 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
         chkFullScreen = (CheckBox)findViewById(R.id.chkFullScreen);
         chkFullScreen.setOnCheckedChangeListener(this);
         chkShowClock = (CheckBox)findViewById(R.id.chkShowClock);
-        chkShowClock.setOnCheckedChangeListener(this);        
+        chkShowClock.setOnCheckedChangeListener(this);
+        chkKeepScreenOn = (CheckBox)findViewById(R.id.chkKeepScreenOn);
+        chkKeepScreenOn.setOnCheckedChangeListener(this);
         loadSettings();
 	}
 	
 	private void loadSettings() {
 		chkArabicNames.setChecked(settings.isArabicNames());
+		chkKeepScreenOn.setChecked(settings.isKeepScreenOn());
 		chkFullScreen.setChecked(settings.isFullScreen());
 		chkShowClock.setChecked(settings.isShowClock());
 		chkShowClock.setEnabled(settings.isFullScreen());
@@ -40,6 +44,9 @@ public class SettingsActivity extends Activity implements OnCheckedChangeListene
 		switch (buttonView.getId()) {
 			case R.id.chkArbaicNames:
 				settings.setArabicNames(isChecked);
+			break;
+			case R.id.chkKeepScreenOn:
+				settings.setKeepScreenOn(isChecked);
 			break;
 			case R.id.chkFullScreen:
 				settings.setFullScreen(isChecked);

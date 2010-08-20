@@ -5,6 +5,10 @@
 	<CheckBox android:id="@+id/chkArbaicNames"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:text="@string/settings_use_arabic_names" />
+		
+  <CheckBox android:id="@+id/chkKeepScreenOn"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:text="@string/settings_keep_screen_on" />		
 
 	<CheckBox android:id="@+id/chkFullScreen"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
