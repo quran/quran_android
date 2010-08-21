@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.common;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranInfo {
-	
+
 	public static String[] SURA_NAMES = {
 		"Al-Fatiha", "Al-Baqara", "Aal-E-Imran", "An-Nisa", "Al-Maeda",
 		"Al-Anaam", "Al-Araf", "Al-Anfal", "At-Tawba", "Yunus", "Hud",
@@ -54,6 +54,8 @@ public class QuranInfo {
 		"الناس"
 	};
 	
+	private static int AYAH_AYAT_BOUNDARY = 11;
+	
 	public static String getSuraTitle() {
 		return QuranSettings.getInstance().isArabicNames() ? "سورة" : "Surat";
 	}
@@ -72,7 +74,9 @@ public class QuranInfo {
 		if (QuranSettings.getInstance().isArabicNames()){
 			info = QuranInfo.SURA_IS_MAKKI[sura-1]?
 					"مكية" : "مدنية";
-			info += " - " + QuranInfo.SURA_NUM_AYAHS[sura-1] + " آيات";
+			int ayahs = QuranInfo.SURA_NUM_AYAHS[sura-1];
+			String ayahStr = " " + ((ayahs < QuranInfo.AYAH_AYAT_BOUNDARY)? " آيات" : " آية");
+			info += " - " + ayahs + ayahStr;
 		}
 		else {
 			info = QuranInfo.SURA_IS_MAKKI[sura-1]?

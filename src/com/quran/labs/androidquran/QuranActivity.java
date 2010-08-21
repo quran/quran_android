@@ -89,7 +89,7 @@ public class QuranActivity extends ListActivity {
 		
 		for (int juz=1; juz <= ApplicationConstants.JUZ2_COUNT; juz++){
 			elements[pos++] = new QuranElement(QuranInfo.getJuzTitle() + " " + juz, true, juz, QuranInfo.JUZ_PAGE_START[juz-1]);
-			next = (juz == ApplicationConstants.JUZ2_COUNT) ? ApplicationConstants.PAGES_LAST : QuranInfo.JUZ_PAGE_START[juz];
+			next = (juz == ApplicationConstants.JUZ2_COUNT) ? ApplicationConstants.PAGES_LAST+1 : QuranInfo.JUZ_PAGE_START[juz];
 			while ((sura <= ApplicationConstants.SURAS_COUNT) && (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
 				String title = (sura) + ". " + QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(sura-1);
 				elements[pos++] = new QuranElement(title, false, sura, QuranInfo.SURA_PAGE_START[sura-1]);
@@ -139,6 +139,7 @@ public class QuranActivity extends ListActivity {
 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
+			
 			if (convertView == null) {
 				convertView = mInflater.inflate(R.layout.quran_row, null);
 				holder = new ViewHolder();
