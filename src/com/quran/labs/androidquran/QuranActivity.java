@@ -88,7 +88,7 @@ public class QuranActivity extends ListActivity {
 		QuranElement[] elements = new QuranElement[114+30];
 		
 		for (int juz=1; juz <= ApplicationConstants.JUZ2_COUNT; juz++){
-			elements[pos++] = new QuranElement("Juz' " + juz, true, juz, QuranInfo.JUZ_PAGE_START[juz-1]);
+			elements[pos++] = new QuranElement(QuranInfo.getJuzTitle() + " " + juz, true, juz, QuranInfo.JUZ_PAGE_START[juz-1]);
 			next = (juz == ApplicationConstants.JUZ2_COUNT) ? ApplicationConstants.PAGES_LAST : QuranInfo.JUZ_PAGE_START[juz];
 			while ((sura <= ApplicationConstants.SURAS_COUNT) && (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
 				String title = (sura) + ". " + QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(sura-1);
@@ -157,12 +157,7 @@ public class QuranActivity extends ListActivity {
 				holder.metadata.setVisibility(View.GONE);
 			}
 			else {
-				String info = 
-					QuranInfo.SURA_IS_MAKKI[elements[position].number-1]?
-							"Makki" : "Madani";
-				info += " - " +
-					QuranInfo.SURA_NUM_AYAHS[elements[position].number-1] +
-					" verses.";
+				String info = QuranInfo.getSuraListMetaString(elements[position].number);
 				holder.metadata.setVisibility(View.VISIBLE);
 				holder.metadata.setText(info);
 			}

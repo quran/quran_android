@@ -58,8 +58,29 @@ public class QuranInfo {
 		return QuranSettings.getInstance().isArabicNames() ? "سورة" : "Surat";
 	}
 	
+	public static String getJuzTitle(){
+		return QuranSettings.getInstance().isArabicNames()? "جزء" : "Juz'";
+	}
+	
 	public static String getSuraName(int index) {
 		return QuranSettings.getInstance().isArabicNames() ? SURA_NAMES_AR[index] : SURA_NAMES[index];
+	}
+	
+	public static String getSuraListMetaString(int sura){
+		String info = "";
+		
+		if (QuranSettings.getInstance().isArabicNames()){
+			info = QuranInfo.SURA_IS_MAKKI[sura-1]?
+					"مكية" : "مدنية";
+			info += " - " + QuranInfo.SURA_NUM_AYAHS[sura-1] + " آيات";
+		}
+		else {
+			info = QuranInfo.SURA_IS_MAKKI[sura-1]?
+					"Makki" : "Madani";
+			info += " - " + QuranInfo.SURA_NUM_AYAHS[sura-1] + " verses.";
+		}
+		
+		return info;
 	}
 	
 	private static String getPageTitle() {
