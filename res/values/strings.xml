@@ -23,6 +23,8 @@
 	<string name="menu_bookmarks_add">Add To Bookmarks</string>
 	<string name="menu_bookmarks_saved">Bookmark Saved</string>
 	<string name="menu_bookmarks_removed">Bookmark Removed</string>
+	<string name="menu_bookmarks_help">Help</string>
+	<string name="menu_help">Help</string>
 	<string name="jump_dialog_title">Jump To Page</string>
 	<string name="page_hint">Page Number</string>
 	<string name="go">Go</string>
@@ -32,9 +34,14 @@
 	<string name="email_subject">Feedback</string>
 	<string name="email_to">quran.android@gmail.com</string>
 	<string name="aboutUs">Quran Android is a free, open source Quran
-		application for Android.\nUpcoming features include:\n- Bookmarks.\n-
-		Translations.\n- Search.\n- And more..\n\nLa tansawna men saleh el
+		application for Android.\nUpcoming features include:
+		\n- Translations.\n- Search.\n- And more..\n\nLa tansawna men saleh el
 		doaa.</string>
+	<string name="help_title">Quran Android Help</string>
+	<string name="help">- Font size too small?  Try
+	    flipping your screen to landscape mode for a zoomed in version!
+	    \n- Long press on any page to bring a menu and bookmark a page!
+	    \n- Don\'t forget to check out the settings!</string>
 	<string name="settings_use_arabic_names">Arabic sura names.</string>
 	<string name="settings_full_screen">Full Screen Mode.\nHave a larger view area for pages.</string>
 	<string name="settings_show_clock">Show Clock in full screen mode.</string>

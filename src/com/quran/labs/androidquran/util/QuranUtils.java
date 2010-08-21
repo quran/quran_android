@@ -6,14 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
 public class QuranUtils {
-
 	public static boolean failedToWrite = false;
 	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
 	private static String QURAN_BASE = "/quran_android/";

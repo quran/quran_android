@@ -19,12 +19,12 @@ public class QuranSettings {
 		
 	}
 
-	public int getLastPage() {
-		return lastPage;
+	public Integer getLastPage() {
+		return (lastPage == -1)? null : lastPage;
 	}
 
-	public void setLastPage(int lastPage) {
-		this.lastPage = lastPage;
+	public void setLastPage(Integer lastPage) {
+		this.lastPage = (lastPage == null)? -1 : lastPage;
 	}
 	
 	public boolean isFullScreen() {
@@ -68,7 +68,7 @@ public class QuranSettings {
 		instance.keepScreenOn = preferences.getBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, true);
 		instance.fullScreen = preferences.getBoolean(ApplicationConstants.PREF_FULL_SCREEN, false);
 		instance.showClock = preferences.getBoolean(ApplicationConstants.PREF_SHOW_CLOCK, false);
-		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.PAGES_FIRST);
+		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, -1);
 	}
 	
 	public static void save(SharedPreferences preferences) {

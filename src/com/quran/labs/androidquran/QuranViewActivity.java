@@ -363,6 +363,8 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	@Override
 	protected void onPause(){
 		super.onPause();
+		if (imageView != null)
+			imageView.setKeepScreenOn(false);
 	}
 	
 	@Override
@@ -370,6 +372,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		super.onResume();
 		animate = false;
 		showPage();
+		imageView.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 	}
 	
 	private void animateSwappingPages() {

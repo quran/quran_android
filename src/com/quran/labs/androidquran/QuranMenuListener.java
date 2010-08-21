@@ -18,11 +18,20 @@ public class QuranMenuListener {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 			case ApplicationConstants.DATA_CHECK_CODE:
+				((QuranActivity)activity).showSuras();
+				Integer lastPage = QuranSettings.getInstance().getLastPage();
+				if (lastPage != null)
+					jumpTo(lastPage);
+			break;
 			case ApplicationConstants.SETTINGS_CODE:
 				if (activity instanceof QuranActivity) {
 					((QuranActivity)activity).showSuras();
 				}
-				jumpTo(QuranSettings.getInstance().getLastPage());
+				else {
+					lastPage = QuranSettings.getInstance().getLastPage();
+					if (lastPage != null)
+						jumpTo(lastPage);
+				}
 			break;
 			case ApplicationConstants.BOOKMARKS_CODE:
 				if (resultCode == Activity.RESULT_OK) {
@@ -55,6 +64,10 @@ public class QuranMenuListener {
 		    	intent = new Intent(activity.getApplicationContext(), AboutUsActivity.class);
 		    	activity.startActivity(intent);
 		    break;
+			case R.id.menu_item_help:
+				intent = new Intent(activity.getApplicationContext(), HelpActivity.class);
+				activity.startActivity(intent);
+			break;
 			case R.id.menu_item_settings:
 				if (activity instanceof QuranViewActivity) {
 					Intent data = new Intent();

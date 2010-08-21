@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:visibility="visible"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="#FFFFFF" android:id="@+id/txtHelpTitle"
+		android:singleLine="true" android:text="@string/help_title"
+		android:padding="10dip" />
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:visibility="visible"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="#FFFFFF" android:id="@+id/txtHelp"
+		android:singleLine="false" android:scrollbarAlwaysDrawVerticalTrack="true"
+		android:scrollbars="vertical" android:maxLines="16" android:text="@string/help"
+		android:padding="10dip" android:lineSpacingExtra="4dip" />
+	<Button android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+		android:id="@+id/btnHelpBack"
+        android:text="Back"
+		android:visibility="visible" />
+</LinearLayout>
