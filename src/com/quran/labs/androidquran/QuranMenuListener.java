@@ -24,14 +24,12 @@ public class QuranMenuListener {
 					jumpTo(lastPage);
 			break;
 			case ApplicationConstants.SETTINGS_CODE:
-				if (activity instanceof QuranActivity) {
-					((QuranActivity)activity).showSuras();
-				}
-				else {
-					lastPage = QuranSettings.getInstance().getLastPage();
-					if (lastPage != null)
-						jumpTo(lastPage);
-				}
+				((QuranActivity)activity).showSuras();
+			break;
+			case ApplicationConstants.SETTINGS_CODE_VIEW:
+				lastPage = QuranSettings.getInstance().getLastPage();
+				if (lastPage != null)
+					jumpTo(lastPage);
 			break;
 			case ApplicationConstants.BOOKMARKS_CODE:
 				if (resultCode == Activity.RESULT_OK) {
@@ -42,7 +40,7 @@ public class QuranMenuListener {
 			case ApplicationConstants.QURAN_VIEW_CODE:
 				if (resultCode == Activity.RESULT_OK) {
 					boolean openSettings = data.getBooleanExtra("openSettings", false);
-					if (openSettings) startSettingsActivity();
+					if (openSettings) startSettingsActivity(true);
 				}
 			break;
 		}
@@ -75,7 +73,7 @@ public class QuranMenuListener {
 					activity.setResult(Activity.RESULT_OK, data);
 					activity.finish(); 
 				} else {
-			    	startSettingsActivity();
+			    	startSettingsActivity(false);
 				}
 			break;
 			case R.id.menu_item_bookmarks:
@@ -86,8 +84,10 @@ public class QuranMenuListener {
 		return true;
 	}
 	
-	private void startSettingsActivity() {
+	private void startSettingsActivity(boolean returnToView) {
 		Intent intent = new Intent(activity.getApplicationContext(), SettingsActivity.class);
-    	activity.startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
+		
+		int whereToGo = ((returnToView)? ApplicationConstants.SETTINGS_CODE_VIEW : ApplicationConstants.SETTINGS_CODE);
+    	activity.startActivityForResult(intent, whereToGo);
 	}
 }

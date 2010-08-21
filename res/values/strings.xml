@@ -39,9 +39,10 @@
 		doaa.</string>
 	<string name="help_title">Quran Android Help</string>
 	<string name="help">- Font size too small?  Try
-	    flipping your screen to landscape mode for a zoomed in version!
-	    \n- Long press on any page to bring a menu and bookmark a page!
-	    \n- Don\'t forget to check out the settings!</string>
+	    flipping your screen to landscape mode for a zoomed in version.
+	    \n- Change pages by swiping your finger across the screen or by using the arrow keys or trackball.
+	    \n- Long press on any page to bring up the option to bookmark a page.
+	    \n- Don\'t forget to check out the settings.</string>
 	<string name="settings_use_arabic_names">Arabic sura names.</string>
 	<string name="settings_full_screen">Full Screen Mode.\nHave a larger view area for pages.</string>
 	<string name="settings_show_clock">Show Clock in full screen mode.</string>
