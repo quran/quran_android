@@ -12,7 +12,8 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".QuranDataActivity"></activity>
+		<activity android:name=".QuranDataActivity"
+		          android:configChanges="keyboardHidden|orientation"></activity>
 		<activity android:name=".AboutUsActivity"></activity>
 		<activity android:name=".HelpActivity"></activity>
 		<activity android:name=".QuranViewActivity"></activity>
