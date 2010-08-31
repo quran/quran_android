@@ -65,6 +65,9 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+        QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+		BookmarksManager.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+
 		qml = new QuranMenuListener(this);
 		adjustDisplaySettings();
 		initializeViewElements();
@@ -370,6 +373,9 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	@Override
 	protected void onResume(){
 		super.onResume();
+        QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+		BookmarksManager.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+        
 		animate = false;
 		showPage();
 		imageView.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
