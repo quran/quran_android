@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
@@ -78,6 +79,18 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		pageHeight = 0;
 		animate = false;
 		showPage();
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case ApplicationConstants.BOOKMARKS_CODE:
+			if (resultCode == Activity.RESULT_OK) {
+				page = data.getIntExtra("page", ApplicationConstants.PAGES_FIRST);
+				showPage();
+			} 
+			break;
+		}
 	}
 	
 	private void adjustDisplaySettings() {

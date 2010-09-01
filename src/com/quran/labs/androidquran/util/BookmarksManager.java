@@ -61,9 +61,11 @@ public class BookmarksManager {
 		return bookmarks;
 	}
 	
-	public void removeAt(int index) {
+	public void removeAt(int index, SharedPreferences prefs) {
 		if (index >= 0 && index < bookmarks.size()) {
-			bookmarks.remove(index);
+			Integer page = bookmarks.remove(index);
+			bookmarksMap.remove(page);
+			save(prefs);
 		}
 	}
 	

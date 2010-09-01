@@ -68,7 +68,8 @@ public class BookmarksActivity extends ListActivity {
 	public boolean onContextItemSelected(MenuItem item) { 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		if (item.getItemId() == CONTEXT_MENU_REMOVE) {
-			BookmarksManager.getInstance().removeAt(info.position);
+			BookmarksManager.getInstance().removeAt(info.position,
+					getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
 			showBookmarks();
 		}
 		return true;
