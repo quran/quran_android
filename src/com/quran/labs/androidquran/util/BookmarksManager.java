@@ -45,11 +45,17 @@ public class BookmarksManager {
 	
 	public static void load(SharedPreferences preferences) {
 		String str = preferences.getString(ApplicationConstants.PREF_BOOKMARKS, "");
+		if (str.length() == 0) return;
+		
 		String [] pages = str.split(SEPARATOR);
 		instance.bookmarks.clear();
 		for (String p : pages) {
-			instance.bookmarks.add(Integer.valueOf(p));
-			instance.bookmarksMap.put(Integer.valueOf(p), new Boolean(true));
+			try {
+				Integer page = Integer.valueOf(p);
+				instance.bookmarks.add(page);
+				instance.bookmarksMap.put(page, new Boolean(true));
+			}
+			catch (NumberFormatException nfe){}
 		}
 	}
 	
