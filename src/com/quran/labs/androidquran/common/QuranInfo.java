@@ -211,6 +211,37 @@ public class QuranInfo {
 		true, true, true, true
 	};
 	
+	public static Integer[] getPageBounds(int page){
+		if ((page > 604) || (page < 1)) return null;
+		Integer[] bounds = new Integer[4];
+		bounds[0] = PAGE_SURA_START[page-1];
+		bounds[1] = PAGE_AYAH_START[page-1];
+		if (page == 604){
+			bounds[2] = 114;
+			bounds[3] = 6;
+		}
+		else {
+			int nextPageSura = PAGE_SURA_START[page];
+			int nextPageAyah = PAGE_AYAH_START[page];
+						
+			if (nextPageSura == bounds[0]){
+				bounds[2] = bounds[0];
+				bounds[3] = nextPageAyah-1;
+			}
+			else {
+				if (nextPageAyah > 1){
+					bounds[2] = nextPageSura;
+					bounds[3] = nextPageAyah - 1;
+				}
+				else {
+					bounds[2] = nextPageSura - 1;
+					bounds[3] = SURA_NUM_AYAHS[bounds[2]-1];
+				}
+			}
+		}
+		return bounds;
+	}
+	
 	public static String getSuraNameFromPage(int page){
 		for (int i = 0; i < 114; i++){
 			if (SURA_PAGE_START[i] == page)
@@ -252,6 +283,11 @@ public class QuranInfo {
 		return index;
 	}
 
+	public static int getNumAyahs(int sura){
+		if ((sura < 1) || (sura > 114)) return -1;
+		return SURA_NUM_AYAHS[sura-1];
+	}
+	
 	public static String getPageTitleNoPrefix(int page) {
 		return getPageTitleNoPrefix() + page +
 		" - [" + getSuraTitle() + " " + getSuraNameFromPage(page) + "]";

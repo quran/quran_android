@@ -10,6 +10,8 @@ public class ApplicationConstants {
 	public static final int BOOKMARKS_CODE = SETTINGS_CODE + 1;
 	public static final int QURAN_VIEW_CODE = BOOKMARKS_CODE + 1;
 	public static final int SETTINGS_CODE_VIEW = QURAN_VIEW_CODE + 1;
+	public static final int TRANSLATION_VIEW_CODE = SETTINGS_CODE_VIEW + 1;
+
 	
 	// Pages
 	public static final int PAGES_FIRST = 1;

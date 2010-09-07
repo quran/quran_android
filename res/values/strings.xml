@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="errorString">Could not download Quran Pages!</string>
+	<string name="translationsNeeded">Need to download translation!</string>
 	<string name="app_name">Quran Android</string>
 	<string name="downloadPrompt_title">Download Required Files?</string>
 	<string name="downloadPrompt">For optimal performance, some files must be
@@ -8,6 +9,8 @@
 		If you choose not to do this now, each page will take significantly
 		longer to load. Would you
 		like to download the required files now?</string>
+	<string name="downloadTranslationPrompt">Would you
+		like to download the required translations now?</string>
 	<string name="downloadPrompt_ok">Yes</string>
 	<string name="downloadPrompt_no">No</string>
 	<string name="downloading_title">Downloading...</string>
@@ -20,6 +23,7 @@
 	<string name="menu_jump_last_page">Last page</string>
 	<string name="menu_bookmarks">Bookmarks</string>
 	<string name="menu_bookmarks_remove">Remove From Bookmarks</string>
+	<string name="menu_translation">Show Translation</string>
 	<string name="menu_bookmarks_add">Add To Bookmarks</string>
 	<string name="menu_bookmarks_saved">Bookmark Saved</string>
 	<string name="menu_bookmarks_removed">Bookmark Removed</string>

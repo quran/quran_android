@@ -51,6 +51,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
     private static final int ANIMATION_DURATION = 500;
 	private static final int CONTEXT_MENU_REMOVE = 0;
 	private static final int CONTEXT_MENU_ADD = 1;
+	private static final int CONTEXT_MENU_TRANSLATION = 2;
     private GestureDetector gestureDetector;
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
@@ -85,6 +86,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case ApplicationConstants.BOOKMARKS_CODE:
+		case ApplicationConstants.TRANSLATION_VIEW_CODE:
 			if (resultCode == Activity.RESULT_OK) {
 				page = data.getIntExtra("page", ApplicationConstants.PAGES_FIRST);
 				showPage();
@@ -161,6 +163,7 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 					menuTitle = R.string.menu_bookmarks_add;
 				}
 				menu.add(0, menuType, 0, menuTitle);
+				menu.add(0, CONTEXT_MENU_TRANSLATION, 1, R.string.menu_translation);
 			}
 		});
 		
@@ -176,6 +179,11 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 				boolean added = BookmarksManager.toggleBookmarkState(page, preferences);
 				int msgId = added ? R.string.menu_bookmarks_saved : R.string.menu_bookmarks_removed;
 				Toast.makeText(getApplicationContext(), msgId, Toast.LENGTH_SHORT).show();
+			break;
+			case CONTEXT_MENU_TRANSLATION:
+				Intent i = new Intent(this, TranslationActivity.class);
+				i.putExtra("page", page);
+				startActivityForResult(i, ApplicationConstants.TRANSLATION_VIEW_CODE);
 			break;
 		}
 		return true;

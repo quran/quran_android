@@ -13,6 +13,7 @@ import android.util.Log;
 
 public class QuranUtils {
 	public static boolean failedToWrite = false;
+	public static String DB_HOST = "http://labs.quran.com/androidquran/databases/";
 	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
 	private static String QURAN_BASE = "/quran_android/";
 	
@@ -87,6 +88,63 @@ public class QuranUtils {
 		else return false;
 	}
 	
+	public static boolean makeQuranDatabaseDirectory(){
+		String path = getQuranDatabaseDirectory();
+		if (path == null) return false;
+		
+		File directory = new File(path);
+		if (directory.exists() && directory.isDirectory()){
+			return true;						
+		}
+		else if (directory.mkdirs()){
+			return true;
+		}
+		else return false;
+	}
+	
+	public static boolean getTranslation(String filename){
+		String urlString = QuranUtils.DB_HOST + filename;
+		InputStream is;
+		try {
+			URL url = new URL(urlString);
+			is = (InputStream)url.getContent();
+		}
+		catch (Exception e){
+			return false;
+		}
+
+		if (failedToWrite)
+			return false;
+		
+		String path = getQuranDatabaseDirectory();
+		if (path != null){
+			path += "/" + filename;
+			
+			if (!QuranUtils.makeQuranDatabaseDirectory()){
+				failedToWrite = true;
+				return false;
+			}
+			
+			try {
+				FileOutputStream output = new FileOutputStream(path);
+				int readlen;
+				
+				byte[] buf = new byte[1024];
+				while ((readlen = is.read(buf)) > 0)
+					output.write(buf, 0, readlen);
+				output.close();
+				is.close();
+
+				return true;
+			}
+			catch (Exception e){
+				Log.d("quran_utils", e.toString());
+				return false;
+			}
+		}
+		else return false;
+	}
+	
 	public static Bitmap getImageFromWeb(String filename){
 		String urlString = IMG_HOST + "width" +
 			QuranScreenInfo.getInstance().getWidthParam() + "/" + filename;
@@ -143,6 +201,11 @@ public class QuranUtils {
 		if (state.equals(Environment.MEDIA_MOUNTED))
 			return Environment.getExternalStorageDirectory() + QURAN_BASE;
 		else return null;
+	}
+	
+	public static String getQuranDatabaseDirectory(){
+		String base = getQuranBaseDirectory();
+		return (base == null)? null : base + "databases";
 	}
 	
 	public static String getQuranDirectory(){

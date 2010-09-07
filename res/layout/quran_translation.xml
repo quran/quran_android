@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<ScrollView android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		
+		<TextView android:background="#FFF4CB" android:textColor="#000000"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:id="@+id/translationText" android:scrollbars="vertical"
+			android:scrollbarAlwaysDrawVerticalTrack="true" />
+	</ScrollView>
+</LinearLayout>
