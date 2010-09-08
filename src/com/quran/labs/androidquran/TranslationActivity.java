@@ -154,10 +154,7 @@ public class TranslationActivity extends Activity {
 		
 		int i = bounds[0];
 		for (; i <= bounds[2]; i++){
-			int j;
-			if (i == bounds[0]) j = bounds[1];
-			else if (i == bounds[2]) j = bounds[3];
-			else j = 1;
+			int j = (i == bounds[0])? bounds[1] : 1;
 			
 			for (;;){
 				int numAdded = 0;
@@ -183,7 +180,8 @@ public class TranslationActivity extends Activity {
 			handler = new DatabaseHandler(translation);
 			for (int i = bounds[0]; i <= bounds[2]; i++){
 				int max = (i == bounds[2])? bounds[3] : QuranInfo.getNumAyahs(i);
-				Cursor res = handler.getVerses(i, bounds[1], max);
+				int min = (i == bounds[0])? bounds[1] : 1;
+				Cursor res = handler.getVerses(i, min, max);
 				if ((res == null) || (!res.moveToFirst())) continue;
 				do {
 					int sura = res.getInt(0);
