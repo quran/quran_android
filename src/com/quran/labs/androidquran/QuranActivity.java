@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -14,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,7 +25,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-public class QuranActivity extends ListActivity {
+public class QuranActivity extends Activity {
 	
 	private QuranMenuListener qml;
 		
@@ -97,8 +99,19 @@ public class QuranActivity extends ListActivity {
 			}
 		}
 
+		ListView list = (ListView)findViewById(R.id.suralist);
 		EfficientAdapter suraAdapter = new EfficientAdapter(this, elements);
-		setListAdapter(suraAdapter);
+		list.setAdapter(suraAdapter);
+		list.setOnItemClickListener(new OnItemClickListener(){
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v, int position,
+					long id) {
+				ListView p = (ListView)parent;
+				QuranElement elem = (QuranElement)p.getAdapter().getItem((int)id);
+				qml.jumpTo(elem.page);				
+			}
+		});
 	}
 	
 	private class QuranElement {
@@ -170,12 +183,5 @@ public class QuranActivity extends ListActivity {
 			TextView page;
 			TextView metadata;
 		}
-	}
-
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id){
-		super.onListItemClick(l, v, position, id);
-		QuranElement elem = (QuranElement)getListAdapter().getItem((int)id);
-		qml.jumpTo(elem.page);
 	}
 }
