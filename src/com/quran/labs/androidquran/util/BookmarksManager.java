@@ -3,10 +3,10 @@ package com.quran.labs.androidquran.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+
+import com.quran.labs.androidquran.data.ApplicationConstants;
 
 public class BookmarksManager {
 	

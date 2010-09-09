@@ -18,13 +18,13 @@ import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
-import com.quran.labs.androidquran.common.QuranInfo;
+import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranUtils;
 

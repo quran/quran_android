@@ -4,8 +4,8 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,8 +18,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
-import com.quran.labs.androidquran.common.QuranInfo;
+import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 

@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.util;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 
 
 public class QuranSettings {

@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
-import com.quran.labs.androidquran.common.QuranInfo;
-import com.quran.labs.androidquran.util.BookmarksManager;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.BookmarksManager;
 
 public class BookmarksActivity extends ListActivity {
 

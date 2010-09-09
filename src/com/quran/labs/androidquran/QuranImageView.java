@@ -1,14 +1,14 @@
 package com.quran.labs.androidquran;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 public class QuranImageView extends ImageView {
 	

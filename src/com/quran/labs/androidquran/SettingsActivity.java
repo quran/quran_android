@@ -6,7 +6,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class SettingsActivity extends Activity implements OnCheckedChangeListener {

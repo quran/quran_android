@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.common;
+package com.quran.labs.androidquran.data;
 
 import com.quran.labs.androidquran.util.QuranSettings;
 

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.MenuItem;
 
-import com.quran.labs.androidquran.common.ApplicationConstants;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranMenuListener {
