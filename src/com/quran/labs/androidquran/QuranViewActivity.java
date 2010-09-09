@@ -2,9 +2,6 @@ package com.quran.labs.androidquran;
 
 import java.text.NumberFormat;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -96,28 +93,6 @@ public class QuranViewActivity extends AnimatedQuranActivity implements Animatio
 		bgImageView = (ImageView)findViewById(R.id.bgPageview);
 		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
 	}
-	
-	@Override
-    protected Dialog onCreateDialog(int id){
-		if (id == ApplicationConstants.JUMP_DIALOG){
-    		Dialog dialog = new QuranJumpDialog(this);
-    		dialog.setOnCancelListener(new OnCancelListener(){
-    			public void onCancel(DialogInterface dialog) {
-    				QuranJumpDialog dlg = (QuranJumpDialog)dialog;
-    				Integer page = dlg.getPage();
-    				removeDialog(ApplicationConstants.JUMP_DIALOG);
-    				if (page != null) {
-    					animate = false;
-    					QuranViewActivity.this.page = page.intValue();
-    					showPage();
-    				}
-    			}
-
-    		});
-    		return dialog;
-    	}
-    	return null;
-    }
 	
 
 	@Override
@@ -421,6 +396,7 @@ public class QuranViewActivity extends AnimatedQuranActivity implements Animatio
 	@Override
 	public void jumpTo(int page) {
 		this.page = page;
+		animate = false;
 		showPage();
 	}
 }

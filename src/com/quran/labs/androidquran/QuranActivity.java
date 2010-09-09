@@ -1,9 +1,6 @@
 package com.quran.labs.androidquran;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -51,25 +48,6 @@ public class QuranActivity extends BaseQuranActivity {
 				jumpTo(lastPage);
 		}
 	}
-    
-    @Override
-    protected Dialog onCreateDialog(int id){
-    	if (id == ApplicationConstants.JUMP_DIALOG){
-    		Dialog dialog = new QuranJumpDialog(this);
-    		dialog.setOnCancelListener(new OnCancelListener(){
-    			public void onCancel(DialogInterface dialog) {
-    				QuranJumpDialog dlg = (QuranJumpDialog)dialog;
-    				Integer page = dlg.getPage();
-    				removeDialog(ApplicationConstants.JUMP_DIALOG);
-    				if (page != null)
-    					jumpTo(page);
-    			}
-
-    		});
-    		return dialog;
-    	}
-    	return null;
-    }
 
 	public void showSuras() {
 		int pos = 0;

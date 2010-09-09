@@ -1,7 +1,10 @@
 package com.quran.labs.androidquran.common;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -9,6 +12,7 @@ import android.view.MenuItem;
 import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.BookmarksActivity;
 import com.quran.labs.androidquran.HelpActivity;
+import com.quran.labs.androidquran.QuranJumpDialog;
 import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SettingsActivity;
@@ -37,6 +41,24 @@ public abstract class BaseQuranActivity extends Activity {
 			break;
 		}
 	}
+	
+	@Override
+    protected Dialog onCreateDialog(int id){
+		if (id == ApplicationConstants.JUMP_DIALOG){
+    		Dialog dialog = new QuranJumpDialog(this);
+    		dialog.setOnCancelListener(new OnCancelListener(){
+    			public void onCancel(DialogInterface dialog) {
+    				QuranJumpDialog dlg = (QuranJumpDialog)dialog;
+    				Integer page = dlg.getPage();
+    				removeDialog(ApplicationConstants.JUMP_DIALOG);
+    				if (page != null) jumpTo(page);
+    			}
+
+    		});
+    		return dialog;
+    	}
+    	return null;
+    }
 	
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
