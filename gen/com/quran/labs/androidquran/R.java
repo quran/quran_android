@@ -55,15 +55,16 @@ public final class R {
     }
     public static final class layout {
         public static final int about_us=0x7f030000;
-        public static final int help=0x7f030001;
-        public static final int jump_to=0x7f030002;
-        public static final int quran_error=0x7f030003;
-        public static final int quran_list=0x7f030004;
-        public static final int quran_row=0x7f030005;
-        public static final int quran_translation=0x7f030006;
-        public static final int quran_view=0x7f030007;
-        public static final int settings=0x7f030008;
-        public static final int splash_screen=0x7f030009;
+        public static final int bookmarks_list=0x7f030001;
+        public static final int help=0x7f030002;
+        public static final int jump_to=0x7f030003;
+        public static final int quran_error=0x7f030004;
+        public static final int quran_list=0x7f030005;
+        public static final int quran_row=0x7f030006;
+        public static final int quran_translation=0x7f030007;
+        public static final int quran_view=0x7f030008;
+        public static final int settings=0x7f030009;
+        public static final int splash_screen=0x7f03000a;
     }
     public static final class menu {
         public static final int option_menu=0x7f050000;

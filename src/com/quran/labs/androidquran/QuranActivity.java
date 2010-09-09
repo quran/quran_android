@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,9 +8,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,14 +16,13 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-public class QuranActivity extends Activity {
-	
-	private QuranMenuListener qml;
+public class QuranActivity extends BaseQuranActivity {
 		
     /** Called when the activity is first created. */
     @Override
@@ -35,7 +30,6 @@ public class QuranActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quran_list);
         QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
-        qml = new QuranMenuListener(this);
         
         Intent i = new Intent(this, QuranDataActivity.class);
 		this.startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
@@ -46,9 +40,17 @@ public class QuranActivity extends Activity {
 		QuranScreenInfo.getInstance().setOrientation(newConfig.orientation);
 	}
     
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-    	qml.onActivityResult(requestCode, resultCode, data);
-    }
+    @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == ApplicationConstants.DATA_CHECK_CODE){
+			showSuras();
+			Integer lastPage = QuranSettings.getInstance().getLastPage();
+			if (lastPage != null)
+				jumpTo(lastPage);
+		}
+	}
     
     @Override
     protected Dialog onCreateDialog(int id){
@@ -60,7 +62,7 @@ public class QuranActivity extends Activity {
     				Integer page = dlg.getPage();
     				removeDialog(ApplicationConstants.JUMP_DIALOG);
     				if (page != null)
-    					qml.jumpTo(page);
+    					jumpTo(page);
     			}
 
     		});
@@ -68,20 +70,6 @@ public class QuranActivity extends Activity {
     	}
     	return null;
     }
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.option_menu, menu);	  
-		return true;
-	}
-
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		qml.onMenuItemSelected(featureId, item);
-		return super.onMenuItemSelected(featureId, item);
-	}
 
 	public void showSuras() {
 		int pos = 0;
@@ -109,7 +97,7 @@ public class QuranActivity extends Activity {
 					long id) {
 				ListView p = (ListView)parent;
 				QuranElement elem = (QuranElement)p.getAdapter().getItem((int)id);
-				qml.jumpTo(elem.page);				
+				jumpTo(elem.page);				
 			}
 		});
 	}

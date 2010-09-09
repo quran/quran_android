@@ -28,7 +28,7 @@ public class BookmarksActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		BookmarksManager.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
 		
-		setContentView(R.layout.quran_list);
+		setContentView(R.layout.bookmarks_list);
 		showBookmarks();
 		registerForContextMenu(getListView());
 	}

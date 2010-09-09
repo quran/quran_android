@@ -2,7 +2,6 @@ package com.quran.labs.androidquran;
 
 import java.text.NumberFormat;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -19,8 +18,6 @@ import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.quran.labs.androidquran.common.AnimatedQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.BookmarksManager;
@@ -41,7 +39,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-public class QuranViewActivity extends Activity implements AnimationListener {
+public class QuranViewActivity extends AnimatedQuranActivity implements AnimationListener {
 
 	private int page;
 	private static final int SWIPE_MIN_DISTANCE = 120;
@@ -62,7 +60,6 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 	private boolean rightTransitionSwap;
 	private ScrollView scrollView;
 	private Bitmap bitmap;
-	private QuranMenuListener qml;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -70,7 +67,6 @@ public class QuranViewActivity extends Activity implements AnimationListener {
         QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
 		BookmarksManager.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
 
-		qml = new QuranMenuListener(this);
 		adjustDisplaySettings();
 		initializeViewElements();
 		initializeQsi();
@@ -80,19 +76,6 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		pageHeight = 0;
 		animate = false;
 		showPage();
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case ApplicationConstants.BOOKMARKS_CODE:
-		case ApplicationConstants.TRANSLATION_VIEW_CODE:
-			if (resultCode == Activity.RESULT_OK) {
-				page = data.getIntExtra("page", ApplicationConstants.PAGES_FIRST);
-				showPage();
-			} 
-			break;
-		}
 	}
 	
 	private void adjustDisplaySettings() {
@@ -112,20 +95,6 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 		imageView.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 		bgImageView = (ImageView)findViewById(R.id.bgPageview);
 		scrollView = (ScrollView)findViewById(R.id.pageScrollView);
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.option_menu, menu);	  
-		return true;
-	}
-
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		qml.onMenuItemSelected(featureId, item);
-		return super.onMenuItemSelected(featureId, item);
 	}
 	
 	@Override
@@ -150,6 +119,17 @@ public class QuranViewActivity extends Activity implements AnimationListener {
     	return null;
     }
 	
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == ApplicationConstants.TRANSLATION_VIEW_CODE){
+			Integer lastPage = QuranSettings.getInstance().getLastPage();
+			if (lastPage != null)
+				jumpTo(lastPage);
+		}
+	}
+
 	private void registerListeners() {	
 		imageView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -436,5 +416,11 @@ public class QuranViewActivity extends Activity implements AnimationListener {
 
 	public void onAnimationStart(Animation animation) {
 
+	}
+	
+	@Override
+	public void jumpTo(int page) {
+		this.page = page;
+		showPage();
 	}
 }
