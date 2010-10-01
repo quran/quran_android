@@ -94,7 +94,8 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == ApplicationConstants.TRANSLATION_VIEW_CODE){
-			Integer lastPage = QuranSettings.getInstance().getLastPage();
+			Integer lastPage = data.getIntExtra("page",
+					QuranSettings.getInstance().getLastPage());
 			if (lastPage != null)
 				jumpTo(lastPage);
 		}

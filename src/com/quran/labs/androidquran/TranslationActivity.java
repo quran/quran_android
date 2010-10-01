@@ -217,6 +217,12 @@ public class TranslationActivity extends GestureQuranActivity {
     }
 	
 	@Override
+	protected void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putInt("page", page);
+	}
+	
+	@Override
 	protected void onDestroy(){
 		super.onDestroy();
 		if ((currentTask != null) && (currentTask.getStatus() == Status.RUNNING))
