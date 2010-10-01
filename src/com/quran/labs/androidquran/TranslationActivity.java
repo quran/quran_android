@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -18,26 +17,20 @@ import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-public class TranslationActivity extends Activity {
+public class TranslationActivity extends GestureQuranActivity {
 
 	private int page = 1;
     private AsyncTask<?, ?, ?> currentTask;
     private ProgressDialog pd = null;
-    private GestureDetector gestureDetector;
-    
-	private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_MAX_OFF_PATH = 250;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -48,44 +41,20 @@ public class TranslationActivity extends Activity {
 		renderTranslation();
 	}
 	
-	// thanks to codeshogun's blog post for this
-	// http://www.codeshogun.com/blog/2009/04/16/how-to-implement-swipe-action-in-android/
-	class QuranGestureDetector extends SimpleOnGestureListener {
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
-			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-				return false;
-			// previous page swipe
-			if ((e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE) && 
-			    (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				if (page > 1){
-					page--;
-					renderTranslation();
-				}
-			}
-			else if ((e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE) &&
-				(Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				if (page < 604){
-					page++;
-					renderTranslation();
-				}
-			}
-			
-			return false;
-		}
+	public void goToNextPage(){
+		if (page < 604){
+			page++;
+			renderTranslation();
+		}	
 	}
 	
-	@Override
-	public boolean onTouchEvent(MotionEvent event){
-		return gestureDetector.onTouchEvent(event);
+	public void goToPreviousPage(){
+		if (page > 1){
+			page--;
+			renderTranslation();
+		}	
 	}
 	
-	// this function lets this activity handle the touch event before the ScrollView
-	@Override
-	public boolean dispatchTouchEvent(MotionEvent event){
-		super.dispatchTouchEvent(event);
-		return gestureDetector.onTouchEvent(event);
-	}
 	
 	public void loadPageState(Bundle savedInstanceState){
 		page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
@@ -99,16 +68,10 @@ public class TranslationActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
-			if (page < 604){
-				page++;
-				renderTranslation();
-			}
+			goToNextPage();
 		}
 		else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
-			if (page > 1){
-				page--;
-				renderTranslation();
-			}
+			goToPreviousPage();
 		}
 		else if (keyCode == KeyEvent.KEYCODE_BACK){
 			goBack();

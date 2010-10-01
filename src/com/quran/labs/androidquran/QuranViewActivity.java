@@ -13,10 +13,8 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.Window;
@@ -28,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.quran.labs.androidquran.common.AnimatedQuranActivity;
+import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.BookmarksManager;
@@ -36,18 +34,15 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-public class QuranViewActivity extends AnimatedQuranActivity implements AnimationListener {
+public class QuranViewActivity extends GestureQuranActivity implements AnimationListener {
 
 	private int page;
-	private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_MAX_OFF_PATH = 250;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
     // Duration in MS
     private static final int ANIMATION_DURATION = 500;
 	private static final int CONTEXT_MENU_REMOVE = 0;
 	private static final int CONTEXT_MENU_ADD = 1;
 	private static final int CONTEXT_MENU_TRANSLATION = 2;
-    private GestureDetector gestureDetector;
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
     private QuranScreenInfo qsi;
@@ -168,45 +163,6 @@ public class QuranViewActivity extends AnimatedQuranActivity implements Animatio
 		if ((currentTask != null) && (currentTask.getStatus() == Status.RUNNING))
 			currentTask.cancel(true);
 	}
-	
-	@Override
-	public boolean onTouchEvent(MotionEvent event){
-		return gestureDetector.onTouchEvent(event);
-	}
-	
-	// this function lets this activity handle the touch event before the ScrollView
-	@Override
-	public boolean dispatchTouchEvent(MotionEvent event){
-		super.dispatchTouchEvent(event);
-		return gestureDetector.onTouchEvent(event);
-	}
-	
-	// thanks to codeshogun's blog post for this
-	// http://www.codeshogun.com/blog/2009/04/16/how-to-implement-swipe-action-in-android/
-	class QuranGestureDetector extends SimpleOnGestureListener {
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
-			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-				return false;
-			// previous page swipe
-			if ((e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE) && 
-			    (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				goToPreviousPage();
-			}
-			else if ((e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE) &&
-				(Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				goToNextPage();
-			}
-			
-			return false;
-		}
-		
-		@Override
-		public boolean onDoubleTap(MotionEvent e){
-			handleDoubleTap(e.getX(), e.getY());
-			return false;
-		}
-	}
 
 	public void handleDoubleTap(float x, float y){
 		// just in case...
@@ -229,7 +185,7 @@ public class QuranViewActivity extends AnimatedQuranActivity implements Animatio
 		Log.d("quran_view", "position of dbl tap: " + x + ", " + y);
 	}
 	
-	private void goToNextPage() {
+	public void goToNextPage() {
 		animate = true;
 		if (page < ApplicationConstants.PAGES_LAST) {
 			page++;
@@ -238,7 +194,7 @@ public class QuranViewActivity extends AnimatedQuranActivity implements Animatio
 		}
 	}
 
-	private void goToPreviousPage() {
+	public void goToPreviousPage() {
 		animate = true;
 		if (page != ApplicationConstants.PAGES_FIRST) {
 			page--;
