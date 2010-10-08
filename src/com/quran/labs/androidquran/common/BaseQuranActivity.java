@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,12 +14,15 @@ import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.BookmarksActivity;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranJumpDialog;
+import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SettingsActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 
 public abstract class BaseQuranActivity extends Activity {
+	
+	public SharedPreferences prefs;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,8 +80,9 @@ public abstract class BaseQuranActivity extends Activity {
 				startActivity(intent);
 			break;
 			case R.id.menu_item_settings:
-				intent = new Intent(getApplicationContext(), SettingsActivity.class);
-				startActivity(intent);
+				//intent = new Intent(getApplicationContext(), SettingsActivity.class);
+				intent = new Intent(getApplicationContext(), QuranPreferenceActivity.class);
+				startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
 			case R.id.menu_item_bookmarks:
 		    	intent = new Intent(getApplicationContext(), BookmarksActivity.class);

@@ -7,6 +7,7 @@ import java.util.Map;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
@@ -26,7 +27,7 @@ public class BookmarksActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		BookmarksManager.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+		BookmarksManager.load(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 		
 		setContentView(R.layout.bookmarks_list);
 		showBookmarks();

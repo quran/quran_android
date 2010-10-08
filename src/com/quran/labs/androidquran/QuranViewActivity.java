@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -56,8 +57,9 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-        QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
-		BookmarksManager.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        QuranSettings.load(prefs);
+		BookmarksManager.load(prefs);
 
 		adjustDisplaySettings();
 		initializeViewElements();
@@ -98,9 +100,19 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 					QuranSettings.getInstance().getLastPage());
 			if (lastPage != null)
 				jumpTo(lastPage);
+		} else if (requestCode == ApplicationConstants.SETTINGS_CODE) {
+			// Reason to finish is that the fullscreen settings requires to call 
+			// requestWindowFeature() a second time after setContentView() is called.  
+			// This causes runtimeexceptions in android. The ideal way to fix this  
+			// is that the activity has to be restarted. 
+			//
+			//If you know of a way to restart the activity smoothly, then 
+			// you can remove this and call the restart method instead. Otherwise, leave 
+			// it be and make dua! 
+			finish();
 		}
 	}
-
+	
 	private void registerListeners() {	
 		imageView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -241,7 +253,7 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		}
 		
 		QuranSettings.getInstance().setLastPage(page);
-		QuranSettings.save(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+		QuranSettings.save(prefs);
 		pageWidth = bitmap.getWidth();
 		pageHeight = bitmap.getHeight();
 		
@@ -306,8 +318,8 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	@Override
 	protected void onResume(){
 		super.onResume();
-        QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
-		BookmarksManager.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+        QuranSettings.load(prefs);
+		BookmarksManager.load(prefs);
         
 		animate = false;
 		showPage();

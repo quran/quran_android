@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,8 @@ public class QuranActivity extends BaseQuranActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quran_list);
-        QuranSettings.load(getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        QuranSettings.load(prefs);
         
         Intent i = new Intent(this, QuranDataActivity.class);
 		this.startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
@@ -46,7 +48,17 @@ public class QuranActivity extends BaseQuranActivity {
 			Integer lastPage = QuranSettings.getInstance().getLastPage();
 			if (lastPage != null)
 				jumpTo(lastPage);
+		} else if (requestCode == ApplicationConstants.SETTINGS_CODE) {
+			QuranSettings.load(prefs);
+			showSuras();
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		QuranSettings.load(prefs);
+		showSuras();
 	}
 
 	public void showSuras() {

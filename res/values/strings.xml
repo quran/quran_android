@@ -53,4 +53,9 @@
 	<string name="settings_full_screen">Full Screen Mode.\nHave a larger view area for pages.</string>
 	<string name="settings_show_clock">Show Clock in full screen mode.</string>
 	<string name="settings_keep_screen_on">Keep screen on.</string>
+<string name="prefs_use_arabic_names">useArabicNames</string>
+<string name="prefs_full_screen">fullScreen</string>
+<string name="prefs_show_clock">showClock</string>
+<string name="prefs_keep_screen_on">keepScreenOn</string>
+<string name="prefs_path">QuranAndroid_Settings</string>
 </resources>

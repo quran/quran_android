@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android" 
+  android:title="Quran Settings" 
+  android:key="@string/prefs_path">
+<CheckBoxPreference android:summaryOff="Screen will turn off after idling" android:title="Keep Screen On" android:summaryOn="Screen will stay on while reading" android:persistent="true" android:key="@string/prefs_keep_screen_on"></CheckBoxPreference>
+<CheckBoxPreference 	android:title="Full Screen Mode" 
+	android:summaryOn="Full Screen Mode is Enabled" 
+	android:summaryOff="Full Screen Mode is Disabled" android:disableDependentsState="false" android:persistent="true" android:key="@string/prefs_full_screen">
+</CheckBoxPreference>
+<CheckBoxPreference 
+	android:title="Show Clock" 
+	android:summaryOn="Clock Shown in Fullscreen Mode" 
+	android:summaryOff="Clock Hidden" android:persistent="true" android:key="@string/prefs_show_clock" android:dependency="@string/prefs_full_screen">
+</CheckBoxPreference>
+<CheckBoxPreference 
+	android:title="Arabic Surah Names" 
+	android:summaryOn="Surah Names are in Arabic" 
+	android:summaryOff="Surah Names are in English" android:persistent="true" android:key="@string/prefs_use_arabic_names">
+</CheckBoxPreference>
+</PreferenceScreen>
