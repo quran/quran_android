@@ -57,5 +57,7 @@
 <string name="prefs_full_screen">fullScreen</string>
 <string name="prefs_show_clock">showClock</string>
 <string name="prefs_keep_screen_on">keepScreenOn</string>
+<string name="prefs_lock_orientation">lockOrientation</string>
+<string name="prefs_landscape_orientation">landscapeOrientation</string>
 <string name="prefs_path">QuranAndroid_Settings</string>
 </resources>

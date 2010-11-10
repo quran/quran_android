@@ -13,6 +13,8 @@ public class QuranSettings {
 	private boolean showClock = false;
 	private boolean fullScreen = false;
 	private boolean keepScreenOn = false;
+	private boolean lockOrientation = false;
+	private boolean landscapeOrientation = false;
 	private int lastPage = 0;
 	
 	private QuranSettings() {
@@ -62,12 +64,30 @@ public class QuranSettings {
 	public void setKeepScreenOn(boolean keepScreenOn) {
 		this.keepScreenOn = keepScreenOn;
 	}
+	
+	public boolean isLockOrientation() {
+		return lockOrientation;
+	}
+
+	public void setLockOrientation(boolean lockOrientation) {
+		this.lockOrientation = lockOrientation;
+	}
+	
+	public boolean isLandscapeOrientation() {
+		return landscapeOrientation;
+	}
+
+	public void setLandscapeOrientation(boolean landscapeOrientation) {
+		this.landscapeOrientation = landscapeOrientation;
+	}
 
 	public static void load(SharedPreferences preferences) {
 		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
 		instance.keepScreenOn = preferences.getBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, true);
 		instance.fullScreen = preferences.getBoolean(ApplicationConstants.PREF_FULL_SCREEN, false);
 		instance.showClock = preferences.getBoolean(ApplicationConstants.PREF_SHOW_CLOCK, false);
+		instance.lockOrientation = preferences.getBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, false);
+		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, -1);
 	}
 	
@@ -77,6 +97,8 @@ public class QuranSettings {
 		editor.putBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, instance.keepScreenOn);
 		editor.putBoolean(ApplicationConstants.PREF_FULL_SCREEN, instance.fullScreen);
 		editor.putBoolean(ApplicationConstants.PREF_SHOW_CLOCK, instance.showClock);
+		editor.putBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, instance.lockOrientation);
+		editor.putBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, instance.landscapeOrientation);
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
 		editor.commit();
 	}

@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
@@ -72,6 +73,17 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		showPage();
 	}
 	
+	private void adjustActivityOrientation() {
+		if (QuranSettings.getInstance().isLockOrientation()) {
+			if (QuranSettings.getInstance().isLandscapeOrientation()) 
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			else 
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		} else {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		}
+	}
+	
 	private void adjustDisplaySettings() {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		if (QuranSettings.getInstance().isFullScreen()) {
@@ -80,7 +92,9 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 				getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			}
-		}				
+		}	
+		
+		adjustActivityOrientation();
 	}
 	
 	private void initializeViewElements() {
