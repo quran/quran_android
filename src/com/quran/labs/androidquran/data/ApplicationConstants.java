@@ -36,4 +36,6 @@ public class ApplicationConstants {
 	public static final String PREF_LAST_PAGE = "lastPage";
 	public static final String PREF_BOOKMARKS = "bookmarks";
 	public static final String PREF_KEEP_SCREEN_ON = "keepScreenOn";
+	public static final String PREF_LOCK_ORIENTATION = "lockOrientation";
+	public static final String PREF_LANDSCAPE_ORIENTATION = "landscapeOrientation";
 }
