@@ -20,4 +20,9 @@
 </CheckBoxPreference>
 <CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false"></CheckBoxPreference>
 <CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation"></CheckBoxPreference>
+<com.quran.labs.androidquran.widgets.SeekBarPreference
+	android:key="@string/prefs_translation_text_size" android:title="Translation Text"
+	android:persistent="true" android:dialogMessage="Text Size"
+	android:summary="Customize the text size for translation"
+	android:defaultValue="15" android:max="40" />
 </PreferenceScreen>

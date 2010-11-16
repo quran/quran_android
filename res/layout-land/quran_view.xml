@@ -17,7 +17,7 @@
 	  		android:layout_width="fill_parent"
 	  		android:layout_height="wrap_content" />
 	  		
-  		<com.quran.labs.androidquran.QuranImageView android:id="@+id/pageview"
+  		<com.quran.labs.androidquran.widgets.QuranImageView android:id="@+id/pageview"
 	    	android:background="#FFF4CB"
 	  		android:layout_width="fill_parent"
 	  		android:layout_height="wrap_content" />

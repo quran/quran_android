@@ -24,6 +24,7 @@ import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.DatabaseHandler;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class TranslationActivity extends GestureQuranActivity {
@@ -31,25 +32,28 @@ public class TranslationActivity extends GestureQuranActivity {
 	private int page = 1;
     private AsyncTask<?, ?, ?> currentTask;
     private ProgressDialog pd = null;
+    private TextView txtTranslation;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.quran_translation);
+		txtTranslation = (TextView) findViewById(R.id.translationText);
+		txtTranslation.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
 		loadPageState(savedInstanceState);
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 		renderTranslation();
 	}
 	
 	public void goToNextPage(){
-		if (page < 604){
+		if (page < ApplicationConstants.PAGES_LAST){
 			page++;
 			renderTranslation();
 		}	
 	}
 	
 	public void goToPreviousPage(){
-		if (page > 1){
+		if (page > ApplicationConstants.PAGES_FIRST){
 			page--;
 			renderTranslation();
 		}	
@@ -81,7 +85,7 @@ public class TranslationActivity extends GestureQuranActivity {
 	}
 
 	public void renderTranslation(){
-		if ((page > 604) || (page < 1)) page = 1;
+		if ((page > ApplicationConstants.PAGES_LAST) || (page < ApplicationConstants.PAGES_FIRST)) page = 1;
 		setTitle(QuranInfo.getPageTitle(page));
 
 		Integer[] bounds = QuranInfo.getPageBounds(page);

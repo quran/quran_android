@@ -108,8 +108,9 @@ public final class R {
         public static final int prefs_keep_screen_on=0x7f05002a;
         public static final int prefs_landscape_orientation=0x7f05002c;
         public static final int prefs_lock_orientation=0x7f05002b;
-        public static final int prefs_path=0x7f05002d;
+        public static final int prefs_path=0x7f05002e;
         public static final int prefs_show_clock=0x7f050029;
+        public static final int prefs_translation_text_size=0x7f05002d;
         public static final int prefs_use_arabic_names=0x7f050027;
         public static final int settings_full_screen=0x7f050024;
         public static final int settings_keep_screen_on=0x7f050026;

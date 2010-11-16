@@ -15,8 +15,9 @@ public class QuranSettings {
 	private boolean keepScreenOn = false;
 	private boolean lockOrientation = false;
 	private boolean landscapeOrientation = false;
+	private int translationTextSize = ApplicationConstants.DEFAULT_TEXT_SIZE;
 	private int lastPage = 0;
-	
+
 	private QuranSettings() {
 		
 	}
@@ -80,6 +81,14 @@ public class QuranSettings {
 	public void setLandscapeOrientation(boolean landscapeOrientation) {
 		this.landscapeOrientation = landscapeOrientation;
 	}
+	
+	public int getTranslationTextSize() {
+		return translationTextSize;
+	}
+
+	public void setTranslationTextSize(int translationTextSize) {
+		this.translationTextSize = translationTextSize;
+	}
 
 	public static void load(SharedPreferences preferences) {
 		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
@@ -88,6 +97,7 @@ public class QuranSettings {
 		instance.showClock = preferences.getBoolean(ApplicationConstants.PREF_SHOW_CLOCK, false);
 		instance.lockOrientation = preferences.getBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, false);
 		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
+		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, -1);
 	}
 	
@@ -99,6 +109,7 @@ public class QuranSettings {
 		editor.putBoolean(ApplicationConstants.PREF_SHOW_CLOCK, instance.showClock);
 		editor.putBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, instance.lockOrientation);
 		editor.putBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, instance.landscapeOrientation);
+		editor.putInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, instance.translationTextSize);
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
 		editor.commit();
 	}
