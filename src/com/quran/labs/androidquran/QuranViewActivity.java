@@ -35,6 +35,7 @@ import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.QuranImageView;
 
 public class QuranViewActivity extends GestureQuranActivity implements AnimationListener {
 
