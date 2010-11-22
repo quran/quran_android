@@ -12,10 +12,10 @@ import android.view.MenuItem;
 
 import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.BookmarksActivity;
+import com.quran.labs.androidquran.ExpViewActivity;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranJumpDialog;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
-import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 
@@ -92,7 +92,7 @@ public abstract class BaseQuranActivity extends Activity {
 	}
 	
 	public void jumpTo(int page) {
-		Intent i = new Intent(this, QuranViewActivity.class);
+		Intent i = new Intent(this, ExpViewActivity.class);
 		i.putExtra("page", page);
 		startActivityForResult(i, ApplicationConstants.QURAN_VIEW_CODE);
 	}

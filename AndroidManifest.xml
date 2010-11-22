@@ -17,6 +17,7 @@
 		<activity android:name=".AboutUsActivity"></activity>
 		<activity android:name=".HelpActivity"></activity>
 		<activity android:name=".QuranViewActivity"></activity>
+		<activity android:name=".ExpViewActivity"></activity>
 		<service android:enabled="true" android:name=".service.QuranDataService" />
 		<activity android:name=".SettingsActivity"></activity>
 		<activity android:name=".BookmarksActivity"></activity>
