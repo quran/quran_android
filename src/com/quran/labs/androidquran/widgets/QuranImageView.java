@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran;
+package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.graphics.Canvas;

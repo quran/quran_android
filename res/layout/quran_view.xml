@@ -5,7 +5,7 @@
 	<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/bgPageview" android:background="#FFF4CB"
 		android:layout_width="fill_parent" android:layout_height="fill_parent" />
-	<com.quran.labs.androidquran.QuranImageView xmlns:android="http://schemas.android.com/apk/res/android"
+	<com.quran.labs.androidquran.widgets.QuranImageView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/pageview" android:background="#FFF4CB"
 		android:layout_width="fill_parent" android:layout_height="fill_parent" />
 </FrameLayout>
