@@ -30,10 +30,24 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 			
 			return false;
 		}
+		
+		@Override
+		public boolean onDoubleTap(MotionEvent e){
+			handleDoubleTap(e);
+			return false;
+		}
+		
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent e){
+			handleSingleTap(e);
+			return false;
+		}
 	}
 	
 	public abstract void goToNextPage();
 	public abstract void goToPreviousPage();
+	public void handleSingleTap(MotionEvent e){}
+	public void handleDoubleTap(MotionEvent e){}
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
