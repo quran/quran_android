@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -24,7 +25,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	private SeekBar seekBar = null;
 	
 	private int page = 100;
-
+	private int width = 0;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -58,6 +60,10 @@ public class ExpViewActivity extends GestureQuranActivity {
         
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 		
+		WindowManager manager = getWindowManager();
+		Display display = manager.getDefaultDisplay();
+		width = display.getWidth();
+		
 		renderPage();
 		toggleMode();
 	}
@@ -79,8 +85,12 @@ public class ExpViewActivity extends GestureQuranActivity {
 	
 	@Override
 	public void handleSingleTap(MotionEvent e){
-		// TODO: see where the click happens before deciding
-		toggleMode();
+		int sliceWidth = (int)(0.2 * width);
+		if (e.getX() < sliceWidth)
+			goToNextPage();
+		else if (e.getX() > (width - sliceWidth))
+			goToPreviousPage();
+		else toggleMode();
 	}
 	
 	public void toggleMode(){
