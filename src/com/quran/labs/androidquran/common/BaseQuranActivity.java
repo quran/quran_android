@@ -17,7 +17,7 @@ import com.quran.labs.androidquran.QuranJumpDialog;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.SettingsActivity;
+import com.quran.labs.androidquran.TranslationActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 
 public abstract class BaseQuranActivity extends Activity {
@@ -84,9 +84,13 @@ public abstract class BaseQuranActivity extends Activity {
 				intent = new Intent(getApplicationContext(), QuranPreferenceActivity.class);
 				startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
-			case R.id.menu_item_bookmarks:
+			case R.id.menu_item_bookmarks_view:
 		    	intent = new Intent(getApplicationContext(), BookmarksActivity.class);
 		    	startActivityForResult(intent, ApplicationConstants.BOOKMARKS_CODE);
+			break;
+			case R.id.menu_item_translations:
+				Intent i = new Intent(this, TranslationActivity.class);
+				startActivityForResult(i, ApplicationConstants.TRANSLATION_VIEW_CODE);
 			break;
 		}
 		return super.onMenuItemSelected(featureId, item);

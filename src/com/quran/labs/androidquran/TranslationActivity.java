@@ -15,6 +15,7 @@ import android.database.SQLException;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -39,12 +40,23 @@ public class TranslationActivity extends GestureQuranActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.quran_translation);
 		txtTranslation = (TextView) findViewById(R.id.translationText);
-		txtTranslation.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
 		loadPageState(savedInstanceState);
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
+		adjustTextSize();
 		renderTranslation();
 	}
 	
+	private void adjustTextSize() {
+		QuranSettings.load(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+		txtTranslation.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
+	}
+	
+	@Override
+	protected void onResume() {
+		adjustTextSize();
+		super.onResume();
+	}
+
 	public void goToNextPage(){
 		if (page < ApplicationConstants.PAGES_LAST){
 			page++;
@@ -61,7 +73,7 @@ public class TranslationActivity extends GestureQuranActivity {
 	
 	
 	public void loadPageState(Bundle savedInstanceState){
-		page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
+		page = savedInstanceState != null ? savedInstanceState.getInt("page") : QuranSettings.getInstance().getLastPage();
 		if (page == ApplicationConstants.PAGES_FIRST){
 			Bundle extras = getIntent().getExtras();
 			page = extras != null? extras.getInt("page") : ApplicationConstants.PAGES_FIRST;

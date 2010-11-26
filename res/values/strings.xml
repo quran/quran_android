@@ -22,9 +22,10 @@
 	<string name="menu_settings">Settings</string>
 	<string name="menu_jump_last_page">Last page</string>
 	<string name="menu_bookmarks">Bookmarks</string>
-	<string name="menu_bookmarks_remove">Remove From Bookmarks</string>
+	<string name="menu_bookmarks_remove">Remove</string>
+	<string name="menu_bookmarks_view">View</string>
 	<string name="menu_translation">Show Translation</string>
-	<string name="menu_bookmarks_add">Add To Bookmarks</string>
+	<string name="menu_bookmarks_add">Add</string>
 	<string name="menu_bookmarks_saved">Bookmark Saved</string>
 	<string name="menu_bookmarks_removed">Bookmark Removed</string>
 	<string name="menu_bookmarks_help">Help</string>

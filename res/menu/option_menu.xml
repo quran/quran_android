@@ -11,7 +11,16 @@
           android:icon="@drawable/settings" android:title="@string/menu_settings"/>
   	
   	<item android:id="@+id/menu_item_bookmarks"          
-          android:icon="@drawable/bookmarks" android:title="@string/menu_bookmarks"/>
+          android:icon="@drawable/bookmarks" android:title="@string/menu_bookmarks">
+          <menu>
+          	<item android:id="@+id/menu_item_bookmarks_view" android:title="@string/menu_bookmarks_view" />
+          	<item android:id="@+id/menu_item_bookmarks_add" android:title="@string/menu_bookmarks_add" />
+          	<item android:id="@+id/menu_item_bookmarks_remove" android:title="@string/menu_bookmarks_remove" />
+          </menu>
+    </item>
+    
+    <item android:id="@+id/menu_item_translations"          
+          android:icon="@drawable/translation" android:title="@string/menu_translation"/>
           
     <item android:id="@+id/menu_item_help"
           android:icon="@drawable/help" android:title="@string/menu_help"/>

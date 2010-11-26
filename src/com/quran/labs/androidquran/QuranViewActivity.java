@@ -7,23 +7,19 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -43,9 +39,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 
     // Duration in MS
     private static final int ANIMATION_DURATION = 500;
-	private static final int CONTEXT_MENU_REMOVE = 0;
-	private static final int CONTEXT_MENU_ADD = 1;
-	private static final int CONTEXT_MENU_TRANSLATION = 2;
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
     private QuranScreenInfo qsi;
@@ -128,43 +121,27 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		}
 	}
 	
-	private void registerListeners() {	
-		imageView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				int menuType;
-				int menuTitle;
-				if (BookmarksManager.getInstance().contains(page)) {
-					menuType = CONTEXT_MENU_REMOVE;
-					menuTitle = R.string.menu_bookmarks_remove;
-				} else {
-					menuType = CONTEXT_MENU_ADD;
-					menuTitle = R.string.menu_bookmarks_add;
-				}
-				menu.add(0, menuType, 0, menuTitle);
-				menu.add(0, CONTEXT_MENU_TRANSLATION, 1, R.string.menu_translation);
-			}
-		});
-		
+	private void registerListeners() {		
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 	}
 	
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch(item.getItemId()) {
-			case CONTEXT_MENU_ADD:
-			case CONTEXT_MENU_REMOVE:
+			case R.id.menu_item_bookmarks:
+				boolean exists = BookmarksManager.getInstance().contains(page);
+				item.getSubMenu().findItem(R.id.menu_item_bookmarks_add).setVisible(!exists);
+				item.getSubMenu().findItem(R.id.menu_item_bookmarks_remove).setVisible(exists);
+			break;
+			case R.id.menu_item_bookmarks_add:
+			case R.id.menu_item_bookmarks_remove:
 				SharedPreferences preferences = getSharedPreferences(ApplicationConstants.PREFERNCES, 0);
 				boolean added = BookmarksManager.toggleBookmarkState(page, preferences);
 				int msgId = added ? R.string.menu_bookmarks_saved : R.string.menu_bookmarks_removed;
 				Toast.makeText(getApplicationContext(), msgId, Toast.LENGTH_SHORT).show();
 			break;
-			case CONTEXT_MENU_TRANSLATION:
-				Intent i = new Intent(this, TranslationActivity.class);
-				i.putExtra("page", page);
-				startActivityForResult(i, ApplicationConstants.TRANSLATION_VIEW_CODE);
-			break;
 		}
-		return true;
+		return super.onMenuItemSelected(featureId, item);
 	}
 	
 	private void loadPageState(Bundle savedInstanceState) {
