@@ -24,7 +24,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	private TextView titleText = null;
 	private SeekBar seekBar = null;
 	
-	private int page = 100;
+	private int page = 1;
 	private int width = 0;
 	
 	@Override
@@ -64,8 +64,17 @@ public class ExpViewActivity extends GestureQuranActivity {
 		Display display = manager.getDefaultDisplay();
 		width = display.getWidth();
 		
+		loadState(savedInstanceState);
 		renderPage();
 		toggleMode();
+	}
+	
+	private void loadState(Bundle savedInstanceState){
+		page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
+		if (page == ApplicationConstants.PAGES_FIRST){
+			Bundle extras = getIntent().getExtras();
+			page = extras != null? extras.getInt("page") : ApplicationConstants.PAGES_FIRST;
+		}
 	}
 	
 	private String getPageFileName() {
@@ -77,6 +86,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	private void renderPage(){
 		String filename = getPageFileName();
 		Bitmap bitmap = QuranUtils.getImageFromSD(filename);
+		// TODO: handle null case (download page)
 		imageView.setImageBitmap(bitmap);
 		
 		seekBar.setProgress(page);
