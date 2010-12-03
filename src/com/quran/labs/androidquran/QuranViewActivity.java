@@ -3,13 +3,11 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.AsyncTask.Status;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -52,7 +50,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         QuranSettings.load(prefs);
 		BookmarksManager.load(prefs);
 
@@ -135,8 +132,7 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 			break;
 			case R.id.menu_item_bookmarks_add:
 			case R.id.menu_item_bookmarks_remove:
-				SharedPreferences preferences = getSharedPreferences(ApplicationConstants.PREFERNCES, 0);
-				boolean added = BookmarksManager.toggleBookmarkState(page, preferences);
+				boolean added = BookmarksManager.toggleBookmarkState(page, prefs);
 				int msgId = added ? R.string.menu_bookmarks_saved : R.string.menu_bookmarks_removed;
 				Toast.makeText(getApplicationContext(), msgId, Toast.LENGTH_SHORT).show();
 			break;
