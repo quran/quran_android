@@ -3,7 +3,6 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -50,10 +48,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-        QuranSettings.load(prefs);
-		BookmarksManager.load(prefs);
-
-		adjustDisplaySettings();
 		initializeViewElements();
 		initializeQsi();
 		loadPageState(savedInstanceState);
@@ -62,30 +56,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		pageHeight = 0;
 		animate = false;
 		showPage();
-	}
-	
-	private void adjustActivityOrientation() {
-		if (QuranSettings.getInstance().isLockOrientation()) {
-			if (QuranSettings.getInstance().isLandscapeOrientation()) 
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			else 
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		} else {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-		}
-	}
-	
-	private void adjustDisplaySettings() {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		if (QuranSettings.getInstance().isFullScreen()) {
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-			if (!QuranSettings.getInstance().isShowClock()) {
-				getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			}
-		}	
-		
-		adjustActivityOrientation();
 	}
 	
 	private void initializeViewElements() {
