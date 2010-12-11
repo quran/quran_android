@@ -18,7 +18,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.quran.labs.androidquran.common.BaseQuranActivity;
-import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.BookmarksManager;
 
@@ -77,8 +76,7 @@ public class BookmarksActivity extends BaseQuranActivity {
 	public boolean onContextItemSelected(MenuItem item) { 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		if (item.getItemId() == CONTEXT_MENU_REMOVE) {
-			BookmarksManager.getInstance().removeAt(info.position,
-					getSharedPreferences(ApplicationConstants.PREFERNCES, 0));
+			BookmarksManager.getInstance().removeAt(info.position, prefs);
 			showBookmarks();
 		}
 		return true;

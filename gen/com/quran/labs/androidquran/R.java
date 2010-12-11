@@ -27,27 +27,23 @@ public final class R {
         public static final int btnEmailUs=0x7f070006;
         public static final int btnHelpBack=0x7f07000a;
         public static final int cancelButton=0x7f07000c;
-        public static final int chkArbaicNames=0x7f070016;
-        public static final int chkFullScreen=0x7f070018;
-        public static final int chkKeepScreenOn=0x7f070017;
-        public static final int chkShowClock=0x7f070019;
         public static final int jumpButton=0x7f07000d;
         public static final int linear=0x7f070000;
         public static final int lstBookmarks=0x7f070007;
-        public static final int menu_item_about_us=0x7f07001c;
-        public static final int menu_item_bookmarks=0x7f07001e;
-        public static final int menu_item_bookmarks_add=0x7f070020;
-        public static final int menu_item_bookmarks_remove=0x7f070021;
-        public static final int menu_item_bookmarks_view=0x7f07001f;
-        public static final int menu_item_help=0x7f070023;
-        public static final int menu_item_jump=0x7f07001b;
-        public static final int menu_item_settings=0x7f07001d;
-        public static final int menu_item_translations=0x7f070022;
+        public static final int menu_item_about_us=0x7f070018;
+        public static final int menu_item_bookmarks=0x7f07001a;
+        public static final int menu_item_bookmarks_add=0x7f07001c;
+        public static final int menu_item_bookmarks_remove=0x7f07001d;
+        public static final int menu_item_bookmarks_view=0x7f07001b;
+        public static final int menu_item_help=0x7f07001f;
+        public static final int menu_item_jump=0x7f070017;
+        public static final int menu_item_settings=0x7f070019;
+        public static final int menu_item_translations=0x7f07001e;
         public static final int pageScrollView=0x7f070015;
         public static final int page_field=0x7f07000b;
         public static final int page_info=0x7f070011;
         public static final int pageview=0x7f070014;
-        public static final int splashview=0x7f07001a;
+        public static final int splashview=0x7f070016;
         public static final int sura_info=0x7f070010;
         public static final int sura_title=0x7f07000f;
         public static final int suralist=0x7f07000e;
@@ -69,8 +65,7 @@ public final class R {
         public static final int quran_row=0x7f030006;
         public static final int quran_translation=0x7f030007;
         public static final int quran_view=0x7f030008;
-        public static final int settings=0x7f030009;
-        public static final int splash_screen=0x7f03000a;
+        public static final int splash_screen=0x7f030009;
     }
     public static final class menu {
         public static final int option_menu=0x7f060000;
