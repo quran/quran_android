@@ -23,11 +23,11 @@ public class QuranSettings {
 	}
 
 	public Integer getLastPage() {
-		return (lastPage == -1)? null : lastPage;
+		return lastPage;
 	}
 
 	public void setLastPage(Integer lastPage) {
-		this.lastPage = (lastPage == null)? -1 : lastPage;
+		this.lastPage = (lastPage == null)? ApplicationConstants.NO_PAGE_SAVED : lastPage;
 	}
 	
 	public boolean isFullScreen() {
@@ -98,7 +98,7 @@ public class QuranSettings {
 		instance.lockOrientation = preferences.getBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, false);
 		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
 		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
-		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, -1);
+		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.NO_PAGE_SAVED);
 	}
 	
 	public static void save(SharedPreferences preferences) {

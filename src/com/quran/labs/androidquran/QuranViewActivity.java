@@ -103,7 +103,7 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		if (requestCode == ApplicationConstants.TRANSLATION_VIEW_CODE){
 			Integer lastPage = data.getIntExtra("page",
 					QuranSettings.getInstance().getLastPage());
-			if (lastPage != null)
+			if (lastPage != null && lastPage != ApplicationConstants.NO_PAGE_SAVED)
 				jumpTo(lastPage);
 		} else if (requestCode == ApplicationConstants.SETTINGS_CODE) {
 			// Reason to finish is that the fullscreen settings requires to call 

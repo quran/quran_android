@@ -44,7 +44,7 @@ public class QuranActivity extends BaseQuranActivity {
 		if (requestCode == ApplicationConstants.DATA_CHECK_CODE){
 			showSuras();
 			Integer lastPage = QuranSettings.getInstance().getLastPage();
-			if (lastPage != null)
+			if (lastPage != null && lastPage != ApplicationConstants.NO_PAGE_SAVED)
 				jumpTo(lastPage);
 		} else if (requestCode == ApplicationConstants.SETTINGS_CODE) {
 			QuranSettings.load(prefs);
