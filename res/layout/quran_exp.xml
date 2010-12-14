@@ -2,9 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			 android:layout_width="fill_parent"
 			 android:layout_height="fill_parent">
-	<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/pageview" android:background="#FFF4CB"
-		android:layout_width="fill_parent" android:layout_height="fill_parent" />
+	<Gallery xmlns:android="http://schemas.android.com/apk/res/android" 
+    	android:id="@+id/gallery"
+    	android:background="#FFF4CB"
+    	android:spacing="10px"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent" />
 	<TextView android:id="@+id/pagetitle" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:background="#90000000"
 		android:textColor="#ffffff" android:layout_gravity="top"

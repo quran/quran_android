@@ -27,27 +27,24 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 				(Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
 				goToNextPage();
 			}
-			
 			return false;
 		}
 		
 		@Override
 		public boolean onDoubleTap(MotionEvent e){
-			handleDoubleTap(e);
-			return false;
+			return handleDoubleTap(e);
 		}
 		
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e){
-			handleSingleTap(e);
-			return false;
+			return handleSingleTap(e);
 		}
 	}
 	
 	public abstract void goToNextPage();
 	public abstract void goToPreviousPage();
-	public void handleSingleTap(MotionEvent e){}
-	public void handleDoubleTap(MotionEvent e){}
+	public boolean handleSingleTap(MotionEvent e){ return false; }
+	public boolean handleDoubleTap(MotionEvent e){ return false; }
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
