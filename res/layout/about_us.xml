@@ -5,21 +5,17 @@
 
 	<LinearLayout android:id="@+id/linear"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:orientation="vertical">
+		android:scrollbarAlwaysDrawVerticalTrack="true"
+		android:orientation="vertical" android:paddingBottom="5dip">
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="fill_parent" android:visibility="visible"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="#FFFFFF" android:textStyle="bold" android:id="@+id/txtAbout"
 			android:singleLine="false" android:scrollbarAlwaysDrawVerticalTrack="true"
-			android:scrollbars="vertical" android:maxLines="16" android:text="@string/aboutUs"
+			android:scrollbars="vertical" android:text="@string/aboutUs"
 			android:padding="10dip" android:lineSpacingExtra="4dip" />
-		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:visibility="visible"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textStyle="bold" android:id="@+id/txtSupport"
-			android:singleLine="false" android:textColor="#CCCCCC" android:text="" />
-
 	</LinearLayout>
+	
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:linksClickable="true"
 		android:id="@+id/txtDevelopedBy" android:text="@string/developedBy"
@@ -31,13 +27,12 @@
 		android:id="@+id/txtCopyRights" android:text="@string/copyRights"
 		android:textSize="12dip" android:layout_above="@id/txtDevelopedBy"
 		android:textColor="#FFFFFF" android:paddingLeft="10dip" />
-	<Button android:layout_width="300dip" android:layout_height="wrap_content"
-		android:id="@+id/btnAboutBack" android:text="Back"
-		android:layout_centerHorizontal="true" android:layout_above="@id/txtCopyRights"
-		android:visibility="visible" />
-	<Button android:layout_width="300dip" android:layout_height="wrap_content"
+		
+	<Button android:layout_width="300dip" android:layout_height="20px"
 		android:id="@+id/btnEmailUs" android:text="Email Quran Android"
-		android:layout_centerHorizontal="true" android:layout_above="@id/btnAboutBack"
+		android:layout_centerHorizontal="true"
+		android:layout_below="@id/linear" 
+		android:layout_above="@id/txtCopyRights"
 		android:visibility="visible" />
 
 </RelativeLayout>

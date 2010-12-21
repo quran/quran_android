@@ -10,28 +10,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class AboutUsActivity extends Activity implements OnClickListener {
-	protected Button btnBack;
 	protected Button btnEmailUs;
-	protected TextView txtDevelopedBy;
-	protected TextView txtCopyRights;
 	protected TextView txtAbout;
 
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_us);
-        btnBack = (Button)findViewById(R.id.btnAboutBack);        
-        btnBack.setOnClickListener(this);
         
         btnEmailUs = (Button)findViewById(R.id.btnEmailUs);
         btnEmailUs.setOnClickListener(this);
         
-        txtDevelopedBy = (TextView)findViewById(R.id.txtDevelopedBy);
-        txtDevelopedBy.setOnClickListener(this);
-        
-        txtCopyRights = (TextView)findViewById(R.id.txtCopyRights);
-        txtCopyRights.setOnClickListener(this);
-        
         txtAbout = (TextView)findViewById(R.id.txtAbout);
+        txtAbout.setVerticalScrollBarEnabled(true);
         txtAbout.setMovementMethod(new ScrollingMovementMethod());
         
         if (getWindowManager().getDefaultDisplay().getHeight() < 
@@ -44,9 +34,6 @@ public class AboutUsActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.btnAboutBack:
-			finish();
-			break;
 		case R.id.btnEmailUs:
 			final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);			 
 			emailIntent.setType("plain/text");						 
