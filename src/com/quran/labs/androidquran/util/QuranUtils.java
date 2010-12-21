@@ -12,17 +12,20 @@ import android.os.Environment;
 import android.util.Log;
 
 public class QuranUtils {
+	
 	public static boolean failedToWrite = false;
 	public static String DB_HOST = "http://labs.quran.com/androidquran/databases/";
 	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
-	private static String QURAN_BASE = "/quran_android/";
+	private static String QURAN_BASE = File.separator + "quran_android" + File.separator;
+	private static String DATABASE_DIRECTORY = "databases";
+	private static int BUFF_SIZE = 1024;
 	
 	public static boolean debugRmDir(String dir, boolean deleteDirectory){
 		File directory = new File(dir);
 		if (directory.isDirectory()){
 			String[] children = directory.list();
 			for (String s : children){
-				if (!debugRmDir(dir + "/" + s, true))
+				if (!debugRmDir(dir + File.separator + s, true))
 					return false;
 			}
 		}
@@ -37,14 +40,14 @@ public class QuranUtils {
 		if (directory.isDirectory()){
 			String[] children = directory.list();
 			for (String s : children)
-				debugLsDir(dir + "/" + s);
+				debugLsDir(dir + File.separator + s);
 		}
 	}
 	
 	public static boolean haveAllImages(){
 		String state = Environment.getExternalStorageState();
 		if (state.equals(Environment.MEDIA_MOUNTED)){
-			File dir = new File(getQuranDirectory() + "/");
+			File dir = new File(getQuranDirectory() + File.separator);
 			if (dir.isDirectory()){
 				int files = dir.list().length;
 				if (files == 605) return true;
@@ -57,7 +60,7 @@ public class QuranUtils {
 	public static Bitmap getImageFromSD(String filename){
 		String location = getQuranDirectory();
 		if (location == null) return null;
-		return BitmapFactory.decodeFile(location + "/" + filename);
+		return BitmapFactory.decodeFile(location + File.separator + filename);
 	}
 	
 	public static boolean writeNoMediaFile(){
@@ -118,7 +121,7 @@ public class QuranUtils {
 		
 		String path = getQuranDatabaseDirectory();
 		if (path != null){
-			path += "/" + filename;
+			path += File.separator + filename;
 			
 			if (!QuranUtils.makeQuranDatabaseDirectory()){
 				failedToWrite = true;
@@ -126,15 +129,7 @@ public class QuranUtils {
 			}
 			
 			try {
-				FileOutputStream output = new FileOutputStream(path);
-				int readlen;
-				
-				byte[] buf = new byte[1024];
-				while ((readlen = is.read(buf)) > 0)
-					output.write(buf, 0, readlen);
-				output.close();
-				is.close();
-
+				saveStream(is, path);
 				return true;
 			}
 			catch (Exception e){
@@ -164,7 +159,7 @@ public class QuranUtils {
 		
 		String path = getQuranDirectory();
 		if (path != null){
-			path += "/" + filename;
+			path += File.separator + filename;
 			
 			if (!QuranUtils.makeQuranDirectory()){
 				failedToWrite = true;
@@ -173,15 +168,8 @@ public class QuranUtils {
 			
 			boolean readPhase = false;
 			try {
-				FileOutputStream output = new FileOutputStream(path);
-				int readlen;
 				readPhase = true;
-				
-				byte[] buf = new byte[1024];
-				while ((readlen = is.read(buf)) > 0)
-					output.write(buf, 0, readlen);
-				output.close();
-				is.close();
+				saveStream(is, path);
 
 				return QuranUtils.getImageFromSD(filename);
 			}
@@ -196,6 +184,17 @@ public class QuranUtils {
 		else return BitmapFactory.decodeStream(is);
 	}
 	
+	private static void saveStream(InputStream is, String savePath) throws IOException {
+		FileOutputStream output = new FileOutputStream(savePath);
+		int readlen;
+		
+		byte[] buf = new byte[BUFF_SIZE];
+		while ((readlen = is.read(buf)) > 0)
+			output.write(buf, 0, readlen);
+		output.close();
+		is.close();
+	}
+	
 	public static String getQuranBaseDirectory(){
 		String state = Environment.getExternalStorageState();
 		if (state.equals(Environment.MEDIA_MOUNTED))
@@ -205,7 +204,7 @@ public class QuranUtils {
 	
 	public static String getQuranDatabaseDirectory(){
 		String base = getQuranBaseDirectory();
-		return (base == null)? null : base + "databases";
+		return (base == null)? null : base + DATABASE_DIRECTORY;
 	}
 	
 	public static String getQuranDirectory(){
@@ -222,5 +221,14 @@ public class QuranUtils {
 		if (qsi == null) return null;
 		url += "images" + qsi.getWidthParam() + ".zip";
 		return url;
+	}
+	
+	public static boolean hasTranslation(String fileName) {
+		String path = getQuranDatabaseDirectory();
+		if (path != null){
+			path += File.separator + fileName;
+			return new File(path).exists();
+		}
+		return false;
 	}
 }
