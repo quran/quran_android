@@ -23,26 +23,20 @@ public class AboutUsActivity extends Activity implements OnClickListener {
         txtAbout = (TextView)findViewById(R.id.txtAbout);
         txtAbout.setVerticalScrollBarEnabled(true);
         txtAbout.setMovementMethod(new ScrollingMovementMethod());
-        
-        if (getWindowManager().getDefaultDisplay().getHeight() < 
-        		getWindowManager().getDefaultDisplay().getWidth())
-        	txtAbout.setMaxLines(6);
-        else
-        	txtAbout.setMaxLines(16);
 	}
 	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.btnEmailUs:
-			final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);			 
-			emailIntent.setType("plain/text");						 
-			emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
-			emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{getString(R.string.email_to)});
-			startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-			break;
-		default:
-			break;
+			case R.id.btnEmailUs:
+				final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);			 
+				emailIntent.setType("plain/text");						 
+				emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+				emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{getString(R.string.email_to)});
+				startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+				break;
+			default:
+				break;
 		}		
 	}
 }
