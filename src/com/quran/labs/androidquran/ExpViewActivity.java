@@ -51,6 +51,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 		// imageView = (ImageView)findViewById(R.id.pageview);
 		gallery = (Gallery) findViewById(R.id.gallery);
 	    gallery.setAdapter(new QuranGalleryImageAdapter(this));
+	    gallery.setAnimationDuration(0);
+	    gallery.setSpacing(25);
 	    
         titleText = (TextView)findViewById(R.id.pagetitle);
         seekBar = (SeekBar)findViewById(R.id.suraSeek);
@@ -245,5 +247,4 @@ public class ExpViewActivity extends GestureQuranActivity {
 		if (position > 0)
 			renderPage(position - 1);
 	}
-
 }
