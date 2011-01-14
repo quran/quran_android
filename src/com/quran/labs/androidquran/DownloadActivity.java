@@ -28,7 +28,7 @@ import com.quran.labs.androidquran.util.RestClient;
 public class DownloadActivity extends BaseQuranActivity {
 	
 	public static final String URL_KEY = "url";
-	public static final String LOCALHOST_TEST_URL = "http://192.168.1.2/quran_ws/translations.php";
+	public static final String LOCALHOST_TEST_URL = "http://192.168.2.103/quran_ws/translations.php";
 	private String url;
 	private DownloadItem [] downloadItems;
 	private ListView listView;
@@ -51,7 +51,7 @@ public class DownloadActivity extends BaseQuranActivity {
 	private void populateList() {
 		// Set up column mappings
 		String [] dataColumns = new String [] {"displayName", "is_downloaded"};
-		int [] dataColumnsIds = new int [] {R.id.display_name, R.id.is_downloaded, R.id.remove_translation};
+		int [] dataColumnsIds = new int [] {R.id.display_name, R.id.is_downloaded};
 		
 		// Now iterate on all records
 		List<HashMap<String, String>> lst = new ArrayList<HashMap<String,String>>();

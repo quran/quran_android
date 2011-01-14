@@ -35,19 +35,29 @@
 	<string name="page_hint">Page Number</string>
 	<string name="go">Go</string>
 	<string name="cancel">Cancel</string>
-	<string name="developedBy">Quran Android - Muslim Developers</string>
+	<string name="developedBy">Developed by: Ahmed El-Helw - Hussein Maher</string>
 	<string name="copyRights">Copy Rights - All Muslims</string>
 	<string name="email_subject">Feedback</string>
 	<string name="email_to">quran.android@gmail.com</string>
 	<string name="aboutUs">Quran Android is a free, open source Quran
-		application for Android.\nUpcoming features include:
-		\n- Translations.\n- Search.\n- And more..\n\nLa tansawna men saleh el
-		doaa.</string>
+		application for Android.
+		\n\nNew features in this release:
+		\n- English translation (Sahih International)
+		\n- Ability to fix orientation to either landscape or portrait modes.
+		\n\nUpcoming features include:
+		\n- More translations.
+		\n- Tafsir.
+		\n- Recitation.
+		\n- Search.
+		\n- And more..
+		\n\nLa tansawna men saleh el doaa.
+	</string>
 	<string name="help_title">Quran Android Help</string>
-	<string name="help">- Font size too small?  Try
-	    flipping your screen to landscape mode for a zoomed in version.
+	<string name="help">- Flip your screen to landscape mode for a zoomed in version.
 	    \n- Change pages by swiping your finger across the screen or by using the arrow keys or trackball.
-	    \n- Long press on any page to bring up the option to bookmark a page.
+	    \n- You can fix the orientation in either landscape or portrait modes.
+	    \n- Adjust translation text size to your preference via Settings.
+	    \n- Bookmark a page via Menu > Bookmarks > View.
 	    \n- You can add as many bookmarks as you\'d like.  Long press on a bookmark to remove it.
 	    \n- The application remembers the last page you were reading and displays it when you restart the app.
 	    \n- Don\'t forget to check out the settings.</string>

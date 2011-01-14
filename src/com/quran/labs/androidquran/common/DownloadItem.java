@@ -43,10 +43,11 @@ public class DownloadItem {
 		download_type = downloadType;
 	}
 	
-	public boolean isDownloaded() {		
-		if (download_type == TRNASLATION) {
-			return QuranUtils.hasTranslation(file_url);
-		}
-		return false;
+	public boolean isDownloaded() {
+		return QuranUtils.hasTranslation(file_url);
+//		if (download_type == TRNASLATION) {
+//			return QuranUtils.hasTranslation(file_url);
+//		}
+//		return false;
 	}
 }

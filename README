@@ -11,8 +11,16 @@ patches, comments, etc are welcome.
 
 changelog
 ---------
+version 1.2
+- Sahih Internation Translation introduced
+- Fix orientation in either landscape or portrait modes
+- Adjust translation text size
+- Centralized menu for app
+- Bookmarks are added via menu
+- Fixed bookmarks bug
+
 version 1.1
-- added bookmarks (thanks Hussein)
+- added bookmarks
 - updated browse to allow browsing by juz'
 - remember the last place you left off
 - added help dialog
@@ -24,6 +32,8 @@ version 1.0
 
 todo
 ----
-- add translation for verses
+- add multiple translations
 - add transliteration search
+- add audio
+- add tafsir
 - code cleanup [strings localization, comments, etc]
