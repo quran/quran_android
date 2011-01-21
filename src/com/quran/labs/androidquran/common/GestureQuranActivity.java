@@ -1,15 +1,15 @@
 package com.quran.labs.androidquran.common;
 
-import com.quran.labs.androidquran.util.BookmarksManager;
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.GestureDetector;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.quran.labs.androidquran.util.BookmarksManager;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public abstract class GestureQuranActivity extends BaseQuranActivity {
     protected GestureDetector gestureDetector;

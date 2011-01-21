@@ -74,7 +74,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				if (seekBar.getProgress() !=
 					gallery.getSelectedItemPosition()){
-					renderPage(seekBar.getProgress());
+					renderPage(603 - seekBar.getProgress());
 				}
 			}
 		});
@@ -86,7 +86,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 		width = display.getWidth();
 		
 		int page = loadState(savedInstanceState);
-		renderPage(page - 1);
+		renderPage(604 - page);
 		toggleMode();
 	}
 	
@@ -112,11 +112,11 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    }
 
 	    public Object getItem(int position) {
-	        return position;
+	        return 603 - position;
 	    }
 
 	    public long getItemId(int position) {
-	        return position;
+	        return 603 - position;
 	    }
 
 	    public View getView(int position, View convertView, ViewGroup parent) {
@@ -133,7 +133,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    	}
 	    	
 	        Bitmap bitmap = null;
-	        int page = position + 1;
+	        int page = 604 - position;
 	        if (cache.containsKey("page_" + page)){
 	        	SoftReference<Bitmap> bitmapRef = cache.get("page_" + page);
 	        	bitmap = bitmapRef.get();
@@ -195,8 +195,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	}
 	
 	private void updatePageInfo(int position){
-		titleText.setText(QuranInfo.getPageTitle(position + 1));
-		seekBar.setProgress(position);
+		titleText.setText(QuranInfo.getPageTitle(604 - position));
+		seekBar.setProgress(603 - position);
 	}
 	
 	@Override
@@ -246,14 +246,14 @@ public class ExpViewActivity extends GestureQuranActivity {
 	@Override
 	public void goToNextPage() {
 		int position = gallery.getSelectedItemPosition();
-		if (position < 603)
-			renderPage(position + 1);
+		if (position > 0)
+			renderPage(position - 1);
 	}
 
 	@Override
 	public void goToPreviousPage() {
 		int position = gallery.getSelectedItemPosition();
-		if (position > 0)
-			renderPage(position - 1);
+		if (position < 603)
+			renderPage(position + 1);
 	}
 }
