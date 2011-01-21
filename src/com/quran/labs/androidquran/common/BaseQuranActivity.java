@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,12 +19,20 @@ import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranJumpDialog;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.TranslationActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 
 public abstract class BaseQuranActivity extends Activity {
+
+	protected SharedPreferences prefs;
 	
-	public SharedPreferences prefs;
-	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -83,9 +93,13 @@ public abstract class BaseQuranActivity extends Activity {
 				intent = new Intent(getApplicationContext(), QuranPreferenceActivity.class);
 				startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
-			case R.id.menu_item_bookmarks:
+			case R.id.menu_item_bookmarks_view:
 		    	intent = new Intent(getApplicationContext(), BookmarksActivity.class);
 		    	startActivityForResult(intent, ApplicationConstants.BOOKMARKS_CODE);
+			break;
+			case R.id.menu_item_translations:
+				Intent i = new Intent(this, TranslationActivity.class);
+				startActivityForResult(i, ApplicationConstants.TRANSLATION_VIEW_CODE);
 			break;
 		}
 		return super.onMenuItemSelected(featureId, item);

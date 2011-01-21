@@ -4,15 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
@@ -27,7 +26,6 @@ public class QuranActivity extends BaseQuranActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quran_list);
-        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         QuranSettings.load(prefs);
         
         Intent i = new Intent(this, QuranDataActivity.class);
@@ -46,7 +44,7 @@ public class QuranActivity extends BaseQuranActivity {
 		if (requestCode == ApplicationConstants.DATA_CHECK_CODE){
 			showSuras();
 			Integer lastPage = QuranSettings.getInstance().getLastPage();
-			if (lastPage != null)
+			if (lastPage != null && lastPage != ApplicationConstants.NO_PAGE_SAVED)
 				jumpTo(lastPage);
 		} else if (requestCode == ApplicationConstants.SETTINGS_CODE) {
 			QuranSettings.load(prefs);

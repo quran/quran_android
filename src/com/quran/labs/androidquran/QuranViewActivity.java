@@ -3,27 +3,19 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.AsyncTask.Status;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -43,9 +35,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 
     // Duration in MS
     private static final int ANIMATION_DURATION = 500;
-	private static final int CONTEXT_MENU_REMOVE = 0;
-	private static final int CONTEXT_MENU_ADD = 1;
-	private static final int CONTEXT_MENU_TRANSLATION = 2;
     private AsyncTask<?, ?, ?> currentTask;
     private float pageWidth, pageHeight;
     private QuranScreenInfo qsi;
@@ -59,11 +48,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        QuranSettings.load(prefs);
-		BookmarksManager.load(prefs);
-
-		adjustDisplaySettings();
 		initializeViewElements();
 		initializeQsi();
 		loadPageState(savedInstanceState);
@@ -72,30 +56,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		pageHeight = 0;
 		animate = false;
 		showPage();
-	}
-	
-	private void adjustActivityOrientation() {
-		if (QuranSettings.getInstance().isLockOrientation()) {
-			if (QuranSettings.getInstance().isLandscapeOrientation()) 
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			else 
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		} else {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-		}
-	}
-	
-	private void adjustDisplaySettings() {
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		if (QuranSettings.getInstance().isFullScreen()) {
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-			if (!QuranSettings.getInstance().isShowClock()) {
-				getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			}
-		}	
-		
-		adjustActivityOrientation();
 	}
 	
 	private void initializeViewElements() {
@@ -113,7 +73,7 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		if (requestCode == ApplicationConstants.TRANSLATION_VIEW_CODE){
 			Integer lastPage = data.getIntExtra("page",
 					QuranSettings.getInstance().getLastPage());
-			if (lastPage != null)
+			if (lastPage != null && lastPage != ApplicationConstants.NO_PAGE_SAVED)
 				jumpTo(lastPage);
 		} else if (requestCode == ApplicationConstants.SETTINGS_CODE) {
 			// Reason to finish is that the fullscreen settings requires to call 
@@ -128,43 +88,26 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		}
 	}
 	
-	private void registerListeners() {	
-		imageView.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				int menuType;
-				int menuTitle;
-				if (BookmarksManager.getInstance().contains(page)) {
-					menuType = CONTEXT_MENU_REMOVE;
-					menuTitle = R.string.menu_bookmarks_remove;
-				} else {
-					menuType = CONTEXT_MENU_ADD;
-					menuTitle = R.string.menu_bookmarks_add;
-				}
-				menu.add(0, menuType, 0, menuTitle);
-				menu.add(0, CONTEXT_MENU_TRANSLATION, 1, R.string.menu_translation);
-			}
-		});
-		
+	private void registerListeners() {		
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 	}
 	
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch(item.getItemId()) {
-			case CONTEXT_MENU_ADD:
-			case CONTEXT_MENU_REMOVE:
-				SharedPreferences preferences = getSharedPreferences(ApplicationConstants.PREFERNCES, 0);
-				boolean added = BookmarksManager.toggleBookmarkState(page, preferences);
+			case R.id.menu_item_bookmarks:
+				boolean exists = BookmarksManager.getInstance().contains(page);
+				item.getSubMenu().findItem(R.id.menu_item_bookmarks_add).setVisible(!exists);
+				item.getSubMenu().findItem(R.id.menu_item_bookmarks_remove).setVisible(exists);
+			break;
+			case R.id.menu_item_bookmarks_add:
+			case R.id.menu_item_bookmarks_remove:
+				boolean added = BookmarksManager.toggleBookmarkState(page, prefs);
 				int msgId = added ? R.string.menu_bookmarks_saved : R.string.menu_bookmarks_removed;
 				Toast.makeText(getApplicationContext(), msgId, Toast.LENGTH_SHORT).show();
 			break;
-			case CONTEXT_MENU_TRANSLATION:
-				Intent i = new Intent(this, TranslationActivity.class);
-				i.putExtra("page", page);
-				startActivityForResult(i, ApplicationConstants.TRANSLATION_VIEW_CODE);
-			break;
 		}
-		return true;
+		return super.onMenuItemSelected(featureId, item);
 	}
 	
 	private void loadPageState(Bundle savedInstanceState) {

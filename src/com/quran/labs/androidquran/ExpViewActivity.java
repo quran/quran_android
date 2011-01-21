@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
 
@@ -89,6 +90,12 @@ public class ExpViewActivity extends GestureQuranActivity {
 		toggleMode();
 	}
 	
+	@Override
+	protected void onResume(){
+		super.onResume();
+        QuranSettings.load(prefs);
+	}
+	
 	public class QuranGalleryImageAdapter extends BaseAdapter {
 		private Context context;
 		private LayoutInflater mInflater;
@@ -139,6 +146,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        	cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
 	        }
 			holder.page.setImageBitmap(bitmap);
+			QuranSettings.getInstance().setLastPage(page);
+			QuranSettings.save(prefs);
 			
 			if (!inReadingMode)
 				updatePageInfo(position);

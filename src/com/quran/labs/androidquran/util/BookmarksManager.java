@@ -11,7 +11,7 @@ import com.quran.labs.androidquran.data.ApplicationConstants;
 public class BookmarksManager {
 	
 	private static final String SEPARATOR = ",";
-	private static BookmarksManager instance = new BookmarksManager();
+	private static BookmarksManager instance;
 	private ArrayList<Integer> bookmarks;
 	private HashMap<Integer, Boolean> bookmarksMap;
 	
@@ -21,13 +21,13 @@ public class BookmarksManager {
 	}
 	
 	public static boolean toggleBookmarkState(int page, SharedPreferences preferences) {
-		boolean ret = instance.bookmarksMap.containsKey(page);
+		boolean ret = getInstance().bookmarksMap.containsKey(page);
 		if (ret) {
-			instance.bookmarks.remove(new Integer(page));
-			instance.bookmarksMap.remove(new Integer(page));
+			getInstance().bookmarks.remove(new Integer(page));
+			getInstance().bookmarksMap.remove(new Integer(page));
 		} else { 
-			instance.bookmarks.add(0, page);
-			instance.bookmarksMap.put(new Integer(page), new Boolean(true));
+			getInstance().bookmarks.add(0, page);
+			getInstance().bookmarksMap.put(new Integer(page), new Boolean(true));
 		}
 		save(preferences);
 		return !ret;
@@ -48,18 +48,20 @@ public class BookmarksManager {
 		if (str.length() == 0) return;
 		
 		String [] pages = str.split(SEPARATOR);
-		instance.bookmarks.clear();
+		getInstance().bookmarks.clear();
 		for (String p : pages) {
 			try {
 				Integer page = Integer.valueOf(p);
-				instance.bookmarks.add(page);
-				instance.bookmarksMap.put(page, new Boolean(true));
+				getInstance().bookmarks.add(page);
+				getInstance().bookmarksMap.put(page, new Boolean(true));
 			}
 			catch (NumberFormatException nfe){}
 		}
 	}
 	
 	public static BookmarksManager getInstance() {
+		if (instance == null)
+			instance = new BookmarksManager();
 		return instance;
 	}
 	
