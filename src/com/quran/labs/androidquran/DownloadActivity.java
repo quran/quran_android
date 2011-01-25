@@ -27,8 +27,7 @@ import com.quran.labs.androidquran.util.RestClient;
 
 public class DownloadActivity extends BaseQuranActivity {
 	
-	public static final String URL_KEY = "url";
-	public static final String LOCALHOST_TEST_URL = "http://192.168.2.103/quran_ws/translations.php";
+	public static final String WEB_SERVICE_URL = "http://www.dynamix-systems.com/quranAndroid/translations.php";
 	private String url;
 	private DownloadItem [] downloadItems;
 	private ListView listView;
@@ -43,7 +42,7 @@ public class DownloadActivity extends BaseQuranActivity {
         progressDialog = new ProgressDialog(this);
         
         // Check for url sent in savedInstance
-        url = savedInstanceState != null ? savedInstanceState.getString("url") : LOCALHOST_TEST_URL;
+        url = savedInstanceState != null ? savedInstanceState.getString("url") : WEB_SERVICE_URL;
                 
         new LoadTranslationsTask().execute((Object []) null);
 	}

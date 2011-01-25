@@ -105,8 +105,8 @@ public class QuranUtils {
 		else return false;
 	}
 	
-	public static boolean getTranslation(String filename){
-		String urlString = QuranUtils.DB_HOST + filename;
+	public static boolean getTranslation(String fileUrl){
+		String urlString = fileUrl;
 		InputStream is;
 		try {
 			URL url = new URL(urlString);
@@ -121,7 +121,8 @@ public class QuranUtils {
 		
 		String path = getQuranDatabaseDirectory();
 		if (path != null){
-			path += File.separator + filename;
+			int index = fileUrl.lastIndexOf('/');
+			path += File.separator + fileUrl.substring(index + 1);
 			
 			if (!QuranUtils.makeQuranDatabaseDirectory()){
 				failedToWrite = true;
