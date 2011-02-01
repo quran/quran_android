@@ -1,15 +1,15 @@
 package com.quran.labs.androidquran.common;
 
-import com.quran.labs.androidquran.util.BookmarksManager;
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.GestureDetector;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.quran.labs.androidquran.util.BookmarksManager;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public abstract class GestureQuranActivity extends BaseQuranActivity {
     protected GestureDetector gestureDetector;
@@ -42,13 +42,24 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 				(Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
 				goToNextPage();
 			}
-			
 			return false;
+		}
+		
+		@Override
+		public boolean onDoubleTap(MotionEvent e){
+			return handleDoubleTap(e);
+		}
+		
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent e){
+			return handleSingleTap(e);
 		}
 	}
 	
 	public abstract void goToNextPage();
 	public abstract void goToPreviousPage();
+	public boolean handleSingleTap(MotionEvent e){ return false; }
+	public boolean handleDoubleTap(MotionEvent e){ return false; }
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
