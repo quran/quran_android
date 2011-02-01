@@ -74,7 +74,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				if (seekBar.getProgress() !=
 					gallery.getSelectedItemPosition()){
-					renderPage(603 - seekBar.getProgress());
+					renderPage(ApplicationConstants.PAGES_LAST - 1 - seekBar.getProgress());
 				}
 			}
 		});
@@ -86,7 +86,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 		width = display.getWidth();
 		
 		int page = loadState(savedInstanceState);
-		renderPage(604 - page);
+		renderPage(ApplicationConstants.PAGES_LAST - page);
 		toggleMode();
 	}
 	
@@ -108,15 +108,15 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    }
 
 	    public int getCount() {
-	    	return 604;
+	    	return ApplicationConstants.PAGES_LAST;
 	    }
 
 	    public Object getItem(int position) {
-	        return 603 - position;
+	        return ApplicationConstants.PAGES_LAST - 1 - position;
 	    }
 
 	    public long getItemId(int position) {
-	        return 603 - position;
+	        return ApplicationConstants.PAGES_LAST - 1 - position;
 	    }
 
 	    public View getView(int position, View convertView, ViewGroup parent) {
@@ -133,7 +133,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    	}
 	    	
 	        Bitmap bitmap = null;
-	        int page = 604 - position;
+	        int page = ApplicationConstants.PAGES_LAST - position;
 	        if (cache.containsKey("page_" + page)){
 	        	SoftReference<Bitmap> bitmapRef = cache.get("page_" + page);
 	        	bitmap = bitmapRef.get();
@@ -195,8 +195,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	}
 	
 	private void updatePageInfo(int position){
-		titleText.setText(QuranInfo.getPageTitle(604 - position));
-		seekBar.setProgress(603 - position);
+		titleText.setText(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - position));
+		seekBar.setProgress(ApplicationConstants.PAGES_LAST - 1 - position);
 	}
 	
 	@Override
@@ -253,7 +253,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	@Override
 	public void goToPreviousPage() {
 		int position = gallery.getSelectedItemPosition();
-		if (position < 603)
+		if (position < ApplicationConstants.PAGES_LAST - 1)
 			renderPage(position + 1);
 	}
 }
