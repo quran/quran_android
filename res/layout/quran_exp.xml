@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			 android:layout_width="fill_parent"
-			 android:layout_height="fill_parent">
-	<com.quran.labs.androidquran.widgets.QuranGallery 
-    	android:id="@+id/gallery"
-    	android:background="#FFF4CB"
-    	android:spacing="10px"
-    	android:layout_width="fill_parent"
-    	android:layout_height="fill_parent" />
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<com.quran.labs.androidquran.widgets.QuranGallery
+		android:id="@+id/gallery" android:background="#FFF4CB"
+		android:spacing="10px" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" />
 	<TextView android:id="@+id/pagetitle" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:background="#90000000"
 		android:textColor="#ffffff" android:layout_gravity="top"
@@ -16,4 +13,10 @@
 	<SeekBar android:id="@+id/suraSeek" android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:background="#90000000"
 		android:layout_gravity="bottom" android:gravity="center" android:max="603" />
+	<ImageView android:id="@+id/btnLockOrientation" android:src="@drawable/lock"
+		android:layout_gravity="bottom|right" android:layout_marginBottom="35dip"
+		android:layout_width="wrap_content" android:layout_height="wrap_content" />
+	<ImageView android:id="@+id/btnBookmark" android:src="@drawable/bookmarks"
+		android:layout_gravity="bottom|right" android:layout_marginBottom="70dip"
+		android:layout_width="wrap_content" android:layout_height="wrap_content" />
 </FrameLayout>

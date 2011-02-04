@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
@@ -38,6 +40,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	private Gallery gallery = null;
 	private TextView titleText = null;
 	private SeekBar seekBar = null;
+	private ImageView btnLockOrientation = null;
+	private ImageView btnBookmark = null;
 	
 	// private int page = 1;
 	private int width = 0;
@@ -56,6 +60,24 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    gallery.setSpacing(25);
 	    
         titleText = (TextView)findViewById(R.id.pagetitle);
+        btnLockOrientation = (ImageView)findViewById(R.id.btnLockOrientation);
+        btnLockOrientation.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				QuranSettings qs = QuranSettings.getInstance();
+				qs.setLockOrientation(!qs.isLockOrientation());
+				QuranSettings.save(prefs);
+				adjustLockView();
+			}
+		});
+        
+        btnBookmark = (ImageView) findViewById(R.id.btnBookmark);
+        btnBookmark.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				BookmarksManager.toggleBookmarkState(QuranSettings.getInstance().getLastPage(), prefs);
+				adjustBookmarkView();
+			}
+		});
+        
         seekBar = (SeekBar)findViewById(R.id.suraSeek);
         
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
@@ -87,7 +109,24 @@ public class ExpViewActivity extends GestureQuranActivity {
 		
 		int page = loadState(savedInstanceState);
 		renderPage(ApplicationConstants.PAGES_LAST - page);
+		
 		toggleMode();
+	}
+	
+	private void adjustLockView() {
+		if (QuranSettings.getInstance().isLockOrientation()) {
+			btnLockOrientation.setImageResource(R.drawable.lock);		
+		} else {
+			btnLockOrientation.setImageResource(R.drawable.unlock);
+		}
+	}
+	
+	private void adjustBookmarkView() {
+		if (BookmarksManager.getInstance().contains(QuranSettings.getInstance().getLastPage())) {
+			btnBookmark.setImageResource(R.drawable.bookmarks);
+		} else {
+			btnBookmark.setImageResource(R.drawable.remove_bookmark);
+		}
 	}
 	
 	@Override
@@ -220,6 +259,10 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        
 	        seekBar.setVisibility(TextView.VISIBLE);
 	        titleText.setVisibility(TextView.VISIBLE);
+	        btnLockOrientation.setVisibility(View.VISIBLE);
+	        btnBookmark.setVisibility(View.VISIBLE);
+	        adjustLockView();
+			adjustBookmarkView();
 		}
 		else {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -227,6 +270,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        
 	        seekBar.setVisibility(TextView.INVISIBLE);
 	        titleText.setVisibility(TextView.INVISIBLE);
+	        btnLockOrientation.setVisibility(View.INVISIBLE);
+	        btnBookmark.setVisibility(View.INVISIBLE);
 		}
 		
 		inReadingMode = !inReadingMode;
