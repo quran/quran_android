@@ -135,8 +135,10 @@ public class DownloadActivity extends BaseQuranActivity {
     			loadTranslationsFromDb();    			
     		} else {
     			sendRequest();
-    			dba.deleteAllRecords();
-    			dba.save(downloadItems);
+    			if (downloadItems != null) {
+    				dba.deleteAllRecords();
+        			dba.save(downloadItems);
+    			}
     		}
     		return null;
     	}
