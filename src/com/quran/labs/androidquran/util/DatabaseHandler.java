@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.util;
 
+import java.io.File;
+
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,7 +18,7 @@ public class DatabaseHandler {
 	public DatabaseHandler(String databaseName) throws SQLException {
 		String base = QuranUtils.getQuranDatabaseDirectory();
 		if (base == null) return;
-		String path = base + "/quran." + databaseName + ".db";
+		String path = base + File.separator + databaseName;
 		database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 	}
 	

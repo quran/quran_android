@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.common;
 
+import java.util.ArrayList;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,7 +17,6 @@ public class TranslationsDBAdapter {
 	public static final String COLUMN_ID = "id";
 	public static final String COLUMN_DISPLAY_NAME = "displayName";
 	public static final String COLUMN_FILE_NAME = "fileName";
-	public static final String COLUMN_IS_DOWNLOADED = "isDownloaded";
 	
 	private final Context context;
 	private DatabaseHelper DBHelper;
@@ -25,12 +26,11 @@ public class TranslationsDBAdapter {
 		"CREATE TABLE " + TABLE_NAME + "(" +
 		COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY, " +
 		COLUMN_DISPLAY_NAME + " TEXT NOT NULL , " +
-		COLUMN_FILE_NAME + " TEXT, " +
-		COLUMN_IS_DOWNLOADED + " BOOLEAN)";
+		COLUMN_FILE_NAME + " TEXT)";
 	 
 	public TranslationsDBAdapter(Context ctx) {
         this.context = ctx;
-        DBHelper = new DatabaseHelper(context);        
+        DBHelper = new DatabaseHelper(context);
     }
 
 	public TranslationsDBAdapter open() throws SQLException {
@@ -43,7 +43,6 @@ public class TranslationsDBAdapter {
 		initialValues.put(COLUMN_ID, translation.getId());
 		initialValues.put(COLUMN_DISPLAY_NAME, translation.getDisplayName());
 		initialValues.put(COLUMN_FILE_NAME, translation.getFileName());
-		initialValues.put(COLUMN_IS_DOWNLOADED, translation.isDownloaded());
 		return db.insert(TABLE_NAME, null, initialValues);
 	}
 	
@@ -60,7 +59,13 @@ public class TranslationsDBAdapter {
 	}
 	
 	public TranslationItem[] getAvailableTranslations() {
-		return getTranslations(COLUMN_IS_DOWNLOADED + " = ?", new String[]{"true"});		
+		ArrayList<TranslationItem> result = new ArrayList<TranslationItem>();
+		TranslationItem[] items = getAllTranslations();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].isDownloaded())
+				result.add(items[i]);
+		}
+		return (TranslationItem[])result.toArray(new TranslationItem[result.size()]);		
 	}
 	
 	private TranslationItem[] getTranslations(String selection, String[] selectionArgs) {
@@ -87,11 +92,12 @@ public class TranslationsDBAdapter {
 	}
 	
 	public boolean isDBEmpty(){
-		this.open();
+		open();
 		boolean result = false;
 		Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
-		result = cursor.moveToNext();		
-		this.close();
+		result = cursor.moveToNext();
+		cursor.close();
+		close();
 		return !result;
 	}
 		
@@ -119,9 +125,7 @@ public class TranslationsDBAdapter {
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+			
 		}
-    }    
-
-
+    }
 }

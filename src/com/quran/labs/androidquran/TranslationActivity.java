@@ -21,6 +21,8 @@ import android.view.KeyEvent;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.common.GestureQuranActivity;
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.DatabaseHandler;
@@ -33,12 +35,14 @@ public class TranslationActivity extends GestureQuranActivity {
     private AsyncTask<?, ?, ?> currentTask;
     private ProgressDialog pd = null;
     private TextView txtTranslation;
+    private TranslationsDBAdapter dba;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.quran_translation);
 		txtTranslation = (TextView) findViewById(R.id.translationText);
+		dba = new TranslationsDBAdapter(getApplicationContext());
 		loadPageState(savedInstanceState);
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 		adjustTextSize();
@@ -102,19 +106,19 @@ public class TranslationActivity extends GestureQuranActivity {
 
 		Integer[] bounds = QuranInfo.getPageBounds(page);
 		
-		String[] translationLists = new String[]{ "en_si" };
+		TranslationItem[] translationLists = dba.getAvailableTranslations();
 		List<String> unavailable = new ArrayList<String>();
 		
 		int available = 0;
 		List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
-		for (String tl : translationLists){
-			Map<String, String> currentTranslation = getVerses(tl, bounds);
+		for (TranslationItem tl : translationLists){
+			Map<String, String> currentTranslation = getVerses(tl.getFileName(), bounds);
 			if (currentTranslation != null){
 				translations.add(currentTranslation);
 				available++;
 			}
 			else {
-				unavailable.add(tl);
+				unavailable.add(tl.getDisplayName());
 				translations.add(null);
 			}
 		}

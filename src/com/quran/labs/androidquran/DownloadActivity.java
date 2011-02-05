@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.google.gson.Gson;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.common.DownloadItem;
+import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.RestClient;
@@ -48,7 +49,8 @@ public class DownloadActivity extends BaseQuranActivity {
 	}
 	
 	private void fetchTranslationsList() {
-		new LoadTranslationsTask(!dba.isDBEmpty()).execute((Object []) null);
+		//new LoadTranslationsTask(!dba.isDBEmpty()).execute((Object []) null);
+		new LoadTranslationsTask(false).execute((Object []) null);
 	}
 	
 	private void populateList() {
@@ -84,8 +86,9 @@ public class DownloadActivity extends BaseQuranActivity {
 	        downloadItems = new DownloadItem[nItems];
 	        Gson gson = new Gson();
 	        for (int i = 0; i < nItems; i++) {
-	        	JSONObject json = jsonArray.getJSONObject(i);                	
-	        	downloadItems[i] = gson.fromJson(json.toString(), DownloadItem.class);
+	        	JSONObject json = jsonArray.getJSONObject(i);
+	        	// Just for now use TranslationItem class..
+	        	downloadItems[i] = gson.fromJson(json.toString(), TranslationItem.class);
 	            Log.i("Praeda","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
 	        }	
 		} catch (JSONException e) {
@@ -99,7 +102,7 @@ public class DownloadActivity extends BaseQuranActivity {
 	
 	private void loadTranslationsFromDb() {
 		TranslationsDBAdapter dba = new TranslationsDBAdapter(getApplicationContext());
-		downloadItems = dba.getAllTranslations();
+		downloadItems = dba.getAvailableTranslations();
 	}
 	
 	private abstract class QuranAsyncTask extends AsyncTask<Object [], Object, Object>  {
@@ -132,6 +135,7 @@ public class DownloadActivity extends BaseQuranActivity {
     			loadTranslationsFromDb();    			
     		} else {
     			sendRequest();
+    			dba.deleteAllRecords();
     			dba.save(downloadItems);
     		}
     		return null;
