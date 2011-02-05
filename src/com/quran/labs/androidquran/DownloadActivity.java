@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.google.gson.Gson;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.common.DownloadItem;
+import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.RestClient;
 
@@ -33,6 +34,7 @@ public class DownloadActivity extends BaseQuranActivity {
 	private ListView listView;
 	private ProgressDialog progressDialog;
 	public QuranAsyncTask currentTask;
+	private TranslationsDBAdapter dba;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,11 +42,13 @@ public class DownloadActivity extends BaseQuranActivity {
         setContentView(R.layout.download_list);
         listView = (ListView) findViewById(R.id.download_list);
         progressDialog = new ProgressDialog(this);
-        
-        // Check for url sent in savedInstance
         url = savedInstanceState != null ? savedInstanceState.getString("url") : WEB_SERVICE_URL;
-                
-        new LoadTranslationsTask().execute((Object []) null);
+        dba = new TranslationsDBAdapter(getApplicationContext());
+    	fetchTranslationsList();
+	}
+	
+	private void fetchTranslationsList() {
+		new LoadTranslationsTask(!dba.isDBEmpty()).execute((Object []) null);
 	}
 	
 	private void populateList() {
@@ -56,7 +60,7 @@ public class DownloadActivity extends BaseQuranActivity {
 		List<HashMap<String, String>> lst = new ArrayList<HashMap<String,String>>();
 		for (int i = 0; i < downloadItems.length; i++) {
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("displayName", downloadItems[i].getDisplay_name());
+			map.put("displayName", downloadItems[i].getDisplayName());
 			map.put("is_downloaded",downloadItems[i].isDownloaded() ? "Downloaded" : "");
 			lst.add(map);
 		}
@@ -64,10 +68,8 @@ public class DownloadActivity extends BaseQuranActivity {
 		SimpleAdapter adapter = new SimpleAdapter(this, lst, R.layout.download_row, dataColumns, dataColumnsIds);
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				new DownloadTranslationsTask().execute(new String[] {downloadItems[position].getFile_url()});
+				new DownloadTranslationsTask().execute(new String[] {downloadItems[position].getFileUrl()});
 			}
 		});
 	}
@@ -76,7 +78,7 @@ public class DownloadActivity extends BaseQuranActivity {
 		JSONObject jsonObject = RestClient.connect(url, null, null);
 		// convert json object to Download item array
 		
-		try{
+		try {
 	        JSONArray jsonArray = jsonObject.getJSONArray("data");
 	        int nItems = jsonArray.length();
 	        downloadItems = new DownloadItem[nItems];
@@ -95,6 +97,11 @@ public class DownloadActivity extends BaseQuranActivity {
 		}
 	}
 	
+	private void loadTranslationsFromDb() {
+		TranslationsDBAdapter dba = new TranslationsDBAdapter(getApplicationContext());
+		downloadItems = dba.getAllTranslations();
+	}
+	
 	private abstract class QuranAsyncTask extends AsyncTask<Object [], Object, Object>  {
 		protected void onPreExecute() {
 			currentTask = this;
@@ -109,13 +116,24 @@ public class DownloadActivity extends BaseQuranActivity {
 	}
 	
 	private class LoadTranslationsTask extends QuranAsyncTask {
+		private boolean offline = false;
+		
+		public LoadTranslationsTask(boolean offline) {
+			this.offline = offline;
+		}
+		
 		public void onPreExecute() {
 			super.onPreExecute();
 			progressDialog.setMessage("Loading Translations List, Please wait..");
 		}
 		
     	public String doInBackground(Object[]... params){
-    		sendRequest();
+    		if (offline) {
+    			loadTranslationsFromDb();    			
+    		} else {
+    			sendRequest();
+    			dba.save(downloadItems);
+    		}
     		return null;
     	}
     	    	

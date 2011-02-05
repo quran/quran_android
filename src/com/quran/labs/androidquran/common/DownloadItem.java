@@ -1,53 +1,63 @@
 package com.quran.labs.androidquran.common;
 
-import com.quran.labs.androidquran.util.QuranUtils;
-
 public class DownloadItem {
 	
-	public final static String TRNASLATION = "translation";
+	protected int id;
+	protected String displayName;
+	protected String fileUrl;
+	protected String saveTo;
+	protected String downloadType;
+	protected String fileName;
 	
-	private String display_name;
-	private String file_url;
-	private String save_to;
-	private boolean local_url;
-	private String download_type;
-	
-	public String getDisplay_name() {
-		return display_name;
+	public int getId() {
+		return id;
 	}
-	public void setDisplay_name(String displayName) {
-		display_name = displayName;
+
+	public void setId(int id) {
+		this.id = id;
 	}
-	public String getFile_url() {
-		return file_url;
+
+	public String getDisplayName() {
+		return displayName;
 	}
-	public void setFile_url(String fileUrl) {
-		file_url = fileUrl;
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
-	public String getSave_to() {
-		return save_to;
+
+	public String getFileUrl() {
+		return fileUrl;
 	}
-	public void setSave_to(String saveTo) {
-		save_to = saveTo;
+
+	public void setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
 	}
-	public boolean isLocal_url() {
-		return local_url;
+
+	public String getSaveTo() {
+		return saveTo;
 	}
-	public void setLocal_url(boolean localUrl) {
-		local_url = localUrl;
+
+	public void setSaveTo(String saveTo) {
+		this.saveTo = saveTo;
 	}
-	public String getDownload_type() {
-		return download_type;
+
+	public String getDownloadType() {
+		return downloadType;
 	}
-	public void setDownload_type(String downloadType) {
-		download_type = downloadType;
+
+	public void setDownloadType(String downloadType) {
+		this.downloadType = downloadType;
 	}
-	
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	public boolean isDownloaded() {
-		return QuranUtils.hasTranslation(file_url);
-//		if (download_type == TRNASLATION) {
-//			return QuranUtils.hasTranslation(file_url);
-//		}
-//		return false;
+		return false;
 	}
 }
