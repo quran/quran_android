@@ -65,12 +65,23 @@
 	<string name="settings_full_screen">Full Screen Mode.\nHave a larger view area for pages.</string>
 	<string name="settings_show_clock">Show Clock in full screen mode.</string>
 	<string name="settings_keep_screen_on">Keep screen on.</string>
-<string name="prefs_use_arabic_names">useArabicNames</string>
-<string name="prefs_full_screen">fullScreen</string>
-<string name="prefs_show_clock">showClock</string>
-<string name="prefs_keep_screen_on">keepScreenOn</string>
-<string name="prefs_lock_orientation">lockOrientation</string>
-<string name="prefs_landscape_orientation">landscapeOrientation</string>
-<string name="prefs_translation_text_size">translationTextSize</string>
-<string name="prefs_path">QuranAndroid_Settings</string>
+	<string name="prefs_use_arabic_names">useArabicNames</string>
+	<string name="prefs_full_screen">fullScreen</string>
+	<string name="prefs_show_clock">showClock</string>
+	<string name="prefs_keep_screen_on">keepScreenOn</string>
+	<string name="prefs_lock_orientation">lockOrientation</string>
+	<string name="prefs_landscape_orientation">landscapeOrientation</string>
+	<string name="prefs_translation_text_size">translationTextSize</string>
+	<string name="prefs_path">QuranAndroid_Settings</string>
+	<string name="search_hint">Search the Quran</string>
+	<string name="quranSearchType">Verses of the Quran</string>
+
+	<!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+      <item quantity="one">result for \"%s\": </item>
+      <item quantity="other">results for \"%s\": </item>
+    </plurals>
+
+    <!-- Search failure message. -->
+    <string name="no_results">No results found for \"%s\"</string>
 </resources>

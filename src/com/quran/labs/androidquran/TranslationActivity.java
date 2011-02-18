@@ -24,8 +24,8 @@ import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.DatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.util.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 

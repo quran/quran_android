@@ -65,6 +65,7 @@ public class TranslationsDBAdapter {
 			if (items[i].isDownloaded())
 				result.add(items[i]);
 		}
+		close();
 		return (TranslationItem[])result.toArray(new TranslationItem[result.size()]);		
 	}
 	

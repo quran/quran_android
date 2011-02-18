@@ -25,45 +25,49 @@ public final class R {
         public static final int unlock=0x7f02000b;
     }
     public static final class id {
-        public static final int bgPageview=0x7f07001a;
-        public static final int btnBookmark=0x7f070012;
-        public static final int btnEmailUs=0x7f070002;
-        public static final int btnHelpBack=0x7f07000a;
-        public static final int btnLockOrientation=0x7f070011;
-        public static final int cancelButton=0x7f07000c;
-        public static final int display_name=0x7f070006;
-        public static final int download_list=0x7f070005;
-        public static final int gallery=0x7f07000e;
-        public static final int is_downloaded=0x7f070007;
-        public static final int jumpButton=0x7f07000d;
-        public static final int lstBookmarks=0x7f070004;
-        public static final int menu_item_about_us=0x7f07001e;
-        public static final int menu_item_bookmarks=0x7f070020;
-        public static final int menu_item_bookmarks_add=0x7f070022;
-        public static final int menu_item_bookmarks_remove=0x7f070023;
-        public static final int menu_item_bookmarks_view=0x7f070021;
-        public static final int menu_item_get_translations=0x7f070026;
-        public static final int menu_item_help=0x7f070025;
-        public static final int menu_item_jump=0x7f07001d;
-        public static final int menu_item_settings=0x7f07001f;
-        public static final int menu_item_translations=0x7f070024;
-        public static final int pageImageView=0x7f070014;
-        public static final int pageScrollView=0x7f070015;
-        public static final int page_field=0x7f07000b;
-        public static final int page_info=0x7f070018;
-        public static final int pagetitle=0x7f07000f;
-        public static final int pageview=0x7f07001b;
-        public static final int splashview=0x7f07001c;
-        public static final int suraSeek=0x7f070010;
-        public static final int sura_info=0x7f070017;
-        public static final int sura_title=0x7f070016;
-        public static final int suralist=0x7f070013;
-        public static final int translationText=0x7f070019;
-        public static final int txtAbout=0x7f070003;
-        public static final int txtCopyRights=0x7f070001;
-        public static final int txtDevelopedBy=0x7f070000;
-        public static final int txtHelp=0x7f070009;
-        public static final int txtHelpTitle=0x7f070008;
+        public static final int bgPageview=0x7f08001a;
+        public static final int btnBookmark=0x7f080012;
+        public static final int btnEmailUs=0x7f080002;
+        public static final int btnHelpBack=0x7f08000a;
+        public static final int btnLockOrientation=0x7f080011;
+        public static final int cancelButton=0x7f08000c;
+        public static final int display_name=0x7f080006;
+        public static final int download_list=0x7f080005;
+        public static final int gallery=0x7f08000e;
+        public static final int is_downloaded=0x7f080007;
+        public static final int jumpButton=0x7f08000d;
+        public static final int lstBookmarks=0x7f080004;
+        public static final int menu_item_about_us=0x7f080022;
+        public static final int menu_item_bookmarks=0x7f080024;
+        public static final int menu_item_bookmarks_add=0x7f080026;
+        public static final int menu_item_bookmarks_remove=0x7f080027;
+        public static final int menu_item_bookmarks_view=0x7f080025;
+        public static final int menu_item_get_translations=0x7f08002a;
+        public static final int menu_item_help=0x7f080029;
+        public static final int menu_item_jump=0x7f080021;
+        public static final int menu_item_settings=0x7f080023;
+        public static final int menu_item_translations=0x7f080028;
+        public static final int pageImageView=0x7f080014;
+        public static final int pageScrollView=0x7f080015;
+        public static final int page_field=0x7f08000b;
+        public static final int page_info=0x7f080018;
+        public static final int pagetitle=0x7f08000f;
+        public static final int pageview=0x7f08001b;
+        public static final int results_list=0x7f08001d;
+        public static final int search_area=0x7f08001c;
+        public static final int splashview=0x7f080020;
+        public static final int suraSeek=0x7f080010;
+        public static final int sura_info=0x7f080017;
+        public static final int sura_title=0x7f080016;
+        public static final int suralist=0x7f080013;
+        public static final int translationText=0x7f080019;
+        public static final int txtAbout=0x7f080003;
+        public static final int txtCopyRights=0x7f080001;
+        public static final int txtDevelopedBy=0x7f080000;
+        public static final int txtHelp=0x7f080009;
+        public static final int txtHelpTitle=0x7f080008;
+        public static final int verseLocation=0x7f08001f;
+        public static final int verseText=0x7f08001e;
     }
     public static final class layout {
         public static final int about_us=0x7f030000;
@@ -79,10 +83,17 @@ public final class R {
         public static final int quran_row=0x7f03000a;
         public static final int quran_translation=0x7f03000b;
         public static final int quran_view=0x7f03000c;
-        public static final int splash_screen=0x7f03000d;
+        public static final int search=0x7f03000d;
+        public static final int search_result=0x7f03000e;
+        public static final int splash_screen=0x7f03000f;
     }
     public static final class menu {
-        public static final int option_menu=0x7f060000;
+        public static final int option_menu=0x7f070000;
+    }
+    public static final class plurals {
+        /**  Shown above search results when we receive a search request. 
+         */
+        public static final int search_results=0x7f060000;
     }
     public static final class string {
         public static final int aboutUs=0x7f050022;
@@ -120,6 +131,9 @@ public final class R {
         public static final int menu_jump_last_page=0x7f05000f;
         public static final int menu_settings=0x7f05000e;
         public static final int menu_translation=0x7f050013;
+        /**  Search failure message. 
+         */
+        public static final int no_results=0x7f050033;
         public static final int page_hint=0x7f05001b;
         public static final int prefs_full_screen=0x7f05002a;
         public static final int prefs_keep_screen_on=0x7f05002c;
@@ -129,6 +143,8 @@ public final class R {
         public static final int prefs_show_clock=0x7f05002b;
         public static final int prefs_translation_text_size=0x7f05002f;
         public static final int prefs_use_arabic_names=0x7f050029;
+        public static final int quranSearchType=0x7f050032;
+        public static final int search_hint=0x7f050031;
         public static final int settings_full_screen=0x7f050026;
         public static final int settings_keep_screen_on=0x7f050028;
         public static final int settings_show_clock=0x7f050027;
@@ -137,5 +153,6 @@ public final class R {
     }
     public static final class xml {
         public static final int quran_preferences=0x7f040000;
+        public static final int searchable=0x7f040001;
     }
 }
