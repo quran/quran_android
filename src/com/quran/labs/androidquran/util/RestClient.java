@@ -17,6 +17,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -55,8 +56,8 @@ public class RestClient {
 			Log.d(e.toString(), e.getMessage());			
 		} catch (IOException e) {
 			Log.d(e.toString(), e.getMessage());			
-		} catch (Exception e) {		
-			Log.d("exception", e.getMessage());			
+		} catch (JSONException e) {
+			Log.d(e.toString(), e.getMessage());
 		}
 		return null;
 	}

@@ -8,7 +8,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +40,7 @@ public class DownloadActivity extends BaseQuranActivity {
 	private ProgressDialog progressDialog;
 	public QuranAsyncTask currentTask;
 	private TranslationsDBAdapter dba;
+	private QuranAsyncTask asyncTask;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,15 +50,24 @@ public class DownloadActivity extends BaseQuranActivity {
         progressDialog = new ProgressDialog(this);
         url = savedInstanceState != null ? savedInstanceState.getString("url") : WEB_SERVICE_URL;
         dba = new TranslationsDBAdapter(getApplicationContext());
-    	fetchTranslationsList();
+        connect();
+	}
+	
+	private void connect() {
+		if (isInternetOn())
+        	fetchTranslationsList();
+        else
+        	onConnectionFailed();
 	}
 	
 	private void fetchTranslationsList() {
 		//new LoadTranslationsTask(!dba.isDBEmpty()).execute((Object []) null);
-		new LoadTranslationsTask(false).execute((Object []) null);
+		asyncTask = new LoadTranslationsTask(false);
+		asyncTask.execute((Object []) null);
 	}
 	
 	private void populateList() {
+		if (downloadItems == null) return;
 		// Set up column mappings
 		String [] dataColumns = new String [] {"displayName", "is_downloaded"};
 		int [] dataColumnsIds = new int [] {R.id.display_name, R.id.is_downloaded};
@@ -77,10 +91,10 @@ public class DownloadActivity extends BaseQuranActivity {
 	}
 	
 	private void sendRequest() {
-		JSONObject jsonObject = RestClient.connect(url, null, null);
-		// convert json object to Download item array
+		JSONObject jsonObject;
 		
 		try {
+			jsonObject = RestClient.connect(url, null, null);
 	        JSONArray jsonArray = jsonObject.getJSONArray("data");
 	        int nItems = jsonArray.length();
 	        downloadItems = new DownloadItem[nItems];
@@ -96,7 +110,7 @@ public class DownloadActivity extends BaseQuranActivity {
 			Log.d("JSON Exception", e.getMessage());
 		} catch (NullPointerException e){
 			// Show Error msg
-			Log.d("JSON Exception", e.getMessage());
+			Log.d("JSON Exception", "Empty message");
 		}
 	}
 	
@@ -146,9 +160,27 @@ public class DownloadActivity extends BaseQuranActivity {
     	@Override
     	public void onPostExecute(Object result){
     		super.onPostExecute(result);
-    		populateList();
+			populateList();
     	}
     }
+	
+	private void onConnectionFailed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(DownloadActivity.this);
+		builder.setMessage("Unable to connect to server, make sure that your Internet connection is active. Retry ?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                connect();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
 	
 	private class DownloadTranslationsTask extends QuranAsyncTask {
 		public void onPreExecute() {
@@ -174,5 +206,11 @@ public class DownloadActivity extends BaseQuranActivity {
     		Toast.makeText(DownloadActivity.this, "File Downloaded", Toast.LENGTH_SHORT);
     	}
     }
-
+	
+	public boolean isInternetOn() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (cm != null && cm.getActiveNetworkInfo() != null) 
+			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
+		return false;
+	}
 }
