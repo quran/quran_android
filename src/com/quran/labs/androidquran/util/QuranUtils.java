@@ -14,7 +14,6 @@ import android.util.Log;
 public class QuranUtils {
 	
 	public static boolean failedToWrite = false;
-	public static String DB_HOST = "http://labs.quran.com/androidquran/databases/";
 	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
 	private static String QURAN_BASE = File.separator + "quran_android" + File.separator;
 	private static String DATABASE_DIRECTORY = "databases";
@@ -105,7 +104,7 @@ public class QuranUtils {
 		else return false;
 	}
 	
-	public static boolean getTranslation(String fileUrl){
+	public static boolean getTranslation(String fileUrl, String fileName){
 		String urlString = fileUrl;
 		InputStream is;
 		try {
@@ -121,8 +120,7 @@ public class QuranUtils {
 		
 		String path = getQuranDatabaseDirectory();
 		if (path != null){
-			int index = fileUrl.lastIndexOf('/');
-			path += File.separator + fileUrl.substring(index + 1);
+			path += File.separator + fileName;
 			
 			if (!QuranUtils.makeQuranDatabaseDirectory()){
 				failedToWrite = true;

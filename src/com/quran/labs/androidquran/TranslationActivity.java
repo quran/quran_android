@@ -6,15 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.AsyncTask.Status;
 import android.text.Html;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -27,13 +23,10 @@ import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.DatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class TranslationActivity extends GestureQuranActivity {
 
 	private int page = 1;
-    private AsyncTask<?, ?, ?> currentTask;
-    private ProgressDialog pd = null;
     private TextView txtTranslation;
     private TranslationsDBAdapter dba;
 	
@@ -132,7 +125,6 @@ public class TranslationActivity extends GestureQuranActivity {
 			return;
 		}
 		
-		
 		int numTranslations = translationLists.length;
 		
 		int i = bounds[0];
@@ -191,62 +183,10 @@ public class TranslationActivity extends GestureQuranActivity {
 		finish();	
 	}
 	
-	public void startDownload(List<String> whatToGet){
-		pd = ProgressDialog.show(this, "Downloading..", "Please Wait...", true, true,
-				new OnCancelListener(){
-
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						cancelDownload();
-					}
-			
-		});
-		currentTask = new DownloadTranslationsTask().execute(whatToGet.toArray());
-	}
-	
-	public void cancelDownload(){
-		pd.dismiss();
-		currentTask.cancel(true);
-		goBack();
-	}
-	
-	public void doneDownloading(Integer downloaded){
-		pd.dismiss();
-		if (downloaded > 0) renderTranslation();
-		else goBack();
-	}
-	
-	private class DownloadTranslationsTask extends AsyncTask<Object[], Void, Integer> {
-    	public Integer doInBackground(Object[]... params){
-    		Integer numDownloads = 0;
-    		
-    		Object[] translations = (Object[]) params[0];
-    		for (Object dbName : translations){
-    			String tlFile = "quran." + (String)dbName + ".db";
-    			if (QuranUtils.getTranslation(tlFile))
-    				numDownloads++;
-    		}
-    		return numDownloads;
-    	}
-    	    	
-    	@Override
-    	public void onPostExecute(Integer downloaded){
-    		currentTask = null;
-    		doneDownloading(downloaded);
-    	}
-    }
-	
 	@Override
 	protected void onSaveInstanceState(Bundle outState){
 		super.onSaveInstanceState(outState);
 		outState.putInt("page", page);
-	}
-	
-	@Override
-	protected void onDestroy(){
-		super.onDestroy();
-		if ((currentTask != null) && (currentTask.getStatus() == Status.RUNNING))
-			currentTask.cancel(true);
 	}
 	
 	public void promptForTranslationDownload(final List<String> translationsToGet){
@@ -257,7 +197,9 @@ public class TranslationActivity extends GestureQuranActivity {
 			new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
-					startDownload(translationsToGet);
+					TranslationActivity.this.finish();
+					Intent intent = new Intent(getApplicationContext(), DownloadActivity.class);
+					startActivity(intent);
 				}
     	});
     	

@@ -12,9 +12,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,7 +42,6 @@ public class DownloadActivity extends BaseQuranActivity {
 	private ProgressDialog progressDialog;
 	public QuranAsyncTask currentTask;
 	private TranslationsDBAdapter dba;
-	private QuranAsyncTask asyncTask;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,12 @@ public class DownloadActivity extends BaseQuranActivity {
         setContentView(R.layout.download_list);
         listView = (ListView) findViewById(R.id.download_list);
         progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(true);
+        progressDialog.setOnCancelListener(new OnCancelListener() {
+			public void onCancel(DialogInterface dialog) {
+				cancelDownload();
+			}
+		});
         url = savedInstanceState != null ? savedInstanceState.getString("url") : WEB_SERVICE_URL;
         dba = new TranslationsDBAdapter(getApplicationContext());
         connect();
@@ -61,9 +68,9 @@ public class DownloadActivity extends BaseQuranActivity {
 	}
 	
 	private void fetchTranslationsList() {
-		//new LoadTranslationsTask(!dba.isDBEmpty()).execute((Object []) null);
-		asyncTask = new LoadTranslationsTask(false);
-		asyncTask.execute((Object []) null);
+		//currentTask = new LoadTranslationsTask(!dba.isDBEmpty());
+		currentTask = new LoadTranslationsTask(false);
+		currentTask.execute((Object []) null);
 	}
 	
 	private void populateList() {
@@ -85,7 +92,7 @@ public class DownloadActivity extends BaseQuranActivity {
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				new DownloadTranslationsTask().execute(new String[] {downloadItems[position].getFileUrl()});
+				new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
 			}
 		});
 	}
@@ -150,7 +157,8 @@ public class DownloadActivity extends BaseQuranActivity {
     		} else {
     			sendRequest();
     			if (downloadItems != null) {
-    				dba.deleteAllRecords();
+    				int nrecords = dba.deleteAllRecords();
+    				Log.i("Translations DB", "Deleted " + nrecords + " records");
         			dba.save(downloadItems);
     			}
     		}
@@ -170,12 +178,13 @@ public class DownloadActivity extends BaseQuranActivity {
 		       .setCancelable(false)
 		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
-		                connect();
+		        	   dialog.dismiss();
+		        	   connect();
 		           }
 		       })
 		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
+		        	   dialog.dismiss();
 		           }
 		       });
 		AlertDialog alert = builder.create();
@@ -188,14 +197,10 @@ public class DownloadActivity extends BaseQuranActivity {
 			progressDialog.setMessage("Downloading Translation, Please wait..");
 		}
 		
-    	public String doInBackground(Object[]... params){
-    		Integer numDownloads = 0;
-    		
-    		Object[] translations = (Object[]) params[0];
-    		for (Object dbName : translations){
-    			if (QuranUtils.getTranslation((String)dbName))
-    				numDownloads++;
-    		}
+    	public String doInBackground(Object[]... params){   		
+    		String str = (String) ((Object []) params[0])[0];
+    		int position = Integer.parseInt(str);
+    		QuranUtils.getTranslation(downloadItems[position].getFileUrl(), downloadItems[position].getFileName());
     		return null;
     	}
     	    	
@@ -203,14 +208,27 @@ public class DownloadActivity extends BaseQuranActivity {
     	public void onPostExecute(Object result){
     		super.onPostExecute(result);
     		currentTask = null;
-    		Toast.makeText(DownloadActivity.this, "File Downloaded", Toast.LENGTH_SHORT);
+    		Toast.makeText(DownloadActivity.this, "File Downloaded", Toast.LENGTH_LONG);
     	}
     }
+	
+	public void cancelDownload(){
+		progressDialog.dismiss();
+		currentTask.cancel(true);
+	}
 	
 	public boolean isInternetOn() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (cm != null && cm.getActiveNetworkInfo() != null) 
 			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
 		return false;
+	}
+	
+	@Override
+	protected void onDestroy(){
+		super.onDestroy();
+		progressDialog.dismiss();
+		if ((currentTask != null) && (currentTask.getStatus() == Status.RUNNING))
+			currentTask.cancel(true);
 	}
 }

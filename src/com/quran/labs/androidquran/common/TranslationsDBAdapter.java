@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class TranslationsDBAdapter {
 	
@@ -51,6 +52,7 @@ public class TranslationsDBAdapter {
 		for (int i = 0; i < downloadItems.length; i++) {
 			insert(downloadItems[i]);
 		}
+		Log.i("Translations DB", "Inserted " + downloadItems.length + " records");
 		close();
 	}
 	
@@ -65,7 +67,6 @@ public class TranslationsDBAdapter {
 			if (items[i].isDownloaded())
 				result.add(items[i]);
 		}
-		close();
 		return (TranslationItem[])result.toArray(new TranslationItem[result.size()]);		
 	}
 	
@@ -74,6 +75,7 @@ public class TranslationsDBAdapter {
 		open();
 		Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, COLUMN_DISPLAY_NAME);
 		results = loadTranslations(cursor);
+		cursor.close();
 		close();
 		return results;
 	}
@@ -103,10 +105,13 @@ public class TranslationsDBAdapter {
 	}
 		
 	public int deleteAllRecords() {
+		open();
 		try {		
 			return db.delete(TABLE_NAME, null, null);
 		} catch (Exception e) {
 			return 0;
+		} finally {
+			close();
 		}
 	}
 		    
