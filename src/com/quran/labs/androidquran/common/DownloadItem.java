@@ -2,6 +2,9 @@ package com.quran.labs.androidquran.common;
 
 public class DownloadItem {
 	
+	public static final String DOWNLOAD_TYPE_TRANSLATION = "translation";
+	public static final String DOWNLOAD_TYPE_SCRIPT = "script";
+	
 	protected int id;
 	protected String displayName;
 	protected String fileUrl;

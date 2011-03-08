@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_height="fill_parent" android:orientation="vertical"
+		android:minHeight="50dp" android:gravity="center_vertical">
+		<TextView android:id="@+id/txt_arabic_script"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:textColor="#ffffff" android:visibility="invisible"
+			android:textSize="16sp" />
+		<TextView android:id="@+id/txt_transliteration"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:textColor="#ffffff" android:visibility="invisible"
+			android:textSize="16sp" />
+		<TextView android:id="@+id/txt_translation"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:textColor="#ffffff" android:visibility="invisible"
+			android:textSize="16sp" />
+		<TextView android:id="@+id/txt_translation2"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:textColor="#ffffff" android:visibility="invisible"
+			android:textSize="16sp" />
+	</LinearLayout>
+	<TextView android:id="@+id/ayah_num" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:gravity="right|center_vertical"
+		android:textSize="14sp" />
+</LinearLayout>

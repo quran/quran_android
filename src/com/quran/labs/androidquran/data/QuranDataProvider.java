@@ -91,7 +91,7 @@ public class QuranDataProvider extends ContentProvider {
 	private Cursor getSuggestions(String query){
 		if (query.length() < 3) return null;
 		
-		TranslationItem[] items = dba.getAvailableTranslations();
+		TranslationItem[] items = dba.getAvailableTranslations(true);
 		String[] cols = new String[]{ BaseColumns._ID,
 				SearchManager.SUGGEST_COLUMN_TEXT_1,
 				SearchManager.SUGGEST_COLUMN_TEXT_2 };

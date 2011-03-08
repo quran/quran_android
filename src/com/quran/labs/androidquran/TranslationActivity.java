@@ -99,7 +99,7 @@ public class TranslationActivity extends GestureQuranActivity {
 
 		Integer[] bounds = QuranInfo.getPageBounds(page);
 		
-		TranslationItem[] translationLists = dba.getAvailableTranslations();
+		TranslationItem[] translationLists = dba.getAvailableTranslations(true);
 		List<String> unavailable = new ArrayList<String>();
 		
 		int available = 0;

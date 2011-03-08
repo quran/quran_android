@@ -12,12 +12,13 @@ import android.util.Log;
 
 public class TranslationsDBAdapter {
 	
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	public static final String TABLE_NAME = "Translations";
 
 	public static final String COLUMN_ID = "id";
 	public static final String COLUMN_DISPLAY_NAME = "displayName";
 	public static final String COLUMN_FILE_NAME = "fileName";
+	public static final String COLUMN_DOWNLOAD_TYPE = "downloadType";
 	
 	private final Context context;
 	private DatabaseHelper DBHelper;
@@ -26,8 +27,9 @@ public class TranslationsDBAdapter {
 	private static final String DATABASE_CREATE = 
 		"CREATE TABLE " + TABLE_NAME + "(" +
 		COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY, " +
-		COLUMN_DISPLAY_NAME + " TEXT NOT NULL , " +
-		COLUMN_FILE_NAME + " TEXT)";
+		COLUMN_DISPLAY_NAME + " TEXT NOT NULL, " +
+		COLUMN_DOWNLOAD_TYPE + " TEXT NOT NULL, " +
+		COLUMN_FILE_NAME + " TEXT NOT NULL)";
 	 
 	public TranslationsDBAdapter(Context ctx) {
         this.context = ctx;
@@ -44,6 +46,7 @@ public class TranslationsDBAdapter {
 		initialValues.put(COLUMN_ID, translation.getId());
 		initialValues.put(COLUMN_DISPLAY_NAME, translation.getDisplayName());
 		initialValues.put(COLUMN_FILE_NAME, translation.getFileName());
+		initialValues.put(COLUMN_DOWNLOAD_TYPE, translation.getDownloadType());
 		return db.insert(TABLE_NAME, null, initialValues);
 	}
 	
@@ -57,12 +60,25 @@ public class TranslationsDBAdapter {
 	}
 	
 	public TranslationItem[] getAllTranslations() {
+		return getTranslations(COLUMN_DOWNLOAD_TYPE + " = ?", new String[]{DownloadItem.DOWNLOAD_TYPE_TRANSLATION});
+	}
+	
+	public TranslationItem[] getAll() {
 		return getTranslations(null, null);
 	}
 	
+	public TranslationItem getQuranScript() {
+		TranslationItem[] items = getTranslations(COLUMN_DOWNLOAD_TYPE + " = ?", new String[]{DownloadItem.DOWNLOAD_TYPE_SCRIPT}); 
+		return items.length > 0 && items[0].isDownloaded() ? items[0] : null;
+	}
+	
 	public TranslationItem[] getAvailableTranslations() {
+		return getAvailableTranslations(false);
+	}
+	
+	public TranslationItem[] getAvailableTranslations(boolean includeScript) {
 		ArrayList<TranslationItem> result = new ArrayList<TranslationItem>();
-		TranslationItem[] items = getAllTranslations();
+		TranslationItem[] items = includeScript ? getAll() : getAllTranslations();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].isDownloaded())
 				result.add(items[i]);
