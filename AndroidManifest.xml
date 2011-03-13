@@ -20,6 +20,7 @@
 		<service android:enabled="true" android:name=".service.QuranDataService" />
 		<activity android:name=".BookmarksActivity"></activity>
 		<activity android:name=".TranslationActivity"></activity>
+		<activity android:name=".DownloadActivity"></activity>
 		<activity android:name=".QuranPreferenceActivity"></activity>
 		<activity android:name=".SearchActivity" android:launchMode="singleTop">
 			<intent-filter>
@@ -40,4 +41,5 @@
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest> 

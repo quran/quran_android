@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.data;
 
+import java.io.File;
+
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +22,7 @@ public class DatabaseHandler {
 	public DatabaseHandler(String databaseName) throws SQLException {
 		String base = QuranUtils.getQuranDatabaseDirectory();
 		if (base == null) return;
-		String path = base + "/quran." + databaseName + ".db";
+		String path = base + File.separator + databaseName;
 		database = SQLiteDatabase.openDatabase(path, null,
 				SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 	}
@@ -49,7 +51,6 @@ public class DatabaseHandler {
 		return search(query, VERSE_TABLE);
 	}
 	
-	
 	public Cursor search(String query, String table){
 		if (!validDatabase()) return null;
 		
@@ -58,5 +59,8 @@ public class DatabaseHandler {
 				" like '%" + query + "%' limit 50", null);
 	}
 	
-	public void closeDatabase(){ if (database != null) database.close(); }
+	public void closeDatabase() {
+		if (database != null)
+			database.close();
+	}
 }

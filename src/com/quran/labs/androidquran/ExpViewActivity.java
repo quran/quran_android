@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
@@ -38,6 +40,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	private Gallery gallery = null;
 	private TextView titleText = null;
 	private SeekBar seekBar = null;
+	private ImageView btnLockOrientation = null;
+	private ImageView btnBookmark = null;
 	
 	// private int page = 1;
 	private int width = 0;
@@ -56,6 +60,24 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    gallery.setSpacing(25);
 	    
         titleText = (TextView)findViewById(R.id.pagetitle);
+        btnLockOrientation = (ImageView)findViewById(R.id.btnLockOrientation);
+        btnLockOrientation.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				QuranSettings qs = QuranSettings.getInstance();
+				qs.setLockOrientation(!qs.isLockOrientation());
+				QuranSettings.save(prefs);
+				adjustLockView();
+			}
+		});
+        
+        btnBookmark = (ImageView) findViewById(R.id.btnBookmark);
+        btnBookmark.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				BookmarksManager.toggleBookmarkState(QuranSettings.getInstance().getLastPage(), prefs);
+				adjustBookmarkView();
+			}
+		});
+        
         seekBar = (SeekBar)findViewById(R.id.suraSeek);
         
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
@@ -74,7 +96,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				if (seekBar.getProgress() !=
 					gallery.getSelectedItemPosition()){
-					renderPage(603 - seekBar.getProgress());
+					renderPage(ApplicationConstants.PAGES_LAST - 1 - seekBar.getProgress());
 				}
 			}
 		});
@@ -86,8 +108,25 @@ public class ExpViewActivity extends GestureQuranActivity {
 		width = display.getWidth();
 		
 		int page = loadState(savedInstanceState);
-		renderPage(604 - page);
+		renderPage(ApplicationConstants.PAGES_LAST - page);
+		
 		toggleMode();
+	}
+	
+	private void adjustLockView() {
+		if (QuranSettings.getInstance().isLockOrientation()) {
+			btnLockOrientation.setImageResource(R.drawable.lock);		
+		} else {
+			btnLockOrientation.setImageResource(R.drawable.unlock);
+		}
+	}
+	
+	private void adjustBookmarkView() {
+		if (BookmarksManager.getInstance().contains(QuranSettings.getInstance().getLastPage())) {
+			btnBookmark.setImageResource(R.drawable.bookmarks);
+		} else {
+			btnBookmark.setImageResource(R.drawable.remove_bookmark);
+		}
 	}
 	
 	@Override
@@ -108,15 +147,15 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    }
 
 	    public int getCount() {
-	    	return 604;
+	    	return ApplicationConstants.PAGES_LAST;
 	    }
 
 	    public Object getItem(int position) {
-	        return 603 - position;
+	        return ApplicationConstants.PAGES_LAST - 1 - position;
 	    }
 
 	    public long getItemId(int position) {
-	        return 603 - position;
+	        return ApplicationConstants.PAGES_LAST - 1 - position;
 	    }
 
 	    public View getView(int position, View convertView, ViewGroup parent) {
@@ -133,7 +172,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    	}
 	    	
 	        Bitmap bitmap = null;
-	        int page = 604 - position;
+	        int page = ApplicationConstants.PAGES_LAST - position;
 	        if (cache.containsKey("page_" + page)){
 	        	SoftReference<Bitmap> bitmapRef = cache.get("page_" + page);
 	        	bitmap = bitmapRef.get();
@@ -195,8 +234,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	}
 	
 	private void updatePageInfo(int position){
-		titleText.setText(QuranInfo.getPageTitle(604 - position));
-		seekBar.setProgress(603 - position);
+		titleText.setText(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - position));
+		seekBar.setProgress(ApplicationConstants.PAGES_LAST - 1 - position);
 	}
 	
 	@Override
@@ -220,6 +259,10 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        
 	        seekBar.setVisibility(TextView.VISIBLE);
 	        titleText.setVisibility(TextView.VISIBLE);
+	        btnLockOrientation.setVisibility(View.VISIBLE);
+	        btnBookmark.setVisibility(View.VISIBLE);
+	        adjustLockView();
+			adjustBookmarkView();
 		}
 		else {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -227,6 +270,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        
 	        seekBar.setVisibility(TextView.INVISIBLE);
 	        titleText.setVisibility(TextView.INVISIBLE);
+	        btnLockOrientation.setVisibility(View.INVISIBLE);
+	        btnBookmark.setVisibility(View.INVISIBLE);
 		}
 		
 		inReadingMode = !inReadingMode;
@@ -253,7 +298,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	@Override
 	public void goToPreviousPage() {
 		int position = gallery.getSelectedItemPosition();
-		if (position < 603)
+		if (position < ApplicationConstants.PAGES_LAST - 1)
 			renderPage(position + 1);
 	}
 }

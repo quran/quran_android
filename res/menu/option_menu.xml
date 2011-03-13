@@ -24,4 +24,7 @@
           
     <item android:id="@+id/menu_item_help"
           android:icon="@drawable/help" android:title="@string/menu_help"/>
+          
+		<item android:id="@+id/menu_item_get_translations"
+          android:icon="@drawable/help" android:title="@string/menu_get_translations"/>          
 </menu>

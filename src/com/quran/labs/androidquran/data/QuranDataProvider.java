@@ -2,6 +2,9 @@ package com.quran.labs.androidquran.data;
 
 import java.util.List;
 
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.common.TranslationsDBAdapter;
+
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -32,6 +35,7 @@ public class QuranDataProvider extends ContentProvider {
 	private static final int GET_VERSE = 1;
 	private static final int SEARCH_SUGGEST = 2;
 	private static final UriMatcher sURIMatcher = buildUriMatcher();
+	private TranslationsDBAdapter dba;
 
 	private static UriMatcher buildUriMatcher() {
 		UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
@@ -49,6 +53,7 @@ public class QuranDataProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
+		dba = new TranslationsDBAdapter(getContext());
 		return true;
 	}
 
@@ -86,31 +91,35 @@ public class QuranDataProvider extends ContentProvider {
 	private Cursor getSuggestions(String query){
 		if (query.length() < 3) return null;
 		
-		Cursor suggestions = search(query, "en_si");
-		
+		TranslationItem[] items = dba.getAvailableTranslations(true);
 		String[] cols = new String[]{ BaseColumns._ID,
 				SearchManager.SUGGEST_COLUMN_TEXT_1,
 				SearchManager.SUGGEST_COLUMN_TEXT_2 };
 		MatrixCursor mc = new MatrixCursor(cols);
-		if (suggestions.moveToFirst()){
-			do {
-				int sura = suggestions.getInt(0);
-				int ayah = suggestions.getInt(1);
-				String text = suggestions.getString(2);
-				String foundText = "Found in Sura " +
-					QuranInfo.getSuraName(sura-1) + ", verse " + ayah;
-				
-				MatrixCursor.RowBuilder row = mc.newRow();
-				int id = 0;
-				for (int i=1; i<sura; i++){
-					id += QuranInfo.getNumAyahs(i);
-				}
-				id += ayah;
-				
-				row.add(id);
-				row.add(text);
-				row.add(foundText);
-			} while (suggestions.moveToNext());
+		
+		for (int i = 0; i < items.length; i++) {
+			Cursor suggestions = search(query, items[i].getFileName());
+			
+			if (suggestions.moveToFirst()){
+				do {
+					int sura = suggestions.getInt(0);
+					int ayah = suggestions.getInt(1);
+					String text = suggestions.getString(2);
+					String foundText = "Found in Sura " +
+						QuranInfo.getSuraName(sura-1) + ", verse " + ayah;
+					
+					MatrixCursor.RowBuilder row = mc.newRow();
+					int id = 0;
+					for (int j=1; j<sura;j++){
+						id += QuranInfo.getNumAyahs(j);
+					}
+					id += ayah;
+					
+					row.add(id);
+					row.add(text);
+					row.add(foundText);
+				} while (suggestions.moveToNext());
+			}
 		}
 		
 		return mc;
