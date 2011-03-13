@@ -21,6 +21,20 @@
 		<activity android:name=".BookmarksActivity"></activity>
 		<activity android:name=".TranslationActivity"></activity>
 		<activity android:name=".QuranPreferenceActivity"></activity>
+		<activity android:name=".SearchActivity" android:launchMode="singleTop">
+			<intent-filter>
+            	<action android:name="android.intent.action.SEARCH" />
+        	</intent-filter>
+        	<meta-data android:name="android.app.searchable"
+                   android:resource="@xml/searchable"/>
+		</activity>
+		<!-- declare the default searchable Activity for the whole app -->
+    	<meta-data android:name="android.app.default_searchable"
+               	   android:value=".SearchActivity" />
+               	   
+        <!-- provides search suggestions for verses. -->
+        <provider android:name=".data.QuranDataProvider"
+          android:authorities="com.quran.labs.androidquran.data.QuranDataProvider" />
 	</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="7" />
 
