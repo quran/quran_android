@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -91,8 +92,33 @@ public class DownloadActivity extends BaseQuranActivity {
 		SimpleAdapter adapter = new SimpleAdapter(this, lst, R.layout.download_row, dataColumns, dataColumnsIds);
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
+			public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
+				final DownloadItem item = downloadItems[position];
+				if (!item.isDownloaded())
+					new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
+				else {
+					// Prompt User for Redownload/Removal 
+					AlertDialog.Builder builder = new AlertDialog.Builder(DownloadActivity.this);
+					builder.setMessage("'" + item.getDisplayName() + "' is already downloaded. Do you want to remove it ?")
+					       .setCancelable(false)
+					       .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+					           public void onClick(DialogInterface dialog, int id) {
+					        	   boolean removed = QuranUtils.removeTranslation(item.getFileName());
+					        	   if (removed) {
+					        		   TextView t = (TextView) view.findViewById(R.id.is_downloaded);
+					        		   t.setText("");					        		   
+					        	   }					        		   
+					        	   dialog.dismiss();
+					           }
+					       })
+					       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					           public void onClick(DialogInterface dialog, int id) {
+					        	   dialog.dismiss();
+					           }
+					       });
+					AlertDialog alert = builder.create();
+					alert.show();
+				}
 			}
 		});
 	}
@@ -192,6 +218,7 @@ public class DownloadActivity extends BaseQuranActivity {
 	}
 	
 	private class DownloadTranslationsTask extends QuranAsyncTask {
+		private int itemPosition;
 		public void onPreExecute() {
 			super.onPreExecute();
 			progressDialog.setMessage("Downloading Translation, Please wait..");
@@ -200,6 +227,7 @@ public class DownloadActivity extends BaseQuranActivity {
     	public String doInBackground(Object[]... params){   		
     		String str = (String) ((Object []) params[0])[0];
     		int position = Integer.parseInt(str);
+    		itemPosition = position;
     		QuranUtils.getTranslation(downloadItems[position].getFileUrl(), downloadItems[position].getFileName());
     		return null;
     	}
@@ -208,6 +236,8 @@ public class DownloadActivity extends BaseQuranActivity {
     	public void onPostExecute(Object result){
     		super.onPostExecute(result);
     		currentTask = null;
+    		TextView t = (TextView) listView.getChildAt(itemPosition).findViewById(R.id.is_downloaded);
+    		t.setText("Downloaded");
     		Toast.makeText(DownloadActivity.this, "File Downloaded", Toast.LENGTH_LONG);
     	}
     }

@@ -19,7 +19,7 @@
 		<service android:enabled="true" android:name=".service.QuranDataService" />
 		<activity android:name=".BookmarksActivity"/>
 		<activity android:name=".TranslationActivity"/>
-		<activity android:name=".DownloadActivity"/>
+		<activity android:name=".DownloadActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".QuranPreferenceActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".SearchActivity" android:launchMode="singleTop">
 			<intent-filter>
