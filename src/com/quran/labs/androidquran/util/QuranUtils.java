@@ -230,4 +230,14 @@ public class QuranUtils {
 		}
 		return false;
 	}
+	
+	public static boolean removeTranslation(String fileName) {
+		String path = getQuranDatabaseDirectory();
+		if (path != null){
+			path += File.separator + fileName;
+			File f = new File(path);
+			return f.delete();
+		}
+		return false;		
+	}
 }
