@@ -8,10 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
@@ -69,7 +70,7 @@ public class QuranActivity extends BaseQuranActivity {
 			elements[pos++] = new QuranElement(QuranInfo.getJuzTitle() + " " + juz, true, juz, QuranInfo.JUZ_PAGE_START[juz-1]);
 			next = (juz == ApplicationConstants.JUZ2_COUNT) ? ApplicationConstants.PAGES_LAST+1 : QuranInfo.JUZ_PAGE_START[juz];
 			while ((sura <= ApplicationConstants.SURAS_COUNT) && (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
-				String title = (sura) + ". " + QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(sura-1);
+				String title = QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(sura-1);
 				elements[pos++] = new QuranElement(title, false, sura, QuranInfo.SURA_PAGE_START[sura-1]);
 				sura++;
 			}
@@ -135,6 +136,8 @@ public class QuranActivity extends BaseQuranActivity {
 				holder.text = (TextView)convertView.findViewById(R.id.sura_title);
 				holder.metadata = (TextView)convertView.findViewById(R.id.sura_info);
 				holder.page = (TextView)convertView.findViewById(R.id.page_info);
+				holder.number = (TextView)convertView.findViewById(R.id.sura_number);
+				holder.suraicon = (ImageView)convertView.findViewById(R.id.sura_icon_img);
 				convertView.setTag(holder);
 			}
 			else {
@@ -143,12 +146,18 @@ public class QuranActivity extends BaseQuranActivity {
 
 			holder.page.setText("" + elements[position].page);
 			holder.text.setText(elements[position].text);
+			holder.number.setText("" + elements[position].number);
+			
 			if (elements[position].isJuz){
 				holder.metadata.setVisibility(View.GONE);
+				holder.suraicon.setVisibility(View.GONE);
+				holder.number.setVisibility(View.GONE);
 			}
 			else {
 				String info = QuranInfo.getSuraListMetaString(elements[position].number);
 				holder.metadata.setVisibility(View.VISIBLE);
+				holder.suraicon.setVisibility(View.VISIBLE);
+				holder.number.setVisibility(View.VISIBLE);
 				holder.metadata.setText(info);
 			}
 			return convertView;
@@ -157,7 +166,9 @@ public class QuranActivity extends BaseQuranActivity {
 		static class ViewHolder {
 			TextView text;
 			TextView page;
+			TextView number;
 			TextView metadata;
+			ImageView suraicon;
 		}
 	}
 }
