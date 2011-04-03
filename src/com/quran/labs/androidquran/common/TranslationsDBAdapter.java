@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.common;
 
 import java.util.ArrayList;
 
+import com.quran.labs.androidquran.util.QuranSettings;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -74,6 +76,15 @@ public class TranslationsDBAdapter {
 	
 	public TranslationItem[] getAvailableTranslations() {
 		return getAvailableTranslations(false);
+	}
+	
+	public TranslationItem findTranslation(String fileName) {
+		TranslationItem[] items = getTranslations(COLUMN_FILE_NAME + " = ?", new String[]{fileName}); 
+		return items.length > 0 && items[0].isDownloaded() ? items[0] : null;
+	}
+	
+	public TranslationItem getActiveTranslation() {
+		return findTranslation(QuranSettings.getInstance().getActiveTranslation());
 	}
 	
 	public TranslationItem[] getAvailableTranslations(boolean includeScript) {

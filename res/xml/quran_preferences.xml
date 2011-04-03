@@ -3,26 +3,34 @@
   xmlns:android="http://schemas.android.com/apk/res/android" 
   android:title="Quran Settings" 
   android:key="@string/prefs_path">
-<CheckBoxPreference android:summaryOff="Screen will turn off after idling" android:title="Keep Screen On" android:summaryOn="Screen will stay on while reading" android:persistent="true" android:key="@string/prefs_keep_screen_on"></CheckBoxPreference>
-<CheckBoxPreference 	android:title="Full Screen Mode" 
-	android:summaryOn="Full Screen Mode is Enabled" 
-	android:summaryOff="Full Screen Mode is Disabled" android:disableDependentsState="false" android:persistent="true" android:key="@string/prefs_full_screen">
-</CheckBoxPreference>
-<CheckBoxPreference 
-	android:title="Show Clock" 
-	android:summaryOn="Clock Shown in Fullscreen Mode" 
-	android:summaryOff="Clock Hidden" android:persistent="true" android:key="@string/prefs_show_clock" android:dependency="@string/prefs_full_screen">
-</CheckBoxPreference>
-<CheckBoxPreference 
-	android:title="Arabic Surah Names" 
-	android:summaryOn="Surah Names are in Arabic" 
-	android:summaryOff="Surah Names are in English" android:persistent="true" android:key="@string/prefs_use_arabic_names">
-</CheckBoxPreference>
-<CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false"></CheckBoxPreference>
-<CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation"></CheckBoxPreference>
-<com.quran.labs.androidquran.widgets.SeekBarPreference
-	android:key="@string/prefs_translation_text_size" android:title="Translation Text"
-	android:persistent="true" android:dialogMessage="Text Size"
-	android:summary="Customize the text size for translation"
-	android:defaultValue="15" android:max="40" />
+	<PreferenceCategory android:title="@string/prefs_category_display_settings">  
+		<CheckBoxPreference android:summaryOff="Screen will turn off after idling" android:title="Keep Screen On" android:summaryOn="Screen will stay on while reading" android:persistent="true" android:key="@string/prefs_keep_screen_on"></CheckBoxPreference>
+		<CheckBoxPreference 	android:title="Full Screen Mode" 
+			android:summaryOn="Full Screen Mode is Enabled" 
+			android:summaryOff="Full Screen Mode is Disabled" android:disableDependentsState="false" android:persistent="true" android:key="@string/prefs_full_screen">
+		</CheckBoxPreference>
+		<CheckBoxPreference 
+			android:title="Show Clock" 
+			android:summaryOn="Clock Shown in Fullscreen Mode" 
+			android:summaryOff="Clock Hidden" android:persistent="true" android:key="@string/prefs_show_clock" android:dependency="@string/prefs_full_screen">
+		</CheckBoxPreference>
+		<CheckBoxPreference 
+			android:title="Arabic Surah Names" 
+			android:summaryOn="Surah Names are in Arabic" 
+			android:summaryOff="Surah Names are in English" android:persistent="true" android:key="@string/prefs_use_arabic_names">
+		</CheckBoxPreference>
+		<CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false"></CheckBoxPreference>
+		<CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation"></CheckBoxPreference>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/prefs_category_translation">
+		<com.quran.labs.androidquran.widgets.SelectTranslationPreference
+	    android:key="@string/prefs_active_translation"
+	    android:title="Active Translation"
+	    android:dialogTitle="Select Active Translation" />
+		<com.quran.labs.androidquran.widgets.SeekBarPreference
+			android:key="@string/prefs_translation_text_size" android:title="Translation Text"
+			android:persistent="true" android:dialogMessage="Text Size"
+			android:summary="Customize the text size for translation"
+			android:defaultValue="15" android:max="40" />
+	</PreferenceCategory>
 </PreferenceScreen>

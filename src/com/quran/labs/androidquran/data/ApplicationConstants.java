@@ -44,4 +44,5 @@ public class ApplicationConstants {
 	public static final String PREF_LOCK_ORIENTATION = "lockOrientation";
 	public static final String PREF_LANDSCAPE_ORIENTATION = "landscapeOrientation";
 	public static final String PREF_TRANSLATION_TEXT_SIZE = "translationTextSize";
+	public static final String PREF_ACTIVE_TRANSLATION = "activeTranslation";
 }

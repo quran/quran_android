@@ -84,4 +84,7 @@
 
     <!-- Search failure message. -->
     <string name="no_results">No results found for \"%s\"</string>
+    <string name="prefs_category_translation">Translation Preferences</string>
+    <string name="prefs_category_display_settings">Display Settings</string>
+    <string name="prefs_active_translation">activeTranslation</string>
 </resources>

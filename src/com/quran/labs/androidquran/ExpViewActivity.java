@@ -40,85 +40,85 @@ public class ExpViewActivity extends GestureQuranActivity {
 	private Gallery gallery = null;
 	private TextView titleText = null;
 	private SeekBar seekBar = null;
-	private ImageView btnLockOrientation = null;
+	//private ImageView btnLockOrientation = null;
 	private ImageView btnBookmark = null;
+	private View toolbar = null;
 	
 	// private int page = 1;
 	private int width = 0;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState){
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
 		setContentView(R.layout.quran_exp);
 		// imageView = (ImageView)findViewById(R.id.pageview);
 		gallery = (Gallery) findViewById(R.id.gallery);
-	    gallery.setAdapter(new QuranGalleryImageAdapter(this));
-	    gallery.setAnimationDuration(0);
-	    gallery.setSpacing(25);
-	    
-        titleText = (TextView)findViewById(R.id.pagetitle);
-        btnLockOrientation = (ImageView)findViewById(R.id.btnLockOrientation);
-        btnLockOrientation.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				QuranSettings qs = QuranSettings.getInstance();
-				qs.setLockOrientation(!qs.isLockOrientation());
-				QuranSettings.save(prefs);
-				adjustLockView();
-			}
-		});
-        
-        btnBookmark = (ImageView) findViewById(R.id.btnBookmark);
-        btnBookmark.setOnClickListener(new OnClickListener() {
+		gallery.setAdapter(new QuranGalleryImageAdapter(this));
+		gallery.setAnimationDuration(0);
+		gallery.setSpacing(25);
+
+		titleText = (TextView) findViewById(R.id.pagetitle);
+		toolbar = (View) findViewById(R.id.toolbar);
+//		btnLockOrientation = (ImageView) findViewById(R.id.btnLockOrientation);
+//		btnLockOrientation.setOnClickListener(new OnClickListener() {
+//			public void onClick(View v) {
+//				QuranSettings qs = QuranSettings.getInstance();
+//				qs.setLockOrientation(!qs.isLockOrientation());
+//				QuranSettings.save(prefs);
+//				adjustLockView();
+//			}
+//		});
+
+		btnBookmark = (ImageView) findViewById(R.id.btnBookmark);
+		btnBookmark.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				BookmarksManager.toggleBookmarkState(QuranSettings.getInstance().getLastPage(), prefs);
 				adjustBookmarkView();
 			}
 		});
-        
-        seekBar = (SeekBar)findViewById(R.id.suraSeek);
-        
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+
+		seekBar = (SeekBar) findViewById(R.id.suraSeek);
+		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if (fromUser)
-					titleText.setText(QuranInfo.getPageTitle(progress+1));
+					titleText.setText(QuranInfo.getPageTitle(progress + 1));
 			}
 
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 			}
-			
+
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
-				if (seekBar.getProgress() !=
-					gallery.getSelectedItemPosition()){
+				if (seekBar.getProgress() != gallery.getSelectedItemPosition()) {
 					renderPage(ApplicationConstants.PAGES_LAST - 1 - seekBar.getProgress());
 				}
 			}
 		});
-        
+
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
-		
+
 		WindowManager manager = getWindowManager();
 		Display display = manager.getDefaultDisplay();
 		width = display.getWidth();
-		
+
 		int page = loadState(savedInstanceState);
 		renderPage(ApplicationConstants.PAGES_LAST - page);
-		
+
 		toggleMode();
 	}
 	
 	private void adjustLockView() {
-		if (QuranSettings.getInstance().isLockOrientation()) {
-			btnLockOrientation.setImageResource(R.drawable.lock);		
-		} else {
-			btnLockOrientation.setImageResource(R.drawable.unlock);
-		}
+//		if (QuranSettings.getInstance().isLockOrientation()) {
+//			btnLockOrientation.setImageResource(R.drawable.lock);		
+//		} else {
+//			btnLockOrientation.setImageResource(R.drawable.unlock);
+//		}
 	}
 	
 	private void adjustBookmarkView() {
@@ -257,9 +257,10 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	        
+	        toolbar.setVisibility(View.VISIBLE);
 	        seekBar.setVisibility(TextView.VISIBLE);
 	        titleText.setVisibility(TextView.VISIBLE);
-	        btnLockOrientation.setVisibility(View.VISIBLE);
+	        //btnLockOrientation.setVisibility(View.VISIBLE);
 	        btnBookmark.setVisibility(View.VISIBLE);
 	        adjustLockView();
 			adjustBookmarkView();
@@ -268,9 +269,10 @@ public class ExpViewActivity extends GestureQuranActivity {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	        
+	        toolbar.setVisibility(View.INVISIBLE);
 	        seekBar.setVisibility(TextView.INVISIBLE);
 	        titleText.setVisibility(TextView.INVISIBLE);
-	        btnLockOrientation.setVisibility(View.INVISIBLE);
+	        //btnLockOrientation.setVisibility(View.INVISIBLE);
 	        btnBookmark.setVisibility(View.INVISIBLE);
 		}
 		

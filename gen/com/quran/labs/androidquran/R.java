@@ -28,10 +28,9 @@ public final class R {
     public static final class id {
         public static final int ayah_num=0x7f08001a;
         public static final int bgPageview=0x7f080022;
-        public static final int btnBookmark=0x7f080012;
+        public static final int btnBookmark=0x7f080011;
         public static final int btnEmailUs=0x7f080002;
         public static final int btnHelpBack=0x7f08000a;
-        public static final int btnLockOrientation=0x7f080011;
         public static final int cancelButton=0x7f08000c;
         public static final int display_name=0x7f080006;
         public static final int download_list=0x7f080005;
@@ -59,12 +58,13 @@ public final class R {
         public static final int results_list=0x7f080025;
         public static final int search_area=0x7f080024;
         public static final int splashview=0x7f080028;
-        public static final int suraSeek=0x7f080010;
+        public static final int suraSeek=0x7f080012;
         public static final int sura_icon_img=0x7f08001d;
         public static final int sura_info=0x7f08001f;
         public static final int sura_number=0x7f08001c;
         public static final int sura_title=0x7f08001e;
         public static final int suralist=0x7f080013;
+        public static final int toolbar=0x7f080010;
         public static final int translationText=0x7f080021;
         public static final int txtAbout=0x7f080003;
         public static final int txtCopyRights=0x7f080001;
@@ -146,6 +146,9 @@ public final class R {
          */
         public static final int no_results=0x7f050033;
         public static final int page_hint=0x7f05001b;
+        public static final int prefs_active_translation=0x7f050036;
+        public static final int prefs_category_display_settings=0x7f050035;
+        public static final int prefs_category_translation=0x7f050034;
         public static final int prefs_full_screen=0x7f05002a;
         public static final int prefs_keep_screen_on=0x7f05002c;
         public static final int prefs_landscape_orientation=0x7f05002e;

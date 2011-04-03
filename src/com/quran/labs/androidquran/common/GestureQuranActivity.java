@@ -31,17 +31,6 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 	public class QuranGestureDetector extends SimpleOnGestureListener {
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
-			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-				return false;
-			// previous page swipe
-			if ((e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE) && 
-			    (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				goToPreviousPage();
-			}
-			else if ((e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE) &&
-				(Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)){
-				goToNextPage();
-			}
 			return false;
 		}
 		

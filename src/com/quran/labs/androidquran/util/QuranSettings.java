@@ -17,6 +17,7 @@ public class QuranSettings {
 	private boolean landscapeOrientation = false;
 	private int translationTextSize = ApplicationConstants.DEFAULT_TEXT_SIZE;
 	private int lastPage = 0;
+	private String activeTranslation = null;
 
 	private QuranSettings() {
 		
@@ -85,9 +86,9 @@ public class QuranSettings {
 	public int getTranslationTextSize() {
 		return translationTextSize;
 	}
-
-	public void setTranslationTextSize(int translationTextSize) {
-		this.translationTextSize = translationTextSize;
+	
+	public String getActiveTranslation() {
+		return activeTranslation;
 	}
 
 	public static void load(SharedPreferences preferences) {
@@ -99,6 +100,7 @@ public class QuranSettings {
 		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
 		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.NO_PAGE_SAVED);
+		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
 	}
 	
 	public static void save(SharedPreferences preferences) {

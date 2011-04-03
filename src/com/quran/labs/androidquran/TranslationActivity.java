@@ -50,6 +50,7 @@ public class TranslationActivity extends GestureQuranActivity {
 	@Override
 	protected void onResume() {
 		adjustTextSize();
+		renderTranslation();
 		super.onResume();
 	}
 
@@ -99,7 +100,8 @@ public class TranslationActivity extends GestureQuranActivity {
 
 		Integer[] bounds = QuranInfo.getPageBounds(page);
 		
-		TranslationItem[] translationLists = dba.getAvailableTranslations(true);
+		//TranslationItem[] translationLists = dba.getAvailableTranslations(true);
+		TranslationItem[] translationLists = new TranslationItem[]{dba.getActiveTranslation()};
 		List<String> unavailable = new ArrayList<String>();
 		
 		int available = 0;
