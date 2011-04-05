@@ -190,6 +190,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 			
 			if (!inReadingMode)
 				updatePageInfo(position);
+			adjustBookmarkView();
 	    	return convertView;
 	    }
 	}
@@ -231,6 +232,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 		imageView.setImageBitmap(bitmap);
 		*/
 		gallery.setSelection(position, true);
+		adjustBookmarkView();
 	}
 	
 	private void updatePageInfo(int position){

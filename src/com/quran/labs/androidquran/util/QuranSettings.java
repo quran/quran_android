@@ -90,6 +90,10 @@ public class QuranSettings {
 	public String getActiveTranslation() {
 		return activeTranslation;
 	}
+	
+	public void setActiveTranslation(String activeTranslation){
+		this.activeTranslation = activeTranslation;
+	}
 
 	public static void load(SharedPreferences preferences) {
 		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
@@ -113,6 +117,7 @@ public class QuranSettings {
 		editor.putBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, instance.landscapeOrientation);
 		editor.putInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, instance.translationTextSize);
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
+		editor.putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, instance.activeTranslation);
 		editor.commit();
 	}
 }

@@ -31,6 +31,7 @@ import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.common.DownloadItem;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.RestClient;
 
@@ -94,13 +95,22 @@ public class DownloadActivity extends BaseQuranActivity {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
 				final DownloadItem item = downloadItems[position];
-				if (!item.isDownloaded())
-					new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
-				else {
-					// Prompt User for Redownload/Removal 
+				if (!item.isDownloaded()) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(DownloadActivity.this);
-					builder.setMessage("'" + item.getDisplayName() + "' is already downloaded. Do you want to remove it ?")
-					       .setCancelable(false)
+					builder.setMessage("Download Translation '" + item.getDisplayName() + "' ?")
+					       .setCancelable(true)
+					       .setPositiveButton("Download", new DialogInterface.OnClickListener() {
+					           public void onClick(DialogInterface dialog, int id) {
+					        	   new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
+					        	   dialog.dismiss();
+					           }
+					       });
+					AlertDialog alert = builder.create();
+					alert.show();
+				} else {
+					AlertDialog.Builder builder = new AlertDialog.Builder(DownloadActivity.this);
+					builder.setMessage("'" + item.getDisplayName() + "' is already downloaded.")
+					       .setCancelable(true)
 					       .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
 					           public void onClick(DialogInterface dialog, int id) {
 					        	   boolean removed = QuranUtils.removeTranslation(item.getFileName());
@@ -111,8 +121,10 @@ public class DownloadActivity extends BaseQuranActivity {
 					        	   dialog.dismiss();
 					           }
 					       })
-					       .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					       .setNegativeButton("Set Active", new DialogInterface.OnClickListener() {
 					           public void onClick(DialogInterface dialog, int id) {
+					        	   QuranSettings.getInstance().setActiveTranslation(item.getFileName());
+					        	   QuranSettings.save(prefs);
 					        	   dialog.dismiss();
 					           }
 					       });

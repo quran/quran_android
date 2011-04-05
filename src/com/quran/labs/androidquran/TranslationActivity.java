@@ -35,6 +35,7 @@ public class TranslationActivity extends GestureQuranActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.quran_translation);
 		txtTranslation = (TextView) findViewById(R.id.translationText);
+		txtTranslation.setText("");
 		dba = new TranslationsDBAdapter(getApplicationContext());
 		loadPageState(savedInstanceState);
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
@@ -98,33 +99,32 @@ public class TranslationActivity extends GestureQuranActivity {
 		if ((page > ApplicationConstants.PAGES_LAST) || (page < ApplicationConstants.PAGES_FIRST)) page = 1;
 		setTitle(QuranInfo.getPageTitle(page));
 
+		TranslationItem[] translationLists;
 		Integer[] bounds = QuranInfo.getPageBounds(page);
 		
-		//TranslationItem[] translationLists = dba.getAvailableTranslations(true);
-		TranslationItem[] translationLists = new TranslationItem[]{dba.getActiveTranslation()};
-		List<String> unavailable = new ArrayList<String>();
+		TranslationItem activeTranslation = dba.getActiveTranslation();
+		if (activeTranslation == null){
+			translationLists = dba.getAvailableTranslations();
+			if (translationLists.length > 0) {
+				activeTranslation = translationLists[0];
+				QuranSettings.getInstance().setActiveTranslation(activeTranslation.getFileName());
+				QuranSettings.save(prefs);
+			} else {
+				promptForTranslationDownload();
+				txtTranslation.setText(R.string.translationsNeeded);
+				return;
+			}
+		}
 		
-		int available = 0;
+		//TranslationItem[] translationLists = dba.getAvailableTranslations(true);
+		translationLists = new TranslationItem[]{activeTranslation};
+		
 		List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
 		for (TranslationItem tl : translationLists){
 			Map<String, String> currentTranslation = getVerses(tl.getFileName(), bounds);
 			if (currentTranslation != null){
 				translations.add(currentTranslation);
-				available++;
 			}
-			else {
-				unavailable.add(tl.getDisplayName());
-				translations.add(null);
-			}
-		}
-		
-		TextView translationArea = (TextView)findViewById(R.id.translationText);
-		translationArea.setText("");
-		
-		if (available == 0){
-			promptForTranslationDownload(unavailable);
-			translationArea.setText(R.string.translationsNeeded);
-			return;
 		}
 		
 		int numTranslations = translationLists.length;
@@ -132,7 +132,6 @@ public class TranslationActivity extends GestureQuranActivity {
 		int i = bounds[0];
 		for (; i <= bounds[2]; i++){
 			int j = (i == bounds[0])? bounds[1] : 1;
-			
 			for (;;){
 				int numAdded = 0;
 				String key = i + ":" + j++;
@@ -142,7 +141,7 @@ public class TranslationActivity extends GestureQuranActivity {
 					if (text != null){
 						numAdded++;
 						String str = "<b>" + key + ":</b> " + text + "<br>";
-						translationArea.append(Html.fromHtml(str));
+						txtTranslation.append(Html.fromHtml(str));
 					}
 				}
 				if (numAdded == 0) break;
@@ -191,7 +190,7 @@ public class TranslationActivity extends GestureQuranActivity {
 		outState.putInt("page", page);
 	}
 	
-	public void promptForTranslationDownload(final List<String> translationsToGet){
+	public void promptForTranslationDownload(){
     	AlertDialog.Builder dialog = new AlertDialog.Builder(this);
     	dialog.setMessage(R.string.downloadTranslationPrompt);
     	dialog.setCancelable(false);

@@ -79,6 +79,8 @@ public class TranslationsDBAdapter {
 	}
 	
 	public TranslationItem findTranslation(String fileName) {
+		if (fileName == null) 
+			return null;
 		TranslationItem[] items = getTranslations(COLUMN_FILE_NAME + " = ?", new String[]{fileName}); 
 		return items.length > 0 && items[0].isDownloaded() ? items[0] : null;
 	}
