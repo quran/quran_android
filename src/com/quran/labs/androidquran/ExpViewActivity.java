@@ -35,6 +35,8 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
 
 public class ExpViewActivity extends GestureQuranActivity {
+	
+	private static final int BOOKMARK_SAFE_REGION = 15;
 	private boolean inReadingMode = false;
 	// private ImageView imageView = null;
 	private Gallery gallery = null;
@@ -244,6 +246,13 @@ public class ExpViewActivity extends GestureQuranActivity {
 	public boolean handleSingleTap(MotionEvent e){
 		Log.d("exp_v", "in handle single tap");
 		int sliceWidth = (int)(0.2 * width);
+		
+		// Skip bookmark region
+		int bookmarkRegionY = btnBookmark.getTop() + btnBookmark.getHeight() + BOOKMARK_SAFE_REGION;
+		int bookmarkRegionX = btnBookmark.getLeft() + btnBookmark.getWidth() + BOOKMARK_SAFE_REGION;
+		if (e.getY() < bookmarkRegionY && e.getX() < bookmarkRegionX)
+			return true;
+		
 		if (e.getX() < sliceWidth)
 			goToNextPage();
 		else if (e.getX() > (width - sliceWidth))
