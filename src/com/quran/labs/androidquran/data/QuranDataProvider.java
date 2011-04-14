@@ -91,14 +91,15 @@ public class QuranDataProvider extends ContentProvider {
 	private Cursor getSuggestions(String query){
 		if (query.length() < 3) return null;
 		
-		TranslationItem[] items = dba.getAvailableTranslations(true);
+		//TranslationItem[] items = dba.getAvailableTranslations(true);
+		TranslationItem[] items = new TranslationItem[]{dba.getActiveTranslation()};
 		String[] cols = new String[]{ BaseColumns._ID,
 				SearchManager.SUGGEST_COLUMN_TEXT_1,
 				SearchManager.SUGGEST_COLUMN_TEXT_2 };
 		MatrixCursor mc = new MatrixCursor(cols);
 		
-		for (int i = 0; i < items.length; i++) {
-			Cursor suggestions = search(query, items[i].getFileName());
+		for (TranslationItem item : items) {
+			Cursor suggestions = search(query, item.getFileName());
 			
 			if (suggestions.moveToFirst()){
 				do {

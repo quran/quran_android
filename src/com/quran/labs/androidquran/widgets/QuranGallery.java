@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.widgets;
 
+import com.quran.labs.androidquran.data.ApplicationConstants;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -53,4 +55,27 @@ public class QuranGallery extends Gallery {
             }
         }
     }
+    
+    /**
+     * Checkout this post at stack overflow
+     * http://stackoverflow.com/questions/2373617/how-to-stop-scrolling-in-a-gallery-widget
+     */
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+    	boolean leftScroll = false;
+		if (e1 != null && e2 != null)
+			leftScroll = isScrollingLeft(e1, e2);
+
+		if (leftScroll) {
+			velocityX = ApplicationConstants.GALLERY_SCROLLING_SPEED;
+		} else {
+			velocityX = -ApplicationConstants.GALLERY_SCROLLING_SPEED;
+		}
+
+    	return super.onFling(e1, e2, velocityX, velocityY);
+    }
+    
+	private boolean isScrollingLeft(MotionEvent e1, MotionEvent e2) {
+		return e2.getX() > e1.getX();
+	}
 }

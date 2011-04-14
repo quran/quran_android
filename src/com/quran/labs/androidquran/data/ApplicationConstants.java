@@ -11,6 +11,9 @@ public class ApplicationConstants {
 	public static final int QURAN_VIEW_CODE = BOOKMARKS_CODE + 1;
 	public static final int TRANSLATION_VIEW_CODE = QURAN_VIEW_CODE + 1;
 	
+	// Gallery Scrolling Speed
+	public static final int GALLERY_SCROLLING_SPEED = 250;
+	
 	// Numerics
 	public static final int DEFAULT_TEXT_SIZE = 15;
 	
