@@ -7,5 +7,6 @@
   android:searchSuggestAuthority="com.quran.labs.androidquran.data.QuranDataProvider"
   android:searchSuggestIntentAction="android.intent.action.VIEW"
   android:searchSettingsDescription="@string/quranSearchType"
+  android:searchSuggestIntentData="content://com.quran.labs.androidquran.data.QuranDataProvider/quran/verse"
   android:searchSuggestSelection="word MATCH ?">
 </searchable>

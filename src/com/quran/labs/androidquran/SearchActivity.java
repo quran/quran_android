@@ -8,10 +8,13 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,6 +46,39 @@ public class SearchActivity extends Activity {
 			String query = intent.getStringExtra(SearchManager.QUERY);
 			showResults(query);
 		}
+		else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+			Uri intentData = intent.getData();
+			Integer id = null;
+			try {
+				id = intentData.getLastPathSegment() != null ? Integer.valueOf(intentData.getLastPathSegment()) : null;
+			} catch (NumberFormatException e) {
+			}
+			
+			if (id != null){
+				int sura = 1;
+				int total = id;
+				for (int j = 1; j <= 114; j++){
+					int cnt = QuranInfo.getNumAyahs(j);
+					total -= cnt;
+					if (total >= 0)
+						sura++;
+					else {
+						total += cnt;
+						break;
+					}
+				}
+				
+				jumpToResult(sura, total);
+			}
+		}
+	}
+	
+	private void jumpToResult(int sura, int ayah){
+		int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+		Intent translation = new Intent(this, TranslationActivity.class);
+		translation.putExtra("page", page);
+		startActivity(translation);
+		finish();
 	}
 
 	private void showResults(String query){
@@ -69,10 +105,20 @@ public class SearchActivity extends Activity {
 				}
 				while (cursor.moveToNext());
 			}
+			cursor.close();
 			
 			ListView listView = (ListView)findViewById(R.id.results_list);
 			EfficientResultAdapter adapter = new EfficientResultAdapter(this, res);
 			listView.setAdapter(adapter);
+			listView.setOnItemClickListener(new OnItemClickListener(){
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					ListView p = (ListView)parent;
+					SearchElement res = (SearchElement)p.getAdapter().getItem(position);
+					jumpToResult(res.sura, res.ayah);
+				}
+			});
 		}
 	}
 	

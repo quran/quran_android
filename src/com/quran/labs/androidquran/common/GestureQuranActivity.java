@@ -14,9 +14,11 @@ import com.quran.labs.androidquran.util.QuranSettings;
 public abstract class GestureQuranActivity extends BaseQuranActivity {
     protected GestureDetector gestureDetector;
     
+    /*
 	private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    */
     
     @Override
 	protected void onCreate(Bundle savedInstanceState){

@@ -70,10 +70,10 @@ public class TranslationActivity extends GestureQuranActivity {
 	}
 	
 	public void loadPageState(Bundle savedInstanceState){
-		page = savedInstanceState != null ? savedInstanceState.getInt("page") : QuranSettings.getInstance().getLastPage();
+		page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
 		if (page == ApplicationConstants.PAGES_FIRST){
 			Bundle extras = getIntent().getExtras();
-			page = extras != null? extras.getInt("page") : ApplicationConstants.PAGES_FIRST;
+			page = extras != null? extras.getInt("page") : QuranSettings.getInstance().getLastPage();
 		} else if (page == ApplicationConstants.NO_PAGE_SAVED) {
 			page = ApplicationConstants.PAGES_FIRST;
 		}
@@ -166,6 +166,7 @@ public class TranslationActivity extends GestureQuranActivity {
 					ayahs.put(sura + ":" + ayah, text);
 				}
 				while (res.moveToNext());
+				res.close();
 			}
 			handler.closeDatabase();
 			return ayahs;

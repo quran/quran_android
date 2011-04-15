@@ -35,7 +35,9 @@ public class QuranDataProvider extends ContentProvider {
 	private static final int GET_VERSE = 1;
 	private static final int SEARCH_SUGGEST = 2;
 	private static final UriMatcher sURIMatcher = buildUriMatcher();
-	private TranslationsDBAdapter dba;
+
+	private DatabaseHandler database = null;
+	private TranslationItem activeTranslation = null;
 
 	private static UriMatcher buildUriMatcher() {
 		UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
@@ -53,7 +55,6 @@ public class QuranDataProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
-		dba = new TranslationsDBAdapter(getContext());
 		return true;
 	}
 
@@ -85,17 +86,29 @@ public class QuranDataProvider extends ContentProvider {
 	}
 
 	private Cursor search(String query){
-		return search(query, "en_si");
+		TranslationItem active = getActiveTranslation();
+		if (active == null) return null;
+		return search(query, active.getFileName());
 	}
 
+	private TranslationItem getActiveTranslation(){
+		if (activeTranslation == null){
+			TranslationsDBAdapter dba = new TranslationsDBAdapter(getContext());
+			activeTranslation = dba.getActiveTranslation();
+			dba.close();
+		}
+		return activeTranslation;
+	}
+	
 	private Cursor getSuggestions(String query){
 		if (query.length() < 3) return null;
 		
 		//TranslationItem[] items = dba.getAvailableTranslations(true);
-		TranslationItem[] items = new TranslationItem[]{dba.getActiveTranslation()};
+		TranslationItem[] items = new TranslationItem[]{ getActiveTranslation() };
 		String[] cols = new String[]{ BaseColumns._ID,
 				SearchManager.SUGGEST_COLUMN_TEXT_1,
-				SearchManager.SUGGEST_COLUMN_TEXT_2 };
+				SearchManager.SUGGEST_COLUMN_TEXT_2,
+				SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID };
 		MatrixCursor mc = new MatrixCursor(cols);
 		
 		for (TranslationItem item : items) {
@@ -119,28 +132,39 @@ public class QuranDataProvider extends ContentProvider {
 					row.add(id);
 					row.add(text);
 					row.add(foundText);
+					row.add(id);
 				} while (suggestions.moveToNext());
 			}
+			suggestions.close();
+			database.closeDatabase();
+			database = null;
 		}
 		
 		return mc;
 	}
 
 	private Cursor search(String query, String language) {
-		DatabaseHandler database = new DatabaseHandler(language);
+		Log.d("qdp", "q: " + query + ", l: " + language);
+		if (language == null) return null;
+		
+		if (database == null)
+			database = new DatabaseHandler(language);
 		return database.search(query);
 	}
 
 	private Cursor getVerse(Uri uri){
 		int sura = 1;
 		int ayah = 1;
-		String lang = "en_si";
+		TranslationItem langType = getActiveTranslation();
+		String lang = (langType != null)? langType.getFileName() : null;
+		if (lang == null) return null;
 
 		List<String> parts = uri.getPathSegments();
 		for (String s : parts)
 			Log.d("qdp", "uri part: " + s);
 
-		DatabaseHandler database = new DatabaseHandler(lang);
+		if (database == null)
+			database = new DatabaseHandler(lang);
 		return database.getVerse(sura, ayah);
 	}
 
