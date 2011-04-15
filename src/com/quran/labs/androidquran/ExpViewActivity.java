@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
