@@ -90,7 +90,7 @@ public class QuranInfo {
 	}
 	
 	private static String getPageTitle() {
-		return QuranSettings.getInstance().isArabicNames() ? "القرآن الكريم، صفحة " : "Quran, page ";
+		return QuranSettings.getInstance().isArabicNames() ? "صفحة " : "page ";
 	}
 	
 	private static String getPageTitleNoPrefix() {
