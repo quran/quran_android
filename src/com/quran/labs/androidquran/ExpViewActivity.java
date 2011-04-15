@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,6 +46,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	//private ImageView btnLockOrientation = null;
 	private ImageView btnBookmark = null;
 	private View toolbar = null;
+	private ViewGroup expLayout;
 	
 	// private int page = 1;
 	private int width = 0;
@@ -56,6 +58,23 @@ public class ExpViewActivity extends GestureQuranActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		setContentView(R.layout.quran_exp);
+		initComponents();
+
+		gestureDetector = new GestureDetector(new QuranGestureDetector());
+
+		WindowManager manager = getWindowManager();
+		Display display = manager.getDefaultDisplay();
+		width = display.getWidth();
+
+		int page = loadState(savedInstanceState);
+		renderPage(ApplicationConstants.PAGES_LAST - page);
+
+		toggleMode();
+	}
+	
+	private void initComponents() {
+		expLayout = (ViewGroup) findViewById(R.id.expLayout);
+		
 		// imageView = (ImageView)findViewById(R.id.pageview);
 		gallery = (Gallery) findViewById(R.id.gallery);
 		gallery.setAdapter(new QuranGalleryImageAdapter(this));
@@ -102,17 +121,6 @@ public class ExpViewActivity extends GestureQuranActivity {
 				}
 			}
 		});
-
-		gestureDetector = new GestureDetector(new QuranGestureDetector());
-
-		WindowManager manager = getWindowManager();
-		Display display = manager.getDefaultDisplay();
-		width = display.getWidth();
-
-		int page = loadState(savedInstanceState);
-		renderPage(ApplicationConstants.PAGES_LAST - page);
-
-		toggleMode();
 	}
 	
 	private void adjustLockView() {
@@ -134,7 +142,18 @@ public class ExpViewActivity extends GestureQuranActivity {
 	@Override
 	protected void onResume(){
 		super.onResume();
+		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
+		expLayout.bringToFront();
+		Log.d("QuranAndroid","Screen on");
         QuranSettings.load(prefs);
+        adjustActivityOrientation();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		expLayout.setKeepScreenOn(false);
+		Log.d("QuranAndroid","Screen off");
 	}
 	
 	public class QuranGalleryImageAdapter extends BaseAdapter {

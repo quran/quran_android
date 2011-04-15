@@ -94,7 +94,7 @@ public abstract class BaseQuranActivity extends Activity {
 				intent = new Intent(getApplicationContext(), QuranPreferenceActivity.class);
 				startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
-			case R.id.menu_item_bookmarks_view:
+			case R.id.menu_item_bookmarks:
 		    	intent = new Intent(getApplicationContext(), BookmarksActivity.class);
 		    	startActivityForResult(intent, ApplicationConstants.BOOKMARKS_CODE);
 			break;
