@@ -106,7 +106,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if (fromUser)
-					titleText.setText(QuranInfo.getPageTitle(progress + 1));
+					titleText.setText(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - progress));
 			}
 
 			@Override
@@ -116,7 +116,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				if (seekBar.getProgress() != gallery.getSelectedItemPosition()) {
-					renderPage(ApplicationConstants.PAGES_LAST - 1 - seekBar.getProgress());
+					renderPage(seekBar.getProgress());
 				}
 			}
 		});
@@ -257,7 +257,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	
 	private void updatePageInfo(int position){
 		titleText.setText(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - position));
-		seekBar.setProgress(ApplicationConstants.PAGES_LAST - 1 - position);
+		seekBar.setProgress(position);
 	}
 	
 	@Override
