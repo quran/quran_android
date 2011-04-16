@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Checkout original post from http://stackoverflow.com/questions/5314488/changing-default-seekbar-color -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@android:id/background">
+		<shape>
+			<corners android:radius="5dip" />
+			<gradient android:startColor="#FFF4CB"
+				android:centerColor="#FFF4CB" android:centerY="0.75"
+				android:endColor="#FFF4CB" android:angle="270" />
+		</shape>
+	</item>
+	
+	<item android:id="@android:id/progress">
+		<clip>
+			<shape>
+				<solid android:color="#99000000" />
+			</shape>
+		</clip>
+	</item>
+</layer-list>
