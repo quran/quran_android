@@ -28,13 +28,13 @@ public class ExpViewActivity extends GestureQuranActivity {
 		renderPage(ApplicationConstants.PAGES_LAST - currentPage);
 	}
 	
-	private void adjustLockView() {
+//	private void adjustLockView() {
 //		if (QuranSettings.getInstance().isLockOrientation()) {
 //			btnLockOrientation.setImageResource(R.drawable.lock);		
 //		} else {
 //			btnLockOrientation.setImageResource(R.drawable.unlock);
 //		}
-	}
+//	}
 	
 	public class QuranGalleryImageAdapter extends QuranGalleryAdapter {
 		private Map<String, SoftReference<Bitmap>> cache = 
