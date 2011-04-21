@@ -2,8 +2,10 @@ package com.quran.labs.androidquran.common;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,25 +16,57 @@ import com.quran.labs.androidquran.util.QuranSettings;
 public abstract class GestureQuranActivity extends BaseQuranActivity {
     protected GestureDetector gestureDetector;
     
-    /*
 	private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-    */
     
     @Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-        QuranSettings.load(prefs);
 		BookmarksManager.load(prefs);
 		adjustDisplaySettings();
     }
-    
+        
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		Log.d("QuranAndroid", "KeyDown");
+		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+			goToNextPage();
+		}
+		else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
+			goToPreviousPage();
+		}
+
+		return super.onKeyDown(keyCode, event);
+	}
+	
 	// thanks to codeshogun's blog post for this
 	// http://www.codeshogun.com/blog/2009/04/16/how-to-implement-swipe-action-in-android/
 	public class QuranGestureDetector extends SimpleOnGestureListener {
+		
+		private boolean useFling;
+
+		public QuranGestureDetector(boolean useFling) {
+			this.useFling = useFling;
+		}
+		
 		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+			if (!useFling)
+				return false;
+			
+			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+				return false;
+			// previous page swipe
+			if ((e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE)
+					&& (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)) {
+				goToPreviousPage();
+			} else if ((e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE)
+					&& (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY)) {
+				goToNextPage();
+			}
+
 			return false;
 		}
 		

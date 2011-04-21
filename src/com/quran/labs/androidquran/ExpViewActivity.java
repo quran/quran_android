@@ -59,7 +59,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 		setContentView(R.layout.quran_exp);
 		initComponents();
 
-		gestureDetector = new GestureDetector(new QuranGestureDetector());
+		gestureDetector = new GestureDetector(new QuranGestureDetector(false));
 
 		WindowManager manager = getWindowManager();
 		Display display = manager.getDefaultDisplay();
@@ -144,8 +144,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 		expLayout.bringToFront();
 		Log.d("QuranAndroid","Screen on");
-        QuranSettings.load(prefs);
         adjustActivityOrientation();
+        renderPage(ApplicationConstants.PAGES_LAST - QuranSettings.getInstance().getLastPage());
 	}
 	
 	@Override

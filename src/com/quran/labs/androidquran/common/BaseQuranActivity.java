@@ -1,11 +1,14 @@
 package com.quran.labs.androidquran.common;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -22,6 +25,7 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.TranslationActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public abstract class BaseQuranActivity extends Activity {
 
@@ -115,4 +119,47 @@ public abstract class BaseQuranActivity extends Activity {
 		i.putExtra("page", page);
 		startActivityForResult(i, ApplicationConstants.QURAN_VIEW_CODE);
 	}
+	
+	public boolean isInternetOn() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (cm != null && cm.getActiveNetworkInfo() != null) 
+			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
+		return false;
+	}
+	
+	protected void connect() {
+		if (isInternetOn())
+        	onConnectionSuccess();
+        else
+        	onConnectionFailed();
+	}
+	
+	protected void onConnectionSuccess() {
+		
+	}
+	
+	protected void onConnectionFailed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Unable to connect to server, make sure that your Internet connection is active. Retry ?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   dialog.dismiss();
+		        	   connect();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   dialog.dismiss();
+		           }
+		       });
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
+	@Override
+    protected void onResume() {
+    	super.onResume();
+    	QuranSettings.load(prefs);
+    }
 }

@@ -13,7 +13,6 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.common.GestureQuranActivity;
@@ -38,7 +37,7 @@ public class TranslationActivity extends GestureQuranActivity {
 		txtTranslation.setText("");
 		dba = new TranslationsDBAdapter(getApplicationContext());
 		loadPageState(savedInstanceState);
-		gestureDetector = new GestureDetector(new QuranGestureDetector());
+		gestureDetector = new GestureDetector(new QuranGestureDetector(true));
 		adjustTextSize();
 		renderTranslation();
 	}
@@ -79,21 +78,6 @@ public class TranslationActivity extends GestureQuranActivity {
 		}
 		return;
 	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
-			goToNextPage();
-		}
-		else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
-			goToPreviousPage();
-		}
-		else if (keyCode == KeyEvent.KEYCODE_BACK){
-			goBack();
-		}
-
-		return super.onKeyDown(keyCode, event);
-	}
 
 	public void renderTranslation(){
 		if ((page > ApplicationConstants.PAGES_LAST) || (page < ApplicationConstants.PAGES_FIRST)) page = 1;
@@ -128,6 +112,7 @@ public class TranslationActivity extends GestureQuranActivity {
 		}
 		
 		int numTranslations = translationLists.length;
+		txtTranslation.setText("");		
 		
 		int i = bounds[0];
 		for (; i <= bounds[2]; i++){
@@ -178,13 +163,6 @@ public class TranslationActivity extends GestureQuranActivity {
 		}
 	}
 	
-	public void goBack(){
-		Intent i = new Intent();
-		i.putExtra("page", page);
-		setResult(RESULT_OK, i);
-		finish();	
-	}
-	
 	@Override
 	protected void onSaveInstanceState(Bundle outState){
 		super.onSaveInstanceState(outState);
@@ -209,7 +187,7 @@ public class TranslationActivity extends GestureQuranActivity {
     			new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
     					dialog.cancel();
-    					goBack();
+    					finish();
     				}
     	});
     	

@@ -89,7 +89,7 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	}
 	
 	private void registerListeners() {		
-		gestureDetector = new GestureDetector(new QuranGestureDetector());
+		gestureDetector = new GestureDetector(new QuranGestureDetector(true));
 	}
 	
 	@Override

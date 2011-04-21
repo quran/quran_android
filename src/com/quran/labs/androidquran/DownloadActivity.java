@@ -10,10 +10,8 @@ import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.AsyncTask.Status;
@@ -62,11 +60,9 @@ public class DownloadActivity extends BaseQuranActivity {
         connect();
 	}
 	
-	private void connect() {
-		if (isInternetOn())
-        	fetchTranslationsList();
-        else
-        	onConnectionFailed();
+	@Override
+	protected void onConnectionSuccess() {
+		fetchTranslationsList();
 	}
 	
 	private void fetchTranslationsList() {
@@ -210,25 +206,6 @@ public class DownloadActivity extends BaseQuranActivity {
     	}
     }
 	
-	private void onConnectionFailed() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(DownloadActivity.this);
-		builder.setMessage("Unable to connect to server, make sure that your Internet connection is active. Retry ?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   dialog.dismiss();
-		        	   connect();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   dialog.dismiss();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-	
 	private class DownloadTranslationsTask extends QuranAsyncTask {
 		private int itemPosition;
 		public void onPreExecute() {
@@ -257,13 +234,6 @@ public class DownloadActivity extends BaseQuranActivity {
 	public void cancelDownload(){
 		progressDialog.dismiss();
 		currentTask.cancel(true);
-	}
-	
-	public boolean isInternetOn() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (cm != null && cm.getActiveNetworkInfo() != null) 
-			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
-		return false;
 	}
 	
 	@Override
