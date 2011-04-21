@@ -162,4 +162,10 @@ public abstract class BaseQuranActivity extends Activity {
     	super.onResume();
     	QuranSettings.load(prefs);
     }
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		QuranSettings.save(prefs);
+	}
 }

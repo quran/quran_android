@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.widget.TextView;
 
@@ -38,20 +39,24 @@ public class TranslationActivity extends GestureQuranActivity {
 		dba = new TranslationsDBAdapter(getApplicationContext());
 		loadPageState(savedInstanceState);
 		gestureDetector = new GestureDetector(new QuranGestureDetector(true));
-		adjustTextSize();
-		renderTranslation();
 	}
 	
 	private void adjustTextSize() {
-		QuranSettings.load(prefs);
 		txtTranslation.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
 	}
 	
 	@Override
 	protected void onResume() {
+		super.onResume();
 		adjustTextSize();
 		renderTranslation();
-		super.onResume();
+	}
+	
+	@Override
+	protected void onPause() {
+		Log.d("QuranAndroid", "TranslationActivity puased - page " + page);
+		QuranSettings.getInstance().setLastPage(page);
+		super.onPause();
 	}
 
 	public void goToNextPage(){
@@ -161,12 +166,6 @@ public class TranslationActivity extends GestureQuranActivity {
 			if (handler != null) handler.closeDatabase();
 			return null;
 		}
-	}
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState){
-		super.onSaveInstanceState(outState);
-		outState.putInt("page", page);
 	}
 	
 	public void promptForTranslationDownload(){

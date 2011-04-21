@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -139,13 +138,15 @@ public class ExpViewActivity extends GestureQuranActivity {
 	}
 	
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
 		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 		expLayout.bringToFront();
-		Log.d("QuranAndroid","Screen on");
-        adjustActivityOrientation();
-        renderPage(ApplicationConstants.PAGES_LAST - QuranSettings.getInstance().getLastPage());
+		Log.d("QuranAndroid", "Screen on");
+		adjustActivityOrientation();
+		int page = QuranSettings.getInstance().getLastPage();
+		Log.d("QuranAndroid", "ExpView resumed - page " + page);
+		renderPage(ApplicationConstants.PAGES_LAST - page);
 	}
 	
 	@Override
@@ -306,17 +307,6 @@ public class ExpViewActivity extends GestureQuranActivity {
 		}
 		
 		inReadingMode = !inReadingMode;
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
-			goToNextPage();
-		}
-		else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
-			goToPreviousPage();
-		}
-		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
