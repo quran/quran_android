@@ -257,6 +257,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 		Log.d("QuranAndroid", "Screen on");
 		adjustActivityOrientation();
+		//currentPage = QuranSettings.getInstance().getLastPage();
 		renderPage(ApplicationConstants.PAGES_LAST - currentPage);
 	}
 	

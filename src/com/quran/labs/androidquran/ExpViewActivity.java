@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,12 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
 
 public class ExpViewActivity extends GestureQuranActivity {
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		renderPage(ApplicationConstants.PAGES_LAST - currentPage);
+	}
 	
 	private void adjustLockView() {
 //		if (QuranSettings.getInstance().isLockOrientation()) {
