@@ -42,6 +42,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
     protected ViewGroup expLayout = null;
     protected int width = 0;
     protected int currentPage;
+    protected QuranGalleryAdapter galleryAdapter = null;
     
     @Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -67,13 +68,20 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		toggleMode();
     }
     
-    protected abstract QuranGalleryAdapter getAdapter();
+    @Override
+    public void onLowMemory() {
+    	super.onLowMemory();
+    	galleryAdapter.emptyCache();
+    }
+    
+    protected abstract void initGalleryAdapter();
     
     protected void initComponents() {
+    	initGalleryAdapter();
 		expLayout = (ViewGroup) findViewById(R.id.expLayout);
 		
 		gallery = (Gallery) findViewById(R.id.gallery);
-		gallery.setAdapter(getAdapter());
+		gallery.setAdapter(galleryAdapter);
 		gallery.setAnimationDuration(0);
 		gallery.setSpacing(25);
 

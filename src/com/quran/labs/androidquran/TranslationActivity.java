@@ -162,8 +162,16 @@ public class TranslationActivity extends GestureQuranActivity {
 	}
 	
 	public class QuranGalleryTranslationAdapter extends QuranGalleryAdapter {
+		private Map<String, String> cache = new HashMap<String, String>();
+		
 	    public QuranGalleryTranslationAdapter(Context context) {
 	    	super(context);
+	    }
+	    
+	    @Override
+	    public void emptyCache() {
+	    	super.emptyCache();
+	    	cache.clear();
 	    }
 
 	    public View getView(int position, View convertView, ViewGroup parent) {
@@ -180,7 +188,18 @@ public class TranslationActivity extends GestureQuranActivity {
 	    	}
 	    	
 	        int page = ApplicationConstants.PAGES_LAST - position;
-	        holder.page.setText(Html.fromHtml(getTranslation(page)));
+	        String str = null;
+	        if (cache.containsKey("page_" + page)){
+	        	str = cache.get("page_" + page);
+	        	Log.d("exp_v", "reading translation for page " + page + " from cache!");
+	        }
+	        
+	        if (str == null){
+	        	str = getTranslation(page);
+	        	cache.put("page_" + page, str);
+	        }
+	        
+	        holder.page.setText(Html.fromHtml(str));
 	        holder.page.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
 			QuranSettings.getInstance().setLastPage(page);
 			QuranSettings.save(prefs);
@@ -198,8 +217,8 @@ public class TranslationActivity extends GestureQuranActivity {
 	}
 	
 	@Override
-	protected QuranGalleryAdapter getAdapter() {
-		return new QuranGalleryTranslationAdapter(this);
+	protected void initGalleryAdapter() {
+		galleryAdapter = new QuranGalleryTranslationAdapter(this);
 	}
 	
 }

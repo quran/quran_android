@@ -31,4 +31,5 @@ public abstract class QuranGalleryAdapter extends BaseAdapter {
 	}
 
 	public abstract View getView(int position, View convertView, ViewGroup parent);
+	public void emptyCache() {};
 }

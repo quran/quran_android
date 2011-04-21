@@ -43,6 +43,12 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    public QuranGalleryImageAdapter(Context context) {
 	    	super(context);
 	    }
+	    
+	    @Override
+	    public void emptyCache() {
+	    	super.emptyCache();
+	    	cache.clear();
+	    }
 
 	    public View getView(int position, View convertView, ViewGroup parent) {
 	    	PageHolder holder;
@@ -87,8 +93,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	}
 
 	@Override
-	protected QuranGalleryAdapter getAdapter() {
-		return new QuranGalleryImageAdapter(this);
+	protected void initGalleryAdapter() {
+		galleryAdapter = new QuranGalleryImageAdapter(this);
 	}
 	
 }
