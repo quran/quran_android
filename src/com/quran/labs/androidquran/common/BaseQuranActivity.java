@@ -40,7 +40,6 @@ public abstract class BaseQuranActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.option_menu, menu);	  
 		return super.onCreateOptionsMenu(menu);
@@ -104,6 +103,7 @@ public abstract class BaseQuranActivity extends Activity {
 			break;
 			case R.id.menu_item_translations:
 				Intent i = new Intent(this, TranslationActivity.class);
+				i.putExtra("page", QuranSettings.getInstance().getLastPage());
 				startActivityForResult(i, ApplicationConstants.TRANSLATION_VIEW_CODE);
 			break;
 			case R.id.menu_item_get_translations:

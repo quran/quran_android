@@ -21,6 +21,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.common.GestureQuranActivity;
+import com.quran.labs.androidquran.common.QuranGalleryAdapter;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.BookmarksManager;
@@ -89,7 +90,7 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 	}
 	
 	private void registerListeners() {		
-		gestureDetector = new GestureDetector(new QuranGestureDetector(true));
+		gestureDetector = new GestureDetector(new QuranGestureDetector());
 	}
 	
 	@Override
@@ -108,14 +109,6 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 			break;
 		}
 		return super.onMenuItemSelected(featureId, item);
-	}
-	
-	private void loadPageState(Bundle savedInstanceState) {
-		page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
-		if (page == ApplicationConstants.PAGES_FIRST){
-			Bundle extras = getIntent().getExtras();
-			page = extras != null? extras.getInt("page") : ApplicationConstants.PAGES_FIRST;
-		}
 	}
 	
 	private void initializeQsi() {
@@ -325,5 +318,17 @@ public class QuranViewActivity extends GestureQuranActivity implements Animation
 		this.page = page;
 		animate = false;
 		showPage();
+	}
+
+	@Override
+	protected void toggleMode() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected QuranGalleryAdapter getAdapter() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
