@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.data.ApplicationConstants;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -9,6 +7,9 @@ import android.widget.Gallery;
 
 // http://stackoverflow.com/questions/5286115
 public class QuranGallery extends Gallery {
+	
+	// Gallery Scrolling Speed
+	public static final int GALLERY_SCROLLING_SPEED = 250;
 
 	private float mInitialX;
     private float mInitialY;
@@ -67,9 +68,9 @@ public class QuranGallery extends Gallery {
 			leftScroll = isScrollingLeft(e1, e2);
 
 		if (leftScroll) {
-			velocityX = ApplicationConstants.GALLERY_SCROLLING_SPEED;
+			velocityX = GALLERY_SCROLLING_SPEED;
 		} else {
-			velocityX = -ApplicationConstants.GALLERY_SCROLLING_SPEED;
+			velocityX = -GALLERY_SCROLLING_SPEED;
 		}
 
     	return super.onFling(e1, e2, velocityX, velocityY);
