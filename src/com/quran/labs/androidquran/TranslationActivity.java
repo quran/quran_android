@@ -36,8 +36,8 @@ public class TranslationActivity extends GestureQuranActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		dba = new TranslationsDBAdapter(this);
+		super.onCreate(savedInstanceState);
 		checkTranslationAvailability();
 	}
 	

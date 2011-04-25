@@ -41,7 +41,6 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
     protected TextView titleText = null;
     protected ViewGroup expLayout = null;
     protected int width = 0;
-    protected int currentPage;
     protected QuranGalleryAdapter galleryAdapter = null;
     
     @Override
@@ -62,8 +61,9 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		
 		BookmarksManager.load(prefs);
 		adjustDisplaySettings();
-
-		currentPage = loadPageState(savedInstanceState);
+		
+		int page = loadPageState(savedInstanceState);
+		renderPage(ApplicationConstants.PAGES_LAST - page);
 
 		toggleMode();
     }
@@ -234,7 +234,9 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		int page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
 		if (page == ApplicationConstants.PAGES_FIRST){
 			Bundle extras = getIntent().getExtras();
-			page = extras != null? extras.getInt("page") : ApplicationConstants.PAGES_FIRST;
+			page = extras != null? extras.getInt("page") : QuranSettings.getInstance().getLastPage();
+		} else if (page == ApplicationConstants.NO_PAGE_SAVED) {
+			page = ApplicationConstants.PAGES_FIRST;
 		}
 		
 		return page;
@@ -266,7 +268,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		Log.d("QuranAndroid", "Screen on");
 		adjustActivityOrientation();
 		//currentPage = QuranSettings.getInstance().getLastPage();
-		renderPage(ApplicationConstants.PAGES_LAST - currentPage);
+		//renderPage(ApplicationConstants.PAGES_LAST - currentPage);
 	}
 	
 	@Override
