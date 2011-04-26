@@ -3,4 +3,4 @@
     android:id="@+id/splashview"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:src="@drawable/splash" />
+    android:background="@drawable/splash" />
