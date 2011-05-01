@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.common.QuranGalleryAdapter;
@@ -50,15 +51,45 @@ public class ExpViewActivity extends GestureQuranActivity {
 				holder = new PageHolder();
 				holder.page = (ImageView)convertView.findViewById(R.id.pageImageView);
 				holder.scroll = (GalleryFriendlyScrollView)convertView.findViewById(R.id.pageScrollView);
+				holder.txtPageNotFound = (TextView)convertView.findViewById(R.id.txtPageNotFound);
 				convertView.setTag(holder);
 	    	}
 	    	else {
 	    		holder = (PageHolder)convertView.getTag();
 	    	}
 	    	
-	        Bitmap bitmap = null;
 	        int page = ApplicationConstants.PAGES_LAST - position;
-	        if (cache.containsKey("page_" + page)){
+	        Bitmap bitmap = getBitmap(page);
+	        
+	        if (bitmap == null) {
+	        	Log.d("QuranAndroid", "Page not found: " + page);
+	        	adjustView(holder, true);
+	        } else {
+	        	holder.page.setImageBitmap(bitmap);
+	        	adjustView(holder, false);
+				QuranSettings.getInstance().setLastPage(page);
+				QuranSettings.save(prefs);
+	        }
+	        
+			if (!inReadingMode)
+				updatePageInfo(position);
+			adjustBookmarkView();
+	    	return convertView;
+	    }
+	    
+	    private void adjustView(PageHolder holder, boolean pageNotFound) {
+	    	if (pageNotFound) {
+	    		holder.txtPageNotFound.setVisibility(View.VISIBLE);
+	        	holder.page.setVisibility(View.GONE);
+	    	} else {
+	    		holder.txtPageNotFound.setVisibility(View.GONE);
+	        	holder.page.setVisibility(View.VISIBLE);
+	    	}
+	    }
+	    
+	    private Bitmap getBitmap(int page) {
+	    	Bitmap bitmap = null;
+	    	if (cache.containsKey("page_" + page)){
 	        	SoftReference<Bitmap> bitmapRef = cache.get("page_" + page);
 	        	bitmap = bitmapRef.get();
 	        	Log.d("exp_v", "reading image for page " + page + " from cache!");
@@ -69,18 +100,13 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        	bitmap = QuranUtils.getImageFromSD(filename);
 	        	cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
 	        }
-			holder.page.setImageBitmap(bitmap);
-			QuranSettings.getInstance().setLastPage(page);
-			QuranSettings.save(prefs);
-			
-			if (!inReadingMode)
-				updatePageInfo(position);
-			adjustBookmarkView();
-	    	return convertView;
+	        
+	        return bitmap;
 	    }
 	}
 	
 	static class PageHolder {
+		TextView txtPageNotFound;
 		ImageView page;
 		ScrollView scroll;
 	}

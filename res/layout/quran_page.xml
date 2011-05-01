@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/pageImageView" android:background="#FFF4CB"
-		android:layout_width="fill_parent" android:layout_height="fill_parent" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<TextView android:id="@+id/txtPageNotFound" android:text="@string/pageNotFound"
+		android:visibility="gone" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:textSize="16sp" />
+	<ImageView android:id="@+id/pageImageView"
+		android:background="#FFF4CB" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" />
+</LinearLayout>
