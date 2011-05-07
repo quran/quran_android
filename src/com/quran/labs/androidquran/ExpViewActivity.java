@@ -4,8 +4,11 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,9 @@ import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
 
 public class ExpViewActivity extends GestureQuranActivity {
 	
+	private DownloadBitmapTask currentTask;
+	private ProgressDialog progressDialog;
+	
 //	private void adjustLockView() {
 //		if (QuranSettings.getInstance().isLockOrientation()) {
 //			btnLockOrientation.setImageResource(R.drawable.lock);		
@@ -29,6 +35,12 @@ public class ExpViewActivity extends GestureQuranActivity {
 //			btnLockOrientation.setImageResource(R.drawable.unlock);
 //		}
 //	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		progressDialog = new ProgressDialog(this);
+		super.onCreate(savedInstanceState);
+	}
 	
 	public class QuranGalleryImageAdapter extends QuranGalleryAdapter {
 		private Map<String, SoftReference<Bitmap>> cache = 
@@ -64,6 +76,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        if (bitmap == null) {
 	        	Log.d("QuranAndroid", "Page not found: " + page);
 	        	adjustView(holder, true);
+	        	if (currentTask == null) 
+	        		new DownloadBitmapTask(position, page).execute(null);
 	        } else {
 	        	holder.page.setImageBitmap(bitmap);
 	        	adjustView(holder, false);
@@ -114,6 +128,40 @@ public class ExpViewActivity extends GestureQuranActivity {
 	@Override
 	protected void initGalleryAdapter() {
 		galleryAdapter = new QuranGalleryImageAdapter(this);
+	}
+	
+	private class DownloadBitmapTask extends AsyncTask<Object[], Object, Object> {
+		private int position, page;
+		private boolean downloaded = false;
+
+		public DownloadBitmapTask(int position, int page) {
+			this.position = position;
+			this.page = page;
+		}
+
+		protected void onPreExecute() {
+			currentTask = this;
+			progressDialog
+					.setMessage("Downloading missing page. Please wait..");
+			progressDialog.show();
+		}
+
+		@Override
+		public void onPostExecute(Object result) {
+			currentTask = null;
+			progressDialog.hide();
+			if (downloaded) {
+				renderPage(position == 0 ? position + 1 : position - 1);
+				renderPage(position);
+			}
+		}
+
+		@Override
+		protected Object doInBackground(Object[]... arg0) {
+			Bitmap b = QuranUtils.getImageFromWeb(getPageFileName(page));
+			downloaded = b != null;
+			return null;
+		}
 	}
 	
 }
