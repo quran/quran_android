@@ -9,6 +9,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,8 +77,10 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        if (bitmap == null) {
 	        	Log.d("QuranAndroid", "Page not found: " + page);
 	        	adjustView(holder, true);
-	        	if (currentTask == null) 
-	        		new DownloadBitmapTask(position, page).execute(null);
+	        	if (currentTask == null || currentTask.getStatus() != Status.RUNNING) {
+	        		currentTask = new DownloadBitmapTask(position, page);
+	        		connect();
+	        	}
 	        } else {
 	        	holder.page.setImageBitmap(bitmap);
 	        	adjustView(holder, false);
@@ -130,6 +133,13 @@ public class ExpViewActivity extends GestureQuranActivity {
 		galleryAdapter = new QuranGalleryImageAdapter(this);
 	}
 	
+	@Override
+	protected void onConnectionSuccess() {
+		super.onConnectionSuccess();
+		if (currentTask != null)
+			currentTask.execute(null);
+	}
+	
 	private class DownloadBitmapTask extends AsyncTask<Object[], Object, Object> {
 		private int position, page;
 		private boolean downloaded = false;
@@ -140,9 +150,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 		}
 
 		protected void onPreExecute() {
-			currentTask = this;
-			progressDialog
-					.setMessage("Downloading missing page. Please wait..");
+			progressDialog.setMessage("Downloading missing page. Please wait..");
 			progressDialog.show();
 		}
 
