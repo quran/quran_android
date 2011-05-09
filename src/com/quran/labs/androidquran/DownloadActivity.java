@@ -35,7 +35,7 @@ import com.quran.labs.androidquran.util.RestClient;
 
 public class DownloadActivity extends BaseQuranActivity {
 	
-	public static final String WEB_SERVICE_URL = "http://www.dynamix-systems.com/quranAndroid/translations.php";
+	public static final String WEB_SERVICE_URL = "http://labs.quran.com/androidquran/translations.php";
 	private String url;
 	private DownloadItem [] downloadItems;
 	private ListView listView;
