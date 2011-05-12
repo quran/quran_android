@@ -79,7 +79,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        	adjustView(holder, true);
 	        	if (currentTask == null || currentTask.getStatus() != Status.RUNNING) {
 	        		currentTask = new DownloadBitmapTask(position, page);
-	        		connect();
+	        		connect(page);
 	        	}
 	        } else {
 	        	holder.page.setImageBitmap(bitmap);
@@ -120,6 +120,12 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        
 	        return bitmap;
 	    }
+	}
+	
+	protected void connect(int page) {
+		String filename = getPageFileName(page);
+		if (QuranUtils.getImageFromSD(filename) != null)
+    		connect();
 	}
 	
 	static class PageHolder {
