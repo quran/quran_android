@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.common.QuranGalleryAdapter;
@@ -79,7 +80,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        	adjustView(holder, true);
 	        	if (currentTask == null || currentTask.getStatus() != Status.RUNNING) {
 	        		currentTask = new DownloadBitmapTask(position, page);
-	        		connect(page);
+	        		connect();
 	        	}
 	        } else {
 	        	holder.page.setImageBitmap(bitmap);
@@ -112,20 +113,17 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        	Log.d("exp_v", "reading image for page " + page + " from cache!");
 	        }
 	        
-	        if (bitmap == null){
+	        // Bitmap not found in cache..
+	    	if (bitmap == null){
 	        	String filename = getPageFileName(page);
 	        	bitmap = QuranUtils.getImageFromSD(filename);
-	        	cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
+	        	// Add Bitmap to cache..
+	        	if (bitmap != null)
+	        		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
 	        }
 	        
 	        return bitmap;
 	    }
-	}
-	
-	protected void connect(int page) {
-		String filename = getPageFileName(page);
-		if (QuranUtils.getImageFromSD(filename) != null)
-    		connect();
 	}
 	
 	static class PageHolder {
@@ -148,7 +146,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	
 	private class DownloadBitmapTask extends AsyncTask<Object[], Object, Object> {
 		private int position, page;
-		private boolean downloaded = false;
+		private boolean downloaded = false; 
 
 		public DownloadBitmapTask(int position, int page) {
 			this.position = position;
@@ -156,18 +154,19 @@ public class ExpViewActivity extends GestureQuranActivity {
 		}
 
 		protected void onPreExecute() {
-			progressDialog.setMessage("Downloading missing page. Please wait..");
+			progressDialog.setMessage("Downloading page (" + page + ").. Please wait..");
 			progressDialog.show();
 		}
 
 		@Override
 		public void onPostExecute(Object result) {
+			if (downloaded) {
+				galleryAdapter.notifyDataSetChanged();
+			} else {
+				Toast.makeText(getApplicationContext(), "Error downloading page..", Toast.LENGTH_SHORT);
+			}
 			currentTask = null;
 			progressDialog.hide();
-			if (downloaded) {
-				renderPage(position == 0 ? position + 1 : position - 1);
-				renderPage(position);
-			}
 		}
 
 		@Override
