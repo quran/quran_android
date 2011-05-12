@@ -40,8 +40,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		progressDialog = new ProgressDialog(this);
 		super.onCreate(savedInstanceState);
+		progressDialog = new ProgressDialog(this);
 	}
 	
 	public class QuranGalleryImageAdapter extends QuranGalleryAdapter {
@@ -141,15 +141,14 @@ public class ExpViewActivity extends GestureQuranActivity {
 	protected void onConnectionSuccess() {
 		super.onConnectionSuccess();
 		if (currentTask != null)
-			currentTask.execute(null);
+			currentTask.execute();
 	}
 	
-	private class DownloadBitmapTask extends AsyncTask<Object[], Object, Object> {
-		private int position, page;
+	private class DownloadBitmapTask extends AsyncTask<Void, Object, Object> {
+		private int page;
 		private boolean downloaded = false; 
 
 		public DownloadBitmapTask(int position, int page) {
-			this.position = position;
 			this.page = page;
 		}
 
@@ -170,7 +169,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 		}
 
 		@Override
-		protected Object doInBackground(Object[]... arg0) {
+		protected Object doInBackground(Void... arg0) {
 			Bitmap b = QuranUtils.getImageFromWeb(getPageFileName(page));
 			downloaded = b != null;
 			return null;

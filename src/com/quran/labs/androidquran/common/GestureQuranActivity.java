@@ -48,7 +48,10 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
+		// does requestWindowFeature, has to be before setContentView
+		adjustDisplaySettings();
+
 		setContentView(R.layout.quran_exp);
 		
 		WindowManager manager = getWindowManager();
@@ -60,7 +63,6 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		gestureDetector = new GestureDetector(new QuranGestureDetector());
 		
 		BookmarksManager.load(prefs);
-		adjustDisplaySettings();
 		
 		int page = loadPageState(savedInstanceState);
 		renderPage(ApplicationConstants.PAGES_LAST - page);
