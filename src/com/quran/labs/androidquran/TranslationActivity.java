@@ -38,7 +38,7 @@ public class TranslationActivity extends GestureQuranActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		dba = new TranslationsDBAdapter(this);
 		super.onCreate(savedInstanceState);
-		checkTranslationAvailability();
+		//checkTranslationAvailability();
 	}
 	
 	@Override
@@ -65,8 +65,19 @@ public class TranslationActivity extends GestureQuranActivity {
 		
 		return true;
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		checkTranslationAvailability();
+		if (galleryAdapter != null)
+			galleryAdapter.notifyDataSetChanged();
+	}
 
 	public String getTranslation(int page){
+		if (dba.getActiveTranslation() == null)
+			return "";
+		
 		Log.d("QuranAndroid", "get translation for page " + page);
 		String translation = "";
 		if ((page > ApplicationConstants.PAGES_LAST) || (page < ApplicationConstants.PAGES_FIRST)) page = 1;
@@ -196,7 +207,8 @@ public class TranslationActivity extends GestureQuranActivity {
 	        
 	        if (str == null){
 	        	str = getTranslation(page);
-	        	cache.put("page_" + page, str);
+	        	if (str != null && !"".equals(str))
+	        		cache.put("page_" + page, str);
 	        }
 	        
 	        holder.page.setText(Html.fromHtml(str));
@@ -206,7 +218,6 @@ public class TranslationActivity extends GestureQuranActivity {
 			
 			if (!inReadingMode)
 				updatePageInfo(position);
-			//adjustBookmarkView();
 	    	return convertView;
 	    }
 	}
