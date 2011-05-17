@@ -40,8 +40,19 @@ public class ExpViewActivity extends GestureQuranActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Object [] saved = (Object []) getLastNonConfigurationInstance();
+		if (saved != null) {
+			currentTask = (DownloadBitmapTask) saved[0];
+			galleryAdapter = (QuranGalleryImageAdapter) saved[1];
+		}
 		super.onCreate(savedInstanceState);
 		progressDialog = new ProgressDialog(this);
+	}
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		Object [] o = {currentTask, galleryAdapter};
+		return o;
 	}
 	
 	public class QuranGalleryImageAdapter extends QuranGalleryAdapter {
@@ -134,7 +145,8 @@ public class ExpViewActivity extends GestureQuranActivity {
 
 	@Override
 	protected void initGalleryAdapter() {
-		galleryAdapter = new QuranGalleryImageAdapter(this);
+		if (galleryAdapter == null)
+			galleryAdapter = new QuranGalleryImageAdapter(this);
 	}
 	
 	@Override
@@ -153,19 +165,23 @@ public class ExpViewActivity extends GestureQuranActivity {
 		}
 
 		protected void onPreExecute() {
-			progressDialog.setMessage("Downloading page (" + page + ").. Please wait..");
-			progressDialog.show();
+			if (progressDialog != null) {
+				progressDialog.setMessage("Downloading page (" + page + ").. Please wait..");
+				progressDialog.show();
+			}
 		}
 
 		@Override
 		public void onPostExecute(Object result) {
 			if (downloaded) {
-				galleryAdapter.notifyDataSetChanged();
+				if (galleryAdapter != null)
+					galleryAdapter.notifyDataSetChanged();
 			} else {
 				Toast.makeText(getApplicationContext(), "Error downloading page..", Toast.LENGTH_SHORT);
 			}
 			currentTask = null;
-			progressDialog.hide();
+			if (progressDialog != null)
+				progressDialog.hide();
 		}
 
 		@Override

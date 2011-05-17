@@ -144,6 +144,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 	protected void renderPage(int position){
 		gallery.setSelection(position, true);
 		adjustBookmarkView();
+		updatePageInfo(position);
 	}
 	
 	protected void adjustBookmarkView() {
