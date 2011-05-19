@@ -11,9 +11,12 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.BookmarksActivity;
@@ -25,6 +28,8 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.TranslationActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.service.QuranDataService;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public abstract class BaseQuranActivity extends Activity {
@@ -167,5 +172,16 @@ public abstract class BaseQuranActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		QuranSettings.save(prefs);
+	}
+
+	protected void initializeQuranScreen() {
+	    // get the screen size
+	    WindowManager w = getWindowManager();
+	    Display d = w.getDefaultDisplay();
+	    int width = d.getWidth();
+	    int height = d.getHeight();
+	    Log.d("quran", "screen size: width [" + width + "], height: [" + height + "]");
+	    QuranScreenInfo.initialize(width, height);
+	    QuranDataService.qsi = QuranScreenInfo.getInstance();
 	}
 }

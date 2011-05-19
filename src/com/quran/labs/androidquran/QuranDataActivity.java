@@ -15,16 +15,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
-import android.view.WindowManager;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.service.QuranDataService;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-public class QuranDataActivity extends Activity {
+public class QuranDataActivity extends BaseQuranActivity {
 	ProgressDialog pDialog = null;
 	private QuranDataService boundService;
 	private AsyncTask<?, ?, ?> currentTask = null;
@@ -60,17 +58,6 @@ public class QuranDataActivity extends Activity {
 			}
 		};
 		splashHandler.postDelayed(splashRunner, _splashTime);
-	}
-
-	private void initializeQuranScreen() {
-        // get the screen size
-        WindowManager w = getWindowManager();
-        Display d = w.getDefaultDisplay();
-        int width = d.getWidth();
-        int height = d.getHeight();
-        Log.d("quran", "screen size: width [" + width + "], height: [" + height + "]");
-        QuranScreenInfo.initialize(width, height);
-        QuranDataService.qsi = QuranScreenInfo.getInstance();
 	}
 
 	public void checkDataStatus(){

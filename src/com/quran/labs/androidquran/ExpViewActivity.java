@@ -42,6 +42,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		Object [] saved = (Object []) getLastNonConfigurationInstance();
 		if (saved != null) {
+			Log.d("exp_v", "Adapter retrieved..");
 			currentTask = (DownloadBitmapTask) saved[0];
 			galleryAdapter = (QuranGalleryImageAdapter) saved[1];
 		}
@@ -53,6 +54,15 @@ public class ExpViewActivity extends GestureQuranActivity {
 	public Object onRetainNonConfigurationInstance() {
 		Object [] o = {currentTask, galleryAdapter};
 		return o;
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Always initialize Quran Screen on start so as to be able to retrieve images
+		// Error cause: Gallery Adapter was unable to retrieve images from SDCard as QuranScreenInfo
+		// was cleared after long sleep..
+		initializeQuranScreen();
 	}
 	
 	public class QuranGalleryImageAdapter extends QuranGalleryAdapter {
@@ -83,6 +93,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    		holder = (PageHolder)convertView.getTag();
 	    	}
 	    	
+	    	Log.d("exp_v", "position: " + position);
 	        int page = ApplicationConstants.PAGES_LAST - position;
 	        Bitmap bitmap = getBitmap(page);
 	        
@@ -118,10 +129,12 @@ public class ExpViewActivity extends GestureQuranActivity {
 	    
 	    private Bitmap getBitmap(int page) {
 	    	Bitmap bitmap = null;
-	    	if (cache.containsKey("page_" + page)){
+	    	if (cache != null && cache.containsKey("page_" + page)){
 	        	SoftReference<Bitmap> bitmapRef = cache.get("page_" + page);
 	        	bitmap = bitmapRef.get();
 	        	Log.d("exp_v", "reading image for page " + page + " from cache!");
+	        } else {
+	        	Log.d("exp_v", "loading image for page " + page + " from sdcard");
 	        }
 	        
 	        // Bitmap not found in cache..
@@ -129,8 +142,12 @@ public class ExpViewActivity extends GestureQuranActivity {
 	        	String filename = getPageFileName(page);
 	        	bitmap = QuranUtils.getImageFromSD(filename);
 	        	// Add Bitmap to cache..
-	        	if (bitmap != null)
+	        	if (bitmap != null) {
 	        		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
+	        		Log.d("exp_v", "page " + page + " added to cache!");
+	        	} else {
+	        		Log.d("exp_v", "page " + page + " not found on sdcard");
+	        	}
 	        }
 	        
 	        return bitmap;
@@ -145,8 +162,10 @@ public class ExpViewActivity extends GestureQuranActivity {
 
 	@Override
 	protected void initGalleryAdapter() {
-		if (galleryAdapter == null)
+		if (galleryAdapter == null) {
+			Log.d("exp_v", "Adapter instantiated..");
 			galleryAdapter = new QuranGalleryImageAdapter(this);
+		}
 	}
 	
 	@Override
