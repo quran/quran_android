@@ -30,12 +30,13 @@
 	<PreferenceCategory android:title="@string/prefs_category_translation">
 		<com.quran.labs.androidquran.widgets.SelectTranslationPreference
 	    android:key="@string/prefs_active_translation"
-	    android:title="Active Translation"
+	    android:title="Active Translation" 
+	    android:summary="Switch between downloaded translations.. Select 'Menu > Get Translations' to display a full list of available translations"
 	    android:dialogTitle="Select Active Translation" />
 		<com.quran.labs.androidquran.widgets.SeekBarPreference
 			android:key="@string/prefs_translation_text_size" android:title="Translation Text"
 			android:persistent="true" android:dialogMessage="Text Size"
-			android:summary="Customize the text size for translation"
+			android:summary="Customize the translation text size"
 			android:defaultValue="15" android:max="40" />
 	</PreferenceCategory>
 </PreferenceScreen>
