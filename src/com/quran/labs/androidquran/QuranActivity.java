@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -28,7 +29,8 @@ public class QuranActivity extends BaseQuranActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quran_list);
         QuranSettings.load(prefs);
-        
+        // set the asset manager to define the Arabic font
+        ArabicStyle.setAssetManager(getAssets());
         Intent i = new Intent(this, QuranDataActivity.class);
 		this.startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
     }
@@ -135,7 +137,9 @@ public class QuranActivity extends BaseQuranActivity {
 				convertView = mInflater.inflate(R.layout.quran_row, null);
 				holder = new ViewHolder();
 				holder.text = (TextView)convertView.findViewById(R.id.sura_title);
+				holder.text.setTypeface(ArabicStyle.getTypeface());
 				holder.metadata = (TextView)convertView.findViewById(R.id.sura_info);
+				holder.metadata.setTypeface(ArabicStyle.getTypeface());
 				holder.page = (TextView)convertView.findViewById(R.id.page_info);
 				holder.number = (TextView)convertView.findViewById(R.id.sura_number);
 				holder.suraicon = (ImageView)convertView.findViewById(R.id.sura_icon_img);
@@ -146,7 +150,7 @@ public class QuranActivity extends BaseQuranActivity {
 			}
 
 			holder.page.setText("" + elements[position].page);
-			holder.text.setText(elements[position].text);
+			holder.text.setText(ArabicStyle.reshape(elements[position].text));
 			holder.number.setText("" + elements[position].number);
 			
 			if (elements[position].isJuz){
@@ -159,7 +163,7 @@ public class QuranActivity extends BaseQuranActivity {
 				holder.metadata.setVisibility(View.VISIBLE);
 				holder.suraicon.setVisibility(View.VISIBLE);
 				holder.number.setVisibility(View.VISIBLE);
-				holder.metadata.setText(info);
+				holder.metadata.setText(ArabicStyle.reshape(info));
 			}
 			return convertView;
 		}
