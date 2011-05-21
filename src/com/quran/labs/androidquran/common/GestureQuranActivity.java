@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -88,6 +89,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		gallery.setSpacing(25);
 
 		titleText = (TextView) findViewById(R.id.pagetitle);
+		titleText.setTypeface(ArabicStyle.getTypeface());
 		//toolbar = (View) findViewById(R.id.toolbar);
 //		btnLockOrientation = (ImageView) findViewById(R.id.btnLockOrientation);
 //		btnLockOrientation.setOnClickListener(new OnClickListener() {
@@ -113,7 +115,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if (fromUser)
-					titleText.setText(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - progress));
+					titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - progress)));
 			}
 
 			@Override
@@ -283,7 +285,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 	}
 	
 	protected void updatePageInfo(int position){
-		titleText.setText(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - position));
+		titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - position)));
 		seekBar.setProgress(position);
 	}
 	
