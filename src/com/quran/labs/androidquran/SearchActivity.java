@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
 
 public class SearchActivity extends Activity {
 
@@ -162,7 +163,9 @@ public class SearchActivity extends Activity {
 				convertView = mInflater.inflate(R.layout.search_result, null);
 				holder = new ViewHolder();
 				holder.text = (TextView)convertView.findViewById(R.id.verseText);
+				holder.text.setTypeface(ArabicStyle.getTypeface());
 				holder.metadata = (TextView)convertView.findViewById(R.id.verseLocation);
+				holder.metadata.setTypeface(ArabicStyle.getTypeface());
 				convertView.setTag(holder);
 			}
 			else {
@@ -170,10 +173,10 @@ public class SearchActivity extends Activity {
 			}
 
 			SearchElement v = elements.get(position);
-			holder.text.setText(v.text);
+			holder.text.setText(ArabicStyle.reshape(v.text));
 
 			holder.metadata.setText("Found in Sura " +
-					QuranInfo.getSuraName(v.sura-1) +
+					ArabicStyle.reshape(QuranInfo.getSuraName(v.sura-1)) +
 					", verse " + v.ayah);
 			return convertView;
 		}
