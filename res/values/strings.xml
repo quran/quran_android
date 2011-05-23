@@ -55,9 +55,13 @@
 	</string>
 	<string name="help_title">Quran Android Help</string>
 	<string name="help">- Flip your screen to landscape mode for a zoomed in version.
-	    \n- Change pages by swiping your finger across the screen or by using the arrow keys or trackball.
+	    \n- Change pages by tapping the right or left side of the screen, or by 
+	    swiping your finger across the screen or by using the arrow keys or trackball.
+	    \n- Tap the center of the screen to get a slider for switching pages and a way to bookmark the pages.
 	    \n- You can fix the orientation in either landscape or portrait modes.
 	    \n- Adjust translation text size to your preference via Settings.
+	    \n- Browse and download available translations (choose "get translations" from under menu).
+	    \n- Initial search implementation allows you to search the active translation via the search button.
 	    \n- Bookmark a page via Menu > Bookmarks > View.
 	    \n- You can add as many bookmarks as you\'d like.  Long press on a bookmark to remove it.
 	    \n- The application remembers the last page you were reading and displays it when you restart the app.
