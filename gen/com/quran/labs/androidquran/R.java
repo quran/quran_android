@@ -30,6 +30,7 @@ public final class R {
     public static final class id {
         public static final int btnBookmark=0x7f080012;
         public static final int btnEmailUs=0x7f080002;
+        public static final int btnGetTranslations=0x7f08001f;
         public static final int btnHelpBack=0x7f08000a;
         public static final int cancelButton=0x7f08000c;
         public static final int display_name=0x7f080006;
@@ -39,24 +40,24 @@ public final class R {
         public static final int is_downloaded=0x7f080007;
         public static final int jumpButton=0x7f08000d;
         public static final int lstBookmarks=0x7f080004;
-        public static final int menu_item_about_us=0x7f080024;
-        public static final int menu_item_bookmarks=0x7f080026;
-        public static final int menu_item_bookmarks_add=0x7f080028;
-        public static final int menu_item_bookmarks_remove=0x7f080029;
-        public static final int menu_item_bookmarks_view=0x7f080027;
-        public static final int menu_item_get_translations=0x7f08002c;
-        public static final int menu_item_help=0x7f08002b;
-        public static final int menu_item_jump=0x7f080023;
-        public static final int menu_item_settings=0x7f080025;
-        public static final int menu_item_translations=0x7f08002a;
+        public static final int menu_item_about_us=0x7f080025;
+        public static final int menu_item_bookmarks=0x7f080027;
+        public static final int menu_item_bookmarks_add=0x7f080029;
+        public static final int menu_item_bookmarks_remove=0x7f08002a;
+        public static final int menu_item_bookmarks_view=0x7f080028;
+        public static final int menu_item_get_translations=0x7f08002d;
+        public static final int menu_item_help=0x7f08002c;
+        public static final int menu_item_jump=0x7f080024;
+        public static final int menu_item_settings=0x7f080026;
+        public static final int menu_item_translations=0x7f08002b;
         public static final int pageImageView=0x7f080016;
         public static final int pageScrollView=0x7f080017;
         public static final int page_field=0x7f08000b;
         public static final int page_info=0x7f08001c;
         public static final int pagetitle=0x7f080010;
-        public static final int results_list=0x7f08001f;
+        public static final int results_list=0x7f080020;
         public static final int search_area=0x7f08001e;
-        public static final int splashview=0x7f080022;
+        public static final int splashview=0x7f080023;
         public static final int suraSeek=0x7f080013;
         public static final int sura_icon_img=0x7f080019;
         public static final int sura_info=0x7f08001b;
@@ -71,8 +72,8 @@ public final class R {
         public static final int txtHelp=0x7f080009;
         public static final int txtHelpTitle=0x7f080008;
         public static final int txtPageNotFound=0x7f080015;
-        public static final int verseLocation=0x7f080021;
-        public static final int verseText=0x7f080020;
+        public static final int verseLocation=0x7f080022;
+        public static final int verseText=0x7f080021;
     }
     public static final class layout {
         public static final int about_us=0x7f030000;
@@ -135,14 +136,16 @@ public final class R {
         public static final int menu_jump_last_page=0x7f050010;
         public static final int menu_settings=0x7f05000f;
         public static final int menu_translation=0x7f050014;
+        public static final int no_active_translation=0x7f050036;
         /**  Search failure message. 
          */
         public static final int no_results=0x7f050035;
+        public static final int no_translations_available=0x7f050038;
         public static final int pageNotFound=0x7f050003;
         public static final int page_hint=0x7f05001c;
-        public static final int prefs_active_translation=0x7f050038;
-        public static final int prefs_category_display_settings=0x7f050037;
-        public static final int prefs_category_translation=0x7f050036;
+        public static final int prefs_active_translation=0x7f05003b;
+        public static final int prefs_category_display_settings=0x7f05003a;
+        public static final int prefs_category_translation=0x7f050039;
         public static final int prefs_full_screen=0x7f05002b;
         public static final int prefs_keep_screen_on=0x7f05002d;
         public static final int prefs_landscape_orientation=0x7f05002f;
@@ -154,6 +157,7 @@ public final class R {
         public static final int prefs_use_arabic_names=0x7f05002a;
         public static final int quranSearchType=0x7f050034;
         public static final int search_hint=0x7f050033;
+        public static final int set_active_translation=0x7f050037;
         public static final int settings_full_screen=0x7f050027;
         public static final int settings_keep_screen_on=0x7f050029;
         public static final int settings_show_clock=0x7f050028;

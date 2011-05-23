@@ -90,6 +90,9 @@
 
     <!-- Search failure message. -->
     <string name="no_results">No results found for \"%s\"</string>
+    <string name="no_active_translation">No active translation set, set an active translation first (Settings > Set Active Translation) and then search again.</string>
+    <string name="set_active_translation">Set Active Translation</string>
+    <string name="no_translations_available">You have not got any available translations, please download a translation first (Menu > Get More Translations) and then search again.</string>
     <string name="prefs_category_translation">Translation Preferences</string>
     <string name="prefs_category_display_settings">Display Settings</string>
     <string name="prefs_active_translation">activeTranslation</string>

@@ -9,6 +9,8 @@
             android:background="@android:drawable/title_bar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
+    <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations" 
+    	android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone"/>
     <ListView
             android:id="@+id/results_list"
             android:layout_width="fill_parent"
