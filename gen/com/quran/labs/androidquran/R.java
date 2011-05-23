@@ -137,22 +137,23 @@ public final class R {
         public static final int menu_translation=0x7f050014;
         /**  Search failure message. 
          */
-        public static final int no_results=0x7f050034;
+        public static final int no_results=0x7f050035;
         public static final int pageNotFound=0x7f050003;
         public static final int page_hint=0x7f05001c;
-        public static final int prefs_active_translation=0x7f050037;
-        public static final int prefs_category_display_settings=0x7f050036;
-        public static final int prefs_category_translation=0x7f050035;
+        public static final int prefs_active_translation=0x7f050038;
+        public static final int prefs_category_display_settings=0x7f050037;
+        public static final int prefs_category_translation=0x7f050036;
         public static final int prefs_full_screen=0x7f05002b;
         public static final int prefs_keep_screen_on=0x7f05002d;
         public static final int prefs_landscape_orientation=0x7f05002f;
         public static final int prefs_lock_orientation=0x7f05002e;
         public static final int prefs_path=0x7f050031;
+        public static final int prefs_reshape_arabic=0x7f050032;
         public static final int prefs_show_clock=0x7f05002c;
         public static final int prefs_translation_text_size=0x7f050030;
         public static final int prefs_use_arabic_names=0x7f05002a;
-        public static final int quranSearchType=0x7f050033;
-        public static final int search_hint=0x7f050032;
+        public static final int quranSearchType=0x7f050034;
+        public static final int search_hint=0x7f050033;
         public static final int settings_full_screen=0x7f050027;
         public static final int settings_keep_screen_on=0x7f050029;
         public static final int settings_show_clock=0x7f050028;

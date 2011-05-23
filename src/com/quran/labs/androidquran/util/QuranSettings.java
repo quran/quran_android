@@ -18,6 +18,7 @@ public class QuranSettings {
 	private int translationTextSize = ApplicationConstants.DEFAULT_TEXT_SIZE;
 	private int lastPage = 0;
 	private String activeTranslation = null;
+	private boolean reshapeArabic = false;
 
 	private QuranSettings() {
 		
@@ -94,6 +95,14 @@ public class QuranSettings {
 	public void setActiveTranslation(String activeTranslation){
 		this.activeTranslation = activeTranslation;
 	}
+	
+	public boolean isReshapeArabic() {
+		return reshapeArabic;
+	}
+
+	public void setReshapeArabic(boolean reshapeArabic) {
+		this.reshapeArabic = reshapeArabic;
+	}
 
 	public static void load(SharedPreferences preferences) {
 		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
@@ -105,6 +114,7 @@ public class QuranSettings {
 		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.NO_PAGE_SAVED);
 		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+		instance.reshapeArabic = preferences.getBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, false);
 	}
 	
 	public static void save(SharedPreferences preferences) {
@@ -118,6 +128,7 @@ public class QuranSettings {
 		editor.putInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, instance.translationTextSize);
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
 		editor.putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, instance.activeTranslation);
+		editor.putBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, instance.reshapeArabic);
 		editor.commit();
 	}
 }

@@ -292,11 +292,11 @@ public class QuranInfo {
 	
 	public static String getPageTitleNoPrefix(int page) {
 		return getPageTitleNoPrefix() + page +
-		" - [" + getSuraTitle() + " " + getSuraNameFromPage(page) + "]";
+		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
 	}
 	
 	public static String getPageTitle(int page) {
 		return getPageTitle() + page +
-		" - [" + getSuraTitle() + " " + getSuraNameFromPage(page) + "]";
+		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
 	}
 }

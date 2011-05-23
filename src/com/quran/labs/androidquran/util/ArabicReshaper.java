@@ -5,37 +5,48 @@
 
 package com.quran.labs.androidquran.util;
 
+import java.util.HashMap;
 
-public class Reshaping {
+
+public class ArabicReshaper {
+	
+	public static final char RTL = '\u200f';
 	
 	/**
 	 * States of the word
 	 */
-	final  int NON_ARABIC =0, ISOLATED = 1, BEGINING = 2, MIDDLE = 3, END = 4, ARABIC2FORM=5, LAMALEF=6;
+	private final  int NON_ARABIC =0, ISOLATED = 1, BEGINING = 2, MIDDLE = 3, END = 4, ARABIC2FORM=5, LAMALEF=6;
 	/**
 	 * Previous state of the word
 	 */
-	int preState = NON_ARABIC;
+	private int preState = NON_ARABIC;
 	/**
 	 * Number of forms the word has
 	 */
-	int forms = 0;
+	@SuppressWarnings("unused")
+	private int forms = 0;
 	/**
 	 * Location of the current char in the ARABIC_GLYPHS matrix
 	 */
-	int loc = 0 ;
+	private int loc = 0 ;
 	/**
 	 * States for lam alef
 	 */
-	int lamState=0 ,alef=0;
+	private int lamState=0 ,alef=0;
 	/**
 	 * The current and next chars
 	 */
-	char curntChar, nxtChar;
+	private char curntChar, nxtChar;
 	/**
 	 * To decide either stay in lam alef state or change the state
 	 */
-	boolean lam = true ,append = false;
+	private boolean lam = true, append = false;
+	
+	/**
+	 * used to handle numbers switch
+	 */
+	private boolean number = false, flipNumber = false;
+	private int numStartIndex = -1;
 	
 	/**
 	 * The Arabic chars unicode mapping matrix	
@@ -88,6 +99,21 @@ public class Reshaping {
 			{ 65275, 65276 }
 	};
 	
+	private HashMap<Character, Character> arabicNumbers = new HashMap<Character, Character>();
+	
+	public ArabicReshaper() {
+		arabicNumbers.put(new Character('0'), new Character('\u0660'));
+		arabicNumbers.put(new Character('1'), new Character('\u0661'));
+		arabicNumbers.put(new Character('2'), new Character('\u0662'));
+		arabicNumbers.put(new Character('3'), new Character('\u0663'));
+		arabicNumbers.put(new Character('4'), new Character('\u0664'));
+		arabicNumbers.put(new Character('5'), new Character('\u0665'));
+		arabicNumbers.put(new Character('6'), new Character('\u0666'));
+		arabicNumbers.put(new Character('7'), new Character('\u0667'));
+		arabicNumbers.put(new Character('8'), new Character('\u0668'));
+		arabicNumbers.put(new Character('9'), new Character('\u0669'));
+	}
+	
 	/**
 	 * Takes the text and iterates over its chars then send them to the FSM
 	 * to compute the state and choose the correct form for each char
@@ -98,22 +124,37 @@ public class Reshaping {
 		int state=0;StringBuffer txt=new StringBuffer("");
 		if(text==""||text==null)
 			return "";
+		// Append an empty char to the text to avoid repeating code after loop
+		text = text + " ";
 		for (int i = 0 ; i < text.length()-1 ; i++){
 			curntChar = text.charAt(i);
 			nxtChar = text.charAt(i+1);
-			state = getCurrentState(curntChar,nxtChar);						
-			if (!append)
+			state = getCurrentState(curntChar,nxtChar);
+			if (number && numStartIndex == -1) {
+				numStartIndex = i;
+			}
+			if (flipNumber) {
+				number = false;
+				flipNumber = false;
+				String num = text.substring(numStartIndex, i + 1);
+				// if the whole text is a number don't reverse it
+				txt.append(convertToArabicNumbers(num, !(numStartIndex == 0 && (i + 2) == text.length())));
+				numStartIndex = -1;
+			} else if (!append && !number)
 				txt .append(getReshapedChar(state));
 			else
 				append = false;
 		}
-		curntChar = text.charAt(text.length()-1);
-		state = getCurrentState(curntChar,' ');
-		if (!append)
-			txt.append(getReshapedChar(state));
 		return txt.toString();
 	}
 	
+	private String convertToArabicNumbers(String num, boolean reverse) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < num.length(); i++)
+			sb.append(arabicNumbers.get(num.charAt(i)));
+		return (reverse ? sb.reverse().toString() : sb.toString()) + RTL;
+	}
+
 	/**
 	 * Computes the state of the FSM using the current and next chars
 	 * @param current: the current char
@@ -140,6 +181,9 @@ public class Reshaping {
 					state = BEGINING;
 			}	
 			lamState = BEGINING;
+			
+			number = Character.isDigit(current);
+			flipNumber = number && !Character.isDigit(next);
 			break;
 		case ISOLATED:
 			if(curnt==-1 )
@@ -260,7 +304,10 @@ public class Reshaping {
 		char reshaped = 0 ;
 		switch(state){
 		case NON_ARABIC:
-			reshaped = curntChar;
+			if (Character.isDigit(curntChar))
+				reshaped = arabicNumbers.get(new Character(curntChar));
+			else
+				reshaped = curntChar;
 			break;
 		case ISOLATED:
 			reshaped = ARABIC_GLYPHS[loc][1];

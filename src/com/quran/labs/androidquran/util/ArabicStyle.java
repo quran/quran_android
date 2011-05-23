@@ -15,7 +15,9 @@ public class ArabicStyle {
 		return typeface;
 	}
 	public static String reshape(String text){
-		Reshaping rs = new Reshaping();
+		if (!QuranSettings.getInstance().isReshapeArabic())
+			return text;
+		ArabicReshaper rs = new ArabicReshaper();
 		return rs.reshape(text);
 	}
 }

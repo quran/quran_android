@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,9 +150,9 @@ public class QuranActivity extends BaseQuranActivity {
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			holder.page.setText("" + elements[position].page);
+			holder.page.setText(ArabicStyle.reshape(String.valueOf(elements[position].page)));
 			holder.text.setText(ArabicStyle.reshape(elements[position].text));
-			holder.number.setText("" + elements[position].number);
+			holder.number.setText(ArabicStyle.reshape(String.valueOf(elements[position].number)));
 			
 			if (elements[position].isJuz){
 				holder.metadata.setVisibility(View.GONE);
