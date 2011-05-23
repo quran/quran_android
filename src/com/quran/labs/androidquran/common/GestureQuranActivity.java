@@ -144,10 +144,11 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 	}
 	
 	protected void renderPage(int position){
-		if (position < ApplicationConstants.PAGES_LAST)
+		if (position < ApplicationConstants.PAGES_LAST) {
 			gallery.setSelection(position, true);
-		adjustBookmarkView();
-		updatePageInfo(position);
+			adjustBookmarkView();
+			updatePageInfo(position);
+		}
 	}
 	
 	protected void adjustBookmarkView() {
