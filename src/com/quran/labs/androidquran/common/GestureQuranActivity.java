@@ -286,8 +286,13 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 	}
 	
 	protected void updatePageInfo(int position){
+		Log.d("QuranAndroid", "Update page info: " + position);
 		titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - position)));
 		seekBar.setProgress(position);
+	}
+	
+	private void updatePageInfo() {
+		updatePageInfo(gallery.getSelectedItemPosition());
 	}
 	
 	protected void toggleMode(){
@@ -303,6 +308,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 	        btnBookmark.setVisibility(View.VISIBLE);
 	        //adjustLockView();
 			adjustBookmarkView();
+			updatePageInfo();
 		}
 		else {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -316,5 +322,5 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		}
 		
 		inReadingMode = !inReadingMode;
-	}
+	}	
 }

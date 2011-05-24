@@ -111,8 +111,7 @@ public class ExpViewActivity extends GestureQuranActivity {
 				QuranSettings.save(prefs);
 	        }
 	        
-			if (!inReadingMode)
-				updatePageInfo(position);
+			updatePageInfo(position);
 			adjustBookmarkView();
 	    	return convertView;
 	    }
