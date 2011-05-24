@@ -12,6 +12,7 @@
 		android:layout_height="fill_parent" android:visibility="visible"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="#FFFFFF" android:id="@+id/txtHelp"
+		android:textSize="16dip"
 		android:singleLine="false" android:scrollbarAlwaysDrawVerticalTrack="true"
 		android:scrollbars="vertical" android:maxLines="16" android:text="@string/help"
 		android:padding="10dip" android:lineSpacingExtra="4dip" />

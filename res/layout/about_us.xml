@@ -23,7 +23,7 @@
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:visibility="visible"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="#FFFFFF" android:textStyle="bold" android:id="@+id/txtAbout"
+		android:textColor="#FFFFFF" android:textSize="16dip" android:id="@+id/txtAbout"
 		android:singleLine="false" android:scrollbarAlwaysDrawVerticalTrack="true"
 		android:scrollbars="vertical" android:text="@string/aboutUs"
 		android:layout_above="@id/btnEmailUs" android:padding="10dip"
