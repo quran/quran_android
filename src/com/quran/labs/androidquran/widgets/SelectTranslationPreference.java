@@ -20,6 +20,12 @@ public class SelectTranslationPreference extends ListPreference {
 			values[i] = items[i].getFileName();
 		}
 		
+		// there is no available translations
+		if (items.length == 0) {
+			setEnabled(items.length > 0);
+			setSummary("No translations installed");
+		}
+
 		setEntries(entries);
 		setEntryValues(values);
 	}
