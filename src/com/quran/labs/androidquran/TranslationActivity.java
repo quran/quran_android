@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.DatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
 
@@ -191,6 +192,7 @@ public class TranslationActivity extends GestureQuranActivity {
 	    		convertView = mInflater.inflate(R.layout.quran_translation, null);
 				holder = new PageHolder();
 				holder.page = (TextView)convertView.findViewById(R.id.translationText);
+				holder.page.setTypeface(ArabicStyle.getTypeface());
 				holder.scroll = (GalleryFriendlyScrollView)convertView.findViewById(R.id.pageScrollView);
 				convertView.setTag(holder);
 	    	}
@@ -211,7 +213,7 @@ public class TranslationActivity extends GestureQuranActivity {
 	        		cache.put("page_" + page, str);
 	        }
 	        
-	        holder.page.setText(Html.fromHtml(str));
+	        holder.page.setText(Html.fromHtml(ArabicStyle.reshape(str)));
 	        holder.page.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
 			QuranSettings.getInstance().setLastPage(page);
 			QuranSettings.save(prefs);

@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -10,14 +9,13 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.util.QuranUtils;
