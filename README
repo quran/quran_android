@@ -11,6 +11,15 @@ patches, comments, etc are welcome.
 
 changelog
 ---------
+version 1.3
+- improved interface
+- support for 1024x768 images
+- translation download support
+- arabic support for non-arabic supporting devices
+- initial search support via search button
+- more translations
+- bugfixes and more
+
 version 1.2
 - Sahih Internation Translation introduced
 - Fix orientation in either landscape or portrait modes
