@@ -37,6 +37,8 @@ public class QuranActivity extends BaseQuranActivity {
     
     public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+		if (QuranScreenInfo.getInstance() == null)
+			initializeQuranScreen();
 		if (newConfig != null)
 			QuranScreenInfo.getInstance().setOrientation(newConfig.orientation);
 	}
