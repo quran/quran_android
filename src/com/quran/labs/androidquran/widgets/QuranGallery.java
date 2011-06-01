@@ -2,14 +2,18 @@ package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.Gallery;
+
+import com.quran.labs.androidquran.R;
 
 // http://stackoverflow.com/questions/5286115
 public class QuranGallery extends Gallery {
 	
 	// Gallery Scrolling Speed
 	public static final int GALLERY_SCROLLING_SPEED = 250;
+	private static final int LANDSCAPE_SCROLLING_SPEED = 50;
 
 	private float mInitialX;
     private float mInitialY;
@@ -29,6 +33,30 @@ public class QuranGallery extends Gallery {
             distanceX = 0;
         }
         return super.onScroll(e1, e2, distanceX, distanceY);
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	GalleryFriendlyScrollView scroller = null;
+    	// Get the scroller from the layout - Only present in landscape mode
+    	scroller = (GalleryFriendlyScrollView) findViewById(R.id.pageScrollView);
+    	switch(keyCode) {
+    	case KeyEvent.KEYCODE_DPAD_DOWN:
+    		if (scroller != null) {
+    			scroller.scrollBy(0, LANDSCAPE_SCROLLING_SPEED);
+    		}
+    		break;
+    	case KeyEvent.KEYCODE_DPAD_UP:
+    		if (scroller != null) {
+    			scroller.scrollBy(0, -LANDSCAPE_SCROLLING_SPEED);
+    		}
+    		break;
+    	case KeyEvent.KEYCODE_DPAD_LEFT:
+    		break;
+    	case KeyEvent.KEYCODE_DPAD_RIGHT:
+    		break;
+    	}
+    	return super.onKeyDown(keyCode, event);
     }
 
     @Override
