@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.widget.Gallery;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.INavigatorListener;
 
 // http://stackoverflow.com/questions/5286115
 public class QuranGallery extends Gallery {
@@ -19,6 +20,7 @@ public class QuranGallery extends Gallery {
     private float mInitialY;
     private boolean mNeedToRebase;
     private boolean mIgnore;
+	private INavigatorListener navigatorListener = null;
 
     
 	public QuranGallery(Context context, AttributeSet attrs) {
@@ -52,8 +54,12 @@ public class QuranGallery extends Gallery {
     		}
     		break;
     	case KeyEvent.KEYCODE_DPAD_LEFT:
+    		if (navigatorListener != null)
+    			navigatorListener.onLeftKey();
     		break;
     	case KeyEvent.KEYCODE_DPAD_RIGHT:
+    		if (navigatorListener != null)
+    			navigatorListener.onRightKey();
     		break;
     	}
     	return super.onKeyDown(keyCode, event);
@@ -106,5 +112,9 @@ public class QuranGallery extends Gallery {
     
 	private boolean isScrollingLeft(MotionEvent e1, MotionEvent e2) {
 		return e2.getX() > e1.getX();
+	}
+
+	public void setNavigatorListener(INavigatorListener navigatorListener) {
+		this.navigatorListener = navigatorListener;
 	}
 }

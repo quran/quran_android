@@ -15,7 +15,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -26,8 +25,9 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.QuranGallery;
 
-public abstract class GestureQuranActivity extends BaseQuranActivity {
+public abstract class GestureQuranActivity extends BaseQuranActivity implements INavigatorListener {
     protected GestureDetector gestureDetector;
     
 	protected static final int SWIPE_MIN_DISTANCE = 120;
@@ -37,7 +37,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
     
     protected ImageView btnBookmark = null;
     protected boolean inReadingMode = false;
-    protected Gallery gallery = null;
+    protected QuranGallery gallery = null;
     protected SeekBar seekBar = null;
     protected TextView titleText = null;
     protected ViewGroup expLayout = null;
@@ -83,10 +83,11 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
     	initGalleryAdapter();
 		expLayout = (ViewGroup) findViewById(R.id.expLayout);
 		
-		gallery = (Gallery) findViewById(R.id.gallery);
+		gallery = (QuranGallery) findViewById(R.id.gallery);
 		gallery.setAdapter(galleryAdapter);
 		gallery.setAnimationDuration(0);
 		gallery.setSpacing(25);
+		gallery.setNavigatorListener(this);
 
 		titleText = (TextView) findViewById(R.id.pagetitle);
 		titleText.setTypeface(ArabicStyle.getTypeface());
@@ -322,5 +323,15 @@ public abstract class GestureQuranActivity extends BaseQuranActivity {
 		}
 		
 		inReadingMode = !inReadingMode;
-	}	
+	}
+
+	@Override
+	public void onLeftKey() {
+		goToNextPage();
+	}
+
+	@Override
+	public void onRightKey() {
+		goToPreviousPage();
+	}
 }
