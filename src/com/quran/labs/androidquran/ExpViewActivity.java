@@ -20,12 +20,15 @@ import android.widget.Toast;
 
 import com.quran.labs.androidquran.common.GestureQuranActivity;
 import com.quran.labs.androidquran.common.QuranGalleryAdapter;
+import com.quran.labs.androidquran.common.QuranPageFeeder;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
 
 public class ExpViewActivity extends GestureQuranActivity {
+	
+	private static final String TAG = "ExpViewActivity";
 	
 	private DownloadBitmapTask currentTask;
 	private ProgressDialog progressDialog;
@@ -45,14 +48,15 @@ public class ExpViewActivity extends GestureQuranActivity {
 			Log.d("exp_v", "Adapter retrieved..");
 			currentTask = (DownloadBitmapTask) saved[0];
 			galleryAdapter = (QuranGalleryImageAdapter) saved[1];
-		}
+			quranPageFeeder = (QuranPageFeeder) saved[2];
+		} 
 		super.onCreate(savedInstanceState);
 		progressDialog = new ProgressDialog(this);
 	}
 	
 	@Override
 	public Object onRetainNonConfigurationInstance() {
-		Object [] o = {currentTask, galleryAdapter};
+		Object [] o = {currentTask, galleryAdapter, quranPageFeeder};
 		return o;
 	}
 	
@@ -164,6 +168,13 @@ public class ExpViewActivity extends GestureQuranActivity {
 		if (galleryAdapter == null) {
 			Log.d("exp_v", "Adapter instantiated..");
 			galleryAdapter = new QuranGalleryImageAdapter(this);
+		}
+	}
+	
+	protected void initQuranPageFeeder(){
+		if (quranPageFeeder == null) {
+			Log.d(TAG, "Quran Feeder instantiated...");
+			quranPageFeeder = new QuranPageFeeder(this, quranPageCurler, R.layout.quran_page_layout);
 		}
 	}
 	

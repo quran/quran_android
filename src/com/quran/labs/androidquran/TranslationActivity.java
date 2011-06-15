@@ -234,4 +234,8 @@ public class TranslationActivity extends GestureQuranActivity {
 		galleryAdapter = new QuranGalleryTranslationAdapter(this);
 	}
 	
+	protected void initQuranPageFeeder(){
+		
+	}
+	
 }

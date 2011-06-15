@@ -26,6 +26,7 @@ import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranGallery;
+import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 
 public abstract class GestureQuranActivity extends BaseQuranActivity implements INavigatorListener {
     protected GestureDetector gestureDetector;
@@ -37,12 +38,15 @@ public abstract class GestureQuranActivity extends BaseQuranActivity implements 
     
     protected ImageView btnBookmark = null;
     protected boolean inReadingMode = false;
-    protected QuranGallery gallery = null;
+    protected QuranGallery gallerys = null;
     protected SeekBar seekBar = null;
     protected TextView titleText = null;
     protected ViewGroup expLayout = null;
     protected int width = 0;
     protected QuranGalleryAdapter galleryAdapter = null;
+    
+    protected QuranPageCurlView quranPageCurler = null;
+    protected QuranPageFeeder quranPageFeeder;
     
     @Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -66,7 +70,8 @@ public abstract class GestureQuranActivity extends BaseQuranActivity implements 
 		BookmarksManager.load(prefs);
 		
 		int page = loadPageState(savedInstanceState);
-		renderPage(ApplicationConstants.PAGES_LAST - page);
+		quranPageFeeder.jumpToPage(page);
+		//renderPage(ApplicationConstants.PAGES_LAST - page);
 
 		toggleMode();
     }
@@ -78,17 +83,33 @@ public abstract class GestureQuranActivity extends BaseQuranActivity implements 
     }
     
     protected abstract void initGalleryAdapter();
+    protected abstract void initQuranPageFeeder();
     
     protected void initComponents() {
-    	initGalleryAdapter();
+    	//initGalleryAdapter();
 		expLayout = (ViewGroup) findViewById(R.id.expLayout);
 		
+		quranPageCurler = (QuranPageCurlView)findViewById(R.id.gallery);
+		quranPageCurler.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				toggleMode();
+				
+			}
+		});
+		initQuranPageFeeder();
+				
+		/**
+		 * Old gallery stuff
+		 * 
 		gallery = (QuranGallery) findViewById(R.id.gallery);
 		gallery.setAdapter(galleryAdapter);
 		gallery.setAnimationDuration(0);
 		gallery.setSpacing(25);
 		gallery.setNavigatorListener(this);
-
+		*/
+		
 		titleText = (TextView) findViewById(R.id.pagetitle);
 		titleText.setTypeface(ArabicStyle.getTypeface());
 		//toolbar = (View) findViewById(R.id.toolbar);
@@ -125,31 +146,37 @@ public abstract class GestureQuranActivity extends BaseQuranActivity implements 
 
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
-				if (seekBar.getProgress() != gallery.getSelectedItemPosition()) {
-					renderPage(seekBar.getProgress());
+				if (seekBar.getProgress() != quranPageFeeder.getCurrentPagePosition()) {
+					quranPageFeeder.jumpToPage(ApplicationConstants.PAGES_LAST - seekBar.getProgress());
 				}
 			}
 		});
 	}
     
 	protected void goToNextPage() {
+		/*
 		int position = gallery.getSelectedItemPosition();
 		if (position > 0)
 			renderPage(position - 1);
+		 */
 	}
 
 	protected void goToPreviousPage() {
+		/*
 		int position = gallery.getSelectedItemPosition();
 		if (position < ApplicationConstants.PAGES_LAST - 1)
 			renderPage(position + 1);
+		*/
 	}
 	
 	protected void renderPage(int position){
+		/*
 		if (position < ApplicationConstants.PAGES_LAST) {
 			gallery.setSelection(position, true);
 			adjustBookmarkView();
 			updatePageInfo(position);
 		}
+		*/
 	}
 	
 	protected void adjustBookmarkView() {
@@ -199,14 +226,15 @@ public abstract class GestureQuranActivity extends BaseQuranActivity implements 
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
-		return gestureDetector.onTouchEvent(event);
+		return super.onTouchEvent(event);
+		//return gestureDetector.onTouchEvent(event);
 	}
 	
 	// this function lets this activity handle the touch event before the ScrollView
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event){
-		super.dispatchTouchEvent(event);
-		return gestureDetector.onTouchEvent(event);
+		return super.dispatchTouchEvent(event);
+		//return gestureDetector.onTouchEvent(event);
 	}
 	
 	protected void adjustActivityOrientation() {
@@ -288,12 +316,13 @@ public abstract class GestureQuranActivity extends BaseQuranActivity implements 
 	
 	protected void updatePageInfo(int position){
 		Log.d("QuranAndroid", "Update page info: " + position);
-		titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - position)));
-		seekBar.setProgress(position);
+		titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(position)));
+		seekBar.setProgress(ApplicationConstants.PAGES_LAST - position);
 	}
 	
 	private void updatePageInfo() {
-		updatePageInfo(gallery.getSelectedItemPosition());
+		//updatePageInfo(gallery.getSelectedItemPosition());
+		updatePageInfo(quranPageFeeder.getCurrentPagePosition());
 	}
 	
 	protected void toggleMode(){
