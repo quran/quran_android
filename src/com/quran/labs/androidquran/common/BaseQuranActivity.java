@@ -3,9 +3,9 @@ package com.quran.labs.androidquran.common;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -21,10 +21,10 @@ import android.view.WindowManager;
 import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.BookmarksActivity;
 import com.quran.labs.androidquran.DownloadActivity;
-import com.quran.labs.androidquran.ExpViewActivity;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranJumpDialog;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
+import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.TranslationActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
@@ -38,7 +38,6 @@ public abstract class BaseQuranActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 	}
@@ -120,7 +119,7 @@ public abstract class BaseQuranActivity extends Activity {
 	}
 	
 	public void jumpTo(int page) {
-		Intent i = new Intent(this, ExpViewActivity.class);
+		Intent i = new Intent(this, QuranViewActivity.class);
 		i.putExtra("page", page);
 		startActivityForResult(i, ApplicationConstants.QURAN_VIEW_CODE);
 	}
@@ -140,7 +139,6 @@ public abstract class BaseQuranActivity extends Activity {
 	}
 	
 	protected void onConnectionSuccess() {
-		
 	}
 	
 	protected void onConnectionFailed() {

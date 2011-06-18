@@ -4,19 +4,15 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.quran.labs.androidquran.ExpViewActivity;
+import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -43,17 +39,14 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	private Map<String, SoftReference<Bitmap>> cache = 
         new HashMap<String, SoftReference<Bitmap>>();
 	
-	private ExpViewActivity mContext;
+	private QuranViewActivity mContext;
 	private QuranPageCurlView mQuranPage;
 	
 	private LayoutInflater mInflater;
 	private int mPageLayout;
 	private int mCurrentPageNumber;
 	
-	private ProgressDialog progressDialog;
-	private DownloadBitmapTask currentTask;
-
-	public QuranPageFeeder(ExpViewActivity context, QuranPageCurlView quranPage, int page_layout) {
+	public QuranPageFeeder(QuranViewActivity context, QuranPageCurlView quranPage, int page_layout) {
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mPageLayout = page_layout;
@@ -83,16 +76,15 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mQuranPage.addNextPage(createPage(page+1));
 		}
 		
-		// TODO: how do i handle multiple downloads at the same time??
-		
 		// TODO: do i need to invalidate to redraw?
 		mQuranPage.refresh(true);
+		mQuranPage.refresh(false);
 	}
 	
 	public void refreshCurrent() {
 		jumpToPage(mCurrentPageNumber);
 	}
-
+	
 	@Override
 	public void onPageFlipBegin(QuranPageCurlView pageView, int flipDirection) {
 		// Does nothing
@@ -145,10 +137,6 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		if (bitmap == null) {
         	Log.d(TAG, "Page not found: " + index);
         	updateViewForUser(v, true);
-        	if (currentTask == null || currentTask.getStatus() != Status.RUNNING) {
-        		currentTask = new DownloadBitmapTask(iv, index);
-        		connect();
-        	}
         } else {
         	iv.setImageBitmap(bitmap);
         	updateViewForUser(v, false);
@@ -196,65 +184,4 @@ public class QuranPageFeeder implements OnPageFlipListener {
         
         return bitmap;
     }
-	
-	protected void connect() {
-		if (mContext.isInternetOn())
-        	onConnectionSuccess();
-        else
-        	mContext.onConnectionFailed();
-	}
-	
-	protected void onConnectionSuccess() {
-		if (currentTask != null)
-			currentTask.execute();
-	}
-	
-	private class DownloadBitmapTask extends AsyncTask<Void, Void, Bitmap> {
-		
-		private ImageView image;
-		private int page;
-		private boolean downloaded = false; 
-
-		public DownloadBitmapTask(ImageView iv, int page) {
-			this.page = page;
-			this.image = iv; 
-		}
-
-		protected void onPreExecute() {
-			if (progressDialog != null) {
-				progressDialog.setMessage("Downloading page (" + page + ").. Please wait..");
-				progressDialog.show();
-			}
-		}
-
-		@Override
-		public void onPostExecute(Bitmap bitmap) {
-			if (downloaded) {
-				image.setImageBitmap(bitmap);
-				QuranPageFeeder.this.mQuranPage.refresh();
-				
-				// add bitmap to cache
-				cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
-        		Log.d(TAG, "page " + page + " added to cache!");
-        		
-			} else {
-				Toast.makeText(mContext, "Error downloading page..", Toast.LENGTH_SHORT);
-			}
-			
-			//Release memory for GC
-			image = null;
-			currentTask = null;
-			
-			if (progressDialog != null)
-				progressDialog.hide();
-		}
-
-		@Override
-		protected Bitmap doInBackground(Void... arg0) {
-			Bitmap b = QuranUtils.getImageFromWeb(QuranPageFeeder.this.mContext.getPageFileName(page));
-			downloaded = b != null;
-			return b;
-		}
-	}
-
 }
