@@ -76,7 +76,7 @@ public class QuranDataService extends Service {
 
 	public void handleStart(Intent intent, int startId){
 		QuranDataService.isRunning = true;
-		new DownloadQuranThread(this, QuranUtils.getZipFileUrl(), "images.zip", QuranUtils.getQuranBaseDirectory()).start();
+		new DownloadQuranThread(this, QuranUtils.getZipFileUrl(), "images.zip", QuranUtils.getQuranBaseDirectory(), true).start();
 	}
 
 	@Override
@@ -105,12 +105,14 @@ public class QuranDataService extends Service {
 		private String fileName;
 		private String downloadUrl;
 		private String saveToDirectory;
+		private boolean zipped;
 
-		DownloadQuranThread(QuranDataService service, String downloadUrl, String fileName, String saveToDirectory){
+		DownloadQuranThread(QuranDataService service, String downloadUrl, String fileName, String saveToDirectory, boolean zipped){
 			this.service = service;
 			this.downloadUrl = downloadUrl;
 			this.fileName = fileName;
 			this.saveToDirectory = saveToDirectory;
+			this.zipped = zipped;
 		}
 		
 		private boolean resumeDownload() {
@@ -165,7 +167,7 @@ public class QuranDataService extends Service {
 		public void run(){
 			while (true) {
 				if (isInternetOn() && resumeDownload()) {
-					unzipFile();
+					if (zipped) unzipFile();
 					break;
 				}
 				try {
