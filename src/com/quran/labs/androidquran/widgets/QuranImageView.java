@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.quran.labs.androidquran.data.ApplicationConstants;
@@ -35,6 +36,8 @@ public class QuranImageView extends ImageView {
         canvas.drawLine(0, 0, 0, length, p);
         canvas.drawLine(width, 0, width, length, p);
 
-        invalidate();
+        //invalidate();
 	}
+	
+	
 }

@@ -85,38 +85,31 @@ public class QuranViewActivity extends BaseQuranActivity {
 		// was cleared after long sleep..
 		initializeQuranScreen();
 	}
-	
-	@Override
-    public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		
-		// TODO: there should be a way to do this without invalidating :(
-		int page = quranPageFeeder.getCurrentPagePosition();
-		quranPageFeeder = null;
-		initQuranPageFeeder();
-		quranPageFeeder.jumpToPage(page);
-	}
-    
 
 	protected void initQuranPageFeeder(){
 		if (quranPageFeeder == null) {
 			Log.d(TAG, "Quran Feeder instantiated...");
 			quranPageFeeder = new QuranPageFeeder(this, quranPageCurler, R.layout.quran_page_layout);
+		} else {
+			quranPageFeeder.setContext(this, quranPageCurler);
 		}
 	}
     
     protected void initComponents() {
 		expLayout = (ViewGroup) findViewById(R.id.expLayout);
 		
-		quranPageCurler = (QuranPageCurlView)findViewById(R.id.gallery);
-		quranPageCurler.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				toggleMode();
-				
-			}
-		});
+		if (quranPageCurler == null){
+			quranPageCurler = (QuranPageCurlView)findViewById(R.id.gallery);
+			quranPageCurler.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					toggleMode();
+
+				}
+			});
+		}
+		
 		initQuranPageFeeder();
 		
 		titleText = (TextView) findViewById(R.id.pagetitle);
@@ -215,20 +208,32 @@ public class QuranViewActivity extends BaseQuranActivity {
 	}
 	
 	protected int loadPageState(Bundle savedInstanceState){
-		int page = savedInstanceState != null ? savedInstanceState.getInt("page") : ApplicationConstants.PAGES_FIRST;
+	
+		int page = savedInstanceState != null ? savedInstanceState.getInt("lastPage") : ApplicationConstants.NO_PAGE_SAVED;
 		
-		// TODO - i had to change this to <= rather than == - not sure why page is 0
-		// upon getInt (even though preferences are saved :(  but this does work...
-		if (page <= ApplicationConstants.PAGES_FIRST){
+		if (page == ApplicationConstants.NO_PAGE_SAVED){
 			Bundle extras = getIntent().getExtras();
 			page = extras != null? extras.getInt("page") : QuranSettings.getInstance().getLastPage();
-		} else if (page == ApplicationConstants.NO_PAGE_SAVED) {
-			page = ApplicationConstants.PAGES_FIRST;
-		}
+			
+			// If still no page saved
+			if (page == ApplicationConstants.NO_PAGE_SAVED) {
+				page = ApplicationConstants.PAGES_FIRST;
+			}
+		} 
+		
+		Log.d(TAG, "page: "+ page+" fyi: "+QuranSettings.getInstance().getLastPage());
 		
 		return page;
 	}
 	
+	
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt("lastPage", QuranSettings.getInstance().getLastPage());
+		super.onSaveInstanceState(outState);
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();

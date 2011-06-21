@@ -2,8 +2,6 @@ package com.quran.labs.androidquran.widgets;
 
 import java.lang.ref.WeakReference;
 
-import com.quran.labs.androidquran.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -13,12 +11,15 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+
+import com.quran.labs.androidquran.R;
 
 /*
  * Adapted and modified from http://code.google.com/p/android-page-curl
@@ -475,12 +476,12 @@ public class QuranPageCurlView extends View {
 	 * Before displaying the view, need to layout and measure page according to
 	 * our current View's layout specs
 	 */
-	private void pageViewLayoutandMeasure(View v) {
+	private void pageViewMeasureAndLayout(View v) {
 		if (v != null) {
-			v.layout(0, 0, getWidth(), getHeight());
 			v.measure(MeasureSpec.makeMeasureSpec(getWidth(),
 					MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
 					getHeight(), MeasureSpec.EXACTLY));
+			v.layout(0, 0, getWidth(), getHeight());
 		}
 	}
 
@@ -818,7 +819,7 @@ public class QuranPageCurlView extends View {
 		 */
 		if ((event.getAction() == MotionEvent.ACTION_UP) &&
 				((event.getEventTime() - event.getDownTime()) <= FINGER_CLICK_TIME_MAX) &&
-				!dispatchDecisionTaken){
+				!dispatchDecisionTaken) {
 			event.setAction(MotionEvent.ACTION_CANCEL);
 			performClick();
 		}
@@ -1002,9 +1003,6 @@ public class QuranPageCurlView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 
-		// Translate the whole canvas
-		// canvas.translate(mCurrentLeft, mCurrentTop);
-
 		// We need to initialize all size data when we first draw the view
 		if (!bViewDrawn) {
 			bViewDrawn = true;
@@ -1076,7 +1074,7 @@ public class QuranPageCurlView extends View {
 		canvas.clipPath(mask);
 
 		if (mForegroundView != null) {
-			pageViewLayoutandMeasure(mForegroundView);
+			pageViewMeasureAndLayout(mForegroundView);
 			mForegroundView.draw(canvas);
 		} else {
 			canvas.drawRect(0, 0, getWidth(), getHeight(), mEmptyPagePaint);
@@ -1100,7 +1098,7 @@ public class QuranPageCurlView extends View {
 		// canvas.clipPath(mask);
 
 		if (mBackgroundView != null) {
-			pageViewLayoutandMeasure(mBackgroundView);
+			pageViewMeasureAndLayout(mBackgroundView);
 			mBackgroundView.draw(canvas);
 		} else {
 			canvas.drawRect(0, 0, getWidth(), getHeight(), mEmptyPagePaint);
@@ -1169,11 +1167,26 @@ public class QuranPageCurlView extends View {
 		if (initialSetup){
 			previousDrawView();
 		}
-		invalidate();
+
+		this.invalidate();
 	}
 
 	public void refresh() {
 		refresh(false);
 	}
+
+	@Override
+	protected void onRestoreInstanceState(Parcelable state) {
+		// TODO Auto-generated method stub
+		super.onRestoreInstanceState(state);
+	}
+
+	@Override
+	protected Parcelable onSaveInstanceState() {
+		// TODO Auto-generated method stub
+		return super.onSaveInstanceState();
+	}
+	
+	
 
 }

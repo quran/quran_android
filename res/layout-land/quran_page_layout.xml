@@ -11,16 +11,20 @@
 		android:visibility="gone" 
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:layout_gravity = "center" 
-		android:textSize="16sp" />
+		android:gravity = "center"
+		android:textSize="16sp" 
+		android:textColor="@android:color/black"
+		android:background="#FFF4CB" />	
  	<ScrollView 
  		android:id = "@+id/page_scroller"
  		android:layout_width = "wrap_content"
  		android:layout_height = "wrap_content"
+ 		android:background = "@android:color/black"
  		android:fillViewport="true">
 	<ImageView
 		android:id = "@+id/page_image"
+		android:background="#FFF4CB"
   		android:layout_width = "wrap_content"
-  		android:layout_height =  "wrap_content" />
+  		android:layout_height =  "wrap_content"/>
   	</ScrollView>
 </LinearLayout>

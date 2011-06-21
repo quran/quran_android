@@ -4,6 +4,7 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -77,8 +78,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		}
 		
 		// TODO: do i need to invalidate to redraw?
-		mQuranPage.refresh(true);
-		mQuranPage.refresh(false);
+		mQuranPage.refresh(true); //why is this invalidate not working??
 	}
 	
 	public void refreshCurrent() {
@@ -125,7 +125,6 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	
 	private View createPage(int index) {
 		View v = mInflater.inflate(mPageLayout, null);
-		ImageView iv = (ImageView)v.findViewById(R.id.page_image);
 		
 		ScrollView sv = (ScrollView)v.findViewById(R.id.page_scroller);
 		if (sv == null)
@@ -133,16 +132,10 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		else
 			v.setTag(new Boolean(true));
 		
-		Bitmap bitmap = getBitmap(index);
-		if (bitmap == null) {
-        	Log.d(TAG, "Page not found: " + index);
-        	updateViewForUser(v, true);
-        } else {
-        	iv.setImageBitmap(bitmap);
-        	updateViewForUser(v, false);
-        	QuranSettings.getInstance().setLastPage(index);
-			QuranSettings.save(mContext.prefs);
-        }
+		updateViewForUser(v, true);
+		
+		// Get page on different thread
+		new PageRetriever(v, index).start();
 		
 		return v;
 	}
@@ -184,4 +177,63 @@ public class QuranPageFeeder implements OnPageFlipListener {
         
         return bitmap;
     }
+
+	public void setContext(QuranViewActivity context, QuranPageCurlView quranPage) {
+		mContext = context;
+		mInflater = LayoutInflater.from(context);
+		mQuranPage = quranPage;
+		mQuranPage.setOnPageFlipListener(this);
+		
+	}
+	
+	private class PageRetriever extends Thread {
+
+		int index;
+		View v;
+		
+		public PageRetriever(View v, int index){
+			this.index = index;
+			this.v =  v;
+		}
+		
+		@Override
+		public void run() {
+			Bitmap bitmap = getBitmap(index);
+			((Activity)mContext).runOnUiThread(new PageDisplayer(bitmap, v, index));
+			mQuranPage.postInvalidate();
+			
+			//clear for GC
+			v = null;
+		}
+	}
+	
+	class PageDisplayer implements Runnable {
+		private Bitmap bitmap;
+		private View v;
+		private int index;
+		
+		public PageDisplayer(Bitmap bitmap, View v, int index){
+			this.bitmap = bitmap;
+			this.v = v;
+			this.index = index;
+		}
+		
+		public void run(){
+			ImageView iv = (ImageView)v.findViewById(R.id.page_image);
+			if (bitmap == null) {
+	        	Log.d(TAG, "Page not found: " + index);
+	        	updateViewForUser(v, true);
+	        } else {
+	        	iv.setImageBitmap(bitmap);
+	        	updateViewForUser(v, false);
+	        	QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
+				QuranSettings.save(mContext.prefs);
+	        }
+			
+			//clear for GC
+			iv = null;
+			bitmap = null;
+			v = null;
+		}
+	}
 }
