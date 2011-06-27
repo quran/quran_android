@@ -1,5 +1,4 @@
 quran for android
-a simple quran client for android
 ==================================
 
 this is a simple (madani based) quran app for android.  for details about
@@ -18,7 +17,8 @@ of the original application (and the data sources).
 
 changelog
 ---------
-version 1.3
+*version 1.3*
+
 - improved interface
 - support for 1024x768 images
 - translation download support
@@ -27,7 +27,8 @@ version 1.3
 - more translations
 - bugfixes and more
 
-version 1.2
+*version 1.2*
+
 - Sahih Internation Translation introduced
 - Fix orientation in either landscape or portrait modes
 - Adjust translation text size
@@ -35,7 +36,8 @@ version 1.2
 - Bookmarks are added via menu
 - Fixed bookmarks bug
 
-version 1.1
+*version 1.1*
+
 - added bookmarks
 - updated browse to allow browsing by juz'
 - remember the last place you left off
@@ -43,7 +45,8 @@ version 1.1
 - made the screen lock an option
 - fixed a bug where the screen lock wasn't released
 
-version 1.0
+*version 1.0*
+
 - initial release
 
 todo
