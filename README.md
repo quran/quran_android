@@ -3,10 +3,15 @@ quran for android
 
 this is a simple (madani based) quran app for android.  for details about
 the images used, please check out the 
-[quran images project](http://github.com/quran/quran_images) on github.
+[quran images project](http://github.com/quran/quran.com-images) on github.
 translation and arabic data come from [tanzil](http://tanzil.net).
 
 patches, comments, etc are welcome.
+
+code by [@ahmedre](http://twitter.com/ahmedre),
+[@HusseinMaher](http://twitter.com/husseinmaher),
+and [@wnafee](http://twitter.com/wnafee).  graphics by
+[@somaiagabr](http://twitter.com/somaiagabr).
 
 terms of use
 ------------
@@ -16,7 +21,7 @@ application with some conditions:
 * if you write an application using any of the Quran data (the images, the
 translations, etc), you must provide a link to the respective data source
 page ([tanzil.net](http://tanzil.net) for the translations and the
-[quran images project](http://github.com/quran/quran_images) for the images
+[quran images project](http://github.com/quran/quran.com-images) for the images)
 both within your application (in an about page) and in your application
 description in the market or app store.
 
