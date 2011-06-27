@@ -61,13 +61,13 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	}
 	
 	public void jumpToPage(int page){
-		mCurrentPageNumber = page;
-		
-		if (page == ApplicationConstants.PAGES_FIRST) {
+		if (page <= ApplicationConstants.PAGES_FIRST) {
+			page = ApplicationConstants.PAGES_FIRST;
 			mQuranPage.addNextPage(null);
 			mQuranPage.addNextPage(createPage(page));
 			mQuranPage.addNextPage(createPage(page+1));
-		} else if (page == ApplicationConstants.PAGES_LAST){
+		} else if (page >= ApplicationConstants.PAGES_LAST){
+			page = ApplicationConstants.PAGES_LAST;
 			mQuranPage.addPreviousPage(null);
 			mQuranPage.addPreviousPage(createPage(page));
 			mQuranPage.addPreviousPage(createPage(page-1));
@@ -77,8 +77,18 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mQuranPage.addNextPage(createPage(page+1));
 		}
 		
+		mCurrentPageNumber = page;
+		
 		// TODO: do i need to invalidate to redraw?
 		mQuranPage.refresh(true); //why is this invalidate not working??
+	}
+	
+	public void goToNextpage() {
+		jumpToPage(mCurrentPageNumber + 1);
+	}
+	
+	public void goToPreviousPage() {
+		jumpToPage(mCurrentPageNumber - 1);
 	}
 	
 	public void refreshCurrent() {

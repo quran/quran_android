@@ -3,16 +3,15 @@ package com.quran.labs.androidquran;
 import java.text.NumberFormat;
 
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -146,11 +145,11 @@ public class QuranViewActivity extends BaseQuranActivity {
 	}
     
 	protected void goToNextPage() {
-		// TODO: handle this so key down works.
+		quranPageFeeder.goToNextpage();
 	}
 
 	protected void goToPreviousPage() {
-		// TODO: handle this so key down works.
+		quranPageFeeder.goToPreviousPage();
 	}
 		
 	protected void adjustBookmarkView() {
