@@ -2,12 +2,19 @@ quran for android
 a simple quran client for android
 ==================================
 
-this is a simple (madani based) quran app for android.
-
-for details about the images used, please see:
-   http://github.com/quran/quran_images
+this is a simple (madani based) quran app for android.  for details about
+the images used, please check out the 
+[quran images project](http://github.com/quran/quran_images) on github.
+translation and arabic data come from [tanzil](http://tanzil.net).
 
 patches, comments, etc are welcome.
+
+terms of use
+------------
+you are free to use parts of (or all of) the Quran Android code in your
+application provided that you provide a link back to 
+http://github.com/ahmedre/quran_android and give credit to the developers
+of the original application (and the data sources).
 
 changelog
 ---------
@@ -41,8 +48,8 @@ version 1.0
 
 todo
 ----
-- add multiple translations
-- add transliteration search
 - add audio
-- add tafsir
+- improve page scrolling
+- downloads should resume
+- add transliteration search
 - code cleanup [strings localization, comments, etc]
