@@ -35,6 +35,10 @@ import com.quran.labs.androidquran.util.QuranUtils;
 public class QuranDataService extends Service {
 
 	public static final String DWONLOAD_TYPE_KEY = "downloadType";
+	public static final String SOURA_KEY = "soura";
+	public static final String AYAH_KEY = "ayah";
+	public static final String READER_KEY = "quranReader";
+	public static final String DOWNLOAD_AYAH_IMAGES_KEY = "downloadImage";
 	public static final int DOWNLOAD_QURAN_IMAGES = 1;
 	public static final int DOWNLOAD_SURA_AUDIO = 2;
 
@@ -83,7 +87,6 @@ public class QuranDataService extends Service {
 	}
 
 	public void handleStart(Intent intent, int startId) {
-		QuranDataService.isRunning = true;
 		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
 		switch (downloadType) {
 			case DOWNLOAD_QURAN_IMAGES:
@@ -94,23 +97,26 @@ public class QuranDataService extends Service {
 			case DOWNLOAD_SURA_AUDIO:
 				downloadSuraAudio(intent);
 			break;
+			
+			default:
+			return;
 		}
-
+		QuranDataService.isRunning = true;
 	}
 
 	private void downloadSuraAudio(Intent intent) {
-		Log.d(this.getClass().getName(), "onHandleIntent");
-		int soura = intent.getIntExtra("soura", 1);
-		int startAyah = intent.getIntExtra("ayah", 1);
-		int quranReader = intent.getIntExtra("quranReader", 0);
+		Log.d("quran_srv", "downloadSuraAudio");
+		int soura = intent.getIntExtra(SOURA_KEY, 1);
+		int startAyah = intent.getIntExtra(AYAH_KEY, 1);
+		int quranReader = intent.getIntExtra(READER_KEY, 0);
 		// optional end ayah
 		int endAyah = intent.getIntExtra("endAyah",
 				QuranInfo.SURA_NUM_AYAHS[soura - 1]);
 		if (endAyah > QuranInfo.SURA_NUM_AYAHS[soura - 1])
 			endAyah = QuranInfo.SURA_NUM_AYAHS[soura - 1];
-		boolean downloadImage = intent.getBooleanExtra("downloadImage", false);
+		boolean downloadImage = intent.getBooleanExtra(DOWNLOAD_AYAH_IMAGES_KEY, false);
 
-		Log.d(this.getClass().getName(), "finish reading params");
+		Log.d("quran_srv", "finish reading params");
 		int itemsCount = downloadImage? (endAyah-startAyah+1)*2 : endAyah-startAyah+1;
 		String fileNames[] = new String[itemsCount];
 		String urls[] = new String[itemsCount];
