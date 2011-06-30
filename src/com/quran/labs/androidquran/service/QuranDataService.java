@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranDataService extends Service {
 
+	public static final String DWONLOAD_TYPE_KEY = "downloadType";
 	public static final int DOWNLOAD_QURAN_IMAGES = 1;
 	public static final int DOWNLOAD_SURA_AUDIO = 2;
 
@@ -83,11 +84,11 @@ public class QuranDataService extends Service {
 
 	public void handleStart(Intent intent, int startId) {
 		QuranDataService.isRunning = true;
-		switch (startId) {
+		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
+		switch (downloadType) {
 			case DOWNLOAD_QURAN_IMAGES:
-				thread = new DownloadThread(this, new String[] { QuranUtils
-						.getZipFileUrl() }, new String[] { "images.zip" },
-						new String[]{QuranUtils.getQuranBaseDirectory()}, true);
+				thread = new DownloadThread(this, new String[] { QuranUtils.getZipFileUrl() }, 
+						new String[] { "images.zip" }, new String[]{QuranUtils.getQuranBaseDirectory()}, true);
 				thread.start();
 			break;
 			case DOWNLOAD_SURA_AUDIO:
@@ -221,7 +222,7 @@ public class QuranDataService extends Service {
 					if (zipped)
 						unzipFile(saveToDirectories[downloadIndex], fileNames[downloadIndex]);
 
-					Log.d("quran_srv", "Download Completed");
+					Log.d("quran_srv", "Download Completed [" + downloadUrls[downloadIndex] + "]");
 				}
 			} catch (IOException e) {
 				Log.e("quran_srv", "Download paused: IO Exception", e);

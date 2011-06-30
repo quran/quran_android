@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -111,7 +114,7 @@ public class QuranActivity extends BaseQuranActivity {
 	}
 	
 	// http://www.androidpeople.com/android-custom-listview-tutorial-example/
-	private static class EfficientAdapter extends BaseAdapter {
+	private class EfficientAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private QuranElement[] elements;
 		
@@ -132,7 +135,7 @@ public class QuranActivity extends BaseQuranActivity {
 			return position;
 		}
 
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 			
 			if (convertView == null) {
@@ -145,6 +148,14 @@ public class QuranActivity extends BaseQuranActivity {
 				holder.page = (TextView)convertView.findViewById(R.id.page_info);
 				holder.number = (TextView)convertView.findViewById(R.id.sura_number);
 				holder.suraicon = (ImageView)convertView.findViewById(R.id.sura_icon_img);
+				holder.play = (Button)convertView.findViewById(R.id.btnPlay);
+				holder.play.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						downloadSuraAudio(elements[position].number);
+					}
+				});
 				convertView.setTag(holder);
 			}
 			else {
@@ -159,6 +170,7 @@ public class QuranActivity extends BaseQuranActivity {
 				holder.metadata.setVisibility(View.GONE);
 				holder.suraicon.setVisibility(View.GONE);
 				holder.number.setVisibility(View.GONE);
+				holder.play.setVisibility(View.GONE);
 			}
 			else {
 				String info = QuranInfo.getSuraListMetaString(elements[position].number);
@@ -169,13 +181,25 @@ public class QuranActivity extends BaseQuranActivity {
 			}
 			return convertView;
 		}
+		
+		private void downloadSuraAudio(int suraId) {
+			Intent intent = new Intent(QuranActivity.this, QuranDataService.class);
+	    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+			intent.putExtra("soura", suraId);
+			intent.putExtra("ayah", (int)1);
+			intent.putExtra("quranReader", 1);
+			intent.putExtra("downloadImage", false);
+	    	if (!QuranDataService.isRunning)
+	    		startService(intent);
+		}
 
-		static class ViewHolder {
+		class ViewHolder {
 			TextView text;
 			TextView page;
 			TextView number;
 			TextView metadata;
 			ImageView suraicon;
+			Button play;
 		}
 	}
 }

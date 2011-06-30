@@ -122,11 +122,12 @@ public class QuranDataActivity extends BaseQuranActivity {
     
     private void startService(){
     	starting = true;
+    	Intent intent = new Intent(this, QuranDataService.class);
+    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_QURAN_IMAGES);
     	if (!QuranDataService.isRunning)
-    		startService(new Intent(this, QuranDataService.class));
+    		startService(intent);
     	
-    	bindService(new Intent(this, QuranDataService.class),
-    		conn, Context.BIND_AUTO_CREATE);
+    	bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
     
     private ServiceConnection conn = new ServiceConnection() {

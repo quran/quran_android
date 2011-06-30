@@ -30,9 +30,20 @@
     		android:layout_height="wrap_content"
     		android:textSize="12sp" />
 	</LinearLayout>
-	<TextView android:id="@+id/page_info"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:gravity="right|center_vertical"
-			android:textSize="14sp" />
+	<LinearLayout android:orientation="vertical"
+		android:gravity="right"
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent">
+		<TextView android:id="@+id/page_info"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="right|center_vertical"
+				android:textSize="14sp" />
+		<Button android:id="@+id/btnPlay" 
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+				android:gravity="right|center_vertical"
+				android:textSize="14sp"
+				android:text="P"/>
+	</LinearLayout>
 </LinearLayout>

@@ -114,8 +114,8 @@ public class QuranUtils {
 		if (path == null)
 			return false;
 
-		File directory = new File(path + File.pathSeparator + readerId
-				+ File.pathSeparator + suraId);
+		File directory = new File(path + File.separator + readerId
+				+ File.separator + suraId);
 		if (directory.exists() && directory.isDirectory()) {
 			return true;
 		} else if (directory.mkdirs()) {
@@ -269,12 +269,12 @@ public class QuranUtils {
 	}
 
 	public static String getSuraAudioPath(int quranReaderId, int sura){
-		return getAudioDirectory() + File.pathSeparator + quranReaderId
-		+ File.pathSeparator + sura ;
+		return getAudioDirectory() + File.separator + quranReaderId
+		+ File.separator + sura ;
 	}
 	
 	public static String getSuraImagePath(int sura){
-		return getAyahImagesDirectory() + File.pathSeparator + sura;
+		return getAyahImagesDirectory() + File.separator + sura;
 	}
 	public static String getAyahImagePath(AyahItem ayahItem) {
 		return getAyahImagePath(ayahItem.getSoura(), ayahItem
@@ -282,14 +282,14 @@ public class QuranUtils {
 	}
 
 	public static String getAyahAudioPath(int sura, int ayah, int quranReaderId) {
-		return getAudioDirectory() + File.pathSeparator + quranReaderId
-				+ File.pathSeparator + sura + File.pathSeparator + ayah
+		return getAudioDirectory() + File.separator + quranReaderId
+				+ File.separator + sura + File.separator + ayah
 				+ QuranAudioLibrary.AUDIO_EXTENSION;
 	}
 
 	public static String getAyahImagePath(int sura, int ayah) {
-		return getAyahImagesDirectory() + File.pathSeparator + sura
-				+ File.pathSeparator + ayah + QuranAudioLibrary.IMAGE_EXTENSION;
+		return getAyahImagesDirectory() + File.separator + sura
+				+ File.separator + ayah + QuranAudioLibrary.IMAGE_EXTENSION;
 	}
 
 	public static String getAudioDirectory() {
