@@ -7,7 +7,7 @@
 	android:layout_gravity = "center">
 	<TextView 
 		android:id="@+id/txtPageNotFound" 
-		android:text="@string/pageNotFound"
+		android:text="@string/pageLoading"
 		android:visibility="gone" 
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"

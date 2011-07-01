@@ -45,7 +45,6 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 				@Override
 				public void onClick(View v) {
 					toggleMode();
-
 				}
 			});
 		}
@@ -58,18 +57,22 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		btnBookmark = (ImageView) findViewById(R.id.btnBookmark);
 		btnBookmark.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				BookmarksManager.toggleBookmarkState(QuranSettings.getInstance().getLastPage(), prefs);
+				BookmarksManager.toggleBookmarkState(
+						QuranSettings.getInstance().getLastPage(), prefs);
 				adjustBookmarkView();
 			}
 		});
 
 		seekBar = (SeekBar) findViewById(R.id.suraSeek);
-		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+		seekBar.setOnSeekBarChangeListener(
+				new SeekBar.OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if (fromUser)
-					titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(ApplicationConstants.PAGES_LAST - progress)));
+					titleText.setText(ArabicStyle.reshape(
+							QuranInfo.getPageTitle(
+								ApplicationConstants.PAGES_LAST - progress)));
 			}
 
 			@Override
@@ -80,8 +83,9 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				if (seekBar.getProgress() !=
 					quranPageFeeder.getCurrentPagePosition()) {
-					quranPageFeeder.jumpToPage(ApplicationConstants.PAGES_LAST -
-							seekBar.getProgress());
+					quranPageFeeder.jumpToPage(
+							ApplicationConstants.PAGES_LAST -
+								seekBar.getProgress());
 				}
 			}
 		});
@@ -110,20 +114,20 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	
 	protected void adjustActivityOrientation() {
 		if (QuranSettings.getInstance().isLockOrientation()) {
-			// TODO - don't call setRequestedOrientation here unless we are in the
-			// wrong orientation...
-			if (QuranSettings.getInstance().isLandscapeOrientation()) 
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			// TODO - don't call setRequestedOrientation here unless we are
+			// in the wrong orientation...
+			if (QuranSettings.getInstance().isLandscapeOrientation())
+				setRequestedOrientation(
+						ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 			else 
-				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		} else {
-			// why is this here?
-			// setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+				setRequestedOrientation(
+						ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 	}
 	
 	protected void adjustBookmarkView() {
-		if (BookmarksManager.getInstance().contains(QuranSettings.getInstance().getLastPage())) {
+		if (BookmarksManager.getInstance().contains(
+				QuranSettings.getInstance().getLastPage())) {
 			btnBookmark.setImageResource(R.drawable.bookmarks);
 		} else {
 			btnBookmark.setImageResource(R.drawable.remove_bookmark);
@@ -134,21 +138,22 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		if (QuranSettings.getInstance().isFullScreen()) {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			if (!QuranSettings.getInstance().isShowClock()) {
-				getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+				getWindow().setFlags(
+					WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			}
 		}	
-		
-		// onResume will call adjustActivityOrientation
-		// adjustActivityOrientation();
 	}
 	
 	protected int loadPageState(Bundle savedInstanceState){
-		int page = savedInstanceState != null ? savedInstanceState.getInt("lastPage") : ApplicationConstants.NO_PAGE_SAVED;
+		int page = savedInstanceState != null ?
+				savedInstanceState.getInt("lastPage") :
+					ApplicationConstants.NO_PAGE_SAVED;
 		
 		if (page == ApplicationConstants.NO_PAGE_SAVED){
 			Bundle extras = getIntent().getExtras();
-			page = extras != null? extras.getInt("page") : QuranSettings.getInstance().getLastPage();
+			page = extras != null? extras.getInt("page") :
+				QuranSettings.getInstance().getLastPage();
 			
 			// If still no page saved
 			if (page == ApplicationConstants.NO_PAGE_SAVED) {
@@ -156,15 +161,18 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 			}
 		} 
 		
-		Log.d(TAG, "page: "+ page+" fyi: "+QuranSettings.getInstance().getLastPage());
+		Log.d(TAG, "page: "+ page+" fyi: "+
+				QuranSettings.getInstance().getLastPage());
 		return page;
 	}
 	
 	protected void toggleMode(){
 		Log.d("exp_v", "in toggle mode");
 		if (inReadingMode){
-	        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-	        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	        getWindow().addFlags(
+	        		WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+	        getWindow().clearFlags(
+	        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	        
 	        seekBar.setVisibility(TextView.VISIBLE);
 	        titleText.setVisibility(TextView.VISIBLE);
@@ -173,8 +181,10 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 			updatePageInfo();
 		}
 		else {
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-	        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+			getWindow().addFlags(
+					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	        getWindow().clearFlags(
+	        		WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	        
 	        seekBar.setVisibility(TextView.INVISIBLE);
 	        titleText.setVisibility(TextView.INVISIBLE);
@@ -187,12 +197,14 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	
 	protected void updatePageInfo(int position){
 		Log.d(TAG, "Update page info: " + position);
-		titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(position)));
+		titleText.setText(ArabicStyle.reshape(
+				QuranInfo.getPageTitle(position)));
 		seekBar.setProgress(ApplicationConstants.PAGES_LAST - position);
 	}
 	
 	private void updatePageInfo() {
 		updatePageInfo(quranPageFeeder.getCurrentPagePosition());
-		QuranSettings.getInstance().setLastPage(quranPageFeeder.getCurrentPagePosition());
+		QuranSettings.getInstance().setLastPage(
+				quranPageFeeder.getCurrentPagePosition());
 	}
 }

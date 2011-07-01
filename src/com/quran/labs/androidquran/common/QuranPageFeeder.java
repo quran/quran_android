@@ -39,14 +39,15 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	private Map<String, SoftReference<Bitmap>> cache = 
         new HashMap<String, SoftReference<Bitmap>>();
 	
-	protected BaseQuranActivity mContext;
+	protected PageViewQuranActivity mContext;
 	protected QuranPageCurlView mQuranPage;
 	
 	protected LayoutInflater mInflater;
 	protected int mPageLayout;
 	protected int mCurrentPageNumber;
 	
-	public QuranPageFeeder(BaseQuranActivity context, QuranPageCurlView quranPage, int page_layout) {
+	public QuranPageFeeder(PageViewQuranActivity context,
+			QuranPageCurlView quranPage, int page_layout) {
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mPageLayout = page_layout;
@@ -95,7 +96,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	}
 	
 	@Override
-	public void onPageFlipBegin(QuranPageCurlView pageView, int flipDirection) {
+	public void onPageFlipBegin(QuranPageCurlView pageView, int flipDirection){
 		// Does nothing
 	}
 
@@ -115,7 +116,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			View v = createPage(mCurrentPageNumber+1);
 			pageView.addNextPage(v);
 		} else {
-			pageView.addNextPage((View)null); // add empty page to prevent coming here again
+			pageView.addNextPage((View)null); 
+			// add empty page to prevent coming here again
 		}
 		return mCurrentPageNumber;
 	}
@@ -127,7 +129,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			View v = createPage(mCurrentPageNumber-1);
 			pageView.addPreviousPage(v);
 		} else {
-			pageView.addPreviousPage((View)null); // add empty page to prevent coming here again
+			pageView.addPreviousPage((View)null);
+			// add empty page to prevent coming here again
 		}
 		return mCurrentPageNumber;
 	}
@@ -141,7 +144,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		else
 			v.setTag(new Boolean(true));
 		
-		updateViewForUser(v, true);
+		updateViewForUser(v, true, false);
 		
 		// Get page on different thread
 		new PageRetriever(v, index).start();
@@ -149,16 +152,19 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		return v;
 	}
 	
-	protected void updateViewForUser(View v, boolean pageNotFound){
+	protected void updateViewForUser(View v, boolean loading,
+			boolean pageNotFound){
 		TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
 		ImageView iv = (ImageView)v.findViewById(R.id.page_image);
-		if (pageNotFound) {
-    		tv.setVisibility(View.VISIBLE);
-        	iv.setVisibility(View.GONE);
-    	} else {
-    		tv.setVisibility(View.GONE);
-        	iv.setVisibility(View.VISIBLE);
-    	}
+		if ((loading) || (pageNotFound)){
+			tv.setText(loading? R.string.pageLoading : R.string.pageNotFound);
+			tv.setVisibility(View.VISIBLE);
+			iv.setVisibility(View.GONE);
+		}
+		else {
+			tv.setVisibility(View.GONE);
+			iv.setVisibility(View.VISIBLE);
+		}
 	}
 	
 	private Bitmap getBitmap(int page) {
@@ -187,18 +193,17 @@ public class QuranPageFeeder implements OnPageFlipListener {
         return bitmap;
     }
 
-	public void setContext(BaseQuranActivity context, QuranPageCurlView quranPage) {
+	public void setContext(PageViewQuranActivity context,
+			QuranPageCurlView quranPage) {
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mQuranPage = quranPage;
-		mQuranPage.setOnPageFlipListener(this);
-		
+		mQuranPage.setOnPageFlipListener(this);	
 	}
 	
 	private class PageRetriever extends Thread {
-
-		int index;
 		View v;
+		int index;
 		
 		public PageRetriever(View v, int index){
 			this.index = index;
@@ -231,10 +236,10 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			ImageView iv = (ImageView)v.findViewById(R.id.page_image);
 			if (bitmap == null) {
 	        	Log.d(TAG, "Page not found: " + index);
-	        	updateViewForUser(v, true);
+	        	updateViewForUser(v, false, true);
 	        } else {
 	        	iv.setImageBitmap(bitmap);
-	        	updateViewForUser(v, false);
+	        	updateViewForUser(v, false, false);
 	        	QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
 				QuranSettings.save(mContext.prefs);
 	        }

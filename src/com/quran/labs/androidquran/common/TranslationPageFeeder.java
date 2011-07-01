@@ -60,12 +60,13 @@ public class TranslationPageFeeder extends QuranPageFeeder
 		tv.setText(Html.fromHtml(ArabicStyle.reshape(text)));
         tv.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
 		
-		updateViewForUser(v, true);
+		updateViewForUser(v, false, false);
         return v;
 	}
 	
 	@Override
-	protected void updateViewForUser(View v, boolean pageNotFound){
+	protected void updateViewForUser(View v, boolean loading,
+			boolean pageNotFound){
 		TextView tv = (TextView)v.findViewById(R.id.translationText);
 		Log.d(TAG, "text: " + tv.getText().toString());
         tv.setVisibility(View.VISIBLE);
