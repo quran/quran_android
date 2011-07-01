@@ -260,7 +260,7 @@ public abstract class GestureQuranActivity extends BaseQuranActivity implements 
 		adjustActivityOrientation();
 	}
 	
-	protected String getPageFileName(int p) {
+	public String getPageFileName(int p) {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(3);
 		return "page" + nf.format(p) + ".png";

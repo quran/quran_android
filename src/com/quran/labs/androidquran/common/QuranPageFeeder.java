@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -40,14 +39,14 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	private Map<String, SoftReference<Bitmap>> cache = 
         new HashMap<String, SoftReference<Bitmap>>();
 	
-	private QuranViewActivity mContext;
-	private QuranPageCurlView mQuranPage;
+	protected BaseQuranActivity mContext;
+	protected QuranPageCurlView mQuranPage;
 	
-	private LayoutInflater mInflater;
-	private int mPageLayout;
-	private int mCurrentPageNumber;
+	protected LayoutInflater mInflater;
+	protected int mPageLayout;
+	protected int mCurrentPageNumber;
 	
-	public QuranPageFeeder(QuranViewActivity context, QuranPageCurlView quranPage, int page_layout) {
+	public QuranPageFeeder(BaseQuranActivity context, QuranPageCurlView quranPage, int page_layout) {
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mPageLayout = page_layout;
@@ -133,7 +132,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		return mCurrentPageNumber;
 	}
 	
-	private View createPage(int index) {
+	protected View createPage(int index) {
 		View v = mInflater.inflate(mPageLayout, null);
 		
 		ScrollView sv = (ScrollView)v.findViewById(R.id.page_scroller);
@@ -150,7 +149,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		return v;
 	}
 	
-	private void updateViewForUser(View v, boolean pageNotFound){
+	protected void updateViewForUser(View v, boolean pageNotFound){
 		TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
 		ImageView iv = (ImageView)v.findViewById(R.id.page_image);
 		if (pageNotFound) {
@@ -188,7 +187,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
         return bitmap;
     }
 
-	public void setContext(QuranViewActivity context, QuranPageCurlView quranPage) {
+	public void setContext(BaseQuranActivity context, QuranPageCurlView quranPage) {
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mQuranPage = quranPage;

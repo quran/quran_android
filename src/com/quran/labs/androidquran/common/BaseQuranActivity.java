@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.common;
 
+import java.text.NumberFormat;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -158,6 +160,12 @@ public abstract class BaseQuranActivity extends Activity {
 		       });
 		AlertDialog alert = builder.create();
 		alert.show();
+	}
+	
+	public String getPageFileName(int p) {
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMinimumIntegerDigits(3);
+		return "page" + nf.format(p) + ".png";
 	}
 	
 	@Override
