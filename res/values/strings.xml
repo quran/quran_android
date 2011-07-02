@@ -36,12 +36,14 @@
 	<string name="page_hint">Page Number</string>
 	<string name="go">Go</string>
 	<string name="cancel">Cancel</string>
-	<string name="developedBy">Developed by: Ahmed El-Helw - Hussein Maher</string>
+	<string name="developedBy">Ahmed El-Helw - Hussein Maher - Wael Nafee</string>
 	<string name="copyRights">Copyright All Muslims</string>
 	<string name="email_subject">Feedback</string>
 	<string name="email_to">quran.android@gmail.com</string>
 	<string name="aboutUs">Quran Android is a free, open source Quran
-		application for Android.
+      application for Android. The images used are from the quran.com
+      project, and the data used in the translations and Arabic comes from
+      tanzil.net.  graphics by @somaiagabr.
 		\n\nNew features in this release:
 		\n- Enhanced Navigation.
 		\n- Arabic support (if your device does not support Arabic).
