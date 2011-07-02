@@ -43,6 +43,8 @@ import com.quran.labs.androidquran.R;
  * 
  * TODO: Problem when doing a "perfect" touch click (ie. ACTION_DOWN followed by ACTION_UP with
  * 		 no ACTION_MOVE in between). Page flip direction not determined and causes problems
+ * 
+ * 		Update: Fixed it (I think). But still in review
  */
 public class QuranPageCurlView extends View {
 
@@ -219,7 +221,7 @@ public class QuranPageCurlView extends View {
 	 * Max time between ACTION_DOWN and ACTION_UP to consider this a click
 	 * (completely heuristics)
 	 */
-	private static final int FINGER_CLICK_TIME_MAX = ViewConfiguration.getTapTimeout(); //in milliseconds 
+	private static final int FINGER_CLICK_TIME_MAX = (int) (ViewConfiguration.getTapTimeout() * 1.5); //in milliseconds 
 	
 
 	/**
@@ -693,11 +695,12 @@ public class QuranPageCurlView extends View {
 		if (mCurrentPageView != null) {
 			boolean hasScroller = ((Boolean) mCurrentPageView.getTag()).booleanValue();
 			
+			/*
 			// If there is no scroll view then always dispatch events to me
 			if (!hasScroller) {
-				//Log.d(TAG, "my scroller is null!");
 				return super.dispatchTouchEvent(event);
 			}
+			*/
 
 			/**
 			 * Strategy explained:
@@ -748,7 +751,8 @@ public class QuranPageCurlView extends View {
 					if (xMovement >= yMovement){
 						dispatchTouchToMe = true;
 					} else { //Vertical movement mainly => scrolling
-						dispatchTouchToMe = false;
+						// but only assign to child if it has a scroller
+						dispatchTouchToMe = hasScroller? false : true;
 					}
 				}
 				break;
@@ -779,7 +783,6 @@ public class QuranPageCurlView extends View {
 					
 					// Need to redraw screen to show updated children if they changed
 					if (childConsumed)
-						//Log.d(TAG, "child consumed");
 						invalidate();
 	
 					/*
@@ -809,6 +812,8 @@ public class QuranPageCurlView extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		//Log.d(TAG, "dispatched to me");
 		
+		int width = getWidth();
+		
 		/* If this was a click, then fire onClickListener and cancel current page flip because
 		 * it seems that this was not intended for page flip.
 		 * 
@@ -820,8 +825,17 @@ public class QuranPageCurlView extends View {
 		if ((event.getAction() == MotionEvent.ACTION_UP) &&
 				((event.getEventTime() - event.getDownTime()) <= FINGER_CLICK_TIME_MAX) &&
 				!dispatchDecisionTaken) {
-			event.setAction(MotionEvent.ACTION_CANCEL);
-			performClick();
+			float xPos = event.getX();
+			
+			/* 
+			 * Only perform click if the tap was in the center of the screen. 
+			 * Otherwise, just perform the ACTION_UP as normal which should 
+			 * flip the page depending which side of the screen the tap was on
+			 */
+			if ((xPos > width/3) && (xPos < width*2/3)){
+				event.setAction(MotionEvent.ACTION_CANCEL);
+				performClick();
+			}
 		}
 		
 		
@@ -831,7 +845,6 @@ public class QuranPageCurlView extends View {
 			// Get our finger position
 			mFinger.x = event.getX();
 			mFinger.y = event.getY();
-			int width = getWidth();
 
 			// Depending on the action do what we need to
 			switch (event.getAction()) {
@@ -849,6 +862,7 @@ public class QuranPageCurlView extends View {
 					// Set the right movement flag
 					bFlipRight = true;
 					bFlipRightOnDown = true;
+					bFlipRightOnLastMove = true;
 
 					if (mPreviousPageView != null) {
 						bAllowFlip = true;
@@ -857,6 +871,7 @@ public class QuranPageCurlView extends View {
 					// Set the left movement flag
 					bFlipRight = false;
 					bFlipRightOnDown = false;
+					bFlipRightOnLastMove = false;
 
 					if (mNextPageView != null) {
 						bAllowFlip = true;
@@ -886,7 +901,7 @@ public class QuranPageCurlView extends View {
 				if (bAllowFlip) {
 					bUserMoves = false;
 					bFlipping = true;
-					bFlipRightOnLastMove = !bFlipRightOnDown; // make sure we dont flip the page
+					bFlipRightOnLastMove = !bFlipRightOnDown; // make sure we dont call pageflip listener
 				
 					// return back to original page
 					if (bFlipRightOnDown)
@@ -908,13 +923,21 @@ public class QuranPageCurlView extends View {
 					mPageOffset.x = Math.min(getWidth() - 1, mPageOffset.x);
 					mPageOffset.x = Math.max(0, mPageOffset.x);
 
-					// Get movement direction
-					if (mFinger.x < mPreviousFinger.x) {
-						bFlipRight = true;
-						bFlipRightOnLastMove = true;
-					} else {
-						bFlipRight = false;
-						bFlipRightOnLastMove = false;
+					/* 
+					 * Make sure that we've moved enough beyond the finger slop distance
+					 * or else a long finger click can cause strange behavior because
+					 * the direction will be incorrectly determined
+					 */
+					if (dispatchDecisionTaken){
+						
+						// Get movement direction
+						if (mFinger.x < mPreviousFinger.x) {
+							bFlipRight = true;
+							bFlipRightOnLastMove = true;
+						} else {
+							bFlipRight = false;
+							bFlipRightOnLastMove = false;
+						}
 					}
 
 					// Store finger postion for next round

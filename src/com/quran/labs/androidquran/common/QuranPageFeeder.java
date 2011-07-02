@@ -79,16 +79,21 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		
 		mCurrentPageNumber = page;
 		
-		// TODO: do i need to invalidate to redraw?
-		mQuranPage.refresh(true); //why is this invalidate not working??
+		mQuranPage.refresh(true); 
 	}
 	
 	public void goToNextpage() {
-		jumpToPage(mCurrentPageNumber + 1);
+		if (mCurrentPageNumber+1 > ApplicationConstants.PAGES_LAST)
+			return;
+		loadNextPage(mQuranPage);
+		mQuranPage.refresh(true);
 	}
 	
 	public void goToPreviousPage() {
-		jumpToPage(mCurrentPageNumber - 1);
+		if (mCurrentPageNumber-1 < ApplicationConstants.PAGES_FIRST)
+			return;
+		loadPreviousPage(mQuranPage);
+		mQuranPage.refresh(true);
 	}
 	
 	public void refreshCurrent() {
@@ -111,7 +116,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	
 	public int loadNextPage(QuranPageCurlView pageView) {
 		mCurrentPageNumber += 1;
-		if (mCurrentPageNumber+1 < ApplicationConstants.PAGES_LAST){
+		if (mCurrentPageNumber < ApplicationConstants.PAGES_LAST){
 			Log.d(TAG, "Adding Next Page: " + (mCurrentPageNumber+1));
 			View v = createPage(mCurrentPageNumber+1);
 			pageView.addNextPage(v);
@@ -214,7 +219,6 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		public void run() {
 			Bitmap bitmap = getBitmap(index);
 			((Activity)mContext).runOnUiThread(new PageDisplayer(bitmap, v, index));
-			mQuranPage.postInvalidate();
 			
 			//clear for GC
 			v = null;
@@ -239,6 +243,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	        	updateViewForUser(v, false, true);
 	        } else {
 	        	iv.setImageBitmap(bitmap);
+	        	mQuranPage.refresh();
 	        	updateViewForUser(v, false, false);
 	        	QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
 				QuranSettings.save(mContext.prefs);
