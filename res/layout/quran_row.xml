@@ -39,11 +39,12 @@
 				android:layout_height="wrap_content"
 				android:gravity="right|center_vertical"
 				android:textSize="14sp" />
-		<Button android:id="@+id/btnPlay" 
-				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content"
-				android:gravity="right|center_vertical"
-				android:textSize="14sp"
-				android:text="P"/>
+		<ImageView android:id="@+id/btnPlay"
+				android:src="@drawable/play"
+				android:scaleType="centerInside"
+				android:layout_width="42dp"
+				android:layout_height="42dp"
+				android:padding="5dp"
+				/>
 	</LinearLayout>
 </LinearLayout>

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -148,7 +147,7 @@ public class QuranActivity extends BaseQuranActivity {
 				holder.page = (TextView)convertView.findViewById(R.id.page_info);
 				holder.number = (TextView)convertView.findViewById(R.id.sura_number);
 				holder.suraicon = (ImageView)convertView.findViewById(R.id.sura_icon_img);
-				holder.play = (Button)convertView.findViewById(R.id.btnPlay);
+				holder.play = (ImageView)convertView.findViewById(R.id.btnPlay);
 				holder.play.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -199,7 +198,7 @@ public class QuranActivity extends BaseQuranActivity {
 			TextView number;
 			TextView metadata;
 			ImageView suraicon;
-			Button play;
+			ImageView play;
 		}
 	}
 }
