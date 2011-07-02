@@ -194,6 +194,10 @@ public class QuranPageFeeder implements OnPageFlipListener {
         		Log.d(TAG, "page " + page + " added to cache!");
         	} else {
         		Log.d(TAG, "page " + page + " not found on sdcard");
+        		bitmap = QuranUtils.getImageFromWeb(filename);
+        		if (bitmap != null)
+            		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
+        		else Log.d(TAG, "page " + page + " could not be fetched from the web");
         	}
         }
         
