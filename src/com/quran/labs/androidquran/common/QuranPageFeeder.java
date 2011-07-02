@@ -120,6 +120,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			Log.d(TAG, "Adding Next Page: " + (mCurrentPageNumber+1));
 			View v = createPage(mCurrentPageNumber+1);
 			pageView.addNextPage(v);
+			mContext.updatePageInfo(mCurrentPageNumber);
 		} else {
 			pageView.addNextPage((View)null); 
 			// add empty page to prevent coming here again
@@ -133,6 +134,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			Log.d(TAG, "Adding Previous Page: " + (mCurrentPageNumber-1));
 			View v = createPage(mCurrentPageNumber-1);
 			pageView.addPreviousPage(v);
+			mContext.updatePageInfo(mCurrentPageNumber);
 		} else {
 			pageView.addPreviousPage((View)null);
 			// add empty page to prevent coming here again
