@@ -4,6 +4,7 @@
 	<string name="translationsNeeded">Need to download translation!</string>
 	<string name="app_name">Quran Android</string>
 	<string name="pageNotFound">Page not found.</string>
+	<string name="pageLoading">Page Loading...</string>
 	<string name="downloadPrompt_title">Download Required Files?</string>
 	<string name="downloadPrompt">For optimal performance, some files must be
 		downloaded to the sd card.
