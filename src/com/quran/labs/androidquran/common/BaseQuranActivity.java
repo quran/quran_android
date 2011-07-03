@@ -3,14 +3,11 @@ package com.quran.labs.androidquran.common;
 import java.text.NumberFormat;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -126,42 +123,6 @@ public abstract class BaseQuranActivity extends Activity {
 		startActivityForResult(i, ApplicationConstants.QURAN_VIEW_CODE);
 	}
 	
-	public boolean isInternetOn() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (cm != null && cm.getActiveNetworkInfo() != null) 
-			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
-		return false;
-	}
-	
-	protected void connect() {
-		if (isInternetOn())
-        	onConnectionSuccess();
-        else
-        	onConnectionFailed();
-	}
-	
-	protected void onConnectionSuccess() {
-	}
-	
-	protected void onConnectionFailed() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Unable to connect to server, make sure that your Internet connection is active. Retry ?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   dialog.dismiss();
-		        	   connect();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   dialog.dismiss();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-	
 	public String getPageFileName(int p) {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(3);
@@ -190,4 +151,5 @@ public abstract class BaseQuranActivity extends Activity {
 	    QuranScreenInfo.initialize(width, height);
 	    QuranDataService.qsi = QuranScreenInfo.getInstance();
 	}
+	
 }

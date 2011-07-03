@@ -25,15 +25,15 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.gson.Gson;
-import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.common.DownloadItem;
+import com.quran.labs.androidquran.common.InternetActivity;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.RestClient;
 
-public class DownloadActivity extends BaseQuranActivity {
+public class DownloadActivity extends InternetActivity {
 	
 	public static final String WEB_SERVICE_URL = "http://labs.quran.com/androidquran/translations.php";
 	private String url;
@@ -97,7 +97,8 @@ public class DownloadActivity extends BaseQuranActivity {
 					       .setCancelable(true)
 					       .setPositiveButton("Download", new DialogInterface.OnClickListener() {
 					           public void onClick(DialogInterface dialog, int id) {
-					        	   new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
+					        	   downloadTranslation(downloadItems[position].getFileUrl(), downloadItems[position].getFileName());
+					        	   //new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
 					        	   dialog.dismiss();
 					           }
 					       });
@@ -205,6 +206,12 @@ public class DownloadActivity extends BaseQuranActivity {
 			populateList();
     	}
     }
+	
+	@Override
+	protected void onFinishDownload() {
+		super.onFinishDownload();
+		fetchTranslationsList();
+	}
 	
 	private class DownloadTranslationsTask extends QuranAsyncTask {
 		private int itemPosition;
