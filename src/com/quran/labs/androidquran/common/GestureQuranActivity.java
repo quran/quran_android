@@ -27,7 +27,7 @@ import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranGallery;
 
-public abstract class GestureQuranActivity extends BaseQuranActivity implements INavigatorListener {
+public abstract class GestureQuranActivity extends InternetActivity implements INavigatorListener {
     protected GestureDetector gestureDetector;
     
 	protected static final int SWIPE_MIN_DISTANCE = 120;

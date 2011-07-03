@@ -49,4 +49,5 @@ public class ApplicationConstants {
 	
 	// Notifications
 	public static final int NOTIFICATION_DOWNLOAD_COMPLETED = 1;
+	public static final int NOTIFICATION_DOWNLOADING = 2;
 }
