@@ -699,6 +699,32 @@ public class QuranPageCurlView extends View {
 		}
 		return result;
 	}
+	
+	public void doPageFlip(int direction) {
+		
+		switch(direction){
+			case OnPageFlipListener.PREVIOUS_PAGE:
+				bFlipRight = bFlipRightOnDown = bFlipRightOnLastMove = true;
+				mPageOffset.x = getWidth();
+				break;
+			case OnPageFlipListener.NEXT_PAGE:
+				bFlipRight = bFlipRightOnDown = bFlipRightOnLastMove = false;
+				// set up canvas for next page
+				nextDrawView();
+
+				// Start from far left
+				mPageOffset.x = 1;
+				break;
+		}
+		
+		bUserMoves = false;
+		bFlipping = true;
+		if (mFlipListener != null  && (bFlipRightOnDown == bFlipRightOnLastMove)) {
+			mFlipListener.onPageFlipBegin(this,
+					bFlipRight ? OnPageFlipListener.PREVIOUS_PAGE : OnPageFlipListener.NEXT_PAGE);
+		}
+		FlipAnimationStep();
+	}
 
 	/**
 	 * Determine whether or not to dispatch the touch event to myself to draw or

@@ -83,17 +83,23 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	}
 	
 	public void goToNextpage() {
+		mQuranPage.doPageFlip(OnPageFlipListener.NEXT_PAGE);
+		/* Keeping old code in case new solution is too buggy
 		if (mCurrentPageNumber+1 > ApplicationConstants.PAGES_LAST)
 			return;
 		loadNextPage(mQuranPage);
 		mQuranPage.refresh(true);
+		*/
 	}
 	
 	public void goToPreviousPage() {
+		mQuranPage.doPageFlip(OnPageFlipListener.PREVIOUS_PAGE);
+		/* Keeping old code in case new solution is too buggy
 		if (mCurrentPageNumber-1 < ApplicationConstants.PAGES_FIRST)
 			return;
 		loadPreviousPage(mQuranPage);
 		mQuranPage.refresh(true);
+		*/
 	}
 	
 	public void refreshCurrent() {
