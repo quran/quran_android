@@ -99,14 +99,25 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		quranPageFeeder.goToPreviousPage();
 	}
 	
+	protected void scrollPageDown() {
+		quranPageFeeder.ScrollDown();
+	}
+	
+	protected void scrollPageUp() {
+		quranPageFeeder.ScrollUp();
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		Log.d(TAG, "KeyDown");
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
 			goToNextPage();
-		}
-		else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
 			goToPreviousPage();
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+			scrollPageDown();
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_UP){
+			scrollPageUp();
 		}
 
 		return super.onKeyDown(keyCode, event);

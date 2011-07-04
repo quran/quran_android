@@ -100,6 +100,14 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		jumpToPage(mCurrentPageNumber);
 	}
 	
+	public void ScrollDown() {
+		mQuranPage.scrollPage(R.id.page_scroller, View.FOCUS_DOWN);
+	}
+	
+	public void ScrollUp() {
+		mQuranPage.scrollPage(R.id.page_scroller, View.FOCUS_UP);
+	}
+	
 	@Override
 	public void onPageFlipBegin(QuranPageCurlView pageView, int flipDirection){
 		// Does nothing
