@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.widget.ScrollView;
 
 import com.quran.labs.androidquran.R;
 
@@ -513,6 +514,20 @@ public class QuranPageCurlView extends View {
 	public void addCurrentPage(View v) {
 		mCurrentPageView = v;
 	}
+	
+	public View getCurrentPage() {
+		return mCurrentPageView;
+	}
+	
+	public void scrollPage(int scrollerId, int direction) {
+		ScrollView sv = (ScrollView) mCurrentPageView.findViewById(scrollerId);
+		if (sv != null){
+			sv.arrowScroll(direction);
+			mScrollAnimationHandler.setUpdateRate(mUpdateRate);
+			mScrollAnimationHandler.setCount(20); // 33ms x 20 = ~0.75 second
+			mScrollAnimationHandler.sleep();
+		}
+	}
 
 	/**
 	 * Reset points to it's initial clip edge state
@@ -684,6 +699,32 @@ public class QuranPageCurlView extends View {
 		}
 		return result;
 	}
+	
+	public void doPageFlip(int direction) {
+		
+		switch(direction){
+			case OnPageFlipListener.PREVIOUS_PAGE:
+				bFlipRight = bFlipRightOnDown = bFlipRightOnLastMove = true;
+				mPageOffset.x = getWidth();
+				break;
+			case OnPageFlipListener.NEXT_PAGE:
+				bFlipRight = bFlipRightOnDown = bFlipRightOnLastMove = false;
+				// set up canvas for next page
+				nextDrawView();
+
+				// Start from far left
+				mPageOffset.x = 1;
+				break;
+		}
+		
+		bUserMoves = false;
+		bFlipping = true;
+		if (mFlipListener != null  && (bFlipRightOnDown == bFlipRightOnLastMove)) {
+			mFlipListener.onPageFlipBegin(this,
+					bFlipRight ? OnPageFlipListener.PREVIOUS_PAGE : OnPageFlipListener.NEXT_PAGE);
+		}
+		FlipAnimationStep();
+	}
 
 	/**
 	 * Determine whether or not to dispatch the touch event to myself to draw or
@@ -732,7 +773,7 @@ public class QuranPageCurlView extends View {
 				// animate scroll if my child??
 				if (!dispatchDecisionTaken || (dispatchDecisionTaken && !dispatchTouchToMe)){
 					mScrollAnimationHandler.setUpdateRate(mUpdateRate);
-					mScrollAnimationHandler.setCount(30); // 33ms x 45 = ~1.5 seconds
+					mScrollAnimationHandler.setCount(30); // 33ms x 30 = ~1 second
 					mScrollAnimationHandler.sleep();
 				}
 				
