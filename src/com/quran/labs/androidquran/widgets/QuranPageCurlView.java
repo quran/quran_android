@@ -873,7 +873,7 @@ public class QuranPageCurlView extends View {
 			 * Otherwise, just perform the ACTION_UP as normal which should 
 			 * flip the page depending which side of the screen the tap was on
 			 */
-			if ((xPos > width/3) && (xPos < width*2/3)){
+			if ((xPos > width/4) && (xPos < width*3/4)){
 				event.setAction(MotionEvent.ACTION_CANCEL);
 				performClick();
 			}
