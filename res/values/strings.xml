@@ -42,14 +42,17 @@
 	<string name="email_subject">Feedback</string>
 	<string name="email_to">quran.android@gmail.com</string>
 	<string name="aboutUs">Quran Android is a free, open source Quran
-		application for Android.
+		application for Android.  The images used are from the quran.com
+		project, and the data used in the translations and Arabic comes from
+		tanzil.net.
+		\n\nCredits:
+		\n @wnafee - page flip animation (based on android-page-curl project)
+		\n @hams_rrr - arabic support for non-arabic phones
+		\n @neo_4583 - arabic reshaper project
+		\n @somaiagabr - graphics
 		\n\nNew features in this release:
-		\n- Enhanced Navigation.
-		\n- Arabic support (if your device does not support Arabic).
-		\n- New translations added: French, German, Urdu, Spanish, Indonesian, 
-		Turkish and Malay Translations.
-		\n- Al Tafsir Al Mouyassar. (Added with translations)
-		\n- Search translations. (Soon we will introduce Arabic search)
+		\n- Awesome page flip animation (thanks @wnafee).
+		\n- Minor bugfixes.
 		\n\nUpcoming features include:
 		\n- Recitation.
 		\nAnd more..
@@ -67,9 +70,9 @@
 	    \n- Adjust translation text size to your preference via Settings.
 	    \n- Initial search implementation allows you to search the active translation 
 	    via the search button.
- 	    \n- On tapping the center of the screen and you will find the page bookmarker 
- 	    on the top left corner. 
- 	    tap on the bookmarker to toggle the page bookmark state.
+ 	    \n- On tapping the center of the screen and you will find the page bookmark 
+ 	    option in the top left corner. 
+ 	    tap on the bookmark button to toggle the page bookmark state.
 	    \n- You can add as many bookmarks as you\'d like.
 	    \n- The application remembers the last page you were reading and displays it when you restart the app.
 	    \n- Don\'t forget to check out the settings.</string>
