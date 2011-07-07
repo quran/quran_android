@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.quran.labs.androidquran" android:versionName="1.4.0"
-	android:versionCode="6">
+	package="com.quran.labs.androidquran" android:versionCode="7" android:versionName="1.5">
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="true">
 		<activity android:name=".QuranActivity" android:label="@string/app_name" android:configChanges="keyboardHidden|orientation">

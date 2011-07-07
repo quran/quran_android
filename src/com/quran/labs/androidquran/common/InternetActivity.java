@@ -59,7 +59,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 		alert.show();
 	}
 	
-	private void startDownloadService(Intent intent) {
+	protected void startDownloadService(Intent intent) {
     	starting = true;    	
     	initServiceConnection();
     	if (!QuranDataService.isRunning)
@@ -86,8 +86,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	private void initServiceConnection() {
 	    serviceConnection = new ServiceConnection() {
 	    	public void onServiceConnected(ComponentName name, IBinder service){
-	    		downloadService = 
-	    			((QuranDataService.QuranDownloadBinder)service).getService();
+	    		downloadService = ((QuranDataService.QuranDownloadBinder)service).getService();
 	    		starting = false;
 	    	}
 	
@@ -97,26 +96,10 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	    };
 	}
 	
-	
-    
     class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {	
 		@Override
 		protected Void doInBackground(Void... params) {
-    		int iters = 0;
-    		while (starting || QuranDataService.phase == 1){
-    			try {
-    				Thread.sleep(1000);
-    				if ((serviceConnection != null) && (downloadService != null)){
-    					int progress = downloadService.getProgress();
-    					publishProgress(progress);
-    				}
-    				iters++;
-    			}
-    			catch (InterruptedException ie){}
-    		}
-    		
-    		publishProgress(-1);
-    		while (QuranDataService.isRunning){
+    		while (starting || QuranDataService.isRunning){
     			try {
     				Thread.sleep(1000);
     				if ((serviceConnection != null) && (downloadService != null)){
@@ -154,7 +137,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	
     }
     
-    private void showProgressDialog(){
+	private void showProgressDialog(){
     	pDialog = new ProgressDialog(this);
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);

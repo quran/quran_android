@@ -21,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.gson.Gson;
@@ -40,7 +39,7 @@ public class DownloadActivity extends InternetActivity {
 	private DownloadItem [] downloadItems;
 	private ListView listView;
 	private ProgressDialog progressDialog;
-	public QuranAsyncTask currentTask;
+	private LoadTranslationsTask currentTask;
 	private TranslationsDBAdapter dba;
 	
 	@Override
@@ -66,8 +65,7 @@ public class DownloadActivity extends InternetActivity {
 	}
 	
 	private void fetchTranslationsList() {
-		//currentTask = new LoadTranslationsTask(!dba.isDBEmpty());
-		currentTask = new LoadTranslationsTask(false);
+		currentTask = new LoadTranslationsTask();
 		currentTask.execute((Object []) null);
 	}
 	
@@ -98,7 +96,6 @@ public class DownloadActivity extends InternetActivity {
 					       .setPositiveButton("Download", new DialogInterface.OnClickListener() {
 					           public void onClick(DialogInterface dialog, int id) {
 					        	   downloadTranslation(downloadItems[position].getFileUrl(), downloadItems[position].getFileName());
-					        	   //new DownloadTranslationsTask().execute(new String[] {String.valueOf(position)});
 					        	   dialog.dismiss();
 					           }
 					       });
@@ -145,7 +142,7 @@ public class DownloadActivity extends InternetActivity {
 	        	JSONObject json = jsonArray.getJSONObject(i);
 	        	// Just for now use TranslationItem class..
 	        	downloadItems[i] = gson.fromJson(json.toString(), TranslationItem.class);
-	            Log.i("Praeda","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
+	            Log.i("QuranAndroid","Load Translations: <jsonobject>\n"+json.toString()+"\n</jsonobject>");
 	        }	
 		} catch (JSONException e) {
 			// Show Error msg
@@ -155,54 +152,31 @@ public class DownloadActivity extends InternetActivity {
 			Log.d("JSON Exception", "Empty message");
 		}
 	}
-	
-	private void loadTranslationsFromDb() {
-		TranslationsDBAdapter dba = new TranslationsDBAdapter(getApplicationContext());
-		downloadItems = dba.getAvailableTranslations();
-	}
-	
-	private abstract class QuranAsyncTask extends AsyncTask<Object [], Object, Object>  {
-		protected void onPreExecute() {
-			currentTask = this;
-			progressDialog.show();
-		}
-		
-		@Override
-    	public void onPostExecute(Object result){
-    		currentTask = null;
-    		progressDialog.hide();
-    	}
-	}
-	
-	private class LoadTranslationsTask extends QuranAsyncTask {
-		private boolean offline = false;
-		
-		public LoadTranslationsTask(boolean offline) {
-			this.offline = offline;
-		}
+
+	private class LoadTranslationsTask extends AsyncTask<Object [], Object, Object>  {
 		
 		public void onPreExecute() {
 			super.onPreExecute();
+			currentTask = this;
+			progressDialog.show();
 			progressDialog.setMessage("Loading Translations List, Please wait..");
 		}
 		
-    	public String doInBackground(Object[]... params){
-    		if (offline) {
-    			loadTranslationsFromDb();    			
-    		} else {
-    			sendRequest();
-    			if (downloadItems != null) {
-    				int nrecords = dba.deleteAllRecords();
-    				Log.i("Translations DB", "Deleted " + nrecords + " records");
-        			dba.save(downloadItems);
-    			}
-    		}
+		public String doInBackground(Object[]... params) {
+			sendRequest();
+			if (downloadItems != null) {
+				int nrecords = dba.deleteAllRecords();
+				Log.i("Translations DB", "Deleted " + nrecords + " records");
+				dba.save(downloadItems);
+			}
     		return null;
     	}
     	    	
     	@Override
     	public void onPostExecute(Object result){
     		super.onPostExecute(result);
+    		currentTask = null;
+    		progressDialog.hide();
 			populateList();
     	}
     }
@@ -212,31 +186,6 @@ public class DownloadActivity extends InternetActivity {
 		super.onFinishDownload();
 		fetchTranslationsList();
 	}
-	
-	private class DownloadTranslationsTask extends QuranAsyncTask {
-		private int itemPosition;
-		public void onPreExecute() {
-			super.onPreExecute();
-			progressDialog.setMessage("Downloading Translation, Please wait..");
-		}
-		
-    	public String doInBackground(Object[]... params){   		
-    		String str = (String) ((Object []) params[0])[0];
-    		int position = Integer.parseInt(str);
-    		itemPosition = position;
-    		QuranUtils.getTranslation(downloadItems[position].getFileUrl(), downloadItems[position].getFileName());
-    		return null;
-    	}
-    	    	
-    	@Override
-    	public void onPostExecute(Object result){
-    		super.onPostExecute(result);
-    		currentTask = null;
-    		TextView t = (TextView) listView.getChildAt(itemPosition).findViewById(R.id.is_downloaded);
-    		t.setText("Downloaded");
-    		Toast.makeText(DownloadActivity.this, "File Downloaded", Toast.LENGTH_LONG);
-    	}
-    }
 	
 	public void cancelDownload(){
 		progressDialog.dismiss();

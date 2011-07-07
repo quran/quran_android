@@ -22,7 +22,6 @@ import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.quran.labs.androidquran.QuranActivity;
 import com.quran.labs.androidquran.R;
@@ -43,10 +42,10 @@ public class QuranDataService extends Service {
 	public static final int DOWNLOAD_QURAN_IMAGES = 1;
 	public static final int DOWNLOAD_SURA_AUDIO = 2;
 	public static final int DOWNLOAD_TRANSLATION = 3;
+	private static final String DOWNLOAD_EXT = ".part";
 
 	private int progress;
 	public static boolean isRunning = false;
-	public static int phase = 1;
 	public static QuranScreenInfo qsi = null;
 	private DownloadThread thread;
 
@@ -89,6 +88,9 @@ public class QuranDataService extends Service {
 	}
 
 	public void handleStart(Intent intent, int startId) {
+		if (intent == null)
+			return;
+		
 		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
 		switch (downloadType) {
 			case DOWNLOAD_QURAN_IMAGES:
@@ -138,21 +140,23 @@ public class QuranDataService extends Service {
 
 	public boolean isInternetOn() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		boolean val = false;
 		if (cm != null && cm.getActiveNetworkInfo() != null)
-			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
-		return false;
+			val = cm.getActiveNetworkInfo().isConnectedOrConnecting();
+		return val;
 	}
 
 	private class DownloadThread extends Thread {
+		private static final int DOWNLOAD_BUFFER_SIZE = 2048;
 		private QuranDataService service;
 		private String[] fileNames;
 		private String[] downloadUrls;
 		private String[] saveToDirectories;
 		private boolean zipped;
 		private int downloadIndex;
-		private RemoteViews contentView;
-		private Notification notification;
-		private NotificationManager notificationManager;
+		//private RemoteViews contentView;
+		//private Notification notification;
+		//private NotificationManager notificationManager;
 
 		DownloadThread(QuranDataService service, String[] downloadUrls,
 				String[] fileNames, String[] saveToDirectories, boolean zipped) {
@@ -165,19 +169,19 @@ public class QuranDataService extends Service {
 		}
 		
 		private void onDowloadStart() {
-			String ns = Context.NOTIFICATION_SERVICE;
-			notificationManager = (NotificationManager) getSystemService(ns);
-			Context context = QuranDataService.this.getApplicationContext();
-			notification = new Notification(R.drawable.icon, "Quran Android", System.currentTimeMillis());
-			contentView = new RemoteViews(context.getPackageName(), R.layout.notification_progress_bar);
-			contentView.setProgressBar(R.id.progressBar, 100, 0, false);        
-			contentView.setTextViewText(R.id.text, "Downloading..");       
-			notification.contentView = contentView;
-
-			Intent notificationIntent = new Intent(context, QuranActivity.class);
-			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-			notification.contentIntent = contentIntent;
-			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING, notification);
+//			String ns = Context.NOTIFICATION_SERVICE;
+//			notificationManager = (NotificationManager) getSystemService(ns);
+//			Context context = QuranDataService.this.getApplicationContext();
+//			notification = new Notification(R.drawable.icon, "Quran Android", System.currentTimeMillis());
+//			contentView = new RemoteViews(context.getPackageName(), R.layout.notification_progress_bar);
+//			contentView.setProgressBar(R.id.progressBar, 100, 0, false);        
+//			contentView.setTextViewText(R.id.text, "Downloading..");       
+//			notification.contentView = contentView;
+//
+//			Intent notificationIntent = new Intent(context, QuranActivity.class);
+//			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+//			notification.contentIntent = contentIntent;
+//			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING, notification);
 		}
 
 		private boolean resumeDownload() {
@@ -191,7 +195,7 @@ public class QuranDataService extends Service {
 					File f = new File(saveToDirectories[downloadIndex]);
 					f.mkdirs();
 					File file = new File(saveToDirectories[downloadIndex],
-							fileNames[downloadIndex]);
+							fileNames[downloadIndex] + DOWNLOAD_EXT);
 					URL url = new URL(downloadUrls[downloadIndex]);
 					URLConnection conn = url.openConnection();
 					int total = conn.getContentLength();
@@ -214,16 +218,18 @@ public class QuranDataService extends Service {
 					fos = (downloaded == 0) ? new FileOutputStream(file
 							.getAbsolutePath()) : new FileOutputStream(file
 							.getAbsolutePath(), true);
-					bout = new BufferedOutputStream(fos, 1024);
-					byte[] data = new byte[1024];
+					bout = new BufferedOutputStream(fos, DOWNLOAD_BUFFER_SIZE);
+					byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
 					int x = 0;
 
-					while ((x = in.read(data, 0, 1024)) >= 0) {
+					while ((x = in.read(data, 0, DOWNLOAD_BUFFER_SIZE)) >= 0) {
 						bout.write(data, 0, x);
 						downloaded += x;
 						double percent = 100.0 * ((1.0 * downloaded) / (1.0 * total));
 						updateProgress((int) percent);
 					}
+					
+					file.renameTo(new File(saveToDirectories[downloadIndex], fileNames[downloadIndex]));
 
 					if (zipped)
 						unzipFile(saveToDirectories[downloadIndex], fileNames[downloadIndex]);
@@ -233,6 +239,9 @@ public class QuranDataService extends Service {
 			} catch (IOException e) {
 				Log.e("quran_srv", "Download paused: IO Exception", e);
 				return false;
+			} catch (Exception e) {
+				Log.e("quran_srv", "Download paused: Exception", e);
+				return false;
 			}
 
 			return true;
@@ -240,33 +249,36 @@ public class QuranDataService extends Service {
 
 		private void updateProgress(int percent) {
 			service.updateProgress(percent);
-			notification.contentView.setTextViewText(R.id.text, "Downloading.. " + percent + "%");
-			notification.contentView.setProgressBar(R.id.progressBar, 100, percent, false);
-
-			//notify the notification manager on the update.
-			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING, notification);
+//			notification.contentView.setTextViewText(R.id.text, "Downloading.. " + percent + "%");
+//			notification.contentView.setProgressBar(R.id.progressBar, 100, percent, false);
+//
+//			//notify the notification manager on the update.
+//			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING, notification);
 		}
 
 		@Override
 		public void run() {
 			onDowloadStart();
-			while (true) {
-				if (isInternetOn() && resumeDownload()) {
-					onDownloadComplete();
-					break;
+			try {
+				while (true) {
+					if (isInternetOn() && resumeDownload()) {
+						onDownloadComplete();
+						break;
+					}
+					try {
+						Log.d("quran_srv", "Disconnected.. Retring after 10 seconds");
+						sleep(WAIT_TIME * 1000);
+					} catch (InterruptedException e) {
+					}
 				}
-				try {
-					Log.d("quran_srv", "Disconnected.. Retring after 10 seconds");
-					sleep(WAIT_TIME * 1000);
-				} catch (InterruptedException e) {
-				}
+			} catch(Exception e) {
+				Log.e("quran_srv", "Error", e);
 			}
 		}
 
 		protected void unzipFile(String saveToDirectory, String fileName) {
 			try {
 				updateProgress(0);
-				QuranDataService.phase++;
 
 				// success, unzip the file...
 				File file = new File(saveToDirectory, fileName);
@@ -291,7 +303,7 @@ public class QuranDataService extends Service {
 								+ entry.getName());
 
 						int size;
-						byte[] buf = new byte[1024];
+						byte[] buf = new byte[DOWNLOAD_BUFFER_SIZE];
 						while ((size = zis.read(buf)) > 0)
 							ostream.write(buf, 0, size);
 						ostream.close();
@@ -305,11 +317,13 @@ public class QuranDataService extends Service {
 
 				file.delete();
 			} catch (IOException ioe) {
-				Log.d("quran_srv", "io exception: " + ioe.toString());
+				Log.e("quran_srv", "io exception: ", ioe);
 			}
 		}
 
 		private void onDownloadComplete() {
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
 			notificationManager.cancel(ApplicationConstants.NOTIFICATION_DOWNLOADING);
 
 			long when = System.currentTimeMillis();

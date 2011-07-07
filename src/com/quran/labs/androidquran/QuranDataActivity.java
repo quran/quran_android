@@ -50,10 +50,9 @@ public class QuranDataActivity extends InternetActivity {
 
 	public void checkDataStatus(){
         if (QuranDataService.isRunning){
-        	downloadQuranImages();
+        	startDownloadService(new Intent(this, QuranDataService.class));
         } else {
-        	if ((QuranUtils.getQuranDirectory() != null) &&
-        			(!QuranUtils.haveAllImages())){
+        	if ((QuranUtils.getQuranDirectory() != null) && (!QuranUtils.haveAllImages())){
         		promptForDownload();
         	}
         	else runListView();
