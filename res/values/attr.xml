@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<resources> 
+	<declare-styleable name="QuranPageCurlView"> 
+		<attr name="enableDebugMode" format="boolean" /> 
+		<attr name="curlSpeed" format="integer" /> 
+		<attr name="updateRate" format="integer" /> 
+		<attr name="initialEdgeOffset" format="integer" /> 
+		<attr name="backgroundColor" format="color" />
+		<attr name="curlMode" format="integer"/> 
+	</declare-styleable>
+	
+	<declare-styleable name="SlidingPanel">
+		<attr name="speed" format="integer" />
+		<attr name="targetHeight" format="dimension" />
+		<attr name="isRTL" format="boolean" />
+	</declare-styleable>
+	
+</resources>

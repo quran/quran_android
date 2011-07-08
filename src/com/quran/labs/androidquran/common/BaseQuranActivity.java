@@ -1,14 +1,13 @@
 package com.quran.labs.androidquran.common;
 
+import java.text.NumberFormat;
+
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -21,10 +20,10 @@ import android.view.WindowManager;
 import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.BookmarksActivity;
 import com.quran.labs.androidquran.DownloadActivity;
-import com.quran.labs.androidquran.ExpViewActivity;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranJumpDialog;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
+import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.TranslationActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
@@ -38,7 +37,6 @@ public abstract class BaseQuranActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 	}
@@ -120,46 +118,15 @@ public abstract class BaseQuranActivity extends Activity {
 	}
 	
 	public void jumpTo(int page) {
-		Intent i = new Intent(this, ExpViewActivity.class);
+		Intent i = new Intent(this, QuranViewActivity.class);
 		i.putExtra("page", page);
 		startActivityForResult(i, ApplicationConstants.QURAN_VIEW_CODE);
 	}
 	
-	public boolean isInternetOn() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (cm != null && cm.getActiveNetworkInfo() != null) 
-			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
-		return false;
-	}
-	
-	protected void connect() {
-		if (isInternetOn())
-        	onConnectionSuccess();
-        else
-        	onConnectionFailed();
-	}
-	
-	protected void onConnectionSuccess() {
-		
-	}
-	
-	protected void onConnectionFailed() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Unable to connect to server, make sure that your Internet connection is active. Retry ?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   dialog.dismiss();
-		        	   connect();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   dialog.dismiss();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
+	public String getPageFileName(int p) {
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMinimumIntegerDigits(3);
+		return "page" + nf.format(p) + ".png";
 	}
 	
 	@Override
@@ -184,4 +151,5 @@ public abstract class BaseQuranActivity extends Activity {
 	    QuranScreenInfo.initialize(width, height);
 	    QuranDataService.qsi = QuranScreenInfo.getInstance();
 	}
+	
 }

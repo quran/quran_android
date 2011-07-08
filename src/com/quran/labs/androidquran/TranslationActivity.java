@@ -1,51 +1,114 @@
 package com.quran.labs.androidquran;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.view.Window;
+import android.view.WindowManager;
 
-import com.quran.labs.androidquran.common.GestureQuranActivity;
-import com.quran.labs.androidquran.common.QuranGalleryAdapter;
+import com.quran.labs.androidquran.common.PageViewQuranActivity;
 import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.common.TranslationPageFeeder;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
-import com.quran.labs.androidquran.data.ApplicationConstants;
-import com.quran.labs.androidquran.data.DatabaseHandler;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.GalleryFriendlyScrollView;
 
-public class TranslationActivity extends GestureQuranActivity {
+public class TranslationActivity extends PageViewQuranActivity {
 
+	private static final String TAG = "TranslationViewActivity";
+	protected static final int DOWNLOAD_TRANSLATION_CODE = 0;
     private TranslationsDBAdapter dba;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		dba = new TranslationsDBAdapter(this);
+	protected void onCreate(Bundle savedInstanceState) {		
+		Object [] saved = (Object []) getLastNonConfigurationInstance();
+		if (saved != null) {
+			Log.d("exp_v", "Adapter retrieved..");
+			quranPageFeeder = (TranslationPageFeeder) saved[0];
+		} 
 		super.onCreate(savedInstanceState);
-		//checkTranslationAvailability();
+		
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		// does requestWindowFeature, has to be before setContentView
+		adjustDisplaySettings();
+
+		setContentView(R.layout.quran_exp);
+		
+		dba = new TranslationsDBAdapter(this);
+		
+		WindowManager manager = getWindowManager();
+		Display display = manager.getDefaultDisplay();
+		width = display.getWidth();
+
+		initComponents();		
+		BookmarksManager.load(prefs);
+		
+		int page = loadPageState(savedInstanceState);
+		quranPageFeeder.jumpToPage(page);
+		//renderPage(ApplicationConstants.PAGES_LAST - page);
+
+		toggleMode();
+	}
+	
+
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		Object [] o = { quranPageFeeder };
+		return o;
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Always initialize Quran Screen on start so as to be able to retrieve images
+		// Error cause: Gallery Adapter was unable to retrieve images from SDCard as QuranScreenInfo
+		// was cleared after long sleep..
+		initializeQuranScreen();
 	}
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.findItem(R.id.menu_item_translations).setVisible(false);
 		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
+	protected void initQuranPageFeeder(){
+		if (quranPageFeeder == null) {
+			Log.d(TAG, "Quran Feeder instantiated...");
+			quranPageFeeder = new TranslationPageFeeder(this, quranPageCurler,
+					R.layout.quran_translation, dba);
+		} else {
+			quranPageFeeder.setContext(this, quranPageCurler);
+		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt("lastPage", QuranSettings.getInstance().getLastPage());
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		checkTranslationAvailability();
+		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
+		Log.d("QuranAndroid", "Screen on");
+		adjustActivityOrientation();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		expLayout.setKeepScreenOn(false);
+		Log.d("QuranAndroid","Screen off");
 	}
 	
 	private boolean checkTranslationAvailability() {
@@ -68,82 +131,10 @@ public class TranslationActivity extends GestureQuranActivity {
 	}
 	
 	@Override
-	protected void onResume() {
-		super.onResume();
-		checkTranslationAvailability();
-		if (galleryAdapter != null)
-			galleryAdapter.notifyDataSetChanged();
-	}
-
-	public String getTranslation(int page){
-		if (dba.getActiveTranslation() == null)
-			return "";
-		
-		Log.d("QuranAndroid", "get translation for page " + page);
-		String translation = "";
-		if ((page > ApplicationConstants.PAGES_LAST) || (page < ApplicationConstants.PAGES_FIRST)) page = 1;
-		setTitle(QuranInfo.getPageTitle(page));
-
-		Integer[] bounds = QuranInfo.getPageBounds(page);
-		TranslationItem[] translationLists = {dba.getActiveTranslation()};
-		
-		List<Map<String, String>> translations = new ArrayList<Map<String, String>>();
-		for (TranslationItem tl : translationLists){
-			Map<String, String> currentTranslation = getVerses(tl.getFileName(), bounds);
-			if (currentTranslation != null){
-				translations.add(currentTranslation);
-			}
-		}
-		
-		int numTranslations = translationLists.length;
-		
-		int i = bounds[0];
-		for (; i <= bounds[2]; i++){
-			int j = (i == bounds[0])? bounds[1] : 1;
-			for (;;){
-				int numAdded = 0;
-				String key = i + ":" + j++;
-				for (int t = 0; t < numTranslations; t++){
-					if (translations.get(t) == null) continue;
-					String text = translations.get(t).get(key);
-					if (text != null){
-						numAdded++; 
-						translation += "<b>" + key + ":</b> " + text + "<br/>";
-					}
-				}
-				if (numAdded == 0) break;
-			}
-		}
-		
-		return translation;
-	}
-	
-	public Map<String, String> getVerses(String translation, Integer[] bounds){
-		DatabaseHandler handler = null;
-		try {
-			Map<String, String> ayahs = new HashMap<String, String>();
-			handler = new DatabaseHandler(translation);
-			for (int i = bounds[0]; i <= bounds[2]; i++){
-				int max = (i == bounds[2])? bounds[3] : QuranInfo.getNumAyahs(i);
-				int min = (i == bounds[0])? bounds[1] : 1;
-				Cursor res = handler.getVerses(i, min, max);
-				if ((res == null) || (!res.moveToFirst())) continue;
-				do {
-					int sura = res.getInt(0);
-					int ayah = res.getInt(1);
-					String text = res.getString(2);
-					ayahs.put(sura + ":" + ayah, text);
-				}
-				while (res.moveToNext());
-				res.close();
-			}
-			handler.closeDatabase();
-			return ayahs;
-		}
-		catch (SQLException ex){
-			ex.printStackTrace();
-			if (handler != null) handler.closeDatabase();
-			return null;
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == DOWNLOAD_TRANSLATION_CODE && resultCode == RESULT_OK) {
+			quranPageFeeder.jumpToPage(QuranSettings.getInstance().getLastPage());
 		}
 	}
 	
@@ -156,7 +147,7 @@ public class TranslationActivity extends GestureQuranActivity {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.dismiss();
 					Intent intent = new Intent(getApplicationContext(), DownloadActivity.class);
-					startActivity(intent);
+					startActivityForResult(intent, DOWNLOAD_TRANSLATION_CODE);
 				}
     	});
     	
@@ -172,66 +163,4 @@ public class TranslationActivity extends GestureQuranActivity {
     	alert.setTitle(R.string.downloadPrompt_title);
     	alert.show();
 	}
-	
-	public class QuranGalleryTranslationAdapter extends QuranGalleryAdapter {
-		private Map<String, String> cache = new HashMap<String, String>();
-		
-	    public QuranGalleryTranslationAdapter(Context context) {
-	    	super(context);
-	    }
-	    
-	    @Override
-	    public void emptyCache() {
-	    	super.emptyCache();
-	    	cache.clear();
-	    }
-
-	    public View getView(int position, View convertView, ViewGroup parent) {
-	    	PageHolder holder;
-	    	if (convertView == null){
-	    		convertView = mInflater.inflate(R.layout.quran_translation, null);
-				holder = new PageHolder();
-				holder.page = (TextView)convertView.findViewById(R.id.translationText);
-				holder.page.setTypeface(ArabicStyle.getTypeface());
-				holder.scroll = (GalleryFriendlyScrollView)convertView.findViewById(R.id.pageScrollView);
-				convertView.setTag(holder);
-	    	}
-	    	else {
-	    		holder = (PageHolder)convertView.getTag();
-	    	}
-	    	
-	        int page = ApplicationConstants.PAGES_LAST - position;
-	        String str = null;
-	        if (cache.containsKey("page_" + page)){
-	        	str = cache.get("page_" + page);
-	        	Log.d("exp_v", "reading translation for page " + page + " from cache!");
-	        }
-	        
-	        if (str == null){
-	        	str = getTranslation(page);
-	        	if (str != null && !"".equals(str))
-	        		cache.put("page_" + page, str);
-	        }
-	        
-	        holder.page.setText(Html.fromHtml(ArabicStyle.reshape(str)));
-	        holder.page.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
-			QuranSettings.getInstance().setLastPage(page);
-			QuranSettings.save(prefs);
-			
-			if (!inReadingMode)
-				updatePageInfo(position);
-	    	return convertView;
-	    }
-	}
-	
-	static class PageHolder {
-		TextView page;
-		ScrollView scroll;
-	}
-	
-	@Override
-	protected void initGalleryAdapter() {
-		galleryAdapter = new QuranGalleryTranslationAdapter(this);
-	}
-	
 }
