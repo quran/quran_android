@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 public class TranslationActivity extends PageViewQuranActivity {
 
 	private static final String TAG = "TranslationViewActivity";
+	protected static final int DOWNLOAD_TRANSLATION_CODE = 0;
     private TranslationsDBAdapter dba;
 	
 	@Override
@@ -40,7 +41,6 @@ public class TranslationActivity extends PageViewQuranActivity {
 		setContentView(R.layout.quran_exp);
 		
 		dba = new TranslationsDBAdapter(this);
-		checkTranslationAvailability();
 		
 		WindowManager manager = getWindowManager();
 		Display display = manager.getDefaultDisplay();
@@ -130,6 +130,14 @@ public class TranslationActivity extends PageViewQuranActivity {
 		return true;
 	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == DOWNLOAD_TRANSLATION_CODE && resultCode == RESULT_OK) {
+			quranPageFeeder.jumpToPage(QuranSettings.getInstance().getLastPage());
+		}
+	}
+	
 	public void promptForTranslationDownload(){
     	AlertDialog.Builder dialog = new AlertDialog.Builder(this);
     	dialog.setMessage(R.string.downloadTranslationPrompt);
@@ -139,7 +147,7 @@ public class TranslationActivity extends PageViewQuranActivity {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.dismiss();
 					Intent intent = new Intent(getApplicationContext(), DownloadActivity.class);
-					startActivity(intent);
+					startActivityForResult(intent, DOWNLOAD_TRANSLATION_CODE);
 				}
     	});
     	

@@ -98,7 +98,7 @@ public class QuranDataActivity extends InternetActivity {
     			new DialogInterface.OnClickListener() {
     				public void onClick(DialogInterface dialog, int id) {
     					dialog.cancel();
-    					//runListView();
+    					runListView();
     				}
     	});
     	

@@ -53,7 +53,7 @@ public class QuranDataService extends Service {
 	 * Wait time in seconds.. Time to wait before re-checking for internet
 	 * connection..
 	 */
-	private static final int WAIT_TIME = 10;
+	private static final int WAIT_TIME = 30;
 
 	public class QuranDownloadBinder extends Binder {
 		public QuranDataService getService() {

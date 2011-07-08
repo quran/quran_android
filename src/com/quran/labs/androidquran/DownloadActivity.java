@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.gson.Gson;
@@ -107,12 +106,8 @@ public class DownloadActivity extends InternetActivity {
 					       .setCancelable(true)
 					       .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
 					           public void onClick(DialogInterface dialog, int id) {
-					        	   boolean removed = QuranUtils.removeTranslation(item.getFileName());
-					        	   if (removed) {
-					        		   TextView t = (TextView) view.findViewById(R.id.is_downloaded);
-					        		   t.setText("");					        		   
-					        	   }					        		   
-					        	   dialog.dismiss();
+					        	   QuranUtils.removeTranslation(item.getFileName());
+					        	   populateList();
 					           }
 					       })
 					       .setNegativeButton("Set Active", new DialogInterface.OnClickListener() {
@@ -184,7 +179,8 @@ public class DownloadActivity extends InternetActivity {
 	@Override
 	protected void onFinishDownload() {
 		super.onFinishDownload();
-		fetchTranslationsList();
+		setResult(RESULT_OK);
+		populateList();
 	}
 	
 	public void cancelDownload(){
