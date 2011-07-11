@@ -46,7 +46,7 @@ public class TranslationActivity extends PageViewQuranActivity {
 		Display display = manager.getDefaultDisplay();
 		width = display.getWidth();
 
-		initComponents();		
+		initComponents();
 		BookmarksManager.load(prefs);
 		
 		int page = loadPageState(savedInstanceState);

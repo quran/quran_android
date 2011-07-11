@@ -303,7 +303,7 @@ public class QuranDataService extends Service {
 						break;
 					}
 					try {
-						Log.d("quran_srv", "Disconnected.. Retring after 10 seconds");
+						Log.d("quran_srv", "Disconnected.. Retring after " + WAIT_TIME + " seconds");
 						sleep(WAIT_TIME * 1000);
 					} catch (InterruptedException e) {
 					}

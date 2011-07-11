@@ -25,6 +25,8 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	private static final String TAG = "BaseQuranActivity";
 
 	protected ImageView btnBookmark = null;
+	protected ImageView btnPlay = null;
+	
     protected boolean inReadingMode = false;
     protected SeekBar seekBar = null;
     protected TextView titleText = null;
@@ -62,6 +64,8 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 				adjustBookmarkView();
 			}
 		});
+		
+		btnPlay = (ImageView) findViewById(R.id.btnPlay);
 
 		seekBar = (SeekBar) findViewById(R.id.suraSeek);
 		seekBar.setOnSeekBarChangeListener(
@@ -188,6 +192,7 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	        seekBar.setVisibility(TextView.VISIBLE);
 	        titleText.setVisibility(TextView.VISIBLE);
 	        btnBookmark.setVisibility(View.VISIBLE);
+	        btnPlay.setVisibility(View.VISIBLE);
 			adjustBookmarkView();
 			updatePageInfo();
 		}
@@ -200,6 +205,7 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	        seekBar.setVisibility(TextView.INVISIBLE);
 	        titleText.setVisibility(TextView.INVISIBLE);
 	        btnBookmark.setVisibility(View.INVISIBLE);
+	        btnPlay.setVisibility(View.INVISIBLE);
 		}
 		
 		inReadingMode = !inReadingMode;

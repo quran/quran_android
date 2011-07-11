@@ -14,7 +14,6 @@
 		<activity android:name=".AboutUsActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".HelpActivity" android:screenOrientation="portrait"/>
 		<activity android:name=".QuranViewActivity" />
-		<service android:enabled="true" android:name=".service.QuranDataService" />
 		<activity android:name=".BookmarksActivity"/>
 		<activity android:name=".TranslationActivity"/>
 		<activity android:name=".DownloadActivity" android:screenOrientation="portrait"/>
@@ -26,14 +25,20 @@
 			<meta-data android:name="android.app.searchable"
 				android:resource="@xml/searchable" />
 		</activity>
+			
 		<!-- declare the default searchable Activity for the whole app -->
 		<meta-data android:name="android.app.default_searchable" android:value=".SearchActivity" />
 		<!-- provides search suggestions for verses. -->
 		<provider android:name=".data.QuranDataProvider" android:authorities="com.quran.labs.androidquran.data.QuranDataProvider" />
+		
+		<service android:enabled="true" android:name=".service.QuranDataService" />
+		<service android:name=".service.QuranAudioService" />
+		
 	</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="7" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 </manifest> 

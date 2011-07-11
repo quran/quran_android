@@ -31,11 +31,8 @@
 		<ImageView android:id="@+id/btnBookmark" android:src="@drawable/bookmarks"
 			android:layout_gravity="bottom|right"
 			android:layout_width="wrap_content" android:layout_height="wrap_content" />
-			<!-- 
-		<ImageView android:id="@+id/btnLockOrientation" android:src="@drawable/lock"
-			android:layout_gravity="bottom|right"
+		<ImageView android:id="@+id/btnPlay" android:src="@drawable/play"
 			android:layout_width="wrap_content" android:layout_height="wrap_content" />
-			 -->
 	</LinearLayout>
 	<SeekBar android:id="@+id/suraSeek" android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:background="#99000000"
