@@ -31,11 +31,41 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
     protected SeekBar seekBar = null;
     protected TextView titleText = null;
     protected ViewGroup expLayout = null;
-    protected int width = 0;
     protected QuranPageCurlView quranPageCurler = null;
     protected QuranPageFeeder quranPageFeeder;
     
 	protected abstract void initQuranPageFeeder();
+	protected abstract void loadLastNonConfigurationInstance();
+	
+	protected void requestWindowFeatures() {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		// Request window feautres should be called before setting the layout
+		requestWindowFeatures();
+		setContentView(R.layout.quran_exp);
+		
+		// Adjust display settings
+		adjustDisplaySettings();
+		
+		// retrieve feeder if exists
+		loadLastNonConfigurationInstance();
+		
+		// initialize scree componnets
+		initComponents();
+		
+		// go to page
+		BookmarksManager.load(prefs);
+		int page = loadPageState(savedInstanceState);
+		quranPageFeeder.jumpToPage(page);
+
+		toggleMode();
+	}
 	
 	protected void initComponents() {
 		expLayout = (ViewGroup) findViewById(R.id.expLayout);
@@ -93,6 +123,15 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 				}
 			}
 		});
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Always initialize Quran Screen on start so as to be able to retrieve images
+		// Error cause: Gallery Adapter was unable to retrieve images from SDCard as QuranScreenInfo
+		// was cleared after long sleep..
+		initializeQuranScreen();
 	}
 	
 	@Override
@@ -228,5 +267,32 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		updatePageInfo(quranPageFeeder.getCurrentPagePosition());
 		QuranSettings.getInstance().setLastPage(
 				quranPageFeeder.getCurrentPagePosition());
+	}
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		Object [] o = { quranPageFeeder };
+		return o;
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt("lastPage", QuranSettings.getInstance().getLastPage());
+		super.onSaveInstanceState(outState);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
+		Log.d("QuranAndroid", "Screen on");
+		adjustActivityOrientation();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		expLayout.setKeepScreenOn(false);
+		Log.d("QuranAndroid","Screen off");
 	}
 }

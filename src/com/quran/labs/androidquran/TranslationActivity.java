@@ -5,16 +5,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationPageFeeder;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
-import com.quran.labs.androidquran.util.BookmarksManager;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class TranslationActivity extends PageViewQuranActivity {
@@ -24,52 +21,9 @@ public class TranslationActivity extends PageViewQuranActivity {
     private TranslationsDBAdapter dba;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {		
-		Object [] saved = (Object []) getLastNonConfigurationInstance();
-		if (saved != null) {
-			Log.d("exp_v", "Adapter retrieved..");
-			quranPageFeeder = (TranslationPageFeeder) saved[0];
-		} 
-		super.onCreate(savedInstanceState);
-		
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-		// does requestWindowFeature, has to be before setContentView
-		adjustDisplaySettings();
-
-		setContentView(R.layout.quran_exp);
-		
+	protected void onCreate(Bundle savedInstanceState) {
 		dba = new TranslationsDBAdapter(this);
-		
-		WindowManager manager = getWindowManager();
-		Display display = manager.getDefaultDisplay();
-		width = display.getWidth();
-
-		initComponents();
-		BookmarksManager.load(prefs);
-		
-		int page = loadPageState(savedInstanceState);
-		quranPageFeeder.jumpToPage(page);
-		//renderPage(ApplicationConstants.PAGES_LAST - page);
-
-		toggleMode();
-	}
-	
-
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		Object [] o = { quranPageFeeder };
-		return o;
-	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		// Always initialize Quran Screen on start so as to be able to retrieve images
-		// Error cause: Gallery Adapter was unable to retrieve images from SDCard as QuranScreenInfo
-		// was cleared after long sleep..
-		initializeQuranScreen();
+		super.onCreate(savedInstanceState);
 	}
 	
 	@Override
@@ -88,27 +42,11 @@ public class TranslationActivity extends PageViewQuranActivity {
 			quranPageFeeder.setContext(this, quranPageCurler);
 		}
 	}
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putInt("lastPage", QuranSettings.getInstance().getLastPage());
-		super.onSaveInstanceState(outState);
-	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		checkTranslationAvailability();
-		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
-		Log.d("QuranAndroid", "Screen on");
-		adjustActivityOrientation();
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		expLayout.setKeepScreenOn(false);
-		Log.d("QuranAndroid","Screen off");
 	}
 	
 	private boolean checkTranslationAvailability() {
@@ -134,7 +72,10 @@ public class TranslationActivity extends PageViewQuranActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == DOWNLOAD_TRANSLATION_CODE && resultCode == RESULT_OK) {
-			quranPageFeeder.jumpToPage(QuranSettings.getInstance().getLastPage());
+			dba.refresh();
+			int page = QuranSettings.getInstance().getLastPage();
+			page = page == ApplicationConstants.NO_PAGE_SAVED ? ApplicationConstants.PAGES_FIRST : page;
+			quranPageFeeder.jumpToPage(page);
 		}
 	}
 	
@@ -162,5 +103,15 @@ public class TranslationActivity extends PageViewQuranActivity {
     	AlertDialog alert = dialog.create();
     	alert.setTitle(R.string.downloadPrompt_title);
     	alert.show();
+	}
+
+
+	@Override
+	protected void loadLastNonConfigurationInstance() {
+		Object [] saved = (Object []) getLastNonConfigurationInstance();
+		if (saved != null) {
+			Log.d("exp_v", "Adapter retrieved..");
+			quranPageFeeder = (TranslationPageFeeder) saved[0];
+		} 
 	}
 }

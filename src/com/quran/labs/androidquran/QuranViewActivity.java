@@ -6,10 +6,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
@@ -20,9 +17,7 @@ import com.quran.labs.androidquran.common.QuranPageFeeder;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
-import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
-import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranViewActivity extends PageViewQuranActivity implements AyahStateListener {
 	private static final String TAG = "QuranViewActivity";
@@ -45,28 +40,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Object [] saved = (Object []) getLastNonConfigurationInstance();
-		if (saved != null) {
-			Log.d("exp_v", "Adapter retrieved..");
-			quranPageFeeder = (QuranPageFeeder) saved[0];
-		} 
 		super.onCreate(savedInstanceState);
-		
 		bindAudioService();
 		
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-		// does requestWindowFeature, has to be before setContentView
-		adjustDisplaySettings();
-
-		setContentView(R.layout.quran_exp);
-		
-		WindowManager manager = getWindowManager();
-		Display display = manager.getDefaultDisplay();
-		width = display.getWidth();
-
-		initComponents();
 		btnPlay.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -76,31 +52,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 				quranAudioPlayer.play(i);
 			}
 		});
-		
-		BookmarksManager.load(prefs);
-		
-		int page = loadPageState(savedInstanceState);
-		quranPageFeeder.jumpToPage(page);
-		//renderPage(ApplicationConstants.PAGES_LAST - page);
-
-		toggleMode();
 	}
 	
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		Object [] o = { quranPageFeeder };
-		return o;
-	}
-	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		// Always initialize Quran Screen on start so as to be able to retrieve images
-		// Error cause: Gallery Adapter was unable to retrieve images from SDCard as QuranScreenInfo
-		// was cleared after long sleep..
-		initializeQuranScreen();
-	}
-
 	protected void initQuranPageFeeder(){
 		if (quranPageFeeder == null) {
 			Log.d(TAG, "Quran Feeder instantiated...");
@@ -108,27 +61,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		} else {
 			quranPageFeeder.setContext(this, quranPageCurler);
 		}
-	}
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putInt("lastPage", QuranSettings.getInstance().getLastPage());
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
-		Log.d("QuranAndroid", "Screen on");
-		adjustActivityOrientation();
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		expLayout.setKeepScreenOn(false);
-		Log.d("QuranAndroid","Screen off");
 	}
 	
 	private void unBindAudioService(){
@@ -160,5 +92,14 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	@Override
 	public void onNotFound(AyahItem ayah) {
 		
+	}
+
+	@Override
+	protected void loadLastNonConfigurationInstance() {
+		Object [] saved = (Object []) getLastNonConfigurationInstance();
+		if (saved != null) {
+			Log.d("exp_v", "Adapter retrieved..");
+			quranPageFeeder = (QuranPageFeeder) saved[0];
+		}		
 	}
 }

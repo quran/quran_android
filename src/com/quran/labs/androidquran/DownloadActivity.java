@@ -59,6 +59,12 @@ public class DownloadActivity extends InternetActivity {
 	}
 	
 	@Override
+	public void onBackPressed() {
+		setResult(RESULT_OK);
+		super.onBackPressed();
+	}
+	
+	@Override
 	protected void onConnectionSuccess() {
 		fetchTranslationsList();
 	}
