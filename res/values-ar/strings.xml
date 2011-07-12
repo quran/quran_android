@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="errorString">لا يمكن تحميل صفحات القران</string>
+	<string name="app_name">قران أندرويد </string>
+	<string name="pageNotFound">لا توجد صفحة</string>
+	<string name="pageLoading"> جاري تحميل الصفحة...</string>
+	<string name="downloadPrompt_title">حمل الملفات المطلوبه؟</string>
+	<string name="downloadPrompt">لأداء أفضل، بعض الملفات في حاجه للتحميل على بطاقة الذاكرة الرقمية.
+		 إذا لم تقم بذلك الاختيار فإن الصفحات ستستغرق وقت أطول للتحميل.
+		 هل ترغب في تحميل الملفات الآن؟</string>
+	<string name="downloadTranslationPrompt">هل ترغب في تحميل الترجمة الآن؟</string>
+	<string name="downloadPrompt_ok">نعم</string>
+	<string name="downloadPrompt_no">لا</string>
+	<string name="downloading_title">جاري التحميل....</string>
+	<string name="downloading_message">يرجى الانتظار حتى نهاية التحميل</string>
+	<string name="extracting_title">تجهيز...</string>
+	<string name="extracting_message">يرجى الانتظار، تتم معالجة الملفات...</string>
+	<string name="menu_jump">انتقال سريع</string>
+	<string name="menu_about">عنا</string>
+	<string name="menu_settings">الاعدادات</string>
+	<string name="menu_jump_last_page">الصفحة الأخيرة</string>
+	<string name="menu_bookmarks">مرجعيات</string>
+	<string name="menu_bookmarks_remove">حذف</string>
+	<string name="menu_bookmarks_view">معينة</string>
+	<string name="menu_translation">اظهار الترجمة</string>
+	<string name="menu_bookmarks_add">اضافة</string>
+	<string name="menu_bookmarks_saved">Bookmark Saved</string>
+	<string name="menu_bookmarks_removed">Bookmark Removed</string>
+	<string name="menu_bookmarks_help">مساعدة</string>
+	<string name="menu_help">مساعدة</string>
+	<string name="menu_get_translations">الحصول على ترجمات</string>
+	<string name="jump_dialog_title">ذهاب لصفحة</string>
+	<string name="page_hint">رقم الصفحة</string>
+	<string name="go">اذهب</string>
+	<string name="cancel">الغاء</string>
+	<string name="developedBy">أحمد الحلو- حسين ماهر- وائل نافع</string>
+	<string name="copyRights">حقوق الطبع محفوظة لجميع المسلمين</string>
+	<string name="email_subject">ردود الفعل</string>
+	<string name="email_to">quran.android@gmail.com</string>
+	<string name="aboutUs">Quran Android is a free, open source Quran
+		application for Android.  The images used are from the quran.com
+		project, and the data used in the translations and Arabic comes from
+		tanzil.net.
+		\n\nCredits:
+		\n @wnafee - page flip animation (based on android-page-curl project)
+		\n @hams_rrr - arabic support for non-arabic phones
+		\n @neo_4583 - arabic reshaper project
+		\n @somaiagabr - graphics
+		\n\nNew features in this release:
+		\n- Awesome page flip animation (thanks @wnafee).
+		\n- Minor bugfixes.
+		\n\nUpcoming features include:
+		\n- Recitation.
+		\nAnd more..
+		\n\nLa tansawna men saleh el doaa.
+	</string>
+	<string name="help_title">مساعد قران اندرويد </string>
+	<string name="help">- ضع الشاشه في الوضع الافقي للتكبير في هذا الاصدار..
+	    \n- لتغير الصفحة انقر يمين او يسار الشاشة،او باستخدام اصبعك لتحريك الصفحة
+	    \n- اضغط على وسط الشاشة للحصول على التمرير لتحويل صفحات.
+	    \n-  يمكنك تحديد الاتجاه في وضع افقي أو رأسي.
+	    \n- تصفح و حمل الترجمة المتاحة (اختر القايمة حصول على لاترجمة(
+	    \n-يمكنك تحميل العديد من الترجمات كما تريد، ولكن ترجمة واحدة فقط
+		يمكن أن تكون مفعلة للاطلاع والبحث.		
+	    \n-يمكنك ظبط حجم خط  الترجمة بما يناسبك عن طريق الاعدادات. 
+	    \n- البحث المبدأي يسمح لك بالبحث عن ترجمة نشطة
+		عن طريق زر البحث.
+ 	    \n- بالضغط في منتصف الشاشة ستظهر لك في اعلى الزاوية اليسرا خيارات  صفحة المرجعية
+		اضغط على زر المرجعية لتبديل حالة صفحة المرجعية.
+	    \n- يمكنك اضافه مرجعيات كما تريد. 
+	    \n- يتذكر التطبيق آخر صفحة تم قراتها ويتم عرضها عند بدأ التطبيق  
+	    \n- لا تنسى التحقق من الاعدادات</string>
+	<string name="settings_use_arabic_names">اسم السورة</string>
+	<string name="settings_keep_screen_on">ابقى على الشاشة</string>
+	<string name="prefs_use_arabic_names">useArabicNames</string>
+    <string name="prefs_full_screen">fullScreen</string>
+    <string name="prefs_show_clock">showClock</string>
+    <string name="prefs_keep_screen_on">keepScreenOn</string>
+    <string name="prefs_lock_orientation">lockOrientation</string>
+    <string name="prefs_landscape_orientation">landscapeOrientation</string>
+    <string name="prefs_translation_text_size">translationTextSize</string>
+    <string name="prefs_path">QuranAndroid_Settings</string>
+    <string name="prefs_reshape_arabic">reshapeArabic</string>
+	<string name="search_hint">بحث يف القران</string>
+	<string name="quranSearchType">آيات القران</string>
+
+	<!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+      <item quantity="one"> نتيجة البحث عن \"%s\": </item>
+      <item quantity="other">نتائج البحث عن \"%s\": </item>
+    </plurals>
+
+    <!-- Search failure message. -->
+    <string name="no_results">لا توجد نتيجة للبحث \"%s\"</string>
+    <string name="no_active_translation">لا توجد ترجمة مفعلة, قم بضبط تفعيل الترجمة 
+	اعدادات ظبط تفعيل الترجمة)</string>
+    <string name="set_active_translation">اعداد تفعيل الترجمة</string>
+    <string name="no_translations_available"> لم يتم الحصول على اي ترجمة متاحة، يرجى تحميل الترجمة أولا (قائمة الحصول على ترجمة) ثم اعد البحث</string>
+    <string name="prefs_category_translation">Translation Preferences</string>
+    <string name="prefs_category_display_settings">Display Settings</string>
+    <string name="prefs_active_translation">activeTranslation</string>
+</resources>

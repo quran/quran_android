@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="errorString">Could not download Quran Pages!</string>
-	<string name="translationsNeeded">Need to download translation!</string>
 	<string name="app_name">Quran Android</string>
 	<string name="pageNotFound">Page not found.</string>
 	<string name="pageLoading">Page Loading...</string>
@@ -49,7 +48,8 @@
 		\n @wnafee - page flip animation (based on android-page-curl project)
 		\n @hams_rrr - arabic support for non-arabic phones
 		\n @neo_4583 - arabic reshaper project
-		\n @somaiagabr - graphics
+		\n @somaiagabr - graphics and arabic translation
+		\n Mehmed Mahmudoglu - turkish translation
 		\n\nNew features in this release:
 		\n- Awesome page flip animation (thanks @wnafee).
 		\n- Minor bugfixes.
@@ -77,8 +77,6 @@
 	    \n- The application remembers the last page you were reading and displays it when you restart the app.
 	    \n- Don\'t forget to check out the settings.</string>
 	<string name="settings_use_arabic_names">Arabic sura names.</string>
-	<string name="settings_full_screen">Full Screen Mode.\nHave a larger view area for pages.</string>
-	<string name="settings_show_clock">Show Clock in full screen mode.</string>
 	<string name="settings_keep_screen_on">Keep screen on.</string>
 	<string name="prefs_use_arabic_names">useArabicNames</string>
 	<string name="prefs_full_screen">fullScreen</string>
