@@ -94,7 +94,12 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 			}
 		});
 	}
-    
+	
+	@Override
+	public void jumpTo(int page) {
+		quranPageFeeder.jumpToPage(page);
+	}
+	    
 	protected void goToNextPage() {
 		quranPageFeeder.goToNextpage();
 	}

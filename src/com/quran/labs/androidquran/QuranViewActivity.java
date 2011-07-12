@@ -28,7 +28,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	private static final String TAG = "QuranViewActivity";
 	
 	private boolean bounded = false;
-	private Integer[] pageBounds = null;
 	private AudioServiceBinder quranAudioPlayer = null;
 	
 	private ServiceConnection conn = new ServiceConnection() {						
@@ -71,7 +70,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		btnPlay.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
+				Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
 				AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 1);
 				quranAudioPlayer.enableRemotePlay(true);
 				quranAudioPlayer.play(i);
@@ -154,11 +153,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 
 	@Override
 	public void onComplete(AyahItem ayah, AyahItem nextAyah) {
-		if (pageBounds != null && ayah.getSoura() == pageBounds[2] && ayah.getAyah() == pageBounds[3]) {
-			pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition() + 1);
-			quranPageFeeder.goToNextpage();
-		}
-		
+		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah());
+		quranPageFeeder.jumpToPage(page);
 	}
 
 	@Override
