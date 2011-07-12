@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.common;
 
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -124,7 +125,7 @@ public abstract class BaseQuranActivity extends Activity {
 	}
 	
 	public String getPageFileName(int p) {
-		NumberFormat nf = NumberFormat.getInstance();
+		NumberFormat nf = NumberFormat.getInstance(Locale.US);
 		nf.setMinimumIntegerDigits(3);
 		return "page" + nf.format(p) + ".png";
 	}
