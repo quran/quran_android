@@ -137,6 +137,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mContext.updatePageInfo(mCurrentPageNumber);
 		} else {
 			pageView.addNextPage((View)null); 
+			mContext.updatePageInfo(mCurrentPageNumber);
 			// add empty page to prevent coming here again
 		}
 		return mCurrentPageNumber;
@@ -151,6 +152,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mContext.updatePageInfo(mCurrentPageNumber);
 		} else {
 			pageView.addPreviousPage((View)null);
+			mContext.updatePageInfo(mCurrentPageNumber);
 			// add empty page to prevent coming here again
 		}
 		return mCurrentPageNumber;
