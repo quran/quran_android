@@ -140,11 +140,13 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	}
 	    
 	protected void goToNextPage() {
-		quranPageFeeder.goToNextpage();
+		if (quranPageFeeder.mCurrentPageNumber < 604)
+			quranPageFeeder.goToNextpage();
 	}
 
 	protected void goToPreviousPage() {
-		quranPageFeeder.goToPreviousPage();
+		if (quranPageFeeder.mCurrentPageNumber > 1)
+			quranPageFeeder.goToPreviousPage();
 	}
 	
 	protected void scrollPageDown() {
@@ -187,6 +189,14 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	protected void adjustBookmarkView() {
 		if (BookmarksManager.getInstance().contains(
 				QuranSettings.getInstance().getLastPage())) {
+			btnBookmark.setImageResource(R.drawable.bookmarks);
+		} else {
+			btnBookmark.setImageResource(R.drawable.remove_bookmark);
+		}
+	}
+	
+	protected void adjustBookmarkView(int position) {
+		if (BookmarksManager.getInstance().contains(position)) {
 			btnBookmark.setImageResource(R.drawable.bookmarks);
 		} else {
 			btnBookmark.setImageResource(R.drawable.remove_bookmark);
@@ -261,6 +271,7 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		titleText.setText(ArabicStyle.reshape(
 				QuranInfo.getPageTitle(position)));
 		seekBar.setProgress(ApplicationConstants.PAGES_LAST - position);
+		adjustBookmarkView(position);
 	}
 	
 	private void updatePageInfo() {
