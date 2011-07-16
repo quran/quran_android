@@ -31,6 +31,7 @@
 	<string name="menu_get_translations">الحصول على ترجمات</string>
 	<string name="jump_dialog_title">ذهاب لصفحة</string>
 	<string name="page_hint">رقم الصفحة</string>
+	<string name="refresh">تحديث</string>
 	<string name="go">اذهب</string>
 	<string name="cancel">الغاء</string>
 	<string name="developedBy">أحمد الحلو- حسين ماهر- وائل نافع</string>

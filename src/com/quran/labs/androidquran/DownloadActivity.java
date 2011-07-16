@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.anim;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -88,6 +89,16 @@ public class DownloadActivity extends InternetActivity {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
 				final DownloadItem item = downloadItems[position];
+				if (!QuranUtils.isSDCardMounted()) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(DownloadActivity.this);
+					builder .setMessage("SD card should be mounted to download translations.")
+							.setIcon(android.R.drawable.alert_light_frame)
+							.setCancelable(true);
+					AlertDialog alert = builder.create();
+					alert.show();
+					return;
+				}
+				
 				if (!item.isDownloaded()) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(DownloadActivity.this);
 					builder.setMessage("Download Translation '" + item.getDisplayName() + "' ?")

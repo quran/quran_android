@@ -56,6 +56,11 @@ public class QuranUtils {
 		return false;
 	}
 	
+	public static boolean isSDCardMounted() {
+		String state = Environment.getExternalStorageState();
+		return state.equals(Environment.MEDIA_MOUNTED);
+	}
+	
 	public static Bitmap getImageFromSD(String filename){
 		String location = getQuranDirectory();
 		if (location == null) return null;
