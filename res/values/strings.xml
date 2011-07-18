@@ -34,6 +34,7 @@
 	<string name="menu_get_translations">Get Translations</string>
 	<string name="jump_dialog_title">Jump To Page</string>
 	<string name="page_hint">Page Number</string>
+	<string name="refresh">Refresh</string>
 	<string name="go">Go</string>
 	<string name="cancel">Cancel</string>
 	<string name="developedBy">Ahmed El-Helw - Hussein Maher - Wael Nafee</string>
@@ -104,4 +105,14 @@
     <string name="prefs_category_translation">Translation Preferences</string>
     <string name="prefs_category_display_settings">Display Settings</string>
     <string name="prefs_active_translation">activeTranslation</string>
+    
+    <string name="loading_translations">Loading Translations List, Please wait..</string>
+    <string name="downloaded_translations">Downloaded</string>
+    <string name="available_translations">Available for Download</string>
+    <string name="sdcard_required">SD card should be mounted to download translations.</string>
+    <string name="download_a_translation">Download %s?</string>
+    <string name="translation_downloaded">%s is already downloaded.</string>
+    <string name="download_button">Download</string>
+    <string name="remove_button">Remove</string>
+    <string name="set_active">Set Active</string>
 </resources>

@@ -38,6 +38,7 @@
 	<string name="menu_help">Yardım</string>
 	<string name="jump_dialog_title">Sayfaya Git</string>
 	<string name="page_hint">Sayfa Numarası</string>
+	<string name="refresh">Yenileme</string>
 	<string name="go">Git</string>
 	<string name="cancel">İptal</string>
 	<string name="developedBy">Cepmuvakkit.com</string>
