@@ -8,7 +8,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 
 public class QuranAudioLibrary {
 
-	private static String AUDIO_URL = "http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/";
+	//private static String AUDIO_URL = "http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/";
 	private static String IMAGE_URL = "http://www.everyayah.com/data/QuranText_jpg/";
 	public final static String AUDIO_EXTENSION = ".mp3";
 	public final static String IMAGE_EXTENSION = ".jpg";
@@ -17,7 +17,7 @@ public class QuranAudioLibrary {
 		String strSoura = fitInt(soura, 3);
 		String strAyah = fitInt(ayah, 3);
 		AyahItem ayahItem = new AyahItem(soura, ayah, readerId,
-				AUDIO_URL + strSoura + strAyah + AUDIO_EXTENSION, 
+				getAudioUrl(readerId) + strSoura + strAyah + AUDIO_EXTENSION, 
 				IMAGE_URL + soura + "_" + ayah + IMAGE_EXTENSION);
 		setAyahItemLocalPaths(context, ayahItem);
 		return ayahItem;
@@ -34,12 +34,13 @@ public class QuranAudioLibrary {
 			int soura = currentSouraId;
 			if(currentAyaId >= QuranInfo.SURA_NUM_AYAHS[currentSouraId - 1]){
 				soura = (currentSouraId+1)%(QuranInfo.SURA_NUM_AYAHS.length + 1);
-				ayah = 1;
+				ayah = soura == 9 ? 1 : 0;
+				//ayah = 1;
 			}else
 				ayah++;
 			AyahItem nextAyahItem =
 				new AyahItem(soura, ayah, quranReaderId,
-						AUDIO_URL + fitInt(soura, 3) + fitInt(ayah, 3) + AUDIO_EXTENSION,
+						getAudioUrl(quranReaderId) + fitInt(soura, 3) + fitInt(ayah, 3) + AUDIO_EXTENSION,
 						IMAGE_URL + soura + "_" + ayah + IMAGE_EXTENSION);
 			setAyahItemLocalPaths(context, nextAyahItem);
 			return nextAyahItem;
@@ -76,4 +77,17 @@ public class QuranAudioLibrary {
 		result = result + x;
 		return result;
 	}
+	
+	private static String[] AUDIO_URLS = {
+		"http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/",
+		"http://www.everyayah.com/data/Abdullah_Basfar_192kbps/"
+	};
+	
+	private static String getAudioUrl(int readerId){
+		if(readerId > AUDIO_URLS.length)
+			return null;
+		return AUDIO_URLS[readerId - 1];
+	}
+	
+	
 }

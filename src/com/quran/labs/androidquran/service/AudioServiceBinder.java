@@ -2,15 +2,22 @@ package com.quran.labs.androidquran.service;
 
 import java.io.IOException;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 
+import com.quran.labs.androidquran.QuranViewActivity;
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.IAudioPlayer;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 
 public class AudioServiceBinder extends Binder implements  
@@ -22,6 +29,7 @@ public class AudioServiceBinder extends Binder implements
 	private boolean remotePlayEnabled = false;
 	private AyahItem currentItem;
 	private AyahStateListener ayahListener = null;
+	private boolean notified;
 	
 	public void setAyahCompleteListener(AyahStateListener ayahListener) {
 		this.ayahListener = ayahListener;
@@ -75,6 +83,8 @@ public class AudioServiceBinder extends Binder implements
 				mp.setDataSource(url);
 				mp.prepare();
 				mp.start();
+				if(!notified)
+					showNotification(item);
 			}
 			
 		} catch (IllegalArgumentException e) {
@@ -169,6 +179,37 @@ public class AudioServiceBinder extends Binder implements
 	
 	public boolean isRemotePlayEnabled(){
 		return this.remotePlayEnabled;
+	}
+	
+	private void showNotification(AyahItem item){
+		NotificationManager mgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+		 // cancel all previous notifications ..
+	     mgr.cancelAll();
+	     Intent i = new Intent(context, QuranViewActivity.class);
+	     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	     PendingIntent pi = PendingIntent.getActivity(context.getApplicationContext(), 
+	    		 	0,
+	    		 	i
+	     			, PendingIntent.FLAG_UPDATE_CURRENT | Notification.FLAG_AUTO_CANCEL);
+	     Notification notification = new Notification(
+	                //android.R.drawable.ic_notification_overlay,
+	    		 	R.drawable.icon,
+	                "",
+	                System.currentTimeMillis());
+	     
+	        notification.setLatestEventInfo(context,
+	        				context.getApplicationInfo().name, 
+	        				QuranInfo.getSuraName(item.getSoura() -1)
+	        			 + "(" + item.getAyah() + ")", pi);
+//	        notification.contentView = new RemoteViews("com.quran.labs.androidquran", 
+//	        		R.layout.audio_notification);
+	       
+	        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+            notification.icon = R.drawable.icon;
+            
+            mgr.notify(1, notification);
+	        //notified = true;
+
 	}
 	
 };
