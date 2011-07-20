@@ -35,8 +35,12 @@ public class TranslationsDBAdapter {
 	 
 	public TranslationsDBAdapter(Context ctx) {
         this.context = ctx;
-        DBHelper = new DatabaseHelper(context);
+        refresh();
     }
+	
+	public void refresh() {
+		DBHelper = new DatabaseHelper(context);
+	}
 
 	public TranslationsDBAdapter open() throws SQLException {
         db = DBHelper.getWritableDatabase();

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="errorString">Kuran Sayfaları İndirilemiyor</string>
+
+	<string name="translationsNeeded">Kuran-ı Kerim Mealinin Yüklenmesi Gerekiyor!</string>
+	<string name="app_name">Kuran-ı Kerim</string>
+	
+	<string name="downloadPrompt_title">Gerekli Dosyalari yükleyeyim mi?</string>
+	<string name="downloadPrompt">
+		
+		Daha iyi performans icin bazı dosyalar SD karta kopyalanmalı.
+		Eğer şimdi bu işlemi gerçekleştirmez iseniz sayfaların ayrı ayrı indirilmesi daha uzun sürebilir.
+		Şimdi gerekli dosyaları indirmek istiyor musunuz ?
+		
+		</string>
+	<string name="downloadTranslationPrompt">Şimdi gerekli olan  mealini indirmek istiyormusunuz?</string>
+	
+	<string name="downloadPrompt_ok">Evet</string>
+	<string name="downloadPrompt_no">Hayır</string>
+	
+	<string name="downloading_title">Yükleniyor...</string>
+	<string name="downloading_message">Dosyaların indirilmesi için lütfen bekleyin</string>
+	<string name="extracting_title">İşlem yapılıyor...</string>
+	<string name="extracting_message">Dosyalar açılırken lütfen bekleyiniz.</string>
+	<string name="menu_jump">Atla</string>
+	<string name="menu_about">Hakkında</string>
+	<string name="menu_settings">Ayarlar</string>
+	<string name="menu_jump_last_page">Son Sayfa</string>
+	<string name="menu_bookmarks">Sayfa İşaretleri</string>
+	<string name="menu_bookmarks_remove">Kaldır</string>
+	<string name="menu_bookmarks_view">Görüntüle</string>
+	<string name="menu_translation">Mealini Göster</string>
+	<string name="menu_bookmarks_add">Ekle</string>
+	<string name="menu_bookmarks_saved">Sayfa İşareti Kaydoldu</string>
+	<string name="menu_bookmarks_removed">Sayfa İşareti Silindi</string>
+	<string name="menu_bookmarks_help">Yardım</string>
+	<string name="menu_help">Yardım</string>
+	<string name="jump_dialog_title">Sayfaya Git</string>
+	<string name="page_hint">Sayfa Numarası</string>
+	<string name="refresh">Yenileme</string>
+	<string name="go">Git</string>
+	<string name="cancel">İptal</string>
+	<string name="developedBy">Cepmuvakkit.com</string>
+	<string name="copyRights">Telif Hakları Cepmuvakkit</string>
+	<string name="email_subject">GeriBildirim</string>
+	<string name="email_to">cepmuvakkit@gmail.com</string>
+	<string name="aboutUs">
+		Kuran-ı Kerim uygulaması ücretsizdir Lütfen Yapımcısınıa dua etmeyi unutmayınız.
+	</string>
+	<string name="help_title">Kuran-ı Kerim Yardım</string>
+	<string name="help">-Ekranı yan yatırarak daha büyük bir görüntü elde edebilirsiniz
+	    \n-Ekran üzerinde parmağınızla kaydırarak yada iztopunu kullanarak sayfalar arasında gezinebilirsiniz.
+	    \n- Ekran Döndürme modunu yatay yada dikey modda iken sabitleyebilirsiniz.
+	    \n- Kuran Mealini metin büyüklüğünü Ayarlar kısmından değiştirebilirsiniz. 
+	    \n- Sayfa İşaretlemeyi Menü> Sayfa İşaretle > Görüntüle 
+	    \n- İstediğiniz kadar çok sayfa işareti ekleyebilirsiniz. Sayfa işareti üzerin uzun süreli basarak silebilirsiniz.	    
+	    \n- Don\'t forget to check out the settings.
+	    \n- Kuran uygulaması en son okuduğunuz sayfayı muhafaza ederek 
+	    tekrar açtığınız takdirde kaldığı yerden başlar. 
+	    \n- Ayarlar kısmını gözden geçirmeyi unutmayın    </string>
+	<string name="settings_use_arabic_names">Arapça Sure isimleri</string>
+	<string name="settings_full_screen">Tam Ekran Modu.\nSayfaları daha iyi görebilmek için büyük alan.</string>
+	<string name="settings_show_clock">Tam Ekran Modunda Saati Göster</string>
+	<string name="settings_keep_screen_on">Ekran Sürekli Açık</string>
+<!--<string name="prefs_use_arabic_names">useArabicNames</string>
+<string name="prefs_full_screen">tamEkran</string>
+<string name="prefs_show_clock">SaatGöster</string>
+<string name="prefs_keep_screen_on">EkranSürekliAçık</string>
+<string name="prefs_lock_orientation">EkranDöndürmeyiKapat</string>
+<string name="prefs_landscape_orientation">Yatay Ekran</string>
+<string name="prefs_translation_text_size">Tercüme Metin Büyüklüğü</string>
+<string name="prefs_path">QuranAndroid_Settings</string>
+-->
+<!--Benim ekleme  cevirlerim-->
+<string name="quran_settings">Kuran Ayarları</string>
+<string name="keep_screen_on">Ekranı Açık Tut</string>
+<string name="full_screen_mode">Tam Ekran Modu</string>
+<string name="show_clock">Saat Göster</string>
+<string name="arabic_surah_names">Arapça Sure İsimleri</string>
+<string name="lock_screen_orientation">Ekran Döndürmeyi Durdur</string>
+<string name="landscape_orientation">Ekranı Yatay Döndür</string>
+<string name="translation_text">Tercüme Meal Yazı Boyutu</string>
+<string name="customize_text">Yazı Büyüklüğünü Ayarla</string>
+<string name="text_size">Metin Boyutu</string>
+<string name="prefs_use_arabic_names">useArabicNames</string>
+<string name="quran">Kuran</string>
+<string name="on_while_reading">Okurken Ekran açık kalsın</string>
+<string name="full_screen_on">Tam ekran modu mevcut</string>
+<string name="off_after_idling">Meşgul iken ekran kapansın</string>
+<string name="full_screen_off">Tam ekran modu kapalı</string>
+<string name="shown_clock">Tam ekran modunda saat gösterilsin</string>
+<string name="clock_hidden">Saat Gizli</string>
+<string name="surah_arabic">Sure isimleri Arapça</string>
+<string name="surah_english">Sure İsimleri İngilizce</string>
+<string name="surah_turkish">Sure İsimleri Türkçe</string>
+<string name="portrait_orientation">Dikey Ekran modu kullanılsın</string>
+
+<string name="orientation_on">Değişebilen Ekran Döndürme açık</string>
+<string name="more_applications">Daha Başka Uygulamalar</string>
+<!--Benim ekleme  cevirlerim-->
+<string name="prefs_full_screen">fullScreen</string>
+<string name="prefs_show_clock">showClock</string>
+<string name="prefs_keep_screen_on">keepScreenOn</string>
+<string name="prefs_lock_orientation">lockOrientation</string>
+<string name="prefs_landscape_orientation">landscapeOrientation</string>
+<string name="prefs_translation_text_size">translationTextSize</string>
+<string name="prefs_path">QuranAndroid_Settings</string>
+</resources>
