@@ -79,7 +79,7 @@ public class BookmarksActivity extends BaseQuranActivity {
 			BookmarksManager.getInstance().removeAt(info.position, prefs);
 			showBookmarks();
 		}
-		return true;
+		return super.onContextItemSelected(item);
 	}
 
 }
