@@ -108,6 +108,7 @@ public class TranslationActivity extends PageViewQuranActivity {
 
 	@Override
 	protected void loadLastNonConfigurationInstance() {
+		super.loadLastNonConfigurationInstance();
 		Object [] saved = (Object []) getLastNonConfigurationInstance();
 		if (saved != null) {
 			Log.d("exp_v", "Adapter retrieved..");
