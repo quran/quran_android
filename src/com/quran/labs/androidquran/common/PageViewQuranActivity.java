@@ -13,13 +13,13 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.markupartist.android.widget.ActionBar;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.ActionBar;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 
 public abstract class PageViewQuranActivity extends BaseQuranActivity {
