@@ -96,10 +96,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 
 	@Override
 	protected void loadLastNonConfigurationInstance() {
+		super.loadLastNonConfigurationInstance();
 		Object [] saved = (Object []) getLastNonConfigurationInstance();
 		if (saved != null) {
 			Log.d("exp_v", "Adapter retrieved..");
 			quranPageFeeder = (QuranPageFeeder) saved[0];
-		}		
+		}
 	}
 }

@@ -35,7 +35,6 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
     protected QuranPageFeeder quranPageFeeder;
     
 	protected abstract void initQuranPageFeeder();
-	protected abstract void loadLastNonConfigurationInstance();
 	
 	protected void requestWindowFeatures() {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -53,7 +52,7 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		// Adjust display settings
 		adjustDisplaySettings();
 		
-		// retrieve feeder if exists
+		// retrieve saved configurations
 		loadLastNonConfigurationInstance();
 		
 		// initialize scree componnets
@@ -282,7 +281,7 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	
 	@Override
 	public Object onRetainNonConfigurationInstance() {
-		Object [] o = { quranPageFeeder };
+		Object [] o = { quranPageFeeder, new Boolean(!inReadingMode) };
 		return o;
 	}
 	
@@ -305,5 +304,14 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		super.onPause();
 		expLayout.setKeepScreenOn(false);
 		Log.d("QuranAndroid","Screen off");
+	}
+	
+	protected void loadLastNonConfigurationInstance() {
+		Object [] saved = (Object []) getLastNonConfigurationInstance();
+		if (saved != null) {
+			Log.d("exp_v", "Reading mode");
+			inReadingMode = ((Boolean) saved[1]).booleanValue();
+		}
+		
 	}
 }
