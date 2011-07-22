@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.markupartist.android.widget.ActionBar.Action;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
@@ -24,6 +26,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	
 	private boolean bounded = false;
 	private AudioServiceBinder quranAudioPlayer = null;
+	
+//	private TextView textView;
 	
 	private ServiceConnection conn = new ServiceConnection() {						
 		@Override
@@ -41,17 +45,78 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+//		textView = new TextView(this);
+//		textView.setText("");
+		addActions();
 		bindAudioService();
 		
 		btnPlay.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
-				AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 1);
+				AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
 				quranAudioPlayer.enableRemotePlay(true);
 				quranAudioPlayer.play(i);
 			}
 		});
+	}
+	
+	protected void addActions(){
+		if(actionBar != null){
+			//actionBar.setTitle("QuranAndroid");
+	        Intent i = new Intent(this, QuranViewActivity.class);
+	        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	        i.setAction("ACTION_PLAY");
+	        Action action = new IntentAction(this, i, android.R.drawable.ic_media_play);	        
+	        actionBar.addAction(action);
+	        
+	        // add pause
+	        i =  new Intent(this, QuranViewActivity.class); 
+	        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	        i.setAction("ACTION_PAUSE");
+	        action = new IntentAction(this, i, android.R.drawable.ic_media_pause);
+	        actionBar.addAction(action);
+	        
+	        // add next ayah
+	        i =  new Intent(this, QuranViewActivity.class); 
+	        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	        i.setAction("ACTION_NEXT");
+	        action = new IntentAction(this, i, android.R.drawable.ic_media_next);
+	        actionBar.addAction(action);
+	        
+	        // add bootmark
+	        i =  new Intent(this, QuranViewActivity.class); 
+	        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	        i.setAction("ACTION_BOOTMARK");
+	        action = new IntentAction(this, i, R.drawable.bookmarks);
+	        actionBar.addAction(action);
+	        
+	        
+	        //actionBar.addView(textView);
+	        
+		}
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		super.onNewIntent(intent);
+		if(quranAudioPlayer != null){
+			String action = intent.getAction();
+			if(action.equalsIgnoreCase("ACTION_PLAY")){
+				Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
+				AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
+				quranAudioPlayer.enableRemotePlay(true);
+				quranAudioPlayer.play(i);
+			}else if(action.equalsIgnoreCase("ACTION_PAUSE")){
+				quranAudioPlayer.pause();
+			}else if(action.equalsIgnoreCase("ACTION_BOOTMAR")){
+
+			}else if(action.equalsIgnoreCase("ACTION_NEXT")){
+				AyahItem ayah = QuranAudioLibrary.getNextAyahAudioItem(this, quranAudioPlayer.getCurrentAyah());
+				quranAudioPlayer.play(ayah);
+			}
+		}
 	}
 	
 	protected void initQuranPageFeeder(){
@@ -85,6 +150,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 
 	@Override
 	public void onComplete(AyahItem ayah, AyahItem nextAyah) {
+		//String text = "Page(" + QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah()) + ")" + System.getProperty("line.separator");
+		//text += "Soura: " + QuranInfo.getSuraName(nextAyah.getSoura()-1) + System.getProperty("line.separator");
+		//text += "Ayah: " + nextAyah.getAyah() + System.getProperty("line.separator");
+		//textView.setText(text);
 		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah());
 		quranPageFeeder.jumpToPage(page);
 	}

@@ -34,6 +34,14 @@
 		<ImageView android:id="@+id/btnPlay" android:src="@drawable/play"
 			android:layout_width="wrap_content" android:layout_height="wrap_content" />
 	</LinearLayout>
+	
+	<com.markupartist.android.widget.ActionBar
+	    android:id="@+id/actionbar"
+	    style="@style/ActionBar"
+	    android:visibility = "gone"
+        />
+	
+	
 	<SeekBar android:id="@+id/suraSeek" android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:background="#99000000"
 		android:progressDrawable="@drawable/gallery_seekbar"

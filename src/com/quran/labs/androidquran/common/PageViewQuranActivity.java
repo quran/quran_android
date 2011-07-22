@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.markupartist.android.widget.ActionBar;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -34,7 +35,9 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
     protected QuranPageCurlView quranPageCurler = null;
     protected QuranPageFeeder quranPageFeeder;
     
-	protected abstract void initQuranPageFeeder();
+	protected ActionBar actionBar;
+	
+    protected abstract void initQuranPageFeeder();
 	protected abstract void loadLastNonConfigurationInstance();
 	
 	protected void requestWindowFeatures() {
@@ -45,10 +48,11 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		// Request window feautres should be called before setting the layout
 		requestWindowFeatures();
 		setContentView(R.layout.quran_exp);
+		// get action bar
+		actionBar = (ActionBar) findViewById(R.id.actionbar);				
 		
 		// Adjust display settings
 		adjustDisplaySettings();
@@ -247,6 +251,8 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	        titleText.setVisibility(TextView.VISIBLE);
 	        btnBookmark.setVisibility(View.VISIBLE);
 	        btnPlay.setVisibility(View.VISIBLE);
+	        if(actionBar != null)
+	        	actionBar.setVisibility(View.VISIBLE);
 			adjustBookmarkView();
 			updatePageInfo();
 		}
@@ -260,6 +266,8 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	        titleText.setVisibility(TextView.INVISIBLE);
 	        btnBookmark.setVisibility(View.INVISIBLE);
 	        btnPlay.setVisibility(View.INVISIBLE);
+	        if(actionBar != null)
+	        	actionBar.setVisibility(View.INVISIBLE);
 		}
 		
 		inReadingMode = !inReadingMode;

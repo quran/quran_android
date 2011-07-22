@@ -184,7 +184,7 @@ public class AudioServiceBinder extends Binder implements
 	private void showNotification(AyahItem item){
 		NotificationManager mgr = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		 // cancel all previous notifications ..
-	     mgr.cancelAll();
+	     //mgr.cancelAll();
 	     Intent i = new Intent(context, QuranViewActivity.class);
 	     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 	     PendingIntent pi = PendingIntent.getActivity(context.getApplicationContext(), 
@@ -194,8 +194,9 @@ public class AudioServiceBinder extends Binder implements
 	     Notification notification = new Notification(
 	                //android.R.drawable.ic_notification_overlay,
 	    		 	R.drawable.icon,
-	                "",
+	    		 	"",
 	                System.currentTimeMillis());
+	     
 	     
 	        notification.setLatestEventInfo(context,
 	        				context.getApplicationInfo().name, 
@@ -205,9 +206,10 @@ public class AudioServiceBinder extends Binder implements
 //	        		R.layout.audio_notification);
 	       
 	        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-            notification.icon = R.drawable.icon;
+	        notification.icon = R.drawable.icon;
             
             mgr.notify(1, notification);
+            
 	        //notified = true;
 
 	}
