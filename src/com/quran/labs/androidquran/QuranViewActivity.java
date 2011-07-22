@@ -170,6 +170,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		if (saved != null) {
 			Log.d("exp_v", "Adapter retrieved..");
 			quranPageFeeder = (QuranPageFeeder) saved[0];
+			
 		}
 	}
 }
