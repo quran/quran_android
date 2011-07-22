@@ -115,5 +115,4 @@
     <string name="download_button">Download</string>
     <string name="remove_button">Remove</string>
     <string name="set_active">Set Active</string>
-    <string name="actionbar_activity_not_found">Failed to open intent...</string>
 </resources>

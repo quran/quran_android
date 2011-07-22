@@ -35,7 +35,7 @@
 			android:layout_width="wrap_content" android:layout_height="wrap_content" />
 	</LinearLayout>
 	
-	<com.quran.labs.androidquran.widgets.ActionBar
+	<com.markupartist.android.widget.ActionBar
 	    android:id="@+id/actionbar"
 	    style="@style/ActionBar"
 	    android:visibility = "gone"

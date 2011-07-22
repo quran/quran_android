@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.markupartist.android.widget.ActionBar.Action;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
@@ -18,8 +20,6 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
-import com.quran.labs.androidquran.widgets.ActionBar.Action;
-import com.quran.labs.androidquran.widgets.ActionBar.IntentAction;
 
 public class QuranViewActivity extends PageViewQuranActivity implements AyahStateListener {
 	private static final String TAG = "QuranViewActivity";
