@@ -30,6 +30,7 @@ public class AudioServiceBinder extends Binder implements
 	private AyahItem currentItem;
 	private AyahStateListener ayahListener = null;
 	private boolean notified;
+	private boolean stopped;
 	
 	public void setAyahCompleteListener(AyahStateListener ayahListener) {
 		this.ayahListener = ayahListener;
@@ -49,6 +50,8 @@ public class AudioServiceBinder extends Binder implements
 	public void stop() {
 		if(mp != null && mp.isPlaying())
 				mp.stop();		
+		paused = false;	
+		stopped = true;
 	}
 
 	/* (non-Javadoc)
@@ -83,6 +86,8 @@ public class AudioServiceBinder extends Binder implements
 				mp.setDataSource(url);
 				mp.prepare();
 				mp.start();
+				paused = false;
+				stopped = false;
 				if(!notified)
 					showNotification(item);
 			}
@@ -122,7 +127,8 @@ public class AudioServiceBinder extends Binder implements
 		if(mp != null && mp.isPlaying()){			
 			mp.pause();					
 		}
-		paused = true;
+		if(!stopped)
+			paused = true;
 	}
 
 	/* (non-Javadoc)
@@ -138,7 +144,6 @@ public class AudioServiceBinder extends Binder implements
 	public boolean isPaused() {
 		return paused;
 	}
-
 	
 
 	@Override
@@ -148,7 +153,8 @@ public class AudioServiceBinder extends Binder implements
 			ayahListener.onComplete(currentItem, nextItem);
 		if(nextItem != null){
 			this.currentItem = nextItem;
-			this.play(currentItem);
+			if(!paused && !stopped)
+				this.play(currentItem);
 		}
 	}		
 	
