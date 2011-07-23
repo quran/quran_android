@@ -33,11 +33,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	private boolean bounded = false;
 	private AudioServiceBinder quranAudioPlayer = null;
 	
-	private static final int ACTION_BAR_ACTION_BOOTMARK = 0;
-	private static final int ACTION_BAR_ACTION_PLAY = 1;
-	private static final int ACTION_BAR_ACTION_PAUSE = 2;
-	private static final int ACTION_BAR_ACTION_STOP = 3;
-	private static final int ACTION_BAR_ACTION_NEXT = 4;
+	private static final int ACTION_BAR_ACTION_PLAY = 0;
+	private static final int ACTION_BAR_ACTION_PAUSE = 1;
+	private static final int ACTION_BAR_ACTION_STOP = 2;
+	private static final int ACTION_BAR_ACTION_NEXT = 3;
 	
 	
 	HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
@@ -88,11 +87,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 							android.R.drawable.ic_media_next));
 			actionBarActions.put("ACTION_STOP", 
 					getIntentAction("ACTION_STOP", R.drawable.stop));
-			actionBarActions.put("ACTION_BOOTMARK",
-					getIntentAction("ACTION_BOOTMARK", R.drawable.bookmarks));
 			
-			actionBar.addAction(actionBarActions.get("ACTION_BOOTMARK"), 
-					ACTION_BAR_ACTION_BOOTMARK);
 			actionBar.addAction(actionBarActions.get("ACTION_PLAY"), 
 					ACTION_BAR_ACTION_PLAY);
 			actionBar.addAction(actionBarActions.get("ACTION_PAUSE"), 
@@ -129,8 +124,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 				}				
 			}else if(action.equalsIgnoreCase("ACTION_PAUSE")){
 				quranAudioPlayer.pause();
-			}else if(action.equalsIgnoreCase("ACTION_BOOTMAR")){
-
 			}else if(action.equalsIgnoreCase("ACTION_NEXT")){
 				AyahItem ayah = QuranAudioLibrary.getNextAyahAudioItem(this,
 						quranAudioPlayer.getCurrentAyah());

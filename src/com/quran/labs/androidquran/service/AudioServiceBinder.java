@@ -200,7 +200,7 @@ public class AudioServiceBinder extends Binder implements
 	     Notification notification = new Notification(
 	                //android.R.drawable.ic_notification_overlay,
 	    		 	R.drawable.icon,
-	    		 	"",
+	    		 	QuranInfo.getSuraName(item.getSoura() - 1),
 	                System.currentTimeMillis());
 	     
 	     
