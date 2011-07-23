@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.common;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.Action;
+import com.markupartist.android.widget.ActionBar.IntentAction;
+import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -23,6 +27,8 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 
 public abstract class PageViewQuranActivity extends BaseQuranActivity {
+	protected static final String ACTION_BOOKMARK = "ACTION_BOOKMARK";
+
 	private static final String TAG = "BaseQuranActivity";
 
 	protected ImageView btnBookmark = null;
@@ -34,14 +40,10 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
     protected ViewGroup expLayout = null;
     protected QuranPageCurlView quranPageCurler = null;
     protected QuranPageFeeder quranPageFeeder;
-    
-
 	protected ActionBar actionBar;
 	
-   
 	protected abstract void initQuranPageFeeder();
 
-	
 	protected void requestWindowFeatures() {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -53,8 +55,6 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		// Request window feautres should be called before setting the layout
 		requestWindowFeatures();
 		setContentView(R.layout.quran_exp);
-		// get action bar
-		actionBar = (ActionBar) findViewById(R.id.actionbar);				
 		
 		// Adjust display settings
 		adjustDisplaySettings();
@@ -64,6 +64,10 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 		
 		// initialize scree componnets
 		initComponents();
+		
+		// get action bar
+		actionBar = (ActionBar) findViewById(R.id.actionbar);
+		addActions();
 		
 		// go to page
 		BookmarksManager.load(prefs);
@@ -146,12 +150,12 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	}
 	    
 	protected void goToNextPage() {
-		if (quranPageFeeder.mCurrentPageNumber < 604)
+		if (quranPageFeeder.mCurrentPageNumber < ApplicationConstants.PAGES_LAST)
 			quranPageFeeder.goToNextpage();
 	}
 
 	protected void goToPreviousPage() {
-		if (quranPageFeeder.mCurrentPageNumber > 1)
+		if (quranPageFeeder.mCurrentPageNumber > ApplicationConstants.PAGES_FIRST)
 			quranPageFeeder.goToPreviousPage();
 	}
 	
@@ -193,20 +197,19 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 	}
 	
 	protected void adjustBookmarkView() {
-		if (BookmarksManager.getInstance().contains(
-				QuranSettings.getInstance().getLastPage())) {
-			btnBookmark.setImageResource(R.drawable.bookmarks);
-		} else {
-			btnBookmark.setImageResource(R.drawable.remove_bookmark);
-		}
+		adjustBookmarkView(quranPageFeeder.mCurrentPageNumber);		
 	}
 	
 	protected void adjustBookmarkView(int position) {
-		if (BookmarksManager.getInstance().contains(position)) {
-			btnBookmark.setImageResource(R.drawable.bookmarks);
-		} else {
-			btnBookmark.setImageResource(R.drawable.remove_bookmark);
-		}
+		actionBar.removeActionAt(actionBar.getActionCount() - 1);
+		int r = BookmarksManager.getInstance().contains(position) ?
+					R.drawable.bookmarks : R.drawable.remove_bookmark;
+		
+		Intent i =  new Intent(this, QuranViewActivity.class); 
+        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.setAction(ACTION_BOOKMARK);
+        Action a = new IntentAction(this, i, r);
+        actionBar.addAction(a, actionBar.getActionCount());
 	}
 	
 	protected void adjustDisplaySettings() {
@@ -324,5 +327,26 @@ public abstract class PageViewQuranActivity extends BaseQuranActivity {
 			inReadingMode = ((Boolean) saved[1]).booleanValue();
 		}
 		
+	}
+	
+	protected void addActions() {
+		if(actionBar != null){
+	        // add bootmark
+	        Intent i =  new Intent(this, QuranViewActivity.class); 
+	        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	        i.setAction(ACTION_BOOKMARK);
+	        int r = BookmarksManager.getInstance().contains(quranPageFeeder.mCurrentPageNumber) ?
+					R.drawable.bookmarks : R.drawable.remove_bookmark;
+	        Action action = new IntentAction(this, i, r);
+	        actionBar.addAction(action, actionBar.getActionCount());
+		}
+	}
+	
+	protected void onNewIntent(Intent intent) {
+		String action = intent.getAction();
+		if(action.equalsIgnoreCase(ACTION_BOOKMARK)){
+			BookmarksManager.toggleBookmarkState(quranPageFeeder.mCurrentPageNumber, prefs);
+			adjustBookmarkView();
+		}
 	}
 }

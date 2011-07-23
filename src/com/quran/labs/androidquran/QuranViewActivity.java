@@ -23,6 +23,11 @@ import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 
 public class QuranViewActivity extends PageViewQuranActivity implements AyahStateListener {
+
+	protected static final String ACTION_NEXT = "ACTION_NEXT";
+	protected static final String ACTION_PAUSE = "ACTION_PAUSE";
+	protected static final String ACTION_PLAY = "ACTION_PLAY";
+
 	private static final String TAG = "QuranViewActivity";
 	
 	private boolean bounded = false;
@@ -57,7 +62,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		super.onCreate(savedInstanceState);
 //		textView = new TextView(this);
 //		textView.setText("");
-		addActions();
 		bindAudioService();
 		
 		btnPlay.setOnClickListener(new OnClickListener() {
@@ -72,6 +76,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	}
 	
 	protected void addActions(){
+		super.addActions();
 		if(actionBar != null){
 			//actionBar.setTitle("QuranAndroid");
 			actionBarActions.put("ACTION_PLAY",
@@ -96,7 +101,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 					ACTION_BAR_ACTION_STOP);
 			actionBar.addAction(actionBarActions.get("ACTION_NEXT"),
 					ACTION_BAR_ACTION_NEXT);	
-		}
+		}		
 	}
 	
 	private IntentAction getIntentAction(String intentAction, int drawable){
