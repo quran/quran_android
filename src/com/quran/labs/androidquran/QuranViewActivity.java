@@ -10,8 +10,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.markupartist.android.widget.ActionBar.IntentAction;
@@ -30,6 +28,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	protected static final String ACTION_NEXT = "ACTION_NEXT";
 	protected static final String ACTION_PAUSE = "ACTION_PAUSE";
 	protected static final String ACTION_PLAY = "ACTION_PLAY";
+	protected static final String ACTION_STOP = "ACTION_STOP";
 
 	private static final String TAG = "QuranViewActivity";
 	
@@ -66,39 +65,28 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 //		textView = new TextView(this);
 //		textView.setText("");
 		bindAudioService();
-		
-		btnPlay.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
-				AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
-				quranAudioPlayer.enableRemotePlay(true);
-				quranAudioPlayer.play(i);
-			}
-		});
 	}
 	
 	protected void addActions(){
 		super.addActions();
 		if(actionBar != null){
 			//actionBar.setTitle("QuranAndroid");
-			actionBarActions.put("ACTION_PLAY",
-					getIntentAction("ACTION_PLAY", android.R.drawable.ic_media_play));
-			actionBarActions.put("ACTION_PAUSE", 
-					getIntentAction("ACTION_PAUSE", android.R.drawable.ic_media_pause));
-			actionBarActions.put("ACTION_NEXT",
-					getIntentAction("ACTION_NEXT", 
-							android.R.drawable.ic_media_next));
-			actionBarActions.put("ACTION_STOP", 
-					getIntentAction("ACTION_STOP", R.drawable.stop));
+			actionBarActions.put(ACTION_PLAY,
+					getIntentAction(ACTION_PLAY, android.R.drawable.ic_media_play));
+			actionBarActions.put(ACTION_PAUSE, 
+					getIntentAction(ACTION_PAUSE, android.R.drawable.ic_media_pause));
+			actionBarActions.put(ACTION_NEXT,
+					getIntentAction(ACTION_NEXT, android.R.drawable.ic_media_next));
+			actionBarActions.put(ACTION_STOP, 
+					getIntentAction(ACTION_STOP, R.drawable.stop));
 			
-			actionBar.addAction(actionBarActions.get("ACTION_PLAY"), 
+			actionBar.addAction(actionBarActions.get(ACTION_PLAY), 
 					ACTION_BAR_ACTION_PLAY);
-			actionBar.addAction(actionBarActions.get("ACTION_PAUSE"), 
+			actionBar.addAction(actionBarActions.get(ACTION_PAUSE), 
 					ACTION_BAR_ACTION_PAUSE);
-			actionBar.addAction(actionBarActions.get("ACTION_STOP"),
+			actionBar.addAction(actionBarActions.get(ACTION_STOP),
 					ACTION_BAR_ACTION_STOP);
-			actionBar.addAction(actionBarActions.get("ACTION_NEXT"),
+			actionBar.addAction(actionBarActions.get(ACTION_NEXT),
 					ACTION_BAR_ACTION_NEXT);	
 		}		
 	}
@@ -117,7 +105,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		super.onNewIntent(intent);
 		String action = intent.getAction();
 		if(quranAudioPlayer != null && action != null){
-			if(action.equalsIgnoreCase("ACTION_PLAY")){
+			if(action.equalsIgnoreCase(ACTION_PLAY)){
 				if(quranAudioPlayer.isPaused())
 					quranAudioPlayer.resume();
 				else{
@@ -130,14 +118,14 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 						quranAudioPlayer.enableRemotePlay(false);
 						playAudio(i);
 					}
-				}
-			}else if(action.equalsIgnoreCase("ACTION_PAUSE")){
+				}		
+			}else if(action.equalsIgnoreCase(ACTION_PAUSE)){
 				quranAudioPlayer.pause();
-			}else if(action.equalsIgnoreCase("ACTION_NEXT")){
+			}else if(action.equalsIgnoreCase(ACTION_NEXT)){
 				AyahItem ayah = QuranAudioLibrary.getNextAyahAudioItem(this,
 						quranAudioPlayer.getCurrentAyah());
 				quranAudioPlayer.play(ayah);
-			}else if (action.equalsIgnoreCase("ACTION_STOP")){
+			}else if (action.equalsIgnoreCase(ACTION_STOP)){
 				lastAyah = null;
 				quranAudioPlayer.stop();
 			}

@@ -15,9 +15,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.markupartist.android.widget.ActionBar;
-import com.markupartist.android.widget.ActionBar.Action;
-import com.markupartist.android.widget.ActionBar.IntentAction;
-import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -26,13 +23,13 @@ import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 
+
 public abstract class PageViewQuranActivity extends InternetActivity {
 	protected static final String ACTION_BOOKMARK = "ACTION_BOOKMARK";
 
 	private static final String TAG = "BaseQuranActivity";
 
 	protected ImageView btnBookmark = null;
-	protected ImageView btnPlay = null;
 	
     protected boolean inReadingMode = false;
     protected SeekBar seekBar = null;
@@ -41,6 +38,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
     protected QuranPageCurlView quranPageCurler = null;
     protected QuranPageFeeder quranPageFeeder;
 	protected ActionBar actionBar;
+	protected ViewGroup bottomToolbar;
 	
 	protected abstract void initQuranPageFeeder();
 
@@ -79,6 +77,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	
 	protected void initComponents() {
 		expLayout = (ViewGroup) findViewById(R.id.expLayout);
+		bottomToolbar = (ViewGroup) findViewById(R.id.bottomToolbar);
 		
 		if (quranPageCurler == null){
 			quranPageCurler = (QuranPageCurlView)findViewById(R.id.gallery);
@@ -105,18 +104,18 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 			}
 		});
 		
-		btnPlay = (ImageView) findViewById(R.id.btnPlay);
-
 		seekBar = (SeekBar) findViewById(R.id.suraSeek);
 		seekBar.setOnSeekBarChangeListener(
 				new SeekBar.OnSeekBarChangeListener(){
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
-				if (fromUser)
-					titleText.setText(ArabicStyle.reshape(
-							QuranInfo.getPageTitle(
-								ApplicationConstants.PAGES_LAST - progress)));
+				if (fromUser) {
+					int page = ApplicationConstants.PAGES_LAST - progress;
+					titleText.setText(ArabicStyle.reshape(QuranInfo.getPageTitle(page)));
+					adjustBookmarkView(page);
+				}
+				
 			}
 
 			@Override
@@ -201,15 +200,9 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	}
 	
 	protected void adjustBookmarkView(int position) {
-		actionBar.removeActionAt(actionBar.getActionCount() - 1);
 		int r = BookmarksManager.getInstance().contains(position) ?
 					R.drawable.bookmarks : R.drawable.remove_bookmark;
-		
-		Intent i =  new Intent(this, QuranViewActivity.class); 
-        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        i.setAction(ACTION_BOOKMARK);
-        Action a = new IntentAction(this, i, r);
-        actionBar.addAction(a, actionBar.getActionCount());
+		btnBookmark.setImageResource(r);
 	}
 	
 	protected void adjustDisplaySettings() {
@@ -252,10 +245,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	        getWindow().clearFlags(
 	        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	        
-	        seekBar.setVisibility(TextView.VISIBLE);
-	        titleText.setVisibility(TextView.VISIBLE);
-	        btnBookmark.setVisibility(View.VISIBLE);
-	        btnPlay.setVisibility(View.VISIBLE);
+	        bottomToolbar.setVisibility(View.VISIBLE);
 	        if(actionBar != null)
 	        	actionBar.setVisibility(View.VISIBLE);
 			adjustBookmarkView();
@@ -267,10 +257,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	        getWindow().clearFlags(
 	        		WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	        
-	        seekBar.setVisibility(TextView.INVISIBLE);
-	        titleText.setVisibility(TextView.INVISIBLE);
-	        btnBookmark.setVisibility(View.INVISIBLE);
-	        btnPlay.setVisibility(View.INVISIBLE);
+	        bottomToolbar.setVisibility(View.INVISIBLE);
 	        if(actionBar != null)
 	        	actionBar.setVisibility(View.INVISIBLE);
 		}
@@ -326,27 +313,13 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 			Log.d("exp_v", "Reading mode");
 			inReadingMode = ((Boolean) saved[1]).booleanValue();
 		}
-		
 	}
 	
 	protected void addActions() {
-		if(actionBar != null){
-	        // add bootmark
-	        Intent i =  new Intent(this, QuranViewActivity.class); 
-	        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-	        i.setAction(ACTION_BOOKMARK);
-	        int r = BookmarksManager.getInstance().contains(quranPageFeeder.mCurrentPageNumber) ?
-					R.drawable.bookmarks : R.drawable.remove_bookmark;
-	        Action action = new IntentAction(this, i, r);
-	        actionBar.addAction(action, actionBar.getActionCount());
-		}
+		
 	}
 	
 	protected void onNewIntent(Intent intent) {
-		String action = intent.getAction();
-		if(action.equalsIgnoreCase(ACTION_BOOKMARK)){
-			BookmarksManager.toggleBookmarkState(quranPageFeeder.mCurrentPageNumber, prefs);
-			adjustBookmarkView();
-		}
+		
 	}
 }
