@@ -83,6 +83,14 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	startDownloadService(intent);
 	}
 	
+	protected void downloadSura(int readerId, int sura) {
+		Intent intent = new Intent(this, QuranDataService.class);
+		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.SOURA_KEY, sura);
+		intent.putExtra(QuranDataService.READER_KEY, readerId);
+		startDownloadService(intent);
+	}
+	
 	private void initServiceConnection() {
 	    serviceConnection = new ServiceConnection() {
 	    	public void onServiceConnected(ComponentName name, IBinder service){

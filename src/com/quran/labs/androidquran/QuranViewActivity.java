@@ -2,7 +2,10 @@ package com.quran.labs.androidquran;
 
 import java.util.HashMap;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -118,10 +121,39 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 					quranAudioPlayer.resume();
 				else{
 					Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
-					AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
+					final AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
+					// soura not totall found
+					if(com.quran.labs.androidquran.util.QuranUtils.isSouraAudioFound(i.getQuranReaderId(), i.getSoura()) < 0){
+						AlertDialog.Builder builder = new AlertDialog.Builder(this);
+						builder.setMessage("Do you want to download sura");
+						builder.setPositiveButton("download", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								downloadSura(i.getQuranReaderId(), i.getSoura());
+							}
+						});
+						builder.setNeutralButton("Stream", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								quranAudioPlayer.enableRemotePlay(true);
+								quranAudioPlayer.play(i);
+								dialog.dismiss();
+							}
+						});
+						
+						builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						});
+					}
 					quranAudioPlayer.enableRemotePlay(true);
 					quranAudioPlayer.play(i);
-				}				
+				}
 			}else if(action.equalsIgnoreCase("ACTION_PAUSE")){
 				quranAudioPlayer.pause();
 			}else if(action.equalsIgnoreCase("ACTION_NEXT")){
@@ -187,4 +219,5 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 			quranPageFeeder = (QuranPageFeeder) saved[0];
 		}
 	}
+	
 }

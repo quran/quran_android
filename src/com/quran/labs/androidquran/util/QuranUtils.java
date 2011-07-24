@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -278,6 +279,30 @@ public class QuranUtils {
 		+ File.separator + sura ;
 	}
 	
+	public static int isSouraAudioFound(int quranReaderId, int sura){
+		File f = new File(getSuraAudioPath(quranReaderId, sura));
+		if(f.exists() && f.isDirectory()){
+			String[] filesNames = f.list(new FilenameFilter() {
+				
+				@Override
+				public boolean accept(File dir, String filename) {
+					try{
+						if(filename.endsWith(QuranAudioLibrary.AUDIO_EXTENSION)){
+							filename = filename.substring(0, filename.indexOf(QuranAudioLibrary.AUDIO_EXTENSION));
+							Integer.parseInt(filename);
+							return true;
+						}return false;						
+					}catch (Exception e) {
+						return false;
+					}
+				}
+			});
+			if(filesNames != null)
+				return filesNames.length - 1;
+		}		
+		return -1;
+		
+	}
 	public static String getSuraImagePath(int sura){
 		return getAyahImagesDirectory() + File.separator + sura;
 	}

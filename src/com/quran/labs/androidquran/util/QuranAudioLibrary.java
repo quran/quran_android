@@ -89,5 +89,4 @@ public class QuranAudioLibrary {
 		return AUDIO_URLS[readerId - 1];
 	}
 	
-	
 }

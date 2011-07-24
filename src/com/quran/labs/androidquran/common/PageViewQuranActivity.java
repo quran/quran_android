@@ -26,7 +26,7 @@ import com.quran.labs.androidquran.util.BookmarksManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 
-public abstract class PageViewQuranActivity extends BaseQuranActivity {
+public abstract class PageViewQuranActivity extends InternetActivity {
 	protected static final String ACTION_BOOKMARK = "ACTION_BOOKMARK";
 
 	private static final String TAG = "BaseQuranActivity";

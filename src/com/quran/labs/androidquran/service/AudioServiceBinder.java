@@ -82,7 +82,7 @@ public class AudioServiceBinder extends Binder implements
 					// show notification ayah not found, download it or play remotely	
 				}
 			}	
-			if(url != null){				
+			if(url != null){
 				mp.setDataSource(url);
 				mp.prepare();
 				mp.start();
@@ -168,9 +168,15 @@ public class AudioServiceBinder extends Binder implements
 
 
 	@Override
-	public void onPrepared(MediaPlayer arg0) {
-		if(mp != null)
-			mp.start();	
+	public void onPrepared(MediaPlayer mp) {
+		this.mp  = mp;
+		if(mp != null){
+			mp.start();
+			paused = false;
+			stopped = false;
+			if(!notified)
+				showNotification(currentItem);
+		}
 	}
 	
 
