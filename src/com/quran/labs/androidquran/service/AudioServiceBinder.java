@@ -76,7 +76,7 @@ public class AudioServiceBinder extends Binder implements
 				url = item.getRemoteAudioUrl();
 			}else{
 				if(ayahListener != null)
-					ayahListener.onNotFound(item);
+					ayahListener.onAyahNotFound(item);
 				else
 				{
 					// show notification ayah not found, download it or play remotely	
@@ -150,7 +150,7 @@ public class AudioServiceBinder extends Binder implements
 	public void onCompletion(MediaPlayer mp) {
 		AyahItem nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
 		if(ayahListener != null)
-			ayahListener.onComplete(currentItem, nextItem);
+			ayahListener.onAyahComplete(currentItem, nextItem);
 		if(nextItem != null){
 			this.currentItem = nextItem;
 			if(!paused && !stopped)

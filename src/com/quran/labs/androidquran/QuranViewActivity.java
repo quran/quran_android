@@ -203,7 +203,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	}
 	
 	@Override
-	public void onComplete(AyahItem ayah, AyahItem nextAyah) {
+	public void onAyahComplete(AyahItem ayah, AyahItem nextAyah) {
 		//String text = "Page(" + QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah()) + ")" + System.getProperty("line.separator");
 		//text += "Soura: " + QuranInfo.getSuraName(nextAyah.getSoura()-1) + System.getProperty("line.separator");
 		//text += "Ayah: " + nextAyah.getAyah() + System.getProperty("line.separator");
@@ -214,7 +214,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	}
 
 	@Override
-	public void onNotFound(AyahItem ayah) {
+	public void onAyahNotFound(AyahItem ayah) {
 		lastAyah = ayah;
 		showDownloadDialog(ayah);
 	}
