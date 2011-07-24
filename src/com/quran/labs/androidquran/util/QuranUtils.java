@@ -298,7 +298,7 @@ public class QuranUtils {
 				}
 			});
 			if(filesNames != null)
-				return filesNames.length - 1;
+				return filesNames.length;
 		}		
 		return -1;
 		

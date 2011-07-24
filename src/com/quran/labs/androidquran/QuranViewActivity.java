@@ -3,7 +3,6 @@ package com.quran.labs.androidquran;
 import java.util.HashMap;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +23,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranViewActivity extends PageViewQuranActivity implements AyahStateListener {
 
@@ -41,6 +41,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	private static final int ACTION_BAR_ACTION_STOP = 2;
 	private static final int ACTION_BAR_ACTION_NEXT = 3;
 	
+	private AyahItem lastAyah;
 	
 	HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
 	
@@ -114,8 +115,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	protected void onNewIntent(Intent intent) {
 		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
-		if(quranAudioPlayer != null){
-			String action = intent.getAction();
+		String action = intent.getAction();
+		if(quranAudioPlayer != null && action != null){
 			if(action.equalsIgnoreCase("ACTION_PLAY")){
 				if(quranAudioPlayer.isPaused())
 					quranAudioPlayer.resume();
@@ -123,36 +124,12 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 					Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
 					final AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
 					// soura not totall found
-					if(com.quran.labs.androidquran.util.QuranUtils.isSouraAudioFound(i.getQuranReaderId(), i.getSoura()) < 0){
-						AlertDialog.Builder builder = new AlertDialog.Builder(this);
-						builder.setMessage("Do you want to download sura");
-						builder.setPositiveButton("download", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								downloadSura(i.getQuranReaderId(), i.getSoura());
-							}
-						});
-						builder.setNeutralButton("Stream", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								quranAudioPlayer.enableRemotePlay(true);
-								quranAudioPlayer.play(i);
-								dialog.dismiss();
-							}
-						});
-						
-						builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								dialog.dismiss();
-							}
-						});
+					if(QuranUtils.isSouraAudioFound(i.getQuranReaderId(), i.getSoura()) < 0){
+						showDownloadDialog(i);
+					}else{
+						quranAudioPlayer.enableRemotePlay(false);
+						playAudio(i);
 					}
-					quranAudioPlayer.enableRemotePlay(true);
-					quranAudioPlayer.play(i);
 				}
 			}else if(action.equalsIgnoreCase("ACTION_PAUSE")){
 				quranAudioPlayer.pause();
@@ -161,11 +138,43 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 						quranAudioPlayer.getCurrentAyah());
 				quranAudioPlayer.play(ayah);
 			}else if (action.equalsIgnoreCase("ACTION_STOP")){
+				lastAyah = null;
 				quranAudioPlayer.stop();
 			}
 		}
 	}
 	
+	private void showDownloadDialog(final AyahItem i) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Do you want to download sura");
+		builder.setPositiveButton("download", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				downloadSura(i.getQuranReaderId(), i.getSoura());
+			}
+		});
+		builder.setNeutralButton("Stream", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				quranAudioPlayer.enableRemotePlay(true);
+				quranAudioPlayer.play(i);
+				dialog.dismiss();
+			}
+		});
+		
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		
+		builder.show();
+	}
+
 	protected void initQuranPageFeeder(){
 		if (quranPageFeeder == null) {
 			Log.d(TAG, "Quran Feeder instantiated...");
@@ -195,19 +204,31 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		}
 	}
 
+	private void playAudio(AyahItem ayah){
+		if(quranAudioPlayer != null){
+			if (ayah == null) {
+				Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
+				ayah = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
+			}
+			quranAudioPlayer.play(ayah);
+		}
+	}
+	
 	@Override
 	public void onComplete(AyahItem ayah, AyahItem nextAyah) {
 		//String text = "Page(" + QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah()) + ")" + System.getProperty("line.separator");
 		//text += "Soura: " + QuranInfo.getSuraName(nextAyah.getSoura()-1) + System.getProperty("line.separator");
 		//text += "Ayah: " + nextAyah.getAyah() + System.getProperty("line.separator");
 		//textView.setText(text);
+		lastAyah = ayah;
 		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah());
 		quranPageFeeder.jumpToPage(page);
 	}
 
 	@Override
 	public void onNotFound(AyahItem ayah) {
-		
+		lastAyah = ayah;
+		showDownloadDialog(ayah);
 	}
 
 	@Override
@@ -217,6 +238,15 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		if (saved != null) {
 			Log.d("exp_v", "Adapter retrieved..");
 			quranPageFeeder = (QuranPageFeeder) saved[0];
+		}
+	}
+	
+	@Override
+	protected void onFinishDownload() {
+		super.onFinishDownload();
+		if (quranAudioPlayer != null) {
+			quranAudioPlayer.enableRemotePlay(false);
+			playAudio(lastAyah);
 		}
 	}
 	
