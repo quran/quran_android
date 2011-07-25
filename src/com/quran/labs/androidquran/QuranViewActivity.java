@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.markupartist.android.widget.ActionBar.IntentAction;
@@ -31,6 +32,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	protected static final String ACTION_PAUSE = "ACTION_PAUSE";
 	protected static final String ACTION_PLAY = "ACTION_PLAY";
 	protected static final String ACTION_STOP = "ACTION_STOP";
+	protected static final String ACTION_CHANGE_READER = "ACTION_CHANGE_READER";
 
 	private static final String TAG = "QuranViewActivity";
 	
@@ -41,8 +43,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	private static final int ACTION_BAR_ACTION_PAUSE = 1;
 	private static final int ACTION_BAR_ACTION_STOP = 2;
 	private static final int ACTION_BAR_ACTION_NEXT = 3;
+	private static final int ACTION_BAR_ACTION_CHANGE_READER = 4;
 	
 	private AyahItem lastAyah;
+	private int currentReaderId;
 	
 	HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
 	
@@ -81,6 +85,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 					getIntentAction(ACTION_NEXT, android.R.drawable.ic_media_next));
 			actionBarActions.put(ACTION_STOP, 
 					getIntentAction(ACTION_STOP, R.drawable.stop));
+			actionBarActions.put(ACTION_CHANGE_READER,
+					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			
 			actionBar.addAction(actionBarActions.get(ACTION_PLAY), 
 					ACTION_BAR_ACTION_PLAY);
@@ -90,6 +96,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 					ACTION_BAR_ACTION_STOP);
 			actionBar.addAction(actionBarActions.get(ACTION_NEXT),
 					ACTION_BAR_ACTION_NEXT);	
+			actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER),
+					ACTION_BAR_ACTION_CHANGE_READER);
 		}		
 	}
 	
@@ -112,7 +120,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 					quranAudioPlayer.resume();
 				else{
 					Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
-					final AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], getQuranReaderId());
+					final AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0],
+							pageBounds[1], getQuranReaderId());
+					lastAyah = i;
 					// soura not totall found
 					if(QuranUtils.isSouraAudioFound(i.getQuranReaderId(), i.getSoura()) < 0){
 						showDownloadDialog(i);
@@ -130,32 +140,62 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 			}else if (action.equalsIgnoreCase(ACTION_STOP)){
 				lastAyah = null;
 				quranAudioPlayer.stop();
-			}
+			}else if(action.equalsIgnoreCase(ACTION_CHANGE_READER))
+				showChangeReaderDialog();
 		}
 	}
 	
 	private void showDownloadDialog(final AyahItem i) {
 
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-		 LayoutInflater li = LayoutInflater.from(this);
-         View view = li.inflate(R.layout.dialog_download, null);
-         
-         dialog.setView(view);
+		LayoutInflater li = LayoutInflater.from(this);
+        final View view = li.inflate(R.layout.dialog_download, null);
+        Spinner s = (Spinner) view.findViewById(R.id.spinner);
+        if(s != null)
+        	s.setSelection(getQuranReaderId());
+        dialog.setView(view);
 		//AlertDialog dialog = new DownloadDialog(this);
 		dialog.setMessage("Do you want to download sura");
 		dialog.setPositiveButton("download", new DialogInterface.OnClickListener() {
 
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				downloadSura(i.getQuranReaderId(), i.getSoura(), i.getAyah());
+			public void onClick(DialogInterface dialog, int which) {				
+				// get reader id
+				Spinner s = (Spinner) view.findViewById(R.id.spinner);
+				lastAyah = i;
+				if(s != null){
+					if(s.getSelectedItemPosition() != Spinner.INVALID_POSITION){
+						// reader is not default reader
+						if(s.getSelectedItemPosition() != i.getQuranReaderId()){
+							lastAyah = QuranAudioLibrary.getAyahItem(getApplicationContext(), i.getSoura(), 
+									i.getAyah(), s.getSelectedItemPosition());
+							currentReaderId = s.getSelectedItemPosition();
+						}
+					}
+				}
+				downloadSura(lastAyah.getQuranReaderId(), lastAyah.getSoura(), lastAyah.getAyah());
+				dialog.dismiss();
 			}
 		});
 		dialog.setNeutralButton("Stream", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				// get reader id
 				quranAudioPlayer.enableRemotePlay(true);
-				quranAudioPlayer.play(i);
+				Spinner s = (Spinner) view.findViewById(R.id.spinner);
+				lastAyah = i;
+				if(s != null){
+					if(s.getSelectedItemPosition() != Spinner.INVALID_POSITION){
+						// reader is not default reader
+						if(s.getSelectedItemPosition() != i.getQuranReaderId()){
+							lastAyah = QuranAudioLibrary.getAyahItem(getApplicationContext(), i.getSoura(), 
+									i.getAyah(), s.getSelectedItemPosition());
+							currentReaderId = s.getSelectedItemPosition();
+						}
+					}
+				}
+				quranAudioPlayer.play(lastAyah);
 				dialog.dismiss();
 			}
 		});
@@ -172,6 +212,31 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		diag.show();
 	}
 
+	private void showChangeReaderDialog(){
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+		LayoutInflater li = LayoutInflater.from(this);
+        final View view = li.inflate(R.layout.dialog_download, null); 
+        Spinner s = (Spinner)view.findViewById(R.id.spinner);
+        s.setSelection(getQuranReaderId());
+        dialogBuilder.setView(view);
+		dialogBuilder.setMessage("Change quran reader");
+		dialogBuilder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Spinner s = (Spinner) view.findViewById(R.id.spinner);
+				if(s != null && s.getSelectedItemPosition() != Spinner.INVALID_POSITION){
+					if(currentReaderId != s.getSelectedItemPosition()){
+						currentReaderId = s.getSelectedItemPosition();
+					}
+				}
+			}
+		});	
+		dialogBuilder.setNegativeButton("Cancel", null);
+		dialogBuilder.show();
+	}
+	
+	
 	protected void initQuranPageFeeder(){
 		if (quranPageFeeder == null) {
 			Log.d(TAG, "Quran Feeder instantiated...");
@@ -213,11 +278,14 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	
 	@Override
 	public void onAyahComplete(AyahItem ayah, AyahItem nextAyah) {
-		//String text = "Page(" + QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah()) + ")" + System.getProperty("line.separator");
-		//text += "Soura: " + QuranInfo.getSuraName(nextAyah.getSoura()-1) + System.getProperty("line.separator");
-		//text += "Ayah: " + nextAyah.getAyah() + System.getProperty("line.separator");
-		//textView.setText(text);
 		lastAyah = ayah;
+		if(nextAyah.getQuranReaderId() != getQuranReaderId() &&
+				quranAudioPlayer != null && quranAudioPlayer.isPlaying()){
+			quranAudioPlayer.stop();
+			lastAyah = QuranAudioLibrary.getAyahItem(this, nextAyah.getSoura(), nextAyah.getAyah(),
+					getQuranReaderId());
+			quranAudioPlayer.play(lastAyah);
+		}
 		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah.getAyah());
 		quranPageFeeder.jumpToPage(page);
 	}
@@ -251,7 +319,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	// we should put it in another place + we should read reader from preferences
 	private int getQuranReaderId() {
 		// TODO Auto-generated method stub
-		return 0;
+		return currentReaderId;
 	}
 
 	
