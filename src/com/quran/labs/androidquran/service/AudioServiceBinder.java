@@ -30,7 +30,7 @@ public class AudioServiceBinder extends Binder implements
 	private AyahItem currentItem;
 	private AyahStateListener ayahListener = null;
 	private boolean notified;
-	private boolean stopped;
+	private boolean stopped = true;
 	
 	public void setAyahCompleteListener(AyahStateListener ayahListener) {
 		this.ayahListener = ayahListener;
@@ -48,8 +48,9 @@ public class AudioServiceBinder extends Binder implements
 	 * @see org.islam.quran.IAudioPlayer#stop()
 	 */
 	public void stop() {
-		if(mp != null && mp.isPlaying())
-				mp.stop();		
+		if(mp != null && mp.isPlaying()){
+			mp.stop();
+		}
 		paused = false;	
 		stopped = true;
 	}
@@ -61,7 +62,9 @@ public class AudioServiceBinder extends Binder implements
 		this.currentItem = item;
 		if(mp != null){
 			mp.stop();
-			mp.release();
+			try{
+				mp.release();
+			}catch(Exception e){}
 			mp = null;
 		}
 		try {
@@ -153,8 +156,10 @@ public class AudioServiceBinder extends Binder implements
 			ayahListener.onAyahComplete(currentItem, nextItem);
 		if(nextItem != null){
 			this.currentItem = nextItem;
-			if(!paused && !stopped)
-				this.play(currentItem);
+			try{
+				if(!paused && !stopped && mp != null && !mp.isPlaying())
+					this.play(currentItem);
+			}catch(Exception ex){}
 		}
 	}		
 	
@@ -224,6 +229,10 @@ public class AudioServiceBinder extends Binder implements
             
 	        //notified = true;
 
+	}
+	
+	public boolean isPlaying(){
+		return !paused && !stopped;
 	}
 	
 };
