@@ -135,6 +135,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	}
 	
 	private void showDownloadDialog(final AyahItem i) {
+
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		 LayoutInflater li = LayoutInflater.from(this);
          View view = li.inflate(R.layout.dialog_download, null);
@@ -143,10 +144,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		//AlertDialog dialog = new DownloadDialog(this);
 		dialog.setMessage("Do you want to download sura");
 		dialog.setPositiveButton("download", new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				downloadSura(i.getQuranReaderId(), i.getSoura());
+				downloadSura(i.getQuranReaderId(), i.getSoura(), i.getAyah());
 			}
 		});
 		dialog.setNeutralButton("Stream", new DialogInterface.OnClickListener() {

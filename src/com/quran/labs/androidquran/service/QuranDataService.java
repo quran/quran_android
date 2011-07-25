@@ -263,7 +263,7 @@ public class QuranDataService extends Service {
 						bout.write(data, 0, x);
 						downloaded += x;
 						double percent = 100.0 * ((1.0 * downloaded) / (1.0 * total));
-						updateProgress((int) percent);
+						updateProgress((int) percent, fileNames.length, downloadIndex);
 					}
 					
 					file.renameTo(new File(saveToDirectories[downloadIndex], fileNames[downloadIndex]));
@@ -284,7 +284,8 @@ public class QuranDataService extends Service {
 			return true;
 		}
 
-		private void updateProgress(int percent) {
+		private void updateProgress(int percent, int totalFiles, int nDownloadedFiles) {
+			percent = (int) (((double)percent / (double)100 + (double)nDownloadedFiles) / (double)totalFiles * 100);
 			service.updateProgress(percent);
 //			notification.contentView.setTextViewText(R.id.text, "Downloading.. " + percent + "%");
 //			notification.contentView.setProgressBar(R.id.progressBar, 100, percent, false);
@@ -315,23 +316,18 @@ public class QuranDataService extends Service {
 
 		protected void unzipFile(String saveToDirectory, String fileName) {
 			try {
-				updateProgress(0);
-
 				// success, unzip the file...
 				File file = new File(saveToDirectory, fileName);
 				FileInputStream is = new FileInputStream(file);
 				ZipInputStream zis = new ZipInputStream(is);
 				String base = QuranUtils.getQuranBaseDirectory();
 
-				int ctr = 0;
 				ZipEntry entry;
 				while ((entry = zis.getNextEntry()) != null) {
 					if (entry.isDirectory()) {
 						zis.closeEntry();
 						continue;
 					}
-
-					double percentage = 100.0 * ((1.0 * ctr++) / 604.0);
 
 					// ignore files that already exist
 					File f = new File(base + entry.getName());
@@ -346,7 +342,6 @@ public class QuranDataService extends Service {
 						ostream.close();
 					}
 					zis.closeEntry();
-					updateProgress((int) percentage);
 				}
 
 				zis.close();
