@@ -118,7 +118,7 @@ public class QuranDataService extends Service {
 		Log.d("quran_srv", "downloadSuraAudio");
 		int soura = intent.getIntExtra(SOURA_KEY, 1);
 		int startAyah = intent.getIntExtra(AYAH_KEY, 1);
-		int quranReader = intent.getIntExtra(READER_KEY, 1);
+		int quranReader = intent.getIntExtra(READER_KEY, 0);
 		// optional end ayah
 		int endAyah = intent.getIntExtra("endAyah",
 				QuranInfo.SURA_NUM_AYAHS[soura - 1]);

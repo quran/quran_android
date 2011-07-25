@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.util;
 
 import android.content.Context;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.QuranInfo;
 
@@ -17,7 +18,7 @@ public class QuranAudioLibrary {
 		String strSoura = fitInt(soura, 3);
 		String strAyah = fitInt(ayah, 3);
 		AyahItem ayahItem = new AyahItem(soura, ayah, readerId,
-				getAudioUrl(readerId) + strSoura + strAyah + AUDIO_EXTENSION, 
+				getAudioUrl(context, readerId) + strSoura + strAyah + AUDIO_EXTENSION, 
 				IMAGE_URL + soura + "_" + ayah + IMAGE_EXTENSION);
 		setAyahItemLocalPaths(context, ayahItem);
 		return ayahItem;
@@ -40,7 +41,7 @@ public class QuranAudioLibrary {
 				ayah++;
 			AyahItem nextAyahItem =
 				new AyahItem(soura, ayah, quranReaderId,
-						getAudioUrl(quranReaderId) + fitInt(soura, 3) + fitInt(ayah, 3) + AUDIO_EXTENSION,
+						getAudioUrl(context, quranReaderId) + fitInt(soura, 3) + fitInt(ayah, 3) + AUDIO_EXTENSION,
 						IMAGE_URL + soura + "_" + ayah + IMAGE_EXTENSION);
 			setAyahItemLocalPaths(context, nextAyahItem);
 			return nextAyahItem;
@@ -83,10 +84,12 @@ public class QuranAudioLibrary {
 		"http://www.everyayah.com/data/Abdullah_Basfar_192kbps/"
 	};
 	
-	private static String getAudioUrl(int readerId){
-		if(readerId > AUDIO_URLS.length)
+	private static String getAudioUrl(Context context, int readerId){
+		String[] urls = 
+			context.getResources().getStringArray(R.array.quran_readers_urls);
+		if(readerId > urls.length)
 			return null;
-		return AUDIO_URLS[readerId - 1];
+		return urls[readerId];
 	}
 	
 }
