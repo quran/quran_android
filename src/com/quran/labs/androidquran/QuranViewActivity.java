@@ -10,6 +10,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import com.markupartist.android.widget.ActionBar.IntentAction;
@@ -110,7 +112,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 					quranAudioPlayer.resume();
 				else{
 					Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
-					final AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
+					final AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], getQuranReaderId());
 					// soura not totall found
 					if(QuranUtils.isSouraAudioFound(i.getQuranReaderId(), i.getSoura()) < 0){
 						showDownloadDialog(i);
@@ -133,16 +135,21 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 	}
 	
 	private void showDownloadDialog(final AyahItem i) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Do you want to download sura");
-		builder.setPositiveButton("download", new DialogInterface.OnClickListener() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		 LayoutInflater li = LayoutInflater.from(this);
+         View view = li.inflate(R.layout.dialog_download, null);
+         
+         dialog.setView(view);
+		//AlertDialog dialog = new DownloadDialog(this);
+		dialog.setMessage("Do you want to download sura");
+		dialog.setPositiveButton("download", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				downloadSura(i.getQuranReaderId(), i.getSoura());
 			}
 		});
-		builder.setNeutralButton("Stream", new DialogInterface.OnClickListener() {
+		dialog.setNeutralButton("Stream", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -152,7 +159,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 			}
 		});
 		
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -160,7 +167,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 			}
 		});
 		
-		builder.show();
+		AlertDialog diag = dialog.create();
+		diag.show();
 	}
 
 	protected void initQuranPageFeeder(){
@@ -196,7 +204,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		if(quranAudioPlayer != null){
 			if (ayah == null) {
 				Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
-				ayah = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], 2);
+				ayah = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], getQuranReaderId());
 			}
 			quranAudioPlayer.play(ayah);
 		}
@@ -237,5 +245,13 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 			playAudio(lastAyah);
 		}
 	}
+	
+	// temp method to select default reader id
+	// we should put it in another place + we should read reader from preferences
+	private int getQuranReaderId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	
 }
