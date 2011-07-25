@@ -96,6 +96,7 @@ public class QuranDataService extends Service {
 			return;
 		
 		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
+		QuranDataService.isRunning = true;
 		switch (downloadType) {
 			case DOWNLOAD_QURAN_IMAGES:
 				thread = new DownloadThread(this, new String[] { QuranUtils.getZipFileUrl() }, 
@@ -110,9 +111,9 @@ public class QuranDataService extends Service {
 			break;
 			
 			default:
+				QuranDataService.isRunning = false;
 			return;
 		}
-		QuranDataService.isRunning = true;
 	}
 
 	private void downloadSuraAudio(Intent intent) {
@@ -159,10 +160,14 @@ public class QuranDataService extends Service {
 				 urls.add(ayah.getRemoteImageUrl());
 			 }
 		}
-
-		thread = new DownloadThread(this, urls.toArray(new String[urls.size()]), 
-					fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);
-		thread.start();
+		
+		if (urls.size() > 0) {
+			thread = new DownloadThread(this, urls.toArray(new String[urls.size()]), 
+						fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);
+			thread.start();
+		} else {
+			QuranDataService.isRunning = false;
+		}
 	}
 
 	private void downloadTranslation(Intent intent) {
@@ -172,11 +177,25 @@ public class QuranDataService extends Service {
 				new String[] { fileName }, new String[]{QuranUtils.getQuranDatabaseDirectory()}, false);
 		thread.start();
 	}
+	
+	public void stop() {
+		Log.d("quran_srv", "Stop Service called");
+		try {
+			if (thread != null) {
+				thread.interrupt();
+			}
+		} catch (Exception e) {
+			
+		}
+		progress = 0;
+		thread = null;
+		QuranDataService.isRunning = false;
+	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		QuranDataService.isRunning = false;
+		stop();
 	}
 
 	public void updateProgress(int progress) {
@@ -246,7 +265,7 @@ public class QuranDataService extends Service {
 					File file = new File(saveToDirectories[downloadIndex],
 							fileNames[downloadIndex] + DOWNLOAD_EXT);
 
-					URL url = new URL(downloadUrls[downloadIndex]);
+					URL url = new URL(escapeUrlSpecialCharacters(downloadUrls[downloadIndex]));
 					URLConnection conn = url.openConnection();
 					int total = conn.getContentLength();
 					Log.d("quran_srv", "File to download: " + file.getName()
@@ -273,19 +292,22 @@ public class QuranDataService extends Service {
 					byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
 					int x = 0;
 
-					while ((x = in.read(data, 0, DOWNLOAD_BUFFER_SIZE)) >= 0) {
+					while (isRunning && (x = in.read(data, 0, DOWNLOAD_BUFFER_SIZE)) >= 0) {
 						bout.write(data, 0, x);
 						downloaded += x;
 						double percent = 100.0 * ((1.0 * downloaded) / (1.0 * total));
 						updateProgress((int) percent, fileNames.length, downloadIndex);
 					}
 					
-					file.renameTo(new File(saveToDirectories[downloadIndex], fileNames[downloadIndex]));
-
-					if (zipped)
-						unzipFile(saveToDirectories[downloadIndex], fileNames[downloadIndex]);
-
-					Log.d("quran_srv", "Download Completed [" + downloadUrls[downloadIndex] + "]");
+					if (isRunning) {
+						file.renameTo(new File(saveToDirectories[downloadIndex], fileNames[downloadIndex]));
+	
+						if (zipped)
+							unzipFile(saveToDirectories[downloadIndex], fileNames[downloadIndex]);
+	
+						Log.d("quran_srv", "Download Completed [" + downloadUrls[downloadIndex] + "]");
+					} else 
+						return false;
 				}
 			} catch (IOException e) {
 				Log.e("quran_srv", "Download paused: IO Exception", e);
@@ -312,15 +334,21 @@ public class QuranDataService extends Service {
 		public void run() {
 			onDowloadStart();
 			try {
-				while (true) {
+				while (isRunning) {
 					if (isInternetOn() && resumeDownload()) {
-						onDownloadComplete();
+						if (isRunning)
+							onDownloadComplete();
+						break;
+					}
+					if (!isRunning) {
+						Log.d("quran_srv", "Canceled");
 						break;
 					}
 					try {
 						Log.d("quran_srv", "Disconnected.. Retring after " + WAIT_TIME + " seconds");
 						sleep(WAIT_TIME * 1000);
 					} catch (InterruptedException e) {
+						
 					}
 				}
 			} catch(Exception e) {
@@ -392,5 +420,9 @@ public class QuranDataService extends Service {
 			service.stopSelf();
 			QuranDataService.isRunning = false;
 		}
+	}
+	
+	private String escapeUrlSpecialCharacters(String url) {
+		return url.replace(" ", "%20");
 	}
 }
