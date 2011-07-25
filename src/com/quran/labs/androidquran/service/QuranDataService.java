@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.ArrayList;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -127,27 +128,40 @@ public class QuranDataService extends Service {
 		boolean downloadImage = intent.getBooleanExtra(DOWNLOAD_AYAH_IMAGES_KEY, false);
 
 		Log.d("quran_srv", "finish reading params");
-		int itemsCount = downloadImage? (endAyah-startAyah+1)*2 : endAyah-startAyah+1;
-		String fileNames[] = new String[itemsCount];
-		String urls[] = new String[itemsCount];
-		String directories[] = new String[itemsCount];
 		
-		int index = 0;
+		ArrayList<String> fileNames = new ArrayList<String>();
+		ArrayList<String> urls = new ArrayList<String>();
+		ArrayList<String> directories = new ArrayList<String>();
+		
 		for (int i = startAyah; i <= endAyah; i++) {
 			// get ayah
 			AyahItem ayah = QuranAudioLibrary.getAyahItem(
 					getApplicationContext(), soura, i, quranReader);
-			 fileNames[index] = ayah.getAyah() + QuranAudioLibrary.AUDIO_EXTENSION;
-			 urls[index] = ayah.getRemoteAudioUrl();
-			 directories[index++] = QuranUtils.getSuraAudioPath(ayah.getQuranReaderId(), ayah.getSoura());
+			 String fileName = ayah.getAyah() + QuranAudioLibrary.AUDIO_EXTENSION;
+			 String dir = QuranUtils.getSuraAudioPath(ayah.getQuranReaderId(), ayah.getSoura());
+			 File f = new File(dir, fileName);
+			 if (f.exists())
+				 continue;
+			 fileNames.add(fileName);
+			 directories.add(dir);
+			 urls.add(ayah.getRemoteAudioUrl());
+			 
 			 if(downloadImage){
-				 fileNames[index] = ayah.getAyah() + QuranAudioLibrary.IMAGE_EXTENSION;
-				 urls[index] = ayah.getRemoteImageUrl();
-				 directories[index++] = QuranUtils.getSuraImagePath(ayah.getSoura());
+				 fileName = ayah.getAyah() + QuranAudioLibrary.IMAGE_EXTENSION;
+				 dir = QuranUtils.getSuraImagePath(ayah.getSoura());
+				 
+				 f = new File(dir, fileName);
+				 if (f.exists())
+					 continue;
+				 
+				 fileNames.add(fileName);
+				 directories.add(dir);
+				 urls.add(ayah.getRemoteImageUrl());
 			 }
-			
 		}
-		thread = new DownloadThread(this, urls, fileNames, directories, false);
+
+		thread = new DownloadThread(this, urls.toArray(new String[urls.size()]), 
+					fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);
 		thread.start();
 	}
 
