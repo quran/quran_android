@@ -84,9 +84,14 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	}
 	
 	protected void downloadSura(int readerId, int sura) {
+		downloadSura(readerId, sura, 1);
+	}
+	
+	protected void downloadSura(int readerId, int sura, int ayah) {
 		Intent intent = new Intent(this, QuranDataService.class);
 		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 		intent.putExtra(QuranDataService.SOURA_KEY, sura);
+		intent.putExtra(QuranDataService.AYAH_KEY, ayah);
 		intent.putExtra(QuranDataService.READER_KEY, readerId);
 		startDownloadService(intent);
 	}
@@ -124,12 +129,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 		@Override
     	public void onProgressUpdate(Integer...integers){
     		int progress = integers[0];
-    		if (progress == -1){
-    			pDialog.setTitle(R.string.extracting_title);
-				pDialog.setMessage(getString(R.string.extracting_message));
-				pDialog.setProgress(0);
-    		}
-    		else pDialog.setProgress(progress);
+    		pDialog.setProgress(progress);
     	}
     	
     	@Override

@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.data;
 
 import com.quran.labs.androidquran.util.QuranSettings;
+import android.util.Log;
 
 public class QuranInfo {
 
@@ -272,16 +273,15 @@ public class QuranInfo {
 			int ss = QuranInfo.PAGE_SURA_START[index];
 			
 			// if we've passed the sura, return the previous page
-			if (ss > sura) return index - 1;
-			
-			// otherwise, if we're at the sura and found the ayah, return it
-			if ((ss == sura) && (QuranInfo.PAGE_AYAH_START[index] > ayah))
-				return index;
+			// or, if we're at the same sura and passed the ayah
+			if (ss > sura || ((ss == sura) && (QuranInfo.PAGE_AYAH_START[index] > ayah))) {
+				break;
+			}
 			
 			// otherwise, look at the next page
-			else index++;
+			index++;
 		}
-		
+		 
 		return index;
 	}
 
