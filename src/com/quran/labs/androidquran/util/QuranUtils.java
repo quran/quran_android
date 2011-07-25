@@ -312,6 +312,11 @@ public class QuranUtils {
 	}
 
 	public static String getAyahAudioPath(int sura, int ayah, int quranReaderId) {
+		// always get basmala from el fate7a
+		if(ayah == 0){
+			ayah = 1;
+			sura = 1;
+		}
 		return getAudioDirectory() + File.separator + quranReaderId
 				+ File.separator + sura + File.separator + ayah
 				+ QuranAudioLibrary.AUDIO_EXTENSION;
