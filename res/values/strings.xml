@@ -15,7 +15,7 @@
 	<string name="downloadPrompt_ok">Yes</string>
 	<string name="downloadPrompt_no">No</string>
 	<string name="downloading_title">Downloading...</string>
-	<string name="downloading_message">Please wait for the files to download.</string>
+	<string name="downloading_message">Please wait for the files to download. (Resume supported)</string>
 	<string name="extracting_title">Processing...</string>
 	<string name="extracting_message">Please wait the files are processed.</string>
 	<string name="menu_jump">Jump</string>

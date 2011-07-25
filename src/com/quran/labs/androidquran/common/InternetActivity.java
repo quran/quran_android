@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.service.QuranDataService;
@@ -21,6 +23,14 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	protected AsyncTask<?, ?, ?> currentTask = null;
 	protected boolean starting = true;
 	protected ServiceConnection serviceConnection;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		initServiceConnection();
+		if (QuranDataService.isRunning)
+			showProgressDialog();
+	}
 	
 	public boolean isInternetOn() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -149,7 +159,23 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	pDialog = new ProgressDialog(this);
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);
-    	pDialog.setCancelable(false);
+    	pDialog.setCancelable(true);
+    	pDialog.setButton(ProgressDialog.BUTTON1, "Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.d("QuranAndroid", "User canceled downloading..");
+				if (serviceConnection != null) {
+					if (downloadService != null) {
+						downloadService.stop();
+					}
+					unbindService(serviceConnection);
+				}
+				stopService(new Intent(getApplicationContext(), QuranDataService.class));
+				currentTask = null;
+				pDialog.dismiss();
+			}
+		});
+    	
     	pDialog.setMessage(getString(R.string.downloading_message));
     	pDialog.show();
     	
