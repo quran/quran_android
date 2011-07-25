@@ -53,8 +53,15 @@ public class AudioServiceBinder extends Binder implements
 		}
 		paused = false;	
 		stopped = true;
+		clearNotification();
 	}
 
+	
+	private void clearNotification(){
+		NotificationManager mgr = 
+			(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+		 mgr.cancelAll();
+	}
 	/* (non-Javadoc)
 	 * @see org.islam.quran.IAudioPlayer#play(org.islam.quran.AyahAudioItem)
 	 */
