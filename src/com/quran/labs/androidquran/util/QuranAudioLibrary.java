@@ -45,7 +45,8 @@ public class QuranAudioLibrary {
 			int soura = currentSouraId;
 			if(currentAyaId >= QuranInfo.SURA_NUM_AYAHS[currentSouraId - 1]){
 				soura = (currentSouraId+1)%(QuranInfo.SURA_NUM_AYAHS.length + 1);
-				ayah = soura == 9 ? 1 : 0;
+				if(soura == 0) soura = 1;
+				ayah = soura == 9 || soura == 1 ? 1 : 0;
 				//ayah = 1;
 			}else
 				ayah++;
@@ -71,7 +72,8 @@ public class QuranAudioLibrary {
 			int ayah = currentAyaId;
 			int soura = currentSouraId;
 			if(currentAyaId == 1){
-				soura = (currentSouraId-1)%(QuranInfo.SURA_NUM_AYAHS.length + 1);
+				soura--;
+				if(soura == 0) soura = 114;
 				ayah = QuranInfo.SURA_NUM_AYAHS[soura - 1];
 			}else
 				ayah--;

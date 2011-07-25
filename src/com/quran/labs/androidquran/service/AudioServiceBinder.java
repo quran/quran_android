@@ -66,6 +66,8 @@ public class AudioServiceBinder extends Binder implements
 	 * @see org.islam.quran.IAudioPlayer#play(org.islam.quran.AyahAudioItem)
 	 */
 	public void play(AyahItem item) {
+		if(item == null)
+			return;
 		this.currentItem = item;
 		if(mp != null){
 			mp.stop();

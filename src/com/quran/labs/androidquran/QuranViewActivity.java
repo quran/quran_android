@@ -145,13 +145,17 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 			}else if(action.equalsIgnoreCase(ACTION_PAUSE)){
 				quranAudioPlayer.pause();
 			}else if(action.equalsIgnoreCase(ACTION_NEXT)){
-				AyahItem ayah = QuranAudioLibrary.getNextAyahAudioItem(this,
-						quranAudioPlayer.getCurrentAyah());
-				quranAudioPlayer.play(ayah);
+				if(quranAudioPlayer.getCurrentAyah() != null){
+					AyahItem ayah = QuranAudioLibrary.getNextAyahAudioItem(this,
+							quranAudioPlayer.getCurrentAyah());
+					quranAudioPlayer.play(ayah);
+				}
 			}else if (action.equalsIgnoreCase(ACTION_PREVIOUS)){
-				AyahItem ayah = QuranAudioLibrary.getPreviousAyahAudioItem(this,
-						quranAudioPlayer.getCurrentAyah());
-				quranAudioPlayer.play(ayah);
+				if(quranAudioPlayer.getCurrentAyah() != null){
+					AyahItem ayah = QuranAudioLibrary.getPreviousAyahAudioItem(this,
+							quranAudioPlayer.getCurrentAyah());
+					quranAudioPlayer.play(ayah);
+				}
 			}else if (action.equalsIgnoreCase(ACTION_STOP)){
 			
 				lastAyah = null;
