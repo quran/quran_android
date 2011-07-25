@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.data;
 
 import com.quran.labs.androidquran.util.QuranSettings;
-import android.util.Log;
 
 public class QuranInfo {
 
@@ -262,6 +261,7 @@ public class QuranInfo {
 	
 	public static int getPageFromSuraAyah(int sura, int ayah){
 		// basic bounds checking
+		if (ayah == 0) ayah = 1;
 		if ((sura < 1) || (sura > ApplicationConstants.SURAS_COUNT) 
 				|| (ayah < ApplicationConstants.AYA_MIN) || (ayah > ApplicationConstants.AYA_MAX))
 			return -1;
