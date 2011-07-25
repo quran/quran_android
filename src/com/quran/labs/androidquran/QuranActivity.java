@@ -85,17 +85,19 @@ public class QuranActivity extends BaseQuranActivity {
 
 		ListView list = (ListView)findViewById(R.id.suralist);
 		EfficientAdapter suraAdapter = new EfficientAdapter(this, elements);
-		list.setAdapter(suraAdapter);
-		list.setOnItemClickListener(new OnItemClickListener(){
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View v, int position,
-					long id) {
-				ListView p = (ListView)parent;
-				QuranElement elem = (QuranElement)p.getAdapter().getItem((int)id);
-				jumpTo(elem.page);				
-			}
-		});
+		if(list != null){
+			list.setAdapter(suraAdapter);
+			list.setOnItemClickListener(new OnItemClickListener(){
+	
+				@Override
+				public void onItemClick(AdapterView<?> parent, View v, int position,
+						long id) {
+					ListView p = (ListView)parent;
+					QuranElement elem = (QuranElement)p.getAdapter().getItem((int)id);
+					jumpTo(elem.page);				
+				}
+			});
+		}
 	}
 	
 	private class QuranElement {
