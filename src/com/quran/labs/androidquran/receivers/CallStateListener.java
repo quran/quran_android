@@ -12,6 +12,7 @@ public class CallStateListener extends PhoneStateListener {
 	private int currentCallState = TelephonyManager.CALL_STATE_IDLE;
 	private int prevCallState = TelephonyManager.CALL_STATE_IDLE;
 	private IAudioPlayer audioService;
+	private boolean wasPaused = false;
 	
 	public CallStateListener(IAudioPlayer mediaPlayerService ) {
 			this.audioService = mediaPlayerService;		
@@ -22,10 +23,18 @@ public class CallStateListener extends PhoneStateListener {
 		 prevCallState = currentCallState;
 		  currentCallState = state;
 		switch (state) {
+		case TelephonyManager.CALL_STATE_OFFHOOK:
 		case TelephonyManager.CALL_STATE_RINGING:
-			if(audioService != null)
+			if(audioService != null) {
 				audioService.pause();
+				wasPaused = true;
+			}
 			break;
+		case TelephonyManager.CALL_STATE_IDLE:
+			if (wasPaused && audioService != null) {
+				audioService.resume();
+			}
+			wasPaused = false;
 		default:
 			break;
 		}		
