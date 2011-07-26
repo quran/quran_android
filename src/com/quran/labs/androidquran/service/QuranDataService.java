@@ -138,8 +138,8 @@ public class QuranDataService extends Service {
 			// get ayah
 			AyahItem ayah = QuranAudioLibrary.getAyahItem(
 					getApplicationContext(), soura, i, quranReader);
-			 String fileName = ayah.getAyah() + QuranAudioLibrary.AUDIO_EXTENSION;
-			 String dir = QuranUtils.getSuraAudioPath(ayah.getQuranReaderId(), ayah.getSoura());
+			 String fileName =  ayah.getLocalAudioUrl().substring(ayah.getLocalAudioUrl().lastIndexOf(File.separator) + 1);
+			 String dir = ayah.getLocalAudioUrl().substring(0, ayah.getLocalAudioUrl().lastIndexOf(File.separator));
 			 File f = new File(dir, fileName);
 			 if (f.exists())
 				 continue;
