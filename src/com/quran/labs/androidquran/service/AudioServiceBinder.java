@@ -87,8 +87,10 @@ public class AudioServiceBinder extends Binder implements
 			else if(remotePlayEnabled) {
 				url = item.getRemoteAudioUrl();
 			}else{
-				if(ayahListener != null)
+				if(ayahListener != null){
+					clearNotification();
 					ayahListener.onAyahNotFound(item);
+				}
 				else
 				{
 					// show notification ayah not found, download it or play remotely	
