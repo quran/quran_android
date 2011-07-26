@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -15,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.markupartist.android.widget.ActionBar;
+import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -24,18 +27,51 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranActivity extends BaseQuranActivity {
+	
+	private ActionBar actionBar;
+	private static final String ACTION_BOOKMARK = "BOOKMARK";
+	private static final String ACTION_RESUME = "RESUME";
 		
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.quran_list);
         QuranSettings.load(prefs);
+        
         // set the asset manager to define the Arabic font
         ArabicStyle.setAssetManager(getAssets());
         Intent i = new Intent(this, QuranDataActivity.class);
-		this.startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
+		startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
+		
+		actionBar = (ActionBar) findViewById(R.id.actionbar);
+		addActions();
     }
+    
+	protected void addActions() {
+		actionBar.addAction(getIntentAction(ACTION_RESUME, R.drawable.translation));
+		actionBar.addAction(getIntentAction(ACTION_BOOKMARK, R.drawable.bookmarks));
+	}
+	
+	protected void onNewIntent(Intent intent) {
+		String action = intent.getAction();
+		if (ACTION_BOOKMARK.equals(action)) {
+			Intent i = new Intent(getApplicationContext(), BookmarksActivity.class);
+	    	startActivityForResult(i, ApplicationConstants.BOOKMARKS_CODE);
+		} else if (ACTION_RESUME.equals(action)) {
+			jumpTo(QuranSettings.getInstance().getLastPage());
+		}
+	}
+	
+	private IntentAction getIntentAction(String intentAction, int drawable) {
+		Intent i = new Intent(this, QuranActivity.class);
+		i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		i.setAction(intentAction);
+		IntentAction action = new IntentAction(this, i, drawable);
+		return action;
+	}
     
     public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
