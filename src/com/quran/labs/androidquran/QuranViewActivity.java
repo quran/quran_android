@@ -497,7 +497,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private int getReaderIndex(int readerId) {
 		int[] ids = getResources().getIntArray(R.array.quran_readers_id);
-		for (int i : ids) {
+		for (int i=0 ; i<ids.length ; i++) {
 			if (ids[i] == readerId) {
 				return i;
 			}

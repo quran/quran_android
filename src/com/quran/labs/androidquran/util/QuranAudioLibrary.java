@@ -136,7 +136,7 @@ public class QuranAudioLibrary {
 		int[] ids = 
 			context.getResources().getIntArray(R.array.quran_readers_id);
 		int index = 0;
-		for (int i : ids) {
+		for(int i = 0; i < ids.length; i++){
 			if(ids[i] == readerId){
 				index = i;
 				break;
