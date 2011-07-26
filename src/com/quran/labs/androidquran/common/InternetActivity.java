@@ -159,7 +159,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	pDialog = new ProgressDialog(this);
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);
-    	pDialog.setCancelable(true);
+    	pDialog.setCancelable(false);
     	pDialog.setButton(ProgressDialog.BUTTON1, "Cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
