@@ -15,11 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.AyahItem;
@@ -275,6 +278,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		final View view = li.inflate(R.layout.dialog_jump_to_ayah, null);
 		
 		final Spinner ayatSpinner = (Spinner) view.findViewById(R.id.spinner_ayat);
+		final CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox_whole_quran);
 		int startAyah = pageBounds[1];
 		int endAyah = pageBounds[0] == pageBounds[2]? pageBounds[3] : QuranInfo.SURA_NUM_AYAHS[pageBounds[0] - 1];
 		initAyatSpinner(ayatSpinner, startAyah, endAyah);
@@ -300,7 +304,19 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				
 			}
 		});
-				
+			
+		checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					initSurasSpinner(surasSpinner, 1, 114);
+					surasSpinner.setSelection(pageBounds[0] - 1);
+				}
+				else
+					initSurasSpinner(surasSpinner, pageBounds[0], pageBounds[2]);
+			}
+		});
 		dialogBuilder.setView(view);
 		dialogBuilder.setMessage("Jumo to ayah");
 		dialogBuilder.setPositiveButton("Jump",
