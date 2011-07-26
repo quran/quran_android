@@ -9,12 +9,19 @@
      android:id="@+id/spinner_suras"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:prompt="@string/prompt_select_sura"
         android:drawSelectorOnTop="true">
       </Spinner>
       <Spinner 
      android:id="@+id/spinner_ayat"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:prompt="@string/prompt_select_ayah"
         android:drawSelectorOnTop="true">
       </Spinner>
+      <CheckBox android:id="@+id/checkbox_whole_quran"
+      			android:layout_width="fill_parent"
+      			android:layout_height="wrap_content"
+      			android:text="Show all suras"
+		/>
 </LinearLayout>
