@@ -98,12 +98,14 @@ public class AudioServiceBinder extends Binder implements
 			}	
 			if(url != null){
 				mp.setDataSource(url);
-				mp.prepare();
-				mp.start();
-				paused = false;
-				stopped = false;
-				if(!notified)
-					showNotification(item);
+				mp.setOnPreparedListener(this);
+				mp.prepareAsync();
+//				mp.prepare();
+//				mp.start();
+//				paused = false;
+//				stopped = false;
+//				if(!notified)
+//					showNotification(item);
 			}
 			
 		} catch (IllegalArgumentException e) {
