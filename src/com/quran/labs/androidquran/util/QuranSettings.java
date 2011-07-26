@@ -19,9 +19,18 @@ public class QuranSettings {
 	private int lastPage = 0;
 	private String activeTranslation = null;
 	private boolean reshapeArabic = false;
+	private int lastReader = 0;
 
 	private QuranSettings() {
 		
+	}
+
+	public int getLastReader() {
+		return lastReader;
+	}
+
+	public void setLastReader(int lastReader) {
+		this.lastReader = lastReader;
 	}
 
 	public Integer getLastPage() {
@@ -115,6 +124,7 @@ public class QuranSettings {
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.NO_PAGE_SAVED);
 		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
 		instance.reshapeArabic = preferences.getBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, false);
+		instance.lastReader = preferences.getInt(ApplicationConstants.PREF_LAST_READER, 0);
 	}
 	
 	public static void save(SharedPreferences preferences) {
@@ -129,6 +139,7 @@ public class QuranSettings {
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
 		editor.putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, instance.activeTranslation);
 		editor.putBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, instance.reshapeArabic);
+		editor.putInt(ApplicationConstants.PREF_LAST_READER, instance.lastReader);
 		editor.commit();
 	}
 }
