@@ -30,6 +30,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranViewActivity extends PageViewQuranActivity implements
@@ -47,19 +48,23 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private boolean bounded = false;
 	private AudioServiceBinder quranAudioPlayer = null;
+	
+	// on Stop Actions
+	private static final int ACTION_BAR_ACTION_PLAY = 0;
 
+	// on Play Actions
 	private static final int ACTION_BAR_ACTION_CHANGE_READER = 0;
 	private static final int ACTION_BAR_ACTION_JUMP_TO_AYAH = 1;
 	private static final int ACTION_BAR_ACTION_PREVIOUS = 2;
-	private static final int ACTION_BAR_ACTION_PLAY = 3;
-	private static final int ACTION_BAR_ACTION_PAUSE = 4;
-	private static final int ACTION_BAR_ACTION_STOP = 5;
-	private static final int ACTION_BAR_ACTION_NEXT = 6;
+	private static final int ACTION_BAR_ACTION_PAUSE = 3;
+	private static final int ACTION_BAR_ACTION_STOP = 4;
+	private static final int ACTION_BAR_ACTION_NEXT = 5;
 
 	private AyahItem lastAyah;
 	private int currentReaderId;
 
-	HashMap<Integer, IntentAction> actionBarActions = new HashMap<Integer, IntentAction>();
+	private HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
+	private HashMap<String, Integer> actionBarIndecies = new HashMap<String, Integer>();
 
 	// private TextView textView;
 
@@ -73,6 +78,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			quranAudioPlayer = (AudioServiceBinder) service;
 			quranAudioPlayer.setAyahCompleteListener(QuranViewActivity.this);
+			if (quranAudioPlayer.isPlaying()) {
+				onActionPlay();
+			}
 		}
 	};
 
@@ -88,37 +96,30 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		super.addActions();
 		if (actionBar != null) {
 			// actionBar.setTitle("QuranAndroid");
-			actionBarActions.put(ACTION_BAR_ACTION_PLAY, getIntentAction(
+			actionBarActions.put(ACTION_PLAY, getIntentAction(
 					ACTION_PLAY, android.R.drawable.ic_media_play));
-			actionBarActions.put(ACTION_BAR_ACTION_PAUSE, getIntentAction(
+			actionBarActions.put(ACTION_PAUSE, getIntentAction(
 					ACTION_PAUSE, android.R.drawable.ic_media_pause));
-			actionBarActions.put(ACTION_BAR_ACTION_NEXT, getIntentAction(
+			actionBarActions.put(ACTION_NEXT, getIntentAction(
 					ACTION_NEXT, android.R.drawable.ic_media_next));
-			actionBarActions.put(ACTION_BAR_ACTION_PREVIOUS, getIntentAction(
+			actionBarActions.put(ACTION_PREVIOUS, getIntentAction(
 					ACTION_PREVIOUS, android.R.drawable.ic_media_previous));
-			actionBarActions.put(ACTION_BAR_ACTION_STOP, getIntentAction(
+			actionBarActions.put(ACTION_STOP, getIntentAction(
 					ACTION_STOP, R.drawable.stop));
-			actionBarActions.put(ACTION_BAR_ACTION_CHANGE_READER,
+			actionBarActions.put(ACTION_CHANGE_READER,
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
-			actionBarActions.put(ACTION_BAR_ACTION_JUMP_TO_AYAH,
+			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.jump));
-
-			// actionBar.addAction(actionBarActions.get(ACTION_BAR_ACTION_PREVIOUS),
-			// ACTION_BAR_ACTION_PREVIOUS);
-			// actionBar.addAction(actionBarActions.get(ACTION_BAR_ACTION_PLAY),
-			// ACTION_BAR_ACTION_PLAY);
-			// actionBar.addAction(actionBarActions.get(ACTION_BAR_ACTION_PAUSE),
-			// ACTION_BAR_ACTION_PAUSE);
-			// actionBar.addAction(actionBarActions.get(ACTION_BAR_ACTION_STOP),
-			// ACTION_BAR_ACTION_STOP);
-			// actionBar.addAction(actionBarActions.get(ACTION_BAR_ACTION_NEXT),
-			// ACTION_BAR_ACTION_NEXT);
-			// actionBar.addAction(actionBarActions.get(ACTION_BAR_ACTION_CHANGE_READER),
-			// ACTION_BAR_ACTION_CHANGE_READER);
-
-			for (Integer actionId : actionBarActions.keySet()) {
-				actionBar.addAction(actionBarActions.get(actionId), actionId);
-			}
+			
+			actionBarIndecies.put(ACTION_PLAY, ACTION_BAR_ACTION_PLAY);
+			actionBarIndecies.put(ACTION_PAUSE, ACTION_BAR_ACTION_PAUSE);
+			actionBarIndecies.put(ACTION_NEXT, ACTION_BAR_ACTION_NEXT);
+			actionBarIndecies.put(ACTION_PREVIOUS, ACTION_BAR_ACTION_PREVIOUS);
+			actionBarIndecies.put(ACTION_STOP, ACTION_BAR_ACTION_STOP);
+			actionBarIndecies.put(ACTION_CHANGE_READER, ACTION_BAR_ACTION_CHANGE_READER);
+			actionBarIndecies.put(ACTION_JUMP_TO_AYAH, ACTION_BAR_ACTION_JUMP_TO_AYAH);
+			
+			onActionStop();
 		}
 	}
 
@@ -150,8 +151,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						playAudio(lastAyah);
 					}
 				}
+				onActionPlay();
 			} else if (action.equalsIgnoreCase(ACTION_PAUSE)) {
 				quranAudioPlayer.pause();
+				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_NEXT)) {
 				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
 						getCurrentAudioAyah());
@@ -165,6 +168,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			} else if (action.equalsIgnoreCase(ACTION_STOP)) {
 				lastAyah = null;
 				quranAudioPlayer.stop();
+				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_CHANGE_READER)){
 				showChangeReaderDialog();
 			}
@@ -172,6 +176,20 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				showJumpToAyahDialog();
 			}
 		}
+	}
+
+	private void onActionPlay() {
+		actionBar.removeAllActions();
+		for (String action : actionBarIndecies.keySet()) {
+			if (ACTION_PLAY.equals(action))
+				continue;
+			actionBar.addAction(actionBarActions.get(action), actionBarIndecies.get(ACTION_PLAY));
+		}
+	}
+
+	private void onActionStop() {
+		actionBar.removeAllActions();
+		actionBar.addAction(actionBarActions.get(ACTION_PLAY), actionBarIndecies.get(ACTION_PLAY));
 	}
 
 	private void showDownloadDialog(final AyahItem i) {
@@ -185,7 +203,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		dialog.setView(view);
 		// AlertDialog dialog = new DownloadDialog(this);
 		dialog.setMessage("Do you want to download sura");
-		dialog.setPositiveButton("download",
+		dialog.setPositiveButton("Download",
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -197,11 +215,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 							if (s.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
 								setReaderId(s.getSelectedItemPosition());
 								// reader is not default reader
-								if (getReaderId() != i.getQuranReaderId()) {
+								if (getQuranReaderId() != i.getQuranReaderId()) {
 									lastAyah = QuranAudioLibrary.getAyahItem(
 											getApplicationContext(), i
 													.getSoura(), i.getAyah(),
-											getReaderId());
+											getQuranReaderId());
 								}
 							}
 						}
@@ -222,12 +240,12 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						if (s != null) {
 							if (s.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
 								// reader is not default reader
-								if (getReaderId() != i.getQuranReaderId()) {
-									setReaderId(getReaderId());
+								if (getQuranReaderId() != i.getQuranReaderId()) {
+									setReaderId(getQuranReaderId());
 									lastAyah = QuranAudioLibrary.getAyahItem(
 											getApplicationContext(), i
 													.getSoura(), i.getAyah(),
-											getReaderId());
+											getQuranReaderId());
 								}
 							}
 						}
@@ -458,12 +476,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		}
 	}
 
-	// temp method to select default reader id
-	// we should put it in another place + we should read reader from
-	// preferences
 	private int getQuranReaderId() {
-		// TODO Auto-generated method stub
-		return currentReaderId;
+		return QuranSettings.getInstance().getLastReader();
 	}
 
 	private AyahItem getCurrentAudioAyah() {
@@ -478,10 +492,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private void setReaderId(int readerNamePosition) {
 		currentReaderId = getResources().getIntArray(R.array.quran_readers_id)[readerNamePosition];
-	}
-
-	private int getReaderId() {
-		return currentReaderId;
+		QuranSettings.getInstance().setLastReader(currentReaderId);
 	}
 
 	private int getReaderIndex(int readerId) {

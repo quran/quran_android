@@ -259,6 +259,11 @@ public class QuranInfo {
 		return QuranInfo.JUZ_PAGE_START[juz-1];
 	}
 	
+	public static int getJuzFromPage(int page) {
+		int juz = ((page -2) / 20) + 1;
+		return juz > 30 ? 30 : juz < 1 ? 1 : juz;
+	}
+	
 	public static int getPageFromSuraAyah(int sura, int ayah){
 		// basic bounds checking
 		if (ayah == 0) ayah = 1;
@@ -297,6 +302,6 @@ public class QuranInfo {
 	
 	public static String getPageTitle(int page) {
 		return getPageTitle() + page +
-		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
+		" - " + getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" + getJuzTitle() + " " + getJuzFromPage(page);
 	}
 }
