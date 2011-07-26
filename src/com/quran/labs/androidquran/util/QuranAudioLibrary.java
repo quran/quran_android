@@ -133,9 +133,18 @@ public class QuranAudioLibrary {
 	private static String getAudioUrl(Context context, int readerId){
 		String[] urls = 
 			context.getResources().getStringArray(R.array.quran_readers_urls);
+		int[] ids = 
+			context.getResources().getIntArray(R.array.quran_readers_id);
+		int index = 0;
+		for (int i : ids) {
+			if(ids[i] == readerId){
+				index = i;
+				break;
+			}
+		}
 		if(readerId > urls.length)
 			return null;
-		return urls[readerId];
+		return urls[index];
 	}
 	
 }

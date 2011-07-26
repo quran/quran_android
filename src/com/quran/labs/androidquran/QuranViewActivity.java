@@ -130,34 +130,26 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 				if(quranAudioPlayer.isPaused())
 					quranAudioPlayer.resume();
 				else{
-					Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
-					final AyahItem i = QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0],
-							pageBounds[1], getQuranReaderId());
-					lastAyah = i;
+					lastAyah = getCurrentAudioAyah();
 					// soura not totall found
-					if(QuranUtils.isSouraAudioFound(i.getQuranReaderId(), i.getSoura()) < 0){
-						showDownloadDialog(i);
+					if(QuranUtils.isSouraAudioFound(lastAyah.getQuranReaderId(), lastAyah.getSoura()) < 0){
+						showDownloadDialog(lastAyah);
 					}else{
 						quranAudioPlayer.enableRemotePlay(false);
-						playAudio(i);
+						playAudio(lastAyah);
 					}
 				}		
 			}else if(action.equalsIgnoreCase(ACTION_PAUSE)){
 				quranAudioPlayer.pause();
 			}else if(action.equalsIgnoreCase(ACTION_NEXT)){
-				if(quranAudioPlayer.getCurrentAyah() != null){
-					AyahItem ayah = QuranAudioLibrary.getNextAyahAudioItem(this,
-							quranAudioPlayer.getCurrentAyah());
-					quranAudioPlayer.play(ayah);
-				}
+				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this, getCurrentAudioAyah());
+				if(quranAudioPlayer != null && quranAudioPlayer.isPlaying())
+					quranAudioPlayer.play(lastAyah);
 			}else if (action.equalsIgnoreCase(ACTION_PREVIOUS)){
-				if(quranAudioPlayer.getCurrentAyah() != null){
-					AyahItem ayah = QuranAudioLibrary.getPreviousAyahAudioItem(this,
-							quranAudioPlayer.getCurrentAyah());
-					quranAudioPlayer.play(ayah);
-				}
+				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getCurrentAudioAyah());
+				if(quranAudioPlayer != null && quranAudioPlayer.isPlaying())
+					quranAudioPlayer.play(lastAyah);
 			}else if (action.equalsIgnoreCase(ACTION_STOP)){
-			
 				lastAyah = null;
 				quranAudioPlayer.stop();
 			}else if(action.equalsIgnoreCase(ACTION_CHANGE_READER))
@@ -172,7 +164,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
         final View view = li.inflate(R.layout.dialog_download, null);
         Spinner s = (Spinner) view.findViewById(R.id.spinner);
         if(s != null)
-        	s.setSelection(getQuranReaderId());
+        	s.setSelection(getReaderIndex(getQuranReaderId()));
         dialog.setView(view);
 		//AlertDialog dialog = new DownloadDialog(this);
 		dialog.setMessage("Do you want to download sura");
@@ -186,10 +178,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 				if(s != null){
 					if(s.getSelectedItemPosition() != Spinner.INVALID_POSITION){
 						// reader is not default reader
-						if(s.getSelectedItemPosition() != i.getQuranReaderId()){
+						if(getReaderId() != i.getQuranReaderId()){
+							setReaderId(s.getSelectedItemPosition());
 							lastAyah = QuranAudioLibrary.getAyahItem(getApplicationContext(), i.getSoura(), 
-									i.getAyah(), s.getSelectedItemPosition());
-							currentReaderId = s.getSelectedItemPosition();
+									i.getAyah(), getReaderId());
+							
 						}
 					}
 				}
@@ -208,10 +201,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 				if(s != null){
 					if(s.getSelectedItemPosition() != Spinner.INVALID_POSITION){
 						// reader is not default reader
-						if(s.getSelectedItemPosition() != i.getQuranReaderId()){
+						if(getReaderId() != i.getQuranReaderId()){
+							setReaderId(getReaderId());
 							lastAyah = QuranAudioLibrary.getAyahItem(getApplicationContext(), i.getSoura(), 
-									i.getAyah(), s.getSelectedItemPosition());
-							currentReaderId = s.getSelectedItemPosition();
+									i.getAyah(), getReaderId());
 						}
 					}
 				}
@@ -237,7 +230,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		LayoutInflater li = LayoutInflater.from(this);
         final View view = li.inflate(R.layout.dialog_download, null); 
         Spinner s = (Spinner)view.findViewById(R.id.spinner);
-        s.setSelection(getQuranReaderId());
+        s.setSelection(getReaderIndex(getQuranReaderId()));
         dialogBuilder.setView(view);
 		dialogBuilder.setMessage("Change quran reader");
 		dialogBuilder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
@@ -246,9 +239,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 			public void onClick(DialogInterface dialog, int which) {
 				Spinner s = (Spinner) view.findViewById(R.id.spinner);
 				if(s != null && s.getSelectedItemPosition() != Spinner.INVALID_POSITION){
-					if(currentReaderId != s.getSelectedItemPosition()){
-						currentReaderId = s.getSelectedItemPosition();
-					}
+					setReaderId(s.getSelectedItemPosition());
 				}
 			}
 		});	
@@ -342,5 +333,31 @@ public class QuranViewActivity extends PageViewQuranActivity implements AyahStat
 		return currentReaderId;
 	}
 
+	private AyahItem getCurrentAudioAyah(){
+		if(lastAyah != null){
+			return lastAyah;
+		}
+		Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
+		return QuranAudioLibrary.getAyahItem(getApplicationContext(), pageBounds[0], pageBounds[1], getQuranReaderId());
+	}
+	
+	private void setReaderId(int readerNamePosition){
+		currentReaderId = getResources().getIntArray(R.array.quran_readers_id)[readerNamePosition];
+	}
+	
+	private int getReaderId(){
+		return currentReaderId;
+	}
+	
+	private int getReaderIndex(int readerId){
+		int[] ids = 
+			getResources().getIntArray(R.array.quran_readers_id);
+		for (int i : ids) {
+			if(ids[i] == readerId){
+				return i;
+			}
+		}
+		return 0;
+	}
 	
 }
