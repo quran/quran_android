@@ -226,7 +226,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 								}
 							}
 						}
-						downloadSura(lastAyah.getQuranReaderId(), lastAyah
+						downloadSura(getQuranReaderId(), lastAyah
 								.getSoura(), lastAyah.getAyah());
 						dialog.dismiss();
 					}
@@ -241,10 +241,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						Spinner s = (Spinner) view.findViewById(R.id.spinner);
 						lastAyah = i;
 						if (s != null) {
-							if (s.getSelectedItemPosition() != Spinner.INVALID_POSITION) {
+							if (s.getSelectedItemPosition() != Spinner.INVALID_POSITION) {								
+								setReaderId(s.getSelectedItemPosition());
 								// reader is not default reader
 								if (getQuranReaderId() != i.getQuranReaderId()) {
-									setReaderId(getQuranReaderId());
 									lastAyah = QuranAudioLibrary.getAyahItem(
 											getApplicationContext(), i
 													.getSoura(), i.getAyah(),
@@ -252,6 +252,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 								}
 							}
 						}
+						if(lastAyah.getQuranReaderId() != getQuranReaderId())
+							lastAyah.setReader(getQuranReaderId());
 						quranAudioPlayer.play(lastAyah);
 						dialog.dismiss();
 					}
@@ -453,7 +455,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	}
 
 	@Override
-	public void onAyahComplete(AyahItem ayah, AyahItem nextAyah) {
+	public boolean onAyahComplete(AyahItem ayah, AyahItem nextAyah) {
 		lastAyah = ayah;
 		if (nextAyah.getQuranReaderId() != getQuranReaderId()
 				&& quranAudioPlayer != null && quranAudioPlayer.isPlaying()) {
@@ -461,10 +463,12 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			lastAyah = QuranAudioLibrary.getAyahItem(this, nextAyah.getSoura(),
 					nextAyah.getAyah(), getQuranReaderId());
 			quranAudioPlayer.play(lastAyah);
+			return false;
 		}
 		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah
 				.getAyah());
 		quranPageFeeder.jumpToPage(page);
+		return true;
 	}
 
 	@Override
@@ -508,7 +512,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private void setReaderId(int readerNamePosition) {
 		currentReaderId = getResources().getIntArray(R.array.quran_readers_id)[readerNamePosition];
-		QuranSettings.getInstance().setLastReader(currentReaderId);
+		QuranSettings.getInstance().setLastReader(currentReaderId);		
 	}
 
 	private int getReaderIndex(int readerId) {
@@ -519,6 +523,21 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			}
 		}
 		return 0;
+	}
+
+	@Override
+	public void onAyahError(AyahItem ayah) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("An error occured");
+		builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				
+			}
+		});
+		builder.show();
 	}
 
 }
