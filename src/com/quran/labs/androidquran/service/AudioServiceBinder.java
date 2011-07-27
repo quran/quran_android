@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
+import android.util.Log;
 
 import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
@@ -21,7 +23,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 
 public class AudioServiceBinder extends Binder implements  
-	OnCompletionListener, IAudioPlayer, OnPreparedListener{
+	OnCompletionListener, IAudioPlayer, OnPreparedListener, OnErrorListener{
 	
 	private MediaPlayer mp = null;
 	private Context context;
@@ -30,9 +32,11 @@ public class AudioServiceBinder extends Binder implements
 	private AyahItem currentItem;
 	private AyahStateListener ayahListener = null;
 	private boolean notified;
+	//private boolean stopped = true;
 	private boolean stopped = true;
+	private boolean preparing = false;
 	
-	public void setAyahCompleteListener(AyahStateListener ayahListener) {
+	public synchronized void setAyahCompleteListener(AyahStateListener ayahListener) {
 		this.ayahListener = ayahListener;
 	}
 
@@ -43,13 +47,18 @@ public class AudioServiceBinder extends Binder implements
 	}
 	
 
-	
-	/* (non-Javadoc)
-	 * @see org.islam.quran.IAudioPlayer#stop()
-	 */
-	public void stop() {
+	public synchronized void stop() {
+		// reset enable remote play to false
+		enableRemotePlay(false);
 		if(mp != null && mp.isPlaying()){
+			try{
 			mp.stop();
+			mp.release();
+			mp = null;
+			}catch (Exception e) {
+				Log.d("AudioServiceBinder:stop",
+						"Exception on calling media player stop " + e.toString() + " " + e.getMessage());
+			}
 		}
 		paused = false;	
 		stopped = true;
@@ -65,11 +74,14 @@ public class AudioServiceBinder extends Binder implements
 	/* (non-Javadoc)
 	 * @see org.islam.quran.IAudioPlayer#play(org.islam.quran.AyahAudioItem)
 	 */
-	public void play(AyahItem item) {
+	public synchronized void play(AyahItem item) {
+		stopped = false;
+		paused = false;
+		
 		if(item == null)
 			return;
 		this.currentItem = item;
-		if(mp != null){
+		if(mp != null && mp.isPlaying()){
 			mp.stop();
 			try{
 				mp.release();
@@ -99,7 +111,9 @@ public class AudioServiceBinder extends Binder implements
 			if(url != null){
 				mp.setDataSource(url);
 				mp.setOnPreparedListener(this);
-				mp.prepareAsync();
+				mp.setOnErrorListener(this);
+				preparing = true;
+				mp.prepareAsync();				
 //				mp.prepare();
 //				mp.start();
 //				paused = false;
@@ -124,10 +138,7 @@ public class AudioServiceBinder extends Binder implements
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.islam.quran.IAudioPlayer#getMediaPlayer()
-	 */
-	public MediaPlayer getMediaPlayer() {
+	public synchronized MediaPlayer getMediaPlayer() {
 		if(mp == null){
 			mp = new MediaPlayer();
 			mp.setOnCompletionListener(this);
@@ -136,10 +147,7 @@ public class AudioServiceBinder extends Binder implements
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.islam.quran.IAudioPlayer#pause()
-	 */
-	public void pause() {
+	public synchronized void pause() {
 		if(mp != null && mp.isPlaying()){			
 			mp.pause();					
 		}
@@ -147,31 +155,30 @@ public class AudioServiceBinder extends Binder implements
 			paused = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.islam.quran.IAudioPlayer#resume()
-	 */
-	public void resume() {
+	public synchronized void resume() {
 		if(mp != null && !mp.isPlaying()){
 			paused = false;
-			mp.start();
+			if(!preparing)
+				mp.start();
 		}
 	}
 
-	public boolean isPaused() {
+	public synchronized boolean isPaused() {
 		return paused;
 	}
 	
 
 	@Override
-	public void onCompletion(MediaPlayer mp) {
+	public synchronized void onCompletion(MediaPlayer mp) {
 		AyahItem nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
-		if(ayahListener != null)
-			ayahListener.onAyahComplete(currentItem, nextItem);
+		boolean continuePlaying = false;
+		if(ayahListener != null && !stopped)
+			continuePlaying = ayahListener.onAyahComplete(currentItem, nextItem);
 		if(nextItem != null){
-			this.currentItem = nextItem;
+			//this.currentItem = nextItem;
 			try{
-				if(!paused && !stopped && mp != null && !mp.isPlaying())
-					this.play(currentItem);
+				if(continuePlaying && !paused && !stopped && mp != null && !mp.isPlaying())
+					this.play(nextItem);
 			}catch(Exception ex){}
 		}
 	}		
@@ -186,8 +193,18 @@ public class AudioServiceBinder extends Binder implements
 
 
 	@Override
-	public void onPrepared(MediaPlayer mp) {
+	public synchronized void onPrepared(MediaPlayer mp) {
+		preparing = false;
 		this.mp  = mp;
+		if(stopped){
+			mp.stop();
+			return;
+		}
+		if(paused){
+			mp.start();
+			mp.pause();
+			return;
+		}
 		if(mp != null){
 			mp.start();
 			paused = false;
@@ -198,16 +215,16 @@ public class AudioServiceBinder extends Binder implements
 	}
 	
 
-	public AyahItem getCurrentAyah(){
+	public synchronized AyahItem getCurrentAyah(){
 		return currentItem;
 	}
 	
 	
-	public void enableRemotePlay(boolean remote){
+	public synchronized void enableRemotePlay(boolean remote){
 		this.remotePlayEnabled = remote;
 	}
 	
-	public boolean isRemotePlayEnabled(){
+	public synchronized boolean isRemotePlayEnabled(){
 		return this.remotePlayEnabled;
 	}
 	
@@ -244,8 +261,26 @@ public class AudioServiceBinder extends Binder implements
 
 	}
 	
-	public boolean isPlaying(){
+	public synchronized boolean isPlaying(){
 		return !paused && !stopped;
+	}
+
+
+
+	@Override
+	public synchronized boolean onError(MediaPlayer mp, int what, int extra) {
+		if(this.mp != null && mp.isPlaying()){
+			try{
+				this.mp.stop();
+				if(mp != this.mp && mp.isPlaying())
+					mp.stop();
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		if(ayahListener != null && !stopped)
+			ayahListener.onAyahError(currentItem);
+		return true;
 	}
 	
 };
