@@ -51,6 +51,7 @@ public class QuranActivity extends BaseQuranActivity {
     }
     
 	protected void addActions() {
+		actionBar.setTitle("Quran");
 		actionBar.addAction(getIntentAction(ACTION_RESUME, R.drawable.translation));
 		actionBar.addAction(getIntentAction(ACTION_BOOKMARK, R.drawable.bookmarks));
 	}

@@ -99,20 +99,21 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		super.addActions();
 		if (actionBar != null) {
 			// actionBar.setTitle("QuranAndroid");
+			actionBar.setTitle("Quran");
 			actionBarActions.put(ACTION_PLAY, getIntentAction(
-					ACTION_PLAY, android.R.drawable.ic_media_play));
+					ACTION_PLAY, R.drawable.ab_play));
 			actionBarActions.put(ACTION_PAUSE, getIntentAction(
-					ACTION_PAUSE, android.R.drawable.ic_media_pause));
+					ACTION_PAUSE, R.drawable.ab_pause));
 			actionBarActions.put(ACTION_NEXT, getIntentAction(
-					ACTION_NEXT, android.R.drawable.ic_media_next));
+					ACTION_NEXT, R.drawable.ab_next));
 			actionBarActions.put(ACTION_PREVIOUS, getIntentAction(
-					ACTION_PREVIOUS, android.R.drawable.ic_media_previous));
+					ACTION_PREVIOUS, R.drawable.ab_prev));
 			actionBarActions.put(ACTION_STOP, getIntentAction(
 					ACTION_STOP, R.drawable.stop));
 			actionBarActions.put(ACTION_CHANGE_READER,
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
-					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.jump));
+					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
 			
 			actionBarIndecies.put(ACTION_PLAY, ACTION_BAR_ACTION_PLAY);
 			actionBarIndecies.put(ACTION_PAUSE, ACTION_BAR_ACTION_PAUSE);
