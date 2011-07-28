@@ -342,7 +342,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 							quranAudioPlayer.stop();
 							quranAudioPlayer.play(lastAyah);	
 						}
-							
+						jumpTo(QuranInfo.getPageFromSuraAyah(sura, ayah));
 					}
 				});
 		dialogBuilder.setNegativeButton("Cancel", null);
