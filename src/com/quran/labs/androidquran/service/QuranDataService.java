@@ -265,7 +265,7 @@ public class QuranDataService extends Service {
 					File file = new File(saveToDirectories[downloadIndex],
 							fileNames[downloadIndex] + DOWNLOAD_EXT);
 
-					URL url = new URL(escapeUrlSpecialCharacters(downloadUrls[downloadIndex]));
+					URL url = new URL(downloadUrls[downloadIndex]);
 					URLConnection conn = url.openConnection();
 					int total = conn.getContentLength();
 					Log.d("quran_srv", "File to download: " + file.getName()
@@ -420,9 +420,5 @@ public class QuranDataService extends Service {
 			service.stopSelf();
 			QuranDataService.isRunning = false;
 		}
-	}
-	
-	private String escapeUrlSpecialCharacters(String url) {
-		return url.replace(" ", "%20");
 	}
 }

@@ -20,7 +20,6 @@ import android.widget.CompoundButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -145,7 +144,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				if (quranAudioPlayer.isPaused())
 					quranAudioPlayer.resume();
 				else {
-					lastAyah = getCurrentAudioAyah();
+					lastAyah = getLastAyah();
 					// soura not totall found
 					if (QuranUtils.isSouraAudioFound(lastAyah
 							.getQuranReaderId(), lastAyah.getSoura()) < 0) {
@@ -161,12 +160,12 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_NEXT)) {
 				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
-						getCurrentAudioAyah());
+						getLastAyah());
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS)) {
 				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this,
-						getCurrentAudioAyah());
+						getLastAyah());
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_STOP)) {
@@ -193,7 +192,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private void onActionStop() {
 		actionBar.removeAllActions();
-		actionBar.addAction(actionBarActions.get(ACTION_PLAY), actionBarIndecies.get(ACTION_PLAY));
+		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
+		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 1);
 	}
 
 	private void showDownloadDialog(final AyahItem i) {
@@ -265,6 +265,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						onActionStop();
 						dialog.dismiss();
 					}
 				});
@@ -345,9 +346,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				});
 		dialogBuilder.setNegativeButton("Cancel", null);
 		dialogBuilder.show();
-
 	}
-
 	
 	private void initSurasSpinner(final Spinner spinner, int startSura, int endSura){
 		String[] from = new String[] {"suraName"};
@@ -436,10 +435,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					QuranAudioService.class);
 			startService(serviceIntent);
 			bounded = bindService(serviceIntent, conn, BIND_AUTO_CREATE);
-			if (!bounded)
-				Toast
-						.makeText(this, "can not bind service",
-								Toast.LENGTH_SHORT);
+			Log.d("QuranView", "Audio service bounded: " + bounded);
 		}
 	}
 
@@ -495,22 +491,12 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		super.onFinishDownload();
 		if (quranAudioPlayer != null) {
 			quranAudioPlayer.enableRemotePlay(false);
-			playAudio(lastAyah);
+			playAudio(getLastAyah());
 		}
 	}
 
 	private int getQuranReaderId() {
 		return QuranSettings.getInstance().getLastReader();
-	}
-
-	private AyahItem getCurrentAudioAyah() {
-		if (lastAyah != null) {
-			return lastAyah;
-		}
-		Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder
-				.getCurrentPagePosition());
-		return QuranAudioLibrary.getAyahItem(getApplicationContext(),
-				pageBounds[0], pageBounds[1], getQuranReaderId());
 	}
 
 	private void setReaderId(int readerNamePosition) {
@@ -529,18 +515,51 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	}
 
 	@Override
-	public void onAyahError(AyahItem ayah) {
+	public void onUnknownError(AyahItem ayah) {
+		lastAyah = ayah;
+		quranAudioPlayer.stop();
+		onActionStop();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("An error occured");
-		builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				
 			}
 		});
 		builder.show();
+	}
+	
+	private AyahItem getLastAyah() {
+		AyahItem last = lastAyah; 
+		if (quranAudioPlayer != null && quranAudioPlayer.isPlaying()) {
+			last = quranAudioPlayer.getCurrentAyah();
+		}
+		
+		if (last == null) {
+			Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
+			last = QuranAudioLibrary.getAyahItem(getApplicationContext(),
+					pageBounds[0], pageBounds[1], getQuranReaderId());
+		}
+		
+		lastAyah = last;
+		return lastAyah;
+	}
+
+	@Override
+	public void onConnectionLost(AyahItem ayah) {
+		lastAyah = ayah;
+		connect();
+	}
+	
+	@Override
+	protected void onConnectionSuccess() {
+		super.onConnectionSuccess();
+		if (lastAyah != null) {
+			quranAudioPlayer.enableRemotePlay(true);
+			quranAudioPlayer.play(getLastAyah());
+		}
 	}
 
 }

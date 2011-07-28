@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -64,6 +65,11 @@ public class QuranActivity extends BaseQuranActivity {
 		} else if (ACTION_RESUME.equals(action)) {
 			jumpTo(QuranSettings.getInstance().getLastPage());
 		}
+	}
+	
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.findItem(R.id.menu_item_bookmarks).setVisible(false);
+		return super.onPrepareOptionsMenu(menu);
 	}
 	
 	private IntentAction getIntentAction(String intentAction, int drawable) {
