@@ -301,7 +301,9 @@ public class QuranInfo {
 	}
 	
 	public static String getPageTitle(int page) {
-		return getPageTitle() + page +
-		" - " + getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" + getJuzTitle() + " " + getJuzFromPage(page);
+		return getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" +
+			getPageTitle() + page + " - " + getJuzTitle() + " " + getJuzFromPage(page);
+		//return getPageTitle() + page +
+		//" - " + getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" + getJuzTitle() + " " + getJuzFromPage(page);
 	}
 }
