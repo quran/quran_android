@@ -164,8 +164,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS)) {
-				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this,
-						getLastAyah());
+				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_STOP)) {
