@@ -98,6 +98,7 @@ public class AudioServiceBinder extends Binder implements
 				url = item.getLocalAudioUrl();
 			else if(remotePlayEnabled) {
 				url = item.getRemoteAudioUrl();
+				Log.d("quran_audio", url);
 			}else{
 				if(ayahListener != null){
 					clearNotification();
@@ -272,14 +273,20 @@ public class AudioServiceBinder extends Binder implements
 		if(this.mp != null && mp.isPlaying()){
 			try{
 				this.mp.stop();
+				stopped = true;
 				if(mp != this.mp && mp.isPlaying())
 					mp.stop();
 			}catch (Exception e) {
 				// TODO: handle exception
 			}
 		}
-		if(ayahListener != null && !stopped)
-			ayahListener.onAyahError(currentItem);
+		if(ayahListener != null && !stopped) {
+			if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED)
+				ayahListener.onConnectionLost(currentItem);
+			else 
+				ayahListener.onUnknownError(currentItem);
+		}
+			
 		return true;
 	}
 	

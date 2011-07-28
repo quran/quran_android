@@ -43,7 +43,7 @@
         <item>http://www.everyayah.com/data/Abdul_Basit_Mujawwad_128kbps/</item>
         <item>http://www.everyayah.com/data/Abdullah_Basfar_192kbps/</item>
         <item>http://www.everyayah.com/data/Abdurrahmaan_As-Sudais_192kbps/</item>
-        <item>http://www.everyayah.com/data/Abu Bakr Ash-Shaatree_128kbps/</item>
+        <item>http://www.everyayah.com/data/Abu\u002520Bakr\u002520Ash-Shaatree_128kbps/</item>
         <item>http://www.everyayah.com/data/Alafasy_128kbps/</item>
         <item>http://www.everyayah.com/data/Hani_Rifai_192kbps/</item>
         <item>http://www.everyayah.com/data/Husary_64kbps/</item>
@@ -55,7 +55,7 @@
         <item>http://www.everyayah.com/data/Mohammad_al_Tablaway_128kbps/</item>
         <item>http://www.everyayah.com/data/Muhammad_Ayyoub_128kbps/</item>
         <item>http://www.everyayah.com/data/Muhammad_Jibreel_128kbps/</item>
-        <item>http://www.everyayah.com/data/Saood bin Ibraaheem Ash-Shuraym_128kbps/</item>
+        <item>http://www.everyayah.com/data/Saood\u002520bin\u002520Ibraaheem\u002520Ash-Shuraym_128kbps/</item>
     </string-array>
    
 </resources>
