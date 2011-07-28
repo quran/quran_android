@@ -287,7 +287,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		initAyatSpinner(ayatSpinner, startAyah, endAyah);
 		
 		final Spinner surasSpinner = (Spinner) view.findViewById(R.id.spinner_suras);
-		initSurasSpinner(surasSpinner, pageBounds[0], pageBounds[2]);
+		//initSurasSpinner(surasSpinner, pageBounds[0], pageBounds[2]);
+		initSurasSpinner(surasSpinner, 1, 114);
+		surasSpinner.setSelection(pageBounds[0] - 1);
 		surasSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@SuppressWarnings("unchecked")
@@ -312,7 +314,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if(isChecked){
+				if(!isChecked){
 					initSurasSpinner(surasSpinner, 1, 114);
 					surasSpinner.setSelection(pageBounds[0] - 1);
 				}
