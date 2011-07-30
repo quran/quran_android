@@ -50,23 +50,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private boolean bounded = false;
 	private AudioServiceBinder quranAudioPlayer = null;
-	
-	// on Stop Actions
-	private static final int ACTION_BAR_ACTION_PLAY = 0;
-
-	// on Play Actions
-	private static final int ACTION_BAR_ACTION_CHANGE_READER = 0;
-	private static final int ACTION_BAR_ACTION_JUMP_TO_AYAH = 1;
-	private static final int ACTION_BAR_ACTION_PREVIOUS = 2;
-	private static final int ACTION_BAR_ACTION_PAUSE = 3;
-	private static final int ACTION_BAR_ACTION_STOP = 4;
-	private static final int ACTION_BAR_ACTION_NEXT = 5;
-
 	private AyahItem lastAyah;
 	private int currentReaderId;
 
 	private HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
-	private HashMap<String, Integer> actionBarIndecies = new HashMap<String, Integer>();
 
 	// private TextView textView;
 
@@ -114,14 +101,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
 			
-			actionBarIndecies.put(ACTION_PLAY, ACTION_BAR_ACTION_PLAY);
-			actionBarIndecies.put(ACTION_PAUSE, ACTION_BAR_ACTION_PAUSE);
-			actionBarIndecies.put(ACTION_NEXT, ACTION_BAR_ACTION_NEXT);
-			actionBarIndecies.put(ACTION_PREVIOUS, ACTION_BAR_ACTION_PREVIOUS);
-			actionBarIndecies.put(ACTION_STOP, ACTION_BAR_ACTION_STOP);
-			actionBarIndecies.put(ACTION_CHANGE_READER, ACTION_BAR_ACTION_CHANGE_READER);
-			actionBarIndecies.put(ACTION_JUMP_TO_AYAH, ACTION_BAR_ACTION_JUMP_TO_AYAH);
-			
 			onActionStop();
 		}
 	}
@@ -159,12 +138,13 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				quranAudioPlayer.pause();
 				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_NEXT)) {
-				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
-						getLastAyah());
+				// Quick fix to switch actions 
+				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS)) {
-				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
+				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
+						getLastAyah());
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_STOP)) {
@@ -182,10 +162,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private void onActionPlay() {
 		actionBar.removeAllActions();
-		for (String action : actionBarIndecies.keySet()) {
+		for (String action : actionBarActions.keySet()) {
 			if (ACTION_PLAY.equals(action))
 				continue;
-			actionBar.addAction(actionBarActions.get(action), actionBarIndecies.get(ACTION_PLAY));
+			actionBar.addAction(actionBarActions.get(action), 0);
 		}
 	}
 
