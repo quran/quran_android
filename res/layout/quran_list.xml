@@ -5,5 +5,6 @@
 	<com.markupartist.android.widget.ActionBar
 		android:id="@+id/actionbar" style="@style/ActionBar" />
 	<ListView android:id="@+id/suralist" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:background="@drawable/list" />
+		android:layout_height="wrap_content" android:background="@drawable/list"
+		android:cacheColorHint="#00000000" />
 </LinearLayout>
