@@ -546,4 +546,14 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		}
 	}
 
+	@Override
+	public void onAyahPlay(AyahItem ayah) {
+		int page = QuranInfo.getPageFromSuraAyah(ayah.getSoura(), ayah.getAyah());
+
+		if (quranPageFeeder.getCurrentPagePosition() != page) {
+			quranPageFeeder.jumpToPage(page);
+			updatePageInfo(page);
+		}
+	}
+
 }

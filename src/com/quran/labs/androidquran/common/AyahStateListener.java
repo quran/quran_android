@@ -5,4 +5,5 @@ public interface AyahStateListener {
 	void onAyahNotFound(AyahItem ayah);
 	void onUnknownError(AyahItem ayah);
 	void onConnectionLost(AyahItem ayah);
+	void onAyahPlay(AyahItem ayah);
 }
