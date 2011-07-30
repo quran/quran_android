@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView.OnPageFlipListener;
 
@@ -100,6 +101,26 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		loadPreviousPage(mQuranPage);
 		mQuranPage.refresh(true);
 		*/
+	}
+	
+	public void highlightAyah(int sura, int ayah){
+		View v = mQuranPage.getCurrentPage();
+		HighlightingImageView iv = 
+			(HighlightingImageView)v.findViewById(R.id.page_image);
+		if (iv != null){
+			HighlightingImageView hi = (HighlightingImageView)iv;
+			hi.highlightAyah(sura, ayah);
+		}
+	}
+	
+	public void unHighlightAyah(){
+		View v = mQuranPage.getCurrentPage();
+		HighlightingImageView iv = 
+			(HighlightingImageView)v.findViewById(R.id.page_image);
+		if (iv != null){
+			HighlightingImageView hi = (HighlightingImageView)iv;
+			hi.unhighlight();
+		}
 	}
 	
 	public void refreshCurrent() {
