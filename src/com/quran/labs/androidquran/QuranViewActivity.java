@@ -45,7 +45,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	protected static final String ACTION_STOP = "ACTION_STOP";
 	protected static final String ACTION_CHANGE_READER = "ACTION_CHANGE_READER";
 	protected static final String ACTION_JUMP_TO_AYAH = "ACTION_JUMP_TO_AYAH";
-
+	protected static final String ACTION_REPEAT = "ACTION_REPEAT";
+	
 	private static final String TAG = "QuranViewActivity";
 
 	private boolean bounded = false;
@@ -61,7 +62,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	private static final int ACTION_BAR_ACTION_PAUSE = 3;
 	private static final int ACTION_BAR_ACTION_STOP = 4;
 	private static final int ACTION_BAR_ACTION_NEXT = 5;
-
+	private static final int ACTION_BAR_ACTION_REPEAT = 6;
+	
 	private AyahItem lastAyah;
 	private int currentReaderId;
 
@@ -113,6 +115,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
+			actionBarActions.put(ACTION_REPEAT,
+					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
 			
 			actionBarIndecies.put(ACTION_PLAY, ACTION_BAR_ACTION_PLAY);
 			actionBarIndecies.put(ACTION_PAUSE, ACTION_BAR_ACTION_PAUSE);
@@ -121,7 +125,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			actionBarIndecies.put(ACTION_STOP, ACTION_BAR_ACTION_STOP);
 			actionBarIndecies.put(ACTION_CHANGE_READER, ACTION_BAR_ACTION_CHANGE_READER);
 			actionBarIndecies.put(ACTION_JUMP_TO_AYAH, ACTION_BAR_ACTION_JUMP_TO_AYAH);
-			
+			actionBarIndecies.put(ACTION_REPEAT, ACTION_BAR_ACTION_REPEAT);
 			onActionStop();
 		}
 	}
