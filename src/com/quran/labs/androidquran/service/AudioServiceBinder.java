@@ -212,6 +212,8 @@ public class AudioServiceBinder extends Binder implements
 			stopped = false;
 			if(!notified)
 				showNotification(currentItem);
+			if (ayahListener != null)
+				ayahListener.onAyahPlay(currentItem);
 		}
 	}
 	
