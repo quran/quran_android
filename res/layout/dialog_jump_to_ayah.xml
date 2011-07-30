@@ -22,6 +22,6 @@
       <CheckBox android:id="@+id/checkbox_whole_quran"
       			android:layout_width="fill_parent"
       			android:layout_height="wrap_content"
-      			android:text="Show all suras"
+      			android:text="Show current suras"
 		/>
 </LinearLayout>
