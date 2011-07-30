@@ -36,6 +36,21 @@ public class AudioServiceBinder extends Binder implements
 	private boolean stopped = true;
 	private boolean preparing = false;
 	
+	private int numberOfRepeats = 2;
+	private int repeats = 0;
+	
+	public int getNumberOfRepeats() {
+		return numberOfRepeats;
+	}
+
+
+
+	public void setNumberOfRepeats(int numberOfRepeats) {
+		this.numberOfRepeats = numberOfRepeats;
+	}
+
+
+
 	public synchronized void setAyahCompleteListener(AyahStateListener ayahListener) {
 		this.ayahListener = ayahListener;
 	}
@@ -171,16 +186,22 @@ public class AudioServiceBinder extends Binder implements
 
 	@Override
 	public synchronized void onCompletion(MediaPlayer mp) {
-		AyahItem nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
-		boolean continuePlaying = false;
-		if(ayahListener != null && !stopped)
-			continuePlaying = ayahListener.onAyahComplete(currentItem, nextItem);
-		if(nextItem != null){
-			//this.currentItem = nextItem;
-			try{
-				if(continuePlaying && !paused && !stopped && mp != null && !mp.isPlaying())
-					this.play(nextItem);
-			}catch(Exception ex){}
+		if(repeats < numberOfRepeats){
+			repeats++;
+			play(currentItem);
+		}else{
+			repeats = 0;
+			AyahItem nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
+			boolean continuePlaying = false;
+			if(ayahListener != null && !stopped)
+				continuePlaying = ayahListener.onAyahComplete(currentItem, nextItem);
+			if(nextItem != null){
+				//this.currentItem = nextItem;
+				try{
+					if(continuePlaying && !paused && !stopped && mp != null && !mp.isPlaying())
+						this.play(nextItem);
+				}catch(Exception ex){}
+			}
 		}
 	}		
 	
