@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -115,31 +116,19 @@ public class HighlightingImageView extends ImageView {
 			for (AyahBounds b : currentlyHighlighting){
 				Bitmap bm = BitmapFactory.decodeResource(
 					getResources(), R.drawable.highlight);
-				RectF rect = new RectF(b.getMinX(), b.getMinY(),
-						b.getMaxX(), b.getMaxY());
-				if (canvas.getHeight() > canvas.getWidth()){
-					/*
-					android.util.Log.d("highlight", "currently: " +
-							canvas.getHeight() + " " + 
-							this.getHeight() + " and width: " +
-							canvas.getWidth() + " " +
-							this.getWidth());
-					*/
-					
-					// portrait mode, need to adjust the rectangle
-					float factor = (float)((1.0 * canvas.getWidth()) /
-								   		   (1.0 * canvas.getHeight()));
-					float maxY = (b.getMaxY() * factor);
-					float minY = (b.getMinY() * factor);
-					if (canvas.getHeight() == this.getHeight()){
-						maxY += 12.5;
-						minY += 12.5;
-					}
-					RectF scaled = new RectF(b.getMinX() * factor,
-							minY, b.getMaxX() * factor, maxY);
-					rect = scaled;
+				
+				Drawable page = this.getDrawable();
+				if (page != null){
+					float widthFactor = (float)((1.0 * getWidth()) /
+												(1.0 * page.getIntrinsicWidth()));
+					float heightFactor = (float)((1.0 * getHeight()) /
+												(1.0 * page.getIntrinsicHeight()));
+				
+					RectF scaled = new RectF(b.getMinX() * widthFactor,
+							b.getMinY() * heightFactor, b.getMaxX() * widthFactor,
+							b.getMaxY() * heightFactor);
+					canvas.drawBitmap(bm, null, scaled, null);
 				}
-				canvas.drawBitmap(bm, null, rect, null);
 			}
 		}
 	}
