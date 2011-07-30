@@ -39,14 +39,16 @@ public class BookmarksActivity extends BaseQuranActivity {
 		ArrayList<Integer> bookmarks = BookmarksManager.getInstance().getBookmarks();
 		for (int i = 0; i < bookmarks.size(); i++) {
 			int page = bookmarks.get(i);
-			String title = (i+1) + ". " + QuranInfo.getPageTitleNoPrefix(page);
+			String title = QuranInfo.getSuraNameString(page);
+			String info = QuranInfo.getSuraDetailsForBookmark(page);
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("suraname", title);
+			map.put("info", info);
 			bookmarkList.add(map);
 		}
 		
-		String[] from = new String[]{ "suraname" };
-		int[] to = new int[]{ R.id.sura_title };
+		String[] from = new String[]{ "suraname", "info" };
+		int[] to = new int[]{ R.id.sura_title, R.id.sura_info };
 		
 		ListView list = (ListView)findViewById(R.id.lstBookmarks);
 
