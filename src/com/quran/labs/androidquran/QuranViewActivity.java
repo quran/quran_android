@@ -444,13 +444,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranAudioPlayer.play(lastAyah);
 			return false;
 		}
-		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah
-				.getAyah());
-
-		if (quranPageFeeder.getCurrentPagePosition() != page) {
-			quranPageFeeder.jumpToPage(page);
-			updatePageInfo(page);
-		}
 		return true;
 	}
 
