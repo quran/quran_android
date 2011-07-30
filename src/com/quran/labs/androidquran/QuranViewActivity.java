@@ -193,6 +193,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		actionBar.removeAllActions();
 		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 1);
+		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 2);
 	}
 
 	private void showDownloadDialog(final AyahItem i) {
@@ -466,8 +467,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah
 				.getAyah());
 
-		if (quranPageFeeder.getCurrentPagePosition() != page)
+		if (quranPageFeeder.getCurrentPagePosition() != page) {
 			quranPageFeeder.jumpToPage(page);
+			updatePageInfo(page);
+		}
 		return true;
 	}
 
