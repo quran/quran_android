@@ -300,6 +300,15 @@ public class QuranInfo {
 		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
 	}
 	
+	public static String getSuraNameString(int page){
+		return getSuraTitle() + " " + getSuraNameFromPage(page);
+	}
+	
+	public static String getSuraDetailsForBookmark(int page){
+		return getPageTitle() + page + " - " +
+			getJuzTitle() + " " + getJuzFromPage(page);
+	}
+	
 	public static String getPageTitle(int page) {
 		return getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" +
 			getPageTitle() + page + " - " + getJuzTitle() + " " + getJuzFromPage(page);
