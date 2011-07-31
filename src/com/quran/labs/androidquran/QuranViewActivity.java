@@ -55,6 +55,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private AyahItem lastAyah;
 	private int currentReaderId;
+	private boolean playing = false;
 
 	private HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
 
@@ -125,6 +126,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		String action = intent.getAction();
 		if (quranAudioPlayer != null && action != null) {
 			if (action.equalsIgnoreCase(ACTION_PLAY)) {
+				bindAudioService();
 				if (quranAudioPlayer.isPaused())
 					quranAudioPlayer.resume();
 				else {
@@ -155,6 +157,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			} else if (action.equalsIgnoreCase(ACTION_STOP)) {
 				lastAyah = null;
 				quranAudioPlayer.stop();
+				unBindAudioService();
 				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_CHANGE_READER)){
 				showChangeReaderDialog();
@@ -172,6 +175,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				continue;
 			actionBar.addAction(actionBarActions.get(action), 0);
 		}
+		playing =true;
 	}
 
 	private void onActionStop() {
@@ -179,6 +183,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 1);
 		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 2);
+		playing = false;
 	}
 
 	private void showDownloadDialog(final AyahItem i) {
@@ -476,6 +481,15 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			playAudio(getLastAyah());
 		}
 	}
+	
+	@Override
+	protected void onDownloadCanceled() {
+		super.onDownloadCanceled();
+		if (quranAudioPlayer != null) {
+			quranAudioPlayer.stop();
+		}
+		onActionStop();
+	}
 
 	private int getQuranReaderId() {
 		return QuranSettings.getInstance().getLastReader();
@@ -552,6 +566,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranPageFeeder.jumpToPage(page);
 			updatePageInfo(page);
 		}
+		
+		if (!playing)
+			onActionPlay();
 	}
 
 }
