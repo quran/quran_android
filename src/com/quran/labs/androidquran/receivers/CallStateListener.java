@@ -25,7 +25,7 @@ public class CallStateListener extends PhoneStateListener {
 		switch (state) {
 		case TelephonyManager.CALL_STATE_OFFHOOK:
 		case TelephonyManager.CALL_STATE_RINGING:
-			if(audioService != null) {
+			if(audioService != null && audioService.isPlaying()) {
 				audioService.pause();
 				wasPaused = true;
 			}
