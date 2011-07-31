@@ -36,7 +36,7 @@ public class AudioServiceBinder extends Binder implements
 	private boolean stopped = true;
 	private boolean preparing = false;
 	
-	private int numberOfRepeats = 2;
+	private int numberOfRepeats = 0;
 	private int repeats = 0;
 	
 	public int getNumberOfRepeats() {
