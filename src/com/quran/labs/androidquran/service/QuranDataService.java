@@ -96,23 +96,21 @@ public class QuranDataService extends Service {
 			return;
 		
 		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
-		QuranDataService.isRunning = true;
 		switch (downloadType) {
 			case DOWNLOAD_QURAN_IMAGES:
+				isRunning = true;
 				thread = new DownloadThread(this, new String[] { QuranUtils.getZipFileUrl() }, 
 						new String[] { "images.zip" }, new String[]{QuranUtils.getQuranBaseDirectory()}, true);
 				thread.start();
 			break;
 			case DOWNLOAD_SURA_AUDIO:
+				isRunning = true;
 				downloadSuraAudio(intent);
 			break;
 			case DOWNLOAD_TRANSLATION:
+				isRunning = true;
 				downloadTranslation(intent);
 			break;
-			
-			default:
-				QuranDataService.isRunning = false;
-			return;
 		}
 	}
 
@@ -166,7 +164,7 @@ public class QuranDataService extends Service {
 						fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);
 			thread.start();
 		} else {
-			QuranDataService.isRunning = false;
+			isRunning = false;
 		}
 	}
 
@@ -189,7 +187,7 @@ public class QuranDataService extends Service {
 		}
 		progress = 0;
 		thread = null;
-		QuranDataService.isRunning = false;
+		isRunning = false;
 	}
 
 	@Override
@@ -332,6 +330,7 @@ public class QuranDataService extends Service {
 
 		@Override
 		public void run() {
+			isRunning = true;
 			onDowloadStart();
 			try {
 				while (isRunning) {
@@ -418,7 +417,7 @@ public class QuranDataService extends Service {
 					notification);
 
 			service.stopSelf();
-			QuranDataService.isRunning = false;
+			isRunning = false;
 		}
 	}
 }
