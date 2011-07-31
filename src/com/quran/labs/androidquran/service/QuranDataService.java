@@ -235,19 +235,25 @@ public class QuranDataService extends Service {
 		}
 		
 		private void onDowloadStart() {
-//			String ns = Context.NOTIFICATION_SERVICE;
-//			notificationManager = (NotificationManager) getSystemService(ns);
-//			Context context = QuranDataService.this.getApplicationContext();
-//			notification = new Notification(R.drawable.icon, "Quran Android", System.currentTimeMillis());
-//			contentView = new RemoteViews(context.getPackageName(), R.layout.notification_progress_bar);
-//			contentView.setProgressBar(R.id.progressBar, 100, 0, false);        
-//			contentView.setTextViewText(R.id.text, "Downloading..");       
-//			notification.contentView = contentView;
-//
-//			Intent notificationIntent = new Intent(context, QuranActivity.class);
-//			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-//			notification.contentIntent = contentIntent;
-//			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING, notification);
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
+
+			long when = System.currentTimeMillis();
+			Notification notification = new Notification(R.drawable.icon, "Downloading..", when);
+			notification.defaults |= Notification.FLAG_AUTO_CANCEL;
+
+			Context context = getApplicationContext();
+			CharSequence contentTitle = "Quran Android";
+			CharSequence contentText = "Downloading..";
+			Intent notificationIntent = new Intent(context, QuranActivity.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+					notificationIntent, 0);
+
+			notification.setLatestEventInfo(context, contentTitle, contentText,
+					contentIntent);
+
+			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING,
+					notification);
 		}
 
 		private boolean resumeDownload() {
