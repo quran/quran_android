@@ -45,11 +45,14 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	protected static final String ACTION_STOP = "ACTION_STOP";
 	protected static final String ACTION_CHANGE_READER = "ACTION_CHANGE_READER";
 	protected static final String ACTION_JUMP_TO_AYAH = "ACTION_JUMP_TO_AYAH";
-
+	protected static final String ACTION_REPEAT = "ACTION_REPEAT";
+	
 	private static final String TAG = "QuranViewActivity";
 
 	private boolean bounded = false;
 	private AudioServiceBinder quranAudioPlayer = null;
+
+
 	private AyahItem lastAyah;
 	private int currentReaderId;
 
@@ -100,7 +103,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
-			
+//			actionBarActions.put(ACTION_REPEAT,
+//					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
+//	
 			onActionStop();
 		}
 	}
