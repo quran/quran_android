@@ -103,9 +103,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
-			actionBarActions.put(ACTION_REPEAT,
-					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
-	
+//			actionBarActions.put(ACTION_REPEAT,
+//					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
+//	
 			onActionStop();
 		}
 	}
