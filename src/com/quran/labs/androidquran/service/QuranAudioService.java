@@ -15,7 +15,6 @@ public class QuranAudioService extends Service {
 	private PhoneStateListener psl;
 	private AudioServiceBinder mBinder;
 	
-	
 	@Override
 	public void onCreate() {		
 		super.onCreate();
@@ -40,6 +39,7 @@ public class QuranAudioService extends Service {
 		return mBinder;
 	}
 	
+	// only runs on pre-2.0 sdks
 	@Override
 	public boolean onUnbind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -47,9 +47,15 @@ public class QuranAudioService extends Service {
 	}
 	@Override
 	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);		
+		super.onStart(intent, startId);
 	}
 	
-
+	// 2.0+ sdks
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		return START_STICKY;
+	}
+	
+	
 
 }

@@ -55,8 +55,6 @@ public class AudioServiceBinder extends Binder implements
 		this.ayahListener = ayahListener;
 	}
 
-
-
 	public AudioServiceBinder(Context context){
 		this.context = context;
 	}
@@ -271,8 +269,8 @@ public class AudioServiceBinder extends Binder implements
 	     
 	        notification.setLatestEventInfo(context,
 	        				context.getApplicationInfo().name, 
-	        				QuranInfo.getSuraName(item.getSoura() -1)
-	        			 + "(" + item.getAyah() + ")", pi);
+	        				item.getSoura() + " - " + QuranInfo.getSuraName(item.getSoura() -1)
+	        			 + " (" + item.getAyah() + ")", pi);
 //	        notification.contentView = new RemoteViews("com.quran.labs.androidquran", 
 //	        		R.layout.audio_notification);
 	       
@@ -288,8 +286,6 @@ public class AudioServiceBinder extends Binder implements
 	public synchronized boolean isPlaying(){
 		return !paused && !stopped;
 	}
-
-
 
 	@Override
 	public synchronized boolean onError(MediaPlayer mp, int what, int extra) {
