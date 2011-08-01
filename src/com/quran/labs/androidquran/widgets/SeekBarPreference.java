@@ -6,8 +6,6 @@
 
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.data.ApplicationConstants;
-
 import android.content.Context;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -16,6 +14,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.data.ApplicationConstants;
 
 public class SeekBarPreference extends DialogPreference implements
 		SeekBar.OnSeekBarChangeListener {
