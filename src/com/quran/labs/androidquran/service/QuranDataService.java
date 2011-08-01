@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -157,6 +158,18 @@ public class QuranDataService extends Service {
 				 directories.add(dir);
 				 urls.add(ayah.getRemoteImageUrl());
 			 }
+		}
+		
+		// Check aya info db
+		String base = QuranUtils.getQuranDatabaseDirectory();
+		if (base == null)
+			QuranUtils.makeQuranDatabaseDirectory();
+		String ayaPositionDb = base + File.separator + "ayahinfo.db";
+		File f = new File(ayaPositionDb);
+		if (!f.exists()) {
+			urls.add(QuranUtils.getAyaPositionFileUrl());
+			fileNames.add("ayahinfo.db");
+			directories.add(base);
 		}
 		
 		if (urls.size() > 0) {
@@ -313,6 +326,8 @@ public class QuranDataService extends Service {
 					} else 
 						return false;
 				}
+			} catch (FileNotFoundException e) {
+				Log.e("quran_srv", "File not found: IO Exception", e);
 			} catch (IOException e) {
 				Log.e("quran_srv", "Download paused: IO Exception", e);
 				return false;

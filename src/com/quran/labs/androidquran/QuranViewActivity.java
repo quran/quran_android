@@ -452,6 +452,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			lastAyah = QuranAudioLibrary.getAyahItem(this, nextAyah.getSoura(),
 					nextAyah.getAyah(), getQuranReaderId());
 			quranAudioPlayer.play(lastAyah);
+			
+			quranPageFeeder.unHighlightAyah();
 			return false;
 		}
 		return true;
@@ -566,6 +568,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranPageFeeder.jumpToPage(page);
 			updatePageInfo(page);
 		}
+		
+		quranPageFeeder.highlightAyah(ayah.getSoura(), ayah.getAyah());
 		
 		if (!playing)
 			onActionPlay();
