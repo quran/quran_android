@@ -316,8 +316,8 @@ public class QuranInfo {
 		//" - " + getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" + getJuzTitle() + " " + getJuzFromPage(page);
 	}
 	
-	 public static int [] getJuzBounds(int juz) {
-         int [] results = new int [4]; 
+	 public static Integer [] getJuzBounds(int juz) {
+         Integer [] results = new Integer [4]; 
          int spage = JUZ_PAGE_START[juz - 1];
          int epage = juz == 30 ? ApplicationConstants.PAGES_LAST : JUZ_PAGE_START[juz];
          Integer [] bounds = getPageBounds(spage);
