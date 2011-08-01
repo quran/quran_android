@@ -13,8 +13,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
 
 public abstract class InternetActivity extends BaseQuranActivity {
@@ -23,15 +23,23 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	protected QuranDataService downloadService;
 	protected AsyncTask<?, ?, ?> currentTask = null;
 	protected boolean starting = true;
-	protected ServiceConnection serviceConnection;
+	protected ServiceConnection serviceConnection = new ServiceConnection() {
+    	public void onServiceConnected(ComponentName name, IBinder service){
+    		downloadService = ((QuranDataService.QuranDownloadBinder)service).getService();
+    		starting = false;
+    		if (QuranDataService.isRunning)
+    			currentTask = new ProgressBarUpdateTask().execute();
+    	}
+
+    	public void onServiceDisconnected(ComponentName className) {
+    		downloadService = null;
+    	}
+    };;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initServiceConnection();
-		if (!(this instanceof QuranViewActivity))
-			if (QuranDataService.isRunning)
-				showProgressDialog();
+		startDownloadService(new Intent(this, QuranDataService.class));
 	}
 	
 	public boolean isInternetOn() {
@@ -73,12 +81,10 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void startDownloadService(Intent intent) {
     	starting = true;    	
-    	initServiceConnection();
     	if (!QuranDataService.isRunning)
     		startService(intent);
     	
     	bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    	showProgressDialog();
     }
 	
 	protected void downloadTranslation(String url, String fileName) {
@@ -108,20 +114,26 @@ public abstract class InternetActivity extends BaseQuranActivity {
 		startDownloadService(intent);
 	}
 	
-	private void initServiceConnection() {
-	    serviceConnection = new ServiceConnection() {
-	    	public void onServiceConnected(ComponentName name, IBinder service){
-	    		downloadService = ((QuranDataService.QuranDownloadBinder)service).getService();
-	    		starting = false;
-	    	}
+	protected void downloadPage(int readerId, Integer[] integers){		
+		Intent intent = new Intent(this, QuranDataService.class);
+		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.SOURA_KEY, integers[0]);
+		intent.putExtra(QuranDataService.AYAH_KEY, integers[1]);
+		intent.putExtra(QuranDataService.END_SOURA_KEY, integers[2]);
+		intent.putExtra(QuranDataService.END_AYAH_KEY, integers[3]);
+		intent.putExtra(QuranDataService.READER_KEY, readerId);
+		startDownloadService(intent);
+		
+	}
 	
-	    	public void onServiceDisconnected(ComponentName className) {
-	    		downloadService = null;
-	    	}
-	    };
+	protected void downloadJuza(int readerId, Integer juza){
+			downloadPage(readerId, QuranInfo.getJuzBounds(juza));
 	}
 	
     class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {	
+    	
+    	private boolean callOnFinish = false;
+    	
 		@Override
 		protected Void doInBackground(Void... params) {
     		while (starting || QuranDataService.isRunning){
@@ -134,22 +146,30 @@ public abstract class InternetActivity extends BaseQuranActivity {
     			}
     			catch (InterruptedException ie){}
     		}
+    		callOnFinish = true;
     		
     		return null;
     	}
     	
 		@Override
     	public void onProgressUpdate(Integer...integers){
+			if (pDialog == null)
+				showProgressDialog();
     		int progress = integers[0];
     		pDialog.setProgress(progress);
     	}
     	
     	@Override
     	public void onPostExecute(Void val){
-    		pDialog.dismiss();
+    		try {
+				pDialog.dismiss();
+    		} catch (Exception e) {
+    			
+    		}
 			pDialog = null;
 			currentTask = null;
-			onFinishDownload();
+			if (callOnFinish)
+				onFinishDownload();
     	}
     }
     
@@ -178,8 +198,10 @@ public abstract class InternetActivity extends BaseQuranActivity {
 					unbindService(serviceConnection);
 				}
 				stopService(new Intent(getApplicationContext(), QuranDataService.class));
-				currentTask = null;
-				pDialog.dismiss();
+				if (currentTask != null)
+					currentTask.cancel(true);
+				if (pDialog != null)
+					pDialog.dismiss();
 			}
 		});
     	pDialog.setButton(ProgressDialog.BUTTON2, "Hide", new DialogInterface.OnClickListener() {
@@ -187,14 +209,13 @@ public abstract class InternetActivity extends BaseQuranActivity {
 			public void onClick(DialogInterface dialog, int which) {
 				if (currentTask != null)
 					currentTask.cancel(true);
-				pDialog.dismiss();
+				if (pDialog != null)
+					pDialog.dismiss();
 			}
 		});
     	
     	pDialog.setMessage(getString(R.string.downloading_message));
     	pDialog.show();
-    	
-    	currentTask = new ProgressBarUpdateTask().execute();
     }
 
 }
