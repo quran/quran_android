@@ -75,6 +75,7 @@ public class AudioServiceBinder extends Binder implements
 		}
 		paused = false;	
 		stopped = true;
+		currentItem = null;
 		clearNotification();
 	}
 
@@ -96,10 +97,10 @@ public class AudioServiceBinder extends Binder implements
 		this.currentItem = item;
 		if(mp != null && mp.isPlaying()){
 			mp.stop();
-			try{
-				mp.release();
-			}catch(Exception e){}
-			mp = null;
+//			try{
+//				mp.release();
+//			}catch(Exception e){}
+//			mp = null;
 		}
 		try {
 			if(mp == null)
@@ -296,7 +297,8 @@ public class AudioServiceBinder extends Binder implements
 				if(mp != this.mp && mp.isPlaying())
 					mp.stop();
 			}catch (Exception e) {
-				// TODO: handle exception
+				try{mp.release();}catch(Exception ex){}
+				mp = null;
 			}
 		}
 		if(ayahListener != null && !stopped) {

@@ -1,11 +1,11 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.common.TranslationsDBAdapter;
-
 import android.content.Context;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
+
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 
 public class SelectTranslationPreference extends ListPreference {
 
