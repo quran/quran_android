@@ -117,4 +117,5 @@
     <string name="set_active">Set Active</string>
     <string name="prompt_select_ayah">Select Ayah</string>
     <string name="prompt_select_sura">Select Sura</string>
+    <string name="radio_download_message">Choose download option</string>
 </resources>

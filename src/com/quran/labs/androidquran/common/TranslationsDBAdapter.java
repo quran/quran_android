@@ -2,8 +2,6 @@ package com.quran.labs.androidquran.common;
 
 import java.util.ArrayList;
 
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +9,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public class TranslationsDBAdapter {
 	
