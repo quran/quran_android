@@ -314,7 +314,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			}
 		});
 		dialogBuilder.setView(view);
-		dialogBuilder.setMessage("Jumo to ayah");
+		dialogBuilder.setMessage("Jump to ayah");
 		dialogBuilder.setPositiveButton("Jump",
 				new DialogInterface.OnClickListener() {
 
