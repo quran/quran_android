@@ -185,7 +185,8 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	pDialog.setButton(ProgressDialog.BUTTON2, "Hide", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				currentTask.cancel(true);
+				if (currentTask != null)
+					currentTask.cancel(true);
 				pDialog.dismiss();
 			}
 		});
