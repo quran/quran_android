@@ -2,9 +2,6 @@ package com.quran.labs.androidquran.data;
 
 import java.util.List;
 
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.common.TranslationsDBAdapter;
-
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -15,6 +12,9 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
+
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 
 public class QuranDataProvider extends ContentProvider {
 

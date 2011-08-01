@@ -17,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -195,6 +197,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		if (s != null)
 			s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialog.setView(view);
+		initDownloadRadioButtons(view, getLastAyah());
 		// AlertDialog dialog = new DownloadDialog(this);
 		dialog.setMessage("Do you want to download sura");
 		dialog.setPositiveButton("Download",
@@ -217,8 +220,22 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 								}
 							}
 						}
-						downloadSura(getQuranReaderId(), lastAyah
-								.getSoura(), lastAyah.getAyah());
+						RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroupDownload); 
+						
+						switch (radio.getCheckedRadioButtonId()) {						
+						case R.id.radioDownloadJuza:
+							downloadJuza(getQuranReaderId(), 
+									QuranInfo.getJuzFromPage(quranPageFeeder.getCurrentPagePosition()));
+							break;
+						case R.id.radioDownloadSura:
+							downloadSura(getQuranReaderId(), lastAyah.getSoura());
+							break;
+						case R.id.radioDownloadPage:
+							downloadPage(getQuranReaderId(), QuranInfo.getPageBounds(quranPageFeeder
+									.getCurrentPagePosition()));
+						default:
+							break;
+						}
 						dialog.dismiss();
 					}
 				});
@@ -264,6 +281,16 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		diag.show();
 	}
 
+	private void initDownloadRadioButtons(View parent, AyahItem ayahItem){
+		RadioButton radioSura = (RadioButton) parent.findViewById(R.id.radioDownloadSura);
+		RadioButton radioJuz = (RadioButton) parent.findViewById(R.id.radioDownloadJuza);
+		RadioButton radioPage = (RadioButton) parent.findViewById(R.id.radioDownloadPage);
+		
+		radioSura.setText(QuranInfo.getSuraName(ayahItem.getSoura() - 1));
+		radioJuz.setText(QuranInfo.getJuzTitle() + " " + QuranInfo.getJuzFromPage(QuranInfo.getPageFromSuraAyah(ayahItem.getSoura(), ayahItem.getAyah())));
+		radioPage.setText("Page" + (QuranInfo.getPageFromSuraAyah(ayahItem.getSoura(), ayahItem.getAyah())));
+		
+	}
 	private void showJumpToAyahDialog() {
 		final Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder
 				.getCurrentPagePosition());
@@ -382,6 +409,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		LayoutInflater li = LayoutInflater.from(this);
 		final View view = li.inflate(R.layout.dialog_download, null);
 		Spinner s = (Spinner) view.findViewById(R.id.spinner);
+		View v = view.findViewById(R.id.radioGroupDownload);
+		v.setVisibility(View.GONE);
 		s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialogBuilder.setView(view);
 		dialogBuilder.setMessage("Change quran reader");
@@ -482,6 +511,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		}
 	}
 	
+
 	@Override
 	protected void onDownloadCanceled() {
 		super.onDownloadCanceled();
