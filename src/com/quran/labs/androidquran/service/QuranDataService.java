@@ -96,23 +96,21 @@ public class QuranDataService extends Service {
 			return;
 		
 		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
-		QuranDataService.isRunning = true;
 		switch (downloadType) {
 			case DOWNLOAD_QURAN_IMAGES:
+				isRunning = true;
 				thread = new DownloadThread(this, new String[] { QuranUtils.getZipFileUrl() }, 
 						new String[] { "images.zip" }, new String[]{QuranUtils.getQuranBaseDirectory()}, true);
 				thread.start();
 			break;
 			case DOWNLOAD_SURA_AUDIO:
+				isRunning = true;
 				downloadSuraAudio(intent);
 			break;
 			case DOWNLOAD_TRANSLATION:
+				isRunning = true;
 				downloadTranslation(intent);
 			break;
-			
-			default:
-				QuranDataService.isRunning = false;
-			return;
 		}
 	}
 
@@ -166,7 +164,7 @@ public class QuranDataService extends Service {
 						fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);
 			thread.start();
 		} else {
-			QuranDataService.isRunning = false;
+			isRunning = false;
 		}
 	}
 
@@ -189,7 +187,7 @@ public class QuranDataService extends Service {
 		}
 		progress = 0;
 		thread = null;
-		QuranDataService.isRunning = false;
+		isRunning = false;
 	}
 
 	@Override
@@ -237,19 +235,25 @@ public class QuranDataService extends Service {
 		}
 		
 		private void onDowloadStart() {
-//			String ns = Context.NOTIFICATION_SERVICE;
-//			notificationManager = (NotificationManager) getSystemService(ns);
-//			Context context = QuranDataService.this.getApplicationContext();
-//			notification = new Notification(R.drawable.icon, "Quran Android", System.currentTimeMillis());
-//			contentView = new RemoteViews(context.getPackageName(), R.layout.notification_progress_bar);
-//			contentView.setProgressBar(R.id.progressBar, 100, 0, false);        
-//			contentView.setTextViewText(R.id.text, "Downloading..");       
-//			notification.contentView = contentView;
-//
-//			Intent notificationIntent = new Intent(context, QuranActivity.class);
-//			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-//			notification.contentIntent = contentIntent;
-//			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING, notification);
+			String ns = Context.NOTIFICATION_SERVICE;
+			NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
+
+			long when = System.currentTimeMillis();
+			Notification notification = new Notification(R.drawable.icon, "Downloading..", when);
+			notification.defaults |= Notification.FLAG_AUTO_CANCEL;
+
+			Context context = getApplicationContext();
+			CharSequence contentTitle = "Quran Android";
+			CharSequence contentText = "Downloading..";
+			Intent notificationIntent = new Intent(context, QuranActivity.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
+					notificationIntent, 0);
+
+			notification.setLatestEventInfo(context, contentTitle, contentText,
+					contentIntent);
+
+			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING,
+					notification);
 		}
 
 		private boolean resumeDownload() {
@@ -332,6 +336,7 @@ public class QuranDataService extends Service {
 
 		@Override
 		public void run() {
+			isRunning = true;
 			onDowloadStart();
 			try {
 				while (isRunning) {
@@ -418,7 +423,7 @@ public class QuranDataService extends Service {
 					notification);
 
 			service.stopSelf();
-			QuranDataService.isRunning = false;
+			isRunning = false;
 		}
 	}
 }

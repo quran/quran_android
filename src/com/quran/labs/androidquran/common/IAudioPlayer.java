@@ -17,5 +17,7 @@ public interface IAudioPlayer {
 	public void enableRemotePlay(boolean remote);
 	
 	public boolean isRemotePlayEnabled();
+	
+	public boolean isPlaying();
 
 }
