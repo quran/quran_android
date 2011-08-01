@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.ArrayList;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -37,7 +37,9 @@ public class QuranDataService extends Service {
 
 	public static final String DWONLOAD_TYPE_KEY = "downloadType";
 	public static final String SOURA_KEY = "soura";
+	public static final String END_SOURA_KEY = "endSoura";
 	public static final String AYAH_KEY = "ayah";
+	public static final String END_AYAH_KEY = "endAyah";
 	public static final String READER_KEY = "quranReader";
 	public static final String DOWNLOAD_AYAH_IMAGES_KEY = "downloadImage";
 	public static final String DISPLAY_MESSAGE_KEY = "displayMsg";
@@ -117,13 +119,14 @@ public class QuranDataService extends Service {
 	private void downloadSuraAudio(Intent intent) {
 		Log.d("quran_srv", "downloadSuraAudio");
 		int soura = intent.getIntExtra(SOURA_KEY, 1);
+		int endSoura = intent.getIntExtra(END_SOURA_KEY, soura);
 		int startAyah = intent.getIntExtra(AYAH_KEY, 1);
 		int quranReader = intent.getIntExtra(READER_KEY, 0);
 		// optional end ayah
-		int endAyah = intent.getIntExtra("endAyah",
+		int endAyah = intent.getIntExtra(END_AYAH_KEY,
 				QuranInfo.SURA_NUM_AYAHS[soura - 1]);
-		if (endAyah > QuranInfo.SURA_NUM_AYAHS[soura - 1])
-			endAyah = QuranInfo.SURA_NUM_AYAHS[soura - 1];
+//		if (endAyah > QuranInfo.SURA_NUM_AYAHS[soura - 1])
+//			endAyah = QuranInfo.SURA_NUM_AYAHS[soura - 1];
 		boolean downloadImage = intent.getBooleanExtra(DOWNLOAD_AYAH_IMAGES_KEY, false);
 
 		Log.d("quran_srv", "finish reading params");
@@ -132,33 +135,51 @@ public class QuranDataService extends Service {
 		ArrayList<String> urls = new ArrayList<String>();
 		ArrayList<String> directories = new ArrayList<String>();
 		
-		for (int i = startAyah; i <= endAyah; i++) {
-			// get ayah
-			AyahItem ayah = QuranAudioLibrary.getAyahItem(
-					getApplicationContext(), soura, i, quranReader);
-			 String fileName =  ayah.getLocalAudioUrl().substring(ayah.getLocalAudioUrl().lastIndexOf(File.separator) + 1);
-			 String dir = ayah.getLocalAudioUrl().substring(0, ayah.getLocalAudioUrl().lastIndexOf(File.separator));
-			 File f = new File(dir, fileName);
-			 if (f.exists())
-				 continue;
-			 fileNames.add(fileName);
-			 directories.add(dir);
-			 urls.add(ayah.getRemoteAudioUrl());
-			 
-			 if(downloadImage){
-				 fileName = ayah.getAyah() + QuranAudioLibrary.IMAGE_EXTENSION;
-				 dir = QuranUtils.getSuraImagePath(ayah.getSoura());
-				 
-				 f = new File(dir, fileName);
-				 if (f.exists())
-					 continue;
-				 
-				 fileNames.add(fileName);
-				 directories.add(dir);
-				 urls.add(ayah.getRemoteImageUrl());
-			 }
-		}
-		
+		int ayatStartIndex = startAyah;
+		int ayatEndIndex = endAyah;
+		for (int j = soura; j <= endSoura; j++) {
+			if(j == soura){
+				ayatStartIndex = startAyah;
+			}else{
+				ayatStartIndex = 1;
+			}
+			if(j == endSoura){
+				ayatEndIndex = endAyah;
+			}else{
+				ayatEndIndex = QuranInfo.getNumAyahs(j);
+			}
+			for (int i = ayatStartIndex; i <= ayatEndIndex; i++) {
+				// get ayah
+				AyahItem ayah = QuranAudioLibrary.getAyahItem(
+						getApplicationContext(), j, i, quranReader);
+				String fileName = ayah.getLocalAudioUrl()
+						.substring(
+								ayah.getLocalAudioUrl().lastIndexOf(
+										File.separator) + 1);
+				String dir = ayah.getLocalAudioUrl().substring(0,
+						ayah.getLocalAudioUrl().lastIndexOf(File.separator));
+				File f = new File(dir, fileName);
+				if (f.exists())
+					continue;
+				fileNames.add(fileName);
+				directories.add(dir);
+				urls.add(ayah.getRemoteAudioUrl());
+
+				if (downloadImage) {
+					fileName = ayah.getAyah()
+							+ QuranAudioLibrary.IMAGE_EXTENSION;
+					dir = QuranUtils.getSuraImagePath(ayah.getSoura());
+
+					f = new File(dir, fileName);
+					if (f.exists())
+						continue;
+
+					fileNames.add(fileName);
+					directories.add(dir);
+					urls.add(ayah.getRemoteImageUrl());
+				}
+			}
+		}		
 		if (urls.size() > 0) {
 			thread = new DownloadThread(this, urls.toArray(new String[urls.size()]), 
 						fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);

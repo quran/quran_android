@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
 
 public abstract class InternetActivity extends BaseQuranActivity {
@@ -113,7 +114,23 @@ public abstract class InternetActivity extends BaseQuranActivity {
 		startDownloadService(intent);
 	}
 	
-    class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {
+	protected void downloadPage(int readerId, Integer[] integers){		
+		Intent intent = new Intent(this, QuranDataService.class);
+		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.SOURA_KEY, integers[0]);
+		intent.putExtra(QuranDataService.AYAH_KEY, integers[1]);
+		intent.putExtra(QuranDataService.END_SOURA_KEY, integers[2]);
+		intent.putExtra(QuranDataService.END_AYAH_KEY, integers[3]);
+		intent.putExtra(QuranDataService.READER_KEY, readerId);
+		startDownloadService(intent);
+		
+	}
+	
+	protected void downloadJuza(int readerId, Integer juza){
+			downloadPage(readerId, QuranInfo.getJuzBounds(juza));
+	}
+	
+    class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {	
     	
     	private boolean callOnFinish = false;
     	

@@ -36,7 +36,12 @@ public class AudioServiceBinder extends Binder implements
 	private boolean stopped = true;
 	private boolean preparing = false;
 	
-	private int numberOfRepeats = 0;
+	private int numberOfRepeats = 0;	
+	
+	private int errorCount = 0;
+	private int numberOfTries = 3;
+	private String url;
+	
 	private int repeats = 0;
 	
 	public int getNumberOfRepeats() {
@@ -75,6 +80,7 @@ public class AudioServiceBinder extends Binder implements
 		}
 		paused = false;	
 		stopped = true;
+		currentItem = null;
 		clearNotification();
 	}
 
@@ -96,17 +102,17 @@ public class AudioServiceBinder extends Binder implements
 		this.currentItem = item;
 		if(mp != null && mp.isPlaying()){
 			mp.stop();
-			try{
-				mp.release();
-			}catch(Exception e){}
-			mp = null;
+//			try{
+//				mp.release();
+//			}catch(Exception e){}
+//			mp = null;
 		}
 		try {
 			if(mp == null)
 				mp = new MediaPlayer();			
 			mp.reset();
 			mp.setOnCompletionListener(this);
-			String url = null;
+			url = null;
 			if(item.isAudioFoundLocally())
 				url = item.getLocalAudioUrl();
 			else if(remotePlayEnabled) {
@@ -214,6 +220,7 @@ public class AudioServiceBinder extends Binder implements
 
 	@Override
 	public synchronized void onPrepared(MediaPlayer mp) {
+		errorCount = 0;
 		preparing = false;
 		this.mp  = mp;
 		if(stopped){
@@ -296,15 +303,34 @@ public class AudioServiceBinder extends Binder implements
 				if(mp != this.mp && mp.isPlaying())
 					mp.stop();
 			}catch (Exception e) {
-				// TODO: handle exception
+				try{mp.release();}catch(Exception ex){}
+				mp = null;
 			}
 		}
-		if(ayahListener != null && !stopped) {
-			if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED)
-				ayahListener.onConnectionLost(currentItem);
-			else 
-				ayahListener.onUnknownError(currentItem);
+		if(errorCount >= numberOfTries || url == null || mp == null){
+			errorCount = 0;
+			if(ayahListener != null && !stopped) {
+				if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED)
+					ayahListener.onConnectionLost(currentItem);
+				else 
+					ayahListener.onUnknownError(currentItem);
+			}
+		}else{
+			try {
+				errorCount++;
+				mp.stop();
+				mp.reset();
+				mp.setDataSource(url);
+				mp.prepareAsync();				
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
 			
 		return true;
 	}
