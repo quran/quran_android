@@ -247,6 +247,15 @@ public class QuranUtils {
 		url += "images" + qsi.getWidthParam() + ".zip";
 		return url;
 	}
+	
+	public static String getAyaPositionFileUrl() {
+		String url = IMG_HOST;
+		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+		if (qsi == null)
+			return null;
+		url += "databases/ayahinfo" + qsi.getWidthParamNoUnderScore() + ".db.zip";
+		return url;
+	}
 
 	public static boolean hasTranslation(String fileName) {
 		String path = getQuranDatabaseDirectory();
