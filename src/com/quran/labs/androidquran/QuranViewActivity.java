@@ -476,6 +476,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			playAudio(getLastAyah());
 		}
 	}
+	
 
 	private int getQuranReaderId() {
 		return QuranSettings.getInstance().getLastReader();

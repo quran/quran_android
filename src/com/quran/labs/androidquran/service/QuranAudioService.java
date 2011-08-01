@@ -41,6 +41,11 @@ public class QuranAudioService extends Service {
 	}
 	
 	@Override
+	public boolean onUnbind(Intent intent) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);		
 	}
