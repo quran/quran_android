@@ -110,8 +110,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		if (iv != null){
 			HighlightingImageView hi = (HighlightingImageView)iv;
 			hi.highlightAyah(sura, ayah);
-			hi.invalidate();
-			hi.refreshDrawableState();
+			mQuranPage.invalidate();
 		}
 	}
 	
@@ -122,8 +121,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		if (iv != null){
 			HighlightingImageView hi = (HighlightingImageView)iv;
 			hi.unhighlight();
-			hi.invalidate();
-			hi.refreshDrawableState();
+			mQuranPage.invalidate();
 		}
 	}
 	
