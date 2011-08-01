@@ -179,8 +179,7 @@ public class QuranDataService extends Service {
 					urls.add(ayah.getRemoteImageUrl());
 				}
 			}
-		}
-		
+		}		
 		if (urls.size() > 0) {
 			thread = new DownloadThread(this, urls.toArray(new String[urls.size()]), 
 						fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);

@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
 
 public abstract class InternetActivity extends BaseQuranActivity {
@@ -121,7 +122,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	}
 	
 	protected void downloadJuza(int readerId, Integer juza){
-		Intent intent = new Intent(this, QuranDataService.class);
+			downloadPage(readerId, QuranInfo.getJuzBounds(juza));
 	}
 	
 	private void initServiceConnection() {
