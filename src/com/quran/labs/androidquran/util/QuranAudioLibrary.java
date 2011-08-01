@@ -71,7 +71,7 @@ public class QuranAudioLibrary {
 		try{
 			int ayah = currentAyaId;
 			int soura = currentSouraId;
-			if(currentAyaId == 1){
+			if(currentAyaId <= 1){
 				soura--;
 				if(soura == 0) soura = 114;
 				ayah = QuranInfo.SURA_NUM_AYAHS[soura - 1];

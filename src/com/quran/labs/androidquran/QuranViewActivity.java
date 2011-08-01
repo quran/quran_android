@@ -45,28 +45,19 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	protected static final String ACTION_STOP = "ACTION_STOP";
 	protected static final String ACTION_CHANGE_READER = "ACTION_CHANGE_READER";
 	protected static final String ACTION_JUMP_TO_AYAH = "ACTION_JUMP_TO_AYAH";
-
+	protected static final String ACTION_REPEAT = "ACTION_REPEAT";
+	
 	private static final String TAG = "QuranViewActivity";
 
 	private boolean bounded = false;
 	private AudioServiceBinder quranAudioPlayer = null;
-	
-	// on Stop Actions
-	private static final int ACTION_BAR_ACTION_PLAY = 0;
 
-	// on Play Actions
-	private static final int ACTION_BAR_ACTION_CHANGE_READER = 0;
-	private static final int ACTION_BAR_ACTION_JUMP_TO_AYAH = 1;
-	private static final int ACTION_BAR_ACTION_PREVIOUS = 2;
-	private static final int ACTION_BAR_ACTION_PAUSE = 3;
-	private static final int ACTION_BAR_ACTION_STOP = 4;
-	private static final int ACTION_BAR_ACTION_NEXT = 5;
 
 	private AyahItem lastAyah;
 	private int currentReaderId;
+	private boolean playing = false;
 
 	private HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
-	private HashMap<String, Integer> actionBarIndecies = new HashMap<String, Integer>();
 
 	// private TextView textView;
 
@@ -113,15 +104,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
-			
-			actionBarIndecies.put(ACTION_PLAY, ACTION_BAR_ACTION_PLAY);
-			actionBarIndecies.put(ACTION_PAUSE, ACTION_BAR_ACTION_PAUSE);
-			actionBarIndecies.put(ACTION_NEXT, ACTION_BAR_ACTION_NEXT);
-			actionBarIndecies.put(ACTION_PREVIOUS, ACTION_BAR_ACTION_PREVIOUS);
-			actionBarIndecies.put(ACTION_STOP, ACTION_BAR_ACTION_STOP);
-			actionBarIndecies.put(ACTION_CHANGE_READER, ACTION_BAR_ACTION_CHANGE_READER);
-			actionBarIndecies.put(ACTION_JUMP_TO_AYAH, ACTION_BAR_ACTION_JUMP_TO_AYAH);
-			
+//			actionBarActions.put(ACTION_REPEAT,
+//					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
+//	
 			onActionStop();
 		}
 	}
@@ -141,6 +126,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		String action = intent.getAction();
 		if (quranAudioPlayer != null && action != null) {
 			if (action.equalsIgnoreCase(ACTION_PLAY)) {
+				bindAudioService();
 				if (quranAudioPlayer.isPaused())
 					quranAudioPlayer.resume();
 				else {
@@ -159,17 +145,19 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				quranAudioPlayer.pause();
 				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_NEXT)) {
-				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
-						getLastAyah());
+				// Quick fix to switch actions 
+				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS)) {
-				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
+				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
+						getLastAyah());
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_STOP)) {
 				lastAyah = null;
 				quranAudioPlayer.stop();
+				unBindAudioService();
 				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_CHANGE_READER)){
 				showChangeReaderDialog();
@@ -182,17 +170,20 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	private void onActionPlay() {
 		actionBar.removeAllActions();
-		for (String action : actionBarIndecies.keySet()) {
+		for (String action : actionBarActions.keySet()) {
 			if (ACTION_PLAY.equals(action))
 				continue;
-			actionBar.addAction(actionBarActions.get(action), actionBarIndecies.get(ACTION_PLAY));
+			actionBar.addAction(actionBarActions.get(action), 0);
 		}
+		playing =true;
 	}
 
 	private void onActionStop() {
 		actionBar.removeAllActions();
 		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 1);
+		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 2);
+		playing = false;
 	}
 
 	private void showDownloadDialog(final AyahItem i) {
@@ -463,11 +454,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranAudioPlayer.play(lastAyah);
 			return false;
 		}
-		int page = QuranInfo.getPageFromSuraAyah(nextAyah.getSoura(), nextAyah
-				.getAyah());
-
-		if (quranPageFeeder.getCurrentPagePosition() != page)
-			quranPageFeeder.jumpToPage(page);
 		return true;
 	}
 
@@ -494,6 +480,15 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranAudioPlayer.enableRemotePlay(false);
 			playAudio(getLastAyah());
 		}
+	}
+	
+	@Override
+	protected void onDownloadCanceled() {
+		super.onDownloadCanceled();
+		if (quranAudioPlayer != null) {
+			quranAudioPlayer.stop();
+		}
+		onActionStop();
 	}
 
 	private int getQuranReaderId() {
@@ -561,6 +556,19 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranAudioPlayer.enableRemotePlay(true);
 			quranAudioPlayer.play(getLastAyah());
 		}
+	}
+
+	@Override
+	public void onAyahPlay(AyahItem ayah) {
+		int page = QuranInfo.getPageFromSuraAyah(ayah.getSoura(), ayah.getAyah());
+
+		if (quranPageFeeder.getCurrentPagePosition() != page) {
+			quranPageFeeder.jumpToPage(page);
+			updatePageInfo(page);
+		}
+		
+		if (!playing)
+			onActionPlay();
 	}
 
 }
