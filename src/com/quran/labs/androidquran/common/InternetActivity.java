@@ -85,6 +85,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     		startService(intent);
     	
     	bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    	currentTask = new ProgressBarUpdateTask().execute();
     }
 	
 	protected void downloadTranslation(String url, String fileName) {
@@ -136,7 +137,9 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	
 		@Override
 		protected Void doInBackground(Void... params) {
+			boolean wasRunning = false;
     		while (starting || QuranDataService.isRunning){
+    			wasRunning = QuranDataService.isRunning;
     			try {
     				Thread.sleep(1000);
     				if ((serviceConnection != null) && (downloadService != null)){
@@ -146,17 +149,19 @@ public abstract class InternetActivity extends BaseQuranActivity {
     			}
     			catch (InterruptedException ie){}
     		}
-    		callOnFinish = true;
+    		callOnFinish = true && wasRunning;
     		
     		return null;
     	}
     	
 		@Override
     	public void onProgressUpdate(Integer...integers){
-			if (pDialog == null)
-				showProgressDialog();
-    		int progress = integers[0];
-    		pDialog.setProgress(progress);
+			int progress = integers[0];
+			if (progress > 0) {
+				if (pDialog == null)
+					showProgressDialog();
+	    		pDialog.setProgress(progress);
+			}
     	}
     	
     	@Override
