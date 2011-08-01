@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.service.QuranDataService;
 
@@ -28,8 +29,9 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initServiceConnection();
-		if (QuranDataService.isRunning)
-			showProgressDialog();
+		if (!(this instanceof QuranViewActivity))
+			if (QuranDataService.isRunning)
+				showProgressDialog();
 	}
 	
 	public boolean isInternetOn() {
@@ -106,6 +108,22 @@ public abstract class InternetActivity extends BaseQuranActivity {
 		startDownloadService(intent);
 	}
 	
+	protected void downloadPage(int readerId, Integer[] integers){		
+		Intent intent = new Intent(this, QuranDataService.class);
+		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.SOURA_KEY, integers[0]);
+		intent.putExtra(QuranDataService.AYAH_KEY, integers[1]);
+		intent.putExtra(QuranDataService.END_SOURA_KEY, integers[2]);
+		intent.putExtra(QuranDataService.END_AYAH_KEY, integers[3]);
+		intent.putExtra(QuranDataService.READER_KEY, readerId);
+		startDownloadService(intent);
+		
+	}
+	
+	protected void downloadJuza(int readerId, Integer juza){
+		Intent intent = new Intent(this, QuranDataService.class);
+	}
+	
 	private void initServiceConnection() {
 	    serviceConnection = new ServiceConnection() {
 	    	public void onServiceConnected(ComponentName name, IBinder service){
@@ -155,6 +173,10 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	
     }
     
+    protected void onDownloadCanceled() {
+    	
+    }
+    
 	private void showProgressDialog(){
     	pDialog = new ProgressDialog(this);
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -164,6 +186,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("QuranAndroid", "User canceled downloading..");
+				onDownloadCanceled();
 				if (serviceConnection != null) {
 					if (downloadService != null) {
 						downloadService.stop();
@@ -172,6 +195,13 @@ public abstract class InternetActivity extends BaseQuranActivity {
 				}
 				stopService(new Intent(getApplicationContext(), QuranDataService.class));
 				currentTask = null;
+				pDialog.dismiss();
+			}
+		});
+    	pDialog.setButton(ProgressDialog.BUTTON2, "Hide", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				currentTask.cancel(true);
 				pDialog.dismiss();
 			}
 		});

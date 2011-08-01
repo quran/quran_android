@@ -11,4 +11,14 @@
         android:drawSelectorOnTop="true"
         android:entries="@array/quran_readers_name"
     />
+    <RadioGroup android:id="@+id/radioGroupDownload"
+    android:layout_width="fill_parent" android:layout_height="wrap_content">
+    <TextView android:text="@string/radio_download_message"  
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:gravity="center_horizontal"/>
+    <RadioButton android:id="@+id/radioDownloadPage" android:text="Current Page" android:checked="true"/>
+    <RadioButton android:id="@+id/radioDownloadSura" android:text="Current Sura"/>    
+    <RadioButton android:id="@+id/radioDownloadJuza" android:text="Current Juza"/>
+    </RadioGroup>
 </LinearLayout>
