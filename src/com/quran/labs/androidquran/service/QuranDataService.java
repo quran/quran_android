@@ -58,7 +58,7 @@ public class QuranDataService extends Service {
 	 * Wait time in seconds.. Time to wait before re-checking for internet
 	 * connection..
 	 */
-	private static final int WAIT_TIME = 30;
+	private static final int WAIT_TIME = 15;
 
 	public class QuranDownloadBinder extends Binder {
 		public QuranDataService getService() {
@@ -168,7 +168,7 @@ public class QuranDataService extends Service {
 		File f = new File(ayaPositionDb);
 		if (!f.exists()) {
 			urls.add(QuranUtils.getAyaPositionFileUrl());
-			fileNames.add("ayahinfo.db");
+			fileNames.add("ayahinfo.db.zip");
 			directories.add(base);
 		}
 		
@@ -319,7 +319,7 @@ public class QuranDataService extends Service {
 					if (isRunning) {
 						file.renameTo(new File(saveToDirectories[downloadIndex], fileNames[downloadIndex]));
 	
-						if (zipped)
+						if (zipped || fileNames[downloadIndex].endsWith(".zip"))
 							unzipFile(saveToDirectories[downloadIndex], fileNames[downloadIndex]);
 	
 						Log.d("quran_srv", "Download Completed [" + downloadUrls[downloadIndex] + "]");
