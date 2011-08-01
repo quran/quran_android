@@ -378,11 +378,11 @@ public class QuranDataService extends Service {
 
 		protected void unzipFile(String saveToDirectory, String fileName) {
 			try {
+				Log.d("quran_srv", "Unziping file: " + saveToDirectory + fileName);
 				// success, unzip the file...
 				File file = new File(saveToDirectory, fileName);
 				FileInputStream is = new FileInputStream(file);
 				ZipInputStream zis = new ZipInputStream(is);
-				String base = QuranUtils.getQuranBaseDirectory();
 
 				ZipEntry entry;
 				while ((entry = zis.getNextEntry()) != null) {
@@ -392,10 +392,9 @@ public class QuranDataService extends Service {
 					}
 
 					// ignore files that already exist
-					File f = new File(base + entry.getName());
+					File f = new File(saveToDirectory, entry.getName());
 					if (!f.exists()) {
-						FileOutputStream ostream = new FileOutputStream(base
-								+ entry.getName());
+						FileOutputStream ostream = new FileOutputStream(f);
 
 						int size;
 						byte[] buf = new byte[DOWNLOAD_BUFFER_SIZE];
@@ -410,8 +409,9 @@ public class QuranDataService extends Service {
 				is.close();
 
 				file.delete();
+				Log.d("quran_srv", "file unzipped successfully");
 			} catch (IOException ioe) {
-				Log.e("quran_srv", "io exception: ", ioe);
+				Log.e("quran_srv", "Error unzipping file: io exception: ", ioe);
 			}
 		}
 
