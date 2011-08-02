@@ -221,7 +221,6 @@ public class QuranDataService extends Service {
 			
 		}
 		progress = 0;
-		thread = null;
 		isRunning = false;
 	}
 
@@ -417,6 +416,7 @@ public class QuranDataService extends Service {
 			} catch(Exception e) {
 				Log.e("quran_srv", "Error", e);
 			}
+			thread = null;
 		}
 
 		protected void unzipFile(String saveToDirectory, String fileName) {

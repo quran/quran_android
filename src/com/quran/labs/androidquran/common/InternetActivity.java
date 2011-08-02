@@ -34,7 +34,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	public void onServiceDisconnected(ComponentName className) {
     		downloadService = null;
     	}
-    };;
+    };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -201,7 +201,6 @@ public abstract class InternetActivity extends BaseQuranActivity {
 					if (downloadService != null) {
 						downloadService.stop();
 					}
-					unbindService(serviceConnection);
 				}
 				stopService(new Intent(getApplicationContext(), QuranDataService.class));
 				if (currentTask != null)
