@@ -37,7 +37,10 @@
 	<string name="refresh">Refresh</string>
 	<string name="go">Go</string>
 	<string name="cancel">Cancel</string>
-	<string name="developedBy">Ahmed El-Helw - Hussein Maher - Wael Nafee</string>
+	<string name="developedBy">
+		Ahmed El-Helw - Ahmed Fouad
+		\nHussein Maher - Wael Nafee
+	</string>
 	<string name="copyRights">Copyright All Muslims</string>
 	<string name="email_subject">Feedback</string>
 	<string name="email_to">quran.android@gmail.com</string>
@@ -46,17 +49,15 @@
 		project, and the data used in the translations and Arabic comes from
 		tanzil.net.
 		\n\nCredits:
+		\n @fo2ad - audio recitation support
 		\n @wnafee - page flip animation (based on android-page-curl project)
 		\n @hams_rrr - arabic support for non-arabic phones
 		\n @neo_4583 - arabic reshaper project
 		\n @somaiagabr - graphics and arabic translation
 		\n Mehmed Mahmudoglu - turkish translation
 		\n\nNew features in this release:
-		\n- Awesome page flip animation (thanks @wnafee).
+		\n- Audio Recitations (thanks to @fo2ad)
 		\n- Minor bugfixes.
-		\n\nUpcoming features include:
-		\n- Recitation.
-		\nAnd more..
 		\n\nLa tansawna men saleh el doaa.
 	</string>
 	<string name="help_title">Quran Android Help</string>
