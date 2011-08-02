@@ -195,9 +195,11 @@ public class AudioServiceBinder extends Binder implements
 			play(currentItem);
 		}else{
 			repeats = 0;
-			AyahItem nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
+			AyahItem nextItem = null;
+			if (this.currentItem != null)
+				nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
 			boolean continuePlaying = false;
-			if(ayahListener != null && !stopped)
+			if(ayahListener != null && !stopped && nextItem != null)
 				continuePlaying = ayahListener.onAyahComplete(currentItem, nextItem);
 			if(nextItem != null){
 				//this.currentItem = nextItem;
