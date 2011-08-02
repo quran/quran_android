@@ -208,7 +208,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		dialog.setView(view);
 		initDownloadRadioButtons(view, getLastAyah());
 		// AlertDialog dialog = new DownloadDialog(this);
-		dialog.setMessage("Do you want to download sura");
+		dialog.setMessage("Select download option..");
 		dialog.setPositiveButton("Download",
 				new DialogInterface.OnClickListener() {
 
@@ -325,9 +325,12 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					int position, long id) {
 				HashMap<String, String>map = (HashMap<String, String>) adapter.getItemAtPosition(position);
 				int suraIndex = Integer.parseInt(map.get("suraId"));
-				int startAyah = suraIndex == pageBounds[0] ? pageBounds[1] : 1;
+				int startAyah = suraIndex == pageBounds[0] && checkbox.isChecked() ? pageBounds[1] : 1;
 				int endAyah = suraIndex == pageBounds[2]? pageBounds[3] : QuranInfo.SURA_NUM_AYAHS[suraIndex - 1];
 				initAyatSpinner(ayatSpinner, startAyah, endAyah);
+				if (suraIndex == pageBounds[0]) {
+					ayatSpinner.setSelection(pageBounds[1] - 1);
+				}
 			}
 
 			@Override
@@ -423,7 +426,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialogBuilder.setView(view);
 		dialogBuilder.setMessage("Change quran reader");
-		dialogBuilder.setPositiveButton("Change",
+		dialogBuilder.setPositiveButton("Set",
 				new DialogInterface.OnClickListener() {
 
 					@Override
