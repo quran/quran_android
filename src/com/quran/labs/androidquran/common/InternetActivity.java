@@ -131,7 +131,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 			downloadPage(readerId, QuranInfo.getJuzBounds(juza));
 	}
 	
-    class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {	
+    class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {
     	
     	private boolean callOnFinish = false;
     	
@@ -158,6 +158,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	public void onProgressUpdate(Integer...integers){
 			int progress = integers[0];
 			if (progress > 0) {
+				starting = false;
 				if (pDialog == null)
 					showProgressDialog();
 	    		pDialog.setProgress(progress);

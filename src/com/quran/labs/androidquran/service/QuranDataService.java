@@ -466,7 +466,7 @@ public class QuranDataService extends Service {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOAD_COMPLETED, 
 					"Download Completed", 
 					Notification.DEFAULT_SOUND | Notification.FLAG_AUTO_CANCEL | 
-					Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
+					Notification.DEFAULT_LIGHTS);
 			
 			service.stopSelf();
 			isRunning = false;
