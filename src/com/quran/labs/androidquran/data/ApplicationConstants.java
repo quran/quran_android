@@ -36,8 +36,6 @@ public class ApplicationConstants {
 	
 	// Settings Key
 	public static final String PREF_USE_ARABIC_NAMES = "useArabicNames";
-	public static final String PREF_FULL_SCREEN = "fullScreen"; 
-	public static final String PREF_SHOW_CLOCK = "showClock";
 	public static final String PREF_LAST_PAGE = "lastPage";
 	public static final String PREF_BOOKMARKS = "bookmarks";
 	public static final String PREF_KEEP_SCREEN_ON = "keepScreenOn";

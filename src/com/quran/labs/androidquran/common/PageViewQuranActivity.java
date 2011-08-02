@@ -52,10 +52,11 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 		super.onCreate(savedInstanceState);
 		// Request window feautres should be called before setting the layout
 		requestWindowFeatures();
-		setContentView(R.layout.quran_exp);
-		
+
 		// Adjust display settings
 		adjustDisplaySettings();
+		
+		setContentView(R.layout.quran_exp);
 		
 		// retrieve saved configurations
 		loadLastNonConfigurationInstance();
@@ -206,14 +207,9 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	}
 	
 	protected void adjustDisplaySettings() {
-		if (QuranSettings.getInstance().isFullScreen()) {
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-			if (!QuranSettings.getInstance().isShowClock()) {
-				getWindow().setFlags(
-					WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			}
-		}	
+		getWindow().setFlags(
+			WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	}
 	
 	protected int loadPageState(Bundle savedInstanceState){
