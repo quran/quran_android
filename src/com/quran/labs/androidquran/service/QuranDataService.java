@@ -270,16 +270,31 @@ public class QuranDataService extends Service {
 		}
 		
 		private void onDowloadStart() {
+			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
+					"Downloading..", Notification.FLAG_AUTO_CANCEL);
+		}
+		
+		private void onDownloadPaused() {
+			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
+					"Download Paused", Notification.FLAG_AUTO_CANCEL);
+		}
+		
+		private void onDownloadCanceled() {
+			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
+					"Download Canceled", Notification.FLAG_AUTO_CANCEL);
+		}
+		
+		private void showNotification(int notificationId, String msg, int flags) {
 			String ns = Context.NOTIFICATION_SERVICE;
 			NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
 
 			long when = System.currentTimeMillis();
-			Notification notification = new Notification(R.drawable.icon, "Downloading..", when);
-			notification.defaults |= Notification.FLAG_AUTO_CANCEL;
+			Notification notification = new Notification(R.drawable.icon, msg, when);
+			notification.defaults |= flags;
 
 			Context context = getApplicationContext();
 			CharSequence contentTitle = "Quran Android";
-			CharSequence contentText = "Downloading..";
+			CharSequence contentText = msg;
 			Intent notificationIntent = new Intent(context, QuranActivity.class);
 			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 					notificationIntent, 0);
@@ -287,13 +302,13 @@ public class QuranDataService extends Service {
 			notification.setLatestEventInfo(context, contentTitle, contentText,
 					contentIntent);
 
-			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING,
-					notification);
+			notificationManager.notify(notificationId, notification);
 		}
 
 		// based on:
 		// http://stackoverflow.com/questions/6237079/resume-http-file-download-in-java
 		private boolean resumeDownload() {
+			onDowloadStart();
 			BufferedInputStream in = null;
 			FileOutputStream fos = null;
 			BufferedOutputStream bout = null;
@@ -379,7 +394,6 @@ public class QuranDataService extends Service {
 		@Override
 		public void run() {
 			isRunning = true;
-			onDowloadStart();
 			try {
 				while (isRunning) {
 					if (isInternetOn() && resumeDownload()) {
@@ -388,10 +402,12 @@ public class QuranDataService extends Service {
 						break;
 					}
 					if (!isRunning) {
+						onDownloadCanceled();
 						Log.d("quran_srv", "Canceled");
 						break;
 					}
 					try {
+						onDownloadPaused();
 						Log.d("quran_srv", "Disconnected.. Retring after " + WAIT_TIME + " seconds");
 						sleep(WAIT_TIME * 1000);
 					} catch (InterruptedException e) {
@@ -446,24 +462,12 @@ public class QuranDataService extends Service {
 			String ns = Context.NOTIFICATION_SERVICE;
 			NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
 			notificationManager.cancel(ApplicationConstants.NOTIFICATION_DOWNLOADING);
-
-			long when = System.currentTimeMillis();
-			Notification notification = new Notification(R.drawable.icon, "Download Completed", when);
-			notification.defaults |= Notification.DEFAULT_SOUND | Notification.FLAG_AUTO_CANCEL;
-
-			Context context = getApplicationContext();
-			CharSequence contentTitle = "Quran Android";
-			CharSequence contentText = "Download Completed";
-			Intent notificationIntent = new Intent(context, QuranActivity.class);
-			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-					notificationIntent, 0);
-
-			notification.setLatestEventInfo(context, contentTitle, contentText,
-					contentIntent);
-
-			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOAD_COMPLETED,
-					notification);
-
+			
+			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOAD_COMPLETED, 
+					"Download Completed", 
+					Notification.DEFAULT_SOUND | Notification.FLAG_AUTO_CANCEL | 
+					Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS);
+			
 			service.stopSelf();
 			isRunning = false;
 		}
