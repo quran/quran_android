@@ -65,6 +65,7 @@ public class HighlightingImageView extends ImageView {
 				(first.getPosition() != current.getPosition()))
 				last = current;
 			
+			cursor.close();
 			handler.closeDatabase();
 			doHighlightAyah(first, last, lineCoords);
 		}
