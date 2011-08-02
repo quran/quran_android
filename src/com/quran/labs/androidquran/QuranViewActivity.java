@@ -75,6 +75,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranAudioPlayer.setAyahCompleteListener(QuranViewActivity.this);
 			if (quranAudioPlayer.isPlaying()) {
 				onActionPlay();
+				AyahItem a = quranAudioPlayer.getCurrentAyah();
+				quranPageFeeder.highlightAyah(a.getSoura(), a.getAyah());
 			}
 		}
 	};
@@ -288,7 +290,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		
 		radioSura.setText(QuranInfo.getSuraName(ayahItem.getSoura() - 1));
 		radioJuz.setText(QuranInfo.getJuzTitle() + " " + QuranInfo.getJuzFromPage(QuranInfo.getPageFromSuraAyah(ayahItem.getSoura(), ayahItem.getAyah())));
-		radioPage.setText("Page" + (QuranInfo.getPageFromSuraAyah(ayahItem.getSoura(), ayahItem.getAyah())));
+		radioPage.setText("Page");
 		
 	}
 	private void showJumpToAyahDialog() {
