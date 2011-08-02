@@ -84,9 +84,6 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void startDownloadService(Intent intent) {
     	starting = true;    	
-//    	if (!QuranDataService.isRunning)
-//    		startService(intent);
-//    	
     	
     	int downloadType = intent.getIntExtra(QuranDataService.DWONLOAD_TYPE_KEY, -1);
     	if(downloadType != -1){
@@ -95,11 +92,6 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	}else if(QuranDataService.isRunning && !bounded){
     		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);    	
     	}
-//    	else if (downloadService != null) {
-//    		downloadService.handleStart(intent);
-//    		if(currentTask != null) currentTask.cancel(true);
-//    		currentTask = new ProgressBarUpdateTask().execute();
-//    	}
     }
 	
 	protected void downloadTranslation(String url, String fileName) {
