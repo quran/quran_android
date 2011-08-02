@@ -163,6 +163,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				quranAudioPlayer.stop();
 				unBindAudioService();
 				onActionStop();
+				quranPageFeeder.unHighlightAyah();
 			} else if (action.equalsIgnoreCase(ACTION_CHANGE_READER)){
 				showChangeReaderDialog();
 			}
