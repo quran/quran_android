@@ -14,6 +14,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.util.Log;
 
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.QuranViewActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
@@ -88,7 +89,7 @@ public class AudioServiceBinder extends Binder implements
 	private void clearNotification(){
 		NotificationManager mgr = 
 			(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-		 mgr.cancelAll();
+		 mgr.cancel(ApplicationConstants.NOTIFICATION_AUDIO);
 	}
 	/* (non-Javadoc)
 	 * @see org.islam.quran.IAudioPlayer#play(org.islam.quran.AyahAudioItem)
@@ -286,7 +287,7 @@ public class AudioServiceBinder extends Binder implements
 	        notification.flags |= Notification.FLAG_ONGOING_EVENT;
 	        notification.icon = R.drawable.icon;
             
-            mgr.notify(1, notification);
+            mgr.notify(ApplicationConstants.NOTIFICATION_AUDIO, notification);
             
 	        //notified = true;
 

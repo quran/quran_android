@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.service.QuranDataService;
 public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected ProgressDialog pDialog = null;
+	private static boolean hideProgressBar = false;
 	protected QuranDataService downloadService;
 	protected AsyncTask<?, ?, ?> currentTask = null;
 	protected boolean starting = true;
@@ -86,15 +87,19 @@ public abstract class InternetActivity extends BaseQuranActivity {
 //    	if (!QuranDataService.isRunning)
 //    		startService(intent);
 //    	
-    	if(!bounded){
+    	
+    	int downloadType = intent.getIntExtra(QuranDataService.DWONLOAD_TYPE_KEY, -1);
+    	if(downloadType != -1){
     		startService(intent);
     		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    	}else if(QuranDataService.isRunning && !bounded){
+    		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);    	
     	}
-    	else if (downloadService != null) {
-    		downloadService.handleStart(intent);
-    		if(currentTask != null) currentTask.cancel(true);
-    		currentTask = new ProgressBarUpdateTask().execute();
-    	}
+//    	else if (downloadService != null) {
+//    		downloadService.handleStart(intent);
+//    		if(currentTask != null) currentTask.cancel(true);
+//    		currentTask = new ProgressBarUpdateTask().execute();
+//    	}
     }
 	
 	protected void downloadTranslation(String url, String fileName) {
@@ -166,7 +171,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 		@Override
     	public void onProgressUpdate(Integer...integers){
 			int progress = integers[0];
-			if (progress > 0) {
+			if (progress > 0 && !hideProgressBar) {
 				starting = false;
 				try {					
 		    		pDialog.setProgress(progress);
@@ -189,6 +194,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     		} catch (Exception e) {
     			
     		}
+    		hideProgressBar = false;
 			pDialog = null;
 			currentTask = null;
 			if (callOnFinish)
@@ -205,6 +211,9 @@ public abstract class InternetActivity extends BaseQuranActivity {
     }
     
 	private void showProgressDialog(){
+		if (hideProgressBar)
+			return;
+		
     	pDialog = new ProgressDialog(InternetActivity.this);
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);
@@ -229,8 +238,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	pDialog.setButton(ProgressDialog.BUTTON2, "Hide", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				if (currentTask != null)
-					currentTask.cancel(true);
+				hideProgressBar = true;
 				if (pDialog != null)
 					pDialog.dismiss();
 			}

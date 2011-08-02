@@ -72,7 +72,6 @@ public class QuranDataService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		handleStart(intent, 0);
 		return binder;
 	}
 
@@ -120,6 +119,8 @@ public class QuranDataService extends Service {
 				downloadTranslation(intent);
 			break;
 		}
+		if(thread == null)
+			stopSelf();
 	}
 
 	private void downloadSuraAudio(Intent intent) {
@@ -300,6 +301,7 @@ public class QuranDataService extends Service {
 			CharSequence contentTitle = "Quran Android";
 			CharSequence contentText = msg;
 			Intent notificationIntent = new Intent(context, QuranActivity.class);
+			notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 					notificationIntent, 0);
 
