@@ -291,6 +291,8 @@ public class QuranDataService extends Service {
 					notification);
 		}
 
+		// based on:
+		// http://stackoverflow.com/questions/6237079/resume-http-file-download-in-java
 		private boolean resumeDownload() {
 			BufferedInputStream in = null;
 			FileOutputStream fos = null;
@@ -298,7 +300,7 @@ public class QuranDataService extends Service {
 
 			try {
 				for (; downloadIndex < fileNames.length; downloadIndex++) {
-					int downloaded = 0;	;
+					int downloaded = 0;
 					File f = new File(saveToDirectories[downloadIndex]);
 					f.mkdirs();
 					File file = new File(saveToDirectories[downloadIndex],
@@ -322,7 +324,7 @@ public class QuranDataService extends Service {
 					connection.setRequestProperty("Range", "bytes="
 							+ downloaded + "-");
 					connection.setDoInput(true);
-					in = new BufferedInputStream(connection.getInputStream());
+					in = new BufferedInputStream(connection.getInputStream(), DOWNLOAD_BUFFER_SIZE);
 					fos = (downloaded == 0) ? new FileOutputStream(file
 							.getAbsolutePath()) : new FileOutputStream(file
 							.getAbsolutePath(), true);
@@ -337,6 +339,9 @@ public class QuranDataService extends Service {
 						double percent = 100.0 * ((1.0 * downloaded) / (1.0 * total));
 						updateProgress((int) percent, fileNames.length, downloadIndex);
 					}
+					bout.flush();
+					bout.close();
+					fos.close();
 					
 					if (isRunning) {
 						file.renameTo(new File(saveToDirectories[downloadIndex], fileNames[downloadIndex]));

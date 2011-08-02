@@ -17,7 +17,7 @@ import com.quran.labs.androidquran.common.AyahItem;
 public class QuranUtils {
 
 	public static boolean failedToWrite = false;
-	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
+	public static String IMG_HOST = "http://downthestreetfromyou.com/androidquran/";
 	private static String QURAN_BASE = File.separator + "quran_android"
 			+ File.separator;
 	private static String DATABASE_DIRECTORY = "databases";
