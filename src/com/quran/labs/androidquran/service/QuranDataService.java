@@ -72,6 +72,7 @@ public class QuranDataService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
+		handleStart(intent, 0);
 		return binder;
 	}
 
@@ -92,6 +93,10 @@ public class QuranDataService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		handleStart(intent, startId);
 		return START_STICKY;
+	}
+	
+	public void handleStart(Intent intent) {
+		handleStart(intent, - 1);
 	}
 
 	public void handleStart(Intent intent, int startId) {

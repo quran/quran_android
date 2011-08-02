@@ -23,16 +23,18 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	protected QuranDataService downloadService;
 	protected AsyncTask<?, ?, ?> currentTask = null;
 	protected boolean starting = true;
+	private boolean bounded = false;
 	protected ServiceConnection serviceConnection = new ServiceConnection() {
     	public void onServiceConnected(ComponentName name, IBinder service){
     		downloadService = ((QuranDataService.QuranDownloadBinder)service).getService();
     		starting = false;
-    		if (QuranDataService.isRunning)
-    			currentTask = new ProgressBarUpdateTask().execute();
+    		currentTask = new ProgressBarUpdateTask().execute();
+    		bounded = true;
     	}
 
     	public void onServiceDisconnected(ComponentName className) {
     		downloadService = null;
+    		starting = false;
     	}
     };
 	
@@ -81,11 +83,18 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void startDownloadService(Intent intent) {
     	starting = true;    	
-    	if (!QuranDataService.isRunning)
+//    	if (!QuranDataService.isRunning)
+//    		startService(intent);
+//    	
+    	if(!bounded){
     		startService(intent);
-    	
-    	bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    	currentTask = new ProgressBarUpdateTask().execute();
+    		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    	}
+    	else if (downloadService != null) {
+    		downloadService.handleStart(intent);
+    		if(currentTask != null) currentTask.cancel(true);
+    		currentTask = new ProgressBarUpdateTask().execute();
+    	}
     }
 	
 	protected void downloadTranslation(String url, String fileName) {
@@ -159,11 +168,19 @@ public abstract class InternetActivity extends BaseQuranActivity {
 			int progress = integers[0];
 			if (progress > 0) {
 				starting = false;
-				if (pDialog == null)
-					showProgressDialog();
-	    		pDialog.setProgress(progress);
+				try {					
+		    		pDialog.setProgress(progress);
+				} catch (Exception e) {
+					
+				}
 			}
     	}
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showProgressDialog();
+		}
     	
     	@Override
     	public void onPostExecute(Void val){
@@ -188,7 +205,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     }
     
 	private void showProgressDialog(){
-    	pDialog = new ProgressDialog(this);
+    	pDialog = new ProgressDialog(InternetActivity.this);
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);
     	pDialog.setCancelable(false);
