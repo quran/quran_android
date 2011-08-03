@@ -116,12 +116,14 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	
 	public void unHighlightAyah(){
 		View v = mQuranPage.getCurrentPage();
-		HighlightingImageView iv = 
-			(HighlightingImageView)v.findViewById(R.id.page_image);
-		if (iv != null){
-			HighlightingImageView hi = (HighlightingImageView)iv;
-			hi.unhighlight();
-			mQuranPage.invalidate();
+		if (v != null) {
+			HighlightingImageView iv = 
+				(HighlightingImageView)v.findViewById(R.id.page_image);
+			if (iv != null){
+				HighlightingImageView hi = (HighlightingImageView)iv;
+				hi.unhighlight();
+				mQuranPage.invalidate();
+			}
 		}
 	}
 	
