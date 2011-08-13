@@ -51,6 +51,10 @@ public class QuranActivity extends BaseQuranActivity {
 		addActions();
     }
     
+    /**
+     * Sets up the action bar.
+     */
+    
 	protected void addActions() {
 		actionBar.setTitle("Quran");
 		actionBar.addAction(getIntentAction(ACTION_RESUME, R.drawable.translation));
@@ -157,7 +161,7 @@ public class QuranActivity extends BaseQuranActivity {
 		}
 	}
 	
-	// http://www.androidpeople.com/android-custom-listview-tutorial-example/
+	
 	private class EfficientAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		private QuranElement[] elements;
@@ -225,6 +229,7 @@ public class QuranActivity extends BaseQuranActivity {
 			}
 			return convertView;
 		}
+		
 		
 		private void downloadSuraAudio(int suraId) {
 			Intent intent = new Intent(QuranActivity.this, QuranDataService.class);

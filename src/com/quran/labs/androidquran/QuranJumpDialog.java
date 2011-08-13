@@ -63,8 +63,8 @@ public class QuranJumpDialog extends Dialog {
 		leave();
 	}
 	
-	// http://groups.google.com/group/android-developers/browse_frm/
-	//    thread/17210d784766602d/d430c900a9c4019c?
+	//hides the soft keyboard
+	
 	public void leave(){
 		EditText pageField = (EditText)this.findViewById(R.id.page_field);
 		InputMethodManager imm =
