@@ -330,7 +330,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				int endAyah = suraIndex == pageBounds[2]? pageBounds[3] : QuranInfo.SURA_NUM_AYAHS[suraIndex - 1];
 				initAyatSpinner(ayatSpinner, startAyah, endAyah);
 				if (suraIndex == pageBounds[0]) {
-					ayatSpinner.setSelection(checkbox.isChecked() ? 0 : (pageBounds[1] - 1));
+					ayatSpinner.setSelection(pageBounds[1] - 1);
 				}
 			}
 
