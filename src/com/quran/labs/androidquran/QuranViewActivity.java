@@ -296,8 +296,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		RadioButton radioJuz = (RadioButton) parent.findViewById(R.id.radioDownloadJuza);
 		RadioButton radioPage = (RadioButton) parent.findViewById(R.id.radioDownloadPage);
 		
-		radioSura.setText(QuranInfo.getSuraName(ayahItem.getSoura() - 1));
-		radioJuz.setText(QuranInfo.getJuzTitle() + " " + QuranInfo.getJuzFromPage(QuranInfo.getPageFromSuraAyah(ayahItem.getSoura(), ayahItem.getAyah())));
+		radioSura.setText(ArabicStyle.reshape(QuranInfo.getSuraName(ayahItem.getSoura() - 1)));
+		radioJuz.setText(ArabicStyle.reshape(QuranInfo.getJuzTitle() + " " + QuranInfo.getJuzFromPage(
+				QuranInfo.getPageFromSuraAyah(ayahItem.getSoura(), ayahItem.getAyah()))));
 		radioPage.setText("Page");
 		
 	}
