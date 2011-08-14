@@ -13,6 +13,7 @@ public class QuranSettings {
 	private boolean keepScreenOn = false;
 	private boolean lockOrientation = false;
 	private boolean landscapeOrientation = false;
+	private boolean displayMarkerPopup = false;
 	private int translationTextSize = ApplicationConstants.DEFAULT_TEXT_SIZE;
 	private int lastPage = 0;
 	private String activeTranslation = null;
@@ -75,6 +76,14 @@ public class QuranSettings {
 		this.landscapeOrientation = landscapeOrientation;
 	}
 	
+	public boolean isDisplayMarkerPopup() {
+		return displayMarkerPopup;
+	}
+
+	public void setMarkerPopup(boolean displayMarkerPopup) {
+		this.displayMarkerPopup = displayMarkerPopup;
+	}
+
 	public int getTranslationTextSize() {
 		return translationTextSize;
 	}
@@ -100,6 +109,7 @@ public class QuranSettings {
 		instance.keepScreenOn = preferences.getBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, true);
 		instance.lockOrientation = preferences.getBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, false);
 		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
+		instance.displayMarkerPopup = preferences.getBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, false);
 		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.NO_PAGE_SAVED);
 		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
@@ -113,6 +123,7 @@ public class QuranSettings {
 		editor.putBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, instance.keepScreenOn);
 		editor.putBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, instance.lockOrientation);
 		editor.putBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, instance.landscapeOrientation);
+		editor.putBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, instance.displayMarkerPopup);
 		editor.putInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, instance.translationTextSize);
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
 		editor.putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, instance.activeTranslation);
