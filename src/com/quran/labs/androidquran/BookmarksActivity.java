@@ -19,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.BookmarksManager;
 
 public class BookmarksActivity extends BaseQuranActivity {
@@ -39,8 +40,8 @@ public class BookmarksActivity extends BaseQuranActivity {
 		ArrayList<Integer> bookmarks = BookmarksManager.getInstance().getBookmarks();
 		for (int i = 0; i < bookmarks.size(); i++) {
 			int page = bookmarks.get(i);
-			String title = QuranInfo.getSuraNameString(page);
-			String info = QuranInfo.getSuraDetailsForBookmark(page);
+			String title = ArabicStyle.reshape(QuranInfo.getSuraNameString(page));
+			String info = ArabicStyle.reshape(QuranInfo.getSuraDetailsForBookmark(page));
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("suraname", title);
 			map.put("info", info);

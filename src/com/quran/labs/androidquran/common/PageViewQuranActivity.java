@@ -147,6 +147,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	@Override
 	public void jumpTo(int page) {
 		quranPageFeeder.jumpToPage(page);
+		updatePageInfo();
 	}
 	    
 	protected void goToNextPage() {
