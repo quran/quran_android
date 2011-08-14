@@ -33,6 +33,7 @@ import com.quran.labs.androidquran.common.QuranPageFeeder;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
+import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -387,7 +388,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 		for (int i = startSura; i <= endSura; i++) {
 			HashMap<String, String> hash = new HashMap<String, String>();
-			hash.put("suraName", QuranInfo.getSuraName(i-1));
+			hash.put("suraName", ArabicStyle.reshape(QuranInfo.getSuraName(i-1)));
 			hash.put("suraId", ""+i);
 			data.add(hash);
 		}
