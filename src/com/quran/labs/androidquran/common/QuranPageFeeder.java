@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
@@ -166,19 +167,20 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		int hizb = (rub3 / 4) + 1;
 		StringBuilder sb = new StringBuilder();
 		
+		boolean arabic = QuranSettings.getInstance().isArabicNames();
 		if (rub3 % 8 == 0) {
-			sb.append("Juz' ").append((hizb/2) + 1);
+			sb.append(arabic ? "الجزء" : "Juz'").append(' ').append((hizb/2) + 1);
 		} else {
-			sb.append("Hizb ").append(hizb);
 			int remainder = rub3 % 4;
 			if (remainder == 1)
-				sb.insert(0, "¼ ");
+				sb.append(arabic ? "ربع" : "¼").append(' ');
 			else if (remainder == 2)
-				sb.insert(0, "½ ");
+				sb.append(arabic ? "نصف" : "½").append(' ');
 			else if (remainder == 3)
-				sb.insert(0, "¾ ");
+				sb.append(arabic ? "ثلاثة أرباع" : "¾").append(' ');
+			sb.append(arabic ? "الحزب" : "Hizb").append(' ').append(hizb);
 		}
-		Toast.makeText(mContext, sb.toString(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(mContext, ArabicStyle.reshape(sb.toString()), Toast.LENGTH_SHORT).show();
 		lastPopupTime = System.currentTimeMillis();
 	}
 	
