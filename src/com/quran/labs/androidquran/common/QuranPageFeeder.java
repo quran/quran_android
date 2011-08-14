@@ -12,9 +12,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
@@ -46,6 +48,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	protected LayoutInflater mInflater;
 	protected int mPageLayout;
 	protected int mCurrentPageNumber;
+	
+	private long lastPopupTime = System.currentTimeMillis();
 	
 	public QuranPageFeeder(PageViewQuranActivity context,
 			QuranPageCurlView quranPage, int page_layout) {
@@ -149,6 +153,31 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		} else if (flipDirection == OnPageFlipListener.PREVIOUS_PAGE){
 			loadPreviousPage(pageView);
 		}
+	}
+	
+	public void displayMarkerPopup() {
+		if(System.currentTimeMillis() - lastPopupTime < 3000)
+			return;
+		int rub3 = QuranInfo.getRub3FromPage(mCurrentPageNumber);
+		if (rub3 == -1)
+			return;
+		int hizb = (rub3 / 4) + 1;
+		StringBuilder sb = new StringBuilder();
+		
+		if (rub3 % 8 == 0) {
+			sb.append("Juz' ").append((hizb/2) + 1);
+		} else {
+			sb.append("Hizb ").append(hizb);
+			int remainder = rub3 % 4;
+			if (remainder == 1)
+				sb.insert(0, "¼ ");
+			else if (remainder == 2)
+				sb.insert(0, "½ ");
+			else if (remainder == 3)
+				sb.insert(0, "¾ ");
+		}
+		Toast.makeText(mContext, sb.toString(), Toast.LENGTH_SHORT).show();
+		lastPopupTime = System.currentTimeMillis();
 	}
 	
 	public int loadNextPage(QuranPageCurlView pageView) {
@@ -292,6 +321,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	        	updateViewForUser(v, false, false);
 	        	QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
 				QuranSettings.save(mContext.prefs);
+				if (QuranSettings.getInstance().isDisplayMarkerPopup())
+					displayMarkerPopup();
 	        }
 			
 			//clear for GC
