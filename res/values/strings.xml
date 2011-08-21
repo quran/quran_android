@@ -46,7 +46,8 @@
 	<string name="email_to">quran.android@gmail.com</string>
 	<string name="aboutUs">Quran Android is a free, open source Quran
 		application for Android.  The images used are from the quran.com
-		project, and the data used in the translations and Arabic comes from
+		project, the audio comes from everyayah.com, 
+		the data used in the translations and Arabic comes from
 		tanzil.net.
 		\n\nCredits:
 		\n @fo2ad - audio recitation support
