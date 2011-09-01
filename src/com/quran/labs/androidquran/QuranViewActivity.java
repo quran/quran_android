@@ -616,6 +616,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		
 		quranPageFeeder.highlightAyah(ayah.getSoura(), ayah.getAyah());
 		
+		QuranSettings.getInstance().setLastPlayedAyah(ayah.getSoura(), ayah.getAyah());
+		
 		if (!playing)
 			onActionPlay();
 	}

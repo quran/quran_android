@@ -19,6 +19,8 @@ public class QuranSettings {
 	private String activeTranslation = null;
 	private boolean reshapeArabic = false;
 	private int lastReader = 0;
+	private int lastPlayedSura = 1;
+	private int lastPlayedAyah = 1;
 
 	private QuranSettings() {
 		
@@ -32,6 +34,19 @@ public class QuranSettings {
 		this.lastReader = lastReader;
 	}
 
+	public int getLastPlayedSura() {
+		return lastPlayedSura;
+	}
+	
+	public int getLastPlayedAyah() {
+		return lastPlayedAyah;
+	}
+	
+	public void setLastPlayedAyah(int sura, int ayah) {
+		this.lastPlayedSura = sura;
+		this.lastPlayedAyah = ayah;
+	}
+	
 	public Integer getLastPage() {
 		return lastPage;
 	}
@@ -115,6 +130,8 @@ public class QuranSettings {
 		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
 		instance.reshapeArabic = preferences.getBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, false);
 		instance.lastReader = preferences.getInt(ApplicationConstants.PREF_LAST_READER, 0);
+		instance.lastPlayedSura = preferences.getInt(ApplicationConstants.PREF_LAST_PLAYED_SURA, 0);
+		instance.lastPlayedAyah = preferences.getInt(ApplicationConstants.PREF_LAST_PLAYED_AYAH, 0);
 	}
 	
 	public static void save(SharedPreferences preferences) {
@@ -129,6 +146,8 @@ public class QuranSettings {
 		editor.putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, instance.activeTranslation);
 		editor.putBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, instance.reshapeArabic);
 		editor.putInt(ApplicationConstants.PREF_LAST_READER, instance.lastReader);
+		editor.putInt(ApplicationConstants.PREF_LAST_PLAYED_SURA, instance.lastPlayedSura);
+		editor.putInt(ApplicationConstants.PREF_LAST_PLAYED_AYAH, instance.lastPlayedAyah);
 		editor.commit();
 	}
 }
