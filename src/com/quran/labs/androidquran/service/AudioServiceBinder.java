@@ -277,8 +277,8 @@ public class AudioServiceBinder extends Binder implements
 	                System.currentTimeMillis());
 	     
 	     
-	        notification.setLatestEventInfo(context,
-	        				context.getApplicationInfo().name, 
+	     	String name = context.getString(R.string.app_name);
+	        notification.setLatestEventInfo(context, name,
 	        				item.getSoura() + " - " + QuranInfo.getSuraName(item.getSoura() -1)
 	        			 + " (" + item.getAyah() + ")", pi);
 //	        notification.contentView = new RemoteViews("com.quran.labs.androidquran", 
