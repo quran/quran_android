@@ -63,9 +63,8 @@
 	</string>
 	<string name="help_title">Quran Android Help</string>
 	<string name="help">- Flip your screen to landscape mode for a zoomed in version.
-	    \n- Change pages by tapping the right or left side of the screen, or by 
-	    swiping your finger across the screen.
-	    \n- Tap the center of the screen to get a slider for switching pages.
+	    \n- Change pages by swiping your finger across the screen.
+	    \n- Tap the screen to get a bookmark button, a slider for switching pages and audio.
 	    \n- You can fix the orientation in either landscape or portrait modes.
 	    \n- Browse and download available translations (choose Menu > Get Translations).
 	    \n- You can download as many translations as you want, yet only one translation
