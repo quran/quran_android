@@ -866,17 +866,20 @@ public class QuranPageCurlView extends View {
 		if ((event.getAction() == MotionEvent.ACTION_UP) &&
 				((event.getEventTime() - event.getDownTime()) <= FINGER_CLICK_TIME_MAX) &&
 				!dispatchDecisionTaken) {
-			float xPos = event.getX();
+			//float xPos = event.getX();
 			
 			/* 
 			 * Only perform click if the tap was in the center of the screen. 
 			 * Otherwise, just perform the ACTION_UP as normal which should 
 			 * flip the page depending which side of the screen the tap was on
+			 * 
+			 * update 9/4/2011 - removed this behavior because it was confusing
+			 * and made it always click on touch.
 			 */
-			if ((xPos > width/4) && (xPos < width*3/4)){
+			//if ((xPos > width/4) && (xPos < width*3/4)){
 				event.setAction(MotionEvent.ACTION_CANCEL);
 				performClick();
-			}
+			//}
 		}
 		
 		
