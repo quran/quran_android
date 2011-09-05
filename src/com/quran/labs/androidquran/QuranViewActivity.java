@@ -30,6 +30,7 @@ import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
 import com.quran.labs.androidquran.common.QuranPageFeeder;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
@@ -88,6 +89,17 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		// textView = new TextView(this);
 		// textView.setText("");
 		bindAudioService();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		int lastPage = QuranSettings.getInstance().getLastPage();
+		if (lastPage != ApplicationConstants.NO_PAGE_SAVED 
+				&& lastPage != quranPageFeeder.getCurrentPagePosition()) {
+			quranPageFeeder.jumpToPage(lastPage);
+			updatePageInfo(lastPage);
+		}
 	}
 
 	protected void addActions() {
@@ -615,6 +627,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		}
 		
 		quranPageFeeder.highlightAyah(ayah.getSoura(), ayah.getAyah());
+		
+		QuranSettings.getInstance().setLastPlayedAyah(ayah.getSoura(), ayah.getAyah());
 		
 		if (!playing)
 			onActionPlay();

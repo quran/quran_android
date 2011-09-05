@@ -61,6 +61,10 @@ public class TranslationPageFeeder extends QuranPageFeeder
         tv.setTextSize(QuranSettings.getInstance().getTranslationTextSize());
 		
 		updateViewForUser(v, false, false);
+		
+		QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
+		QuranSettings.save(mContext.prefs);
+		
         return v;
 	}
 	
