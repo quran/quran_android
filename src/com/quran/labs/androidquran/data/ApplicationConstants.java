@@ -46,6 +46,8 @@ public class ApplicationConstants {
 	public static final String PREF_ACTIVE_TRANSLATION = "activeTranslation";
 	public static final String PREF_RESHAPE_ARABIC = "reshapeArabic";
 	public static final String PREF_LAST_READER = "lastReader";
+	public static final String PREF_LAST_PLAYED_SURA = "lastPlayedSura";
+	public static final String PREF_LAST_PLAYED_AYAH = "lastPlayedAyah";
 	
 	// Notifications
 	public static final int NOTIFICATION_DOWNLOAD_COMPLETED = 1;
