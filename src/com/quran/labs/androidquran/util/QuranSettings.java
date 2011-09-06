@@ -14,6 +14,7 @@ public class QuranSettings {
 	private boolean lockOrientation = false;
 	private boolean landscapeOrientation = false;
 	private boolean displayMarkerPopup = false;
+	private boolean autoScroll = false;
 	private int translationTextSize = ApplicationConstants.DEFAULT_TEXT_SIZE;
 	private int lastPage = 0;
 	private String activeTranslation = null;
@@ -99,6 +100,14 @@ public class QuranSettings {
 		this.displayMarkerPopup = displayMarkerPopup;
 	}
 
+	public boolean isAutoScroll() {
+		return autoScroll;
+	}
+	
+	public void setAutoScroll(boolean autoScroll) {
+		this.autoScroll = autoScroll;
+	}
+	
 	public int getTranslationTextSize() {
 		return translationTextSize;
 	}
@@ -125,6 +134,7 @@ public class QuranSettings {
 		instance.lockOrientation = preferences.getBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, false);
 		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
 		instance.displayMarkerPopup = preferences.getBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, false);
+		instance.autoScroll = preferences.getBoolean(ApplicationConstants.PREF_AUTO_SCROLL, false);
 		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.NO_PAGE_SAVED);
 		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
@@ -141,6 +151,7 @@ public class QuranSettings {
 		editor.putBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, instance.lockOrientation);
 		editor.putBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, instance.landscapeOrientation);
 		editor.putBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, instance.displayMarkerPopup);
+		editor.putBoolean(ApplicationConstants.PREF_AUTO_SCROLL, instance.autoScroll);
 		editor.putInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, instance.translationTextSize);
 		editor.putInt(ApplicationConstants.PREF_LAST_PAGE, instance.lastPage);
 		editor.putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, instance.activeTranslation);
