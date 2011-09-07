@@ -50,6 +50,8 @@
 		the data used in the translations and Arabic comes from
 		tanzil.net.
 		\n\nCredits:
+		\n Ahmed Farra - bugfixes and many contributions.
+		\n Mahmoud Hossam - bugfixes.
 		\n @fo2ad - audio recitation support
 		\n @wnafee - page flip animation (based on android-page-curl project)
 		\n @hams_rrr - arabic support for non-arabic phones
