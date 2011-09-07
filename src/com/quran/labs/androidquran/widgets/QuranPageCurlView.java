@@ -21,6 +21,8 @@ import android.view.ViewConfiguration;
 import android.widget.ScrollView;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 /*
  * Adapted and modified from http://code.google.com/p/android-page-curl
@@ -529,6 +531,33 @@ public class QuranPageCurlView extends View {
 		}
 	}
 
+	public void scrollToAyah(int scrollerId, AyahBounds yBounds) {
+		ScrollView sv = (ScrollView) mCurrentPageView.findViewById(scrollerId);
+		if (sv == null || yBounds == null)
+			return;
+		
+		int screenHeight = QuranScreenInfo.getInstance().getHeight();
+		int curScrollY = sv.getScrollY();
+		int scrollToY = curScrollY;
+		
+		// If Ayah is within bounds, do nothing
+		if (yBounds.getMinY() > curScrollY && yBounds.getMaxY() < curScrollY + screenHeight)
+			return;
+		
+		int ayahHeight = yBounds.getMaxY() - yBounds.getMinY();
+		
+		// If entire ayah can fit in screen, center it vertically. Otherwise, scroll to top of Ayah.
+		if (ayahHeight < screenHeight)
+			scrollToY = yBounds.getMinY() - (screenHeight - ayahHeight)/2;
+		else
+			scrollToY = yBounds.getMinY() - (int) (screenHeight*0.05); // Leave a gap of 5% screen height
+		
+		sv.smoothScrollTo(sv.getScrollX(), scrollToY);
+		mScrollAnimationHandler.setUpdateRate(mUpdateRate);
+		mScrollAnimationHandler.setCount(20);
+		mScrollAnimationHandler.sleep();
+	}
+	
 	/**
 	 * Reset points to it's initial clip edge state
 	 */
