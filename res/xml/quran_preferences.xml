@@ -27,6 +27,11 @@
 			android:summaryOn="Display popup when reaching Juz', Hizb, etc." android:summaryOff="Don't display popup when reaching Juz', Hizb, etc." 
 			android:persistent="true" android:key="@string/prefs_display_marker_popup">
 		</CheckBoxPreference>
+		<CheckBoxPreference 
+			android:title="Auto Scroll" 
+			android:summaryOn="Auto scroll to highlighted ayah while playing (in landscape)" android:summaryOff="Don't auto scroll to highlighted ayah while playing (in landscape)" 
+			android:persistent="true" android:key="@string/prefs_auto_scroll">
+		</CheckBoxPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/prefs_category_translation">
 		<com.quran.labs.androidquran.widgets.SelectTranslationPreference
