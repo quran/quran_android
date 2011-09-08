@@ -13,8 +13,8 @@ public class QuranSettings {
 	private boolean keepScreenOn = false;
 	private boolean lockOrientation = false;
 	private boolean landscapeOrientation = false;
-	private boolean displayMarkerPopup = false;
-	private boolean autoScroll = false;
+	private boolean displayMarkerPopup = true;
+	private boolean autoScroll = true;
 	private int translationTextSize = ApplicationConstants.DEFAULT_TEXT_SIZE;
 	private int lastPage = 0;
 	private String activeTranslation = null;
@@ -133,8 +133,8 @@ public class QuranSettings {
 		instance.keepScreenOn = preferences.getBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, true);
 		instance.lockOrientation = preferences.getBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, false);
 		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
-		instance.displayMarkerPopup = preferences.getBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, false);
-		instance.autoScroll = preferences.getBoolean(ApplicationConstants.PREF_AUTO_SCROLL, false);
+		instance.displayMarkerPopup = preferences.getBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, true);
+		instance.autoScroll = preferences.getBoolean(ApplicationConstants.PREF_AUTO_SCROLL, true);
 		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
 		instance.lastPage = preferences.getInt(ApplicationConstants.PREF_LAST_PAGE, ApplicationConstants.NO_PAGE_SAVED);
 		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
