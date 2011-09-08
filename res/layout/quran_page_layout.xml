@@ -17,7 +17,7 @@
 		android:background="#FFF4CB" />
 	<com.quran.labs.androidquran.widgets.HighlightingImageView
 		android:id = "@+id/page_image"
-		android:background="#FFF4CB"
+		android:background="#A3D7F8"
   		android:layout_width = "wrap_content"
   		android:layout_height =  "wrap_content" />
 </LinearLayout>

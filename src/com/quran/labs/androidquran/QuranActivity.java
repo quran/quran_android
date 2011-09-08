@@ -16,11 +16,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import static com.quran.labs.androidquran.data.ApplicationConstants.*;
 
 import com.markupartist.android.widget.ActionBar;
 import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
-import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.util.ArabicStyle;
@@ -42,13 +42,19 @@ public class QuranActivity extends BaseQuranActivity {
         setContentView(R.layout.quran_list);
         QuranSettings.load(prefs);
         
-        // set the asset manager to define the Arabic font
-        ArabicStyle.setAssetManager(getAssets());
-        Intent i = new Intent(this, QuranDataActivity.class);
-		startActivityForResult(i, ApplicationConstants.DATA_CHECK_CODE);
-		
+        setArabicFont();		
 		actionBar = (ActionBar) findViewById(R.id.actionbar);
 		addActions();
+    }
+    
+    /**
+     *  set the asset manager to define the Arabic font
+     */
+    
+    public void setArabicFont(){
+    	ArabicStyle.setAssetManager(getAssets());
+        Intent i = new Intent(this, QuranDataActivity.class);
+		startActivityForResult(i, DATA_CHECK_CODE);
     }
     
     /**
@@ -65,7 +71,7 @@ public class QuranActivity extends BaseQuranActivity {
 		String action = intent.getAction();
 		if (ACTION_BOOKMARK.equals(action)) {
 			Intent i = new Intent(getApplicationContext(), BookmarksActivity.class);
-	    	startActivityForResult(i, ApplicationConstants.BOOKMARKS_CODE);
+	    	startActivityForResult(i, BOOKMARKS_CODE);
 		} else if (ACTION_RESUME.equals(action)) {
 			jumpTo(QuranSettings.getInstance().getLastPage());
 		}
@@ -96,12 +102,12 @@ public class QuranActivity extends BaseQuranActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if (requestCode == ApplicationConstants.DATA_CHECK_CODE){
+		if (requestCode == DATA_CHECK_CODE){
 			showSuras();
 			Integer lastPage = QuranSettings.getInstance().getLastPage();
-			if (lastPage != null && lastPage != ApplicationConstants.NO_PAGE_SAVED)
+			if (lastPage != null && lastPage != NO_PAGE_SAVED)
 				jumpTo(lastPage);
-		} else if (requestCode == ApplicationConstants.SETTINGS_CODE) {
+		} else if (requestCode == SETTINGS_CODE) {
 			QuranSettings.load(prefs);
 			showSuras();
 		}
@@ -118,12 +124,12 @@ public class QuranActivity extends BaseQuranActivity {
 		int pos = 0;
 		int sura = 1;
 		int next = 1;
-		QuranElement[] elements = new QuranElement[114+30];
+		QuranElement[] elements = new QuranElement[SURAS_COUNT + JUZ2_COUNT];
 		
-		for (int juz=1; juz <= ApplicationConstants.JUZ2_COUNT; juz++){
+		for (int juz=1; juz <= JUZ2_COUNT; juz++){
 			elements[pos++] = new QuranElement(QuranInfo.getJuzTitle() + " " + juz, true, juz, QuranInfo.JUZ_PAGE_START[juz-1]);
-			next = (juz == ApplicationConstants.JUZ2_COUNT) ? ApplicationConstants.PAGES_LAST+1 : QuranInfo.JUZ_PAGE_START[juz];
-			while ((sura <= ApplicationConstants.SURAS_COUNT) && (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
+			next = (juz == JUZ2_COUNT) ? PAGES_LAST+1 : QuranInfo.JUZ_PAGE_START[juz];
+			while ((sura <= SURAS_COUNT) && (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
 				String title = QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(sura-1);
 				elements[pos++] = new QuranElement(title, false, sura, QuranInfo.SURA_PAGE_START[sura-1]);
 				sura++;

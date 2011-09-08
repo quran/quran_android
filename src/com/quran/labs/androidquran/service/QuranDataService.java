@@ -23,7 +23,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.StatFs;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.quran.labs.androidquran.QuranActivity;
 import com.quran.labs.androidquran.R;
@@ -93,33 +95,35 @@ public class QuranDataService extends Service {
 		handleStart(intent, startId);
 		return START_STICKY;
 	}
-	
+
 	public void handleStart(Intent intent) {
-		handleStart(intent, - 1);
+		handleStart(intent, -1);
 	}
 
 	public void handleStart(Intent intent, int startId) {
 		if (intent == null)
 			return;
-		
+
 		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
 		switch (downloadType) {
-			case DOWNLOAD_QURAN_IMAGES:
-				isRunning = true;
-				thread = new DownloadThread(this, new String[] { QuranUtils.getZipFileUrl() }, 
-						new String[] { "images.zip" }, new String[]{QuranUtils.getQuranBaseDirectory()}, true);
-				thread.start();
+		case DOWNLOAD_QURAN_IMAGES:
+			isRunning = true;
+			thread = new DownloadThread(this,
+					new String[] { QuranUtils.getZipFileUrl() },
+					new String[] { "images.zip" },
+					new String[] { QuranUtils.getQuranBaseDirectory() }, true);
+			thread.start();
 			break;
-			case DOWNLOAD_SURA_AUDIO:
-				isRunning = true;
-				downloadSuraAudio(intent);
+		case DOWNLOAD_SURA_AUDIO:
+			isRunning = true;
+			downloadSuraAudio(intent);
 			break;
-			case DOWNLOAD_TRANSLATION:
-				isRunning = true;
-				downloadTranslation(intent);
+		case DOWNLOAD_TRANSLATION:
+			isRunning = true;
+			downloadTranslation(intent);
 			break;
 		}
-		if(thread == null)
+		if (thread == null)
 			stopSelf();
 	}
 
@@ -132,27 +136,28 @@ public class QuranDataService extends Service {
 		// optional end ayah
 		int endAyah = intent.getIntExtra(END_AYAH_KEY,
 				QuranInfo.SURA_NUM_AYAHS[soura - 1]);
-//		if (endAyah > QuranInfo.SURA_NUM_AYAHS[soura - 1])
-//			endAyah = QuranInfo.SURA_NUM_AYAHS[soura - 1];
-		boolean downloadImage = intent.getBooleanExtra(DOWNLOAD_AYAH_IMAGES_KEY, false);
+		// if (endAyah > QuranInfo.SURA_NUM_AYAHS[soura - 1])
+		// endAyah = QuranInfo.SURA_NUM_AYAHS[soura - 1];
+		boolean downloadImage = intent.getBooleanExtra(
+				DOWNLOAD_AYAH_IMAGES_KEY, false);
 
 		Log.d("quran_srv", "finish reading params");
-		
+
 		ArrayList<String> fileNames = new ArrayList<String>();
 		ArrayList<String> urls = new ArrayList<String>();
 		ArrayList<String> directories = new ArrayList<String>();
-		
+
 		int ayatStartIndex = startAyah;
 		int ayatEndIndex = endAyah;
 		for (int j = soura; j <= endSoura; j++) {
-			if(j == soura){
+			if (j == soura) {
 				ayatStartIndex = startAyah;
-			}else{
+			} else {
 				ayatStartIndex = 1;
 			}
-			if(j == endSoura){
+			if (j == endSoura) {
 				ayatEndIndex = endAyah;
-			}else{
+			} else {
 				ayatEndIndex = QuranInfo.getNumAyahs(j);
 			}
 			for (int i = ayatStartIndex; i <= ayatEndIndex; i++) {
@@ -186,8 +191,8 @@ public class QuranDataService extends Service {
 					urls.add(ayah.getRemoteImageUrl());
 				}
 			}
-		}		
-		
+		}
+
 		// Check aya info db
 		String base = QuranUtils.getQuranDatabaseDirectory();
 		if (base == null)
@@ -199,10 +204,11 @@ public class QuranDataService extends Service {
 			fileNames.add("ayahinfo.db.zip");
 			directories.add(base);
 		}
-		
+
 		if (urls.size() > 0) {
-			thread = new DownloadThread(this, urls.toArray(new String[urls.size()]), 
-						fileNames.toArray(new String[urls.size()]), directories.toArray(new String[urls.size()]), false);
+			thread = new DownloadThread(this, urls.toArray(new String[urls
+					.size()]), fileNames.toArray(new String[urls.size()]),
+					directories.toArray(new String[urls.size()]), false);
 			thread.start();
 		} else {
 			isRunning = false;
@@ -212,11 +218,12 @@ public class QuranDataService extends Service {
 	private void downloadTranslation(Intent intent) {
 		String url = intent.getStringExtra(URL_KEY);
 		String fileName = intent.getStringExtra(FILE_NAME_KEY);
-		thread = new DownloadThread(this, new String[] { url }, 
-				new String[] { fileName }, new String[]{QuranUtils.getQuranDatabaseDirectory()}, false);
+		thread = new DownloadThread(this, new String[] { url },
+				new String[] { fileName },
+				new String[] { QuranUtils.getQuranDatabaseDirectory() }, false);
 		thread.start();
 	}
-	
+
 	public void stop() {
 		Log.d("quran_srv", "Stop Service called");
 		try {
@@ -224,7 +231,7 @@ public class QuranDataService extends Service {
 				thread.interrupt();
 			}
 		} catch (Exception e) {
-			
+
 		}
 		progress = 0;
 		isRunning = false;
@@ -260,9 +267,11 @@ public class QuranDataService extends Service {
 		private String[] saveToDirectories;
 		private boolean zipped;
 		private int downloadIndex;
-		//private RemoteViews contentView;
-		//private Notification notification;
-		//private NotificationManager notificationManager;
+		private int fileLength;
+
+		// private RemoteViews contentView;
+		// private Notification notification;
+		// private NotificationManager notificationManager;
 
 		DownloadThread(QuranDataService service, String[] downloadUrls,
 				String[] fileNames, String[] saveToDirectories, boolean zipped) {
@@ -273,35 +282,37 @@ public class QuranDataService extends Service {
 			this.zipped = zipped;
 			downloadIndex = 0;
 		}
-		
+
 		private void onDowloadStart() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
 					"Downloading..", Notification.FLAG_AUTO_CANCEL);
 		}
-		
+
 		private void onDownloadPaused() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
 					"Download Paused", Notification.FLAG_AUTO_CANCEL);
 		}
-		
+
 		private void onDownloadCanceled() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
 					"Download Canceled", Notification.FLAG_AUTO_CANCEL);
 		}
-		
+
 		private void showNotification(int notificationId, String msg, int flags) {
 			String ns = Context.NOTIFICATION_SERVICE;
 			NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
 
 			long when = System.currentTimeMillis();
-			Notification notification = new Notification(R.drawable.icon, msg, when);
+			Notification notification = new Notification(R.drawable.icon, msg,
+					when);
 			notification.defaults |= flags;
 
 			Context context = getApplicationContext();
 			CharSequence contentTitle = "Quran Android";
 			CharSequence contentText = msg;
 			Intent notificationIntent = new Intent(context, QuranActivity.class);
-			notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+					| Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
 					notificationIntent, 0);
 
@@ -326,52 +337,62 @@ public class QuranDataService extends Service {
 					f.mkdirs();
 					File file = new File(saveToDirectories[downloadIndex],
 							fileNames[downloadIndex] + DOWNLOAD_EXT);
-
 					URL url = new URL(downloadUrls[downloadIndex]);
 					URLConnection conn = url.openConnection();
-					int total = conn.getContentLength();
+					fileLength = conn.getContentLength();
+					if(!isSpaceAvailable()){
+						Toast.makeText(getApplicationContext(), "Error: not enough space", Toast.LENGTH_SHORT);
+						return false;
+					}
 					Log.d("quran_srv", "File to download: " + file.getName()
-							+ " - total length: " + total);
+							+ " - total length: " + fileLength);
 					HttpURLConnection connection = (HttpURLConnection) url
 							.openConnection();
 					if (file.exists()) {
 						downloaded = (int) file.length();
-						connection.setRequestProperty("Range", "bytes="
-								+ (file.length()) + "-");
+						connection.setRequestProperty("Range",
+								"bytes=" + (file.length()) + "-");
 						Log.d("quran_srv", "Resuming from " + downloaded);
-						if (downloaded == total)
+						if (downloaded == fileLength)
 							continue;
 					}
 					connection.setRequestProperty("Range", "bytes="
 							+ downloaded + "-");
 					connection.setDoInput(true);
-					in = new BufferedInputStream(connection.getInputStream(), DOWNLOAD_BUFFER_SIZE);
-					fos = (downloaded == 0) ? new FileOutputStream(file
-							.getAbsolutePath()) : new FileOutputStream(file
-							.getAbsolutePath(), true);
+					in = new BufferedInputStream(connection.getInputStream(),
+							DOWNLOAD_BUFFER_SIZE);
+					fos = (downloaded == 0) ? new FileOutputStream(
+							file.getAbsolutePath()) : new FileOutputStream(
+							file.getAbsolutePath(), true);
 
 					bout = new BufferedOutputStream(fos, DOWNLOAD_BUFFER_SIZE);
 					byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
 					int x = 0;
 
-					while (isRunning && (x = in.read(data, 0, DOWNLOAD_BUFFER_SIZE)) >= 0) {
+					while (isRunning
+							&& (x = in.read(data, 0, DOWNLOAD_BUFFER_SIZE)) >= 0) {
 						bout.write(data, 0, x);
 						downloaded += x;
-						double percent = 100.0 * ((1.0 * downloaded) / (1.0 * total));
-						updateProgress((int) percent, fileNames.length, downloadIndex);
+						double percent = 100.0 * ((1.0 * downloaded) / (1.0 * fileLength));
+						updateProgress((int) percent, fileNames.length,
+								downloadIndex);
 					}
 					bout.flush();
 					bout.close();
 					fos.close();
-					
+
 					if (isRunning) {
-						file.renameTo(new File(saveToDirectories[downloadIndex], fileNames[downloadIndex]));
-	
+						file.renameTo(new File(
+								saveToDirectories[downloadIndex],
+								fileNames[downloadIndex]));
+
 						if (zipped || fileNames[downloadIndex].endsWith(".zip"))
-							unzipFile(saveToDirectories[downloadIndex], fileNames[downloadIndex]);
-	
-						Log.d("quran_srv", "Download Completed [" + downloadUrls[downloadIndex] + "]");
-					} else 
+							unzipFile(saveToDirectories[downloadIndex],
+									fileNames[downloadIndex]);
+
+						Log.d("quran_srv", "Download Completed ["
+								+ downloadUrls[downloadIndex] + "]");
+					} else
 						return false;
 				}
 			} catch (FileNotFoundException e) {
@@ -386,15 +407,26 @@ public class QuranDataService extends Service {
 
 			return true;
 		}
+		
+		private boolean isSpaceAvailable(){
+			StatFs fsStats = new StatFs("/mnt/sdcard/");
+			double availableSpace = fsStats.getAvailableBlocks() * fsStats.getBlockSize();
+			return availableSpace > fileLength ? true : false;
+		}
 
-		private void updateProgress(int percent, int totalFiles, int nDownloadedFiles) {
-			percent = (int) (((double)percent / (double)100 + (double)nDownloadedFiles) / (double)totalFiles * 100);
+		private void updateProgress(int percent, int totalFiles,
+				int nDownloadedFiles) {
+			percent = (int) (((double) percent / (double) 100 + (double) nDownloadedFiles)
+					/ (double) totalFiles * 100);
 			service.updateProgress(percent);
-//			notification.contentView.setTextViewText(R.id.text, "Downloading.. " + percent + "%");
-//			notification.contentView.setProgressBar(R.id.progressBar, 100, percent, false);
-//
-//			//notify the notification manager on the update.
-//			notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING, notification);
+			// notification.contentView.setTextViewText(R.id.text,
+			// "Downloading.. " + percent + "%");
+			// notification.contentView.setProgressBar(R.id.progressBar, 100,
+			// percent, false);
+			//
+			// //notify the notification manager on the update.
+			// notificationManager.notify(ApplicationConstants.NOTIFICATION_DOWNLOADING,
+			// notification);
 		}
 
 		@Override
@@ -414,13 +446,14 @@ public class QuranDataService extends Service {
 					}
 					try {
 						onDownloadPaused();
-						Log.d("quran_srv", "Disconnected.. Retring after " + WAIT_TIME + " seconds");
+						Log.d("quran_srv", "Disconnected.. Retring after "
+								+ WAIT_TIME + " seconds");
 						sleep(WAIT_TIME * 1000);
 					} catch (InterruptedException e) {
-						
+
 					}
 				}
-			} catch(Exception e) {
+			} catch (Exception e) {
 				Log.e("quran_srv", "Error", e);
 			}
 			thread = null;
@@ -428,7 +461,8 @@ public class QuranDataService extends Service {
 
 		protected void unzipFile(String saveToDirectory, String fileName) {
 			try {
-				Log.d("quran_srv", "Unziping file: " + saveToDirectory + fileName);
+				Log.d("quran_srv", "Unziping file: " + saveToDirectory
+						+ fileName);
 				// success, unzip the file...
 				File file = new File(saveToDirectory, fileName);
 				FileInputStream is = new FileInputStream(file);
@@ -468,13 +502,15 @@ public class QuranDataService extends Service {
 		private void onDownloadComplete() {
 			String ns = Context.NOTIFICATION_SERVICE;
 			NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
-			notificationManager.cancel(ApplicationConstants.NOTIFICATION_DOWNLOADING);
-			
-			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOAD_COMPLETED, 
-					"Download Completed", 
-					Notification.DEFAULT_SOUND | Notification.FLAG_AUTO_CANCEL | 
-					Notification.DEFAULT_LIGHTS);
-			
+			notificationManager
+					.cancel(ApplicationConstants.NOTIFICATION_DOWNLOADING);
+
+			showNotification(
+					ApplicationConstants.NOTIFICATION_DOWNLOAD_COMPLETED,
+					"Download Completed", Notification.DEFAULT_SOUND
+							| Notification.FLAG_AUTO_CANCEL
+							| Notification.DEFAULT_LIGHTS);
+
 			service.stopSelf();
 			isRunning = false;
 		}
