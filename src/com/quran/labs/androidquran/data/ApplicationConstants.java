@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.data;
 
-
-
 public class ApplicationConstants {
 
 	// activity codes
@@ -24,9 +22,6 @@ public class ApplicationConstants {
 	public static final int AYA_MIN = 1;
 	public static final int AYA_MAX = 286;
 	public static final int NO_PAGE_SAVED = -1;
-	
-	// Colors
-	public static final String PAGE_BORDER_COLOR = "#802A2A";
 	
 	// dialogs
 	public static final int JUMP_DIALOG = 1;
