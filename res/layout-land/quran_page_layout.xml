@@ -23,7 +23,7 @@
  		android:fillViewport="true">
 	<com.quran.labs.androidquran.widgets.HighlightingImageView
 		android:id = "@+id/page_image"
-		android:background="#A3D7F8"
+		android:background="#FFF4CB"
   		android:layout_width = "wrap_content"
   		android:layout_height =  "wrap_content"/>
   	</ScrollView>
