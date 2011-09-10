@@ -49,6 +49,14 @@ public class TranslationActivity extends PageViewQuranActivity {
 		checkTranslationAvailability();
 	}
 	
+	@Override
+	public void onBackPressed() {
+		Intent data = new Intent();
+		data.putExtra("page", quranPageFeeder.getCurrentPagePosition());
+		setResult(RESULT_OK, data);
+		super.onBackPressed();
+	}
+	
 	private boolean checkTranslationAvailability() {
 		Log.d("QuranAndroid", "checking translations");
 		TranslationItem[] translationLists;
