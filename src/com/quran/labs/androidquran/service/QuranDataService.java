@@ -25,7 +25,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.StatFs;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.quran.labs.androidquran.QuranActivity;
 import com.quran.labs.androidquran.R;
@@ -341,7 +340,7 @@ public class QuranDataService extends Service {
 					URLConnection conn = url.openConnection();
 					fileLength = conn.getContentLength();
 					if(!isSpaceAvailable()){
-						Toast.makeText(getApplicationContext(), "Error: not enough space", Toast.LENGTH_SHORT);
+						Log.e("quran_srv", "Not enough space on SD card");
 						return false;
 					}
 					Log.d("quran_srv", "File to download: " + file.getName()
