@@ -60,6 +60,12 @@ public abstract class BaseQuranActivity extends Activity {
 					jumpTo(lastPage);
 				} 
 			break;
+			case ApplicationConstants.TRANSLATION_VIEW_CODE:
+				if (resultCode == Activity.RESULT_OK) {
+					Integer lastPage = data.getIntExtra("page", ApplicationConstants.PAGES_FIRST);
+					jumpTo(lastPage);
+				} 
+			break;
 		}
 	}
 	
