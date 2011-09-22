@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.StatFs;
 import android.util.Log;
@@ -408,8 +409,8 @@ public class QuranDataService extends Service {
 		}
 		
 		private boolean isSpaceAvailable(){
-			StatFs fsStats = new StatFs("/mnt/sdcard/");
-			double availableSpace = fsStats.getAvailableBlocks() * fsStats.getBlockSize();
+			StatFs fsStats = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
+			double availableSpace = (double)fsStats.getAvailableBlocks() * (double)fsStats.getBlockSize();
 			return availableSpace > fileLength ? true : false;
 		}
 
