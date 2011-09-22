@@ -411,7 +411,7 @@ public class QuranDataService extends Service {
 		private boolean isSpaceAvailable(){
 			StatFs fsStats = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
 			double availableSpace = (double)fsStats.getAvailableBlocks() * (double)fsStats.getBlockSize();
-			return availableSpace > fileLength ? true : false;
+			return availableSpace > fileLength;
 		}
 
 		private void updateProgress(int percent, int totalFiles,
