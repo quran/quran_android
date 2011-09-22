@@ -2,6 +2,7 @@ package com.quran.labs.androidquran;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -36,7 +37,6 @@ import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranViewActivity extends PageViewQuranActivity implements
 		AyahStateListener {
@@ -126,7 +126,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		String action = intent.getAction();
 		if (quranAudioPlayer != null && action != null) {
@@ -134,18 +133,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				bindAudioService();
 				if (quranAudioPlayer.isPaused())
 					quranAudioPlayer.resume();
-				else {
-					lastAyah = getLastAyah();
-					// soura not totall found
-					if (QuranUtils.isSouraAudioFound(lastAyah
-							.getQuranReaderId(), lastAyah.getSoura()) < 0) {
-						showDownloadDialog(lastAyah);
-					} else {
-						quranAudioPlayer.enableRemotePlay(false);
-						playAudio(lastAyah);
-					}
-				}
-				onActionPlay();
+				else
+					showPlayDialog();
 			} else if (action.equalsIgnoreCase(ACTION_PAUSE)) {
 				quranAudioPlayer.pause();
 				onActionStop();
@@ -198,8 +187,57 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		playing = false;
 	}
 
-	private void showDownloadDialog(final AyahItem i) {
+	private void showPlayDialog() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		LayoutInflater li = LayoutInflater.from(this);
+		final View view = li.inflate(R.layout.dialog_play, null);
+		dialog.setView(view);
+		final Map<Integer, RadioButton> suraButtons = initPlayRadioButtons(view, quranPageFeeder.getCurrentPagePosition());
+		dialog.setPositiveButton("Play", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroupPlay); 
+				int checkedRbId = radio.getCheckedRadioButtonId();
+				if (R.id.radioPlayPage == checkedRbId) {
+					// TODO Should have a method to get first ayah on page -AF
+					Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
+					lastAyah = QuranAudioLibrary.getAyahItem(getApplicationContext(),
+							pageBounds[0], pageBounds[1], getQuranReaderId());
+				} else if (R.id.radioPlayLast == checkedRbId) {
+					// TODO Method to return AyahItem instead of one for Ayah + one for sura -AF
+					int lastPlayedSura = QuranSettings.getInstance().getLastPlayedSura();
+					int lastPlayedAyah = QuranSettings.getInstance().getLastPlayedAyah();
+					if (lastPlayedSura > 0 && lastPlayedAyah >= 0)
+						lastAyah = QuranAudioLibrary.getAyahItem(getApplicationContext(),
+								lastPlayedSura, lastPlayedAyah, getQuranReaderId());
+				} else {
+					for (Integer sura : suraButtons.keySet()) {
+						if (radio.getCheckedRadioButtonId() == suraButtons.get(sura).getId()) {
+							int ayah = sura == 1 || sura == 9 ? 1 : 0;
+							lastAyah = QuranAudioLibrary.getAyahItem(getApplicationContext(),
+									sura, ayah, getQuranReaderId());
+							break;
+						}
+					}
+				}
+				onActionPlay();
+				dialog.dismiss();
+				quranAudioPlayer.enableRemotePlay(false);
+				playAudio(lastAyah);
+			}
+		});
+		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		
+		AlertDialog diag = dialog.create();
+		diag.show();
+	}
 
+	private void showDownloadDialog(final AyahItem i) {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		LayoutInflater li = LayoutInflater.from(this);
 		final View view = li.inflate(R.layout.dialog_download, null);
@@ -208,8 +246,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialog.setView(view);
 		initDownloadRadioButtons(view, getLastAyah());
-		// AlertDialog dialog = new DownloadDialog(this);
-		dialog.setMessage("Select download option..");
 		dialog.setPositiveButton("Download",
 				new DialogInterface.OnClickListener() {
 
@@ -291,17 +327,47 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		diag.show();
 	}
 
+	// Returns a map of Sura Number to RadioButtons
+	private Map<Integer, RadioButton> initPlayRadioButtons(View parent, int pageNum){
+		RadioButton radioPage = (RadioButton) parent.findViewById(R.id.radioPlayPage);
+		RadioButton radioLastAyah = (RadioButton) parent.findViewById(R.id.radioPlayLast);
+		
+		radioPage.setText(getString(R.string.play_dialog_page, new Object[]{pageNum}));
+		int lastPlayedSura = QuranSettings.getInstance().getLastPlayedSura();
+		int lastPlayedAyah = QuranSettings.getInstance().getLastPlayedAyah();
+		if (lastPlayedSura > 0 && lastPlayedAyah >= 0)
+			radioLastAyah.setText(ArabicStyle.reshape(getString(R.string.play_dialog_resume, 
+					new Object[]{QuranInfo.getSuraName(lastPlayedSura - 1), lastPlayedAyah})));
+		else
+			radioLastAyah.setVisibility(View.GONE);
+		
+		Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
+		RadioGroup rg = (RadioGroup)parent.findViewById(R.id.radioGroupPlay);
+		Map<Integer, RadioButton> rbMap = new HashMap<Integer, RadioButton>();
+		for (int i = pageBounds[0]; i <= pageBounds[2]; i++) {
+			RadioButton rb = new RadioButton(getApplicationContext());
+			rb.setText(ArabicStyle.reshape(QuranInfo.getSuraTitle() + " " + QuranInfo.getSuraName(i-1)));
+			rg.addView(rb);
+			rbMap.put(i, rb);
+		}
+		rg.invalidate();
+		return rbMap;
+	}
+
 	private void initDownloadRadioButtons(View parent, AyahItem ayahItem){
 		RadioButton radioSura = (RadioButton) parent.findViewById(R.id.radioDownloadSura);
 		RadioButton radioJuz = (RadioButton) parent.findViewById(R.id.radioDownloadJuza);
 		RadioButton radioPage = (RadioButton) parent.findViewById(R.id.radioDownloadPage);
 		
-		radioSura.setText(ArabicStyle.reshape(QuranInfo.getSuraName(ayahItem.getSoura() - 1)));
+		radioSura.setText(ArabicStyle.reshape(QuranInfo.getSuraTitle() + " " 
+				+ QuranInfo.getSuraName(ayahItem.getSoura() - 1)));
 		radioJuz.setText(ArabicStyle.reshape(QuranInfo.getJuzTitle() + " " + QuranInfo.getJuzFromPage(
 				QuranInfo.getPageFromSuraAyah(ayahItem.getSoura(), ayahItem.getAyah()))));
-		radioPage.setText("Page");
+		radioPage.setText(getString(R.string.download_dialog_page, 
+				new Object[]{quranPageFeeder.getCurrentPagePosition()}));
 		
 	}
+
 	private void showJumpToAyahDialog() {
 		final Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder
 				.getCurrentPagePosition());
@@ -424,11 +490,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		LayoutInflater li = LayoutInflater.from(this);
 		final View view = li.inflate(R.layout.dialog_download, null);
 		Spinner s = (Spinner) view.findViewById(R.id.spinner);
-		View v = view.findViewById(R.id.radioGroupDownload);
+		View v = view.findViewById(R.id.scrollViewDownload);
 		v.setVisibility(View.GONE);
 		s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialogBuilder.setView(view);
-		dialogBuilder.setMessage("Change quran reader");
+		dialogBuilder.setMessage("Change reciter");
 		dialogBuilder.setPositiveButton("Set",
 				new DialogInterface.OnClickListener() {
 
@@ -580,6 +646,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			last = quranAudioPlayer.getCurrentAyah();
 		}
 		
+		// TODO Should have a method to get first ayah on page -AF
 		if (last == null) {
 			Integer[] pageBounds = QuranInfo.getPageBounds(quranPageFeeder.getCurrentPagePosition());
 			last = QuranAudioLibrary.getAyahItem(getApplicationContext(),

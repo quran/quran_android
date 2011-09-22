@@ -121,5 +121,10 @@
     <string name="set_active">Set Active</string>
     <string name="prompt_select_ayah">Select Ayah</string>
     <string name="prompt_select_sura">Select Sura</string>
-    <string name="radio_download_message">Choose download option</string>
+    <string name="prompt_select_reciter">Select Reciter</string>
+	<string name="play_dialog_message">Start playing from...</string>
+	<string name="play_dialog_page">Current Page (%s)</string>
+	<string name="play_dialog_resume">Resume %1$s : %2$s</string>
+	<string name="download_dialog_message">Choose download option</string>
+	<string name="download_dialog_page">Current Page (%s)</string>
 </resources>
