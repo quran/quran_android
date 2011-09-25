@@ -40,6 +40,7 @@ public class ApplicationConstants {
 	public static final String PREF_ACTIVE_TRANSLATION = "activeTranslation";
 	public static final String PREF_RESHAPE_ARABIC = "reshapeArabic";
 	public static final String PREF_LAST_READER = "lastReader";
+	public static final String PREF_BACKGROUND_COLOR = "bgColor";
 	
 	// Notifications
 	public static final int NOTIFICATION_DOWNLOAD_COMPLETED = 1;

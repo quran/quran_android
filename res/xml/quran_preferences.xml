@@ -18,8 +18,13 @@
 			android:summary="Select if your phone doesn't support Arabic" 
 			android:persistent="true" android:key="@string/prefs_reshape_arabic">
 		</CheckBoxPreference>
-		<CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false"></CheckBoxPreference>
-		<CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation"></CheckBoxPreference>
+		<CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false" />
+		<CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation" />
+		<com.commonsware.cwac.colormixer.ColorPreference
+		android:key="bgColor"
+		android:defaultValue="0xFFFF"
+		android:title="Background color"
+		android:summary="Background color for the quran screen" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/prefs_category_translation">
 		<com.quran.labs.androidquran.widgets.SelectTranslationPreference

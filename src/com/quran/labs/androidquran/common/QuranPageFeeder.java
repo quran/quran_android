@@ -184,6 +184,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	protected View createPage(int index) {
 		View v = mInflater.inflate(mPageLayout, null);
 		
+		setBackgroundColor(v);
+		
 		ScrollView sv = (ScrollView)v.findViewById(R.id.page_scroller);
 		if (sv == null)
 			v.setTag(new Boolean(false));
@@ -196,6 +198,17 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		new PageRetriever(v, index).start();
 		
 		return v;
+	}
+	
+	private void setBackgroundColor(View v){
+		TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
+	    ImageView iv = (ImageView)v.findViewById(R.id.page_image);
+	    iv.setBackgroundColor(getBackgroundColor());
+	    tv.setBackgroundColor(getBackgroundColor());
+	}
+	
+	private int getBackgroundColor(){
+		return QuranSettings.getInstance().getBgColor();
 	}
 	
 	protected void updateViewForUser(View v, boolean loading,

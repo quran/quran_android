@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.data.ApplicationConstants;
 public class QuranSettings {
 	
 	private static QuranSettings instance = new QuranSettings();
+	private int bgColor;
 	private boolean arabicNames = false;
 	private boolean keepScreenOn = false;
 	private boolean lockOrientation = false;
@@ -95,6 +96,14 @@ public class QuranSettings {
 		this.reshapeArabic = reshapeArabic;
 	}
 
+	public int getBgColor() {
+		return bgColor;
+	}
+
+	public void setBgColor(int bgColor) {
+		this.bgColor = bgColor;
+	}
+
 	public static void load(SharedPreferences preferences) {
 		instance.arabicNames = preferences.getBoolean(ApplicationConstants.PREF_USE_ARABIC_NAMES, false);
 		instance.keepScreenOn = preferences.getBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, true);
@@ -105,6 +114,7 @@ public class QuranSettings {
 		instance.activeTranslation = preferences.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
 		instance.reshapeArabic = preferences.getBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, false);
 		instance.lastReader = preferences.getInt(ApplicationConstants.PREF_LAST_READER, 0);
+		instance.bgColor = preferences.getInt(ApplicationConstants.PREF_BACKGROUND_COLOR, 0xFFFF);
 	}
 	
 	public static void save(SharedPreferences preferences) {
@@ -118,6 +128,7 @@ public class QuranSettings {
 		editor.putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, instance.activeTranslation);
 		editor.putBoolean(ApplicationConstants.PREF_RESHAPE_ARABIC, instance.reshapeArabic);
 		editor.putInt(ApplicationConstants.PREF_LAST_READER, instance.lastReader);
+		editor.putInt(ApplicationConstants.PREF_BACKGROUND_COLOR, instance.bgColor);
 		editor.commit();
 	}
 }
