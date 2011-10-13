@@ -38,6 +38,7 @@ import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.numberpicker.NumberPickerDialog;
 
 public class QuranViewActivity extends PageViewQuranActivity implements
 		AyahStateListener {
@@ -109,6 +110,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			actionBar.setTitle("Quran");
 			actionBarActions.put(ACTION_PLAY, getIntentAction(
 					ACTION_PLAY, R.drawable.ab_play));
+			actionBarActions.put(ACTION_REPEAT, getIntentAction(
+					ACTION_REPEAT, R.drawable.repeat));
 			actionBarActions.put(ACTION_PAUSE, getIntentAction(
 					ACTION_PAUSE, R.drawable.ab_pause));
 			actionBarActions.put(ACTION_NEXT, getIntentAction(
@@ -185,9 +188,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				quranPageFeeder.unHighlightAyah();
 			} else if (action.equalsIgnoreCase(ACTION_CHANGE_READER)){
 				showChangeReaderDialog();
-			}
-			else if (action.equalsIgnoreCase(ACTION_JUMP_TO_AYAH)) {
+			} else if (action.equalsIgnoreCase(ACTION_JUMP_TO_AYAH)) {
 				showJumpToAyahDialog();
+			} else if (action.equalsIgnoreCase(ACTION_REPEAT)) {
+				showAudioRepeatsDialog();
 			}
 		}
 	}
@@ -205,6 +209,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	private void onActionStop() {
 		actionBar.removeAllActions();
 		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
+		actionBar.addAction(actionBarActions.get(ACTION_REPEAT), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 1);
 		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 2);
 		playing = false;
@@ -303,6 +308,19 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		diag.show();
 	}
 
+	private void showAudioRepeatsDialog(){
+		final NumberPickerDialog diag = new NumberPickerDialog(this, 1, 0);
+		diag.setTitle("Choose number of repeats");
+		diag.show();
+		diag.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				if(quranAudioPlayer != null)
+					quranAudioPlayer.setNumberOfRepeats(diag.getSelectedNumber());
+			}
+		});
+	}
+	
 	private void initDownloadRadioButtons(View parent, AyahItem ayahItem){
 		RadioButton radioSura = (RadioButton) parent.findViewById(R.id.radioDownloadSura);
 		RadioButton radioJuz = (RadioButton) parent.findViewById(R.id.radioDownloadJuza);
@@ -625,8 +643,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranPageFeeder.jumpToPage(page);
 			updatePageInfo(page);
 		}
-		
-		quranPageFeeder.highlightAyah(ayah.getSoura(), ayah.getAyah());
+		try{
+			quranPageFeeder.highlightAyah(ayah.getSoura(), ayah.getAyah());
+		} catch(Exception e){
+			Log.e("HighLight", "Exception while highlighting ayah " + e.toString() + e.getMessage());
+		}
 		
 		QuranSettings.getInstance().setLastPlayedAyah(ayah.getSoura(), ayah.getAyah());
 		

@@ -119,4 +119,11 @@
     <string name="prompt_select_ayah">Select Ayah</string>
     <string name="prompt_select_sura">Select Sura</string>
     <string name="radio_download_message">Choose download option</string>
+    <!--  Number Picker Strings -->
+     <string name="menu_preferences_label">Preferences</string>
+    <string name="menu_dialog_label">Dialog Picker</string>
+    <string name="dialog_set_number">Set</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_picker_title">Choose a number</string>
+    <!--  End Number picker Strings -->
 </resources>

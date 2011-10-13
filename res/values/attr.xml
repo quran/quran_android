@@ -15,4 +15,11 @@
 		<attr name="isRTL" format="boolean" />
 	</declare-styleable>
 	
+	<declare-styleable name="numberpicker">
+        <attr format="integer" name="startRange"/>
+        <attr name="endRange" format="integer" />
+		<attr name="defaultValue" format="integer" />
+		<attr name="maxValue" format="integer" />
+    </declare-styleable>
+	
 </resources>

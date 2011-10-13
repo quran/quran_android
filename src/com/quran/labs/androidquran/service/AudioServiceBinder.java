@@ -95,9 +95,9 @@ public class AudioServiceBinder extends Binder implements
 	 * @see org.islam.quran.IAudioPlayer#play(org.islam.quran.AyahAudioItem)
 	 */
 	public synchronized void play(AyahItem item) {
+		Log.d("Play", "1 playing ayah " + item.getAyah());
 		stopped = false;
 		paused = false;
-		
 		if(item == null)
 			return;
 		this.currentItem = item;
@@ -111,7 +111,7 @@ public class AudioServiceBinder extends Binder implements
 		try {
 			if(mp == null)
 				mp = new MediaPlayer();			
-			mp.reset();
+			mp.reset();			
 			mp.setOnCompletionListener(this);
 			url = null;
 			if(item.isAudioFoundLocally())
@@ -191,23 +191,36 @@ public class AudioServiceBinder extends Binder implements
 
 	@Override
 	public synchronized void onCompletion(MediaPlayer mp) {
+		Log.d("onCompletion", "1");
 		if(repeats < numberOfRepeats){
 			repeats++;
-			play(currentItem);
+			mp.seekTo(0);
+			mp.start();
+			//play(currentItem);
 		}else{
 			repeats = 0;
+			if(mp != null && mp.isPlaying()){
+				Log.d("onCompletion", "1.1 mp is playing !!! stop it!!!");
+				mp.stop();
+			}
+			//mp.setLooping(false);
 			AyahItem nextItem = null;
 			if (this.currentItem != null)
 				nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
+			Log.d("onCompletion", "2");
 			boolean continuePlaying = false;
 			if(ayahListener != null && !stopped && nextItem != null)
 				continuePlaying = ayahListener.onAyahComplete(currentItem, nextItem);
 			if(nextItem != null){
+				Log.d("onCompletion", "3 next ayah is not null, next ayah is " + nextItem.getAyah());
 				//this.currentItem = nextItem;
 				try{
-					if(continuePlaying && !paused && !stopped && mp != null && !mp.isPlaying())
+					Log.d("onCompletion", "4 before try " + (mp == null) + " " +  mp.isPlaying());
+					if(continuePlaying && !paused && !stopped && mp != null && !mp.isPlaying()){
+						Log.d("onCompletion", "5 inside if");
 						this.play(nextItem);
-				}catch(Exception ex){}
+					}
+				}catch(Exception ex){Log.e("OnCompletion", "error on play " + ex.toString() + ex.getMessage());}
 			}
 		}
 	}		
