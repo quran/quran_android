@@ -111,6 +111,23 @@ public class HighlightingImageView extends ImageView {
 		this.currentlyHighlighting = rangesToDraw;
 	}
 	
+	public AyahBounds getYBoundsForCurrentHighlight() {
+		if (currentlyHighlighting == null)
+			return null;
+		Integer upperBound = null;
+		Integer lowerBound = null;
+		for (AyahBounds bounds : currentlyHighlighting) {
+			if (upperBound == null || bounds.getMinY() < upperBound)
+				upperBound = bounds.getMinY();
+			if (lowerBound == null || bounds.getMaxY() > lowerBound)
+				lowerBound = bounds.getMaxY();
+		}
+		AyahBounds yBounds = null;
+		if (upperBound != null && lowerBound != null)
+			yBounds = new AyahBounds(0, 0, 0, upperBound, 0, lowerBound);
+		return yBounds;
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);

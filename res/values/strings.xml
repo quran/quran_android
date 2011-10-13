@@ -50,6 +50,8 @@
 		the data used in the translations and Arabic comes from
 		tanzil.net.
 		\n\nCredits:
+		\n Ahmed Farra - bugfixes and many contributions.
+		\n Mahmoud Hossam - bugfixes.
 		\n @fo2ad - audio recitation support
 		\n @wnafee - page flip animation (based on android-page-curl project)
 		\n @hams_rrr - arabic support for non-arabic phones
@@ -83,6 +85,7 @@
 	<string name="prefs_use_arabic_names">useArabicNames</string>
 	<string name="prefs_keep_screen_on">keepScreenOn</string>
 	<string name="prefs_display_marker_popup">displayMarkerPopup</string>
+	<string name="prefs_auto_scroll">autoScroll</string>
 	<string name="prefs_lock_orientation">lockOrientation</string>
 	<string name="prefs_landscape_orientation">landscapeOrientation</string>
 	<string name="prefs_translation_text_size">translationTextSize</string>
@@ -126,4 +129,10 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_picker_title">Choose a number</string>
     <!--  End Number picker Strings -->
+    <string name="prompt_select_reciter">Select Reciter</string>
+	<string name="play_dialog_message">Start playing from...</string>
+	<string name="play_dialog_page">Current Page (%s)</string>
+	<string name="play_dialog_resume">Resume %1$s : %2$s</string>
+	<string name="download_dialog_message">Choose download option</string>
+	<string name="download_dialog_page">Current Page (%s)</string>
 </resources>

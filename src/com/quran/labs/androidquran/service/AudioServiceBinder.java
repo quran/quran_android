@@ -114,6 +114,7 @@ public class AudioServiceBinder extends Binder implements
 			mp.reset();			
 			mp.setOnCompletionListener(this);
 			url = null;
+			// FIXME Even though soura is downloaded, Basmallah of every sura asks for download since Al-Fati7a isn't downloaded -AF
 			if(item.isAudioFoundLocally())
 				url = item.getLocalAudioUrl();
 			else if(remotePlayEnabled) {
@@ -126,7 +127,7 @@ public class AudioServiceBinder extends Binder implements
 				}
 				else
 				{
-					// show notification ayah not found, download it or play remotely	
+					// TODO show notification ayah not found, download it or play remotely	
 				}
 			}	
 			if(url != null){
