@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -113,6 +114,12 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		if (iv != null){
 			HighlightingImageView hi = (HighlightingImageView)iv;
 			hi.highlightAyah(sura, ayah);
+			if (QuranSettings.getInstance().isAutoScroll() && v.getResources()
+					.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+				AyahBounds yBounds = hi.getYBoundsForCurrentHighlight();
+				if (yBounds != null)
+					mQuranPage.scrollToAyah(R.id.page_scroller, yBounds);
+			}
 			mQuranPage.invalidate();
 		}
 	}
