@@ -13,7 +13,9 @@ code by [@ahmedre](http://twitter.com/ahmedre),
 and [@wnafee](http://twitter.com/wnafee).  graphics by
 [@somaiagabr](http://twitter.com/somaiagabr).
 
-terms of use
+contributors include @afarra and @mahmoudhossam.
+
+Terms of use
 ------------
 you are free to use parts of (or all of) the Quran Android code in your
 application with some conditions:
@@ -30,8 +32,37 @@ must provide a link back to the [quran android
 project](http://github.com/ahmedre/quran_android) in your application
 description and your application itself in an about section.
 
-changelog
+Project dependecies
+-------------------
+*Action bar for Android:* https://github.com/johannilsson/android-actionbar
+
+*Google's Gson library:* http://code.google.com/p/google-gson/
+
+
+Changelog
 ---------
+**version 1.5.2**
+
+- fix crash on android 1.5.
+- rub3/7izb/juz2 notifications while reading
+- autoscroll to ayah if it is not visible on the screen
+- audio options to resume from last played ayah, start of the page, or start
+  of any of the suras on that page.
+- plethora of bugfixes (arabic fixes, seekbar not refreshing after jump, page
+  resets when orientation changes in translation view, page navigated to in
+  translation not retained when returning to quran view, and warning if the
+  sd card is filled.
+
+**version 1.5**
+
+- audio support
+- highlight ayah
+
+**version 1.4**
+
+- smooth transition between pages
+- resume download support
+
 **version 1.3**
 
 - improved interface
@@ -63,11 +94,3 @@ changelog
 **version 1.0**
 
 - initial release
-
-todo
-----
-- add audio
-- improve page scrolling
-- downloads should resume
-- add transliteration search
-- code cleanup [strings localization, comments, etc]
