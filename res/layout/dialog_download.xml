@@ -9,16 +9,23 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:drawSelectorOnTop="true"
-        android:entries="@array/quran_readers_name"
-    />
-    <RadioGroup android:id="@+id/radioGroupDownload"
-    android:layout_width="fill_parent" android:layout_height="wrap_content">
-    <TextView android:text="@string/radio_download_message"  
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:gravity="center_horizontal"/>
-    <RadioButton android:id="@+id/radioDownloadPage" android:text="Current Page" android:checked="true"/>
-    <RadioButton android:id="@+id/radioDownloadSura" android:text="Current Sura"/>    
-    <RadioButton android:id="@+id/radioDownloadJuza" android:text="Current Juza"/>
-    </RadioGroup>
+        android:prompt="@string/prompt_select_reciter"
+        android:entries="@array/quran_readers_name"/>
+    <ScrollView
+        android:id="@+id/scrollViewDownload"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <RadioGroup
+            android:id="@+id/radioGroupDownload"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TextView android:text="@string/download_dialog_message"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"/>
+            <RadioButton android:id="@+id/radioDownloadPage" android:text="Current Page" android:checked="true"/>
+            <RadioButton android:id="@+id/radioDownloadSura" android:text="Current Sura"/>
+            <RadioButton android:id="@+id/radioDownloadJuza" android:text="Current Juza"/>
+        </RadioGroup>
+    </ScrollView>
 </LinearLayout>

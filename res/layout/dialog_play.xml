@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+    <ScrollView
+        android:id="@+id/scrollViewPlay"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <RadioGroup android:id="@+id/radioGroupPlay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true">
+            <TextView android:text="@string/play_dialog_message"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"/>
+            <RadioButton android:id="@+id/radioPlayPage" android:text="Start of Page" android:checked="true"/>
+            <RadioButton android:id="@+id/radioPlayLast" android:text="Last Played Ayah"/>
+        </RadioGroup>
+    </ScrollView>
+</LinearLayout>

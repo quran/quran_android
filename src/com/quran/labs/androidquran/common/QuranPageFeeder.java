@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
@@ -81,9 +83,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mQuranPage.addNextPage(createPage(page));
 			mQuranPage.addNextPage(createPage(page+1));
 		}
-		
 		mCurrentPageNumber = page;
-		
 		mQuranPage.refresh(true); 
 	}
 	
@@ -114,18 +114,26 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		if (iv != null){
 			HighlightingImageView hi = (HighlightingImageView)iv;
 			hi.highlightAyah(sura, ayah);
+			if (QuranSettings.getInstance().isAutoScroll() && v.getResources()
+					.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+				AyahBounds yBounds = hi.getYBoundsForCurrentHighlight();
+				if (yBounds != null)
+					mQuranPage.scrollToAyah(R.id.page_scroller, yBounds);
+			}
 			mQuranPage.invalidate();
 		}
 	}
 	
 	public void unHighlightAyah(){
 		View v = mQuranPage.getCurrentPage();
-		HighlightingImageView iv = 
-			(HighlightingImageView)v.findViewById(R.id.page_image);
-		if (iv != null){
-			HighlightingImageView hi = (HighlightingImageView)iv;
-			hi.unhighlight();
-			mQuranPage.invalidate();
+		if (v != null) {
+			HighlightingImageView iv = 
+				(HighlightingImageView)v.findViewById(R.id.page_image);
+			if (iv != null){
+				HighlightingImageView hi = (HighlightingImageView)iv;
+				hi.unhighlight();
+				mQuranPage.invalidate();
+			}
 		}
 	}
 	
@@ -164,19 +172,20 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		int hizb = (rub3 / 4) + 1;
 		StringBuilder sb = new StringBuilder();
 		
+		boolean arabic = QuranSettings.getInstance().isArabicNames();
 		if (rub3 % 8 == 0) {
-			sb.append("Juz' ").append((hizb/2) + 1);
+			sb.append(arabic ? "الجزء" : "Juz'").append(' ').append((hizb/2) + 1);
 		} else {
-			sb.append("Hizb ").append(hizb);
 			int remainder = rub3 % 4;
 			if (remainder == 1)
-				sb.insert(0, "¼ ");
+				sb.append(arabic ? "ربع" : "¼").append(' ');
 			else if (remainder == 2)
-				sb.insert(0, "½ ");
+				sb.append(arabic ? "نصف" : "½").append(' ');
 			else if (remainder == 3)
-				sb.insert(0, "¾ ");
+				sb.append(arabic ? "ثلاثة أرباع" : "¾").append(' ');
+			sb.append(arabic ? "الحزب" : "Hizb").append(' ').append(hizb);
 		}
-		Toast.makeText(mContext, sb.toString(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(mContext, ArabicStyle.reshape(sb.toString()), Toast.LENGTH_SHORT).show();
 		lastPopupTime = System.currentTimeMillis();
 	}
 	
