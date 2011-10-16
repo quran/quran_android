@@ -195,8 +195,10 @@ public class AudioServiceBinder extends Binder implements
 		if(repeats < numberOfRepeats){
 			repeats++;
 			play(currentItem);
-		}else{
+		} else{
 			repeats = 0;
+			if (mp != null && mp.isPlaying())
+				mp.stop();
 			AyahItem nextItem = null;
 			if (this.currentItem != null)
 				nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
