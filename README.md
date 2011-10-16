@@ -13,7 +13,7 @@ code by [@ahmedre](http://twitter.com/ahmedre),
 and [@wnafee](http://twitter.com/wnafee).  graphics by
 [@somaiagabr](http://twitter.com/somaiagabr).
 
-contributors include @afarra and @mahmoudhossam.
+contributors include [@afarra](http://github.com/afarra) and [@mahmoudhossam](http://github.com/mahmoudhossam).
 
 Terms of use
 ------------
@@ -51,7 +51,7 @@ Changelog
 - plethora of bugfixes (arabic fixes, seekbar not refreshing after jump, page
   resets when orientation changes in translation view, page navigated to in
   translation not retained when returning to quran view, and warning if the
-  sd card is filled.
+  sd card is filled).
 
 **version 1.5**
 
