@@ -114,6 +114,7 @@ public class AudioServiceBinder extends Binder implements
 			mp.reset();
 			mp.setOnCompletionListener(this);
 			url = null;
+			// FIXME Even though soura is downloaded, Basmallah of every sura asks for download since Al-Fati7a isn't downloaded -AF
 			if(item.isAudioFoundLocally())
 				url = item.getLocalAudioUrl();
 			else if(remotePlayEnabled) {
@@ -126,7 +127,7 @@ public class AudioServiceBinder extends Binder implements
 				}
 				else
 				{
-					// show notification ayah not found, download it or play remotely	
+					// TODO show notification ayah not found, download it or play remotely	
 				}
 			}	
 			if(url != null){
@@ -194,8 +195,10 @@ public class AudioServiceBinder extends Binder implements
 		if(repeats < numberOfRepeats){
 			repeats++;
 			play(currentItem);
-		}else{
+		} else{
 			repeats = 0;
+			if (mp != null && mp.isPlaying())
+				mp.stop();
 			AyahItem nextItem = null;
 			if (this.currentItem != null)
 				nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
@@ -277,8 +280,8 @@ public class AudioServiceBinder extends Binder implements
 	                System.currentTimeMillis());
 	     
 	     
-	        notification.setLatestEventInfo(context,
-	        				context.getApplicationInfo().name, 
+	     	String name = context.getString(R.string.app_name);
+	        notification.setLatestEventInfo(context, name,
 	        				item.getSoura() + " - " + QuranInfo.getSuraName(item.getSoura() -1)
 	        			 + " (" + item.getAyah() + ")", pi);
 //	        notification.contentView = new RemoteViews("com.quran.labs.androidquran", 
