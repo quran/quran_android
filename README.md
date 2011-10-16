@@ -48,6 +48,7 @@ Changelog
 - autoscroll to ayah if it is not visible on the screen
 - audio options to resume from last played ayah, start of the page, or start
   of any of the suras on that page.
+- apps2sd support.
 - plethora of bugfixes (arabic fixes, seekbar not refreshing after jump, page
   resets when orientation changes in translation view, page navigated to in
   translation not retained when returning to quran view, and warning if the
