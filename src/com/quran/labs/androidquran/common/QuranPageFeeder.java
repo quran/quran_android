@@ -68,7 +68,6 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	}
 	
 	public void jumpToPage(int page){
-		mCurrentPageNumber = page;
 		if (page <= ApplicationConstants.PAGES_FIRST) {
 			page = ApplicationConstants.PAGES_FIRST;
 			mQuranPage.addNextPage(null);
@@ -84,6 +83,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mQuranPage.addNextPage(createPage(page));
 			mQuranPage.addNextPage(createPage(page+1));
 		}
+		mCurrentPageNumber = page;
 		mQuranPage.refresh(true); 
 	}
 	

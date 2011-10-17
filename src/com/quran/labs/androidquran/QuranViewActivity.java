@@ -134,9 +134,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		if (quranAudioPlayer != null && action != null) {
 			if (action.equalsIgnoreCase(ACTION_PLAY)) {
 				bindAudioService();
-				if (quranAudioPlayer.isPaused())
+				if (quranAudioPlayer.isPaused()) {
 					quranAudioPlayer.resume();
-				else
+					onActionPlay();
+				} else
 					showPlayDialog();
 			} else if (action.equalsIgnoreCase(ACTION_PAUSE)) {
 				quranAudioPlayer.pause();

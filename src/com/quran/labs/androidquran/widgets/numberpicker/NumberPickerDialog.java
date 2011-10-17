@@ -15,14 +15,14 @@
  */
 package com.quran.labs.androidquran.widgets.numberpicker;
 
-import com.quran.labs.androidquran.R;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import com.quran.labs.androidquran.R;
 
 public class NumberPickerDialog extends AlertDialog implements OnClickListener {
     private OnNumberSetListener mListener;
