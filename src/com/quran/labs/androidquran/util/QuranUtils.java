@@ -307,6 +307,12 @@ public class QuranUtils {
 				+ QuranAudioLibrary.AUDIO_EXTENSION;
 	}
 
+	public static boolean isBasmallahDownloaded(int quranReaderId) {
+		String path = getAyahAudioPath(1, 1, quranReaderId);
+		File f = new File(path);
+		return f.exists();
+	}
+
 	public static String getAyahImagePath(int sura, int ayah) {
 		return getAyahImagesDirectory() + File.separator + sura
 				+ File.separator + ayah + QuranAudioLibrary.IMAGE_EXTENSION;
