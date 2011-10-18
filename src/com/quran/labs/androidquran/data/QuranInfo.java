@@ -399,4 +399,16 @@ public class QuranInfo {
          results[3] = bounds[1];
          return results;
 	 }
+	
+	public static boolean ayahWithinBounds(int sura, int ayah,
+			int startSura, int startAyah, int endSura, int endAyah) {
+		if (sura >= startSura && sura <= endSura) {
+			if (sura == startSura && ayah < startAyah)
+				return false;
+			if (sura == endSura && ayah > endAyah)
+				return false;
+			return true;
+		}
+		return false;
+	}
 }
