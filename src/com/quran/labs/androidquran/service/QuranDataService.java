@@ -147,6 +147,12 @@ public class QuranDataService extends Service {
 		ArrayList<String> urls = new ArrayList<String>();
 		ArrayList<String> directories = new ArrayList<String>();
 
+		// Check Basmallah
+		if (!QuranInfo.ayahWithinBounds(1, 1, soura, startAyah, endSoura, endAyah)
+				&& !QuranUtils.isBasmallahDownloaded(quranReader)) {
+			addAyahForDownload(1, 1, quranReader, false, fileNames, urls, directories);
+		}
+
 		int ayatStartIndex = startAyah;
 		int ayatEndIndex = endAyah;
 		for (int j = soura; j <= endSoura; j++) {
@@ -162,34 +168,8 @@ public class QuranDataService extends Service {
 			}
 			for (int i = ayatStartIndex; i <= ayatEndIndex; i++) {
 				// get ayah
-				AyahItem ayah = QuranAudioLibrary.getAyahItem(
-						getApplicationContext(), j, i, quranReader);
-				String fileName = ayah.getLocalAudioUrl()
-						.substring(
-								ayah.getLocalAudioUrl().lastIndexOf(
-										File.separator) + 1);
-				String dir = ayah.getLocalAudioUrl().substring(0,
-						ayah.getLocalAudioUrl().lastIndexOf(File.separator));
-				File f = new File(dir, fileName);
-				if (f.exists())
-					continue;
-				fileNames.add(fileName);
-				directories.add(dir);
-				urls.add(ayah.getRemoteAudioUrl());
-
-				if (downloadImage) {
-					fileName = ayah.getAyah()
-							+ QuranAudioLibrary.IMAGE_EXTENSION;
-					dir = QuranUtils.getSuraImagePath(ayah.getSoura());
-
-					f = new File(dir, fileName);
-					if (f.exists())
-						continue;
-
-					fileNames.add(fileName);
-					directories.add(dir);
-					urls.add(ayah.getRemoteImageUrl());
-				}
+				addAyahForDownload(j, i, quranReader, downloadImage,
+						fileNames, urls, directories);
 			}
 		}
 
@@ -212,6 +192,39 @@ public class QuranDataService extends Service {
 			thread.start();
 		} else {
 			isRunning = false;
+		}
+	}
+
+	private void addAyahForDownload(int soura, int ayah, int quranReader,
+			boolean downloadImage, ArrayList<String> fileNames,
+			ArrayList<String> urls, ArrayList<String> directories) {
+		AyahItem ayahItem = QuranAudioLibrary.getAyahItem(
+				getApplicationContext(), soura, ayah, quranReader);
+		String fileName = ayahItem.getLocalAudioUrl()
+				.substring(
+						ayahItem.getLocalAudioUrl().lastIndexOf(
+								File.separator) + 1);
+		String dir = ayahItem.getLocalAudioUrl().substring(0,
+				ayahItem.getLocalAudioUrl().lastIndexOf(File.separator));
+		File f = new File(dir, fileName);
+		if (f.exists())
+			return;
+		fileNames.add(fileName);
+		directories.add(dir);
+		urls.add(ayahItem.getRemoteAudioUrl());
+
+		if (downloadImage) {
+			fileName = ayahItem.getAyah()
+					+ QuranAudioLibrary.IMAGE_EXTENSION;
+			dir = QuranUtils.getSuraImagePath(ayahItem.getSoura());
+
+			f = new File(dir, fileName);
+			if (f.exists())
+				return;
+
+			fileNames.add(fileName);
+			directories.add(dir);
+			urls.add(ayahItem.getRemoteImageUrl());
 		}
 	}
 
