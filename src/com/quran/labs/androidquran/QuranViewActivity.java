@@ -560,6 +560,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			Log.d("QuranView", "Audio service bounded: " + bounded);
 		}
 	}
+	
+	public void onDestroy(){
+		unBindAudioService();
+		super.onDestroy();
+	}
 
 	private void playAudio(AyahItem ayah) {
 		if (quranAudioPlayer != null) {
