@@ -118,6 +118,15 @@ public class QuranActivity extends BaseQuranActivity {
 		super.onResume();
 		QuranSettings.load(prefs);
 		showSuras();
+		
+		int lastPage = QuranSettings.getInstance().getLastPage();
+		if ((lastPage > 0) && (lastPage < 605)){
+			int currentSura = QuranInfo.PAGE_SURA_START[lastPage-1];
+			int juz = QuranInfo.getJuzFromPage(lastPage);
+			int position = currentSura + juz - 1;
+			ListView list = (ListView)findViewById(R.id.suralist);
+			list.setSelectionFromTop(position, 20);
+		}
 	}
 
 	public void showSuras() {
