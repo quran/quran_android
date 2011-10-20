@@ -98,8 +98,9 @@ public class AudioServiceBinder extends Binder implements
 		Log.d("Play", "1 playing ayah " + item.getAyah());
 		stopped = false;
 		paused = false;
-		if(item == null)
-			return;
+		// eclipse says this is dead code
+		// if (item == null)
+		//	  return;
 		this.currentItem = item;
 		if(mp != null && mp.isPlaying()){
 			mp.stop();

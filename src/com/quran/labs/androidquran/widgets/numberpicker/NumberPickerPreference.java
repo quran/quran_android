@@ -15,15 +15,14 @@
  */
 package com.quran.labs.androidquran.widgets.numberpicker;
 
-import com.quran.labs.androidquran.R;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+
+import com.quran.labs.androidquran.R;
 
 public class NumberPickerPreference extends DialogPreference {
     private NumberPicker mPicker;
