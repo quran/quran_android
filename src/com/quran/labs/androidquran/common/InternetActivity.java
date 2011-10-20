@@ -195,11 +195,17 @@ public abstract class InternetActivity extends BaseQuranActivity {
     }
     
     protected void onFinishDownload() {
-    	
+    	if (bounded){
+    		unbindService(serviceConnection);
+    		bounded = false;
+    	}
     }
     
     protected void onDownloadCanceled() {
-    	
+    	if (bounded){
+    		unbindService(serviceConnection);
+    		bounded = false;
+    	}
     }
     
 	private void showProgressDialog(){
