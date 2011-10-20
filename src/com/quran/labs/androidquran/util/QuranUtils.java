@@ -8,6 +8,7 @@ import java.net.URL;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -333,4 +334,11 @@ public class QuranUtils {
 		f = new File(externalPath.getAbsolutePath() + path);
 		return f.getAbsolutePath();
 	}
+	
+    public static boolean isSdk15() {
+    	// Build.VERSION.SDK_INT is only 1.6+ :(
+        if (Build.VERSION.RELEASE.startsWith("1.5"))  
+            return true;  
+        return false;  
+     }
 }
