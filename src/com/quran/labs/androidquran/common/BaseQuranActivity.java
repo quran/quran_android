@@ -120,6 +120,9 @@ public abstract class BaseQuranActivity extends Activity {
 				intent = new Intent(getApplicationContext(), DownloadActivity.class);
 				startActivity(intent);
 			break;
+			case R.id.menu_item_search:
+				onSearchRequested();
+				break;
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
@@ -144,8 +147,8 @@ public abstract class BaseQuranActivity extends Activity {
 	
 	@Override
 	protected void onPause() {
-		super.onPause();
 		QuranSettings.save(prefs);
+		super.onPause();
 	}
 
 	protected void initializeQuranScreen() {

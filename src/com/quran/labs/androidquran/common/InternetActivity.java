@@ -208,6 +208,17 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	}
     }
     
+    @Override
+    protected void onPause(){
+    	if (bounded){
+    		if (currentTask != null)
+    			currentTask.cancel(true);
+    		unbindService(serviceConnection);
+    		bounded = false;
+    	}
+    	super.onPause();
+    }
+    
 	private void showProgressDialog(){
 		if (hideProgressBar)
 			return;

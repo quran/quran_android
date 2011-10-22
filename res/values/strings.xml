@@ -31,6 +31,7 @@
 	<string name="menu_bookmarks_removed">Bookmark Removed</string>
 	<string name="menu_bookmarks_help">Help</string>
 	<string name="menu_help">Help</string>
+	<string name="menu_search">Search</string>
 	<string name="menu_get_translations">Get Translations</string>
 	<string name="jump_dialog_title">Jump To Page</string>
 	<string name="page_hint">Page Number</string>
@@ -102,9 +103,12 @@
 
     <!-- Search failure message. -->
     <string name="no_results">No results found for \"%s\"</string>
-    <string name="no_active_translation">No active translation set, set an active translation first (Settings > Set Active Translation) and then search again.</string>
+    <string name="no_active_translation">You have no active translation set.  Please set an active translation first and then search again.</string>
     <string name="set_active_translation">Set Active Translation</string>
-    <string name="no_translations_available">You have not got any available translations, please download a translation first (Menu > Get More Translations) and then search again.</string>
+    <string name="no_translations_available">You have not downloaded any translations.  Please download a translation first and then search again.</string>
+    <string name="no_arabic_search_available">You have not downloaded the arabic search pack.  Please download it and try your search again.</string>
+    <string name="get_arabic_search_db">Get Arabic Search Database</string>
+        
     <string name="prefs_category_reading">Reading Preferences</string>
     <string name="prefs_category_translation">Translation Preferences</string>
     <string name="prefs_category_display_settings">Display Settings</string>

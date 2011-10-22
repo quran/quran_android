@@ -19,7 +19,11 @@ public class DatabaseHandler {
 	public static String AR_SEARCH_TABLE = "search";
 	public static String TRANSLITERATION_TABLE = "transliteration";
 	
+	private boolean useFullTextIndex = false;
+	
 	public DatabaseHandler(String databaseName) throws SQLException {
+		if (databaseName.equals("quran.search.db"))
+			useFullTextIndex = true;
 		String base = QuranUtils.getQuranDatabaseDirectory();
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
@@ -47,16 +51,26 @@ public class DatabaseHandler {
 		return getVerses(sura, ayah, ayah);
 	}
 	
-	public Cursor search(String query){
-		return search(query, VERSE_TABLE);
+	public Cursor search(String query, boolean withSnippets){
+		return search(query, VERSE_TABLE, withSnippets);
 	}
 	
-	public Cursor search(String query, String table){
+	public Cursor search(String query, String table, boolean withSnippets){
 		if (!validDatabase()) return null;
+		String operator = " like '%";
+		String endOperator = "%'";
+		String whatTextToSelect = COL_TEXT;
+		if (useFullTextIndex){
+			operator = " MATCH '";
+			endOperator = "*'";
+		}
+		
+		if (useFullTextIndex && withSnippets)
+			whatTextToSelect = "snippet(" + table + ")";
 		
 		return database.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
-				", " + COL_TEXT + " from " + table + " where " + COL_TEXT +
-				" like '%" + query + "%' limit 50", null);
+				", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
+				operator + query + endOperator + " limit 50", null);
 	}
 	
 	public void closeDatabase() {
