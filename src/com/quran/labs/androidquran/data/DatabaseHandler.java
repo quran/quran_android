@@ -19,16 +19,19 @@ public class DatabaseHandler {
 	public static String AR_SEARCH_TABLE = "search";
 	public static String TRANSLITERATION_TABLE = "transliteration";
 	
-	private boolean useFullTextIndex = false;
+	public static String PROPERTIES_TABLE = "properties";
+	public static String COL_PROPERTY = "property";
+	public static String COL_VALUE = "value";
+	
+	private int schemaVersion = 1;
 	
 	public DatabaseHandler(String databaseName) throws SQLException {
-		if (databaseName.equals("quran.search.db"))
-			useFullTextIndex = true;
 		String base = QuranUtils.getQuranDatabaseDirectory();
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
 		database = SQLiteDatabase.openDatabase(path, null,
 				SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+		schemaVersion = getSchemaVersion();
 	}
 	
 	public boolean validDatabase(){
@@ -37,6 +40,28 @@ public class DatabaseHandler {
 	
 	public Cursor getVerses(int sura, int minAyah, int maxAyah){
 		return getVerses(sura, minAyah, maxAyah, VERSE_TABLE);
+	}
+	
+	public int getSchemaVersion(){
+		int version = 1;
+		if (!validDatabase()) return version;
+		
+		Cursor result = null;
+		try {
+			result = database.query(PROPERTIES_TABLE, new String[]{ COL_VALUE },
+					COL_PROPERTY + "= ?", new String[]{ "schema_version" },
+					null, null, null);
+			if ((result != null) && (result.moveToFirst()))
+				version = result.getInt(0);
+			if (result != null)
+				result.close();
+			return version;
+		}
+		catch (SQLException se){
+			if (result != null)
+				result.close();
+			return version;
+		}
 	}
 	
 	public Cursor getVerses(int sura, int minAyah, int maxAyah, String table){
@@ -60,6 +85,8 @@ public class DatabaseHandler {
 		String operator = " like '%";
 		String endOperator = "%'";
 		String whatTextToSelect = COL_TEXT;
+		
+		boolean useFullTextIndex = (schemaVersion > 1);
 		if (useFullTextIndex){
 			operator = " MATCH '";
 			endOperator = "*'";
