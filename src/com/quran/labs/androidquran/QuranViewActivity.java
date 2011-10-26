@@ -9,6 +9,8 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -335,14 +337,22 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 
 	private void showAudioRepeatsDialog(){
-		final NumberPickerDialog diag = new NumberPickerDialog(this, 1, 0);
+		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+		int numberOfRepeats = preferences.getInt("numberOfRepeats", 0);
+		final NumberPickerDialog diag = new NumberPickerDialog(this, 1, numberOfRepeats);
 		diag.setTitle("Choose number of repeats");
 		diag.show();
 		diag.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
+				int numberOfRepeats = diag.getSelectedNumber();
 				if(quranAudioPlayer != null)
-					quranAudioPlayer.setNumberOfRepeats(diag.getSelectedNumber());
+					quranAudioPlayer.setNumberOfRepeats(numberOfRepeats);
+				// save repeats to preference file
+				SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+				Editor editor = preferences.edit();
+				editor.putInt("numberOfRepeats", numberOfRepeats);
+				editor.commit();
 			}
 		});
 	}
