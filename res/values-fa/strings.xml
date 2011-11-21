@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="errorString">بارگیری صفحات قرآن ممکن نیست!</string>
+	<string name="app_name">قرآن اندروید</string>
+	<string name="pageNotFound">صفحه پیدا نشد.</string>
+	<string name="pageLoading">در حال بارکردن صفحه</string>
+	<string name="downloadPrompt_title">بارگیری صفحات مورد نیاز؟</string>
+	<string name="downloadPrompt">برای عملکرد بهینه، برخی پرونده‌ها باید بر روی کارت
+		SD بارگیری شوند. اگر این کار را هم‌اکنون انجام ندهید، بارگیری و نمایش
+		هر صفحه بیشتر طول می‌کشد. دوست دارید همین حالا پرونده‌های مورد نیاز را
+		بارگیری کنید؟</string>
+	<string name="downloadTranslationPrompt">آیا می‌خواهید ترجمه‌های مورد نیاز را هم‌اکنون
+		بارگیری کنید؟</string>
+	<string name="downloadPrompt_ok">بله</string>
+	<string name="downloadPrompt_no">خیر</string>
+	<string name="downloading_title">بارگیری ...</string>
+	<string name="downloading_message">لطفاً صبر کنید تا پرونده‌ها بارگیری شوند. (بارگیری
+		ادامهٔ پرونده پشتیبانی می‌شود)</string>
+
+	<string name="extracting_title">در حال پردازش ...</string>
+	<string name="extracting_message">لطفاً صبر کنید تا پرونده‌ها پردازش شوند.</string>
+	<string name="menu_jump">پرش</string>
+	<string name="menu_about">دربارهٔ ما</string>
+	<string name="menu_settings">تنظیمات</string>
+	<string name="menu_jump_last_page">صفحهٔ پایانی</string>
+	<string name="menu_bookmarks">بوکمارک‌ها</string>
+	<string name="menu_bookmarks_remove">حذف</string>
+	<string name="menu_bookmarks_view">نما</string>
+	<string name="menu_translation">نمایش ترجمه</string>
+	<string name="menu_bookmarks_add">اضافه</string>
+	<string name="menu_bookmarks_saved">بوکمارک ذخیره شد</string>
+	<string name="menu_bookmarks_removed">بوکمارک حذف شد</string>
+	<string name="menu_bookmarks_help">کمک</string>
+	<string name="menu_help">کمک</string>
+	<string name="menu_get_translations">گرفتن ترجمه‌ها</string>
+	<string name="jump_dialog_title">پرش به صفحه</string>
+	<string name="page_hint">شماره صفحه</string>
+	<string name="refresh">Refresh</string>
+	<string name="go">برو</string>
+	<string name="cancel">لغو</string>
+	<string name="developedBy">
+		أحمد الحلو - أحمد فؤاد
+		\n حسين ماهر - وائل نافع
+	</string>
+	<string name="copyRights">حقوق این نرم‌افزار متعلق به تمامی مسلمانان است
+	</string>
+	<string name="email_subject">بازخورد</string>
+	<string name="email_to">quran.android@gmail.com</string>
+	<string name="aboutUs">Quran Android is a free, open source Quran
+		application for Android. The images used are from the quran.com
+		project, the audio comes from everyayah.com,
+		the data used in the translations and Arabic comes from
+		tanzil.net.
+		\n\nCredits:
+		\n Ahmed Farra - bugfixes and many contributions.
+		\n
+		Mahmoud Hossam - bugfixes.
+		\n @fo2ad - audio recitation support
+		\n
+		@wnafee - page flip animation (based on android-page-curl project)
+		\n
+		@hams_rrr - arabic support for non-arabic phones
+		\n @neo_4583 - arabic
+		reshaper project
+		\n @somaiagabr - graphics and arabic translation
+		\n
+		Mehmed Mahmudoglu - turkish translation
+		\n\nNew features in this
+		release:
+		\n- Audio Recitations (thanks to @fo2ad)
+		\n- Minor bugfixes.
+		\n\nLa tansawna men saleh el doaa.
+	</string>
+	<string name="help_title">راهنمای قرآن اندروید</string>
+	<string name="help">- Flip your screen to landscape mode for a zoomed
+		in version.
+		\n- Change pages by swiping your finger across the screen.
+		\n- Tap the screen to get a bookmark button, a slider for switching pages
+		and audio.
+		\n- You can fix the orientation in either landscape or portrait modes.
+		\n- Browse and download available translations (choose Menu > Get
+		Translations).
+		\n- You can download as many translations as you want, yet only one
+		translation
+		can be active for viewing and searching.
+		\n- Adjust translation text size to your preference via Settings.
+		\n- Initial search implementation allows you to search the active
+		translation
+		via the search button.
+		\n- On tapping the center of the screen and you will find the page
+		bookmark
+		option in the top left corner.
+		tap on the bookmark button to toggle the page bookmark state.
+		\n- You can add as many bookmarks as you\'d like.
+		\n- The application remembers the last page you were reading and displays
+		it when you restart the app.
+		\n- Don\'t forget to check out the settings.</string>
+	<string name="settings_use_arabic_names">اسم سوره</string>
+	<string name="settings_keep_screen_on">باز نگه‌داشتن صفحه</string>
+	<string name="prefs_use_arabic_names">استفاده از نام‌های عربی</string>
+	<string name="prefs_keep_screen_on">صفحهٔ نمایش روشن بماند</string>
+	<string name="prefs_display_marker_popup">displayMarkerPopup</string>
+	<string name="prefs_auto_scroll">مرور خودکار صفحه</string>
+	<string name="prefs_lock_orientation">lockOrientation</string>
+	<string name="prefs_landscape_orientation">landscapeOrientation</string>
+	<string name="prefs_translation_text_size">translationTextSize</string>
+	<string name="prefs_path">QuranAndroid_Settings</string>
+	<string name="prefs_reshape_arabic">reshapeArabic</string>
+	<string name="search_hint">جست-و-جو در قرآن</string>
+	<string name="quranSearchType">آیه‌های قرآن</string>
+
+	<!-- Shown above search results when we receive a search request. -->
+	<plurals name="search_results">
+		<item quantity="one">نتیجه برای \"%s\": </item>
+		<item quantity="other">نتایج برای \"%s\": </item>
+	</plurals>
+
+	<!-- Search failure message. -->
+	<string name="no_results">نتیجه‌ای برای \"%s\" پیدا نشد</string>
+	<string name="no_active_translation">شما ترجمهٔ فعالی را تنظیم نکرده‌اید، ابتدا ترجمه‌ای را فعال کنید (تنظیمات > ترجمهٔ فعال) و سپس دوباره جست-و-جو کنید.</string>
+	<string name="set_active_translation">تنظیم ترجمهٔ فعال</string>
+	<string name="no_translations_available">شما ترجمه‌ای ندارید، لطفاً ابتدا ترجمه‌ای را بارگیری کنید (منو > گرفتن ترجمه‌های بیشتر) و سپس دوباره جست-و-جو کنید.</string>
+	<string name="prefs_category_reading">ترجیحات قرائت</string>
+	<string name="prefs_category_translation">ترجیحات ترجمه</string>
+	<string name="prefs_category_display_settings">نمایش تنظیمات</string>
+	<string name="prefs_active_translation">activeTranslation</string>
+
+	<string name="loading_translations">بار کردن فهرست ترجمه‌ها، لطفاً صبر کنید...</string>
+	<string name="downloaded_translations">بارگیری شد</string>
+	<string name="available_translations">موجود برای بارگیری</string>
+	<string name="sdcard_required">کارت SD برای بارگیری ترجمه‌ها باید متصل باشد.
+	</string>
+	<string name="download_a_translation">بارگیری %s?</string>
+	<string name="translation_downloaded">%s بارگیری شده است.</string>
+	<string name="download_button">بارگیری</string>
+	<string name="remove_button">حذف</string>
+	<string name="set_active">فعال شود</string>
+	<string name="prompt_select_ayah">انتخاب آیه</string>
+	<string name="prompt_select_sura">انتخاب سوره</string>
+	<string name="prompt_select_reciter">انتخاب قاری</string>
+	<string name="play_dialog_message">شروع پخش از...</string>
+	<string name="play_dialog_page">صفحهٔ کنونی (%s)</string>
+	<string name="play_dialog_resume">از سرگیری %1$s : %2$s</string>
+	<string name="download_dialog_message">انتخاب گزینهٔ بارگیری</string>
+	<string name="download_dialog_page">صفحهٔ کنونی (%s)</string>
+</resources>
