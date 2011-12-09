@@ -196,7 +196,7 @@ public class AudioServiceBinder extends Binder implements
 		Log.d("onCompletion", "1");
 		if(repeats < numberOfRepeats){
 			repeats++;
-//<<<<<<< HEAD
+
 			mp.seekTo(0);
 			mp.start();
 			//play(currentItem);
@@ -206,14 +206,7 @@ public class AudioServiceBinder extends Binder implements
 				Log.d("onCompletion", "1.1 mp is playing !!! stop it!!!");
 				mp.stop();
 			}
-			//mp.setLooping(false);
-//=======
-//			play(currentItem);
-//		} else{
-//			repeats = 0;
-//			if (mp != null && mp.isPlaying())
-//				mp.stop();
-//>>>>>>> origin/1.5.2
+
 			AyahItem nextItem = null;
 			if (this.currentItem != null)
 				nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
