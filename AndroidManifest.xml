@@ -18,6 +18,7 @@
 		<activity android:name=".HelpActivity"
 			android:screenOrientation="portrait" />
 		<activity android:name=".QuranViewActivity" />
+		<activity android:name=".AudioManagerActivity" />
 		<activity android:name=".BookmarksActivity" />
 		<activity android:name=".TranslationActivity" />
 		<activity android:name=".DownloadActivity"
