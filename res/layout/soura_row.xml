@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="horizontal"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+<TextView  android:id="@+id/suraName" 
+   android:layout_height="wrap_content"
+   android:layout_width="fill_parent"
+   android:layout_weight="1"
+   android:paddingLeft="2dip"
+   android:textColor="#F3F4E6"
+    		android:textSize="16sp"
+   android:text="soura" />
+   
+   <TextView  android:id="@+id/suraDownloadStatus" 
+   android:layout_height="wrap_content"
+   android:layout_width="fill_parent"
+   android:layout_weight="2"
+   android:paddingRight="2dip"
+   android:textColor="#F3F4E6"
+    		android:textSize="16sp"
+   android:text="status" />    
+</LinearLayout>

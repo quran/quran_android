@@ -327,6 +327,10 @@ public class QuranUtils {
 		return f.getAbsolutePath();
 	}
 	
+	public static String getReaderAudioDirectory(int readerId){
+		return getAudioDirectory() + "/" + readerId;
+		
+	}
 	public static String getAyahImagesDirectory() {
 		File f = null;
 		File externalPath = Environment.getExternalStorageDirectory();
