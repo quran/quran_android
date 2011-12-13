@@ -15,7 +15,7 @@ public class QuranInfo {
 		"Fussilat", "Ash-Shura", "Az-Zukhruf", "Ad-Dukhan", "Al-Jathiya",
 		"Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujraat", "Qaf",
 		"Adh-Dhariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman",
-		"Al-Waqia", "Al-Hadid", "Al-Mujadila", "Al-Hashr", "Al-Mumtahina",
+		"Al-Waqia", "Al-Hadid", "Al-Mujadala", "Al-Hashr", "Al-Mumtahina",
 		"As-Saff", "Al-Jumua", "Al-Munafiqoon", "At-Taghabun", "At-Talaq",
 		"At-Tahrim", "Al-Mulk", "Al-Qalam", "Al-Haaqqa", "Al-Maarij", "Nooh",
 		"Al-Jinn", "Al-Muzzammil", "Al-Muddaththir", "Al-Qiyama", "Al-Insan",
