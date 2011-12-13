@@ -2,6 +2,7 @@ package com.quran.labs.androidquran;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -63,7 +64,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	private int currentReaderId;
 	private boolean playing = false;
 
-	private HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
+	private LinkedHashMap<String, IntentAction> actionBarActions = new LinkedHashMap<String, IntentAction>();
 
 	// private TextView textView;
 
@@ -100,8 +101,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			actionBar.setTitle("Quran");
 			actionBarActions.put(ACTION_PLAY, getIntentAction(
 					ACTION_PLAY, R.drawable.ab_play));
-			actionBarActions.put(ACTION_REPEAT, getIntentAction(
-					ACTION_REPEAT, R.drawable.repeat));
 			actionBarActions.put(ACTION_PAUSE, getIntentAction(
 					ACTION_PAUSE, R.drawable.ab_pause));
 			actionBarActions.put(ACTION_NEXT, getIntentAction(
@@ -114,9 +113,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
-//			actionBarActions.put(ACTION_REPEAT,
-//					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
-//	
+			actionBarActions.put(ACTION_REPEAT,
+					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
 			onActionStop();
 		}
 	}
@@ -189,9 +187,9 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	private void onActionStop() {
 		actionBar.removeAllActions();
 		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
+		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 0);
+		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_REPEAT), 0);
-		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 1);
-		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 2);
 		playing = false;
 	}
 
