@@ -366,6 +366,9 @@ public class QuranInfo {
 		return SURA_NUM_AYAHS[sura-1];
 	}
 	
+	public static int getNumAyahs(){
+		return 6236;
+	}
 	public static String getPageTitleNoPrefix(int page) {
 		return getPageTitleNoPrefix() + page +
 		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);

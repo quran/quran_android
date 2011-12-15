@@ -31,11 +31,25 @@ public class AudioManagerActivity extends Activity{
 	private class ReaderStatus{
 		private QuranReader reader;
 		private Integer totalAyasDownload = new Integer(0);
+		private short getDownloadStatus(){
+			if(totalAyasDownload == 0)
+				return 0;
+			if(totalAyasDownload == QuranInfo.getNumAyahs())
+				return 1;
+			return -1;  // partially downloaded
+		}
 	}
 	
 	private class SouraStatus{
 		private Integer suraIndex = new Integer(0);
 		private Integer ayasDownloaded = new Integer(0);
+		private short getDownloadStatus(){
+			if(ayasDownloaded == 0)
+				return 0;
+			if(ayasDownloaded == QuranInfo.getNumAyahs(suraIndex))
+				return 1;
+			return -1; // partially downloaded
+		}
 	}
 	
 	private ExpandableListView lst = null;
@@ -49,6 +63,8 @@ public class AudioManagerActivity extends Activity{
         setContentView(R.layout.audio_download_status);
         lst = (ExpandableListView) findViewById(R.id.expandableListView);
         dialog = new ProgressDialog(this);
+        dialog.setTitle("Loading");
+        dialog.setMessage("Please wait, while reading data from your sdcard");
         task = new CheckReaderDownloadStatus();
         dialog.show();
         task.execute();
@@ -132,8 +148,6 @@ public class AudioManagerActivity extends Activity{
 		
 	}
 	
-	
-	
 	public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 	    @Override
@@ -193,6 +207,21 @@ public class AudioManagerActivity extends Activity{
 	        TextView status = (TextView) convertView.findViewById(R.id.suraDownloadStatus);
 	        status.setText(""+soura.ayasDownloaded);
 	        
+	        View v = convertView.findViewById(R.id.souraRow);
+	        switch (soura.getDownloadStatus()) {
+			case -1:
+				v.setBackgroundColor(0x6600FCEB);
+				break;
+			case 1:
+				v.setBackgroundColor(0x3300EE00);
+				break;
+			case 0:
+				v.setBackgroundColor(0x000000);
+				break;
+			default:
+				break;
+			}
+	        
 	        return convertView;
 	    }
 
@@ -234,6 +263,19 @@ public class AudioManagerActivity extends Activity{
 	        
 	        TextView status = (TextView) convertView.findViewById(R.id.downloadStatus);
 	        status.setText(""+readerStatus.totalAyasDownload);
+	        
+	        View v = convertView.findViewById(R.id.readerRow);
+	        switch (readerStatus.getDownloadStatus()) {
+	        case -1:
+				v.setBackgroundColor(0x6600FCEB);
+				break;
+			case 1:
+				v.setBackgroundColor(0x3300EE00);
+				break;		
+			case 0:
+				v.setBackgroundColor(0x000000);
+				break;
+			}
 	        return convertView;
 	    }
 
