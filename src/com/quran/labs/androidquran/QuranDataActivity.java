@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.quran.labs.androidquran.common.InternetActivity;
 import com.quran.labs.androidquran.service.QuranDataService;
@@ -24,6 +26,10 @@ public class QuranDataActivity extends InternetActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(
+    			WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.splash_screen);
         
         /*
@@ -114,8 +120,7 @@ public class QuranDataActivity extends InternetActivity {
     }
     
     protected void runListView(){
-		Intent i = new Intent();
-		setResult(RESULT_OK, i);
-		finish();
+		Intent i = new Intent(this, QuranActivity.class);
+		startActivity(i);
     }
 }
