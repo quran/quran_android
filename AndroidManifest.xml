@@ -51,7 +51,6 @@
 		<provider android:name=".data.QuranDataProvider"
 			android:authorities="com.quran.labs.androidquran.data.QuranDataProvider" />
       
-      <service android:enabled="true" android:name="com.whatstheplot.scratch.DownloadService" />
 		<service android:enabled="true" android:name=".service.QuranDataService" />
 		<service android:name=".service.QuranAudioService" />
 
