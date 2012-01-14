@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.graphics.drawable.PaintDrawable;
@@ -15,14 +14,15 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranPageAdapter extends PagerAdapter {
 
+	private Context mContext = null;
 	private LayoutInflater mInflater = null;
 	private PaintDrawable mLeftGradient, mRightGradient = null;
 
 	public QuranPageAdapter(Context context){
+		mContext = context;
 		mInflater = (LayoutInflater)context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
@@ -59,12 +59,12 @@ public class QuranPageAdapter extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(View collection, int position){
-		android.util.Log.d("PagerActivity", "instantiate " + position);
+		android.util.Log.d("PagerActivity", "instantiate " + position +
+				", page " + (604 - position));
 
 		int page = 604 - position;
 		View view = mInflater.inflate(R.layout.quran_page_layout, null);
-		ImageView iv = (ImageView)view.findViewById(R.id.page_image);
-		iv.setBackgroundDrawable((page % 2 == 0? mLeftGradient : mRightGradient));
+		view.setBackgroundDrawable((page % 2 == 0? mLeftGradient : mRightGradient));
 
 		ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
 		ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
@@ -78,9 +78,8 @@ public class QuranPageAdapter extends PagerAdapter {
 			leftBorder.setBackgroundResource(R.drawable.dark_line);
 		}
 		
-		String filename = QuranUtils.getPageFileName(page);		
-		Bitmap image = QuranUtils.getImageFromSD(filename);
-		iv.setImageBitmap(image);
+		new PageRetriever(mContext, view, page).start();
+		
 		((ViewPager)collection).addView(view, 0);
 		return view;
 	}
