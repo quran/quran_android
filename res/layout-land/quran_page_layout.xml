@@ -18,19 +18,16 @@
 		android:layout_height="fill_parent"
 		android:gravity = "center"
 		android:textSize="16sp" 
-		android:textColor="@android:color/black"
-		android:background="#FFF4CB" />
+		android:textColor="@android:color/black" />
  	<ScrollView 
  		android:id = "@+id/page_scroller"
  		android:layout_width = "wrap_content"
  		android:layout_height = "wrap_content"
  		android:layout_toRightOf="@id/left_border"
  		android:layout_toLeftOf="@+id/right_border"
- 		android:background = "@android:color/black"
  		android:fillViewport="true">
 	<com.quran.labs.androidquran.widgets.HighlightingImageView
 		android:id = "@+id/page_image"
-		android:background="#FFF4CB"
   		android:layout_width = "wrap_content"
   		android:layout_height = "wrap_content"/>
   	</ScrollView>
