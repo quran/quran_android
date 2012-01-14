@@ -1,8 +1,5 @@
 package com.quran.labs.androidquran.common;
 
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -22,13 +19,13 @@ import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.BookmarksActivity;
 import com.quran.labs.androidquran.DownloadActivity;
 import com.quran.labs.androidquran.HelpActivity;
-import com.quran.labs.androidquran.PagerActivity;
 import com.quran.labs.androidquran.QuranJumpDialog;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.TranslationActivity;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.service.QuranDataService;
+import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -131,12 +128,6 @@ public abstract class BaseQuranActivity extends Activity {
 		Intent i = new Intent(this, PagerActivity.class);
 		i.putExtra("page", page);
 		startActivityForResult(i, ApplicationConstants.QURAN_VIEW_CODE);
-	}
-	
-	public String getPageFileName(int p) {
-		NumberFormat nf = NumberFormat.getInstance(Locale.US);
-		nf.setMinimumIntegerDigits(3);
-		return "page" + nf.format(p) + ".png";
 	}
 	
 	@Override
