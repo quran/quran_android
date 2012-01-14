@@ -34,7 +34,7 @@ public class PagerActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
 		setContentView(R.layout.quran_page_activity);
-		
+		android.util.Log.d("PagerActivity", "onCreate()");
 		int page = 100;
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
@@ -95,6 +95,18 @@ public class PagerActivity extends Activity {
 			p.setShaderFactory(sf);
 			iv.setBackgroundDrawable(p);
 			
+			ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
+			ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
+			if (page % 2 == 0){
+				rightBorder.setVisibility(View.GONE);
+				leftBorder.setBackgroundResource(R.drawable.border_left);
+			}
+			else {
+				rightBorder.setVisibility(View.VISIBLE);
+				rightBorder.setBackgroundResource(R.drawable.border_right);
+				leftBorder.setBackgroundResource(R.drawable.dark_line);
+			}
+
 			NumberFormat nf = NumberFormat.getInstance(Locale.US);
 			nf.setMinimumIntegerDigits(3);
 			String filename = "page" + nf.format(page) + ".png";
