@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -60,6 +62,12 @@ public class QuranUtils {
 				QuranUtils.makeQuranDirectory();
 		}
 		return false;
+	}
+	
+	public static String getPageFileName(int p) {
+		NumberFormat nf = NumberFormat.getInstance(Locale.US);
+		nf.setMinimumIntegerDigits(3);
+		return "page" + nf.format(p) + ".png";
 	}
 	
 	public static boolean isSDCardMounted() {

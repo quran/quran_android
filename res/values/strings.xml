@@ -3,7 +3,7 @@
 	<string name="errorString">Could not download Quran Pages!</string>
 	<string name="app_name">Quran Android</string>
 	<string name="pageNotFound">Page not found.</string>
-	<string name="pageLoading">Page Loading...</string>
+	<string name="pageLoading">Page Loading&#8230;</string>
 	<string name="downloadPrompt_title">Download Required Files?</string>
 	<string name="downloadPrompt">For optimal performance, some files must be
 		downloaded to the sd card.
@@ -14,9 +14,9 @@
 		like to download the required translations now?</string>
 	<string name="downloadPrompt_ok">Yes</string>
 	<string name="downloadPrompt_no">No</string>
-	<string name="downloading_title">Downloading...</string>
+	<string name="downloading_title">Downloading&#8230;</string>
 	<string name="downloading_message">Please wait for the files to download. (Resume supported)</string>
-	<string name="extracting_title">Processing...</string>
+	<string name="extracting_title">Processing&#8230;</string>
 	<string name="extracting_message">Please wait the files are processed.</string>
 	<string name="menu_jump">Jump</string>
 	<string name="menu_about">About Us</string>
@@ -134,9 +134,11 @@
     <string name="dialog_picker_title">Choose a number</string>
     <!--  End Number picker Strings -->
     <string name="prompt_select_reciter">Select Reciter</string>
-	<string name="play_dialog_message">Start playing from...</string>
+	<string name="play_dialog_message">Start playing from&#8230;</string>
 	<string name="play_dialog_page">Current Page (%s)</string>
 	<string name="play_dialog_resume">Resume %1$s : %2$s</string>
 	<string name="download_dialog_message">Choose download option</string>
 	<string name="download_dialog_page">Current Page (%s)</string>
+	
+	<string name="border">border</string>
 </resources>

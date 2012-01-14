@@ -28,7 +28,7 @@
 		<activity android:name=".HelpActivity"
 			android:screenOrientation="portrait" />
 		<activity android:name=".QuranViewActivity" />
-		<activity android:name=".PagerActivity" />
+		<activity android:name=".ui.PagerActivity" />
 		<activity android:name=".AudioManagerActivity" />
 		<activity android:name=".BookmarksActivity" />
 		<activity android:name=".TranslationActivity" />

@@ -263,7 +263,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
         
         // Bitmap not found in cache..
     	if (bitmap == null){
-        	String filename = mContext.getPageFileName(page);
+        	String filename = QuranUtils.getPageFileName(page);
         	bitmap = QuranUtils.getImageFromSD(filename);
         	// Add Bitmap to cache..
         	if (bitmap != null) {
