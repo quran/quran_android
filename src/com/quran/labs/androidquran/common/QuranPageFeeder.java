@@ -19,8 +19,8 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView.OnPageFlipListener;
@@ -263,15 +263,15 @@ public class QuranPageFeeder implements OnPageFlipListener {
         
         // Bitmap not found in cache..
     	if (bitmap == null){
-        	String filename = QuranUtils.getPageFileName(page);
-        	bitmap = QuranUtils.getImageFromSD(filename);
+        	String filename = QuranFileUtils.getPageFileName(page);
+        	bitmap = QuranFileUtils.getImageFromSD(filename);
         	// Add Bitmap to cache..
         	if (bitmap != null) {
         		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
         		Log.d(TAG, "page " + page + " added to cache!");
         	} else {
         		Log.d(TAG, "page " + page + " not found on sdcard");
-        		bitmap = QuranUtils.getImageFromWeb(filename);
+        		bitmap = QuranFileUtils.getImageFromWeb(filename);
         		if (bitmap != null)
             		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
         		else Log.d(TAG, "page " + page + " could not be fetched from the web");

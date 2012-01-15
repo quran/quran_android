@@ -20,13 +20,13 @@ public class BitmapUtils {
     	
         // Bitmap not found in cache..
     	if (bitmap == null){
-        	String filename = QuranUtils.getPageFileName(page);
-        	bitmap = QuranUtils.getImageFromSD(filename);
+        	String filename = QuranFileUtils.getPageFileName(page);
+        	bitmap = QuranFileUtils.getImageFromSD(filename);
         	// Add Bitmap to cache..
         	if (bitmap != null) {
         		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
         	} else {
-        		bitmap = QuranUtils.getImageFromWeb(filename);
+        		bitmap = QuranFileUtils.getImageFromWeb(filename);
         		if (bitmap != null)
             		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
         	}

@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class SearchActivity extends InternetActivity {
@@ -93,7 +94,7 @@ public class SearchActivity extends InternetActivity {
 			if (isArabicSearch){
 				// if we come from muyassar and don't have arabic db, we set
 				// arabic search to false so we jump to the translation.
-				if (!QuranUtils.hasTranslation("quran.search.db"))
+				if (!QuranFileUtils.hasTranslation("quran.search.db"))
 					isArabicSearch = false;
 			}
 			
@@ -136,7 +137,7 @@ public class SearchActivity extends InternetActivity {
 	private void showResults(String query){
 		isArabicSearch = QuranUtils.doesStringContainArabic(query);
 		boolean showArabicWarning = (isArabicSearch &&
-			!QuranUtils.hasTranslation("quran.search.db"));
+			!QuranFileUtils.hasTranslation("quran.search.db"));
 		if (showArabicWarning) isArabicSearch = false;
 		
 		Cursor cursor = managedQuery(QuranDataProvider.SEARCH_URI,

@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranDataProvider extends ContentProvider {
@@ -87,7 +88,7 @@ public class QuranDataProvider extends ContentProvider {
 
 	private Cursor search(String query){
 		if (QuranUtils.doesStringContainArabic(query) &&
-				QuranUtils.hasTranslation("quran.search.db")){
+				QuranFileUtils.hasTranslation("quran.search.db")){
 			Cursor c = search(query, "quran.search.db", true);
 			if (c != null) return c;
 		}
@@ -111,7 +112,7 @@ public class QuranDataProvider extends ContentProvider {
 		
 		int numItems = 1;
 		if (QuranUtils.doesStringContainArabic(query) &&
-				QuranUtils.hasTranslation("quran.search.db")){
+				QuranFileUtils.hasTranslation("quran.search.db")){
 			numItems = 2;
 		}
 		

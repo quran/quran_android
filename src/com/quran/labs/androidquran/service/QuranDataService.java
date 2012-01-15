@@ -33,8 +33,8 @@ import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranDataService extends Service {
 
@@ -109,9 +109,9 @@ public class QuranDataService extends Service {
 		case DOWNLOAD_QURAN_IMAGES:
 			isRunning = true;
 			thread = new DownloadThread(this,
-					new String[] { QuranUtils.getZipFileUrl() },
+					new String[] { QuranFileUtils.getZipFileUrl() },
 					new String[] { "images.zip" },
-					new String[] { QuranUtils.getQuranBaseDirectory() }, true);
+					new String[] { QuranFileUtils.getQuranBaseDirectory() }, true);
 			thread.start();
 			break;
 		case DOWNLOAD_SURA_AUDIO:
@@ -149,7 +149,7 @@ public class QuranDataService extends Service {
 
 		// Check Basmallah
 		if (!QuranInfo.ayahWithinBounds(1, 1, soura, startAyah, endSoura, endAyah)
-				&& !QuranUtils.isBasmallahDownloaded(quranReader)) {
+				&& !QuranFileUtils.isBasmallahDownloaded(quranReader)) {
 			addAyahForDownload(1, 1, quranReader, false, fileNames, urls, directories);
 		}
 
@@ -174,13 +174,13 @@ public class QuranDataService extends Service {
 		}
 
 		// Check aya info db
-		String base = QuranUtils.getQuranDatabaseDirectory();
+		String base = QuranFileUtils.getQuranDatabaseDirectory();
 		if (base == null)
-			QuranUtils.makeQuranDatabaseDirectory();
+			QuranFileUtils.makeQuranDatabaseDirectory();
 		String ayaPositionDb = base + File.separator + "ayahinfo.db";
 		File f = new File(ayaPositionDb);
 		if (!f.exists()) {
-			urls.add(QuranUtils.getAyaPositionFileUrl());
+			urls.add(QuranFileUtils.getAyaPositionFileUrl());
 			fileNames.add("ayahinfo.db.zip");
 			directories.add(base);
 		}
@@ -216,7 +216,7 @@ public class QuranDataService extends Service {
 		if (downloadImage) {
 			fileName = ayahItem.getAyah()
 					+ QuranAudioLibrary.IMAGE_EXTENSION;
-			dir = QuranUtils.getSuraImagePath(ayahItem.getSoura());
+			dir = QuranFileUtils.getSuraImagePath(ayahItem.getSoura());
 
 			f = new File(dir, fileName);
 			if (f.exists())
@@ -233,7 +233,7 @@ public class QuranDataService extends Service {
 		String fileName = intent.getStringExtra(FILE_NAME_KEY);
 		thread = new DownloadThread(this, new String[] { url },
 				new String[] { fileName },
-				new String[] { QuranUtils.getQuranDatabaseDirectory() }, false);
+				new String[] { QuranFileUtils.getQuranDatabaseDirectory() }, false);
 		thread.start();
 	}
 

@@ -24,7 +24,7 @@ import com.quran.labs.androidquran.common.QuranReader;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 public class AudioManagerActivity extends Activity{
 
@@ -93,7 +93,7 @@ public class AudioManagerActivity extends Activity{
 					sourasStatuses[j].suraIndex = new Integer(j+1);
 					sourasStatuses[j].ayasDownloaded = new Integer(0);
 				}
-				File f = new File(QuranUtils.getReaderAudioDirectory(readerId));
+				File f = new File(QuranFileUtils.getReaderAudioDirectory(readerId));
 				File[] directories = f.listFiles(new FileFilter() {
 
 					@Override
