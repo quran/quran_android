@@ -13,25 +13,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.AsyncTask.Status;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.gson.Gson;
 import com.quran.labs.androidquran.common.DownloadItem;
 import com.quran.labs.androidquran.common.InternetActivity;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.RestClient;
@@ -123,7 +124,7 @@ public class DownloadActivity extends InternetActivity {
 				final DownloadItem item = listItems.get(position).getItem();
 
 				if (item == null) return;
-				if (!QuranUtils.isSDCardMounted())
+				if (!QuranFileUtils.isSDCardMounted())
 					showSDCardDialog();
 				else if (item.isDownloaded())
 					showRemoveItemDialog(item);
@@ -364,7 +365,7 @@ public class DownloadActivity extends InternetActivity {
 		       .setPositiveButton(R.string.remove_button,
 		    		   new DialogInterface.OnClickListener() {
 		           		  public void onClick(DialogInterface dialog, int id) {
-		           			  QuranUtils.removeTranslation(item.getFileName());
+		           			QuranFileUtils.removeTranslation(item.getFileName());
 		           			  populateList();
 		           	   }
 		       })

@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 
 public class DatabaseHandler {
@@ -26,7 +26,7 @@ public class DatabaseHandler {
 	private int schemaVersion = 1;
 	
 	public DatabaseHandler(String databaseName) throws SQLException {
-		String base = QuranUtils.getQuranDatabaseDirectory();
+		String base = QuranFileUtils.getQuranDatabaseDirectory();
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
 		database = SQLiteDatabase.openDatabase(path, null,

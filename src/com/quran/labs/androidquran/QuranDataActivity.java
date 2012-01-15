@@ -4,9 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -14,7 +14,7 @@ import android.view.WindowManager;
 
 import com.quran.labs.androidquran.common.InternetActivity;
 import com.quran.labs.androidquran.service.QuranDataService;
-import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 public class QuranDataActivity extends InternetActivity {
 	
@@ -58,7 +58,8 @@ public class QuranDataActivity extends InternetActivity {
         if (QuranDataService.isRunning){
         	startDownloadService(new Intent(this, QuranDataService.class));
         } else {
-        	if ((QuranUtils.getQuranDirectory() != null) && (!QuranUtils.haveAllImages())){
+        	if ((QuranFileUtils.getQuranDirectory() != null) &&
+        			(!QuranFileUtils.haveAllImages())){
         		promptForDownload();
         	}
         	else runListView();

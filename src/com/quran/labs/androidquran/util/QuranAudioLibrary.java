@@ -105,11 +105,11 @@ public class QuranAudioLibrary {
 	}
 	
 	public static String generateAudioFileName(Context context, AyahItem ayahItem){
-		return QuranUtils.getAyahAudioPath(ayahItem);
+		return QuranFileUtils.getAyahAudioPath(ayahItem);
 	}
 	
 	public static String generateImageFileName(Context context, AyahItem ayahItem){
-		return QuranUtils.getAyahImagePath(ayahItem);
+		return QuranFileUtils.getAyahImagePath(ayahItem);
 	}
 
 	protected static String fitInt(int x, int digits) {
