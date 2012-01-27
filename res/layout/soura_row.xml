@@ -4,7 +4,7 @@
   android:orientation="horizontal"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:weightSum="5"
+  android:weightSum="7"
   android:id="@+id/souraRow">
 
 <TextView  android:id="@+id/suraName" 
@@ -12,7 +12,7 @@
    android:layout_width="fill_parent"
    android:paddingLeft="2dip"
    android:textColor="#F3F4E6"
-   android:textSize="12sp"
+   android:textSize="14sp"
    android:text="soura"
    android:layout_weight="1" 
    android:layout_marginLeft="4dip"/>
@@ -20,10 +20,17 @@
    <TextView  android:id="@+id/suraDownloadStatus" 
    android:layout_height="wrap_content"
    android:layout_width="fill_parent"
-   android:layout_weight="4"
+   android:layout_weight="3"
    android:paddingRight="2dip"
    android:textColor="#F3F4E6"
    android:gravity="right"
-    		android:textSize="12sp"
+	android:textSize="14sp"
    android:text="status" />    
+   <CheckBox android:id="@+id/chkSelectSura"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:layout_weight="3"
+   android:paddingRight="2dip"
+   android:paddingLeft="2dip"
+   	/>
 </LinearLayout>
