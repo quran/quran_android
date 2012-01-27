@@ -84,6 +84,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mQuranPage.addNextPage(createPage(page+1));
 		}
 		mCurrentPageNumber = page;
+		QuranSettings.getInstance().setLastPage(page);
+		QuranSettings.save(mContext.prefs);
 		mQuranPage.refresh(true); 
 	}
 	
@@ -161,6 +163,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		} else if (flipDirection == OnPageFlipListener.PREVIOUS_PAGE){
 			loadPreviousPage(pageView);
 		}
+		QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
+		QuranSettings.save(mContext.prefs);
 	}
 	
 	public void displayMarkerPopup() {
@@ -328,8 +332,6 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	        	iv.setImageBitmap(bitmap);
 	        	mQuranPage.refresh();
 	        	updateViewForUser(v, false, false);
-	        	QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
-				QuranSettings.save(mContext.prefs);
 				if (QuranSettings.getInstance().isDisplayMarkerPopup())
 					displayMarkerPopup();
 	        }

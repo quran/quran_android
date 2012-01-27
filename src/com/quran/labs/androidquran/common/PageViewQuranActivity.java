@@ -273,8 +273,6 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	
 	private void updatePageInfo() {
 		updatePageInfo(quranPageFeeder.getCurrentPagePosition());
-		QuranSettings.getInstance().setLastPage(
-				quranPageFeeder.getCurrentPagePosition());
 	}
 	
 	@Override
