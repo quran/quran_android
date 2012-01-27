@@ -1,12 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
+  android:background="@drawable/list"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
+
+    
+  <LinearLayout android:id="@+id/filters" android:layout_width="fill_parent" 
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_alignParentTop="true"
+      android:weightSum="2"
+      >
+      <RadioGroup android:id="@+id/radioFilterReader"
+       android:layout_width="fill_parent" 
+       android:weightSum="4"
+       android:layout_height="wrap_content"
+       android:layout_weight="1"
+       android:orientation="vertical">
+     
+        <TextView android:text="Filter Readers" android:gravity="center_horizontal" android:layout_width="fill_parent"/>
+       <RadioButton android:id="@+id/radioShowAll" android:checked="true" android:text="Show All" android:layout_weight="1" android:textSize="10sp" />
+      <RadioButton android:id="@+id/radioDownloaded" android:checked="false" android:text="Show Completely Downloaded"  android:layout_weight="1" android:textSize="10sp"/>
+      <RadioButton android:id="@+id/radioPartiallyDownloaded" android:checked="false" android:text="Show Partially Downloaded" android:layout_weight="1" android:textSize="10sp"/>
+      <RadioButton android:id="@+id/radioMissing" android:checked="false" android:text="Show Missing" android:layout_weight="1" android:textSize="10sp"/>
+  
+  </RadioGroup>
+  
+      <RadioGroup android:id="@+id/radioFilterSuras"
+       android:layout_width="fill_parent" 
+       android:layout_height="wrap_content"
+       android:layout_weight="1"
+       android:weightSum="4"
+       android:orientation="vertical">
+      <TextView android:text="Filter Suras" android:gravity="center_horizontal" android:layout_width="fill_parent"/>
+      <RadioButton android:id="@+id/radioShowAll" android:checked="true" android:text="Show All" android:layout_weight="1" android:textSize="10sp"/>
+      <RadioButton android:id="@+id/radioDownloaded" android:checked="false" android:text="Show Downloaded Only" android:layout_weight="1" android:textSize="10sp"/>
+      <RadioButton android:id="@+id/radioPartiallyDownloaded" android:checked="false" android:text="Show Partially Downloaded" android:layout_weight="1" android:textSize="10sp"/>
+      <RadioButton android:id="@+id/radioMissing" android:checked="false" android:text="Show Missing Only" android:layout_weight="1" android:textSize="10sp"/>
+  
+  </RadioGroup>
+
+  </LinearLayout>
+  
+  <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+  android:weightSum="3"
+  android:id="@+id/layoutBtns"
+  android:orientation="horizontal"
+  android:layout_alignParentBottom="true"
+  >
+      
+      <CheckBox android:id="@+id/btnFilter" 
+          android:layout_height="wrap_content" 
+          android:text="Show Filters" android:layout_width="fill_parent"
+          android:layout_marginLeft="2dip"
+		  android:layout_marginRight="2dip"
+          android:layout_weight="1"/>
+      
+		<Button android:id="@+id/btnDownload" android:text="Download" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" 
+		android:layout_weight="1"
+		android:layout_marginLeft="2dip"
+		android:layout_marginRight="2dip"
+		/>
+		<Button android:id="@+id/btnRemove" android:text="Remove" android:layout_width="fill_parent"
+		android:layout_weight="1"
+		android:layout_marginLeft="2dip"
+		android:layout_marginRight="2dip"
+		android:layout_height="wrap_content" 
+		/>
+</LinearLayout>
      <ExpandableListView android:id="@+id/expandableListView"
-    	 android:background="@drawable/list"
+     android:background="#00000000"
+    	 android:layout_above="@id/layoutBtns"
+    	 android:layout_below="@id/filters"
 		android:cacheColorHint="#00000000" android:fastScrollEnabled="true"
                 android:layout_width="fill_parent" android:layout_height="fill_parent" 
                 android:scrollbars="vertical"/>
-</LinearLayout>
+        
+</RelativeLayout>
