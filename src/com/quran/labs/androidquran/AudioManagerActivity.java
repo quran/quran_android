@@ -7,6 +7,8 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -31,6 +33,7 @@ import com.quran.labs.androidquran.common.InternetActivity;
 import com.quran.labs.androidquran.common.QuranReader;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranUtils;
 
@@ -41,7 +44,7 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 	private static final int FILTER_SHOW_DOWNALOADED = R.id.radioDownloaded;
 	private static final int FILTER_SHOW_MISSING = R.id.radioMissing;
 	private static final int FILTER_SHOW_PARTIALLY_DOWNLOADED = R.id.radioPartiallyDownloaded;
-	
+	private Queue<Integer> downloadQueue = new ConcurrentLinkedQueue<Integer>();
 	private class ReaderStatus{
 		private QuranReader reader;
 		private Integer totalAyasDownload = new Integer(0);
@@ -79,6 +82,7 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 	private View filterView = null;
 	private int filterReaders = FILTER_SHOW_ALL;
 	private int filterSouras = FILTER_SHOW_ALL;
+	private boolean downloading = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -517,9 +521,14 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 		switch (v.getId()) {
 		case R.id.btnDownload:
 			for (Integer id : items) {
-				int sura = id % 1000;
-				int readerId = id / 1000;
-				downloadSura(readerId, sura);
+				if(QuranDataService.isRunning || downloading || downloadQueue.size() > 0)
+					downloadQueue.add(id);
+				else if (downloadQueue.size() == 0){
+					downloading = true;
+					int sura = id % 1000;
+					int readerId = id / 1000;
+					downloadSura(readerId, sura);
+				}
 			}
 			break;
 		case R.id.btnRemove:	
@@ -573,6 +582,21 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
         task = new CheckReaderDownloadStatus();
         dialog.show();
         task.execute();
+	}
+	
+	@Override
+	protected void onFinishDownload() {
+		super.onFinishDownload();
+		if(!QuranDataService.isRunning && downloadQueue.size() > 0){
+			int id = downloadQueue.remove();
+			int sura = id % 1000;
+			int readerId = id / 1000;
+			downloading = true;
+			downloadSura(readerId, sura);
+		} else if(downloading){
+			downloading = false;
+			refresh();
+		}
 	}
 	
 }
