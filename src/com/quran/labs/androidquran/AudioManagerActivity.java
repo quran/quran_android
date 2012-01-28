@@ -77,7 +77,8 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 	private Button btnDownload = null;
 	private Button btnRemove = null;
 	private View filterView = null;
-	
+	private int filterReaders = FILTER_SHOW_ALL;
+	private int filterSouras = FILTER_SHOW_ALL;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -194,6 +195,8 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 							lst.collapseGroup(i);
 				}
 			});
+			adapter.filterReaders(filterReaders);
+			adapter.filterSuras(filterSouras);
 			dialog.dismiss();
 		}
 		
@@ -212,6 +215,7 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 	    
 	    
 	    public void filterReaders(int filter){
+	    	boolean refresh = filter != filterReaders;
 	    	switch (filter) {
 			case FILTER_SHOW_ALL:	
 				readers = allReaders;
@@ -228,10 +232,12 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 			default:
 				break;
 			}
-	    	super.notifyDataSetChanged();
+	    	if(refresh)
+	    		super.notifyDataSetChanged();
 	    }
 	    
 	    public void filterSuras(int filter){
+	    	boolean refresh = filter != filterSouras;
 	    	switch (filter) {
 			case FILTER_SHOW_ALL:	
 				elements = allElements;
@@ -248,7 +254,8 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 			default:
 				break;
 			}
-	    	super.notifyDataSetChanged();	    	
+	    	if(refresh)
+	    		super.notifyDataSetChanged();	    	
 	    }
 	    
 	    private Context context;
@@ -277,6 +284,8 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 	   private HashMap<ReaderStatus, SouraStatus[]> partialElements =
 			   new HashMap<AudioManagerActivity.ReaderStatus, AudioManagerActivity.SouraStatus[]>();
 	    		
+		private int filterReaders = FILTER_SHOW_ALL;
+		private int filterSouras = FILTER_SHOW_ALL;
 	    public ExpandableListAdapter(Context context, ArrayList<ReaderStatus> readers,
 	    		HashMap<ReaderStatus, SouraStatus[]> elements) {	    	
 	        this.context = context;
@@ -471,14 +480,18 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 		if(adapter == null) return;
 		switch (radio.getId()) {
 		case R.id.radioFilterReader:
-			adapter.filterReaders(newId);			
+			adapter.filterReaders(newId);	
+			filterReaders = newId;
 			if((newId==FILTER_SHOW_ALL 
 					|| newId == FILTER_SHOW_PARTIALLY_DOWNLOADED))
 				radioFilterSuras.setVisibility(View.VISIBLE);
-			else
+			else{
+				radioFilterSuras.check(FILTER_SHOW_ALL);
 				radioFilterSuras.setVisibility(View.GONE);
+			}
 			break;
 		case R.id.radioFilterSuras:
+			filterSouras = newId;
 			adapter.filterSuras(newId);
 			break;
 		default:
@@ -509,12 +522,57 @@ public class AudioManagerActivity extends InternetActivity implements OnCheckedC
 				downloadSura(readerId, sura);
 			}
 			break;
-		case R.id.btnRemove:			
+		case R.id.btnRemove:	
+			removeSouras(items);
+			refresh();
 			break;
 		default:
 			break;
 		}
 	}
+	
+	public void removeSouras(Collection<Integer> items){
+		for (Integer id : items) {
+			int sura = id % 1000;
+			int readerId = id / 1000;
+			removeSoura(readerId, sura);
+		}
+	}
+	
+	public void removeSoura(int readerId, final int souraId){
+		File f = new File(QuranUtils.getReaderAudioDirectory(readerId));
+		File[] directories = f.listFiles(new FileFilter() {
 
+			@Override
+			public boolean accept(File file) {
+				if(file.isDirectory())
+				try{
+					int suraIndex = Integer.parseInt(file.getName());
+					if(suraIndex == souraId)
+						return true;
+				}catch(Exception e){
+					return false;
+				}
+				return false;
+			}
+		});
+		if(directories.length == 1){
+			File directory = directories[0];
+			File[] files = directory.listFiles();
+			for (File file : files) {
+				file.delete();
+			}
+			directory.delete();
+		}
+	}
 
+	public void refresh(){
+		dialog = new ProgressDialog(this);
+        dialog.setTitle("Loading");
+        dialog.setMessage("Please wait, while reading data from your sdcard");
+        task = new CheckReaderDownloadStatus();
+        dialog.show();
+        task.execute();
+	}
+	
 }
