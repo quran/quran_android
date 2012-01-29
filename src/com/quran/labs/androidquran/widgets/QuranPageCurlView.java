@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.widgets;
 import java.lang.ref.WeakReference;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.os.Parcelable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -23,6 +25,7 @@ import android.widget.ScrollView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 /*
  * Adapted and modified from http://code.google.com/p/android-page-curl
@@ -54,6 +57,11 @@ public class QuranPageCurlView extends View {
 	/** Log tag */
 	private final static String TAG = "QuranPageCurlView";
 
+	public interface OnPageClickListener {
+		public void onShortClick(float x, float y);
+		public void onLongClick(float x, float y);
+	}
+	
 	public interface OnPageFlipListener {
 
 		public static final int PREVIOUS_PAGE = 1;
@@ -162,6 +170,11 @@ public class QuranPageCurlView extends View {
 	private boolean bFlipRightOnLastMove = false;
 
 	/*
+	 * Page Click Listener
+	 */
+	private OnPageClickListener mClickListener;
+	
+	/*
 	 * Page Flip Listener
 	 */
 	private OnPageFlipListener mFlipListener;
@@ -226,6 +239,11 @@ public class QuranPageCurlView extends View {
 	 */
 	private static final int FINGER_CLICK_TIME_MAX = (int) (ViewConfiguration.getTapTimeout() * 1.5); //in milliseconds 
 	
+	// Threshold to consider a click as a long click
+	private static final int LONG_CLICK_THRESHOLD = 750;
+	
+	// Track when a long click is occurring to avoid multiple long clicks within the same gesture
+	private boolean isLongClick = false;
 
 	/**
 	 * Inner class used to represent a 2D point.
@@ -473,6 +491,10 @@ public class QuranPageCurlView extends View {
 		Log.d(TAG, "touch slop: " + FINGER_MOVEMENT_SLOP_DISTANCE + " time slop: " + FINGER_CLICK_TIME_MAX);
 	}
 
+	public void setOnPageClickListener(OnPageClickListener listener) {
+		mClickListener = listener;
+	}
+	
 	public void setOnPageFlipListener(OnPageFlipListener listener) {
 		mFlipListener = listener;
 	}
@@ -884,6 +906,23 @@ public class QuranPageCurlView extends View {
 		
 		int width = getWidth();
 		
+		// TODO Improve handling of long clicks and double taps -AF
+		boolean enableAyahSelection = QuranSettings.getInstance().isEnableAyahSelection();
+		if (enableAyahSelection && !isLongClick && !dispatchDecisionTaken 
+				&& ((event.getEventTime() - event.getDownTime()) >= LONG_CLICK_THRESHOLD)) {
+			event.setAction(MotionEvent.ACTION_CANCEL);
+			performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			performLongClick();
+			float y = event.getY();
+			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+				y += mCurrentPageView.findViewById(R.id.page_scroller).getScrollY();
+			mClickListener.onLongClick(event.getX(), y);
+			isLongClick = true;
+		}
+		
+		if (enableAyahSelection && event.getAction() == MotionEvent.ACTION_UP)
+			isLongClick = false;
+		
 		/* If this was a click, then fire onClickListener and cancel current page flip because
 		 * it seems that this was not intended for page flip.
 		 * 
@@ -908,6 +947,12 @@ public class QuranPageCurlView extends View {
 			//if ((xPos > width/4) && (xPos < width*3/4)){
 				event.setAction(MotionEvent.ACTION_CANCEL);
 				performClick();
+				if (enableAyahSelection) {
+					float y = event.getY();
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+						y += mCurrentPageView.findViewById(R.id.page_scroller).getScrollY();
+					mClickListener.onShortClick(event.getX(), y);
+				}
 			//}
 		}
 		

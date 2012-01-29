@@ -128,6 +128,31 @@ public class HighlightingImageView extends ImageView {
 		return yBounds;
 	}
 	
+	private class PageScalingData {
+		float screenRatio, pageRatio, scaledPageHeight, scaledPageWidth, 
+				widthFactor, heightFactor, offsetX, offsetY;
+		
+		public PageScalingData(Drawable page) {
+			screenRatio = QuranScreenInfo.getInstance().getRatio();
+			pageRatio = (float) (1.0* page.getIntrinsicHeight()/page.getIntrinsicWidth());
+			
+			// depending on whether or not you will have a top or bottom offset
+			if (screenRatio < pageRatio){
+				scaledPageHeight = getHeight();
+				scaledPageWidth = (float) (1.0*getHeight()/page.getIntrinsicHeight()*page.getIntrinsicWidth());
+			} else {
+				scaledPageWidth = getWidth();
+				scaledPageHeight = (float)(1.0*getWidth()/page.getIntrinsicWidth()*page.getIntrinsicHeight());
+			}
+			
+			widthFactor = scaledPageWidth / page.getIntrinsicWidth();
+			heightFactor = scaledPageHeight / page.getIntrinsicHeight();
+			
+			offsetX = (getWidth() - scaledPageWidth)/2;
+			offsetY = (getHeight() - scaledPageHeight)/2;
+		}
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -137,35 +162,27 @@ public class HighlightingImageView extends ImageView {
 				Bitmap bm = BitmapFactory.decodeResource(
 						getResources(), R.drawable.highlight);
 				
-				float screenRatio = QuranScreenInfo.getInstance().getRatio();
-				float pageRatio = (float) (1.0* page.getIntrinsicHeight()/page.getIntrinsicWidth());
-				
-				float scaledPageHeight;
-				float scaledPageWidth;
-				
-				// depending on whether or not you will have a top or bottom offset
-				if (screenRatio < pageRatio){
-					scaledPageHeight = getHeight();
-					scaledPageWidth = (float) (1.0*getHeight()/page.getIntrinsicHeight()*page.getIntrinsicWidth());
-				} else {
-					scaledPageWidth = getWidth();
-					scaledPageHeight = (float)(1.0*getWidth()/page.getIntrinsicWidth()*page.getIntrinsicHeight());
-				}
-				
-				float widthFactor = scaledPageWidth / page.getIntrinsicWidth();
-				float heightFactor = scaledPageHeight / page.getIntrinsicHeight();
-				
-				float offsetX = (getWidth() - scaledPageWidth)/2;
-				float offsetY = (getHeight() - scaledPageHeight)/2;
+				PageScalingData scalingData = new PageScalingData(page);
 			
 				for (AyahBounds b : currentlyHighlighting){
-					RectF scaled = new RectF(b.getMinX() * widthFactor,
-							b.getMinY() * heightFactor, b.getMaxX() * widthFactor,
-							b.getMaxY() * heightFactor);
-					scaled.offset(offsetX, offsetY);
+					RectF scaled = new RectF(b.getMinX() * scalingData.widthFactor,
+							b.getMinY() * scalingData.heightFactor, b.getMaxX() * scalingData.widthFactor,
+							b.getMaxY() * scalingData.heightFactor);
+					scaled.offset(scalingData.offsetX, scalingData.offsetY);
 					canvas.drawBitmap(bm, null, scaled, null);
 				}
 			}
 		}
+	}
+	
+	public float[] getPageXY(float screenX, float screenY) {
+		Drawable page = this.getDrawable();
+		if (page == null)
+			return null;
+		PageScalingData scalingData = new PageScalingData(page);
+		float pageX = screenX / scalingData.widthFactor - scalingData.offsetX;
+		float pageY = screenY / scalingData.heightFactor - scalingData.offsetY;
+		float[] pageXY = {pageX, pageY};
+		return pageXY;
 	}
 }
