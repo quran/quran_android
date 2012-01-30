@@ -9,11 +9,21 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.GestureDetector;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahItem;
+import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 public class QuranPageAdapter extends PagerAdapter {
 
@@ -80,6 +90,22 @@ public class QuranPageAdapter extends PagerAdapter {
 		
 		new PageRetriever(mContext, view, page).start();
 		
+		if (QuranSettings.getInstance().isEnableAyahSelection()) {
+			HighlightingImageView iv = (HighlightingImageView) view
+					.findViewById(R.id.page_image);
+			final GestureDetector gestureDetector = new GestureDetector(
+					new PageGestureDetector(iv, page));
+			OnTouchListener gestureListener = new OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					return gestureDetector.onTouchEvent(event);
+				}
+			};
+			iv.setClickable(true);
+			iv.setLongClickable(true);
+			iv.setOnTouchListener(gestureListener);
+		}
+		
 		((ViewPager)collection).addView(view, 0);
 		return view;
 	}
@@ -92,5 +118,61 @@ public class QuranPageAdapter extends PagerAdapter {
 	@Override
 	public boolean isViewFromObject(View view, Object object){
 		return view.equals(object);
+	}
+	
+	private class PageGestureDetector extends SimpleOnGestureListener {
+		int page;
+		HighlightingImageView iv;
+		
+		public PageGestureDetector(HighlightingImageView iv, int page) {
+			this.page = page;
+			this.iv = iv;
+		}
+		
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent event) {
+			AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
+			if (result != null) {
+				iv.highlightAyah(result.getSoura(), result.getAyah());
+				iv.invalidate();
+				return true;
+			}
+			return false;
+		}
+		
+		@Override
+		public boolean onDoubleTap(MotionEvent event) {
+			Toast.makeText(mContext, "Double Tap - Toggle Full Screen", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		
+		@Override
+		public void onLongPress(MotionEvent event) {
+			AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
+			if (result != null) {
+				iv.highlightAyah(result.getSoura(), result.getAyah());
+				iv.invalidate();
+				Toast.makeText(mContext, "Context Menu For:\n--------------------------\nSura "
+						+result.getSoura()+", Ayah "+result.getAyah()+", Page "
+						+page+"\n@("+event.getX()+","+event.getY()+")", Toast.LENGTH_SHORT).show();
+				iv.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+			}
+		}
+		
+		private AyahItem getAyahFromCoordinates(float x, float y) {
+			float[] pageXY = iv.getPageXY(x, y);
+			AyahItem result = null;
+			if (pageXY != null) {
+				AyahInfoDatabaseHandler handler = new AyahInfoDatabaseHandler("ayahinfo.db");
+				try {
+					result = handler.getVerseAtPoint(page, pageXY[0], pageXY[1]);
+				} catch (Exception e) {
+					System.out.println(e.toString());
+				} finally {
+					handler.closeDatabase();
+				}
+			}
+			return result;
+		}
 	}
 }

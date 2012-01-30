@@ -86,6 +86,7 @@
 	<string name="prefs_use_arabic_names">useArabicNames</string>
 	<string name="prefs_keep_screen_on">keepScreenOn</string>
 	<string name="prefs_display_marker_popup">displayMarkerPopup</string>
+	<string name="prefs_enable_ayah_selection">enableAyahSelection</string>
 	<string name="prefs_auto_scroll">autoScroll</string>
 	<string name="prefs_lock_orientation">lockOrientation</string>
 	<string name="prefs_landscape_orientation">landscapeOrientation</string>
