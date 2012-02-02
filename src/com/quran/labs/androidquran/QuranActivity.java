@@ -32,7 +32,6 @@ public class QuranActivity extends BaseQuranActivity {
 	private ActionBar actionBar;
 	private static final String ACTION_BOOKMARK = "BOOKMARK";
 	private static final String ACTION_RESUME = "RESUME";
-	private static final String ACTION_AUDIO_MANAGER = "DOWNLOAD";
 		
     /** Called when the activity is first created. */
     @Override
@@ -66,7 +65,6 @@ public class QuranActivity extends BaseQuranActivity {
 		actionBar.setTitle("Quran");
 		actionBar.addAction(getIntentAction(ACTION_RESUME, R.drawable.translation));
 		actionBar.addAction(getIntentAction(ACTION_BOOKMARK, R.drawable.bookmarks));
-		actionBar.addAction(getIntentAction(ACTION_AUDIO_MANAGER, R.drawable.download));
 		actionBar.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -84,9 +82,6 @@ public class QuranActivity extends BaseQuranActivity {
 	    	startActivityForResult(i, BOOKMARKS_CODE);
 		} else if (ACTION_RESUME.equals(action)) {
 			jumpTo(QuranSettings.getInstance().getLastPage());
-		} else if (ACTION_AUDIO_MANAGER.equals(action)){
-			Intent i = new Intent(this, AudioManagerActivity.class);
-			startActivity(i);
 		}
 	}
 	
