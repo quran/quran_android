@@ -22,9 +22,14 @@ public class QuranSettings {
 	private int lastReader = 0;
 	private int lastPlayedSura = 1;
 	private int lastPlayedAyah = 1;
+	private boolean nightMode = false;
 
 	private QuranSettings() {
 		
+	}
+	
+	public boolean isNightMode() {
+		return nightMode;
 	}
 
 	public int getLastReader() {
@@ -142,6 +147,7 @@ public class QuranSettings {
 		instance.lastReader = preferences.getInt(ApplicationConstants.PREF_LAST_READER, 0);
 		instance.lastPlayedSura = preferences.getInt(ApplicationConstants.PREF_LAST_PLAYED_SURA, 0);
 		instance.lastPlayedAyah = preferences.getInt(ApplicationConstants.PREF_LAST_PLAYED_AYAH, 0);
+		instance.nightMode = preferences.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
 	}
 	
 	public static void save(SharedPreferences preferences) {
@@ -159,6 +165,7 @@ public class QuranSettings {
 		editor.putInt(ApplicationConstants.PREF_LAST_READER, instance.lastReader);
 		editor.putInt(ApplicationConstants.PREF_LAST_PLAYED_SURA, instance.lastPlayedSura);
 		editor.putInt(ApplicationConstants.PREF_LAST_PLAYED_AYAH, instance.lastPlayedAyah);
+		editor.putBoolean(ApplicationConstants.PREF_NIGHT_MODE, instance.nightMode);
 		editor.commit();
 	}
 }

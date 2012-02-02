@@ -85,6 +85,7 @@
 	<string name="settings_keep_screen_on">Keep screen on.</string>
 	<string name="prefs_use_arabic_names">useArabicNames</string>
 	<string name="prefs_keep_screen_on">keepScreenOn</string>
+	<string name="prefs_night_mode">nightMode</string>
 	<string name="prefs_display_marker_popup">displayMarkerPopup</string>
 	<string name="prefs_auto_scroll">autoScroll</string>
 	<string name="prefs_lock_orientation">lockOrientation</string>

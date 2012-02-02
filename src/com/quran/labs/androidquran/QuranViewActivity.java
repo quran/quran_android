@@ -85,6 +85,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			}
 		}
 	};
+	
+	protected void onResume() {
+		super.onResume();
+		quranPageFeeder.invalidate();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

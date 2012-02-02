@@ -11,6 +11,7 @@ import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -20,6 +21,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;
@@ -128,9 +130,21 @@ public class HighlightingImageView extends ImageView {
 		return yBounds;
 	}
 	
+	protected void adjustNightMode() {
+		float[] matrix = { 
+			-1, 0, 0, 0, 255,
+			0, -1, 0, 0, 255,
+			0, 0, -1, 0, 255,
+			0, 0, 0, 1, 0 
+		};
+		setColorFilter(new ColorMatrixColorFilter(matrix));
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		if (QuranSettings.getInstance().isNightMode())
+			adjustNightMode();
 		if (this.currentlyHighlighting != null){
 			Drawable page = this.getDrawable();
 			if (page != null){
