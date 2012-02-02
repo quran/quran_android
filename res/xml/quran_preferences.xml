@@ -1,51 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android" 
-  android:title="Quran Settings" 
-  android:key="@string/prefs_path">
-	<PreferenceCategory android:title="@string/prefs_category_display_settings">  
-		<CheckBoxPreference android:summaryOff="Screen will turn off after idling"
-			android:title="Keep Screen On" android:summaryOn="Screen will stay on while reading"
-			android:persistent="true" android:key="@string/prefs_keep_screen_on"/>
-		 
-		<CheckBoxPreference 
-			android:title="Arabic Surah Names" 
-			android:summaryOn="Surah Names are in Arabic" 
-			android:summaryOff="Surah Names are in English" android:persistent="true" android:key="@string/prefs_use_arabic_names">
-		</CheckBoxPreference>
-		<CheckBoxPreference 
-			android:title="Fix Arabic Names" 
-			android:summary="Select if your phone doesn't support Arabic" 
-			android:persistent="true" android:key="@string/prefs_reshape_arabic">
-		</CheckBoxPreference>
-		<CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false"></CheckBoxPreference>
-		<CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation"></CheckBoxPreference>
-		<CheckBoxPreference android:summaryOff="Normal display settings"
-      android:title="Night Mode On" android:summaryOn="Darkbackground and Light fonts will be used"	
-      android:persistent="true" android:key="@string/prefs_night_mode"/>
-	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/prefs_category_reading">
-		<CheckBoxPreference 
-			android:title="Display Marker Popups" 
-			android:summaryOn="Display popup when reaching Juz', Hizb, etc." android:summaryOff="Don't display popup when reaching Juz', Hizb, etc." 
-			android:persistent="true" android:key="@string/prefs_display_marker_popup" android:defaultValue="true">
-		</CheckBoxPreference>
-		<CheckBoxPreference 
-			android:title="Auto Scroll" 
-			android:summaryOn="Auto scroll to highlighted ayah while playing (in landscape)" android:summaryOff="Don't auto scroll to highlighted ayah while playing (in landscape)" 
-			android:persistent="true" android:key="@string/prefs_auto_scroll" android:defaultValue="true">
-		</CheckBoxPreference>
-	</PreferenceCategory>
-	<PreferenceCategory android:title="@string/prefs_category_translation">
-		<com.quran.labs.androidquran.widgets.SelectTranslationPreference
-	    android:key="@string/prefs_active_translation"
-	    android:title="Active Translation" 
-	    android:summary="Switch between downloaded translations.. Select 'Menu > Get Translations' to display a full list of available translations"
-	    android:dialogTitle="Select Active Translation" />
-		<com.quran.labs.androidquran.widgets.SeekBarPreference
-			android:key="@string/prefs_translation_text_size" android:title="Translation Text"
-			android:persistent="true" android:dialogMessage="Text Size"
-			android:summary="Customize the translation text size"
-			android:defaultValue="15" android:max="40" />
-	</PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="@string/prefs_path"
+    android:title="Quran Settings" >
+
+    <PreferenceCategory android:title="@string/prefs_category_display_settings" >
+
+        <CheckBoxPreference
+            android:key="@string/prefs_keep_screen_on"
+            android:persistent="true"
+            android:summaryOff="@string/prefs_keep_screen_summary_off"
+            android:summaryOn="@string/prefs_keep_screen_summary_on"
+            android:title="@string/prefs_keep_screen_title" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:disableDependentsState="false"
+            android:key="@string/prefs_use_arabic_names"
+            android:persistent="true"
+            android:summaryOff="@string/prefs_use_arabic_summary_off"
+            android:summaryOn="@string/prefs_use_arabic_summary_on"
+            android:title="@string/prefs_use_arabic_title" >
+        </CheckBoxPreference>
+        
+        <CheckBoxPreference
+            android:dependency="@string/prefs_use_arabic_names"
+            android:key="@string/prefs_reshape_arabic"
+            android:persistent="true"
+            android:summary="@string/prefs_arabic_reshape_summary"
+            android:title="@string/prefs_arabic_reshape_title" >
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:disableDependentsState="false"
+            android:key="@string/prefs_lock_orientation"
+            android:persistent="true"
+            android:summaryOff="@string/prefs_lock_orientation_summary_off"
+            android:summaryOn="@string/prefs_lock_orientation_summary_on"
+            android:title="@string/prefs_lock_orientation_title" >
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
+            android:dependency="@string/prefs_lock_orientation"
+            android:key="@string/prefs_landscape_orientation"
+            android:persistent="true"
+            android:summaryOff="@string/prefs_landscape_orientation_summary_off"
+            android:summaryOn="@string/prefs_landscape_orientation_summary_on"
+            android:title="@string/prefs_landscape_orientation_title" >
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
+            android:key="@string/prefs_night_mode"
+            android:persistent="true"
+            android:summary="@string/prefs_night_mode_summary"
+            android:title="@string/prefs_night_mode_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/prefs_category_reading" >
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/prefs_display_marker_popup"
+            android:persistent="true"
+            android:summary="@string/prefs_display_marker_summary"
+            android:title="@string/prefs_display_marker_title" >
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/prefs_auto_scroll"
+            android:persistent="true"
+            android:summary="@string/prefs_auto_scroll_summary"
+            android:title="@string/prefs_auto_scroll_title" >
+        </CheckBoxPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/prefs_category_translation" >
+
+        <com.quran.labs.androidquran.widgets.SelectTranslationPreference
+            android:dialogTitle="@string/prefs_active_translation_dialog_title"
+            android:key="@string/prefs_active_translation"
+            android:summary="@string/prefs_active_translation_summary"
+            android:title="@string/prefs_active_translation_title" />
+	
+        <com.quran.labs.androidquran.widgets.SeekBarPreference
+            android:defaultValue="15"
+            android:dialogMessage="@string/prefs_translation_text_title"
+            android:key="@string/prefs_translation_text_size"
+            android:max="40"
+            android:persistent="true"
+            android:title="@string/prefs_translation_text_title" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

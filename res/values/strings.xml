@@ -81,8 +81,6 @@
 	    \n- You can add as many bookmarks as you\'d like.
 	    \n- The application remembers the last page you were reading and displays it when you restart the app.
 	    \n- Don\'t forget to check out the settings.</string>
-	<string name="settings_use_arabic_names">Arabic sura names.</string>
-	<string name="settings_keep_screen_on">Keep screen on.</string>
 	<string name="prefs_use_arabic_names">useArabicNames</string>
 	<string name="prefs_keep_screen_on">keepScreenOn</string>
 	<string name="prefs_night_mode">nightMode</string>
@@ -114,6 +112,40 @@
     <string name="prefs_category_translation">Translation Preferences</string>
     <string name="prefs_category_display_settings">Display Settings</string>
     <string name="prefs_active_translation">activeTranslation</string>
+    
+    <string name="prefs_keep_screen_summary_on">Screen will stay on while reading</string>
+    <string name="prefs_keep_screen_summary_off">Screen will turn off after idling</string>
+    <string name="prefs_keep_screen_title">Keep Screen On</string>
+    
+		<string name="prefs_use_arabic_title">Arabic sura names</string>
+		<string name="prefs_use_arabic_summary_on">Sura names are in Arabic</string>
+		<string name="prefs_use_arabic_summary_off">Sura names are transliterated</string>
+		
+    <string name="prefs_arabic_reshape_title">Fix Arabic text</string>
+    <string name="prefs_arabic_reshape_summary">Select if your device doesn\'t support Arabic</string>
+    
+		<string name="prefs_lock_orientation_title">Lock screen orientation</string>
+		<string name="prefs_lock_orientation_summary_on">Quran page will be in fixed orientation mode</string>
+		<string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
+		
+		<string name="prefs_landscape_orientation_title">Landscape orientation</string>
+		<string name="prefs_landscape_orientation_summary_on">Landscape orientation will be used</string>
+		<string name="prefs_landscape_orientation_summary_off">Portrait orientation will be used</string>
+		
+		<string name="prefs_night_mode_title">Night mode</string>
+		<string name="prefs_night_mode_summary">Darkbackground and light fonts will be used</string>
+		
+		<string name="prefs_display_marker_title">Display marker popups</string>
+		<string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
+		
+		<string name="prefs_auto_scroll_title">Auto scroll</string>
+		<string name="prefs_auto_scroll_summary">Auto scroll to highlighted ayah while playing (in landscape)</string>
+		
+    <string name="prefs_active_translation_title">Active translation</string>
+    <string name="prefs_active_translation_dialog_title">Select active translation</string>
+    <string name="prefs_active_translation_summary">Switch between downloaded translations. Select \'Menu > Get Translations\' to display a full list of available translations</string>
+    
+    <string name="prefs_translation_text_title">Translation text size</string>
     
     <string name="loading_translations">Loading Translations List, Please wait..</string>
     <string name="downloaded_translations">Downloaded</string>
