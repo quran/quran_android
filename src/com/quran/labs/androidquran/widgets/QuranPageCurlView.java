@@ -424,7 +424,8 @@ public class QuranPageCurlView extends View {
 			Method setLayerMethod = View.class.getMethod(
 			        "setLayerType", new Class[] { Integer.TYPE, Paint.class } );
 			if (setLayerMethod != null){
-				setLayerMethod.invoke(this, 0, null);
+				// 1 means View.LAYER_TYPE_SOFTWARE
+				setLayerMethod.invoke(this, 1, null);
 			}
 			android.util.Log.d(TAG, "successfully set layer type to software");
 		}
