@@ -20,6 +20,9 @@
 		</CheckBoxPreference>
 		<CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false"></CheckBoxPreference>
 		<CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation"></CheckBoxPreference>
+		<CheckBoxPreference android:summaryOff="Normal display settings"
+      android:title="Night Mode On" android:summaryOn="Darkbackground and Light fonts will be used"	
+      android:persistent="true" android:key="@string/prefs_night_mode"/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/prefs_category_reading">
 		<CheckBoxPreference 

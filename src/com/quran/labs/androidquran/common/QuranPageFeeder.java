@@ -7,6 +7,7 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,8 +140,20 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		}
 	}
 	
+	public void invalidate() {
+		View v = mQuranPage.getCurrentPage();
+		if (v != null) {
+			HighlightingImageView iv = 
+				(HighlightingImageView)v.findViewById(R.id.page_image);
+			if (iv != null){
+				iv.invalidate();
+				v.invalidate();
+			}
+		}
+	}
+	
 	public void refreshCurrent() {
-		jumpToPage(mCurrentPageNumber);
+		jumpToPage(mCurrentPageNumber);		
 	}
 	
 	public void ScrollDown() {
@@ -244,12 +257,19 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			boolean pageNotFound){
 		TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
 		ImageView iv = (ImageView)v.findViewById(R.id.page_image);
+		
 		if ((loading) || (pageNotFound)){
+			if (QuranSettings.getInstance().isNightMode()) {
+				tv.setTextColor(Color.WHITE);
+			}
 			tv.setText(loading? R.string.pageLoading : R.string.pageNotFound);
 			tv.setVisibility(View.VISIBLE);
 			iv.setVisibility(View.GONE);
 		}
 		else {
+			if (QuranSettings.getInstance().isNightMode()) {
+				iv.setBackgroundColor(Color.BLACK);
+			}
 			tv.setVisibility(View.GONE);
 			iv.setVisibility(View.VISIBLE);
 		}
