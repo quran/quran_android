@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -35,6 +36,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 public abstract class BaseQuranActivity extends Activity {
 
 	protected SharedPreferences prefs;
+	static boolean arabicLocaleLoaded = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +145,17 @@ public abstract class BaseQuranActivity extends Activity {
     protected void onResume() {
     	super.onResume();
     	QuranSettings.load(prefs);
+    	// On starting app check if arabic locale loading is required..
+    	// Otherwise, locale will be reloaded from settings..
+    	if (QuranSettings.getInstance().isArabicNames() && !arabicLocaleLoaded) {
+			Locale locale = new Locale("ar");
+			Locale.setDefault(locale);
+			Configuration config = new Configuration();
+			config.locale = locale;
+			getBaseContext().getResources().updateConfiguration(config,
+			      getBaseContext().getResources().getDisplayMetrics());
+			arabicLocaleLoaded = true;
+    	}
     }
 	
 	@Override
