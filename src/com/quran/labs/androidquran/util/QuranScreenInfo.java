@@ -33,16 +33,14 @@ public class QuranScreenInfo {
 		if (this.max_width <= 320) return "_320";
 		else if (this.max_width <= 480) return "_480";
 		else if (this.max_width <= 800) return "_800";
-		else if (this.max_width <= 1024) return "_1024";
-		else return "_1280";
+		else return "_1024";
 	}
 	
 	public String getWidthParamNoUnderScore(){
 		if (this.max_width <= 320) return "320";
 		else if (this.max_width <= 480) return "480";
 		else if (this.max_width <= 800) return "800";
-		else if (this.max_width <= 1024) return "1024";
-		else return "1280";
+		else return "1024";
 	}
 	
 	public boolean isLandscapeOrientation() {
