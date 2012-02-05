@@ -177,12 +177,15 @@ public class QuranDataService extends Service {
 		String base = QuranUtils.getQuranDatabaseDirectory();
 		if (base == null)
 			QuranUtils.makeQuranDatabaseDirectory();
-		String ayaPositionDb = base + File.separator + "ayahinfo.db";
-		File f = new File(ayaPositionDb);
-		if (!f.exists()) {
-			urls.add(QuranUtils.getAyaPositionFileUrl());
-			fileNames.add("ayahinfo.db.zip");
-			directories.add(base);
+		String filename = QuranUtils.getAyaPositionFileName();
+		if (filename != null){
+			String ayaPositionDb = base + File.separator + filename;
+			File f = new File(ayaPositionDb);
+			if (!f.exists()) {
+				urls.add(QuranUtils.getAyaPositionFileUrl());
+				fileNames.add("ayahinfo.db.zip");
+				directories.add(base);
+			}
 		}
 
 		if (urls.size() > 0) {

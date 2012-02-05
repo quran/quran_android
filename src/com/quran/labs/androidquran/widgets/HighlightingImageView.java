@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;
@@ -46,8 +47,11 @@ public class HighlightingImageView extends ImageView {
 	
 	public void highlightAyah(int sura, int ayah){
 		try {
+			String filename = QuranUtils.getAyaPositionFileName();
+			if (filename == null) return;
+			
 			AyahInfoDatabaseHandler handler =
-				new AyahInfoDatabaseHandler("ayahinfo.db");
+				new AyahInfoDatabaseHandler(filename);
 			Cursor cursor = handler.getVerseBounds(sura, ayah);
 			Map<Integer, AyahBounds> lineCoords =
 				new HashMap<Integer, AyahBounds>();

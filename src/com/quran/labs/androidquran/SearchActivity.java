@@ -64,8 +64,8 @@ public class SearchActivity extends InternetActivity {
 
 	private void downloadArabicSearchDb(){
 		String fileUrl =
-			"http://labs.quran.com/androidquran/databases/quran.search.db";
-		downloadTranslation(fileUrl, "quran.search.db");
+			"http://labs.quran.com/androidquran/databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
+		downloadTranslation(fileUrl, QuranDataProvider.QURAN_ARABIC_DATABASE);
 	}
 	
 	@Override
@@ -93,7 +93,7 @@ public class SearchActivity extends InternetActivity {
 			if (isArabicSearch){
 				// if we come from muyassar and don't have arabic db, we set
 				// arabic search to false so we jump to the translation.
-				if (!QuranUtils.hasTranslation("quran.search.db"))
+				if (!QuranUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE))
 					isArabicSearch = false;
 			}
 			
@@ -136,7 +136,7 @@ public class SearchActivity extends InternetActivity {
 	private void showResults(String query){
 		isArabicSearch = QuranUtils.doesStringContainArabic(query);
 		boolean showArabicWarning = (isArabicSearch &&
-			!QuranUtils.hasTranslation("quran.search.db"));
+			!QuranUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE));
 		if (showArabicWarning) isArabicSearch = false;
 		
 		Cursor cursor = managedQuery(QuranDataProvider.SEARCH_URI,
