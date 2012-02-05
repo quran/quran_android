@@ -146,7 +146,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			HighlightingImageView iv = 
 				(HighlightingImageView)v.findViewById(R.id.page_image);
 			if (iv != null){
-				iv.invalidate();
+				iv.adjustNightMode();
 				v.invalidate();
 			}
 		}
@@ -256,7 +256,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	protected void updateViewForUser(View v, boolean loading,
 			boolean pageNotFound){
 		TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
-		ImageView iv = (ImageView)v.findViewById(R.id.page_image);
+		HighlightingImageView iv = (HighlightingImageView)v.findViewById(R.id.page_image);
 		
 		if ((loading) || (pageNotFound)){
 			if (QuranSettings.getInstance().isNightMode()) {
@@ -267,9 +267,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			iv.setVisibility(View.GONE);
 		}
 		else {
-			if (QuranSettings.getInstance().isNightMode()) {
-				iv.setBackgroundColor(Color.BLACK);
-			}
+			iv.adjustNightMode();
 			tv.setVisibility(View.GONE);
 			iv.setVisibility(View.VISIBLE);
 		}
