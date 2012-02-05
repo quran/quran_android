@@ -118,7 +118,7 @@
     <string name="prefs_keep_screen_summary_off">Screen will turn off after idling</string>
     <string name="prefs_keep_screen_title">Keep Screen On</string>
     
-		<string name="prefs_use_arabic_title">Arabic sura names</string>
+		<string name="prefs_use_arabic_title">Arabic Mode (restart required)</string>
 		<string name="prefs_use_arabic_summary_on">Sura names are in Arabic</string>
 		<string name="prefs_use_arabic_summary_off">Sura names are transliterated</string>
 		
