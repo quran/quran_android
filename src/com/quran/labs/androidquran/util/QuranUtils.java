@@ -248,12 +248,18 @@ public class QuranUtils {
 		return url;
 	}
 	
+	public static String getAyaPositionFileName(){
+		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+		if (qsi == null) return null;
+		return "ayahinfo" + qsi.getWidthParam() + ".db";
+	}
+	
 	public static String getAyaPositionFileUrl() {
-		String url = IMG_HOST;
+		String url = QuranUtils.getQuranDirectory();
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
 		if (qsi == null)
 			return null;
-		url += "databases/ayahinfo" + qsi.getWidthParamNoUnderScore() + ".db.zip";
+		url += "/ayahinfo" + qsi.getWidthParam() + ".zip";
 		return url;
 	}
 
