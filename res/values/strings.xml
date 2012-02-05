@@ -59,6 +59,7 @@
 		\n @neo_4583 - arabic reshaper project
 		\n @somaiagabr - graphics and arabic translation
 		\n Mehmed Mahmudoglu - turkish translation
+		\n khajavi (on github) - farsi translation
 		\n\nNew features in this release:
 		\n- Audio Recitations (thanks to @fo2ad)
 		\n- Minor bugfixes.
@@ -132,8 +133,8 @@
 		<string name="prefs_landscape_orientation_summary_on">Landscape orientation will be used</string>
 		<string name="prefs_landscape_orientation_summary_off">Portrait orientation will be used</string>
 		
-		<string name="prefs_night_mode_title">Night mode</string>
-		<string name="prefs_night_mode_summary">Darkbackground and light fonts will be used</string>
+		<string name="prefs_night_mode_title">Beta - Night mode</string>
+		<string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
 		
 		<string name="prefs_display_marker_title">Display marker popups</string>
 		<string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
