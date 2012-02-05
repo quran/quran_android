@@ -255,10 +255,10 @@ public class QuranUtils {
 	}
 	
 	public static String getAyaPositionFileUrl() {
-		String url = QuranUtils.getQuranDirectory();
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
 		if (qsi == null)
 			return null;
+		String url = IMG_HOST + "width" + qsi.getWidthParam();
 		url += "/ayahinfo" + qsi.getWidthParam() + ".zip";
 		return url;
 	}
