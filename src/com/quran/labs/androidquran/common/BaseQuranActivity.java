@@ -107,6 +107,7 @@ public abstract class BaseQuranActivity extends Activity {
 			case R.id.menu_item_settings:
 				//intent = new Intent(getApplicationContext(), SettingsActivity.class);
 				intent = new Intent(getApplicationContext(), QuranPreferenceActivity.class);
+				intent.putExtra("activity", this.getClass());
 				startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
 			case R.id.menu_item_bookmarks:
@@ -143,8 +144,8 @@ public abstract class BaseQuranActivity extends Activity {
 	
 	@Override
     protected void onResume() {
+		QuranSettings.load(prefs);
     	super.onResume();
-    	QuranSettings.load(prefs);
     	// On starting app check if arabic locale loading is required..
     	// Otherwise, locale will be reloaded from settings..
     	if (QuranSettings.getInstance().isArabicNames() && !arabicLocaleLoaded) {

@@ -39,6 +39,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
     protected QuranPageFeeder quranPageFeeder;
 	protected ActionBar actionBar;
 	protected ViewGroup bottomToolbar;
+	private boolean nightMode;
 	
 	protected abstract void initQuranPageFeeder();
 
@@ -74,6 +75,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 		quranPageFeeder.jumpToPage(page);
 
 		toggleMode();
+		nightMode = QuranSettings.getInstance().isNightMode();
 	}
 	
 	protected void initComponents() {
@@ -290,6 +292,11 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		// Restart activity if night mode was changed..
+		if (nightMode != QuranSettings.getInstance().isNightMode()) {
+			finish();
+			startActivity(getIntent());
+		}
 		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 		Log.d("QuranAndroid", "Screen on");
 		adjustActivityOrientation();
