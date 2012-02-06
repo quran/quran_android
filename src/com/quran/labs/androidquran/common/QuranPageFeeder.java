@@ -140,18 +140,6 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		}
 	}
 	
-	public void invalidate() {
-		View v = mQuranPage.getCurrentPage();
-		if (v != null) {
-			HighlightingImageView iv = 
-				(HighlightingImageView)v.findViewById(R.id.page_image);
-			if (iv != null){
-				iv.adjustNightMode();
-				v.invalidate();
-			}
-		}
-	}
-	
 	public void refreshCurrent() {
 		jumpToPage(mCurrentPageNumber);		
 	}

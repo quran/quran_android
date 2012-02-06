@@ -18,16 +18,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.AyahItem;
@@ -59,7 +59,6 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	private boolean bounded = false;
 	private AudioServiceBinder quranAudioPlayer = null;
 
-
 	private AyahItem lastAyah;
 	private int currentReaderId;
 	private boolean playing = false;
@@ -85,18 +84,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			}
 		}
 	};
-	
-	protected void onResume() {
-		super.onResume();
-		quranPageFeeder.invalidate();
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// textView = new TextView(this);
-		// textView.setText("");
-		// bindAudioService();
 	}
 
 	protected void addActions() {
@@ -732,5 +723,4 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		if (!playing)
 			onActionPlay();
 	}
-
 }
