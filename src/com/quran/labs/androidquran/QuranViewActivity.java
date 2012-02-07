@@ -55,9 +55,14 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	protected static final String ACTION_REPEAT = "ACTION_REPEAT";
 	
 	private static final String TAG = "QuranViewActivity";
+	private static final String IS_PLAYING = "IS_PLAYING";
 
 	private boolean bounded = false;
-	private AudioServiceBinder quranAudioPlayer = null;
+	
+	/* making this static because otherwise, when activity gets destroyed (ex on
+	 * orientation change), we lose this reference and can't properly keep state.
+	 * (stop, etc start dying).  mainly seen on 1.5. */
+	private static AudioServiceBinder quranAudioPlayer = null;
 
 	private AyahItem lastAyah;
 	private int currentReaderId;
@@ -88,6 +93,13 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null && savedInstanceState.containsKey(IS_PLAYING)){
+			boolean shouldIPlay = savedInstanceState.getBoolean(IS_PLAYING);
+			if (shouldIPlay){
+				bindAudioService();
+				onActionPlay();
+			}
+		}
 	}
 
 	protected void addActions() {
@@ -568,8 +580,17 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		}
 	}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(IS_PLAYING, quranAudioPlayer != null && quranAudioPlayer.isPlaying());
+	}
+	
+	@Override
 	public void onDestroy(){
-		unBindAudioService();
+		if (bounded){
+			unbindService(conn);
+		}
 		super.onDestroy();
 	}
 
