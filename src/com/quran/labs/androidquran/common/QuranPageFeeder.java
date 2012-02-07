@@ -271,17 +271,28 @@ public class QuranPageFeeder implements OnPageFlipListener {
         	Log.d(TAG, "loading image for page " + page + " from sdcard");
         }
         
+    	boolean outOfMemory = false;
         // Bitmap not found in cache..
     	if (bitmap == null){
         	String filename = mContext.getPageFileName(page);
-        	bitmap = QuranUtils.getImageFromSD(filename);
+        	try {
+        		bitmap = QuranUtils.getImageFromSD(filename);
+        	}
+        	catch (OutOfMemoryError oe){
+        		bitmap = null;
+        		outOfMemory = true;
+        	}
+        	
         	// Add Bitmap to cache..
         	if (bitmap != null) {
         		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
         		Log.d(TAG, "page " + page + " added to cache!");
         	} else {
-        		Log.d(TAG, "page " + page + " not found on sdcard");
-        		bitmap = QuranUtils.getImageFromWeb(filename);
+        		if (!outOfMemory){
+        			Log.d(TAG, "page " + page + " not found on sdcard");
+        			bitmap = QuranUtils.getImageFromWeb(filename);
+        		}
+        		
         		if (bitmap != null)
             		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
         		else Log.d(TAG, "page " + page + " could not be fetched from the web");
