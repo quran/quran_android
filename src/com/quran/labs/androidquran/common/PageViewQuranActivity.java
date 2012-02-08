@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.BookmarksManager;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 
@@ -58,6 +59,12 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 		adjustDisplaySettings();
 		
 		setContentView(R.layout.quran_exp);
+		
+		// reinitialize quran screen info if it was lost due to memory
+		if (QuranScreenInfo.getInstance() == null){
+			android.util.Log.d(TAG, "reinitializing QuranScreenInfo...");
+			initializeQuranScreen();
+		}
 		
 		// retrieve saved configurations
 		loadLastNonConfigurationInstance();

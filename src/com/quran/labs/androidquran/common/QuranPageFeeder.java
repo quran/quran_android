@@ -51,6 +51,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	protected LayoutInflater mInflater;
 	protected int mPageLayout;
 	protected int mCurrentPageNumber;
+	private Boolean mHasBeenOutOfMemory;
 	
 	private long lastPopupTime = System.currentTimeMillis();
 	
@@ -251,6 +252,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 				tv.setTextColor(Color.WHITE);
 			}
 			tv.setText(loading? R.string.pageLoading : R.string.pageNotFound);
+			if (!loading && mHasBeenOutOfMemory != null && mHasBeenOutOfMemory)
+				tv.setText(R.string.couldNotLoadPage);
 			tv.setVisibility(View.VISIBLE);
 			iv.setVisibility(View.GONE);
 		}
@@ -281,6 +284,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
         	catch (OutOfMemoryError oe){
         		bitmap = null;
         		outOfMemory = true;
+        		mHasBeenOutOfMemory = true;
         	}
         	
         	// Add Bitmap to cache..
@@ -295,7 +299,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
         		
         		if (bitmap != null)
             		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
-        		else Log.d(TAG, "page " + page + " could not be fetched from the web");
+        		else Log.d(TAG, "page " + page + " could not be fetched " +
+        				(outOfMemory? "due to being out of memory" : "from the web"));
         	}
         }
         
@@ -322,6 +327,12 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		@Override
 		public void run() {
 			Bitmap bitmap = getBitmap(index);
+			if (bitmap == null && mHasBeenOutOfMemory != null && mHasBeenOutOfMemory){
+				android.util.Log.d(TAG, "in a second, will try to get page " + index + " again");
+				try { Thread.sleep(1000); } catch (InterruptedException ie){ }
+				bitmap = getBitmap(index);
+			}
+			
 			((Activity)mContext).runOnUiThread(new PageDisplayer(bitmap, v, index));
 			
 			//clear for GC
