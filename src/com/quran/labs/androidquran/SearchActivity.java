@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -88,6 +89,17 @@ public class SearchActivity extends InternetActivity {
 		else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 			Uri intentData = intent.getData();
 			String query = intent.getStringExtra(SearchManager.USER_QUERY);
+			if (query == null){
+				Bundle extras = intent.getExtras();
+				if (extras != null){
+					// bug on ics where the above returns null
+					// http://code.google.com/p/android/issues/detail?id=22978
+					Object q = extras.get(SearchManager.USER_QUERY);
+					if (q != null && q instanceof SpannableString){
+						query = ((SpannableString)q).toString();
+					}
+				}
+			}
 			if (QuranUtils.doesStringContainArabic(query))
 				isArabicSearch = true;
 			if (isArabicSearch){
