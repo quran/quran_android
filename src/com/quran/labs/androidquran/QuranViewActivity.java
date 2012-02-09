@@ -240,7 +240,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				playAudio(lastAyah);
 			}
 		});
-		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		dialog.setNegativeButton(getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
@@ -261,7 +261,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialog.setView(view);
 		initDownloadRadioButtons(view, getLastAyah());
-		dialog.setPositiveButton("Download",
+		dialog.setPositiveButton(getString(R.string.dialog_download),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -300,7 +300,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						dialog.dismiss();
 					}
 				});
-		dialog.setNeutralButton("Stream",
+		dialog.setNeutralButton(getString(R.string.dialog_stream),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -328,7 +328,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					}
 				});
 
-		dialog.setNegativeButton("Cancel",
+		dialog.setNegativeButton(getString(R.string.dialog_cancel),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -348,7 +348,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
 		int numberOfRepeats = preferences.getInt("numberOfRepeats", 0);
 		final NumberPickerDialog diag = new NumberPickerDialog(this, 1, numberOfRepeats);
-		diag.setTitle("Choose number of repeats");
+		diag.setTitle(getString(R.string.dialog_repeat_title));
 		diag.show();
 		diag.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
@@ -460,8 +460,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			}
 		});
 		dialogBuilder.setView(view);
-		dialogBuilder.setMessage("Jump to ayah");
-		dialogBuilder.setPositiveButton("Jump",
+		dialogBuilder.setMessage(getString(R.string.dialog_jump_ayah));
+		dialogBuilder.setPositiveButton(getString(R.string.menu_jump),
 				new DialogInterface.OnClickListener() {
 
 					@SuppressWarnings("unchecked")
@@ -482,7 +482,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						jumpTo(QuranInfo.getPageFromSuraAyah(sura, ayah));
 					}
 				});
-		dialogBuilder.setNegativeButton("Cancel", null);
+		dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel), null);
 		dialogBuilder.show();
 	}
 	
@@ -532,8 +532,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		v.setVisibility(View.GONE);
 		s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialogBuilder.setView(view);
-		dialogBuilder.setMessage("Change reciter");
-		dialogBuilder.setPositiveButton("Set",
+		dialogBuilder.setMessage(getString(R.string.dialog_select_reciter));
+		dialogBuilder.setPositiveButton(getString(R.string.dialg_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -545,7 +545,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						}
 					}
 				});
-		dialogBuilder.setNegativeButton("Cancel", null);
+		dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel), null);
 		dialogBuilder.show();
 	}
 

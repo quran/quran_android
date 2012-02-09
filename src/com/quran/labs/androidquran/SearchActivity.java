@@ -137,8 +137,9 @@ public class SearchActivity extends InternetActivity {
 	private void jumpToResult(int sura, int ayah){
 		int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
 		Intent intent = null;
-		if (isArabicSearch)
+		if (isArabicSearch) {
 			intent = new Intent(this, QuranViewActivity.class);
+		}
 		else intent = new Intent(this, TranslationActivity.class);
 		intent.putExtra("page", page);
 		startActivity(intent);

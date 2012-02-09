@@ -30,10 +30,7 @@ public class QuranScreenInfo {
 	public int getHeight(){ return this.height; }
 	
 	public String getWidthParam(){
-		if (this.max_width <= 320) return "_320";
-		else if (this.max_width <= 480) return "_480";
-		else if (this.max_width <= 800) return "_800";
-		else return "_1024";
+		return "_" + getWidthParamNoUnderScore();
 	}
 	
 	public String getWidthParamNoUnderScore(){

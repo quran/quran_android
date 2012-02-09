@@ -44,6 +44,7 @@
 	<string name="copyRights">Copyright All Muslims</string>
 	<string name="email_subject">Feedback</string>
 	<string name="email_to">quran.android@gmail.com</string>
+	<string name="send_email">Send email..</string>
 	<string name="aboutUs">Quran Android is a free, open source Quran
 		application for Android.  The images used are from the quran.com
 		project, the audio comes from everyayah.com, 
@@ -146,6 +147,7 @@
     <string name="prefs_active_translation_summary">Switch between downloaded translations. Select \'Menu > Get Translations\' to display a full list of available translations</string>
     
     <string name="prefs_translation_text_title">Translation text size</string>
+    <string name="prefs_no_translations_installed">No translations installed</string>
     
     <string name="loading_translations">Loading Translations List, Please wait..</string>
     <string name="downloaded_translations">Downloaded</string>
@@ -164,13 +166,29 @@
     <string name="menu_dialog_label">Dialog Picker</string>
     <string name="dialog_set_number">Set</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="dialg_ok">OK</string>
+    <string name="dialg_set">Set</string>
+    <string name="dialog_download">Download</string>
+    <string name="dialog_stream">Stream</string>
+    <string name="dialog_jump_ayah">Jump to ayah</string>
+    <string name="dialog_repeat_title">Choose number of repeats</string>
     <string name="dialog_picker_title">Choose a number</string>
+    <string name="dialog_show_current_suras">Show current suras</string>
+    <string name="dialog_play_page_start">Page beginning</string>
+    <string name="dialog_resume_play">Resume</string>
     <!--  End Number picker Strings -->
-    <string name="prompt_select_reciter">Select Reciter</string>
+    <string name="dialog_select_reciter">Select Reciter</string>
 	<string name="play_dialog_message">Start playing from&#8230;</string>
 	<string name="play_dialog_page">Current Page (%s)</string>
 	<string name="play_dialog_resume">Resume %1$s : %2$s</string>
 	<string name="download_dialog_message">Choose download option</string>
 	<string name="download_dialog_page">Current Page (%s)</string>
 	<string name="couldNotLoadPage">Page Loading Error</string>
+	<string name="quran_rob3">#00BC</string>
+	<string name="quran_nos">#00BD</string>
+	<string name="quran_talt_arb3">#00BE</string>
+	<string name="quran_hizb">Hizb</string>
+	<string name="quran_juz2">Juz\'</string>
+	<string name="quran_page">Page</string>
+	<string name="quran_sura">Sura</string>
 </resources>
