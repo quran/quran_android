@@ -2,6 +2,7 @@ package com.quran.labs.androidquran;
 
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,13 +14,14 @@ import android.preference.PreferenceActivity;
 public class QuranPreferenceActivity extends PreferenceActivity {
 	
 	private boolean restartRequired = false;
-	private Class caller = null;
+	private Class<Activity> caller = null;
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		caller = (Class) getIntent().getExtras().getSerializable("activity");
+		caller = (Class<Activity>) getIntent().getExtras().getSerializable("activity");
 		
 		//Inflate preference screen
 		addPreferencesFromResource(R.xml.quran_preferences);

@@ -254,7 +254,7 @@ public class QuranActivity extends BaseQuranActivity {
 		
 		private void downloadSuraAudio(int suraId) {
 			Intent intent = new Intent(QuranActivity.this, QuranDataService.class);
-			intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+			intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 			intent.putExtra(QuranDataService.SOURA_KEY, suraId);
 			intent.putExtra(QuranDataService.AYAH_KEY, (int)1);
 			intent.putExtra(QuranDataService.READER_KEY, 1);

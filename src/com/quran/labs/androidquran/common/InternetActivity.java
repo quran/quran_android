@@ -85,7 +85,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	protected void startDownloadService(Intent intent) {
     	starting = true;    	
     	
-    	int downloadType = intent.getIntExtra(QuranDataService.DWONLOAD_TYPE_KEY, -1);
+    	int downloadType = intent.getIntExtra(QuranDataService.DOWNLOAD_TYPE_KEY, -1);
     	if(downloadType != -1){
     		startService(intent);
     		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -96,7 +96,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadTranslation(String url, String fileName) {
 		Intent intent = new Intent(this, QuranDataService.class);
-    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_TRANSLATION);
+    	intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_TRANSLATION);
     	intent.putExtra(QuranDataService.URL_KEY, url);
     	intent.putExtra(QuranDataService.FILE_NAME_KEY, fileName);
     	startDownloadService(intent);
@@ -104,7 +104,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadQuranImages() {
 		Intent intent = new Intent(this, QuranDataService.class);
-    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_QURAN_IMAGES);
+    	intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_QURAN_IMAGES);
     	startDownloadService(intent);
 	}
 	
@@ -114,7 +114,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadSura(int readerId, int sura, int ayah) {
 		Intent intent = new Intent(this, QuranDataService.class);
-		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 		intent.putExtra(QuranDataService.SOURA_KEY, sura);
 		intent.putExtra(QuranDataService.AYAH_KEY, ayah);
 		intent.putExtra(QuranDataService.READER_KEY, readerId);
@@ -123,7 +123,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadPage(int readerId, Integer[] integers){		
 		Intent intent = new Intent(this, QuranDataService.class);
-		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 		intent.putExtra(QuranDataService.SOURA_KEY, integers[0]);
 		intent.putExtra(QuranDataService.AYAH_KEY, integers[1]);
 		intent.putExtra(QuranDataService.END_SOURA_KEY, integers[2]);
