@@ -207,7 +207,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		final View view = li.inflate(R.layout.dialog_play, null);
 		dialog.setView(view);
 		final Map<Integer, RadioButton> suraButtons = initPlayRadioButtons(view, quranPageFeeder.getCurrentPagePosition());
-		dialog.setPositiveButton("Play", new DialogInterface.OnClickListener() {
+		dialog.setPositiveButton(getString(R.string.dialog_play), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroupPlay); 
