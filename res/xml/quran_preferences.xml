@@ -17,8 +17,7 @@
             android:disableDependentsState="false"
             android:key="@string/prefs_use_arabic_names"
             android:persistent="true"
-            android:summaryOff="@string/prefs_use_arabic_summary_off"
-            android:summaryOn="@string/prefs_use_arabic_summary_on"
+            android:summary="@string/prefs_use_arabic_summary_on"
             android:title="@string/prefs_use_arabic_title" >
         </CheckBoxPreference>
         
@@ -85,10 +84,10 @@
 	
         <com.quran.labs.androidquran.widgets.SeekBarPreference
             android:defaultValue="15"
-            android:dialogMessage="@string/prefs_translation_text_title"
             android:key="@string/prefs_translation_text_size"
             android:max="40"
             android:persistent="true"
+            android:summary="@string/prefs_translation_text_title"
             android:title="@string/prefs_translation_text_title" />
     </PreferenceCategory>
 
