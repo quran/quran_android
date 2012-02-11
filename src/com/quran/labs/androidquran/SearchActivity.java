@@ -139,8 +139,9 @@ public class SearchActivity extends InternetActivity {
 		Intent intent = null;
 		if (isArabicSearch) {
 			intent = new Intent(this, QuranViewActivity.class);
-		}
-		else intent = new Intent(this, TranslationActivity.class);
+			intent.setAction(QuranViewActivity.ACTION_GO_TO_PAGE);
+		} else 
+			intent = new Intent(this, TranslationActivity.class);
 		intent.putExtra("page", page);
 		startActivity(intent);
 		finish();
@@ -284,9 +285,9 @@ public class SearchActivity extends InternetActivity {
 			SearchElement v = elements.get(position);
 			holder.text.setText(Html.fromHtml(ArabicStyle.reshape(v.text)));
 
-			holder.metadata.setText(parent.getContext().getString(R.string.found_in_sura) + " " + 
+			holder.metadata.setText(mInflater.getContext().getString(R.string.found_in_sura) + " " + 
 					ArabicStyle.reshape(QuranInfo.getSuraName(v.sura-1)) +
-					", " + parent.getContext().getString(R.string.quran_ayah) + " " + v.ayah);
+					", " + mInflater.getContext().getString(R.string.quran_ayah) + " " + v.ayah);
 			return convertView;
 		}
 
