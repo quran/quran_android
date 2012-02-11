@@ -82,7 +82,8 @@
         <item quantity="other">نتائج البحث عن \"%s\": </item>
     </plurals>
 
-    <!-- Search failure message. -->
+    <!-- Search messages -->
+    <string name="found_in_sura">سورة</string>
     <string name="no_results">لا توجد نتيجة للبحث \"%s\"</string>
     <string name="no_active_translation">يجب تفعيل التفسير/الترجمة أولا -- اذهب إلى اﻹعدادات</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
@@ -161,7 +162,8 @@
     <string name="quran_talt_arb3">ثلاثة أرباع</string>
     <string name="quran_hizb">الحزب</string>
     <string name="quran_juz2">الجزء</string>
-    <string name="quran_page">Page</string>
-    <string name="quran_sura">Sura</string>
+    <string name="quran_page">الصفحة</string>
+    <string name="quran_sura">سورة</string>
+    <string name="quran_ayah">آية</string>
 
 </resources>

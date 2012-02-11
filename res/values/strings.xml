@@ -90,7 +90,8 @@
         <item quantity="other">results for \"%s\": </item>
     </plurals>
 
-    <!-- Search failure message. -->
+    <!-- Search messages -->
+    <string name="found_in_sura">Found in Sura</string>
     <string name="no_results">No results found for \"%s\"</string>
     <string name="no_active_translation">You have no active translation set.  Please set an active translation first and then search again.</string>
     <string name="set_active_translation">Set Active Translation</string>
@@ -170,5 +171,6 @@
     <string name="quran_juz2">Juz\'</string>
     <string name="quran_page">Page</string>
     <string name="quran_sura">Sura</string>
+    <string name="quran_ayah">Ayah</string>
 
 </resources>

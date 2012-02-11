@@ -284,9 +284,9 @@ public class SearchActivity extends InternetActivity {
 			SearchElement v = elements.get(position);
 			holder.text.setText(Html.fromHtml(ArabicStyle.reshape(v.text)));
 
-			holder.metadata.setText("Found in Sura " +
+			holder.metadata.setText(parent.getContext().getString(R.string.found_in_sura) + " " + 
 					ArabicStyle.reshape(QuranInfo.getSuraName(v.sura-1)) +
-					", verse " + v.ayah);
+					", " + parent.getContext().getString(R.string.quran_ayah) + " " + v.ayah);
 			return convertView;
 		}
 
