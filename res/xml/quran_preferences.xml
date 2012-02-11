@@ -84,7 +84,6 @@
 	
         <com.quran.labs.androidquran.widgets.SeekBarPreference
             android:defaultValue="15"
-            android:dialogMessage="@string/prefs_translation_text_title"
             android:key="@string/prefs_translation_text_size"
             android:max="40"
             android:persistent="true"
