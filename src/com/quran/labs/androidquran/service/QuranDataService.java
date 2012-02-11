@@ -321,7 +321,8 @@ public class QuranDataService extends Service {
 			long when = System.currentTimeMillis();
 			Notification notification = new Notification(R.drawable.icon, msg,
 					when);
-			notification.defaults |= flags;
+			notification.flags |= flags;
+			notification.defaults = Notification.DEFAULT_LIGHTS; 
 
 			Context context = getApplicationContext();
 			CharSequence contentTitle = "Quran Android";
