@@ -46,6 +46,7 @@ import com.quran.labs.androidquran.widgets.numberpicker.NumberPickerDialog;
 public class QuranViewActivity extends PageViewQuranActivity implements
 		AyahStateListener {
 
+	protected static final String ACTION_GO_TO_PAGE = "ACTION_GO_TO_PAGE";
 	protected static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
 	protected static final String ACTION_NEXT = "ACTION_NEXT";
 	protected static final String ACTION_PAUSE = "ACTION_PAUSE";
@@ -141,7 +142,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		super.onNewIntent(intent);
 		String action = intent.getAction();
 		if (action != null) {
-			if (action.equalsIgnoreCase(ACTION_PLAY)) {
+			if (action.equalsIgnoreCase(ACTION_GO_TO_PAGE)) {
+				int page = intent.getExtras().getInt("page", QuranSettings.getInstance().getLastPage());
+				jumpTo(page);
+			} else if (action.equalsIgnoreCase(ACTION_PLAY)) {
 				bindAudioService();
 				if (quranAudioPlayer != null && quranAudioPlayer.isPaused()) {
 					quranAudioPlayer.resume();
@@ -219,7 +223,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		final View view = li.inflate(R.layout.dialog_play, null);
 		dialog.setView(view);
 		final Map<Integer, RadioButton> suraButtons = initPlayRadioButtons(view, quranPageFeeder.getCurrentPagePosition());
-		dialog.setPositiveButton("Play", new DialogInterface.OnClickListener() {
+		dialog.setPositiveButton(getString(R.string.dialog_play), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroupPlay); 

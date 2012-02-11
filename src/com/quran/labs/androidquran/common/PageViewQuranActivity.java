@@ -69,7 +69,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 		// retrieve saved configurations
 		loadLastNonConfigurationInstance();
 		
-		// initialize scree componnets
+		// initialize screen components
 		initComponents();
 		
 		// get action bar

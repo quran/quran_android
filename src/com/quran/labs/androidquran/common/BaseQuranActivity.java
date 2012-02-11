@@ -43,6 +43,15 @@ public abstract class BaseQuranActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		try {
+			arabicLocaleLoaded = false;
+		} catch(Exception e) {}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,7 +155,7 @@ public abstract class BaseQuranActivity extends Activity {
     protected void onResume() {
 		QuranSettings.load(prefs);
     	super.onResume();
-    	// On starting app check if arabic locale loading is required..
+		// On starting app check if arabic locale loading is required..
     	// Otherwise, locale will be reloaded from settings..
     	if (QuranSettings.getInstance().isArabicNames() && !arabicLocaleLoaded) {
 			Locale locale = new Locale("ar");
@@ -157,7 +166,7 @@ public abstract class BaseQuranActivity extends Activity {
 			      getBaseContext().getResources().getDisplayMetrics());
 			arabicLocaleLoaded = true;
     	}
-    }
+	}
 	
 	@Override
 	protected void onPause() {

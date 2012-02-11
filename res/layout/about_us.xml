@@ -12,7 +12,7 @@
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:linksClickable="true"
 		android:id="@+id/txtCopyRights" android:text="@string/copyRights"
-		android:textSize="12dip" android:layout_above="@id/txtDevelopedBy"
+		android:textSize="14dip" android:layout_above="@id/txtDevelopedBy"
 		android:textColor="#FFFFFF" android:paddingLeft="10dip" />
 
 	<Button android:layout_width="300dip" android:id="@+id/btnEmailUs"

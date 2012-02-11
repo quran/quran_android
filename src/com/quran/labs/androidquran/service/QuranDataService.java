@@ -38,7 +38,7 @@ import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranDataService extends Service {
 
-	public static final String DWONLOAD_TYPE_KEY = "downloadType";
+	public static final String DOWNLOAD_TYPE_KEY = "downloadType";
 	public static final String SOURA_KEY = "soura";
 	public static final String END_SOURA_KEY = "endSoura";
 	public static final String AYAH_KEY = "ayah";
@@ -104,7 +104,7 @@ public class QuranDataService extends Service {
 		if (intent == null)
 			return;
 
-		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
+		int downloadType = intent.getIntExtra(DOWNLOAD_TYPE_KEY, -1);
 		switch (downloadType) {
 		case DOWNLOAD_QURAN_IMAGES:
 			isRunning = true;
