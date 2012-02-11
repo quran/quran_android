@@ -29,6 +29,7 @@
     <string name="menu_bookmarks_removed">تم حذف علامة المراجعة</string>
     <string name="menu_bookmarks_help">مساعدة</string>
     <string name="menu_help">مساعدة</string>
+    <string name="menu_search">بحث</string>
     <string name="menu_get_translations">حمل التفاسير/التراجم</string>
     <string name="jump_dialog_title">ذهاب لصفحة</string>
     <string name="page_hint">رقم الصفحة</string>
