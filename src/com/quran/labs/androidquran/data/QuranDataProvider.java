@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -142,8 +143,9 @@ public class QuranDataProvider extends ContentProvider {
 					int sura = suggestions.getInt(0);
 					int ayah = suggestions.getInt(1);
 					String text = suggestions.getString(2);
-					String foundText = "Found in Sura " +
-						QuranInfo.getSuraName(sura-1) + ", verse " + ayah;
+					String foundText = getContext().getString(R.string.found_in_sura) + " " +
+						QuranInfo.getSuraName(sura-1) + ", " + 
+						getContext().getString(R.string.quran_ayah) + " " + ayah;
 					
 					gotResults = true;
 					MatrixCursor.RowBuilder row = mc.newRow();
@@ -221,5 +223,4 @@ public class QuranDataProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		throw new UnsupportedOperationException();
 	}
-
 }
