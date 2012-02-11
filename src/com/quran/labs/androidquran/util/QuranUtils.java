@@ -354,6 +354,9 @@ public class QuranUtils {
     	int length = s.length();
     	for (int i=0; i<length; i++){
     		int current = (int)s.charAt(i);
+    		// Skip space
+    		if (current == 32)
+    			continue;
         	// non-reshaped arabic
         	if ((current >= 1570) && (current <= 1610))
         		return true;
