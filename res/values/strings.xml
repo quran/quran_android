@@ -164,9 +164,9 @@
     <string name="download_dialog_message">Choose download option</string>
     <string name="download_dialog_page">Current Page (%s)</string>
     <string name="couldNotLoadPage">Page Loading Error</string>
-    <string name="quran_rob3">#00BC</string>
-    <string name="quran_nos">#00BD</string>
-    <string name="quran_talt_arb3">#00BE</string>
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
     <string name="quran_hizb">Hizb</string>
     <string name="quran_juz2">Juz\'</string>
     <string name="quran_page">Page</string>

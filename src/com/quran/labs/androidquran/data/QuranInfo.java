@@ -275,7 +275,10 @@ public class QuranInfo {
 	};
 	
 	public static Integer[] getPageBounds(int page){
-		if ((page > ApplicationConstants.PAGES_LAST) || (page < 1)) return null;
+		if (page > ApplicationConstants.PAGES_LAST)
+			page = 604;
+		if (page < 1) page = 1;
+		
 		Integer[] bounds = new Integer[4];
 		bounds[0] = PAGE_SURA_START[page-1];
 		bounds[1] = PAGE_AYAH_START[page-1];
