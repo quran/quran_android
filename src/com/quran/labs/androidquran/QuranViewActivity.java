@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
 import com.quran.labs.androidquran.common.QuranPageFeeder;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
@@ -183,6 +184,17 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			} else if (action.equalsIgnoreCase(ACTION_REPEAT)) {
 				showAudioRepeatsDialog();
 			}
+		} else { // no audio related tasks to just flip to requested page
+			Bundle extras = intent.getExtras();
+			int page = extras != null? extras.getInt("page") :
+				QuranSettings.getInstance().getLastPage();
+			
+			// If still no page saved
+			if (page == ApplicationConstants.NO_PAGE_SAVED) {
+				page = ApplicationConstants.PAGES_FIRST;
+			}
+			
+			quranPageFeeder.jumpToPage(page);
 		}
 	}
 
