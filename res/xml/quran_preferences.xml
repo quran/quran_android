@@ -17,8 +17,7 @@
             android:disableDependentsState="false"
             android:key="@string/prefs_use_arabic_names"
             android:persistent="true"
-            android:summaryOff="@string/prefs_use_arabic_summary_off"
-            android:summaryOn="@string/prefs_use_arabic_summary_on"
+            android:summary="@string/prefs_use_arabic_summary_on"
             android:title="@string/prefs_use_arabic_title" >
         </CheckBoxPreference>
         
