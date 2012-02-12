@@ -9,9 +9,11 @@ translation and arabic data come from [tanzil](http://tanzil.net).
 patches, comments, etc are welcome.
 
 code by [@ahmedre](http://twitter.com/ahmedre),
+[@Fo2ad](http://twitter.com/fo2ad),
 [@HusseinMaher](http://twitter.com/husseinmaher),
-and [@wnafee](http://twitter.com/wnafee).  graphics by
-[@somaiagabr](http://twitter.com/somaiagabr).
+and [@wnafee](http://twitter.com/wnafee).  
+
+Graphics by [@somaiagabr](http://twitter.com/somaiagabr).
 
 contributors include [@afarra](http://github.com/afarra) and [@mahmoudhossam](http://github.com/mahmoudhossam).
 
