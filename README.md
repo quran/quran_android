@@ -1,10 +1,10 @@
 quran for android
 ==================================
 
-this is a simple (madani based) quran app for android.  for details about
-the images used, please check out the 
-[quran images project](http://github.com/quran/quran.com-images) on github.
-translation and arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/)
+this is a simple (madani based) quran app for android.
+- images from [quran images project](http://github.com/quran/quran.com-images) on github.
+- translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
+- audio from [Every Ayah](http://everyayah.com/).
 
 patches, comments, etc are welcome.
 
