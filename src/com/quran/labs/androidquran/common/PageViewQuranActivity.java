@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.BookmarksManager;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
 
@@ -39,6 +40,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
     protected QuranPageFeeder quranPageFeeder;
 	protected ActionBar actionBar;
 	protected ViewGroup bottomToolbar;
+	private boolean nightMode;
 	
 	protected abstract void initQuranPageFeeder();
 
@@ -58,10 +60,16 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 		
 		setContentView(R.layout.quran_exp);
 		
+		// reinitialize quran screen info if it was lost due to memory
+		if (QuranScreenInfo.getInstance() == null){
+			android.util.Log.d(TAG, "reinitializing QuranScreenInfo...");
+			initializeQuranScreen();
+		}
+		
 		// retrieve saved configurations
 		loadLastNonConfigurationInstance();
 		
-		// initialize scree componnets
+		// initialize screen components
 		initComponents();
 		
 		// get action bar
@@ -74,6 +82,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 		quranPageFeeder.jumpToPage(page);
 
 		toggleMode();
+		nightMode = QuranSettings.getInstance().isNightMode();
 	}
 	
 	protected void initComponents() {
@@ -273,8 +282,6 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	
 	private void updatePageInfo() {
 		updatePageInfo(quranPageFeeder.getCurrentPagePosition());
-		QuranSettings.getInstance().setLastPage(
-				quranPageFeeder.getCurrentPagePosition());
 	}
 	
 	@Override
@@ -292,6 +299,11 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		// Restart activity if night mode was changed..
+		if (nightMode != QuranSettings.getInstance().isNightMode()) {
+			finish();
+			startActivity(getIntent());
+		}
 		expLayout.setKeepScreenOn(QuranSettings.getInstance().isKeepScreenOn());
 		Log.d("QuranAndroid", "Screen on");
 		adjustActivityOrientation();

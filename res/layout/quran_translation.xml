@@ -11,7 +11,7 @@
         android:layout_height = "wrap_content"
         android:background = "@android:color/black"
         android:fillViewport="true">
-        <TextView android:background="#FFF4CB" android:textColor="#000000"
+        <TextView android:background="@color/page_background" android:textColor="#000000"
             android:layout_width="fill_parent" android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/translationText"

@@ -8,6 +8,7 @@ import java.net.URL;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -16,7 +17,7 @@ import com.quran.labs.androidquran.common.AyahItem;
 public class QuranUtils {
 
 	public static boolean failedToWrite = false;
-	public static String IMG_HOST = "http://downthestreetfromyou.com/androidquran/";
+	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
 	private static String QURAN_BASE = File.separator + "quran_android"
 			+ File.separator;
 	private static String DATABASE_DIRECTORY = "databases";
@@ -247,13 +248,36 @@ public class QuranUtils {
 		return url;
 	}
 	
+	public static String getAyaPositionFileName(){
+		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+		if (qsi == null) return null;
+		return "ayahinfo" + qsi.getWidthParam() + ".db";
+	}
+	
 	public static String getAyaPositionFileUrl() {
-		String url = IMG_HOST;
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
 		if (qsi == null)
 			return null;
-		url += "databases/ayahinfo" + qsi.getWidthParamNoUnderScore() + ".db.zip";
+		String url = IMG_HOST + "width" + qsi.getWidthParam();
+		url += "/ayahinfo" + qsi.getWidthParam() + ".zip";
 		return url;
+	}
+	
+	public static boolean haveAyaPositionFile(){
+		String base = QuranUtils.getQuranDatabaseDirectory();
+		if (base == null)
+			QuranUtils.makeQuranDatabaseDirectory();
+		String filename = QuranUtils.getAyaPositionFileName();
+		if (filename != null){
+			String ayaPositionDb = base + File.separator + filename;
+			File f = new File(ayaPositionDb);
+			if (!f.exists()) {
+				return false;
+			}
+			else { return true; }
+		}
+		
+		return false;
 	}
 
 	public static boolean hasTranslation(String fileName) {
@@ -264,7 +288,7 @@ public class QuranUtils {
 		}
 		return false;
 	}
-
+	
 	public static boolean removeTranslation(String fileName) {
 		String path = getQuranDatabaseDirectory();
 		if (path != null) {
@@ -307,6 +331,12 @@ public class QuranUtils {
 				+ QuranAudioLibrary.AUDIO_EXTENSION;
 	}
 
+	public static boolean isBasmallahDownloaded(int quranReaderId) {
+		String path = getAyahAudioPath(1, 1, quranReaderId);
+		File f = new File(path);
+		return f.exists();
+	}
+
 	public static String getAyahImagePath(int sura, int ayah) {
 		return getAyahImagesDirectory() + File.separator + sura
 				+ File.separator + ayah + QuranAudioLibrary.IMAGE_EXTENSION;
@@ -327,4 +357,34 @@ public class QuranUtils {
 		f = new File(externalPath.getAbsolutePath() + path);
 		return f.getAbsolutePath();
 	}
+	
+    public static boolean isSdk15() {
+    	// Build.VERSION.SDK_INT is only 1.6+ :(
+        if (Build.VERSION.RELEASE.startsWith("1.5"))  
+            return true;  
+        return false;  
+     }
+    
+    public static boolean doesStringContainArabic(String s){
+    	if (s == null) return false;
+    	
+    	int length = s.length();
+    	for (int i=0; i<length; i++){
+    		int current = (int)s.charAt(i);
+    		// Skip space
+    		if (current == 32)
+    			continue;
+        	// non-reshaped arabic
+        	if ((current >= 1570) && (current <= 1610))
+        		return true;
+        	// re-shaped arabic
+        	else if ((current >= 65133) && (current <= 65276))
+        		return true;
+        	// if the value is 42, it deserves another chance :p
+        	// (in reality, 42 is a * which is useful in searching sqlite)
+        	else if (current != 42)
+        		return false;
+    	}
+    	return false;
+    }
 }

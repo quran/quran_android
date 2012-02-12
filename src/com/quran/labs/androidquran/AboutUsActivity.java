@@ -22,6 +22,6 @@ public class AboutUsActivity extends Activity {
 		emailIntent.setType("plain/text");
 		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
 		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { getString(R.string.email_to) });
-		startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+		startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
 	}
 }

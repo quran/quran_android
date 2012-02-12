@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.AsyncTask.Status;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +69,16 @@ public class DownloadActivity extends InternetActivity {
 	@Override
 	public void onBackPressed() {
 		setResult(RESULT_OK);
-		super.onBackPressed();
+		finish();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event){
+		if (QuranUtils.isSdk15() && keyCode == KeyEvent.KEYCODE_BACK
+            && event.getRepeatCount() == 0) {
+			onBackPressed();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override

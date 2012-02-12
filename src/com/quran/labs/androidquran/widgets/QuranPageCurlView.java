@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.widgets;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -417,6 +418,23 @@ public class QuranPageCurlView extends View {
 	 * Initialize the view
 	 */
 	private final void init(Context context) {
+		try {
+			// clipPath is only available for software acceleration, so disable
+			// hw acceleration on honeycomb and ics.
+			Method setLayerMethod = View.class.getMethod(
+			        "setLayerType", new Class[] { Integer.TYPE, Paint.class } );
+			if (setLayerMethod != null){
+				// 1 means View.LAYER_TYPE_SOFTWARE
+				setLayerMethod.invoke(this, 1, null);
+			}
+			android.util.Log.d(TAG, "successfully set layer type to software");
+		}
+		catch (Exception e) {
+			// pre-honeycomb/ics, so don't do anything
+		}
+
+		
+		
 		// Foreground text paint
 		mTextPaint = new Paint();
 		mTextPaint.setAntiAlias(true);

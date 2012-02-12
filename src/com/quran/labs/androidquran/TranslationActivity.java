@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
@@ -13,6 +14,7 @@ import com.quran.labs.androidquran.common.TranslationPageFeeder;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class TranslationActivity extends PageViewQuranActivity {
 
@@ -54,7 +56,16 @@ public class TranslationActivity extends PageViewQuranActivity {
 		Intent data = new Intent();
 		data.putExtra("page", quranPageFeeder.getCurrentPagePosition());
 		setResult(RESULT_OK, data);
-		super.onBackPressed();
+		finish();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event){
+		if (QuranUtils.isSdk15() && keyCode == KeyEvent.KEYCODE_BACK
+            && event.getRepeatCount() == 0) {
+			onBackPressed();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	private boolean checkTranslationAvailability() {

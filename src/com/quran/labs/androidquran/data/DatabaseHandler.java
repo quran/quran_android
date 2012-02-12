@@ -19,12 +19,19 @@ public class DatabaseHandler {
 	public static String AR_SEARCH_TABLE = "search";
 	public static String TRANSLITERATION_TABLE = "transliteration";
 	
+	public static String PROPERTIES_TABLE = "properties";
+	public static String COL_PROPERTY = "property";
+	public static String COL_VALUE = "value";
+	
+	private int schemaVersion = 1;
+	
 	public DatabaseHandler(String databaseName) throws SQLException {
 		String base = QuranUtils.getQuranDatabaseDirectory();
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
 		database = SQLiteDatabase.openDatabase(path, null,
 				SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+		schemaVersion = getSchemaVersion();
 	}
 	
 	public boolean validDatabase(){
@@ -33,6 +40,28 @@ public class DatabaseHandler {
 	
 	public Cursor getVerses(int sura, int minAyah, int maxAyah){
 		return getVerses(sura, minAyah, maxAyah, VERSE_TABLE);
+	}
+	
+	public int getSchemaVersion(){
+		int version = 1;
+		if (!validDatabase()) return version;
+		
+		Cursor result = null;
+		try {
+			result = database.query(PROPERTIES_TABLE, new String[]{ COL_VALUE },
+					COL_PROPERTY + "= ?", new String[]{ "schema_version" },
+					null, null, null);
+			if ((result != null) && (result.moveToFirst()))
+				version = result.getInt(0);
+			if (result != null)
+				result.close();
+			return version;
+		}
+		catch (SQLException se){
+			if (result != null)
+				result.close();
+			return version;
+		}
 	}
 	
 	public Cursor getVerses(int sura, int minAyah, int maxAyah, String table){
@@ -47,16 +76,28 @@ public class DatabaseHandler {
 		return getVerses(sura, ayah, ayah);
 	}
 	
-	public Cursor search(String query){
-		return search(query, VERSE_TABLE);
+	public Cursor search(String query, boolean withSnippets){
+		return search(query, VERSE_TABLE, withSnippets);
 	}
 	
-	public Cursor search(String query, String table){
+	public Cursor search(String query, String table, boolean withSnippets){
 		if (!validDatabase()) return null;
+		String operator = " like '%";
+		String endOperator = "%'";
+		String whatTextToSelect = COL_TEXT;
+		
+		boolean useFullTextIndex = (schemaVersion > 1);
+		if (useFullTextIndex){
+			operator = " MATCH '";
+			endOperator = "*'";
+		}
+		
+		if (useFullTextIndex && withSnippets)
+			whatTextToSelect = "snippet(" + table + ")";
 		
 		return database.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
-				", " + COL_TEXT + " from " + table + " where " + COL_TEXT +
-				" like '%" + query + "%' limit 50", null);
+				", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
+				operator + query + endOperator + " limit 50", null);
 	}
 	
 	public void closeDatabase() {
