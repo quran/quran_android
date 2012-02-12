@@ -164,7 +164,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				// Quick fix to switch actions 
 				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() - 1)) 
 					quranPageFeeder.goToPreviousPage();
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
@@ -172,7 +172,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
 						getLastAyah());
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() + 1)) 
 					quranPageFeeder.goToNextpage();
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
