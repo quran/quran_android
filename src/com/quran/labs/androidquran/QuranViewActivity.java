@@ -167,7 +167,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				 * Ideally it should be done here but (24:22). May Allah accept
 				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() - 1)) 
 					quranPageFeeder.goToPreviousPage();
 				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
@@ -179,7 +179,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				 * Ideally it should be done here but (24:22). May Allah accept
 				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() + 1)) 
 					quranPageFeeder.goToNextpage();
 				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
