@@ -41,6 +41,7 @@ import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.numberpicker.NumberPickerDialog;
 
 public class QuranViewActivity extends PageViewQuranActivity implements
@@ -150,8 +151,12 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				if (quranAudioPlayer != null && quranAudioPlayer.isPaused()) {
 					quranAudioPlayer.resume();
 					onActionPlay();
-				} else
-					showPlayDialog();
+				} else {
+					if (!QuranUtils.haveAyaPositionFile()){
+						showDownloadAyahInfoDialog();
+					}
+					else showPlayDialog();
+				}
 			} else if (action.equalsIgnoreCase(ACTION_PAUSE) && quranAudioPlayer != null) {
 				quranAudioPlayer.pause();
 				onActionStop();
@@ -217,6 +222,24 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		playing = false;
 	}
 
+	private void showDownloadAyahInfoDialog(){
+		AlertDialog.Builder dialog = new AlertDialog.Builder(QuranViewActivity.this);
+		dialog.setTitle(R.string.downloadPrompt_title)
+		.setMessage(R.string.downloadHighlightingData)
+		.setPositiveButton(R.string.downloadPrompt_ok, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				downloadTranslation(QuranUtils.getAyaPositionFileUrl(), "ayahinfo.db.zip");
+			}
+		})
+		.setNegativeButton(R.string.downloadPrompt_no, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				showPlayDialog();
+			}
+		});
+		
+		dialog.show();
+	}
+	
 	private void showPlayDialog() {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		LayoutInflater li = LayoutInflater.from(this);

@@ -6,9 +6,9 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -133,10 +133,14 @@ public abstract class BaseQuranActivity extends Activity {
 				startActivity(intent);
 			break;
 			case R.id.menu_item_search:
-				onSearchRequested();
+				searchRequested();
 				break;
 		}
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	protected void searchRequested(){
+		onSearchRequested();
 	}
 	
 	public void jumpTo(int page) {

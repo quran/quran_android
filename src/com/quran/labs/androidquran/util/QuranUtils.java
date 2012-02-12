@@ -17,7 +17,7 @@ import com.quran.labs.androidquran.common.AyahItem;
 public class QuranUtils {
 
 	public static boolean failedToWrite = false;
-	public static String IMG_HOST = "http://downthestreetfromyou.com/androidquran/";
+	public static String IMG_HOST = "http://labs.quran.com/androidquran/";
 	private static String QURAN_BASE = File.separator + "quran_android"
 			+ File.separator;
 	private static String DATABASE_DIRECTORY = "databases";
@@ -261,6 +261,23 @@ public class QuranUtils {
 		String url = IMG_HOST + "width" + qsi.getWidthParam();
 		url += "/ayahinfo" + qsi.getWidthParam() + ".zip";
 		return url;
+	}
+	
+	public static boolean haveAyaPositionFile(){
+		String base = QuranUtils.getQuranDatabaseDirectory();
+		if (base == null)
+			QuranUtils.makeQuranDatabaseDirectory();
+		String filename = QuranUtils.getAyaPositionFileName();
+		if (filename != null){
+			String ayaPositionDb = base + File.separator + filename;
+			File f = new File(ayaPositionDb);
+			if (!f.exists()) {
+				return false;
+			}
+			else { return true; }
+		}
+		
+		return false;
 	}
 
 	public static boolean hasTranslation(String fileName) {

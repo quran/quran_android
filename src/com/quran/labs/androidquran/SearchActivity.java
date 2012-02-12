@@ -64,8 +64,7 @@ public class SearchActivity extends InternetActivity {
 	}
 
 	private void downloadArabicSearchDb(){
-		String fileUrl =
-			"http://labs.quran.com/androidquran/databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
+		String fileUrl = QuranUtils.IMG_HOST + "databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
 		downloadTranslation(fileUrl, QuranDataProvider.QURAN_ARABIC_DATABASE);
 	}
 	
