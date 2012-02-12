@@ -69,16 +69,20 @@ public class AudioServiceBinder extends Binder implements
 	public synchronized void stop() {
 		// reset enable remote play to false
 		enableRemotePlay(false);
-		if(mp != null && mp.isPlaying()){
-			try{
-			mp.stop();
-			mp.release();
-			mp = null;
-			}catch (Exception e) {
+		if (mp != null){
+			try {
+				if (mp.isPlaying()) mp.stop();
+			} catch (Exception e) {
 				Log.d("AudioServiceBinder:stop",
 						"Exception on calling media player stop " + e.toString() + " " + e.getMessage());
 			}
+			
+			try { mp.release(); }
+			catch (Exception ex){ }
+			
+			mp = null;
 		}
+		
 		paused = false;	
 		stopped = true;
 		currentItem = null;
@@ -95,23 +99,20 @@ public class AudioServiceBinder extends Binder implements
 	 * @see org.islam.quran.IAudioPlayer#play(org.islam.quran.AyahAudioItem)
 	 */
 	public synchronized void play(AyahItem item) {
+		Log.d("Play", "1 playing ayah " + item.getAyah());
 		stopped = false;
 		paused = false;
-		
-		if(item == null)
-			return;
+
 		this.currentItem = item;
-		if(mp != null && mp.isPlaying()){
-			mp.stop();
-//			try{
-//				mp.release();
-//			}catch(Exception e){}
-//			mp = null;
+		if(mp != null){
+			try { if (mp.isPlaying()) mp.stop(); }
+			catch (Exception e){ }
 		}
+		
 		try {
 			if(mp == null)
 				mp = new MediaPlayer();			
-			mp.reset();
+			mp.reset();			
 			mp.setOnCompletionListener(this);
 			url = null;
 			// FIXME Even though soura is downloaded, Basmallah of every sura asks for download since Al-Fati7a isn't downloaded -AF
@@ -192,33 +193,47 @@ public class AudioServiceBinder extends Binder implements
 
 	@Override
 	public synchronized void onCompletion(MediaPlayer mp) {
+		Log.d("onCompletion", "1");
 		if(repeats < numberOfRepeats){
 			repeats++;
-			play(currentItem);
+
+			mp.seekTo(0);
+			mp.start();
+			//play(currentItem);
 		} else{
 			repeats = 0;
-			if (mp != null && mp.isPlaying())
+			if(mp != null && mp.isPlaying()){
 				mp.stop();
+			}
+
 			AyahItem nextItem = null;
 			if (this.currentItem != null)
 				nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
+			Log.d("onCompletion", "2");
 			boolean continuePlaying = false;
 			if(ayahListener != null && !stopped && nextItem != null)
 				continuePlaying = ayahListener.onAyahComplete(currentItem, nextItem);
 			if(nextItem != null){
+				Log.d("onCompletion", "3 next ayah is not null, next ayah is " + nextItem.getAyah());
 				//this.currentItem = nextItem;
 				try{
-					if(continuePlaying && !paused && !stopped && mp != null && !mp.isPlaying())
+					Log.d("onCompletion", "4 before try " + (mp == null) + " " +  mp.isPlaying());
+					if(continuePlaying && !paused && !stopped && mp != null && !mp.isPlaying()){
+						Log.d("onCompletion", "5 inside if");
 						this.play(nextItem);
-				}catch(Exception ex){}
+					}
+				}catch(Exception ex){Log.e("OnCompletion", "error on play " + ex.toString() + ex.getMessage());}
 			}
 		}
 	}		
 	
-	public void destory(){
-		if(mp != null){
-			mp.stop();
-			mp.release();
+	public void destroy(){
+		if (mp != null){
+			try { mp.stop(); }
+			catch (Exception e){
+				try { mp.release(); }
+				catch (Exception ex){ }
+			}
 		}
 	}
 

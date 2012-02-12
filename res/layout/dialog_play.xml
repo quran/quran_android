@@ -16,8 +16,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"/>
-            <RadioButton android:id="@+id/radioPlayPage" android:text="Start of Page" android:checked="true"/>
-            <RadioButton android:id="@+id/radioPlayLast" android:text="Last Played Ayah"/>
+            <RadioButton android:id="@+id/radioPlayPage" android:text="@string/dialog_play_page_start" android:checked="true"/>
+            <RadioButton android:id="@+id/radioPlayLast" android:text="@string/dialog_resume_play"/>
         </RadioGroup>
     </ScrollView>
 </LinearLayout>

@@ -32,6 +32,7 @@ public class QuranActivity extends BaseQuranActivity {
 	private ActionBar actionBar;
 	private static final String ACTION_BOOKMARK = "BOOKMARK";
 	private static final String ACTION_RESUME = "RESUME";
+	private static boolean alreadyJumped = false;
 		
     /** Called when the activity is first created. */
     @Override
@@ -53,8 +54,6 @@ public class QuranActivity extends BaseQuranActivity {
     
     public void setArabicFont(){
     	ArabicStyle.setAssetManager(getAssets());
-        Intent i = new Intent(this, QuranDataActivity.class);
-		startActivityForResult(i, DATA_CHECK_CODE);
     }
     
     /**
@@ -65,6 +64,14 @@ public class QuranActivity extends BaseQuranActivity {
 		actionBar.setTitle("Quran");
 		actionBar.addAction(getIntentAction(ACTION_RESUME, R.drawable.translation));
 		actionBar.addAction(getIntentAction(ACTION_BOOKMARK, R.drawable.bookmarks));
+		actionBar.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ListView list = (ListView)findViewById(R.id.suralist);
+				list.setSelectionFromTop(0, 0);
+			}
+		});
 	}
 	
 	protected void onNewIntent(Intent intent) {
@@ -102,12 +109,7 @@ public class QuranActivity extends BaseQuranActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if (requestCode == DATA_CHECK_CODE){
-			showSuras();
-			Integer lastPage = QuranSettings.getInstance().getLastPage();
-			if (lastPage != null && lastPage != NO_PAGE_SAVED)
-				jumpTo(lastPage);
-		} else if (requestCode == SETTINGS_CODE) {
+		if (requestCode == SETTINGS_CODE) {
 			QuranSettings.load(prefs);
 			showSuras();
 		}
@@ -118,6 +120,19 @@ public class QuranActivity extends BaseQuranActivity {
 		super.onResume();
 		QuranSettings.load(prefs);
 		showSuras();
+		
+		Integer lastPage = QuranSettings.getInstance().getLastPage();
+		if (lastPage != null && lastPage != NO_PAGE_SAVED && !alreadyJumped){
+			alreadyJumped = true;
+			jumpTo(lastPage);
+		}
+		else if (lastPage != null && lastPage > 0 && lastPage < 605){
+			int currentSura = QuranInfo.PAGE_SURA_START[lastPage-1];
+			int juz = QuranInfo.getJuzFromPage(lastPage);
+			int position = currentSura + juz - 1;
+			ListView list = (ListView)findViewById(R.id.suralist);
+			list.setSelectionFromTop(position, 20);
+		}
 	}
 
 	public void showSuras() {
@@ -239,7 +254,7 @@ public class QuranActivity extends BaseQuranActivity {
 		
 		private void downloadSuraAudio(int suraId) {
 			Intent intent = new Intent(QuranActivity.this, QuranDataService.class);
-			intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+			intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 			intent.putExtra(QuranDataService.SOURA_KEY, suraId);
 			intent.putExtra(QuranDataService.AYAH_KEY, (int)1);
 			intent.putExtra(QuranDataService.READER_KEY, 1);

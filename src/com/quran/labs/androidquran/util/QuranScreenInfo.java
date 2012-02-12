@@ -30,13 +30,12 @@ public class QuranScreenInfo {
 	public int getHeight(){ return this.height; }
 	
 	public String getWidthParam(){
-		if (this.max_width <= 480) return "_480";
-		else if (this.max_width <= 800) return "_800";
-		else return "_1024";
+		return "_" + getWidthParamNoUnderScore();
 	}
 	
 	public String getWidthParamNoUnderScore(){
-		if (this.max_width <= 480) return "480";
+		if (this.max_width <= 320) return "320";
+		else if (this.max_width <= 480) return "480";
 		else if (this.max_width <= 800) return "800";
 		else return "1024";
 	}
@@ -47,11 +46,5 @@ public class QuranScreenInfo {
 		
 	public void setOrientation(int orientation) {
 		this.orientation = orientation;
-	}
-
-	public float getRatio() {
-		if (height > width)
-			return (float)(1.0*height/width);
-		return (float)(1.0*width/height);
 	}
 }

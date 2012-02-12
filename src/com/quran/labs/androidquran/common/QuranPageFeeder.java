@@ -7,6 +7,7 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	protected LayoutInflater mInflater;
 	protected int mPageLayout;
 	protected int mCurrentPageNumber;
+	private Boolean mHasBeenOutOfMemory;
 	
 	private long lastPopupTime = System.currentTimeMillis();
 	
@@ -84,6 +86,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 			mQuranPage.addNextPage(createPage(page+1));
 		}
 		mCurrentPageNumber = page;
+		QuranSettings.getInstance().setLastPage(page);
+		QuranSettings.save(mContext.prefs);
 		mQuranPage.refresh(true); 
 	}
 	
@@ -138,7 +142,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	}
 	
 	public void refreshCurrent() {
-		jumpToPage(mCurrentPageNumber);
+		jumpToPage(mCurrentPageNumber);		
 	}
 	
 	public void ScrollDown() {
@@ -161,6 +165,8 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		} else if (flipDirection == OnPageFlipListener.PREVIOUS_PAGE){
 			loadPreviousPage(pageView);
 		}
+		QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
+		QuranSettings.save(mContext.prefs);
 	}
 	
 	public void displayMarkerPopup() {
@@ -172,18 +178,17 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		int hizb = (rub3 / 4) + 1;
 		StringBuilder sb = new StringBuilder();
 		
-		boolean arabic = QuranSettings.getInstance().isArabicNames();
 		if (rub3 % 8 == 0) {
-			sb.append(arabic ? "الجزء" : "Juz'").append(' ').append((hizb/2) + 1);
+			sb.append(mContext.getString(R.string.quran_juz2)).append(' ').append((hizb/2) + 1);
 		} else {
 			int remainder = rub3 % 4;
 			if (remainder == 1)
-				sb.append(arabic ? "ربع" : "¼").append(' ');
+				sb.append(mContext.getString(R.string.quran_rob3)).append(' ');
 			else if (remainder == 2)
-				sb.append(arabic ? "نصف" : "½").append(' ');
+				sb.append(mContext.getString(R.string.quran_nos)).append(' ');
 			else if (remainder == 3)
-				sb.append(arabic ? "ثلاثة أرباع" : "¾").append(' ');
-			sb.append(arabic ? "الحزب" : "Hizb").append(' ').append(hizb);
+				sb.append(mContext.getString(R.string.quran_talt_arb3)).append(' ');
+			sb.append(mContext.getString(R.string.quran_hizb)).append(' ').append(hizb);
 		}
 		Toast.makeText(mContext, ArabicStyle.reshape(sb.toString()), Toast.LENGTH_SHORT).show();
 		lastPopupTime = System.currentTimeMillis();
@@ -239,13 +244,20 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	protected void updateViewForUser(View v, boolean loading,
 			boolean pageNotFound){
 		TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
-		ImageView iv = (ImageView)v.findViewById(R.id.page_image);
+		HighlightingImageView iv = (HighlightingImageView)v.findViewById(R.id.page_image);
+		
 		if ((loading) || (pageNotFound)){
+			if (QuranSettings.getInstance().isNightMode()) {
+				tv.setTextColor(Color.WHITE);
+			}
 			tv.setText(loading? R.string.pageLoading : R.string.pageNotFound);
+			if (!loading && mHasBeenOutOfMemory != null && mHasBeenOutOfMemory)
+				tv.setText(R.string.couldNotLoadPage);
 			tv.setVisibility(View.VISIBLE);
 			iv.setVisibility(View.GONE);
 		}
 		else {
+			iv.adjustNightMode();
 			tv.setVisibility(View.GONE);
 			iv.setVisibility(View.VISIBLE);
 		}
@@ -261,20 +273,33 @@ public class QuranPageFeeder implements OnPageFlipListener {
         	Log.d(TAG, "loading image for page " + page + " from sdcard");
         }
         
+    	boolean outOfMemory = false;
         // Bitmap not found in cache..
     	if (bitmap == null){
         	String filename = mContext.getPageFileName(page);
-        	bitmap = QuranUtils.getImageFromSD(filename);
+        	try {
+        		bitmap = QuranUtils.getImageFromSD(filename);
+        	}
+        	catch (OutOfMemoryError oe){
+        		bitmap = null;
+        		outOfMemory = true;
+        		mHasBeenOutOfMemory = true;
+        	}
+        	
         	// Add Bitmap to cache..
         	if (bitmap != null) {
         		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
         		Log.d(TAG, "page " + page + " added to cache!");
         	} else {
-        		Log.d(TAG, "page " + page + " not found on sdcard");
-        		bitmap = QuranUtils.getImageFromWeb(filename);
+        		if (!outOfMemory){
+        			Log.d(TAG, "page " + page + " not found on sdcard");
+        			bitmap = QuranUtils.getImageFromWeb(filename);
+        		}
+        		
         		if (bitmap != null)
             		cache.put("page_" + page, new SoftReference<Bitmap>(bitmap));
-        		else Log.d(TAG, "page " + page + " could not be fetched from the web");
+        		else Log.d(TAG, "page " + page + " could not be fetched " +
+        				(outOfMemory? "due to being out of memory" : "from the web"));
         	}
         }
         
@@ -301,6 +326,12 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		@Override
 		public void run() {
 			Bitmap bitmap = getBitmap(index);
+			if (bitmap == null && mHasBeenOutOfMemory != null && mHasBeenOutOfMemory){
+				android.util.Log.d(TAG, "in a second, will try to get page " + index + " again");
+				try { Thread.sleep(1000); } catch (InterruptedException ie){ }
+				bitmap = getBitmap(index);
+			}
+			
 			((Activity)mContext).runOnUiThread(new PageDisplayer(bitmap, v, index));
 			
 			//clear for GC
@@ -328,8 +359,6 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	        	iv.setImageBitmap(bitmap);
 	        	mQuranPage.refresh();
 	        	updateViewForUser(v, false, false);
-	        	QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
-				QuranSettings.save(mContext.prefs);
 				if (QuranSettings.getInstance().isDisplayMarkerPopup())
 					displayMarkerPopup();
 	        }

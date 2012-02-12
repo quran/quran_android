@@ -4,12 +4,13 @@
     <item android:id="@+id/menu_item_jump"          
           android:icon="@drawable/jump" android:title="@string/menu_jump"/>
           
-    <item android:id="@+id/menu_item_about_us"          
-          android:icon="@drawable/about" android:title="@string/menu_about"/>
-          
     <item android:id="@+id/menu_item_settings"          
           android:icon="@drawable/settings" android:title="@string/menu_settings"/>
   	
+    <item android:id="@+id/menu_item_search"          
+          android:icon="@drawable/ic_menu_search" android:title="@string/menu_search">
+    </item>
+    
   	<item android:id="@+id/menu_item_bookmarks"          
           android:icon="@drawable/bookmarks" android:title="@string/menu_bookmarks">
     </item>
@@ -19,7 +20,10 @@
           
     <item android:id="@+id/menu_item_help"
           android:icon="@drawable/help" android:title="@string/menu_help"/>
-          
-		<item android:id="@+id/menu_item_get_translations"
+    
+    <item android:id="@+id/menu_item_about_us"          
+          android:icon="@drawable/about" android:title="@string/menu_about"/>
+    
+	<item android:id="@+id/menu_item_get_translations"
           android:icon="@drawable/download" android:title="@string/menu_get_translations"/>          
 </menu>

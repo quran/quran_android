@@ -14,8 +14,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public abstract class InternetActivity extends BaseQuranActivity {
 	
@@ -85,7 +87,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	protected void startDownloadService(Intent intent) {
     	starting = true;    	
     	
-    	int downloadType = intent.getIntExtra(QuranDataService.DWONLOAD_TYPE_KEY, -1);
+    	int downloadType = intent.getIntExtra(QuranDataService.DOWNLOAD_TYPE_KEY, -1);
     	if(downloadType != -1){
     		startService(intent);
     		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -96,7 +98,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadTranslation(String url, String fileName) {
 		Intent intent = new Intent(this, QuranDataService.class);
-    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_TRANSLATION);
+    	intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_TRANSLATION);
     	intent.putExtra(QuranDataService.URL_KEY, url);
     	intent.putExtra(QuranDataService.FILE_NAME_KEY, fileName);
     	startDownloadService(intent);
@@ -104,7 +106,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadQuranImages() {
 		Intent intent = new Intent(this, QuranDataService.class);
-    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_QURAN_IMAGES);
+    	intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_QURAN_IMAGES);
     	startDownloadService(intent);
 	}
 	
@@ -114,7 +116,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadSura(int readerId, int sura, int ayah) {
 		Intent intent = new Intent(this, QuranDataService.class);
-		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 		intent.putExtra(QuranDataService.SOURA_KEY, sura);
 		intent.putExtra(QuranDataService.AYAH_KEY, ayah);
 		intent.putExtra(QuranDataService.READER_KEY, readerId);
@@ -123,7 +125,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadPage(int readerId, Integer[] integers){		
 		Intent intent = new Intent(this, QuranDataService.class);
-		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 		intent.putExtra(QuranDataService.SOURA_KEY, integers[0]);
 		intent.putExtra(QuranDataService.AYAH_KEY, integers[1]);
 		intent.putExtra(QuranDataService.END_SOURA_KEY, integers[2]);
@@ -135,6 +137,31 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadJuza(int readerId, Integer juza){
 			downloadPage(readerId, QuranInfo.getJuzBounds(juza));
+	}
+	
+	@Override
+	protected void searchRequested(){
+		if (QuranUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE)){
+			onSearchRequested();
+		}
+		else {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(InternetActivity.this);
+			dialog.setTitle(R.string.downloadPrompt_title)
+			.setMessage(R.string.download_arabic_search_db)
+			.setPositiveButton(R.string.downloadPrompt_ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					String fileUrl = QuranUtils.IMG_HOST + "databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
+					downloadTranslation(fileUrl, QuranDataProvider.QURAN_ARABIC_DATABASE);
+				}
+			})
+			.setNegativeButton(R.string.downloadPrompt_no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					onSearchRequested();
+				}
+			});
+			
+			dialog.show();
+		}
 	}
 	
     class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {
@@ -195,11 +222,28 @@ public abstract class InternetActivity extends BaseQuranActivity {
     }
     
     protected void onFinishDownload() {
-    	
+    	if (bounded){
+    		unbindService(serviceConnection);
+    		bounded = false;
+    	}
     }
     
     protected void onDownloadCanceled() {
-    	
+    	if (bounded){
+    		unbindService(serviceConnection);
+    		bounded = false;
+    	}
+    }
+    
+    @Override
+    protected void onPause(){
+    	if (bounded){
+    		if (currentTask != null)
+    			currentTask.cancel(true);
+    		unbindService(serviceConnection);
+    		bounded = false;
+    	}
+    	super.onPause();
     }
     
 	private void showProgressDialog(){

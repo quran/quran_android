@@ -2,6 +2,7 @@ package com.quran.labs.androidquran;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -9,38 +10,44 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
 import com.quran.labs.androidquran.common.QuranPageFeeder;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioServiceBinder;
 import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.numberpicker.NumberPickerDialog;
 
 public class QuranViewActivity extends PageViewQuranActivity implements
 		AyahStateListener {
 
+	protected static final String ACTION_GO_TO_PAGE = "ACTION_GO_TO_PAGE";
 	protected static final String ACTION_PREVIOUS = "ACTION_PREVIOUS";
 	protected static final String ACTION_NEXT = "ACTION_NEXT";
 	protected static final String ACTION_PAUSE = "ACTION_PAUSE";
@@ -51,16 +58,20 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	protected static final String ACTION_REPEAT = "ACTION_REPEAT";
 	
 	private static final String TAG = "QuranViewActivity";
+	private static final String IS_PLAYING = "IS_PLAYING";
 
 	private boolean bounded = false;
-	private AudioServiceBinder quranAudioPlayer = null;
-
+	
+	/* making this static because otherwise, when activity gets destroyed (ex on
+	 * orientation change), we lose this reference and can't properly keep state.
+	 * (stop, etc start dying).  mainly seen on 1.5. */
+	private static AudioServiceBinder quranAudioPlayer = null;
 
 	private AyahItem lastAyah;
 	private int currentReaderId;
 	private boolean playing = false;
 
-	private HashMap<String, IntentAction> actionBarActions = new HashMap<String, IntentAction>();
+	private LinkedHashMap<String, IntentAction> actionBarActions = new LinkedHashMap<String, IntentAction>();
 
 	// private TextView textView;
 
@@ -85,9 +96,13 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// textView = new TextView(this);
-		// textView.setText("");
-		bindAudioService();
+		if (savedInstanceState != null && savedInstanceState.containsKey(IS_PLAYING)){
+			boolean shouldIPlay = savedInstanceState.getBoolean(IS_PLAYING);
+			if (shouldIPlay){
+				bindAudioService();
+				onActionPlay();
+			}
+		}
 	}
 
 	protected void addActions() {
@@ -109,9 +124,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					getIntentAction(ACTION_CHANGE_READER, R.drawable.mic));
 			actionBarActions.put(ACTION_JUMP_TO_AYAH,
 					getIntentAction(ACTION_JUMP_TO_AYAH, R.drawable.ab_jump));
-//			actionBarActions.put(ACTION_REPEAT,
-//					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
-//	
+			actionBarActions.put(ACTION_REPEAT,
+					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
 			onActionStop();
 		}
 	}
@@ -128,45 +142,72 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		String action = intent.getAction();
-		if (quranAudioPlayer != null && action != null) {
-			if (action.equalsIgnoreCase(ACTION_PLAY)) {
+		if (action != null) {
+			if (action.equalsIgnoreCase(ACTION_GO_TO_PAGE)) {
+				int page = intent.getExtras().getInt("page", QuranSettings.getInstance().getLastPage());
+				jumpTo(page);
+			} else if (action.equalsIgnoreCase(ACTION_PLAY)) {
 				bindAudioService();
-				if (quranAudioPlayer.isPaused()) {
+				if (quranAudioPlayer != null && quranAudioPlayer.isPaused()) {
 					quranAudioPlayer.resume();
 					onActionPlay();
-				} else
-					showPlayDialog();
-			} else if (action.equalsIgnoreCase(ACTION_PAUSE)) {
+				} else {
+					if (!QuranUtils.haveAyaPositionFile()){
+						showDownloadAyahInfoDialog();
+					}
+					else showPlayDialog();
+				}
+			} else if (action.equalsIgnoreCase(ACTION_PAUSE) && quranAudioPlayer != null) {
 				quranAudioPlayer.pause();
 				onActionStop();
-			} else if (action.equalsIgnoreCase(ACTION_NEXT)) {
+			} else if (action.equalsIgnoreCase(ACTION_NEXT) && quranAudioPlayer != null) {
 				// Quick fix to switch actions 
 				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
+				/* removed temporarily so that we dont race with the audio binder. 
+				 * Ideally it should be done here but (24:22). May Allah accept
+				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() - 1)) 
 					quranPageFeeder.goToPreviousPage();
+				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
-			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS)) {
+			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS) && quranAudioPlayer != null) {
 				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
 						getLastAyah());
+				/* removed temporarily so that we dont race with the audio binder. 
+				 * Ideally it should be done here but (24:22). May Allah accept
+				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() + 1)) 
 					quranPageFeeder.goToNextpage();
+				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
-			} else if (action.equalsIgnoreCase(ACTION_STOP)) {
+			} else if (action.equalsIgnoreCase(ACTION_STOP) && quranAudioPlayer != null) {
 				lastAyah = null;
 				quranAudioPlayer.stop();
-				unBindAudioService();
 				onActionStop();
+				unBindAudioService();
 				quranPageFeeder.unHighlightAyah();
 			} else if (action.equalsIgnoreCase(ACTION_CHANGE_READER)){
 				showChangeReaderDialog();
-			}
-			else if (action.equalsIgnoreCase(ACTION_JUMP_TO_AYAH)) {
+			} else if (action.equalsIgnoreCase(ACTION_JUMP_TO_AYAH)) {
 				showJumpToAyahDialog();
+			} else if (action.equalsIgnoreCase(ACTION_REPEAT)) {
+				showAudioRepeatsDialog();
 			}
+		} else { // no audio related tasks to just flip to requested page
+			Bundle extras = intent.getExtras();
+			int page = extras != null? extras.getInt("page") :
+				QuranSettings.getInstance().getLastPage();
+			
+			// If still no page saved
+			if (page == ApplicationConstants.NO_PAGE_SAVED) {
+				page = ApplicationConstants.PAGES_FIRST;
+			}
+			
+			quranPageFeeder.jumpToPage(page);
 		}
 	}
 
@@ -183,18 +224,37 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	private void onActionStop() {
 		actionBar.removeAllActions();
 		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
-		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 1);
-		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 2);
+		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 0);
+		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 0);
+		actionBar.addAction(actionBarActions.get(ACTION_REPEAT), 0);
 		playing = false;
 	}
 
+	private void showDownloadAyahInfoDialog(){
+		AlertDialog.Builder dialog = new AlertDialog.Builder(QuranViewActivity.this);
+		dialog.setTitle(R.string.downloadPrompt_title)
+		.setMessage(R.string.downloadHighlightingData)
+		.setPositiveButton(R.string.downloadPrompt_ok, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				downloadTranslation(QuranUtils.getAyaPositionFileUrl(), "ayahinfo.db.zip");
+			}
+		})
+		.setNegativeButton(R.string.downloadPrompt_no, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				showPlayDialog();
+			}
+		});
+		
+		dialog.show();
+	}
+	
 	private void showPlayDialog() {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		LayoutInflater li = LayoutInflater.from(this);
 		final View view = li.inflate(R.layout.dialog_play, null);
 		dialog.setView(view);
 		final Map<Integer, RadioButton> suraButtons = initPlayRadioButtons(view, quranPageFeeder.getCurrentPagePosition());
-		dialog.setPositiveButton("Play", new DialogInterface.OnClickListener() {
+		dialog.setPositiveButton(getString(R.string.dialog_play), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroupPlay); 
@@ -227,10 +287,11 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				playAudio(lastAyah);
 			}
 		});
-		dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		dialog.setNegativeButton(getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
+				unBindAudioService();
 			}
 		});
 		
@@ -247,7 +308,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialog.setView(view);
 		initDownloadRadioButtons(view, getLastAyah());
-		dialog.setPositiveButton("Download",
+		dialog.setPositiveButton(getString(R.string.dialog_download),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -286,7 +347,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						dialog.dismiss();
 					}
 				});
-		dialog.setNeutralButton("Stream",
+		dialog.setNeutralButton(getString(R.string.dialog_stream),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -314,13 +375,14 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					}
 				});
 
-		dialog.setNegativeButton("Cancel",
+		dialog.setNegativeButton(getString(R.string.dialog_cancel),
 				new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						onActionStop();
 						dialog.dismiss();
+						unBindAudioService();
 					}
 				});
 
@@ -328,6 +390,28 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		diag.show();
 	}
 
+
+	private void showAudioRepeatsDialog(){
+		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+		int numberOfRepeats = preferences.getInt("numberOfRepeats", 0);
+		final NumberPickerDialog diag = new NumberPickerDialog(this, 1, numberOfRepeats);
+		diag.setTitle(getString(R.string.dialog_repeat_title));
+		diag.show();
+		diag.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				int numberOfRepeats = diag.getSelectedNumber();
+				if(quranAudioPlayer != null)
+					quranAudioPlayer.setNumberOfRepeats(numberOfRepeats);
+				// save repeats to preference file
+				SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+				Editor editor = preferences.edit();
+				editor.putInt("numberOfRepeats", numberOfRepeats);
+				editor.commit();
+			}
+		});
+	}
+	
 	// Returns a map of Sura Number to RadioButtons
 	private Map<Integer, RadioButton> initPlayRadioButtons(View parent, int pageNum){
 		RadioButton radioPage = (RadioButton) parent.findViewById(R.id.radioPlayPage);
@@ -395,7 +479,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				HashMap<String, String>map = (HashMap<String, String>) adapter.getItemAtPosition(position);
 				int suraIndex = Integer.parseInt(map.get("suraId"));
 				int startAyah = suraIndex == pageBounds[0] && checkbox.isChecked() ? pageBounds[1] : 1;
-				int endAyah = suraIndex == pageBounds[2]? pageBounds[3] : QuranInfo.SURA_NUM_AYAHS[suraIndex - 1];
+				int endAyah = suraIndex == pageBounds[2] && checkbox.isChecked() ? pageBounds[3] : QuranInfo.SURA_NUM_AYAHS[suraIndex - 1];
 				initAyatSpinner(ayatSpinner, startAyah, endAyah);
 				if (suraIndex == pageBounds[0]) {
 					int selection = checkbox.isChecked()? 0 : pageBounds[1] - 1;
@@ -423,8 +507,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			}
 		});
 		dialogBuilder.setView(view);
-		dialogBuilder.setMessage("Jump to ayah");
-		dialogBuilder.setPositiveButton("Jump",
+		dialogBuilder.setMessage(getString(R.string.dialog_jump_ayah));
+		dialogBuilder.setPositiveButton(getString(R.string.menu_jump),
 				new DialogInterface.OnClickListener() {
 
 					@SuppressWarnings("unchecked")
@@ -445,7 +529,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						jumpTo(QuranInfo.getPageFromSuraAyah(sura, ayah));
 					}
 				});
-		dialogBuilder.setNegativeButton("Cancel", null);
+		dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel), null);
 		dialogBuilder.show();
 	}
 	
@@ -495,8 +579,8 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		v.setVisibility(View.GONE);
 		s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialogBuilder.setView(view);
-		dialogBuilder.setMessage("Change reciter");
-		dialogBuilder.setPositiveButton("Set",
+		dialogBuilder.setMessage(getString(R.string.dialog_select_reciter));
+		dialogBuilder.setPositiveButton(getString(R.string.dialg_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
@@ -508,7 +592,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 						}
 					}
 				});
-		dialogBuilder.setNegativeButton("Cancel", null);
+		dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel), null);
 		dialogBuilder.show();
 	}
 
@@ -528,6 +612,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			unbindService(conn);
 			if (quranAudioPlayer != null)
 				quranAudioPlayer.setAyahCompleteListener(null);
+			stopService(new Intent(getApplicationContext(), QuranAudioService.class));
 			bounded = false;
 		}
 	}
@@ -540,6 +625,21 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			bounded = bindService(serviceIntent, conn, BIND_AUTO_CREATE);
 			Log.d("QuranView", "Audio service bounded: " + bounded);
 		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(IS_PLAYING, quranAudioPlayer != null && quranAudioPlayer.isPlaying());
+	}
+	
+	@Override
+	public void onDestroy(){
+		if (bounded){
+			unbindService(conn);
+			quranAudioPlayer.setAyahCompleteListener(null);
+		}
+		super.onDestroy();
 	}
 
 	private void playAudio(AyahItem ayah) {
@@ -681,13 +781,15 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			quranPageFeeder.jumpToPage(page);
 			updatePageInfo(page);
 		}
-		
-		quranPageFeeder.highlightAyah(ayah.getSoura(), ayah.getAyah());
+		try{
+			quranPageFeeder.highlightAyah(ayah.getSoura(), ayah.getAyah());
+		} catch(Exception e){
+			Log.e("HighLight", "Exception while highlighting ayah " + e.toString() + e.getMessage());
+		}
 		
 		QuranSettings.getInstance().setLastPlayedAyah(ayah.getSoura(), ayah.getAyah());
 		
 		if (!playing)
 			onActionPlay();
 	}
-
 }

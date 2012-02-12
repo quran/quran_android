@@ -6,9 +6,10 @@ import java.util.Locale;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -35,11 +36,21 @@ import com.quran.labs.androidquran.util.QuranSettings;
 public abstract class BaseQuranActivity extends Activity {
 
 	protected SharedPreferences prefs;
+	static boolean arabicLocaleLoaded = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		try {
+			arabicLocaleLoaded = false;
+		} catch(Exception e) {}
 	}
 
 	@Override
@@ -105,6 +116,7 @@ public abstract class BaseQuranActivity extends Activity {
 			case R.id.menu_item_settings:
 				//intent = new Intent(getApplicationContext(), SettingsActivity.class);
 				intent = new Intent(getApplicationContext(), QuranPreferenceActivity.class);
+				intent.putExtra("activity", this.getClass());
 				startActivityForResult(intent, ApplicationConstants.SETTINGS_CODE);
 			break;
 			case R.id.menu_item_bookmarks:
@@ -120,8 +132,15 @@ public abstract class BaseQuranActivity extends Activity {
 				intent = new Intent(getApplicationContext(), DownloadActivity.class);
 				startActivity(intent);
 			break;
+			case R.id.menu_item_search:
+				searchRequested();
+				break;
 		}
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	protected void searchRequested(){
+		onSearchRequested();
 	}
 	
 	public void jumpTo(int page) {
@@ -138,14 +157,25 @@ public abstract class BaseQuranActivity extends Activity {
 	
 	@Override
     protected void onResume() {
+		QuranSettings.load(prefs);
     	super.onResume();
-    	QuranSettings.load(prefs);
-    }
+		// On starting app check if arabic locale loading is required..
+    	// Otherwise, locale will be reloaded from settings..
+    	if (QuranSettings.getInstance().isArabicNames() && !arabicLocaleLoaded) {
+			Locale locale = new Locale("ar");
+			Locale.setDefault(locale);
+			Configuration config = new Configuration();
+			config.locale = locale;
+			getBaseContext().getResources().updateConfiguration(config,
+			      getBaseContext().getResources().getDisplayMetrics());
+			arabicLocaleLoaded = true;
+    	}
+	}
 	
 	@Override
 	protected void onPause() {
-		super.onPause();
 		QuranSettings.save(prefs);
+		super.onPause();
 	}
 
 	protected void initializeQuranScreen() {

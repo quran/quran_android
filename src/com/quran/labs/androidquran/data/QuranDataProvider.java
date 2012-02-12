@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranDataProvider extends ContentProvider {
 
@@ -29,6 +30,7 @@ public class QuranDataProvider extends ContentProvider {
 	 public static final String AYAH_MIME_TYPE =
 		 ContentResolver.CURSOR_ITEM_BASE_TYPE +
           "/vnd.com.quran.labs.androidquran";
+	 public static final String QURAN_ARABIC_DATABASE = "quran.ar.db";
 
 	// UriMatcher stuff
 	private static final int SEARCH_VERSES = 0;
@@ -37,8 +39,7 @@ public class QuranDataProvider extends ContentProvider {
 	private static final UriMatcher sURIMatcher = buildUriMatcher();
 
 	private DatabaseHandler database = null;
-	private TranslationItem activeTranslation = null;
-
+	
 	private static UriMatcher buildUriMatcher() {
 		UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
 		matcher.addURI(AUTHORITY, "quran/search", SEARCH_VERSES);
@@ -77,7 +78,7 @@ public class QuranDataProvider extends ContentProvider {
 
 			if (selectionArgs.length == 1)
 				return search(selectionArgs[0]);
-			else return search(selectionArgs[0], selectionArgs[1]);
+			else return search(selectionArgs[0], selectionArgs[1], true);
 		case GET_VERSE:
 			return getVerse(uri);
 		default:
@@ -86,33 +87,55 @@ public class QuranDataProvider extends ContentProvider {
 	}
 
 	private Cursor search(String query){
+		if (QuranUtils.doesStringContainArabic(query) &&
+				QuranUtils.hasTranslation(QURAN_ARABIC_DATABASE)){
+			Cursor c = search(query, QURAN_ARABIC_DATABASE, true);
+			if (c != null) return c;
+		}
+		
 		TranslationItem active = getActiveTranslation();
 		if (active == null) return null;
-		return search(query, active.getFileName());
+		return search(query, active.getFileName(), true);
 	}
 
 	private TranslationItem getActiveTranslation(){
-		if (activeTranslation == null){
-			TranslationsDBAdapter dba = new TranslationsDBAdapter(getContext());
-			activeTranslation = dba.getActiveTranslation();
-			dba.close();
-		}
+		// i used to cache this, but i stopped because if you set a new active
+		// translation or remove a translation, it won't get reflected here.
+		TranslationsDBAdapter dba = new TranslationsDBAdapter(getContext());
+		TranslationItem activeTranslation = dba.getActiveTranslation();
+		dba.close();
 		return activeTranslation;
 	}
 	
 	private Cursor getSuggestions(String query){
 		if (query.length() < 3) return null;
 		
+		int numItems = 1;
+		if (QuranUtils.doesStringContainArabic(query) &&
+				QuranUtils.hasTranslation(QURAN_ARABIC_DATABASE)){
+			numItems = 2;
+		}
+		
 		//TranslationItem[] items = dba.getAvailableTranslations(true);
-		TranslationItem[] items = new TranslationItem[]{ getActiveTranslation() };
+		TranslationItem[] items = new TranslationItem[numItems];
+		if (numItems == 1) items[0] = getActiveTranslation();
+		else {
+			TranslationItem arabicItem = new TranslationItem();
+			arabicItem.setFileName(QURAN_ARABIC_DATABASE);
+			items[0] = arabicItem;
+			items[1] = getActiveTranslation();
+		}
+				
 		String[] cols = new String[]{ BaseColumns._ID,
 				SearchManager.SUGGEST_COLUMN_TEXT_1,
 				SearchManager.SUGGEST_COLUMN_TEXT_2,
 				SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID };
 		MatrixCursor mc = new MatrixCursor(cols);
 		
+		boolean gotResults = false;
 		for (TranslationItem item : items) {
-			Cursor suggestions = search(query, item.getFileName());
+			if ((item == null) || (gotResults)) continue;
+			Cursor suggestions = search(query, item.getFileName(), false);
 			
 			if (suggestions.moveToFirst()){
 				do {
@@ -122,6 +145,7 @@ public class QuranDataProvider extends ContentProvider {
 					String foundText = "Found in Sura " +
 						QuranInfo.getSuraName(sura-1) + ", verse " + ayah;
 					
+					gotResults = true;
 					MatrixCursor.RowBuilder row = mc.newRow();
 					int id = 0;
 					for (int j=1; j<sura;j++){
@@ -143,13 +167,13 @@ public class QuranDataProvider extends ContentProvider {
 		return mc;
 	}
 
-	private Cursor search(String query, String language) {
+	private Cursor search(String query, String language, boolean wantSnippets) {
 		Log.d("qdp", "q: " + query + ", l: " + language);
 		if (language == null) return null;
 		
 		if (database == null)
 			database = new DatabaseHandler(language);
-		return database.search(query);
+		return database.search(query, wantSnippets);
 	}
 
 	private Cursor getVerse(Uri uri){

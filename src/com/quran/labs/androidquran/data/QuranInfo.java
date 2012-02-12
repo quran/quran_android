@@ -15,7 +15,7 @@ public class QuranInfo {
 		"Fussilat", "Ash-Shura", "Az-Zukhruf", "Ad-Dukhan", "Al-Jathiya",
 		"Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujraat", "Qaf",
 		"Adh-Dhariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman",
-		"Al-Waqia", "Al-Hadid", "Al-Mujadila", "Al-Hashr", "Al-Mumtahina",
+		"Al-Waqia", "Al-Hadid", "Al-Mujadala", "Al-Hashr", "Al-Mumtahina",
 		"As-Saff", "Al-Jumua", "Al-Munafiqoon", "At-Taghabun", "At-Talaq",
 		"At-Tahrim", "Al-Mulk", "Al-Qalam", "Al-Haaqqa", "Al-Maarij", "Nooh",
 		"Al-Jinn", "Al-Muzzammil", "Al-Muddaththir", "Al-Qiyama", "Al-Insan",
@@ -275,7 +275,10 @@ public class QuranInfo {
 	};
 	
 	public static Integer[] getPageBounds(int page){
-		if ((page > ApplicationConstants.PAGES_LAST) || (page < 1)) return null;
+		if (page > ApplicationConstants.PAGES_LAST)
+			page = 604;
+		if (page < 1) page = 1;
+		
 		Integer[] bounds = new Integer[4];
 		bounds[0] = PAGE_SURA_START[page-1];
 		bounds[1] = PAGE_AYAH_START[page-1];
@@ -366,6 +369,9 @@ public class QuranInfo {
 		return SURA_NUM_AYAHS[sura-1];
 	}
 	
+	public static int getNumAyahs(){
+		return 6236;
+	}
 	public static String getPageTitleNoPrefix(int page) {
 		return getPageTitleNoPrefix() + page +
 		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
@@ -399,4 +405,16 @@ public class QuranInfo {
          results[3] = bounds[1];
          return results;
 	 }
+	
+	public static boolean ayahWithinBounds(int sura, int ayah,
+			int startSura, int startAyah, int endSura, int endAyah) {
+		if (sura >= startSura && sura <= endSura) {
+			if (sura == startSura && ayah < startAyah)
+				return false;
+			if (sura == endSura && ayah > endAyah)
+				return false;
+			return true;
+		}
+		return false;
+	}
 }

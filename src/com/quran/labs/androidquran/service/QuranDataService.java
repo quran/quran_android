@@ -38,7 +38,7 @@ import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranDataService extends Service {
 
-	public static final String DWONLOAD_TYPE_KEY = "downloadType";
+	public static final String DOWNLOAD_TYPE_KEY = "downloadType";
 	public static final String SOURA_KEY = "soura";
 	public static final String END_SOURA_KEY = "endSoura";
 	public static final String AYAH_KEY = "ayah";
@@ -104,7 +104,7 @@ public class QuranDataService extends Service {
 		if (intent == null)
 			return;
 
-		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
+		int downloadType = intent.getIntExtra(DOWNLOAD_TYPE_KEY, -1);
 		switch (downloadType) {
 		case DOWNLOAD_QURAN_IMAGES:
 			isRunning = true;
@@ -147,6 +147,12 @@ public class QuranDataService extends Service {
 		ArrayList<String> urls = new ArrayList<String>();
 		ArrayList<String> directories = new ArrayList<String>();
 
+		// Check Basmallah
+		if (!QuranInfo.ayahWithinBounds(1, 1, soura, startAyah, endSoura, endAyah)
+				&& !QuranUtils.isBasmallahDownloaded(quranReader)) {
+			addAyahForDownload(1, 1, quranReader, false, fileNames, urls, directories);
+		}
+
 		int ayatStartIndex = startAyah;
 		int ayatEndIndex = endAyah;
 		for (int j = soura; j <= endSoura; j++) {
@@ -162,47 +168,16 @@ public class QuranDataService extends Service {
 			}
 			for (int i = ayatStartIndex; i <= ayatEndIndex; i++) {
 				// get ayah
-				AyahItem ayah = QuranAudioLibrary.getAyahItem(
-						getApplicationContext(), j, i, quranReader);
-				String fileName = ayah.getLocalAudioUrl()
-						.substring(
-								ayah.getLocalAudioUrl().lastIndexOf(
-										File.separator) + 1);
-				String dir = ayah.getLocalAudioUrl().substring(0,
-						ayah.getLocalAudioUrl().lastIndexOf(File.separator));
-				File f = new File(dir, fileName);
-				if (f.exists())
-					continue;
-				fileNames.add(fileName);
-				directories.add(dir);
-				urls.add(ayah.getRemoteAudioUrl());
-
-				if (downloadImage) {
-					fileName = ayah.getAyah()
-							+ QuranAudioLibrary.IMAGE_EXTENSION;
-					dir = QuranUtils.getSuraImagePath(ayah.getSoura());
-
-					f = new File(dir, fileName);
-					if (f.exists())
-						continue;
-
-					fileNames.add(fileName);
-					directories.add(dir);
-					urls.add(ayah.getRemoteImageUrl());
-				}
+				addAyahForDownload(j, i, quranReader, downloadImage,
+						fileNames, urls, directories);
 			}
 		}
 
 		// Check aya info db
-		String base = QuranUtils.getQuranDatabaseDirectory();
-		if (base == null)
-			QuranUtils.makeQuranDatabaseDirectory();
-		String ayaPositionDb = base + File.separator + "ayahinfo.db";
-		File f = new File(ayaPositionDb);
-		if (!f.exists()) {
+		if (!QuranUtils.haveAyaPositionFile()){
 			urls.add(QuranUtils.getAyaPositionFileUrl());
 			fileNames.add("ayahinfo.db.zip");
-			directories.add(base);
+			directories.add(QuranUtils.getQuranDatabaseDirectory());
 		}
 
 		if (urls.size() > 0) {
@@ -212,6 +187,39 @@ public class QuranDataService extends Service {
 			thread.start();
 		} else {
 			isRunning = false;
+		}
+	}
+
+	private void addAyahForDownload(int soura, int ayah, int quranReader,
+			boolean downloadImage, ArrayList<String> fileNames,
+			ArrayList<String> urls, ArrayList<String> directories) {
+		AyahItem ayahItem = QuranAudioLibrary.getAyahItem(
+				getApplicationContext(), soura, ayah, quranReader);
+		String fileName = ayahItem.getLocalAudioUrl()
+				.substring(
+						ayahItem.getLocalAudioUrl().lastIndexOf(
+								File.separator) + 1);
+		String dir = ayahItem.getLocalAudioUrl().substring(0,
+				ayahItem.getLocalAudioUrl().lastIndexOf(File.separator));
+		File f = new File(dir, fileName);
+		if (f.exists())
+			return;
+		fileNames.add(fileName);
+		directories.add(dir);
+		urls.add(ayahItem.getRemoteAudioUrl());
+
+		if (downloadImage) {
+			fileName = ayahItem.getAyah()
+					+ QuranAudioLibrary.IMAGE_EXTENSION;
+			dir = QuranUtils.getSuraImagePath(ayahItem.getSoura());
+
+			f = new File(dir, fileName);
+			if (f.exists())
+				return;
+
+			fileNames.add(fileName);
+			directories.add(dir);
+			urls.add(ayahItem.getRemoteImageUrl());
 		}
 	}
 
@@ -305,7 +313,8 @@ public class QuranDataService extends Service {
 			long when = System.currentTimeMillis();
 			Notification notification = new Notification(R.drawable.icon, msg,
 					when);
-			notification.defaults |= flags;
+			notification.flags |= flags;
+			notification.defaults = Notification.DEFAULT_LIGHTS; 
 
 			Context context = getApplicationContext();
 			CharSequence contentTitle = "Quran Android";
