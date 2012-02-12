@@ -14,8 +14,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public abstract class InternetActivity extends BaseQuranActivity {
 	
@@ -135,6 +137,31 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadJuza(int readerId, Integer juza){
 			downloadPage(readerId, QuranInfo.getJuzBounds(juza));
+	}
+	
+	@Override
+	protected void searchRequested(){
+		if (QuranUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE)){
+			onSearchRequested();
+		}
+		else {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(InternetActivity.this);
+			dialog.setTitle(R.string.downloadPrompt_title)
+			.setMessage(R.string.download_arabic_search_db)
+			.setPositiveButton(R.string.downloadPrompt_ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					String fileUrl = QuranUtils.IMG_HOST + "databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
+					downloadTranslation(fileUrl, QuranDataProvider.QURAN_ARABIC_DATABASE);
+				}
+			})
+			.setNegativeButton(R.string.downloadPrompt_no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					onSearchRequested();
+				}
+			});
+			
+			dialog.show();
+		}
 	}
 	
     class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {

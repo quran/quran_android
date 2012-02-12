@@ -174,18 +174,10 @@ public class QuranDataService extends Service {
 		}
 
 		// Check aya info db
-		String base = QuranUtils.getQuranDatabaseDirectory();
-		if (base == null)
-			QuranUtils.makeQuranDatabaseDirectory();
-		String filename = QuranUtils.getAyaPositionFileName();
-		if (filename != null){
-			String ayaPositionDb = base + File.separator + filename;
-			File f = new File(ayaPositionDb);
-			if (!f.exists()) {
-				urls.add(QuranUtils.getAyaPositionFileUrl());
-				fileNames.add("ayahinfo.db.zip");
-				directories.add(base);
-			}
+		if (!QuranUtils.haveAyaPositionFile()){
+			urls.add(QuranUtils.getAyaPositionFileUrl());
+			fileNames.add("ayahinfo.db.zip");
+			directories.add(QuranUtils.getQuranDatabaseDirectory());
 		}
 
 		if (urls.size() > 0) {

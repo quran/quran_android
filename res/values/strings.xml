@@ -14,6 +14,8 @@
 			like to download the required translations now?</string>
     <string name="downloadPrompt_ok">Yes</string>
     <string name="downloadPrompt_no">No</string>
+    <string name="downloadHighlightingData">In order to highlight ayahs during audio
+        playback, we need to download some files.  Download them now?</string>
     <string name="downloading_title">Downloading…</string>
     <string name="downloading_message">Please wait for the files to download. (Resume supported)</string>
     <string name="extracting_title">Processing…</string>
@@ -98,7 +100,8 @@
     <string name="no_translations_available">You have not downloaded any translations.  Please download a translation first and then search again.</string>
     <string name="no_arabic_search_available">You have not downloaded the arabic search pack.  Please download it and try your search again.</string>
     <string name="get_arabic_search_db">Get Arabic Search Database</string>
-    
+    <string name="download_arabic_search_db">Download the Arabic Search Database to enable Arabic Searches?</string>
+        
     <!-- Quran Preference Activity -->
     <string name="prefs_category_reading">Reading Preferences</string>
     <string name="prefs_category_translation">Translation Preferences</string>

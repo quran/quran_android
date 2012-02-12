@@ -69,16 +69,20 @@ public class AudioServiceBinder extends Binder implements
 	public synchronized void stop() {
 		// reset enable remote play to false
 		enableRemotePlay(false);
-		if(mp != null && mp.isPlaying()){
-			try{
-			mp.stop();
-			mp.release();
-			mp = null;
-			}catch (Exception e) {
+		if (mp != null){
+			try {
+				mp.stop();
+			} catch (Exception e) {
 				Log.d("AudioServiceBinder:stop",
 						"Exception on calling media player stop " + e.toString() + " " + e.getMessage());
 			}
+			
+			try { mp.release(); }
+			catch (Exception ex){ }
+			
+			mp = null;
 		}
+		
 		paused = false;	
 		stopped = true;
 		currentItem = null;
@@ -98,17 +102,13 @@ public class AudioServiceBinder extends Binder implements
 		Log.d("Play", "1 playing ayah " + item.getAyah());
 		stopped = false;
 		paused = false;
-		// eclipse says this is dead code
-		// if (item == null)
-		//	  return;
+
 		this.currentItem = item;
-		if(mp != null && mp.isPlaying()){
-			mp.stop();
-//			try{
-//				mp.release();
-//			}catch(Exception e){}
-//			mp = null;
+		if(mp != null){
+			try { mp.stop(); }
+			catch (Exception e){ }
 		}
+		
 		try {
 			if(mp == null)
 				mp = new MediaPlayer();			
@@ -200,10 +200,9 @@ public class AudioServiceBinder extends Binder implements
 			mp.seekTo(0);
 			mp.start();
 			//play(currentItem);
-		}else{
+		} else{
 			repeats = 0;
 			if(mp != null && mp.isPlaying()){
-				Log.d("onCompletion", "1.1 mp is playing !!! stop it!!!");
 				mp.stop();
 			}
 
@@ -228,10 +227,13 @@ public class AudioServiceBinder extends Binder implements
 		}
 	}		
 	
-	public void destory(){
-		if(mp != null){
-			mp.stop();
-			mp.release();
+	public void destroy(){
+		if (mp != null){
+			try { mp.stop(); }
+			catch (Exception e){
+				try { mp.release(); }
+				catch (Exception ex){ }
+			}
 		}
 	}
 
