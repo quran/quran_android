@@ -47,10 +47,4 @@ public class QuranScreenInfo {
 	public void setOrientation(int orientation) {
 		this.orientation = orientation;
 	}
-
-	public float getRatio() {
-		if (height > width)
-			return (float)(1.0*height/width);
-		return (float)(1.0*width/height);
-	}
 }

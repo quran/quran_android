@@ -21,7 +21,6 @@ import android.widget.ImageView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
@@ -164,7 +163,7 @@ public class HighlightingImageView extends ImageView {
 				Bitmap bm = BitmapFactory.decodeResource(
 						getResources(), R.drawable.highlight);
 				
-				float screenRatio = QuranScreenInfo.getInstance().getRatio();
+				float screenRatio = (1.0f*getHeight())/(1.0f*getWidth());
 				float pageRatio = (float) (1.0* page.getIntrinsicHeight()/page.getIntrinsicWidth());
 				
 				float scaledPageHeight;

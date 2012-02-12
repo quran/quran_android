@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="errorString">لا يمكن تحميل صفحات القران</string>
     <string name="app_name">قران أندرويد </string>
     <string name="pageNotFound">لا توجد صفحة</string>
-    <string name="pageLoading"> جاري تحميل الصفحة...</string>
+    <string name="pageLoading"> جاري تحميل الصفحة&#8230;</string>
     <string name="downloadPrompt_title">حمل الملفات المطلوبه؟</string>
     <string name="downloadPrompt">لأداء أفضل، بعض الملفات في حاجه للتحميل على بطاقة الذاكرة الرقمية.
 		 إذا لم تقم بذلك الاختيار فإن الصفحات ستستغرق وقت أطول للتحميل.
@@ -12,10 +11,11 @@
     <string name="downloadTranslationPrompt">هل ترغب في تحميل الترجمة الآن؟</string>
     <string name="downloadPrompt_ok">نعم</string>
     <string name="downloadPrompt_no">لا</string>
+    <string name="downloadHighlightingData">تحتاج لتحميل بعض الملفات للحصول على تظليل للاية اثناء الستماع .حمل الان ؟</string>
     <string name="downloading_title">جاري التحميل....</string>
     <string name="downloading_message">يرجى الانتظار حتى نهاية التحميل</string>
-    <string name="extracting_title">تجهيز...</string>
-    <string name="extracting_message">يرجى الانتظار، تتم معالجة الملفات...</string>
+    <string name="extracting_title">تجهيز&#8230;</string>
+    <string name="extracting_message">يرجى الانتظار، تتم معالجة الملفات&#8230;</string>
     <string name="menu_jump">انتقال سريع</string>
     <string name="menu_about">عنا</string>
     <string name="menu_settings">الاعدادات</string>
@@ -86,13 +86,14 @@
     <!-- Search messages -->
     <string name="found_in_sura">سورة</string>
     <string name="no_results">لا توجد نتيجة للبحث \"%s\"</string>
-    <string name="no_active_translation">يجب تفعيل التفسير/الترجمة أولا -- اذهب إلى اﻹعدادات</string>
+    <string name="no_active_translation">يجب تفعيل التفسير/الترجمة أولا &#8212; اذهب إلى اﻹعدادات</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
     <string name="no_active_translation">يجب تفعيل التفسير/الترجمة أولا.. اذهب إلى اﻹعدادت</string>
     <string name="set_active_translation">التفسير/الترجمة</string>
     <string name="no_translations_available">من فضلك قم بتحميل التفسير/الترجمة من القائمة أولا</string>
     <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
     <string name="get_arabic_search_db">حمل قاعدة البيانات</string>
+    <string name="download_arabic_search_db">حمل قاعده البيانات للبحث بالعربي لامكانية البحث باللغة العربية ؟</string>
     
     <!-- Quran Preference Activity -->
     <string name="prefs_category_reading">إعدادات القراءة</string>
