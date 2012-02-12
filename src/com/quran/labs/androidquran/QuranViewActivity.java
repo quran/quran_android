@@ -629,6 +629,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	public void onDestroy(){
 		if (bounded){
 			unbindService(conn);
+			quranAudioPlayer.setAyahCompleteListener(null);
 		}
 		super.onDestroy();
 	}
