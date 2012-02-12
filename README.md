@@ -19,9 +19,10 @@ contributors include [Ahmed Farra](http://github.com/afarra) and [Mahmoud Hossam
 
 Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_rrr), based on Arabic Reshaper project by [Ahmed Essam](http://twitter.com/Neo_4583).
 
-Application localization
+App localization
 ------------------------
 Farsi translation by [@khajavi](http://github.com/khajavi).
+
 Turkish translation by Mehmed Mahmudoglu.
 
 
