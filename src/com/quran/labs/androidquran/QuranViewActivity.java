@@ -163,17 +163,25 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 			} else if (action.equalsIgnoreCase(ACTION_NEXT) && quranAudioPlayer != null) {
 				// Quick fix to switch actions 
 				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
+				/* removed temporarily so that we dont race with the audio binder. 
+				 * Ideally it should be done here but (24:22). May Allah accept
+				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
 				if (page != quranPageFeeder.getCurrentPagePosition()) 
 					quranPageFeeder.goToPreviousPage();
+				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS) && quranAudioPlayer != null) {
 				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
 						getLastAyah());
+				/* removed temporarily so that we dont race with the audio binder. 
+				 * Ideally it should be done here but (24:22). May Allah accept
+				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
 				if (page != quranPageFeeder.getCurrentPagePosition()) 
 					quranPageFeeder.goToNextpage();
+				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_STOP) && quranAudioPlayer != null) {
