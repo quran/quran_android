@@ -21,9 +21,11 @@ Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_
 
 App localization
 ------------------------
-Farsi translation by [@khajavi](http://github.com/khajavi).
+Farsi by [@khajavi](http://github.com/khajavi).
 
-Turkish translation by Mehmed Mahmudoglu.
+Turkish by Mehmed Mahmudoglu.
+
+Russian by Ринат Валеев.
 
 
 Terms of use
