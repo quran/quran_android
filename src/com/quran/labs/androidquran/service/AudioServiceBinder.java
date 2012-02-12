@@ -71,7 +71,7 @@ public class AudioServiceBinder extends Binder implements
 		enableRemotePlay(false);
 		if (mp != null){
 			try {
-				mp.stop();
+				if (mp.isPlaying()) mp.stop();
 			} catch (Exception e) {
 				Log.d("AudioServiceBinder:stop",
 						"Exception on calling media player stop " + e.toString() + " " + e.getMessage());
@@ -105,7 +105,7 @@ public class AudioServiceBinder extends Binder implements
 
 		this.currentItem = item;
 		if(mp != null){
-			try { mp.stop(); }
+			try { if (mp.isPlaying()) mp.stop(); }
 			catch (Exception e){ }
 		}
 		
