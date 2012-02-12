@@ -13,12 +13,11 @@ import com.quran.labs.androidquran.receivers.CallStateListener;
 public class QuranAudioService extends Service {
 
 	private PhoneStateListener psl;
-	private AudioServiceBinder mBinder;
+	private AudioServiceBinder mBinder = new AudioServiceBinder(this);
 	
 	@Override
 	public void onCreate() {		
 		super.onCreate();
-		mBinder = new AudioServiceBinder(this);
 		psl = new CallStateListener(mBinder);
 		((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE))
 			.listen(psl, PhoneStateListener.LISTEN_CALL_STATE);	
@@ -27,7 +26,7 @@ public class QuranAudioService extends Service {
 	@Override
 	public void onDestroy() {
 		try{
-			mBinder.destory();
+			mBinder.destroy();
 		}catch(Exception e){}
 		finally{
 			super.onDestroy();

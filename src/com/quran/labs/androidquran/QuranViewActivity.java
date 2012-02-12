@@ -41,6 +41,7 @@ import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.numberpicker.NumberPickerDialog;
 
 public class QuranViewActivity extends PageViewQuranActivity implements
@@ -150,25 +151,37 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 				if (quranAudioPlayer != null && quranAudioPlayer.isPaused()) {
 					quranAudioPlayer.resume();
 					onActionPlay();
-				} else
-					showPlayDialog();
+				} else {
+					if (!QuranUtils.haveAyaPositionFile()){
+						showDownloadAyahInfoDialog();
+					}
+					else showPlayDialog();
+				}
 			} else if (action.equalsIgnoreCase(ACTION_PAUSE) && quranAudioPlayer != null) {
 				quranAudioPlayer.pause();
 				onActionStop();
 			} else if (action.equalsIgnoreCase(ACTION_NEXT) && quranAudioPlayer != null) {
 				// Quick fix to switch actions 
 				lastAyah = QuranAudioLibrary.getPreviousAyahAudioItem(this, getLastAyah());
+				/* removed temporarily so that we dont race with the audio binder. 
+				 * Ideally it should be done here but (24:22). May Allah accept
+				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() - 1)) 
 					quranPageFeeder.goToPreviousPage();
+				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_PREVIOUS) && quranAudioPlayer != null) {
 				lastAyah = QuranAudioLibrary.getNextAyahAudioItem(this,
 						getLastAyah());
+				/* removed temporarily so that we dont race with the audio binder. 
+				 * Ideally it should be done here but (24:22). May Allah accept
+				 * 
 				int page = QuranInfo.getPageFromSuraAyah(lastAyah.getSoura(), lastAyah.getAyah());
-				if (page != quranPageFeeder.getCurrentPagePosition()) 
+				if (page == (quranPageFeeder.getCurrentPagePosition() + 1)) 
 					quranPageFeeder.goToNextpage();
+				*/
 				if (quranAudioPlayer != null && quranAudioPlayer.isPlaying())
 					quranAudioPlayer.play(lastAyah);
 			} else if (action.equalsIgnoreCase(ACTION_STOP) && quranAudioPlayer != null) {
@@ -217,6 +230,24 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		playing = false;
 	}
 
+	private void showDownloadAyahInfoDialog(){
+		AlertDialog.Builder dialog = new AlertDialog.Builder(QuranViewActivity.this);
+		dialog.setTitle(R.string.downloadPrompt_title)
+		.setMessage(R.string.downloadHighlightingData)
+		.setPositiveButton(R.string.downloadPrompt_ok, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				downloadTranslation(QuranUtils.getAyaPositionFileUrl(), "ayahinfo.db.zip");
+			}
+		})
+		.setNegativeButton(R.string.downloadPrompt_no, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				showPlayDialog();
+			}
+		});
+		
+		dialog.show();
+	}
+	
 	private void showPlayDialog() {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		LayoutInflater li = LayoutInflater.from(this);
@@ -606,6 +637,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	public void onDestroy(){
 		if (bounded){
 			unbindService(conn);
+			quranAudioPlayer.setAyahCompleteListener(null);
 		}
 		super.onDestroy();
 	}
