@@ -164,7 +164,7 @@ public class HighlightingImageView extends ImageView {
 				Bitmap bm = BitmapFactory.decodeResource(
 						getResources(), R.drawable.highlight);
 				
-				float screenRatio = QuranScreenInfo.getInstance().getRatio();
+				float screenRatio = (1.0f*getHeight())/(1.0f*getWidth());
 				float pageRatio = (float) (1.0* page.getIntrinsicHeight()/page.getIntrinsicWidth());
 				
 				float scaledPageHeight;
