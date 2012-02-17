@@ -67,15 +67,15 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void onConnectionFailed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Unable to connect to server, make sure that your Internet connection is active. Retry ?")
+		builder.setMessage(getString(R.string.download_connection_failed))
 		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		       .setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   dialog.dismiss();
 		        	   connect();
 		           }
 		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		       .setNegativeButton(getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   dialog.dismiss();
 		           }
@@ -254,7 +254,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);
     	pDialog.setCancelable(false);
-    	pDialog.setButton(ProgressDialog.BUTTON1, "Cancel", new DialogInterface.OnClickListener() {
+    	pDialog.setButton(ProgressDialog.BUTTON1, getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("QuranAndroid", "User canceled downloading..");
@@ -271,7 +271,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 					pDialog.dismiss();
 			}
 		});
-    	pDialog.setButton(ProgressDialog.BUTTON2, "Hide", new DialogInterface.OnClickListener() {
+    	pDialog.setButton(ProgressDialog.BUTTON2, getString(R.string.dialog_hide), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				hideProgressBar = true;

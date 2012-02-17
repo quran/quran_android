@@ -9,7 +9,9 @@
     <string name="downloadPrompt">For optimal performance, some files must be
 			downloaded.  If you choose not to do this now, each page will take
 			significantly longer to load. Would you like to download the required
-			files now?</string>
+			files now?
+		</string>
+		<string name="download_connection_failed">Unable to connect to server, make sure that your Internet connection is active. Retry ?</string>
     <string name="downloadTranslationPrompt">Would you
 			like to download the required translations now?</string>
     <string name="downloadPrompt_ok">Yes</string>
@@ -149,8 +151,9 @@
     <string name="menu_dialog_label">Dialog Picker</string>
     <string name="dialog_set_number">Set</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialg_ok">OK</string>
-    <string name="dialg_set">Set</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_set">Set</string>
+    <string name="dialog_hide">Hide</string>
     <string name="dialog_download">Download</string>
     <string name="dialog_stream">Stream</string>
     <string name="dialog_jump_ayah">Jump to ayah</string>
@@ -176,5 +179,8 @@
     <string name="quran_page">Page</string>
     <string name="quran_sura">Sura</string>
     <string name="quran_ayah">Ayah</string>
+    <string name="notification_downloading">Downloading..</string>
+    <string name="notification_download_paused">Download paused</string>
+    <string name="notification_download_canceled">Download canceled</string>
 
 </resources>

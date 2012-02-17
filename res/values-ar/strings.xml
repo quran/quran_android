@@ -8,14 +8,15 @@
     <string name="downloadPrompt">لأداء أفضل، بعض الملفات في حاجه للتحميل على بطاقة الذاكرة الرقمية.
 		 إذا لم تقم بذلك الاختيار فإن الصفحات ستستغرق وقت أطول للتحميل.
 		 هل ترغب في تحميل الملفات الآن؟</string>
+		 <string name="download_connection_failed">لا يمكن اﻹتصال بخادم البرنامج، برجاء التأكد أن اﻹتصال بالإنترنت متاح. هل ترغب في إعادة المحاولة ؟</string>
     <string name="downloadTranslationPrompt">هل ترغب في تحميل الترجمة الآن؟</string>
     <string name="downloadPrompt_ok">نعم</string>
     <string name="downloadPrompt_no">لا</string>
-    <string name="downloadHighlightingData">تحتاج لتحميل بعض الملفات للحصول على تظليل للاية اثناء الستماع .حمل الان ؟</string>
+    <string name="downloadHighlightingData">تحتاج لتحميل بعض الملفات للحصول على تظليل للآية أثناء الاستماع .حمل الان ؟</string>
     <string name="downloading_title">جاري التحميل....</string>
-    <string name="downloading_message">يرجى الانتظار حتى نهاية التحميل</string>
+    <string name="downloading_message">يرجى الإنتظار حتى نهاية التحميل</string>
     <string name="extracting_title">تجهيز&#8230;</string>
-    <string name="extracting_message">يرجى الانتظار، تتم معالجة الملفات&#8230;</string>
+    <string name="extracting_message">يرجى الإنتظار، تتم معالجة الملفات&#8230;</string>
     <string name="menu_jump">انتقال سريع</string>
     <string name="menu_about">عنا</string>
     <string name="menu_settings">الاعدادات</string>
@@ -43,10 +44,10 @@
     <string name="email_to">quran.android@gmail.com</string>
     <string name="aboutUs">	    تطبيق (قرآن آندرويد) هو تطبيق مجاني للقرآن الكريم لهواتف آندرويد، التطبيق مفتوح المصدر.
         \n- صور المصحف الشريف من موقع (http://quran.com)
-        \n- التلاوات من مdوقع (http://everyayah.com)
+        \n- التلاوات من موقع (http://everyayah.com)
         \n- التراجم والتفاسير من موقع (http://tanzil.net) وموقع جامعة الملك سعود (http://quran.ksu.edu.sa)
 				\n\nالمساهمون في التطبيق:
-				\n أحمد فارة.
+				\n أحمد فرة.
 				\n محمود حسام.
 				\n @fo2ad - خاصية التلاوة
 				\n @wnafee - تصفح الصفحات بإنسيابية (مبني على تطبيق android-page-curl)
@@ -140,11 +141,12 @@
     <string name="menu_dialog_label">Dialog Picker</string>
     <string name="dialog_set_number">اختر</string>
     <string name="dialog_cancel">إلغاء</string>
-    <string name="dialg_ok">موافق</string>
-    <string name="dialg_set">اختر</string>
+    <string name="dialog_ok">موافق</string>
+    <string name="dialog_set">اختر</string>
+    <string name="dialog_hide">إخفاء</string>
     <string name="dialog_download">حمّل</string>
     <string name="dialog_stream">استمع</string>
-    <string name="dialog_jump_ayah">Jump to ayah</string>
+    <string name="dialog_jump_ayah">اختر آية</string>
     <string name="dialog_repeat_title">التكرار</string>
     <string name="dialog_picker_title">العدد</string>
     <string name="dialog_show_current_suras">السور في الصفحة فقط</string>
@@ -167,5 +169,8 @@
     <string name="quran_page">الصفحة</string>
     <string name="quran_sura">سورة</string>
     <string name="quran_ayah">آية</string>
+    <string name="notification_downloading">جاري التحميل</string>
+    <string name="notification_download_paused">توقف التحميل</string>
+    <string name="notification_download_canceled">تم إلغاء التحميل</string>
 
 </resources>

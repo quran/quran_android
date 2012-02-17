@@ -145,8 +145,8 @@
     <string name="menu_dialog_label">Окно выбора</string>
     <string name="dialog_set_number">Выбрать</string>
     <string name="dialog_cancel">Отмена</string>
-    <string name="dialg_ok">OK</string>
-    <string name="dialg_set">Выбрать</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_set">Выбрать</string>
     <string name="dialog_download">Скачать</string>
     <string name="dialog_stream">В фоне</string>
     <string name="dialog_jump_ayah">Перейти к аяту</string>
