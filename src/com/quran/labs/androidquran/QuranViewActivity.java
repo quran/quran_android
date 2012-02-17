@@ -580,7 +580,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		s.setSelection(getReaderIndex(getQuranReaderId()));
 		dialogBuilder.setView(view);
 		dialogBuilder.setMessage(getString(R.string.dialog_select_reciter));
-		dialogBuilder.setPositiveButton(getString(R.string.dialg_ok),
+		dialogBuilder.setPositiveButton(getString(R.string.dialog_ok),
 				new DialogInterface.OnClickListener() {
 
 					@Override
