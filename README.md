@@ -25,7 +25,7 @@ Farsi by [@khajavi](http://github.com/khajavi).
 
 Turkish by Mehmed Mahmudoglu.
 
-Russian by Ринат Валеев.
+Russian by Rinat (Ринат Валеев).
 
 
 Terms of use
