@@ -5,6 +5,7 @@ import java.util.Locale;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -34,7 +35,7 @@ public class QuranPreferenceActivity extends PreferenceActivity {
 				restartRequired = true;
 				boolean isArabic = (Boolean)newValue;
 
-				Locale lang = (isArabic? new Locale("ar") : Locale.getDefault());
+				Locale lang = (isArabic? new Locale("ar") : Resources.getSystem().getConfiguration().locale);
 				Locale.setDefault(lang);
 				Configuration config = new Configuration();
 				config.locale = lang;
