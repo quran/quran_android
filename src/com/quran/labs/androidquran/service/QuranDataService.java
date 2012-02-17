@@ -293,17 +293,17 @@ public class QuranDataService extends Service {
 
 		private void onDowloadStart() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
-					"Downloading..", Notification.FLAG_AUTO_CANCEL);
+					getString(R.string.notification_downloading), Notification.FLAG_AUTO_CANCEL);
 		}
 
 		private void onDownloadPaused() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
-					"Download Paused", Notification.FLAG_AUTO_CANCEL);
+					getString(R.string.notification_download_paused), Notification.FLAG_AUTO_CANCEL);
 		}
 
 		private void onDownloadCanceled() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
-					"Download Canceled", Notification.FLAG_AUTO_CANCEL);
+					getString(R.string.notification_download_canceled), Notification.FLAG_AUTO_CANCEL);
 		}
 
 		private void showNotification(int notificationId, String msg, int flags) {
