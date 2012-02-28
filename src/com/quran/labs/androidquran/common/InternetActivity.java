@@ -246,6 +246,19 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	super.onPause();
     }
     
+    @Override
+    protected void onDestroy(){
+    	try {
+    		if (pDialog != null)
+    			pDialog.dismiss();
+    	}
+    	catch (Exception e){
+    		android.util.Log.d("InternetActivity", "exception while removing dialog: " + e);
+    	}
+    	
+    	super.onDestroy();
+    }
+    
 	private void showProgressDialog(){
 		if (hideProgressBar)
 			return;
