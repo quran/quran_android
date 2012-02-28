@@ -54,6 +54,10 @@ Project dependecies
 
 Changelog
 ---------
+**version 1.6.1**
+- download issue fixed
+- restore locale issue fixed
+
 **version 1.6.0**
 
 - search!  searches arabic text and translations!
