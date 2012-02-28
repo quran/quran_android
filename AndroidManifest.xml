@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.quran.labs.androidquran" android:versionCode="10" android:versionName="1.6.0" android:installLocation="preferExternal">
+	package="com.quran.labs.androidquran" android:versionCode="11" android:versionName="1.6.1" android:installLocation="preferExternal">
 	
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="7" />
     
