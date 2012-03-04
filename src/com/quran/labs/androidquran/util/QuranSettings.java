@@ -13,6 +13,7 @@ public class QuranSettings {
 	private boolean keepScreenOn = false;
 	private boolean lockOrientation = false;
 	private boolean landscapeOrientation = false;
+	private boolean enableAyahSelection = true;
 	private boolean displayMarkerPopup = true;
 	private boolean autoScroll = true;
 	private int translationTextSize = ApplicationConstants.DEFAULT_TEXT_SIZE;
@@ -97,6 +98,14 @@ public class QuranSettings {
 		this.landscapeOrientation = landscapeOrientation;
 	}
 	
+	public boolean isEnableAyahSelection() {
+		return enableAyahSelection;
+	}
+	
+	public void setEnableAyahSelection(boolean enableAyahSelection) {
+		this.enableAyahSelection = enableAyahSelection;
+	}
+	
 	public boolean isDisplayMarkerPopup() {
 		return displayMarkerPopup;
 	}
@@ -138,6 +147,7 @@ public class QuranSettings {
 		instance.keepScreenOn = preferences.getBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, true);
 		instance.lockOrientation = preferences.getBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, false);
 		instance.landscapeOrientation = preferences.getBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, false);
+		instance.enableAyahSelection = preferences.getBoolean(ApplicationConstants.PREF_ENABLE_AYAH_SELECTION, true);
 		instance.displayMarkerPopup = preferences.getBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, true);
 		instance.autoScroll = preferences.getBoolean(ApplicationConstants.PREF_AUTO_SCROLL, true);
 		instance.translationTextSize = preferences.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, ApplicationConstants.DEFAULT_TEXT_SIZE);
@@ -156,6 +166,7 @@ public class QuranSettings {
 		editor.putBoolean(ApplicationConstants.PREF_KEEP_SCREEN_ON, instance.keepScreenOn);
 		editor.putBoolean(ApplicationConstants.PREF_LOCK_ORIENTATION, instance.lockOrientation);
 		editor.putBoolean(ApplicationConstants.PREF_LANDSCAPE_ORIENTATION, instance.landscapeOrientation);
+		editor.putBoolean(ApplicationConstants.PREF_ENABLE_AYAH_SELECTION, instance.enableAyahSelection);
 		editor.putBoolean(ApplicationConstants.PREF_DISPLAY_MARKER_POPUP, instance.displayMarkerPopup);
 		editor.putBoolean(ApplicationConstants.PREF_AUTO_SCROLL, instance.autoScroll);
 		editor.putInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, instance.translationTextSize);

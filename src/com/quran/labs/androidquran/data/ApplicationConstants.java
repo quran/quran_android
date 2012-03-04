@@ -36,6 +36,7 @@ public class ApplicationConstants {
 	public static final String PREF_KEEP_SCREEN_ON = "keepScreenOn";
 	public static final String PREF_LOCK_ORIENTATION = "lockOrientation";
 	public static final String PREF_LANDSCAPE_ORIENTATION = "landscapeOrientation";
+	public static final String PREF_ENABLE_AYAH_SELECTION = "enableAyahSelection";
 	public static final String PREF_DISPLAY_MARKER_POPUP = "displayMarkerPopup";
 	public static final String PREF_AUTO_SCROLL = "autoScroll";
 	public static final String PREF_TRANSLATION_TEXT_SIZE = "translationTextSize";

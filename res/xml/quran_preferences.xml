@@ -3,7 +3,8 @@
     android:key="@string/prefs_path"
     android:title="Quran Settings" >
 
-    <PreferenceCategory android:title="@string/prefs_category_display_settings" >
+    <PreferenceCategory
+       android:title="@string/prefs_category_display_settings" >
 
         <CheckBoxPreference
             android:key="@string/prefs_keep_screen_on"
