@@ -4,6 +4,7 @@ import android.content.Context;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 
@@ -23,7 +24,7 @@ public class SelectTranslationPreference extends ListPreference {
 		// there is no available translations
 		if (items.length == 0) {
 			setEnabled(items.length > 0);
-			setSummary("No translations installed");
+			setSummary(context.getResources().getString(R.string.prefs_no_translations_installed));
 		}
 
 		setEntries(entries);

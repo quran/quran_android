@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -31,6 +32,7 @@ public class QuranDataProvider extends ContentProvider {
 	 public static final String AYAH_MIME_TYPE =
 		 ContentResolver.CURSOR_ITEM_BASE_TYPE +
           "/vnd.com.quran.labs.androidquran";
+	 public static final String QURAN_ARABIC_DATABASE = "quran.ar.db";
 
 	// UriMatcher stuff
 	private static final int SEARCH_VERSES = 0;
@@ -88,8 +90,8 @@ public class QuranDataProvider extends ContentProvider {
 
 	private Cursor search(String query){
 		if (QuranUtils.doesStringContainArabic(query) &&
-				QuranFileUtils.hasTranslation("quran.search.db")){
-			Cursor c = search(query, "quran.search.db", true);
+				QuranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)){
+			Cursor c = search(query, QURAN_ARABIC_DATABASE, true);
 			if (c != null) return c;
 		}
 		
@@ -112,7 +114,7 @@ public class QuranDataProvider extends ContentProvider {
 		
 		int numItems = 1;
 		if (QuranUtils.doesStringContainArabic(query) &&
-				QuranFileUtils.hasTranslation("quran.search.db")){
+				QuranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)){
 			numItems = 2;
 		}
 		
@@ -121,7 +123,7 @@ public class QuranDataProvider extends ContentProvider {
 		if (numItems == 1) items[0] = getActiveTranslation();
 		else {
 			TranslationItem arabicItem = new TranslationItem();
-			arabicItem.setFileName("quran.search.db");
+			arabicItem.setFileName(QURAN_ARABIC_DATABASE);
 			items[0] = arabicItem;
 			items[1] = getActiveTranslation();
 		}
@@ -142,8 +144,9 @@ public class QuranDataProvider extends ContentProvider {
 					int sura = suggestions.getInt(0);
 					int ayah = suggestions.getInt(1);
 					String text = suggestions.getString(2);
-					String foundText = "Found in Sura " +
-						QuranInfo.getSuraName(sura-1) + ", verse " + ayah;
+					String foundText = getContext().getString(R.string.found_in_sura) + " " +
+						QuranInfo.getSuraName(sura-1) + ", " + 
+						getContext().getString(R.string.quran_ayah) + " " + ayah;
 					
 					gotResults = true;
 					MatrixCursor.RowBuilder row = mc.newRow();
@@ -221,5 +224,4 @@ public class QuranDataProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		throw new UnsupportedOperationException();
 	}
-
 }

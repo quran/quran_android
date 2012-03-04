@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -64,9 +65,8 @@ public class SearchActivity extends InternetActivity {
 	}
 
 	private void downloadArabicSearchDb(){
-		String fileUrl =
-			"http://labs.quran.com/androidquran/databases/quran.search.db";
-		downloadTranslation(fileUrl, "quran.search.db");
+		String fileUrl = QuranFileUtils.IMG_HOST + "databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
+		downloadTranslation(fileUrl, QuranDataProvider.QURAN_ARABIC_DATABASE);
 	}
 	
 	@Override
@@ -89,12 +89,23 @@ public class SearchActivity extends InternetActivity {
 		else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 			Uri intentData = intent.getData();
 			String query = intent.getStringExtra(SearchManager.USER_QUERY);
+			if (query == null){
+				Bundle extras = intent.getExtras();
+				if (extras != null){
+					// bug on ics where the above returns null
+					// http://code.google.com/p/android/issues/detail?id=22978
+					Object q = extras.get(SearchManager.USER_QUERY);
+					if (q != null && q instanceof SpannableString){
+						query = ((SpannableString)q).toString();
+					}
+				}
+			}
 			if (QuranUtils.doesStringContainArabic(query))
 				isArabicSearch = true;
 			if (isArabicSearch){
 				// if we come from muyassar and don't have arabic db, we set
 				// arabic search to false so we jump to the translation.
-				if (!QuranFileUtils.hasTranslation("quran.search.db"))
+				if (!QuranFileUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE))
 					isArabicSearch = false;
 			}
 			
@@ -126,9 +137,11 @@ public class SearchActivity extends InternetActivity {
 	private void jumpToResult(int sura, int ayah){
 		int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
 		Intent intent = null;
-		if (isArabicSearch)
+		if (isArabicSearch) {
 			intent = new Intent(this, QuranViewActivity.class);
-		else intent = new Intent(this, TranslationActivity.class);
+			intent.setAction(QuranViewActivity.ACTION_GO_TO_PAGE);
+		} else 
+			intent = new Intent(this, TranslationActivity.class);
 		intent.putExtra("page", page);
 		startActivity(intent);
 		finish();
@@ -137,7 +150,7 @@ public class SearchActivity extends InternetActivity {
 	private void showResults(String query){
 		isArabicSearch = QuranUtils.doesStringContainArabic(query);
 		boolean showArabicWarning = (isArabicSearch &&
-			!QuranFileUtils.hasTranslation("quran.search.db"));
+			!QuranFileUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE));
 		if (showArabicWarning) isArabicSearch = false;
 		
 		Cursor cursor = managedQuery(QuranDataProvider.SEARCH_URI,
@@ -272,9 +285,9 @@ public class SearchActivity extends InternetActivity {
 			SearchElement v = elements.get(position);
 			holder.text.setText(Html.fromHtml(ArabicStyle.reshape(v.text)));
 
-			holder.metadata.setText("Found in Sura " +
+			holder.metadata.setText(mInflater.getContext().getString(R.string.found_in_sura) + " " + 
 					ArabicStyle.reshape(QuranInfo.getSuraName(v.sura-1)) +
-					", verse " + v.ayah);
+					", " + mInflater.getContext().getString(R.string.quran_ayah) + " " + v.ayah);
 			return convertView;
 		}
 

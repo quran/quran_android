@@ -3,16 +3,17 @@ package com.quran.labs.androidquran.service;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -38,7 +39,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 public class QuranDataService extends Service {
 
-	public static final String DWONLOAD_TYPE_KEY = "downloadType";
+	public static final String DOWNLOAD_TYPE_KEY = "downloadType";
 	public static final String SOURA_KEY = "soura";
 	public static final String END_SOURA_KEY = "endSoura";
 	public static final String AYAH_KEY = "ayah";
@@ -104,7 +105,7 @@ public class QuranDataService extends Service {
 		if (intent == null)
 			return;
 
-		int downloadType = intent.getIntExtra(DWONLOAD_TYPE_KEY, -1);
+		int downloadType = intent.getIntExtra(DOWNLOAD_TYPE_KEY, -1);
 		switch (downloadType) {
 		case DOWNLOAD_QURAN_IMAGES:
 			isRunning = true;
@@ -174,15 +175,10 @@ public class QuranDataService extends Service {
 		}
 
 		// Check aya info db
-		String base = QuranFileUtils.getQuranDatabaseDirectory();
-		if (base == null)
-			QuranFileUtils.makeQuranDatabaseDirectory();
-		String ayaPositionDb = base + File.separator + "ayahinfo.db";
-		File f = new File(ayaPositionDb);
-		if (!f.exists()) {
+		if (!QuranFileUtils.haveAyaPositionFile()){
 			urls.add(QuranFileUtils.getAyaPositionFileUrl());
 			fileNames.add("ayahinfo.db.zip");
-			directories.add(base);
+			directories.add(QuranFileUtils.getQuranDatabaseDirectory());
 		}
 
 		if (urls.size() > 0) {
@@ -298,17 +294,17 @@ public class QuranDataService extends Service {
 
 		private void onDowloadStart() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
-					"Downloading..", Notification.FLAG_AUTO_CANCEL);
+					getString(R.string.notification_downloading), Notification.FLAG_AUTO_CANCEL);
 		}
 
 		private void onDownloadPaused() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
-					"Download Paused", Notification.FLAG_AUTO_CANCEL);
+					getString(R.string.notification_download_paused), Notification.FLAG_AUTO_CANCEL);
 		}
 
 		private void onDownloadCanceled() {
 			showNotification(ApplicationConstants.NOTIFICATION_DOWNLOADING,
-					"Download Canceled", Notification.FLAG_AUTO_CANCEL);
+					getString(R.string.notification_download_canceled), Notification.FLAG_AUTO_CANCEL);
 		}
 
 		private void showNotification(int notificationId, String msg, int flags) {
@@ -318,7 +314,8 @@ public class QuranDataService extends Service {
 			long when = System.currentTimeMillis();
 			Notification notification = new Notification(R.drawable.icon, msg,
 					when);
-			notification.defaults |= flags;
+			notification.flags |= flags;
+			notification.defaults = Notification.DEFAULT_LIGHTS; 
 
 			Context context = getApplicationContext();
 			CharSequence contentTitle = "Quran Android";
@@ -346,63 +343,84 @@ public class QuranDataService extends Service {
 			try {
 				for (; downloadIndex < fileNames.length; downloadIndex++) {
 					int downloaded = 0;
+					boolean skipDownload = false;
+					boolean shouldRename = true;
 					File f = new File(saveToDirectories[downloadIndex]);
 					f.mkdirs();
+					
+					// try to open the actual file without .part in case
+					// it has already finished downloading.
 					File file = new File(saveToDirectories[downloadIndex],
-							fileNames[downloadIndex] + DOWNLOAD_EXT);
+							fileNames[downloadIndex]);
 					URL url = new URL(downloadUrls[downloadIndex]);
 					URLConnection conn = url.openConnection();
 					fileLength = conn.getContentLength();
-					if(!isSpaceAvailable()){
-						Log.e("quran_srv", "Not enough space on SD card");
-						return false;
+					if (file.exists() && (fileLength == (int)file.length())){
+						skipDownload = true;
+						shouldRename = false;
+					}		
+					else {
+						// try to see if the filename with .part exists
+						file = new File(saveToDirectories[downloadIndex],
+							fileNames[downloadIndex] + DOWNLOAD_EXT);
+						if (file.exists()) {
+							downloaded = (int) file.length();
+							Log.d("quran_srv", "Resuming from " + downloaded);
+							if (downloaded == fileLength)
+								skipDownload = true;
+						}
 					}
-					Log.d("quran_srv", "File to download: " + file.getName()
-							+ " - total length: " + fileLength);
-					HttpURLConnection connection = (HttpURLConnection) url
+					
+					if (!skipDownload){
+						if(!isSpaceAvailable()){
+							Log.e("quran_srv", "Not enough space on SD card");
+							return false;
+						}
+						Log.d("quran_srv", "File to download: " + file.getName()
+								+ " - total length: " + fileLength);
+						
+						HttpURLConnection connection = (HttpURLConnection) url
 							.openConnection();
-					if (file.exists()) {
-						downloaded = (int) file.length();
-						connection.setRequestProperty("Range",
-								"bytes=" + (file.length()) + "-");
-						Log.d("quran_srv", "Resuming from " + downloaded);
-						if (downloaded == fileLength)
-							continue;
+						connection.setRequestProperty("Range", "bytes="
+								+ downloaded + "-");
+						connection.setDoInput(true);
+						in = new BufferedInputStream(connection.getInputStream(),
+								DOWNLOAD_BUFFER_SIZE);
+						fos = (downloaded == 0) ? new FileOutputStream(
+								file.getAbsolutePath()) : new FileOutputStream(
+								file.getAbsolutePath(), true);
+	
+						bout = new BufferedOutputStream(fos, DOWNLOAD_BUFFER_SIZE);
+						byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
+						int x = 0;
+	
+						while (isRunning
+								&& (x = in.read(data, 0, DOWNLOAD_BUFFER_SIZE)) >= 0) {
+							bout.write(data, 0, x);
+							downloaded += x;
+							double percent = 100.0 * ((1.0 * downloaded) / (1.0 * fileLength));
+							updateProgress((int) percent, fileNames.length,
+									downloadIndex, false);
+						}
+						bout.flush();
+						bout.close();
+						fos.close();
 					}
-					connection.setRequestProperty("Range", "bytes="
-							+ downloaded + "-");
-					connection.setDoInput(true);
-					in = new BufferedInputStream(connection.getInputStream(),
-							DOWNLOAD_BUFFER_SIZE);
-					fos = (downloaded == 0) ? new FileOutputStream(
-							file.getAbsolutePath()) : new FileOutputStream(
-							file.getAbsolutePath(), true);
-
-					bout = new BufferedOutputStream(fos, DOWNLOAD_BUFFER_SIZE);
-					byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
-					int x = 0;
-
-					while (isRunning
-							&& (x = in.read(data, 0, DOWNLOAD_BUFFER_SIZE)) >= 0) {
-						bout.write(data, 0, x);
-						downloaded += x;
-						double percent = 100.0 * ((1.0 * downloaded) / (1.0 * fileLength));
-						updateProgress((int) percent, fileNames.length,
-								downloadIndex);
-					}
-					bout.flush();
-					bout.close();
-					fos.close();
 
 					if (isRunning) {
-						file.renameTo(new File(
+						updateProgress(100, fileNames.length, downloadIndex, false);
+						if (shouldRename){
+							file.renameTo(new File(
 								saveToDirectories[downloadIndex],
 								fileNames[downloadIndex]));
+						}
 
 						if (zipped || fileNames[downloadIndex].endsWith(".zip"))
 							unzipFile(saveToDirectories[downloadIndex],
-									fileNames[downloadIndex]);
+									fileNames[downloadIndex],
+									fileNames.length, downloadIndex);
 
+						updateProgress(100, fileNames.length, downloadIndex, true);
 						Log.d("quran_srv", "Download Completed ["
 								+ downloadUrls[downloadIndex] + "]");
 					} else
@@ -428,9 +446,14 @@ public class QuranDataService extends Service {
 		}
 
 		private void updateProgress(int percent, int totalFiles,
-				int nDownloadedFiles) {
-			percent = (int) (((double) percent / (double) 100 + (double) nDownloadedFiles)
-					/ (double) totalFiles * 100);
+				int nDownloadedFiles, boolean zipPortion) {
+			//android.util.Log.d("quran_srv", "called updateProgress with " + percent + ", " + totalFiles + ", "
+			//		+ nDownloadedFiles + ", " + zipPortion);
+			int totalPercent = totalFiles * 100;
+			int donePercent = nDownloadedFiles * 100;
+			int thisFileDone = (int)(1.0 * percent / 2.0) + (zipPortion? 50 : 0);
+			donePercent = donePercent + thisFileDone;
+		    percent = (int)((100.0 * donePercent) / (1.0 * totalPercent));
 			service.updateProgress(percent);
 			// notification.contentView.setTextViewText(R.id.text,
 			// "Downloading.. " + percent + "%");
@@ -472,38 +495,48 @@ public class QuranDataService extends Service {
 			thread = null;
 		}
 
-		protected void unzipFile(String saveToDirectory, String fileName) {
+		protected void unzipFile(String saveToDirectory, String fileName,
+				int totalFiles, int downloadedFiles) {
 			try {
 				Log.d("quran_srv", "Unziping file: " + saveToDirectory
 						+ fileName);
 				// success, unzip the file...
 				File file = new File(saveToDirectory, fileName);
-				FileInputStream is = new FileInputStream(file);
-				ZipInputStream zis = new ZipInputStream(is);
-
-				ZipEntry entry;
-				while ((entry = zis.getNextEntry()) != null) {
+				ZipFile zip = new ZipFile(file, ZipFile.OPEN_READ);
+				int numberOfFiles = zip.size();
+				Enumeration<? extends ZipEntry> entries = zip.entries();
+				
+				int processedFiles = 0;
+				while (entries.hasMoreElements()) {
+					processedFiles++;
+					ZipEntry entry = entries.nextElement();
 					if (entry.isDirectory()) {
-						zis.closeEntry();
+						File f = new File(saveToDirectory, entry.getName());
+						if (!f.exists()){
+							f.mkdirs();
+						}
 						continue;
 					}
 
 					// ignore files that already exist
 					File f = new File(saveToDirectory, entry.getName());
 					if (!f.exists()) {
+						InputStream is = zip.getInputStream(entry);
 						FileOutputStream ostream = new FileOutputStream(f);
 
 						int size;
 						byte[] buf = new byte[DOWNLOAD_BUFFER_SIZE];
-						while ((size = zis.read(buf)) > 0)
+						while ((size = is.read(buf)) > 0)
 							ostream.write(buf, 0, size);
+						is.close();
 						ostream.close();
 					}
-					zis.closeEntry();
+					
+					updateProgress((int)((100.0 * processedFiles) / (1.0 * numberOfFiles)),
+							totalFiles, downloadedFiles, true);
 				}
 
-				zis.close();
-				is.close();
+				zip.close();
 
 				file.delete();
 				Log.d("quran_srv", "file unzipped successfully");

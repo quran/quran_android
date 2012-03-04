@@ -11,6 +11,8 @@ import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -19,10 +21,12 @@ import android.widget.ImageView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;
+	private boolean colorFilterOn = false;
 	
 	public HighlightingImageView(Context context){
 		super(context);
@@ -44,8 +48,11 @@ public class HighlightingImageView extends ImageView {
 	
 	public void highlightAyah(int sura, int ayah){
 		try {
+			String filename = QuranFileUtils.getAyaPositionFileName();
+			if (filename == null) return;
+			
 			AyahInfoDatabaseHandler handler =
-				new AyahInfoDatabaseHandler("ayahinfo.db");
+				new AyahInfoDatabaseHandler(filename);
 			Cursor cursor = handler.getVerseBounds(sura, ayah);
 			Map<Integer, AyahBounds> lineCoords =
 				new HashMap<Integer, AyahBounds>();
@@ -128,6 +135,25 @@ public class HighlightingImageView extends ImageView {
 		return yBounds;
 	}
 	
+	public void adjustNightMode() {
+		if (QuranSettings.getInstance().isNightMode() && !colorFilterOn) {
+			setBackgroundColor(Color.BLACK);
+			float[] matrix = { 
+				-1, 0, 0, 0, 255,
+				0, -1, 0, 0, 255,
+				0, 0, -1, 0, 255,
+				0, 0, 0, 1, 0 
+			};
+			setColorFilter(new ColorMatrixColorFilter(matrix));
+			colorFilterOn = true;
+		} else if (!QuranSettings.getInstance().isNightMode() && colorFilterOn) {
+			clearColorFilter();
+			setBackgroundColor(getResources().getColor(R.color.page_background));
+			colorFilterOn = false;
+		}
+		invalidate();
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -137,7 +163,7 @@ public class HighlightingImageView extends ImageView {
 				Bitmap bm = BitmapFactory.decodeResource(
 						getResources(), R.drawable.highlight);
 				
-				float screenRatio = QuranScreenInfo.getInstance().getRatio();
+				float screenRatio = (1.0f*getHeight())/(1.0f*getWidth());
 				float pageRatio = (float) (1.0* page.getIntrinsicHeight()/page.getIntrinsicWidth());
 				
 				float scaledPageHeight;
