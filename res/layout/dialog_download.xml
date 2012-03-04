@@ -23,9 +23,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"/>
-            <RadioButton android:id="@+id/radioDownloadPage" android:text="Current Page" android:checked="true"/>
-            <RadioButton android:id="@+id/radioDownloadSura" android:text="Current Sura"/>
-            <RadioButton android:id="@+id/radioDownloadJuza" android:text="Current Juza"/>
+            <RadioButton android:id="@+id/radioDownloadPage" android:text="@string/quran_page" android:checked="true"/>
+            <RadioButton android:id="@+id/radioDownloadSura" android:text="@string/quran_sura"/>
+            <RadioButton android:id="@+id/radioDownloadJuza" android:text="@string/quran_juz2"/>
         </RadioGroup>
     </ScrollView>
 </LinearLayout>

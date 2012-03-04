@@ -14,8 +14,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 public abstract class InternetActivity extends BaseQuranActivity {
 	
@@ -65,15 +67,15 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void onConnectionFailed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Unable to connect to server, make sure that your Internet connection is active. Retry ?")
+		builder.setMessage(getString(R.string.download_connection_failed))
 		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		       .setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   dialog.dismiss();
 		        	   connect();
 		           }
 		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		       .setNegativeButton(getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   dialog.dismiss();
 		           }
@@ -85,7 +87,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	protected void startDownloadService(Intent intent) {
     	starting = true;    	
     	
-    	int downloadType = intent.getIntExtra(QuranDataService.DWONLOAD_TYPE_KEY, -1);
+    	int downloadType = intent.getIntExtra(QuranDataService.DOWNLOAD_TYPE_KEY, -1);
     	if(downloadType != -1){
     		startService(intent);
     		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -96,7 +98,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadTranslation(String url, String fileName) {
 		Intent intent = new Intent(this, QuranDataService.class);
-    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_TRANSLATION);
+    	intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_TRANSLATION);
     	intent.putExtra(QuranDataService.URL_KEY, url);
     	intent.putExtra(QuranDataService.FILE_NAME_KEY, fileName);
     	startDownloadService(intent);
@@ -104,7 +106,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadQuranImages() {
 		Intent intent = new Intent(this, QuranDataService.class);
-    	intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_QURAN_IMAGES);
+    	intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_QURAN_IMAGES);
     	startDownloadService(intent);
 	}
 	
@@ -114,7 +116,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadSura(int readerId, int sura, int ayah) {
 		Intent intent = new Intent(this, QuranDataService.class);
-		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 		intent.putExtra(QuranDataService.SOURA_KEY, sura);
 		intent.putExtra(QuranDataService.AYAH_KEY, ayah);
 		intent.putExtra(QuranDataService.READER_KEY, readerId);
@@ -123,7 +125,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadPage(int readerId, Integer[] integers){		
 		Intent intent = new Intent(this, QuranDataService.class);
-		intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+		intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 		intent.putExtra(QuranDataService.SOURA_KEY, integers[0]);
 		intent.putExtra(QuranDataService.AYAH_KEY, integers[1]);
 		intent.putExtra(QuranDataService.END_SOURA_KEY, integers[2]);
@@ -135,6 +137,31 @@ public abstract class InternetActivity extends BaseQuranActivity {
 	
 	protected void downloadJuza(int readerId, Integer juza){
 			downloadPage(readerId, QuranInfo.getJuzBounds(juza));
+	}
+	
+	@Override
+	protected void searchRequested(){
+		if (QuranFileUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE)){
+			onSearchRequested();
+		}
+		else {
+			AlertDialog.Builder dialog = new AlertDialog.Builder(InternetActivity.this);
+			dialog.setTitle(R.string.downloadPrompt_title)
+			.setMessage(R.string.download_arabic_search_db)
+			.setPositiveButton(R.string.downloadPrompt_ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					String fileUrl = QuranFileUtils.IMG_HOST + "databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
+					downloadTranslation(fileUrl, QuranDataProvider.QURAN_ARABIC_DATABASE);
+				}
+			})
+			.setNegativeButton(R.string.downloadPrompt_no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					onSearchRequested();
+				}
+			});
+			
+			dialog.show();
+		}
 	}
 	
     class ProgressBarUpdateTask extends AsyncTask<Void, Integer, Void> {
@@ -219,6 +246,19 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	super.onPause();
     }
     
+    @Override
+    protected void onDestroy(){
+    	try {
+    		if (pDialog != null)
+    			pDialog.dismiss();
+    	}
+    	catch (Exception e){
+    		android.util.Log.d("InternetActivity", "exception while removing dialog: " + e);
+    	}
+    	
+    	super.onDestroy();
+    }
+    
 	private void showProgressDialog(){
 		if (hideProgressBar)
 			return;
@@ -227,7 +267,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
     	pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     	pDialog.setTitle(R.string.downloading_title);
     	pDialog.setCancelable(false);
-    	pDialog.setButton(ProgressDialog.BUTTON1, "Cancel", new DialogInterface.OnClickListener() {
+    	pDialog.setButton(ProgressDialog.BUTTON1, getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("QuranAndroid", "User canceled downloading..");
@@ -244,7 +284,7 @@ public abstract class InternetActivity extends BaseQuranActivity {
 					pDialog.dismiss();
 			}
 		});
-    	pDialog.setButton(ProgressDialog.BUTTON2, "Hide", new DialogInterface.OnClickListener() {
+    	pDialog.setButton(ProgressDialog.BUTTON2, getString(R.string.dialog_hide), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				hideProgressBar = true;

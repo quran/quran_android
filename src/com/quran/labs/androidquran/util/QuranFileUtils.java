@@ -254,13 +254,36 @@ public class QuranFileUtils {
 		return url;
 	}
 	
+	public static String getAyaPositionFileName(){
+		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+		if (qsi == null) return null;
+		return "ayahinfo" + qsi.getWidthParam() + ".db";
+	}
+
 	public static String getAyaPositionFileUrl() {
-		String url = IMG_HOST;
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
 		if (qsi == null)
 			return null;
-		url += "databases/ayahinfo" + qsi.getWidthParamNoUnderScore() + ".db.zip";
+		String url = IMG_HOST + "width" + qsi.getWidthParam();
+		url += "/ayahinfo" + qsi.getWidthParam() + ".zip";
 		return url;
+	}
+
+	public static boolean haveAyaPositionFile(){
+		String base = QuranFileUtils.getQuranDatabaseDirectory();
+		if (base == null)
+			QuranFileUtils.makeQuranDatabaseDirectory();
+		String filename = QuranFileUtils.getAyaPositionFileName();
+		if (filename != null){
+			String ayaPositionDb = base + File.separator + filename;
+			File f = new File(ayaPositionDb);
+			if (!f.exists()) {
+				return false;
+			}
+			else { return true; }
+		}
+
+		return false;
 	}
 
 	public static boolean hasTranslation(String fileName) {

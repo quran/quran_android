@@ -1,19 +1,32 @@
 quran for android
 ==================================
 
-this is a simple (madani based) quran app for android.  for details about
-the images used, please check out the 
-[quran images project](http://github.com/quran/quran.com-images) on github.
-translation and arabic data come from [tanzil](http://tanzil.net).
+this is a simple (madani based) quran app for android.
+- images from [quran images project](http://github.com/quran/quran.com-images) on github.
+- translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
+- audio from [Every Ayah](http://everyayah.com/).
 
 patches, comments, etc are welcome.
 
-code by [@ahmedre](http://twitter.com/ahmedre),
-[@HusseinMaher](http://twitter.com/husseinmaher),
-and [@wnafee](http://twitter.com/wnafee).  graphics by
-[@somaiagabr](http://twitter.com/somaiagabr).
+code by [Ahmed El-Helw](http://twitter.com/ahmedre),
+[Ahmed Fouad](http://twitter.com/fo2ad),
+[Hussein Maher](http://twitter.com/husseinmaher),
+and [Wael Nafee](http://twitter.com/wnafee).
 
-contributors include [@afarra](http://github.com/afarra) and [@mahmoudhossam](http://github.com/mahmoudhossam).
+graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
+
+contributors include [Ahmed Farra](http://github.com/afarra) and [Mahmoud Hossam](http://github.com/mahmoudhossam).
+
+Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_rrr), based on Arabic Reshaper project by [Ahmed Essam](http://twitter.com/Neo_4583).
+
+App localization
+------------------------
+Farsi by [@khajavi](http://github.com/khajavi).
+
+Turkish by Mehmed Mahmudoglu.
+
+Russian by Rinat (Ринат Валеев).
+
 
 Terms of use
 ------------
@@ -41,6 +54,22 @@ Project dependecies
 
 Changelog
 ---------
+**version 1.6.1**
+- download issue fixed
+- restore locale issue fixed
+
+**version 1.6.0**
+
+- search!  searches arabic text and translations!
+- beta: audio repeat feature!
+- beta: night mode!
+- farsi translation now available, and app now localized in farsi (thanks khajavi).
+- full arabic ui
+- better images for ldpi devices.
+- looks nicer now on tablet and large devices.
+- bugfixes for ICS and 1.5 devices.
+- many, many bugfixes and minor improvements.
+
 **version 1.5.2**
 
 - fix crash on android 1.5.

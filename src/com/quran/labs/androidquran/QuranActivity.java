@@ -32,7 +32,6 @@ public class QuranActivity extends BaseQuranActivity {
 	private ActionBar actionBar;
 	private static final String ACTION_BOOKMARK = "BOOKMARK";
 	private static final String ACTION_RESUME = "RESUME";
-	private static final String ACTION_AUDIO_MANAGER = "DOWNLOAD";
 	private static boolean alreadyJumped = false;
 		
     /** Called when the activity is first created. */
@@ -65,7 +64,6 @@ public class QuranActivity extends BaseQuranActivity {
 		actionBar.setTitle("Quran");
 		actionBar.addAction(getIntentAction(ACTION_RESUME, R.drawable.translation));
 		actionBar.addAction(getIntentAction(ACTION_BOOKMARK, R.drawable.bookmarks));
-		actionBar.addAction(getIntentAction(ACTION_AUDIO_MANAGER, R.drawable.download));
 		actionBar.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -83,9 +81,6 @@ public class QuranActivity extends BaseQuranActivity {
 	    	startActivityForResult(i, BOOKMARKS_CODE);
 		} else if (ACTION_RESUME.equals(action)) {
 			jumpTo(QuranSettings.getInstance().getLastPage());
-		} else if (ACTION_AUDIO_MANAGER.equals(action)){
-			Intent i = new Intent(this, AudioManagerActivity.class);
-			startActivity(i);
 		}
 	}
 	
@@ -127,13 +122,11 @@ public class QuranActivity extends BaseQuranActivity {
 		showSuras();
 		
 		Integer lastPage = QuranSettings.getInstance().getLastPage();
-		if (lastPage != null && lastPage != NO_PAGE_SAVED){
-			if (!alreadyJumped){
-				alreadyJumped = true;
-				jumpTo(lastPage);
-			}
+		if (lastPage != null && lastPage != NO_PAGE_SAVED && !alreadyJumped){
+			alreadyJumped = true;
+			jumpTo(lastPage);
 		}
-		else if (lastPage != null && lastPage > 0  && lastPage < 605){
+		else if (lastPage != null && lastPage > 0 && lastPage < 605){
 			int currentSura = QuranInfo.PAGE_SURA_START[lastPage-1];
 			int juz = QuranInfo.getJuzFromPage(lastPage);
 			int position = currentSura + juz - 1;
@@ -261,7 +254,7 @@ public class QuranActivity extends BaseQuranActivity {
 		
 		private void downloadSuraAudio(int suraId) {
 			Intent intent = new Intent(QuranActivity.this, QuranDataService.class);
-			intent.putExtra(QuranDataService.DWONLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
+			intent.putExtra(QuranDataService.DOWNLOAD_TYPE_KEY, QuranDataService.DOWNLOAD_SURA_AUDIO);
 			intent.putExtra(QuranDataService.SOURA_KEY, suraId);
 			intent.putExtra(QuranDataService.AYAH_KEY, (int)1);
 			intent.putExtra(QuranDataService.READER_KEY, 1);

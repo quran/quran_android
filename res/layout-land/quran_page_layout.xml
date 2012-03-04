@@ -3,6 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width = "fill_parent"
 	android:layout_height = "fill_parent"
+	android:orientation = "vertical"
 	android:layout_gravity = "center">
 	<ImageView android:id="@+id/left_border"
        android:background="@drawable/border_left"
@@ -18,17 +19,19 @@
 		android:layout_height="fill_parent"
 		android:gravity = "center"
 		android:textSize="16sp" 
-		android:textColor="@android:color/black" />
+		android:textColor="@android:color/black" />	
  	<ScrollView 
  		android:id = "@+id/page_scroller"
- 		android:layout_width = "wrap_content"
+ 		android:layout_width = "fill_parent"
  		android:layout_height = "wrap_content"
  		android:layout_toRightOf="@id/left_border"
- 		android:layout_toLeftOf="@+id/right_border"
+      android:layout_toLeftOf="@+id/right_border"
+ 		android:layout_gravity="center_horizontal"
  		android:fillViewport="true">
 	<com.quran.labs.androidquran.widgets.HighlightingImageView
-		android:id = "@+id/page_image"
-  		android:layout_width = "wrap_content"
+      android:id = "@+id/page_image"
+		android:layout_gravity="center_horizontal"
+  		android:layout_width = "fill_parent"
   		android:layout_height = "wrap_content"/>
   	</ScrollView>
    <ImageView android:id="@id/right_border"

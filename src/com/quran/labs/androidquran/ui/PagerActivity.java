@@ -70,7 +70,7 @@ public class PagerActivity extends Activity {
 		pager.setCurrentItem(page);
 	}
 	
-    private void displayMarkerPopup(int page) {
+	public void displayMarkerPopup(int page) {
 		if(System.currentTimeMillis() - lastPopupTime < 3000)
 			return;
 		int rub3 = QuranInfo.getRub3FromPage(page);
@@ -79,18 +79,17 @@ public class PagerActivity extends Activity {
 		int hizb = (rub3 / 4) + 1;
 		StringBuilder sb = new StringBuilder();
 		
-		boolean arabic = QuranSettings.getInstance().isArabicNames();
 		if (rub3 % 8 == 0) {
-			sb.append(arabic ? "الجزء" : "Juz'").append(' ').append((hizb/2) + 1);
+			sb.append(getString(R.string.quran_juz2)).append(' ').append((hizb/2) + 1);
 		} else {
 			int remainder = rub3 % 4;
 			if (remainder == 1)
-				sb.append(arabic ? "ربع" : "¼").append(' ');
+				sb.append(getString(R.string.quran_rob3)).append(' ');
 			else if (remainder == 2)
-				sb.append(arabic ? "نصف" : "½").append(' ');
+				sb.append(getString(R.string.quran_nos)).append(' ');
 			else if (remainder == 3)
-				sb.append(arabic ? "ثلاثة أرباع" : "¾").append(' ');
-			sb.append(arabic ? "الحزب" : "Hizb").append(' ').append(hizb);
+				sb.append(getString(R.string.quran_talt_arb3)).append(' ');
+			sb.append(getString(R.string.quran_hizb)).append(' ').append(hizb);
 		}
 		Toast.makeText(this, ArabicStyle.reshape(sb.toString()), Toast.LENGTH_SHORT).show();
 		lastPopupTime = System.currentTimeMillis();

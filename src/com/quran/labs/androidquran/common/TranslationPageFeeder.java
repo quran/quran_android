@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -62,9 +63,6 @@ public class TranslationPageFeeder extends QuranPageFeeder
 		
 		updateViewForUser(v, false, false);
 		
-		QuranSettings.getInstance().setLastPage(mCurrentPageNumber);
-		QuranSettings.save(mContext.prefs);
-		
         return v;
 	}
 	
@@ -72,6 +70,10 @@ public class TranslationPageFeeder extends QuranPageFeeder
 	protected void updateViewForUser(View v, boolean loading,
 			boolean pageNotFound){
 		TextView tv = (TextView)v.findViewById(R.id.translationText);
+		if (QuranSettings.getInstance().isNightMode()) {
+			tv.setBackgroundColor(Color.BLACK);
+			tv.setTextColor(Color.WHITE);
+		}
 		Log.d(TAG, "text: " + tv.getText().toString());
         tv.setVisibility(View.VISIBLE);
 	}
