@@ -21,7 +21,7 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".QuranActivity"
+		<activity android:name=".ui.QuranActivity"
          android:configChanges="keyboardHidden|orientation" />
 		<activity android:name=".AboutUsActivity"
 			android:screenOrientation="portrait" />

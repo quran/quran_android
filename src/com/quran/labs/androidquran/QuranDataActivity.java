@@ -14,6 +14,7 @@ import android.view.WindowManager;
 
 import com.quran.labs.androidquran.common.InternetActivity;
 import com.quran.labs.androidquran.service.QuranDataService;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 public class QuranDataActivity extends InternetActivity {
