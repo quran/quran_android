@@ -6,15 +6,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.markupartist.android.widget.ActionBar;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -38,7 +37,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
     protected ViewGroup expLayout = null;
     protected QuranPageCurlView quranPageCurler = null;
     protected QuranPageFeeder quranPageFeeder;
-	protected ActionBar actionBar;
+	//protected ActionBar actionBar;
 	protected ViewGroup bottomToolbar;
 	private boolean nightMode;
 	
@@ -73,7 +72,7 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 		initComponents();
 		
 		// get action bar
-		actionBar = (ActionBar) findViewById(R.id.actionbar);
+		//actionBar = (ActionBar) findViewById(R.id.actionbar);
 		addActions();
 		
 		// go to page
@@ -252,8 +251,8 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	        		WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	        
 	        bottomToolbar.setVisibility(View.VISIBLE);
-	        if(actionBar != null)
-	        	actionBar.setVisibility(View.VISIBLE);
+	        //if(actionBar != null)
+	        //	actionBar.setVisibility(View.VISIBLE);
 			adjustBookmarkView();
 			updatePageInfo();
 		}
@@ -264,8 +263,8 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	        		WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 	        
 	        bottomToolbar.setVisibility(View.INVISIBLE);
-	        if(actionBar != null)
-	        	actionBar.setVisibility(View.INVISIBLE);
+	        //if(actionBar != null)
+	        //	actionBar.setVisibility(View.INVISIBLE);
 		}
 		
 		inReadingMode = !inReadingMode;

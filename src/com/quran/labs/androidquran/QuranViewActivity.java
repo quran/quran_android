@@ -2,7 +2,6 @@ package com.quran.labs.androidquran;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -29,7 +28,6 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.PageViewQuranActivity;
@@ -71,7 +69,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	private int currentReaderId;
 	private boolean playing = false;
 
-	private LinkedHashMap<String, IntentAction> actionBarActions = new LinkedHashMap<String, IntentAction>();
+	//private LinkedHashMap<String, IntentAction> actionBarActions = new LinkedHashMap<String, IntentAction>();
 
 	// private TextView textView;
 
@@ -107,6 +105,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 
 	protected void addActions() {
 		super.addActions();
+		/*
 		if (actionBar != null) {
 			// actionBar.setTitle("QuranAndroid");
 			actionBar.setTitle("Quran");
@@ -128,8 +127,10 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 					getIntentAction(ACTION_REPEAT, R.drawable.repeat));
 			onActionStop();
 		}
+		*/
 	}
 
+	/*
 	private IntentAction getIntentAction(String intentAction, int drawable) {
 		Intent i = new Intent(this, QuranViewActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -137,6 +138,7 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 		IntentAction action = new IntentAction(this, i, drawable);
 		return action;
 	}
+	*/
 
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -212,21 +214,25 @@ public class QuranViewActivity extends PageViewQuranActivity implements
 	}
 
 	private void onActionPlay() {
+		/*
 		actionBar.removeAllActions();
 		for (String action : actionBarActions.keySet()) {
 			if (ACTION_PLAY.equals(action))
 				continue;
 			actionBar.addAction(actionBarActions.get(action), 0);
 		}
+		*/
 		playing =true;
 	}
 
 	private void onActionStop() {
+		/*
 		actionBar.removeAllActions();
 		actionBar.addAction(actionBarActions.get(ACTION_PLAY), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_CHANGE_READER), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_JUMP_TO_AYAH), 0);
 		actionBar.addAction(actionBarActions.get(ACTION_REPEAT), 0);
+		*/
 		playing = false;
 	}
 

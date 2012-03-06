@@ -1,5 +1,11 @@
 package com.quran.labs.androidquran;
 
+import static com.quran.labs.androidquran.data.ApplicationConstants.BOOKMARKS_CODE;
+import static com.quran.labs.androidquran.data.ApplicationConstants.JUZ2_COUNT;
+import static com.quran.labs.androidquran.data.ApplicationConstants.NO_PAGE_SAVED;
+import static com.quran.labs.androidquran.data.ApplicationConstants.PAGES_LAST;
+import static com.quran.labs.androidquran.data.ApplicationConstants.SETTINGS_CODE;
+import static com.quran.labs.androidquran.data.ApplicationConstants.SURAS_COUNT;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -7,19 +13,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-import static com.quran.labs.androidquran.data.ApplicationConstants.*;
 
-import com.markupartist.android.widget.ActionBar;
-import com.markupartist.android.widget.ActionBar.IntentAction;
 import com.quran.labs.androidquran.common.BaseQuranActivity;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDataService;
@@ -29,7 +32,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranActivity extends BaseQuranActivity {
 	
-	private ActionBar actionBar;
+	//private ActionBar actionBar;
 	private static final String ACTION_BOOKMARK = "BOOKMARK";
 	private static final String ACTION_RESUME = "RESUME";
 	private static boolean alreadyJumped = false;
@@ -44,8 +47,8 @@ public class QuranActivity extends BaseQuranActivity {
         QuranSettings.load(prefs);
         
         setArabicFont();		
-		actionBar = (ActionBar) findViewById(R.id.actionbar);
-		addActions();
+		//actionBar = (ActionBar) findViewById(R.id.actionbar);
+		//addActions();
     }
     
     /**
@@ -61,6 +64,7 @@ public class QuranActivity extends BaseQuranActivity {
      */
     
 	protected void addActions() {
+		/*
 		actionBar.setTitle("Quran");
 		actionBar.addAction(getIntentAction(ACTION_RESUME, R.drawable.translation));
 		actionBar.addAction(getIntentAction(ACTION_BOOKMARK, R.drawable.bookmarks));
@@ -72,6 +76,7 @@ public class QuranActivity extends BaseQuranActivity {
 				list.setSelectionFromTop(0, 0);
 			}
 		});
+		*/
 	}
 	
 	protected void onNewIntent(Intent intent) {
@@ -89,6 +94,7 @@ public class QuranActivity extends BaseQuranActivity {
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
+	/*
 	private IntentAction getIntentAction(String intentAction, int drawable) {
 		Intent i = new Intent(this, QuranActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -96,6 +102,7 @@ public class QuranActivity extends BaseQuranActivity {
 		IntentAction action = new IntentAction(this, i, drawable);
 		return action;
 	}
+	*/
     
     public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
