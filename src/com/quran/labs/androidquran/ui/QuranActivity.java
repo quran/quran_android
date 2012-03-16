@@ -6,6 +6,7 @@ import static com.quran.labs.androidquran.data.ApplicationConstants.SURAS_COUNT;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    }
 
    @Override
-   public void onTabSelected(Tab tab){
+   public void onTabSelected(Tab tab, FragmentTransaction transaction){
       android.util.Log.d(TAG, "onTabSelected");
       Integer tabTag = (Integer)tab.getTag();
       
@@ -90,12 +91,12 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    }
    
    @Override
-   public void onTabReselected(Tab tab){
+   public void onTabReselected(Tab tab, FragmentTransaction transaction){
       android.util.Log.d(TAG, "onTabReselected");
    }
 
    @Override
-   public void onTabUnselected(Tab tab){
+   public void onTabUnselected(Tab tab, FragmentTransaction transaction){
       android.util.Log.d(TAG, "onTabUnselected");
    }
 
