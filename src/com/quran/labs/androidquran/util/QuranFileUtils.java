@@ -170,8 +170,11 @@ public class QuranFileUtils {
 	}
 
 	public static Bitmap getImageFromWeb(String filename) {
+		QuranScreenInfo instance = QuranScreenInfo.getInstance();
+		if (instance == null) return null;
+		
 		String urlString = IMG_HOST + "width"
-				+ QuranScreenInfo.getInstance().getWidthParam() + "/"
+				+ instance.getWidthParam() + "/"
 				+ filename;
 		Log.d("quran_utils", "want to download: " + urlString);
 
