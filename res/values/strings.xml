@@ -205,4 +205,5 @@
     <string name="notification_download_canceled">Download canceled</string>
 
     <string name="bookmarks_current_page">Current Page</string>
+    <string name="no_bookmarks">No Bookmarks!</string>
 </resources>

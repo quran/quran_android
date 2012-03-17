@@ -54,6 +54,9 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
       actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
       mList = (ListView)findViewById(R.id.suralist);
+      View emptyView = findViewById(R.id.emptysuralist);
+      mList.setEmptyView(emptyView);
+      
       for (int i=0; i<mTabs.length; i++){
          ActionBar.Tab tab = actionbar.newTab();
          tab.setText(mTabs[i]);
@@ -89,7 +92,8 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
                                  int position, long id){
             ListView p = (ListView)parent;
             QuranRow elem = (QuranRow)p.getAdapter().getItem((int)id);
-            jumpTo(elem.page);
+            if (elem.page > 0)
+            	jumpTo(elem.page);
          }
       });
    }
@@ -160,19 +164,28 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 	   int lastPage = prefs.getInt(ApplicationConstants.PREF_LAST_PAGE,
 			   ApplicationConstants.NO_PAGE_SAVED);
 	   boolean showLastPage = lastPage != ApplicationConstants.NO_PAGE_SAVED;
-	   int size = bookmarks.size() + (showLastPage? 1 : 0);
+	   boolean showBookmarkHeader = bookmarks.size() != 0;
+	   int size = bookmarks.size() + (showLastPage? 2 : 0) +
+			   (showBookmarkHeader? 1 : 0);
 	   
 	   int index = 0;
 	   QuranRow[] res = new QuranRow[size];
 	   if (showLastPage){
-		   QuranRow currentPosition = new QuranRow(
+		   QuranRow header = new QuranRow(
 				   getString(R.string.bookmarks_current_page),
-				   QuranInfo.getSuraNameString(lastPage) + " - " +
+				   null, true, 0, 0);
+		   QuranRow currentPosition = new QuranRow(
+				   QuranInfo.getSuraNameString(lastPage),
 				   QuranInfo.getSuraDetailsForBookmark(lastPage),
 				   false, QuranInfo.PAGE_SURA_START[lastPage], lastPage);
+		   res[index++] = header;
 		   res[index++] = currentPosition;
 	   }
 	   
+	   if (showBookmarkHeader){
+		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks),
+				   null, true, 0, 0);
+	   }
 	   for (int page : bookmarks){
 		   res[index++] = new QuranRow(
 				   QuranInfo.getSuraNameString(page),
@@ -245,6 +258,8 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
               holder.metadata.setText(ArabicStyle.reshape(info));
           }
           holder.page.setTextColor(getResources().getColor(color));
+          int pageVisibility = item.page == 0? View.GONE : View.VISIBLE;
+          holder.page.setVisibility(pageVisibility);
           return convertView;
       }
             
