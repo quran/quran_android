@@ -75,6 +75,9 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
       QuranRow[] elements = null;
       switch (tabTag){
       case JUZ2_LIST:
+    	  layout = R.layout.index_sura_row;
+          elements = getJuz2List();
+          break;
       case BOOKMARKS_LIST:
     	  layout = R.layout.index_sura_row;
     	  elements = getBookmarks();
@@ -129,6 +132,15 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
          this.page = page;
          this.metadata = metadata;
       }
+   }
+   
+   private QuranRow[] getJuz2List() {
+	   QuranRow[] elements = new QuranRow[JUZ2_COUNT];
+	   for (int j = 0; j < JUZ2_COUNT; j++) {
+		   elements[j] = new QuranRow(QuranInfo.getJuzTitle() + " " +
+	               (j+1), null, true, j+1, QuranInfo.JUZ_PAGE_START[j]);
+	   }
+	   return elements;
    }
    
    private QuranRow[] getSuraList(){
