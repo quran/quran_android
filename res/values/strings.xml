@@ -204,4 +204,5 @@
     <string name="notification_download_paused">Download paused</string>
     <string name="notification_download_canceled">Download canceled</string>
 
+    <string name="bookmarks_current_page">Current Page</string>
 </resources>

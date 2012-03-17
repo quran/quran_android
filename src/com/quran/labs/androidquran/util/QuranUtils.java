@@ -1,8 +1,32 @@
 package com.quran.labs.androidquran.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.SharedPreferences;
 import android.os.Build;
 
+import com.quran.labs.androidquran.data.ApplicationConstants;
+
 public class QuranUtils {
+	private static final String BOOKMARKS_SEPARATOR = ",";
+	
+	public static List<Integer> getBookmarks(SharedPreferences preferences){
+		List<Integer> bookmarks = new ArrayList<Integer>();
+		
+		String str = preferences.getString(ApplicationConstants.PREF_BOOKMARKS, "");
+		if (str.length() == 0) return bookmarks;
+
+		String [] pages = str.split(BOOKMARKS_SEPARATOR);
+		for (String p : pages) {
+			try {
+				Integer page = Integer.valueOf(p);
+				bookmarks.add(page);
+			} catch (NumberFormatException nfe){}
+		}
+		
+		return bookmarks;
+	}
 	
     public static boolean isSdk15() {
     	// Build.VERSION.SDK_INT is only 1.6+ :(
