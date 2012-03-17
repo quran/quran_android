@@ -5,12 +5,13 @@
     android:orientation="horizontal" >
     
     <TextView android:id="@+id/suraNumber"
-              android:layout_width="wrap_content"
+              android:layout_width="30dp"
               android:layout_height="fill_parent"
               android:layout_marginLeft="10dp"
               android:layout_marginRight="20dp"
               android:layout_alignParentLeft="true"
               android:layout_centerInParent="true"
+              android:gravity="center"
               android:textSize="18sp"
               android:textColor="@color/suraInfoColor" />
 
