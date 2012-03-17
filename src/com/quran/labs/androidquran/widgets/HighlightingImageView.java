@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;
 	private boolean colorFilterOn = false;
+	private String highightedAyah = null;
 	
 	public HighlightingImageView(Context context){
 		super(context);
@@ -44,6 +45,16 @@ public class HighlightingImageView extends ImageView {
 	public void unhighlight(){
 		this.currentlyHighlighting = null;
 		this.invalidate();
+	}
+	
+	public void toggleHighlight(int sura, int ayah) {
+		if (highightedAyah != null && highightedAyah.equals(sura + ":" + ayah)) {
+			currentlyHighlighting = null;
+			highightedAyah = null;
+		} else {
+			highlightAyah(sura, ayah);
+			highightedAyah = sura + ":" + ayah;
+		} 
 	}
 	
 	public void highlightAyah(int sura, int ayah){
