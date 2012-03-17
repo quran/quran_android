@@ -9,6 +9,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -134,7 +135,7 @@ public class QuranPageAdapter extends PagerAdapter {
 		public boolean onSingleTapConfirmed(MotionEvent event) {
 			AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
 			if (result != null) {
-				iv.highlightAyah(result.getSoura(), result.getAyah());
+				iv.toggleHighlight(result.getSoura(), result.getAyah());
 				iv.invalidate();
 				return true;
 			}
@@ -169,7 +170,7 @@ public class QuranPageAdapter extends PagerAdapter {
 				try {
 					result = handler.getVerseAtPoint(page, pageXY[0], pageXY[1]);
 				} catch (Exception e) {
-					System.out.println(e.toString());
+					Log.e("PagerActivity", e.getMessage(), e);
 				} finally {
 					handler.closeDatabase();
 				}
