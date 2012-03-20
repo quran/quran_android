@@ -15,10 +15,20 @@
               android:textSize="18sp"
               android:textColor="@color/suraInfoColor" />
 
+    <ImageView android:id="@+id/rowIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/suraNumber"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/menu_bookmarks"
+        android:visibility="gone" />
+
     <TextView android:id="@+id/headerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/suraNumber"
+        android:layout_toRightOf="@id/rowIcon"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:layout_marginLeft="10dp"
@@ -29,7 +39,7 @@
     <TextView android:id="@+id/suraName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/suraNumber"
+        android:layout_toRightOf="@id/rowIcon"
         android:paddingTop="5dp"
         android:textSize="16sp"
         android:textColor="@color/suraInfoColor" />
@@ -37,7 +47,7 @@
     <TextView android:id="@+id/suraDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/suraNumber"
+        android:layout_toRightOf="@id/rowIcon"
         android:layout_below="@id/suraName"
         android:paddingBottom="5dp"
         android:textSize="10sp"
