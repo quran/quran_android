@@ -22,7 +22,9 @@ public class QuranPreferenceActivity extends PreferenceActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		caller = (Class<Activity>) getIntent().getExtras().getSerializable("activity");
+		Bundle extras = getIntent() == null? null : getIntent().getExtras();
+		if (extras != null && extras.containsKey("activity"))
+		   caller = (Class<Activity>) getIntent().getExtras().getSerializable("activity");
 		
 		//Inflate preference screen
 		addPreferencesFromResource(R.xml.quran_preferences);
