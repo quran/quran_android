@@ -6,4 +6,5 @@
 	<color name="headerTextColor">#31B6E7</color>
 	<color name="suraInfoColor">#FFFFFF</color>
 	<color name="suraDetailsColor">#D1D1D1</color>
+	<color name="hizbNumberColor">#FF000000</color>
 </resources>

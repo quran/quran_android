@@ -9,16 +9,17 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -71,6 +72,12 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
          tab.setTabListener(this);
          actionbar.addTab(tab);
       }
+   }
+   
+   @Override
+   public void onResume(){
+      super.onResume();
+      refreshLists();
    }
 
    @Override
@@ -132,6 +139,47 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
       return super.onOptionsItemSelected(item);
 	}
 
+   private void refreshLists(){
+      EfficientAdapter adapter = null;
+      if (mList != null){
+         Adapter tmp = mList.getAdapter();
+         if (tmp != null && tmp instanceof EfficientAdapter)
+            adapter = (EfficientAdapter)tmp;
+      }
+      ActionBar actionbar = getSupportActionBar();
+
+      if (actionbar != null && adapter != null){
+         Tab tab = actionbar.getSelectedTab();
+         if (tab == null) return;
+         
+         Integer tabTag = (Integer)tab.getTag();
+         if (tabTag != null && tabTag == BOOKMARKS_LIST){
+            // refresh the bookmarks list to update current page
+            // and any added new bookmarks.
+            QuranRow[] elements = getBookmarks();
+            adapter.mElements = elements;
+            adapter.notifyDataSetChanged();
+         }
+         else {
+            int lastPage = getLastPage();
+            if (lastPage == ApplicationConstants.NO_PAGE_SAVED) return;
+            if (tabTag != null && tabTag == SURA_LIST){
+               // scroll the list to the correct sura
+               int sura = QuranInfo.PAGE_SURA_START[lastPage-1];
+               int juz = QuranInfo.getJuzFromPage(lastPage);
+               int position = sura + juz - 1;
+               mList.setSelectionFromTop(position, 20);
+            }
+            else if (tabTag != null && tabTag == JUZ2_LIST){
+               // scroll the list to the correct juz'
+               int juz = QuranInfo.getJuzFromPage(lastPage);
+               int position = (juz - 1) * 8;
+               mList.setSelectionFromTop(position, 20);
+            }
+         }
+      }
+   }
+   
    public void jumpTo(int page) {
       Intent i = new Intent(this, PagerActivity.class);
       i.putExtra("page", page);
@@ -148,6 +196,8 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
       android.util.Log.d(TAG, "onTabUnselected");
    }
 
+   // this class holds the data representation of our ListItem
+   // it is used for rendering sura, juz', and bookmarks.
    private class QuranRow {
       public int number;
       public int page;
@@ -155,6 +205,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
       public String metadata;
       public boolean isHeader;
       public Integer imageResource;
+      public String imageText;
 
       public QuranRow(String text, String metadata, boolean isHeader, 
     		  int number, int page, Integer imageResource){
@@ -164,15 +215,35 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
          this.page = page;
          this.metadata = metadata;
          this.imageResource = imageResource;
+         this.imageText = "";
       }
    }
    
    private QuranRow[] getJuz2List() {
-	   QuranRow[] elements = new QuranRow[JUZ2_COUNT];
-	   for (int j = 0; j < JUZ2_COUNT; j++) {
-		   elements[j] = new QuranRow(QuranInfo.getJuzTitle() + " " +
-	               (j+1), null, true, j+1, QuranInfo.JUZ_PAGE_START[j], null);
+      int[] images = { R.drawable.hizb_full, R.drawable.hizb_quarter,
+                       R.drawable.hizb_half, R.drawable.hizb_threequarters };
+      Resources res = getResources();
+      String[] quarters = res.getStringArray(R.array.quarter_prefix_array);
+	   QuranRow[] elements = new QuranRow[JUZ2_COUNT * (8 + 1)];
+	   
+	   int ctr = 0;
+	   for (int i = 0; i < (8 * JUZ2_COUNT); i++){
+	      int[] pos = QuranInfo.QUARTERS[i];
+	      int page = QuranInfo.getPageFromSuraAyah(pos[0], pos[1]);
+	      
+	      if (i % 8 == 0){
+	         int juz = 1 + (i / 8);
+	         elements[ctr++] = new QuranRow(QuranInfo.getJuzTitle() + " " +
+	               juz, null, true, juz, QuranInfo.JUZ_PAGE_START[juz-1], null);
+	      }
+	      String verseString = getString(R.string.quran_ayah) + " " + pos[1];
+	      elements[ctr++] = new QuranRow(quarters[i],
+	            QuranInfo.getSuraName(pos[0]-1) + ", " + verseString,
+	            false, 0, page, images[i % 4]);
+	      if (i % 4 == 0)
+	         elements[ctr-1].imageText = (1 + (i / 4)) + "";
 	   }
+	   
 	   return elements;
    }
    
@@ -202,12 +273,23 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
       return elements;
    }
    
+   private int getLastPage(){
+      SharedPreferences prefs = PreferenceManager
+            .getDefaultSharedPreferences(getApplicationContext());
+      return getLastPage(prefs);
+   }
+   
+   private int getLastPage(SharedPreferences prefs){
+      return prefs.getInt(ApplicationConstants.PREF_LAST_PAGE,
+            ApplicationConstants.NO_PAGE_SAVED);
+   }
+   
    private QuranRow[] getBookmarks(){
-	   SharedPreferences prefs = PreferenceManager.
-			   getDefaultSharedPreferences(getApplicationContext());
-	   List<Integer> bookmarks = QuranUtils.getBookmarks(prefs);
-	   int lastPage = prefs.getInt(ApplicationConstants.PREF_LAST_PAGE,
-			   ApplicationConstants.NO_PAGE_SAVED);
+      SharedPreferences prefs = PreferenceManager.
+            getDefaultSharedPreferences(getApplicationContext());
+      List<Integer> bookmarks = QuranUtils.getBookmarks(prefs);
+      
+	   int lastPage = getLastPage(prefs);
 	   boolean showLastPage = lastPage != ApplicationConstants.NO_PAGE_SAVED;
 	   boolean showBookmarkHeader = bookmarks.size() != 0;
 	   int size = bookmarks.size() + (showLastPage? 2 : 0) +
@@ -278,7 +360,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
               holder.page = (TextView)convertView.findViewById(R.id.pageNumber);
               holder.number = (TextView)convertView.findViewById(R.id.suraNumber);
               holder.header = (TextView)convertView.findViewById(R.id.headerName);
-              holder.image = (ImageView)convertView.findViewById(R.id.rowIcon);
+              holder.image = (TextView)convertView.findViewById(R.id.rowIcon);
               convertView.setTag(holder);
           }
           else { holder = (ViewHolder) convertView.getTag(); }
@@ -311,6 +393,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
               }
               else {
             	  holder.image.setBackgroundResource(item.imageResource);
+            	  holder.image.setText(item.imageText);
             	  holder.image.setVisibility(View.VISIBLE);
             	  holder.number.setVisibility(View.GONE);
               }
@@ -327,7 +410,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
           TextView number;
           TextView metadata;
           TextView header;
-          ImageView image;
+          TextView image;
       }
   }
 }
