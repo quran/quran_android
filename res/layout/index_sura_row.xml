@@ -15,14 +15,16 @@
               android:textSize="18sp"
               android:textColor="@color/suraInfoColor" />
 
-    <ImageView android:id="@+id/rowIcon"
+    <TextView android:id="@+id/rowIcon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="20dp"
+        android:textSize="10sp"
+        android:textColor="@color/hizbNumberColor"
         android:layout_toRightOf="@id/suraNumber"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/menu_bookmarks"
+        android:gravity="center"
         android:visibility="gone" />
 
     <TextView android:id="@+id/headerName"

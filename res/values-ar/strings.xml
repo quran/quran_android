@@ -172,5 +172,4 @@
     <string name="notification_downloading">جاري التحميل</string>
     <string name="notification_download_paused">توقف التحميل</string>
     <string name="notification_download_canceled">تم إلغاء التحميل</string>
-
 </resources>
