@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ public class PagerActivity extends Activity {
 	private static String TAG = "PagerActivity";
 	private SharedPreferences prefs = null;
 	private long lastPopupTime = 0;
+	private ViewPager pager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -43,7 +45,7 @@ public class PagerActivity extends Activity {
 		
 		lastPopupTime = System.currentTimeMillis();
 		QuranPageAdapter adapter = new QuranPageAdapter(this);
-		ViewPager pager = (ViewPager)findViewById(R.id.quran_pager);
+		pager = (ViewPager)findViewById(R.id.quran_pager);
 		pager.setAdapter(adapter);
 		pager.setOnPageChangeListener(new OnPageChangeListener(){
 
@@ -68,6 +70,20 @@ public class PagerActivity extends Activity {
 		});
 		
 		pager.setCurrentItem(page);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d(TAG, "keep screen on - reading started");
+		pager.setKeepScreenOn(true);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Log.d(TAG, "keep screen off - reading finished");
+		pager.setKeepScreenOn(false);
 	}
 	
 	public void displayMarkerPopup(int page) {

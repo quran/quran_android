@@ -6,12 +6,14 @@
     <PreferenceCategory
        android:title="@string/prefs_category_display_settings" >
 
+        <!--
         <CheckBoxPreference
             android:key="@string/prefs_keep_screen_on"
             android:persistent="true"
             android:summaryOff="@string/prefs_keep_screen_summary_off"
             android:summaryOn="@string/prefs_keep_screen_summary_on"
             android:title="@string/prefs_keep_screen_title" />
+        -->
         
         <CheckBoxPreference
             android:defaultValue="false"
