@@ -11,15 +11,6 @@
        android:layout_alignParentLeft="true"
        android:layout_width="wrap_content"
        android:layout_height="fill_parent" />
-	<TextView 
-		android:id="@+id/txtPageNotFound" 
-		android:text="@string/pageLoading"
-		android:visibility="gone" 
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:gravity = "center"
-		android:textSize="16sp" 
-		android:textColor="@android:color/black" />	
  	<ScrollView 
  		android:id = "@+id/page_scroller"
  		android:layout_width = "fill_parent"
@@ -29,7 +20,7 @@
  		android:layout_gravity="center_horizontal"
  		android:fillViewport="true">
 	<com.quran.labs.androidquran.widgets.HighlightingImageView
-      android:id = "@+id/page_image"
+        android:id = "@+id/page_image"
 		android:layout_gravity="center_horizontal"
   		android:layout_width = "fill_parent"
   		android:layout_height = "wrap_content"/>
