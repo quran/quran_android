@@ -17,12 +17,14 @@ import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView;
+import com.quran.labs.androidquran.widgets.QuranPageCurlView.OnPageClickListener;
 import com.quran.labs.androidquran.widgets.QuranPageCurlView.OnPageFlipListener;
 
 
@@ -37,7 +39,7 @@ import com.quran.labs.androidquran.widgets.QuranPageCurlView.OnPageFlipListener;
  * filled to allow for proper animation from the user's perspective
  *
  */
-public class QuranPageFeeder implements OnPageFlipListener {
+public class QuranPageFeeder implements OnPageFlipListener, OnPageClickListener {
 	
 	private static final String TAG = "QuranPageFeeder";
 	
@@ -59,6 +61,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		mInflater = LayoutInflater.from(context);
 		mPageLayout = page_layout;
 		mQuranPage = quranPage;
+		mQuranPage.setOnPageClickListener(this);
 		mQuranPage.setOnPageFlipListener(this);
 		mCurrentPageNumber = 0;
 	}
@@ -107,6 +110,51 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		loadPreviousPage(mQuranPage);
 		mQuranPage.refresh(true);
 		*/
+	}
+	
+	@Override
+	public void onShortClick(float x, float y) {
+		View v = mQuranPage.getCurrentPage();
+		HighlightingImageView iv = (HighlightingImageView)v.findViewById(R.id.page_image);
+		float[] pageXY = iv.getPageXY(x, y);
+		
+		AyahItem result = null;
+		if (pageXY != null) {
+			AyahInfoDatabaseHandler handler = new AyahInfoDatabaseHandler("ayahinfo.db");
+			try {
+				result = handler.getVerseAtPoint(mCurrentPageNumber, pageXY[0], pageXY[1]);
+			} catch (Exception e) {
+				System.out.println(e.toString());
+			} finally {
+				handler.closeDatabase();
+			}
+		}
+		if (result != null)
+			highlightAyah(result.getSoura(), result.getAyah()); // TODO Fix highlighting -AF
+	}
+	
+	@Override
+	public void onLongClick(float x, float y) {
+		View v = mQuranPage.getCurrentPage();
+		HighlightingImageView iv = (HighlightingImageView)v.findViewById(R.id.page_image);
+		float[] pageXY = iv.getPageXY(x, y);
+		
+		AyahItem result = null;
+		if (pageXY != null) {
+			AyahInfoDatabaseHandler handler = new AyahInfoDatabaseHandler("ayahinfo.db");
+			try {
+				result = handler.getVerseAtPoint(mCurrentPageNumber, pageXY[0], pageXY[1]);
+			} catch (Exception e) {
+				System.out.println(e.toString());
+			} finally {
+				handler.closeDatabase();
+			}
+		}
+		if (result != null) {
+			highlightAyah(result.getSoura(), result.getAyah());
+			Toast.makeText(mContext, "Sura "+result.getSoura()+", Ayah "+result.getAyah()+", Page "
+					+mCurrentPageNumber+"\n(at x="+x+", y="+y+")", Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	public void highlightAyah(int sura, int ayah){
@@ -290,6 +338,7 @@ public class QuranPageFeeder implements OnPageFlipListener {
 		mContext = context;
 		mInflater = LayoutInflater.from(context);
 		mQuranPage = quranPage;
+		mQuranPage.setOnPageClickListener(this);	
 		mQuranPage.setOnPageFlipListener(this);	
 	}
 	

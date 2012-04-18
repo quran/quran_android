@@ -20,6 +20,11 @@
 		</CheckBoxPreference>
 		<CheckBoxPreference android:title="Lock Screen Orientation" android:summaryOn="Quran page will be in  fixed orientation mode" android:summaryOff="Adaptive to current orientation mode" android:key="@string/prefs_lock_orientation" android:defaultValue="false" android:persistent="true" android:disableDependentsState="false"></CheckBoxPreference>
 		<CheckBoxPreference android:key="@string/prefs_landscape_orientation" android:title="Landscape Orientation" android:persistent="true" android:summaryOn="Landscape orientation will be used" android:summaryOff="Portrait orientation will be used" android:dependency="@string/prefs_lock_orientation"></CheckBoxPreference>
+		<CheckBoxPreference 
+			android:title="Enable Ayah Selection" 
+			android:summary="Enables 'per-Ayah' features" 
+			android:persistent="true" android:key="@string/prefs_enable_ayah_selection">
+		</CheckBoxPreference>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/prefs_category_reading">
 		<CheckBoxPreference 

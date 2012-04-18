@@ -140,4 +140,14 @@ public class TranslationPageFeeder extends QuranPageFeeder
 			return null;
 		}
 	}
+	
+	@Override
+	public void onShortClick(float x, float y) {
+		// Do nothing
+	}
+	
+	@Override
+	public void onLongClick(float x, float y) {
+		// Do nothing
+	}
 }

@@ -28,6 +28,9 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 	protected static final String ACTION_BOOKMARK = "ACTION_BOOKMARK";
 
 	private static final String TAG = "BaseQuranActivity";
+	private static final int DOUBLE_CLICK_THRESHOLD = 250;
+	
+	private long lastClickTime = 0;
 
 	protected ImageView btnBookmark = null;
 	
@@ -86,7 +89,10 @@ public abstract class PageViewQuranActivity extends InternetActivity {
 
 				@Override
 				public void onClick(View v) {
-					toggleMode();
+					if (!QuranSettings.getInstance().isEnableAyahSelection() 
+							|| System.currentTimeMillis() - lastClickTime < DOUBLE_CLICK_THRESHOLD)
+						toggleMode();
+					lastClickTime = System.currentTimeMillis();
 				}
 			});
 		}
