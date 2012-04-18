@@ -22,10 +22,12 @@ import com.quran.labs.androidquran.common.AyahStateListener;
 import com.quran.labs.androidquran.common.IAudioPlayer;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranAudioLibrary;
+import com.quran.labs.androidquran.util.CachingManager;
 
 public class AudioServiceBinder extends Binder implements  
 	OnCompletionListener, IAudioPlayer, OnPreparedListener, OnErrorListener{
 	
+	private CachingManager cachingManager = new CachingManager();
 	private MediaPlayer mp = null;
 	private Context context;
 	private boolean paused = false;	
@@ -132,6 +134,21 @@ public class AudioServiceBinder extends Binder implements
 				}
 			}	
 			if(url != null){
+				
+				if (remotePlayEnabled) {
+					if (cachingManager.isCachedURL(url)) {
+						mp = cachingManager.consumeCachedMediaPlayer(url);
+						mp.setOnCompletionListener(this);
+						this.onPrepared(mp);
+						return;
+					}
+					
+					if (cachingManager.isCachingURL(url)) {
+						cachingManager.setStreamCachingListenerForURL(this, url);
+						preparing = true;
+						return;
+					}
+				}
 				mp.setDataSource(url);
 				mp.setOnPreparedListener(this);
 				mp.setOnErrorListener(this);
@@ -261,6 +278,15 @@ public class AudioServiceBinder extends Binder implements
 				showNotification(currentItem);
 			if (ayahListener != null)
 				ayahListener.onAyahPlay(currentItem);
+		}
+		
+		if (remotePlayEnabled) {
+			AyahItem nextItem = null;
+			if (this.currentItem != null)
+				nextItem = QuranAudioLibrary.getNextAyahAudioItem(context, this.currentItem);
+			if (nextItem != null) {
+				cachingManager.cacheStreamWithURL(nextItem.getRemoteAudioUrl());
+			}
 		}
 	}
 	
