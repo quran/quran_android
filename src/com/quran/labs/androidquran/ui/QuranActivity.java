@@ -304,7 +304,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 		   QuranRow currentPosition = new QuranRow(
 				   QuranInfo.getSuraNameString(lastPage),
 				   QuranInfo.getSuraDetailsForBookmark(lastPage),
-				   false, QuranInfo.PAGE_SURA_START[lastPage], lastPage,
+				   false, QuranInfo.PAGE_SURA_START[lastPage-1], lastPage,
 				   R.drawable.bookmark_currentpage);
 		   res[index++] = header;
 		   res[index++] = currentPosition;

@@ -7,13 +7,11 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
@@ -243,22 +241,23 @@ public class QuranPageFeeder implements OnPageFlipListener {
 	
 	protected void updateViewForUser(View v, boolean loading,
 			boolean pageNotFound){
-		TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
+		//TextView tv = (TextView)v.findViewById(R.id.txtPageNotFound);
 		HighlightingImageView iv = (HighlightingImageView)v.findViewById(R.id.page_image);
 		
 		if ((loading) || (pageNotFound)){
 			if (QuranSettings.getInstance().isNightMode()) {
-				tv.setTextColor(Color.WHITE);
+				//tv.setTextColor(Color.WHITE);
 			}
-			tv.setText(loading? R.string.pageLoading : R.string.pageNotFound);
-			if (!loading && mHasBeenOutOfMemory != null && mHasBeenOutOfMemory)
-				tv.setText(R.string.couldNotLoadPage);
-			tv.setVisibility(View.VISIBLE);
+			//tv.setText(loading? R.string.pageLoading : R.string.pageNotFound);
+			if (!loading && mHasBeenOutOfMemory != null && mHasBeenOutOfMemory){
+				//tv.setText(R.string.couldNotLoadPage);
+		   }
+			//tv.setVisibility(View.VISIBLE);
 			iv.setVisibility(View.GONE);
 		}
 		else {
 			iv.adjustNightMode();
-			tv.setVisibility(View.GONE);
+			//tv.setVisibility(View.GONE);
 			iv.setVisibility(View.VISIBLE);
 		}
 	}

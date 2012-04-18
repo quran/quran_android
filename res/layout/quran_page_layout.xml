@@ -10,20 +10,10 @@
 	    android:layout_alignParentLeft="true"
 	    android:layout_width="wrap_content"
 	    android:layout_height="fill_parent" />
-	<TextView 
-		android:id="@+id/txtPageNotFound" 
-		android:text="@string/pageLoading"
-		android:visibility="gone" 
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:gravity = "center" 
-		android:textSize="16sp" 
-      android:textColor="@android:color/black" />
-
 	<com.quran.labs.androidquran.widgets.HighlightingImageView
 		android:id = "@+id/page_image"
 		android:layout_toRightOf="@id/left_border"
-      android:layout_toLeftOf="@+id/right_border"
+        android:layout_toLeftOf="@+id/right_border"
   		android:layout_width = "wrap_content"
   		android:layout_height = "wrap_content" />
    <ImageView android:id="@id/right_border"
