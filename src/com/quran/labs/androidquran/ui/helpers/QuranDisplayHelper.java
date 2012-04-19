@@ -15,12 +15,15 @@ import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 public class QuranDisplayHelper {
+   private static final String TAG = "QuranDisplayHelper";
+   
    public static Bitmap getQuranPage(int page){
       Bitmap bitmap = null;
 
       String filename = QuranFileUtils.getPageFileName(page);
       bitmap = QuranFileUtils.getImageFromSD(filename);
       if (bitmap == null) {
+         android.util.Log.d(TAG, "failed to get " + page + " with name " + filename + " from sd...");
          bitmap = QuranFileUtils.getImageFromWeb(filename);
       }
       return bitmap;

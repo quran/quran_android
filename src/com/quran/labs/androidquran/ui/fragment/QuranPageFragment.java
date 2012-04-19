@@ -20,10 +20,12 @@ import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 public class QuranPageFragment extends Fragment {
+   private static final String TAG = "QuranPageFragment";
    private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
    private int mPageNumber;
@@ -68,7 +70,7 @@ public class QuranPageFragment extends Fragment {
       mImageView = (HighlightingImageView)view.findViewById(R.id.page_image);
       
       final GestureDetector gestureDetector = new GestureDetector(
-            new PageGestureDetector(mImageView, mPageNumber));
+            new PageGestureDetector());
       OnTouchListener gestureListener = new OnTouchListener() {
          @Override
          public boolean onTouch(View v, MotionEvent event) {
@@ -85,25 +87,24 @@ public class QuranPageFragment extends Fragment {
    public void onActivityCreated(Bundle savedInstanceState){
       super.onActivityCreated(savedInstanceState);
       if (PagerActivity.class.isInstance(getActivity())){
-         ((PagerActivity)getActivity()).loadPage(mPageNumber, mImageView);
+         QuranPageWorker worker = ((PagerActivity)getActivity()).getQuranPageWorker();
+         worker.loadPage(mPageNumber, mImageView);
       }
+   }
+   
+   public void cleanup(){
+      android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
+      mImageView.setImageDrawable(null);
+      mImageView = null;
    }
 
    private class PageGestureDetector extends SimpleOnGestureListener {
-      int page;
-      HighlightingImageView iv;
-
-      public PageGestureDetector(HighlightingImageView iv, int page) {
-         this.page = page;
-         this.iv = iv;
-      }
-
       @Override
       public boolean onSingleTapConfirmed(MotionEvent event) {
          AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
          if (result != null) {
-            iv.toggleHighlight(result.getSoura(), result.getAyah());
-            iv.invalidate();
+            mImageView.toggleHighlight(result.getSoura(), result.getAyah());
+            mImageView.invalidate();
             return true;
          }
          return false;
@@ -119,25 +120,25 @@ public class QuranPageFragment extends Fragment {
       public void onLongPress(MotionEvent event) {
          AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
          if (result != null) {
-            iv.highlightAyah(result.getSoura(), result.getAyah());
-            iv.invalidate();
+            mImageView.highlightAyah(result.getSoura(), result.getAyah());
+            mImageView.invalidate();
             Toast.makeText(getActivity(), "Context Menu For:\n--------------------------\nSura "
                   +result.getSoura()+", Ayah "+result.getAyah()+", Page "
-                  +page+"\n@("+event.getX()+","+event.getY()+")", Toast.LENGTH_SHORT).show();
-            iv.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                  +mPageNumber+"\n@("+event.getX()+","+event.getY()+")", Toast.LENGTH_SHORT).show();
+            mImageView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
          }
       }
 
       private AyahItem getAyahFromCoordinates(float x, float y) {
-         float[] pageXY = iv.getPageXY(x, y);
+         float[] pageXY = mImageView.getPageXY(x, y);
          AyahItem result = null;
          if (pageXY != null) {
             String filename = QuranFileUtils.getAyaPositionFileName();
             AyahInfoDatabaseHandler handler = new AyahInfoDatabaseHandler(filename);
             try {
-               result = handler.getVerseAtPoint(page, pageXY[0], pageXY[1]);
+               result = handler.getVerseAtPoint(mPageNumber, pageXY[0], pageXY[1]);
             } catch (Exception e) {
-               Log.e("PagerActivity", e.getMessage(), e);
+               Log.e(TAG, e.getMessage(), e);
             } finally {
                handler.closeDatabase();
             }
