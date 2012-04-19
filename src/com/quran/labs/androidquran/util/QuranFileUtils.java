@@ -77,7 +77,10 @@ public class QuranFileUtils {
 		String location = getQuranDirectory();
 		if (location == null)
 			return null;
-		return BitmapFactory.decodeFile(location + File.separator + filename);
+		
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPreferredConfig = Bitmap.Config.ALPHA_8;
+		return BitmapFactory.decodeFile(location + File.separator + filename, options);
 	}
 
 	public static boolean writeNoMediaFile() {
