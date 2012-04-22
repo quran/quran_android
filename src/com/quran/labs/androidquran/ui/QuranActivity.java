@@ -32,6 +32,7 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranUtils;
 
@@ -285,15 +286,21 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    }
    
    private QuranRow[] getBookmarks(){
-      SharedPreferences prefs = PreferenceManager.
-            getDefaultSharedPreferences(getApplicationContext());
-      List<Integer> bookmarks = QuranUtils.getBookmarks(prefs);
+	   // FIXME do on separate thread (AsyncTask), and check context is correct
+	   BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getApplicationContext());
+	   db.open();
+	   List<Integer> pageBookmarks = db.getPageBookmarks();
+	   List<Integer[]> ayahBookmarks = db.getAyahBookmarks();
+	   db.close();
       
+	   SharedPreferences prefs = PreferenceManager.
+			   getDefaultSharedPreferences(getApplicationContext());
 	   int lastPage = getLastPage(prefs);
 	   boolean showLastPage = lastPage != ApplicationConstants.NO_PAGE_SAVED;
-	   boolean showBookmarkHeader = bookmarks.size() != 0;
-	   int size = bookmarks.size() + (showLastPage? 2 : 0) +
-			   (showBookmarkHeader? 1 : 0);
+	   boolean showPageBookmarkHeader = pageBookmarks.size() != 0;
+	   boolean showAyahBookmarkHeader = ayahBookmarks.size() != 0;
+	   int size = pageBookmarks.size() + ayahBookmarks.size() + (showLastPage? 2 : 0) +
+			   (showPageBookmarkHeader? 1 : 0) + (showAyahBookmarkHeader? 1 : 0);
 	   
 	   int index = 0;
 	   QuranRow[] res = new QuranRow[size];
@@ -310,17 +317,31 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 		   res[index++] = currentPosition;
 	   }
 	   
-	   if (showBookmarkHeader){
-		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks),
+	   if (showPageBookmarkHeader){
+		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks_page),
 				   null, true, 0, 0, null);
 	   }
-	   for (int page : bookmarks){
+	   for (int page : pageBookmarks){
 		   res[index++] = new QuranRow(
 				   QuranInfo.getSuraNameString(page),
 				   QuranInfo.getSuraDetailsForBookmark(page),
 				   false, QuranInfo.PAGE_SURA_START[page], page,
 				   R.drawable.bookmark_page);
 	   }
+	   
+	   if (showAyahBookmarkHeader){
+		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks_ayah),
+				   null, true, 0, 0, null);
+	   }
+	   for (Integer[] ayah : ayahBookmarks){
+		   res[index++] = new QuranRow(
+				   // TODO Polish up displayed information for Ayahs
+				   QuranInfo.getAyahString(ayah[1], ayah[2]),
+				   QuranInfo.getSuraDetailsForBookmark(ayah[0]),
+				   false, ayah[1], ayah[0],
+				   R.drawable.bookmark_page);
+	   }
+	   
 	   return res;
    }
 

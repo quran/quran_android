@@ -1,6 +1,10 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import java.lang.ref.WeakReference;
+
+import android.content.Context;
 import android.graphics.drawable.PaintDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,6 +22,7 @@ import android.widget.Toast;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
+import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -101,6 +106,13 @@ public class QuranPageFragment extends Fragment {
    private class PageGestureDetector extends SimpleOnGestureListener {
       @Override
       public boolean onSingleTapConfirmed(MotionEvent event) {
+          // FIXME Context usage correct?? -AF
+          new PageBookmarkTask(getActivity()).execute(mPageNumber);
+          return true;
+      }
+
+      @Override
+      public boolean onDoubleTap(MotionEvent event) {
          AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
          if (result != null) {
             mImageView.toggleHighlight(result.getSoura(), result.getAyah());
@@ -111,21 +123,14 @@ public class QuranPageFragment extends Fragment {
       }
 
       @Override
-      public boolean onDoubleTap(MotionEvent event) {
-         Toast.makeText(getActivity(), "Double Tap - Toggle Full Screen", Toast.LENGTH_SHORT).show();
-         return true;
-      }
-
-      @Override
       public void onLongPress(MotionEvent event) {
          AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
          if (result != null) {
             mImageView.highlightAyah(result.getSoura(), result.getAyah());
             mImageView.invalidate();
-            Toast.makeText(getActivity(), "Context Menu For:\n--------------------------\nSura "
-                  +result.getSoura()+", Ayah "+result.getAyah()+", Page "
-                  +mPageNumber+"\n@("+event.getX()+","+event.getY()+")", Toast.LENGTH_SHORT).show();
             mImageView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+            // FIXME Context usage correct?? -AF
+            new AyahBookmarkTask(getActivity()).execute(mPageNumber, result.getSoura(), result.getAyah());
          }
       }
 
@@ -146,4 +151,64 @@ public class QuranPageFragment extends Fragment {
          return result;
       }
    }
+   
+	class AyahBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+		private final WeakReference<Context> contextReference;
+		
+		private int page = 0;
+		private int sura = 0;
+		private int ayah = 0;
+
+		public AyahBookmarkTask(Context context) {
+			// FIXME Is this correct?? How to pass context correctly? -AF
+	        // use a WeakReference to ensure the Context can be garbage collected
+			contextReference = new WeakReference<Context>(context);
+		}
+		
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			page = params[0];
+			sura = params[1];
+			ayah = params[2];
+
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(contextReference.get());
+			db.open();
+			boolean result = db.toggleAyahBookmark(page, sura, ayah);
+			db.close();
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+            Toast.makeText(getActivity(), result ? "Ayah Bookmarked" : "Ayah Unbookmarked", Toast.LENGTH_SHORT).show();
+		}
+	}
+   
+	class PageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+		private final WeakReference<Context> contextReference;
+		
+		private int page = 0;
+		
+		public PageBookmarkTask(Context context) {
+			// FIXME Is this correct?? How to pass context correctly? -AF
+			// use a WeakReference to ensure the Context can be garbage collected
+			contextReference = new WeakReference<Context>(context);
+		}
+		
+		@Override
+		protected Boolean doInBackground(Integer... params) {
+			page = params[0];
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(contextReference.get());
+			db.open();
+			boolean result = db.togglePageBookmark(page);
+			db.close();
+			return result;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			Toast.makeText(getActivity(), result ? "Page Bookmarked" : "Page Unbookmarked", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
 }

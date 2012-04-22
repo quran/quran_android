@@ -56,6 +56,10 @@ public class QuranInfo {
 	
 	private static int AYAH_AYAT_BOUNDARY = 11;
 	
+	public static String getAyahTitle() {
+		return QuranSettings.getInstance().isArabicNames() ? "آية" : "Ayah";
+	}
+	
 	public static String getSuraTitle() {
 		return QuranSettings.getInstance().isArabicNames() ? "سورة" : "Surat";
 	}
@@ -557,6 +561,10 @@ public class QuranInfo {
 	public static String getPageTitleNoPrefix(int page) {
 		return getPageTitleNoPrefix() + page +
 		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
+	}
+	
+	public static String getAyahString(int sura, int ayah){
+		return getSuraTitle() + " " + getSuraName(sura-1) + " - " + getAyahTitle() + " " + ayah;
 	}
 	
 	public static String getSuraNameString(int page){
