@@ -325,7 +325,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 		   res[index++] = new QuranRow(
 				   QuranInfo.getSuraNameString(page),
 				   QuranInfo.getSuraDetailsForBookmark(page),
-				   false, QuranInfo.PAGE_SURA_START[page], page,
+				   false, QuranInfo.PAGE_SURA_START[page-1], page,
 				   R.drawable.bookmark_page);
 	   }
 	   
