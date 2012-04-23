@@ -106,8 +106,7 @@ public class QuranPageFragment extends Fragment {
    private class PageGestureDetector extends SimpleOnGestureListener {
       @Override
       public boolean onSingleTapConfirmed(MotionEvent event) {
-          // FIXME Context usage correct?? -AF
-          new PageBookmarkTask(getActivity()).execute(mPageNumber);
+          new PageBookmarkTask().execute(mPageNumber);
           return true;
       }
 
@@ -129,8 +128,7 @@ public class QuranPageFragment extends Fragment {
             mImageView.highlightAyah(result.getSoura(), result.getAyah());
             mImageView.invalidate();
             mImageView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            // FIXME Context usage correct?? -AF
-            new AyahBookmarkTask(getActivity()).execute(mPageNumber, result.getSoura(), result.getAyah());
+            new AyahBookmarkTask().execute(mPageNumber, result.getSoura(), result.getAyah());
          }
       }
 
@@ -153,27 +151,11 @@ public class QuranPageFragment extends Fragment {
    }
    
 	class AyahBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
-		private final WeakReference<Context> contextReference;
-		
-		private int page = 0;
-		private int sura = 0;
-		private int ayah = 0;
-
-		public AyahBookmarkTask(Context context) {
-			// FIXME Is this correct?? How to pass context correctly? -AF
-	        // use a WeakReference to ensure the Context can be garbage collected
-			contextReference = new WeakReference<Context>(context);
-		}
-		
 		@Override
 		protected Boolean doInBackground(Integer... params) {
-			page = params[0];
-			sura = params[1];
-			ayah = params[2];
-
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(contextReference.get());
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
 			db.open();
-			boolean result = db.toggleAyahBookmark(page, sura, ayah);
+			boolean result = db.toggleAyahBookmark(params[0], params[1], params[2]);
 			db.close();
 			return result;
 		}
@@ -185,22 +167,11 @@ public class QuranPageFragment extends Fragment {
 	}
    
 	class PageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
-		private final WeakReference<Context> contextReference;
-		
-		private int page = 0;
-		
-		public PageBookmarkTask(Context context) {
-			// FIXME Is this correct?? How to pass context correctly? -AF
-			// use a WeakReference to ensure the Context can be garbage collected
-			contextReference = new WeakReference<Context>(context);
-		}
-		
 		@Override
 		protected Boolean doInBackground(Integer... params) {
-			page = params[0];
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(contextReference.get());
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
 			db.open();
-			boolean result = db.togglePageBookmark(page);
+			boolean result = db.togglePageBookmark(params[0]);
 			db.close();
 			return result;
 		}

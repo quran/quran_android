@@ -22,6 +22,8 @@
     <string name="menu_settings">الاعدادات</string>
     <string name="menu_jump_last_page">الصفحة الأخيرة</string>
     <string name="menu_bookmarks">مرجعيات</string>
+    <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
+    <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
     <string name="menu_bookmarks_remove">حذف</string>
     <string name="menu_bookmarks_view">معينة</string>
     <string name="menu_translation">التفسير/الترجمة</string>

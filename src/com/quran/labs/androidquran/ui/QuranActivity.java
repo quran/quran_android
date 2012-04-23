@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
@@ -34,7 +35,6 @@ import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
 import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranActivity extends SherlockActivity implements ActionBar.TabListener {
    public final String TAG = "QuranActivity";
@@ -85,36 +85,49 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    public void onTabSelected(Tab tab, FragmentTransaction transaction){
       android.util.Log.d(TAG, "onTabSelected");
       Integer tabTag = (Integer)tab.getTag();
-      
-      int layout;
-      QuranRow[] elements = null;
-      switch (tabTag){
-      case JUZ2_LIST:
-    	  layout = R.layout.index_sura_row;
-          elements = getJuz2List();
-          break;
-      case BOOKMARKS_LIST:
-    	  layout = R.layout.index_sura_row;
-    	  elements = getBookmarks();
-    	  break;
-      case SURA_LIST:
-      default:
-         layout = R.layout.index_sura_row;
-         elements = getSuraList();
-      }
-      
-      EfficientAdapter adapter = new EfficientAdapter(this, layout, elements);
-      mList.setAdapter(adapter);
-      mList.setOnItemClickListener(new OnItemClickListener(){
-         public void onItemClick(AdapterView<?> parent, View v,
-                                 int position, long id){
-            ListView p = (ListView)parent;
-            QuranRow elem = (QuranRow)p.getAdapter().getItem((int)id);
-            if (elem.page > 0)
-            	jumpTo(elem.page);
-         }
-      });
+      new OnTabSelectedTask().execute(tabTag);
    }
+   
+	class OnTabSelectedTask extends AsyncTask<Integer, Void, QuranRow[]> {
+		private Integer layout = 0;
+
+		@Override
+		protected QuranRow[] doInBackground(Integer... params) {
+		      QuranRow[] elements = null;
+		      switch (params[0]){
+		      case JUZ2_LIST:
+		    	  layout = R.layout.index_sura_row;
+		          elements = getJuz2List();
+		          break;
+		      case BOOKMARKS_LIST:
+		    	  layout = R.layout.index_sura_row;
+		    	  elements = getBookmarks();
+		    	  break;
+		      case SURA_LIST:
+		      default:
+		         layout = R.layout.index_sura_row;
+		         elements = getSuraList();
+		      }
+		      return elements;
+		}
+		
+		@Override
+		protected void onPostExecute(QuranRow[] result) {
+			EfficientAdapter adapter = new EfficientAdapter(
+					getApplicationContext(), layout, result);
+			mList.setAdapter(adapter);
+			mList.setOnItemClickListener(new OnItemClickListener(){
+				public void onItemClick(AdapterView<?> parent, View v,
+						int position, long id){
+					ListView p = (ListView)parent;
+					QuranRow elem = (QuranRow)p.getAdapter().getItem((int)id);
+					if (elem.page > 0)
+						jumpTo(elem.page);
+				}
+			});
+		}
+
+	}
    
    @Override
    public boolean onCreateOptionsMenu(Menu menu){
@@ -157,9 +170,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
          if (tabTag != null && tabTag == BOOKMARKS_LIST){
             // refresh the bookmarks list to update current page
             // and any added new bookmarks.
-            QuranRow[] elements = getBookmarks();
-            adapter.mElements = elements;
-            adapter.notifyDataSetChanged();
+            new BookmarksRefreshTask(adapter).execute();
          }
          else {
             int lastPage = getLastPage();
@@ -180,6 +191,27 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
          }
       }
    }
+   
+	class BookmarksRefreshTask extends AsyncTask<Void, Void, QuranRow[]> {
+		private EfficientAdapter adapter;
+		
+		public BookmarksRefreshTask(EfficientAdapter adapter) {
+			this.adapter = adapter;
+		}
+		
+		@Override
+		protected QuranRow[] doInBackground(Void... params) {
+            return getBookmarks();
+		}
+
+		@Override
+		protected void onPostExecute(QuranRow[] result) {
+            if (adapter != null) {
+				adapter.mElements = result;
+				adapter.notifyDataSetChanged();
+			}
+		}
+	}
    
    public void jumpTo(int page) {
       Intent i = new Intent(this, PagerActivity.class);
@@ -286,7 +318,6 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    }
    
    private QuranRow[] getBookmarks(){
-	   // FIXME do on separate thread (AsyncTask), and check context is correct
 	   BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getApplicationContext());
 	   db.open();
 	   List<Integer> pageBookmarks = db.getPageBookmarks();
