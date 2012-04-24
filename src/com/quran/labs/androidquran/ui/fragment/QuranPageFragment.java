@@ -1,8 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.lang.ref.WeakReference;
-
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,12 +15,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
@@ -106,7 +107,7 @@ public class QuranPageFragment extends Fragment {
    private class PageGestureDetector extends SimpleOnGestureListener {
       @Override
       public boolean onSingleTapConfirmed(MotionEvent event) {
-          new PageBookmarkTask().execute(mPageNumber);
+          new TogglePageBookmarkTask().execute(mPageNumber);
           return true;
       }
 
@@ -128,7 +129,9 @@ public class QuranPageFragment extends Fragment {
             mImageView.highlightAyah(result.getSoura(), result.getAyah());
             mImageView.invalidate();
             mImageView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            new AyahBookmarkTask().execute(mPageNumber, result.getSoura(), result.getAyah());
+            
+            // TODO Temporary UI until new UI is implemented
+            new ShowAyahMenuTask(mPageNumber, result.getSoura(), result.getAyah()).execute();
          }
       }
 
@@ -150,7 +153,115 @@ public class QuranPageFragment extends Fragment {
       }
    }
    
-	class AyahBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+   class ShowAyahMenuTask extends AsyncTask<Void, Void, Boolean> {
+		int page, sura, ayah;
+		
+		public ShowAyahMenuTask(int page, int sura, int ayah) {
+			this.page = page;
+			this.sura = sura;
+			this.ayah = ayah;
+		}
+		
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
+			db.open();
+			boolean result = db.isAyahBookmarked(sura, ayah);
+			db.close();
+			return result;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			final CharSequence[] options = { result ? "Unbookmark" : "Bookmark",
+					"Notes", "Tags", "Tafsir", "Ayah ID" };
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle(QuranInfo.getAyahString(sura, ayah));
+			builder.setItems(options, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int selection) {
+					if (selection == 0)
+						new ToggleAyahBookmarkTask().execute(mPageNumber, sura, ayah);
+					else if (selection == 1)
+						new ShowNotesDialogTask(page, sura, ayah).execute();
+					else if (selection == 4)
+						Toast.makeText(getActivity(), "Ayah "+QuranInfo.getAyahId(
+								sura, ayah), Toast.LENGTH_SHORT).show();
+				}
+			});
+			AlertDialog dlg = builder.create();
+			dlg.show();
+		}
+	}
+
+	class ShowNotesDialogTask extends AsyncTask<Void, Void, String> {
+		int page, sura, ayah;
+		
+		public ShowNotesDialogTask(int page, int sura, int ayah) {
+			this.page = page;
+			this.sura = sura;
+			this.ayah = ayah;
+		}
+		
+		@Override
+		protected String doInBackground(Void... params) {
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
+			db.open();
+			String result = db.getAyahNotes(sura, ayah);
+			db.close();
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(final String result) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Notes (" + QuranInfo.getAyahString(sura, ayah) + ")");
+			
+			final EditText input = new EditText(getActivity());
+			input.setText(result);
+			builder.setView(input);
+			builder.setPositiveButton("Save",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							String newNotes = input.getText().toString();
+							if (result != null && !result.equals(newNotes))
+								new SaveNotesTask(page, sura, ayah).execute(newNotes);
+						}
+					});
+			builder.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {/*Do Nothing*/}
+					});
+			AlertDialog dlg = builder.create();
+			dlg.show();
+		}
+	}
+
+	class SaveNotesTask extends AsyncTask<String, Void, Void> {
+		int page, sura, ayah;
+		
+		public SaveNotesTask(int page, int sura, int ayah) {
+			this.page = page;
+			this.sura = sura;
+			this.ayah = ayah;
+		}
+		
+		@Override
+		protected Void doInBackground(String... params) {
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
+			db.open();
+			db.saveAyahNotes(page, sura, ayah, params[0]);
+			db.close();
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			Toast.makeText(getActivity(), "Notes Saved", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	class ToggleAyahBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
 			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
@@ -162,11 +273,12 @@ public class QuranPageFragment extends Fragment {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-            Toast.makeText(getActivity(), result ? "Ayah Bookmarked" : "Ayah Unbookmarked", Toast.LENGTH_SHORT).show();
+			// Temp toast for debugging
+			Toast.makeText(getActivity(), result ? "Ayah Bookmarked" : "Ayah Unbookmarked", Toast.LENGTH_SHORT).show();
 		}
 	}
-   
-	class PageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+
+	class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
 			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
@@ -178,6 +290,7 @@ public class QuranPageFragment extends Fragment {
 		
 		@Override
 		protected void onPostExecute(Boolean result) {
+			// Temp toast for debugging
 			Toast.makeText(getActivity(), result ? "Page Bookmarked" : "Page Unbookmarked", Toast.LENGTH_SHORT).show();
 		}
 	}
