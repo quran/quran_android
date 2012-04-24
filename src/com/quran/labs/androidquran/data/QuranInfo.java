@@ -550,6 +550,15 @@ public class QuranInfo {
 		return index;
 	}
 
+	public static int getAyahId(int sura, int ayah) {
+		int ayahId = 0;
+		for (int i = 0; i < sura-1; i++) {
+			ayahId += SURA_NUM_AYAHS[i];
+		}
+		ayahId += ayah;
+		return ayahId;
+	}
+	
 	public static int getNumAyahs(int sura){
 		if ((sura < 1) || (sura > ApplicationConstants.SURAS_COUNT)) return -1;
 		return SURA_NUM_AYAHS[sura-1];

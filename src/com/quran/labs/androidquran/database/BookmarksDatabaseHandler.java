@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDatabaseHelper.AyahTable;
 import com.quran.labs.androidquran.database.BookmarksDatabaseHelper.PageTable;
 
@@ -14,62 +15,76 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class BookmarksDatabaseHandler {
 
-	private SQLiteDatabase db;
-	private BookmarksDatabaseHelper dbHelper;
+	private SQLiteDatabase mDb;
+	private BookmarksDatabaseHelper mDbHelper;
 	
 	public BookmarksDatabaseHandler(Context context) {
-		this.dbHelper = new BookmarksDatabaseHelper(context);
+		this.mDbHelper = new BookmarksDatabaseHelper(context);
 	}
 
 	// TODO Add error handling for SQLExceptions and such..
 
 	public void open() throws SQLException {
-		db = dbHelper.getWritableDatabase();
+		mDb = mDbHelper.getWritableDatabase();
 	}
 
 	public void close() {
-		dbHelper.close();
+		mDbHelper.close();
 	}
 
-	private Cursor findAyah(int page, int sura, int ayah, String[] columns) {
-		return db.query(AyahTable.TABLE_NAME, columns,
-				AyahTable.PAGE + "=" + page + " and " + AyahTable.SURA + "=" + sura + 
-				" and " + AyahTable.AYAH + "=" + ayah, null, null, null, AyahTable.SURA+", "+AyahTable.AYAH);
+	private Cursor findAyah(int sura, int ayah, String[] columns) {
+		return findAyah(QuranInfo.getAyahId(sura, ayah), columns);
 	}
 	
+	private Cursor findAyah(int ayahId, String[] columns) {
+		return mDb.query(AyahTable.TABLE_NAME, columns, AyahTable.ID + "=" + ayahId,
+				null, null, null, AyahTable.SURA+", "+AyahTable.AYAH);
+	}
+	
+	private ContentValues createAyahValues(
+			int ayahId, int page, int sura, int ayah, int bookmarked) {
+		ContentValues values = new ContentValues();
+		values.put(AyahTable.ID, ayahId);
+		values.put(AyahTable.PAGE, page);
+		values.put(AyahTable.SURA, sura);
+		values.put(AyahTable.AYAH, ayah);
+		values.put(AyahTable.BOOKMARKED, bookmarked);
+		return values;
+	}
+	
+	// Returns new isBookmarked value
 	public boolean toggleAyahBookmark(int page, int sura, int ayah) {
-		Cursor cursor = findAyah(page, sura, ayah, 
-				new String[] {AyahTable.ID, AyahTable.BOOKMARKED});
-		if (!cursor.moveToFirst()) {
+		int ayahId = QuranInfo.getAyahId(sura, ayah);
+		Cursor cursor = findAyah(ayahId, new String[] {AyahTable.BOOKMARKED});
+		if (cursor.moveToFirst()) {
+			boolean isBookmarked = (cursor.getInt(0) != 0);
 			ContentValues values = new ContentValues();
-			values.put(AyahTable.PAGE, page);
-			values.put(AyahTable.SURA, sura);
-			values.put(AyahTable.AYAH, ayah);
-			values.put(AyahTable.BOOKMARKED, 1);
-			db.insert(AyahTable.TABLE_NAME, null, values);
-			return true;
+			values.put(AyahTable.BOOKMARKED, !isBookmarked);
+			mDb.update(AyahTable.TABLE_NAME, values, AyahTable.ID+"="+ayahId, null);
+			return !isBookmarked;
 		} else {
-			int id = cursor.getInt(0);
-			boolean curValue = (cursor.getInt(1) != 0);
-			ContentValues values = new ContentValues();
-			values.put(AyahTable.BOOKMARKED, !curValue);
-			db.update(AyahTable.TABLE_NAME, values, AyahTable.ID+"="+id, null);
-			return !curValue;
+			ContentValues values = createAyahValues(ayahId, page, sura, ayah, 1);
+			mDb.insert(AyahTable.TABLE_NAME, null, values);
+			return true;
 		}
 	}
 	
-	public boolean isAyahBookmarked(int page, int sura, int ayah) {
-		Cursor cursor = findAyah(page, sura, ayah, new String[] {AyahTable.BOOKMARKED});
-		if (!cursor.moveToFirst())
-			return false;
-		else
-			return cursor.getInt(0) == 1;
+	public boolean isAyahBookmarked(int sura, int ayah) {
+		Cursor cursor = findAyah(sura, ayah, new String[] {AyahTable.BOOKMARKED});
+		return (cursor.moveToFirst() && cursor.getInt(0) == 1);
 	}
 	
 	public List<Integer[]> getAyahBookmarks() {
-		Cursor cursor = db.query(AyahTable.TABLE_NAME, 
+		return getAyahBookmarks(null);
+	}
+	
+	public List<Integer[]> getAyahBookmarks(Integer page) {
+		String query = AyahTable.BOOKMARKED + "=1";
+		if(page != null)
+			query += " and " + AyahTable.PAGE + "=" + page;
+		Cursor cursor = mDb.query(AyahTable.TABLE_NAME,
 				new String[] {AyahTable.PAGE, AyahTable.SURA, AyahTable.AYAH},
-				AyahTable.BOOKMARKED + "=1", null, null, null, AyahTable.SURA+", "+AyahTable.AYAH);
+				query, null, null, null, AyahTable.SURA+", "+AyahTable.AYAH);
 		List<Integer[]> ayahBookmarks = new ArrayList<Integer[]>();
 		while(cursor.moveToNext()) {
 			ayahBookmarks.add(new Integer[] {cursor.getInt(0), cursor.getInt(1), cursor.getInt(2)});
@@ -77,28 +92,53 @@ public class BookmarksDatabaseHandler {
 		return ayahBookmarks;
 	}
 	
+	// If no notes, returns empty string
+	public String getAyahNotes(int sura, int ayah) {
+		Cursor cursor = findAyah(sura, ayah, new String[] {AyahTable.NOTES});
+		if (!cursor.moveToFirst() || cursor.isNull(0))
+			return "";
+		return cursor.getString(0);
+	}
+	
+	public void saveAyahNotes(int page, int sura, int ayah, String notes) {
+		int ayahId = QuranInfo.getAyahId(sura, ayah);
+		Cursor cursor = findAyah(ayahId, new String[] {AyahTable.BOOKMARKED});
+		if (cursor.moveToFirst()) {
+			ContentValues values = new ContentValues();
+			values.put(AyahTable.NOTES, notes);
+			mDb.update(AyahTable.TABLE_NAME, values, AyahTable.ID+"="+ayahId, null);
+		} else {
+			ContentValues values = createAyahValues(ayahId, page, sura, ayah, 0);
+			values.put(AyahTable.NOTES, notes);
+			mDb.insert(AyahTable.TABLE_NAME, null, values);
+		}
+	}
+	
 	private Cursor findPage(int page) {
-		return db.query(PageTable.TABLE_NAME, new String[] {PageTable.ID, PageTable.PAGE},
-				PageTable.PAGE + "=" + page, null, null, null, PageTable.PAGE);
+		return mDb.query(PageTable.TABLE_NAME, new String[] {PageTable.BOOKMARKED},
+				PageTable.ID + "=" + page, null, null, null, PageTable.ID);
 	}
 	
 	public boolean togglePageBookmark(int page) {
 		Cursor cursor = findPage(page);
 		if (!cursor.moveToFirst()) {
 			ContentValues values = new ContentValues();
-			values.put(PageTable.PAGE, page);
-			db.insert(PageTable.TABLE_NAME, null, values);
+			values.put(PageTable.ID, page);
+			values.put(PageTable.BOOKMARKED, 1);
+			mDb.insert(PageTable.TABLE_NAME, null, values);
 			return true;
 		} else {
-			int id = cursor.getInt(0);
-			db.delete(PageTable.TABLE_NAME, PageTable.ID+"="+id, null);
-			return false;
+			boolean isBookmarked = (cursor.getInt(0) != 0);
+			ContentValues values = new ContentValues();
+			values.put(PageTable.BOOKMARKED, !isBookmarked);
+			mDb.update(PageTable.TABLE_NAME, values, PageTable.ID+"="+page, null);
+			return !isBookmarked;
 		}
 	}
 	
 	public List<Integer> getPageBookmarks() {
-		Cursor cursor = db.query(PageTable.TABLE_NAME, new String[] {PageTable.PAGE},
-				null, null, null, null, PageTable.PAGE);
+		Cursor cursor = mDb.query(PageTable.TABLE_NAME, new String[] {PageTable.ID},
+				PageTable.BOOKMARKED + "=1", null, null, null, PageTable.ID);
 		List<Integer> pageBookmarks = new ArrayList<Integer>();
 		while(cursor.moveToNext()) {
 			pageBookmarks.add(cursor.getInt(0));

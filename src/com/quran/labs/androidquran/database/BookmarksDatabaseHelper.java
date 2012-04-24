@@ -20,26 +20,26 @@ class BookmarksDatabaseHelper extends SQLiteOpenHelper {
 		static final String NOTES = "notes";
 	}
 	
-	private static final String CREATE_AYAH_TABLE=
+	private static final String CREATE_AYAH_TABLE =
 			" create table " + AyahTable.TABLE_NAME + " (" + 
-					AyahTable.ID + " integer primary key, " +
-					AyahTable.PAGE + " integer not null, " +
-					AyahTable.SURA + " integer not null, " +
-					AyahTable.AYAH + " integer not null, " +
-					AyahTable.BOOKMARKED + " integer not null, " +
-					AyahTable.TAGS + " text, " +
-					AyahTable.NOTES + " text);";
+					AyahTable.ID + " INTEGER PRIMARY KEY, " +
+					AyahTable.PAGE + " INTEGER NOT NULL, " +
+					AyahTable.SURA + " INTEGER NOT NULL, " +
+					AyahTable.AYAH + " INTEGER NOT NULL, " +
+					AyahTable.BOOKMARKED + " INTEGER NOT NULL, " +
+					AyahTable.TAGS + " TEXT, " +
+					AyahTable.NOTES + " TEXT);";
 	
 	static class PageTable {
 		static final String TABLE_NAME = "page_bookmarks";
 		static final String ID = "_id";
-		static final String PAGE = "page";
+		static final String BOOKMARKED = "bookmarked";
 	}
 	
-	private static final String CREATE_PAGE_TABLE=
+	private static final String CREATE_PAGE_TABLE =
 			" create table " + PageTable.TABLE_NAME + " (" + 
-					PageTable.ID + " integer primary key, " +
-					PageTable.PAGE + " integer not null);";
+					PageTable.ID + " INTEGER PRIMARY KEY, " +
+					PageTable.BOOKMARKED + " INTEGER NOT NULL);";
 	
 //	static class TagsTable {
 //		static final String TABLE_NAME = "tags";
