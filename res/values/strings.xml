@@ -208,6 +208,7 @@
 
     <string name="bookmarks_current_page">Current Page</string>
     <string name="no_bookmarks">No Bookmarks!</string>
+    <string name="index_loading">Loading…</string>
     
     <string-array name="quarter_prefix_array">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>

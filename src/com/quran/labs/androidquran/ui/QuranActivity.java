@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
+import com.quran.labs.androidquran.database.BookmarksDatabaseHandler.AyahBookmark;
 import com.quran.labs.androidquran.util.ArabicStyle;
 
 public class QuranActivity extends SherlockActivity implements ActionBar.TabListener {
@@ -321,7 +322,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 	   BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getApplicationContext());
 	   db.open();
 	   List<Integer> pageBookmarks = db.getPageBookmarks();
-	   List<Integer[]> ayahBookmarks = db.getAyahBookmarks();
+	   List<AyahBookmark> ayahBookmarks = db.getAyahBookmarks();
 	   db.close();
       
 	   SharedPreferences prefs = PreferenceManager.
@@ -364,12 +365,12 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks_ayah),
 				   null, true, 0, 0, null);
 	   }
-	   for (Integer[] ayah : ayahBookmarks){
+	   for (AyahBookmark ayah : ayahBookmarks){
 		   res[index++] = new QuranRow(
 				   // TODO Polish up displayed information for Ayahs
-				   QuranInfo.getAyahString(ayah[1], ayah[2]),
-				   QuranInfo.getSuraDetailsForBookmark(ayah[0]),
-				   false, ayah[1], ayah[0],
+				   QuranInfo.getAyahString(ayah.sura, ayah.ayah),
+				   QuranInfo.getSuraDetailsForBookmark(ayah.page),
+				   false, ayah.sura, ayah.page,
 				   R.drawable.bookmark_page);
 	   }
 	   
