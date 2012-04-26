@@ -1,22 +1,36 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
@@ -24,6 +38,7 @@ import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
+import com.quran.labs.androidquran.database.BookmarksDatabaseHandler.AyahTag;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -130,7 +145,7 @@ public class QuranPageFragment extends Fragment {
             mImageView.invalidate();
             mImageView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             
-            // TODO Temporary UI until new UI is implemented
+            // TODO Temporary UI (including all sub-tasks) until new UI is implemented
             new ShowAyahMenuTask(mPageNumber, result.getSoura(), result.getAyah()).execute();
          }
       }
@@ -184,6 +199,10 @@ public class QuranPageFragment extends Fragment {
 						new ToggleAyahBookmarkTask().execute(mPageNumber, sura, ayah);
 					else if (selection == 1)
 						new ShowNotesDialogTask(page, sura, ayah).execute();
+					else if (selection == 2)
+						new ShowTagsDialogTask(page, sura, ayah).execute();
+					else if (selection == 3)
+						Toast.makeText(getActivity(), "Not Implemented", Toast.LENGTH_SHORT).show();
 					else if (selection == 4)
 						Toast.makeText(getActivity(), "Ayah "+QuranInfo.getAyahId(
 								sura, ayah), Toast.LENGTH_SHORT).show();
@@ -191,6 +210,217 @@ public class QuranPageFragment extends Fragment {
 			});
 			AlertDialog dlg = builder.create();
 			dlg.show();
+		}
+	}
+
+	// Temporary UI until new UI is implemented
+	class ShowTagsDialogTask extends AsyncTask<Void, Void, List<AyahTag>> {
+		int page, sura, ayah;
+		List<Integer> ayahTagIds;
+		
+		public ShowTagsDialogTask(int page, int sura, int ayah) {
+			this.page = page;
+			this.sura = sura;
+			this.ayah = ayah;
+		}
+		
+		@Override
+		protected List<AyahTag> doInBackground(Void... params) {
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
+			db.open();
+			ayahTagIds = db.getAyahTagIds(page, sura, ayah);
+			List<AyahTag> result = db.getTagList();
+			db.close();
+			return result;
+		}
+		
+		@Override
+		protected void onPostExecute(final List<AyahTag> result) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Tags (" + QuranInfo.getAyahString(sura, ayah) + ")");
+			
+			// Map tagIds to corresponding CheckBoxes
+			final HashMap<Integer, CheckBox> checkBoxes = new HashMap<Integer, CheckBox>();
+			for (AyahTag tag : result) {
+				CheckBox cb = new CheckBox(getActivity());
+				cb.setText(tag.name);
+				cb.setChecked(ayahTagIds.contains(tag.id));
+				checkBoxes.put(tag.id, cb);
+			}
+			
+			final TableLayout tl = new TableLayout(getActivity());
+			
+			// Button for adding new Tag
+			final Button btnNewTag = new Button(getActivity());
+			btnNewTag.setText("New Tag");
+			btnNewTag.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setTitle("New Tag");
+					LinearLayout ll = new LinearLayout(getActivity());
+					ll.setOrientation(LinearLayout.VERTICAL);
+					final EditText etName = new EditText(getActivity());
+					final EditText etDesc = new EditText(getActivity());
+					final EditText etColor = new EditText(getActivity());
+					etName.setHint("Name");
+					etDesc.setHint("Description");
+					etColor.setHint("Color");
+					etColor.setInputType(InputType.TYPE_CLASS_NUMBER);
+					ll.addView(etName);
+					ll.addView(etDesc);
+					ll.addView(etColor);
+					builder.setView(ll);
+					builder.setPositiveButton("Save",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									new SaveTagTask(checkBoxes, tl).execute(etName.getText().toString(),
+											etDesc.getText().toString(), etColor.getText().toString());
+								}
+							});
+					builder.setNegativeButton("Cancel",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {/*Do Nothing*/}
+							});
+					AlertDialog dlg = builder.create();
+					dlg.show();
+				}
+			});
+			
+			// Populate tag list (TableView layout)
+			// First row has button for adding new tag
+			TableRow trBtnNewTag = new TableRow(getActivity());
+			trBtnNewTag.addView(btnNewTag);
+			trBtnNewTag.setGravity(Gravity.RIGHT);
+			tl.addView(trBtnNewTag);
+			// Remaining rows have tag checkbox + button to delete the tag
+			for (Integer key : checkBoxes.keySet()) {
+				final Integer tagId = key;
+				final TableRow tr = new TableRow(getActivity());
+				Button btnDelTag = new Button(getActivity());
+				btnDelTag.setText("Delete");
+				btnDelTag.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						tl.removeView(tr);
+						new DeleteTagTask().execute(tagId);
+					}
+				});
+				tr.addView(checkBoxes.get(key));
+				tr.addView(btnDelTag);
+				tl.addView(tr);
+			}
+			
+			// Put TableLayout in ScrollView (to allow scrolling if tag list is long)
+			final ScrollView sv = new ScrollView(getActivity());
+			sv.addView(tl);
+			
+			// Show dialog
+			builder.setView(sv);
+			builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					List<Integer> ayahTagIds = new ArrayList<Integer>();
+					for (Integer tagId : checkBoxes.keySet()) {
+						if (checkBoxes.get(tagId).isChecked())
+							ayahTagIds.add(tagId);
+					}
+					new UpdateTagTask(sura, ayah, ayahTagIds).execute();
+				}
+			});
+			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {/*Do Nothing*/}
+			});
+			AlertDialog dlg = builder.create();
+			dlg.show();
+		}
+	}
+	
+	class UpdateTagTask extends AsyncTask<Void, Void, Void> {
+		int sura, ayah;
+		List<Integer> ayahTagIds;
+		
+		public UpdateTagTask(int sura, int ayah, List<Integer> ayahTagIds) {
+			this.sura = sura;
+			this.ayah = ayah;
+			this.ayahTagIds = ayahTagIds;
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
+			db.open();
+			db.updateAyahTags(sura, ayah, ayahTagIds);
+			db.close();
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			Toast.makeText(getActivity(), "Tags Updated", Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	class DeleteTagTask extends AsyncTask<Integer, Void, Void> {
+		@Override
+		protected Void doInBackground(Integer... params) {
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
+			db.open();
+			db.deleteTag(params[0]);
+			db.close();
+			return null;
+		}
+	}
+	
+	class SaveTagTask extends AsyncTask<String, Void, Integer> {
+		WeakReference<HashMap<Integer, CheckBox>> checkBoxesReference;
+		WeakReference<TableLayout> tlReference;
+		String name;
+		
+		public SaveTagTask(HashMap<Integer, CheckBox> checkBoxes, TableLayout tl) {
+			this.checkBoxesReference = new WeakReference<HashMap<Integer,CheckBox>>(checkBoxes);
+			this.tlReference = new WeakReference<TableLayout>(tl);
+		}
+		
+		@Override
+		protected Integer doInBackground(String... params) {
+			name = params[0];
+			Integer color = null;
+			if (params[2] != null && !params[2].equals(""))
+					color = Integer.valueOf(params[2]);
+			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
+			db.open();
+			int tagId = db.saveTag(name, params[1], color);
+			db.close();
+			return tagId;
+		}
+		
+		@Override
+		protected void onPostExecute(final Integer result) {
+			if (checkBoxesReference == null || tlReference == null)
+				return;
+			
+			final HashMap<Integer, CheckBox> checkBoxes = checkBoxesReference.get();
+			final TableLayout tl = tlReference.get();
+			if (checkBoxes == null || tl == null || checkBoxes.containsKey(result))
+				return;
+			
+			final TableRow tr = new TableRow(getActivity());
+			Button delBtn = new Button(getActivity());
+			delBtn.setText("Delete");
+			delBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					tl.removeView(tr);
+					new DeleteTagTask().execute(result);
+				}
+			});
+			CheckBox cb = new CheckBox(getActivity());
+			cb.setText(name);
+			cb.setChecked(true);
+			checkBoxes.put(result, cb);
+			tr.addView(cb);
+			tr.addView(delBtn);
+			tl.addView(tr);
 		}
 	}
 
