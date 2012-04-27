@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-class BookmarksDatabaseHelper extends SQLiteOpenHelper {
+class BookmarksDBHelper extends SQLiteOpenHelper {
 
 	private static final String DB_NAME = "bookmarks.db";
 	private static final int DB_VERSION = 1;
@@ -67,7 +67,7 @@ class BookmarksDatabaseHelper extends SQLiteOpenHelper {
 					AyahTagMapTable.AYAH_ID + " INTEGER NOT NULL, " +
 					AyahTagMapTable.TAG_ID + " INTEGER NOT NULL);";
 	
-	public BookmarksDatabaseHelper(Context context) {
+	public BookmarksDBHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 	}
 	
