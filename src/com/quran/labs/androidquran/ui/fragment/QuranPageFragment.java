@@ -37,8 +37,8 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
-import com.quran.labs.androidquran.database.BookmarksDatabaseHandler.AyahTag;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter.AyahTag;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -179,10 +179,10 @@ public class QuranPageFragment extends Fragment {
 		
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			boolean result = db.isAyahBookmarked(sura, ayah);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			boolean result = dba.isAyahBookmarked(sura, ayah);
+			dba.close();
 			return result;
 		}
 		
@@ -226,11 +226,11 @@ public class QuranPageFragment extends Fragment {
 		
 		@Override
 		protected List<AyahTag> doInBackground(Void... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			ayahTagIds = db.getAyahTagIds(page, sura, ayah);
-			List<AyahTag> result = db.getTagList();
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			ayahTagIds = dba.getAyahTagIds(page, sura, ayah);
+			List<AyahTag> result = dba.getTagList();
+			dba.close();
 			return result;
 		}
 		
@@ -347,10 +347,10 @@ public class QuranPageFragment extends Fragment {
 		
 		@Override
 		protected Void doInBackground(Void... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			db.updateAyahTags(sura, ayah, ayahTagIds);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			dba.updateAyahTags(sura, ayah, ayahTagIds);
+			dba.close();
 			return null;
 		}
 		
@@ -363,10 +363,10 @@ public class QuranPageFragment extends Fragment {
 	class DeleteTagTask extends AsyncTask<Integer, Void, Void> {
 		@Override
 		protected Void doInBackground(Integer... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			db.deleteTag(params[0]);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			dba.deleteTag(params[0]);
+			dba.close();
 			return null;
 		}
 	}
@@ -387,10 +387,10 @@ public class QuranPageFragment extends Fragment {
 			Integer color = null;
 			if (params[2] != null && !params[2].equals(""))
 					color = Integer.valueOf(params[2]);
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			int tagId = db.saveTag(name, params[1], color);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			int tagId = dba.saveTag(name, params[1], color);
+			dba.close();
 			return tagId;
 		}
 		
@@ -435,10 +435,12 @@ public class QuranPageFragment extends Fragment {
 		
 		@Override
 		protected String doInBackground(Void... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			String result = db.getAyahNotes(sura, ayah);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			String result = dba.getAyahNotes(sura, ayah);
+			dba.close();
+			if (result == null)
+				result = "";
 			return result;
 		}
 
@@ -478,10 +480,10 @@ public class QuranPageFragment extends Fragment {
 		
 		@Override
 		protected Void doInBackground(String... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			db.saveAyahNotes(page, sura, ayah, params[0]);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			dba.saveAyahNotes(page, sura, ayah, params[0]);
+			dba.close();
 			return null;
 		}
 		
@@ -494,10 +496,10 @@ public class QuranPageFragment extends Fragment {
 	class ToggleAyahBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			boolean result = db.toggleAyahBookmark(params[0], params[1], params[2]);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			boolean result = dba.toggleAyahBookmark(params[0], params[1], params[2]);
+			dba.close();
 			return result;
 		}
 
@@ -511,10 +513,10 @@ public class QuranPageFragment extends Fragment {
 	class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
-			BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getActivity());
-			db.open();
-			boolean result = db.togglePageBookmark(params[0]);
-			db.close();
+			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+			dba.open();
+			boolean result = dba.togglePageBookmark(params[0]);
+			dba.close();
 			return result;
 		}
 		

@@ -33,8 +33,8 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.BookmarksDatabaseHandler;
-import com.quran.labs.androidquran.database.BookmarksDatabaseHandler.AyahBookmark;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter.AyahBookmark;
 import com.quran.labs.androidquran.util.ArabicStyle;
 
 public class QuranActivity extends SherlockActivity implements ActionBar.TabListener {
@@ -319,7 +319,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    }
    
    private QuranRow[] getBookmarks(){
-	   BookmarksDatabaseHandler db = new BookmarksDatabaseHandler(getApplicationContext());
+	   BookmarksDBAdapter db = new BookmarksDBAdapter(getApplicationContext());
 	   db.open();
 	   List<Integer> pageBookmarks = db.getPageBookmarks();
 	   List<AyahBookmark> ayahBookmarks = db.getAyahBookmarks();
