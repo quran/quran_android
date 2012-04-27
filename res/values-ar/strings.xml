@@ -171,6 +171,7 @@
     <string name="quran_page">الصفحة</string>
     <string name="quran_sura">سورة</string>
     <string name="quran_ayah">آية</string>
+    <string name="quran_sura_title">سورة</string>
     <string name="notification_downloading">جاري التحميل</string>
     <string name="notification_download_paused">توقف التحميل</string>
     <string name="notification_download_canceled">تم إلغاء التحميل</string>

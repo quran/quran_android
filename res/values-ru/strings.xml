@@ -172,5 +172,6 @@
     <string name="quran_page">Страница</string>
     <string name="quran_sura">Сура</string>
     <string name="quran_ayah">Аят</string>
+    <string name="quran_sura_title">Сура</string>
 
 </resources>

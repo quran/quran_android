@@ -191,7 +191,7 @@ public class QuranPageFragment extends Fragment {
 			final CharSequence[] options = { result ? "Unbookmark" : "Bookmark",
 					"Notes", "Tags", "Tafsir", "Ayah ID" };
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle(QuranInfo.getAyahString(sura, ayah));
+			builder.setTitle(QuranInfo.getAyahString(sura, ayah, getActivity()));
 			builder.setItems(options, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int selection) {
@@ -237,7 +237,7 @@ public class QuranPageFragment extends Fragment {
 		@Override
 		protected void onPostExecute(final List<AyahTag> result) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle("Tags (" + QuranInfo.getAyahString(sura, ayah) + ")");
+			builder.setTitle("Tags (" + QuranInfo.getAyahString(sura, ayah, getActivity()) + ")");
 			
 			// Map tagIds to corresponding CheckBoxes
 			final HashMap<Integer, CheckBox> checkBoxes = new HashMap<Integer, CheckBox>();
@@ -324,7 +324,7 @@ public class QuranPageFragment extends Fragment {
 						if (checkBoxes.get(tagId).isChecked())
 							ayahTagIds.add(tagId);
 					}
-					new UpdateTagTask(sura, ayah, ayahTagIds).execute();
+					new UpdateAyahTagsTask(sura, ayah, ayahTagIds).execute();
 				}
 			});
 			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -335,11 +335,11 @@ public class QuranPageFragment extends Fragment {
 		}
 	}
 	
-	class UpdateTagTask extends AsyncTask<Void, Void, Void> {
+	class UpdateAyahTagsTask extends AsyncTask<Void, Void, Void> {
 		int sura, ayah;
 		List<Integer> ayahTagIds;
 		
-		public UpdateTagTask(int sura, int ayah, List<Integer> ayahTagIds) {
+		public UpdateAyahTagsTask(int sura, int ayah, List<Integer> ayahTagIds) {
 			this.sura = sura;
 			this.ayah = ayah;
 			this.ayahTagIds = ayahTagIds;
@@ -445,7 +445,7 @@ public class QuranPageFragment extends Fragment {
 		@Override
 		protected void onPostExecute(final String result) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle("Notes (" + QuranInfo.getAyahString(sura, ayah) + ")");
+			builder.setTitle("Notes (" + QuranInfo.getAyahString(sura, ayah, getActivity()) + ")");
 			
 			final EditText input = new EditText(getActivity());
 			input.setText(result);

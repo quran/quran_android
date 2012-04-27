@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.data;
 
+import android.content.Context;
+
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranInfo {
@@ -56,16 +59,26 @@ public class QuranInfo {
 	
 	private static int AYAH_AYAT_BOUNDARY = 11;
 	
-	public static String getAyahTitle() {
-		return QuranSettings.getInstance().isArabicNames() ? "آية" : "Ayah";
-	}
-	
+	// TODO Use getSuraTitle(Context cx) instead
 	public static String getSuraTitle() {
 		return QuranSettings.getInstance().isArabicNames() ? "سورة" : "Surat";
 	}
 	
+	// TODO Use getJuzTitle(Context cx) instead
 	public static String getJuzTitle(){
 		return QuranSettings.getInstance().isArabicNames()? "جزء" : "Juz'";
+	}
+	
+	public static String getAyahTitle(Context cx) {
+		return cx.getString(R.string.quran_ayah);
+	}
+	
+	public static String getSuraTitle(Context cx) {
+		return cx.getString(R.string.quran_sura_title);
+	}
+	
+	public static String getJuzTitle(Context cx){
+		return cx.getString(R.string.quran_juz2);
 	}
 	
 	public static String getSuraName(int index) {
@@ -572,8 +585,9 @@ public class QuranInfo {
 		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
 	}
 	
-	public static String getAyahString(int sura, int ayah){
-		return getSuraTitle() + " " + getSuraName(sura-1) + " - " + getAyahTitle() + " " + ayah;
+	public static String getAyahString(int sura, int ayah, Context cx){
+		return getSuraTitle(cx) + " " + getSuraName(sura - 1) + " - "
+				+ getAyahTitle(cx) + " " + ayah;
 	}
 	
 	public static String getSuraNameString(int page){
