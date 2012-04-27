@@ -202,6 +202,7 @@
     <string name="quran_page">Page</string>
     <string name="quran_sura">Sura</string>
     <string name="quran_ayah">Ayah</string>
+    <string name="quran_sura_title">Surat</string>
     <string name="notification_downloading">Downloading..</string>
     <string name="notification_download_paused">Download paused</string>
     <string name="notification_download_canceled">Download canceled</string>
