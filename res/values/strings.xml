@@ -26,6 +26,8 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_jump_last_page">Last page</string>
     <string name="menu_bookmarks">Bookmarks</string>
+    <string name="menu_bookmarks_page">Page Bookmarks</string>
+    <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
     <string name="menu_bookmarks_remove">Remove</string>
     <string name="menu_bookmarks_view">View</string>
     <string name="menu_translation">Show Translation</string>
@@ -200,12 +202,14 @@
     <string name="quran_page">Page</string>
     <string name="quran_sura">Sura</string>
     <string name="quran_ayah">Ayah</string>
+    <string name="quran_sura_title">Surat</string>
     <string name="notification_downloading">Downloading..</string>
     <string name="notification_download_paused">Download paused</string>
     <string name="notification_download_canceled">Download canceled</string>
 
     <string name="bookmarks_current_page">Current Page</string>
     <string name="no_bookmarks">No Bookmarks!</string>
+    <string name="index_loading">Loading…</string>
     
     <string-array name="quarter_prefix_array">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>
