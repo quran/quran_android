@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
@@ -32,8 +33,9 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter.AyahBookmark;
 import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranActivity extends SherlockActivity implements ActionBar.TabListener {
    public final String TAG = "QuranActivity";
@@ -84,36 +86,49 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    public void onTabSelected(Tab tab, FragmentTransaction transaction){
       android.util.Log.d(TAG, "onTabSelected");
       Integer tabTag = (Integer)tab.getTag();
-      
-      int layout;
-      QuranRow[] elements = null;
-      switch (tabTag){
-      case JUZ2_LIST:
-    	  layout = R.layout.index_sura_row;
-          elements = getJuz2List();
-          break;
-      case BOOKMARKS_LIST:
-    	  layout = R.layout.index_sura_row;
-    	  elements = getBookmarks();
-    	  break;
-      case SURA_LIST:
-      default:
-         layout = R.layout.index_sura_row;
-         elements = getSuraList();
-      }
-      
-      EfficientAdapter adapter = new EfficientAdapter(this, layout, elements);
-      mList.setAdapter(adapter);
-      mList.setOnItemClickListener(new OnItemClickListener(){
-         public void onItemClick(AdapterView<?> parent, View v,
-                                 int position, long id){
-            ListView p = (ListView)parent;
-            QuranRow elem = (QuranRow)p.getAdapter().getItem((int)id);
-            if (elem.page > 0)
-            	jumpTo(elem.page);
-         }
-      });
+      new OnTabSelectedTask().execute(tabTag);
    }
+   
+	class OnTabSelectedTask extends AsyncTask<Integer, Void, QuranRow[]> {
+		private Integer layout = 0;
+
+		@Override
+		protected QuranRow[] doInBackground(Integer... params) {
+		      QuranRow[] elements = null;
+		      switch (params[0]){
+		      case JUZ2_LIST:
+		    	  layout = R.layout.index_sura_row;
+		          elements = getJuz2List();
+		          break;
+		      case BOOKMARKS_LIST:
+		    	  layout = R.layout.index_sura_row;
+		    	  elements = getBookmarks();
+		    	  break;
+		      case SURA_LIST:
+		      default:
+		         layout = R.layout.index_sura_row;
+		         elements = getSuraList();
+		      }
+		      return elements;
+		}
+		
+		@Override
+		protected void onPostExecute(QuranRow[] result) {
+			EfficientAdapter adapter = new EfficientAdapter(
+					getApplicationContext(), layout, result);
+			mList.setAdapter(adapter);
+			mList.setOnItemClickListener(new OnItemClickListener(){
+				public void onItemClick(AdapterView<?> parent, View v,
+						int position, long id){
+					ListView p = (ListView)parent;
+					QuranRow elem = (QuranRow)p.getAdapter().getItem((int)id);
+					if (elem.page > 0)
+						jumpTo(elem.page);
+				}
+			});
+		}
+
+	}
    
    @Override
    public boolean onCreateOptionsMenu(Menu menu){
@@ -156,9 +171,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
          if (tabTag != null && tabTag == BOOKMARKS_LIST){
             // refresh the bookmarks list to update current page
             // and any added new bookmarks.
-            QuranRow[] elements = getBookmarks();
-            adapter.mElements = elements;
-            adapter.notifyDataSetChanged();
+            new BookmarksRefreshTask(adapter).execute();
          }
          else {
             int lastPage = getLastPage();
@@ -179,6 +192,27 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
          }
       }
    }
+   
+	class BookmarksRefreshTask extends AsyncTask<Void, Void, QuranRow[]> {
+		private EfficientAdapter adapter;
+		
+		public BookmarksRefreshTask(EfficientAdapter adapter) {
+			this.adapter = adapter;
+		}
+		
+		@Override
+		protected QuranRow[] doInBackground(Void... params) {
+            return getBookmarks();
+		}
+
+		@Override
+		protected void onPostExecute(QuranRow[] result) {
+            if (adapter != null) {
+				adapter.mElements = result;
+				adapter.notifyDataSetChanged();
+			}
+		}
+	}
    
    public void jumpTo(int page) {
       Intent i = new Intent(this, PagerActivity.class);
@@ -285,15 +319,20 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    }
    
    private QuranRow[] getBookmarks(){
-      SharedPreferences prefs = PreferenceManager.
-            getDefaultSharedPreferences(getApplicationContext());
-      List<Integer> bookmarks = QuranUtils.getBookmarks(prefs);
+	   BookmarksDBAdapter db = new BookmarksDBAdapter(getApplicationContext());
+	   db.open();
+	   List<Integer> pageBookmarks = db.getPageBookmarks();
+	   List<AyahBookmark> ayahBookmarks = db.getAyahBookmarks();
+	   db.close();
       
+	   SharedPreferences prefs = PreferenceManager.
+			   getDefaultSharedPreferences(getApplicationContext());
 	   int lastPage = getLastPage(prefs);
 	   boolean showLastPage = lastPage != ApplicationConstants.NO_PAGE_SAVED;
-	   boolean showBookmarkHeader = bookmarks.size() != 0;
-	   int size = bookmarks.size() + (showLastPage? 2 : 0) +
-			   (showBookmarkHeader? 1 : 0);
+	   boolean showPageBookmarkHeader = pageBookmarks.size() != 0;
+	   boolean showAyahBookmarkHeader = ayahBookmarks.size() != 0;
+	   int size = pageBookmarks.size() + ayahBookmarks.size() + (showLastPage? 2 : 0) +
+			   (showPageBookmarkHeader? 1 : 0) + (showAyahBookmarkHeader? 1 : 0);
 	   
 	   int index = 0;
 	   QuranRow[] res = new QuranRow[size];
@@ -310,17 +349,31 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 		   res[index++] = currentPosition;
 	   }
 	   
-	   if (showBookmarkHeader){
-		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks),
+	   if (showPageBookmarkHeader){
+		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks_page),
 				   null, true, 0, 0, null);
 	   }
-	   for (int page : bookmarks){
+	   for (int page : pageBookmarks){
 		   res[index++] = new QuranRow(
 				   QuranInfo.getSuraNameString(page),
 				   QuranInfo.getSuraDetailsForBookmark(page),
-				   false, QuranInfo.PAGE_SURA_START[page], page,
+				   false, QuranInfo.PAGE_SURA_START[page-1], page,
 				   R.drawable.bookmark_page);
 	   }
+	   
+	   if (showAyahBookmarkHeader){
+		   res[index++] = new QuranRow(getString(R.string.menu_bookmarks_ayah),
+				   null, true, 0, 0, null);
+	   }
+	   for (AyahBookmark ayah : ayahBookmarks){
+		   res[index++] = new QuranRow(
+				   // TODO Polish up displayed information for Ayahs
+				   QuranInfo.getAyahString(ayah.sura, ayah.ayah, getApplicationContext()),
+				   QuranInfo.getSuraDetailsForBookmark(ayah.page),
+				   false, ayah.sura, ayah.page,
+				   R.drawable.bookmark_page);
+	   }
+	   
 	   return res;
    }
 
