@@ -26,6 +26,7 @@ public class TranslationsDBAdapter {
 	private DatabaseHelper DBHelper;
 	private SQLiteDatabase db;
 	
+	private static final String DB_NAME = "translations.db";
 	private static final String DATABASE_CREATE = 
 		"CREATE TABLE " + TABLE_NAME + "(" +
 		COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY, " +
@@ -154,7 +155,7 @@ public class TranslationsDBAdapter {
 		
 	private static class DatabaseHelper extends SQLiteOpenHelper {
         DatabaseHelper(Context context) {
-            super(context, DATABASE_CREATE, null, DATABASE_VERSION);
+            super(context, DB_NAME, null, DATABASE_VERSION);
         }
 
         @Override

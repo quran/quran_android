@@ -53,6 +53,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    private int[] mTabTags = new int[]{ SURA_LIST, JUZ2_LIST, BOOKMARKS_LIST };
    
    private ListView mList = null;
+   private AsyncTask<Integer, Void, QuranRow[]> loadingTask = null;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -86,7 +87,8 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    public void onTabSelected(Tab tab, FragmentTransaction transaction){
       android.util.Log.d(TAG, "onTabSelected");
       Integer tabTag = (Integer)tab.getTag();
-      new OnTabSelectedTask().execute(tabTag);
+      if (loadingTask != null){ loadingTask.cancel(true); }
+      loadingTask = new OnTabSelectedTask().execute(tabTag);
    }
    
 	class OnTabSelectedTask extends AsyncTask<Integer, Void, QuranRow[]> {
@@ -126,6 +128,7 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
 						jumpTo(elem.page);
 				}
 			});
+			loadingTask = null;
 		}
 
 	}
