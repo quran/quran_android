@@ -122,7 +122,7 @@ public class QuranPageFragment extends Fragment {
    private class PageGestureDetector extends SimpleOnGestureListener {
       @Override
       public boolean onSingleTapConfirmed(MotionEvent event) {
-          new TogglePageBookmarkTask().execute(mPageNumber);
+    	  ((PagerActivity)getActivity()).toggleActionBar();
           return true;
       }
 
@@ -130,8 +130,7 @@ public class QuranPageFragment extends Fragment {
       public boolean onDoubleTap(MotionEvent event) {
          AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
          if (result != null) {
-            mImageView.toggleHighlight(result.getSoura(), result.getAyah());
-            mImageView.invalidate();
+            new TogglePageBookmarkTask().execute(mPageNumber);
             return true;
          }
          return false;
