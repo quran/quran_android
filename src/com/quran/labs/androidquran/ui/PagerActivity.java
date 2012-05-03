@@ -37,7 +37,6 @@ public class PagerActivity extends SherlockFragmentActivity {
    
       if (QuranScreenInfo.getInstance() == null){
          Log.d(TAG, "QuranScreenInfo was null, re-initializing...");
-         
          WindowManager w = getWindowManager();
          Display d = w.getDefaultDisplay();
          int width = d.getWidth();

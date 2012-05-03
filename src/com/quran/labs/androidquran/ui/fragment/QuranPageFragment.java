@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -33,6 +32,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
@@ -45,11 +48,12 @@ import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
-public class QuranPageFragment extends Fragment {
+public class QuranPageFragment extends SherlockFragment {
    private static final String TAG = "QuranPageFragment";
    private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
    private int mPageNumber;
+   private boolean mIsBookmarked;
    private HighlightingImageView mImageView;
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
@@ -69,6 +73,9 @@ public class QuranPageFragment extends Fragment {
             .getDefaultDisplay().getWidth();
       mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
       mRightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
+      setHasOptionsMenu(true);
+      
+      new IsPageBookmarkedTask().execute(mPageNumber);
    }
 
    @Override
@@ -111,6 +118,31 @@ public class QuranPageFragment extends Fragment {
          QuranPageWorker worker = ((PagerActivity)getActivity()).getQuranPageWorker();
          worker.loadPage(mPageNumber, mImageView);
       }
+   }
+   
+   @Override
+   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+      super.onCreateOptionsMenu(menu, inflater);
+      inflater.inflate(R.menu.quran_menu, menu);
+   }
+   
+   @Override
+   public void onPrepareOptionsMenu(Menu menu) {
+      super.onPrepareOptionsMenu(menu);
+      MenuItem item = menu.findItem(R.id.favorite_item);
+      if (item != null){
+         if (mIsBookmarked){ item.setIcon(R.drawable.favorite); }
+         else { item.setIcon(R.drawable.not_favorite); }
+      }
+   }
+   
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item) {
+      if (item.getItemId() == R.id.favorite_item){
+         new TogglePageBookmarkTask().execute(mPageNumber);
+         return true;
+      }
+      return super.onOptionsItemSelected(item);
    }
    
    public void cleanup(){
@@ -509,21 +541,36 @@ public class QuranPageFragment extends Fragment {
 		}
 	}
 
-	class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+	class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Void> {
 		@Override
-		protected Boolean doInBackground(Integer... params) {
+		protected Void doInBackground(Integer... params) {
 			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
 			dba.open();
-			boolean result = dba.togglePageBookmark(params[0]);
+			mIsBookmarked = dba.togglePageBookmark(params[0]);
 			dba.close();
-			return result;
+			return null;
 		}
 		
 		@Override
-		protected void onPostExecute(Boolean result) {
-			// Temp toast for debugging
-			Toast.makeText(getActivity(), result ? "Page Bookmarked" : "Page Unbookmarked", Toast.LENGTH_SHORT).show();
+		protected void onPostExecute(Void result) {
+		   getActivity().invalidateOptionsMenu();
 		}
+	}
+	
+	class IsPageBookmarkedTask extends AsyncTask<Integer, Void, Void> {
+	   @Override
+	   protected Void doInBackground(Integer... params) {
+	      BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+	      dba.open();
+	      mIsBookmarked = dba.isPageBookmarked(params[0]);
+	      dba.close();
+	      return null;
+	   }
+
+	   @Override
+	   protected void onPostExecute(Void result) {
+	      getActivity().invalidateOptionsMenu();
+	   }
 	}
 	
 }

@@ -244,6 +244,16 @@ public class BookmarksDBAdapter {
 				PageTable.ID + "=" + page, null, null, null, PageTable.ID);
 	}
 	
+	public boolean isPageBookmarked(int page){
+	   boolean result = false;
+	   Cursor cursor = findPage(page);
+	   if (cursor.moveToFirst()){
+	      result = cursor.getInt(0) != 0;
+	   }
+	   cursor.close();
+	   return result;
+	}
+	
 	public boolean togglePageBookmark(int page) {
 		Cursor cursor = findPage(page);
 		boolean result = true;

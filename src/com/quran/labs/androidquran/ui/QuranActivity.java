@@ -28,6 +28,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
@@ -43,9 +44,6 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    private final int SURA_LIST = 1;
    private final int JUZ2_LIST = 2;
    private final int BOOKMARKS_LIST = 3;
-   
-   private final int MENU_SEARCH = 1;
-   private final int MENU_SETTINGS = 2;
    
    private int[] mTabs = new int[]{ R.string.quran_sura,
                                     R.string.quran_juz2,
@@ -135,20 +133,18 @@ public class QuranActivity extends SherlockActivity implements ActionBar.TabList
    
    @Override
    public boolean onCreateOptionsMenu(Menu menu){
-	   super.onCreateOptionsMenu(menu);
-	   menu.add(0, MENU_SEARCH, 0, R.string.menu_search).setIcon(R.drawable.ic_ab_search)
-	       .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-	   menu.add(0, MENU_SETTINGS, 0, R.string.menu_settings).setIcon(R.drawable.ic_ab_settings)
-	   	   .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-	   return true;
+      super.onCreateOptionsMenu(menu);
+      MenuInflater inflater = getSupportMenuInflater();
+      inflater.inflate(R.menu.home_menu, menu);
+      return true;
    }
    
    @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-      if (item.getItemId() == MENU_SEARCH){
+      if (item.getItemId() == R.id.search){
          return onSearchRequested();
       }
-      else if (item.getItemId() == MENU_SETTINGS){
+      else if (item.getItemId() == R.id.settings){
          Intent i = new Intent(this, QuranPreferenceActivity.class);
          startActivity(i);
          return true;
