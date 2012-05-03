@@ -32,7 +32,7 @@ public class QuranPageWorker {
       Log.d(TAG, "initial LruCache size: " + (memClass/8));
    }
    
-   public void addBitmapToCache(Integer key, Bitmap bitmap) {
+   private void addBitmapToCache(Integer key, Bitmap bitmap) {
       if (bitmap != null && getBitmapFromCache(key) == null) {
          mMemoryCache.put(key, bitmap);
       }
@@ -41,7 +41,7 @@ public class QuranPageWorker {
             ", number of evicts: " + mMemoryCache.evictionCount());
    }
 
-   public Bitmap getBitmapFromCache(Integer key) {
+   private Bitmap getBitmapFromCache(Integer key) {
       return mMemoryCache.get(key);
    }
 
@@ -57,7 +57,7 @@ public class QuranPageWorker {
       }
    }
 
-   class QuranPageWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
+   private class QuranPageWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
       private final WeakReference<ImageView> imageViewReference;
       private int data = 0;
 
