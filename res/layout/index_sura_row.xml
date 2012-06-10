@@ -13,7 +13,7 @@
               android:layout_centerInParent="true"
               android:gravity="center"
               android:textSize="18sp"
-              android:textColor="@color/suraInfoColor" />
+              android:textColor="@color/sura_info_color" />
 
     <TextView android:id="@+id/rowIcon"
         android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="20dp"
         android:textSize="10sp"
-        android:textColor="@color/hizbNumberColor"
+        android:textColor="@color/hizb_number_color"
         android:layout_toRightOf="@id/suraNumber"
         android:layout_centerVertical="true"
         android:gravity="center"
@@ -36,7 +36,7 @@
         android:layout_marginLeft="10dp"
         android:textSize="12sp"
         android:visibility="gone"
-        android:textColor="@color/headerTextColor" />
+        android:textColor="@color/header_text_color" />
         
     <TextView android:id="@+id/suraName"
         android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
         android:layout_toRightOf="@id/rowIcon"
         android:paddingTop="5dp"
         android:textSize="16sp"
-        android:textColor="@color/suraInfoColor" />
+        android:textColor="@color/sura_info_color" />
     
     <TextView android:id="@+id/suraDetails"
         android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
         android:layout_below="@id/suraName"
         android:paddingBottom="5dp"
         android:textSize="10sp"
-        android:textColor="@color/suraDetailsColor" />
+        android:textColor="@color/sura_details_color" />
     
     <TextView android:id="@+id/pageNumber"
         android:layout_width="wrap_content"
@@ -62,6 +62,6 @@
         android:layout_centerInParent="true"
         android:layout_marginRight="10dp"
         android:textSize="14sp"
-        android:textColor="@color/suraDetailsColor" />
+        android:textColor="@color/sura_details_color" />
        
 </RelativeLayout>

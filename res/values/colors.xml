@@ -3,8 +3,8 @@
 	<color name="actionbar_separator">#0f2d4d</color>
 	<color name="page_border_color">#802A2A</color>
 	<color name="page_background">#FFF4CB</color>
-	<color name="headerTextColor">#31B6E7</color>
-	<color name="suraInfoColor">#FFFFFF</color>
-	<color name="suraDetailsColor">#D1D1D1</color>
-	<color name="hizbNumberColor">#FF000000</color>
+	<color name="header_text_color">#31B6E7</color>
+	<color name="sura_info_color">#FFFFFF</color>
+	<color name="sura_details_color">#D1D1D1</color>
+	<color name="hizb_number_color">#FF000000</color>
 </resources>
