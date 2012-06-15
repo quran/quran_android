@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	android:orientation="vertical" >
-	<ListView android:id="@+id/suralist"
+	<ListView android:id="@+id/list"
 	    android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:fastScrollEnabled="true" />
-	<TextView android:id="@+id/emptysuralist"
+	<TextView android:id="@+id/empty_list"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:gravity="center_horizontal|center_vertical"

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
@@ -27,6 +28,7 @@ public class BookmarksFragment extends SherlockFragment {
 
    private ListView mListView;
    private QuranListAdapter mAdapter;
+   private TextView mEmptyTextView;
    private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
 
    public static BookmarksFragment newInstance(){
@@ -37,9 +39,9 @@ public class BookmarksFragment extends SherlockFragment {
    public View onCreateView(LayoutInflater inflater,
          ViewGroup container, Bundle savedInstanceState){
       View view = inflater.inflate(R.layout.quran_list, container, false);
-      mListView = (ListView)view.findViewById(R.id.suralist);
-      View emptyView = view.findViewById(R.id.emptysuralist);
-      mListView.setEmptyView(emptyView);
+      mListView = (ListView)view.findViewById(R.id.list);
+      mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
+      mListView.setEmptyView(mEmptyTextView);
       
       mAdapter = new QuranListAdapter(getActivity(),
             R.layout.index_sura_row, new QuranRow[]{});
@@ -84,6 +86,9 @@ public class BookmarksFragment extends SherlockFragment {
 
       @Override
       protected void onPostExecute(QuranRow[] result) {
+         if (result.length == 0){
+            mEmptyTextView.setText(R.string.no_bookmarks);
+         }
          mAdapter.setElements(result);
          mAdapter.notifyDataSetChanged();
          loadingTask = null;

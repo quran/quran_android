@@ -40,7 +40,8 @@
     <string name="go">اذهب</string>
     <string name="cancel">الغاء</string>
     <string name="developedBy">المبرمجون:\nأحمد الحلو - أحمد فؤاد
-			\n 	حسين ماهر - وائل نافع		</string>
+			\n 	حسين ماهر - وائل نافع
+		</string>
     <string name="copyRights">حقوق الطبع محفوظة لجميع المسلمين</string>
     <string name="email_subject">ردود الفعل</string>
     <string name="email_to">quran.android@gmail.com</string>
@@ -60,7 +61,8 @@
 				\n- القراءة الليلية
 				\n- البحث في القرآن الكريم
 				\n- تصليح لعدد من المشاكل المبلغ عنها أبرزها مشكلة عرض الصفحات على نسخة أندرويد 4.0 (آيس كريم ساندويتش)
-				\n\nلا تنسونا من صالح دعائكم		</string>
+				\n\nلا تنسونا من صالح دعائكم
+		</string>
     <string name="help_title">مساعد قران اندرويد </string>
     <string name="help">- ضع الشاشه في الوضع الافقي للتكبير في هذا الاصدار..
 	    \n- لتغير الصفحة استخدم اصبعك لتحريك الصفحة
@@ -88,10 +90,8 @@
 
     <!-- Search messages -->
     <string name="found_in_sura">سورة</string>
-    <string name="no_results">لا توجد نتيجة للبحث \"%s\"</string>
     <string name="no_active_translation">يجب تفعيل التفسير/الترجمة أولا &#8212; اذهب إلى اﻹعدادات</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
-    <string name="no_active_translation">يجب تفعيل التفسير/الترجمة أولا.. اذهب إلى اﻹعدادت</string>
     <string name="set_active_translation">التفسير/الترجمة</string>
     <string name="no_translations_available">من فضلك قم بتحميل التفسير/الترجمة من القائمة أولا</string>
     <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
