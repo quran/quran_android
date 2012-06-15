@@ -34,7 +34,7 @@ public class SuraListFragment extends SherlockFragment {
    public View onCreateView(LayoutInflater inflater,
          ViewGroup container, Bundle savedInstanceState){
       View view = inflater.inflate(R.layout.quran_list, container, false);
-      mListView = (ListView)view.findViewById(R.id.suralist);
+      mListView = (ListView)view.findViewById(R.id.list);
       mAdapter = new QuranListAdapter(getActivity(),
             R.layout.index_sura_row, getSuraList());
       mListView.setAdapter(mAdapter);

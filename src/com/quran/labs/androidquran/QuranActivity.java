@@ -137,7 +137,7 @@ public class QuranActivity extends BaseQuranActivity {
 			int currentSura = QuranInfo.PAGE_SURA_START[lastPage-1];
 			int juz = QuranInfo.getJuzFromPage(lastPage);
 			int position = currentSura + juz - 1;
-			ListView list = (ListView)findViewById(R.id.suralist);
+			ListView list = (ListView)findViewById(R.id.list);
 			list.setSelectionFromTop(position, 20);
 		}
 	}
@@ -158,7 +158,7 @@ public class QuranActivity extends BaseQuranActivity {
 			}
 		}
 
-		ListView list = (ListView)findViewById(R.id.suralist);
+		ListView list = (ListView)findViewById(R.id.list);
 		EfficientAdapter suraAdapter = new EfficientAdapter(this, elements);
 		if(list != null){
 			list.setAdapter(suraAdapter);
