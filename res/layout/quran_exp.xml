@@ -20,11 +20,13 @@
   		quran:curlSpeed = "80"
   		quran:curlMode = "1" />
   		
+	<!-- 
 	<com.markupartist.android.widget.ActionBar
 	    android:id="@+id/actionbar"
 	    style="@style/ActionBar"
 	    android:visibility = "gone"
         />
+     -->
 	<LinearLayout android:id="@+id/bottomToolbar" android:layout_width="fill_parent"
 		android:layout_gravity="bottom"
 		android:layout_height="wrap_content" android:orientation="vertical" android:background="#90000000" >
