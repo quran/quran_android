@@ -197,6 +197,16 @@
     <string name="no_bookmarks">No Bookmarks!</string>
     <string name="index_loading">Loading…</string>
     
+    <!-- download statuses and errors -->
+    <string name="download_successful">Download Successful</string>   
+    <string name="download_processing">Processing Download&#8230;</string>              
+    <string name="download_error_general">Download failed</string>             
+    <string name="download_error_disk">Not enough disk space to download</string>               
+    <string name="download_error_network">Could not download due to network error</string>                    
+    <string name="download_error_perms">Could not download due to permissions error</string>                  
+    <string name="download_error_invalid_download">Downloaded file was corrupted</string>
+    <string name="download_error_invalid_download_retry">Corrupted file, attempting to redownload</string> 
+    
     <string-array name="quarter_prefix_array">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>
         <item>إِنَّ اللَّهَ لَا يَسْتَحْيِي أَن</item>
