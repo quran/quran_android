@@ -17,9 +17,9 @@
     <string name="downloadPrompt_no">No</string>
     <string name="downloadHighlightingData">In order to highlight ayahs during audio
         playback, we need to download some files.  Download them now?</string>
-    <string name="downloading_title">Downloading…</string>
+    <string name="downloading_title">Downloading&#8230;</string>
     <string name="downloading_message">Please wait for the files to download. (Resume supported)</string>
-    <string name="extracting_title">Processing…</string>
+    <string name="extracting_title">Processing&#8230;</string>
     <string name="extracting_message">Please wait the files are processed.</string>
     <string name="menu_jump">Jump</string>
     <string name="menu_about">About Us</string>
@@ -206,6 +206,13 @@
     <string name="download_error_perms">Could not download due to permissions error</string>                  
     <string name="download_error_invalid_download">Downloaded file was corrupted</string>
     <string name="download_error_invalid_download_retry">Corrupted file, attempting to redownload</string> 
+    <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
+    
+    <!-- downloading dialogs -->
+    <string name="download_progress">Downloaded %1$s / %2$s</string>
+    <string name="process_progress">Processing file %1$d / %2$d</string>
+    <string name="download_retry">Retry</string>
+    <string name="download_cancel">Cancel</string>
     
     <string-array name="quarter_prefix_array">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>
