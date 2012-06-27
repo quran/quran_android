@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -93,6 +95,7 @@ public class QuranDownloadService extends Service {
    private NotificationManager mNotificationManager;
    private LocalBroadcastManager mBroadcastManager;
    private SharedPreferences mSharedPreferences;
+   private WifiLock mWifiLock;
    
    private Intent mLastSentIntent = null;
    private Map<String, Boolean> mSuccessfulZippedDownloads = null;
@@ -164,6 +167,9 @@ public class QuranDownloadService extends Service {
       HandlerThread thread = new HandlerThread(TAG);
       thread.start();
       
+      mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+            .createWifiLock(WifiManager.WIFI_MODE_FULL, "downloadLock");
+      
       mServiceLooper = thread.getLooper();
       mServiceHandler = new ServiceHandler(mServiceLooper);
       mIsDownloadCanceled = false;
@@ -228,6 +234,7 @@ public class QuranDownloadService extends Service {
    
    @Override
    public void onDestroy() {
+      if (mWifiLock.isHeld()){ mWifiLock.release(); }
       mServiceLooper.quit();
    }
    
@@ -301,7 +308,10 @@ public class QuranDownloadService extends Service {
             catch (InterruptedException exception){}
          }
          
+         mWifiLock.acquire();
          res = downloadFile(urlString, destination, details);
+         if (mWifiLock.isHeld()){ mWifiLock.release(); }
+         
          if (res == DOWNLOAD_SUCCESS){
             notifyDownloadSuccessful(details.title, details.key);
             return true;
