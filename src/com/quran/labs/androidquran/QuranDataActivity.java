@@ -19,10 +19,10 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Display;
-import android.view.Window;
 import android.view.WindowManager;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.QuranDownloadService.ProgressIntent;
@@ -49,8 +49,9 @@ public class QuranDataActivity extends SherlockActivity {
    @Override
    public void onCreate(Bundle savedInstanceState) {
       setTheme(R.style.Theme_Sherlock);
-      super.onCreate(savedInstanceState);
       requestWindowFeature(Window.FEATURE_NO_TITLE);
+      
+      super.onCreate(savedInstanceState);
       getWindow().setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);

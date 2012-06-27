@@ -28,13 +28,17 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -122,6 +126,10 @@ OnErrorListener, AudioFocusable {
 
    // whether the audio we are playing is streaming from the network
    boolean mIsStreaming = false;
+   
+   // Wifi lock that we hold when streaming files from the internet, in order to prevent the
+   // device from shutting off the Wifi radio
+   WifiLock mWifiLock;
 
    // The ID we use for the notification (the onscreen alert that appears at the notification
    // area at the top of the screen as an icon -- and as text as well if the user expands the
@@ -144,6 +152,13 @@ OnErrorListener, AudioFocusable {
    void createMediaPlayerIfNeeded() {
       if (mPlayer == null) {
          mPlayer = new MediaPlayer();
+         
+         // Make sure the media player will acquire a wake-lock while playing. If we don't do
+         // that, the CPU might go to sleep while the song is playing, causing playback to stop.
+         //
+         // Remember that to use this, we have to declare the android.permission.WAKE_LOCK
+         // permission in AndroidManifest.xml.
+         mPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 
          // we want the media player to notify us when it's ready preparing, and when it's done
          // playing:
@@ -159,6 +174,8 @@ OnErrorListener, AudioFocusable {
    public void onCreate() {
       Log.i(TAG, "debug: Creating service");
 
+      mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+            .createWifiLock(WifiManager.WIFI_MODE_FULL, "audiolock");
       mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
       mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
@@ -265,7 +282,7 @@ OnErrorListener, AudioFocusable {
 
    /**
     * Releases resources used by the service for playback. This includes the "foreground service"
-    * status and notification and possibly the MediaPlayer.
+    * status and notification, the wake locks and possibly the MediaPlayer.
     *
     * @param releaseMediaPlayer Indicates whether the Media Player should also be released or not
     */
@@ -279,6 +296,9 @@ OnErrorListener, AudioFocusable {
          mPlayer.release();
          mPlayer = null;
       }
+      
+      // we can also release the Wifi lock, if we're holding it
+      if (mWifiLock.isHeld()) mWifiLock.release();
    }
 
    void giveUpAudioFocus() {
@@ -353,6 +373,12 @@ OnErrorListener, AudioFocusable {
          //
          // Until the media player is prepared, we *cannot* call start() on it!
          mPlayer.prepareAsync();
+         
+         // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
+         // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
+         // we are *not* streaming, we want to release the lock if we were holding it before.
+         if (mIsStreaming) mWifiLock.acquire();
+         else if (mWifiLock.isHeld()) mWifiLock.release();
       }
       catch (IOException ex) {
          Log.e(TAG, "IOException playing file: " + ex.getMessage());
