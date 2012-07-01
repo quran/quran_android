@@ -553,7 +553,7 @@ public class QuranPageFragment extends SherlockFragment {
 		
 		@Override
 		protected void onPostExecute(Void result) {
-		   getActivity().invalidateOptionsMenu();
+         getSherlockActivity().invalidateOptionsMenu();
 		}
 	}
 	
@@ -569,7 +569,7 @@ public class QuranPageFragment extends SherlockFragment {
 
 	   @Override
 	   protected void onPostExecute(Void result) {
-	      getActivity().invalidateOptionsMenu();
+	      getSherlockActivity().invalidateOptionsMenu();
 	   }
 	}
 	

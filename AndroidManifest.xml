@@ -68,7 +68,7 @@
 		<service android:name=".service.QuranAudioService" />
         <service android:exported="false" android:name=".service.AudioService">
             <intent-filter>
-                <action android:name="com.quran.labs.androidquran.action.TOGGLE_PLAYBACK" />
+                <action android:name="com.quran.labs.androidquran.action.PLAYBACK" />
                 <action android:name="com.quran.labs.androidquran.action.PLAY" />
                 <action android:name="com.quran.labs.androidquran.action.PAUSE" />
                 <action android:name="com.quran.labs.androidquran.action.SKIP" />
