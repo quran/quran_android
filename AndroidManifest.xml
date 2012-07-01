@@ -74,6 +74,7 @@
                 <action android:name="com.quran.labs.androidquran.action.SKIP" />
                 <action android:name="com.quran.labs.androidquran.action.REWIND" />
                 <action android:name="com.quran.labs.androidquran.action.STOP" />
+                <action android:name="com.quran.labs.androidquran.action.CONNECT" />
             </intent-filter>
        </service>
        

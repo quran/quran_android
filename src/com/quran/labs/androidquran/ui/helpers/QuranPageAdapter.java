@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import com.quran.labs.androidquran.ui.helpers.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;

@@ -1,11 +1,12 @@
 package com.quran.labs.androidquran.ui;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -36,6 +38,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private boolean mIsActionBarHidden = true;
    private AudioStatusBar mAudioStatusBar = null;
    private ViewPager mViewPager = null;
+   private QuranPageAdapter mPagerAdapter = null;
+   private boolean mShouldReconnect = false;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -77,10 +81,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       mWorker = new QuranPageWorker(this);
       mLastPopupTime = System.currentTimeMillis();
-      QuranPageAdapter adapter = new QuranPageAdapter(
+      mPagerAdapter = new QuranPageAdapter(
               getSupportFragmentManager());
       mViewPager = (ViewPager)findViewById(R.id.quran_pager);
-      mViewPager.setAdapter(adapter);
+      mViewPager.setAdapter(mPagerAdapter);
       mViewPager.setOnPageChangeListener(new OnPageChangeListener(){
 
          @Override
@@ -105,8 +109,56 @@ public class PagerActivity extends SherlockFragmentActivity implements
       });
 
       mViewPager.setCurrentItem(page);
+
+      // just got created, need to reconnect to service
+      mShouldReconnect = true;
    }
-   
+
+   @Override
+   public void onResume(){
+      LocalBroadcastManager.getInstance(this).registerReceiver(
+              mAudioReceiver,
+              new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
+      super.onResume();
+      if (mShouldReconnect){
+         startService(new Intent(AudioService.ACTION_CONNECT));
+         mShouldReconnect = false;
+      }
+   }
+
+   @Override
+   public void onPause(){
+      LocalBroadcastManager.getInstance(this)
+              .unregisterReceiver(mAudioReceiver);
+      super.onPause();
+   }
+
+   BroadcastReceiver mAudioReceiver = new BroadcastReceiver(){
+      @Override
+      public void onReceive(Context context, Intent intent){
+         if (intent != null){
+            int state = intent.getIntExtra(
+                    AudioService.AudioUpdateIntent.STATUS, -1);
+            int sura = intent.getIntExtra(
+                    AudioService.AudioUpdateIntent.SURA, -1);
+            int ayah = intent.getIntExtra(
+                    AudioService.AudioUpdateIntent.AYAH, -1);
+            if (state == AudioService.AudioUpdateIntent.PLAYING){
+               mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
+               highlightAyah(sura, ayah);
+            }
+            else if (state == AudioService.AudioUpdateIntent.PAUSED){
+               mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+               highlightAyah(sura, ayah);
+            }
+            else if (state == AudioService.AudioUpdateIntent.STOPPED){
+               mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+               unhighlightAyah();
+            }
+         }
+      }
+   };
+
    public void toggleActionBar(){
       if (mIsActionBarHidden){
          getWindow().addFlags(
@@ -136,6 +188,26 @@ public class PagerActivity extends SherlockFragmentActivity implements
    protected void onDestroy() {
       android.util.Log.d(TAG, "onDestroy()");
       super.onDestroy();
+   }
+
+   public void highlightAyah(int sura, int ayah){
+      int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+      int position = 604 - page;
+
+      Fragment f = mPagerAdapter.getFragmentIfExists(position);
+      if (f != null && f instanceof QuranPageFragment){
+         QuranPageFragment qpf = (QuranPageFragment)f;
+         qpf.highlightAyah(sura, ayah);
+      }
+   }
+
+   public void unhighlightAyah(){
+      int position = mViewPager.getCurrentItem();
+      Fragment f = mPagerAdapter.getFragmentIfExists(position);
+      if (f!= null && f instanceof QuranPageFragment){
+         QuranPageFragment qpf = (QuranPageFragment)f;
+         qpf.unhighlightAyah();
+      }
    }
 
    @Override
@@ -176,5 +248,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void onStopPressed() {
       startService(new Intent(AudioService.ACTION_STOP));
       mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+      unhighlightAyah();
    }
 }

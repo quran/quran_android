@@ -151,6 +151,15 @@ public class QuranPageFragment extends SherlockFragment {
       mImageView = null;
    }
 
+   public void highlightAyah(int sura, int ayah){
+      mImageView.highlightAyah(sura, ayah);
+      mImageView.invalidate();
+   }
+
+   public void unhighlightAyah(){
+      mImageView.unhighlight();
+   }
+
    private class PageGestureDetector extends SimpleOnGestureListener {
       @Override
       public boolean onSingleTapConfirmed(MotionEvent event) {
