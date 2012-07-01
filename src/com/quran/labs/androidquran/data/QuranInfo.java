@@ -100,7 +100,7 @@ public class QuranInfo {
 		else {
 			info = QuranInfo.SURA_IS_MAKKI[sura-1]?
 					"Makki" : "Madani";
-			info += " - " + QuranInfo.SURA_NUM_AYAHS[sura-1] + " verses.";
+			info += " - " + QuranInfo.SURA_NUM_AYAHS[sura-1] + " verses";
 		}
 		
 		return info;
