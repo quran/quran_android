@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,24 +10,32 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.AudioService;
+import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
-public class PagerActivity extends SherlockFragmentActivity {
+public class PagerActivity extends SherlockFragmentActivity implements
+        AudioStatusBar.AudioBarListener {
    private static String TAG = "PagerActivity";
    
    private QuranPageWorker mWorker = null;
    private SharedPreferences mPrefs = null;
    private long mLastPopupTime = 0;
    private boolean mIsActionBarHidden = true;
+   private AudioStatusBar mAudioStatusBar = null;
+   private ViewPager mViewPager = null;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -52,22 +61,27 @@ public class PagerActivity extends SherlockFragmentActivity {
 
       getSupportActionBar().hide();
       mIsActionBarHidden = true;
-      
+
+      int background = getResources().getColor(
+              R.color.transparent_actionbar_color);
       setContentView(R.layout.quran_page_activity);
-      getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xaa000000));
+      getSupportActionBar().setBackgroundDrawable(
+              new ColorDrawable(background));
+      mAudioStatusBar = (AudioStatusBar)findViewById(R.id.audio_area);
+      mAudioStatusBar.setAudioBarListener(this);
 
       int page = 1;
       Intent intent = getIntent();
       Bundle extras = intent.getExtras();
-      if (extras != null)
-         page = 604 - extras.getInt("page");
+      if (extras != null){ page = 604 - extras.getInt("page"); }
 
       mWorker = new QuranPageWorker(this);
       mLastPopupTime = System.currentTimeMillis();
-      QuranPageAdapter adapter = new QuranPageAdapter(getSupportFragmentManager());
-      ViewPager pager = (ViewPager)findViewById(R.id.quran_pager);
-      pager.setAdapter(adapter);
-      pager.setOnPageChangeListener(new OnPageChangeListener(){
+      QuranPageAdapter adapter = new QuranPageAdapter(
+              getSupportFragmentManager());
+      mViewPager = (ViewPager)findViewById(R.id.quran_pager);
+      mViewPager.setAdapter(adapter);
+      mViewPager.setOnPageChangeListener(new OnPageChangeListener(){
 
          @Override
          public void onPageScrollStateChanged(int state) {}
@@ -84,21 +98,23 @@ public class PagerActivity extends SherlockFragmentActivity {
             QuranSettings.getInstance().setLastPage(page);
             QuranSettings.save(mPrefs);
             if (QuranSettings.getInstance().isDisplayMarkerPopup()){
-               mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(PagerActivity.this, page, mLastPopupTime);
+               mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+                       PagerActivity.this, page, mLastPopupTime);
             }
          }
       });
 
-      pager.setCurrentItem(page);
+      mViewPager.setCurrentItem(page);
    }
    
    public void toggleActionBar(){
       if (mIsActionBarHidden){
          getWindow().addFlags(
-               WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
          getWindow().clearFlags(
-               WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
          getSupportActionBar().show();
+         mAudioStatusBar.setVisibility(View.VISIBLE);
          mIsActionBarHidden = false;
       }
       else {
@@ -107,6 +123,7 @@ public class PagerActivity extends SherlockFragmentActivity {
          getWindow().clearFlags(
                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
          getSupportActionBar().hide();
+         mAudioStatusBar.setVisibility(View.GONE);
          mIsActionBarHidden = true;
       }
    }
@@ -119,5 +136,45 @@ public class PagerActivity extends SherlockFragmentActivity {
    protected void onDestroy() {
       android.util.Log.d(TAG, "onDestroy()");
       super.onDestroy();
+   }
+
+   @Override
+   public void onPlayPressed() {
+      int position = mViewPager.getCurrentItem();
+      int page = 604 - position;
+
+      int startSura = QuranInfo.PAGE_SURA_START[page - 1];
+      int startAyah = QuranInfo.PAGE_AYAH_START[page - 1];
+
+      String s = "http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/%03d%03d.mp3";
+      AudioRequest r = new AudioRequest(s, startSura, startAyah, 0, 0);
+      Intent i = new Intent(AudioService.ACTION_PLAYBACK);
+      i.putExtra(AudioService.EXTRA_PLAY_INFO, r);
+      i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);
+      startService(i);
+
+      mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
+   }
+
+   @Override
+   public void onPausePressed() {
+      startService(new Intent(AudioService.ACTION_PAUSE));
+      mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+   }
+
+   @Override
+   public void onNextPressed() {
+      startService(new Intent(AudioService.ACTION_SKIP));
+   }
+
+   @Override
+   public void onPreviousPressed() {
+      startService(new Intent(AudioService.ACTION_REWIND));
+   }
+
+   @Override
+   public void onStopPressed() {
+      startService(new Intent(AudioService.ACTION_STOP));
+      mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
    }
 }

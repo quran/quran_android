@@ -51,53 +51,65 @@ import com.quran.labs.androidquran.service.util.MediaButtonHelper;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 /**
- * Service that handles media playback. This is the Service through which we perform all the media
- * handling in our application. It waits for Intents (which come from our main activity,
- * {@link PagerActivity}, which signal the service to perform specific operations: Play, Pause,
- * Rewind, Skip, etc.
+ * Service that handles media playback. This is the Service through which we
+ * perform all the media handling in our application. It waits for Intents
+ * (which come from our main activity, {@link PagerActivity}, which signal
+ * the service to perform specific operations: Play, Pause, Rewind, Skip, etc.
  */
-public class AudioService extends Service implements OnCompletionListener, OnPreparedListener,
-OnErrorListener, AudioFocusable {
+public class AudioService extends Service implements OnCompletionListener,
+        OnPreparedListener, OnErrorListener, AudioFocusable {
 
    // The tag we put on debug messages
    final static String TAG = "AudioService";
 
-   // These are the Intent actions that we are prepared to handle. Notice that the fact these
-   // constants exist in our class is a mere convenience: what really defines the actions our
-   // service can handle are the <action> tags in the <intent-filters> tag for our service in
-   // AndroidManifest.xml.
-   public static final String ACTION_TOGGLE_PLAYBACK =
-         "com.quran.labs.androidquran.action.TOGGLE_PLAYBACK";
-   public static final String ACTION_PLAY = "com.quran.labs.androidquran.action.PLAY";
-   public static final String ACTION_PAUSE = "com.quran.labs.androidquran.action.PAUSE";
-   public static final String ACTION_STOP = "com.quran.labs.androidquran.action.STOP";
-   public static final String ACTION_SKIP = "com.quran.labs.androidquran.action.SKIP";
-   public static final String ACTION_REWIND = "com.quran.labs.androidquran.action.REWIND";
+   // These are the Intent actions that we are prepared to handle. Notice that
+   // the fact these constants exist in our class is a mere convenience: what
+   // really defines the actions our service can handle are the <action> tags
+   // in the <intent-filters> tag for our service in AndroidManifest.xml.
+   public static final String ACTION_PLAYBACK =
+         "com.quran.labs.androidquran.action.PLAYBACK";
+   public static final String ACTION_PLAY =
+           "com.quran.labs.androidquran.action.PLAY";
+   public static final String ACTION_PAUSE =
+           "com.quran.labs.androidquran.action.PAUSE";
+   public static final String ACTION_STOP =
+           "com.quran.labs.androidquran.action.STOP";
+   public static final String ACTION_SKIP =
+           "com.quran.labs.androidquran.action.SKIP";
+   public static final String ACTION_REWIND =
+           "com.quran.labs.androidquran.action.REWIND";
 
-   // The volume we set the media player to when we lose audio focus, but are allowed to reduce
-   // the volume instead of stopping playback.
+   // The volume we set the media player to when we lose audio focus, but are
+   // allowed to reduce the volume instead of stopping playback.
    public static final float DUCK_VOLUME = 0.1f;
 
    // our media player
    MediaPlayer mPlayer = null;
 
-   // our AudioFocusHelper object, if it's available (it's available on SDK level >= 8)
-   // If not available, this will be null. Always check for null before using!
+   // our AudioFocusHelper object, if it's available (it's available on SDK
+   // level >= 8). If not available, this will be null. Always check for null
+   // before using!
    AudioFocusHelper mAudioFocusHelper = null;
 
    // object representing the current playing request
    AudioRequest mAudioRequest = null;
 
    // so user can pass in a serializable AudioRequest to the intent
-   public static final String EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO";
+   public static final String EXTRA_PLAY_INFO =
+           "com.quran.labs.androidquran.PLAY_INFO";
+
+   // ignore the passed in play info if we're already playing
+   public static final String EXTRA_IGNORE_IF_PLAYING =
+           "com.quran.labs.androidquran.IGNORE_IF_PLAYING";
 
    // indicates the state our service:
    enum State {
       Stopped,    // media player is stopped and not prepared to play
       Preparing,  // media player is preparing...
-      Playing,    // playback active (media player ready!). (but the media player may actually be
-      // paused in this state if we don't have audio focus. But we stay in this state
-      // so that we know we have to resume playback once we get focus back)
+      Playing,    // playback active (media player ready!). (but the media
+      // player may actually be  paused in this state if we don't have audio
+      // focus. But we stay in this state so that we know we have to resume
+      // playback once we get focus back)
       Paused      // playback paused (media player ready!)
    };
 
@@ -114,7 +126,7 @@ OnErrorListener, AudioFocusable {
    // do we have audio focus?
    enum AudioFocus {
       NoFocusNoDuck,    // we don't have audio focus, and can't duck
-      NoFocusCanDuck,   // we don't have focus, but can play at a low volume ("ducking")
+      NoFocusCanDuck,   // we don't have focus, but can play at a low volume
       Focused           // we have full audio focus
    }
    AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
@@ -127,17 +139,17 @@ OnErrorListener, AudioFocusable {
    // whether the audio we are playing is streaming from the network
    boolean mIsStreaming = false;
    
-   // Wifi lock that we hold when streaming files from the internet, in order to prevent the
-   // device from shutting off the Wifi radio
+   // Wifi lock that we hold when streaming files from the internet,
+   // in order to prevent the device from shutting off the Wifi radio
    WifiLock mWifiLock;
 
-   // The ID we use for the notification (the onscreen alert that appears at the notification
-   // area at the top of the screen as an icon -- and as text as well if the user expands the
-   // notification area).
+   // The ID we use for the notification (the onscreen alert that appears
+   // at the notification area at the top of the screen as an icon -- and
+   // as text as well if the user expands the notification area).
    final int NOTIFICATION_ID = 4;
 
-   // The component name of MusicIntentReceiver, for use with media button and remote control
-   // APIs
+   // The component name of MusicIntentReceiver, for use with media button
+   // and remote control APIs
    ComponentName mMediaButtonReceiverComponent;
 
    AudioManager mAudioManager;
@@ -146,22 +158,25 @@ OnErrorListener, AudioFocusable {
    Notification mNotification = null;
 
    /**
-    * Makes sure the media player exists and has been reset. This will create the media player
-    * if needed, or reset the existing media player if one already exists.
+    * Makes sure the media player exists and has been reset. This will create
+    * the media player if needed, or reset the existing media player if one
+    * already exists.
     */
    void createMediaPlayerIfNeeded() {
       if (mPlayer == null) {
          mPlayer = new MediaPlayer();
          
-         // Make sure the media player will acquire a wake-lock while playing. If we don't do
-         // that, the CPU might go to sleep while the song is playing, causing playback to stop.
+         // Make sure the media player will acquire a wake-lock while playing.
+         // If we don't do that, the CPU might go to sleep while the song is
+         // playing, causing playback to stop.
          //
-         // Remember that to use this, we have to declare the android.permission.WAKE_LOCK
-         // permission in AndroidManifest.xml.
-         mPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+         // Remember that to use this, we have to declare the
+         // android.permission.WAKE_LOCK permission in AndroidManifest.xml.
+         mPlayer.setWakeMode(getApplicationContext(),
+                 PowerManager.PARTIAL_WAKE_LOCK);
 
-         // we want the media player to notify us when it's ready preparing, and when it's done
-         // playing:
+         // we want the media player to notify us when it's ready preparing,
+         // and when it's done playing:
          mPlayer.setOnPreparedListener(this);
          mPlayer.setOnCompletionListener(this);
          mPlayer.setOnErrorListener(this);
@@ -176,41 +191,52 @@ OnErrorListener, AudioFocusable {
 
       mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
             .createWifiLock(WifiManager.WIFI_MODE_FULL, "audiolock");
-      mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+      mNotificationManager = (NotificationManager)
+              getSystemService(NOTIFICATION_SERVICE);
       mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
-      // create the Audio Focus Helper, if the Audio Focus feature is available (SDK 8 or above)
-      if (android.os.Build.VERSION.SDK_INT >= 8)
-         mAudioFocusHelper = new AudioFocusHelper(getApplicationContext(), this);
-      else
-         mAudioFocus = AudioFocus.Focused; // no focus feature, so we always "have" audio focus
+      // create the Audio Focus Helper, if the Audio Focus feature is available
+      if (android.os.Build.VERSION.SDK_INT >= 8){
+         mAudioFocusHelper = new AudioFocusHelper(
+                 getApplicationContext(), this);
+      }
+      // no focus feature, so we always "have" audio focus
+      else { mAudioFocus = AudioFocus.Focused; }
 
-      mMediaButtonReceiverComponent = new ComponentName(this, AudioIntentReceiver.class);
+      mMediaButtonReceiverComponent = new ComponentName(
+              this, AudioIntentReceiver.class);
       mNotificationName = getString(R.string.app_name);
    }
 
    /**
-    * Called when we receive an Intent. When we receive an intent sent to us via startService(),
-    * this is the method that gets called. So here we react appropriately depending on the
-    * Intent's action, which specifies what is being requested of us.
+    * Called when we receive an Intent. When we receive an intent sent to us
+    * via startService(), this is the method that gets called. So here we
+    * react appropriately depending on the Intent's action, which specifies
+    * what is being requested of us.
     */
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
       String action = intent.getAction();
-      Serializable playInfo = intent.getSerializableExtra(EXTRA_PLAY_INFO);
-      if (playInfo != null && playInfo instanceof AudioRequest){
-         mAudioRequest = (AudioRequest)playInfo;
+
+      if (action.equals(ACTION_PLAYBACK)){
+         Serializable playInfo = intent.getSerializableExtra(EXTRA_PLAY_INFO);
+         if (playInfo != null && playInfo instanceof AudioRequest){
+            if (mState == State.Stopped &&
+                    intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)){
+               mAudioRequest = (AudioRequest)playInfo;
+            }
+         }
+
+         processTogglePlaybackRequest();
       }
+      else if (action.equals(ACTION_PLAY)){ processPlayRequest(); }
+      else if (action.equals(ACTION_PAUSE)){ processPauseRequest(); }
+      else if (action.equals(ACTION_SKIP)){ processSkipRequest(); }
+      else if (action.equals(ACTION_STOP)){ processStopRequest(); }
+      else if (action.equals(ACTION_REWIND)){ processRewindRequest(); }
 
-      if (action.equals(ACTION_TOGGLE_PLAYBACK)) processTogglePlaybackRequest();
-      else if (action.equals(ACTION_PLAY)) processPlayRequest();
-      else if (action.equals(ACTION_PAUSE)) processPauseRequest();
-      else if (action.equals(ACTION_SKIP)) processSkipRequest();
-      else if (action.equals(ACTION_STOP)) processStopRequest();
-      else if (action.equals(ACTION_REWIND)) processRewindRequest();
-
-      return START_NOT_STICKY; // Means we started the service, but don't want it to
-      // restart in case it's killed.
+      return START_NOT_STICKY; // Means we started the service, but don't want
+      // it to restart in case it's killed.
    }
 
    void processTogglePlaybackRequest() {
@@ -232,7 +258,8 @@ OnErrorListener, AudioFocusable {
          playAudio();
       }
       else if (mState == State.Paused) {
-         // If we're paused, just continue playback and restore the 'foreground service' state.
+         // If we're paused, just continue playback and restore the
+         // 'foreground service' state.
          mState = State.Playing;
          setUpAsForeground(mAudioTitle + " (playing)");
          configAndStartMediaPlayer();
@@ -244,14 +271,22 @@ OnErrorListener, AudioFocusable {
          // Pause media player and cancel the 'foreground service' state.
          mState = State.Paused;
          mPlayer.pause();
-         relaxResources(false); // while paused, we always retain the MediaPlayer
-         // do not give up audio focus
+         // while paused, we always retain the MediaPlayer
+         relaxResources(false);
       }
    }
 
    void processRewindRequest() {
-      if (mState == State.Playing || mState == State.Paused)
-         mPlayer.seekTo(0);
+      if (mState == State.Playing || mState == State.Paused){
+         if (mPlayer.getCurrentPosition() > 1500){
+            mPlayer.seekTo(0);
+         }
+         else {
+            tryToGetAudioFocus();
+            mAudioRequest.gotoPreviousAyah();
+            playAudio();
+         }
+      }
    }
 
    void processSkipRequest() {
@@ -281,10 +316,12 @@ OnErrorListener, AudioFocusable {
    }
 
    /**
-    * Releases resources used by the service for playback. This includes the "foreground service"
-    * status and notification, the wake locks and possibly the MediaPlayer.
+    * Releases resources used by the service for playback. This includes the
+    * "foreground service" status and notification, the wake locks and
+    * possibly the MediaPlayer.
     *
-    * @param releaseMediaPlayer Indicates whether the Media Player should also be released or not
+    * @param releaseMediaPlayer Indicates whether the Media Player should also
+    *                           be released or not
     */
    void relaxResources(boolean releaseMediaPlayer) {
       // stop being a foreground service
@@ -308,27 +345,30 @@ OnErrorListener, AudioFocusable {
    }
 
    /**
-    * Reconfigures MediaPlayer according to audio focus settings and starts/restarts it. This
-    * method starts/restarts the MediaPlayer respecting the current audio focus state. So if
-    * we have focus, it will play normally; if we don't have focus, it will either leave the
-    * MediaPlayer paused or set it to a low volume, depending on what is allowed by the
-    * current focus settings. This method assumes mPlayer != null, so if you are calling it,
-    * you have to do so from a context where you are sure this is the case.
+    * Reconfigures MediaPlayer according to audio focus settings and
+    * starts/restarts it. This method starts/restarts the MediaPlayer
+    * respecting the current audio focus state. So if we have focus,
+    * it will play normally; if we don't have focus, it will either
+    * leave the MediaPlayer paused or set it to a low volume, depending
+    * on what is allowed by the current focus settings. This method assumes
+    * mPlayer != null, so if you are calling it, you have to do so from a
+    * context where you are sure this is the case.
     */
    void configAndStartMediaPlayer() {
       if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
-         // If we don't have audio focus and can't duck, we have to pause, even if mState
-         // is State.Playing. But we stay in the Playing state so that we know we have to resume
-         // playback once we get the focus back.
+         // If we don't have audio focus and can't duck, we have to pause,
+         // even if mState is State.Playing. But we stay in the Playing state
+         // so that we know we have to resume playback once we get focus back.
          if (mPlayer.isPlaying()) mPlayer.pause();
          return;
       }
-      else if (mAudioFocus == AudioFocus.NoFocusCanDuck)
-         mPlayer.setVolume(DUCK_VOLUME, DUCK_VOLUME);  // we'll be relatively quiet
-      else
-         mPlayer.setVolume(1.0f, 1.0f); // we can be loud
+      else if (mAudioFocus == AudioFocus.NoFocusCanDuck){
+         // we'll be relatively quiet
+         mPlayer.setVolume(DUCK_VOLUME, DUCK_VOLUME);
+      }
+      else { mPlayer.setVolume(1.0f, 1.0f); } // we can be loud
 
-      if (!mPlayer.isPlaying()) mPlayer.start();
+      if (!mPlayer.isPlaying()){ mPlayer.start(); }
    }
 
    void tryToGetAudioFocus() {
@@ -361,24 +401,26 @@ OnErrorListener, AudioFocusable {
          mState = State.Preparing;
          setUpAsForeground(mAudioTitle + " (loading)");
 
-         // Use the media button APIs (if available) to register ourselves for media button
-         // events
+         // Use the media button APIs (if available) to register ourselves
+         // for media button events
 
          MediaButtonHelper.registerMediaButtonEventReceiverCompat(
                mAudioManager, mMediaButtonReceiverComponent);
 
-         // starts preparing the media player in the background. When it's done, it will call
-         // our OnPreparedListener (that is, the onPrepared() method on this class, since we set
-         // the listener to 'this').
+         // starts preparing the media player in the background. When it's
+         // done, it will call our OnPreparedListener (that is, the
+         // onPrepared() method on this class, since we set the listener
+         // to 'this').
          //
          // Until the media player is prepared, we *cannot* call start() on it!
          mPlayer.prepareAsync();
          
-         // If we are streaming from the internet, we want to hold a Wifi lock, which prevents
-         // the Wifi radio from going to sleep while the song is playing. If, on the other hand,
-         // we are *not* streaming, we want to release the lock if we were holding it before.
-         if (mIsStreaming) mWifiLock.acquire();
-         else if (mWifiLock.isHeld()) mWifiLock.release();
+         // If we are streaming from the internet, we want to hold a Wifi lock,
+         // which prevents the Wifi radio from going to sleep while the song is
+         // playing. If, on the other hand, we are *not* streaming, we want to
+         // release the lock if we were holding it before.
+         if (mIsStreaming){ mWifiLock.acquire(); }
+         else if (mWifiLock.isHeld()){ mWifiLock.release(); }
       }
       catch (IOException ex) {
          Log.e(TAG, "IOException playing file: " + ex.getMessage());
@@ -388,7 +430,8 @@ OnErrorListener, AudioFocusable {
 
    /** Called when media player is done playing current file. */
    public void onCompletion(MediaPlayer player) {
-      // The media player finished playing the current file, so we go ahead and start the next.
+      // The media player finished playing the current file, so
+      // we go ahead and start the next.
       mAudioRequest.gotoNextAyah();
       playAudio();
    }
@@ -406,14 +449,16 @@ OnErrorListener, AudioFocusable {
       PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
             new Intent(getApplicationContext(), PagerActivity.class),
             PendingIntent.FLAG_UPDATE_CURRENT);
-      mNotification.setLatestEventInfo(getApplicationContext(), mNotificationName, text, pi);
+      mNotification.setLatestEventInfo(getApplicationContext(),
+              mNotificationName, text, pi);
       mNotificationManager.notify(NOTIFICATION_ID, mNotification);
    }
 
    /**
-    * Configures service as a foreground service. A foreground service is a service that's doing
-    * something the user is actively aware of (such as playing music), and must appear to the
-    * user as a notification. That's why we create the notification here.
+    * Configures service as a foreground service. A foreground service
+    * is a service that's doing something the user is actively aware of
+    * (such as playing music), and must appear to the user as a notification.
+    * That's why we create the notification here.
     */
    void setUpAsForeground(String text) {
       PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
@@ -423,19 +468,21 @@ OnErrorListener, AudioFocusable {
       mNotification.tickerText = text;
       mNotification.icon = R.drawable.icon;
       mNotification.flags |= Notification.FLAG_ONGOING_EVENT;
-      mNotification.setLatestEventInfo(getApplicationContext(), mNotificationName,
-            text, pi);
+      mNotification.setLatestEventInfo(getApplicationContext(),
+              mNotificationName, text, pi);
       startForeground(NOTIFICATION_ID, mNotification);
    }
 
    /**
-    * Called when there's an error playing media. When this happens, the media player goes to
-    * the Error state. We warn the user about the error and reset the media player.
+    * Called when there's an error playing media. When this happens, the media
+    * player goes to the Error state. We warn the user about the error and
+    * reset the media player.
     */
    public boolean onError(MediaPlayer mp, int what, int extra) {
       Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
             Toast.LENGTH_SHORT).show();
-      Log.e(TAG, "Error: what=" + String.valueOf(what) + ", extra=" + String.valueOf(extra));
+      Log.e(TAG, "Error: what=" + String.valueOf(what) +
+              ", extra=" + String.valueOf(extra));
 
       mState = State.Stopped;
       relaxResources(true);
@@ -444,7 +491,8 @@ OnErrorListener, AudioFocusable {
    }
 
    public void onGainedAudioFocus() {
-      Toast.makeText(getApplicationContext(), "gained audio focus.", Toast.LENGTH_SHORT).show();
+      Toast.makeText(getApplicationContext(), "gained audio focus.",
+              Toast.LENGTH_SHORT).show();
       mAudioFocus = AudioFocus.Focused;
 
       // restart media player with new focus settings
@@ -453,13 +501,15 @@ OnErrorListener, AudioFocusable {
    }
 
    public void onLostAudioFocus(boolean canDuck) {
-      Toast.makeText(getApplicationContext(), "lost audio focus." + (canDuck ? "can duck" :
-            "no duck"), Toast.LENGTH_SHORT).show();
-      mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
+      Toast.makeText(getApplicationContext(), "lost audio focus." +
+              (canDuck ? "can duck" : "no duck"), Toast.LENGTH_SHORT).show();
+      mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck :
+              AudioFocus.NoFocusNoDuck;
 
       // start/restart/pause media player with new focus settings
-      if (mPlayer != null && mPlayer.isPlaying())
+      if (mPlayer != null && mPlayer.isPlaying()){
          configAndStartMediaPlayer();
+      }
    }
 
 

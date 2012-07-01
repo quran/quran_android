@@ -38,7 +38,8 @@ public class AudioRequest implements Serializable {
    public String getUrl(){
       if ((mEndAyah > 0 && mCurrentAyah > mEndAyah) 
             || (mEndSura > 0 && mCurrentSura > mEndSura)
-            || mCurrentSura > 114){
+            || mCurrentSura > 114
+            || mCurrentSura < 1){
          return null;
       }
       
@@ -54,6 +55,20 @@ public class AudioRequest implements Serializable {
       if (mEndAyah < 1 && mMaxAyah < mCurrentAyah){
          mCurrentAyah = 1;
          mCurrentSura++;
+         if (mCurrentSura <= 114){
+            mMaxAyah = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+         }
+      }
+   }
+
+   public void gotoPreviousAyah(){
+      mCurrentAyah--;
+      if (mEndAyah < 1 && mCurrentAyah < 1){
+         mCurrentSura--;
+         if (mCurrentSura > 0){
+            mMaxAyah = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+            mCurrentAyah = mMaxAyah;
+         }
       }
    }
 }

@@ -273,6 +273,8 @@ public class QuranDataActivity extends SherlockActivity {
             dialog.dismiss();
             mErrorDialog = null;
             removeErrorPreferences();
+            mSharedPreferences.edit()
+                    .putBoolean(PREF_SHOULD_FETCH_PAGES, false).commit();
             runListView();
          }
       });
