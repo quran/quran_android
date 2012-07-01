@@ -91,6 +91,7 @@ public class QuranDataActivity extends SherlockActivity {
    @Override
    protected void onPause() {
       mIsPaused = true;
+      mHandler.removeCallbacksAndMessages(null);
       
       cleanup();
       if (mPromptForDownloadDialog != null){
@@ -128,7 +129,12 @@ public class QuranDataActivity extends SherlockActivity {
             // run these on the ui thread
             Message msg = mHandler.obtainMessage();
             msg.obj = intent;
-            mHandler.sendMessage(msg);
+
+            // only care about the latest download progress, remove queued
+            mHandler.removeCallbacksAndMessages(null);
+
+            // send the message at the front of the queue
+            mHandler.sendMessageAtFrontOfQueue(msg);
          }
       }
    };
@@ -386,7 +392,7 @@ public class QuranDataActivity extends SherlockActivity {
          // the broadcast - if so, just rebroadcast errors so we handle them
          intent.putExtra(QuranDownloadService.EXTRA_REPEAT_LAST_ERROR, true);
       }
-      
+
       intent.setAction(QuranDownloadService.ACTION_DOWNLOAD_URL);
       startService(intent);
    }

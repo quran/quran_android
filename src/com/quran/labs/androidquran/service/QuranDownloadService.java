@@ -66,8 +66,8 @@ public class QuranDownloadService extends Service {
    // error prefs
    public static final String PREF_LAST_DOWNLOAD_ERROR = "lastDownloadError";
    public static final String PREF_LAST_DOWNLOAD_ITEM = "lastDownloadItem";
-   
-   private static final int BUFFER_SIZE = 4096;
+
+   private static final int BUFFER_SIZE = 4096 * 2;
    private static final int WAIT_TIME = 15 * 1000;
    private static final int RETRY_COUNT = 3;
    private static final String PARTIAL_EXT = ".part";
@@ -348,7 +348,7 @@ public class QuranDownloadService extends Service {
 
       try {         
          long downloaded = 0;
-         
+
          URL url = new URL(urlString);
          String filename = QuranDownloadService.getFilenameFromUrl(urlString);
          File partialFile = new File(destination, filename + PARTIAL_EXT);
@@ -409,12 +409,15 @@ public class QuranDownloadService extends Service {
             byte[] data = new byte[BUFFER_SIZE];            
             
             int x = 0;
+            int updateCount = 0;
             while (!mIsDownloadCanceled &&
                   (x = inputStream.read(data, 0, BUFFER_SIZE)) >= 0){
                bufferedOutputStream.write(data, 0, x);
                downloaded += x;
-               notifyProgress(notificationInfo, downloaded, fileLength);
-
+               if (updateCount % 5 == 0){
+                  notifyProgress(notificationInfo, downloaded, fileLength);
+               }
+               updateCount++;
             }
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
@@ -552,7 +555,7 @@ public class QuranDownloadService extends Service {
          progress = (int)((percentPerFile * (details.currentFile - 1)) +
                (percent * percentPerFile));
       }
-      
+
       showNotification(details.title, null,
             DOWNLOADING_NOTIFICATION, true, max, progress, isIndeterminate);
       
