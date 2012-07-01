@@ -49,6 +49,14 @@ public class AudioRequest implements Serializable {
    public String getTitle(){
       return mCurrentSura + ":" + mCurrentAyah;
    }
+
+   public int getCurrentSura(){
+      return mCurrentSura;
+   }
+
+   public int getCurrentAyah(){
+      return mCurrentAyah;
+   }
    
    public void gotoNextAyah(){
       mCurrentAyah++;

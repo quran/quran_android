@@ -39,15 +39,12 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.service.util.AudioFocusHelper;
-import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.MediaButtonHelper;
+import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 /**
@@ -78,21 +75,35 @@ public class AudioService extends Service implements OnCompletionListener,
            "com.quran.labs.androidquran.action.SKIP";
    public static final String ACTION_REWIND =
            "com.quran.labs.androidquran.action.REWIND";
+   public static final String ACTION_CONNECT =
+           "com.quran.labs.androidquran.action.CONNECT";
+
+   public static class AudioUpdateIntent {
+      public static final String INTENT_NAME =
+              "com.quran.labs.androidquran.audio.AudioUpdate";
+      public static final String STATUS = "status";
+      public static final String SURA = "sura";
+      public static final String AYAH = "ayah";
+
+      public static final int STOPPED = 0;
+      public static final int PLAYING = 1;
+      public static final int PAUSED = 2;
+   }
 
    // The volume we set the media player to when we lose audio focus, but are
    // allowed to reduce the volume instead of stopping playback.
    public static final float DUCK_VOLUME = 0.1f;
 
    // our media player
-   MediaPlayer mPlayer = null;
+   private MediaPlayer mPlayer = null;
 
    // our AudioFocusHelper object, if it's available (it's available on SDK
    // level >= 8). If not available, this will be null. Always check for null
    // before using!
-   AudioFocusHelper mAudioFocusHelper = null;
+   private AudioFocusHelper mAudioFocusHelper = null;
 
    // object representing the current playing request
-   AudioRequest mAudioRequest = null;
+   private AudioRequest mAudioRequest = null;
 
    // so user can pass in a serializable AudioRequest to the intent
    public static final String EXTRA_PLAY_INFO =
@@ -103,7 +114,7 @@ public class AudioService extends Service implements OnCompletionListener,
            "com.quran.labs.androidquran.IGNORE_IF_PLAYING";
 
    // indicates the state our service:
-   enum State {
+   private enum State {
       Stopped,    // media player is stopped and not prepared to play
       Preparing,  // media player is preparing...
       Playing,    // playback active (media player ready!). (but the media
@@ -113,9 +124,9 @@ public class AudioService extends Service implements OnCompletionListener,
       Paused      // playback paused (media player ready!)
    };
 
-   State mState = State.Stopped;
+   private State mState = State.Stopped;
 
-   enum PauseReason {
+   private enum PauseReason {
       UserRequest,  // paused by user request
       FocusLoss,    // paused because of audio focus loss
    };
@@ -124,24 +135,27 @@ public class AudioService extends Service implements OnCompletionListener,
    PauseReason mPauseReason = PauseReason.UserRequest;
 
    // do we have audio focus?
-   enum AudioFocus {
+   private enum AudioFocus {
       NoFocusNoDuck,    // we don't have audio focus, and can't duck
       NoFocusCanDuck,   // we don't have focus, but can play at a low volume
       Focused           // we have full audio focus
    }
-   AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
+   private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
 
-   String mNotificationName = "";
+   private String mNotificationName = "";
    
    // title of the audio we are currently playing
-   String mAudioTitle = "";
+   private String mAudioTitle = "";
 
    // whether the audio we are playing is streaming from the network
-   boolean mIsStreaming = false;
-   
+   private boolean mIsStreaming = false;
+
+   // should we stop (after preparing is done) or not
+   private boolean mShouldStop = false;
+
    // Wifi lock that we hold when streaming files from the internet,
    // in order to prevent the device from shutting off the Wifi radio
-   WifiLock mWifiLock;
+   private WifiLock mWifiLock;
 
    // The ID we use for the notification (the onscreen alert that appears
    // at the notification area at the top of the screen as an icon -- and
@@ -150,19 +164,20 @@ public class AudioService extends Service implements OnCompletionListener,
 
    // The component name of MusicIntentReceiver, for use with media button
    // and remote control APIs
-   ComponentName mMediaButtonReceiverComponent;
+   private ComponentName mMediaButtonReceiverComponent;
 
-   AudioManager mAudioManager;
-   NotificationManager mNotificationManager;
+   private AudioManager mAudioManager;
+   private NotificationManager mNotificationManager;
 
-   Notification mNotification = null;
+   private Notification mNotification = null;
+   private LocalBroadcastManager mBroadcastManager = null;
 
    /**
     * Makes sure the media player exists and has been reset. This will create
     * the media player if needed, or reset the existing media player if one
     * already exists.
     */
-   void createMediaPlayerIfNeeded() {
+   private void createMediaPlayerIfNeeded() {
       if (mPlayer == null) {
          mPlayer = new MediaPlayer();
          
@@ -206,6 +221,9 @@ public class AudioService extends Service implements OnCompletionListener,
       mMediaButtonReceiverComponent = new ComponentName(
               this, AudioIntentReceiver.class);
       mNotificationName = getString(R.string.app_name);
+
+      mBroadcastManager = LocalBroadcastManager.getInstance(
+              getApplicationContext());
    }
 
    /**
@@ -218,7 +236,33 @@ public class AudioService extends Service implements OnCompletionListener,
    public int onStartCommand(Intent intent, int flags, int startId) {
       String action = intent.getAction();
 
-      if (action.equals(ACTION_PLAYBACK)){
+      if (action.equals(ACTION_CONNECT)){
+         if (mState == State.Stopped){
+            processStopRequest();
+         }
+         else {
+            int sura = -1;
+            int ayah = -1;
+            int state = AudioUpdateIntent.STOPPED;
+            if (mState == State.Paused){
+               state = AudioUpdateIntent.PAUSED;
+            }
+            else if (mState != State.Stopped){
+               state = AudioUpdateIntent.PLAYING;
+               if (mAudioRequest != null){
+                  sura = mAudioRequest.getCurrentSura();
+                  ayah = mAudioRequest.getCurrentAyah();
+               }
+            }
+
+            Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
+            updateIntent.putExtra(AudioUpdateIntent.STATUS, state);
+            updateIntent.putExtra(AudioUpdateIntent.SURA, sura);
+            updateIntent.putExtra(AudioUpdateIntent.AYAH, ayah);
+            mBroadcastManager.sendBroadcast(updateIntent);
+         }
+      }
+      else if (action.equals(ACTION_PLAYBACK)){
          Serializable playInfo = intent.getSerializableExtra(EXTRA_PLAY_INFO);
          if (playInfo != null && playInfo instanceof AudioRequest){
             if (mState == State.Stopped &&
@@ -226,7 +270,6 @@ public class AudioService extends Service implements OnCompletionListener,
                mAudioRequest = (AudioRequest)playInfo;
             }
          }
-
          processTogglePlaybackRequest();
       }
       else if (action.equals(ACTION_PLAY)){ processPlayRequest(); }
@@ -239,7 +282,7 @@ public class AudioService extends Service implements OnCompletionListener,
       // it to restart in case it's killed.
    }
 
-   void processTogglePlaybackRequest() {
+   private void processTogglePlaybackRequest() {
       if (mState == State.Paused || mState == State.Stopped) {
          processPlayRequest();
       } else {
@@ -247,7 +290,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
-   void processPlayRequest() {
+   private void processPlayRequest() {
       if (mAudioRequest == null){ return; }
       tryToGetAudioFocus();
 
@@ -266,7 +309,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
-   void processPauseRequest() {
+   private void processPauseRequest() {
       if (mState == State.Playing) {
          // Pause media player and cancel the 'foreground service' state.
          mState = State.Paused;
@@ -276,7 +319,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
-   void processRewindRequest() {
+   private void processRewindRequest() {
       if (mState == State.Playing || mState == State.Paused){
          if (mPlayer.getCurrentPosition() > 1500){
             mPlayer.seekTo(0);
@@ -289,7 +332,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
-   void processSkipRequest() {
+   private void processSkipRequest() {
       if (mAudioRequest == null){ return; }
       if (mState == State.Playing || mState == State.Paused) {
          tryToGetAudioFocus();
@@ -298,11 +341,16 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
-   void processStopRequest() {
+   private void processStopRequest() {
       processStopRequest(false);
    }
 
-   void processStopRequest(boolean force) {
+   private void processStopRequest(boolean force) {
+      if (mState == State.Preparing){
+         mShouldStop = true;
+         relaxResources(false);
+      }
+
       if (mState == State.Playing || mState == State.Paused || force) {
          mState = State.Stopped;
 
@@ -315,6 +363,19 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
+   private void notifyAyahChanged(){
+      if (mAudioRequest != null){
+         Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
+         updateIntent.putExtra(AudioUpdateIntent.STATUS,
+                 AudioUpdateIntent.PLAYING);
+         updateIntent.putExtra(AudioUpdateIntent.SURA,
+                 mAudioRequest.getCurrentSura());
+         updateIntent.putExtra(AudioUpdateIntent.AYAH,
+                 mAudioRequest.getCurrentAyah());
+         mBroadcastManager.sendBroadcast(updateIntent);
+      }
+   }
+
    /**
     * Releases resources used by the service for playback. This includes the
     * "foreground service" status and notification, the wake locks and
@@ -323,7 +384,7 @@ public class AudioService extends Service implements OnCompletionListener,
     * @param releaseMediaPlayer Indicates whether the Media Player should also
     *                           be released or not
     */
-   void relaxResources(boolean releaseMediaPlayer) {
+   private void relaxResources(boolean releaseMediaPlayer) {
       // stop being a foreground service
       stopForeground(true);
 
@@ -335,10 +396,10 @@ public class AudioService extends Service implements OnCompletionListener,
       }
       
       // we can also release the Wifi lock, if we're holding it
-      if (mWifiLock.isHeld()) mWifiLock.release();
+      if (mWifiLock.isHeld()){ mWifiLock.release(); }
    }
 
-   void giveUpAudioFocus() {
+   private void giveUpAudioFocus() {
       if (mAudioFocus == AudioFocus.Focused && mAudioFocusHelper != null
             && mAudioFocusHelper.abandonFocus())
          mAudioFocus = AudioFocus.NoFocusNoDuck;
@@ -354,7 +415,7 @@ public class AudioService extends Service implements OnCompletionListener,
     * mPlayer != null, so if you are calling it, you have to do so from a
     * context where you are sure this is the case.
     */
-   void configAndStartMediaPlayer() {
+   private void configAndStartMediaPlayer() {
       if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
          // If we don't have audio focus and can't duck, we have to pause,
          // even if mState is State.Playing. But we stay in the Playing state
@@ -368,10 +429,15 @@ public class AudioService extends Service implements OnCompletionListener,
       }
       else { mPlayer.setVolume(1.0f, 1.0f); } // we can be loud
 
+      if (mShouldStop){
+         processStopRequest();
+         mShouldStop = false;
+         return;
+      }
       if (!mPlayer.isPlaying()){ mPlayer.start(); }
    }
 
-   void tryToGetAudioFocus() {
+   private void tryToGetAudioFocus() {
       if (mAudioFocus != AudioFocus.Focused && mAudioFocusHelper != null
             && mAudioFocusHelper.requestFocus())
          mAudioFocus = AudioFocus.Focused;
@@ -380,12 +446,17 @@ public class AudioService extends Service implements OnCompletionListener,
    /**
     * Starts playing the next file.
     */
-   void playAudio() {
+   private void playAudio() {
       mState = State.Stopped;
       relaxResources(false); // release everything except MediaPlayer
 
       try {
          if (mAudioRequest == null || mAudioRequest.getUrl() == null){
+            Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
+            updateIntent.putExtra(AudioUpdateIntent.STATUS,
+                    AudioUpdateIntent.STOPPED);
+            mBroadcastManager.sendBroadcast(updateIntent);
+
             processStopRequest(true); // stop everything!
             return;
          }
@@ -403,7 +474,6 @@ public class AudioService extends Service implements OnCompletionListener,
 
          // Use the media button APIs (if available) to register ourselves
          // for media button events
-
          MediaButtonHelper.registerMediaButtonEventReceiverCompat(
                mAudioManager, mMediaButtonReceiverComponent);
 
@@ -440,6 +510,12 @@ public class AudioService extends Service implements OnCompletionListener,
    public void onPrepared(MediaPlayer player) {
       // The media player is done preparing. That means we can start playing!
       mState = State.Playing;
+      if (mShouldStop){
+         processStopRequest();
+         mShouldStop = false;
+         return;
+      }
+      notifyAyahChanged();
       updateNotification(mAudioTitle + " (playing)");
       configAndStartMediaPlayer();
    }
@@ -460,7 +536,7 @@ public class AudioService extends Service implements OnCompletionListener,
     * (such as playing music), and must appear to the user as a notification.
     * That's why we create the notification here.
     */
-   void setUpAsForeground(String text) {
+   private void setUpAsForeground(String text) {
       PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
             new Intent(getApplicationContext(), PagerActivity.class),
             PendingIntent.FLAG_UPDATE_CURRENT);
