@@ -387,6 +387,8 @@ public class QuranDataActivity extends SherlockActivity {
             getString(R.string.app_name));
       intent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_KEY,
             PAGES_DOWNLOAD_KEY);
+      intent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
+              QuranDownloadService.DOWNLOAD_TYPE_PAGES);
       
       if (!force){
          // handle race condition in which we missed the error preference and
