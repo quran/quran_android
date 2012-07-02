@@ -20,6 +20,7 @@
 
 package com.quran.labs.androidquran.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -462,10 +463,24 @@ public class AudioService extends Service implements OnCompletionListener,
          }
 
          String url = mAudioRequest.getUrl();
+         mIsStreaming = url.startsWith("http:") || url.startsWith("https:");
+         if (!mIsStreaming){
+            File f = new File(url);
+            if (!f.exists()){
+               Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
+               updateIntent.putExtra(AudioUpdateIntent.STATUS,
+                       AudioUpdateIntent.STOPPED);
+               updateIntent.putExtra(EXTRA_PLAY_INFO, mAudioRequest);
+               mBroadcastManager.sendBroadcast(updateIntent);
+
+               processStopRequest(true);
+               return;
+            }
+         }
+
          createMediaPlayerIfNeeded();
          mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
          mPlayer.setDataSource(url);
-         mIsStreaming = url.startsWith("http:") || url.startsWith("https:");
 
          mAudioTitle = mAudioRequest.getTitle();
 

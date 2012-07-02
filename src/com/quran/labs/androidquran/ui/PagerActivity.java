@@ -19,6 +19,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioService;
+import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
@@ -28,6 +29,8 @@ import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
+
+import java.io.Serializable;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener {
@@ -155,6 +158,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
             else if (state == AudioService.AudioUpdateIntent.STOPPED){
                mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
                unhighlightAyah();
+
+               Serializable qi = intent.getSerializableExtra(
+                       AudioService.EXTRA_PLAY_INFO);
+               if (qi != null){
+                  // this means we stopped due to missing audio
+               }
             }
          }
       }
@@ -219,11 +228,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       int startSura = QuranInfo.PAGE_SURA_START[page - 1];
       int startAyah = QuranInfo.PAGE_AYAH_START[page - 1];
+      int currentQari = mAudioStatusBar.getCurrentQari();
 
-      String qariUrl = AudioUtils.getQariUrl(this,
-              mAudioStatusBar.getCurrentQari());
+      String qariUrl = AudioUtils.getQariUrl(this, currentQari);
       String s = qariUrl + "%03d%03d.mp3";
-      AudioRequest r = new AudioRequest(s, startSura, startAyah, 0, 0);
+      AudioRequest r = new AudioRequest(s, startSura, startAyah);
       Intent i = new Intent(AudioService.ACTION_PLAYBACK);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, r);
       i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);

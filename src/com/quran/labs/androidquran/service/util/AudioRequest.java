@@ -10,34 +10,50 @@ public class AudioRequest implements Serializable {
 
    private String mBaseUrl = null;
 
+   // where we started from
    private int mStartSura = 0;
-   private int mEndSura = 0;
    private int mStartAyah = 0;
-   private int mEndAyah = 0;
+   private int mAyahsInThisSura = 0;
+
+   // min and max sura/ayah
+   private int mMinSura = 0;
+   private int mMinAyah = 0;
+   private int mMaxSura = 0;
    private int mMaxAyah = 0;
+
+   // what we're currently playing
    private int mCurrentSura = 0;
    private int mCurrentAyah = 0;
    
-   public AudioRequest(String baseUrl, int startSura, int startAyah,
-         int endSura, int endAyah){
+   public AudioRequest(String baseUrl, int startSura, int startAyah){
       mBaseUrl = baseUrl;
       mStartSura = startSura;
-      mEndSura = endSura;
       mStartAyah = startAyah;
-      mEndAyah = endAyah;
-      
+
       if (mStartSura < 1 || mStartSura > 114 || mStartAyah < 1){
          throw new IllegalArgumentException();
       }
       
       mCurrentSura = mStartSura;
       mCurrentAyah = mStartAyah;
-      mMaxAyah = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+      mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+   }
+
+   public void setPlayBounds(int minSura, int minAyah,
+                             int maxSura, int maxAyah){
+      mMinSura = minSura;
+      mMinAyah = minAyah;
+      mMaxSura = maxSura;
+      mMaxAyah = maxAyah;
    }
    
    public String getUrl(){
-      if ((mEndAyah > 0 && mCurrentAyah > mEndAyah) 
-            || (mEndSura > 0 && mCurrentSura > mEndSura)
+      if ((mMaxSura > 0 && mCurrentSura > mMaxSura)
+            || (mMaxAyah > 0 && mCurrentAyah > mMaxAyah
+               && mCurrentSura >= mMaxSura)
+            || (mMinSura > 0 && mCurrentSura < mMinSura)
+            || (mMinAyah > 0 && mCurrentAyah < mMinAyah
+               && mCurrentSura <= mMinSura)
             || mCurrentSura > 114
             || mCurrentSura < 1){
          return null;
@@ -60,21 +76,21 @@ public class AudioRequest implements Serializable {
    
    public void gotoNextAyah(){
       mCurrentAyah++;
-      if (mEndAyah < 1 && mMaxAyah < mCurrentAyah){
+      if (mAyahsInThisSura < mCurrentAyah){
          mCurrentAyah = 1;
          mCurrentSura++;
          if (mCurrentSura <= 114){
-            mMaxAyah = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+            mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
          }
       }
    }
 
    public void gotoPreviousAyah(){
       mCurrentAyah--;
-      if (mEndAyah < 1 && mCurrentAyah < 1){
+      if (mCurrentAyah < 1){
          mCurrentSura--;
          if (mCurrentSura > 0){
-            mMaxAyah = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+            mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
             mCurrentAyah = mMaxAyah;
          }
       }
