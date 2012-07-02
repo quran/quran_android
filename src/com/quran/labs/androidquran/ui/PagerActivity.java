@@ -24,6 +24,7 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
@@ -166,6 +167,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          getWindow().clearFlags(
                  WindowManager.LayoutParams.FLAG_FULLSCREEN);
          getSupportActionBar().show();
+         mAudioStatusBar.updateSelectedItem();
          mAudioStatusBar.setVisibility(View.VISIBLE);
          mIsActionBarHidden = false;
       }
@@ -218,7 +220,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
       int startSura = QuranInfo.PAGE_SURA_START[page - 1];
       int startAyah = QuranInfo.PAGE_AYAH_START[page - 1];
 
-      String s = "http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/%03d%03d.mp3";
+      String qariUrl = AudioUtils.getQariUrl(this,
+              mAudioStatusBar.getCurrentQari());
+      String s = qariUrl + "%03d%03d.mp3";
       AudioRequest r = new AudioRequest(s, startSura, startAyah, 0, 0);
       Intent i = new Intent(AudioService.ACTION_PLAYBACK);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, r);
