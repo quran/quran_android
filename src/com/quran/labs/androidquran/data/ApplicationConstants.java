@@ -46,8 +46,10 @@ public class ApplicationConstants {
 	public static final String PREF_LAST_PLAYED_SURA = "lastPlayedSura";
 	public static final String PREF_LAST_PLAYED_AYAH = "lastPlayedAyah";
 	public static final String PREF_NIGHT_MODE = "nightMode";
-	
-	// Notifications
+   public static final String PREF_DEFAULT_QARI = "defautlQari";
+   public static final String PREF_SHOULD_FETCH_PAGES ="shouldFetchPages";
+
+   // Notifications
 	public static final int NOTIFICATION_DOWNLOAD_COMPLETED = 1;
 	public static final int NOTIFICATION_DOWNLOADING = 2;
 	public static final int NOTIFICATION_AUDIO = 3;

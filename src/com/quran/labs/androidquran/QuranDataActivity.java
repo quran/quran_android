@@ -23,6 +23,7 @@ import android.view.WindowManager;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.QuranDownloadService.ProgressIntent;
@@ -32,7 +33,6 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 public class QuranDataActivity extends SherlockActivity {
    
-   public static final String PREF_SHOULD_FETCH_PAGES ="shouldFetchPages";
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
    
    private boolean mIsPaused = false;
@@ -219,7 +219,7 @@ public class QuranDataActivity extends SherlockActivity {
       }
       mProgressDialog = null;
       mSharedPreferences.edit()
-         .remove(PREF_SHOULD_FETCH_PAGES).commit();
+         .remove(ApplicationConstants.PREF_SHOULD_FETCH_PAGES).commit();
       runListView();
    }
    
@@ -279,8 +279,9 @@ public class QuranDataActivity extends SherlockActivity {
             dialog.dismiss();
             mErrorDialog = null;
             removeErrorPreferences();
-            mSharedPreferences.edit()
-                    .putBoolean(PREF_SHOULD_FETCH_PAGES, false).commit();
+            mSharedPreferences.edit().putBoolean(
+                    ApplicationConstants.PREF_SHOULD_FETCH_PAGES, false)
+                    .commit();
             runListView();
          }
       });
@@ -330,8 +331,8 @@ public class QuranDataActivity extends SherlockActivity {
                      QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0);
                showFatalErrorDialog(lastError);
             }
-            else if (mSharedPreferences
-                  .getBoolean(PREF_SHOULD_FETCH_PAGES, false)){
+            else if (mSharedPreferences.getBoolean(
+                    ApplicationConstants.PREF_SHOULD_FETCH_PAGES, false)){
                downloadQuranImages(false);
             }
             else {
@@ -425,8 +426,9 @@ public class QuranDataActivity extends SherlockActivity {
          public void onClick(DialogInterface dialog, int id) {
             dialog.dismiss();
             mPromptForDownloadDialog = null;
-            mSharedPreferences.edit()
-            .putBoolean(PREF_SHOULD_FETCH_PAGES, true).commit();
+            mSharedPreferences.edit().putBoolean(
+                    ApplicationConstants.PREF_SHOULD_FETCH_PAGES, true)
+                    .commit();
             downloadQuranImages(true);
          }
       });

@@ -1,15 +1,19 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import com.actionbarsherlock.internal.widget.IcsAdapterView;
+import com.actionbarsherlock.internal.widget.IcsSpinner;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 
 public class AudioStatusBar extends LinearLayout {
 
@@ -23,6 +27,10 @@ public class AudioStatusBar extends LinearLayout {
    private int mButtonWidth;
    private int mSeparatorWidth;
    private int mSeparatorSpacing;
+   private int mCurrentQari;
+   private SharedPreferences mSharedPreferences;
+
+   private IcsSpinner mSpinner;
    private AudioBarListener mAudioBarListener;
 
    public interface AudioBarListener {
@@ -58,6 +66,11 @@ public class AudioStatusBar extends LinearLayout {
       mSeparatorSpacing = resources.getDimensionPixelSize(
               R.dimen.audiobar_separator_padding);
       setOrientation(LinearLayout.HORIZONTAL);
+
+      mSharedPreferences = PreferenceManager
+              .getDefaultSharedPreferences(context.getApplicationContext());
+      mCurrentQari = mSharedPreferences.getInt(
+              ApplicationConstants.PREF_DEFAULT_QARI, 0);
       showStoppedMode();
    }
 
@@ -74,6 +87,19 @@ public class AudioStatusBar extends LinearLayout {
       else { showPlayingMode(true); }
    }
 
+   public int getCurrentQari(){
+      if (mSpinner != null){
+         return mSpinner.getSelectedItemPosition();
+      }
+      return mCurrentQari;
+   }
+
+   public void updateSelectedItem(){
+      if (mSpinner != null){
+         mSpinner.setSelection(mCurrentQari);
+      }
+   }
+
    private void showStoppedMode() {
       mCurrentMode = STOPPED_MODE;
       removeAllViews();
@@ -81,12 +107,37 @@ public class AudioStatusBar extends LinearLayout {
       addButton(R.drawable.ic_play);
       addSeparator();
 
-      // add sheikh area
-      TextView qariView = new TextView(mContext);
-      qariView.setText("Muhammad Sideeq al-Minshawi");
-      qariView.setTextColor(Color.WHITE);
-      qariView.setGravity(Gravity.CENTER_VERTICAL);
-      addView(qariView, LayoutParams.WRAP_CONTENT,
+      if (mSpinner == null){
+         mSpinner = new IcsSpinner(mContext, null,
+                 R.attr.actionDropDownStyle);
+         ArrayAdapter<CharSequence> adapter =
+                 ArrayAdapter.createFromResource(mContext,
+                         R.array.quran_readers_name,
+                         R.layout.sherlock_spinner_item);
+         adapter.setDropDownViewResource(
+                 R.layout.sherlock_spinner_dropdown_item);
+         mSpinner.setAdapter(adapter);
+
+         mSpinner.setOnItemSelectedListener(
+                 new IcsAdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(IcsAdapterView<?> parent,
+                                       View view, int position, long id) {
+               if (position != mCurrentQari){
+                  mSharedPreferences.edit().
+                          putInt(ApplicationConstants.PREF_DEFAULT_QARI,
+                                  position).commit();
+                  mCurrentQari = position;
+               }
+            }
+
+            @Override
+            public void onNothingSelected(IcsAdapterView<?> parent) {
+            }
+         });
+      }
+      mSpinner.setSelection(mCurrentQari);
+      addView(mSpinner, LayoutParams.WRAP_CONTENT,
               LayoutParams.MATCH_PARENT);
    }
 
