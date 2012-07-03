@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.service.util;
 
 import java.io.Serializable;
 
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 
 public class AudioRequest implements Serializable {
@@ -25,10 +26,10 @@ public class AudioRequest implements Serializable {
    private int mCurrentSura = 0;
    private int mCurrentAyah = 0;
    
-   public AudioRequest(String baseUrl, int startSura, int startAyah){
+   public AudioRequest(String baseUrl, QuranAyah verse){
       mBaseUrl = baseUrl;
-      mStartSura = startSura;
-      mStartAyah = startAyah;
+      mStartSura = verse.getSura();
+      mStartAyah = verse.getAyah();
 
       if (mStartSura < 1 || mStartSura > 114 || mStartAyah < 1){
          throw new IllegalArgumentException();
@@ -39,12 +40,11 @@ public class AudioRequest implements Serializable {
       mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
    }
 
-   public void setPlayBounds(int minSura, int minAyah,
-                             int maxSura, int maxAyah){
-      mMinSura = minSura;
-      mMinAyah = minAyah;
-      mMaxSura = maxSura;
-      mMaxAyah = maxAyah;
+   public void setPlayBounds(QuranAyah minVerse, QuranAyah maxVerse){
+      mMinSura = minVerse.getSura();
+      mMinAyah = minVerse.getAyah();
+      mMaxSura = maxVerse.getSura();
+      mMaxAyah = maxVerse.getAyah();
    }
    
    public String getUrl(){

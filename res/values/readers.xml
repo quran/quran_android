@@ -21,7 +21,30 @@
         <item>Muhammad Jibreel</item>
         <item>Saood Ash-Shuraym</item>
     </string-array>
-     <integer-array name="quran_readers_id">
+
+    <string-array name="quran_readers_path">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>18</item>
+        <item>19</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+    </string-array>
+
+    <integer-array name="quran_readers_id">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -42,6 +65,7 @@
         <item>16</item>
         <item>17</item>
     </integer-array>
+
     <string-array name="quran_readers_urls">
         <item>http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/</item>
         <item>http://www.everyayah.com/data/Abdul_Basit_Mujawwad_128kbps/</item>

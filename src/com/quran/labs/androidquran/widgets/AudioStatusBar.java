@@ -6,11 +6,16 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.actionbarsherlock.internal.widget.IcsAdapterView;
+import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.actionbarsherlock.internal.widget.IcsSpinner;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
@@ -31,6 +36,8 @@ public class AudioStatusBar extends LinearLayout {
    private SharedPreferences mSharedPreferences;
 
    private IcsSpinner mSpinner;
+   private TextView mProgressText;
+   private IcsProgressBar mProgressBar;
    private AudioBarListener mAudioBarListener;
 
    public interface AudioBarListener {
@@ -142,7 +149,38 @@ public class AudioStatusBar extends LinearLayout {
    }
 
    private void showDownloadingMode(){
+      removeAllViews();
+      addButton(R.drawable.stop);
+      addSeparator();
 
+      LinearLayout ll = new LinearLayout(mContext);
+      ll.setOrientation(LinearLayout.VERTICAL);
+
+      if (mProgressBar == null){
+         mProgressBar = (IcsProgressBar)LayoutInflater.from(mContext)
+                 .inflate(R.layout.download_progress_bar, null);
+      }
+      mProgressBar.setIndeterminate(true);
+
+      ll.addView(mProgressBar, LayoutParams.MATCH_PARENT,
+              LayoutParams.WRAP_CONTENT);
+
+      if (mProgressText == null){
+         mProgressText = new TextView(mContext);
+         mProgressText.setTextColor(Color.WHITE);
+         mProgressText.setGravity(Gravity.CENTER_VERTICAL);
+         mProgressText.setTextSize(10.0f);
+      }
+      mProgressText.setText("Please wait...");
+
+      ll.addView(mProgressText, LayoutParams.MATCH_PARENT,
+              LayoutParams.WRAP_CONTENT);
+
+      LinearLayout.LayoutParams lp =
+              new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                      LayoutParams.MATCH_PARENT);
+      lp.setMargins(mSeparatorSpacing, 0, mSeparatorSpacing, 0);
+      addView(ll, lp);
    }
 
    private void showPlayingMode(boolean isPaused) {
