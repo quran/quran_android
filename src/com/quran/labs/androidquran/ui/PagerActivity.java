@@ -17,6 +17,7 @@ import android.view.WindowManager;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranAudioService;
@@ -30,6 +31,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
+import java.io.File;
 import java.io.Serializable;
 
 public class PagerActivity extends SherlockFragmentActivity implements
@@ -230,15 +232,47 @@ public class PagerActivity extends SherlockFragmentActivity implements
       int startAyah = QuranInfo.PAGE_AYAH_START[page - 1];
       int currentQari = mAudioStatusBar.getCurrentQari();
 
-      String qariUrl = AudioUtils.getQariUrl(this, currentQari);
-      String s = qariUrl + "%03d%03d.mp3";
-      AudioRequest r = new AudioRequest(s, startSura, startAyah);
-      Intent i = new Intent(AudioService.ACTION_PLAYBACK);
-      i.putExtra(AudioService.EXTRA_PLAY_INFO, r);
-      i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);
-      startService(i);
+      QuranAyah ayah = new QuranAyah(startSura, startAyah);
+      boolean streaming = true;
+      if (streaming){
+         playStreaming(ayah, page, currentQari);
+      }
+      else { downloadAndPlayAudio(ayah, page, currentQari); }
+   }
+
+   private void playStreaming(QuranAyah ayah, int page, int qari){
+      String qariUrl = AudioUtils.getQariUrl(this, qari);
+      String s = qariUrl + "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
+      AudioRequest request = new AudioRequest(s, ayah);
+      play(request);
 
       mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
+   }
+
+   private void downloadAndPlayAudio(QuranAyah ayah, int page, int qari){
+      QuranAyah endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
+              AudioUtils.LookAheadAmount.PAGE);
+      String url = AudioUtils.getLocalQariUrl(this, qari);
+      if (endAyah == null || url == null){ return; }
+
+      url += File.separator + "%d" + File.separator +
+              "%d" + AudioUtils.AUDIO_EXTENSION;
+      AudioRequest request = new AudioRequest(url, ayah);
+      request.setPlayBounds(ayah, endAyah);
+
+      if (AudioUtils.haveAllFiles(this, qari, ayah, endAyah)){
+         play(request);
+      }
+      else {
+         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+      }
+   }
+
+   private void play(AudioRequest request){
+      Intent i = new Intent(AudioService.ACTION_PLAYBACK);
+      i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
+      i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);
+      startService(i);
    }
 
    @Override

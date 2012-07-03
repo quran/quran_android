@@ -13,7 +13,7 @@
                   android:id="@+id/audio_area"
                   android:layout_width="match_parent"
                   android:layout_height="@dimen/audiobar_height"
-                  android:padding="8dp"
+                  android:padding="@dimen/audiobar_padding"
                   android:layout_alignParentBottom="true"
                   android:visibility="gone"
                   android:background="@color/transparent_actionbar_color" />
