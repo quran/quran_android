@@ -6,17 +6,24 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
+import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
 
 public class QuranPageWorker {
    private static final String TAG = "QuranPageWorker";
    
    private LruCache<Integer, Bitmap> mMemoryCache = null;
 
-   public QuranPageWorker(Context context){
-      final int memClass = ((ActivityManager)context.getSystemService(
+   public QuranPageWorker(FragmentActivity activity){
+      ImageCacheFragment fragment = ImageCacheFragment.getImageCacheFragment(
+              activity.getSupportFragmentManager());
+      mMemoryCache = fragment.mRetainedCache;
+      if (mMemoryCache != null){ return; }
+
+      final int memClass = ((ActivityManager)activity.getSystemService(
             Context.ACTIVITY_SERVICE)).getMemoryClass();
       final int cacheSize = 1024 * 1024 * memClass / 8;
       mMemoryCache = new LruCache<Integer, Bitmap>(cacheSize){
@@ -28,6 +35,7 @@ public class QuranPageWorker {
             return bitmap.getRowBytes() * bitmap.getHeight();
          }
       };
+      fragment.mRetainedCache = mMemoryCache;
       
       Log.d(TAG, "initial LruCache size: " + (memClass/8));
    }
