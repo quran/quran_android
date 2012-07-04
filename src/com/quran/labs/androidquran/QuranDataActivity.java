@@ -158,7 +158,8 @@ public class QuranDataActivity extends SherlockActivity {
             else if (QuranDownloadService.STATE_ERROR.equals(state)){
                handleFatalError(intent);
             }
-            else if (QuranDownloadService.STATE_ERROR_WILL_RETRY.equals(state)){
+            else if (QuranDownloadService
+                    .STATE_ERROR_WILL_RETRY.equals(state)){
                handleError(intent);
             }
          }

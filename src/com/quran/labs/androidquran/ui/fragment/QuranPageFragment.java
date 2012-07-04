@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.PaintDrawable;
@@ -32,7 +33,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -475,12 +478,16 @@ public class QuranPageFragment extends SherlockFragment {
 		
 		@Override
 		protected String doInBackground(Void... params) {
-			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-			dba.open();
-			String result = dba.getAyahNotes(sura, ayah);
-			dba.close();
-			if (result == null)
-				result = "";
+         String result = "";
+         Activity activity = getActivity();
+         if (activity != null){
+            BookmarksDBAdapter dba = new BookmarksDBAdapter(activity);
+            dba.open();
+			   result = dba.getAyahNotes(sura, ayah);
+			   dba.close();
+			   if (result == null)
+				   result = "";
+         }
 			return result;
 		}
 
@@ -488,24 +495,27 @@ public class QuranPageFragment extends SherlockFragment {
 		protected void onPostExecute(final String result) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle("Notes (" + QuranInfo.getAyahString(sura, ayah, getActivity()) + ")");
-			
-			final EditText input = new EditText(getActivity());
-			input.setText(result);
-			builder.setView(input);
-			builder.setPositiveButton("Save",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							String newNotes = input.getText().toString();
-							if (result != null && !result.equals(newNotes))
-								new SaveNotesTask(page, sura, ayah).execute(newNotes);
-						}
-					});
-			builder.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {/*Do Nothing*/}
-					});
-			AlertDialog dlg = builder.create();
-			dlg.show();
+
+         Activity activity = getActivity();
+         if (activity != null){
+            final EditText input = new EditText(activity);
+            input.setText(result);
+            builder.setView(input);
+            builder.setPositiveButton("Save",
+                  new DialogInterface.OnClickListener() {
+                     public void onClick(DialogInterface dialog, int which) {
+                        String newNotes = input.getText().toString();
+                        if (result != null && !result.equals(newNotes))
+                           new SaveNotesTask(page, sura, ayah).execute(newNotes);
+                     }
+                  });
+            builder.setNegativeButton("Cancel",
+                  new DialogInterface.OnClickListener() {
+                     public void onClick(DialogInterface dialog, int which) {/*Do Nothing*/}
+                  });
+            AlertDialog dlg = builder.create();
+            dlg.show();
+         }
 		}
 	}
 
@@ -520,65 +530,91 @@ public class QuranPageFragment extends SherlockFragment {
 		
 		@Override
 		protected Void doInBackground(String... params) {
-			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-			dba.open();
-			dba.saveAyahNotes(page, sura, ayah, params[0]);
-			dba.close();
+         Activity activity = getActivity();
+         if (activity != null){
+            BookmarksDBAdapter dba = new BookmarksDBAdapter(activity);
+            dba.open();
+            dba.saveAyahNotes(page, sura, ayah, params[0]);
+            dba.close();
+         }
 			return null;
 		}
 		
 		@Override
 		protected void onPostExecute(Void result) {
-			Toast.makeText(getActivity(), "Notes Saved", Toast.LENGTH_SHORT).show();
+         Activity activity = getActivity();
+         if (activity != null){
+            Toast.makeText(activity, "Notes Saved",
+                    Toast.LENGTH_SHORT).show();
+         }
 		}
 	}
 
 	class ToggleAyahBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Integer... params) {
-			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-			dba.open();
-			boolean result = dba.toggleAyahBookmark(params[0], params[1], params[2]);
-			dba.close();
+         Activity activity = getActivity();
+         Boolean result = null;
+         if (activity != null){
+            BookmarksDBAdapter dba = new BookmarksDBAdapter(activity);			dba.open();
+			   result = dba.toggleAyahBookmark(params[0], params[1], params[2]);
+			   dba.close();
+         }
 			return result;
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result) {
 			// Temp toast for debugging
-			Toast.makeText(getActivity(), result ? "Ayah Bookmarked" : "Ayah Unbookmarked", Toast.LENGTH_SHORT).show();
+         Activity activity = getActivity();
+         if (result != null && activity != null){
+			   Toast.makeText(activity, result ? "Ayah Bookmarked" :
+                    "Ayah Unbookmarked", Toast.LENGTH_SHORT).show();
+         }
 		}
 	}
 
 	class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Void> {
 		@Override
 		protected Void doInBackground(Integer... params) {
-			BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-			dba.open();
-			mIsBookmarked = dba.togglePageBookmark(params[0]);
-			dba.close();
+         Activity activity = getActivity();
+         if (activity != null){
+            BookmarksDBAdapter dba = new BookmarksDBAdapter(activity);
+            dba.open();
+            mIsBookmarked = dba.togglePageBookmark(params[0]);
+            dba.close();
+         }
 			return null;
 		}
 		
 		@Override
 		protected void onPostExecute(Void result) {
-         getSherlockActivity().invalidateOptionsMenu();
+         SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+         if (sherlockActivity != null){
+            sherlockActivity.invalidateOptionsMenu();
+         }
 		}
 	}
 	
 	class IsPageBookmarkedTask extends AsyncTask<Integer, Void, Void> {
 	   @Override
 	   protected Void doInBackground(Integer... params) {
-	      BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-	      dba.open();
-	      mIsBookmarked = dba.isPageBookmarked(params[0]);
-	      dba.close();
+         Activity activity = getActivity();
+         if (activity != null){
+            BookmarksDBAdapter dba = new BookmarksDBAdapter(activity);
+            dba.open();
+            mIsBookmarked = dba.isPageBookmarked(params[0]);
+            dba.close();
+         }
 	      return null;
 	   }
 
 	   @Override
 	   protected void onPostExecute(Void result) {
-	      getSherlockActivity().invalidateOptionsMenu();
+         SherlockFragmentActivity sherlockActivity = getSherlockActivity();
+         if (sherlockActivity != null){
+	         sherlockActivity.invalidateOptionsMenu();
+         }
 	   }
 	}
 	

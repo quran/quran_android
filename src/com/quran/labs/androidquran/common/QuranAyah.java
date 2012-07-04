@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.common;
 
-public class QuranAyah {
+import java.io.Serializable;
+
+public class QuranAyah implements Serializable {
    private int mSura = 0;
    private int mAyah = 0;
 

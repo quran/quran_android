@@ -2,9 +2,12 @@ package com.quran.labs.androidquran.util;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.TextUtils;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 
 import java.io.File;
 
@@ -60,31 +63,24 @@ public class AudioUtils {
       }
    }
 
-   public static boolean haveAllFiles(Context context, int qariPosition,
-                                      QuranAyah startVerse,
-                                      QuranAyah endVerse){
-      if (mQariFilePaths == null){
-         mQariFilePaths = context.getResources()
-                 .getStringArray(R.array.quran_readers_path);
-      }
+   public static boolean haveAllFiles(Context context,
+                                      DownloadAudioRequest request){
+      String baseDirectory = request.getLocalPath();
+      if (TextUtils.isEmpty(baseDirectory)){ return false; }
 
-      if (qariPosition >= mQariFilePaths.length || 0 > qariPosition){
-         return false;
-      }
-
-      String rootDirectory = getAudioRootDirectory(context);
-      String directory = rootDirectory + mQariFilePaths[qariPosition];
-      File f = new File(directory);
-
+      File f = new File(baseDirectory);
       if (!f.exists()){
          f.mkdirs();
          return false;
       }
 
-      int startSura = startVerse.getSura();
-      int startAyah = startVerse.getAyah();
-      int endSura = endVerse.getSura();
-      int endAyah = endVerse.getAyah();
+      QuranAyah minAyah = request.getMinAyah();
+      int startSura = minAyah.getSura();
+      int startAyah = minAyah.getAyah();
+
+      QuranAyah maxAyah = request.getMaxAyah();
+      int endSura = maxAyah.getSura();
+      int endAyah = maxAyah.getAyah();
 
       for (int i = startSura; i <= endSura; i++){
          int lastAyah = QuranInfo.getNumAyahs(i);
@@ -94,7 +90,7 @@ public class AudioUtils {
 
          for (int j = firstAyah; j < lastAyah; j++){
             String filename = i + File.separator + j + AUDIO_EXTENSION;
-            f = new File(directory + File.separator + filename);
+            f = new File(baseDirectory + File.separator + filename);
             if (!f.exists()){ return false; }
          }
       }

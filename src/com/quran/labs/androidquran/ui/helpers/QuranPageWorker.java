@@ -51,7 +51,7 @@ public class QuranPageWorker {
          imageView.setImageBitmap(bitmap);
       }
       else {
-         // TODO: set a placeholder image while loading
+         // TODO: restrict so only three of these are running at a time
          QuranPageWorkerTask task = new QuranPageWorkerTask(imageView);
          task.execute(pageNumber);
       }
