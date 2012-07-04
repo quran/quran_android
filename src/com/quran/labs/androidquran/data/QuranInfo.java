@@ -96,7 +96,23 @@ public class QuranInfo {
       return title + (QuranSettings.getInstance().isArabicNames()?
               SURA_NAMES_AR[sura-1] : SURA_NAMES[sura-1]);
    }
-	
+
+   public static String getSuraNameFromPage(Context context, int page,
+                                            boolean wantTitle){
+      int sura = 0;
+      for (int i = 0; i < ApplicationConstants.SURAS_COUNT; i++){
+         if (SURA_PAGE_START[i] == page){
+            sura = i + 1; break;
+         }
+         else if (SURA_PAGE_START[i] > page){
+            sura = i;
+            break;
+         }
+      }
+
+      return (sura > 0)? getSuraName(context, sura, wantTitle) : "";
+   }
+
 	public static String getSuraListMetaString(int sura){
 		String info = "";
 		

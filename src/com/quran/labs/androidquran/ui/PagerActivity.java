@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -25,6 +26,7 @@ import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
@@ -105,6 +107,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       Intent intent = getIntent();
       Bundle extras = intent.getExtras();
       if (extras != null && page == -1){ page = 604 - extras.getInt("page"); }
+      updateActionBarTitle(604 - page);
 
       mWorker = new QuranPageWorker(this);
       mLastPopupTime = System.currentTimeMillis();
@@ -132,6 +135,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
                mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
                        PagerActivity.this, page, mLastPopupTime);
             }
+            updateActionBarTitle(page);
          }
       });
 
@@ -164,6 +168,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
       LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mDownloadReceiver);
       super.onPause();
+   }
+
+   private void updateActionBarTitle(int page){
+      String sura = QuranInfo.getSuraNameFromPage(this, page, true);
+      int juz = QuranInfo.getJuzFromPage(page);
+      ActionBar actionBar = getSupportActionBar();
+      actionBar.setTitle(sura);
+      String desc = getString(R.string.quran_page) + " " + page + ", " +
+              getString(R.string.quran_juz2) + " " + juz;
+      actionBar.setSubtitle(desc);
+
    }
 
    BroadcastReceiver mAudioReceiver = new BroadcastReceiver(){
@@ -276,6 +291,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
       state.putSerializable(LAST_READ_PAGE,
               604 - mViewPager.getCurrentItem());
+      super.onSaveInstanceState(state);
    }
 
    public void highlightAyah(int sura, int ayah){
