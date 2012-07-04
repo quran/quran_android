@@ -46,7 +46,22 @@ public class AudioRequest implements Serializable {
       mMaxSura = maxVerse.getSura();
       mMaxAyah = maxVerse.getAyah();
    }
-   
+
+   public void removePlayBounds(){
+      mMinSura = 0;
+      mMinAyah = 0;
+      mMaxSura = 0;
+      mMaxAyah = 0;
+   }
+
+   public QuranAyah getMinAyah(){
+      return new QuranAyah(mMinSura, mMinAyah);
+   }
+
+   public QuranAyah getMaxAyah(){
+      return new QuranAyah(mMaxSura, mMaxAyah);
+   }
+
    public String getUrl(){
       if ((mMaxSura > 0 && mCurrentSura > mMaxSura)
             || (mMaxAyah > 0 && mCurrentAyah > mMaxAyah

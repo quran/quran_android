@@ -1,11 +1,6 @@
 package com.quran.labs.androidquran.service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
@@ -45,7 +40,9 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.util.AudioRequest;
 
 public class QuranDownloadService extends Service {
 
@@ -70,10 +67,8 @@ public class QuranDownloadService extends Service {
    public static final String EXTRA_DOWNLOAD_TYPE = "downloadType";
 
    // extras for range downloads
-   public static final String EXTRA_START_SURA = "startSura";
-   public static final String EXTRA_START_AYAH = "startAyah";
-   public static final String EXTRA_END_SURA = "endSura";
-   public static final String EXTRA_END_AYAH = "endAyah";
+   public static final String EXTRA_START_VERSE = "startVerse";
+   public static final String EXTRA_END_VERSE = "endVerse";
 
    // download types (also handler message types)
    public static final int DOWNLOAD_TYPE_UNDEF = 0;
@@ -250,6 +245,7 @@ public class QuranDownloadService extends Service {
                currentLast.getStringExtra(ProgressIntent.DOWNLOAD_KEY);
             if (download != null && currentDownload != null &&
                   download.equals(currentDownload)){
+               android.util.Log.d(TAG, "resending last broadcast...");
                mBroadcastManager.sendBroadcast(currentLast);
                
                String state = currentLast.getStringExtra(ProgressIntent.STATE);
@@ -258,6 +254,7 @@ public class QuranDownloadService extends Service {
                   // of a race condition in which we miss the error pref and
                   // miss the success/failure notification and this re-play
                   sendNoOpMessage(startId);
+                  android.util.Log.d(TAG, "leaving...");
                   return;
                }
             }
@@ -336,21 +333,23 @@ public class QuranDownloadService extends Service {
          }
 
          // get the start/end ayah info if it's a ranged download
-         int startSura = intent.getIntExtra(EXTRA_START_SURA, 0);
-         int startAyah = intent.getIntExtra(EXTRA_START_AYAH, 0);
-         int endSura = intent.getIntExtra(EXTRA_END_SURA, 0);
-         int endAyah = intent.getIntExtra(EXTRA_END_AYAH, 0);
-
+         Serializable startAyah = intent.getSerializableExtra(EXTRA_START_VERSE);
+         Serializable endAyah = intent.getSerializableExtra(EXTRA_END_VERSE);
 
          String destination = intent.getStringExtra(EXTRA_DESTINATION);
          mLastSentIntent = null;
          boolean result;
-         if (startSura == 0 || endSura == 0 || startAyah == 0 || endAyah == 0){
-            result = download(url, destination, details);
+         if (startAyah != null && endAyah != null){
+            if (startAyah instanceof QuranAyah &&
+                    endAyah instanceof QuranAyah){
+               result = downloadRange(url, destination,
+                       (QuranAyah)startAyah,
+                       (QuranAyah)endAyah, details);
+            }
+            else { return; }
          }
          else {
-            result = downloadRange(url, destination, startSura, startAyah,
-                    endSura, endAyah, details);
+            result = download(url, destination, details);
          }
          if (result && isZipFile){
             mSuccessfulZippedDownloads.put(url, true);
@@ -378,11 +377,17 @@ public class QuranDownloadService extends Service {
    }
 
    private boolean downloadRange(String urlString, String destination,
-                                 int startSura, int startAyah, int endSura,
-                                 int endAyah, NotificationDetails details){
+                                 QuranAyah startVerse,
+                                 QuranAyah endVerse,
+                                 NotificationDetails details){
       new File(destination).mkdirs();
 
       int totalAyahs = 0;
+      int startSura = startVerse.getSura();
+      int startAyah = startVerse.getAyah();
+      int endSura = endVerse.getSura();
+      int endAyah = endVerse.getAyah();
+
       if (startSura == endSura){
          totalAyahs = endAyah - startAyah + 1;
       }
@@ -399,6 +404,10 @@ public class QuranDownloadService extends Service {
          totalAyahs += endAyah;
       }
 
+      Log.d(TAG, "downloadRange for " + totalAyahs + " between " +
+              startSura + ":" + startAyah + " to " + endSura + ":" +
+              endAyah);
+
       details.setFileStatus(1, totalAyahs);
       notifyProgress(details, 0, 0);
 
@@ -409,9 +418,28 @@ public class QuranDownloadService extends Service {
          int firstAyah = 1;
          if (i == startSura){ firstAyah = startAyah; }
 
-         for (int j = firstAyah; j < lastAyah; j++){
-            result = downloadFileWrapper(urlString, destination, details);
+         for (int j = firstAyah; j <= lastAyah; j++){
+            String destDir = destination + File.separator + i + File.separator;
+            new File(destDir).mkdirs();
+
+            String url = String.format(urlString, i, j);
+            Log.d(TAG, "downloading: " + url + " to " + destDir);
+            result = downloadFileWrapper(url, destDir, details);
             if (!result){ return false; }
+
+            String filename =
+                    QuranDownloadService.getFilenameFromUrl(urlString);
+            int extLocation = filename.lastIndexOf(".");
+            String extension = filename.substring(extLocation);
+
+            File correctPath = new File(destDir + j + extension);
+            File downloaded = new File(destDir +
+                    String.format(filename, i, j));
+            android.util.Log.d(TAG, "attempting to rename " +
+                    destDir + String.format(filename, i, j) +
+                    " to " + destDir + j + extension);
+            downloaded.renameTo(correctPath);
+
             details.currentFile++;
          }
       }

@@ -86,6 +86,16 @@ public class QuranInfo {
 		if (index > ApplicationConstants.SURAS_LAST_INDEX) index = ApplicationConstants.SURAS_LAST_INDEX;
 		return QuranSettings.getInstance().isArabicNames() ? SURA_NAMES_AR[index] : SURA_NAMES[index];
 	}
+
+   public static String getSuraName(Context context, int sura,
+                                    boolean wantTitle){
+      if (sura < 1 || sura > 114){ return ""; }
+      String title = "";
+      if (wantTitle){ title = getSuraTitle(context) + " "; }
+
+      return title + (QuranSettings.getInstance().isArabicNames()?
+              SURA_NAMES_AR[sura-1] : SURA_NAMES[sura-1]);
+   }
 	
 	public static String getSuraListMetaString(int sura){
 		String info = "";

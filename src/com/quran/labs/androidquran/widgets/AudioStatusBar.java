@@ -10,10 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
 import com.actionbarsherlock.internal.widget.IcsAdapterView;
 import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.actionbarsherlock.internal.widget.IcsSpinner;
@@ -37,7 +34,7 @@ public class AudioStatusBar extends LinearLayout {
 
    private IcsSpinner mSpinner;
    private TextView mProgressText;
-   private IcsProgressBar mProgressBar;
+   private ProgressBar mProgressBar;
    private AudioBarListener mAudioBarListener;
 
    public interface AudioBarListener {
@@ -82,6 +79,8 @@ public class AudioStatusBar extends LinearLayout {
    }
 
    public void switchMode(int mode){
+      if (mode == mCurrentMode){ return; }
+
       if (mode == STOPPED_MODE){
          showStoppedMode();
       }
@@ -104,6 +103,26 @@ public class AudioStatusBar extends LinearLayout {
    public void updateSelectedItem(){
       if (mSpinner != null){
          mSpinner.setSelection(mCurrentQari);
+      }
+   }
+
+   public void setProgress(int progress){
+      if (mProgressBar != null){
+         if (progress >= 0){
+            mProgressBar.setIndeterminate(false);
+            mProgressBar.setProgress(progress);
+            mProgressBar.setMax(100);
+         }
+         else { mProgressBar.setIndeterminate(true); }
+      }
+   }
+
+   public void setProgressText(String progressText, boolean isError){
+      if (mProgressText != null){
+         mProgressText.setText(progressText);
+         if (isError && mProgressBar != null){
+            mProgressBar.setVisibility(View.GONE);
+         }
       }
    }
 
@@ -149,6 +168,8 @@ public class AudioStatusBar extends LinearLayout {
    }
 
    private void showDownloadingMode(){
+      mCurrentMode = DOWNLOADING_MODE;
+
       removeAllViews();
       addButton(R.drawable.stop);
       addSeparator();
@@ -156,22 +177,19 @@ public class AudioStatusBar extends LinearLayout {
       LinearLayout ll = new LinearLayout(mContext);
       ll.setOrientation(LinearLayout.VERTICAL);
 
-      if (mProgressBar == null){
-         mProgressBar = (IcsProgressBar)LayoutInflater.from(mContext)
-                 .inflate(R.layout.download_progress_bar, null);
-      }
+      mProgressBar = (ProgressBar)LayoutInflater.from(mContext)
+         .inflate(R.layout.download_progress_bar, null);
       mProgressBar.setIndeterminate(true);
+      mProgressBar.setVisibility(View.VISIBLE);
 
       ll.addView(mProgressBar, LayoutParams.MATCH_PARENT,
               LayoutParams.WRAP_CONTENT);
 
-      if (mProgressText == null){
-         mProgressText = new TextView(mContext);
-         mProgressText.setTextColor(Color.WHITE);
-         mProgressText.setGravity(Gravity.CENTER_VERTICAL);
-         mProgressText.setTextSize(10.0f);
-      }
-      mProgressText.setText("Please wait...");
+      mProgressText = new TextView(mContext);
+      mProgressText.setTextColor(Color.WHITE);
+      mProgressText.setGravity(Gravity.CENTER_VERTICAL);
+      mProgressText.setTextSize(10.0f);
+      mProgressText.setText(R.string.downloading_title);
 
       ll.addView(mProgressText, LayoutParams.MATCH_PARENT,
               LayoutParams.WRAP_CONTENT);
