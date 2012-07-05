@@ -219,12 +219,12 @@ public class AudioStatusBar extends LinearLayout {
       removeAllViews();
 
       int button;
-      if (!isPaused){
-         button = R.drawable.ic_pause;
+      if (isPaused){
+         button = R.drawable.ic_play;
          mCurrentMode = PAUSED_MODE;
       }
       else {
-         button = R.drawable.ic_play;
+         button = R.drawable.ic_pause;
          mCurrentMode = PLAYING_MODE;
       }
 

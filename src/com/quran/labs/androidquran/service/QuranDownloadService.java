@@ -69,6 +69,7 @@ public class QuranDownloadService extends Service {
    // extras for range downloads
    public static final String EXTRA_START_VERSE = "startVerse";
    public static final String EXTRA_END_VERSE = "endVerse";
+   public static final String EXTRA_IS_GAPLESS = "isGapless";
 
    // download types (also handler message types)
    public static final int DOWNLOAD_TYPE_UNDEF = 0;
@@ -335,6 +336,7 @@ public class QuranDownloadService extends Service {
          // get the start/end ayah info if it's a ranged download
          Serializable startAyah = intent.getSerializableExtra(EXTRA_START_VERSE);
          Serializable endAyah = intent.getSerializableExtra(EXTRA_END_VERSE);
+         boolean isGapless = intent.getBooleanExtra(EXTRA_IS_GAPLESS, false);
 
          String destination = intent.getStringExtra(EXTRA_DESTINATION);
          mLastSentIntent = null;
@@ -344,7 +346,7 @@ public class QuranDownloadService extends Service {
                     endAyah instanceof QuranAyah){
                result = downloadRange(url, destination,
                        (QuranAyah)startAyah,
-                       (QuranAyah)endAyah, details);
+                       (QuranAyah)endAyah, isGapless, details);
             }
             else { return; }
          }
@@ -378,7 +380,7 @@ public class QuranDownloadService extends Service {
 
    private boolean downloadRange(String urlString, String destination,
                                  QuranAyah startVerse,
-                                 QuranAyah endVerse,
+                                 QuranAyah endVerse, boolean isGapless,
                                  NotificationDetails details){
       new File(destination).mkdirs();
 
@@ -388,25 +390,31 @@ public class QuranDownloadService extends Service {
       int endSura = endVerse.getSura();
       int endAyah = endVerse.getAyah();
 
-      if (startSura == endSura){
-         totalAyahs = endAyah - startAyah + 1;
+      if (isGapless){
+         totalAyahs = endSura - startSura + 1;
+         if (endAyah == 0){ totalAyahs--; }
       }
       else {
-         // add the number ayahs from suras in between start and end
-         for (int i = startSura + 1; i < endSura; i++){
-            totalAyahs += QuranInfo.getNumAyahs(i);
+         if (startSura == endSura){
+            totalAyahs = endAyah - startAyah + 1;
          }
+         else {
+            // add the number ayahs from suras in between start and end
+            for (int i = startSura + 1; i < endSura; i++){
+               totalAyahs += QuranInfo.getNumAyahs(i);
+            }
 
-         // add the number of ayahs from the start sura
-         totalAyahs += QuranInfo.getNumAyahs(startSura) - startAyah + 1;
+            // add the number of ayahs from the start sura
+            totalAyahs += QuranInfo.getNumAyahs(startSura) - startAyah + 1;
 
-         // add the number of ayahs from the last sura
-         totalAyahs += endAyah;
+            // add the number of ayahs from the last sura
+            totalAyahs += endAyah;
+         }
       }
 
       Log.d(TAG, "downloadRange for " + totalAyahs + " between " +
               startSura + ":" + startAyah + " to " + endSura + ":" +
-              endAyah);
+              endAyah + ", gaplessFlag: " + isGapless);
 
       details.setFileStatus(1, totalAyahs);
       notifyProgress(details, 0, 0);
@@ -423,6 +431,17 @@ public class QuranDownloadService extends Service {
          int firstAyah = 1;
          if (i == startSura){ firstAyah = startAyah; }
 
+         if (isGapless){
+            if (i == endSura && endAyah == 0){ continue; }
+            String destDir = destination + File.separator;
+            String url = String.format(urlString, i);
+            Log.d(TAG, "gapless asking to download " + url + " to " + destDir);
+            result = downloadFileWrapper(url, destDir, null, details);
+            if (!result){ return false; }
+            details.currentFile++;
+            continue;
+         }
+
          // same destination directory for ayahs within the same sura
          String destDir = destination + File.separator + i + File.separator;
          new File(destDir).mkdirs();
@@ -438,17 +457,20 @@ public class QuranDownloadService extends Service {
       }
 
       if (result){
-         // attempt to download basmallah if it doesn't exist
-         String destDir = destination + File.separator + 1 + File.separator;
-         new File(destDir).mkdirs();
-         File basmallah = new File(destDir, "1" + extension);
-         if (!basmallah.exists()){
-            android.util.Log.d(TAG, "basmallah doesn't exist, downloading...");
-            String url = String.format(urlString, 1, 1);
-            String destFile = 1 + extension;
-            result = downloadFileWrapper(url, destDir, destFile, details);
-            if (!result){ return false; }
+         if (!isGapless){
+            // attempt to download basmallah if it doesn't exist
+            String destDir = destination + File.separator + 1 + File.separator;
+            new File(destDir).mkdirs();
+            File basmallah = new File(destDir, "1" + extension);
+            if (!basmallah.exists()){
+               Log.d(TAG, "basmallah doesn't exist, downloading...");
+               String url = String.format(urlString, 1, 1);
+               String destFile = 1 + extension;
+               result = downloadFileWrapper(url, destDir, destFile, details);
+               if (!result){ return false; }
+            }
          }
+
          notifyDownloadSuccessful(details);
       }
 

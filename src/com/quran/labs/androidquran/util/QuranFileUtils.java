@@ -275,6 +275,13 @@ public class QuranFileUtils {
 		return url;
 	}
 
+   public static String getGaplessDatabaseRootUrl() {
+      QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+      if (qsi == null)
+         return null;
+      return IMG_HOST + "databases/audio/";
+   }
+
 	public static boolean haveAyaPositionFile(){
 		String base = QuranFileUtils.getQuranDatabaseDirectory();
 		if (base == null)

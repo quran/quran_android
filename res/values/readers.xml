@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
      <string-array name="quran_readers_name">
+        <item>Minshawi Murattal (gapless)</item>
         <item>Abd El Basit</item>
         <item>Abdul Basit Mujawwad</item>
         <item>Abdullah Basfar</item>
@@ -23,6 +24,7 @@
     </string-array>
 
     <string-array name="quran_readers_path">
+        <item>minshawi_murattal</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -44,6 +46,30 @@
         <item>17</item>
     </string-array>
 
+    <string-array name="quran_readers_db_name">
+        <item>minshawi_murattal</item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+    </string-array>
+
+    <!-- not used by new code - will remove insha'Allah -->
     <integer-array name="quran_readers_id">
         <item>0</item>
         <item>1</item>
@@ -67,6 +93,7 @@
     </integer-array>
 
     <string-array name="quran_readers_urls">
+        <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
         <item>http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/</item>
         <item>http://www.everyayah.com/data/Abdul_Basit_Mujawwad_128kbps/</item>
         <item>http://www.everyayah.com/data/Abdullah_Basfar_192kbps/</item>
