@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.data;
 import android.content.Context;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranInfo {
@@ -111,6 +113,42 @@ public class QuranInfo {
       }
 
       return (sura > 0)? getSuraName(context, sura, wantTitle) : "";
+   }
+
+   public static String getPageSubtitle(Context context, int page){
+      String description = context.getString(R.string.page_description);
+      return String.format(description, page, QuranInfo.getJuzFromPage(page));
+   }
+
+   public static String getNotificationTitle(Context context,
+                                             QuranAyah minVerse,
+                                             QuranAyah maxVerse){
+      int minSura = minVerse.getSura();
+      int maxSura = maxVerse.getSura();
+      int maxAyah = maxVerse.getAyah();
+      if (maxAyah == 0){
+         maxSura--;
+         maxAyah = QuranInfo.getNumAyahs(maxSura);
+      }
+
+      String notificationTitle =
+              QuranInfo.getSuraName(context, minSura, true);
+      if (minSura == maxSura){
+         if (minVerse.getAyah() == maxAyah){
+            notificationTitle += " (" + maxAyah + ")";
+         }
+         else {
+            notificationTitle += " (" + minVerse.getAyah() +
+                 "-" + maxAyah + ")";
+         }
+      }
+      else {
+         notificationTitle += " (" + minVerse.getAyah() +
+                 ") - " + QuranInfo.getSuraName(context, maxSura, true) +
+                 " (" + maxAyah + ")";
+      }
+
+      return notificationTitle;
    }
 
 	public static String getSuraListMetaString(int sura){

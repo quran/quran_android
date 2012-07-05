@@ -1,6 +1,9 @@
 package com.quran.labs.androidquran.util;
 
+import android.app.Activity;
 import android.content.res.Configuration;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class QuranScreenInfo {
 
@@ -21,7 +24,20 @@ public class QuranScreenInfo {
 	public static QuranScreenInfo getInstance(){
 		return instance;
 	}
-	
+
+   public static QuranScreenInfo getOrMakeInstance(Activity activity){
+      if (instance == null){
+         instance = initialize(activity);
+      }
+      return instance;
+   }
+
+   private static QuranScreenInfo initialize(Activity activity){
+      WindowManager w = activity.getWindowManager();
+      Display d = w.getDefaultDisplay();
+      return new QuranScreenInfo(d.getWidth(), d.getHeight());
+   }
+
 	public static void initialize(int width, int height){
 		instance = new QuranScreenInfo(width, height);
 	}

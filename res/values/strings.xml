@@ -196,6 +196,10 @@
     <string name="bookmarks_current_page">Current Page</string>
     <string name="no_bookmarks">No Bookmarks!</string>
     <string name="index_loading">Loading…</string>
+
+    <string name="canceling">Canceling&#8230;</string>
+    <string name="page_description">page %1$d, Juz\' %1$d</string>
+    <string name="highlighting_database">Quran Highlighting Info</string>
     
     <!-- download statuses and errors -->
     <string name="download_successful">Download Successful</string>   

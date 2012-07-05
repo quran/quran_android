@@ -26,12 +26,14 @@ import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
@@ -63,6 +65,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       super.onCreate(savedInstanceState);
 
+      // make sure to remake QuranScreenInfo if it doesn't exist, as it
+      // is needed to get images, to get the highlighting db, etc.
+      QuranScreenInfo.getOrMakeInstance(this);
+
       int page = -1;
 
       if (savedInstanceState != null){
@@ -76,15 +82,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
          page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
          if (page != -1){ page = 604 - page; }
-      }
-   
-      if (QuranScreenInfo.getInstance() == null){
-         Log.d(TAG, "QuranScreenInfo was null, re-initializing...");
-         WindowManager w = getWindowManager();
-         Display d = w.getDefaultDisplay();
-         int width = d.getWidth();
-         int height = d.getHeight();
-         QuranScreenInfo.initialize(width, height);
       }
       
       getWindow().setFlags(
@@ -172,13 +169,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    private void updateActionBarTitle(int page){
       String sura = QuranInfo.getSuraNameFromPage(this, page, true);
-      int juz = QuranInfo.getJuzFromPage(page);
       ActionBar actionBar = getSupportActionBar();
       actionBar.setTitle(sura);
-      String desc = getString(R.string.quran_page) + " " + page + ", " +
-              getString(R.string.quran_juz2) + " " + juz;
+      String desc = QuranInfo.getPageSubtitle(this, page);
       actionBar.setSubtitle(desc);
-
    }
 
    BroadcastReceiver mAudioReceiver = new BroadcastReceiver(){
@@ -233,17 +227,23 @@ public class PagerActivity extends SherlockFragmentActivity implements
                   }
                   else if (QuranDownloadService
                           .STATE_PROCESSING.equals(state)){
-                     // TODO handle this when handling database download
+                     mAudioStatusBar.setProgressText(
+                             getString(R.string.extracting_title), false);
+                     mAudioStatusBar.setProgress(-1);
                   }
                   else if (QuranDownloadService.STATE_SUCCESS.equals(state)){
                      playAudioRequest(mLastAudioDownloadRequest);
                   }
                   else if (QuranDownloadService.STATE_ERROR.equals(state)){
-                     // TODO handleFatalError(intent);
+                     String s = getString(ServiceIntentHelper
+                                     .getErrorResourceFromDownloadIntent(intent));
+                     mAudioStatusBar.setProgressText(s, true);
                   }
                   else if (QuranDownloadService
                           .STATE_ERROR_WILL_RETRY.equals(state)){
-                     // TODO handleError(intent);
+                     int errorId = ServiceIntentHelper
+                             .getErrorResourceFromDownloadIntent(intent);
+                     mAudioStatusBar.setProgressText(getString(errorId), false);
                   }
                }
             }
@@ -297,6 +297,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void highlightAyah(int sura, int ayah){
       int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
       int position = 604 - page;
+      if (position != mViewPager.getCurrentItem()){
+         unhighlightAyah();
+         mViewPager.setCurrentItem(position);
+      }
 
       Fragment f = mPagerAdapter.getFragmentIfExists(position);
       if (f != null && f instanceof QuranPageFragment){
@@ -362,56 +366,59 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       android.util.Log.d(TAG, "seeing if we can play audio request...");
-      if (AudioUtils.haveAllFiles(this, request)){
-         android.util.Log.d(TAG, "have all files, playing!");
-         request.removePlayBounds();
-         play(request);
-         mLastAudioDownloadRequest = null;
+      if (!QuranFileUtils.haveAyaPositionFile()){
+         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+
+         String url = QuranFileUtils.getAyaPositionFileUrl();
+         String destination = QuranFileUtils.getQuranDatabaseDirectory();
+         // start the download
+         String notificationTitle = getString(R.string.highlighting_database);
+         Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
+                 destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
+                 QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+         startService(intent);
+      }
+      else if (AudioUtils.haveAllFiles(request)){
+         if (!AudioUtils.shouldDownloadBasmallah(this, request)){
+            android.util.Log.d(TAG, "have all files, playing!");
+            request.removePlayBounds();
+            play(request);
+            mLastAudioDownloadRequest = null;
+         }
+         else {
+            android.util.Log.d(TAG, "should download basmalla...");
+            QuranAyah firstAyah = new QuranAyah(1, 1);
+            String qariUrl = AudioUtils.getQariUrl(this, request.getQariId());
+            qariUrl += "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
+
+            String notificationTitle =
+                    QuranInfo.getNotificationTitle(this, firstAyah, firstAyah);
+            Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
+                    request.getLocalPath(), notificationTitle,
+                    AUDIO_DOWNLOAD_KEY,
+                    QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+            intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, firstAyah);
+            intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, firstAyah);
+            startService(intent);
+         }
       }
       else {
          mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
-         // TODO - move to helper and use strings.xml
-         int minSura = request.getMinAyah().getSura();
-         int maxSura = request.getMaxAyah().getSura();
-         int maxAyah = request.getMaxAyah().getAyah();
-         if (maxAyah == 0){
-            maxSura--;
-            maxAyah = QuranInfo.getNumAyahs(maxSura);
-         }
-
-         String notificationTitle =
-                 QuranInfo.getSuraName(this, minSura, true);
-         if (minSura == maxSura){
-            notificationTitle += " (" + request.getMinAyah().getAyah() +
-                    "-" + maxAyah + ")";
-         }
-         else {
-            notificationTitle += " (" + request.getMinAyah().getAyah() +
-                    ") - " + QuranInfo.getSuraName(this, maxSura, true) +
-                    " (" + maxAyah + ")";
-         }
-
+         String notificationTitle = QuranInfo.getNotificationTitle(this,
+                 request.getMinAyah(),request.getMaxAyah());
          String qariUrl = AudioUtils.getQariUrl(this, request.getQariId());
          qariUrl += "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
          android.util.Log.d(TAG, "need to start download: " + qariUrl);
 
          // start service
-         Intent intent = new Intent(this, QuranDownloadService.class);
-         intent.putExtra(QuranDownloadService.EXTRA_URL, qariUrl);
-         intent.putExtra(QuranDownloadService.EXTRA_DESTINATION,
-                 request.getLocalPath());
-         intent.putExtra(QuranDownloadService.EXTRA_NOTIFICATION_NAME,
-                 notificationTitle);
-         intent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_KEY,
-                 AUDIO_DOWNLOAD_KEY);
-         intent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
+         Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
+                 request.getLocalPath(), notificationTitle, AUDIO_DOWNLOAD_KEY,
                  QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
          intent.putExtra(QuranDownloadService.EXTRA_START_VERSE,
                  request.getMinAyah());
          intent.putExtra(QuranDownloadService.EXTRA_END_VERSE,
                  request.getMaxAyah());
-         intent.setAction(QuranDownloadService.ACTION_DOWNLOAD_URL);
          startService(intent);
       }
    }
@@ -444,5 +451,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
       startService(new Intent(AudioService.ACTION_STOP));
       mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
       unhighlightAyah();
+   }
+
+   @Override
+   public void onCancelPressed(){
+      int resId = R.string.canceling;
+      mAudioStatusBar.setProgressText(getString(resId), true);
+      Intent i = new Intent(this, QuranDownloadService.class);
+      i.setAction(QuranDownloadService.ACTION_CANCEL_DOWNLOADS);
+      startService(i);
    }
 }
