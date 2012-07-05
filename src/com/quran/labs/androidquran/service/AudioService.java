@@ -452,7 +452,8 @@ public class AudioService extends Service implements OnCompletionListener,
       relaxResources(false); // release everything except MediaPlayer
 
       try {
-         if (mAudioRequest == null || mAudioRequest.getUrl() == null){
+         String url = mAudioRequest == null? null : mAudioRequest.getUrl();
+         if (mAudioRequest == null ||  url == null){
             Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
             updateIntent.putExtra(AudioUpdateIntent.STATUS,
                     AudioUpdateIntent.STOPPED);
@@ -462,7 +463,6 @@ public class AudioService extends Service implements OnCompletionListener,
             return;
          }
 
-         String url = mAudioRequest.getUrl();
          mIsStreaming = url.startsWith("http:") || url.startsWith("https:");
          if (!mIsStreaming){
             File f = new File(url);

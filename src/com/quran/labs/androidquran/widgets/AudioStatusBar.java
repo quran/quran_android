@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,11 @@ public class AudioStatusBar extends LinearLayout {
    private int mButtonWidth;
    private int mSeparatorWidth;
    private int mSeparatorSpacing;
+   private int mTextFontSize;
+   private int mTextFullFontSize;
+
    private int mCurrentQari;
+   private boolean mHaveCriticalError = false;
    private SharedPreferences mSharedPreferences;
 
    private IcsSpinner mSpinner;
@@ -43,6 +48,7 @@ public class AudioStatusBar extends LinearLayout {
       public void onNextPressed();
       public void onPreviousPressed();
       public void onStopPressed();
+      public void onCancelPressed();
    }
 
    public AudioStatusBar(Context context) {
@@ -69,6 +75,10 @@ public class AudioStatusBar extends LinearLayout {
               R.dimen.audiobar_separator_width);
       mSeparatorSpacing = resources.getDimensionPixelSize(
               R.dimen.audiobar_separator_padding);
+      mTextFontSize = resources.getDimensionPixelSize(
+              R.dimen.audiobar_text_font_size);
+      mTextFullFontSize = resources.getDimensionPixelSize(
+              R.dimen.audiobar_text_full_font_size);
       setOrientation(LinearLayout.HORIZONTAL);
 
       mSharedPreferences = PreferenceManager
@@ -117,11 +127,14 @@ public class AudioStatusBar extends LinearLayout {
       }
    }
 
-   public void setProgressText(String progressText, boolean isError){
+   public void setProgressText(String progressText, boolean isCriticalError){
       if (mProgressText != null){
          mProgressText.setText(progressText);
-         if (isError && mProgressBar != null){
+         if (isCriticalError && mProgressBar != null){
             mProgressBar.setVisibility(View.GONE);
+            mProgressText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    mTextFullFontSize);
+            mHaveCriticalError = true;
          }
       }
    }
@@ -171,7 +184,7 @@ public class AudioStatusBar extends LinearLayout {
       mCurrentMode = DOWNLOADING_MODE;
 
       removeAllViews();
-      addButton(R.drawable.stop);
+      addButton(R.drawable.ic_cancel);
       addSeparator();
 
       LinearLayout ll = new LinearLayout(mContext);
@@ -188,11 +201,12 @@ public class AudioStatusBar extends LinearLayout {
       mProgressText = new TextView(mContext);
       mProgressText.setTextColor(Color.WHITE);
       mProgressText.setGravity(Gravity.CENTER_VERTICAL);
-      mProgressText.setTextSize(10.0f);
+      mProgressText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+              mTextFontSize);
       mProgressText.setText(R.string.downloading_title);
 
       ll.addView(mProgressText, LayoutParams.MATCH_PARENT,
-              LayoutParams.WRAP_CONTENT);
+              LayoutParams.MATCH_PARENT);
 
       LinearLayout.LayoutParams lp =
               new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
@@ -265,6 +279,13 @@ public class AudioStatusBar extends LinearLayout {
                   break;
                case R.drawable.ic_previous:
                   mAudioBarListener.onPreviousPressed();
+                  break;
+               case R.drawable.ic_cancel:
+                  if (mHaveCriticalError){
+                     mHaveCriticalError = false;
+                     switchMode(STOPPED_MODE);
+                  }
+                  else { mAudioBarListener.onCancelPressed(); }
                   break;
             }
          }

@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 import java.io.File;
 
 public class AudioUtils {
+   private static final String TAG = "AudioUtils";
    public static final String AUDIO_EXTENSION = ".mp3";
 
    public final static class LookAheadAmount {
@@ -63,8 +64,63 @@ public class AudioUtils {
       }
    }
 
-   public static boolean haveAllFiles(Context context,
-                                      DownloadAudioRequest request){
+   public static boolean shouldDownloadBasmallah(Context context,
+                                                 DownloadAudioRequest request){
+      String baseDirectory = request.getLocalPath();
+      if (!TextUtils.isEmpty(baseDirectory)){
+         File f = new File(baseDirectory);
+         if (f.exists()){
+            String filename = 1 + File.separator + 1 + AUDIO_EXTENSION;
+            f = new File(baseDirectory + File.separator + filename);
+            if (f.exists()){
+               android.util.Log.d(TAG, "already have basmalla...");
+               return false; }
+         }
+         else {
+            f.mkdirs();
+         }
+      }
+
+      return doesRequireBasmallah(request);
+   }
+
+   public static boolean haveSuraAyahForQari(String baseDir, int sura, int ayah){
+      String filename = baseDir + File.separator + sura +
+              File.separator + ayah + AUDIO_EXTENSION;
+      File f = new File(filename);
+      return f.exists();
+   }
+
+   private static boolean doesRequireBasmallah(AudioRequest request){
+      QuranAyah minAyah = request.getMinAyah();
+      int startSura = minAyah.getSura();
+      int startAyah = minAyah.getAyah();
+
+      QuranAyah maxAyah = request.getMaxAyah();
+      int endSura = maxAyah.getSura();
+      int endAyah = maxAyah.getAyah();
+
+      android.util.Log.d(TAG, "seeing if need basmalla...");
+
+      for (int i = startSura; i <= endSura; i++){
+         int lastAyah = QuranInfo.getNumAyahs(i);
+         if (i == endSura){ lastAyah = endAyah; }
+         int firstAyah = 1;
+         if (i == startSura){ firstAyah = startAyah; }
+
+         for (int j = firstAyah; j < lastAyah; j++){
+            if (j == 1 && i != 1 && i != 9){
+               android.util.Log.d(TAG, "need basmalla for " + i + ":" + j);
+
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   public static boolean haveAllFiles(DownloadAudioRequest request){
       String baseDirectory = request.getLocalPath();
       if (TextUtils.isEmpty(baseDirectory)){ return false; }
 

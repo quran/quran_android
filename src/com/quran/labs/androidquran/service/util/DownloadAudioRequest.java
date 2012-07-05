@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.service.util;
 
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.util.AudioUtils;
 
 public class DownloadAudioRequest extends AudioRequest {
 
@@ -16,4 +17,9 @@ public class DownloadAudioRequest extends AudioRequest {
 
    public int getQariId(){ return mQariId; }
    public String getLocalPath(){ return mLocalDirectoryPath; }
+
+   @Override
+   public boolean haveSuraAyah(int sura, int ayah){
+      return AudioUtils.haveSuraAyahForQari(mLocalDirectoryPath, sura, ayah);
+   }
 }

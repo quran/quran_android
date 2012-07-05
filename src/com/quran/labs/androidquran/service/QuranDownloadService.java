@@ -411,6 +411,11 @@ public class QuranDownloadService extends Service {
       details.setFileStatus(1, totalAyahs);
       notifyProgress(details, 0, 0);
 
+      // extension and filename template don't change
+      String filename = QuranDownloadService.getFilenameFromUrl(urlString);
+      int extLocation = filename.lastIndexOf(".");
+      String extension = filename.substring(extLocation);
+
       boolean result = true;
       for (int i = startSura; i <= endSura; i++){
          int lastAyah = QuranInfo.getNumAyahs(i);
@@ -418,38 +423,45 @@ public class QuranDownloadService extends Service {
          int firstAyah = 1;
          if (i == startSura){ firstAyah = startAyah; }
 
+         // same destination directory for ayahs within the same sura
+         String destDir = destination + File.separator + i + File.separator;
+         new File(destDir).mkdirs();
+
          for (int j = firstAyah; j <= lastAyah; j++){
-            String destDir = destination + File.separator + i + File.separator;
-            new File(destDir).mkdirs();
-
             String url = String.format(urlString, i, j);
-            Log.d(TAG, "downloading: " + url + " to " + destDir);
-            result = downloadFileWrapper(url, destDir, details);
+            String destFile = j + extension;
+            result = downloadFileWrapper(url, destDir, destFile, details);
             if (!result){ return false; }
-
-            String filename =
-                    QuranDownloadService.getFilenameFromUrl(urlString);
-            int extLocation = filename.lastIndexOf(".");
-            String extension = filename.substring(extLocation);
-
-            File correctPath = new File(destDir + j + extension);
-            File downloaded = new File(destDir +
-                    String.format(filename, i, j));
-            android.util.Log.d(TAG, "attempting to rename " +
-                    destDir + String.format(filename, i, j) +
-                    " to " + destDir + j + extension);
-            downloaded.renameTo(correctPath);
 
             details.currentFile++;
          }
       }
 
-      if (result){ notifyDownloadSuccessful(details); }
+      if (result){
+         // attempt to download basmallah if it doesn't exist
+         String destDir = destination + File.separator + 1 + File.separator;
+         new File(destDir).mkdirs();
+         File basmallah = new File(destDir, "1" + extension);
+         if (!basmallah.exists()){
+            android.util.Log.d(TAG, "basmallah doesn't exist, downloading...");
+            String url = String.format(urlString, 1, 1);
+            String destFile = 1 + extension;
+            result = downloadFileWrapper(url, destDir, destFile, details);
+            if (!result){ return false; }
+         }
+         notifyDownloadSuccessful(details);
+      }
+
       return result;
    }
 
    private boolean downloadFileWrapper(String urlString, String destination,
-                            NotificationDetails details){
+                                       NotificationDetails details){
+      return downloadFileWrapper(urlString, destination, null, details);
+   }
+
+   private boolean downloadFileWrapper(String urlString, String destination,
+                            String outputFile, NotificationDetails details){
       boolean previouslyCorrupted = false;
       
       int res = DOWNLOAD_SUCCESS;
@@ -463,7 +475,7 @@ public class QuranDownloadService extends Service {
          }
          
          mWifiLock.acquire();
-         res = downloadFile(urlString, destination, details);
+         res = downloadFile(urlString, destination, outputFile,  details);
          if (mWifiLock.isHeld()){ mWifiLock.release(); }
          
          if (res == DOWNLOAD_SUCCESS){
@@ -495,7 +507,7 @@ public class QuranDownloadService extends Service {
    }
    
    private int downloadFile(String urlString, String destination,
-         NotificationDetails notificationInfo){
+         String outputFile, NotificationDetails notificationInfo){
       HttpURLConnection connection = null;
       String notificationTitle = notificationInfo.title;
 
@@ -508,7 +520,7 @@ public class QuranDownloadService extends Service {
          if (partialFile.exists()){
             downloaded = partialFile.length();
          }
-         
+
          if (!haveInternet()){
             notifyError(ERROR_NETWORK, false, notificationInfo);
             return ERROR_NETWORK;
@@ -530,8 +542,10 @@ public class QuranDownloadService extends Service {
          int rc = connection.getResponseCode();
          android.util.Log.d(TAG, "got content length: " + contentLength +
                ", rc: " + connection.getResponseCode());         
-         
-         File actualFile = new File(destination, filename);
+
+         String fileToCheck = filename;
+         if (outputFile != null){ fileToCheck = outputFile; }
+         File actualFile = new File(destination, fileToCheck);
          android.util.Log.d(TAG, "actualFile: " + actualFile.getPath() +
                ", " + actualFile.getAbsolutePath() + ", " +
                actualFile.getName());
@@ -609,7 +623,7 @@ public class QuranDownloadService extends Service {
          return ERROR_NETWORK;
       }
       finally {
-         connection.disconnect();
+         if (connection != null){ connection.disconnect(); }
       }
    }
    
@@ -726,6 +740,8 @@ public class QuranDownloadService extends Service {
    
    public void notifyDownloadProcessing(NotificationDetails details,
                                         int done, int total){
+      if (details.totalFiles > 1){ return; }
+
       String processingString = getString(R.string.download_processing);
       showNotification(details.title, processingString,
             DOWNLOADING_NOTIFICATION, true, 0, 0, true);

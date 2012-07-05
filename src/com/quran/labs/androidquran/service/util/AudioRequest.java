@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.service.util;
 
 import java.io.Serializable;
 
+import android.util.Log;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 
@@ -25,7 +26,10 @@ public class AudioRequest implements Serializable {
    // what we're currently playing
    private int mCurrentSura = 0;
    private int mCurrentAyah = 0;
-   
+
+   // did we just play the basmallah?
+   private boolean mJustPlayedBasmallah = false;
+
    public AudioRequest(String baseUrl, QuranAyah verse){
       mBaseUrl = baseUrl;
       mStartSura = verse.getSura();
@@ -73,8 +77,29 @@ public class AudioRequest implements Serializable {
             || mCurrentSura < 1){
          return null;
       }
-      
-      return String.format(mBaseUrl, mCurrentSura, mCurrentAyah);
+
+      int sura = mCurrentSura;
+      int ayah = mCurrentAyah;
+      if (ayah == 1 && sura != 1 && sura != 9 && !mJustPlayedBasmallah){
+         mJustPlayedBasmallah = true;
+         sura = 1;
+         ayah = 1;
+      }
+      else { mJustPlayedBasmallah = false; }
+
+      if (mJustPlayedBasmallah){
+         // really if "about to play" bismillah...
+         if (!haveSuraAyah(mCurrentSura, mCurrentAyah)){
+            // if we don't have the first ayah, don't play basmallah
+            return null;
+         }
+      }
+      return String.format(mBaseUrl, sura, ayah);
+   }
+
+   public boolean haveSuraAyah(int sura, int ayah){
+      // for streaming, we (theoretically) always "have" the sura and ayah
+      return true;
    }
    
    public String getTitle(){
@@ -90,6 +115,9 @@ public class AudioRequest implements Serializable {
    }
    
    public void gotoNextAyah(){
+      // don't go to next ayah if we haven't played basmallah yet
+      if (mJustPlayedBasmallah){ return ; }
+
       mCurrentAyah++;
       if (mAyahsInThisSura < mCurrentAyah){
          mCurrentAyah = 1;
@@ -106,8 +134,9 @@ public class AudioRequest implements Serializable {
          mCurrentSura--;
          if (mCurrentSura > 0){
             mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
-            mCurrentAyah = mMaxAyah;
+            mCurrentAyah = mAyahsInThisSura;
          }
       }
+      else if (mCurrentAyah == 1){ mJustPlayedBasmallah = true; }
    }
 }

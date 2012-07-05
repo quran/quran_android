@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.QuranDownloadService.ProgressIntent;
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -234,31 +235,11 @@ public class QuranDataActivity extends SherlockActivity {
          return;
       }
       
-      int errorCode = intent.getIntExtra(ProgressIntent.ERROR_CODE, 0);
-      showFatalErrorDialog(errorCode);
+      int msg = ServiceIntentHelper.getErrorResourceFromDownloadIntent(intent);
+      showFatalErrorDialog(msg);
    }
    
-   private void showFatalErrorDialog(int errorCode){
-      int errorId = 0;
-
-      switch (errorCode){
-      case QuranDownloadService.ERROR_DISK_SPACE:
-         errorId = R.string.download_error_disk;
-         break;
-      case QuranDownloadService.ERROR_NETWORK:
-         errorId = R.string.download_error_network;
-         break;
-      case QuranDownloadService.ERROR_PERMISSIONS:
-         errorId = R.string.download_error_perms;
-         break;
-      case QuranDownloadService.ERROR_INVALID_DOWNLOAD:
-         errorId = R.string.download_error_invalid_download;
-         break;
-      case QuranDownloadService.ERROR_GENERAL:
-      default:
-         errorId = R.string.download_error_general;
-      }
-      
+   private void showFatalErrorDialog(int errorId){
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
       builder.setMessage(errorId);
       builder.setCancelable(false);
@@ -293,15 +274,9 @@ public class QuranDataActivity extends SherlockActivity {
    
    private void handleError(Intent intent){
       if (mProgressDialog != null){
-         int errorCode = intent.getIntExtra(ProgressIntent.ERROR_CODE, 0);
-         if (errorCode == QuranDownloadService.ERROR_INVALID_DOWNLOAD){
-            mProgressDialog.setMessage(
-                  getString(R.string.download_error_invalid_download_retry));
-         }
-         else if (errorCode == QuranDownloadService.ERROR_NETWORK){
-            mProgressDialog.setMessage(
-                  getString(R.string.download_error_network_retry));
-         }
+         int msgId = ServiceIntentHelper.
+                 getErrorResourceFromDownloadIntent(intent, true);
+         mProgressDialog.setMessage(getString(msgId));
       }
    }
    
@@ -381,14 +356,8 @@ public class QuranDataActivity extends SherlockActivity {
       String destination = QuranFileUtils.getQuranBaseDirectory();
       
       // start service
-      Intent intent = new Intent(this, QuranDownloadService.class);
-      intent.putExtra(QuranDownloadService.EXTRA_URL, url);
-      intent.putExtra(QuranDownloadService.EXTRA_DESTINATION, destination);
-      intent.putExtra(QuranDownloadService.EXTRA_NOTIFICATION_NAME,
-            getString(R.string.app_name));
-      intent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_KEY,
-            PAGES_DOWNLOAD_KEY);
-      intent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
+      Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
+              destination, getString(R.string.app_name), PAGES_DOWNLOAD_KEY,
               QuranDownloadService.DOWNLOAD_TYPE_PAGES);
       
       if (!force){
@@ -397,7 +366,6 @@ public class QuranDataActivity extends SherlockActivity {
          intent.putExtra(QuranDownloadService.EXTRA_REPEAT_LAST_ERROR, true);
       }
 
-      intent.setAction(QuranDownloadService.ACTION_DOWNLOAD_URL);
       startService(intent);
    }
    
