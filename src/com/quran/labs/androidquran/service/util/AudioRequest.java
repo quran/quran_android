@@ -11,6 +11,7 @@ public class AudioRequest implements Serializable {
    private static final long serialVersionUID = 1L;
 
    private String mBaseUrl = null;
+   private String mGaplessDatabasePath = null;
 
    // where we started from
    private int mStartSura = 0;
@@ -43,6 +44,25 @@ public class AudioRequest implements Serializable {
       mCurrentAyah = mStartAyah;
       mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
    }
+
+   public void setGaplessDatabaseFilePath(String databaseFile){
+      mGaplessDatabasePath = databaseFile;
+   }
+
+   public String getGaplessDatabaseFilePath(){
+      return mGaplessDatabasePath;
+   }
+
+   public boolean isGapless(){
+      return mGaplessDatabasePath != null;
+   }
+
+   public void setCurrentAyah(int sura, int ayah){
+      mCurrentSura = sura;
+      mCurrentAyah = ayah;
+   }
+
+   public String getBaseUrl(){ return mBaseUrl; }
 
    public void setPlayBounds(QuranAyah minVerse, QuranAyah maxVerse){
       mMinSura = minVerse.getSura();
@@ -78,6 +98,12 @@ public class AudioRequest implements Serializable {
          return null;
       }
 
+      if (isGapless()){
+         Log.d("AudioRequest", "isGapless, url: " +
+                 String.format(mBaseUrl, mCurrentSura));
+         return String.format(mBaseUrl, mCurrentSura);
+      }
+
       int sura = mCurrentSura;
       int ayah = mCurrentAyah;
       if (ayah == 1 && sura != 1 && sura != 9 && !mJustPlayedBasmallah){
@@ -94,6 +120,7 @@ public class AudioRequest implements Serializable {
             return null;
          }
       }
+
       return String.format(mBaseUrl, sura, ayah);
    }
 

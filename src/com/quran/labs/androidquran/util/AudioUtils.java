@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.util;
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -13,24 +14,36 @@ import java.io.File;
 
 public class AudioUtils {
    private static final String TAG = "AudioUtils";
+   public static final String DB_EXTENSION = ".db";
    public static final String AUDIO_EXTENSION = ".mp3";
+   public static final String ZIP_EXTENSION = ".zip";
 
    public final static class LookAheadAmount {
       public static final int PAGE = 1;
       public static final int SURA = 2;
    }
 
-   public static String[] mQariBaseUrls = null;
-   public static String[] mQariFilePaths = null;
+   private static String[] mQariBaseUrls = null;
+   private static String[] mQariFilePaths = null;
+   private static String[] mQariDatabaseFiles = null;
 
-   public static String getQariUrl(Context context, int position){
+   public static String getQariUrl(Context context, int position,
+                                   boolean addPlaceHolders){
       if (mQariBaseUrls == null){
          mQariBaseUrls = context.getResources()
                  .getStringArray(R.array.quran_readers_urls);
       }
 
       if (position >= mQariBaseUrls.length || 0 > position){ return null; }
-      return mQariBaseUrls[position];
+      String url = mQariBaseUrls[position];
+      if (addPlaceHolders){
+         if (isQariGapless(context, position)){
+            Log.d(TAG, "qari is gapless...");
+            url += "%03d" + AudioUtils.AUDIO_EXTENSION;
+         }
+         else { url += "%03d%03d" + AudioUtils.AUDIO_EXTENSION; }
+      }
+      return url;
    }
 
    public static String getLocalQariUrl(Context context, int position){
@@ -42,6 +55,56 @@ public class AudioUtils {
       String rootDirectory = getAudioRootDirectory(context);
       return rootDirectory == null? null :
               rootDirectory + mQariFilePaths[position];
+   }
+
+   public static boolean isQariGapless(Context context, int position){
+      return getQariDatabasePathIfGapless(context, position) != null;
+   }
+
+   public static String getQariDatabasePathIfGapless(Context context,
+                                                     int position){
+      if (mQariDatabaseFiles == null){
+         mQariDatabaseFiles = context.getResources()
+                 .getStringArray(R.array.quran_readers_db_name);
+      }
+
+      if (position > mQariDatabaseFiles.length){ return null; }
+
+      String dbname = mQariDatabaseFiles[position];
+      Log.d(TAG, "got dbname of: " + dbname + " for qari");
+      if (TextUtils.isEmpty(dbname)){ return null; }
+
+      String path = getLocalQariUrl(context, position);
+      String overall = path + File.separator +
+              dbname + DB_EXTENSION;
+      Log.d(TAG, "overall path: " + overall);
+      return overall;
+   }
+
+   public static boolean shouldDownloadGaplessDatabase(
+           Context context, DownloadAudioRequest request){
+      if (!request.isGapless()){ return false; }
+      String dbPath = request.getGaplessDatabaseFilePath();
+      if (TextUtils.isEmpty(dbPath)){ return false; }
+
+      File f = new File(dbPath);
+      return !f.exists();
+   }
+
+   public static String getGaplessDatabaseUrl(
+           Context context, DownloadAudioRequest request){
+      if (!request.isGapless()){ return null; }
+      int qariId = request.getQariId();
+
+      if (mQariDatabaseFiles == null){
+         mQariDatabaseFiles = context.getResources()
+                 .getStringArray(R.array.quran_readers_db_name);
+      }
+
+      if (qariId > mQariDatabaseFiles.length){ return null; }
+
+      String dbname = mQariDatabaseFiles[qariId] + ZIP_EXTENSION;
+      return QuranFileUtils.getGaplessDatabaseRootUrl() + "/" + dbname;
    }
 
    public static QuranAyah getLastAyahToPlay(QuranAyah startAyah,
@@ -66,6 +129,7 @@ public class AudioUtils {
 
    public static boolean shouldDownloadBasmallah(Context context,
                                                  DownloadAudioRequest request){
+      if (request.isGapless()){ return false; }
       String baseDirectory = request.getLocalPath();
       if (!TextUtils.isEmpty(baseDirectory)){
          File f = new File(baseDirectory);
@@ -124,6 +188,7 @@ public class AudioUtils {
       String baseDirectory = request.getLocalPath();
       if (TextUtils.isEmpty(baseDirectory)){ return false; }
 
+      boolean isGapless = request.isGapless();
       File f = new File(baseDirectory);
       if (!f.exists()){
          f.mkdirs();
@@ -144,6 +209,17 @@ public class AudioUtils {
          int firstAyah = 1;
          if (i == startSura){ firstAyah = startAyah; }
 
+         if (isGapless){
+            if (i == endSura && endAyah == 0){ continue; }
+            String p = request.getBaseUrl();
+            String fileName = String.format(p, i);
+            Log.d(TAG, "gapless, checking if we have " + fileName);
+            f = new File(fileName);
+            if (!f.exists()){ return false; }
+            continue;
+         }
+
+         Log.d(TAG, "not gapless, checking each ayah...");
          for (int j = firstAyah; j < lastAyah; j++){
             String filename = i + File.separator + j + AUDIO_EXTENSION;
             f = new File(baseDirectory + File.separator + filename);

@@ -23,6 +23,8 @@ package com.quran.labs.androidquran.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -31,6 +33,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -38,13 +41,14 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
-import android.os.IBinder;
-import android.os.PowerManager;
+import android.os.*;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
@@ -55,7 +59,8 @@ import com.quran.labs.androidquran.ui.PagerActivity;
  * the service to perform specific operations: Play, Pause, Rewind, Skip, etc.
  */
 public class AudioService extends Service implements OnCompletionListener,
-        OnPreparedListener, OnErrorListener, AudioFocusable {
+        OnPreparedListener, OnErrorListener, AudioFocusable,
+        MediaPlayer.OnSeekCompleteListener {
 
    // The tag we put on debug messages
    final static String TAG = "AudioService";
@@ -173,6 +178,25 @@ public class AudioService extends Service implements OnCompletionListener,
    private Notification mNotification = null;
    private LocalBroadcastManager mBroadcastManager = null;
 
+   private int mGaplessSura = 0;
+   private Map<Integer, Integer> mGaplessSuraData = null;
+   private AsyncTask<Integer, Void, Map<Integer, Integer>> mTimingTask = null;
+
+   public static final int MSG_START_AUDIO = 1;
+   public static final int MSG_UPDATE_AUDIO_POS = 2;
+   private Handler mHandler = new Handler(){
+      @Override
+      public void handleMessage(Message msg){
+         if (msg == null){ return; }
+         if (msg.what == MSG_START_AUDIO){
+            configAndStartMediaPlayer();
+         }
+         else if (msg.what == MSG_UPDATE_AUDIO_POS){
+            updateAudioPlayPosition();
+         }
+      }
+   };
+
    /**
     * Makes sure the media player exists and has been reset. This will create
     * the media player if needed, or reset the existing media player if one
@@ -196,6 +220,7 @@ public class AudioService extends Service implements OnCompletionListener,
          mPlayer.setOnPreparedListener(this);
          mPlayer.setOnCompletionListener(this);
          mPlayer.setOnErrorListener(this);
+         mPlayer.setOnSeekCompleteListener(this);
       }
       else
          mPlayer.reset();
@@ -283,6 +308,124 @@ public class AudioService extends Service implements OnCompletionListener,
       // it to restart in case it's killed.
    }
 
+   private class ReadGaplessDataTask extends AsyncTask<Integer, Void,
+           Map<Integer, Integer>> {
+      private int mSura = 0;
+      private String mDatabasePath = null;
+
+      public ReadGaplessDataTask(String database){
+         mDatabasePath = database;
+      }
+
+      @Override
+      protected Map<Integer, Integer> doInBackground(Integer... params){
+         int sura = params[0];
+         mSura = sura;
+         SuraTimingDatabaseHandler db =
+                 new SuraTimingDatabaseHandler(mDatabasePath);
+
+         Map<Integer, Integer> map = null;
+         Cursor cursor = db.getAyahTimings(sura);
+         Log.d(TAG, "got cursor of data");
+
+         if (cursor != null && cursor.moveToFirst()){
+            map = new HashMap<Integer, Integer>();
+            do {
+               int ayah = cursor.getInt(1);
+               int time = cursor.getInt(2);
+               //Log.d(TAG, "adding: " + ayah + " @ " + time);
+               map.put(ayah, time);
+            }
+            while (cursor.moveToNext());
+         }
+         if (cursor != null){ cursor.close(); }
+         db.closeDatabase();
+
+         return map;
+      }
+
+      @Override
+      protected void onPostExecute(Map<Integer, Integer> map){
+         mGaplessSura = mSura;
+         mGaplessSuraData = map;
+         mTimingTask = null;
+      }
+   }
+
+   private int getSeekPosition(){
+      if (mAudioRequest == null){ return -1; }
+
+      if (mGaplessSura == mAudioRequest.getCurrentSura()){
+         if (mGaplessSuraData != null){
+            int ayah = mAudioRequest.getCurrentAyah();
+            return mGaplessSuraData.get(ayah);
+         }
+      }
+      return -1;
+   }
+
+   private void updateAudioPlayPosition(){
+      Log.d(TAG, "updateAudioPlayPosition");
+
+      if (mAudioRequest == null){ return; }
+      if (mPlayer != null || mGaplessSuraData == null){
+         int sura = mAudioRequest.getCurrentSura();
+         int ayah = mAudioRequest.getCurrentAyah();
+
+         int updatedAyah = ayah;
+         int maxAyahs = QuranInfo.getNumAyahs(sura);
+
+         if (sura != mGaplessSura){ return; }
+         int pos = mPlayer.getCurrentPosition();
+         Integer ayahTime = mGaplessSuraData.get(ayah);
+         Log.d(TAG, "updateAudioPlayPosition: " + sura + ":" + ayah +
+                 ", currently at " + pos + " vs expected at " + ayahTime);
+
+         if (ayahTime == null){ return; }
+
+         if (ayahTime > pos){
+            int iterAyah = ayah;
+            while (--iterAyah > 0){
+               ayahTime = mGaplessSuraData.get(iterAyah);
+               if (ayahTime != null && ayahTime <= pos){
+                  updatedAyah = iterAyah;
+                  break;
+               }
+            }
+         }
+         else {
+            int iterAyah = ayah;
+            while (++iterAyah < maxAyahs){
+               ayahTime = mGaplessSuraData.get(iterAyah);
+               if (ayahTime != null && ayahTime > pos){
+                  updatedAyah = iterAyah - 1;
+                  break;
+               }
+            }
+         }
+
+         Log.d(TAG, "updateAudioPlayPosition: " + sura + ":" + ayah +
+                 ", decided ayah should be: " + updatedAyah);
+
+         if (updatedAyah != ayah){
+            mAudioRequest.setCurrentAyah(sura, updatedAyah);
+         }
+         notifyAyahChanged();
+
+         if (maxAyahs >= (updatedAyah + 1)){
+            Integer t = mGaplessSuraData.get(updatedAyah + 1);
+            if (t != null){
+               t = t - mPlayer.getCurrentPosition();
+               Log.d(TAG, "updateAudioPlayPosition postingDelayed after: " + t);
+
+               if (t < 100){ t = 100; }
+               else if (t > 5000){ t = 5000; }
+               mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
+            }
+         }
+      }
+   }
+
    private void processTogglePlaybackRequest() {
       if (mState == State.Paused || mState == State.Stopped) {
          processPlayRequest();
@@ -298,6 +441,15 @@ public class AudioService extends Service implements OnCompletionListener,
       // actually play the file
 
       if (mState == State.Stopped) {
+         if (mAudioRequest.isGapless()){
+            if (mTimingTask != null){
+               mTimingTask.cancel(true);
+            }
+            String dbPath = mAudioRequest.getGaplessDatabaseFilePath();
+            mTimingTask = new ReadGaplessDataTask(dbPath);
+            mTimingTask.execute(mAudioRequest.getCurrentSura());
+         }
+
          // If we're stopped, just go ahead to the next file and start playing
          playAudio();
       }
@@ -314,6 +466,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (mState == State.Playing) {
          // Pause media player and cancel the 'foreground service' state.
          mState = State.Paused;
+         mHandler.removeCallbacksAndMessages(null);
          mPlayer.pause();
          // while paused, we always retain the MediaPlayer
          relaxResources(false);
@@ -322,12 +475,26 @@ public class AudioService extends Service implements OnCompletionListener,
 
    private void processRewindRequest() {
       if (mState == State.Playing || mState == State.Paused){
-         if (mPlayer.getCurrentPosition() > 1500){
-            mPlayer.seekTo(0);
+         int seekTo = 0;
+         int pos = mPlayer.getCurrentPosition();
+         if (mAudioRequest.isGapless()){
+            seekTo = getSeekPosition();
+            pos = seekTo - pos;
+         }
+
+         if (pos > 1500){
+            mPlayer.seekTo(seekTo);
          }
          else {
             tryToGetAudioFocus();
+            int sura = mAudioRequest.getCurrentSura();
             mAudioRequest.gotoPreviousAyah();
+            if (mAudioRequest.isGapless() &&
+                    sura == mAudioRequest.getCurrentSura()){
+               int timing = getSeekPosition();
+               if (timing > -1){ mPlayer.seekTo(timing); }
+               return;
+            }
             playAudio();
          }
       }
@@ -336,8 +503,15 @@ public class AudioService extends Service implements OnCompletionListener,
    private void processSkipRequest() {
       if (mAudioRequest == null){ return; }
       if (mState == State.Playing || mState == State.Paused) {
+         int sura = mAudioRequest.getCurrentSura();
          tryToGetAudioFocus();
          mAudioRequest.gotoNextAyah();
+         if (mAudioRequest.isGapless() &&
+                 sura == mAudioRequest.getCurrentSura()){
+            int timing = getSeekPosition();
+            if (timing > -1){ mPlayer.seekTo(timing); }
+            return;
+         }
          playAudio();
       }
    }
@@ -347,6 +521,8 @@ public class AudioService extends Service implements OnCompletionListener,
    }
 
    private void processStopRequest(boolean force) {
+      mHandler.removeCallbacksAndMessages(null);
+
       if (mState == State.Preparing){
          mShouldStop = true;
          relaxResources(false);
@@ -417,6 +593,7 @@ public class AudioService extends Service implements OnCompletionListener,
     * context where you are sure this is the case.
     */
    private void configAndStartMediaPlayer() {
+      Log.d(TAG, "configAndStartMediaPlayer()");
       if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
          // If we don't have audio focus and can't duck, we have to pause,
          // even if mState is State.Playing. But we stay in the Playing state
@@ -435,7 +612,31 @@ public class AudioService extends Service implements OnCompletionListener,
          mShouldStop = false;
          return;
       }
-      if (!mPlayer.isPlaying()){ mPlayer.start(); }
+
+      Log.d(TAG, "checking if playing...");
+      if (!mPlayer.isPlaying()){
+         if (mAudioRequest.isGapless() && mAudioRequest.getCurrentAyah() != 1){
+            int timing = getSeekPosition();
+            if (timing != -1){
+               Log.d(TAG, "got timing: " + timing +
+                       ", seeking and updating later...");
+               mPlayer.seekTo(timing);
+               return;
+            }
+            else {
+               Log.d(TAG, "no timing data yet, will try again...");
+               // try to play again after 200 ms
+               mHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200);
+               return;
+            }
+         }
+         else if (mAudioRequest.isGapless()){
+            Log.d(TAG, "gapless, asking for an update in 200ms");
+            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
+         }
+
+         mPlayer.start();
+      }
    }
 
    private void tryToGetAudioFocus() {
@@ -478,6 +679,7 @@ public class AudioService extends Service implements OnCompletionListener,
             }
          }
 
+         Log.d(TAG, "okay, we are preparing to play - streaming is: " + mIsStreaming);
          createMediaPlayerIfNeeded();
          mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
          mPlayer.setDataSource(url);
@@ -498,6 +700,7 @@ public class AudioService extends Service implements OnCompletionListener,
          // to 'this').
          //
          // Until the media player is prepared, we *cannot* call start() on it!
+         Log.d(TAG, "preparingAsync()...");
          mPlayer.prepareAsync();
          
          // If we are streaming from the internet, we want to hold a Wifi lock,
@@ -513,7 +716,18 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
+
+   @Override
+   public void onSeekComplete(MediaPlayer mediaPlayer) {
+      Log.d(TAG, "seek complete! " +
+              mediaPlayer.getCurrentPosition() +
+              " vs " + mPlayer.getCurrentPosition());
+      mPlayer.start();
+      mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
+   }
+
    /** Called when media player is done playing current file. */
+   @Override
    public void onCompletion(MediaPlayer player) {
       // The media player finished playing the current file, so
       // we go ahead and start the next.
@@ -522,7 +736,10 @@ public class AudioService extends Service implements OnCompletionListener,
    }
 
    /** Called when media player is done preparing. */
+   @Override
    public void onPrepared(MediaPlayer player) {
+      Log.d(TAG, "okay, prepared!");
+
       // The media player is done preparing. That means we can start playing!
       mState = State.Playing;
       if (mShouldStop){
@@ -530,7 +747,12 @@ public class AudioService extends Service implements OnCompletionListener,
          mShouldStop = false;
          return;
       }
-      notifyAyahChanged();
+
+      // if gapless, we'll do this later
+      if (!mAudioRequest.isGapless()){
+         notifyAyahChanged();
+      }
+
       updateNotification(mAudioTitle + " (playing)");
       configAndStartMediaPlayer();
    }

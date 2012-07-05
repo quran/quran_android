@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -336,9 +337,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
    }
 
    private void playStreaming(QuranAyah ayah, int page, int qari){
-      String qariUrl = AudioUtils.getQariUrl(this, qari);
-      String s = qariUrl + "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
-      AudioRequest request = new AudioRequest(s, ayah);
+      String qariUrl = AudioUtils.getQariUrl(this, qari, true);
+      String dbFile = AudioUtils.getQariDatabasePathIfGapless(
+              this, qari);
+      if (!TextUtils.isEmpty(dbFile)){
+         // gapless audio is "download only"
+         downloadAndPlayAudio(ayah, page, qari);
+         return;
+      }
+
+      AudioRequest request = new AudioRequest(qariUrl, ayah);
+      request.setGaplessDatabaseFilePath(dbFile);
       play(request);
 
       mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
@@ -349,11 +358,21 @@ public class PagerActivity extends SherlockFragmentActivity implements
               AudioUtils.LookAheadAmount.PAGE);
       String baseUri = AudioUtils.getLocalQariUrl(this, qari);
       if (endAyah == null || baseUri == null){ return; }
+      String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, qari);
 
-      String fileUrl = baseUri + File.separator + "%d" + File.separator +
+      String fileUrl = "";
+      if (TextUtils.isEmpty(dbFile)){
+         fileUrl = baseUri + File.separator + "%d" + File.separator +
               "%d" + AudioUtils.AUDIO_EXTENSION;
+      }
+      else {
+         fileUrl = baseUri + File.separator + "%03d" +
+                 AudioUtils.AUDIO_EXTENSION;
+      }
+
       DownloadAudioRequest request =
               new DownloadAudioRequest(fileUrl, ayah, qari, baseUri);
+      request.setGaplessDatabaseFilePath(dbFile);
       request.setPlayBounds(ayah, endAyah);
       mLastAudioDownloadRequest = request;
       playAudioRequest(request);
@@ -378,6 +397,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
                  QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
          startService(intent);
       }
+      else if (AudioUtils.shouldDownloadGaplessDatabase(this, request)){
+         Log.d(TAG, "need to download gapless database...");
+
+         String url = AudioUtils.getGaplessDatabaseUrl(this, request);
+         String destination = request.getLocalPath();
+         // start the download
+         String notificationTitle = getString(R.string.timing_database);
+         Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
+                 destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
+                 QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+         startService(intent);
+      }
       else if (AudioUtils.haveAllFiles(request)){
          if (!AudioUtils.shouldDownloadBasmallah(this, request)){
             android.util.Log.d(TAG, "have all files, playing!");
@@ -388,8 +419,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
          else {
             android.util.Log.d(TAG, "should download basmalla...");
             QuranAyah firstAyah = new QuranAyah(1, 1);
-            String qariUrl = AudioUtils.getQariUrl(this, request.getQariId());
-            qariUrl += "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
+            String qariUrl = AudioUtils.getQariUrl(this,
+                    request.getQariId(), true);
 
             String notificationTitle =
                     QuranInfo.getNotificationTitle(this, firstAyah, firstAyah);
@@ -407,8 +438,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
          String notificationTitle = QuranInfo.getNotificationTitle(this,
                  request.getMinAyah(),request.getMaxAyah());
-         String qariUrl = AudioUtils.getQariUrl(this, request.getQariId());
-         qariUrl += "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
+         String qariUrl = AudioUtils.getQariUrl(this,
+                 request.getQariId(), true);
          android.util.Log.d(TAG, "need to start download: " + qariUrl);
 
          // start service
@@ -419,6 +450,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
                  request.getMinAyah());
          intent.putExtra(QuranDownloadService.EXTRA_END_VERSE,
                  request.getMaxAyah());
+         intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS,
+                 request.isGapless());
          startService(intent);
       }
    }
