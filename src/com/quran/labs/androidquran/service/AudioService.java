@@ -391,16 +391,18 @@ public class AudioService extends Service implements OnCompletionListener,
                   updatedAyah = iterAyah;
                   break;
                }
+               else { updatedAyah--; }
             }
          }
          else {
             int iterAyah = ayah;
-            while (++iterAyah < maxAyahs){
+            while (++iterAyah <= maxAyahs){
                ayahTime = mGaplessSuraData.get(iterAyah);
                if (ayahTime != null && ayahTime > pos){
                   updatedAyah = iterAyah - 1;
                   break;
                }
+               else { updatedAyah++; }
             }
          }
 
@@ -479,7 +481,7 @@ public class AudioService extends Service implements OnCompletionListener,
          int pos = mPlayer.getCurrentPosition();
          if (mAudioRequest.isGapless()){
             seekTo = getSeekPosition();
-            pos = seekTo - pos;
+            pos =  pos - seekTo;
          }
 
          if (pos > 1500){
