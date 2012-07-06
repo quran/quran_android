@@ -399,6 +399,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
       else if (AudioUtils.shouldDownloadGaplessDatabase(this, request)){
          Log.d(TAG, "need to download gapless database...");
+         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
          String url = AudioUtils.getGaplessDatabaseUrl(this, request);
          String destination = request.getLocalPath();
@@ -421,6 +422,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             QuranAyah firstAyah = new QuranAyah(1, 1);
             String qariUrl = AudioUtils.getQariUrl(this,
                     request.getQariId(), true);
+            mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
             String notificationTitle =
                     QuranInfo.getNotificationTitle(this, firstAyah, firstAyah);

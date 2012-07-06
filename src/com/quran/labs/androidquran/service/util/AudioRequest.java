@@ -164,6 +164,8 @@ public class AudioRequest implements Serializable {
             mCurrentAyah = mAyahsInThisSura;
          }
       }
-      else if (mCurrentAyah == 1){ mJustPlayedBasmallah = true; }
+      else if (mCurrentAyah == 1 && !isGapless()){
+         mJustPlayedBasmallah = true;
+      }
    }
 }
