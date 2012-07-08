@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/goto_translation"
+          android:icon="@drawable/ic_translation"
+          android:title="@string/menu_translation"
+          android:showAsAction="always" />
+    <item android:id="@+id/goto_quran"
+          android:icon="@drawable/ic_goto_quran"
+          android:title="@string/menu_back_to_page"
+          android:showAsAction="always" />
     <item android:id="@+id/favorite_item"
           android:icon="@drawable/not_favorite"
           android:title="@string/menu_bookmarks"

@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.data;
+package com.quran.labs.androidquran.database;
 
 import java.io.File;
 
@@ -65,11 +65,52 @@ public class DatabaseHandler {
 	}
 	
 	public Cursor getVerses(int sura, int minAyah, int maxAyah, String table){
-		if (!validDatabase()) return null;
+      return getVerses(sura, minAyah, sura, maxAyah, table);
+   }
+
+   public Cursor getVerses(int minSura, int minAyah, int maxSura,
+                           int maxAyah, String table){
+      if (!validDatabase()) return null;
+
+      StringBuilder whereQuery = new StringBuilder();
+      whereQuery.append("(");
+
+      if (minSura == maxSura){
+         whereQuery.append(COL_SURA)
+                 .append("=").append(minSura)
+                 .append(" and ").append(COL_AYAH)
+                 .append(">=").append(minAyah)
+                 .append(" and ").append(COL_AYAH)
+                 .append("<=").append(maxAyah);
+      }
+      else {
+         // (sura = minSura and ayah >= minAyah)
+         whereQuery.append("(").append(COL_SURA).append("=")
+                 .append(minSura).append(" and ")
+                 .append(COL_AYAH).append(">=").append(minAyah).append(")");
+
+         whereQuery.append(" or ");
+
+         // (sura = maxSura and ayah <= maxAyah)
+         whereQuery.append("(").append(COL_SURA).append("=")
+                 .append(maxSura).append(" and ")
+                 .append(COL_AYAH).append("<=").append(maxAyah).append(")");
+
+         whereQuery.append(" or ");
+
+         // (sura > minSura and sura < maxSura)
+         whereQuery.append("(").append(COL_SURA).append(">")
+                 .append(minSura).append(" and ")
+                 .append(COL_SURA).append("<")
+                 .append(maxSura).append(")");
+      }
+
+      whereQuery.append(")");
+
 		return database.query(table,
 				new String[]{ COL_SURA, COL_AYAH, COL_TEXT },
-				COL_SURA + "=" + sura + " and " + COL_AYAH + ">=" + minAyah +
-				" and " + COL_AYAH + "<=" + maxAyah, null, null, null, null);
+				whereQuery.toString(), null, null, null,
+              COL_SURA + "," + COL_AYAH);
 	}
 	
 	public Cursor getVerse(int sura, int ayah){

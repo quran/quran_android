@@ -48,7 +48,7 @@ import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.PagerActivity;
 

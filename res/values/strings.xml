@@ -31,6 +31,7 @@
     <string name="menu_bookmarks_remove">Remove</string>
     <string name="menu_bookmarks_view">View</string>
     <string name="menu_translation">Show Translation</string>
+    <string name="menu_back_to_page">Show Quran</string>
     <string name="menu_bookmarks_add">Add</string>
     <string name="menu_bookmarks_saved">Bookmark Saved</string>
     <string name="menu_bookmarks_removed">Bookmark Removed</string>

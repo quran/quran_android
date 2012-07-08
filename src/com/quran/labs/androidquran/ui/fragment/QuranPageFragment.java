@@ -1,10 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,32 +8,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.Gravity;
-import android.view.HapticFeedbackConstants;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockActivity;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
@@ -51,12 +26,16 @@ import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class QuranPageFragment extends SherlockFragment {
    private static final String TAG = "QuranPageFragment";
    private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
    private int mPageNumber;
-   private boolean mIsBookmarked;
    private HighlightingImageView mImageView;
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
@@ -77,8 +56,6 @@ public class QuranPageFragment extends SherlockFragment {
       mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
       mRightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
       setHasOptionsMenu(true);
-      
-      new IsPageBookmarkedTask().execute(mPageNumber);
    }
 
    @Override
@@ -122,32 +99,7 @@ public class QuranPageFragment extends SherlockFragment {
          worker.loadPage(mPageNumber, mImageView);
       }
    }
-   
-   @Override
-   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-      super.onCreateOptionsMenu(menu, inflater);
-      inflater.inflate(R.menu.quran_menu, menu);
-   }
-   
-   @Override
-   public void onPrepareOptionsMenu(Menu menu) {
-      super.onPrepareOptionsMenu(menu);
-      MenuItem item = menu.findItem(R.id.favorite_item);
-      if (item != null){
-         if (mIsBookmarked){ item.setIcon(R.drawable.favorite); }
-         else { item.setIcon(R.drawable.not_favorite); }
-      }
-   }
-   
-   @Override
-   public boolean onOptionsItemSelected(MenuItem item) {
-      if (item.getItemId() == R.id.favorite_item){
-         new TogglePageBookmarkTask().execute(mPageNumber);
-         return true;
-      }
-      return super.onOptionsItemSelected(item);
-   }
-   
+
    public void cleanup(){
       android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
       mImageView.setImageDrawable(null);
@@ -174,8 +126,12 @@ public class QuranPageFragment extends SherlockFragment {
       public boolean onDoubleTap(MotionEvent event) {
          AyahItem result = getAyahFromCoordinates(event.getX(), event.getY());
          if (result != null) {
-            new TogglePageBookmarkTask().execute(mPageNumber);
-            return true;
+            Activity activity = getActivity();
+            if (activity != null){
+               PagerActivity pagerActivity = (PagerActivity)activity;
+               pagerActivity.toggleBookmark(mPageNumber);
+               return true;
+            }
          }
          return false;
       }
@@ -573,49 +529,4 @@ public class QuranPageFragment extends SherlockFragment {
          }
 		}
 	}
-
-	class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Void> {
-		@Override
-		protected Void doInBackground(Integer... params) {
-         Activity activity = getActivity();
-         if (activity != null){
-            BookmarksDBAdapter dba = new BookmarksDBAdapter(activity);
-            dba.open();
-            mIsBookmarked = dba.togglePageBookmark(params[0]);
-            dba.close();
-         }
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Void result) {
-         SherlockFragmentActivity sherlockActivity = getSherlockActivity();
-         if (sherlockActivity != null){
-            sherlockActivity.invalidateOptionsMenu();
-         }
-		}
-	}
-	
-	class IsPageBookmarkedTask extends AsyncTask<Integer, Void, Void> {
-	   @Override
-	   protected Void doInBackground(Integer... params) {
-         Activity activity = getActivity();
-         if (activity != null){
-            BookmarksDBAdapter dba = new BookmarksDBAdapter(activity);
-            dba.open();
-            mIsBookmarked = dba.isPageBookmarked(params[0]);
-            dba.close();
-         }
-	      return null;
-	   }
-
-	   @Override
-	   protected void onPostExecute(Void result) {
-         SherlockFragmentActivity sherlockActivity = getSherlockActivity();
-         if (sherlockActivity != null){
-	         sherlockActivity.invalidateOptionsMenu();
-         }
-	   }
-	}
-	
 }
