@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.ui;
 
+import android.app.Activity;
 import android.content.*;
-import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -12,23 +12,23 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.service.QuranAudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
-import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
@@ -41,6 +41,8 @@ import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener {
@@ -48,6 +50,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
    private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
    private static final String LAST_READ_PAGE = "LAST_READ_PAGE";
+   private static final String LAST_READING_MODE_IS_TRANSLATION =
+           "LAST_READING_MODE_IS_TRANSLATION";
 
    private QuranPageWorker mWorker = null;
    private SharedPreferences mPrefs = null;
@@ -57,7 +61,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private ViewPager mViewPager = null;
    private QuranPageAdapter mPagerAdapter = null;
    private boolean mShouldReconnect = false;
+   private Map<Integer, Boolean> mBookmarksCache = null;
    private DownloadAudioRequest mLastAudioDownloadRequest = null;
+   private boolean mShowingTranslation = false;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -65,6 +71,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
       super.onCreate(savedInstanceState);
+      mBookmarksCache = new HashMap<Integer, Boolean>();
 
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
@@ -83,6 +90,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
          page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
          if (page != -1){ page = 604 - page; }
+         mShowingTranslation = savedInstanceState
+                 .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
       }
       
       getWindow().setFlags(
@@ -110,7 +119,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mWorker = new QuranPageWorker(this);
       mLastPopupTime = System.currentTimeMillis();
       mPagerAdapter = new QuranPageAdapter(
-              getSupportFragmentManager());
+              getSupportFragmentManager(), mShowingTranslation);
       mViewPager = (ViewPager)findViewById(R.id.quran_pager);
       mViewPager.setAdapter(mPagerAdapter);
       mViewPager.setOnPageChangeListener(new OnPageChangeListener(){
@@ -134,6 +143,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
                        PagerActivity.this, page, mLastPopupTime);
             }
             updateActionBarTitle(page);
+
+            if (!mBookmarksCache.containsKey(page)){
+               new IsPageBookmarkedTask().execute(page);
+            }
          }
       });
 
@@ -166,6 +179,85 @@ public class PagerActivity extends SherlockFragmentActivity implements
       LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mDownloadReceiver);
       super.onPause();
+   }
+
+   @Override
+   protected void onDestroy() {
+      android.util.Log.d(TAG, "onDestroy()");
+      super.onDestroy();
+   }
+
+   @Override
+   public void onSaveInstanceState(Bundle state){
+      if (mLastAudioDownloadRequest != null){
+         state.putSerializable(LAST_AUDIO_DL_REQUEST,
+                 mLastAudioDownloadRequest);
+      }
+      state.putSerializable(LAST_READ_PAGE,
+              604 - mViewPager.getCurrentItem());
+      state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
+      super.onSaveInstanceState(state);
+   }
+
+   @Override
+   public boolean onCreateOptionsMenu(Menu menu) {
+      super.onCreateOptionsMenu(menu);
+      MenuInflater inflater = getSupportMenuInflater();
+      inflater.inflate(R.menu.quran_menu, menu);
+      return true;
+   }
+
+   @Override
+   public boolean onPrepareOptionsMenu(Menu menu) {
+      super.onPrepareOptionsMenu(menu);
+      MenuItem item = menu.findItem(R.id.favorite_item);
+      if (item != null){
+         int page = 604 - mViewPager.getCurrentItem();
+         boolean bookmarked = false;
+         if (mBookmarksCache.containsKey(page)){
+            bookmarked = mBookmarksCache.get(page);
+         }
+         if (bookmarked){ item.setIcon(R.drawable.favorite); }
+         else { item.setIcon(R.drawable.not_favorite); }
+      }
+
+      MenuItem quran = menu.findItem(R.id.goto_quran);
+      MenuItem translation = menu.findItem(R.id.goto_translation);
+      if (!mShowingTranslation){
+         quran.setVisible(false);
+         translation.setVisible(true);
+      }
+      else {
+         quran.setVisible(true);
+         translation.setVisible(false);
+      }
+      return true;
+   }
+
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item) {
+      if (item.getItemId() == R.id.favorite_item){
+         int page = 604 - mViewPager.getCurrentItem();
+         toggleBookmark(page);
+         return true;
+      }
+      else if (item.getItemId() == R.id.goto_quran){
+         mPagerAdapter.setQuranMode();
+         mShowingTranslation = false;
+         invalidateOptionsMenu();
+         return true;
+      }
+      else if (item.getItemId() == R.id.goto_translation){
+         mPagerAdapter.setTranslationMode();
+         mShowingTranslation = true;
+         invalidateOptionsMenu();
+         return true;
+      }
+      return super.onOptionsItemSelected(item);
+   }
+
+   public void toggleBookmark(int page){
+      new TogglePageBookmarkTask().execute(page);
    }
 
    private void updateActionBarTitle(int page){
@@ -277,23 +369,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public QuranPageWorker getQuranPageWorker(){
       return mWorker;
    }
-   
-   @Override
-   protected void onDestroy() {
-      android.util.Log.d(TAG, "onDestroy()");
-      super.onDestroy();
-   }
-
-   @Override
-   public void onSaveInstanceState(Bundle state){
-      if (mLastAudioDownloadRequest != null){
-         state.putSerializable(LAST_AUDIO_DL_REQUEST,
-                 mLastAudioDownloadRequest);
-      }
-      state.putSerializable(LAST_READ_PAGE,
-              604 - mViewPager.getCurrentItem());
-      super.onSaveInstanceState(state);
-   }
 
    public void highlightAyah(int sura, int ayah){
       int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
@@ -316,6 +391,55 @@ public class PagerActivity extends SherlockFragmentActivity implements
       if (f!= null && f instanceof QuranPageFragment){
          QuranPageFragment qpf = (QuranPageFragment)f;
          qpf.unhighlightAyah();
+      }
+   }
+
+   class IsPageBookmarkedTask extends AsyncTask<Integer, Void, Boolean> {
+      private int mPage;
+
+      @Override
+      protected Boolean doInBackground(Integer... params) {
+         Boolean bookmarked = null;
+         mPage = params[0];
+
+         BookmarksDBAdapter dba = new BookmarksDBAdapter(PagerActivity.this);
+         dba.open();
+         bookmarked = dba.isPageBookmarked(mPage);
+         dba.close();
+
+         return bookmarked;
+      }
+
+      @Override
+      protected void onPostExecute(Boolean result) {
+         if (result != null){
+            mBookmarksCache.put(mPage, result);
+            invalidateOptionsMenu();
+         }
+      }
+   }
+
+   class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+      private int mPage;
+      @Override
+      protected Boolean doInBackground(Integer... params) {
+         Boolean bookmarked = null;
+
+         mPage = params[0];
+         BookmarksDBAdapter dba = new BookmarksDBAdapter(PagerActivity.this);
+         dba.open();
+         bookmarked = dba.togglePageBookmark(mPage);
+         dba.close();
+
+         return bookmarked;
+      }
+
+      @Override
+      protected void onPostExecute(Boolean result) {
+         if (result != null){
+            mBookmarksCache.put(mPage, result);
+            invalidateOptionsMenu();
+         }
       }
    }
 

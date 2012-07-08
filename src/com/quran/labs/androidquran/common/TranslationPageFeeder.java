@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.TranslationActivity;
-import com.quran.labs.androidquran.data.DatabaseHandler;
+import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;

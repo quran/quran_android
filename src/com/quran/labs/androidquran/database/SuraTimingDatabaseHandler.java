@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.data;
+package com.quran.labs.androidquran.database;
 
 import android.database.Cursor;
 import android.database.SQLException;
@@ -18,7 +18,6 @@ public class SuraTimingDatabaseHandler {
    }
 
    public SuraTimingDatabaseHandler(String path) throws SQLException {
-      Log.d("stdbh", "opening: " + path);
       mDatabase = SQLiteDatabase.openDatabase(path, null,
               SQLiteDatabase.NO_LOCALIZED_COLLATORS);
    }
