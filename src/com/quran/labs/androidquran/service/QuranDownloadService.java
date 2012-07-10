@@ -65,6 +65,7 @@ public class QuranDownloadService extends Service {
    public static final String EXTRA_DOWNLOAD_KEY = "downloadKey";
    public static final String EXTRA_REPEAT_LAST_ERROR = "repeatLastError";
    public static final String EXTRA_DOWNLOAD_TYPE = "downloadType";
+   public static final String EXTRA_OUTPUT_FILE_NAME = "outputFileName";
 
    // extras for range downloads
    public static final String EXTRA_START_VERSE = "startVerse";
@@ -75,6 +76,7 @@ public class QuranDownloadService extends Service {
    public static final int DOWNLOAD_TYPE_UNDEF = 0;
    public static final int DOWNLOAD_TYPE_PAGES = 1;
    public static final int DOWNLOAD_TYPE_AUDIO = 2;
+   public static final int DOWNLOAD_TYPE_TRANSLATION = 3;
 
    // continuation of handler message types
    public static final int NO_OP = 9;
@@ -338,6 +340,7 @@ public class QuranDownloadService extends Service {
          Serializable endAyah = intent.getSerializableExtra(EXTRA_END_VERSE);
          boolean isGapless = intent.getBooleanExtra(EXTRA_IS_GAPLESS, false);
 
+         String outputFile = intent.getStringExtra(EXTRA_OUTPUT_FILE_NAME);
          String destination = intent.getStringExtra(EXTRA_DESTINATION);
          mLastSentIntent = null;
          boolean result;
@@ -351,7 +354,7 @@ public class QuranDownloadService extends Service {
             else { return; }
          }
          else {
-            result = download(url, destination, details);
+            result = download(url, destination, outputFile, details);
          }
          if (result && isZipFile){
             mSuccessfulZippedDownloads.put(url, true);
@@ -364,6 +367,7 @@ public class QuranDownloadService extends Service {
    }
    
    private boolean download(String urlString, String destination,
+                            String outputFile,
                             NotificationDetails details){
       // make the directory if it doesn't exist
       new File(destination).mkdirs();
@@ -373,7 +377,8 @@ public class QuranDownloadService extends Service {
       
       // notify download starting
       notifyProgress(details, 0, 0);
-      boolean result = downloadFileWrapper(urlString, destination, details);
+      boolean result = downloadFileWrapper(urlString, destination,
+              outputFile, details);
       if (result){ notifyDownloadSuccessful(details); }
       return result;
    }
@@ -478,11 +483,6 @@ public class QuranDownloadService extends Service {
    }
 
    private boolean downloadFileWrapper(String urlString, String destination,
-                                       NotificationDetails details){
-      return downloadFileWrapper(urlString, destination, null, details);
-   }
-
-   private boolean downloadFileWrapper(String urlString, String destination,
                             String outputFile, NotificationDetails details){
       boolean previouslyCorrupted = false;
       
@@ -538,7 +538,11 @@ public class QuranDownloadService extends Service {
 
          URL url = new URL(urlString);
          String filename = QuranDownloadService.getFilenameFromUrl(urlString);
-         File partialFile = new File(destination, filename + PARTIAL_EXT);
+
+         String fileToCheck = filename;
+         if (outputFile != null){ fileToCheck = outputFile; }
+
+         File partialFile = new File(destination, fileToCheck + PARTIAL_EXT);
          if (partialFile.exists()){
             downloaded = partialFile.length();
          }
@@ -565,8 +569,6 @@ public class QuranDownloadService extends Service {
          android.util.Log.d(TAG, "got content length: " + contentLength +
                ", rc: " + connection.getResponseCode());         
 
-         String fileToCheck = filename;
-         if (outputFile != null){ fileToCheck = outputFile; }
          File actualFile = new File(destination, fileToCheck);
          android.util.Log.d(TAG, "actualFile: " + actualFile.getPath() +
                ", " + actualFile.getAbsolutePath() + ", " +

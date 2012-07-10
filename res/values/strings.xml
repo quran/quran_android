@@ -220,6 +220,10 @@
     <string name="download_retry">Retry</string>
     <string name="download_cancel">Cancel</string>
 
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">Remove Translation?</string>
+    <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
+
     <string-array name="quarter_prefix_array">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>
         <item>إِنَّ اللَّهَ لَا يَسْتَحْيِي أَن</item>
