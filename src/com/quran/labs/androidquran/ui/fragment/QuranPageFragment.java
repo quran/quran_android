@@ -15,6 +15,7 @@ import android.view.View.OnTouchListener;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -24,6 +25,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 import java.lang.ref.WeakReference;
@@ -37,6 +39,7 @@ public class QuranPageFragment extends SherlockFragment {
 
    private int mPageNumber;
    private HighlightingImageView mImageView;
+   private ScrollView mScrollView;
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
    public static QuranPageFragment newInstance(int page){
@@ -50,7 +53,8 @@ public class QuranPageFragment extends SherlockFragment {
    @Override
    public void onCreate(Bundle savedInstanceState){
       super.onCreate(savedInstanceState);
-      mPageNumber = getArguments() != null? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
+      mPageNumber = getArguments() != null?
+              getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
       int width = getActivity().getWindowManager()
             .getDefaultDisplay().getWidth();
       mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
@@ -59,9 +63,12 @@ public class QuranPageFragment extends SherlockFragment {
    }
 
    @Override
-   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-      final View view = inflater.inflate(R.layout.quran_page_layout, container, false);
-      view.setBackgroundDrawable((mPageNumber % 2 == 0? mLeftGradient : mRightGradient));
+   public View onCreateView(LayoutInflater inflater,
+                            ViewGroup container, Bundle savedInstanceState){
+      final View view = inflater.inflate(R.layout.quran_page_layout,
+              container, false);
+      view.setBackgroundDrawable((mPageNumber % 2 == 0?
+              mLeftGradient : mRightGradient));
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
       ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
@@ -76,6 +83,7 @@ public class QuranPageFragment extends SherlockFragment {
       }
 
       mImageView = (HighlightingImageView)view.findViewById(R.id.page_image);
+      mScrollView = (ScrollView)view.findViewById(R.id.page_scroller);
       
       final GestureDetector gestureDetector = new GestureDetector(
             new PageGestureDetector());
@@ -108,6 +116,14 @@ public class QuranPageFragment extends SherlockFragment {
 
    public void highlightAyah(int sura, int ayah){
       mImageView.highlightAyah(sura, ayah);
+      if (mScrollView != null){
+         AyahBounds yBounds = mImageView.getYBoundsForCurrentHighlight();
+         if (yBounds != null){
+            int screenHeight = QuranScreenInfo.getInstance().getHeight();
+            int y = yBounds.getMinY() - (int)(0.05 * screenHeight);
+            mScrollView.smoothScrollTo(mScrollView.getScrollX(), y);
+         }
+      }
       mImageView.invalidate();
    }
 

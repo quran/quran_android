@@ -2,7 +2,9 @@ package com.quran.labs.androidquran.ui;
 
 import android.app.Activity;
 import android.content.*;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -158,6 +160,22 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       // just got created, need to reconnect to service
       mShouldReconnect = true;
+
+      // enforce orientation lock
+      if (QuranSettings.getInstance().isLockOrientation()){
+         int current = getResources().getConfiguration().orientation;
+         if (QuranSettings.getInstance().isLandscapeOrientation()){
+            if (current == Configuration.ORIENTATION_PORTRAIT){
+               setRequestedOrientation(
+                       ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+               return;
+            }
+         }
+         else if (current == Configuration.ORIENTATION_LANDSCAPE){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            return;
+         }
+      }
    }
 
    @Override

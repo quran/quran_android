@@ -44,6 +44,7 @@ public class TranslationManagerActivity extends SherlockActivity {
    private List<TranslationItem> mAllItems;
 
    private ListView mListView;
+   private TextView mMessageArea;
    private TranslationsAdapter mAdapter;
    private ProgressDialog mProgressDialog;
    private SharedPreferences mPrefs;
@@ -61,7 +62,9 @@ public class TranslationManagerActivity extends SherlockActivity {
       mListView = (ListView)findViewById(R.id.translation_list);
       mAdapter = new TranslationsAdapter(this, null);
       mListView.setAdapter(mAdapter);
+      mMessageArea = (TextView)findViewById(R.id.message_area);
 
+      setSupportProgressBarIndeterminateVisibility(true);
       mPrefs = PreferenceManager.getDefaultSharedPreferences(
               getApplicationContext());
       new LoadTranslationsTask().execute();
@@ -176,13 +179,21 @@ public class TranslationManagerActivity extends SherlockActivity {
          mAllItems = items;
          setSupportProgressBarIndeterminateVisibility(false);
 
-         generateListItems();
+         if (mAllItems == null){
+            mMessageArea.setText(R.string.error_getting_translation_list);
+         }
+         else {
+            mMessageArea.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+            generateListItems();
+         }
       }
    }
 
    private void generateListItems(){
       mActiveTranslation = mPrefs.getString(
               ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+      if (mAllItems == null){ return; }
 
       List<TranslationItem> downloaded = new ArrayList<TranslationItem>();
       List<TranslationItem> notDownloaded =

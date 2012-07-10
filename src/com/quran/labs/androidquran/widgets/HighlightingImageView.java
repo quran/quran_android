@@ -145,7 +145,13 @@ public class HighlightingImageView extends ImageView {
 			yBounds = new AyahBounds(0, 0, 0, upperBound, 0, lowerBound);
 		return yBounds;
 	}
-	
+
+   @Override
+   public void setImageBitmap(Bitmap bitmap){
+      super.setImageBitmap(bitmap);
+      adjustNightMode();
+   }
+
 	public void adjustNightMode() {
 		if (QuranSettings.getInstance().isNightMode() && !colorFilterOn) {
 			setBackgroundColor(Color.BLACK);
