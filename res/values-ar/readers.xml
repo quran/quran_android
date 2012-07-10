@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
      <string-array name="quran_readers_name">
+        <item>المنشاوي</item>
         <item>عبد الباسط عبد الصمد</item>
         <item>عبد الباسط عبد الصمد مجود</item>
         <item>عبد الله بصفر</item>
@@ -14,7 +15,6 @@
         <item>الحصري مجود</item>
         <item>الحذيفي</item>
         <item>ماهر المعيلقي</item>
-        <item>المنشاوي</item>
         <item>المنشاوي مجود</item>
         <item>محمد الطبلاوي</item>
         <item>محمد أيوب</item>

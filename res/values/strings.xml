@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="errorString">Could not download Quran Pages!</string>
-    <string name="app_name">Quran Android</string>
+    <string name="app_name">Quran</string>
     <string name="pageNotFound">Page not found.</string>
     <string name="pageLoading">Page Loading…</string>
     <string name="downloadPrompt_title">Download Required Files?</string>
@@ -138,7 +138,8 @@
     <string name="prefs_active_translation_summary">Switch between downloaded translations. Select \'Menu > Get Translations\' to display a full list of available translations</string>
     <string name="prefs_translation_text_title">Translation text size</string>
     <string name="prefs_no_translations_installed">No translations installed</string>
-    
+    <string name="prefs_translations">Translations</string>
+    <string name="prefs_translations_summary">Download and manage translations</string>
     <string name="loading_translations">Loading Translations List, Please wait..</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
@@ -223,6 +224,7 @@
     <!-- translation database stuff -->
     <string name="remove_dlg_title">Remove Translation?</string>
     <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
+    <string name="error_getting_translation_list">Unable to download the list of translations.  Please try again later.</string>
 
     <string-array name="quarter_prefix_array">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>

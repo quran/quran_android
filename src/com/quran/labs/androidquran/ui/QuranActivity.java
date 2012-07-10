@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -20,6 +22,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
    public final String TAG = "QuranActivity";
@@ -41,6 +44,10 @@ public class QuranActivity extends SherlockFragmentActivity implements ActionBar
       setTheme(R.style.Theme_Sherlock);
       super.onCreate(savedInstanceState);
       setContentView(R.layout.quran_index);
+
+      SharedPreferences prefs =
+              PreferenceManager.getDefaultSharedPreferences(this);
+      QuranSettings.load(prefs);
 
       ActionBar actionbar = getSupportActionBar();
       actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
