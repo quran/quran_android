@@ -1,9 +1,11 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -78,18 +81,30 @@ public class TranslationFragment extends SherlockFragment {
          }
       });
 
-      new TranslationTask().execute(mPageNumber);
+      SharedPreferences prefs = PreferenceManager
+              .getDefaultSharedPreferences(getActivity());
+      String database = prefs.getString(
+              ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+      if (database != null){
+         new TranslationTask(database).execute(mPageNumber);
+      }
       return view;
    }
 
    class TranslationTask extends AsyncTask<Integer, Void, List<QuranAyah>> {
+      private String mDatabaseName = null;
+
+      public TranslationTask(String databaseName){
+         mDatabaseName = databaseName;
+      }
+
       @Override
       protected List<QuranAyah> doInBackground(Integer... params) {
          int page = params[0];
          Integer[] bounds = QuranInfo.getPageBounds(page);
          if (bounds == null){ return null; }
 
-         String databaseName = "quran.ensi.db";
+         String databaseName = mDatabaseName;
          List<QuranAyah> verses = new ArrayList<QuranAyah>();
 
          try {

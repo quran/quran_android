@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui;
 
 import android.app.Activity;
 import android.content.*;
+import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
@@ -99,6 +101,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
       mPrefs = PreferenceManager.getDefaultSharedPreferences(
             getApplicationContext());
+      QuranSettings.load(mPrefs);
 
       getSupportActionBar().hide();
       mIsActionBarHidden = true;
@@ -122,6 +125,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
               getSupportFragmentManager(), mShowingTranslation);
       mViewPager = (ViewPager)findViewById(R.id.quran_pager);
       mViewPager.setAdapter(mPagerAdapter);
+
       mViewPager.setOnPageChangeListener(new OnPageChangeListener(){
 
          @Override
@@ -248,9 +252,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
          return true;
       }
       else if (item.getItemId() == R.id.goto_translation){
-         mPagerAdapter.setTranslationMode();
-         mShowingTranslation = true;
-         invalidateOptionsMenu();
+         String activeDatabase = mPrefs.getString(
+                 ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+         Log.d("are", "got: " + activeDatabase);
+         if (activeDatabase == null){
+            Intent i = new Intent(this, TranslationManagerActivity.class);
+            startActivity(i);
+         }
+         else {
+            mPagerAdapter.setTranslationMode();
+            mShowingTranslation = true;
+            invalidateOptionsMenu();
+         }
          return true;
       }
       return super.onOptionsItemSelected(item);
