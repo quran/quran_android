@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -57,6 +58,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private static final String LAST_READING_MODE_IS_TRANSLATION =
            "LAST_READING_MODE_IS_TRANSLATION";
 
+   public static final String EXTRA_JUMP_TO_TRANSLATION = "jumpToTranslation";
+   public static final String EXTRA_HIGHLIGHT_SURA = "highlightSura";
+   public static final String EXTRA_HIGHLIGHT_AYAH = "highlightAyah";
+
    private QuranPageWorker mWorker = null;
    private SharedPreferences mPrefs = null;
    private long mLastPopupTime = 0;
@@ -68,6 +73,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private Map<Integer, Boolean> mBookmarksCache = null;
    private DownloadAudioRequest mLastAudioDownloadRequest = null;
    private boolean mShowingTranslation = false;
+   private int mHighlightedSura = -1;
+   private int mHighlightedAyah = -1;
+   private Handler mHandler = new Handler();
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -118,7 +126,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       Intent intent = getIntent();
       Bundle extras = intent.getExtras();
-      if (extras != null && page == -1){ page = 604 - extras.getInt("page"); }
+      if (extras != null){
+         if (page == -1){ page = 604 - extras.getInt("page", 1); }
+
+         mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION,
+                 mShowingTranslation);
+         mHighlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
+         mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+      }
       updateActionBarTitle(604 - page);
 
       mWorker = new QuranPageWorker(this);
@@ -191,6 +206,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
       if (mShouldReconnect){
          startService(new Intent(AudioService.ACTION_CONNECT));
          mShouldReconnect = false;
+      }
+
+      if (mHighlightedSura > 0 && mHighlightedAyah > 0){
+         mHandler.postDelayed(
+                 new Runnable() {
+                    public void run() {
+                       highlightAyah(mHighlightedSura, mHighlightedAyah);
+                    }
+                 }, 750);
       }
    }
 
@@ -272,7 +296,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
       else if (item.getItemId() == R.id.goto_translation){
          String activeDatabase = mPrefs.getString(
                  ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
-         Log.d("are", "got: " + activeDatabase);
          if (activeDatabase == null){
             Intent i = new Intent(this, TranslationManagerActivity.class);
             startActivity(i);
@@ -402,6 +425,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    }
 
    public void highlightAyah(int sura, int ayah){
+      Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
       int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
       int position = 604 - page;
       if (position != mViewPager.getCurrentItem()){
