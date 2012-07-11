@@ -531,7 +531,6 @@ public class QuranDownloadService extends Service {
    private int downloadFile(String urlString, String destination,
          String outputFile, NotificationDetails notificationInfo){
       HttpURLConnection connection = null;
-      String notificationTitle = notificationInfo.title;
 
       try {         
          long downloaded = 0;
@@ -574,9 +573,10 @@ public class QuranDownloadService extends Service {
                ", " + actualFile.getAbsolutePath() + ", " +
                actualFile.getName());
          
-         long fileLength = downloaded + (rc == 416? 0 : contentLength);
-         if (rc != 416 && (!actualFile.exists() ||
-               actualFile.length() != fileLength)){
+         long fileLength = downloaded +
+                 (rc == HttpURLConnection.HTTP_PARTIAL? contentLength : 0);
+         if (rc == HttpURLConnection.HTTP_PARTIAL &&
+                 (!actualFile.exists() || actualFile.length() != fileLength)){
             
             if (!isSpaceAvailable(fileLength, filename.endsWith(".zip"))){
                return ERROR_DISK_SPACE;
@@ -612,6 +612,11 @@ public class QuranDownloadService extends Service {
             bufferedOutputStream.flush();
             bufferedOutputStream.close();
          }
+         else if (rc != HttpURLConnection.HTTP_PARTIAL && rc != 416){
+            Log.d(TAG, "got unexpected response code: " + rc);
+            notifyError(ERROR_NETWORK, false, notificationInfo);
+            return ERROR_NETWORK;
+         }
          
          if (!mIsDownloadCanceled){
             notifyDownloadProcessing(notificationInfo, 0, 0);
@@ -642,7 +647,7 @@ public class QuranDownloadService extends Service {
          return ERROR_GENERAL;
       }
       catch (Exception e){
-         android.util.Log.d(TAG, "exception while downloading: " + e);
+         Log.d(TAG, "exception while downloading: " + e);
          notifyError(ERROR_NETWORK, false, notificationInfo);
          return ERROR_NETWORK;
       }
