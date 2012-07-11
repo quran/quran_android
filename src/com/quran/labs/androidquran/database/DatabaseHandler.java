@@ -6,12 +6,15 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.database.sqlite.SQLiteOpenHelper;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 
 public class DatabaseHandler {
 	
-	private SQLiteDatabase database = null;
+	private SQLiteDatabase mDatabase = null;
+   private String mDatabasePath = null;
+
 	public static String COL_SURA = "sura";
 	public static String COL_AYAH = "ayah";
 	public static String COL_TEXT = "text";
@@ -29,14 +32,24 @@ public class DatabaseHandler {
 		String base = QuranFileUtils.getQuranDatabaseDirectory();
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
-		database = SQLiteDatabase.openDatabase(path, null,
+		mDatabase = SQLiteDatabase.openDatabase(path, null,
 				SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 		schemaVersion = getSchemaVersion();
+      mDatabasePath = path;
 	}
 	
 	public boolean validDatabase(){
-		return (database == null)? false : database.isOpen();
+		return (mDatabase == null)? false : mDatabase.isOpen();
 	}
+
+   public boolean reopenDatabase(){
+      try {
+         mDatabase = SQLiteDatabase.openDatabase(mDatabasePath,
+                 null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+         return (mDatabase != null);
+      }
+      catch (Exception e){ return false; }
+   }
 	
 	public Cursor getVerses(int sura, int minAyah, int maxAyah){
 		return getVerses(sura, minAyah, maxAyah, VERSE_TABLE);
@@ -44,11 +57,11 @@ public class DatabaseHandler {
 	
 	public int getSchemaVersion(){
 		int version = 1;
-		if (!validDatabase()) return version;
+		if (!validDatabase()){ return version; }
 		
 		Cursor result = null;
 		try {
-			result = database.query(PROPERTIES_TABLE, new String[]{ COL_VALUE },
+			result = mDatabase.query(PROPERTIES_TABLE, new String[]{ COL_VALUE },
 					COL_PROPERTY + "= ?", new String[]{ "schema_version" },
 					null, null, null);
 			if ((result != null) && (result.moveToFirst()))
@@ -70,7 +83,9 @@ public class DatabaseHandler {
 
    public Cursor getVerses(int minSura, int minAyah, int maxSura,
                            int maxAyah, String table){
-      if (!validDatabase()) return null;
+      if (!validDatabase()){
+         if (!reopenDatabase()){ return null; }
+      }
 
       StringBuilder whereQuery = new StringBuilder();
       whereQuery.append("(");
@@ -107,7 +122,7 @@ public class DatabaseHandler {
 
       whereQuery.append(")");
 
-		return database.query(table,
+		return mDatabase.query(table,
 				new String[]{ COL_SURA, COL_AYAH, COL_TEXT },
 				whereQuery.toString(), null, null, null,
               COL_SURA + "," + COL_AYAH);
@@ -122,7 +137,10 @@ public class DatabaseHandler {
 	}
 	
 	public Cursor search(String query, String table, boolean withSnippets){
-		if (!validDatabase()) return null;
+		if (!validDatabase()){
+         if (!reopenDatabase()){ return null; }
+      }
+
 		String operator = " like '%";
 		String endOperator = "%'";
 		String whatTextToSelect = COL_TEXT;
@@ -136,13 +154,15 @@ public class DatabaseHandler {
 		if (useFullTextIndex && withSnippets)
 			whatTextToSelect = "snippet(" + table + ")";
 		
-		return database.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
+		return mDatabase.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
 				", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
 				operator + query + endOperator + " limit 50", null);
 	}
 	
 	public void closeDatabase() {
-		if (database != null)
-			database.close();
+		if (mDatabase != null){
+			mDatabase.close();
+         mDatabase = null;
+      }
 	}
 }

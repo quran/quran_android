@@ -1,24 +1,20 @@
 package com.quran.labs.androidquran.data;
 
-import java.util.List;
-
 import android.app.SearchManager;
-import android.content.ContentProvider;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.UriMatcher;
+import android.content.*;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 import android.util.Log;
-
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.common.TranslationsDBAdapter;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import java.util.List;
 
 public class QuranDataProvider extends ContentProvider {
 
@@ -41,7 +37,9 @@ public class QuranDataProvider extends ContentProvider {
 	private static final int SEARCH_SUGGEST = 2;
 	private static final UriMatcher sURIMatcher = buildUriMatcher();
 
-	private DatabaseHandler database = null;
+   private String mCurrentLanguage = null;
+	private DatabaseHandler mDatabase = null;
+   private SharedPreferences mPrefs = null;
 	
 	private static UriMatcher buildUriMatcher() {
 		UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
@@ -59,6 +57,7 @@ public class QuranDataProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
+      mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		return true;
 	}
 
@@ -96,18 +95,14 @@ public class QuranDataProvider extends ContentProvider {
 			if (c != null) return c;
 		}
 		
-		TranslationItem active = getActiveTranslation();
-		if (active == null) return null;
-		return search(query, active.getFileName(), true);
+		String active = getActiveTranslation();
+		if (TextUtils.isEmpty(active)) return null;
+		return search(query, active, true);
 	}
 
-	private TranslationItem getActiveTranslation(){
-		// i used to cache this, but i stopped because if you set a new active
-		// translation or remove a translation, it won't get reflected here.
-		TranslationsDBAdapter dba = new TranslationsDBAdapter(getContext());
-		TranslationItem activeTranslation = dba.getActiveTranslation();
-		dba.close();
-		return activeTranslation;
+	private String getActiveTranslation(){
+		return mPrefs.getString(
+              ApplicationConstants.PREF_ACTIVE_TRANSLATION, "");
 	}
 	
 	private Cursor getSuggestions(String query){
@@ -119,13 +114,10 @@ public class QuranDataProvider extends ContentProvider {
 			numItems = 2;
 		}
 		
-		//TranslationItem[] items = dba.getAvailableTranslations(true);
-		TranslationItem[] items = new TranslationItem[numItems];
-		if (numItems == 1) items[0] = getActiveTranslation();
+		String[] items = new String[numItems];
+		if (numItems == 1){ items[0] = getActiveTranslation(); }
 		else {
-			TranslationItem arabicItem = new TranslationItem();
-			arabicItem.setFileName(QURAN_ARABIC_DATABASE);
-			items[0] = arabicItem;
+			items[0] = QURAN_ARABIC_DATABASE;
 			items[1] = getActiveTranslation();
 		}
 				
@@ -136,17 +128,18 @@ public class QuranDataProvider extends ContentProvider {
 		MatrixCursor mc = new MatrixCursor(cols);
 		
 		boolean gotResults = false;
-		for (TranslationItem item : items) {
-			if ((item == null) || (gotResults)) continue;
-			Cursor suggestions = search(query, item.getFileName(), false);
+		for (String item : items) {
+			if (gotResults){ continue; }
+			Cursor suggestions = search(query, item, false);
 			
 			if (suggestions.moveToFirst()){
 				do {
 					int sura = suggestions.getInt(0);
 					int ayah = suggestions.getInt(1);
 					String text = suggestions.getString(2);
-					String foundText = getContext().getString(R.string.found_in_sura) + " " +
-						QuranInfo.getSuraName(sura-1) + ", " + 
+					String foundText = getContext()
+                       .getString(R.string.found_in_sura) +
+                       " " + QuranInfo.getSuraName(sura-1) + ", " +
 						getContext().getString(R.string.quran_ayah) + " " + ayah;
 					
 					gotResults = true;
@@ -164,8 +157,6 @@ public class QuranDataProvider extends ContentProvider {
 				} while (suggestions.moveToNext());
 			}
 			suggestions.close();
-			database.closeDatabase();
-			database = null;
 		}
 		
 		return mc;
@@ -174,26 +165,40 @@ public class QuranDataProvider extends ContentProvider {
 	private Cursor search(String query, String language, boolean wantSnippets) {
 		Log.d("qdp", "q: " + query + ", l: " + language);
 		if (language == null) return null;
-		
-		if (database == null)
-			database = new DatabaseHandler(language);
-		return database.search(query, wantSnippets);
+
+		if (mDatabase == null){
+			mDatabase = new DatabaseHandler(language);
+      }
+      else if (language != null && !language.equals(mCurrentLanguage)){
+         mDatabase.closeDatabase();
+         mDatabase = new DatabaseHandler(language);
+         mCurrentLanguage = language;
+      }
+
+		return mDatabase.search(query, wantSnippets);
 	}
 
 	private Cursor getVerse(Uri uri){
 		int sura = 1;
 		int ayah = 1;
-		TranslationItem langType = getActiveTranslation();
-		String lang = (langType != null)? langType.getFileName() : null;
+		String langType = getActiveTranslation();
+		String lang = (TextUtils.isEmpty(langType))? null : langType;
 		if (lang == null) return null;
 
 		List<String> parts = uri.getPathSegments();
 		for (String s : parts)
 			Log.d("qdp", "uri part: " + s);
 
-		if (database == null)
-			database = new DatabaseHandler(lang);
-		return database.getVerse(sura, ayah);
+		if (mDatabase == null){
+			mDatabase = new DatabaseHandler(lang);
+      }
+      else if (lang != null && !lang.equals(mCurrentLanguage)){
+         mDatabase.closeDatabase();
+         mDatabase = new DatabaseHandler(lang);
+         mCurrentLanguage = lang;
+      }
+
+		return mDatabase.getVerse(sura, ayah);
 	}
 
 	@Override
