@@ -113,6 +113,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
             getApplicationContext());
       QuranSettings.load(mPrefs);
 
+      getSupportActionBar().setDisplayShowHomeEnabled(true);
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
       getSupportActionBar().hide();
       mIsActionBarHidden = true;
 
@@ -305,6 +307,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
             mShowingTranslation = true;
             invalidateOptionsMenu();
          }
+         return true;
+      }
+      else if (item.getItemId() == android.R.id.home){
+         finish();
          return true;
       }
       return super.onOptionsItemSelected(item);

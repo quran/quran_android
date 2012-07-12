@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/last_page"
+          android:icon="@drawable/ic_goto_quran"
+          android:title="@string/menu_jump_last_page"
+          android:showAsAction="ifRoom" />
     <item android:id="@+id/search"
           android:icon="@drawable/ic_ab_search"
           android:title="@string/menu_search"

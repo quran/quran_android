@@ -19,6 +19,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
@@ -41,7 +42,7 @@ public class QuranActivity extends SherlockFragmentActivity implements ActionBar
 
    @Override
    public void onCreate(Bundle savedInstanceState){
-      setTheme(R.style.Theme_Sherlock);
+      setTheme(R.style.QuranAndroid);
       super.onCreate(savedInstanceState);
       setContentView(R.layout.quran_index);
 
@@ -114,6 +115,14 @@ public class QuranActivity extends SherlockFragmentActivity implements ActionBar
       else if (item.getItemId() == R.id.settings){
          Intent i = new Intent(this, QuranPreferenceActivity.class);
          startActivity(i);
+         return true;
+      }
+      else if (item.getItemId() == R.id.last_page){
+         SharedPreferences prefs =
+                 PreferenceManager.getDefaultSharedPreferences(
+                         getApplicationContext());
+         int page = prefs.getInt(ApplicationConstants.PREF_LAST_PAGE, 1);
+         jumpTo(page);
          return true;
       }
 	   
