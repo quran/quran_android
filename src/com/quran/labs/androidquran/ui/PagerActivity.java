@@ -427,6 +427,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void highlightAyah(int sura, int ayah){
       Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
       int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+      if (page < 1 || 604 < page){ return; }
+
       int position = 604 - page;
       if (position != mViewPager.getCurrentItem()){
          unhighlightAyah();

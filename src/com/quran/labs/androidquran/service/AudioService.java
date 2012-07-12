@@ -275,6 +275,9 @@ public class AudioService extends Service implements OnCompletionListener,
             }
             else if (mState != State.Stopped){
                state = AudioUpdateIntent.PLAYING;
+            }
+
+            if (mState != State.Stopped){
                if (mAudioRequest != null){
                   sura = mAudioRequest.getCurrentSura();
                   ayah = mAudioRequest.getCurrentAyah();
