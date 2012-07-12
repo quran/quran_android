@@ -1,50 +1,35 @@
 package com.quran.labs.androidquran;
 
-import java.text.DecimalFormat;
-
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.content.*;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Display;
 import android.view.WindowManager;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.QuranDownloadService.ProgressIntent;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
-public class QuranDataActivity extends SherlockActivity {
+public class QuranDataActivity extends SherlockActivity implements
+        DefaultDownloadReceiver.SimpleDownloadListener {
    
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
    
-   private boolean mIsPaused = false;
-   private boolean mRegisteredReceiver = false;
    private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
    private AlertDialog mErrorDialog = null;
    private AlertDialog mPromptForDownloadDialog = null;
-   private ProgressDialog mProgressDialog = null;
    private SharedPreferences mSharedPreferences = null;
-   private Resources mResources = null;
-   private boolean mDidReceiveBroadcast = false;
+   private DefaultDownloadReceiver mDownloadReceiver = null;
 
    /** Called when the activity is first created. */
    @Override
@@ -67,22 +52,19 @@ public class QuranDataActivity extends SherlockActivity {
       initializeQuranScreen();
       mSharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(getApplicationContext());
-      mResources = getResources();
    }
    
    @Override
    protected void onResume(){
       super.onResume();
-      
-      mIsPaused = false;
-      mDidReceiveBroadcast = false;
-      initProgressDialog();
 
+      mDownloadReceiver = new DefaultDownloadReceiver(this,
+              QuranDownloadService.DOWNLOAD_TYPE_PAGES);
       String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
       LocalBroadcastManager.getInstance(this).registerReceiver(
-            mMessageReceiver,
+            mDownloadReceiver,
             new IntentFilter(action));
-      mRegisteredReceiver = true;
+      mDownloadReceiver.setListener(this);
 
       // check whether or not we need to download
       mCheckPagesTask = new CheckPagesAsyncTask();
@@ -91,10 +73,11 @@ public class QuranDataActivity extends SherlockActivity {
    
    @Override
    protected void onPause() {
-      mIsPaused = true;
-      mHandler.removeCallbacksAndMessages(null);
-      
-      cleanup();
+      mDownloadReceiver.setListener(null);
+      LocalBroadcastManager.getInstance(this).
+              unregisterReceiver(mDownloadReceiver);
+      mDownloadReceiver = null;
+
       if (mPromptForDownloadDialog != null){
          mPromptForDownloadDialog.dismiss();
          mPromptForDownloadDialog = null;
@@ -105,138 +88,23 @@ public class QuranDataActivity extends SherlockActivity {
          mErrorDialog = null;
       }
       
-      if (mProgressDialog != null){
-         mProgressDialog.dismiss();
-         mProgressDialog = null;
-      }
-      
       super.onPause();
    }
-   
-   private void cleanup(){
-      if (mRegisteredReceiver){
-         LocalBroadcastManager.getInstance(this).
-            unregisterReceiver(mMessageReceiver);
-         mRegisteredReceiver = false;
-      }
-   }
-   
-   BroadcastReceiver mMessageReceiver = new BroadcastReceiver(){
-      @Override
-      public void onReceive(Context context, Intent intent){
-         if (intent != null && PAGES_DOWNLOAD_KEY.equals(
-               intent.getStringExtra(ProgressIntent.DOWNLOAD_KEY))){
-            mDidReceiveBroadcast = true;
-            // run these on the ui thread
-            Message msg = mHandler.obtainMessage();
-            msg.obj = intent;
 
-            // only care about the latest download progress, remove queued
-            mHandler.removeCallbacksAndMessages(null);
-
-            // send the message at the front of the queue
-            mHandler.sendMessageAtFrontOfQueue(msg);
-         }
-      }
-   };
-   
-   private Handler mHandler = new Handler(){
-      @Override
-      public void handleMessage(Message msg){
-         if (mIsPaused){ return; }
-         Intent intent = (Intent)msg.obj;
-         String state = intent.getStringExtra(ProgressIntent.STATE);
-         if (state != null){
-            if (QuranDownloadService.STATE_DOWNLOADING.equals(state)){
-               updateProgress(intent, false);
-            }
-            else if (QuranDownloadService.STATE_PROCESSING.equals(state)){
-               updateProgress(intent, true);
-            }
-            else if (QuranDownloadService.STATE_SUCCESS.equals(state)){
-               handleSuccess(intent);
-            }
-            else if (QuranDownloadService.STATE_ERROR.equals(state)){
-               handleFatalError(intent);
-            }
-            else if (QuranDownloadService
-                    .STATE_ERROR_WILL_RETRY.equals(state)){
-               handleError(intent);
-            }
-         }
-      }
-   };
-   
-   private void updateProgress(Intent intent, boolean isProcessing){
-      if (mProgressDialog != null){
-         if (!mProgressDialog.isShowing()){
-            mProgressDialog.show();
-         }
-         
-         int progress = intent.getIntExtra(ProgressIntent.PROGRESS, -1);
-         if (progress == -1){
-            int titleId = isProcessing? R.string.extracting_title
-                  : R.string.downloading_title;
-            mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setMessage(getString(titleId));
-            return;
-         }
-         
-         mProgressDialog.setIndeterminate(false);
-         mProgressDialog.setMax(100);
-         mProgressDialog.setProgress(progress);
-         
-         if (isProcessing){
-            mProgressDialog.setMessage(getString(R.string.extracting_title));
-            int processedFiles =
-                  intent.getIntExtra(ProgressIntent.PROCESSED_FILES, 0);
-            int totalFiles = intent.getIntExtra(ProgressIntent.TOTAL_FILES, 0);
-            
-            String message = String.format(
-                  mResources.getString(R.string.process_progress),
-                  processedFiles, totalFiles);
-            mProgressDialog.setMessage(message);
-         }
-         else {
-            long downloadedSize =
-                  intent.getLongExtra(ProgressIntent.DOWNLOADED_SIZE, 0);
-            long totalSize = intent.getLongExtra(ProgressIntent.TOTAL_SIZE, 0);
-            
-            DecimalFormat df = new DecimalFormat("###.00");            
-            int mb = 1024 * 1024;
-            String downloaded = df.format((1.0 * downloadedSize / mb)) + " MB";
-            String total = df.format((1.0 * totalSize / mb)) + " MB";
-            
-            String message = String.format(
-                  mResources.getString(R.string.download_progress),
-                  downloaded, total);
-            mProgressDialog.setMessage(message);
-         }
-      }
-   }
-   
-   private void handleSuccess(Intent intent){
-      if (mProgressDialog != null){
-         mProgressDialog.dismiss();
-      }
-      mProgressDialog = null;
+   @Override
+   public void handleDownloadSuccess(){
       mSharedPreferences.edit()
          .remove(ApplicationConstants.PREF_SHOULD_FETCH_PAGES).commit();
       runListView();
    }
-   
-   private void handleFatalError(Intent intent){
-      if (mProgressDialog != null){
-         mProgressDialog.dismiss();
-         mProgressDialog = null;
-      }
-      
+
+   @Override
+   public void handleDownloadFailure(int errId){
       if (mErrorDialog != null && mErrorDialog.isShowing()){
          return;
       }
       
-      int msg = ServiceIntentHelper.getErrorResourceFromDownloadIntent(intent);
-      showFatalErrorDialog(msg);
+      showFatalErrorDialog(errId);
    }
    
    private void showFatalErrorDialog(int errorId){
@@ -270,14 +138,6 @@ public class QuranDataActivity extends SherlockActivity {
       
       mErrorDialog = builder.create();
       mErrorDialog.show();
-   }
-   
-   private void handleError(Intent intent){
-      if (mProgressDialog != null){
-         int msgId = ServiceIntentHelper.
-                 getErrorResourceFromDownloadIntent(intent, true);
-         mProgressDialog.setMessage(getString(msgId));
-      }
    }
    
    private void removeErrorPreferences(){
@@ -339,18 +199,7 @@ public class QuranDataActivity extends SherlockActivity {
       // if any broadcasts were received, then we are already downloading
       // so unless we know what we are doing (via force), don't ask the
       // service to restart the download
-      if (mDidReceiveBroadcast && !force){ return; }
-      
-      if (!haveInternet()){
-         mProgressDialog = null;
-         showFatalErrorDialog(QuranDownloadService.ERROR_NETWORK);
-         return;
-      }
-      
-      // this is safe because we didn't get any broadcasts so we can't be
-      // showing any dialogs at the moment.  we initialized this in onResume
-      initProgressDialog();
-      mProgressDialog.show();
+      if (mDownloadReceiver.didReceieveBroadcast() && !force){ return; }
       
       String url = QuranFileUtils.getZipFileUrl();
       String destination = QuranFileUtils.getQuranBaseDirectory();
@@ -368,26 +217,7 @@ public class QuranDataActivity extends SherlockActivity {
 
       startService(intent);
    }
-   
-   public boolean haveInternet() {
-      ConnectivityManager cm = (ConnectivityManager)getSystemService(
-            Context.CONNECTIVITY_SERVICE);
-      if (cm != null && cm.getActiveNetworkInfo() != null) 
-         return cm.getActiveNetworkInfo().isConnectedOrConnecting();
-      return false;
-   }
-   
-   private void initProgressDialog(){
-      if (mProgressDialog == null){
-         mProgressDialog = new ProgressDialog(this);
-         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-         mProgressDialog.setCancelable(false);
-         mProgressDialog.setTitle(R.string.downloading_title);
-         mProgressDialog.setMessage(getString(R.string.downloading_message));
-         mProgressDialog.setIndeterminate(true);
-      }
-   }
-   
+
    private void promptForDownload(){
       AlertDialog.Builder dialog = new AlertDialog.Builder(this);
       dialog.setMessage(R.string.downloadPrompt);
@@ -429,7 +259,6 @@ public class QuranDataActivity extends SherlockActivity {
    }
 
    protected void runListView(){
-      cleanup();
       Intent i = new Intent(this, QuranActivity.class);
       startActivity(i);
       finish();
