@@ -5,7 +5,7 @@
     android:orientation="horizontal" >
     
     <TextView android:id="@+id/suraNumber"
-              android:layout_width="30dp"
+              android:layout_width="34dp"
               android:layout_height="fill_parent"
               android:layout_marginLeft="10dp"
               android:layout_marginRight="20dp"
