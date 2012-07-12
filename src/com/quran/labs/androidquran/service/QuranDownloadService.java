@@ -77,6 +77,7 @@ public class QuranDownloadService extends Service {
    public static final int DOWNLOAD_TYPE_PAGES = 1;
    public static final int DOWNLOAD_TYPE_AUDIO = 2;
    public static final int DOWNLOAD_TYPE_TRANSLATION = 3;
+   public static final int DOWNLOAD_TYPE_ARABIC_SEARCH_DB = 4;
 
    // continuation of handler message types
    public static final int NO_OP = 9;
@@ -577,8 +578,9 @@ public class QuranDownloadService extends Service {
                  (rc == HttpURLConnection.HTTP_PARTIAL? contentLength : 0);
          if (rc == HttpURLConnection.HTTP_PARTIAL &&
                  (!actualFile.exists() || actualFile.length() != fileLength)){
-            
-            if (!isSpaceAvailable(fileLength, filename.endsWith(".zip"))){
+
+            if (!isSpaceAvailable(downloaded, fileLength,
+                    filename.endsWith(".zip"))){
                return ERROR_DISK_SPACE;
             }
             
@@ -716,13 +718,15 @@ public class QuranDownloadService extends Service {
       return false;
    }
    
-   protected boolean isSpaceAvailable(long fileLength, boolean isZipFile){
+   protected boolean isSpaceAvailable(long downloaded,
+                                      long fileLength, boolean isZipFile){
       StatFs fsStats = new StatFs(
             Environment.getExternalStorageDirectory().getAbsolutePath());
       double availableSpace = (double)fsStats.getAvailableBlocks() *
             (double)fsStats.getBlockSize();
       
-      long length = isZipFile? fileLength * 2 : fileLength;
+      long length = isZipFile? (fileLength + (fileLength - downloaded)) :
+              (fileLength - downloaded);
       return availableSpace > length;
    }
    

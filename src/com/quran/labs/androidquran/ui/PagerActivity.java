@@ -32,6 +32,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
@@ -50,7 +51,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PagerActivity extends SherlockFragmentActivity implements
-        AudioStatusBar.AudioBarListener {
+        AudioStatusBar.AudioBarListener,
+        DefaultDownloadReceiver.DownloadListener {
    private static final String TAG = "PagerActivity";
    private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
    private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
@@ -75,6 +77,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private boolean mShowingTranslation = false;
    private int mHighlightedSura = -1;
    private int mHighlightedAyah = -1;
+   private DefaultDownloadReceiver mDownloadReceiver;
    private Handler mHandler = new Handler();
 
    @Override
@@ -200,9 +203,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
       LocalBroadcastManager.getInstance(this).registerReceiver(
               mAudioReceiver,
               new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
+
+      mDownloadReceiver = new DefaultDownloadReceiver(this,
+              QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+      String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
       LocalBroadcastManager.getInstance(this).registerReceiver(
-              mDownloadReceiver, new IntentFilter(
-              QuranDownloadService.ProgressIntent.INTENT_NAME));
+              mDownloadReceiver,
+              new IntentFilter(action));
+      mDownloadReceiver.setListener(this);
 
       super.onResume();
       if (mShouldReconnect){
@@ -224,8 +232,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void onPause(){
       LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mAudioReceiver);
+      mDownloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mDownloadReceiver);
+      mDownloadReceiver = null;
       super.onPause();
    }
 
@@ -360,49 +370,37 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    };
 
-   BroadcastReceiver mDownloadReceiver = new BroadcastReceiver(){
-      @Override
-      public void onReceive(Context context, Intent intent){
-         if (intent != null){
-            int type = intent.getIntExtra(
-                    QuranDownloadService.ProgressIntent.DOWNLOAD_TYPE,
-                    QuranDownloadService.DOWNLOAD_TYPE_UNDEF);
-            if (QuranDownloadService.DOWNLOAD_TYPE_AUDIO == type){
-               String state = intent.getStringExtra(
-                       QuranDownloadService.ProgressIntent.STATE);
-               if (state != null){
-                  if (QuranDownloadService.STATE_DOWNLOADING.equals(state)){
-                     int progress = intent.getIntExtra(
-                             QuranDownloadService.ProgressIntent.PROGRESS, -1);
-                     mAudioStatusBar.switchMode(
-                             AudioStatusBar.DOWNLOADING_MODE);
-                     mAudioStatusBar.setProgress(progress);
-                  }
-                  else if (QuranDownloadService
-                          .STATE_PROCESSING.equals(state)){
-                     mAudioStatusBar.setProgressText(
-                             getString(R.string.extracting_title), false);
-                     mAudioStatusBar.setProgress(-1);
-                  }
-                  else if (QuranDownloadService.STATE_SUCCESS.equals(state)){
-                     playAudioRequest(mLastAudioDownloadRequest);
-                  }
-                  else if (QuranDownloadService.STATE_ERROR.equals(state)){
-                     String s = getString(ServiceIntentHelper
-                                     .getErrorResourceFromDownloadIntent(intent));
-                     mAudioStatusBar.setProgressText(s, true);
-                  }
-                  else if (QuranDownloadService
-                          .STATE_ERROR_WILL_RETRY.equals(state)){
-                     int errorId = ServiceIntentHelper
-                             .getErrorResourceFromDownloadIntent(intent);
-                     mAudioStatusBar.setProgressText(getString(errorId), false);
-                  }
-               }
-            }
-         }
-      }
-   };
+   @Override
+   public void updateDownloadProgress(int progress,
+                                      long downloadedSize, long totalSize){
+      mAudioStatusBar.switchMode(
+              AudioStatusBar.DOWNLOADING_MODE);
+      mAudioStatusBar.setProgress(progress);
+   }
+
+   @Override
+   public void updateProcessingProgress(int progress,
+                                        int processFiles, int totalFiles){
+      mAudioStatusBar.setProgressText(
+              getString(R.string.extracting_title), false);
+      mAudioStatusBar.setProgress(-1);
+   }
+
+   @Override
+   public void handleDownloadTemporaryError(int errorId){
+      mAudioStatusBar.setProgressText(getString(errorId), false);
+   }
+
+   @Override
+   public void handleDownloadSuccess(){
+      playAudioRequest(mLastAudioDownloadRequest);
+   }
+
+   @Override
+   public void handleDownloadFailure(int errId){
+      String s = getString(errId);
+      mAudioStatusBar.setProgressText(s, true);
+   }
 
    public void toggleActionBar(){
       if (mIsActionBarHidden){

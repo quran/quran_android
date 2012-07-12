@@ -25,14 +25,15 @@ public class ServiceIntentHelper {
       return intent;
    }
 
-   public static int getErrorResourceFromDownloadIntent(Intent intent){
-      return getErrorResourceFromDownloadIntent(intent, false);
-   }
-
    public static int getErrorResourceFromDownloadIntent(Intent intent,
-                                                   boolean willRetry){
+                                                        boolean willRetry){
       int errorCode = intent.getIntExtra(
               QuranDownloadService.ProgressIntent.ERROR_CODE, 0);
+      return getErrorResourceFromErrorCode(errorCode, willRetry);
+   }
+
+   public static int getErrorResourceFromErrorCode(int errorCode,
+                                                   boolean willRetry){
       int errorId = 0;
 
       switch (errorCode){

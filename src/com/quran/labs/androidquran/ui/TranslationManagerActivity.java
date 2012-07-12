@@ -18,6 +18,7 @@ import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import org.json.JSONArray;
@@ -32,7 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TranslationManagerActivity extends SherlockActivity {
+public class TranslationManagerActivity extends SherlockActivity
+        implements DefaultDownloadReceiver.SimpleDownloadListener {
    public static final String TAG = "TranslationManager";
    public static final String TRANSLATION_DOWNLOAD_KEY =
            "TRANSLATION_DOWNLOAD_KEY";
@@ -51,6 +53,8 @@ public class TranslationManagerActivity extends SherlockActivity {
 
    private String mActiveTranslation;
    private int mDownloadedTranslations;
+
+   private DefaultDownloadReceiver mDownloadReceiver = null;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -71,64 +75,24 @@ public class TranslationManagerActivity extends SherlockActivity {
    }
 
    @Override
-   public void onResume(){
-      LocalBroadcastManager.getInstance(this).registerReceiver(
-              mDownloadReceiver, new IntentFilter(
-              QuranDownloadService.ProgressIntent.INTENT_NAME));
-      super.onResume();
-   }
-
-   @Override
    public void onPause(){
-      LocalBroadcastManager.getInstance(this)
+      if (mDownloadReceiver != null){
+         mDownloadReceiver.setListener(null);
+         LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mDownloadReceiver);
+         mDownloadReceiver = null;
+      }
       super.onPause();
    }
 
-   BroadcastReceiver mDownloadReceiver = new BroadcastReceiver(){
-      @Override
-      public void onReceive(Context context, Intent intent){
-         if (intent == null){ return; }
-         int type = intent.getIntExtra(
-                 QuranDownloadService.ProgressIntent.DOWNLOAD_TYPE,
-                 QuranDownloadService.DOWNLOAD_TYPE_UNDEF);
-         String state = intent.getStringExtra(
-                 QuranDownloadService.ProgressIntent.STATE);
+   @Override
+   public void handleDownloadSuccess(){
+      generateListItems();
+   }
 
-         if (QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION != type
-                 || state == null){
-            return;
-         }
-
-         if (QuranDownloadService.STATE_SUCCESS.equals(state)){
-            generateListItems();
-            if (mProgressDialog != null){
-               mProgressDialog.dismiss();
-               mProgressDialog = null;
-            }
-         }
-         else if (QuranDownloadService.STATE_ERROR.equals(state)){
-            if (mProgressDialog != null){
-               mProgressDialog.dismiss();
-               mProgressDialog = null;
-            }
-            // TODO show what the error was
-         }
-         else if (QuranDownloadService.STATE_DOWNLOADING.equals(state)){
-            int progress = intent.getIntExtra(
-                    QuranDownloadService.ProgressIntent.PROGRESS, -1);
-            if (mProgressDialog == null){ makeProgressDialog(); }
-            if (mProgressDialog != null){
-               if (progress >= 0){
-                  mProgressDialog.setProgress(progress);
-                  mProgressDialog.setMax(100);
-                  mProgressDialog.setIndeterminate(false);
-               }
-               // TODO show amount and total
-            }
-         }
-      }
-   };
+   @Override
+   public void handleDownloadFailure(int errId){
+   }
 
    private class LoadTranslationsTask extends
            AsyncTask<Void, Void, List<TranslationItem>> {
@@ -250,6 +214,15 @@ public class TranslationManagerActivity extends SherlockActivity {
       TranslationItem selectedItem =
               (TranslationItem)mAdapter.getItem(pos);
 
+      if (mDownloadReceiver == null){
+         mDownloadReceiver = new DefaultDownloadReceiver(this,
+                 QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
+         LocalBroadcastManager.getInstance(this).registerReceiver(
+                 mDownloadReceiver, new IntentFilter(
+                 QuranDownloadService.ProgressIntent.INTENT_NAME));
+      }
+      mDownloadReceiver.setListener(this);
+
       // actually start the download
       String url = selectedItem.url;
       String destination = QuranFileUtils.getQuranDatabaseDirectory();
@@ -262,8 +235,6 @@ public class TranslationManagerActivity extends SherlockActivity {
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
               selectedItem.filename);
       startService(intent);
-
-      makeProgressDialog();
    }
 
    private void removeItem(int pos){
@@ -320,15 +291,6 @@ public class TranslationManagerActivity extends SherlockActivity {
               selectedItem.filename).commit();
       mActiveTranslation = selectedItem.filename;
       generateListItems();
-   }
-
-   private void makeProgressDialog(){
-      if (mProgressDialog == null){
-         mProgressDialog = new ProgressDialog(this);
-         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-         mProgressDialog.setIndeterminate(true);
-         mProgressDialog.show();
-      }
    }
 
    private class TranslationsAdapter extends BaseAdapter {

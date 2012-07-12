@@ -39,7 +39,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class SearchActivity extends SherlockActivity
-        implements DefaultDownloadReceiver.DownloadListener {
+        implements DefaultDownloadReceiver.SimpleDownloadListener {
 
    public static final String SEARCH_INFO_DOWNLOAD_KEY =
            "SEARCH_INFO_DOWNLOAD_KEY";
@@ -90,8 +90,8 @@ public class SearchActivity extends SherlockActivity
 
 	private void downloadArabicSearchDb(){
       if (mDownloadReceiver == null){
-         mDownloadReceiver = new DefaultDownloadReceiver(
-              QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
+         mDownloadReceiver = new DefaultDownloadReceiver(this,
+              QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
          LocalBroadcastManager.getInstance(this).registerReceiver(
               mDownloadReceiver, new IntentFilter(
               QuranDownloadService.ProgressIntent.INTENT_NAME));
@@ -104,62 +104,21 @@ public class SearchActivity extends SherlockActivity
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
               QuranFileUtils.getQuranDatabaseDirectory(), notificationTitle,
               SEARCH_INFO_DOWNLOAD_KEY,
-              QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
+              QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
               QuranDataProvider.QURAN_ARABIC_DATABASE);
       startService(intent);
 	}
 
-   private void makeAndShowProgressDialog(){
-      mProgressDialog = new ProgressDialog(this);
-      mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-      mProgressDialog.show();
-   }
-
-   @Override
-   public void updateDownloadProgress(int progress,
-                                      long downloadedSize, long totalSize){
-      if (mProgressDialog == null){ makeAndShowProgressDialog(); }
-      if (mProgressDialog != null){
-         boolean indeterminate = true;
-         if (progress >= 0){
-            mProgressDialog.setProgress(progress);
-            mProgressDialog.setMax(100);
-            indeterminate = false;
-         }
-         mProgressDialog.setMessage(getString(R.string.downloading_title));
-         mProgressDialog.setIndeterminate(indeterminate);
-      }
-   }
-
-   @Override
-   public void updateProcessingProgress(int progress,
-                                        int processFiles, int totalFiles){
-      // quran search database is not currently a zip file...
-   }
-
-   @Override
-   public void handleDownloadError(int errorId, boolean willRetry){
-      if (!willRetry && mProgressDialog != null){
-         mProgressDialog.dismiss();
-         mProgressDialog = null;
-      }
-      else if (willRetry) {
-         mProgressDialog.setMessage(getString(errorId));
-         mProgressDialog.setIndeterminate(true);
-      }
-   }
-
    @Override
    public void handleDownloadSuccess(){
-      if (mProgressDialog != null){
-         mProgressDialog.dismiss();
-         mProgressDialog = null;
-      }
-
       mWarningView.setVisibility(View.GONE);
       mBtnGetTranslations.setVisibility(View.GONE);
       handleIntent(getIntent());
+   }
+
+   @Override
+   public void handleDownloadFailure(int errId){
    }
 
 	@Override
