@@ -1,14 +1,17 @@
 package com.quran.labs.androidquran;
 
 import android.app.AlertDialog;
-import android.content.*;
-import android.net.ConnectivityManager;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Display;
 import android.view.WindowManager;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.ApplicationConstants;

@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-import com.actionbarsherlock.app.SherlockFragment;
 
 public class ImageCacheFragment extends Fragment {
    private static final String TAG = "ImageCacheFragment";

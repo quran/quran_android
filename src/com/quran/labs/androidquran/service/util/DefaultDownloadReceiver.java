@@ -1,16 +1,16 @@
 package com.quran.labs.androidquran.service.util;
 
-import android.app.Activity;
+import java.text.DecimalFormat;
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.service.QuranDownloadService;
-
-import java.text.DecimalFormat;
 
 public class DefaultDownloadReceiver extends BroadcastReceiver {
    private int mDownloadType = -1;

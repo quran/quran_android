@@ -1,6 +1,12 @@
 package com.quran.labs.androidquran.service;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
@@ -42,7 +48,6 @@ import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.service.util.AudioRequest;
 
 public class QuranDownloadService extends Service {
 
