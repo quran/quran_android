@@ -18,6 +18,7 @@ public class DatabaseHandler {
 	public static String COL_AYAH = "ayah";
 	public static String COL_TEXT = "text";
 	public static String VERSE_TABLE = "verses";
+	public static String ARABIC_TEXT_TABLE = "arabic_text";
 	public static String AR_SEARCH_TABLE = "search";
 	public static String TRANSLITERATION_TABLE = "transliteration";
 	

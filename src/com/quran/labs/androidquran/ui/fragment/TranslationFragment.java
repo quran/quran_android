@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.PaintDrawable;
@@ -11,18 +14,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.widgets.TranslationView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TranslationFragment extends SherlockFragment {
    private static final String TAG = "TranslationPageFragment";
@@ -108,26 +110,34 @@ public class TranslationFragment extends SherlockFragment {
          List<QuranAyah> verses = new ArrayList<QuranAyah>();
 
          try {
-            DatabaseHandler handler = new DatabaseHandler(databaseName);
-            Cursor cursor =
-                    handler.getVerses(bounds[0], bounds[1], bounds[2],
+            DatabaseHandler translationHandler = new DatabaseHandler(databaseName);
+            DatabaseHandler ayahHandler = new DatabaseHandler(QuranDataProvider.QURAN_ARABIC_DATABASE);
+            Cursor translationCursor =
+                    translationHandler.getVerses(bounds[0], bounds[1], bounds[2],
                             bounds[3], DatabaseHandler.VERSE_TABLE);
+            
+            Cursor ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1], bounds[2],
+                    bounds[3], DatabaseHandler.ARABIC_TEXT_TABLE);
 
-            if (cursor != null) {
-               if (cursor.moveToFirst()) {
+            if (translationCursor != null && ayahCursor != null) {
+               if (translationCursor.moveToFirst() && ayahCursor.moveToFirst()) {
                   do {
-                     int sura = cursor.getInt(0);
-                     int ayah = cursor.getInt(1);
-                     String text = cursor.getString(2);
+                     int sura = translationCursor.getInt(0);
+                     int ayah = translationCursor.getInt(1);
+                     String translation = translationCursor.getString(2);
+                     String text = ayahCursor.getString(2);
                      QuranAyah verse = new QuranAyah(sura, ayah);
                      verse.setText(text);
+                     verse.setTranslation(translation);
                      verses.add(verse);
                   }
-                  while (cursor.moveToNext());
+                  while (translationCursor.moveToNext() && ayahCursor.moveToNext());
                }
-               cursor.close();
+               translationCursor.close();
+               ayahCursor.close();
             }
-            handler.closeDatabase();
+            translationHandler.closeDatabase();
+            ayahHandler.closeDatabase();
          }
          catch (Exception e){
             Log.d(TAG, "unable to open " + databaseName + " - " + e);
