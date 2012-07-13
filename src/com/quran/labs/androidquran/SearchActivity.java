@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.*;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;

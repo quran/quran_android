@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran;
 
+import java.util.Locale;
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -7,10 +9,8 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-import java.util.Locale;
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
 public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 	

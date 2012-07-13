@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranInfo {

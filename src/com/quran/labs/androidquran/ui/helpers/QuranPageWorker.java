@@ -10,9 +10,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
+
 import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 public class QuranPageWorker {
    private static final String TAG = "QuranPageWorker";

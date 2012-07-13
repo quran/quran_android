@@ -3,10 +3,6 @@ package com.quran.labs.androidquran.database;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-
-import java.io.File;
 
 public class SuraTimingDatabaseHandler {
    private SQLiteDatabase mDatabase = null;
