@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Bitmap;
@@ -15,14 +16,15 @@ import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
 
 public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;
@@ -153,7 +155,9 @@ public class HighlightingImageView extends ImageView {
    }
 
 	public void adjustNightMode() {
-		if (QuranSettings.getInstance().isNightMode() && !colorFilterOn) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		boolean nightMode = prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
+		if (nightMode && !colorFilterOn) {
 			setBackgroundColor(Color.BLACK);
 			float[] matrix = { 
 				-1, 0, 0, 0, 255,
@@ -163,7 +167,7 @@ public class HighlightingImageView extends ImageView {
 			};
 			setColorFilter(new ColorMatrixColorFilter(matrix));
 			colorFilterOn = true;
-		} else if (!QuranSettings.getInstance().isNightMode() && colorFilterOn) {
+		} else if (!nightMode && colorFilterOn) {
 			clearColorFilter();
 			setBackgroundColor(getResources().getColor(R.color.page_background));
 			colorFilterOn = false;

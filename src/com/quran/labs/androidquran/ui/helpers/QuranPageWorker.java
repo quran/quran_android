@@ -4,18 +4,14 @@ import java.lang.ref.WeakReference;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 public class QuranPageWorker {
    private static final String TAG = "QuranPageWorker";
@@ -61,7 +57,7 @@ public class QuranPageWorker {
    public void loadPage(int pageNumber, ImageView imageView) {
       final Bitmap bitmap = getBitmapFromCache(pageNumber);
       if (bitmap != null){
-         setImageBitmap(imageView, bitmap);
+         imageView.setImageBitmap(bitmap);
       }
       else {
          // TODO: restrict so only three of these are running at a time
@@ -95,21 +91,10 @@ public class QuranPageWorker {
          if (imageViewReference != null && bitmap != null) {
             final ImageView imageView = imageViewReference.get();
             if (imageView != null) {
-               setImageBitmap(imageView, bitmap);
+               imageView.setImageBitmap(bitmap);
             }
             else { Log.w(TAG, "failed to set bitmap in imageview"); }
          }
       }
-   }
-   
-   private void setImageBitmap(ImageView imageView, Bitmap bitmap) {
-	   SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(imageView.getContext());
-	   boolean nightMode = prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
-	   imageView.setImageBitmap(bitmap);
-	   // ImageView is an instance of HighlightingImageView
-	   if (nightMode) {
-		   HighlightingImageView hiv = (HighlightingImageView) imageView;
-		   hiv.adjustNightMode();
-	   }
    }
 }
