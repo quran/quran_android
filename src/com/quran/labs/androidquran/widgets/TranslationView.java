@@ -2,9 +2,13 @@ package com.quran.labs.androidquran.widgets;
 
 import java.util.List;
 
+import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
@@ -14,6 +18,7 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 
 public class TranslationView extends LinearLayout {
@@ -95,8 +100,15 @@ public class TranslationView extends LinearLayout {
    }
 
    private void addTextForSura(SpannableStringBuilder stringBuilder){
+      boolean nightMode = PreferenceManager.getDefaultSharedPreferences(mContext).
+    		  getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
+      
       TextView translationText = new TextView(mContext);
       translationText.setTextAppearance(mContext, R.style.translation_text);
+      if (nightMode) {
+    	 translationText.setTextColor(Color.WHITE);
+    	 setBackgroundColor(Color.BLACK);
+      }
       translationText.setText(stringBuilder);
       LinearLayout.LayoutParams params = new LayoutParams(
               LayoutParams.MATCH_PARENT,
@@ -108,6 +120,7 @@ public class TranslationView extends LinearLayout {
 
    private void addSuraHeader(int currentSura){
       View view = new View(mContext);
+      
       view.setBackgroundColor(getResources().getColor(R.color.translation_sura_header));
       LinearLayout.LayoutParams params = new LayoutParams(
               LayoutParams.MATCH_PARENT, 2);
