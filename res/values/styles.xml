@@ -21,4 +21,8 @@
 
     <style name="QuranAndroid" parent="Theme.Sherlock.ForceOverflow">
     </style>
+    <style name="translation_night_mode">
+        <item name="android:background">@android:color/black</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 </resources>

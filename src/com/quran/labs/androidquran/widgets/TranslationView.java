@@ -2,9 +2,7 @@ package com.quran.labs.androidquran.widgets;
 
 import java.util.List;
 
-import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -27,6 +25,8 @@ public class TranslationView extends LinearLayout {
    private int mDividerColor;
    private int mLeftRightMargin;
    private int mTopBottomMargin;
+   private int mTextStyle;
+   private int mFontSize;
 
    public TranslationView(Context context){
       super(context);
@@ -53,6 +53,15 @@ public class TranslationView extends LinearLayout {
               R.dimen.translation_left_right_margin);
       mTopBottomMargin = resources.getDimensionPixelSize(
               R.dimen.translation_top_bottom_margin);
+      
+      boolean nightMode = PreferenceManager.getDefaultSharedPreferences(mContext).
+    		  getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
+      mTextStyle = nightMode ? R.style.translation_night_mode : R.style.translation_text;
+      mFontSize = PreferenceManager.getDefaultSharedPreferences(mContext).
+    		  getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, 
+    				  ApplicationConstants.DEFAULT_TEXT_SIZE);
+      if (nightMode)
+    	  setBackgroundColor(Color.BLACK);
    }
 
    public void setAyahs(List<QuranAyah> ayat){
@@ -100,16 +109,10 @@ public class TranslationView extends LinearLayout {
    }
 
    private void addTextForSura(SpannableStringBuilder stringBuilder){
-      boolean nightMode = PreferenceManager.getDefaultSharedPreferences(mContext).
-    		  getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
-      
       TextView translationText = new TextView(mContext);
-      translationText.setTextAppearance(mContext, R.style.translation_text);
-      if (nightMode) {
-    	 translationText.setTextColor(Color.WHITE);
-    	 setBackgroundColor(Color.BLACK);
-      }
+      translationText.setTextAppearance(mContext, mTextStyle);
       translationText.setText(stringBuilder);
+      translationText.setTextSize(mFontSize);
       LinearLayout.LayoutParams params = new LayoutParams(
               LayoutParams.MATCH_PARENT,
               LayoutParams.WRAP_CONTENT);
