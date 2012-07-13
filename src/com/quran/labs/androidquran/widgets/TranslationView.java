@@ -1,21 +1,20 @@
 package com.quran.labs.androidquran.widgets;
 
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TranslationView extends LinearLayout {
 
@@ -72,12 +71,22 @@ public class TranslationView extends LinearLayout {
          if (!isFirst){ ayatInSura.append("\n\n"); }
          isFirst = false;
          int start = ayatInSura.length();
+         // Ayah Header
          ayatInSura.append(ayah.getSura() + ":" + ayah.getAyah());
          int end = ayatInSura.length();
          ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
          ayatInSura.append("\n");
-         start = end+2;
+         start = end+1;
+         
+         // Ayah Text
          ayatInSura.append(ayah.getText());
+         end = ayatInSura.length();
+         ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
+         ayatInSura.append("\n");
+         start = end+1;
+         
+         // Translation
+         ayatInSura.append(ayah.getTranslation());
          end = ayatInSura.length();
       }
       if (ayatInSura.length() > 0){
@@ -98,10 +107,8 @@ public class TranslationView extends LinearLayout {
    }
 
    private void addSuraHeader(int currentSura){
-      boolean firstItem = getChildCount() == 0;
-
       View view = new View(mContext);
-      view.setBackgroundColor(0xff649ab8);
+      view.setBackgroundColor(getResources().getColor(R.color.translation_sura_header));
       LinearLayout.LayoutParams params = new LayoutParams(
               LayoutParams.MATCH_PARENT, 2);
       params.topMargin = mTopBottomMargin;
