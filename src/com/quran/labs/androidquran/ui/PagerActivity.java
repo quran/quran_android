@@ -1,15 +1,6 @@
 package com.quran.labs.androidquran.ui;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -23,10 +14,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -53,6 +44,9 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
+import java.io.File;
+import java.io.Serializable;
+
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
         DefaultDownloadReceiver.DownloadListener {
@@ -75,7 +69,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private ViewPager mViewPager = null;
    private QuranPageAdapter mPagerAdapter = null;
    private boolean mShouldReconnect = false;
-   private Map<Integer, Boolean> mBookmarksCache = null;
+   private SparseArray<Boolean> mBookmarksCache = null;
    private DownloadAudioRequest mLastAudioDownloadRequest = null;
    private boolean mShowingTranslation = false;
    private int mHighlightedSura = -1;
@@ -89,7 +83,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
       super.onCreate(savedInstanceState);
-      mBookmarksCache = new HashMap<Integer, Boolean>();
+      mBookmarksCache = new SparseArray<Boolean>();
 
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
@@ -173,7 +167,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
             }
             updateActionBarTitle(page);
 
-            if (!mBookmarksCache.containsKey(page)){
+            if (mBookmarksCache.get(page) == null){
+               // we don't have the key
                new IsPageBookmarkedTask().execute(page);
             }
          }
@@ -275,7 +270,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       if (item != null){
          int page = 604 - mViewPager.getCurrentItem();
          boolean bookmarked = false;
-         if (mBookmarksCache.containsKey(page)){
+         if (mBookmarksCache.get(page) != null){
             bookmarked = mBookmarksCache.get(page);
          }
          if (bookmarked){ item.setIcon(R.drawable.favorite); }

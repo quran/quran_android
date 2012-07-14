@@ -3,9 +3,11 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.*;
@@ -17,6 +19,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.AyahItem;
+import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
@@ -70,15 +73,24 @@ public class QuranPageFragment extends SherlockFragment {
       view.setBackgroundDrawable((mPageNumber % 2 == 0?
               mLeftGradient : mRightGradient));
 
+      int leftBorderImageId = R.drawable.border_left;
+      int rightBorderImageId = R.drawable.border_right;
+      SharedPreferences prefs = PreferenceManager
+              .getDefaultSharedPreferences(getActivity());
+      if (prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false)){
+         leftBorderImageId = R.drawable.night_left_border;
+         rightBorderImageId = R.drawable.night_right_border;
+      }
+
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
       ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
       if (mPageNumber % 2 == 0){
          rightBorder.setVisibility(View.GONE);
-         leftBorder.setBackgroundResource(R.drawable.border_left);
+         leftBorder.setBackgroundResource(leftBorderImageId);
       }
       else {
          rightBorder.setVisibility(View.VISIBLE);
-         rightBorder.setBackgroundResource(R.drawable.border_right);
+         rightBorder.setBackgroundResource(rightBorderImageId);
          leftBorder.setBackgroundResource(R.drawable.dark_line);
       }
 

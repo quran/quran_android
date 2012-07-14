@@ -62,15 +62,25 @@ public class TranslationFragment extends SherlockFragment {
       view.setBackgroundDrawable((mPageNumber % 2 == 0?
               mLeftGradient : mRightGradient));
 
+      SharedPreferences prefs = PreferenceManager
+              .getDefaultSharedPreferences(getActivity());
+
+      int leftBorderImageId = R.drawable.border_left;
+      int rightBorderImageId = R.drawable.border_right;
+      if (prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false)){
+         leftBorderImageId = R.drawable.night_left_border;
+         rightBorderImageId = R.drawable.night_right_border;
+      }
+
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
       ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
       if (mPageNumber % 2 == 0){
          rightBorder.setVisibility(View.GONE);
-         leftBorder.setBackgroundResource(R.drawable.border_left);
+         leftBorder.setBackgroundResource(leftBorderImageId);
       }
       else {
          rightBorder.setVisibility(View.VISIBLE);
-         rightBorder.setBackgroundResource(R.drawable.border_right);
+         rightBorder.setBackgroundResource(rightBorderImageId);
          leftBorder.setBackgroundResource(R.drawable.dark_line);
       }
 
@@ -83,8 +93,6 @@ public class TranslationFragment extends SherlockFragment {
          }
       });
 
-      SharedPreferences prefs = PreferenceManager
-              .getDefaultSharedPreferences(getActivity());
       String database = prefs.getString(
               ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
       if (database != null){
@@ -109,35 +117,57 @@ public class TranslationFragment extends SherlockFragment {
          String databaseName = mDatabaseName;
          List<QuranAyah> verses = new ArrayList<QuranAyah>();
 
+         boolean wantArabic = true;
          try {
-            DatabaseHandler translationHandler = new DatabaseHandler(databaseName);
-            DatabaseHandler ayahHandler = new DatabaseHandler(QuranDataProvider.QURAN_ARABIC_DATABASE);
+            DatabaseHandler translationHandler =
+                    new DatabaseHandler(databaseName);
             Cursor translationCursor =
-                    translationHandler.getVerses(bounds[0], bounds[1], bounds[2],
-                            bounds[3], DatabaseHandler.VERSE_TABLE);
-            
-            Cursor ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1], bounds[2],
-                    bounds[3], DatabaseHandler.ARABIC_TEXT_TABLE);
+                    translationHandler.getVerses(bounds[0], bounds[1],
+                            bounds[2], bounds[3],
+                            DatabaseHandler.VERSE_TABLE);
 
-            if (translationCursor != null && ayahCursor != null) {
-               if (translationCursor.moveToFirst() && ayahCursor.moveToFirst()) {
+            DatabaseHandler ayahHandler = null;
+            Cursor ayahCursor = null;
+
+            if (wantArabic){
+               ayahHandler = new DatabaseHandler(
+                       QuranDataProvider.QURAN_ARABIC_DATABASE);
+               ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
+                       bounds[2], bounds[3],
+                       DatabaseHandler.ARABIC_TEXT_TABLE);
+            }
+
+            if (translationCursor != null) {
+               boolean validAyahCursor = false;
+               if (ayahCursor != null && ayahCursor.moveToFirst()){
+                  validAyahCursor = true;
+               }
+
+               if (translationCursor.moveToFirst()) {
                   do {
                      int sura = translationCursor.getInt(0);
                      int ayah = translationCursor.getInt(1);
                      String translation = translationCursor.getString(2);
-                     String text = ayahCursor.getString(2);
                      QuranAyah verse = new QuranAyah(sura, ayah);
-                     verse.setText(text);
                      verse.setTranslation(translation);
+                     if (validAyahCursor){
+                        String text = ayahCursor.getString(2);
+                        verse.setText(text);
+                     }
                      verses.add(verse);
                   }
-                  while (translationCursor.moveToNext() && ayahCursor.moveToNext());
+                  while (translationCursor.moveToNext() &&
+                          (!validAyahCursor || ayahCursor.moveToNext()));
                }
                translationCursor.close();
-               ayahCursor.close();
+               if (ayahCursor != null){
+                  ayahCursor.close();
+               }
             }
             translationHandler.closeDatabase();
-            ayahHandler.closeDatabase();
+            if (ayahHandler != null){
+               ayahHandler.closeDatabase();
+            }
          }
          catch (Exception e){
             Log.d(TAG, "unable to open " + databaseName + " - " + e);

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.view.View;
@@ -28,6 +29,8 @@ public class TranslationView extends LinearLayout {
    private int mTopBottomMargin;
    private int mTextStyle;
    private int mFontSize;
+   private int mHeaderColor;
+   private int mHeaderStyle;
 
    public TranslationView(Context context){
       super(context);
@@ -54,6 +57,7 @@ public class TranslationView extends LinearLayout {
               R.dimen.translation_left_right_margin);
       mTopBottomMargin = resources.getDimensionPixelSize(
               R.dimen.translation_top_bottom_margin);
+      mHeaderColor = resources.getColor(R.color.translation_sura_header);
 
       SharedPreferences prefs = PreferenceManager
               .getDefaultSharedPreferences(mContext);
@@ -61,10 +65,10 @@ public class TranslationView extends LinearLayout {
               ApplicationConstants.PREF_NIGHT_MODE, false);
       mTextStyle = nightMode ? R.style.translation_night_mode :
               R.style.translation_text;
+      mHeaderStyle = R.style.translation_sura_title;
       mFontSize = prefs.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE,
     				  ApplicationConstants.DEFAULT_TEXT_SIZE);
-      if (nightMode)
-    	  setBackgroundColor(Color.BLACK);
+      if (nightMode){ setBackgroundColor(Color.BLACK); }
    }
 
    public void setAyahs(List<QuranAyah> ayat){
@@ -94,13 +98,16 @@ public class TranslationView extends LinearLayout {
          ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
          ayatInSura.append("\n");
          start = end+1;
-         
-         // Ayah Text
-         ayatInSura.append(ayah.getText());
-         end = ayatInSura.length();
-         ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
-         ayatInSura.append("\n");
-         start = end+1;
+
+         String ayahText = ayah.getText();
+         if (!TextUtils.isEmpty(ayahText)){
+            // Ayah Text
+            ayatInSura.append(ayahText);
+            end = ayatInSura.length();
+            ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
+            ayatInSura.append("\n");
+            start = end+1;
+         }
          
          // Translation
          ayatInSura.append(ayah.getTranslation());
@@ -127,7 +134,7 @@ public class TranslationView extends LinearLayout {
    private void addSuraHeader(int currentSura){
       View view = new View(mContext);
       
-      view.setBackgroundColor(getResources().getColor(R.color.translation_sura_header));
+      view.setBackgroundColor(mHeaderColor);
       LinearLayout.LayoutParams params = new LayoutParams(
               LayoutParams.MATCH_PARENT, 2);
       params.topMargin = mTopBottomMargin;
@@ -141,7 +148,7 @@ public class TranslationView extends LinearLayout {
       params.topMargin = mTopBottomMargin / 2;
       params.bottomMargin = mTopBottomMargin / 2;
       headerView.setText(suraName);
-      headerView.setTextAppearance(mContext, R.style.translation_sura_title);
+      headerView.setTextAppearance(mContext, mHeaderStyle);
       addView(headerView, params);
 
       view = new View(mContext);
