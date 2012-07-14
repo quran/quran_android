@@ -12,7 +12,7 @@
         android:layout_height="48dp"
         android:scaleType="center" />
     <LinearLayout android:id="@+id/translation_area"
-                  android:layout_width="wrap_content"
+                  android:layout_width="0dp"
                   android:layout_height="48dp"
                   android:layout_weight="1"
                   android:orientation="vertical"
