@@ -1,16 +1,17 @@
 package com.quran.labs.androidquran.util;
 
+import java.io.File;
+
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
-
-import java.io.File;
 
 public class AudioUtils {
    private static final String TAG = "AudioUtils";

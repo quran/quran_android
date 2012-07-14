@@ -1,23 +1,29 @@
 package com.quran.labs.androidquran.widgets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.widget.ImageView;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;

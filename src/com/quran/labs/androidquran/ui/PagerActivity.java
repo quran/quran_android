@@ -1,6 +1,13 @@
 package com.quran.labs.androidquran.ui;
 
-import android.content.*;
+import java.io.File;
+import java.io.Serializable;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -18,6 +25,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -43,9 +51,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
-
-import java.io.File;
-import java.io.Serializable;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,

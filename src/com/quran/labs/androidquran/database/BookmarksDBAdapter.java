@@ -3,17 +3,17 @@ package com.quran.labs.androidquran.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahTagMapTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.PageTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahTagMapTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.PageTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
 
 public class BookmarksDBAdapter {
 

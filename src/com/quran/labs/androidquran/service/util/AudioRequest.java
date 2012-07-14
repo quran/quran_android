@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.service.util;
 import java.io.Serializable;
 
 import android.util.Log;
+
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 

@@ -5,12 +5,12 @@
  */
 package com.quran.labs.androidquran.service.util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import android.content.ComponentName;
 import android.media.AudioManager;
 import android.util.Log;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Class that assists with handling new media button APIs available in API level 8.

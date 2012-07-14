@@ -3,11 +3,10 @@ package com.quran.labs.androidquran.ui.helpers;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
-import com.quran.labs.androidquran.ui.helpers.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
+import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
    private static String TAG = "QuranPageAdapter";
