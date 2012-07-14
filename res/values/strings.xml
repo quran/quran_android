@@ -201,7 +201,7 @@
     <string name="index_loading">Loading…</string>
 
     <string name="canceling">Canceling&#8230;</string>
-    <string name="page_description">page %1$d, Juz\' %1$d</string>
+    <string name="page_description">page %1$d, Juz\' %2$d</string>
     <string name="highlighting_database">Quran Highlighting Info</string>
     <string name="timing_database">Audio Timing Info</string>
     
@@ -227,6 +227,14 @@
     <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
     <string name="error_getting_translation_list">Unable to download the list of translations.  Please try again later.</string>
     <string name="search_data">Search Data</string>
+
+    <string name="search_key">Press the search key to look up a verse</string>
+
+    <!-- about us -->
+    <string name="email_quran_android">Email Quran Android</string>
+
+    <!-- help -->
+    <string name="back">Back</string>
 
     <string-array name="quarter_prefix_array">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>

@@ -19,6 +19,6 @@
 	<Button android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 		android:id="@+id/btnHelpBack"
-        android:text="Back"
+        android:text="@string/back"
 		android:visibility="visible" />
 </LinearLayout>

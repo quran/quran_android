@@ -30,19 +30,28 @@ public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;
 	private boolean colorFilterOn = false;
 	private String highightedAyah = null;
+   private Bitmap mHighlightBitmap = null;
 	
 	public HighlightingImageView(Context context){
 		super(context);
+      init(context);
 	}
 	
 	public HighlightingImageView(Context context, AttributeSet attrs){
 		super(context, attrs);
+      init(context);
 	}
 	
 	public HighlightingImageView(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
+      init(context);
 	}
+
+   public void init(Context context){
+      mHighlightBitmap = BitmapFactory.decodeResource(
+              getResources(), R.drawable.highlight);
+   }
 
 	public void unhighlight(){
 		this.currentlyHighlighting = null;
@@ -205,9 +214,6 @@ public class HighlightingImageView extends ImageView {
 		if (this.currentlyHighlighting != null){
 			Drawable page = this.getDrawable();
 			if (page != null){
-				Bitmap bm = BitmapFactory.decodeResource(
-						getResources(), R.drawable.highlight);
-				
 				PageScalingData scalingData = new PageScalingData(page);
 
 				for (AyahBounds b : currentlyHighlighting){
@@ -215,7 +221,7 @@ public class HighlightingImageView extends ImageView {
 							b.getMinY() * scalingData.heightFactor, b.getMaxX() * scalingData.widthFactor,
 							b.getMaxY() * scalingData.heightFactor);
 					scaled.offset(scalingData.offsetX, scalingData.offsetY);
-					canvas.drawBitmap(bm, null, scaled, null);
+					canvas.drawBitmap(mHighlightBitmap, null, scaled, null);
 				}
 			}
 		}

@@ -14,7 +14,7 @@
     <TextView android:id="@+id/search_area"
             android:textColor="?android:textColorPrimary"
             android:textSize="17dp"
-            android:text="Press the search key to look up a verse"
+            android:text="@string/search_key"
             android:background="@android:drawable/title_bar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
