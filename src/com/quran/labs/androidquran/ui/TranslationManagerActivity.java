@@ -15,7 +15,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,7 +58,6 @@ public class TranslationManagerActivity extends SherlockActivity
    private ListView mListView;
    private TextView mMessageArea;
    private TranslationsAdapter mAdapter;
-   private ProgressDialog mProgressDialog;
    private SharedPreferences mPrefs;
 
    private String mActiveTranslation;

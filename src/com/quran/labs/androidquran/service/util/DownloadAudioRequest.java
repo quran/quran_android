@@ -4,7 +4,8 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.AudioUtils;
 
 public class DownloadAudioRequest extends AudioRequest {
-
+   private static final long serialVersionUID = 1L;
+   
    private int mQariId = -1;
    private String mLocalDirectoryPath = null;
 
