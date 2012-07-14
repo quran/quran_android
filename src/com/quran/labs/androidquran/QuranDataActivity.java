@@ -15,7 +15,6 @@ import android.view.WindowManager;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.ApplicationConstants;
-import com.quran.labs.androidquran.service.QuranDataService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
@@ -258,7 +257,6 @@ public class QuranDataActivity extends SherlockActivity implements
       int width = d.getWidth();
       int height = d.getHeight();
       QuranScreenInfo.initialize(width, height);
-      QuranDataService.qsi = QuranScreenInfo.getInstance();
    }
 
    protected void runListView(){

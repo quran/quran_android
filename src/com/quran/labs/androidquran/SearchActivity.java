@@ -3,7 +3,6 @@ package com.quran.labs.androidquran;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -52,7 +51,6 @@ public class SearchActivity extends SherlockActivity
 	private boolean mDownloadArabicSearchDb = false;
 	private boolean mIsArabicSearch = false;
    private DefaultDownloadReceiver mDownloadReceiver = null;
-   private ProgressDialog mProgressDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
