@@ -1,30 +1,23 @@
 package com.quran.labs.androidquran.widgets;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.widget.ImageView;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HighlightingImageView extends ImageView {
 	private List<AyahBounds> currentlyHighlighting = null;
@@ -76,8 +69,7 @@ public class HighlightingImageView extends ImageView {
 			AyahInfoDatabaseHandler handler =
 				new AyahInfoDatabaseHandler(filename);
 			Cursor cursor = handler.getVerseBounds(sura, ayah);
-			Map<Integer, AyahBounds> lineCoords =
-				new HashMap<Integer, AyahBounds>();
+         SparseArray<AyahBounds> lineCoords = new SparseArray<AyahBounds>();
 			AyahBounds first = null, last = null, current = null;
 			if ((cursor == null) || (!cursor.moveToFirst()))
 				return;
@@ -86,9 +78,10 @@ public class HighlightingImageView extends ImageView {
 						cursor.getInt(5), cursor.getInt(6), cursor.getInt(7),
 						cursor.getInt(8));
 				if (first == null) first = current;
-				if (!lineCoords.containsKey(current.getLine()))
+				if (lineCoords.get(current.getLine()) == null){
 					lineCoords.put(current.getLine(), current);
-				else lineCoords.get(current.getLine()).engulf(current);
+            }
+				else { lineCoords.get(current.getLine()).engulf(current); }
 			} while (cursor.moveToNext());
 			
 			if ((first != null) && (current != null) &&
@@ -104,7 +97,7 @@ public class HighlightingImageView extends ImageView {
 	}
 	
 	private void doHighlightAyah(AyahBounds first,
-			AyahBounds last, Map<Integer, AyahBounds> lineCoordinates){
+			AyahBounds last, SparseArray<AyahBounds> lineCoordinates){
 		if (first == null) return;
 		ArrayList<AyahBounds> rangesToDraw = new ArrayList<AyahBounds>();
 		if (last == null)

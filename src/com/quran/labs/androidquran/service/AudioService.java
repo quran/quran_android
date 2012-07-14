@@ -20,12 +20,6 @@
 
 package com.quran.labs.androidquran.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -44,13 +38,17 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.*;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.PagerActivity;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Service that handles media playback. This is the Service through which we
@@ -179,8 +177,8 @@ public class AudioService extends Service implements OnCompletionListener,
    private LocalBroadcastManager mBroadcastManager = null;
 
    private int mGaplessSura = 0;
-   private Map<Integer, Integer> mGaplessSuraData = null;
-   private AsyncTask<Integer, Void, Map<Integer, Integer>> mTimingTask = null;
+   private SparseArray<Integer> mGaplessSuraData = null;
+   private AsyncTask<Integer, Void, SparseArray<Integer>> mTimingTask = null;
 
    public static final int MSG_START_AUDIO = 1;
    public static final int MSG_UPDATE_AUDIO_POS = 2;
@@ -312,7 +310,7 @@ public class AudioService extends Service implements OnCompletionListener,
    }
 
    private class ReadGaplessDataTask extends AsyncTask<Integer, Void,
-           Map<Integer, Integer>> {
+           SparseArray<Integer>> {
       private int mSura = 0;
       private String mDatabasePath = null;
 
@@ -321,18 +319,18 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       @Override
-      protected Map<Integer, Integer> doInBackground(Integer... params){
+      protected SparseArray<Integer> doInBackground(Integer... params){
          int sura = params[0];
          mSura = sura;
          SuraTimingDatabaseHandler db =
                  new SuraTimingDatabaseHandler(mDatabasePath);
 
-         Map<Integer, Integer> map = null;
+         SparseArray<Integer> map = null;
          Cursor cursor = db.getAyahTimings(sura);
          Log.d(TAG, "got cursor of data");
 
          if (cursor != null && cursor.moveToFirst()){
-            map = new HashMap<Integer, Integer>();
+            map = new SparseArray<Integer>();
             do {
                int ayah = cursor.getInt(1);
                int time = cursor.getInt(2);
@@ -348,7 +346,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       @Override
-      protected void onPostExecute(Map<Integer, Integer> map){
+      protected void onPostExecute(SparseArray<Integer> map){
          mGaplessSura = mSura;
          mGaplessSuraData = map;
          mTimingTask = null;
@@ -753,10 +751,19 @@ public class AudioService extends Service implements OnCompletionListener,
          return;
       }
 
-      // if gapless, we'll do this later
-      if (!mAudioRequest.isGapless()){
-         notifyAyahChanged();
+      // if gapless and sura changed, get the new data
+      if (mAudioRequest.isGapless()){
+         if (mGaplessSura != mAudioRequest.getCurrentSura()){
+            if (mTimingTask != null){
+               mTimingTask.cancel(true);
+            }
+
+            String dbPath = mAudioRequest.getGaplessDatabaseFilePath();
+            mTimingTask = new ReadGaplessDataTask(dbPath);
+            mTimingTask.execute(mAudioRequest.getCurrentSura());
+         }
       }
+      else { notifyAyahChanged(); }
 
       updateNotification(mAudioTitle + " (playing)");
       configAndStartMediaPlayer();
