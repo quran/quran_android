@@ -8,7 +8,9 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,9 +43,11 @@ import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.AyahItem;
 import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.AyahTag;
+import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -231,7 +235,7 @@ public class QuranPageFragment extends SherlockFragment {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			final CharSequence[] options = { result ? "Unbookmark" : "Bookmark",
-					"Notes", "Tags", "Tafsir", "Ayah ID" };
+					"Notes", "Tags", "Tafsir", "Ayah ID", "Share" };
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(QuranInfo.getAyahString(sura, ayah, getActivity()));
 			builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -248,6 +252,8 @@ public class QuranPageFragment extends SherlockFragment {
 					else if (selection == 4)
 						Toast.makeText(getActivity(), "Ayah "+QuranInfo.getAyahId(
 								sura, ayah), Toast.LENGTH_SHORT).show();
+					else if (selection == 5) 
+						new ShareAyahTask(sura, ayah).execute();
 				}
 			});
 			AlertDialog dlg = builder.create();
@@ -570,6 +576,36 @@ public class QuranPageFragment extends SherlockFragment {
 			   Toast.makeText(activity, result ? "Ayah Bookmarked" :
                     "Ayah Unbookmarked", Toast.LENGTH_SHORT).show();
          }
+		}
+	}
+	
+	class ShareAyahTask extends AsyncTask<Void, Void, String> {
+		private int sura, ayah;
+		
+		public ShareAyahTask(int sura, int ayah) {
+			this.sura = sura;
+			this.ayah = ayah;
+		}
+		
+		@Override
+		protected String doInBackground(Void... params) {
+			DatabaseHandler ayahHandler = new DatabaseHandler(QuranDataProvider.QURAN_ARABIC_DATABASE);
+			Cursor cursor = ayahHandler.getVerses(sura, ayah, sura, ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
+			String text = null;
+			if (cursor.moveToFirst()) {
+				text = cursor.getString(2);
+			}
+			cursor.close();
+			ayahHandler.closeDatabase();
+			return text;
+		}
+		
+		@Override
+		protected void onPostExecute(String ayah) {
+			final Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, ayah);
+			startActivity(Intent.createChooser(intent, "Share"));
 		}
 	}
 }
