@@ -1,5 +1,10 @@
 package com.quran.labs.androidquran.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,13 +12,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Locale;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
-import android.util.Log;
-
-import com.quran.labs.androidquran.common.AyahItem;
 
 public class QuranFileUtils {
 	public static boolean failedToWrite = false;
@@ -120,54 +118,6 @@ public class QuranFileUtils {
 			return true;
 		} else if (directory.mkdirs()) {
 			return true;
-		} else
-			return false;
-	}
-
-	public static boolean makeAudioDirectory(int readerId, int suraId) {
-		String path = getAudioDirectory();
-		if (path == null)
-			return false;
-
-		File directory = new File(path + File.separator + readerId
-				+ File.separator + suraId);
-		if (directory.exists() && directory.isDirectory()) {
-			return true;
-		} else if (directory.mkdirs()) {
-			return true;
-		} else
-			return false;
-	}
-
-	public static boolean getTranslation(String fileUrl, String fileName) {
-		String urlString = fileUrl;
-		InputStream is;
-		try {
-			URL url = new URL(urlString);
-			is = (InputStream) url.getContent();
-		} catch (Exception e) {
-			return false;
-		}
-
-		if (failedToWrite)
-			return false;
-
-		String path = getQuranDatabaseDirectory();
-		if (path != null) {
-			path += File.separator + fileName;
-
-			if (!QuranFileUtils.makeQuranDatabaseDirectory()) {
-				failedToWrite = true;
-				return false;
-			}
-
-			try {
-				saveStream(is, path);
-				return true;
-			} catch (Exception e) {
-				Log.d("quran_utils", e.toString());
-				return false;
-			}
 		} else
 			return false;
 	}
@@ -316,49 +266,6 @@ public class QuranFileUtils {
 			return f.delete();
 		}
 		return false;
-	}
-
-	/* Quran Audio Methods */
-
-	public static String getAyahAudioPath(AyahItem ayahItem) {
-		return getAyahAudioPath(ayahItem.getSoura(), ayahItem.getAyah(), ayahItem.getQuranReaderId());
-
-	}
-
-	public static String getSuraAudioPath(int quranReaderId, int sura){
-		return getAudioDirectory() + File.separator + quranReaderId
-		+ File.separator + sura ;
-	}
-
-	public static String getSuraImagePath(int sura){
-		return getAyahImagesDirectory() + File.separator + sura;
-	}
-
-	public static String getAyahImagePath(AyahItem ayahItem) {
-		return getAyahImagePath(ayahItem.getSoura(), ayahItem
-				.getAyah());
-	}
-
-	public static String getAyahAudioPath(int sura, int ayah, int quranReaderId) {
-		// always get basmala from el fate7a
-		if(ayah == 0){
-			ayah = 1;
-			sura = 1;
-		}
-		return getAudioDirectory() + File.separator + quranReaderId
-				+ File.separator + sura + File.separator + ayah
-				+ QuranAudioLibrary.AUDIO_EXTENSION;
-	}
-
-	public static boolean isBasmallahDownloaded(int quranReaderId) {
-		String path = getAyahAudioPath(1, 1, quranReaderId);
-		File f = new File(path);
-		return f.exists();
-	}
-
-	public static String getAyahImagePath(int sura, int ayah) {
-		return getAyahImagesDirectory() + File.separator + sura
-				+ File.separator + ayah + QuranAudioLibrary.IMAGE_EXTENSION;
 	}
 
 	public static String getAudioDirectory() {
