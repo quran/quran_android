@@ -1,7 +1,13 @@
 package com.quran.labs.androidquran.data;
 
+import java.util.List;
+
 import android.app.SearchManager;
-import android.content.*;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.SharedPreferences;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
@@ -9,12 +15,11 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
-
-import java.util.List;
 
 public class QuranDataProvider extends ContentProvider {
 

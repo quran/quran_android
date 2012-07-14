@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.service.util;
 
 import android.content.Context;
 import android.content.Intent;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
