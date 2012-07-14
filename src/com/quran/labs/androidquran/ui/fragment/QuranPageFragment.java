@@ -602,10 +602,13 @@ public class QuranPageFragment extends SherlockFragment {
 		
 		@Override
 		protected void onPostExecute(String ayah) {
-			final Intent intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT, ayah);
-			startActivity(Intent.createChooser(intent, "Share"));
+			if (ayah != null) {
+				ayah += "\n\nvia @QuranAndroid";
+				final Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, ayah);
+				startActivity(Intent.createChooser(intent, "Share"));
+			}
 		}
 	}
 }
