@@ -53,13 +53,13 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 	}
 
 	@Override
-	protected void onDestroy() {
+	protected void onPause() {
 		if (mIsArabic != mInitiallyIsArabic) {
 			Intent i = new Intent(this,
                  com.quran.labs.androidquran.ui.QuranActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 		}
-		super.onDestroy();
+		super.onPause();
 	}
 }
