@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.widgets;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -53,12 +54,14 @@ public class TranslationView extends LinearLayout {
               R.dimen.translation_left_right_margin);
       mTopBottomMargin = resources.getDimensionPixelSize(
               R.dimen.translation_top_bottom_margin);
-      
-      boolean nightMode = PreferenceManager.getDefaultSharedPreferences(mContext).
-    		  getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
-      mTextStyle = nightMode ? R.style.translation_night_mode : R.style.translation_text;
-      mFontSize = PreferenceManager.getDefaultSharedPreferences(mContext).
-    		  getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE, 
+
+      SharedPreferences prefs = PreferenceManager
+              .getDefaultSharedPreferences(mContext);
+      boolean nightMode = prefs.getBoolean(
+              ApplicationConstants.PREF_NIGHT_MODE, false);
+      mTextStyle = nightMode ? R.style.translation_night_mode :
+              R.style.translation_text;
+      mFontSize = prefs.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE,
     				  ApplicationConstants.DEFAULT_TEXT_SIZE);
       if (nightMode)
     	  setBackgroundColor(Color.BLACK);
