@@ -34,7 +34,8 @@ public class SeekBarPreference extends DialogPreference implements
 
 		mDialogMessage = attrs.getAttributeValue(androidns, "dialogMessage");
 		mSuffix = attrs.getAttributeValue(androidns, "text");
-		mDefault = attrs.getAttributeIntValue(androidns, "defaultValue", ApplicationConstants.DEFAULT_TEXT_SIZE);
+		mDefault = attrs.getAttributeIntValue(androidns, "defaultValue",
+              ApplicationConstants.DEFAULT_TEXT_SIZE);
 		mMax = attrs.getAttributeIntValue(androidns, "max", 100);
 	}
 
@@ -91,9 +92,10 @@ public class SeekBarPreference extends DialogPreference implements
 	public void onProgressChanged(SeekBar seek, int value, boolean fromTouch) {
 		String t = String.valueOf(value);
 		mValueText.setText(mSuffix == null ? t : t.concat(mSuffix));
-		if (shouldPersist())
+		if (shouldPersist()){
 			persistInt(value);
-		callChangeListener(new Integer(value));
+      }
+		callChangeListener(Integer.valueOf(value));
 	}
 
 	public void onStartTrackingTouch(SeekBar seek) {

@@ -3,4 +3,5 @@
     android:id="@+id/splashview"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/splash" />
+    android:scaleType="fitXY"
+    android:src="@drawable/splash" />
