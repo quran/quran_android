@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.ui.fragment;
 import static com.quran.labs.androidquran.data.ApplicationConstants.JUZ2_COUNT;
 import static com.quran.labs.androidquran.data.ApplicationConstants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.ApplicationConstants.SURAS_COUNT;
+
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -75,18 +77,18 @@ public class SuraListFragment extends SherlockFragment {
       int next = 1;
       QuranRow[] elements = new QuranRow[SURAS_COUNT + JUZ2_COUNT];
 
+      Activity activity = getActivity();
       for (int juz=1; juz <= JUZ2_COUNT; juz++){
-         elements[pos++] = new QuranRow(QuranInfo.getJuzTitle() + " " +
+         elements[pos++] = new QuranRow(QuranInfo.getJuzTitle(activity) + " " +
                juz, null, true, juz, QuranInfo.JUZ_PAGE_START[juz-1], null);
          next = (juz == JUZ2_COUNT) ? PAGES_LAST+1 :
             QuranInfo.JUZ_PAGE_START[juz];
          
          while ((sura <= SURAS_COUNT) &&
                 (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
-            String title = QuranInfo.getSuraTitle() 
-                  + " " + QuranInfo.getSuraName(sura-1);
+            String title = QuranInfo.getSuraName(activity, sura, true);
             elements[pos++] = new QuranRow(title, 
-                  QuranInfo.getSuraListMetaString(sura),
+                  QuranInfo.getSuraListMetaString(activity, sura),
                   false, sura, QuranInfo.SURA_PAGE_START[sura-1], null);
             sura++;
          }

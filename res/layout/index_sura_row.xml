@@ -42,7 +42,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/rowIcon"
+        android:layout_toLeftOf="@+id/pageNumber"
+        android:maxLines="1"
+        android:lines="1"
+        android:ellipsize="end"
+        android:scrollHorizontally="true"
         android:paddingTop="5dp"
+        android:paddingRight="16dp"
         android:textSize="16sp"
         android:textColor="@color/sura_info_color" />
     
@@ -55,7 +61,7 @@
         android:textSize="10sp"
         android:textColor="@color/sura_details_color" />
     
-    <TextView android:id="@+id/pageNumber"
+    <TextView android:id="@id/pageNumber"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentRight="true"

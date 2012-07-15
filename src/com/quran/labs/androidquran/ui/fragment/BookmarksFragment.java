@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -112,7 +113,9 @@ public class BookmarksFragment extends SherlockFragment {
       boolean showAyahBookmarkHeader = ayahBookmarks.size() != 0;
       int size = pageBookmarks.size() + ayahBookmarks.size() + (showLastPage? 2 : 0) +
             (showPageBookmarkHeader? 1 : 0) + (showAyahBookmarkHeader? 1 : 0);
-      
+
+      Activity activity = getActivity();
+
       int index = 0;
       QuranRow[] res = new QuranRow[size];
       if (showLastPage){
@@ -120,8 +123,8 @@ public class BookmarksFragment extends SherlockFragment {
                getString(R.string.bookmarks_current_page),
                null, true, 0, 0, null);
          QuranRow currentPosition = new QuranRow(
-               QuranInfo.getSuraNameString(lastPage),
-               QuranInfo.getSuraDetailsForBookmark(lastPage),
+               QuranInfo.getSuraNameString(activity, lastPage),
+               QuranInfo.getPageSubtitle(activity, lastPage),
                false, QuranInfo.PAGE_SURA_START[lastPage-1], lastPage,
                R.drawable.bookmark_currentpage);
          res[index++] = header;
@@ -134,8 +137,8 @@ public class BookmarksFragment extends SherlockFragment {
       }
       for (int page : pageBookmarks){
          res[index++] = new QuranRow(
-               QuranInfo.getSuraNameString(page),
-               QuranInfo.getSuraDetailsForBookmark(page),
+               QuranInfo.getSuraNameString(activity, page),
+               QuranInfo.getPageSubtitle(activity, page),
                false, QuranInfo.PAGE_SURA_START[page-1], page,
                R.drawable.bookmark_page);
       }
@@ -148,7 +151,7 @@ public class BookmarksFragment extends SherlockFragment {
          res[index++] = new QuranRow(
                // TODO Polish up displayed information for Ayahs
                QuranInfo.getAyahString(ayah.sura, ayah.ayah, getActivity()),
-               QuranInfo.getSuraDetailsForBookmark(ayah.page),
+               QuranInfo.getPageSubtitle(activity, ayah.page),
                false, ayah.sura, ayah.page,
                R.drawable.bookmark_page);
       }      

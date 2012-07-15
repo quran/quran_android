@@ -92,6 +92,7 @@ public class QuranPageFragment extends SherlockFragment {
       view.setBackgroundDrawable((mPageNumber % 2 == 0?
               mLeftGradient : mRightGradient));
 
+      int lineImageId = R.drawable.dark_line;
       int leftBorderImageId = R.drawable.border_left;
       int rightBorderImageId = R.drawable.border_right;
       SharedPreferences prefs = PreferenceManager
@@ -99,6 +100,7 @@ public class QuranPageFragment extends SherlockFragment {
       if (prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
+         lineImageId = R.drawable.light_line;
       }
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
@@ -110,7 +112,7 @@ public class QuranPageFragment extends SherlockFragment {
       else {
          rightBorder.setVisibility(View.VISIBLE);
          rightBorder.setBackgroundResource(rightBorderImageId);
-         leftBorder.setBackgroundResource(R.drawable.dark_line);
+         leftBorder.setBackgroundResource(lineImageId);
       }
 
       mImageView = (HighlightingImageView)view.findViewById(R.id.page_image);

@@ -65,11 +65,13 @@ public class TranslationFragment extends SherlockFragment {
       SharedPreferences prefs = PreferenceManager
               .getDefaultSharedPreferences(getActivity());
 
+      int lineImageId = R.drawable.dark_line;
       int leftBorderImageId = R.drawable.border_left;
       int rightBorderImageId = R.drawable.border_right;
       if (prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
+         lineImageId = R.drawable.light_line;
       }
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
@@ -81,7 +83,7 @@ public class TranslationFragment extends SherlockFragment {
       else {
          rightBorder.setVisibility(View.VISIBLE);
          rightBorder.setBackgroundResource(rightBorderImageId);
-         leftBorder.setBackgroundResource(R.drawable.dark_line);
+         leftBorder.setBackgroundResource(lineImageId);
       }
 
       mTranslationView = (TranslationView)view
