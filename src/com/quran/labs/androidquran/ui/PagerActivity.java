@@ -33,7 +33,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
@@ -116,7 +116,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
       mPrefs = PreferenceManager.getDefaultSharedPreferences(
             getApplicationContext());
-      QuranSettings.load(mPrefs);
 
       getSupportActionBar().setDisplayShowHomeEnabled(true);
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -164,12 +163,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
          public void onPageSelected(int position) {
             Log.d(TAG, "onPageSelected(): " + position);
             int page = 604 - position;
-            QuranSettings.getInstance().setLastPage(page);
-            QuranSettings.save(mPrefs);
-            if (QuranSettings.getInstance().isDisplayMarkerPopup()){
-               mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+            QuranSettings.setLastPage(PagerActivity.this, page);
+            mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
                        PagerActivity.this, page, mLastPopupTime);
-            }
             updateActionBarTitle(page);
 
             if (mBookmarksCache.get(page) == null){
@@ -185,9 +181,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mShouldReconnect = true;
 
       // enforce orientation lock
-      if (QuranSettings.getInstance().isLockOrientation()){
+      if (QuranSettings.isLockOrientation(this)){
          int current = getResources().getConfiguration().orientation;
-         if (QuranSettings.getInstance().isLandscapeOrientation()){
+         if (QuranSettings.isLandscapeOrientation(this)){
             if (current == Configuration.ORIENTATION_PORTRAIT){
                setRequestedOrientation(
                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -310,7 +306,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
       else if (item.getItemId() == R.id.goto_translation){
          String activeDatabase = mPrefs.getString(
-                 ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+                 Constants.PREF_ACTIVE_TRANSLATION, null);
          if (activeDatabase == null){
             Intent i = new Intent(this, TranslationManagerActivity.class);
             startActivity(i);

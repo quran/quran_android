@@ -78,14 +78,14 @@ public class QuranInfo {
       String title = "";
       if (wantTitle){ title = getSuraTitle(context) + " "; }
 
-      return title + (QuranSettings.getInstance().isArabicNames()?
+      return title + (QuranSettings.isArabicNames(context)?
               SURA_NAMES_AR[sura-1] : SURA_NAMES[sura-1]);
    }
 
    public static String getSuraNameFromPage(Context context, int page,
                                             boolean wantTitle){
       int sura = 0;
-      for (int i = 0; i < ApplicationConstants.SURAS_COUNT; i++){
+      for (int i = 0; i < Constants.SURAS_COUNT; i++){
          if (SURA_PAGE_START[i] == page){
             sura = i + 1; break;
          }
@@ -507,14 +507,14 @@ public class QuranInfo {
 	};
 	
 	public static Integer[] getPageBounds(int page){
-		if (page > ApplicationConstants.PAGES_LAST)
+		if (page > Constants.PAGES_LAST)
 			page = 604;
 		if (page < 1) page = 1;
 		
 		Integer[] bounds = new Integer[4];
 		bounds[0] = PAGE_SURA_START[page-1];
 		bounds[1] = PAGE_AYAH_START[page-1];
-		if (page == ApplicationConstants.PAGES_LAST){
+		if (page == Constants.PAGES_LAST){
 			bounds[2] = 114;
 			bounds[3] = 6;
 		}
@@ -541,7 +541,7 @@ public class QuranInfo {
 	}
 	
 	public static String getSuraNameFromPage(Context context, int page){
-		for (int i = 0; i < ApplicationConstants.SURAS_COUNT; i++){
+		for (int i = 0; i < Constants.SURAS_COUNT; i++){
 			if (SURA_PAGE_START[i] == page){
 				return getSuraName(context, i+1, false);
          }
@@ -558,21 +558,21 @@ public class QuranInfo {
 	}
 	
 	public static int getRub3FromPage(int page) {
-		if ((page > ApplicationConstants.PAGES_LAST) || (page < 1)) return -1;
+		if ((page > Constants.PAGES_LAST) || (page < 1)) return -1;
 		return PAGE_RUB3_START[page-1];
 	}
 	
 	public static int getPageFromSuraAyah(int sura, int ayah){
 		// basic bounds checking
 		if (ayah == 0) ayah = 1;
-		if ((sura < 1) || (sura > ApplicationConstants.SURAS_COUNT) 
-				|| (ayah < ApplicationConstants.AYA_MIN) ||
-               (ayah > ApplicationConstants.AYA_MAX))
+		if ((sura < 1) || (sura > Constants.SURAS_COUNT)
+				|| (ayah < Constants.AYA_MIN) ||
+               (ayah > Constants.AYA_MAX))
 			return -1;
 		
 		// what page does the sura start on?
 		int index = QuranInfo.SURA_PAGE_START[sura - 1] - 1;
-		while (index < ApplicationConstants.PAGES_LAST){
+		while (index < Constants.PAGES_LAST){
 			// what's the first sura in that page?
 			int ss = QuranInfo.PAGE_SURA_START[index];
 			
@@ -600,7 +600,7 @@ public class QuranInfo {
 	}
 	
 	public static int getNumAyahs(int sura){
-		if ((sura < 1) || (sura > ApplicationConstants.SURAS_COUNT)) return -1;
+		if ((sura < 1) || (sura > Constants.SURAS_COUNT)) return -1;
 		return SURA_NUM_AYAHS[sura-1];
 	}
 	

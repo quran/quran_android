@@ -21,7 +21,7 @@ import android.widget.ImageView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -164,7 +164,7 @@ public class HighlightingImageView extends ImageView {
 
 	public void adjustNightMode() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		boolean nightMode = prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false);
+		boolean nightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
 		if (nightMode && !colorFilterOn) {
 			setBackgroundColor(Color.BLACK);
 			float[] matrix = { 

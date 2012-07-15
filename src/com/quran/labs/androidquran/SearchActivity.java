@@ -28,7 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -215,7 +215,7 @@ public class SearchActivity extends SherlockActivity
                  PreferenceManager.getDefaultSharedPreferences(
                          getApplicationContext());
          String active = prefs.getString(
-                 ApplicationConstants.PREF_ACTIVE_TRANSLATION, "");
+                 Constants.PREF_ACTIVE_TRANSLATION, "");
 			if (TextUtils.isEmpty(active)) {
 				int resource = R.string.no_active_translation;
 				int buttonResource = R.string.translation_settings;
@@ -340,11 +340,12 @@ public class SearchActivity extends SherlockActivity
 			}
 
 			SearchElement v = mElements.get(position);
-			holder.text.setText(Html.fromHtml(ArabicStyle.reshape(v.text)));
+			holder.text.setText(Html.fromHtml(
+                 ArabicStyle.reshape(mContext, v.text)));
 
 			holder.metadata.setText(mInflater.getContext()
                  .getString(R.string.found_in_sura) + " " +
-					ArabicStyle.reshape(QuranInfo.getSuraName(mContext,
+					ArabicStyle.reshape(mContext, QuranInfo.getSuraName(mContext,
                        v.sura, false)) +
 					", " + mInflater.getContext()
                  .getString(R.string.quran_ayah) + " " + v.ayah);

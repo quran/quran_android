@@ -103,7 +103,7 @@ public class QuranDataProvider extends ContentProvider {
 
 	private String getActiveTranslation(){
 		return mPrefs.getString(
-              ApplicationConstants.PREF_ACTIVE_TRANSLATION, "");
+              Constants.PREF_ACTIVE_TRANSLATION, "");
 	}
 	
 	private Cursor getSuggestions(String query){

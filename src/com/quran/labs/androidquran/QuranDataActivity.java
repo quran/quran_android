@@ -14,7 +14,7 @@ import android.view.WindowManager;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
@@ -96,7 +96,7 @@ public class QuranDataActivity extends SherlockActivity implements
    @Override
    public void handleDownloadSuccess(){
       mSharedPreferences.edit()
-         .remove(ApplicationConstants.PREF_SHOULD_FETCH_PAGES).commit();
+         .remove(Constants.PREF_SHOULD_FETCH_PAGES).commit();
       runListView();
    }
 
@@ -132,7 +132,7 @@ public class QuranDataActivity extends SherlockActivity implements
             mErrorDialog = null;
             removeErrorPreferences();
             mSharedPreferences.edit().putBoolean(
-                    ApplicationConstants.PREF_SHOULD_FETCH_PAGES, false)
+                    Constants.PREF_SHOULD_FETCH_PAGES, false)
                     .commit();
             runListView();
          }
@@ -170,7 +170,7 @@ public class QuranDataActivity extends SherlockActivity implements
                showFatalErrorDialog(lastError);
             }
             else if (mSharedPreferences.getBoolean(
-                    ApplicationConstants.PREF_SHOULD_FETCH_PAGES, false)){
+                    Constants.PREF_SHOULD_FETCH_PAGES, false)){
                downloadQuranImages(false);
             }
             else {
@@ -230,7 +230,7 @@ public class QuranDataActivity extends SherlockActivity implements
             dialog.dismiss();
             mPromptForDownloadDialog = null;
             mSharedPreferences.edit().putBoolean(
-                    ApplicationConstants.PREF_SHOULD_FETCH_PAGES, true)
+                    Constants.PREF_SHOULD_FETCH_PAGES, true)
                     .commit();
             downloadQuranImages(true);
          }

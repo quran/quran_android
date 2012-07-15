@@ -362,7 +362,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
-   private int getSeekPosition(){
+   private int getSeekPosition(boolean isRepeating){
       if (mAudioRequest == null){ return -1; }
 
       if (mGaplessSura == mAudioRequest.getCurrentSura()){
@@ -370,7 +370,7 @@ public class AudioService extends Service implements OnCompletionListener,
             int ayah = mAudioRequest.getCurrentAyah();
             Integer time = mGaplessSuraData.get(ayah);
             if (time == null){ return -1; }
-            if (ayah == 1){
+            if (ayah == 1 && !isRepeating){
                Integer istiathaEndTime = mGaplessSuraData.get(0);
                if (istiathaEndTime == null){
                   // no isti3atha, play from the start of the file
@@ -523,7 +523,7 @@ public class AudioService extends Service implements OnCompletionListener,
          int seekTo = 0;
          int pos = mPlayer.getCurrentPosition();
          if (mAudioRequest.isGapless()){
-            seekTo = getSeekPosition();
+            seekTo = getSeekPosition(true);
             pos =  pos - seekTo;
          }
 
@@ -536,7 +536,7 @@ public class AudioService extends Service implements OnCompletionListener,
             mAudioRequest.gotoPreviousAyah();
             if (mAudioRequest.isGapless() &&
                     sura == mAudioRequest.getCurrentSura()){
-               int timing = getSeekPosition();
+               int timing = getSeekPosition(true);
                if (timing > -1){ mPlayer.seekTo(timing); }
                return;
             }
@@ -553,7 +553,7 @@ public class AudioService extends Service implements OnCompletionListener,
          mAudioRequest.gotoNextAyah();
          if (mAudioRequest.isGapless() &&
                  sura == mAudioRequest.getCurrentSura()){
-            int timing = getSeekPosition();
+            int timing = getSeekPosition(false);
             if (timing > -1){ mPlayer.seekTo(timing); }
             return;
          }
@@ -661,7 +661,7 @@ public class AudioService extends Service implements OnCompletionListener,
       Log.d(TAG, "checking if playing...");
       if (!mPlayer.isPlaying()){
          if (mAudioRequest.isGapless()){
-            int timing = getSeekPosition();
+            int timing = getSeekPosition(false);
             if (timing != -1){
                Log.d(TAG, "got timing: " + timing +
                        ", seeking and updating later...");

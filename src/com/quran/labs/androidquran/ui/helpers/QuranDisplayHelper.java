@@ -50,7 +50,7 @@ public class QuranDisplayHelper {
             sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
          sb.append(context.getString(R.string.quran_hizb)).append(' ').append(hizb);
       }
-      Toast.makeText(context, ArabicStyle.reshape(sb.toString()), Toast.LENGTH_SHORT).show();
+      Toast.makeText(context, ArabicStyle.reshape(context, sb.toString()), Toast.LENGTH_SHORT).show();
       return System.currentTimeMillis();
    }
    
