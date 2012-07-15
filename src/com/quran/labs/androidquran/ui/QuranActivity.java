@@ -17,6 +17,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -120,6 +121,11 @@ public class QuranActivity extends SherlockFragmentActivity
          int page = prefs.getInt(Constants.PREF_LAST_PAGE, 1);
          jumpTo(page);
          return true;
+      }
+      else if (item.getItemId() == R.id.about) {
+    	  Intent i = new Intent(this, AboutUsActivity.class);
+    	  startActivity(i);
+    	  return true;
       }
 	   
       return super.onOptionsItemSelected(item);
