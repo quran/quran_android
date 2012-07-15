@@ -250,7 +250,7 @@ public class QuranPageFragment extends SherlockFragment {
 					else if (selection == 2)
 						new ShowTagsDialogTask(page, sura, ayah).execute();
 					else if (selection == 3)
-						Toast.makeText(getActivity(), "Not Implemented", Toast.LENGTH_SHORT).show();
+						new ShowTafsirTask(sura, ayah).execute();
 					else if (selection == 4)
 						Toast.makeText(getActivity(), "Ayah "+QuranInfo.getAyahId(
 								sura, ayah), Toast.LENGTH_SHORT).show();
@@ -612,5 +612,44 @@ public class QuranPageFragment extends SherlockFragment {
 				startActivity(Intent.createChooser(intent, "Share"));
 			}
 		}
+	}
+	
+	class ShowTafsirTask extends AsyncTask<Void, Void, String> {
+		private int sura, ayah;
+		
+		public ShowTafsirTask(int sura, int ayah) {
+			this.sura = sura;
+			this.ayah = ayah;
+		}
+
+		@Override
+		protected String doInBackground(Void... params) {
+			String db = PreferenceManager.getDefaultSharedPreferences(getActivity())
+				.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+			if (db != null) {
+				DatabaseHandler tafsirHandler = new DatabaseHandler(db);
+				Cursor cursor = tafsirHandler.getVerse(sura, ayah);
+				if (cursor.moveToFirst()) {
+					String text = cursor.getString(2);
+					cursor.close();
+					tafsirHandler.closeDatabase();
+					return text;
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String text) {
+			Activity activity = getActivity();
+			if (activity != null) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+				builder.setMessage(text);
+				builder.setCancelable(true);
+				AlertDialog alt = builder.create();
+				alt.show();
+			}
+		}
+		
 	}
 }
