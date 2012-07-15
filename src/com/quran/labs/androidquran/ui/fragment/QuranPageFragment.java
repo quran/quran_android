@@ -237,7 +237,8 @@ public class QuranPageFragment extends SherlockFragment {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			final CharSequence[] options = { result ? "Unbookmark" : "Bookmark",
-					"Notes", "Tags", "Tafsir", "Ayah ID", "Share" };
+					//"Notes", "Tags", 
+					"Tafsir", "Share" };
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(QuranInfo.getAyahString(sura, ayah, getActivity()));
 			builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -245,16 +246,13 @@ public class QuranPageFragment extends SherlockFragment {
 				public void onClick(DialogInterface dialog, int selection) {
 					if (selection == 0)
 						new ToggleAyahBookmarkTask().execute(mPageNumber, sura, ayah);
+//					else if (selection == 1)
+//						new ShowNotesDialogTask(page, sura, ayah).execute();
+//					else if (selection == 2)
+//						new ShowTagsDialogTask(page, sura, ayah).execute();
 					else if (selection == 1)
-						new ShowNotesDialogTask(page, sura, ayah).execute();
-					else if (selection == 2)
-						new ShowTagsDialogTask(page, sura, ayah).execute();
-					else if (selection == 3)
 						new ShowTafsirTask(sura, ayah).execute();
-					else if (selection == 4)
-						Toast.makeText(getActivity(), "Ayah "+QuranInfo.getAyahId(
-								sura, ayah), Toast.LENGTH_SHORT).show();
-					else if (selection == 5) 
+					else if (selection == 2) 
 						new ShareAyahTask(sura, ayah).execute();
 				}
 			});
