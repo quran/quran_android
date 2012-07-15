@@ -244,6 +244,8 @@ public class AudioStatusBar extends LinearLayout {
       button.setScaleType(ImageView.ScaleType.CENTER);
       button.setOnClickListener(mOnClickListener);
       button.setTag(imageId);
+      button.setBackgroundResource(
+              R.drawable.abs__item_background_holo_dark);
       addView(button, mButtonWidth,
               LayoutParams.MATCH_PARENT);
    }

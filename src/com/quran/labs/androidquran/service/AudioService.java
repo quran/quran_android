@@ -368,7 +368,18 @@ public class AudioService extends Service implements OnCompletionListener,
       if (mGaplessSura == mAudioRequest.getCurrentSura()){
          if (mGaplessSuraData != null){
             int ayah = mAudioRequest.getCurrentAyah();
-            return mGaplessSuraData.get(ayah);
+            Integer time = mGaplessSuraData.get(ayah);
+            if (time == null){ return -1; }
+            if (ayah == 1){
+               Integer istiathaEndTime = mGaplessSuraData.get(0);
+               if (istiathaEndTime == null){
+                  // no isti3atha, play from the start of the file
+                  return 0;
+               }
+               // have isti3atha, skip it...
+               else { return istiathaEndTime; }
+            }
+            return time;
          }
       }
       return -1;
@@ -422,6 +433,17 @@ public class AudioService extends Service implements OnCompletionListener,
          if (updatedAyah != ayah){
             mAudioRequest.setCurrentAyah(sura, updatedAyah);
          }
+         else {
+            // if we have end of sura info and we bypassed end of sura
+            // line, switch the sura.
+            ayahTime = mGaplessSuraData.get(999);
+            if (ayahTime != null && pos >= ayahTime){
+               mAudioRequest.gotoNextAyah();
+               playAudio();
+               return;
+            }
+         }
+
          notifyAyahChanged();
 
          if (maxAyahs >= (updatedAyah + 1)){
@@ -431,7 +453,18 @@ public class AudioService extends Service implements OnCompletionListener,
                Log.d(TAG, "updateAudioPlayPosition postingDelayed after: " + t);
 
                if (t < 100){ t = 100; }
-               else if (t > 5000){ t = 5000; }
+               else if (t > 10000){ t = 10000; }
+               mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
+            }
+         }
+         else if (maxAyahs == updatedAyah){
+            // check for the end of sura marker if it exists
+            Integer t = mGaplessSuraData.get(999);
+            if (t != null){
+               t = t - mPlayer.getCurrentPosition();
+               Log.d(TAG, "sura ends in " + t + "ms.");
+               if (t < 100){ t = 100; }
+               else if (t > 10000){ t = 10000; }
                mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
             }
          }
@@ -627,7 +660,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
       Log.d(TAG, "checking if playing...");
       if (!mPlayer.isPlaying()){
-         if (mAudioRequest.isGapless() && mAudioRequest.getCurrentAyah() != 1){
+         if (mAudioRequest.isGapless()){
             int timing = getSeekPosition();
             if (timing != -1){
                Log.d(TAG, "got timing: " + timing +
@@ -641,10 +674,6 @@ public class AudioService extends Service implements OnCompletionListener,
                mHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200);
                return;
             }
-         }
-         else if (mAudioRequest.isGapless()){
-            Log.d(TAG, "gapless, asking for an update in 200ms");
-            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
          }
 
          mPlayer.start();
