@@ -141,6 +141,8 @@
     <string name="prefs_no_translations_installed">No translations installed</string>
     <string name="prefs_translations">Translations</string>
     <string name="prefs_translations_summary">Download and manage translations</string>
+    <string name="prefs_ayah_before_translation_title">Show Ayah before Translation</string>
+    <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
     <string name="loading_translations">Loading Translations List, Please wait..</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
