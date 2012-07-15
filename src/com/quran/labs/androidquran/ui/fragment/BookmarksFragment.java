@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.AyahBookmark;
@@ -106,9 +106,9 @@ public class BookmarksFragment extends SherlockFragment {
       SharedPreferences prefs = PreferenceManager
             .getDefaultSharedPreferences(
                   getActivity().getApplicationContext());
-      int lastPage = prefs.getInt(ApplicationConstants.PREF_LAST_PAGE,
-            ApplicationConstants.NO_PAGE_SAVED);
-      boolean showLastPage = lastPage != ApplicationConstants.NO_PAGE_SAVED;
+      int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
+            Constants.NO_PAGE_SAVED);
+      boolean showLastPage = lastPage != Constants.NO_PAGE_SAVED;
       boolean showPageBookmarkHeader = pageBookmarks.size() != 0;
       boolean showAyahBookmarkHeader = ayahBookmarks.size() != 0;
       int size = pageBookmarks.size() + ayahBookmarks.size() + (showLastPage? 2 : 0) +

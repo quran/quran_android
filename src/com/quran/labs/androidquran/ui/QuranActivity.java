@@ -19,13 +19,13 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
-import com.quran.labs.androidquran.util.QuranSettings;
 
-public class QuranActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
+public class QuranActivity extends SherlockFragmentActivity
+        implements ActionBar.TabListener {
    public final String TAG = "QuranActivity";
    
    private static final int SURA_LIST = 0;
@@ -45,10 +45,6 @@ public class QuranActivity extends SherlockFragmentActivity implements ActionBar
       setTheme(R.style.QuranAndroid);
       super.onCreate(savedInstanceState);
       setContentView(R.layout.quran_index);
-
-      SharedPreferences prefs =
-              PreferenceManager.getDefaultSharedPreferences(this);
-      QuranSettings.load(prefs);
 
       ActionBar actionbar = getSupportActionBar();
       actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -121,7 +117,7 @@ public class QuranActivity extends SherlockFragmentActivity implements ActionBar
          SharedPreferences prefs =
                  PreferenceManager.getDefaultSharedPreferences(
                          getApplicationContext());
-         int page = prefs.getInt(ApplicationConstants.PREF_LAST_PAGE, 1);
+         int page = prefs.getInt(Constants.PREF_LAST_PAGE, 1);
          jumpTo(page);
          return true;
       }

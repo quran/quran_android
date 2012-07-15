@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
@@ -68,7 +68,7 @@ public class TranslationFragment extends SherlockFragment {
       int lineImageId = R.drawable.dark_line;
       int leftBorderImageId = R.drawable.border_left;
       int rightBorderImageId = R.drawable.border_right;
-      if (prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false)){
+      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
          lineImageId = R.drawable.light_line;
@@ -96,7 +96,7 @@ public class TranslationFragment extends SherlockFragment {
       });
 
       String database = prefs.getString(
-              ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+              Constants.PREF_ACTIVE_TRANSLATION, null);
       if (database != null){
          new TranslationTask(database).execute(mPageNumber);
       }

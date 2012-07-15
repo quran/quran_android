@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.internal.widget.IcsAdapterView;
 import com.actionbarsherlock.internal.widget.IcsSpinner;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 
 public class AudioStatusBar extends LinearLayout {
 
@@ -87,7 +87,7 @@ public class AudioStatusBar extends LinearLayout {
       mSharedPreferences = PreferenceManager
               .getDefaultSharedPreferences(context.getApplicationContext());
       mCurrentQari = mSharedPreferences.getInt(
-              ApplicationConstants.PREF_DEFAULT_QARI, 0);
+              Constants.PREF_DEFAULT_QARI, 0);
       showStoppedMode();
    }
 
@@ -167,7 +167,7 @@ public class AudioStatusBar extends LinearLayout {
                                        View view, int position, long id) {
                if (position != mCurrentQari){
                   mSharedPreferences.edit().
-                          putInt(ApplicationConstants.PREF_DEFAULT_QARI,
+                          putInt(Constants.PREF_DEFAULT_QARI,
                                   position).commit();
                   mCurrentQari = position;
                }

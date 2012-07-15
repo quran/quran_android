@@ -59,10 +59,14 @@ public class QuranListAdapter extends BaseAdapter {
        else { holder = (ViewHolder) convertView.getTag(); }
 
      QuranRow item = mElements[position];
-       holder.page.setText(ArabicStyle.reshape(String.valueOf(item.page)));
-       holder.text.setText(ArabicStyle.reshape(item.text));
-       holder.header.setText(ArabicStyle.reshape(item.text));
-       holder.number.setText(ArabicStyle.reshape(String.valueOf(item.number)));
+       holder.page.setText(ArabicStyle.reshape(mContext,
+               String.valueOf(item.page)));
+       holder.text.setText(ArabicStyle.reshape(mContext,
+               item.text));
+       holder.header.setText(ArabicStyle.reshape(mContext,
+               item.text));
+       holder.number.setText(ArabicStyle.reshape(mContext,
+               String.valueOf(item.number)));
        
        int color = R.color.sura_details_color;
        if (mElements[position].isHeader){
@@ -78,7 +82,7 @@ public class QuranListAdapter extends BaseAdapter {
            holder.metadata.setVisibility(View.VISIBLE);
            holder.text.setVisibility(View.VISIBLE);
            holder.header.setVisibility(View.GONE);
-           holder.metadata.setText(ArabicStyle.reshape(info));
+           holder.metadata.setText(ArabicStyle.reshape(mContext, info));
            
            if (item.imageResource == null){
               holder.number.setVisibility(View.VISIBLE);

@@ -41,7 +41,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.AyahItem;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -97,7 +97,7 @@ public class QuranPageFragment extends SherlockFragment {
       int rightBorderImageId = R.drawable.border_right;
       SharedPreferences prefs = PreferenceManager
               .getDefaultSharedPreferences(getActivity());
-      if (prefs.getBoolean(ApplicationConstants.PREF_NIGHT_MODE, false)){
+      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
          lineImageId = R.drawable.light_line;
@@ -625,7 +625,7 @@ public class QuranPageFragment extends SherlockFragment {
 		@Override
 		protected String doInBackground(Void... params) {
 			String db = PreferenceManager.getDefaultSharedPreferences(getActivity())
-				.getString(ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+				.getString(Constants.PREF_ACTIVE_TRANSLATION, null);
 			if (db != null) {
 				DatabaseHandler tafsirHandler = new DatabaseHandler(db);
 				Cursor cursor = tafsirHandler.getVerse(sura, ayah);

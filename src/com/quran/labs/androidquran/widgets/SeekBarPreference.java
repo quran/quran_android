@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 
 public class SeekBarPreference extends DialogPreference implements
 		SeekBar.OnSeekBarChangeListener {
@@ -35,7 +35,7 @@ public class SeekBarPreference extends DialogPreference implements
 		mDialogMessage = attrs.getAttributeValue(androidns, "dialogMessage");
 		mSuffix = attrs.getAttributeValue(androidns, "text");
 		mDefault = attrs.getAttributeIntValue(androidns, "defaultValue",
-              ApplicationConstants.DEFAULT_TEXT_SIZE);
+              Constants.DEFAULT_TEXT_SIZE);
 		mMax = attrs.getAttributeIntValue(androidns, "max", 100);
 	}
 

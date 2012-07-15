@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import static com.quran.labs.androidquran.data.ApplicationConstants.JUZ2_COUNT;
+import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
@@ -58,9 +58,9 @@ public class JuzListFragment extends SherlockFragment {
       SharedPreferences prefs = PreferenceManager
             .getDefaultSharedPreferences(
                   getActivity().getApplicationContext());
-      int lastPage = prefs.getInt(ApplicationConstants.PREF_LAST_PAGE,
-            ApplicationConstants.NO_PAGE_SAVED);
-      if (lastPage != ApplicationConstants.NO_PAGE_SAVED){
+      int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
+            Constants.NO_PAGE_SAVED);
+      if (lastPage != Constants.NO_PAGE_SAVED){
          int juz = QuranInfo.getJuzFromPage(lastPage);
          int position = (juz - 1) * 9;
          mListView.setSelectionFromTop(position, 20);

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.quran.labs.androidquran.data.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +38,6 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.ApplicationConstants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
@@ -165,7 +165,7 @@ public class TranslationManagerActivity extends SherlockActivity
 
    private void generateListItems(){
       mActiveTranslation = mPrefs.getString(
-              ApplicationConstants.PREF_ACTIVE_TRANSLATION, null);
+              Constants.PREF_ACTIVE_TRANSLATION, null);
       if (mAllItems == null){ return; }
 
       List<TranslationItem> downloaded = new ArrayList<TranslationItem>();
@@ -200,7 +200,7 @@ public class TranslationManagerActivity extends SherlockActivity
       if (mDownloadedTranslations > 0 && mActiveTranslation == null){
          res.get(1).active = true;
          mActiveTranslation = res.get(1).filename;
-         mPrefs.edit().putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION,
+         mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION,
                  mActiveTranslation).commit();
       }
 
@@ -262,7 +262,7 @@ public class TranslationManagerActivity extends SherlockActivity
                            if (selectedItem.active){
                               mActiveTranslation = null;
                               mPrefs.edit().remove(
-                                      ApplicationConstants
+                                      Constants
                                               .PREF_ACTIVE_TRANSLATION)
                                       .commit();
                            }
@@ -296,7 +296,7 @@ public class TranslationManagerActivity extends SherlockActivity
       }
 
       selectedItem.active = true;
-      mPrefs.edit().putString(ApplicationConstants.PREF_ACTIVE_TRANSLATION,
+      mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION,
               selectedItem.filename).commit();
       mActiveTranslation = selectedItem.filename;
       generateListItems();

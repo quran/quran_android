@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.ApplicationConstants;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 
 public class TranslationView extends LinearLayout {
@@ -62,12 +62,12 @@ public class TranslationView extends LinearLayout {
       SharedPreferences prefs = PreferenceManager
               .getDefaultSharedPreferences(mContext);
       boolean nightMode = prefs.getBoolean(
-              ApplicationConstants.PREF_NIGHT_MODE, false);
+              Constants.PREF_NIGHT_MODE, false);
       mTextStyle = nightMode ? R.style.translation_night_mode :
               R.style.translation_text;
       mHeaderStyle = R.style.translation_sura_title;
-      mFontSize = prefs.getInt(ApplicationConstants.PREF_TRANSLATION_TEXT_SIZE,
-    				  ApplicationConstants.DEFAULT_TEXT_SIZE);
+      mFontSize = prefs.getInt(Constants.PREF_TRANSLATION_TEXT_SIZE,
+    				  Constants.DEFAULT_TEXT_SIZE);
       if (nightMode){ setBackgroundColor(Color.BLACK); }
    }
 
