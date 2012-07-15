@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import static com.quran.labs.androidquran.data.ApplicationConstants.JUZ2_COUNT;
+
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -68,6 +70,7 @@ public class JuzListFragment extends SherlockFragment {
    }
    
    private QuranRow[] getJuz2List() {
+      Activity activity = getActivity();
       int[] images = { R.drawable.hizb_full, R.drawable.hizb_quarter,
                        R.drawable.hizb_half, R.drawable.hizb_threequarters };
       Resources res = getResources();
@@ -81,13 +84,14 @@ public class JuzListFragment extends SherlockFragment {
          
          if (i % 8 == 0){
             int juz = 1 + (i / 8);
-            elements[ctr++] = new QuranRow(QuranInfo.getJuzTitle() + " " +
-                  juz, null, true, juz, QuranInfo.JUZ_PAGE_START[juz-1], null);
+            elements[ctr++] = new QuranRow(QuranInfo.getJuzTitle(activity) +
+                    " " + juz, null, true, juz,
+                    QuranInfo.JUZ_PAGE_START[juz-1], null);
          }
          String verseString = getString(R.string.quran_ayah) + " " + pos[1];
          elements[ctr++] = new QuranRow(quarters[i],
-               QuranInfo.getSuraName(pos[0]-1) + ", " + verseString,
-               false, 0, page, images[i % 4]);
+               QuranInfo.getSuraName(activity, pos[0], true) +
+                       ", " + verseString, false, 0, page, images[i % 4]);
          if (i % 4 == 0)
             elements[ctr-1].imageText = (1 + (i / 4)) + "";
       }

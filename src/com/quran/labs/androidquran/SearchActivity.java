@@ -300,20 +300,22 @@ public class SearchActivity extends SherlockActivity
 	
 	private static class EfficientResultAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
-		private List<SearchElement> elements;
+		private List<SearchElement> mElements;
+      private Context mContext;
 		
 		public EfficientResultAdapter(Context context,
                                     List<SearchElement> metadata) {
 			mInflater = LayoutInflater.from(context);
-			this.elements = metadata;
+			mElements = metadata;
+         mContext = context;
 		}
 
 		public int getCount() {
-			return elements.size();
+			return mElements.size();
 		}
 
 		public Object getItem(int position) {
-			return elements.get(position);
+			return mElements.get(position);
 		}
 
 		public long getItemId(int position) {
@@ -337,12 +339,13 @@ public class SearchActivity extends SherlockActivity
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			SearchElement v = elements.get(position);
+			SearchElement v = mElements.get(position);
 			holder.text.setText(Html.fromHtml(ArabicStyle.reshape(v.text)));
 
 			holder.metadata.setText(mInflater.getContext()
                  .getString(R.string.found_in_sura) + " " +
-					ArabicStyle.reshape(QuranInfo.getSuraName(v.sura-1)) +
+					ArabicStyle.reshape(QuranInfo.getSuraName(mContext,
+                       v.sura, false)) +
 					", " + mInflater.getContext()
                  .getString(R.string.quran_ayah) + " " + v.ayah);
 			return convertView;

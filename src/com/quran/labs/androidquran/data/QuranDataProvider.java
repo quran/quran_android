@@ -3,11 +3,7 @@ package com.quran.labs.androidquran.data;
 import java.util.List;
 
 import android.app.SearchManager;
-import android.content.ContentProvider;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.SharedPreferences;
-import android.content.UriMatcher;
+import android.content.*;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
@@ -131,7 +127,8 @@ public class QuranDataProvider extends ContentProvider {
 				SearchManager.SUGGEST_COLUMN_TEXT_2,
 				SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID };
 		MatrixCursor mc = new MatrixCursor(cols);
-		
+
+      Context context = getContext();
 		boolean gotResults = false;
 		for (String item : items) {
 			if (gotResults){ continue; }
@@ -142,10 +139,11 @@ public class QuranDataProvider extends ContentProvider {
 					int sura = suggestions.getInt(0);
 					int ayah = suggestions.getInt(1);
 					String text = suggestions.getString(2);
-					String foundText = getContext()
+					String foundText = context
                        .getString(R.string.found_in_sura) +
-                       " " + QuranInfo.getSuraName(sura-1) + ", " +
-						getContext().getString(R.string.quran_ayah) + " " + ayah;
+                       " " + QuranInfo.getSuraName(context, sura, false) +
+                       ", " + context.getString(R.string.quran_ayah) +
+                       " " + ayah;
 					
 					gotResults = true;
 					MatrixCursor.RowBuilder row = mc.newRow();
