@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.PaintDrawable;
@@ -24,6 +25,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 public class TranslationFragment extends SherlockFragment {
@@ -112,6 +114,9 @@ public class TranslationFragment extends SherlockFragment {
 
       @Override
       protected List<QuranAyah> doInBackground(Integer... params) {
+         Activity activity = getActivity();
+         if (activity == null){ return null; }
+
          int page = params[0];
          Integer[] bounds = QuranInfo.getPageBounds(page);
          if (bounds == null){ return null; }
@@ -119,7 +124,6 @@ public class TranslationFragment extends SherlockFragment {
          String databaseName = mDatabaseName;
          List<QuranAyah> verses = new ArrayList<QuranAyah>();
 
-         boolean wantArabic = true;
          try {
             DatabaseHandler translationHandler =
                     new DatabaseHandler(databaseName);
@@ -131,12 +135,17 @@ public class TranslationFragment extends SherlockFragment {
             DatabaseHandler ayahHandler = null;
             Cursor ayahCursor = null;
 
-            if (wantArabic){
-               ayahHandler = new DatabaseHandler(
+            if (QuranSettings.wantArabicInTranslationView(activity)){
+               try {
+                  ayahHandler = new DatabaseHandler(
                        QuranDataProvider.QURAN_ARABIC_DATABASE);
-               ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
+                  ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
                        bounds[2], bounds[3],
                        DatabaseHandler.ARABIC_TEXT_TABLE);
+               }
+               catch (Exception e){
+                  // ignore any exceptions due to no arabic database
+               }
             }
 
             if (translationCursor != null) {
@@ -180,7 +189,9 @@ public class TranslationFragment extends SherlockFragment {
 
       @Override
       protected void onPostExecute(List<QuranAyah> result) {
-         mTranslationView.setAyahs(result);
+         if (result != null){
+            mTranslationView.setAyahs(result);
+         }
       }
    }
 }

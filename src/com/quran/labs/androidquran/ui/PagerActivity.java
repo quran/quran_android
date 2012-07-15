@@ -164,8 +164,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
             Log.d(TAG, "onPageSelected(): " + position);
             int page = 604 - position;
             QuranSettings.setLastPage(PagerActivity.this, page);
-            mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+            if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)){
+               mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
                        PagerActivity.this, page, mLastPopupTime);
+            }
             updateActionBarTitle(page);
 
             if (mBookmarksCache.get(page) == null){

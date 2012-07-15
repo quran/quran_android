@@ -62,6 +62,13 @@
                     android:targetPackage="com.quran.labs.androidquran"
                     android:targetClass="com.quran.labs.androidquran.ui.TranslationManagerActivity" />
         </PreferenceScreen>
+
+        <CheckBoxPreference
+                android:key="@string/prefs_ayah_before_translation"
+                android:persistent="true"
+                android:defaultValue="true"
+                android:summary="@string/prefs_ayah_before_translation_summary"
+                android:title="@string/prefs_ayah_before_translation_title" />
 	
         <com.quran.labs.androidquran.widgets.SeekBarPreference
             android:defaultValue="15"
