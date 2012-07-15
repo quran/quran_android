@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:background="@drawable/list">
+	android:layout_height="fill_parent">
 
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:linksClickable="true"
@@ -16,9 +16,9 @@
 		android:textColor="#FFFFFF" android:paddingLeft="10dip" />
 
 	<Button android:layout_width="300dip" android:id="@+id/btnEmailUs"
-		android:layout_height="wrap_content" android:text="Email Quran Android"
+		android:layout_height="wrap_content" android:text="@string/email_quran_android"
 		android:layout_centerHorizontal="true" android:layout_above="@id/txtCopyRights"
-		android:visibility="visible" android:onClick="onEmailClick"/>
+		android:visibility="visible"/>
 
 	<TextView android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:visibility="visible"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="audiobar_height">48dp</dimen>
+    <dimen name="audiobar_button_width">48dp</dimen>
+    <dimen name="audiobar_separator_width">1dp</dimen>
+    <dimen name="audiobar_separator_padding">8dp</dimen>
+    <dimen name="audiobar_text_font_size">10sp</dimen>
+    <dimen name="audiobar_text_full_font_size">12sp</dimen>
+    <dimen name="translation_left_right_margin">20dp</dimen>
+    <dimen name="translation_top_bottom_margin">10dp</dimen>
+</resources>
