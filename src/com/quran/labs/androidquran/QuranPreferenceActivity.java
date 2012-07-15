@@ -2,7 +2,6 @@ package com.quran.labs.androidquran;
 
 import java.util.Locale;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -10,32 +9,38 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
 
-public class QuranPreferenceActivity extends PreferenceActivity {
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+
+public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 	
-	private boolean restartRequired = false;
-	private Class<Activity> caller = null;
-	
+	private boolean mInitiallyIsArabic = false;
+   private boolean mIsArabic = false;
+
 	@Override
-	@SuppressWarnings("unchecked")
 	protected void onCreate(Bundle savedInstanceState) {
+      setTheme(R.style.Theme_Sherlock);
 		super.onCreate(savedInstanceState);
-		
-		caller = (Class<Activity>) getIntent().getExtras().getSerializable("activity");
-		
-		//Inflate preference screen
-		addPreferencesFromResource(R.xml.quran_preferences);
-		CheckBoxPreference arabicPreference = (CheckBoxPreference) findPreference(getResources().getString(R.string.prefs_use_arabic_names));
-		arabicPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener(){
 
+		// add preferences
+		addPreferencesFromResource(R.xml.quran_preferences);
+
+      // special handling for the arabic checkbox
+		CheckBoxPreference arabicPreference = (CheckBoxPreference)
+              findPreference(getResources().getString(
+                      R.string.prefs_use_arabic_names));
+      mInitiallyIsArabic = arabicPreference.isChecked();
+      mIsArabic = mInitiallyIsArabic;
+		arabicPreference.setOnPreferenceChangeListener(
+              new OnPreferenceChangeListener(){
 			@Override
 			public boolean onPreferenceChange(Preference preference,
 					Object newValue) {
-				restartRequired = true;
 				boolean isArabic = (Boolean)newValue;
+            mIsArabic = isArabic;
 
-				Locale lang = (isArabic? new Locale("ar") : Resources.getSystem().getConfiguration().locale);
+            Locale lang = (isArabic? new Locale("ar") :
+                    Resources.getSystem().getConfiguration().locale);
 				Locale.setDefault(lang);
 				Configuration config = new Configuration();
 				config.locale = lang;
@@ -48,12 +53,13 @@ public class QuranPreferenceActivity extends PreferenceActivity {
 	}
 
 	@Override
-	protected void onDestroy() {
-		if (restartRequired && caller != null) {
-			Intent i = new Intent(this, caller);
+	protected void onPause() {
+		if (mIsArabic != mInitiallyIsArabic) {
+			Intent i = new Intent(this,
+                 com.quran.labs.androidquran.ui.QuranActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 		}
-		super.onDestroy();
+		super.onPause();
 	}
 }

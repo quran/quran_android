@@ -3,14 +3,8 @@
     android:key="@string/prefs_path"
     android:title="Quran Settings" >
 
-    <PreferenceCategory android:title="@string/prefs_category_display_settings" >
-
-        <CheckBoxPreference
-            android:key="@string/prefs_keep_screen_on"
-            android:persistent="true"
-            android:summaryOff="@string/prefs_keep_screen_summary_off"
-            android:summaryOn="@string/prefs_keep_screen_summary_on"
-            android:title="@string/prefs_keep_screen_title" />
+    <PreferenceCategory
+       android:title="@string/prefs_category_display_settings" >
         
         <CheckBoxPreference
             android:defaultValue="false"
@@ -19,14 +13,6 @@
             android:persistent="true"
             android:summary="@string/prefs_use_arabic_summary_on"
             android:title="@string/prefs_use_arabic_title" >
-        </CheckBoxPreference>
-        
-        <CheckBoxPreference
-            android:dependency="@string/prefs_use_arabic_names"
-            android:key="@string/prefs_reshape_arabic"
-            android:persistent="true"
-            android:summary="@string/prefs_arabic_reshape_summary"
-            android:title="@string/prefs_arabic_reshape_title" >
         </CheckBoxPreference>
 
         <CheckBoxPreference
@@ -64,23 +50,18 @@
             android:summary="@string/prefs_display_marker_summary"
             android:title="@string/prefs_display_marker_title" >
         </CheckBoxPreference>
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="@string/prefs_auto_scroll"
-            android:persistent="true"
-            android:summary="@string/prefs_auto_scroll_summary"
-            android:title="@string/prefs_auto_scroll_title" >
-        </CheckBoxPreference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/prefs_category_translation" >
 
-        <com.quran.labs.androidquran.widgets.SelectTranslationPreference
-            android:dialogTitle="@string/prefs_active_translation_dialog_title"
-            android:key="@string/prefs_active_translation"
-            android:summary="@string/prefs_active_translation_summary"
-            android:title="@string/prefs_active_translation_title" />
+        <PreferenceScreen
+            android:title="@string/prefs_translations"
+            android:summary="@string/prefs_translations_summary">
+
+            <intent android:action="android.intent.action.MAIN"
+                    android:targetPackage="com.quran.labs.androidquran"
+                    android:targetClass="com.quran.labs.androidquran.ui.TranslationManagerActivity" />
+        </PreferenceScreen>
 	
         <com.quran.labs.androidquran.widgets.SeekBarPreference
             android:defaultValue="15"

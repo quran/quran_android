@@ -1,5 +1,9 @@
 package com.quran.labs.androidquran.data;
 
+import android.content.Context;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranInfo {
@@ -55,48 +59,94 @@ public class QuranInfo {
 	};
 	
 	private static int AYAH_AYAT_BOUNDARY = 11;
-	
-	public static String getSuraTitle() {
-		return QuranSettings.getInstance().isArabicNames() ? "سورة" : "Surat";
+
+	public static String getAyahTitle(Context cx) {
+		return cx.getString(R.string.quran_ayah);
 	}
 	
-	public static String getJuzTitle(){
-		return QuranSettings.getInstance().isArabicNames()? "جزء" : "Juz'";
+	public static String getSuraTitle(Context cx) {
+		return cx.getString(R.string.quran_sura_title);
 	}
 	
-	public static String getSuraName(int index) {
-		if (index < ApplicationConstants.SURAS_FIRST_INDEX) index = ApplicationConstants.SURAS_FIRST_INDEX;
-		if (index > ApplicationConstants.SURAS_LAST_INDEX) index = ApplicationConstants.SURAS_LAST_INDEX;
-		return QuranSettings.getInstance().isArabicNames() ? SURA_NAMES_AR[index] : SURA_NAMES[index];
-	}
-	
-	public static String getSuraListMetaString(int sura){
+	public static String getJuzTitle(Context cx){
+		return cx.getString(R.string.quran_juz2);
+   }
+
+   public static String getSuraName(Context context, int sura,
+                                    boolean wantTitle){
+      if (sura < 1 || sura > 114){ return ""; }
+      String title = "";
+      if (wantTitle){ title = getSuraTitle(context) + " "; }
+
+      return title + (QuranSettings.isArabicNames(context)?
+              SURA_NAMES_AR[sura-1] : SURA_NAMES[sura-1]);
+   }
+
+   public static String getSuraNameFromPage(Context context, int page,
+                                            boolean wantTitle){
+      int sura = 0;
+      for (int i = 0; i < Constants.SURAS_COUNT; i++){
+         if (SURA_PAGE_START[i] == page){
+            sura = i + 1; break;
+         }
+         else if (SURA_PAGE_START[i] > page){
+            sura = i;
+            break;
+         }
+      }
+
+      return (sura > 0)? getSuraName(context, sura, wantTitle) : "";
+   }
+
+   public static String getPageSubtitle(Context context, int page){
+      String description = context.getString(R.string.page_description);
+      return String.format(description, page, QuranInfo.getJuzFromPage(page));
+   }
+
+   public static String getNotificationTitle(Context context,
+                                             QuranAyah minVerse,
+                                             QuranAyah maxVerse){
+      int minSura = minVerse.getSura();
+      int maxSura = maxVerse.getSura();
+      int maxAyah = maxVerse.getAyah();
+      if (maxAyah == 0){
+         maxSura--;
+         maxAyah = QuranInfo.getNumAyahs(maxSura);
+      }
+
+      String notificationTitle =
+              QuranInfo.getSuraName(context, minSura, true);
+      if (minSura == maxSura){
+         if (minVerse.getAyah() == maxAyah){
+            notificationTitle += " (" + maxAyah + ")";
+         }
+         else {
+            notificationTitle += " (" + minVerse.getAyah() +
+                 "-" + maxAyah + ")";
+         }
+      }
+      else {
+         notificationTitle += " (" + minVerse.getAyah() +
+                 ") - " + QuranInfo.getSuraName(context, maxSura, true) +
+                 " (" + maxAyah + ")";
+      }
+
+      return notificationTitle;
+   }
+
+	public static String getSuraListMetaString(Context context, int sura){
 		String info = "";
-		
-		if (QuranSettings.getInstance().isArabicNames()){
-			info = QuranInfo.SURA_IS_MAKKI[sura-1]?
-					"مكية" : "مدنية";
-			int ayahs = QuranInfo.SURA_NUM_AYAHS[sura-1];
-			String ayahStr = " " + ((ayahs < QuranInfo.AYAH_AYAT_BOUNDARY)? " آيات" : " آية");
-			info += " - " + ayahs + ayahStr;
-		}
-		else {
-			info = QuranInfo.SURA_IS_MAKKI[sura-1]?
-					"Makki" : "Madani";
-			info += " - " + QuranInfo.SURA_NUM_AYAHS[sura-1] + " verses.";
-		}
-		
+		int resId = QuranInfo.SURA_IS_MAKKI[sura-1]?
+              R.string.makki : R.string.madani;
+      info = context.getString(resId) + " - ";
+
+      int ayahs = QuranInfo.SURA_NUM_AYAHS[sura-1];
+      info += ayahs + " " +
+              context.getResources().getQuantityString(
+                      R.plurals.verses, ayahs) + ".";
 		return info;
 	}
-	
-	private static String getPageTitle() {
-		return QuranSettings.getInstance().isArabicNames() ? "صفحة " : "page ";
-	}
-	
-	private static String getPageTitleNoPrefix() {
-		return QuranSettings.getInstance().isArabicNames() ? "صفحة " : "Page ";
-	}
-	
+
 	public static int[] SURA_PAGE_START = {
 		1, 2, 50, 77, 106, 128, 151, 177, 187, 208, 221, 235, 249, 255, 262,
 		267, 282, 293, 305, 312, 322, 332, 342, 350, 359, 367, 377, 385, 396,
@@ -274,15 +324,197 @@ public class QuranInfo {
 		true, true, true, true
 	};
 	
+	public static int[][] QUARTERS = new int[][]{
+	      // hizb 1
+	      {1, 1}, {2, 26}, {2, 44}, {2, 60}, 
+
+	      // hizb 2
+	      {2, 75}, {2, 92}, {2, 106}, {2, 124}, 
+
+	      // hizb 3
+	      {2, 142}, {2, 158}, {2, 177}, {2, 189}, 
+
+	      // hizb 4
+	      {2, 203}, {2, 219}, {2, 233}, {2, 243}, 
+
+	      // hizb 5
+	      {2, 253}, {2, 263}, {2, 272}, {2, 283}, 
+
+	      // hizb 6
+	      {3, 15}, {3, 33}, {3, 52}, {3, 75}, 
+
+	      // hizb 7
+	      {3, 93}, {3, 113}, {3, 133}, {3, 153}, 
+
+	      // hizb 8
+	      {3, 171}, {3, 186}, {4, 1}, {4, 12}, 
+
+	      // hizb 9
+	      {4, 24}, {4, 36}, {4, 58}, {4, 74}, 
+
+	      // hizb 10
+	      {4, 88}, {4, 100}, {4, 114}, {4, 135}, 
+
+	      // hizb 11
+	      {4, 148}, {4, 163}, {5, 1}, {5, 12}, 
+
+	      // hizb 12
+	      {5, 27}, {5, 41}, {5, 51}, {5, 67}, 
+
+	      // hizb 13
+	      {5, 82}, {5, 97}, {5, 109}, {6, 13}, 
+
+	      // hizb 14
+	      {6, 36}, {6, 59}, {6, 74}, {6, 95}, 
+
+	      // hizb 15
+	      {6, 111}, {6, 127}, {6, 141}, {6, 151}, 
+
+	      // hizb 16
+	      {7, 1}, {7, 31}, {7, 47}, {7, 65}, 
+
+	      // hizb 17
+	      {7, 88}, {7, 117}, {7, 142}, {7, 156}, 
+
+	      // hizb 18
+	      {7, 171}, {7, 189}, {8, 1}, {8, 22}, 
+
+	      // hizb 19
+	      {8, 41}, {8, 61}, {9, 1}, {9, 19}, 
+
+	      // hizb 20
+	      {9, 34}, {9, 46}, {9, 60}, {9, 75}, 
+
+	      // hizb 21
+	      {9, 93}, {9, 111}, {9, 122}, {10, 11}, 
+
+	      // hizb 22
+	      {10, 26}, {10, 53}, {10, 71}, {10, 90}, 
+
+	      // hizb 23
+	      {11, 6}, {11, 24}, {11, 41}, {11, 61}, 
+
+	      // hizb 24
+	      {11, 84}, {11, 108}, {12, 7}, {12, 30}, 
+
+	      // hizb 25
+	      {12, 53}, {12, 77}, {12, 101}, {13, 5}, 
+
+	      // hizb 26
+	      {13, 19}, {13, 35}, {14, 10}, {14, 28}, 
+
+	      // hizb 27
+	      {15, 1}, {15, 50}, {16, 1}, {16, 30}, 
+
+	      // hizb 28
+	      {16, 51}, {16, 75}, {16, 90}, {16, 111}, 
+
+	      // hizb 29
+	      {17, 1}, {17, 23}, {17, 50}, {17, 70}, 
+
+	      // hizb 30
+	      {17, 99}, {18, 17}, {18, 32}, {18, 51}, 
+
+	      // hizb 31
+	      {18, 75}, {18, 99}, {19, 22}, {19, 59}, 
+
+	      // hizb 32
+	      {20, 1}, {20, 55}, {20, 83}, {20, 111}, 
+
+	      // hizb 33
+	      {21, 1}, {21, 29}, {21, 51}, {21, 83}, 
+
+	      // hizb 34
+	      {22, 1}, {22, 19}, {22, 38}, {22, 60}, 
+
+	      // hizb 35
+	      {23, 1}, {23, 36}, {23, 75}, {24, 1}, 
+
+	      // hizb 36
+	      {24, 21}, {24, 35}, {24, 53}, {25, 1}, 
+
+	      // hizb 37
+	      {25, 21}, {25, 53}, {26, 1}, {26, 52}, 
+
+	      // hizb 38
+	      {26, 111}, {26, 181}, {27, 1}, {27, 27}, 
+
+	      // hizb 39
+	      {27, 56}, {27, 82}, {28, 12}, {28, 29}, 
+
+	      // hizb 40
+	      {28, 51}, {28, 76}, {29, 1}, {29, 26}, 
+
+	      // hizb 41
+	      {29, 46}, {30, 1}, {30, 31}, {30, 54}, 
+
+	      // hizb 42
+	      {31, 22}, {32, 11}, {33, 1}, {33, 18}, 
+
+	      // hizb 43
+	      {33, 31}, {33, 51}, {33, 60}, {34, 10}, 
+
+	      // hizb 44
+	      {34, 24}, {34, 46}, {35, 15}, {35, 41}, 
+
+	      // hizb 45
+	      {36, 28}, {36, 60}, {37, 22}, {37, 83}, 
+
+	      // hizb 46
+	      {37, 145}, {38, 21}, {38, 52}, {39, 8}, 
+
+	      // hizb 47
+	      {39, 32}, {39, 53}, {40, 1}, {40, 21}, 
+
+	      // hizb 48
+	      {40, 41}, {40, 66}, {41, 9}, {41, 25}, 
+
+	      // hizb 49
+	      {41, 47}, {42, 13}, {42, 27}, {42, 51}, 
+
+	      // hizb 50
+	      {43, 24}, {43, 57}, {44, 17}, {45, 12}, 
+
+	      // hizb 51
+	      {46, 1}, {46, 21}, {47, 10}, {47, 33}, 
+
+	      // hizb 52
+	      {48, 18}, {49, 1}, {49, 14}, {50, 27}, 
+
+	      // hizb 53
+	      {51, 31}, {52, 24}, {53, 26}, {54, 9}, 
+
+	      // hizb 54
+	      {55, 1}, {56, 1}, {56, 75}, {57, 16}, 
+
+	      // hizb 55
+	      {58, 1}, {58, 14}, {59, 11}, {60, 7}, 
+
+	      // hizb 56
+	      {62, 1}, {63, 4}, {65, 1}, {66, 1}, 
+
+	      // hizb 57
+	      {67, 1}, {68, 1}, {69, 1}, {70, 19}, 
+
+	      // hizb 58
+	      {72, 1}, {73, 20}, {75, 1}, {76, 19}, 
+
+	      // hizb 59
+	      {78, 1}, {80, 1}, {82, 1}, {84, 1}, 
+
+	      // hizb 60
+	      {87, 1}, {90, 1}, {94, 1}, {100, 9}, 
+	};
+	
 	public static Integer[] getPageBounds(int page){
-		if (page > ApplicationConstants.PAGES_LAST)
+		if (page > Constants.PAGES_LAST)
 			page = 604;
 		if (page < 1) page = 1;
 		
 		Integer[] bounds = new Integer[4];
 		bounds[0] = PAGE_SURA_START[page-1];
 		bounds[1] = PAGE_AYAH_START[page-1];
-		if (page == ApplicationConstants.PAGES_LAST){
+		if (page == Constants.PAGES_LAST){
 			bounds[2] = 114;
 			bounds[3] = 6;
 		}
@@ -308,19 +540,16 @@ public class QuranInfo {
 		return bounds;
 	}
 	
-	public static String getSuraNameFromPage(int page){
-		for (int i = 0; i < ApplicationConstants.SURAS_COUNT; i++){
-			if (SURA_PAGE_START[i] == page)
-				return getSuraName(i);
-			else if (SURA_PAGE_START[i] > page)
-				return getSuraName(i-1);
+	public static String getSuraNameFromPage(Context context, int page){
+		for (int i = 0; i < Constants.SURAS_COUNT; i++){
+			if (SURA_PAGE_START[i] == page){
+				return getSuraName(context, i+1, false);
+         }
+			else if (SURA_PAGE_START[i] > page){
+				return getSuraName(context, i, false);
+         }
 		}
 		return "";
-	}
-	
-	public static int getPageFromJuz(int juz){
-		if ((juz < 1) || (juz > ApplicationConstants.JUZ2_COUNT)) return -1;
-		return QuranInfo.JUZ_PAGE_START[juz-1];
 	}
 	
 	public static int getJuzFromPage(int page) {
@@ -328,32 +557,29 @@ public class QuranInfo {
 		return juz > 30 ? 30 : juz < 1 ? 1 : juz;
 	}
 	
-	public static int getPageFromRub3(int rub3){
-		if ((rub3 < 1) || (rub3 > 8 * ApplicationConstants.JUZ2_COUNT)) return -1;
-		return QuranInfo.RUB3_PAGE_START[rub3-1];
-	}
-	
 	public static int getRub3FromPage(int page) {
-		if ((page > ApplicationConstants.PAGES_LAST) || (page < 1)) return -1;
+		if ((page > Constants.PAGES_LAST) || (page < 1)) return -1;
 		return PAGE_RUB3_START[page-1];
 	}
 	
 	public static int getPageFromSuraAyah(int sura, int ayah){
 		// basic bounds checking
 		if (ayah == 0) ayah = 1;
-		if ((sura < 1) || (sura > ApplicationConstants.SURAS_COUNT) 
-				|| (ayah < ApplicationConstants.AYA_MIN) || (ayah > ApplicationConstants.AYA_MAX))
+		if ((sura < 1) || (sura > Constants.SURAS_COUNT)
+				|| (ayah < Constants.AYA_MIN) ||
+               (ayah > Constants.AYA_MAX))
 			return -1;
 		
 		// what page does the sura start on?
 		int index = QuranInfo.SURA_PAGE_START[sura - 1] - 1;
-		while (index < ApplicationConstants.PAGES_LAST){
+		while (index < Constants.PAGES_LAST){
 			// what's the first sura in that page?
 			int ss = QuranInfo.PAGE_SURA_START[index];
 			
 			// if we've passed the sura, return the previous page
 			// or, if we're at the same sura and passed the ayah
-			if (ss > sura || ((ss == sura) && (QuranInfo.PAGE_AYAH_START[index] > ayah))) {
+			if (ss > sura || ((ss == sura) &&
+                 (QuranInfo.PAGE_AYAH_START[index] > ayah))) {
 				break;
 			}
 			
@@ -364,57 +590,26 @@ public class QuranInfo {
 		return index;
 	}
 
+	public static int getAyahId(int sura, int ayah) {
+		int ayahId = 0;
+		for (int i = 0; i < sura-1; i++) {
+			ayahId += SURA_NUM_AYAHS[i];
+		}
+		ayahId += ayah;
+		return ayahId;
+	}
+	
 	public static int getNumAyahs(int sura){
-		if ((sura < 1) || (sura > ApplicationConstants.SURAS_COUNT)) return -1;
+		if ((sura < 1) || (sura > Constants.SURAS_COUNT)) return -1;
 		return SURA_NUM_AYAHS[sura-1];
 	}
 	
-	public static int getNumAyahs(){
-		return 6236;
-	}
-	public static String getPageTitleNoPrefix(int page) {
-		return getPageTitleNoPrefix() + page +
-		" - " + getSuraTitle() + " " + getSuraNameFromPage(page);
+	public static String getAyahString(int sura, int ayah, Context cx){
+		return getSuraName(cx, sura, true) + " - "
+				+ getAyahTitle(cx) + " " + ayah;
 	}
 	
-	public static String getSuraNameString(int page){
-		return getSuraTitle() + " " + getSuraNameFromPage(page);
-	}
-	
-	public static String getSuraDetailsForBookmark(int page){
-		return getPageTitle() + page + " - " +
-			getJuzTitle() + " " + getJuzFromPage(page);
-	}
-	
-	public static String getPageTitle(int page) {
-		return getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" +
-			getPageTitle() + page + " - " + getJuzTitle() + " " + getJuzFromPage(page);
-		//return getPageTitle() + page +
-		//" - " + getSuraTitle() + " " + getSuraNameFromPage(page) + "\n" + getJuzTitle() + " " + getJuzFromPage(page);
-	}
-	
-	 public static Integer [] getJuzBounds(int juz) {
-         Integer [] results = new Integer [4]; 
-         int spage = JUZ_PAGE_START[juz - 1];
-         int epage = juz == 30 ? ApplicationConstants.PAGES_LAST : JUZ_PAGE_START[juz];
-         Integer [] bounds = getPageBounds(spage);
-         results[0] = bounds[0];
-         results[1] = bounds[1];
-         bounds = getPageBounds(epage);
-         results[2] = bounds[0];
-         results[3] = bounds[1];
-         return results;
-	 }
-	
-	public static boolean ayahWithinBounds(int sura, int ayah,
-			int startSura, int startAyah, int endSura, int endAyah) {
-		if (sura >= startSura && sura <= endSura) {
-			if (sura == startSura && ayah < startAyah)
-				return false;
-			if (sura == endSura && ayah > endAyah)
-				return false;
-			return true;
-		}
-		return false;
+	public static String getSuraNameString(Context context, int page){
+		return getSuraTitle(context) + " " + getSuraNameFromPage(context, page);
 	}
 }
