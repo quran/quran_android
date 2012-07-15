@@ -646,6 +646,12 @@ public class QuranPageFragment extends SherlockFragment {
 				AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 				builder.setMessage(text);
 				builder.setCancelable(true);
+				builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
 				AlertDialog alt = builder.create();
 				alt.show();
 			}
