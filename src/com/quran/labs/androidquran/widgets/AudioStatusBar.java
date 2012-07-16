@@ -91,6 +91,8 @@ public class AudioStatusBar extends LinearLayout {
       showStoppedMode();
    }
 
+   public int getCurrentMode(){ return mCurrentMode; }
+
    public void switchMode(int mode){
       if (mode == mCurrentMode){ return; }
 
@@ -280,10 +282,10 @@ public class AudioStatusBar extends LinearLayout {
                   mAudioBarListener.onPausePressed();
                   break;
                case R.drawable.ic_next:
-                  mAudioBarListener.onNextPressed();
+                  mAudioBarListener.onPreviousPressed();
                   break;
                case R.drawable.ic_previous:
-                  mAudioBarListener.onPreviousPressed();
+                  mAudioBarListener.onNextPressed();
                   break;
                case R.drawable.ic_cancel:
                   if (mHaveCriticalError){
