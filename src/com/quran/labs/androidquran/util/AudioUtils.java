@@ -22,6 +22,11 @@ public class AudioUtils {
    public final static class LookAheadAmount {
       public static final int PAGE = 1;
       public static final int SURA = 2;
+      public static final int JUZ = 3;
+
+      // make sure to update these when a lookup type is added
+      public static final int MIN = 1;
+      public static final int MAX = 3;
    }
 
    private static String[] mQariBaseUrls = null;
@@ -116,15 +121,25 @@ public class AudioUtils {
          if (lastAyah == -1){ return null; }
          return new QuranAyah(sura, lastAyah);
       }
-      else {
-         if (page > 604 || page < 1){ return null; }
-         else if (page == 604){ return new QuranAyah(114, 6); }
-         else {
-            // get sura and ayah for the next page
-            int sura = QuranInfo.PAGE_SURA_START[page];
-            int ayah = QuranInfo.PAGE_AYAH_START[page];
-            return new QuranAyah(sura, ayah-1);
+      else if (mode == LookAheadAmount.JUZ){
+         int juz = QuranInfo.getJuzFromPage(page);
+         if (juz == 30){
+            return new QuranAyah(114, 6);
          }
+         else if (juz >= 1 && juz < 30){
+            int[] endJuz = QuranInfo.QUARTERS[juz * 8];
+            return new QuranAyah(endJuz[0], endJuz[1]);
+         }
+      }
+
+      // page mode (fallback also from errors above)
+      if (page > 604 || page < 1){ return null; }
+      else if (page == 604){ return new QuranAyah(114, 6); }
+      else {
+         // get sura and ayah for the next page
+         int sura = QuranInfo.PAGE_SURA_START[page];
+         int ayah = QuranInfo.PAGE_AYAH_START[page];
+         return new QuranAyah(sura, ayah-1);
       }
    }
 

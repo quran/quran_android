@@ -11,9 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahTagMapTable;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.PageTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
 
 public class BookmarksDBAdapter {
 
@@ -99,7 +97,8 @@ public class BookmarksDBAdapter {
 		cursor.close();
 		return ayahBookmarks;
 	}
-	
+
+   /*
 	public String getAyahNotes(int sura, int ayah) {
 		Cursor cursor = findAyah(sura, ayah, new String[] {AyahTable.NOTES});
 		String result = null;
@@ -238,7 +237,8 @@ public class BookmarksDBAdapter {
 	public void clearAyahTags(int ayahId) {
 		db.delete(AyahTagMapTable.TABLE_NAME, AyahTagMapTable.AYAH_ID+"="+ayahId, null);
 	}
-	
+	*/
+
 	private Cursor findPage(int page) {
 		return db.query(PageTable.TABLE_NAME, new String[] {PageTable.BOOKMARKED},
 				PageTable.ID + "=" + page, null, null, null, PageTable.ID);
@@ -306,7 +306,8 @@ public class BookmarksDBAdapter {
 		}
 		
 	}
-	
+
+   /*
 	public class AyahTag {
 		public Integer id;
 		public String name, description;
@@ -323,4 +324,5 @@ public class BookmarksDBAdapter {
 			this.color = color;
 		}
 	}
+	*/
 }

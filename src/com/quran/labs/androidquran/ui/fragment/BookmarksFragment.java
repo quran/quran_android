@@ -149,11 +149,10 @@ public class BookmarksFragment extends SherlockFragment {
       }
       for (AyahBookmark ayah : ayahBookmarks){
          res[index++] = new QuranRow(
-               // TODO Polish up displayed information for Ayahs
                QuranInfo.getAyahString(ayah.sura, ayah.ayah, getActivity()),
                QuranInfo.getPageSubtitle(activity, ayah.page),
                false, ayah.sura, ayah.page,
-               R.drawable.bookmark_page);
+               R.drawable.bookmark_ayah);
       }      
       return res;
    }

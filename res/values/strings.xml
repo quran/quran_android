@@ -141,8 +141,13 @@
     <string name="prefs_no_translations_installed">No translations installed</string>
     <string name="prefs_translations">Translations</string>
     <string name="prefs_translations_summary">Download and manage translations</string>
-    <string name="prefs_ayah_before_translation_title">Show Ayah before Translation</string>
+    <string name="prefs_ayah_before_translation_title">Ayah before Translation</string>
     <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
+    <string name="prefs_category_download">Download Options</string>
+    <string name="prefs_streaming_title">Streaming</string>
+    <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
+    <string name="prefs_download_amount_title">Download Amount</string>
+    <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
     <string name="loading_translations">Loading Translations List, Please wait..</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
@@ -245,6 +250,17 @@
         <item quantity="one">verse</item>
         <item quantity="other">verses</item>
     </plurals>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">Bookmark this Ayah</string>
+    <string name="unbookmark_ayah">Remove bookmark for this Ayah</string>
+    <string name="share_ayah">Share this Ayah</string>
+    <string name="translation_ayah">Ayah Translation/Tafseer</string>
+    <string name="play_from_here">Play from Here</string>
+    <string name="bookmarked_ayah">Bookmarked Ayah</string>
+    <string name="unbookmarked_ayah">Removed bookmark from Ayah</string>
+    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="share">Share</string>
 
     <string-array name="quarter_prefix_array">
         <item>In the name of Allah, the Entirely Merciful, the Especially Merciful.</item>

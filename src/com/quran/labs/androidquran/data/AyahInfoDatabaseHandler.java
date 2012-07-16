@@ -1,14 +1,13 @@
 package com.quran.labs.androidquran.data;
 
-import java.io.File;
-import java.util.HashMap;
-
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-
-import com.quran.labs.androidquran.common.AyahItem;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+
+import java.io.File;
+import java.util.HashMap;
 
 public class AyahInfoDatabaseHandler {
 
@@ -46,7 +45,7 @@ public class AyahInfoDatabaseHandler {
 	}
 	
 	// TODO Improve efficiency -AF
-	public AyahItem getVerseAtPoint(int page, float x, float y){
+	public QuranAyah getVerseAtPoint(int page, float x, float y){
 		if (!validDatabase())
 			return null;
 		Cursor cursor = database.query(GLYPHS_TABLE,
@@ -81,7 +80,7 @@ public class AyahInfoDatabaseHandler {
 		return null;
 	}
 	
-	public AyahItem getVerseAtPoint(int page, int line, float x){
+	public QuranAyah getVerseAtPoint(int page, int line, float x){
 		if (!validDatabase() || line < 1 || line > 15)
 			return null;
 		Cursor cursor = database.query(GLYPHS_TABLE,
@@ -112,7 +111,7 @@ public class AyahInfoDatabaseHandler {
 		for (Integer ayah : ayahs.keySet()) {
 			Integer[] bounds = ayahs.get(ayah);
 			if (x >= bounds[0] && x <= bounds[1])
-				return new AyahItem("", suraNumber, ayah);
+				return new QuranAyah(suraNumber, ayah);
 		}
 		return null;
 	}

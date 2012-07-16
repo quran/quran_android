@@ -25,6 +25,11 @@ public class QuranSettings {
               Constants.PREF_LANDSCAPE_ORIENTATION, false);
    }
 
+   public static boolean shouldStream(Context context){
+      return getBooleanPreference(context,
+              Constants.PREF_PREFER_STREAMING, false);
+   }
+
    public static boolean isReshapeArabic(Context context){
       return Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH;
    }
@@ -50,6 +55,22 @@ public class QuranSettings {
       SharedPreferences prefs =
               PreferenceManager.getDefaultSharedPreferences(context);
       return prefs.getBoolean(pref, defaultValue);
+   }
+
+   public static int getPreferredDownloadAmount(Context context){
+      SharedPreferences prefs =
+              PreferenceManager.getDefaultSharedPreferences(context);
+      String str = prefs.getString(Constants.PREF_DOWNLOAD_AMOUNT,
+                  "" + AudioUtils.LookAheadAmount.PAGE);
+      int val = AudioUtils.LookAheadAmount.PAGE;
+      try { val = Integer.parseInt(str); }
+      catch (Exception e){}
+
+      if (val > AudioUtils.LookAheadAmount.MAX ||
+              val < AudioUtils.LookAheadAmount.MIN){
+         return AudioUtils.LookAheadAmount.PAGE;
+      }
+      return val;
    }
 
    public static int getTranslationTextSize(Context context){

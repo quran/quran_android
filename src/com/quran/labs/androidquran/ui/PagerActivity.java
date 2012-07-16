@@ -79,6 +79,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private boolean mShowingTranslation = false;
    private int mHighlightedSura = -1;
    private int mHighlightedAyah = -1;
+   private boolean mShouldOverridePlaying = false;
    private DefaultDownloadReceiver mDownloadReceiver;
    private Handler mHandler = new Handler();
 
@@ -106,7 +107,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             mLastAudioDownloadRequest = (DownloadAudioRequest)lastAudioRequest;
          }
          page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
-         if (page != -1){ page = 604 - page; }
+         if (page != -1){ page = Constants.PAGES_LAST - page; }
          mShowingTranslation = savedInstanceState
                  .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
       }
@@ -133,14 +134,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
       Intent intent = getIntent();
       Bundle extras = intent.getExtras();
       if (extras != null){
-         if (page == -1){ page = 604 - extras.getInt("page", 1); }
+         if (page == -1){
+            page = Constants.PAGES_LAST -
+                    extras.getInt("page", Constants.PAGES_FIRST);
+         }
 
          mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION,
                  mShowingTranslation);
          mHighlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
          mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
       }
-      updateActionBarTitle(604 - page);
+      updateActionBarTitle(Constants.PAGES_LAST - page);
 
       mWorker = new QuranPageWorker(this);
       mLastPopupTime = System.currentTimeMillis();
@@ -162,7 +166,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          @Override
          public void onPageSelected(int position) {
             Log.d(TAG, "onPageSelected(): " + position);
-            int page = 604 - position;
+            int page = Constants.PAGES_LAST - position;
             QuranSettings.setLastPage(PagerActivity.this, page);
             if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)){
                mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
@@ -253,7 +257,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
                  mLastAudioDownloadRequest);
       }
       state.putSerializable(LAST_READ_PAGE,
-              604 - mViewPager.getCurrentItem());
+              Constants.PAGES_LAST - mViewPager.getCurrentItem());
       state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
       super.onSaveInstanceState(state);
    }
@@ -271,7 +275,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       super.onPrepareOptionsMenu(menu);
       MenuItem item = menu.findItem(R.id.favorite_item);
       if (item != null){
-         int page = 604 - mViewPager.getCurrentItem();
+         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
          boolean bookmarked = false;
          if (mBookmarksCache.get(page) != null){
             bookmarked = mBookmarksCache.get(page);
@@ -296,7 +300,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    public boolean onOptionsItemSelected(MenuItem item) {
       if (item.getItemId() == R.id.favorite_item){
-         int page = 604 - mViewPager.getCurrentItem();
+         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
          toggleBookmark(page);
          return true;
       }
@@ -432,9 +436,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void highlightAyah(int sura, int ayah){
       Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
       int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
-      if (page < 1 || 604 < page){ return; }
+      if (page < Constants.PAGES_FIRST ||
+              Constants.PAGES_LAST < page){ return; }
 
-      int position = 604 - page;
+      int position = Constants.PAGES_LAST - page;
       if (position != mViewPager.getCurrentItem()){
          unhighlightAyah();
          mViewPager.setCurrentItem(position);
@@ -508,15 +513,24 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    public void onPlayPressed() {
       int position = mViewPager.getCurrentItem();
-      int page = 604 - position;
+      int page = Constants.PAGES_LAST - position;
 
       int startSura = QuranInfo.PAGE_SURA_START[page - 1];
       int startAyah = QuranInfo.PAGE_AYAH_START[page - 1];
+      playFromAyah(page, startSura, startAyah, false);
+   }
+
+   public void playFromAyah(int page, int sura, int ayah){
+      playFromAyah(page, sura, ayah, true);
+   }
+
+   private void playFromAyah(int page, int startSura,
+                             int startAyah, boolean force){
+      if (force){ mShouldOverridePlaying = true; }
       int currentQari = mAudioStatusBar.getCurrentQari();
 
       QuranAyah ayah = new QuranAyah(startSura, startAyah);
-      boolean streaming = false;
-      if (streaming){
+      if (QuranSettings.shouldStream(this)){
          playStreaming(ayah, page, currentQari);
       }
       else { downloadAndPlayAudio(ayah, page, currentQari); }
@@ -541,7 +555,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    private void downloadAndPlayAudio(QuranAyah ayah, int page, int qari){
       QuranAyah endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
-              AudioUtils.LookAheadAmount.PAGE);
+              QuranSettings.getPreferredDownloadAmount(this));
       String baseUri = AudioUtils.getLocalQariUrl(this, qari);
       if (endAyah == null || baseUri == null){ return; }
       String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, qari);
@@ -647,7 +661,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private void play(AudioRequest request){
       Intent i = new Intent(AudioService.ACTION_PLAYBACK);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
-      i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);
+      if (mShouldOverridePlaying){
+         i.putExtra(AudioService.EXTRA_STOP_IF_PLAYING, true);
+         mShouldOverridePlaying = false;
+      }
+      else { i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true); }
       startService(i);
    }
 

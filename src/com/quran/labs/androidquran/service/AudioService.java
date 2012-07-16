@@ -126,6 +126,10 @@ public class AudioService extends Service implements OnCompletionListener,
    public static final String EXTRA_IGNORE_IF_PLAYING =
            "com.quran.labs.androidquran.IGNORE_IF_PLAYING";
 
+   // used to override what is playing now (stop then play)
+   public static final String EXTRA_STOP_IF_PLAYING =
+           "com.quran.labs.androidquran.STOP_IF_PLAYING";
+
    // indicates the state our service:
    private enum State {
       Stopped,    // media player is stopped and not prepared to play
@@ -301,11 +305,17 @@ public class AudioService extends Service implements OnCompletionListener,
       else if (action.equals(ACTION_PLAYBACK)){
          Serializable playInfo = intent.getSerializableExtra(EXTRA_PLAY_INFO);
          if (playInfo != null && playInfo instanceof AudioRequest){
-            if (mState == State.Stopped &&
-                    intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)){
+            if (mState == State.Stopped ||
+                    !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)){
                mAudioRequest = (AudioRequest)playInfo;
             }
          }
+
+         if (intent.getBooleanExtra(EXTRA_STOP_IF_PLAYING, false)){
+            if (mPlayer != null){ mPlayer.stop(); }
+            mState = State.Stopped;
+         }
+
          processTogglePlaybackRequest();
       }
       else if (action.equals(ACTION_PLAY)){ processPlayRequest(); }
@@ -503,7 +513,7 @@ public class AudioService extends Service implements OnCompletionListener,
          // 'foreground service' state.
          mState = State.Playing;
          setUpAsForeground(mAudioTitle + " (playing)");
-         configAndStartMediaPlayer();
+         configAndStartMediaPlayer(false);
       }
    }
 
@@ -638,6 +648,10 @@ public class AudioService extends Service implements OnCompletionListener,
     * context where you are sure this is the case.
     */
    private void configAndStartMediaPlayer() {
+      configAndStartMediaPlayer(true);
+   }
+
+   private void configAndStartMediaPlayer(boolean canSeek){
       Log.d(TAG, "configAndStartMediaPlayer()");
       if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
          // If we don't have audio focus and can't duck, we have to pause,
@@ -660,7 +674,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
       Log.d(TAG, "checking if playing...");
       if (!mPlayer.isPlaying()){
-         if (mAudioRequest.isGapless()){
+         if (canSeek && mAudioRequest.isGapless()){
             int timing = getSeekPosition(false);
             if (timing != -1){
                Log.d(TAG, "got timing: " + timing +
@@ -674,6 +688,9 @@ public class AudioService extends Service implements OnCompletionListener,
                mHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200);
                return;
             }
+         }
+         else if (mAudioRequest.isGapless()){
+            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
          }
 
          mPlayer.start();
@@ -860,7 +877,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
       // restart media player with new focus settings
       if (mState == State.Playing)
-         configAndStartMediaPlayer();
+         configAndStartMediaPlayer(false);
    }
 
    public void onLostAudioFocus(boolean canDuck) {
@@ -871,7 +888,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
       // start/restart/pause media player with new focus settings
       if (mPlayer != null && mPlayer.isPlaying()){
-         configAndStartMediaPlayer();
+         configAndStartMediaPlayer(false);
       }
    }
 

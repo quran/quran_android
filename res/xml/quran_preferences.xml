@@ -79,4 +79,20 @@
             android:title="@string/prefs_translation_text_title" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/prefs_category_download" >
+
+        <CheckBoxPreference android:key="@string/prefs_prefer_streaming"
+                android:persistent="true"
+                android:defaultValue="false"
+                android:summary="@string/prefs_streaming_summary"
+                android:title="@string/prefs_streaming_title" />
+
+        <ListPreference android:key="@string/prefs_download_amount"
+                        android:title="@string/prefs_download_amount_title"
+                        android:summary="@string/prefs_download_amount_summary"
+                        android:entries="@array/download_amount_preference"
+                        android:entryValues="@array/download_amount_preference_values"
+                        android:defaultValue="1"
+                        android:dialogTitle="@string/prefs_download_amount_title" />
+    </PreferenceCategory>
 </PreferenceScreen>
