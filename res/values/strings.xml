@@ -504,4 +504,6 @@
         <item>Did We not expand for you, [O Muhammad], your breast?</item>
         <item>But does he not know that when the contents of the graves are&#8230;</item>
     </string-array>
+    <string name="copy_ayah">Copy Ayah</string>
+    <string name="ayah_copied_popup">Ayah Copied</string>
 </resources>
