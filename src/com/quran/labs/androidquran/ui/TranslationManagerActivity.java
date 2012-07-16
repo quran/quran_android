@@ -50,7 +50,7 @@ public class TranslationManagerActivity extends SherlockActivity
            "TRANSLATION_DOWNLOAD_KEY";
 
    public static final String WEB_SERVICE_URL =
-           "http://labs.quran.com/androidquran/translations.php";
+           "http://labs.quran.com/androidquran/translations.php?v=2";
 
    private List<TranslationItem> mItems;
    private List<TranslationItem> mAllItems;
@@ -241,8 +241,9 @@ public class TranslationManagerActivity extends SherlockActivity
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
               destination, notificationTitle, TRANSLATION_DOWNLOAD_KEY,
               QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
-      intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
-              selectedItem.filename);
+      String filename = selectedItem.filename;
+      if (url.endsWith(".zip")){ filename += "zip"; }
+      intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME, filename);
       startService(intent);
    }
 
