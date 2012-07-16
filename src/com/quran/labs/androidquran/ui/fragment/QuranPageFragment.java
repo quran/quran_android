@@ -10,13 +10,20 @@ import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.ClipboardManager;
 import android.util.Log;
-import android.view.*;
+import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.HapticFeedbackConstants;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
@@ -232,7 +239,7 @@ public class QuranPageFragment extends SherlockFragment {
          int[] optionIds = {
                  result? R.string.unbookmark_ayah : R.string.bookmark_ayah,
                  R.string.translation_ayah, R.string.share_ayah,
-                 R.string.play_from_here };
+                 R.string.copy_ayah, R.string.play_from_here };
          CharSequence[] options = new CharSequence[optionIds.length];
          for (int i=0; i<optionIds.length; i++){
             options[i] = activity.getString(optionIds[i]);
@@ -243,22 +250,21 @@ public class QuranPageFragment extends SherlockFragment {
 			builder.setItems(options, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int selection) {
-					if (selection == 0){
-						new ToggleAyahBookmarkTask().execute(mPageNumber,
-                          sura, ayah);
-               }
-					else if (selection == 1){
+					if (selection == 0) {
+						new ToggleAyahBookmarkTask().execute(mPageNumber, sura,
+								ayah);
+					} else if (selection == 1) {
 						new ShowTafsirTask(sura, ayah).execute();
-               }
-					else if (selection == 2){
-						new ShareAyahTask(sura, ayah).execute();
-               }
-               else if (selection == 3){
-                  if (activity instanceof PagerActivity){
-                     PagerActivity pagerActivity = (PagerActivity)activity;
-                     pagerActivity.playFromAyah(mPageNumber, sura, ayah);
-                  }
-               }
+					} else if (selection == 2) {
+						new ShareAyahTask(sura, ayah, false).execute();
+					} else if (selection == 3) {
+						new ShareAyahTask(sura, ayah, true).execute();
+					} else if (selection == 4) {
+						if (activity instanceof PagerActivity) {
+							PagerActivity pagerActivity = (PagerActivity) activity;
+							pagerActivity.playFromAyah(mPageNumber, sura, ayah);
+						}
+					}
 				}
 			});
 			AlertDialog dlg = builder.create();
@@ -295,10 +301,12 @@ public class QuranPageFragment extends SherlockFragment {
 	
 	class ShareAyahTask extends AsyncTask<Void, Void, String> {
 		private int sura, ayah;
+		private boolean copy;
 		
-		public ShareAyahTask(int sura, int ayah) {
+		public ShareAyahTask(int sura, int ayah, boolean copy) {
 			this.sura = sura;
 			this.ayah = ayah;
+			this.copy = copy;
 		}
 		
 		@Override
@@ -318,8 +326,14 @@ public class QuranPageFragment extends SherlockFragment {
 		
 		@Override
 		protected void onPostExecute(String ayah) {
-         Activity activity = getActivity();
-			if (ayah != null && activity != null) {
+			Activity activity = getActivity();
+			if (copy) {
+				ClipboardManager cm = (ClipboardManager) activity.
+							getSystemService(Activity.CLIPBOARD_SERVICE);
+				cm.setText(ayah);
+				Toast.makeText(activity, activity.getString(R.string.ayah_copied_popup), 
+						Toast.LENGTH_SHORT).show();
+			} else if (ayah != null && activity != null) {
 				ayah += activity.getString(R.string.via_string);
 				final Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain");
