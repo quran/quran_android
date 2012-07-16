@@ -253,12 +253,12 @@ public class AudioUtils {
 
       if (android.os.Build.VERSION.SDK_INT >= 8){
          f = context.getExternalFilesDir(null);
-         path = sep + "ayat" + sep;
+         path = sep + "audio" + sep;
       }
       else {
          f = Environment.getExternalStorageDirectory();
          path = sep + "Android" + sep + "data" + sep +
-                 context.getPackageName() + sep + "files" + sep + "ayat" + sep;
+                 context.getPackageName() + sep + "files" + sep + "audio" + sep;
       }
 
       return f.getAbsolutePath() + path;

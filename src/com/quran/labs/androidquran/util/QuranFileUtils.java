@@ -267,24 +267,4 @@ public class QuranFileUtils {
 		}
 		return false;
 	}
-
-	public static String getAudioDirectory() {
-		File f = null;
-		File externalPath = Environment.getExternalStorageDirectory();
-		String path = "/Android/data/" + PACKAGE_NAME + "/files/audio/";
-		f = new File(externalPath.getAbsolutePath() + path);
-		return f.getAbsolutePath();
-	}
-	
-	public static String getReaderAudioDirectory(int readerId){
-		return getAudioDirectory() + "/" + readerId;
-		
-	}
-	public static String getAyahImagesDirectory() {
-		File f = null;
-		File externalPath = Environment.getExternalStorageDirectory();
-		String path = "/Android/data/" + PACKAGE_NAME + "/files/ayat/";
-		f = new File(externalPath.getAbsolutePath() + path);
-		return f.getAbsolutePath();
-	}
 }
