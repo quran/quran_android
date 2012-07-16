@@ -6,18 +6,16 @@ import android.graphics.Typeface;
 
 public class ArabicStyle {
 
-	private static Typeface typeface;
+	private static Typeface mTypeface;
+   private static final String FONT = "fonts/DroidSansArabic.ttf";
 
-	public static void setAssetManager(AssetManager asset) {
-		typeface = Typeface.createFromAsset(asset, "fonts/DroidSansArabic.ttf");
-	}
-
-	public static Typeface getTypeface() {
-		return typeface;
+	public static Typeface getTypeface(Context context) {
+      if (mTypeface == null){
+         mTypeface = Typeface.createFromAsset(context.getAssets(), FONT);
+      }
+		return mTypeface;
 	}
 	public static String reshape(Context context, String text){
-		if (!QuranSettings.isReshapeArabic(context))
-			return text;
 		ArabicReshaper rs = new ArabicReshaper();
 		return rs.reshape(text);
 	}

@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/rowIcon"
         android:layout_toLeftOf="@+id/pageNumber"
+        android:gravity="left"
         android:maxLines="1"
         android:lines="1"
         android:ellipsize="end"

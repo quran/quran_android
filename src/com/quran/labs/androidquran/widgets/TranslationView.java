@@ -20,6 +20,9 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class TranslationView extends LinearLayout {
 
@@ -31,6 +34,9 @@ public class TranslationView extends LinearLayout {
    private int mFontSize;
    private int mHeaderColor;
    private int mHeaderStyle;
+   private boolean mIsArabic;
+   private int mArabicStatus;
+   private boolean mShouldReshape;
 
    public TranslationView(Context context){
       super(context);
@@ -58,16 +64,16 @@ public class TranslationView extends LinearLayout {
       mTopBottomMargin = resources.getDimensionPixelSize(
               R.dimen.translation_top_bottom_margin);
       mHeaderColor = resources.getColor(R.color.translation_sura_header);
+      mHeaderStyle = R.style.translation_sura_title;
+      mFontSize = QuranSettings.getTranslationTextSize(mContext);
 
-      SharedPreferences prefs = PreferenceManager
-              .getDefaultSharedPreferences(mContext);
-      boolean nightMode = prefs.getBoolean(
-              Constants.PREF_NIGHT_MODE, false);
+      mIsArabic = QuranSettings.isArabicNames(mContext);
+      mShouldReshape = QuranSettings.isReshapeArabic(mContext);
+      mArabicStatus = 0;
+
+      boolean nightMode = QuranSettings.isNightMode(mContext);
       mTextStyle = nightMode ? R.style.translation_night_mode :
               R.style.translation_text;
-      mHeaderStyle = R.style.translation_sura_title;
-      mFontSize = prefs.getInt(Constants.PREF_TRANSLATION_TEXT_SIZE,
-    				  Constants.DEFAULT_TEXT_SIZE);
       if (nightMode){ setBackgroundColor(Color.BLACK); }
    }
 
@@ -102,6 +108,11 @@ public class TranslationView extends LinearLayout {
          String ayahText = ayah.getText();
          if (!TextUtils.isEmpty(ayahText)){
             // Ayah Text
+            if (mShouldReshape){
+               ayahText = ArabicStyle.reshape(mContext, ayahText);
+               mArabicStatus = 1;
+            }
+
             ayatInSura.append(ayahText);
             end = ayatInSura.length();
             ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
@@ -110,7 +121,21 @@ public class TranslationView extends LinearLayout {
          }
          
          // Translation
-         ayatInSura.append(ayah.getTranslation());
+         String translationText = ayah.getTranslation();
+         if (mShouldReshape && mArabicStatus != 2){
+            if (mArabicStatus == 0){  // 0 means we didn't check yet
+               if (QuranUtils.doesStringContainArabic(translationText)){
+                  mArabicStatus = 1;  // 1 means we have arabic
+               }
+               else { mArabicStatus= 2; } // no arabic in this translation
+            }
+
+            if (mArabicStatus == 1){
+               translationText = ArabicStyle.reshape(mContext,
+                       translationText);
+            }
+         }
+         ayatInSura.append(translationText);
          end = ayatInSura.length();
       }
       if (ayatInSura.length() > 0){
@@ -123,6 +148,9 @@ public class TranslationView extends LinearLayout {
       translationText.setTextAppearance(mContext, mTextStyle);
       translationText.setText(stringBuilder);
       translationText.setTextSize(mFontSize);
+      if (mShouldReshape && mArabicStatus == 1){
+         translationText.setTypeface(ArabicStyle.getTypeface(mContext));
+      }
       LinearLayout.LayoutParams params = new LayoutParams(
               LayoutParams.MATCH_PARENT,
               LayoutParams.WRAP_CONTENT);
@@ -141,14 +169,20 @@ public class TranslationView extends LinearLayout {
       addView(view, params);
 
       String suraName = QuranInfo.getSuraName(mContext, currentSura, true);
+
       TextView headerView = new TextView(mContext);
       params = new LayoutParams(LayoutParams.MATCH_PARENT,
               LayoutParams.WRAP_CONTENT);
       params.leftMargin = mLeftRightMargin;
+      params.rightMargin = mLeftRightMargin;
       params.topMargin = mTopBottomMargin / 2;
       params.bottomMargin = mTopBottomMargin / 2;
-      headerView.setText(suraName);
       headerView.setTextAppearance(mContext, mHeaderStyle);
+      if (mShouldReshape && mIsArabic){
+         suraName = ArabicStyle.reshape(mContext, suraName);
+         headerView.setTypeface(ArabicStyle.getTypeface(mContext));
+      }
+      headerView.setText(suraName);
       addView(headerView, params);
 
       view = new View(mContext);
