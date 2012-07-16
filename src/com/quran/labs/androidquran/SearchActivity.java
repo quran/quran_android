@@ -38,6 +38,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class SearchActivity extends SherlockActivity
@@ -74,7 +75,6 @@ public class SearchActivity extends SherlockActivity
             finish();
          }
       });
-		
 		handleIntent(getIntent());
 	}
 
@@ -271,7 +271,8 @@ public class SearchActivity extends SherlockActivity
 			cursor.close();
 			
 			ListView listView = (ListView)findViewById(R.id.results_list);
-			EfficientResultAdapter adapter = new EfficientResultAdapter(this,res);
+			EfficientResultAdapter adapter = new EfficientResultAdapter(this,
+                 res, mIsArabicSearch);
 			listView.setAdapter(adapter);
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				@Override
@@ -302,13 +303,21 @@ public class SearchActivity extends SherlockActivity
 		private LayoutInflater mInflater;
 		private List<SearchElement> mElements;
       private Context mContext;
+      private boolean mIsArabicSearch;
+      private boolean mShouldReshape;
 		
 		public EfficientResultAdapter(Context context,
-                                    List<SearchElement> metadata) {
+                                    List<SearchElement> metadata,
+                                    boolean isArabicSearch) {
 			mInflater = LayoutInflater.from(context);
 			mElements = metadata;
          mContext = context;
-		}
+         mIsArabicSearch = isArabicSearch;
+         if (mIsArabicSearch){
+            mShouldReshape = QuranSettings.isReshapeArabic(context);
+         }
+         else { mShouldReshape = false; }
+      }
 
 		public int getCount() {
 			return mElements.size();
@@ -329,10 +338,12 @@ public class SearchActivity extends SherlockActivity
 				convertView = mInflater.inflate(R.layout.search_result, null);
 				holder = new ViewHolder();
 				holder.text = (TextView)convertView.findViewById(R.id.verseText);
-				holder.text.setTypeface(ArabicStyle.getTypeface());
+				holder.text.setTypeface(ArabicStyle.getTypeface(mContext));
 				holder.metadata = (TextView)convertView
                     .findViewById(R.id.verseLocation);
-				holder.metadata.setTypeface(ArabicStyle.getTypeface());
+            if (mShouldReshape){
+				   holder.metadata.setTypeface(ArabicStyle.getTypeface(mContext));
+            }
 				convertView.setTag(holder);
 			}
 			else {
@@ -340,13 +351,17 @@ public class SearchActivity extends SherlockActivity
 			}
 
 			SearchElement v = mElements.get(position);
-			holder.text.setText(Html.fromHtml(
-                 ArabicStyle.reshape(mContext, v.text)));
+         String text = v.text;
+         String suraName = QuranInfo.getSuraName(mContext, v.sura, false);
+         if (mShouldReshape){
+            text = ArabicStyle.reshape(mContext, v.text);
+            suraName = ArabicStyle.reshape(mContext, suraName);
+         }
+			holder.text.setText(Html.fromHtml(text));
 
 			holder.metadata.setText(mInflater.getContext()
                  .getString(R.string.found_in_sura) + " " +
-					ArabicStyle.reshape(mContext, QuranInfo.getSuraName(mContext,
-                       v.sura, false)) +
+					suraName +
 					", " + mInflater.getContext()
                  .getString(R.string.quran_ayah) + " " + v.ayah);
 			return convertView;

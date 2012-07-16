@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 
+import android.util.Log;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -24,6 +27,9 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
+import com.quran.labs.androidquran.util.QuranSettings;
+
+import java.util.Locale;
 
 public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener {
@@ -43,6 +49,14 @@ public class QuranActivity extends SherlockFragmentActivity
 
    @Override
    public void onCreate(Bundle savedInstanceState){
+      if (QuranSettings.isArabicNames(this)){
+         Resources resources = getResources();
+         Configuration config = resources.getConfiguration();
+         config.locale = new Locale("ar");
+         resources.updateConfiguration(config,
+                 resources.getDisplayMetrics());
+      }
+
       setTheme(R.style.QuranAndroid);
       super.onCreate(savedInstanceState);
       setContentView(R.layout.quran_index);

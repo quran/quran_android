@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import android.os.Build;
 import android.preference.PreferenceManager;
 import com.quran.labs.androidquran.data.Constants;
 
@@ -25,8 +26,12 @@ public class QuranSettings {
    }
 
    public static boolean isReshapeArabic(Context context){
+      return Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+   }
+
+   public static boolean isNightMode(Context context){
       return getBooleanPreference(context,
-              Constants.PREF_RESHAPE_ARABIC, false);
+              Constants.PREF_NIGHT_MODE, false);
    }
 
    public static boolean shouldDisplayMarkerPopup(Context context){
@@ -45,6 +50,13 @@ public class QuranSettings {
       SharedPreferences prefs =
               PreferenceManager.getDefaultSharedPreferences(context);
       return prefs.getBoolean(pref, defaultValue);
+   }
+
+   public static int getTranslationTextSize(Context context){
+      SharedPreferences prefs =
+              PreferenceManager.getDefaultSharedPreferences(context);
+      return prefs.getInt(Constants.PREF_TRANSLATION_TEXT_SIZE,
+              Constants.DEFAULT_TEXT_SIZE);
    }
 
    public static void setLastPage(Context context, int page){
