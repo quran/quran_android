@@ -242,7 +242,7 @@ public class TranslationManagerActivity extends SherlockActivity
               destination, notificationTitle, TRANSLATION_DOWNLOAD_KEY,
               QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
       String filename = selectedItem.filename;
-      if (url.endsWith(".zip")){ filename += "zip"; }
+      if (url.endsWith("zip")){ filename += ".zip"; }
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME, filename);
       startService(intent);
    }
