@@ -202,6 +202,7 @@
     <string name="notification_downloading">Downloading..</string>
     <string name="notification_download_paused">Download paused</string>
     <string name="notification_download_canceled">Download canceled</string>
+    <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
 
     <string name="bookmarks_current_page">Current Page</string>
     <string name="no_bookmarks">No Bookmarks!</string>
@@ -211,6 +212,7 @@
     <string name="page_description">page %1$d, Juz\' %2$d</string>
     <string name="highlighting_database">Quran Highlighting Info</string>
     <string name="timing_database">Audio Timing Info</string>
+    <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
     <string name="download_successful">Download Successful</string>   

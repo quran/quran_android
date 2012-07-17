@@ -38,10 +38,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
-import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
-import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
+import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
@@ -512,6 +509,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onPlayPressed() {
+      if (mAudioStatusBar.getCurrentMode() == AudioStatusBar.PAUSED_MODE){
+         // if we are "paused," just un-pause.
+         play(null);
+         return;
+      }
+
       int position = mViewPager.getCurrentItem();
       int page = Constants.PAGES_LAST - position;
 
@@ -660,11 +663,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    private void play(AudioRequest request){
       Intent i = new Intent(AudioService.ACTION_PLAYBACK);
-      i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
+      if (request != null){
+         i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
+      }
+
       if (mShouldOverridePlaying){
+         // force the current audio to stop and start playing new request
          i.putExtra(AudioService.EXTRA_STOP_IF_PLAYING, true);
          mShouldOverridePlaying = false;
       }
+      // just a playback request, so tell audio service to just continue
+      // playing (and don't store new audio data) if it was already playing
       else { i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true); }
       startService(i);
    }
@@ -683,6 +692,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    public void onPreviousPressed() {
       startService(new Intent(AudioService.ACTION_REWIND));
+   }
+
+   @Override
+   public void setRepeatCount(int repeatCount){
+      Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
+      i.putExtra(AudioService.EXTRA_REPEAT_INFO, new RepeatInfo(repeatCount));
+      startService(i);
    }
 
    @Override

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.service.util;
 
 import java.io.Serializable;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -10,6 +11,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 public class AudioRequest implements Serializable {
 
    private static final long serialVersionUID = 1L;
+   private static final String TAG = "AudioRequest";
 
    private String mBaseUrl = null;
    private String mGaplessDatabasePath = null;
@@ -32,6 +34,9 @@ public class AudioRequest implements Serializable {
    // did we just play the basmallah?
    private boolean mJustPlayedBasmallah = false;
 
+   // repeat information
+   private RepeatInfo mRepeatInfo;
+
    public AudioRequest(String baseUrl, QuranAyah verse){
       mBaseUrl = baseUrl;
       mStartSura = verse.getSura();
@@ -44,6 +49,9 @@ public class AudioRequest implements Serializable {
       mCurrentSura = mStartSura;
       mCurrentAyah = mStartAyah;
       mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+
+      mRepeatInfo = new RepeatInfo(0);
+      mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
    }
 
    public void setGaplessDatabaseFilePath(String databaseFile){
@@ -58,9 +66,29 @@ public class AudioRequest implements Serializable {
       return mGaplessDatabasePath != null;
    }
 
-   public void setCurrentAyah(int sura, int ayah){
-      mCurrentSura = sura;
-      mCurrentAyah = ayah;
+   public void setRepeatInfo(RepeatInfo repeatInfo){
+      if (repeatInfo == null){
+         repeatInfo = new RepeatInfo(0);
+      }
+      if (mRepeatInfo != null){
+         // just update the repeat count for now
+         mRepeatInfo.setRepeatCount(repeatInfo.getRepeatCount());
+      }
+      else { mRepeatInfo = repeatInfo; }
+   }
+
+   public QuranAyah setCurrentAyah(int sura, int ayah){
+      Log.d(TAG, "got setCurrentAyah of: " + sura + ":" + ayah);
+      if (mRepeatInfo.shouldRepeat()){
+         mRepeatInfo.incrementRepeat();
+         return mRepeatInfo.getCurrentAyah();
+      }
+      else {
+         mCurrentSura = sura;
+         mCurrentAyah = ayah;
+         mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
+         return null;
+      }
    }
 
    public String getBaseUrl(){ return mBaseUrl; }
@@ -100,7 +128,7 @@ public class AudioRequest implements Serializable {
       }
 
       if (isGapless()){
-         Log.d("AudioRequest", "isGapless, url: " +
+         Log.d(TAG, "isGapless, url: " +
                  String.format(mBaseUrl, mCurrentSura));
          return String.format(mBaseUrl, mCurrentSura);
       }
@@ -130,8 +158,9 @@ public class AudioRequest implements Serializable {
       return true;
    }
    
-   public String getTitle(){
-      return mCurrentSura + ":" + mCurrentAyah;
+   public String getTitle(Context context){
+      return QuranInfo.getSuraAyahString(context,
+              mCurrentSura, mCurrentAyah);
    }
 
    public int getCurrentSura(){
@@ -142,9 +171,16 @@ public class AudioRequest implements Serializable {
       return mCurrentAyah;
    }
    
-   public void gotoNextAyah(){
+   public void gotoNextAyah(boolean force){
       // don't go to next ayah if we haven't played basmallah yet
       if (mJustPlayedBasmallah){ return ; }
+      if (!force && mRepeatInfo.shouldRepeat()){
+         mRepeatInfo.incrementRepeat();
+         if (mCurrentAyah == 1 && mCurrentSura != 1 && mCurrentSura != 9){
+            mJustPlayedBasmallah = true;
+         }
+         return;
+      }
 
       mCurrentAyah++;
       if (mAyahsInThisSura < mCurrentAyah){
@@ -152,8 +188,10 @@ public class AudioRequest implements Serializable {
          mCurrentSura++;
          if (mCurrentSura <= 114){
             mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
+            mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
          }
       }
+      else { mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah); }
    }
 
    public void gotoPreviousAyah(){
@@ -167,6 +205,10 @@ public class AudioRequest implements Serializable {
       }
       else if (mCurrentAyah == 1 && !isGapless()){
          mJustPlayedBasmallah = true;
+      }
+
+      if (mCurrentSura > 0 && mCurrentAyah > 0){
+         mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
       }
    }
 }
