@@ -84,6 +84,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void onCreate(Bundle savedInstanceState){
       setTheme(R.style.Theme_Sherlock);
       getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+      requestWindowFeature(
+             com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
 
       super.onCreate(savedInstanceState);
       mBookmarksCache = new SparseArray<Boolean>();
@@ -179,7 +181,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
       });
 
       mViewPager.setCurrentItem(page);
-
+      setLoading(false);
+      
       // just got created, need to reconnect to service
       mShouldReconnect = true;
 
@@ -326,6 +329,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
          return true;
       }
       return super.onOptionsItemSelected(item);
+   }
+
+   public void setLoading(boolean isLoading){
+      setSupportProgressBarIndeterminateVisibility(isLoading);
+   }
+
+   public void setLoadingIfPage(int page){
+      int position = mViewPager.getCurrentItem();
+      int currentPage = Constants.PAGES_LAST - position;
+      if (currentPage == page){
+         setLoading(true);
+      }
    }
 
    public void toggleBookmark(int page){
