@@ -110,6 +110,10 @@ public class TranslationFragment extends SherlockFragment {
 
       public TranslationTask(String databaseName){
          mDatabaseName = databaseName;
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof PagerActivity){
+            ((PagerActivity)activity).setLoadingIfPage(mPageNumber);
+         }
       }
 
       @Override
@@ -191,6 +195,11 @@ public class TranslationFragment extends SherlockFragment {
       protected void onPostExecute(List<QuranAyah> result) {
          if (result != null){
             mTranslationView.setAyahs(result);
+         }
+
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof PagerActivity){
+            ((PagerActivity)activity).setLoading(false);
          }
       }
    }
