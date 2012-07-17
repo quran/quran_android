@@ -37,13 +37,17 @@ public class AudioStatusBar extends LinearLayout {
    private int mTextFullFontSize;
 
    private int mCurrentQari;
+   private int mCurrentRepeat = 0;
    private boolean mHaveCriticalError = false;
    private SharedPreferences mSharedPreferences;
 
    private IcsSpinner mSpinner;
    private TextView mProgressText;
    private ProgressBar mProgressBar;
+   private TextView mRepeatButton;
    private AudioBarListener mAudioBarListener;
+
+   private int[] mRepeatValues = { 0, 1, 2, -1 };
 
    public interface AudioBarListener {
       public void onPlayPressed();
@@ -52,6 +56,7 @@ public class AudioStatusBar extends LinearLayout {
       public void onPreviousPressed();
       public void onStopPressed();
       public void onCancelPressed();
+      public void setRepeatCount(int repeatCount);
    }
 
    public AudioStatusBar(Context context) {
@@ -237,7 +242,17 @@ public class AudioStatusBar extends LinearLayout {
       addButton(R.drawable.ic_previous);
       addButton(button);
       addButton(R.drawable.ic_next);
-      addButton(R.drawable.ic_repeat);
+
+      mCurrentRepeat = 0;
+      mRepeatButton = new TextView(mContext);
+      mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
+              R.drawable.ic_repeat, 0, 0, 0);
+      mRepeatButton.setBackgroundResource(
+              R.drawable.abs__item_background_holo_dark);
+      mRepeatButton.setTag(R.drawable.ic_repeat);
+      mRepeatButton.setOnClickListener(mOnClickListener);
+      addView(mRepeatButton, LayoutParams.WRAP_CONTENT,
+              LayoutParams.MATCH_PARENT);
    }
 
    private void addButton(int imageId){
@@ -260,6 +275,19 @@ public class AudioStatusBar extends LinearLayout {
               new LayoutParams(mSeparatorWidth, LayoutParams.MATCH_PARENT);
       paddingParams.setMargins(0, 0, mSeparatorSpacing, 0);
       addView(separator, paddingParams);
+   }
+
+   private void incrementRepeat(){
+      mCurrentRepeat++;
+      if (mCurrentRepeat == mRepeatValues.length){ mCurrentRepeat = 0; }
+      String str = null;
+      int value = mRepeatValues[mCurrentRepeat];
+      if (value == 0){ str = ""; }
+      else if (value > 0){
+         str = mRepeatValues[mCurrentRepeat] + "";
+      }
+      else { str = mContext.getString(R.string.infinity); }
+      mRepeatButton.setText(str);
    }
 
    public void setAudioBarListener(AudioBarListener listener){
@@ -286,6 +314,10 @@ public class AudioStatusBar extends LinearLayout {
                   break;
                case R.drawable.ic_previous:
                   mAudioBarListener.onNextPressed();
+                  break;
+               case R.drawable.ic_repeat:
+                  incrementRepeat();
+                  mAudioBarListener.setRepeatCount(mCurrentRepeat);
                   break;
                case R.drawable.ic_cancel:
                   if (mHaveCriticalError){

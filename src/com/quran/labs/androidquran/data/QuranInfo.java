@@ -103,6 +103,12 @@ public class QuranInfo {
       return String.format(description, page, QuranInfo.getJuzFromPage(page));
    }
 
+   public static String getSuraAyahString(Context context, int sura, int ayah){
+      String suraName = getSuraName(context, sura, false);
+      String format = context.getString(R.string.sura_ayah_notification_str);
+      return String.format(format, suraName, ayah);
+   }
+
    public static String getNotificationTitle(Context context,
                                              QuranAyah minVerse,
                                              QuranAyah maxVerse){

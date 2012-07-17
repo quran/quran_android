@@ -50,13 +50,10 @@ import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
-import com.quran.labs.androidquran.service.util.AudioFocusHelper;
-import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.MediaButtonHelper;
+import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 /**
@@ -90,6 +87,8 @@ public class AudioService extends Service implements OnCompletionListener,
            "com.quran.labs.androidquran.action.REWIND";
    public static final String ACTION_CONNECT =
            "com.quran.labs.androidquran.action.CONNECT";
+   public static final String ACTION_UPDATE_REPEAT =
+           "com.quran.labs.androidquran.action.UPDATE_REPEAT";
 
    public static class AudioUpdateIntent {
       public static final String INTENT_NAME =
@@ -129,6 +128,10 @@ public class AudioService extends Service implements OnCompletionListener,
    // used to override what is playing now (stop then play)
    public static final String EXTRA_STOP_IF_PLAYING =
            "com.quran.labs.androidquran.STOP_IF_PLAYING";
+
+   // repeat info
+   public static final String EXTRA_REPEAT_INFO =
+           "com.quran.labs.androidquran.REPEAT_INFO";
 
    // indicates the state our service:
    private enum State {
@@ -323,6 +326,15 @@ public class AudioService extends Service implements OnCompletionListener,
       else if (action.equals(ACTION_SKIP)){ processSkipRequest(); }
       else if (action.equals(ACTION_STOP)){ processStopRequest(); }
       else if (action.equals(ACTION_REWIND)){ processRewindRequest(); }
+      else if (action.equals(ACTION_UPDATE_REPEAT)){
+         Serializable repeatInfo = intent.getSerializableExtra(
+                 EXTRA_REPEAT_INFO);
+         if (repeatInfo != null && mAudioRequest != null){
+            if (repeatInfo instanceof RepeatInfo){
+               mAudioRequest.setRepeatInfo((RepeatInfo)repeatInfo);
+            }
+         }
+      }
 
       return START_NOT_STICKY; // Means we started the service, but don't want
       // it to restart in case it's killed.
@@ -441,15 +453,42 @@ public class AudioService extends Service implements OnCompletionListener,
                  ", decided ayah should be: " + updatedAyah);
 
          if (updatedAyah != ayah){
-            mAudioRequest.setCurrentAyah(sura, updatedAyah);
+            ayahTime = mGaplessSuraData.get(ayah);
+            if (Math.abs(pos - ayahTime) < 150){
+               // shouldn't change ayahs if the delta is just 150ms...
+               mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150);
+               return;
+            }
+
+            QuranAyah repeat = mAudioRequest.setCurrentAyah(sura, updatedAyah);
+            if (repeat != null){
+               // remove any messages currently in the queue
+               mHandler.removeCallbacksAndMessages(null);
+
+               // jump back to the ayah we should repeat and play it
+               pos = getSeekPosition(true);
+               mPlayer.seekTo(pos);
+               return;
+            }
+
+            // moved on to next ayah
+            updateNotification(mAudioRequest.getTitle(getApplicationContext()));
          }
          else {
             // if we have end of sura info and we bypassed end of sura
             // line, switch the sura.
             ayahTime = mGaplessSuraData.get(999);
             if (ayahTime != null && pos >= ayahTime){
-               mAudioRequest.gotoNextAyah();
-               playAudio();
+               QuranAyah repeat = mAudioRequest.setCurrentAyah(sura+1, 1);
+               if (repeat != null){
+                  // remove any messages currently in the queue
+                  mHandler.removeCallbacksAndMessages(null);
+
+                  // jump back to the ayah we should repeat and play it
+                  pos = getSeekPosition(true);
+                  mPlayer.seekTo(pos);
+               }
+               else { playAudio(); }
                return;
             }
          }
@@ -548,6 +587,8 @@ public class AudioService extends Service implements OnCompletionListener,
                     sura == mAudioRequest.getCurrentSura()){
                int timing = getSeekPosition(true);
                if (timing > -1){ mPlayer.seekTo(timing); }
+               updateNotification(
+                       mAudioRequest.getTitle(getApplicationContext()));
                return;
             }
             playAudio();
@@ -560,11 +601,13 @@ public class AudioService extends Service implements OnCompletionListener,
       if (mState == State.Playing || mState == State.Paused) {
          int sura = mAudioRequest.getCurrentSura();
          tryToGetAudioFocus();
-         mAudioRequest.gotoNextAyah();
+         mAudioRequest.gotoNextAyah(true);
          if (mAudioRequest.isGapless() &&
                  sura == mAudioRequest.getCurrentSura()){
             int timing = getSeekPosition(false);
             if (timing > -1){ mPlayer.seekTo(timing); }
+            updateNotification(
+                    mAudioRequest.getTitle(getApplicationContext()));
             return;
          }
          playAudio();
@@ -737,15 +780,16 @@ public class AudioService extends Service implements OnCompletionListener,
             }
          }
 
-         Log.d(TAG, "okay, we are preparing to play - streaming is: " + mIsStreaming);
+         Log.d(TAG, "okay, we are preparing to play - streaming is: " +
+                 mIsStreaming);
          createMediaPlayerIfNeeded();
          mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
          mPlayer.setDataSource(url);
 
-         mAudioTitle = mAudioRequest.getTitle();
+         mAudioTitle = mAudioRequest.getTitle(getApplicationContext());
 
          mState = State.Preparing;
-         setUpAsForeground(mAudioTitle + " (loading)");
+         setUpAsForeground(mAudioTitle);
 
          // Use the media button APIs (if available) to register ourselves
          // for media button events
@@ -789,7 +833,7 @@ public class AudioService extends Service implements OnCompletionListener,
    public void onCompletion(MediaPlayer player) {
       // The media player finished playing the current file, so
       // we go ahead and start the next.
-      mAudioRequest.gotoNextAyah();
+      mAudioRequest.gotoNextAyah(false);
       playAudio();
    }
 
@@ -820,7 +864,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
       else { notifyAyahChanged(); }
 
-      updateNotification(mAudioTitle + " (playing)");
+      updateNotification(mAudioTitle);
       configAndStartMediaPlayer();
    }
 
