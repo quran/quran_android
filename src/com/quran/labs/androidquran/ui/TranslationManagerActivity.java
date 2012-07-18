@@ -2,15 +2,15 @@ package com.quran.labs.androidquran.ui;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.widget.*;
-import com.quran.labs.androidquran.data.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -31,10 +32,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
@@ -48,6 +55,8 @@ public class TranslationManagerActivity extends SherlockActivity
 
    public static final String WEB_SERVICE_URL =
            "http://labs.quran.com/androidquran/translations.php?v=2";
+   
+   private static final String CACHED_RESPONSE_FILE_NAME = "cached-translation-list";
 
    private List<TranslationItem> mItems;
    private List<TranslationItem> mAllItems;
@@ -113,7 +122,11 @@ public class TranslationManagerActivity extends SherlockActivity
       @Override
       public List<TranslationItem> doInBackground(Void... params) {
          String text = downloadUrl(WEB_SERVICE_URL);
-         if (text == null){ return null; }
+         if (text == null && ((text = loadCachedResponse()) == null)) {
+        	 return null; 
+    	 } else {
+    		 cacheResponse(text);
+    	 }
 
          List<TranslationItem> items = new ArrayList<TranslationItem>();
          try {
@@ -465,6 +478,48 @@ public class TranslationManagerActivity extends SherlockActivity
          this.exists = false;
       }
    }
+   
+   private void cacheResponse(String response) {
+		try {
+			PrintWriter pw = new PrintWriter(getCachedResponseFilePath());
+			pw.write(response);
+			pw.close();
+		} catch (Exception e) {
+			Log.e(TAG, "failed to cache response", e);
+		}
+   }
+   
+   private String loadCachedResponse() {
+	   String response = null;
+	   try {
+		   FileReader fr = new FileReader(getCachedResponseFilePath());
+		   BufferedReader br = new BufferedReader(fr);
+		   response = "";
+		   String line = "";
+		   while ((line = br.readLine()) != null) {
+			   response += line + "\n";
+		   }
+		   br.close();
+	   } catch (Exception e) {
+		   Log.e(TAG, "failed reading cached response", e);
+	   }
+	   return response;
+   }
+   
+	private File getCachedResponseFilePath() {
+		File f;
+		String fileName = CACHED_RESPONSE_FILE_NAME;
+		if (android.os.Build.VERSION.SDK_INT >= 8) {
+			f = getApplicationContext().getExternalFilesDir(null);
+		} else {
+			f = Environment.getExternalStorageDirectory();
+			fileName = File.separator + "Android" + File.separator
+					+ "data" + File.separator + getPackageName()
+					+ File.separator + "files" + File.separator
+					+ fileName;
+		}
+		return new File(f.getAbsolutePath() + File.separator + fileName);
+	}
 
    private String downloadUrl(String urlString){
       InputStream stream = null;
