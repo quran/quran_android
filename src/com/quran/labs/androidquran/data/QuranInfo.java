@@ -57,8 +57,6 @@ public class QuranInfo {
 		"الكافرون", "النصر", "المسد", "اﻹخلاص", "الفلق",
 		"الناس"
 	};
-	
-	private static int AYAH_AYAT_BOUNDARY = 11;
 
 	public static String getAyahTitle(Context cx) {
 		return cx.getString(R.string.quran_ayah);
@@ -74,7 +72,7 @@ public class QuranInfo {
 
    public static String getSuraName(Context context, int sura,
                                     boolean wantTitle){
-      if (sura < 1 || sura > 114){ return ""; }
+      if (sura < Constants.SURA_FIRST || sura > Constants.SURA_LAST){ return ""; }
       String title = "";
       if (wantTitle){ title = getSuraTitle(context) + " "; }
 
@@ -514,14 +512,14 @@ public class QuranInfo {
 	
 	public static Integer[] getPageBounds(int page){
 		if (page > Constants.PAGES_LAST)
-			page = 604;
+			page = Constants.PAGES_LAST;
 		if (page < 1) page = 1;
 		
 		Integer[] bounds = new Integer[4];
 		bounds[0] = PAGE_SURA_START[page-1];
 		bounds[1] = PAGE_AYAH_START[page-1];
 		if (page == Constants.PAGES_LAST){
-			bounds[2] = 114;
+			bounds[2] = Constants.SURA_LAST;
 			bounds[3] = 6;
 		}
 		else {
