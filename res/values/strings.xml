@@ -1,48 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="errorString">Could not download Quran Pages!</string>
     <string name="app_name">Quran</string>
-    <string name="pageNotFound">Page not found.</string>
-    <string name="pageLoading">Page Loading…</string>
     <string name="downloadPrompt_title">Download Required Files?</string>
     <string name="downloadPrompt">For optimal performance, some files must be
 			downloaded.  If you choose not to do this now, each page will take
 			significantly longer to load. Would you like to download the required
 			files now?
 		</string>
-		<string name="download_connection_failed">Unable to connect to server, make sure that your Internet connection is active. Retry ?</string>
-    <string name="downloadTranslationPrompt">Would you
-			like to download the required translations now?</string>
     <string name="downloadPrompt_ok">Yes</string>
     <string name="downloadPrompt_no">No</string>
-    <string name="downloadHighlightingData">In order to highlight ayahs during audio
-        playback, we need to download some files.  Download them now?</string>
     <string name="downloading_title">Downloading&#8230;</string>
     <string name="downloading_message">Please wait for the files to download. (Resume supported)</string>
     <string name="extracting_title">Processing&#8230;</string>
     <string name="extracting_message">Please wait the files are processed.</string>
-    <string name="menu_jump">Jump</string>
     <string name="menu_about">About Us</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_jump_last_page">Last page</string>
     <string name="menu_bookmarks">Bookmarks</string>
     <string name="menu_bookmarks_page">Page Bookmarks</string>
     <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
-    <string name="menu_bookmarks_remove">Remove</string>
-    <string name="menu_bookmarks_view">View</string>
     <string name="menu_translation">Show Translation</string>
     <string name="menu_back_to_page">Show Quran</string>
-    <string name="menu_bookmarks_add">Add</string>
-    <string name="menu_bookmarks_saved">Bookmark Saved</string>
     <string name="menu_bookmarks_removed">Bookmark Removed</string>
-    <string name="menu_bookmarks_help">Help</string>
     <string name="menu_help">Help</string>
     <string name="menu_search">Search</string>
     <string name="menu_get_translations">Get Translations</string>
-    <string name="jump_dialog_title">Jump To Page</string>
     <string name="page_hint">Page Number</string>
-    <string name="refresh">Refresh</string>
-    <string name="go">Go</string>
     <string name="cancel">Cancel</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright All Muslims</string>
