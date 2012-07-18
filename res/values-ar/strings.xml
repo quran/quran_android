@@ -92,7 +92,7 @@
 
     <!-- Search messages -->
     <string name="found_in_sura">سورة</string>
-    <string name="no_active_translation">يجب تفعيل التفسير/الترجمة أولا &#8212; اذهب إلى اﻹعدادات</string>
+    <string name="active_translation">يجب تفعيل التفسير/الترجمة أولا &#8212; اذهب إلى اﻹعدادات</string>
     <string name="translation_settings">إعدادات التفسير</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
     <string name="set_active_translation">التفسير/الترجمة</string>
@@ -180,14 +180,13 @@
     <!-- long press -->
     <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
     <string name="unbookmark_ayah">حذف الآية من المرجعيات</string>
-    <string name="share_ayah">Share this Ayah</string>
+    <string name="share_ayah">شارك</string>
     <string name="translation_ayah">تفسير/ترجمة الآية</string>
     <string name="play_from_here">بدء التلاوة من هذه الآية</string>
     <string name="bookmarked_ayah">تم إضافة الآية إلى المرجعيات</string>
     <string name="unbookmarked_ayah">تم حذف الآية من المرجعيات</string>
-    <string name="share">Share</string>
-    <string name="copy_ayah">نقل الآية</string>
-    <string name="ayah_copied_popup">تم نقل الآية</string>
+    <string name="copy_ayah">نسخ الآية</string>
+    <string name="ayah_copied_popup">تم نسخ الآية</string>
     
     <!-- sura metainfo -->
     <string name="makki">مكية</string>
