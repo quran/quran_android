@@ -41,6 +41,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
+@SuppressWarnings("deprecation")
 public class QuranPageFragment extends SherlockFragment {
    private static final String TAG = "QuranPageFragment";
    private static final String PAGE_NUMBER_EXTRA = "pageNumber";
@@ -339,7 +340,7 @@ public class QuranPageFragment extends SherlockFragment {
 				intent.setType("text/plain");
 				intent.putExtra(Intent.EXTRA_TEXT, ayah);
 				startActivity(Intent.createChooser(intent,
-                    activity.getString(R.string.share)));
+                    activity.getString(R.string.share_ayah)));
 			}
 		}
 	}
