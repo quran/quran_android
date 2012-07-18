@@ -8,14 +8,14 @@ this is a simple (madani based) quran app for android.
 
 patches, comments, etc are welcome.
 
-code by [Ahmed El-Helw](http://twitter.com/ahmedre),
-[Ahmed Fouad](http://twitter.com/fo2ad),
+contributors:
 [Hussein Maher](http://twitter.com/husseinmaher),
-and [Wael Nafee](http://twitter.com/wnafee).
+[Ahmed Farra](http://github.com/afarra),
+[Wael Nafee](http://twitter.com/wnafee),
+[Ahmed Fouad](http://twitter.com/fo2ad),
+[Mahmoud Hossam](http://github.com/mahmoudhossam).
 
 graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
-
-contributors include [Ahmed Farra](http://github.com/afarra) and [Mahmoud Hossam](http://github.com/mahmoudhossam).
 
 Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_rrr), based on Arabic Reshaper project by [Ahmed Essam](http://twitter.com/Neo_4583).
 
@@ -47,14 +47,19 @@ description and your application itself in an about section.
 
 Project dependecies
 -------------------
-*Action bar for Android:* https://github.com/johannilsson/android-actionbar
-
-*Google's Gson library:* http://code.google.com/p/google-gson/
-
+[ActionBarSherlock](http://abs.io)
 
 Changelog
 ---------
+**version 2.0**
+
+- new, improved ui and code rewrite
+- gapless audio support
+- ayah actions (bookmark, share, copy, tafseer)
+- only supports sdks 2.1+
+
 **version 1.6.1**
+
 - download issue fixed
 - restore locale issue fixed
 
