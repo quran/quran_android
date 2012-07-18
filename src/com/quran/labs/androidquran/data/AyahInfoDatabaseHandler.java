@@ -72,11 +72,41 @@ public class AyahInfoDatabaseHandler {
 			}
 		} while (cursor.moveToNext());
 		cursor.close();
+
+      Float delta = null;
+      Integer closestNeighbor = null;
 		for (Integer line : lines.keySet()) {
 			Integer[] bounds = lines.get(line);
-			if (y >= bounds[0] && y <= bounds[1])
+			if (y >= bounds[0] && y <= bounds[1]){
 				return getVerseAtPoint(page, line, x);
+         }
+         else if (y >= bounds[1]){
+            // past this line
+            if (delta == null){
+               delta = y - bounds[1];
+               closestNeighbor = line;
+            }
+            else if ((y - bounds[1]) < delta){
+               delta = y - bounds[1];
+               closestNeighbor = line;
+            }
+         }
+         else if (bounds[0] >= y){
+            // before this line
+            if (delta == null){
+               delta = bounds[0] - y;
+               closestNeighbor = line;
+            }
+            else if ((bounds[0] - y) < delta){
+               delta = bounds[0] - y;
+               closestNeighbor = line;
+            }
+         }
 		}
+
+      if (delta != null && closestNeighbor != null){
+         return getVerseAtPoint(page, closestNeighbor, x);
+      }
 		return null;
 	}
 	

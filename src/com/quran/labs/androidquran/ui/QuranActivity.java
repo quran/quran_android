@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
@@ -75,6 +76,12 @@ public class QuranActivity extends SherlockFragmentActivity
          tab.setTabListener(this);
          actionbar.addTab(tab);
       }
+   }
+
+   @Override
+   public void onResume(){
+      super.onResume();
+      startService(new Intent(AudioService.ACTION_STOP));
    }
 
    @Override
