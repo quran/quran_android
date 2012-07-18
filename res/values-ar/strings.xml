@@ -116,10 +116,15 @@
     <string name="prefs_display_marker_title">التنبيه</string>
     <string name="prefs_display_marker_summary">عرض تنبيه عند الوصول إلى بداية الربع أو الجزء</string>
     <string name="prefs_translation_text_title">خط التفسير والترجمة</string>
-    <string name="prefs_translation">التفسير والترجمة</string>
-    <string name="prefs_active_translation_dialog_title">اختر تفسير أو ترجمة</string>
-    <string name="prefs_active_translation_summary">اختر بين التفاسير والتراجم لعرضها.. يمكنك تحميل التفسير والترجمة من القائمة الرئيسية</string>
-    <string name="prefs_no_translations_installed">لا يوجد تفاسير أو تراجم محملة</string>
+    <string name="prefs_translations">التفسير والترجمة</string>
+    <string name="prefs_translations_summary">حمّل واختر التفاسير والتراجم</string>
+    <string name="prefs_ayah_before_translation_title">عرض اﻵية مع التفسير</string>
+    <string name="prefs_ayah_before_translation_summary">اختر لعرض الآية مع التفسير</string>
+    <string name="prefs_category_download">خيارات التحميل</string>
+    <string name="prefs_streaming_title">استماع عبر اﻻنترنت</string>
+    <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)، هذا الخيار متاح للتلاوات الغير متصلة فقط</string>
+    <string name="prefs_download_amount_title">كم التحميل</string>
+    <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
     <!-- Preferences End -->
     
     <string name="loading_translations">برجاء اﻻنتظار..</string>
