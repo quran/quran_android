@@ -157,6 +157,14 @@ public class QuranActivity extends SherlockFragmentActivity
       startActivity(i);
    }
    
+   public void jumpToAndHighlight(int page, int sura, int ayah) {
+      Intent i = new Intent(this, PagerActivity.class);
+      i.putExtra("page", page);
+      i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura);
+      i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah);
+      startActivity(i);
+   }
+   
    public static class PagerAdapter extends FragmentPagerAdapter {
       public PagerAdapter(FragmentManager fm){
          super(fm);
