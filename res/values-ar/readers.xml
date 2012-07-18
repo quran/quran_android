@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
      <string-array name="quran_readers_name">
-        <item>المنشاوي</item>
+        <item>المنشاوي (متصل)<item>
         <item>عبد الباسط عبد الصمد</item>
         <item>عبد الباسط عبد الصمد مجود</item>
         <item>عبد الله بصفر</item>

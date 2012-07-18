@@ -3,11 +3,9 @@ package com.quran.labs.androidquran.widgets;
 import java.util.List;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
@@ -18,7 +16,6 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -156,6 +153,7 @@ public class TranslationView extends LinearLayout {
               LayoutParams.WRAP_CONTENT);
       params.setMargins(mLeftRightMargin, mTopBottomMargin,
               mLeftRightMargin, mTopBottomMargin);
+      translationText.setLineSpacing(1.4f, 1.4f);
       addView(translationText, params);
    }
 

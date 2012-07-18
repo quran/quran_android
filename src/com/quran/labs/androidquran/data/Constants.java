@@ -7,6 +7,8 @@ public class Constants {
    // Pages
    public static final int PAGES_FIRST = 1;
    public static final int PAGES_LAST = 604;
+   public static final int SURA_FIRST = 1;
+   public static final int SURA_LAST = 114;
    public static final int SURAS_COUNT = 114;
    public static final int JUZ2_COUNT = 30;
    public static final int AYA_MIN = 1;

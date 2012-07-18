@@ -11,8 +11,6 @@
     <string name="prefs_lock_orientation">lockOrientation</string>
     <string name="prefs_landscape_orientation">landscapeOrientation</string>
     <string name="prefs_translation_text_size">translationTextSize</string>
-    <string name="prefs_reshape_arabic">reshapeArabic</string>
-    <string name="prefs_active_translation">activeTranslation</string>
     <string name="prefs_ayah_before_translation">ayahBeforeTranslation</string>
     <string name="prefs_prefer_streaming">preferStreaming</string>
     <string name="prefs_download_amount">preferredDownloadAmount</string>

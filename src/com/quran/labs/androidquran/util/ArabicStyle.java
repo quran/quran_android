@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.util;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Typeface;
 
 public class ArabicStyle {
