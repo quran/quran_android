@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.widget.*;
 import com.quran.labs.androidquran.data.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,10 +31,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
@@ -76,6 +73,13 @@ public class TranslationManagerActivity extends SherlockActivity
       mAdapter = new TranslationsAdapter(this, null);
       mListView.setAdapter(mAdapter);
       mMessageArea = (TextView)findViewById(R.id.message_area);
+      mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+         @Override
+         public void onItemClick(AdapterView<?> adapterView,
+                                 View view, int pos, long id) {
+            downloadItem(pos);
+         }
+      });
 
       setSupportProgressBarIndeterminateVisibility(true);
       mPrefs = PreferenceManager.getDefaultSharedPreferences(
@@ -222,6 +226,7 @@ public class TranslationManagerActivity extends SherlockActivity
 
       TranslationItem selectedItem =
               (TranslationItem)mAdapter.getItem(pos);
+      if (selectedItem.exists){ return; }
 
       if (mDownloadReceiver == null){
          mDownloadReceiver = new DefaultDownloadReceiver(this,
@@ -416,16 +421,10 @@ public class TranslationManagerActivity extends SherlockActivity
                });
             }
             else {
-               final int pos = position;
                holder.leftImage.setVisibility(View.GONE);
                holder.rightImage.setImageResource(R.drawable.ic_download);
                holder.rightImage.setVisibility(View.VISIBLE);
-               holder.rightImage.setOnClickListener(new View.OnClickListener() {
-                  @Override
-                  public void onClick(View view) {
-                     downloadItem(pos);
-                  }
-               });
+               holder.rightImage.setOnClickListener(null);
             }
          }
 
