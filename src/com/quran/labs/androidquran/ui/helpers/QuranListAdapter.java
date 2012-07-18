@@ -80,7 +80,7 @@ public class QuranListAdapter extends BaseAdapter {
       holder.page.setText("" + item.page);
       holder.text.setText(text);
       holder.header.setText(text);
-      holder.number.setText("" + item.number);
+      holder.number.setText("" + item.sura);
 
       int color = R.color.sura_details_color;
       if (mElements[position].isHeader){

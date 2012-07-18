@@ -53,7 +53,11 @@ public class BookmarksFragment extends SherlockFragment {
                int position, long id){
             QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
             if (elem.page > 0){
-               ((QuranActivity)getActivity()).jumpTo(elem.page);
+               if (elem.ayah > 0)
+                  ((QuranActivity)getActivity()).jumpToAndHighlight(
+                        elem.page, elem.sura, elem.ayah);
+               else
+                  ((QuranActivity)getActivity()).jumpTo(elem.page);
             }
          }
       });
@@ -151,7 +155,7 @@ public class BookmarksFragment extends SherlockFragment {
          res[index++] = new QuranRow(
                QuranInfo.getAyahString(ayah.sura, ayah.ayah, getActivity()),
                QuranInfo.getPageSubtitle(activity, ayah.page),
-               false, ayah.sura, ayah.page,
+               false, ayah.sura, ayah.ayah, ayah.page,
                R.drawable.bookmark_ayah);
       }      
       return res;
