@@ -1,5 +1,9 @@
 package com.quran.labs.androidquran.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 public class QuranUtils {
     
     public static boolean doesStringContainArabic(String s){
@@ -24,4 +28,13 @@ public class QuranUtils {
     	}
     	return false;
     }
+
+   public static boolean isOnWifiNetwork(Context context){
+      ConnectivityManager cm =
+              (ConnectivityManager)context.getSystemService(
+                      Context.CONNECTIVITY_SERVICE);
+
+      NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+      return activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+   }
 }
