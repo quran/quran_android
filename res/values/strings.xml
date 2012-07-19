@@ -113,14 +113,10 @@
     <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
-    <string name="sdcard_required">SD card should be mounted to download translations.</string>
-    <string name="download_a_translation">Download %s?</string>
-    <string name="translation_downloaded">%s is already downloaded.</string>
-    <string name="download_button">Download</string>
     <string name="remove_button">Remove</string>
-    <string name="radio_download_message">Choose download option</string>
     <string name="dialog_ok">OK</string>
-
+    
+    <!-- used for screen readers -->
     <string name="border">border</string>
     
     <!-- End Number picker Strings -->
@@ -141,8 +137,8 @@
 
     <string name="canceling">Canceling&#8230;</string>
     <string name="page_description">page %1$d, Juz\' %2$d</string>
-    <string name="highlighting_database">Quran Highlighting Info</string>
-    <string name="timing_database">Audio Timing Info</string>
+    <string name="highlighting_database">required files</string>
+    <string name="timing_database">required files</string>
     <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
@@ -190,9 +186,7 @@
     <string name="bookmarked_ayah">Bookmarked Ayah</string>
     <string name="unbookmarked_ayah">Removed bookmark from Ayah</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
-    
     <string name="search_key">Press the search key to look up a verse</string>
-    
     <string name="copy_ayah">Copy Ayah</string>
     <string name="ayah_copied_popup">Ayah Copied</string>
 </resources>
