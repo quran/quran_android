@@ -25,11 +25,9 @@ public class QuranListAdapter extends BaseAdapter {
       mElements = items;
       mLayout = layout;
       mContext = context;
-      if (QuranSettings.isArabicNames(mContext)){
-         // only consider reshaping if we are in arabic mode
-         mReshapeArabic = QuranSettings.isReshapeArabic(context);
-      }
-      else { mReshapeArabic = false; }
+
+      // should we reshape if we have arabic?
+      mReshapeArabic = QuranSettings.isReshapeArabic(context);
    }
 
    public int getCount() {

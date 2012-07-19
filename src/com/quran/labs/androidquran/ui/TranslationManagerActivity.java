@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.quran.labs.androidquran.util.QuranUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -507,18 +508,9 @@ public class TranslationManagerActivity extends SherlockActivity
    }
    
 	private File getCachedResponseFilePath() {
-		File f;
 		String fileName = CACHED_RESPONSE_FILE_NAME;
-		if (android.os.Build.VERSION.SDK_INT >= 8) {
-			f = getApplicationContext().getExternalFilesDir(null);
-		} else {
-			f = Environment.getExternalStorageDirectory();
-			fileName = File.separator + "Android" + File.separator
-					+ "data" + File.separator + getPackageName()
-					+ File.separator + "files" + File.separator
-					+ fileName;
-		}
-		return new File(f.getAbsolutePath() + File.separator + fileName);
+      String dir = QuranFileUtils.getQuranDatabaseDirectory();
+		return new File(dir + File.separator + fileName);
 	}
 
    private String downloadUrl(String urlString){

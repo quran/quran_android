@@ -1,246 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="quarter_prefix_array">
-        <item>In the name of Allah, the Entirely Merciful, the Especially Merciful.</item>
-        <item>Indeed, Allah is not timid to present an example - that of a mosquito&#8230;</item>
-        <item>Do you order righteousness of the people and forget yourselves while&#8230;</item>
-        <item>And [recall] when Moses prayed for water for his people, so We said,&#8230;</item>
-        <item>Do you covet [the hope, O believers], that they would believe for you&#8230;</item>
-        <item>And Moses had certainly brought you clear proofs. Then you took the&#8230;</item>
-        <item>We do not abrogate a verse or cause it to be forgotten except that We&#8230;</item>
-        <item>And [mention, O Muhammad], when Abraham was tried by his Lord with&#8230;</item>
-        <item>The foolish among the people will say, \"What has turned them away&#8230;</item>
-        <item>Indeed, as-Safa and al-Marwah are among the symbols of Allah . So&#8230;</item>
-        <item>Righteousness is not that you turn your faces toward the east or the&#8230;</item>
-        <item>They ask you, [O Muhammad], about the new moons. Say, \"They are&#8230;</item>
-        <item>And remember Allah during [specific] numbered days. Then whoever&#8230;</item>
-        <item>They ask you about wine and gambling. Say, \"In them is great sin and&#8230;</item>
-        <item>Mothers may breastfeed their children two complete years for whoever&#8230;</item>
-        <item>Have you not considered those who left their homes in many thousands,&#8230;</item>
-        <item>Those messengers - some of them We caused to exceed others. Among&#8230;</item>
-        <item>Kind speech and forgiveness are better than charity followed by&#8230;</item>
-        <item>Not upon you, [O Muhammad], is [responsibility for] their guidance,&#8230;</item>
-        <item>And if you are on a journey and cannot find a scribe, then a security&#8230;</item>
-        <item>Say, \"Shall I inform you of [something] better than that? For those&#8230;</item>
-        <item>Indeed, Allah chose Adam and Noah and the family of Abraham and the&#8230;</item>
-        <item>But when Jesus felt [persistence in] disbelief from them, he said,&#8230;</item>
-        <item>And among the People of the Scripture is he who, if you entrust him&#8230;</item>
-        <item>All food was lawful to the Children of Israel except what Israel had&#8230;</item>
-        <item>They are not [all] the same; among the People of the Scripture is a&#8230;</item>
-        <item>And hasten to forgiveness from your Lord and a garden as wide as the&#8230;</item>
-        <item>[Remember] when you [fled and] climbed [the mountain] without looking&#8230;</item>
-        <item>They receive good tidings of favor from Allah and bounty and [of the&#8230;</item>
-        <item>You will surely be tested in your possessions and in yourselves. And&#8230;</item>
-        <item>O mankind, fear your Lord, who created you from one soul and created&#8230;</item>
-        <item>And for you is half of what your wives leave if they have no child.&#8230;</item>
-        <item>And [also prohibited to you are all] married women except those your&#8230;</item>
-        <item>Worship Allah and associate nothing with Him, and to parents do good,&#8230;</item>
-        <item>Indeed, Allah commands you to render trusts to whom they are due and&#8230;</item>
-        <item>So let those fight in the cause of Allah who sell the life of this&#8230;</item>
-        <item>What is [the matter] with you [that you are] two groups concerning&#8230;</item>
-        <item>And whoever emigrates for the cause of Allah will find on the earth&#8230;</item>
-        <item>No good is there in much of their private conversation, except for&#8230;</item>
-        <item>O you who have believed, be persistently standing firm in justice,&#8230;</item>
-        <item>Allah does not like the public mention of evil except by one who has&#8230;</item>
-        <item>Indeed, We have revealed to you, [O Muhammad], as We revealed to Noah&#8230;</item>
-        <item>O you who have believed, fulfill [all] contracts. Lawful for you are&#8230;</item>
-        <item>And Allah had already taken a covenant from the Children of Israel,&#8230;</item>
-        <item>And recite to them the story of Adam\'s two sons, in truth, when they&#8230;</item>
-        <item>O Messenger, let them not grieve you who hasten into disbelief of&#8230;</item>
-        <item>O you who have believed, do not take the Jews and the Christians as&#8230;</item>
-        <item>O Messenger, announce that which has been revealed to you from your&#8230;</item>
-        <item>You will surely find the most intense of the people in animosity&#8230;</item>
-        <item>Allah has made the Ka\'bah, the Sacred House, standing for the people&#8230;</item>
-        <item>[Be warned of] the Day when Allah will assemble the messengers and&#8230;</item>
-        <item>And to Him belongs that which reposes by night and by day, and He is&#8230;</item>
-        <item>Only those who hear will respond. But the dead - Allah will resurrect&#8230;</item>
-        <item>And with Him are the keys of the unseen; none knows them except Him.&#8230;</item>
-        <item>And [mention, O Muhammad], when Abraham said to his father Azar, \"Do&#8230;</item>
-        <item>Indeed, Allah is the cleaver of grain and date seeds. He brings the&#8230;</item>
-        <item>And even if We had sent down to them the angels [with the message]&#8230;</item>
-        <item>For them will be the Home of Peace with their Lord. And He will be&#8230;</item>
-        <item>And He it is who causes gardens to grow, [both] trellised and&#8230;</item>
-        <item>Say, \"Come, I will recite what your Lord has prohibited to you. [He&#8230;</item>
-        <item>Alif, Lam, Meem, Sad.</item>
-        <item>O children of Adam, take your adornment at every masjid, and eat and&#8230;</item>
-        <item>And when their eyes are turned toward the companions of the Fire,&#8230;</item>
-        <item>And to the \'Aad [We sent] their brother Hud. He said, \"O my people,&#8230;</item>
-        <item>Said the eminent ones who were arrogant among his people, \"We will&#8230;</item>
-        <item>And We inspired to Moses, \"Throw your staff,\" and at once it&#8230;</item>
-        <item>And We made an appointment with Moses for thirty nights and perfected&#8230;</item>
-        <item>And decree for us in this world [that which is] good and [also] in&#8230;</item>
-        <item>And [mention] when We raised the mountain above them as if it was a&#8230;</item>
-        <item>It is He who created you from one soul and created from it its mate&#8230;</item>
-        <item>They ask you, [O Muhammad], about the bounties [of war]. Say, \"The&#8230;</item>
-        <item>Indeed, the worst of living creatures in the sight of Allah are the&#8230;</item>
-        <item>And know that anything you obtain of war booty -  then indeed, for&#8230;</item>
-        <item>And if they incline to peace, then incline to it [also] and rely upon&#8230;</item>
-        <item>[This is a declaration of] disassociation, from Allah and His&#8230;</item>
-        <item>Have you made the providing of water for the pilgrim and the&#8230;</item>
-        <item>O you who have believed, indeed many of the scholars and the monks&#8230;</item>
-        <item>And if they had intended to go forth, they would have prepared for it&#8230;</item>
-        <item>Zakah expenditures are only for the poor and for the needy and for&#8230;</item>
-        <item>And among them are those who made a covenant with Allah, [saying],&#8230;</item>
-        <item>The cause [for blame] is only upon those who ask permission of you&#8230;</item>
-        <item>Indeed, Allah has purchased from the believers their lives and their&#8230;</item>
-        <item>And it is not for the believers to go forth [to battle] all at once.&#8230;</item>
-        <item>And if Allah was to hasten for the people the evil [they invoke] as&#8230;</item>
-        <item>For them who have done good is the best [reward] and extra. No&#8230;</item>
-        <item>And they ask information of you, [O Muhammad], \"Is it true?\" Say,&#8230;</item>
-        <item>And recite to them the news of Noah, when he said to his people, \"O&#8230;</item>
-        <item>And We took the Children of Israel across the sea, and Pharaoh and&#8230;</item>
-        <item>And there is no creature on earth but that upon Allah is its&#8230;</item>
-        <item>The example of the two parties is like the blind and deaf, and the&#8230;</item>
-        <item>And [Noah] said, \"Embark therein; in the name of Allah is its course&#8230;</item>
-        <item>And to Thamud [We sent] their brother Salih. He said, \"O my people,&#8230;</item>
-        <item>And to Madyan [We sent] their brother Shu\'ayb. He said, \"O my&#8230;</item>
-        <item>And as for those who were [destined to be] prosperous, they will be&#8230;</item>
-        <item>Certainly were there in Joseph and his brothers signs for those who&#8230;</item>
-        <item>And women in the city said, \"The wife of al-\'Azeez is seeking to&#8230;</item>
-        <item>And I do not acquit myself. Indeed, the soul is a persistent enjoiner&#8230;</item>
-        <item>They said, \"If he steals -  a brother of his has stolen before.\"&#8230;</item>
-        <item>My Lord, You have given me [something] of sovereignty and taught me&#8230;</item>
-        <item>And if you are astonished, [O Muhammad] -  then astonishing is their&#8230;</item>
-        <item>Then is he who knows that what has been revealed to you from your&#8230;</item>
-        <item>The example of Paradise, which the righteous have been promised, is&#8230;</item>
-        <item>Their messengers said, \"Can there be doubt about Allah, Creator of&#8230;</item>
-        <item>Have you not considered those who exchanged the favor of Allah for&#8230;</item>
-        <item>Alif, Lam, Ra. These are the verses of the Book and a clear Qur\'an.</item>
-        <item>And that it is My punishment which is the painful punishment.</item>
-        <item>The command of Allah is coming, so be not impatient for it. Exalted&#8230;</item>
-        <item>And it will be said to those who feared Allah, \"What did your Lord&#8230;</item>
-        <item>And Allah has said, \"Do not take for yourselves two deities. He is&#8230;</item>
-        <item>Allah presents an example: a slave [who is] owned and unable to do a&#8230;</item>
-        <item>Indeed, Allah orders justice and good conduct and giving to relatives&#8230;</item>
-        <item>On the Day when every soul will come disputing for itself, and every&#8230;</item>
-        <item>Exalted is He who took His Servant by night from al-Masjid al-Haram&#8230;</item>
-        <item>And your Lord has decreed that you not worship except Him, and to&#8230;</item>
-        <item>Say, \"Be you stones or iron</item>
-        <item>And We have certainly honored the children of Adam and carried them&#8230;</item>
-        <item>Do they not see that Allah, who created the heavens and earth, is&#8230;</item>
-        <item>And [had you been present], you would see the sun when it rose,&#8230;</item>
-        <item>And present to them an example of two men: We granted to one of them&#8230;</item>
-        <item>I did not make them witness to the creation of the heavens and the&#8230;</item>
-        <item>[Al-Khidh r] said, \"Did I not tell you that with me you would never&#8230;</item>
-        <item>And We will leave them that day surging over each other, and [then]&#8230;</item>
-        <item>So she conceived him, and she withdrew with him to a remote place.</item>
-        <item>But there came after them successors who neglected prayer and pursued&#8230;</item>
-        <item>Ta, Ha.</item>
-        <item>From the earth We created you, and into it We will return you, and&#8230;</item>
-        <item>[ Allah ] said, \"And what made you hasten from your people, O&#8230;</item>
-        <item>And [all] faces will be humbled before the Ever-Living, the Sustainer&#8230;</item>
-        <item>[The time of] their account has approached for the people, while they&#8230;</item>
-        <item>And whoever of them should say, \"Indeed, I am a god besides Him\"- &#8230;</item>
-        <item>And We had certainly given Abraham his sound judgement before, and We&#8230;</item>
-        <item>And [mention] Job, when he called to his Lord, \"Indeed, adversity&#8230;</item>
-        <item>O mankind, fear your Lord. Indeed, the convulsion of the [final] Hour&#8230;</item>
-        <item>These are two adversaries who have disputed over their Lord. But&#8230;</item>
-        <item>Indeed, Allah defends those who have believed. Indeed, Allah does not&#8230;</item>
-        <item>That [is so]. And whoever responds [to injustice] with the equivalent&#8230;</item>
-        <item>Certainly will the believers have succeeded:</item>
-        <item>How far, how far, is that which you are promised.</item>
-        <item>And even if We gave them mercy and removed what was upon them of&#8230;</item>
-        <item>[This is] a surah which We have sent down and made [that within it]&#8230;</item>
-        <item>O you who have believed, do not follow the footsteps of Satan. And&#8230;</item>
-        <item>Allah is the Light of the heavens and the earth. The example of His&#8230;</item>
-        <item>And they swear by Allah their strongest oaths that if you ordered&#8230;</item>
-        <item>Blessed is He who sent down the Criterion upon His Servant that he&#8230;</item>
-        <item>And those who do not expect the meeting with Us say, \"Why were not&#8230;</item>
-        <item>And it is He who has released [simultaneously] the two seas, one&#8230;</item>
-        <item>Ta, Seen, Meem.</item>
-        <item>And We inspired to Moses, \"Travel by night with My servants; indeed,&#8230;</item>
-        <item>They said, \"Should we believe you while you are followed by the&#8230;</item>
-        <item>Give full measure and do not be of those who cause loss.</item>
-        <item>Ta, Seen.  These are the verses of the Qur\'an and a clear Book</item>
-        <item>[Solomon] said, \"We will see whether you were truthful or were of&#8230;</item>
-        <item>But the answer of his people was not except that they said, \"Expel&#8230;</item>
-        <item>And when the word befalls them, We will bring forth for them a&#8230;</item>
-        <item>And We had prevented from him [all] wet nurses before, so she said,&#8230;</item>
-        <item>And when Moses had completed the term and was traveling with his&#8230;</item>
-        <item>And We have [repeatedly] conveyed to them the Qur\'an that they might&#8230;</item>
-        <item>Indeed, Qarun was from the people of Moses, but he tyrannized them.&#8230;</item>
-        <item>Alif, Lam, Meem</item>
-        <item>And Lot believed him. [Abraham] said, \"Indeed, I will emigrate to&#8230;</item>
-        <item>And do not argue with the People of the Scripture except in a way&#8230;</item>
-        <item>Alif, Lam, Meem.</item>
-        <item>[Adhere to it], turning in repentance to Him, and fear Him and&#8230;</item>
-        <item>Allah is the one who created you from weakness, then made after&#8230;</item>
-        <item>And whoever submits his face to Allah while he is a doer of good - &#8230;</item>
-        <item>Say, \"The angel of death will take you who has been entrusted with&#8230;</item>
-        <item>O Prophet, fear Allah and do not obey the disbelievers and the&#8230;</item>
-        <item>Already Allah knows the hinderers among you and those [hypocrites]&#8230;</item>
-        <item>And whoever of you devoutly obeys Allah and His Messenger and does&#8230;</item>
-        <item>You, [O Muhammad], may put aside whom you will of them or take to&#8230;</item>
-        <item>If the hypocrites and those in whose hearts is disease and those who&#8230;</item>
-        <item>And We certainly gave David from Us bounty. [We said], \"O mountains,&#8230;</item>
-        <item>Say, \"Who provides for you from the heavens and the earth?\" Say, \"&#8230;</item>
-        <item>Say, \"I only advise you of one [thing] -  that you stand for Allah,&#8230;</item>
-        <item>O mankind, you are those in need of Allah, while Allah is the Free of&#8230;</item>
-        <item>Indeed, Allah holds the heavens and the earth, lest they cease. And&#8230;</item>
-        <item>And We did not send down upon his people after him any soldiers from&#8230;</item>
-        <item>Did I not enjoin upon you, O children of Adam, that you not worship&#8230;</item>
-        <item>[The angels will be ordered], \"Gather those who committed wrong,&#8230;</item>
-        <item>And indeed, among his kind was Abraham,</item>
-        <item>But We threw him onto the open shore while he was ill.</item>
-        <item>And has there come to you the news of the adversaries, when they&#8230;</item>
-        <item>And with them will be women limiting [their] glances and of equal age.</item>
-        <item>And when adversity touches man, he calls upon his Lord, turning to&#8230;</item>
-        <item>So who is more unjust than one who lies about Allah and denies the&#8230;</item>
-        <item>Say, \"O My servants who have transgressed against themselves [by&#8230;</item>
-        <item>Ha, Meem.</item>
-        <item>Have they not traveled through the land and observed how was the end&#8230;</item>
-        <item>And O my people, how is it that I invite you to salvation while you&#8230;</item>
-        <item>Say, [O Muhammad], \"Indeed, I have been forbidden to worship those&#8230;</item>
-        <item>Say, \"Do you indeed disbelieve in He who created the earth in two&#8230;</item>
-        <item>And We appointed for them companions who made attractive to them what&#8230;</item>
-        <item>To him [alone] is attributed knowledge of the Hour. And fruits emerge&#8230;</item>
-        <item>He has ordained for you of religion what He enjoined upon Noah and&#8230;</item>
-        <item>And if Allah had extended [excessively] provision for His servants,&#8230;</item>
-        <item>And it is not for any human being that Allah should speak to him&#8230;</item>
-        <item>[Each warner] said, \"Even if I brought you better guidance than that&#8230;</item>
-        <item>And when the son of Mary was presented as an example, immediately&#8230;</item>
-        <item>And We had already tried before them the people of Pharaoh, and there&#8230;</item>
-        <item>It is Allah who subjected to you the sea so that ships may sail upon&#8230;</item>
-        <item>Ha, Meem.</item>
-        <item>And mention, [O Muhammad], the brother of \'Aad, when he warned his&#8230;</item>
-        <item>Have they not traveled through the land and seen how was the end of&#8230;</item>
-        <item>O you who have believed, obey Allah and obey the Messenger and do not&#8230;</item>
-        <item>Certainly was Allah pleased with the believers when they pledged&#8230;</item>
-        <item>O you who have believed, do not put [yourselves] before Allah and His&#8230;</item>
-        <item>The bedouins say, \"We have believed.\" Say, \"You have not [yet]&#8230;</item>
-        <item>His [devil] companion will say, \"Our Lord, I did not make him&#8230;</item>
-        <item>[Abraham] said, \"Then what is your business [here], O messengers?\"</item>
-        <item>There will circulate among them [servant] boys [especially] for them,&#8230;</item>
-        <item>And how many angels there are in the heavens whose intercession will&#8230;</item>
-        <item>The people of Noah denied before them, and they denied Our servant&#8230;</item>
-        <item>The Most Merciful</item>
-        <item>When the Occurrence occurs,</item>
-        <item>Then I swear by the setting of the stars,</item>
-        <item>Has the time not come for those who have believed that their hearts&#8230;</item>
-        <item>Certainly has Allah heard the speech of the one who argues with you,&#8230;</item>
-        <item>Have you not considered those who make allies of a people with whom&#8230;</item>
-        <item>Have you not considered those who practice hypocrisy, saying to their&#8230;</item>
-        <item>Perhaps Allah will put, between you and those to whom you have been&#8230;</item>
-        <item>Whatever is in the heavens and whatever is on the earth is exalting&#8230;</item>
-        <item>And when you see them, their forms please you, and if they speak, you&#8230;</item>
-        <item>O Prophet, when you [Muslims] divorce women, divorce them for [the&#8230;</item>
-        <item>O Prophet, why do you prohibit [yourself from] what Allah has made&#8230;</item>
-        <item>Blessed is He in whose hand is dominion, and He is over all things&#8230;</item>
-        <item>Nun. By the pen and what they inscribe,</item>
-        <item>The Inevitable Reality -</item>
-        <item>Indeed, mankind was created anxious:</item>
-        <item>Say, [O Muhammad], \"It has been revealed to me that a group of the&#8230;</item>
-        <item>Indeed, your Lord knows, [O Muhammad], that you stand [in prayer]&#8230;</item>
-        <item>I swear by the Day of Resurrection</item>
-        <item>There will circulate among them young boys made eternal.  When you&#8230;</item>
-        <item>About what are they asking one another?</item>
-        <item>The Prophet frowned and turned away</item>
-        <item>When the sky breaks apart</item>
-        <item>When the sky has split [open]</item>
-        <item>Exalt the name of your Lord, the Most High,</item>
-        <item>I swear by this city, Makkah -</item>
-        <item>Did We not expand for you, [O Muhammad], your breast?</item>
-        <item>But does he not know that when the contents of the graves are&#8230;</item>
+        <string-array name="quarter_prefix_array">
+        <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>
+        <item>إِنَّ اللَّهَ لَا يَسْتَحْيِي أَن</item>
+        <item>أَتَأْمُرُونَ النَّاسَ بِالْبِرِّ</item>
+        <item>وَإِذِ اسْتَسْقَىٰ مُوسَىٰ لِقَوْمِهِ</item>
+        <item>أَفَتَطْمَعُونَ أَن يُؤْمِنُوا لَكُمْ</item>
+        <item>وَلَقَدْ جَاءَكُم مُّوسَىٰ</item>
+        <item>مَا نَنسَخْ مِنْ آيَةٍ أَوْ نُنسِهَا</item>
+        <item>وَإِذِ ابْتَلَىٰ إِبْرَاهِيمَ رَبُّهُ</item>
+        <item>سَيَقُولُ السُّفَهَاءُ مِنَ النَّاسِ</item>
+        <item>إِنَّ الصَّفَا وَالْمَرْوَةَ مِن</item>
+        <item>لَّيْسَ الْبِرَّ أَن تُوَلُّوا</item>
+        <item>يَسْأَلُونَكَ عَنِ الْأَهِلَّةِ ۖ قُلْ</item>
+        <item>وَاذْكُرُوا اللَّهَ فِي أَيَّامٍ</item>
+        <item>يَسْأَلُونَكَ عَنِ الْخَمْرِ</item>
+        <item>وَالْوَالِدَاتُ يُرْضِعْنَ</item>
+        <item>أَلَمْ تَرَ إِلَى الَّذِينَ خَرَجُوا</item>
+        <item>تِلْكَ الرُّسُلُ فَضَّلْنَا</item>
+        <item>قَوْلٌ مَّعْرُوفٌ وَمَغْفِرَةٌ خَيْرٌ</item>
+        <item>لَّيْسَ عَلَيْكَ هُدَاهُمْ وَلَٰكِنَّ</item>
+        <item>وَإِن كُنتُمْ عَلَىٰ سَفَرٍ وَلَمْ</item>
+        <item>قُلْ أَؤُنَبِّئُكُم بِخَيْرٍ مِّن</item>
+        <item>إِنَّ اللَّهَ اصْطَفَىٰ آدَمَ وَنُوحًا</item>
+        <item>فَلَمَّا أَحَسَّ عِيسَىٰ مِنْهُمُ</item>
+        <item>وَمِنْ أَهْلِ الْكِتَابِ مَنْ إِن</item>
+        <item>كُلُّ الطَّعَامِ كَانَ حِلًّا لِّبَنِي</item>
+        <item>لَيْسُوا سَوَاءً ۗ مِّنْ أَهْلِ</item>
+        <item>وَسَارِعُوا إِلَىٰ مَغْفِرَةٍ مِّن</item>
+        <item>إِذْ تُصْعِدُونَ وَلَا تَلْوُونَ</item>
+        <item>يَسْتَبْشِرُونَ بِنِعْمَةٍ مِّنَ</item>
+        <item>لَتُبْلَوُنَّ فِي أَمْوَالِكُمْ</item>
+        <item> يَا أَيُّهَا النَّاسُ اتَّقُوا</item>
+        <item>وَلَكُمْ نِصْفُ مَا تَرَكَ</item>
+        <item>وَالْمُحْصَنَاتُ مِنَ النِّسَاءِ</item>
+        <item>وَاعْبُدُوا اللَّهَ وَلَا تُشْرِكُوا</item>
+        <item>إِنَّ اللَّهَ يَأْمُرُكُمْ أَن</item>
+        <item>فَلْيُقَاتِلْ فِي سَبِيلِ اللَّهِ</item>
+        <item>فَمَا لَكُمْ فِي الْمُنَافِقِينَ</item>
+        <item>وَمَن يُهَاجِرْ فِي سَبِيلِ اللَّهِ</item>
+        <item>لَّا خَيْرَ فِي كَثِيرٍ مِّن</item>
+        <item>يَا أَيُّهَا الَّذِينَ آمَنُوا كُونُوا</item>
+        <item>لَّا يُحِبُّ اللَّهُ الْجَهْرَ</item>
+        <item>إِنَّا أَوْحَيْنَا إِلَيْكَ كَمَا</item>
+        <item> يَا أَيُّهَا الَّذِينَ آمَنُوا</item>
+        <item>وَلَقَدْ أَخَذَ اللَّهُ مِيثَاقَ بَنِي</item>
+        <item>وَاتْلُ عَلَيْهِمْ نَبَأَ ابْنَيْ</item>
+        <item>يَا أَيُّهَا الرَّسُولُ لَا يَحْزُنكَ</item>
+        <item>يَا أَيُّهَا الَّذِينَ آمَنُوا لَا</item>
+        <item>يَا أَيُّهَا الرَّسُولُ بَلِّغْ مَا</item>
+        <item>لَتَجِدَنَّ أَشَدَّ النَّاسِ</item>
+        <item>جَعَلَ اللَّهُ الْكَعْبَةَ الْبَيْتَ</item>
+        <item>يَوْمَ يَجْمَعُ اللَّهُ الرُّسُلَ</item>
+        <item>وَلَهُ مَا سَكَنَ فِي اللَّيْلِ</item>
+        <item>إِنَّمَا يَسْتَجِيبُ الَّذِينَ</item>
+        <item>وَعِندَهُ مَفَاتِحُ الْغَيْبِ لَا</item>
+        <item>وَإِذْ قَالَ إِبْرَاهِيمُ لِأَبِيهِ</item>
+        <item>إِنَّ اللَّهَ فَالِقُ الْحَبِّ</item>
+        <item>وَلَوْ أَنَّنَا نَزَّلْنَا إِلَيْهِمُ</item>
+        <item>لَهُمْ دَارُ السَّلَامِ عِندَ</item>
+        <item>وَهُوَ الَّذِي أَنشَأَ جَنَّاتٍ</item>
+        <item>قُلْ تَعَالَوْا أَتْلُ مَا حَرَّمَ</item>
+        <item> المص</item>
+        <item>يَا بَنِي آدَمَ خُذُوا زِينَتَكُمْ</item>
+        <item>وَإِذَا صُرِفَتْ أَبْصَارُهُمْ</item>
+        <item>وَإِلَىٰ عَادٍ أَخَاهُمْ هُودًا ۗ</item>
+        <item>قَالَ الْمَلَأُ الَّذِينَ</item>
+        <item>وَأَوْحَيْنَا إِلَىٰ مُوسَىٰ أَنْ</item>
+        <item>وَوَاعَدْنَا مُوسَىٰ ثَلَاثِينَ</item>
+        <item>وَاكْتُبْ لَنَا فِي هَٰذِهِ الدُّنْيَا</item>
+        <item>وَإِذْ نَتَقْنَا الْجَبَلَ فَوْقَهُمْ</item>
+        <item>هُوَ الَّذِي خَلَقَكُم مِّن نَّفْسٍ</item>
+        <item> يَسْأَلُونَكَ عَنِ الْأَنفَالِ ۖ قُلِ</item>
+        <item>إِنَّ شَرَّ الدَّوَابِّ عِندَ اللَّهِ</item>
+        <item>وَاعْلَمُوا أَنَّمَا غَنِمْتُم مِّن</item>
+        <item>وَإِن جَنَحُوا لِلسَّلْمِ فَاجْنَحْ</item>
+        <item>بَرَاءَةٌ مِّنَ اللَّهِ وَرَسُولِهِ</item>
+        <item>أَجَعَلْتُمْ سِقَايَةَ الْحَاجِّ</item>
+        <item>يَا أَيُّهَا الَّذِينَ آمَنُوا إِنَّ</item>
+        <item>وَلَوْ أَرَادُوا الْخُرُوجَ</item>
+        <item>إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ</item>
+        <item>وَمِنْهُم مَّنْ عَاهَدَ اللَّهَ لَئِنْ</item>
+        <item>إِنَّمَا السَّبِيلُ عَلَى الَّذِينَ</item>
+        <item>إِنَّ اللَّهَ اشْتَرَىٰ مِنَ</item>
+        <item>وَمَا كَانَ الْمُؤْمِنُونَ</item>
+        <item>وَلَوْ يُعَجِّلُ اللَّهُ لِلنَّاسِ</item>
+        <item>لِّلَّذِينَ أَحْسَنُوا الْحُسْنَىٰ</item>
+        <item>وَيَسْتَنبِئُونَكَ أَحَقٌّ هُوَ ۖ قُلْ</item>
+        <item>وَاتْلُ عَلَيْهِمْ نَبَأَ نُوحٍ إِذْ</item>
+        <item>وَجَاوَزْنَا بِبَنِي إِسْرَائِيلَ</item>
+        <item>وَمَا مِن دَابَّةٍ فِي الْأَرْضِ</item>
+        <item>مَثَلُ الْفَرِيقَيْنِ كَالْأَعْمَىٰ</item>
+        <item>وَقَالَ ارْكَبُوا فِيهَا بِسْمِ</item>
+        <item>وَإِلَىٰ ثَمُودَ أَخَاهُمْ صَالِحًا ۚ</item>
+        <item>وَإِلَىٰ مَدْيَنَ أَخَاهُمْ شُعَيْبًا</item>
+        <item>وَأَمَّا الَّذِينَ سُعِدُوا فَفِي</item>
+        <item>لَّقَدْ كَانَ فِي يُوسُفَ وَإِخْوَتِهِ</item>
+        <item>وَقَالَ نِسْوَةٌ فِي الْمَدِينَةِ</item>
+        <item>وَمَا أُبَرِّئُ نَفْسِي ۚ إِنَّ</item>
+        <item>قَالُوا إِن يَسْرِقْ فَقَدْ سَرَقَ</item>
+        <item>رَبِّ قَدْ آتَيْتَنِي مِنَ الْمُلْكِ</item>
+        <item>وَإِن تَعْجَبْ فَعَجَبٌ قَوْلُهُمْ</item>
+        <item>أَفَمَن يَعْلَمُ أَنَّمَا أُنزِلَ</item>
+        <item>مَّثَلُ الْجَنَّةِ الَّتِي وُعِدَ</item>
+        <item>قَالَتْ رُسُلُهُمْ أَفِي اللَّهِ شَكٌّ</item>
+        <item>أَلَمْ تَرَ إِلَى الَّذِينَ بَدَّلُوا</item>
+        <item> الر ۚ تِلْكَ آيَاتُ الْكِتَابِ</item>
+        <item>وَأَنَّ عَذَابِي هُوَ الْعَذَابُ</item>
+        <item> أَتَىٰ أَمْرُ اللَّهِ فَلَا</item>
+        <item>وَقِيلَ لِلَّذِينَ اتَّقَوْا مَاذَا</item>
+        <item>وَقَالَ اللَّهُ لَا تَتَّخِذُوا</item>
+        <item>ضَرَبَ اللَّهُ مَثَلًا عَبْدًا</item>
+        <item>إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ</item>
+        <item>يَوْمَ تَأْتِي كُلُّ نَفْسٍ تُجَادِلُ</item>
+        <item> سُبْحَانَ الَّذِي أَسْرَىٰ بِعَبْدِهِ</item>
+        <item>وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوا</item>
+        <item>قُلْ كُونُوا حِجَارَةً أَوْ حَدِيدًا</item>
+        <item>وَلَقَدْ كَرَّمْنَا بَنِي آدَمَ</item>
+        <item>أَوَلَمْ يَرَوْا أَنَّ اللَّهَ الَّذِي</item>
+        <item>وَتَرَى الشَّمْسَ إِذَا طَلَعَت</item>
+        <item>وَاضْرِبْ لَهُم مَّثَلًا رَّجُلَيْنِ</item>
+        <item>مَّا أَشْهَدتُّهُمْ خَلْقَ</item>
+        <item>قَالَ أَلَمْ أَقُل لَّكَ إِنَّكَ لَن</item>
+        <item>وَتَرَكْنَا بَعْضَهُمْ يَوْمَئِذٍ</item>
+        <item>فَحَمَلَتْهُ فَانتَبَذَتْ بِهِ</item>
+        <item>فَخَلَفَ مِن بَعْدِهِمْ خَلْفٌ</item>
+        <item> طه</item>
+        <item>مِنْهَا خَلَقْنَاكُمْ وَفِيهَا</item>
+        <item>وَمَا أَعْجَلَكَ عَن قَوْمِكَ يَا</item>
+        <item>وَعَنَتِ الْوُجُوهُ لِلْحَيِّ</item>
+        <item> اقْتَرَبَ لِلنَّاسِ حِسَابُهُمْ</item>
+        <item>وَمَن يَقُلْ مِنْهُمْ إِنِّي إِلَٰهٌ</item>
+        <item>وَلَقَدْ آتَيْنَا إِبْرَاهِيمَ</item>
+        <item>وَأَيُّوبَ إِذْ نَادَىٰ رَبَّهُ أَنِّي</item>
+        <item> يَا أَيُّهَا النَّاسُ اتَّقُوا</item>
+        <item>هَٰذَانِ خَصْمَانِ اخْتَصَمُوا فِي</item>
+        <item>إِنَّ اللَّهَ يُدَافِعُ عَنِ الَّذِينَ</item>
+        <item>ذَٰلِكَ وَمَنْ عَاقَبَ بِمِثْلِ مَا</item>
+        <item> قَدْ أَفْلَحَ الْمُؤْمِنُونَ</item>
+        <item>هَيْهَاتَ هَيْهَاتَ لِمَا تُوعَدُونَ</item>
+        <item>وَلَوْ رَحِمْنَاهُمْ وَكَشَفْنَا مَا</item>
+        <item> سُورَةٌ أَنزَلْنَاهَا وَفَرَضْنَاهَا</item>
+        <item>يَا أَيُّهَا الَّذِينَ آمَنُوا لَا</item>
+        <item>اللَّهُ نُورُ السَّمَاوَاتِ</item>
+        <item>وَأَقْسَمُوا بِاللَّهِ جَهْدَ</item>
+        <item> تَبَارَكَ الَّذِي نَزَّلَ</item>
+        <item>وَقَالَ الَّذِينَ لَا يَرْجُونَ</item>
+        <item>وَهُوَ الَّذِي مَرَجَ الْبَحْرَيْنِ</item>
+        <item> طسم</item>
+        <item>وَأَوْحَيْنَا إِلَىٰ مُوسَىٰ أَنْ</item>
+        <item>قَالُوا أَنُؤْمِنُ لَكَ وَاتَّبَعَكَ</item>
+        <item>أَوْفُوا الْكَيْلَ وَلَا تَكُونُوا</item>
+        <item> طس ۚ تِلْكَ آيَاتُ الْقُرْآنِ</item>
+        <item>قَالَ سَنَنظُرُ أَصَدَقْتَ أَمْ كُنتَ</item>
+        <item>فَمَا كَانَ جَوَابَ قَوْمِهِ إِلَّا</item>
+        <item>وَإِذَا وَقَعَ الْقَوْلُ عَلَيْهِمْ</item>
+        <item>وَحَرَّمْنَا عَلَيْهِ الْمَرَاضِعَ</item>
+        <item>فَلَمَّا قَضَىٰ مُوسَى الْأَجَلَ</item>
+        <item>وَلَقَدْ وَصَّلْنَا لَهُمُ الْقَوْلَ</item>
+        <item>إِنَّ قَارُونَ كَانَ مِن قَوْمِ</item>
+        <item> الم</item>
+        <item>فَآمَنَ لَهُ لُوطٌ ۘ وَقَالَ إِنِّي</item>
+        <item>وَلَا تُجَادِلُوا أَهْلَ الْكِتَابِ</item>
+        <item> الم</item>
+        <item>مُنِيبِينَ إِلَيْهِ وَاتَّقُوهُ</item>
+        <item>اللَّهُ الَّذِي خَلَقَكُم مِّن ضَعْفٍ</item>
+        <item>وَمَن يُسْلِمْ وَجْهَهُ إِلَى اللَّهِ</item>
+        <item>قُلْ يَتَوَفَّاكُم مَّلَكُ الْمَوْتِ</item>
+        <item> يَا أَيُّهَا النَّبِيُّ اتَّقِ</item>
+        <item>قَدْ يَعْلَمُ اللَّهُ الْمُعَوِّقِينَ</item>
+        <item>وَمَن يَقْنُتْ مِنكُنَّ لِلَّهِ</item>
+        <item>تُرْجِي مَن تَشَاءُ مِنْهُنَّ</item>
+        <item>لَّئِن لَّمْ يَنتَهِ الْمُنَافِقُونَ</item>
+        <item>وَلَقَدْ آتَيْنَا دَاوُودَ مِنَّا</item>
+        <item>قُلْ مَن يَرْزُقُكُم مِّنَ</item>
+        <item>قُلْ إِنَّمَا أَعِظُكُم بِوَاحِدَةٍ ۖ</item>
+        <item>يَا أَيُّهَا النَّاسُ أَنتُمُ</item>
+        <item>إِنَّ اللَّهَ يُمْسِكُ السَّمَاوَاتِ</item>
+        <item>وَمَا أَنزَلْنَا عَلَىٰ قَوْمِهِ مِن</item>
+        <item>أَلَمْ أَعْهَدْ إِلَيْكُمْ يَا بَنِي</item>
+        <item>احْشُرُوا الَّذِينَ ظَلَمُوا</item>
+        <item>وَإِنَّ مِن شِيعَتِهِ لَإِبْرَاهِيمَ</item>
+        <item>فَنَبَذْنَاهُ بِالْعَرَاءِ وَهُوَ</item>
+        <item>وَهَلْ أَتَاكَ نَبَأُ الْخَصْمِ إِذْ</item>
+        <item>وَعِندَهُمْ قَاصِرَاتُ الطَّرْفِ</item>
+        <item>وَإِذَا مَسَّ الْإِنسَانَ ضُرٌّ دَعَا</item>
+        <item>فَمَنْ أَظْلَمُ مِمَّن كَذَبَ عَلَى</item>
+        <item>قُلْ يَا عِبَادِيَ الَّذِينَ</item>
+        <item> حم</item>
+        <item>أَوَلَمْ يَسِيرُوا فِي الْأَرْضِ</item>
+        <item>وَيَا قَوْمِ مَا لِي أَدْعُوكُمْ إِلَى</item>
+        <item>قُلْ إِنِّي نُهِيتُ أَنْ أَعْبُدَ</item>
+        <item>قُلْ أَئِنَّكُمْ لَتَكْفُرُونَ</item>
+        <item>وَقَيَّضْنَا لَهُمْ قُرَنَاءَ</item>
+        <item>إِلَيْهِ يُرَدُّ عِلْمُ السَّاعَةِ ۚ</item>
+        <item>شَرَعَ لَكُم مِّنَ الدِّينِ مَا</item>
+        <item>وَلَوْ بَسَطَ اللَّهُ الرِّزْقَ</item>
+        <item>وَمَا كَانَ لِبَشَرٍ أَن يُكَلِّمَهُ</item>
+        <item>قَالَ أَوَلَوْ جِئْتُكُم بِأَهْدَىٰ</item>
+        <item>وَلَمَّا ضُرِبَ ابْنُ مَرْيَمَ مَثَلًا</item>
+        <item>وَلَقَدْ فَتَنَّا قَبْلَهُمْ قَوْمَ</item>
+        <item>اللَّهُ الَّذِي سَخَّرَ لَكُمُ</item>
+        <item> حم</item>
+        <item>وَاذْكُرْ أَخَا عَادٍ إِذْ أَنذَرَ</item>
+        <item>أَفَلَمْ يَسِيرُوا فِي الْأَرْضِ</item>
+        <item>يَا أَيُّهَا الَّذِينَ آمَنُوا</item>
+        <item>لَّقَدْ رَضِيَ اللَّهُ عَنِ</item>
+        <item> يَا أَيُّهَا الَّذِينَ آمَنُوا لَا</item>
+        <item>قَالَتِ الْأَعْرَابُ آمَنَّا ۖ قُل</item>
+        <item>قَالَ قَرِينُهُ رَبَّنَا مَا</item>
+        <item>قَالَ فَمَا خَطْبُكُمْ أَيُّهَا</item>
+        <item>وَيَطُوفُ عَلَيْهِمْ غِلْمَانٌ</item>
+        <item>وَكَم مِّن مَّلَكٍ فِي السَّمَاوَاتِ</item>
+        <item>كَذَّبَتْ قَبْلَهُمْ قَوْمُ نُوحٍ</item>
+        <item> الرَّحْمَٰنُ</item>
+        <item> إِذَا وَقَعَتِ الْوَاقِعَةُ</item>
+        <item>فَلَا أُقْسِمُ بِمَوَاقِعِ النُّجُومِ</item>
+        <item>أَلَمْ يَأْنِ لِلَّذِينَ آمَنُوا أَن</item>
+        <item> قَدْ سَمِعَ اللَّهُ قَوْلَ الَّتِي</item>
+        <item>أَلَمْ تَرَ إِلَى الَّذِينَ تَوَلَّوْا</item>
+        <item>أَلَمْ تَرَ إِلَى الَّذِينَ نَافَقُوا</item>
+        <item>عَسَى اللَّهُ أَن يَجْعَلَ بَيْنَكُمْ</item>
+        <item> يُسَبِّحُ لِلَّهِ مَا فِي</item>
+        <item>وَإِذَا رَأَيْتَهُمْ تُعْجِبُكَ</item>
+        <item> يَا أَيُّهَا النَّبِيُّ إِذَا</item>
+        <item> يَا أَيُّهَا النَّبِيُّ لِمَ</item>
+        <item> تَبَارَكَ الَّذِي بِيَدِهِ الْمُلْكُ</item>
+        <item> ن ۚ وَالْقَلَمِ وَمَا يَسْطُرُونَ</item>
+        <item> الْحَاقَّةُ</item>
+        <item>إِنَّ الْإِنسَانَ خُلِقَ هَلُوعًا</item>
+        <item> قُلْ أُوحِيَ إِلَيَّ أَنَّهُ</item>
+        <item>إِنَّ رَبَّكَ يَعْلَمُ أَنَّكَ تَقُومُ</item>
+        <item> لَا أُقْسِمُ بِيَوْمِ الْقِيَامَةِ</item>
+        <item>وَيَطُوفُ عَلَيْهِمْ وِلْدَانٌ</item>
+        <item> عَمَّ يَتَسَاءَلُونَ</item>
+        <item> عَبَسَ وَتَوَلَّىٰ</item>
+        <item> إِذَا السَّمَاءُ انفَطَرَتْ</item>
+        <item> إِذَا السَّمَاءُ انشَقَّتْ</item>
+        <item> سَبِّحِ اسْمَ رَبِّكَ الْأَعْلَى</item>
+        <item> لَا أُقْسِمُ بِهَٰذَا الْبَلَدِ</item>
+        <item> أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ</item>
+        <item>أَفَلَا يَعْلَمُ إِذَا بُعْثِرَ مَا</item>
     </string-array>
-    
 </resources>

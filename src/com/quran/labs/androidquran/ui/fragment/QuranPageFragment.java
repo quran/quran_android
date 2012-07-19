@@ -199,15 +199,14 @@ public class QuranPageFragment extends SherlockFragment {
          QuranAyah result = null;
          if (pageXY != null) {
             String filename = QuranFileUtils.getAyaPositionFileName();
-            AyahInfoDatabaseHandler handler =
-                    new AyahInfoDatabaseHandler(filename);
             try {
+               AyahInfoDatabaseHandler handler =
+                       new AyahInfoDatabaseHandler(filename);
                result = handler.getVerseAtPoint(mPageNumber,
                        pageXY[0], pageXY[1]);
+               handler.closeDatabase();
             } catch (Exception e) {
                Log.e(TAG, e.getMessage(), e);
-            } finally {
-               handler.closeDatabase();
             }
          }
          return result;
@@ -289,7 +288,6 @@ public class QuranPageFragment extends SherlockFragment {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
-			// Temp toast for debugging
          Activity activity = getActivity();
          if (result != null && activity != null){
             int strId = result? R.string.bookmarked_ayah :
@@ -312,23 +310,29 @@ public class QuranPageFragment extends SherlockFragment {
 		
 		@Override
 		protected String doInBackground(Void... params) {
-			DatabaseHandler ayahHandler =
-                 new DatabaseHandler(QuranDataProvider.QURAN_ARABIC_DATABASE);
-			Cursor cursor = ayahHandler.getVerses(sura, ayah, sura, ayah,
-                 DatabaseHandler.ARABIC_TEXT_TABLE);
-			String text = null;
-			if (cursor.moveToFirst()) {
-				text = cursor.getString(2);
-			}
-			cursor.close();
-			ayahHandler.closeDatabase();
+         String text = null;
+         try {
+            DatabaseHandler ayahHandler =
+                    new DatabaseHandler(
+                            QuranDataProvider.QURAN_ARABIC_DATABASE);
+            Cursor cursor = ayahHandler.getVerses(sura, ayah, sura, ayah,
+                    DatabaseHandler.ARABIC_TEXT_TABLE);
+            if (cursor.moveToFirst()) {
+               text = cursor.getString(2);
+            }
+            cursor.close();
+            ayahHandler.closeDatabase();
+         }
+         catch (Exception e){
+         }
+
 			return text;
 		}
 		
 		@Override
 		protected void onPostExecute(String ayah) {
 			Activity activity = getActivity();
-			if (copy) {
+			if (copy && ayah != null && activity != null) {
 				ClipboardManager cm = (ClipboardManager) activity.
 							getSystemService(Activity.CLIPBOARD_SERVICE);
 				cm.setText(ayah);
@@ -359,14 +363,18 @@ public class QuranPageFragment extends SherlockFragment {
 			String db = PreferenceManager.getDefaultSharedPreferences(activity)
 				.getString(Constants.PREF_ACTIVE_TRANSLATION, null);
 			if (db != null) {
-				DatabaseHandler tafsirHandler = new DatabaseHandler(db);
-				Cursor cursor = tafsirHandler.getVerse(sura, ayah);
-				if (cursor.moveToFirst()) {
-					String text = cursor.getString(2);
-					cursor.close();
-					tafsirHandler.closeDatabase();
-					return text;
-				}
+            try {
+               DatabaseHandler tafsirHandler = new DatabaseHandler(db);
+               Cursor cursor = tafsirHandler.getVerse(sura, ayah);
+               if (cursor.moveToFirst()) {
+                  String text = cursor.getString(2);
+                  cursor.close();
+                  tafsirHandler.closeDatabase();
+                  return text;
+               }
+            }
+            catch (Exception e){
+            }
 			}
 			return null;
 		}
@@ -374,7 +382,7 @@ public class QuranPageFragment extends SherlockFragment {
 		@Override
 		protected void onPostExecute(String text) {
 			Activity activity = getActivity();
-			if (activity != null) {
+			if (activity != null && text != null) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(activity)
 				   .setMessage(text)
 				   .setCancelable(true)

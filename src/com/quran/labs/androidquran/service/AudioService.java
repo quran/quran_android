@@ -47,7 +47,6 @@ import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
-import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -903,8 +902,8 @@ public class AudioService extends Service implements OnCompletionListener,
     * reset the media player.
     */
    public boolean onError(MediaPlayer mp, int what, int extra) {
-      Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
-            Toast.LENGTH_SHORT).show();
+      //Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
+      //      Toast.LENGTH_SHORT).show();
       Log.e(TAG, "Error: what=" + String.valueOf(what) +
               ", extra=" + String.valueOf(extra));
 
@@ -915,8 +914,8 @@ public class AudioService extends Service implements OnCompletionListener,
    }
 
    public void onGainedAudioFocus() {
-      Toast.makeText(getApplicationContext(), "gained audio focus.",
-              Toast.LENGTH_SHORT).show();
+      //Toast.makeText(getApplicationContext(), "gained audio focus.",
+      //        Toast.LENGTH_SHORT).show();
       mAudioFocus = AudioFocus.Focused;
 
       // restart media player with new focus settings
@@ -925,8 +924,8 @@ public class AudioService extends Service implements OnCompletionListener,
    }
 
    public void onLostAudioFocus(boolean canDuck) {
-      Toast.makeText(getApplicationContext(), "lost audio focus." +
-              (canDuck ? "can duck" : "no duck"), Toast.LENGTH_SHORT).show();
+      //Toast.makeText(getApplicationContext(), "lost audio focus." +
+      //        (canDuck ? "can duck" : "no duck"), Toast.LENGTH_SHORT).show();
       mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck :
               AudioFocus.NoFocusNoDuck;
 
