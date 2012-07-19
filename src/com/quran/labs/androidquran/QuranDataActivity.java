@@ -26,6 +26,7 @@ public class QuranDataActivity extends SherlockActivity implements
         DefaultDownloadReceiver.SimpleDownloadListener {
    
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
+   private static final int SPLASH_WAIT_TIME = 2000;
    
    private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
    private AlertDialog mErrorDialog = null;
@@ -41,8 +42,8 @@ public class QuranDataActivity extends SherlockActivity implements
       
       super.onCreate(savedInstanceState);
       getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
       setContentView(R.layout.splash_screen);
 
       /*
@@ -153,6 +154,10 @@ public class QuranDataActivity extends SherlockActivity implements
 
       @Override
       protected Boolean doInBackground(Void... params) {
+    	  try {
+    		  Thread.sleep(SPLASH_WAIT_TIME);
+    	  } catch (Exception e) {}
+    	  
          return QuranFileUtils.getQuranDirectory() != null &&
                 QuranFileUtils.haveAllImages();
       }
