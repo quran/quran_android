@@ -54,7 +54,7 @@ public class TranslationManagerActivity extends SherlockActivity
            "TRANSLATION_DOWNLOAD_KEY";
 
    public static final String WEB_SERVICE_URL =
-           "http://labs.quran.com/androidquran/translations.php?v=2";
+           "http://android.quran.com/data/translations.php?v=2";
    
    private static final String CACHED_RESPONSE_FILE_NAME = "cached-translation-list";
 

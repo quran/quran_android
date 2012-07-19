@@ -48,7 +48,7 @@
         اثناء قراءتك اضغط على الاية ضغطة طويلة ستظهر لك قائمة بها عدة اختيارات منها الارسال ومنها تسجيل الايه في المرجعيات، نسخ الاية، و تفسير الاية.
     </string>
 
-    <string name="search_hint">بحث يف القران</string>
+    <string name="search_hint">بحث في القران</string>
     <string name="quranSearchType">آيات القران</string>
 
     <!-- Shown above search results when we receive a search request. -->
