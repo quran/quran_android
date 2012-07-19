@@ -93,9 +93,6 @@
     <string name="prefs_category_reading">Reading Preferences</string>
     <string name="prefs_category_translation">Translation Preferences</string>
     <string name="prefs_category_display_settings">Display Settings</string>
-    <string name="prefs_keep_screen_summary_on">Screen will stay on while reading</string>
-    <string name="prefs_keep_screen_summary_off">Screen will turn off after idling</string>
-    <string name="prefs_keep_screen_title">Keep Screen On</string>
     <string name="prefs_use_arabic_title">Arabic Mode</string>
     <string name="prefs_use_arabic_summary_on">Application will be localized to Arabic (restart required)</string>
     <string name="prefs_lock_orientation_title">Lock screen orientation</string>
@@ -118,7 +115,6 @@
     <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
     <string name="prefs_download_amount_title">Download Amount</string>
     <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
-    <string name="loading_translations">Loading Translations List, Please wait..</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
     <string name="sdcard_required">SD card should be mounted to download translations.</string>
