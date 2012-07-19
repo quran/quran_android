@@ -147,7 +147,7 @@ public class QuranInfo {
       int ayahs = QuranInfo.SURA_NUM_AYAHS[sura-1];
       info += ayahs + " " +
               context.getResources().getQuantityString(
-                      R.plurals.verses, ayahs) + ".";
+                      R.plurals.verses, ayahs);
 		return info;
 	}
 
