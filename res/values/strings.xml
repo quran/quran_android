@@ -80,11 +80,10 @@
     <!-- Search messages -->
     <string name="found_in_sura">Found in Sura</string>
     <string name="no_results">No results found for \"%s\"</string>
-    <string name="no_active_translation">You have no active translation set.  Please set an active translation first and then search again.</string>
+    <string name="no_active_translation">You have no active translation set. Please set an active translation first and then search again.</string>
     <string name="translation_settings">Translation Settings</string>
     <string name="no_arabic_search_available">You have not downloaded the arabic search pack.  Please download it and try your search again.</string>
     <string name="get_arabic_search_db">Get Arabic Search Database</string>
-    <string name="download_arabic_search_db">Download the Arabic Search Database to enable Arabic Searches?</string>
         
     <!-- Quran Preference Activity -->
     <string name="prefs_category_reading">Reading Preferences</string>
@@ -120,6 +119,7 @@
     <string name="download_button">Download</string>
     <string name="remove_button">Remove</string>
     <string name="radio_download_message">Choose download option</string>
+    <string name="dialog_ok">OK</string>
 
     <string name="border">border</string>
     
@@ -155,6 +155,7 @@
     <string name="download_error_invalid_download">Downloaded file was corrupted</string>
     <string name="download_error_invalid_download_retry">Corrupted file, attempting to redownload</string> 
     <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
+    <string name="notification_download_canceled">Download canceled</string>
     
     <!-- downloading dialogs -->
     <string name="download_progress">Downloaded %1$s / %2$s</string>
@@ -171,9 +172,6 @@
 
     <!-- about us -->
     <string name="email_quran_android">Email Quran Android</string>
-
-    <!-- help -->
-    <string name="back">Back</string>
 
     <!-- sura metainfo -->
     <string name="makki">Makki</string>

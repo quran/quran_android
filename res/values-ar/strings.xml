@@ -1,44 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="errorString">لا يمكن تحميل صفحات القران</string>
     <string name="app_name">قران أندرويد </string>
-    <string name="pageNotFound">لا توجد صفحة</string>
-    <string name="pageLoading"> جاري تحميل الصفحة&#8230;</string>
     <string name="downloadPrompt_title">حمل الملفات المطلوبه؟</string>
     <string name="downloadPrompt">لأداء أفضل، بعض الملفات في حاجه للتحميل على بطاقة الذاكرة الرقمية.
 		 إذا لم تقم بذلك الاختيار فإن الصفحات ستستغرق وقت أطول للتحميل.
 		 هل ترغب في تحميل الملفات الآن؟</string>
-		 <string name="download_connection_failed">لا يمكن اﻹتصال بخادم البرنامج، برجاء التأكد أن اﻹتصال بالإنترنت متاح. هل ترغب في إعادة المحاولة ؟</string>
-    <string name="downloadTranslationPrompt">هل ترغب في تحميل الترجمة الآن؟</string>
     <string name="downloadPrompt_ok">نعم</string>
     <string name="downloadPrompt_no">لا</string>
-    <string name="downloadHighlightingData">تحتاج لتحميل بعض الملفات للحصول على تظليل للآية أثناء الاستماع .حمل الان ؟</string>
     <string name="downloading_title">جاري التحميل....</string>
     <string name="downloading_message">يرجى الإنتظار حتى نهاية التحميل</string>
     <string name="extracting_title">تجهيز&#8230;</string>
-    <string name="extracting_message">يرجى الإنتظار، تتم معالجة الملفات&#8230;</string>
-    <string name="menu_jump">انتقال سريع</string>
     <string name="menu_about">عنا</string>
     <string name="menu_settings">الاعدادات</string>
     <string name="menu_jump_last_page">الصفحة الأخيرة</string>
     <string name="menu_bookmarks">مرجعيات</string>
     <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
     <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
-    <string name="menu_bookmarks_remove">حذف</string>
-    <string name="menu_bookmarks_view">معينة</string>
     <string name="menu_translation">التفسير/الترجمة</string>
     <string name="menu_back_to_page">إلى التلاوة</string>
-    <string name="menu_bookmarks_add">اضافة</string>
-    <string name="menu_bookmarks_saved">تم إضافة علامة المراجعة</string>
-    <string name="menu_bookmarks_removed">تم حذف علامة المراجعة</string>
-    <string name="menu_bookmarks_help">مساعدة</string>
     <string name="menu_help">مساعدة</string>
     <string name="menu_search">بحث</string>
     <string name="menu_get_translations">حمل التفاسير/التراجم</string>
-    <string name="jump_dialog_title">ذهاب لصفحة</string>
-    <string name="page_hint">رقم الصفحة</string>
-    <string name="refresh">تحديث</string>
-    <string name="go">اذهب</string>
     <string name="cancel">الغاء</string>
     <string name="developedBy">المبرمجون:\nأحمد الحلو - أحمد فؤاد
 			\n 	حسين ماهر - وائل نافع
@@ -92,14 +74,10 @@
 
     <!-- Search messages -->
     <string name="found_in_sura">سورة</string>
-    <string name="active_translation">يجب تفعيل التفسير/الترجمة أولا &#8212; اذهب إلى اﻹعدادات</string>
     <string name="translation_settings">إعدادات التفسير</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
-    <string name="set_active_translation">التفسير/الترجمة</string>
-    <string name="no_translations_available">من فضلك قم بتحميل التفسير/الترجمة من القائمة أولا</string>
     <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
     <string name="get_arabic_search_db">حمل قاعدة البيانات</string>
-    <string name="download_arabic_search_db">حمل قاعده البيانات للبحث بالعربي لامكانية البحث باللغة العربية ؟</string>
     
     <!-- Quran Preference Activity -->
     <string name="prefs_category_reading">إعدادات القراءة</string>
@@ -127,7 +105,6 @@
     <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
     <!-- Preferences End -->
     
-    <string name="loading_translations">برجاء اﻻنتظار..</string>
     <string name="downloaded_translations">الملفات المحملة</string>
     <string name="available_translations">الملفات المتاحة للتحميل</string>
     <string name="sdcard_required">يجب أن تكون الذاكرة اﻹضافية متاحة حتى تتمكن من تحميل الملفات المطلوبة</string>
@@ -135,35 +112,8 @@
     <string name="translation_downloaded">%s تم تحميله.</string>
     <string name="download_button">حمل</string>
     <string name="remove_button">احذف</string>
-    <string name="set_active">فعّل</string>
-    <string name="prompt_select_ayah">السورة</string>
-    <string name="prompt_select_sura">اﻵية</string>
     <string name="radio_download_message">اختيار التحميل</string>
-    <!-- Number Picker Strings -->
-    <string name="menu_preferences_label">اﻹعدادات</string>
-    <string name="menu_dialog_label">Dialog Picker</string>
-    <string name="dialog_set_number">اختر</string>
-    <string name="dialog_cancel">إلغاء</string>
-    <string name="dialog_ok">موافق</string>
-    <string name="dialog_set">اختر</string>
-    <string name="dialog_hide">إخفاء</string>
-    <string name="dialog_download">حمّل</string>
-    <string name="dialog_stream">استمع</string>
-    <string name="dialog_jump_ayah">اختر آية</string>
-    <string name="dialog_repeat_title">التكرار</string>
-    <string name="dialog_picker_title">العدد</string>
-    <string name="dialog_show_current_suras">السور في الصفحة فقط</string>
-    <string name="dialog_play_page_start">بداية الصفحة</string>
-    <string name="dialog_play">التلاوة</string>
-    <string name="dialog_resume_play">اكمل من آخر موضع</string>
-    <!-- End Number picker Strings -->
-    <string name="dialog_select_reciter">القارئ</string>
-    <string name="play_dialog_message">ابدأ من…</string>
-    <string name="play_dialog_page">الصفحة الحالية (%s)</string>
-    <string name="play_dialog_resume">اكمل  %1$s : %2$s</string>
-    <string name="download_dialog_message">اختيار التحميل</string>
-    <string name="download_dialog_page">الصفحة الحالية (%s)</string>
-    <string name="couldNotLoadPage">لا يمكن عرض الصفحة</string>
+    
     <string name="quran_rob3">ربع</string>
     <string name="quran_nos">نصف</string>
     <string name="quran_talt_arb3">ثلاثة أرباع</string>
@@ -173,9 +123,6 @@
     <string name="quran_sura">سورة</string>
     <string name="quran_ayah">آية</string>
     <string name="quran_sura_title">سورة</string>
-    <string name="notification_downloading">جاري التحميل</string>
-    <string name="notification_download_paused">توقف التحميل</string>
-    <string name="notification_download_canceled">تم إلغاء التحميل</string>
 
     <!-- long press -->
     <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
