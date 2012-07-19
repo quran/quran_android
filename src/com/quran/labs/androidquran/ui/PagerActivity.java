@@ -31,6 +31,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.quran.labs.androidquran.HelpActivity;
+import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
@@ -43,10 +45,7 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.util.AudioUtils;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
 public class PagerActivity extends SherlockFragmentActivity implements
@@ -78,11 +77,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private int mHighlightedAyah = -1;
    private boolean mShouldOverridePlaying = false;
    private DefaultDownloadReceiver mDownloadReceiver;
+   private boolean mNeedsPermissionToDownloadOver3g = true;
    private Handler mHandler = new Handler();
 
    @Override
    public void onCreate(Bundle savedInstanceState){
-      setTheme(R.style.Theme_Sherlock);
+      setTheme(R.style.QuranAndroid);
       getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
       requestWindowFeature(
              com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -205,6 +205,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onResume(){
+      mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
       LocalBroadcastManager.getInstance(this).registerReceiver(
               mAudioReceiver,
               new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
@@ -323,6 +324,19 @@ public class PagerActivity extends SherlockFragmentActivity implements
             invalidateOptionsMenu();
          }
          return true;
+      }
+      else if (item.getItemId() == R.id.settings){
+         Intent i = new Intent(this, QuranPreferenceActivity.class);
+         startActivity(i);
+         return true;
+      }
+      else if (item.getItemId() == R.id.help) {
+         Intent i = new Intent(this, HelpActivity.class);
+         startActivity(i);
+         return true;
+      }
+      else if (item.getItemId() == R.id.search){
+         return onSearchRequested();
       }
       else if (item.getItemId() == android.R.id.home){
          finish();
@@ -602,10 +616,22 @@ public class PagerActivity extends SherlockFragmentActivity implements
          return;
       }
 
-      android.util.Log.d(TAG, "seeing if we can play audio request...");
-      if (!QuranFileUtils.haveAyaPositionFile()){
-         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+      boolean needsPermission = mNeedsPermissionToDownloadOver3g;
+      if (needsPermission){
+         if (QuranUtils.isOnWifiNetwork(this)){
+            Log.d(TAG, "on wifi, don't need permission for download...");
+            needsPermission = false;
+         }
+      }
 
+      Log.d(TAG, "seeing if we can play audio request...");
+      if (!QuranFileUtils.haveAyaPositionFile()){
+         if (needsPermission){
+            mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+            return;
+         }
+
+         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
          String url = QuranFileUtils.getAyaPositionFileUrl();
          String destination = QuranFileUtils.getQuranDatabaseDirectory();
          // start the download
@@ -617,8 +643,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
       else if (AudioUtils.shouldDownloadGaplessDatabase(this, request)){
          Log.d(TAG, "need to download gapless database...");
-         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+         if (needsPermission){
+            mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+            return;
+         }
 
+         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
          String url = AudioUtils.getGaplessDatabaseUrl(this, request);
          String destination = request.getLocalPath();
          // start the download
@@ -637,6 +667,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
          else {
             android.util.Log.d(TAG, "should download basmalla...");
+            if (needsPermission){
+               mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+               return;
+            }
+
             QuranAyah firstAyah = new QuranAyah(1, 1);
             String qariUrl = AudioUtils.getQariUrl(this,
                     request.getQariId(), true);
@@ -654,6 +689,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
       }
       else {
+         if (needsPermission){
+            mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+            return;
+         }
+
          mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
          String notificationTitle = QuranInfo.getNotificationTitle(this,
@@ -677,6 +717,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    }
 
    private void play(AudioRequest request){
+      mNeedsPermissionToDownloadOver3g = true;
       Intent i = new Intent(AudioService.ACTION_PLAYBACK);
       if (request != null){
          i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
@@ -724,11 +765,24 @@ public class PagerActivity extends SherlockFragmentActivity implements
    }
 
    @Override
-   public void onCancelPressed(){
-      int resId = R.string.canceling;
-      mAudioStatusBar.setProgressText(getString(resId), true);
-      Intent i = new Intent(this, QuranDownloadService.class);
-      i.setAction(QuranDownloadService.ACTION_CANCEL_DOWNLOADS);
-      startService(i);
+   public void onCancelPressed(boolean cancelDownload){
+      if (cancelDownload){
+         mNeedsPermissionToDownloadOver3g = true;
+
+         int resId = R.string.canceling;
+         mAudioStatusBar.setProgressText(getString(resId), true);
+         Intent i = new Intent(this, QuranDownloadService.class);
+         i.setAction(QuranDownloadService.ACTION_CANCEL_DOWNLOADS);
+         startService(i);
+      }
+      else { mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE); }
+   }
+
+   @Override
+   public void onAcceptPressed(){
+      if (mLastAudioDownloadRequest != null){
+         mNeedsPermissionToDownloadOver3g = false;
+         playAudioRequest(mLastAudioDownloadRequest);
+      }
    }
 }

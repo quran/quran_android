@@ -38,10 +38,12 @@
             &lt;a href="http://tanzil.net">tanzil.net&lt;/a> and
             &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
             &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
+            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
+            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
             &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
             &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
             &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>Somaia Gabr
+            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
             &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
             &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
             &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
@@ -51,23 +53,39 @@
 			&lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
             &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
             &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
-    <string name="help_title">Quran Android Help</string>
-    <string name="help">- Flip your screen to landscape mode for a zoomed in version.
-	    \n- Change pages by swiping your finger across the screen.
-	    \n- Tap the screen to get a bookmark button, a slider for switching pages and audio.
-	    \n- You can fix the orientation in either landscape or portrait modes.
-	    \n- Browse and download available translations (choose Menu > Get Translations).
-	    \n- You can download as many translations as you want, yet only one translation
-	    can be active for viewing and searching.
-	    \n- Adjust translation text size to your preference via Settings.
-	    \n- Initial search implementation allows you to search the active translation 
-	    via the search button.
- 	    \n- On tapping the center of the screen and you will find the page bookmark 
- 	    option in the top left corner. 
- 	    tap on the bookmark button to toggle the page bookmark state.
-	    \n- You can add as many bookmarks as you\'d like.
-	    \n- The application remembers the last page you were reading and displays it when you restart the app.
-	    \n- Don\'t forget to check out the settings.</string>
+    <string name="help_title">Frequently Asked Questions</string>
+    <string name="help">
+        &lt;b>How do I play audio?&lt;/b>
+        &lt;br/>Open any Quran page.  Tap on the screen once.  At the bottom, you will notice
+        a play button and some text with the name of a qari.  click the name of the qari to
+        choose a different qari.  Click play to download and play the current page or sura.
+        &lt;br/>
+        &lt;br/>&lt;b>How do I view the translation?&lt;/b>
+        &lt;br/>Open any Quran page.  Tap on the screen once.  In the top, you will notice a
+        globe icon (or, if you don\'t see it, you may see an icon with three square dots - click
+        this and choose translation to view the translation).
+        &lt;br/>
+        If you do not have any translations downloaded, it will take
+        you to a screen where you can download a translation.  Choose and download a translation,
+        then return back and tap the globe icon again to view the translation.
+        &lt;br/>
+        &lt;br/>&lt;b>How do I bookmark a page?&lt;/b>
+        &lt;br/>Open any Quran page.  Tap on the screen once.  In the top right, you will see a
+        star icon.  Tap the star icon to bookmark it (it will be solid white).  Tap the star icon
+        again to remove the bookmark.
+        &lt;br/>
+        &lt;br/>&lt;b>How do I make the text larger?&lt;/b>
+        &lt;br/>For the arabic pages, hold your phone in landscape.  This makes the text larger.
+        For translations, go to settings and choose translation size.
+        &lt;br/>
+        &lt;br/>&lt;b>How do I share an ayah?&lt;/b>
+        &lt;br/>While on any arabic page, press and hold on any ayah to get a menu where you can
+        choose to bookmark this ayah, share it, see the tafseer, or copy the ayah to the clipboard.
+        &lt;br/>
+        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu fonts don\'t work!&lt;/b>
+        &lt;br/>Unfortunately, Android versions before 4.0 do not support these fonts, and there is
+        little we can do to help with this.
+    </string>
 	<string name="search_hint">Search the Quran</string>
 	<string name="quranSearchType">Verses of the Quran</string>
 
@@ -152,6 +170,7 @@
     <string name="download_error_invalid_download_retry">Corrupted file, attempting to redownload</string> 
     <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
     <string name="notification_download_canceled">Download canceled</string>
+    <string name="download_non_wifi_prompt">You are not on wifi.  Download data anyway?</string>
     
     <!-- downloading dialogs -->
     <string name="download_progress">Downloaded %1$s / %2$s</string>
@@ -164,7 +183,6 @@
     <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
     <string name="error_getting_translation_list">Unable to download the list of translations.  Please try again later.</string>
     <string name="search_data">Search Data</string>
-
 
     <!-- about us -->
     <string name="email_quran_android">Email Quran Android</string>

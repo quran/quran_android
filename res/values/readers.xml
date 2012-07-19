@@ -2,7 +2,6 @@
 <resources>
      <string-array name="quran_readers_name">
         <item>Minshawi Murattal (gapless)</item>
-        <item>Hudhaify (gapless)</item>
         <item>Husary (gapless)</item>
         <item>Abd El Basit</item>
         <item>Abdul Basit Mujawwad</item>
@@ -25,7 +24,6 @@
 
     <string-array name="quran_readers_path">
         <item>minshawi_murattal</item>
-        <item>huthayfi</item>
         <item>husary</item>
         <item>0</item>  <!-- abdul basit -->
         <item>1</item>  <!-- abdul basit mujawwad -->
@@ -48,7 +46,6 @@
 
     <string-array name="quran_readers_db_name">
         <item>minshawi_murattal</item>
-        <item>huthayfi</item>
         <item>husary</item>
         <item></item> <!-- abdul basit -->
         <item></item> <!-- abdul basit mujawwad -->
@@ -71,7 +68,6 @@
 
     <string-array name="quran_readers_urls">
         <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
-        <item>http://download.quranicaudio.com/quran/huthayfi/</item>
         <item>http://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
         <item>http://www.everyayah.com/data/Abdul_Basit_Murattal_192kbps/</item>
         <item>http://www.everyayah.com/data/Abdul_Basit_Mujawwad_128kbps/</item>

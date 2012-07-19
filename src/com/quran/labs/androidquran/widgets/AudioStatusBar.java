@@ -27,6 +27,7 @@ public class AudioStatusBar extends LinearLayout {
    public static final int DOWNLOADING_MODE = 2;
    public static final int PLAYING_MODE = 3;
    public static final int PAUSED_MODE = 4;
+   public static final int PROMPT_DOWNLOAD_MODE = 5;
 
    private Context mContext;
    private int mCurrentMode;
@@ -55,8 +56,9 @@ public class AudioStatusBar extends LinearLayout {
       public void onNextPressed();
       public void onPreviousPressed();
       public void onStopPressed();
-      public void onCancelPressed();
+      public void onCancelPressed(boolean stopDownload);
       public void setRepeatCount(int repeatCount);
+      public void onAcceptPressed();
    }
 
    public AudioStatusBar(Context context) {
@@ -103,6 +105,9 @@ public class AudioStatusBar extends LinearLayout {
 
       if (mode == STOPPED_MODE){
          showStoppedMode();
+      }
+      else if (mode == PROMPT_DOWNLOAD_MODE){
+         showPromptForDownloadMode();
       }
       else if (mode == DOWNLOADING_MODE){
          showDownloadingMode();
@@ -188,6 +193,24 @@ public class AudioStatusBar extends LinearLayout {
       mSpinner.setSelection(mCurrentQari);
       addView(mSpinner, LayoutParams.WRAP_CONTENT,
               LayoutParams.MATCH_PARENT);
+   }
+
+   private void showPromptForDownloadMode(){
+      mCurrentMode = PROMPT_DOWNLOAD_MODE;
+
+      removeAllViews();
+      addButton(R.drawable.ic_cancel);
+      addSeparator();
+
+      TextView mPromptText = new TextView(mContext);
+      mPromptText.setTextColor(Color.WHITE);
+      mPromptText.setGravity(Gravity.CENTER_VERTICAL);
+      mPromptText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+              mTextFontSize);
+      mPromptText.setText(R.string.download_non_wifi_prompt);
+      addView(mPromptText, LayoutParams.WRAP_CONTENT,
+              LayoutParams.MATCH_PARENT);
+      addButton(R.drawable.ic_accept);
    }
 
    private void showDownloadingMode(){
@@ -317,14 +340,21 @@ public class AudioStatusBar extends LinearLayout {
                   break;
                case R.drawable.ic_repeat:
                   incrementRepeat();
-                  mAudioBarListener.setRepeatCount(mCurrentRepeat);
+                  mAudioBarListener.setRepeatCount(
+                          mRepeatValues[mCurrentRepeat]);
                   break;
                case R.drawable.ic_cancel:
                   if (mHaveCriticalError){
                      mHaveCriticalError = false;
                      switchMode(STOPPED_MODE);
                   }
-                  else { mAudioBarListener.onCancelPressed(); }
+                  else {
+                     mAudioBarListener.onCancelPressed(
+                             mCurrentMode != PROMPT_DOWNLOAD_MODE);
+                  }
+                  break;
+               case R.drawable.ic_accept:
+                  mAudioBarListener.onAcceptPressed();
                   break;
             }
          }
