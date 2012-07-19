@@ -76,6 +76,7 @@
     <string name="found_in_sura">سورة</string>
     <string name="translation_settings">إعدادات التفسير</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
+    <string name="no_active_translation">يرجى الذهاب أولا إلى إعدادت التفاسير والتراجم..</string>
     <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
     <string name="get_arabic_search_db">حمل قاعدة البيانات</string>
     
@@ -107,12 +108,8 @@
     
     <string name="downloaded_translations">الملفات المحملة</string>
     <string name="available_translations">الملفات المتاحة للتحميل</string>
-    <string name="sdcard_required">يجب أن تكون الذاكرة اﻹضافية متاحة حتى تتمكن من تحميل الملفات المطلوبة</string>
-    <string name="download_a_translation">هل ترغب في تحميل %s?</string>
-    <string name="translation_downloaded">%s تم تحميله.</string>
-    <string name="download_button">حمل</string>
     <string name="remove_button">احذف</string>
-    <string name="radio_download_message">اختيار التحميل</string>
+    <string name="dialog_ok">موافق</string>
     
     <string name="quran_rob3">ربع</string>
     <string name="quran_nos">نصف</string>
@@ -123,17 +120,45 @@
     <string name="quran_sura">سورة</string>
     <string name="quran_ayah">آية</string>
     <string name="quran_sura_title">سورة</string>
+    
+        <string name="sura_ayah_notification_str">سورة %1$s, آية %2$d</string>
 
-    <!-- long press -->
-    <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
-    <string name="unbookmark_ayah">حذف الآية من المرجعيات</string>
-    <string name="share_ayah">شارك</string>
-    <string name="translation_ayah">تفسير/ترجمة الآية</string>
-    <string name="play_from_here">بدء التلاوة من هذه الآية</string>
-    <string name="bookmarked_ayah">تم إضافة الآية إلى المرجعيات</string>
-    <string name="unbookmarked_ayah">تم حذف الآية من المرجعيات</string>
-    <string name="copy_ayah">نسخ الآية</string>
-    <string name="ayah_copied_popup">تم نسخ الآية</string>
+    <string name="bookmarks_current_page">الصفحة الحالية</string>
+    <string name="no_bookmarks">لا توجد مرجعيات</string>
+    <string name="index_loading">جاري التحميل…</string>
+
+    <string name="canceling">جاري إلغاء اﻷمر&#8230;</string>
+    <string name="page_description">صفحة %1$d, جزء %2$d</string>
+    <string name="highlighting_database">جاري تحميل الملفات المطلوبة</string>
+    <string name="timing_database">جاري تحميل الملفات المطلوبة</string>
+    <string name="infinity">&#8734;</string>
+    
+    <!-- download statuses and errors -->
+    <string name="download_successful">تم التحميل</string>   
+    <string name="download_processing">جاري تجهيز الملفات&#8230;</string>              
+    <string name="download_error_general">لم يتم تحميل الملفات</string>             
+    <string name="download_error_disk">لا توجد مساحة كافية للتخزين</string>               
+    <string name="download_error_network">لا يمكن اﻻتصال بالانترنت</string>                    
+    <string name="download_error_perms">الصلاحيات غير كافية لتحميل الملفات</string>                  
+    <string name="download_error_invalid_download">الملفات المحملة تالفة</string>
+    <string name="download_error_invalid_download_retry">هناك ملف تالف، جاري إعادة التحميل</string> 
+    <string name="download_error_network_retry">لا يمكن اﻻتصال بالانترنت، جاري إعادة المحاولة&#8230;</string>
+    <string name="notification_download_canceled">تم إلغاء التحميل</string>
+    
+    <!-- downloading dialogs -->
+    <string name="download_progress">تم تحميل %1$s / %2$s</string>
+    <string name="process_progress">جاري اﻹعداد %1$d / %2$d</string>
+    <string name="download_retry">اعد المحاولة</string>
+    <string name="download_cancel">إلغاء</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">امسح التفسير/الترجمة؟</string>
+    <string name="remove_dlg_msg">هل ترغب في حذف التفسير/الترجمة %1$s؟</string>
+    <string name="error_getting_translation_list">لم يتم تحميل الملف المطلوب، من فضلك أعد المحاولة</string>
+    <string name="search_data">بيانات البحث</string>
+    
+    <!-- about us -->
+    <string name="email_quran_android">راسلنا</string>
     
     <!-- sura metainfo -->
     <string name="makki">مكية</string>
@@ -144,4 +169,17 @@
         <item quantity="many">آية</item>
         <item quantity="other">آية</item>
     </plurals>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
+    <string name="unbookmark_ayah">حذف الآية من المرجعيات</string>
+    <string name="share_ayah">شارك</string>
+    <string name="translation_ayah">تفسير/ترجمة الآية</string>
+    <string name="play_from_here">بدء التلاوة من هذه الآية</string>
+    <string name="bookmarked_ayah">تم إضافة الآية إلى المرجعيات</string>
+    <string name="unbookmarked_ayah">تم حذف الآية من المرجعيات</string>
+   	<string name="via_string">\n\nبواسطة @QuranAndroid</string>	
+    <string name="search_key">للبحث عن آية</string>
+    <string name="copy_ayah">نسخ الآية</string>
+    <string name="ayah_copied_popup">تم نسخ الآية</string>
 </resources>
