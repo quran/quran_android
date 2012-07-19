@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class QuranFileUtils {
 	public static boolean failedToWrite = false;
-	public static String IMG_HOST = "http://downthestreetfromyou.com/androidquran/";
+	public static String IMG_HOST = "http://android.quran.com/data/";
 	private static String QURAN_BASE = File.separator + "quran_android"
 			+ File.separator;
 	private static String DATABASE_DIRECTORY = "databases";
@@ -267,4 +267,5 @@ public class QuranFileUtils {
 		}
 		return false;
 	}
+
 }

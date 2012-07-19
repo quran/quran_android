@@ -155,8 +155,8 @@
 
     <string name="canceling">Canceling&#8230;</string>
     <string name="page_description">page %1$d, Juz\' %2$d</string>
-    <string name="highlighting_database">required files</string>
-    <string name="timing_database">required files</string>
+    <string name="highlighting_database">Required Files</string>
+    <string name="timing_database">Required Files</string>
     <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
