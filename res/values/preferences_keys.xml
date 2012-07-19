@@ -4,6 +4,8 @@
     <!-- This file will only hold preference-keys 
     		(DONT TRANSLATE - DONT ADD UNRELATED STRINGS) 
  		-->
+ 		
+ 		<string name="prefs_path">QuranAndroid_Settings</string>
 
     <string name="prefs_use_arabic_names">useArabicNames</string>
     <string name="prefs_night_mode">nightMode</string>
