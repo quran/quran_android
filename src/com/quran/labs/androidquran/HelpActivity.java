@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -36,6 +37,19 @@ public class HelpActivity extends SherlockActivity implements OnClickListener {
 		case R.id.btnEmailUs:
          Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
          emailIntent.setType("plain/text");
+         String body = "\n\n";
+         try {
+        	 PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        	 body = getString(R.string.app_name) + " Version: " + pInfo.versionName;
+         } catch (Exception e) {}
+         
+         try {
+	         body += "\nPhone: " + android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
+	         body += "\nAndroid Version: " + android.os.Build.VERSION.CODENAME + " " 
+	        		 + android.os.Build.VERSION.RELEASE;
+         } catch (Exception e) {}
+         
+         emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
          emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
                  getString(R.string.email_subject));
          emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
