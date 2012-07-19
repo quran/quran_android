@@ -11,7 +11,7 @@
     <item android:id="@+id/settings"
           android:icon="@drawable/ic_ab_settings"
           android:title="@string/menu_settings"
-          android:showAsAction="ifRoom" />
+          android:showAsAction="never" />
     <item android:id="@+id/help"
           android:title="@string/menu_help"
           android:showAsAction="never"/>
