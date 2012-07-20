@@ -4,59 +4,8 @@ import android.content.Context;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranInfo {
-
-	public static String[] SURA_NAMES = {
-		"Al-Fatiha", "Al-Baqara", "Aal-E-Imran", "An-Nisa", "Al-Maeda",
-		"Al-Anaam", "Al-Araf", "Al-Anfal", "At-Tawba", "Yunus", "Hud",
-		"Yusuf", "Ar-Rad", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra",
-		"Al-Kahf", "Maryam", "Ta-Ha", "Al-Anbiya", "Al-Hajj", "Al-Mumenoon",
-		"An-Noor", "Al-Furqan", "Ash-Shu'ara", "An-Naml", "Al-Qasas",
-		"Al-Ankaboot", "Ar-Room", "Luqman", "As-Sajda", "Al-Ahzab", "Saba",
-		"Fatir", "Ya-Seen", "As-Saaffat", "Sad", "Az-Zumar", "Ghafir",
-		"Fussilat", "Ash-Shura", "Az-Zukhruf", "Ad-Dukhan", "Al-Jathiya",
-		"Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujraat", "Qaf",
-		"Adh-Dhariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman",
-		"Al-Waqia", "Al-Hadid", "Al-Mujadala", "Al-Hashr", "Al-Mumtahina",
-		"As-Saff", "Al-Jumua", "Al-Munafiqoon", "At-Taghabun", "At-Talaq",
-		"At-Tahrim", "Al-Mulk", "Al-Qalam", "Al-Haaqqa", "Al-Maarij", "Nooh",
-		"Al-Jinn", "Al-Muzzammil", "Al-Muddaththir", "Al-Qiyama", "Al-Insan",
-		"Al-Mursalat", "An-Naba", "An-Naziat", "Abasa", "At-Takwir",
-		"Al-Infitar", "Al-Mutaffifin", "Al-Inshiqaq", "Al-Burooj", "At-Tariq",
-		"Al-Ala", "Al-Ghashiya", "Al-Fajr", "Al-Balad", "Ash-Shams",
-		"Al-Lail", "Ad-Dhuha", "Al-Inshirah", "At-Tin", "Al-Alaq", "Al-Qadr",
-		"Al-Bayyina", "Az-Zalzala", "Al-Adiyat", "Al-Qaria", "At-Takathur",
-		"Al-Asr", "Al-Humaza", "Al-Fil", "Quraish", "Al-Maun", "Al-Kauther",
-		"Al-Kafiroon", "An-Nasr", "Al-Masadd", "Al-Ikhlas", "Al-Falaq",
-		"An-Nas"
-	};
-	
-	public static String[] SURA_NAMES_AR = {
-		"الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة",
-		"اﻷنعام", "اﻷعراف", "اﻷنفال", "التوبة", "يونس", "هود",
-		"يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "اﻹسراء",
-		"الكهف", "مريم", "طه", "اﻷنبياء", "الحج", "المؤمنون",
-		"النور", "الفرقان", "الشعراء", "النمل", "القصص",
-		"العنكبوت", "الروم", "لقمان", "السجدة", "اﻷحزاب", "سبأ",
-		"فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
-		"فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية",
-		"اﻷحقاف", "محمد", "الفتح", "الحجرات", "ق",
-		"الذاريات", "الطور", "النجم", "القمر", "الرحمن",
-		"الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
-		"الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق",
-		"التحريم", "الملك", "القلم", "الحاقة", "المعارج", "نوح",
-		"الجن", "المزمل", "المدثر", "القيامة", "اﻹنسان",
-		"المرسلات", "النبأ", "النازعات", "عبس", "التكوير",
-		"الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق",
-		"اﻷعلى", "الغاشية", "الفجر", "البلد", "الشمس",
-		"الليل", "الضحى", "الشرح", "التين", "العلق", "القدر",
-		"البينة", "الزلزلة", "العاديات", "القارعة", "التكاثر",
-		"العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر",
-		"الكافرون", "النصر", "المسد", "اﻹخلاص", "الفلق",
-		"الناس"
-	};
 
 	public static String getAyahTitle(Context cx) {
 		return cx.getString(R.string.quran_ayah);
@@ -76,8 +25,7 @@ public class QuranInfo {
       String title = "";
       if (wantTitle){ title = getSuraTitle(context) + " "; }
 
-      return title + (QuranSettings.isArabicNames(context)?
-              SURA_NAMES_AR[sura-1] : SURA_NAMES[sura-1]);
+      return title + context.getResources().getStringArray(R.array.sura_names)[sura-1];
    }
 
    public static String getSuraNameFromPage(Context context, int page,
