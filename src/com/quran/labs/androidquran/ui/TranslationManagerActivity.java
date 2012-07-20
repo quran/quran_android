@@ -129,7 +129,9 @@ public class TranslationManagerActivity extends SherlockActivity
 
          List<TranslationItem> items = new ArrayList<TranslationItem>();
          try {
-            JSONObject data = (JSONObject)new JSONTokener(text).nextValue();
+            Object responseItem = new JSONTokener(text).nextValue();
+            if (!(responseItem instanceof JSONObject)){ return null; }
+            JSONObject data = (JSONObject)responseItem;
             JSONArray translations = data.getJSONArray("data");
             int length = translations.length();
             for (int i = 0; i < length; i++){
@@ -238,7 +240,7 @@ public class TranslationManagerActivity extends SherlockActivity
 
       TranslationItem selectedItem =
               (TranslationItem)mAdapter.getItem(pos);
-      if (selectedItem.exists){ return; }
+      if (selectedItem == null || selectedItem.exists){ return; }
 
       if (mDownloadReceiver == null){
          mDownloadReceiver = new DefaultDownloadReceiver(this,
@@ -251,6 +253,7 @@ public class TranslationManagerActivity extends SherlockActivity
 
       // actually start the download
       String url = selectedItem.url;
+      if (selectedItem.url == null){ return; }
       String destination = QuranFileUtils.getQuranDatabaseDirectory();
       Log.d(TAG, "downloading " + url + " to " + destination);
       // start the download

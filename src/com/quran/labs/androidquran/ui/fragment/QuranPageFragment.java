@@ -169,8 +169,12 @@ public class QuranPageFragment extends SherlockFragment {
    private class PageGestureDetector extends SimpleOnGestureListener {
       @Override
       public boolean onSingleTapConfirmed(MotionEvent event) {
-    	  ((PagerActivity)getActivity()).toggleActionBar();
-          return true;
+         PagerActivity pagerActivity = ((PagerActivity)getActivity());
+         if (pagerActivity != null){
+            pagerActivity.toggleActionBar();
+            return true;
+         }
+         else { return false; }
       }
 
       @Override

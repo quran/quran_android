@@ -7,12 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
@@ -217,10 +212,16 @@ public class HighlightingImageView extends ImageView {
 
 				for (AyahBounds b : currentlyHighlighting){
 					RectF scaled = new RectF(b.getMinX() * scalingData.widthFactor,
-							b.getMinY() * scalingData.heightFactor, b.getMaxX() * scalingData.widthFactor,
+							b.getMinY() * scalingData.heightFactor,
+                     b.getMaxX() * scalingData.widthFactor,
 							b.getMaxY() * scalingData.heightFactor);
 					scaled.offset(scalingData.offsetX, scalingData.offsetY);
-					canvas.drawBitmap(mHighlightBitmap, null, scaled, null);
+
+               // work around a 4.0.2 bug where src as null throws npe
+               // http://code.google.com/p/android/issues/detail?id=24830
+               Rect src = new Rect(0, 0, mHighlightBitmap.getWidth(),
+                       mHighlightBitmap.getHeight());
+					canvas.drawBitmap(mHighlightBitmap, src, scaled, null);
 				}
 			}
 		}

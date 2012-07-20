@@ -61,7 +61,9 @@ public class SuraListFragment extends SherlockFragment {
                   getActivity().getApplicationContext());
       int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
             Constants.NO_PAGE_SAVED);
-      if (lastPage != Constants.NO_PAGE_SAVED){
+      if (lastPage != Constants.NO_PAGE_SAVED &&
+              lastPage >= Constants.PAGES_FIRST &&
+              lastPage <= Constants.PAGES_LAST){
          int sura = QuranInfo.PAGE_SURA_START[lastPage-1];
          int juz = QuranInfo.getJuzFromPage(lastPage);
          int position = sura + juz - 1;

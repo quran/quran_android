@@ -27,7 +27,8 @@ public class QuranDataActivity extends SherlockActivity implements
    
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
    private static final int SPLASH_WAIT_TIME = 2000;
-   
+
+   private boolean mIsPaused = false;
    private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
    private AlertDialog mErrorDialog = null;
    private AlertDialog mPromptForDownloadDialog = null;
@@ -60,7 +61,7 @@ public class QuranDataActivity extends SherlockActivity implements
    @Override
    protected void onResume(){
       super.onResume();
-
+      mIsPaused = false;
       mDownloadReceiver = new DefaultDownloadReceiver(this,
               QuranDownloadService.DOWNLOAD_TYPE_PAGES);
       String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
@@ -76,6 +77,7 @@ public class QuranDataActivity extends SherlockActivity implements
    
    @Override
    protected void onPause() {
+      mIsPaused = true;
       mDownloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this).
               unregisterReceiver(mDownloadReceiver);
@@ -165,6 +167,7 @@ public class QuranDataActivity extends SherlockActivity implements
       @Override
       protected void onPostExecute(Boolean result) {
          mCheckPagesTask = null;
+         if (mIsPaused){ return; }
                   
          if (result == null || !result){
             String lastErrorItem = mSharedPreferences.getString(
@@ -172,7 +175,9 @@ public class QuranDataActivity extends SherlockActivity implements
             if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)){
                int lastError = mSharedPreferences.getInt(
                      QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0);
-               showFatalErrorDialog(lastError);
+               int errorId = ServiceIntentHelper
+                       .getErrorResourceFromErrorCode(lastError, false);
+               showFatalErrorDialog(errorId);
             }
             else if (mSharedPreferences.getBoolean(
                     Constants.PREF_SHOULD_FETCH_PAGES, false)){
@@ -206,7 +211,9 @@ public class QuranDataActivity extends SherlockActivity implements
       // if any broadcasts were received, then we are already downloading
       // so unless we know what we are doing (via force), don't ask the
       // service to restart the download
-      if (mDownloadReceiver.didReceieveBroadcast() && !force){ return; }
+      if (mDownloadReceiver != null &&
+              mDownloadReceiver.didReceieveBroadcast() && !force){ return; }
+      if (mIsPaused){ return; }
       
       String url = QuranFileUtils.getZipFileUrl();
       String destination = QuranFileUtils.getQuranBaseDirectory();

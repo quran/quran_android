@@ -44,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -349,6 +350,9 @@ public class QuranDownloadService extends Service {
          String outputFile = intent.getStringExtra(EXTRA_OUTPUT_FILE_NAME);
          String destination = intent.getStringExtra(EXTRA_DESTINATION);
          mLastSentIntent = null;
+
+         if (destination == null){ return; }
+
          boolean result;
          if (startAyah != null && endAyah != null){
             if (startAyah instanceof QuranAyah &&
