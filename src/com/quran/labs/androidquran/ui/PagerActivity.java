@@ -181,6 +181,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       });
 
       mViewPager.setCurrentItem(page);
+      QuranSettings.setLastPage(this, Constants.PAGES_LAST - page);
       setLoading(false);
       
       // just got created, need to reconnect to service

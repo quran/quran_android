@@ -35,6 +35,9 @@ public class QuranUtils {
                       Context.CONNECTIVITY_SERVICE);
 
       NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-      return activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+      if (activeNetwork != null){
+         return activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+      }
+      else { return false; }
    }
 }

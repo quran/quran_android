@@ -81,6 +81,7 @@ public class AudioUtils {
       if (TextUtils.isEmpty(dbname)){ return null; }
 
       String path = getLocalQariUrl(context, position);
+      if (path == null){ return null; }
       String overall = path + File.separator +
               dbname + DB_EXTENSION;
       Log.d(TAG, "overall path: " + overall);
@@ -261,6 +262,7 @@ public class AudioUtils {
                  context.getPackageName() + sep + "files" + sep + "audio" + sep;
       }
 
+      if (f == null){ return null; }
       return f.getAbsolutePath() + path;
    }
 }
