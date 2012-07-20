@@ -44,7 +44,6 @@ import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
-import android.widget.Toast;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
