@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.ui;
 
 import java.util.Locale;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -14,6 +16,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.InputType;
+import android.widget.EditText;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -152,6 +156,9 @@ public class QuranActivity extends SherlockFragmentActivity
     	  Intent i = new Intent(this, AboutUsActivity.class);
     	  startActivity(i);
     	  return true;
+      } else if (item.getItemId() == R.id.jump) {
+    	  gotoPageDialog();
+    	  return true;
       }
 	   
       return super.onOptionsItemSelected(item);
@@ -194,4 +201,26 @@ public class QuranActivity extends SherlockFragmentActivity
          }
       }
    }
+   
+	public void gotoPageDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(getString(R.string.gotoPage));
+		final EditText input = new EditText(this);
+		input.setInputType(InputType.TYPE_CLASS_NUMBER);
+		builder.setView(input);
+		builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				try {
+					dialog.dismiss();
+					int page = Integer.parseInt(input.getText().toString());
+					if (page >= Constants.PAGES_FIRST && page <= Constants.PAGES_LAST) {
+						jumpTo(page);
+					}
+				} catch (Exception e) {
+				}
+			}
+		});
+		builder.create().show();
+	}
 }
