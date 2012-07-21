@@ -8,6 +8,9 @@
           android:icon="@drawable/ic_ab_search"
           android:title="@string/menu_search"
           android:showAsAction="ifRoom" />
+    <item android:id="@+id/jump"
+        	android:title="@string/menu_jump"
+        	android:showAsAction="never" />
     <item android:id="@+id/settings"
           android:icon="@drawable/ic_ab_settings"
           android:title="@string/menu_settings"

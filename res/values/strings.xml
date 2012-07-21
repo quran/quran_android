@@ -23,6 +23,8 @@
     <string name="menu_help">Help</string>
     <string name="menu_search">Search</string>
     <string name="menu_get_translations">Get Translations</string>
+    <string name="menu_jump">Jump</string>
+    <string name="gotoPage">Go to page</string>
     <string name="cancel">Cancel</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright All Muslims</string>
