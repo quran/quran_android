@@ -85,13 +85,13 @@ public class JuzListFragment extends SherlockFragment {
          if (i % 8 == 0){
             int juz = 1 + (i / 8);
             elements[ctr++] = new QuranRow(QuranInfo.getJuzTitle(activity) +
-                    " " + juz, null, true, juz,
+                    " " + juz, null, QuranRow.HEADER, juz,
                     QuranInfo.JUZ_PAGE_START[juz-1], null);
          }
          String verseString = getString(R.string.quran_ayah) + " " + pos[1];
          elements[ctr++] = new QuranRow(quarters[i],
                QuranInfo.getSuraName(activity, pos[0], true) +
-                       ", " + verseString, false, 0, page, images[i % 4]);
+                       ", " + verseString, 0, page, images[i % 4]);
          if (i % 4 == 0)
             elements[ctr-1].imageText = (1 + (i / 4)) + "";
       }

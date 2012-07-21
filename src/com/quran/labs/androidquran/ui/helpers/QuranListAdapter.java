@@ -81,7 +81,7 @@ public class QuranListAdapter extends BaseAdapter {
       holder.number.setText("" + item.sura);
 
       int color = R.color.sura_details_color;
-      if (mElements[position].isHeader){
+      if (mElements[position].isHeader()){
          holder.text.setVisibility(View.GONE);
          holder.header.setVisibility(View.VISIBLE);
          holder.metadata.setVisibility(View.GONE);
