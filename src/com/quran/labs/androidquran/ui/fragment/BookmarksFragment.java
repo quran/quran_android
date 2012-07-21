@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.ui.fragment;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -52,13 +55,42 @@ public class BookmarksFragment extends SherlockFragment {
          public void onItemClick(AdapterView<?> parent, View v,
                int position, long id){
             QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-            if (elem.page > 0){
-               if (elem.ayah > 0)
+            if (!elem.isHeader()){
+               if (elem.isAyahBookmark())
                   ((QuranActivity)getActivity()).jumpToAndHighlight(
                         elem.page, elem.sura, elem.ayah);
                else
                   ((QuranActivity)getActivity()).jumpTo(elem.page);
             }
+         }
+      });
+      
+      mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+         public boolean onItemLongClick(AdapterView<?> parent, View view,
+               int position, long id) {
+            final QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
+            if (elem.isBookmark()){
+               final Activity activity = getActivity();
+               if (activity == null){ return false; }
+               
+               int[] optionIds = {R.string.remove_bookmark};
+               CharSequence[] options = new CharSequence[optionIds.length];
+               for (int i=0; i<optionIds.length; i++){
+                  options[i] = activity.getString(optionIds[i]);
+               }
+               AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+               builder.setItems(options, new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int selection) {
+                     if (selection == 0) {
+                        new RemoveBookmarkTask().execute(elem);
+                     }
+                  }
+               });
+               AlertDialog dlg = builder.create();
+               dlg.show();
+               return true;
+            }
+            return false;
          }
       });
       
@@ -81,6 +113,29 @@ public class BookmarksFragment extends SherlockFragment {
          loadingTask.cancel(true);
       }
       loadingTask = null;
+   }
+
+   private class RemoveBookmarkTask extends AsyncTask<QuranRow, Void, Void> {
+      @Override
+      protected Void doInBackground(QuranRow... params) {
+         QuranRow elem = params[0];
+         BookmarksDBAdapter db = new BookmarksDBAdapter(getActivity());
+         db.open();
+         if (elem.isPageBookmark())
+            db.togglePageBookmark(elem.page);
+         else if (elem.isAyahBookmark())
+            db.toggleAyahBookmark(elem.page, elem.sura, elem.ayah);
+         db.close();
+         return null;
+      }
+      
+      @Override
+      protected void onPostExecute(Void result) {
+          if (loadingTask == null){
+              loadingTask = new BookmarksLoadingTask();
+              loadingTask.execute();
+           }
+      }
    }
 
    private class BookmarksLoadingTask extends AsyncTask<Void, Void, QuranRow[]> {
@@ -125,11 +180,11 @@ public class BookmarksFragment extends SherlockFragment {
       if (showLastPage){
          QuranRow header = new QuranRow(
                getString(R.string.bookmarks_current_page),
-               null, true, 0, 0, null);
+               null, QuranRow.HEADER, 0, 0, null);
          QuranRow currentPosition = new QuranRow(
                QuranInfo.getSuraNameString(activity, lastPage),
                QuranInfo.getPageSubtitle(activity, lastPage),
-               false, QuranInfo.PAGE_SURA_START[lastPage-1], lastPage,
+               QuranInfo.PAGE_SURA_START[lastPage-1], lastPage,
                R.drawable.bookmark_currentpage);
          res[index++] = header;
          res[index++] = currentPosition;
@@ -137,25 +192,25 @@ public class BookmarksFragment extends SherlockFragment {
       
       if (showPageBookmarkHeader){
          res[index++] = new QuranRow(getString(R.string.menu_bookmarks_page),
-               null, true, 0, 0, null);
+               null, QuranRow.HEADER, 0, 0, null);
       }
       for (int page : pageBookmarks){
          res[index++] = new QuranRow(
                QuranInfo.getSuraNameString(activity, page),
                QuranInfo.getPageSubtitle(activity, page),
-               false, QuranInfo.PAGE_SURA_START[page-1], page,
+               QuranRow.PAGE_BOOKMARK, QuranInfo.PAGE_SURA_START[page-1], page,
                R.drawable.bookmark_page);
       }
       
       if (showAyahBookmarkHeader){
          res[index++] = new QuranRow(getString(R.string.menu_bookmarks_ayah),
-               null, true, 0, 0, null);
+               null, QuranRow.HEADER, 0, 0, null);
       }
       for (AyahBookmark ayah : ayahBookmarks){
          res[index++] = new QuranRow(
                QuranInfo.getAyahString(ayah.sura, ayah.ayah, getActivity()),
                QuranInfo.getPageSubtitle(activity, ayah.page),
-               false, ayah.sura, ayah.ayah, ayah.page,
+               QuranRow.AYAH_BOOKMARK, ayah.sura, ayah.ayah, ayah.page,
                R.drawable.bookmark_ayah);
       }      
       return res;
