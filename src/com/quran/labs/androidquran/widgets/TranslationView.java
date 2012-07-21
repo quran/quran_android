@@ -143,6 +143,7 @@ public class TranslationView extends LinearLayout {
    private void addTextForSura(SpannableStringBuilder stringBuilder){
       TextView translationText = new TextView(mContext);
       translationText.setTextAppearance(mContext, mTextStyle);
+      translationText.setTextIsSelectable(true);
       translationText.setText(stringBuilder);
       translationText.setTextSize(mFontSize);
       if (mShouldReshape && mArabicStatus == 1){
