@@ -209,4 +209,5 @@
     <string name="search_key">Press the search key to look up a verse</string>
     <string name="copy_ayah">Copy Ayah</string>
     <string name="ayah_copied_popup">Ayah Copied</string>
+    <string name="remove_bookmark">Remove Bookmark</string>
 </resources>

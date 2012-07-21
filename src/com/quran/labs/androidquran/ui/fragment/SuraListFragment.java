@@ -82,7 +82,7 @@ public class SuraListFragment extends SherlockFragment {
       Activity activity = getActivity();
       for (int juz=1; juz <= JUZ2_COUNT; juz++){
          elements[pos++] = new QuranRow(QuranInfo.getJuzTitle(activity) + " " +
-               juz, null, true, juz, QuranInfo.JUZ_PAGE_START[juz-1], null);
+               juz, null, QuranRow.HEADER, juz, QuranInfo.JUZ_PAGE_START[juz-1], null);
          next = (juz == JUZ2_COUNT) ? PAGES_LAST+1 :
             QuranInfo.JUZ_PAGE_START[juz];
          
@@ -91,7 +91,7 @@ public class SuraListFragment extends SherlockFragment {
             String title = QuranInfo.getSuraName(activity, sura, true);
             elements[pos++] = new QuranRow(title, 
                   QuranInfo.getSuraListMetaString(activity, sura),
-                  false, sura, QuranInfo.SURA_PAGE_START[sura-1], null);
+                  sura, QuranInfo.SURA_PAGE_START[sura-1], null);
             sura++;
          }
       }
