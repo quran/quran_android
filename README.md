@@ -21,7 +21,9 @@ Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_
 
 App localization
 ------------------------
-Farsi by [@khajavi](http://github.com/khajavi).
+Farsi for version 2.0 by M. Jafar Nakar
+
+Farsi for version 1.6 by [@khajavi](http://github.com/khajavi).
 
 Turkish by Mehmed Mahmudoglu.
 
@@ -51,6 +53,14 @@ Project dependecies
 
 Changelog
 ---------
+**version 2.2**
+
+- exactly like 2.1, just compiled with utf8 files to fix arabic
+
+**version 2.1**
+
+- fix market crashes
+
 **version 2.0**
 
 - new, improved ui and code rewrite
