@@ -53,15 +53,15 @@ Project dependecies
 
 Changelog
 ---------
-**version 2.2**
+**version 2.0.2**
 
-- exactly like 2.1, just compiled with utf8 files to fix arabic
+- exactly like 2.0.1, just compiled with utf8 files to fix arabic
 
-**version 2.1**
+**version 2.0.1**
 
 - fix market crashes
 
-**version 2.0**
+**version 2.0.0**
 
 - new, improved ui and code rewrite
 - gapless audio support
