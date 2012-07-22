@@ -581,6 +581,26 @@ public class QuranDownloadService extends Service {
          android.util.Log.d(TAG, "actualFile: " + actualFile.getPath() +
                ", " + actualFile.getAbsolutePath() + ", " +
                actualFile.getName());
+
+         // check for 200 response code - happens on some devices
+         if (rc == HttpURLConnection.HTTP_OK){
+            rc = HttpURLConnection.HTTP_PARTIAL;
+            if (downloaded != 0){
+               // just in case, remove the actual file if exists
+               if (actualFile.exists()){
+                  if (!actualFile.delete()){
+                     return ERROR_PERMISSIONS;
+                  }
+               }
+               // just in case, remove the partial file
+               if (partialFile.exists()){
+                  if (!partialFile.delete()){
+                     return ERROR_PERMISSIONS;
+                  }
+               }
+               downloaded = 0;
+            }
+         }
          
          long fileLength = downloaded +
                  (rc == HttpURLConnection.HTTP_PARTIAL? contentLength : 0);
