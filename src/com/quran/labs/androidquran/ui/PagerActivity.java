@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Locale;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -82,6 +84,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onCreate(Bundle savedInstanceState){
+      if (QuranSettings.isArabicNames(this)){
+         Resources resources = getResources();
+         Configuration config = resources.getConfiguration();
+         config.locale = new Locale("ar");
+         resources.updateConfiguration(config,
+                 resources.getDisplayMetrics());
+      }
+
       setTheme(R.style.QuranAndroid);
       getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
       requestWindowFeature(
@@ -229,9 +239,40 @@ public class PagerActivity extends SherlockFragmentActivity implements
          mHandler.postDelayed(
                  new Runnable() {
                     public void run() {
-                       highlightAyah(mHighlightedSura, mHighlightedAyah);
+                       highlightAyah(mHighlightedSura, mHighlightedAyah, false);
                     }
                  }, 750);
+      }
+   }
+
+   @Override
+   public void onNewIntent(Intent intent){
+      if (intent == null){ return; }
+
+      Bundle extras = intent.getExtras();
+      if (extras != null){
+         int page = Constants.PAGES_LAST -
+                 extras.getInt("page", Constants.PAGES_FIRST);
+         updateActionBarTitle(Constants.PAGES_LAST - page);
+
+         boolean currentValue = mShowingTranslation;
+         mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION,
+              mShowingTranslation);
+         mHighlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
+         mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+
+         if (mShowingTranslation != currentValue){
+            if (mShowingTranslation){
+               mPagerAdapter.setTranslationMode();
+            }
+            else { mPagerAdapter.setQuranMode(); }
+
+            invalidateOptionsMenu();
+         }
+
+         // this will jump to the right page automagically
+         highlightAyah(mHighlightedSura, mHighlightedAyah, true);
+         setIntent(intent);
       }
    }
 
@@ -461,13 +502,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
    }
 
    public void highlightAyah(int sura, int ayah){
+      highlightAyah(sura, ayah, true);
+   }
+
+   public void highlightAyah(int sura, int ayah, boolean force){
       Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
       int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
       if (page < Constants.PAGES_FIRST ||
               Constants.PAGES_LAST < page){ return; }
 
       int position = Constants.PAGES_LAST - page;
-      if (position != mViewPager.getCurrentItem()){
+      if (position != mViewPager.getCurrentItem() && force){
          unhighlightAyah();
          mViewPager.setCurrentItem(position);
       }
