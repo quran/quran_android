@@ -161,14 +161,14 @@ public class SearchActivity extends SherlockActivity
 					mIsArabicSearch = false;
             }
 			}
-			
+         
 			Integer id = null;
 			try {
 				id = intentData.getLastPathSegment() != null?
                     Integer.valueOf(intentData.getLastPathSegment()) : null;
 			} catch (NumberFormatException e) {
 			}
-			
+
 			if (id != null){
 				int sura = 1;
 				int total = id;
@@ -182,8 +182,9 @@ public class SearchActivity extends SherlockActivity
 						break;
 					}
 				}
-				
+
 				jumpToResult(sura, total);
+            finish();
 			}
 		}
 	}
@@ -198,7 +199,6 @@ public class SearchActivity extends SherlockActivity
       }
 		intent.putExtra("page", page);
 		startActivity(intent);
-		finish();
 	}
 
 	private void showResults(String query){
@@ -208,8 +208,9 @@ public class SearchActivity extends SherlockActivity
                  QuranDataProvider.QURAN_ARABIC_DATABASE));
 		if (showArabicWarning){ mIsArabicSearch = false; }
 		
-		Cursor cursor = managedQuery(QuranDataProvider.SEARCH_URI,
-				null, null, new String[] {query}, null);
+		Cursor cursor = getContentResolver().query(
+              QuranDataProvider.SEARCH_URI,
+				  null, null, new String[] {query}, null);
 		if (cursor == null) {
          SharedPreferences prefs =
                  PreferenceManager.getDefaultSharedPreferences(
