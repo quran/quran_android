@@ -211,4 +211,5 @@
     <string name="copy_ayah">Copy Ayah</string>
     <string name="ayah_copied_popup">Ayah Copied</string>
     <string name="remove_bookmark">Remove Bookmark</string>
+    <string name="select_all">Select All</string>
 </resources>
