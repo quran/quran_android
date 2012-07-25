@@ -17,7 +17,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -30,6 +36,7 @@ import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
@@ -205,9 +212,70 @@ public class QuranActivity extends SherlockFragmentActivity
 	public void gotoPageDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(getString(R.string.gotoPage));
+		LinearLayout layout = new LinearLayout(this);
+		layout.setOrientation(LinearLayout.VERTICAL);
+		
+		// Sura Spinner
+		final Spinner suraSpinner = new Spinner(this);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter
+				.createFromResource(this, R.array.sura_names, android.R.layout.simple_spinner_item);
+		suraSpinner.setAdapter(adapter);
+		suraSpinner.setLayoutParams(new ViewGroup.
+				LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		layout.addView(suraSpinner);
+		
+		// Ayah Spinner
+		final Spinner ayahSpinner = new Spinner(this);
+		ayahSpinner.setLayoutParams(new ViewGroup.
+				LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		layout.addView(ayahSpinner);
+		final ArrayAdapter<CharSequence> ayahAdapter = new ArrayAdapter<CharSequence>(getApplicationContext(), android.R.layout.simple_spinner_item);
+		ayahSpinner.setAdapter(ayahAdapter);
+		ayahAdapter.setNotifyOnChange(true);
+		
+		// Page text
 		final EditText input = new EditText(this);
 		input.setInputType(InputType.TYPE_CLASS_NUMBER);
-		builder.setView(input);
+		layout.addView(input);
+		
+		suraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int postion, long rowId) {
+				int sura = postion + 1;
+				int ayahCount = QuranInfo.getNumAyahs(sura);
+				CharSequence[] ayahs = new String[ayahCount];
+				for (int i = 0; i < ayahCount; i++)
+					ayahs[i] = String.valueOf(i + 1);
+				ayahAdapter.clear();
+				ayahAdapter.addAll(ayahs);
+				
+				int page = QuranInfo.getPageFromSuraAyah(sura, 1);
+				input.setText(String.valueOf(page));
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				
+			}
+		});
+		
+		ayahSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int position, long rowId) {
+				int ayah = position + 1;
+				int sura = suraSpinner.getSelectedItemPosition() + 1;
+				int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+				input.setText(String.valueOf(page));
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+		});
+		
+		builder.setView(layout);
 		builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
