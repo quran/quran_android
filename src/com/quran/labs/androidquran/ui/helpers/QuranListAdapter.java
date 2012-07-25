@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
@@ -110,6 +111,12 @@ public class QuranListAdapter extends BaseAdapter {
       holder.page.setTextColor(mContext.getResources().getColor(color));
       int pageVisibility = item.page == 0? View.GONE : View.VISIBLE;
       holder.page.setVisibility(pageVisibility);
+      
+      // If the row is checked (for CAB mode), theme its bg appropriately
+      if (parent != null && parent instanceof ListView)
+         convertView.setBackgroundResource(((ListView)parent).isItemChecked(position) ?
+               R.drawable.abs__list_activated_holo : 0);
+      
       return convertView;
    }
 

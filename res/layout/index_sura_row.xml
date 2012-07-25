@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.quran.labs.androidquran.ui.helpers.CheckableRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:quranandroid="http://schemas.android.com/apk/res/com.quran.labs.androidquran"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
+    <!-- android:background="?android:attr/activatedBackgroundIndicator"
+    This only works on 3.0+, otherwise a custom RelativeLayout won't be needed -->
     
     <TextView android:id="@+id/suraNumber"
               android:layout_width="34dp"
@@ -71,4 +75,4 @@
         android:textSize="14sp"
         android:textColor="@color/sura_details_color" />
        
-</RelativeLayout>
+</com.quran.labs.androidquran.ui.helpers.CheckableRelativeLayout>
