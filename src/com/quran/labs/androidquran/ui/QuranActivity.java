@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -210,45 +212,53 @@ public class QuranActivity extends SherlockFragmentActivity
    }
    
 	public void gotoPageDialog() {
+      LayoutInflater inflater = getLayoutInflater();
+      View layout = inflater.inflate(R.layout.jump_dialog, null);
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(getString(R.string.gotoPage));
-		LinearLayout layout = new LinearLayout(this);
-		layout.setOrientation(LinearLayout.VERTICAL);
-		
+
 		// Sura Spinner
-		final Spinner suraSpinner = new Spinner(this);
+		final Spinner suraSpinner = (Spinner)layout.findViewById(
+              R.id.sura_spinner);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter
-				.createFromResource(this, R.array.sura_names, android.R.layout.simple_spinner_item);
+				.createFromResource(this, R.array.sura_names,
+                    android.R.layout.simple_spinner_item);
 		suraSpinner.setAdapter(adapter);
-		suraSpinner.setLayoutParams(new ViewGroup.
-				LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		layout.addView(suraSpinner);
-		
+
 		// Ayah Spinner
-		final Spinner ayahSpinner = new Spinner(this);
-		ayahSpinner.setLayoutParams(new ViewGroup.
-				LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		layout.addView(ayahSpinner);
-		final ArrayAdapter<CharSequence> ayahAdapter = new ArrayAdapter<CharSequence>(getApplicationContext(), android.R.layout.simple_spinner_item);
+		final Spinner ayahSpinner = (Spinner)layout.findViewById(
+              R.id.ayah_spinner);
+		final ArrayAdapter<CharSequence> ayahAdapter =
+              new ArrayAdapter<CharSequence>(getApplicationContext(),
+                      android.R.layout.simple_spinner_item);
 		ayahSpinner.setAdapter(ayahAdapter);
 		ayahAdapter.setNotifyOnChange(true);
 		
 		// Page text
-		final EditText input = new EditText(this);
-		input.setInputType(InputType.TYPE_CLASS_NUMBER);
-		layout.addView(input);
+		final EditText input = (EditText)layout.findViewById(R.id.page_number);
 		
-		suraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		suraSpinner.setOnItemSelectedListener(
+              new AdapterView.OnItemSelectedListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int postion, long rowId) {
-				int sura = postion + 1;
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long rowId) {
+				int sura = position + 1;
 				int ayahCount = QuranInfo.getNumAyahs(sura);
 				CharSequence[] ayahs = new String[ayahCount];
-				for (int i = 0; i < ayahCount; i++)
+				for (int i = 0; i < ayahCount; i++){
 					ayahs[i] = String.valueOf(i + 1);
+            }
 				ayahAdapter.clear();
-				ayahAdapter.addAll(ayahs);
+
+            if (Build.VERSION.SDK_INT >= 11){
+				   ayahAdapter.addAll(ayahs);
+            }
+            else {
+               for (int i=0; i<ayahCount; i++){
+                  ayahAdapter.add(ayahs[i]);
+               }
+            }
 				
 				int page = QuranInfo.getPageFromSuraAyah(sura, 1);
 				input.setText(String.valueOf(page));
@@ -260,9 +270,10 @@ public class QuranActivity extends SherlockFragmentActivity
 			}
 		});
 		
-		ayahSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		ayahSpinner.setOnItemSelectedListener(
+              new AdapterView.OnItemSelectedListener() {
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
+			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long rowId) {
 				int ayah = position + 1;
 				int sura = suraSpinner.getSelectedItemPosition() + 1;
@@ -276,13 +287,15 @@ public class QuranActivity extends SherlockFragmentActivity
 		});
 		
 		builder.setView(layout);
-		builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(getString(R.string.dialog_ok),
+              new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				try {
 					dialog.dismiss();
 					int page = Integer.parseInt(input.getText().toString());
-					if (page >= Constants.PAGES_FIRST && page <= Constants.PAGES_LAST) {
+					if (page >= Constants.PAGES_FIRST && page
+                       <= Constants.PAGES_LAST) {
 						jumpTo(page);
 					}
 				} catch (Exception e) {

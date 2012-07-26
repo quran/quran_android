@@ -756,6 +756,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             return;
          }
 
+         if (mIsActionBarHidden){ toggleActionBar(); }
          mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
          String url = QuranFileUtils.getAyaPositionFileUrl();
          String destination = QuranFileUtils.getQuranDatabaseDirectory();
@@ -773,6 +774,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             return;
          }
 
+         if (mIsActionBarHidden){ toggleActionBar(); }
          mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
          String url = AudioUtils.getGaplessDatabaseUrl(this, request);
          String destination = request.getLocalPath();
@@ -802,6 +804,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
                     request.getQariId(), true);
             mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
+            if (mIsActionBarHidden){ toggleActionBar(); }
             String notificationTitle =
                     QuranInfo.getNotificationTitle(this, firstAyah, firstAyah);
             Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
@@ -819,6 +822,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             return;
          }
 
+         if (mIsActionBarHidden){ toggleActionBar(); }
          mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
          String notificationTitle = QuranInfo.getNotificationTitle(this,
