@@ -1,14 +1,7 @@
 package com.quran.labs.androidquran.ui;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.Locale;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.app.AlertDialog;
+import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -27,7 +20,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
+import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -38,6 +31,7 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
@@ -49,6 +43,10 @@ import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.Locale;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
@@ -80,6 +78,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private boolean mShouldOverridePlaying = false;
    private DefaultDownloadReceiver mDownloadReceiver;
    private boolean mNeedsPermissionToDownloadOver3g = true;
+   private AlertDialog mPromptDialog = null;
    private Handler mHandler = new Handler();
 
    @Override
@@ -245,6 +244,81 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
+   public void showGetRequiredFilesDialog(){
+      if (mPromptDialog != null){ return; }
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setMessage(R.string.download_extra_data)
+             .setPositiveButton(R.string.downloadPrompt_ok,
+                     new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int option){
+                  downloadRequiredFiles();
+                  dialog.dismiss();
+                  mPromptDialog = null;
+                }
+             })
+             .setNegativeButton(R.string.downloadPrompt_no,
+                     new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int option){
+                           dialog.dismiss();
+                           mPromptDialog = null;
+                        }
+             });
+      mPromptDialog = builder.create();
+      mPromptDialog.show();
+   }
+
+   public void downloadRequiredFiles(){
+      int downloadType = QuranDownloadService.DOWNLOAD_TYPE_AUDIO;
+      if (mAudioStatusBar.getCurrentMode() == AudioStatusBar.STOPPED_MODE){
+         // if we're stopped, use audio download bar as our progress bar
+         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+         if (mIsActionBarHidden){ toggleActionBar(); }
+      }
+      else {
+         // if audio is playing, let's not disrupt it - do this using a
+         // different type so the broadcast receiver ignores it.
+         downloadType = QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB;
+      }
+
+      boolean haveDownload = false;
+      if (!QuranFileUtils.haveAyaPositionFile()){
+         String url = QuranFileUtils.getAyaPositionFileUrl();
+         String destination = QuranFileUtils.getQuranDatabaseDirectory();
+         // start the download
+         String notificationTitle = getString(R.string.highlighting_database);
+         Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
+                 destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
+                 downloadType);
+         startService(intent);
+
+         haveDownload = true;
+      }
+
+      if (!QuranFileUtils.hasArabicSearchDatabase()){
+         String url = QuranFileUtils.getArabicSearchDatabaseUrl();
+
+         // show "downloading required files" unless we already showed that for
+         // highlighting database, in which case, show "downloading search data"
+         String notificationTitle = getString(R.string.highlighting_database);
+         if (haveDownload){
+            notificationTitle = getString(R.string.search_data);
+         }
+
+         Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
+                 QuranFileUtils.getQuranDatabaseDirectory(), notificationTitle,
+                 AUDIO_DOWNLOAD_KEY, downloadType);
+         intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
+                 QuranDataProvider.QURAN_ARABIC_DATABASE);
+         startService(intent);
+      }
+
+      if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO){
+         // if audio is playing, just show a status notification
+         Toast.makeText(this, R.string.downloading_title,
+                 Toast.LENGTH_SHORT).show();
+      }
+   }
+
    @Override
    public void onNewIntent(Intent intent){
       if (intent == null){ return; }
@@ -278,6 +352,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onPause(){
+      if (mPromptDialog != null){
+         mPromptDialog.dismiss();
+         mPromptDialog = null;
+      }
+
       LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mAudioReceiver);
       mDownloadReceiver.setListener(null);

@@ -1,8 +1,5 @@
 package com.quran.labs.androidquran;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -20,13 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -40,6 +32,9 @@ import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchActivity extends SherlockActivity
         implements DefaultDownloadReceiver.SimpleDownloadListener {
@@ -99,8 +94,7 @@ public class SearchActivity extends SherlockActivity
       }
       mDownloadReceiver.setListener(this);
 
-      String url = QuranFileUtils.IMG_HOST +
-              "databases/" + QuranDataProvider.QURAN_ARABIC_DATABASE;
+      String url = QuranFileUtils.getArabicSearchDatabaseUrl();
       String notificationTitle = getString(R.string.search_data);
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
               QuranFileUtils.getQuranDatabaseDirectory(), notificationTitle,
@@ -156,8 +150,7 @@ public class SearchActivity extends SherlockActivity
 			if (mIsArabicSearch){
 				// if we come from muyassar and don't have arabic db, we set
 				// arabic search to false so we jump to the translation.
-				if (!QuranFileUtils.hasTranslation(
-                    QuranDataProvider.QURAN_ARABIC_DATABASE)){
+				if (!QuranFileUtils.hasArabicSearchDatabase()){
 					mIsArabicSearch = false;
             }
 			}
@@ -204,13 +197,12 @@ public class SearchActivity extends SherlockActivity
 	private void showResults(String query){
 		mIsArabicSearch = QuranUtils.doesStringContainArabic(query);
 		boolean showArabicWarning = (mIsArabicSearch &&
-			!QuranFileUtils.hasTranslation(
-                 QuranDataProvider.QURAN_ARABIC_DATABASE));
+			!QuranFileUtils.hasArabicSearchDatabase());
 		if (showArabicWarning){ mIsArabicSearch = false; }
 		
 		Cursor cursor = getContentResolver().query(
               QuranDataProvider.SEARCH_URI,
-				  null, null, new String[] {query}, null);
+              null, null, new String[]{query}, null);
 		if (cursor == null) {
          SharedPreferences prefs =
                  PreferenceManager.getDefaultSharedPreferences(
