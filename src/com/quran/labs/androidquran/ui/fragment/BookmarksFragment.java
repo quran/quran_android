@@ -67,20 +67,26 @@ public class BookmarksFragment extends SherlockFragment {
             
             // If we're not in CAB mode or the element shouldn't
             // be checked then undo the checking
-            if (mMode == null || !elem.isBookmark())
+            if (mMode == null || !elem.isBookmark()){
                mListView.setItemChecked(position, false);
+            }
             
             // If we're in CAB mode don't handle the click
-            if (mMode != null)
+            if (mMode != null){
+               mListView.setItemChecked(position,
+                       mListView.isItemChecked(position));
                return;
+            }
             
             // We're not in CAB mode so handle the click normally
             if (!elem.isHeader()) {
-               if (elem.isAyahBookmark())
+               if (elem.isAyahBookmark()){
                   ((QuranActivity)getActivity()).jumpToAndHighlight(
                         elem.page, elem.sura, elem.ayah);
-               else
+               }
+               else {
                   ((QuranActivity)getActivity()).jumpTo(elem.page);
+               }
             }
          }
       });
