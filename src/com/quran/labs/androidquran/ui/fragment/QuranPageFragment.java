@@ -185,6 +185,16 @@ public class QuranPageFragment extends SherlockFragment {
 
       @Override
       public void onLongPress(MotionEvent event) {
+         if (!QuranFileUtils.haveAyaPositionFile() ||
+             !QuranFileUtils.hasArabicSearchDatabase()){
+            Activity activity = getActivity();
+            if (activity != null){
+               PagerActivity pagerActivity = (PagerActivity)activity;
+               pagerActivity.showGetRequiredFilesDialog();
+               return;
+            }
+         }
+
          QuranAyah result = getAyahFromCoordinates(event.getX(), event.getY());
          if (result != null) {
             mImageView.highlightAyah(result.getSura(), result.getAyah());

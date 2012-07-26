@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 
 public class QuranFileUtils {
 	public static boolean failedToWrite = false;
@@ -267,5 +268,14 @@ public class QuranFileUtils {
 		}
 		return false;
 	}
+
+   public static boolean hasArabicSearchDatabase(){
+      return hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE);
+   }
+
+   public static String getArabicSearchDatabaseUrl(){
+      return IMG_HOST + DATABASE_DIRECTORY + "/" +
+              QuranDataProvider.QURAN_ARABIC_DATABASE;
+   }
 
 }
