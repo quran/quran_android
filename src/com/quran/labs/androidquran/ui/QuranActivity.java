@@ -216,7 +216,7 @@ public class QuranActivity extends SherlockFragmentActivity
       View layout = inflater.inflate(R.layout.jump_dialog, null);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getString(R.string.gotoPage));
+		builder.setTitle(getString(R.string.menu_jump));
 
 		// Sura Spinner
 		final Spinner suraSpinner = (Spinner)layout.findViewById(
