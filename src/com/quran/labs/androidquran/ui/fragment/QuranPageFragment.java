@@ -35,6 +35,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -280,9 +281,16 @@ public class QuranPageFragment extends SherlockFragment {
 						}
 					}
 				}
-			});
-			AlertDialog dlg = builder.create();
-			dlg.show();
+			}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+               dialogInterface.dismiss();
+               mTranslationDialog = null;
+            }
+         });
+
+			mTranslationDialog = builder.create();
+			mTranslationDialog.show();
 		}
 	}
 
@@ -416,6 +424,33 @@ public class QuranPageFragment extends SherlockFragment {
             mTranslationDialog = builder.create();
             mTranslationDialog.show();
 			}
+         else if (activity != null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setMessage(R.string.need_translation)
+                    .setPositiveButton(R.string.get_translations,
+                            new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog,
+                                                   int i) {
+                                  dialog.dismiss();
+                                  mTranslationDialog = null;
+                                  Intent tm = new Intent(getActivity(),
+                                          TranslationManagerActivity.class);
+                                  startActivity(tm);
+                               }
+                            })
+                    .setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog,
+                                                   int i) {
+                                  dialog.dismiss();
+                                  mTranslationDialog = null;
+                               }
+                            });
+            mTranslationDialog = builder.create();
+            mTranslationDialog.show();
+         }
 		}
 	}
 }

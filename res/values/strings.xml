@@ -187,6 +187,8 @@
     <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
     <string name="error_getting_translation_list">Unable to download the list of translations.  Please try again later.</string>
     <string name="search_data">Search Data</string>
+    <string name="need_translation">You don\'t have any translations/tafaseer downloaded yet.</string>
+    <string name="get_translations">Get Translations</string>
 
     <!-- about us -->
     <string name="email_quran_android">Email Quran Android</string>
