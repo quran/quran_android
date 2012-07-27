@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -81,16 +82,21 @@ public class QuranPageFragment extends SherlockFragment {
               container, false);
       view.setBackgroundDrawable((mPageNumber % 2 == 0?
               mLeftGradient : mRightGradient));
-
       int lineImageId = R.drawable.dark_line;
       int leftBorderImageId = R.drawable.border_left;
       int rightBorderImageId = R.drawable.border_right;
-      SharedPreferences prefs = PreferenceManager
-              .getDefaultSharedPreferences(getActivity());
+      
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+      
+      if (!prefs.getBoolean(getResources().getString(R.string.prefs_new_background), true)) {
+    	  view.setBackgroundColor(getResources().getColor(R.color.page_background));
+      }
+
       if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
          lineImageId = R.drawable.light_line;
+         view.setBackgroundColor(Color.BLACK);
       }
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);

@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -71,7 +70,6 @@ public class TranslationView extends LinearLayout {
       boolean nightMode = QuranSettings.isNightMode(mContext);
       mTextStyle = nightMode ? R.style.translation_night_mode :
               R.style.translation_text;
-      if (nightMode){ setBackgroundColor(Color.BLACK); }
    }
 
    public void setAyahs(List<QuranAyah> ayat){
