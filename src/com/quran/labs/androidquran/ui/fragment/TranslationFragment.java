@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -66,6 +67,13 @@ public class TranslationFragment extends SherlockFragment {
 
       SharedPreferences prefs = PreferenceManager
               .getDefaultSharedPreferences(getActivity());
+      
+      if (!prefs.getBoolean(getResources().getString(R.string.prefs_new_background), true)) {
+    	  view.setBackgroundColor(getResources().getColor(R.color.page_background));
+      }
+      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){ 
+    	  view.setBackgroundColor(Color.BLACK); 
+	  }
 
       int lineImageId = R.drawable.dark_line;
       int leftBorderImageId = R.drawable.border_left;

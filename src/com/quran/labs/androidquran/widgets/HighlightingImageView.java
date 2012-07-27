@@ -161,7 +161,6 @@ public class HighlightingImageView extends ImageView {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		boolean nightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
 		if (nightMode && !colorFilterOn) {
-			setBackgroundColor(Color.BLACK);
 			float[] matrix = { 
 				-1, 0, 0, 0, 255,
 				0, -1, 0, 0, 255,
@@ -172,7 +171,6 @@ public class HighlightingImageView extends ImageView {
 			colorFilterOn = true;
 		} else if (!nightMode && colorFilterOn) {
 			clearColorFilter();
-			setBackgroundColor(getResources().getColor(R.color.page_background));
 			colorFilterOn = false;
 		}
 		invalidate();
