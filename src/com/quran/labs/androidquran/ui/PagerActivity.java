@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -37,6 +38,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.*;
+import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
@@ -344,10 +346,20 @@ public class PagerActivity extends SherlockFragmentActivity implements
             invalidateOptionsMenu();
          }
 
-         // this will jump to the right page automagically
-         highlightAyah(mHighlightedSura, mHighlightedAyah, true);
+         if (mHighlightedAyah > 0 && mHighlightedSura > 0){
+            // this will jump to the right page automagically
+            highlightAyah(mHighlightedSura, mHighlightedAyah, true);
+         }
+         else { mViewPager.setCurrentItem(page); }
+
          setIntent(intent);
       }
+   }
+
+   public void jumpTo(int page){
+      Intent i = new Intent(this, PagerActivity.class);
+      i.putExtra("page", page);
+      onNewIntent(i);
    }
 
    @Override
@@ -462,6 +474,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
       else if (item.getItemId() == android.R.id.home){
          finish();
          return true;
+      }
+      else if (item.getItemId() == R.id.jump){
+         FragmentManager fm = getSupportFragmentManager();
+         JumpFragment jumpDialog = new JumpFragment();
+         jumpDialog.show(fm, "jumpDialogTag");
       }
       return super.onOptionsItemSelected(item);
    }

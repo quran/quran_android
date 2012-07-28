@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
@@ -141,7 +142,9 @@ public class TranslationView extends LinearLayout {
    private void addTextForSura(SpannableStringBuilder stringBuilder){
       TextView translationText = new TextView(mContext);
       translationText.setTextAppearance(mContext, mTextStyle);
-      translationText.setTextIsSelectable(true);
+      if (Build.VERSION.SDK_INT >= 11){
+         translationText.setTextIsSelectable(true);
+      }
       translationText.setText(stringBuilder);
       translationText.setTextSize(mFontSize);
       if (mShouldReshape && mArabicStatus == 1){

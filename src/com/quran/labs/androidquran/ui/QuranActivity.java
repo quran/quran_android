@@ -41,6 +41,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
+import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -212,96 +213,8 @@ public class QuranActivity extends SherlockFragmentActivity
    }
    
 	public void gotoPageDialog() {
-      LayoutInflater inflater = getLayoutInflater();
-      View layout = inflater.inflate(R.layout.jump_dialog, null);
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getString(R.string.menu_jump));
-
-		// Sura Spinner
-		final Spinner suraSpinner = (Spinner)layout.findViewById(
-              R.id.sura_spinner);
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter
-				.createFromResource(this, R.array.sura_names,
-                    android.R.layout.simple_spinner_item);
-		suraSpinner.setAdapter(adapter);
-
-		// Ayah Spinner
-		final Spinner ayahSpinner = (Spinner)layout.findViewById(
-              R.id.ayah_spinner);
-		final ArrayAdapter<CharSequence> ayahAdapter =
-              new ArrayAdapter<CharSequence>(getApplicationContext(),
-                      android.R.layout.simple_spinner_item);
-		ayahSpinner.setAdapter(ayahAdapter);
-		ayahAdapter.setNotifyOnChange(true);
-		
-		// Page text
-		final EditText input = (EditText)layout.findViewById(R.id.page_number);
-		
-		suraSpinner.setOnItemSelectedListener(
-              new AdapterView.OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long rowId) {
-				int sura = position + 1;
-				int ayahCount = QuranInfo.getNumAyahs(sura);
-				CharSequence[] ayahs = new String[ayahCount];
-				for (int i = 0; i < ayahCount; i++){
-					ayahs[i] = String.valueOf(i + 1);
-            }
-				ayahAdapter.clear();
-
-            if (Build.VERSION.SDK_INT >= 11){
-				   ayahAdapter.addAll(ayahs);
-            }
-            else {
-               for (int i=0; i<ayahCount; i++){
-                  ayahAdapter.add(ayahs[i]);
-               }
-            }
-				
-				int page = QuranInfo.getPageFromSuraAyah(sura, 1);
-				input.setText(String.valueOf(page));
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				
-			}
-		});
-		
-		ayahSpinner.setOnItemSelectedListener(
-              new AdapterView.OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long rowId) {
-				int ayah = position + 1;
-				int sura = suraSpinner.getSelectedItemPosition() + 1;
-				int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
-				input.setText(String.valueOf(page));
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-		});
-		
-		builder.setView(layout);
-		builder.setPositiveButton(getString(R.string.dialog_ok),
-              new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				try {
-					dialog.dismiss();
-					int page = Integer.parseInt(input.getText().toString());
-					if (page >= Constants.PAGES_FIRST && page
-                       <= Constants.PAGES_LAST) {
-						jumpTo(page);
-					}
-				} catch (Exception e) {
-				}
-			}
-		});
-		builder.create().show();
+      FragmentManager fm = getSupportFragmentManager();
+      JumpFragment jumpDialog = new JumpFragment();
+      jumpDialog.show(fm, "jumpDialogTag");
 	}
 }
