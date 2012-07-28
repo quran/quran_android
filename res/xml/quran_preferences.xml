@@ -15,6 +15,14 @@
             android:title="@string/prefs_use_arabic_title" >
         </CheckBoxPreference>
 
+        <CheckBoxPreference
+                android:title="@string/prefs_use_arabic_reshaper_title"
+                android:persistent="true"
+                android:defaultValue="@bool/use_arabic_reshaper"
+                android:summaryOn="@string/prefs_use_arabic_reshaper_summary_on"
+                android:summaryOff="@string/prefs_use_arabic_reshaper_summary_off"
+                android:key="@string/prefs_use_arabic_reshaper" />
+
         <CheckBoxPreference 
             android:title="@string/prefs_new_background_title"
             android:persistent="true"

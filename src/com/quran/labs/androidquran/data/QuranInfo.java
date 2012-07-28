@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.data;
 
 import android.content.Context;
 
+import android.util.Log;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 
@@ -262,17 +263,29 @@ public class QuranInfo {
 	};
 	
 	public static boolean[] SURA_IS_MAKKI = {
+      // 1 - 10
 		true, false, false, false, false, true, true, false, false, true,
+      // 11 - 20
 		true, true, false, true, true, true, true, true, true, true,
+      // 21 - 30
 		true, false, true, false, true, true, true, true, true, true,
+      // 31 - 40
 		true, true, false, true, true, true, true, true, true, true,
+      // 41 - 50
 		true, true, true, true, true, true, false, false, false, true,
+      // 51 - 60
 		true, true, true, true, false, true, false, false, false, false,
+      // 61 - 70
 		false, false, false, false, false, false, true, true, true, true,
+      // 71 - 80
 		true, true, true, true, true, false, true, true, true, true,
+      // 81 - 90
 		true, true, true, true, true, true, true, true, true, true,
-		true, true, true, true, true, true, true, true, false, false, true,
+      // 91 - 100
+		true, true, true, true, true, true, true, true, false, true,
+      // 101 - 110
 		true, true, true, true, true, true, true, true, true, false,
+      // 111 - 114
 		true, true, true, true
 	};
 	

@@ -33,6 +33,7 @@ public class TranslationView extends LinearLayout {
    private int mHeaderStyle;
    private boolean mIsArabic;
    private int mArabicStatus;
+   private boolean mUseArabicFont;
    private boolean mShouldReshape;
 
    public TranslationView(Context context){
@@ -66,6 +67,7 @@ public class TranslationView extends LinearLayout {
 
       mIsArabic = QuranSettings.isArabicNames(mContext);
       mShouldReshape = QuranSettings.isReshapeArabic(mContext);
+      mUseArabicFont = QuranSettings.needArabicFont(mContext);
       mArabicStatus = 0;
 
       boolean nightMode = QuranSettings.isNightMode(mContext);
@@ -147,7 +149,7 @@ public class TranslationView extends LinearLayout {
       }
       translationText.setText(stringBuilder);
       translationText.setTextSize(mFontSize);
-      if (mShouldReshape && mArabicStatus == 1){
+      if (mUseArabicFont && mArabicStatus == 1){
          translationText.setTypeface(ArabicStyle.getTypeface(mContext));
       }
       LinearLayout.LayoutParams params = new LayoutParams(
@@ -178,9 +180,14 @@ public class TranslationView extends LinearLayout {
       params.topMargin = mTopBottomMargin / 2;
       params.bottomMargin = mTopBottomMargin / 2;
       headerView.setTextAppearance(mContext, mHeaderStyle);
-      if (mShouldReshape && mIsArabic){
-         suraName = ArabicStyle.reshape(mContext, suraName);
-         headerView.setTypeface(ArabicStyle.getTypeface(mContext));
+      if (mIsArabic){
+         if (mShouldReshape){
+            suraName = ArabicStyle.reshape(mContext, suraName);
+         }
+
+         if (mUseArabicFont){
+            headerView.setTypeface(ArabicStyle.getTypeface(mContext));
+         }
       }
       headerView.setText(suraName);
       addView(headerView, params);

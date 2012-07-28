@@ -20,6 +20,7 @@ public class QuranListAdapter extends BaseAdapter {
    private QuranRow[] mElements;
    private int mLayout;
    private boolean mReshapeArabic;
+   private boolean mUseArabicFont;
 
    public QuranListAdapter(Context context, int layout, QuranRow[] items){
       mInflater = LayoutInflater.from(context);
@@ -28,6 +29,7 @@ public class QuranListAdapter extends BaseAdapter {
       mContext = context;
 
       // should we reshape if we have arabic?
+      mUseArabicFont = QuranSettings.needArabicFont(context);
       mReshapeArabic = QuranSettings.isReshapeArabic(context);
    }
 
@@ -60,7 +62,7 @@ public class QuranListAdapter extends BaseAdapter {
          holder.header = (TextView)convertView.findViewById(R.id.headerName);
          holder.image = (TextView)convertView.findViewById(R.id.rowIcon);
 
-         if (mReshapeArabic){
+         if (mUseArabicFont){
             Typeface typeface = ArabicStyle.getTypeface(mContext);
             holder.text.setTypeface(typeface);
             holder.metadata.setTypeface(typeface);

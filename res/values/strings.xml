@@ -112,6 +112,9 @@
     <string name="prefs_category_display_settings">Display Settings</string>
     <string name="prefs_use_arabic_title">Arabic Mode</string>
     <string name="prefs_use_arabic_summary_on">Application will be localized to Arabic (restart required)</string>
+    <string name="prefs_use_arabic_reshaper_title">Use Arabic Reshaper</string>
+    <string name="prefs_use_arabic_reshaper_summary_on">If your Arabic text is backwards, uncheck this option.</string>
+    <string name="prefs_use_arabic_reshaper_summary_off">If your Arabic text is not joined, check this option to fix it.</string>
     <string name="prefs_new_background_title">New background</string>
     <string name="prefs_lock_orientation_title">Lock screen orientation</string>
     <string name="prefs_lock_orientation_summary_on">Quran page will be in fixed orientation mode</string>

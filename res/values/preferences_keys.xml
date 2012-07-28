@@ -5,8 +5,7 @@
     		(DONT TRANSLATE - DONT ADD UNRELATED STRINGS) 
  		-->
  		
- 		<string name="prefs_path">QuranAndroid_Settings</string>
-
+ 	<string name="prefs_path">QuranAndroid_Settings</string>
     <string name="prefs_use_arabic_names">useArabicNames</string>
     <string name="prefs_new_background">useNewBackground</string>
     <string name="prefs_night_mode">nightMode</string>
@@ -17,4 +16,5 @@
     <string name="prefs_ayah_before_translation">ayahBeforeTranslation</string>
     <string name="prefs_prefer_streaming">preferStreaming</string>
     <string name="prefs_download_amount">preferredDownloadAmount</string>
+    <string name="prefs_use_arabic_reshaper">useArabicReshaper</string>
 </resources>

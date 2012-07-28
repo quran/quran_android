@@ -298,6 +298,7 @@ public class SearchActivity extends SherlockActivity
       private Context mContext;
       private boolean mIsArabicSearch;
       private boolean mShouldReshape;
+      private boolean mUseArabicFont;
 		
 		public EfficientResultAdapter(Context context,
                                     List<SearchElement> metadata,
@@ -308,8 +309,12 @@ public class SearchActivity extends SherlockActivity
          mIsArabicSearch = isArabicSearch;
          if (mIsArabicSearch){
             mShouldReshape = QuranSettings.isReshapeArabic(context);
+            mUseArabicFont = QuranSettings.needArabicFont(context);
          }
-         else { mShouldReshape = false; }
+         else {
+            mShouldReshape = false;
+            mUseArabicFont = false;
+         }
       }
 
 		public int getCount() {
@@ -334,7 +339,7 @@ public class SearchActivity extends SherlockActivity
 				holder.text.setTypeface(ArabicStyle.getTypeface(mContext));
 				holder.metadata = (TextView)convertView
                     .findViewById(R.id.verseLocation);
-            if (mShouldReshape){
+            if (mUseArabicFont){
 				   holder.metadata.setTypeface(ArabicStyle.getTypeface(mContext));
             }
 				convertView.setTag(holder);

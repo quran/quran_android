@@ -30,8 +30,15 @@ public class QuranSettings {
               Constants.PREF_PREFER_STREAMING, false);
    }
 
-   public static boolean isReshapeArabic(Context context){
+   public static boolean needArabicFont(Context context){
       return Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+   }
+
+   public static boolean isReshapeArabic(Context context){
+      boolean defValue =
+              (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH);
+      return getBooleanPreference(context, Constants.PREF_USE_ARABIC_RESHAPER,
+              defValue);
    }
 
    public static boolean isNightMode(Context context){
