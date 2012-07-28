@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<resources> 
+   <bool name="use_arabic_reshaper">false</bool>
+</resources>

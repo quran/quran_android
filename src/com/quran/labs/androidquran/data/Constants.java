@@ -17,6 +17,7 @@ public class Constants {
 
    // Settings Key
    public static final String PREF_USE_ARABIC_NAMES = "useArabicNames";
+   public static final String PREF_USE_ARABIC_RESHAPER = "useArabicReshaper";
    public static final String PREF_LAST_PAGE = "lastPage";
    public static final String PREF_LOCK_ORIENTATION = "lockOrientation";
    public static final String PREF_LANDSCAPE_ORIENTATION = "landscapeOrientation";
