@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.data;
 
 import android.content.Context;
 
-import android.util.Log;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 
