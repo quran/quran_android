@@ -479,6 +479,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          FragmentManager fm = getSupportFragmentManager();
          JumpFragment jumpDialog = new JumpFragment();
          jumpDialog.show(fm, "jumpDialogTag");
+         return true;
       }
       return super.onOptionsItemSelected(item);
    }
