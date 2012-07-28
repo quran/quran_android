@@ -53,6 +53,14 @@ Project dependecies
 
 Changelog
 ---------
+**version 2.1.0**
+
+- setting to bring back the old background color
+- the "jump to" dialog is back!
+- support for deleting bookmarks from the bookmarks screen
+- setting for those who have their arabic render backwards
+- app is now localized in Russian and Farsi
+
 **version 2.0.2**
 
 - exactly like 2.0.1, just compiled with utf8 files to fix arabic
