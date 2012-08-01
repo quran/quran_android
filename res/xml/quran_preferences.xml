@@ -60,6 +60,14 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="@string/prefs_overlay_page_info"
+            android:persistent="true"
+            android:summary="@string/prefs_overlay_page_info_summary"
+            android:title="@string/prefs_overlay_page_info_title" >
+        </CheckBoxPreference>
+        
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="@string/prefs_display_marker_popup"
             android:persistent="true"
             android:summary="@string/prefs_display_marker_summary"

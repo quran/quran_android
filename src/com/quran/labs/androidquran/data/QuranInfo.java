@@ -49,6 +49,11 @@ public class QuranInfo {
       return String.format(description, page, QuranInfo.getJuzFromPage(page));
    }
 
+   public static String getJuzString(Context context, int page){
+      String description = context.getString(R.string.juz2_description);
+      return String.format(description, QuranInfo.getJuzFromPage(page));
+   }
+   
    public static String getSuraAyahString(Context context, int sura, int ayah){
       String suraName = getSuraName(context, sura, false);
       String format = context.getString(R.string.sura_ayah_notification_str);
