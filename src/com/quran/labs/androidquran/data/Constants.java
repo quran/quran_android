@@ -27,6 +27,7 @@ public class Constants {
    public static final String PREF_NIGHT_MODE = "nightMode";
    public static final String PREF_DEFAULT_QARI = "defaultQari";
    public static final String PREF_SHOULD_FETCH_PAGES ="shouldFetchPages";
+   public static final String PREF_OVERLAY_PAGE_INFO = "overlayPageInfo";
    public static final String PREF_DISPLAY_MARKER_POPUP = "displayMarkerPopup";
    public static final String PREF_AYAH_BEFORE_TRANSLATION = "ayahBeforeTranslation";
    public static final String PREF_PREFER_STREAMING = "preferStreaming";

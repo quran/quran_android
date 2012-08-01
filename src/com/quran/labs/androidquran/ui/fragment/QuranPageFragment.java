@@ -125,6 +125,10 @@ public class QuranPageFragment extends SherlockFragment {
       mImageView.setOnTouchListener(gestureListener);
       mImageView.setClickable(true);
       mImageView.setLongClickable(true);
+      if (prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true)) {
+         try {mImageView.setOverlayText(mPageNumber, true);}
+         catch (Exception e) {/*do nothing*/} // Temporary to avoid any unanticipated FC's
+      }
       return view;
    }
 
