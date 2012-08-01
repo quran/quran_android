@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.data;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Rect;
+
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -42,6 +44,19 @@ public class AyahInfoDatabaseHandler {
 							   MIN_X, MIN_Y, MAX_X, MAX_Y },
 				COL_SURA + "=" + sura + " and " + COL_AYAH + "=" + ayah,
 				null, null, null, COL_POSITION);
+	}
+	
+	public Rect getPageBounds(int page) {
+		if (!validDatabase()) return null;
+		String[] colNames = new String[] {
+				"MIN("+MIN_X+")", "MIN("+MIN_Y+")",
+				"MAX("+MAX_X+")", "MAX("+MAX_Y+")"};
+		Cursor c = database.query(GLYPHS_TABLE, colNames, COL_PAGE + "=" + page,
+				null, null, null, null);
+		if (!c.moveToFirst()) return null;
+		Rect r = new Rect(c.getInt(0), c.getInt(1), c.getInt(2), c.getInt(3));
+		c.close();
+		return r;
 	}
 	
 	// TODO Improve efficiency -AF

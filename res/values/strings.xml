@@ -122,8 +122,10 @@
     <string name="prefs_landscape_orientation_title">Landscape orientation</string>
     <string name="prefs_landscape_orientation_summary_on">Landscape orientation will be used</string>
     <string name="prefs_landscape_orientation_summary_off">Portrait orientation will be used</string>
-    <string name="prefs_night_mode_title">Beta - Night mode</string>
+    <string name="prefs_night_mode_title">Night mode</string>
     <string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
+    <string name="prefs_overlay_page_info_title">Show page info (beta)</string>
+    <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
     <string name="prefs_display_marker_title">Display marker popups</string>
     <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
     <string name="prefs_translation_text_title">Translation text size</string>
@@ -161,6 +163,7 @@
     <string name="index_loading">Loading…</string>
 
     <string name="canceling">Canceling&#8230;</string>
+    <string name="juz2_description">Juz\' %1$d</string>
     <string name="page_description">page %1$d, Juz\' %2$d</string>
     <string name="highlighting_database">Required Files</string>
     <string name="timing_database">Required Files</string>
@@ -219,4 +222,6 @@
     <string name="ayah_copied_popup">Ayah Copied</string>
     <string name="remove_bookmark">Remove Bookmark</string>
     <string name="select_all">Select All</string>
+    <string name="edit_tag">Edit Tag</string>
+    <string name="new_tag">New Tag</string>
 </resources>
