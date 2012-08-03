@@ -177,6 +177,25 @@
     <string name="search_key">للبحث عن آية</string>
     <string name="copy_ayah">نسخ الآية</string>
     <string name="ayah_copied_popup">تم نسخ الآية</string>
+    
+    <!-- bookmark contextual action bar -->
     <string name="remove_bookmark">حذف المرجعية</string>
-    <string name="select_all">اختيار الكل</string>
+    <string name="edit_bookmark">تغيير تفاصيل المرجعية</string>
+    <string name="new_bookmark">إضافة مرجعية</string>
+    
+    <!-- bookmark dialog -->
+    <string name="bookmark_dlg_title">مرجعية</string>
+    <string name="bookmark_name">إسم المرجعية</string>
+    <string name="bookmark_description">وصف المرجعية (اختياري)</string>
+    <string name="bookmark_collection">مجموعة</string>
+    <string name="bookmark_collection_hint">بدلاً من أن تتغير تلقائياً عند إضافة مرجعية، المجموعة تحتفظ بأكثر من مرجعية</string>
+    
+    <!-- bookmarks list -->
+    <string name="bookmarks_list_title">إختر مرجعية</string>
+    <string name="bookmarks_list_empty">لا توجد أي مرجعيات</string>
+    
+    <!-- sample bookmarks -->
+    <string name="sample_bookmark_reading">* الورد اليومي (مرجعية)</string>
+    <string name="sample_bookmark_duas">أدعية قرآنية (مجموعة)</string>
+    <string name="sample_bookmark_uncategorized">غير مصنفة</string>
 </resources>

@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.database;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,9 +11,10 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.PageTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkMapTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
 
 public class BookmarksDBAdapter {
 
@@ -31,298 +34,195 @@ public class BookmarksDBAdapter {
 	public void close() {
 		dbHelper.close();
 	}
-
-	private Cursor findAyah(int sura, int ayah, String[] columns) {
-		return findAyah(QuranInfo.getAyahId(sura, ayah), columns);
-	}
 	
-	private Cursor findAyah(int ayahId, String[] columns) {
-		return db.query(AyahTable.TABLE_NAME, columns, AyahTable.ID + "=" + ayahId,
-				null, null, null, AyahTable.SURA+", "+AyahTable.AYAH);
-	}
-	
-	private ContentValues createAyahValues(
-			int ayahId, int page, int sura, int ayah, int bookmarked) {
-		ContentValues values = new ContentValues();
-		values.put(AyahTable.ID, ayahId);
-		values.put(AyahTable.PAGE, page);
-		values.put(AyahTable.SURA, sura);
-		values.put(AyahTable.AYAH, ayah);
-		values.put(AyahTable.BOOKMARKED, bookmarked);
-		return values;
-	}
-	
-	// Returns new isBookmarked value
-	public boolean toggleAyahBookmark(int page, int sura, int ayah) {
-		int ayahId = QuranInfo.getAyahId(sura, ayah);
-		Cursor cursor = findAyah(ayahId, new String[] {AyahTable.BOOKMARKED});
-		boolean result = true;
+	public Bookmark getBookmark(long bookmarkId) {
+      Cursor cursor = db.query(BookmarksTable.TABLE_NAME,
+            new String[] {BookmarksTable.ID, BookmarksTable.NAME, BookmarksTable.TYPE, BookmarksTable.DESCRIPTION},
+				BookmarksTable.ID + "=" + bookmarkId, null, null, null, BookmarksTable.ID);
+		Bookmark bookmark = null;
 		if (cursor.moveToFirst()) {
-			boolean isBookmarked = (cursor.getInt(0) != 0);
-			ContentValues values = new ContentValues();
-			values.put(AyahTable.BOOKMARKED, !isBookmarked);
-			db.update(AyahTable.TABLE_NAME, values, AyahTable.ID+"="+ayahId, null);
-			result = !isBookmarked;
-		} else {
-			ContentValues values = createAyahValues(ayahId, page, sura, ayah, 1);
-			db.insert(AyahTable.TABLE_NAME, null, values);
+         boolean isCollection = cursor.getInt(2) == BookmarksTable.TYPE_COLLECTION ? true : false;
+         bookmark = new Bookmark(cursor.getLong(0), cursor.getString(1), isCollection);
+         if (!cursor.isNull(3))
+            bookmark.description = cursor.getString(3);
 		}
 		cursor.close();
-		return result;
+		return bookmark;
 	}
 	
-	public boolean isAyahBookmarked(int sura, int ayah) {
-		Cursor cursor = findAyah(sura, ayah, new String[] {AyahTable.BOOKMARKED});
-		boolean result = (cursor.moveToFirst() && cursor.getInt(0) == 1);
-		cursor.close();
-		return result;
-	}
-	
-	public List<AyahBookmark> getAyahBookmarks() {
-		return getAyahBookmarks(null);
-	}
-	
-	public List<AyahBookmark> getAyahBookmarks(Integer page) {
-		String query = AyahTable.BOOKMARKED + "=1";
-		if(page != null)
-			query += " and " + AyahTable.PAGE + "=" + page;
-		Cursor cursor = db.query(AyahTable.TABLE_NAME,
-				new String[] {AyahTable.ID, AyahTable.PAGE, AyahTable.SURA, AyahTable.AYAH},
-				query, null, null, null, AyahTable.SURA+", "+AyahTable.AYAH);
-		List<AyahBookmark> ayahBookmarks = new ArrayList<AyahBookmark>();
-		while(cursor.moveToNext()) {
-			ayahBookmarks.add(new AyahBookmark(cursor.getInt(0), 
-					cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), true));
-		}
-		cursor.close();
-		return ayahBookmarks;
-	}
-
-   /*
-	public String getAyahNotes(int sura, int ayah) {
-		Cursor cursor = findAyah(sura, ayah, new String[] {AyahTable.NOTES});
-		String result = null;
-		if (cursor.moveToFirst() && !cursor.isNull(0))
-			result = cursor.getString(0);
-		cursor.close();
-		return result;
-	}
-	
-	public void saveAyahNotes(int page, int sura, int ayah, String notes) {
-		int ayahId = QuranInfo.getAyahId(sura, ayah);
-		Cursor cursor = findAyah(ayahId, new String[] {AyahTable.BOOKMARKED});
-		if (cursor.moveToFirst()) {
-			ContentValues values = new ContentValues();
-			values.put(AyahTable.NOTES, notes);
-			db.update(AyahTable.TABLE_NAME, values, AyahTable.ID+"="+ayahId, null);
-		} else {
-			ContentValues values = createAyahValues(ayahId, page, sura, ayah, 0);
-			values.put(AyahTable.NOTES, notes);
-			db.insert(AyahTable.TABLE_NAME, null, values);
-		}
-		cursor.close();
-	}
-	
-	public Integer getTagId(String tagName) {
-		Cursor cursor = db.query(TagsTable.TABLE_NAME,
-				new String[] {TagsTable.ID},
-				TagsTable.NAME + "='" + tagName + "'", null, null, null, TagsTable.ID);
-		Integer result = null;
-		if (cursor.moveToFirst())
-			result = cursor.getInt(0);
-		cursor.close();
-		return result;
-	}
-	
-	public AyahTag getTag(int tagId) {
-		Cursor cursor = db.query(TagsTable.TABLE_NAME,
-				new String[] {TagsTable.ID, TagsTable.NAME, TagsTable.DESCRIPTION, TagsTable.COLOR},
-				TagsTable.ID + "=" + tagId, null, null, null, TagsTable.ID);
-		AyahTag tag = null;
-		if (cursor.moveToFirst()) {
-			tag = new AyahTag(cursor.getInt(0), cursor.getString(1));
-			if (!cursor.isNull(2))
-				tag.description = cursor.getString(2);
-			if (!cursor.isNull(3))
-				tag.color = cursor.getInt(3);
-		}
-		cursor.close();
-		return tag;
-	}
-	
-	public List<AyahTag> getTagList() {
-		Cursor cursor = db.query(TagsTable.TABLE_NAME,
-				new String[] {TagsTable.ID, TagsTable.NAME, TagsTable.DESCRIPTION, TagsTable.COLOR},
-				null, null, null, null, TagsTable.ID);
-		List<AyahTag> tagList = new ArrayList<AyahTag>();
+	public Map<Long, Bookmark> getBookmarks() {
+		Cursor cursor = db.query(BookmarksTable.TABLE_NAME,
+				new String[] {BookmarksTable.ID, BookmarksTable.NAME, BookmarksTable.TYPE, BookmarksTable.DESCRIPTION},
+				null, null, null, null, BookmarksTable.NAME + " ASC");
+		Map<Long, Bookmark> bookmarkList = new LinkedHashMap<Long, Bookmark>();
 		while (cursor.moveToNext()) {
-			AyahTag tag = new AyahTag(cursor.getInt(0), cursor.getString(1));
-			if (!cursor.isNull(2))
-				tag.description = cursor.getString(2);
+		   long id = cursor.getLong(0);
+		   boolean isCollection = cursor.getInt(2) == BookmarksTable.TYPE_COLLECTION ? true : false;
+			Bookmark bookmark = new Bookmark(cursor.getLong(0), cursor.getString(1), isCollection);
 			if (!cursor.isNull(3))
-				tag.color = cursor.getInt(3);
-			tagList.add(tag);
+				bookmark.description = cursor.getString(3);
+			bookmarkList.put(id, bookmark);
 		}
 		cursor.close();
-		return tagList;
+		return bookmarkList;
 	}
 	
-	// Returns the id of the tag that was created/updated
-	public int saveTag(String tagName, String tagDescription, Integer tagColor) {
-		ContentValues values = new ContentValues();
-		values.put(TagsTable.NAME, tagName);
-		if (tagDescription != null)
-			values.put(TagsTable.DESCRIPTION, tagDescription);
-		if (tagColor != null)
-			values.put(TagsTable.COLOR, tagColor);
-		
-		Integer tagId = getTagId(tagName);
-		if (tagId != null)
-			db.update(TagsTable.TABLE_NAME, values, TagsTable.ID+"="+tagId, null);
-		else
-			tagId = (int) db.insert(TagsTable.TABLE_NAME, null, values);
-		return tagId;
+	public List<Bookmark> getBookmarksAsList() {
+	   return new ArrayList<Bookmark>(getBookmarks().values());
 	}
-	
-	public void deleteTag(int tagId) {
-		db.delete(TagsTable.TABLE_NAME, TagsTable.ID+"="+tagId, null);
-		db.delete(AyahTagMapTable.TABLE_NAME, AyahTagMapTable.TAG_ID+"="+tagId, null);
-	}
-	
-	public List<AyahTag> getAyahTags(int page, int sura, int ayah) {
-		return getAyahTags(QuranInfo.getAyahId(sura, ayah));
-	}
-	
-	public List<AyahTag> getAyahTags(int ayahId) {
-		List<Integer> ayahTagIds = getAyahTagIds(ayahId);
-		List<AyahTag> tags = new ArrayList<AyahTag>();
-		for (Integer tagId : ayahTagIds) {
-			AyahTag tag = getTag(tagId);
-			if (tag != null)
-				tags.add(tag);
-		}
-		return tags;
-	}
-	
-	public List<Integer> getAyahTagIds(int page, int sura, int ayah) {
-		return getAyahTagIds(QuranInfo.getAyahId(sura, ayah));
-	}
-	
-	public List<Integer> getAyahTagIds(int ayahId) {
-		Cursor cursor = db.query(AyahTagMapTable.TABLE_NAME,
-				new String[] {AyahTagMapTable.TAG_ID},
-				AyahTagMapTable.AYAH_ID + "=" + ayahId, null, null, null, AyahTagMapTable.TAG_ID);
-		List<Integer> tagIds = new ArrayList<Integer>();
-		while(cursor.moveToNext()) {
-			tagIds.add(cursor.getInt(0));
-		}
-		cursor.close();
-		return tagIds;
-	}
-	
-	public void updateAyahTags(int sura, int ayah, List<Integer> tagIds) {
-		updateAyahTags(QuranInfo.getAyahId(sura, ayah), tagIds);
-	}
-	
-	public void updateAyahTags(int ayahId, List<Integer> tagIds) {
-		clearAyahTags(ayahId);
-		for (Integer tagId : tagIds) {
-			ContentValues values = new ContentValues();
-			values.put(AyahTagMapTable.AYAH_ID, ayahId);
-			values.put(AyahTagMapTable.TAG_ID, tagId);
-			db.insert(AyahTagMapTable.TABLE_NAME, null, values);
-		}
-	}
-	
-	public void clearAyahTags(int ayahId) {
-		db.delete(AyahTagMapTable.TABLE_NAME, AyahTagMapTable.AYAH_ID+"="+ayahId, null);
-	}
-	*/
 
-	private Cursor findPage(int page) {
-		return db.query(PageTable.TABLE_NAME, new String[] {PageTable.BOOKMARKED},
-				PageTable.ID + "=" + page, null, null, null, PageTable.ID);
+	public void saveBookmark(Bookmark bookmark) {
+	   if (bookmark == null) return;
+      ContentValues values = new ContentValues();
+      values.put(BookmarksTable.NAME, bookmark.name);
+      values.put(BookmarksTable.TYPE, bookmark.isCollection ? 1 : 0);
+      values.put(BookmarksTable.DESCRIPTION, bookmark.description);
+      int rowsUpdated = 0;
+	   if (bookmark.id != null) {
+	      rowsUpdated = db.update(BookmarksTable.TABLE_NAME, values, BookmarksTable.ID+"="+bookmark.id, null);
+	   }
+	   if (rowsUpdated < 1) {
+	      db.insert(BookmarksTable.TABLE_NAME, null, values);
+	   }
+	}
+
+	public void deleteBookmark(long bookmarkId) {
+	   db.delete(BookmarkMapTable.TABLE_NAME, BookmarkMapTable.BOOKMARK_ID+"="+bookmarkId, null);
+		db.delete(BookmarksTable.TABLE_NAME, BookmarksTable.ID+"="+bookmarkId, null);
 	}
 	
-	public boolean isPageBookmarked(int page){
+	public void deleteBookmarkMap(long bookmarkMapId) {
+	   db.delete(BookmarkMapTable.TABLE_NAME, BookmarkMapTable.ID+"="+bookmarkMapId, null);
+	}
+
+	public boolean isBookmarkCollection(long bookmarkId) {
 	   boolean result = false;
-	   Cursor cursor = findPage(page);
-	   if (cursor.moveToFirst()){
-	      result = cursor.getInt(0) != 0;
-	   }
+      Cursor c = db.query(BookmarksTable.TABLE_NAME, new String[] {BookmarksTable.TYPE},
+            BookmarksTable.ID+"="+bookmarkId, null, null, null, null);
+      if (c.moveToFirst()) {
+         result = (c.getInt(0) == BookmarksTable.TYPE_COLLECTION);
+      }
+      c.close();
+      return result;
+	}
+	
+	public long bookmarkPage(int page, long bookmarkId) {
+	   int ayahId = QuranInfo.getAyahId(page);
+	   return bookmark(ayahId, bookmarkId, true);
+	}
+	
+	public long bookmarkAyah(int ayahId, long bookmarkId) {
+	   return bookmark(ayahId, bookmarkId, false);
+	}
+	
+   private long bookmark(int ayahId, long bookmarkId, boolean isPageBookmark) {
+      ContentValues values = new ContentValues();
+      values.put(BookmarkMapTable.AYAH_ID, ayahId);
+      values.put(BookmarkMapTable.BOOKMARK_ID, bookmarkId);
+      values.put(BookmarkMapTable.TYPE, isPageBookmark ? 
+            BookmarkMapTable.TYPE_PAGE : BookmarkMapTable.TYPE_AYAH);
+      if (isBookmarkCollection(bookmarkId)) {
+         Cursor c = db.query(BookmarkMapTable.TABLE_NAME,
+               new String[] {BookmarkMapTable.ID},
+               BookmarkMapTable.AYAH_ID+"="+ayahId+" AND "+BookmarkMapTable.BOOKMARK_ID+"="+bookmarkId,
+               null, null, null, null);
+         if (c.moveToFirst())
+            return c.getLong(0);
+         return db.insert(BookmarkMapTable.TABLE_NAME, null, values);
+      } else {
+         db.delete(BookmarkMapTable.TABLE_NAME, BookmarkMapTable.BOOKMARK_ID+"="+bookmarkId, null);
+         return db.insert(BookmarkMapTable.TABLE_NAME, null, values);
+      }
+   }
+
+   public boolean isAyahBookmarked(int sura, int ayah) {
+      int ayahId = QuranInfo.getAyahId(sura, ayah);
+      return isBookmarked(ayahId, BookmarkMapTable.TYPE_AYAH);
+   }
+   
+   public boolean isPageBookmarked(int page){
+      if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
+         return false;
+      }
+      int ayahId = QuranInfo.getAyahId(page);
+      return isBookmarked(ayahId, BookmarkMapTable.TYPE_PAGE);
+   }
+   
+	private boolean isBookmarked(int ayahId, int bookmarkType){
+	   boolean result = false;
+	   Cursor cursor = db.query(BookmarkMapTable.TABLE_NAME,
+	         new String[] {BookmarkMapTable.ID},
+	         BookmarkMapTable.AYAH_ID + "=" + ayahId + " AND "+ 
+	         BookmarkMapTable.TYPE + "=" + bookmarkType,
+	         null, null, null, null);
+	   if (cursor.moveToFirst())
+	      result = true;
 	   cursor.close();
 	   return result;
 	}
-	
-	public boolean togglePageBookmark(int page) {
-		Cursor cursor = findPage(page);
-		boolean result = true;
-		if (!cursor.moveToFirst()) {
-			ContentValues values = new ContentValues();
-			values.put(PageTable.ID, page);
-			values.put(PageTable.BOOKMARKED, 1);
-			db.insert(PageTable.TABLE_NAME, null, values);
-		} else {
-			boolean isBookmarked = (cursor.getInt(0) != 0);
-			ContentValues values = new ContentValues();
-			values.put(PageTable.BOOKMARKED, !isBookmarked);
-			db.update(PageTable.TABLE_NAME, values, PageTable.ID+"="+page, null);
-			result = !isBookmarked;
-		}
-		cursor.close();
-		return result;
-	}
-	
-	public List<Integer> getPageBookmarks() {
-		Cursor cursor = db.query(PageTable.TABLE_NAME, new String[] {PageTable.ID},
-				PageTable.BOOKMARKED + "=1", null, null, null, PageTable.ID);
-		List<Integer> pageBookmarks = new ArrayList<Integer>();
-		while(cursor.moveToNext()) {
-			pageBookmarks.add(cursor.getInt(0));
-		}
-		cursor.close();
-		return pageBookmarks;
-	}
-	
-	public class AyahBookmark {
-		public int id, page, sura, ayah;
-		public boolean isBookmarked;
-		public String notes;
-		public List<Integer> tagIds;
-		
-		public AyahBookmark(int id, int page, int sura, int ayah, boolean isBookmarked) {
-			this(id, page, sura, ayah, isBookmarked, null, null);
-		}
-		
-		public AyahBookmark(int id, int page, int sura, int ayah,
-				boolean isBookmarked, String notes, List<Integer> tagIds) {
-			this.id = id;
-			this.page = page;
-			this.sura = sura;
-			this.ayah = ayah;
-			this.isBookmarked = isBookmarked;
-			this.notes = notes;
-			this.tagIds = tagIds != null ? tagIds : new ArrayList<Integer>();
-		}
-		
-	}
 
-   /*
-	public class AyahTag {
-		public Integer id;
+	// Retruns a map with K as bookmarkId and V as a bookmark with its
+	// bookmarkMaps field populated with the appropriate ayah-bookmark maps
+   public Map<Long, Bookmark> getBookmarkMaps() {
+      Map<Long, Bookmark> bookmarks = getBookmarks();
+      Cursor c = db.query(BookmarkMapTable.TABLE_NAME,
+            new String[] {BookmarkMapTable.ID, BookmarkMapTable.AYAH_ID,
+            BookmarkMapTable.BOOKMARK_ID, BookmarkMapTable.TYPE},
+            null, null, null, null, BookmarkMapTable.AYAH_ID + " ASC");
+      while(c.moveToNext()) {
+         long bookmarkMapId = c.getLong(0);
+         int ayahId = c.getInt(1);
+         long bookmarkId = c.getLong(2);
+         boolean isPageBookmark = (c.getInt(3) == 1) ? true : false;
+         BookmarkMap b = new BookmarkMap(bookmarkMapId, ayahId, bookmarkId, isPageBookmark);
+         Bookmark bookmark = bookmarks.get(bookmarkId);
+         if (bookmark != null && bookmark.bookmarkMaps != null) {
+            bookmark.bookmarkMaps.add(b);
+         }
+      }
+      c.close();
+      return bookmarks;
+   }
+   
+   public static class BookmarkMap {
+      public long bookmarkMapId, bookmarkId;
+      public int ayahId, page, sura, ayah;
+      public boolean isPageBookmark;
+      
+      public BookmarkMap(long bookmarkMapId, int ayahId, long bookmarkId, boolean isPageBookmark) {
+         this.bookmarkMapId = bookmarkMapId;
+         this.ayahId = ayahId;
+         this.bookmarkId = bookmarkId;
+         this.isPageBookmark = isPageBookmark;
+         int[] suraAyah = QuranInfo.getSuraAyahFromAyahId(ayahId);
+         sura = suraAyah[0];
+         ayah = suraAyah[1];
+         page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+      }
+   }
+   
+	public static class Bookmark {
+		public Long id;
 		public String name, description;
-		public Integer color;
+		public boolean isCollection;
+		public List<BookmarkMap> bookmarkMaps;
 		
-		public AyahTag(Integer id, String name) {
-			this(id, name, null, null);
+		public Bookmark(Long id, String name, boolean isCollection) {
+			this(id, name, isCollection, null);
 		}
 		
-		public AyahTag(Integer id, String name, String description, Integer color) {
+		public Bookmark(Long id, String name, boolean isCollection, String description) {
 			this.id = id;
 			this.name = name;
+			this.isCollection = isCollection;
 			this.description = description;
-			this.color = color;
+			this.bookmarkMaps = new ArrayList<BookmarkMap>();
+		}
+		
+		@Override
+		public String toString() {
+		   return (name != null) ? name : super.toString();
 		}
 	}
-	*/
+	
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/favorite_item"
-          android:icon="@drawable/not_favorite"
+          android:icon="@drawable/favorite"
           android:title="@string/menu_bookmarks"
           android:showAsAction="ifRoom" />
     <item android:id="@+id/goto_translation"
