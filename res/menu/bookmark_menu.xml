@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/cab_select_all_bookmarks"
-          android:icon="@drawable/ic_select_all"
-          android:title="@string/select_all"/>
+    <item android:id="@+id/cab_edit_bookmark"
+          android:icon="@drawable/ic_edit"
+          android:title="@string/edit_bookmark"
+          android:showAsAction="always" />
     <item android:id="@+id/cab_remove_bookmark"
           android:icon="@drawable/ic_delete"
-          android:title="@string/remove_bookmark"/>
+          android:title="@string/remove_bookmark"
+          android:showAsAction="always" />
+    <item android:id="@+id/cab_new_bookmark"
+          android:icon="@drawable/ic_new"
+          android:title="@string/new_bookmark"
+          android:showAsAction="always" />
 </menu>
