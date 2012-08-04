@@ -214,6 +214,7 @@
     <string name="share_ayah">Share Ayah</string>
     <string name="translation_ayah">Ayah Translation/Tafseer</string>
     <string name="play_from_here">Play from Here</string>
+    <string name="ayah_notes">Notes</string>
     <string name="bookmarked_ayah">Bookmarked Ayah</string>
     <string name="unbookmarked_ayah">Removed bookmark from Ayah</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>

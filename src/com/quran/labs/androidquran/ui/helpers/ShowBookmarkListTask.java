@@ -60,7 +60,7 @@ public class ShowBookmarkListTask extends AsyncTask<Integer, Void, List<Bookmark
          TextView emptyTextView = (TextView)dlg.findViewById(R.id.empty_bookmarks_list);
          lv.setEmptyView(emptyTextView);
          
-         int background = cx.getResources().getColor(R.color.transparent_actionbar_color);
+         int background = cx.getResources().getColor(R.color.transparent_dialog_color);
          dlg.getWindow().setBackgroundDrawable(new ColorDrawable(background));
          dlg.show();
       }

@@ -2,11 +2,14 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -247,7 +251,7 @@ public class QuranPageFragment extends SherlockFragment {
          int[] optionIds = {
                  R.string.bookmark_ayah,
                  R.string.translation_ayah, R.string.share_ayah,
-                 R.string.copy_ayah, R.string.play_from_here };
+                 R.string.copy_ayah, R.string.play_from_here/*, R.string.ayah_notes*/}; // TODO Enable notes
          CharSequence[] options = new CharSequence[optionIds.length];
          for (int i=0; i<optionIds.length; i++){
             options[i] = activity.getString(optionIds[i]);
@@ -260,7 +264,8 @@ public class QuranPageFragment extends SherlockFragment {
 				public void onClick(DialogInterface dialog, int selection) {
 					if (selection == 0) {
 					   final int ayahId = QuranInfo.getAyahId(sura, ayah);
-				      ShowBookmarkListTask task = new ShowBookmarkListTask(activity, new OnBookmarkSelectedListener() {
+				      ShowBookmarkListTask task = new ShowBookmarkListTask(
+				            activity, new OnBookmarkSelectedListener() {
 				         public void onBookmarkSelected(Bookmark bookmark) {
 		                  new BookmarkAyahTask(ayahId, bookmark.id).execute();
 				         }
@@ -277,6 +282,8 @@ public class QuranPageFragment extends SherlockFragment {
 							PagerActivity pagerActivity = (PagerActivity) activity;
 							pagerActivity.playFromAyah(mPageNumber, sura, ayah);
 						}
+               } else if (selection == 5) {
+                  new ShowNotesTask(sura, ayah).execute();
 					}
 				}
 			}).setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -449,4 +456,64 @@ public class QuranPageFragment extends SherlockFragment {
          }
 		}
 	}
+	
+   class ShowNotesTask extends AsyncTask<Void, Void, String> {
+      private int ayahId;
+      
+      public ShowNotesTask(int sura, int ayah) {
+         this.ayahId = QuranInfo.getAyahId(sura, ayah);
+      }
+      
+      @Override
+      protected String doInBackground(Void... params) {
+         String result;
+         BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+         dba.open();
+         result = dba.getAyahNote(ayahId);
+         dba.close();
+         return result;
+      }
+      
+      @Override
+      protected void onPostExecute(String result) {
+         final Dialog dlg = new Dialog(getActivity());
+         dlg.setTitle(getString(R.string.ayah_notes));
+         dlg.setContentView(R.layout.notes_dialog);
+         final EditText noteView = (EditText) dlg.findViewById(R.id.ayah_note);
+         noteView.setText(result);
+         dlg.setOnDismissListener(new OnDismissListener() {
+            public void onDismiss(DialogInterface dialog) {
+               final String note = noteView.getText().toString();
+               new SaveNotesTask(ayahId, note).execute();
+            }
+         });
+         int background = getResources().getColor(R.color.transparent_dialog_color);
+         dlg.getWindow().setBackgroundDrawable(new ColorDrawable(background));
+         dlg.show();
+      }
+   }
+   
+   class SaveNotesTask extends AsyncTask<Void, Void, Void> {
+      private int ayahId;
+      private String note;
+
+      public SaveNotesTask(int ayahId, String note) {
+         this.ayahId = ayahId;
+         this.note = note;
+      }
+      
+      @Override
+      protected Void doInBackground(Void... params) {
+         BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+         dba.open();
+         if (note != null && !note.trim().equals("")) {
+            dba.saveAyahNote(ayahId, note);
+         } else {
+            dba.deleteAyahNote(ayahId);
+         }
+         dba.close();
+         return null;
+      }
+   }
+   
 }
