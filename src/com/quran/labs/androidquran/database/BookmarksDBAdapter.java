@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahNotesTable;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkMapTable;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
 
@@ -35,6 +36,34 @@ public class BookmarksDBAdapter {
 		dbHelper.close();
 	}
 	
+	public String getAyahNote(int ayahId) {
+	   Cursor cursor = db.query(AyahNotesTable.TABLE_NAME,
+	         new String[] {AyahNotesTable.NOTE},
+	         AyahNotesTable.AYAH_ID + "=" + ayahId, null, null, null, null);
+	   String result = null;
+	   if (cursor.moveToFirst()) {
+	      result = cursor.getString(0);
+	   }
+	   cursor.close();
+	   return result;
+	}
+	
+	public void saveAyahNote(int ayahId, String note) {
+      ContentValues values = new ContentValues();
+      values.put(AyahNotesTable.AYAH_ID, ayahId);
+      values.put(AyahNotesTable.NOTE, note == null ? "" : note);
+	   int rowsChanged = db.update(AyahNotesTable.TABLE_NAME, values,
+	         AyahNotesTable.AYAH_ID + "=" + ayahId, null);
+	   if (rowsChanged == 0) {
+	      db.insert(AyahNotesTable.TABLE_NAME, null, values);
+	   }
+	}
+	
+   public void deleteAyahNote(int ayahId) {
+      db.delete(AyahNotesTable.TABLE_NAME,
+            AyahNotesTable.AYAH_ID + "=" + ayahId, null);
+   }
+   
 	public Bookmark getBookmark(long bookmarkId) {
       Cursor cursor = db.query(BookmarksTable.TABLE_NAME,
             new String[] {BookmarksTable.ID, BookmarksTable.NAME, BookmarksTable.TYPE, BookmarksTable.DESCRIPTION},

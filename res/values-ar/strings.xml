@@ -171,6 +171,7 @@
     <string name="share_ayah">شارك</string>
     <string name="translation_ayah">تفسير/ترجمة الآية</string>
     <string name="play_from_here">بدء التلاوة من هذه الآية</string>
+    <string name="ayah_notes">ملاحظات</string>
     <string name="bookmarked_ayah">تم إضافة الآية إلى المرجعيات</string>
     <string name="unbookmarked_ayah">تم حذف الآية من المرجعيات</string>
    	<string name="via_string">\n\nبواسطة @QuranAndroid</string>	

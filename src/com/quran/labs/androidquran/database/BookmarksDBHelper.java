@@ -82,6 +82,19 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
 					BookmarkMapTable.AYAH_ID + " INTEGER NOT NULL, " +
 					BookmarkMapTable.TYPE + " INTEGER NOT NULL DEFAULT 0);";
 	
+	static class AyahNotesTable {
+	   static final String TABLE_NAME = "ayah_notes";
+	   static final String ID = "_id";
+	   static final String AYAH_ID = "ayah_id";
+	   static final String NOTE = "note";
+	}
+	
+	private static final String CREATE_AYAH_NOTES_TABLE=
+	      " create table " + AyahNotesTable.TABLE_NAME + " (" + 
+	            AyahNotesTable.ID + " INTEGER PRIMARY KEY, " +
+	            AyahNotesTable.AYAH_ID + " INTEGER NOT NULL, " +
+	            AyahNotesTable.NOTE + " TEXT NOT NULL DEFAULT '');";
+	
 	public BookmarksDBHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 		this.cx = context;
@@ -89,15 +102,18 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
 	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-//		db.execSQL(CREATE_AYAH_TABLE);
-//		db.execSQL(CREATE_PAGE_TABLE);
 		db.execSQL(CREATE_BOOKMARKS_TABLE);
 		db.execSQL(CREATE_BOOKMARK_MAP_TABLE);
+		db.execSQL(CREATE_AYAH_NOTES_TABLE);
       createSampleBookmarks(db);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	   if (newVersion <= oldVersion) {
+	      Log.w(TAG, "Can't downgrade from version "+oldVersion+" to version "+newVersion);
+	      return;
+	   }
       Log.i(TAG, "Upgrading database from version "+oldVersion+" to version "+newVersion);
 	   if (oldVersion < 2) {
 	      upgradeToVer2(db);
@@ -107,7 +123,10 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
    private void upgradeToVer2(SQLiteDatabase db) {
       db.execSQL("DROP TABLE IF EXISTS tags");
       db.execSQL("DROP TABLE IF EXISTS ayah_tag_map");
-      onCreate(db);
+      db.execSQL(CREATE_BOOKMARKS_TABLE);
+      db.execSQL(CREATE_BOOKMARK_MAP_TABLE);
+      db.execSQL(CREATE_AYAH_NOTES_TABLE);
+      createSampleBookmarks(db);
       copyOldBookmarks(db);
    }
    
