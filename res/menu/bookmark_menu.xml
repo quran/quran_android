@@ -5,7 +5,7 @@
           android:title="@string/edit_bookmark"
           android:showAsAction="always" />
     <item android:id="@+id/cab_remove_bookmark"
-          android:icon="@drawable/ic_delete"
+          android:icon="@drawable/ic_cancel"
           android:title="@string/remove_bookmark"
           android:showAsAction="always" />
     <item android:id="@+id/cab_new_bookmark"
