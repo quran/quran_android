@@ -6,6 +6,7 @@ public class QuranRow {
    public static final int HEADER = 1;
    public static final int PAGE_BOOKMARK = 2;
    public static final int AYAH_BOOKMARK = 3;
+   public static final int BOOKMARK_HEADER = 4;
    
    public int sura;
    public int ayah;
@@ -15,6 +16,10 @@ public class QuranRow {
    public int rowType;
    public Integer imageResource;
    public String imageText;
+   
+   // For Bookmarks
+   public long bookmarkMapId;
+   public long bookmarkId;
 
    public QuranRow(String text, String metadata, int rowType, 
         int sura, int ayah, int page, Integer imageResource){
@@ -26,6 +31,8 @@ public class QuranRow {
       this.metadata = metadata;
       this.imageResource = imageResource;
       this.imageText = "";
+      this.bookmarkMapId = -1;
+      this.bookmarkId = -1;
    }
 
    public QuranRow(String text, String metadata, int rowType, 
@@ -39,7 +46,11 @@ public class QuranRow {
    }
    
    public boolean isHeader() {
-      return rowType == HEADER;
+      return rowType == HEADER || rowType == BOOKMARK_HEADER;
+   }
+   
+   public boolean isBookmarkHeader() {
+      return rowType == BOOKMARK_HEADER;
    }
    
    public boolean isBookmark() {
