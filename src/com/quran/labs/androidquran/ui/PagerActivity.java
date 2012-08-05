@@ -17,7 +17,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -35,6 +34,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.*;
@@ -43,6 +43,8 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask;
+import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask.OnBookmarkSelectedListener;
 import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
@@ -72,7 +74,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private ViewPager mViewPager = null;
    private QuranPageAdapter mPagerAdapter = null;
    private boolean mShouldReconnect = false;
-   private SparseArray<Boolean> mBookmarksCache = null;
+//   private SparseArray<Boolean> mBookmarksCache = null;
    private DownloadAudioRequest mLastAudioDownloadRequest = null;
    private boolean mShowingTranslation = false;
    private int mHighlightedSura = -1;
@@ -99,7 +101,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
              com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
 
       super.onCreate(savedInstanceState);
-      mBookmarksCache = new SparseArray<Boolean>();
+//      mBookmarksCache = new SparseArray<Boolean>();
 
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
@@ -184,10 +186,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
             }
             updateActionBarTitle(page);
 
-            if (mBookmarksCache.get(page) == null){
-               // we don't have the key
-               new IsPageBookmarkedTask().execute(page);
-            }
+//            if (mBookmarksCache.get(page) == null){
+//               // we don't have the key
+//               new IsPageBookmarkedTask().execute(page);
+//            }
          }
       });
 
@@ -407,16 +409,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    public boolean onPrepareOptionsMenu(Menu menu) {
       super.onPrepareOptionsMenu(menu);
-      MenuItem item = menu.findItem(R.id.favorite_item);
-      if (item != null){
-         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
-         boolean bookmarked = false;
-         if (mBookmarksCache.get(page) != null){
-            bookmarked = mBookmarksCache.get(page);
-         }
-         if (bookmarked){ item.setIcon(R.drawable.favorite); }
-         else { item.setIcon(R.drawable.not_favorite); }
-      }
+//      MenuItem item = menu.findItem(R.id.favorite_item);
+//      if (item != null){
+//         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+//         boolean bookmarked = false;
+//         if (mBookmarksCache.get(page) != null){
+//            bookmarked = mBookmarksCache.get(page);
+//         }
+//         if (bookmarked){ item.setIcon(R.drawable.favorite); }
+//         else { item.setIcon(R.drawable.not_favorite); }
+//      }
 
       MenuItem quran = menu.findItem(R.id.goto_quran);
       MenuItem translation = menu.findItem(R.id.goto_translation);
@@ -435,7 +437,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public boolean onOptionsItemSelected(MenuItem item) {
       if (item.getItemId() == R.id.favorite_item){
          int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
-         toggleBookmark(page);
+         bookmarkPage(page);
          return true;
       }
       else if (item.getItemId() == R.id.goto_quran){
@@ -496,8 +498,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
-   public void toggleBookmark(int page){
-      new TogglePageBookmarkTask().execute(page);
+   public void bookmarkPage(final int page){
+      ShowBookmarkListTask task = new ShowBookmarkListTask(this, new OnBookmarkSelectedListener() {
+         public void onBookmarkSelected(Bookmark bookmark) {
+            new BookmarkPageTask(page, bookmark.id).execute();
+         }
+      });
+      task.execute(page);
    }
 
    private void updateActionBarTitle(int page){
@@ -629,7 +636,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          qpf.unhighlightAyah();
       }
    }
-
+/*
    class IsPageBookmarkedTask extends AsyncTask<Integer, Void, Boolean> {
       private int mPage;
 
@@ -654,28 +661,32 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
       }
    }
-
-   class TogglePageBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
-      private int mPage;
+*/
+   class BookmarkPageTask extends AsyncTask<Void, Void, Long> {
+      private int page;
+      private long bookmarkId;
+      
+      public BookmarkPageTask(int page, long bookmarkId) {
+         this.page = page;
+         this.bookmarkId = bookmarkId;
+      }
+      
       @Override
-      protected Boolean doInBackground(Integer... params) {
-         Boolean bookmarked = null;
-
-         mPage = params[0];
+      protected Long doInBackground(Void... params) {
          BookmarksDBAdapter dba = new BookmarksDBAdapter(PagerActivity.this);
          dba.open();
-         bookmarked = dba.togglePageBookmark(mPage);
+         long result = dba.bookmarkPage(page, bookmarkId);
          dba.close();
-
-         return bookmarked;
+         
+         return result;
       }
-
+      
       @Override
-      protected void onPostExecute(Boolean result) {
-         if (result != null){
-            mBookmarksCache.put(mPage, result);
-            invalidateOptionsMenu();
-         }
+      protected void onPostExecute(Long result) {
+//         if (result != null && result >= 0){
+//            mBookmarksCache.put(page, true);
+//            invalidateOptionsMenu();
+//         }
       }
    }
 
