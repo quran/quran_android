@@ -9,6 +9,8 @@
         <option name="RES_FOLDER_RELATIVE_PATH" value="/res" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/assets" />
         <option name="LIBS_FOLDER_RELATIVE_PATH" value="/libs" />
+        <option name="REGENERATE_R_JAVA" value="true" />
+        <option name="REGENERATE_JAVA_BY_AIDL" value="true" />
         <option name="USE_CUSTOM_APK_RESOURCE_FOLDER" value="false" />
         <option name="CUSTOM_APK_RESOURCE_FOLDER" value="" />
         <option name="USE_CUSTOM_COMPILER_MANIFEST" value="false" />
@@ -35,7 +37,7 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Android 4.0 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android 4.1 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ActionBarSherlock" />
     <orderEntry type="library" name="libs" level="project" />
