@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -85,6 +86,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private AlertDialog mPromptDialog = null;
    private Handler mHandler = new Handler();
 
+   public static final int VISIBLE_FLAGS =
+             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+           | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
+   public static final int INVISIBLE_FLAGS =
+           View.SYSTEM_UI_FLAG_LOW_PROFILE
+           | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
    @Override
    public void onCreate(Bundle savedInstanceState){
       if (QuranSettings.isArabicNames(this)){
@@ -132,8 +141,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       getSupportActionBar().setDisplayShowHomeEnabled(true);
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-      getSupportActionBar().hide();
-      mIsActionBarHidden = true;
+      mIsActionBarHidden = false;
 
       int background = getResources().getColor(
               R.color.transparent_actionbar_color);
@@ -196,7 +204,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mViewPager.setCurrentItem(page);
       QuranSettings.setLastPage(this, Constants.PAGES_LAST - page);
       setLoading(false);
-      
+
+      toggleActionBar();
+
       // just got created, need to reconnect to service
       mShouldReconnect = true;
 
@@ -581,21 +591,36 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    public void toggleActionBar(){
       if (mIsActionBarHidden){
-         getWindow().addFlags(
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            int visibility = VISIBLE_FLAGS;
+            mViewPager.setSystemUiVisibility(visibility);
+         }
+         else {
+            getWindow().addFlags(
                  WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-         getWindow().clearFlags(
+            getWindow().clearFlags(
                  WindowManager.LayoutParams.FLAG_FULLSCREEN);
-         getSupportActionBar().show();
+            getSupportActionBar().show();
+         }
+
          mAudioStatusBar.updateSelectedItem();
          mAudioStatusBar.setVisibility(View.VISIBLE);
          mIsActionBarHidden = false;
       }
       else {
-         getWindow().addFlags(
-               WindowManager.LayoutParams.FLAG_FULLSCREEN);
-         getWindow().clearFlags(
-               WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-         getSupportActionBar().hide();
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            int visibility = VISIBLE_FLAGS;
+            visibility |= INVISIBLE_FLAGS;
+            mViewPager.setSystemUiVisibility(visibility);
+         }
+         else {
+            getWindow().addFlags(
+                  WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().clearFlags(
+                  WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getSupportActionBar().hide();
+         }
+
          mAudioStatusBar.setVisibility(View.GONE);
          mIsActionBarHidden = true;
       }
