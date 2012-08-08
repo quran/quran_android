@@ -133,9 +133,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
                  .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
       }
       
-      getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
       mPrefs = PreferenceManager.getDefaultSharedPreferences(
             getApplicationContext());
 
