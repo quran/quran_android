@@ -41,10 +41,7 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask;
+import com.quran.labs.androidquran.ui.helpers.*;
 import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask.OnBookmarkSelectedListener;
 import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
@@ -226,6 +223,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onResume(){
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+         JBVisibilityHelper.setVisibilityChangeListener(this, mViewPager);
+      }
+
       mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
       LocalBroadcastManager.getInstance(this).registerReceiver(
               mAudioReceiver,
@@ -373,6 +374,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onPause(){
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+         JBVisibilityHelper.clearVisibilityChangeListener(mViewPager);
+      }
+
       if (mPromptDialog != null){
          mPromptDialog.dismiss();
          mPromptDialog = null;
@@ -584,6 +589,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void handleDownloadFailure(int errId){
       String s = getString(errId);
       mAudioStatusBar.setProgressText(s, true);
+   }
+
+   public void toggleActionBarVisibility(boolean visible){
+      if (visible && mIsActionBarHidden){
+         toggleActionBar();
+      }
+      else if (!visible && !mIsActionBarHidden){
+         toggleActionBar();
+      }
    }
 
    public void toggleActionBar(){
