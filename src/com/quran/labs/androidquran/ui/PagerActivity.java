@@ -195,6 +195,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
       });
 
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+         JBVisibilityHelper.setVisibilityChangeListener(this, mViewPager);
+      }
+      
       mViewPager.setCurrentItem(page);
       QuranSettings.setLastPage(this, Constants.PAGES_LAST - page);
       setLoading(false);
@@ -223,10 +227,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onResume(){
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-         JBVisibilityHelper.setVisibilityChangeListener(this, mViewPager);
-      }
-
       mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
       LocalBroadcastManager.getInstance(this).registerReceiver(
               mAudioReceiver,
@@ -374,10 +374,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onPause(){
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-         JBVisibilityHelper.clearVisibilityChangeListener(mViewPager);
-      }
-
       if (mPromptDialog != null){
          mPromptDialog.dismiss();
          mPromptDialog = null;
@@ -395,6 +391,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    protected void onDestroy() {
       android.util.Log.d(TAG, "onDestroy()");
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+         JBVisibilityHelper.clearVisibilityChangeListener(mViewPager);
+      }
+
       super.onDestroy();
    }
 
