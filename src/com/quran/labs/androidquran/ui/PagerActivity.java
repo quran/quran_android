@@ -1,7 +1,16 @@
 package com.quran.labs.androidquran.ui;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.Locale;
+
 import android.app.AlertDialog;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -18,10 +27,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -38,17 +49,25 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.util.*;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
-import com.quran.labs.androidquran.ui.helpers.*;
+import com.quran.labs.androidquran.ui.helpers.JBVisibilityHelper;
+import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
+import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask;
 import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask.OnBookmarkSelectedListener;
-import com.quran.labs.androidquran.util.*;
+import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
-
-import java.io.File;
-import java.io.Serializable;
-import java.util.Locale;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
@@ -224,6 +243,30 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
       }
    }
+   
+   @Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	   boolean navigate = mAudioStatusBar.getCurrentMode() != AudioStatusBar.PLAYING_MODE
+			   && PreferenceManager.getDefaultSharedPreferences(this).
+	   				getBoolean(getString(R.string.prefs_volume_key_navigation), false);
+	   if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+		   mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+		   return true;
+	   } else if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+		   mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
+		   return true;
+	   }
+	   return super.onKeyDown(keyCode, event);
+	}
+   
+   @Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		return (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)
+				&& mAudioStatusBar.getCurrentMode() != AudioStatusBar.PLAYING_MODE
+				&& PreferenceManager.getDefaultSharedPreferences(this)
+					.getBoolean(getString(R.string.prefs_volume_key_navigation),false)
+			? true : super.onKeyUp(keyCode, event);
+	}
 
    @Override
    public void onResume(){
