@@ -6,55 +6,95 @@ this is a simple (madani based) quran app for android.
 - translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
 - audio from [Every Ayah](http://everyayah.com/).
 
-patches, comments, etc are welcome.
+suggestions, comments, etc are welcome.
 
-code by [Ahmed El-Helw](http://twitter.com/ahmedre),
-[Ahmed Fouad](http://twitter.com/fo2ad),
+contributors:
 [Hussein Maher](http://twitter.com/husseinmaher),
-and [Wael Nafee](http://twitter.com/wnafee).
+[Ahmed Farra](http://github.com/afarra),
+[Wael Nafee](http://twitter.com/wnafee),
+[Ahmed Fouad](http://twitter.com/fo2ad),
+[Mahmoud Hossam](http://github.com/mahmoudhossam).
 
 graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
-contributors include [Ahmed Farra](http://github.com/afarra) and [Mahmoud Hossam](http://github.com/mahmoudhossam).
-
 Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_rrr), based on Arabic Reshaper project by [Ahmed Essam](http://twitter.com/Neo_4583).
+
+Important Message from the Developers
+-------------------------------------
+Two years ago when we started Quran Android as an open source project,
+our intention was:
+
+ * to provide a free, highly featured Quran application on the Android
+ platform.
+ * to build a community where all muslims can suggest new ideas and see
+them get implemented.
+ * to allow muslim developers all over the world to contribute and share
+thawab.
+ * to allow computer science students and new Android developers to 
+ learn from the source code.
+
+Al7amdulillah, we have exceeded 2M downloads and over 1M active users,
+which was a dream that wouldn't have become a reality without the mercy of
+Allah followed by your du3a2s and continuous feedback.
+
+Yet, due to irresponsible actions, a few people have cloned our app and
+redistributed it without our permission.  initially, we were ok with that,
+until we found that one of these apps added advertisements above each Quran 
+image.  This is totally unacceptable, in addition to being disrespectful to
+the word of Allah. As a result, we have decided to restrict access to our
+code repository and make our code base only shared between our team members.
+
+Please note that we **do not** have a paid version nor an ad supported 
+version.  If you see an application using our source code with
+advertisements or charging for it, please let us know.
+
+We will keep this project open to keep track of specific issues, bugs, and
+features that we are working on insha'Allah.  Please feel free to report
+any issues or suggestions [here](http://github.com/quran_android/issues).
+
+JazakumAllah Khairan.
 
 App localization
 ------------------------
-Farsi by [@khajavi](http://github.com/khajavi).
+Farsi for version 2.0 by M. Jafar Nakar
+
+Farsi for version 1.6 by [@khajavi](http://github.com/khajavi).
 
 Turkish by Mehmed Mahmudoglu.
 
 Russian by Rinat (Ринат Валеев).
 
-
-Terms of use
-------------
-you are free to use parts of (or all of) the Quran Android code in your
-application with some conditions:
-
-* if you write an application using any of the Quran data (the images, the
-translations, etc), you must provide a link to the respective data source
-page ([tanzil.net](http://tanzil.net) for the translations and the
-[quran images project](http://github.com/quran/quran.com-images) for the images)
-both within your application (in an about page) and in your application
-description in the market or app store.
-
-* if you use part of (or all of) the quran android code or graphics, you
-must provide a link back to the [quran android
-project](http://github.com/ahmedre/quran_android) in your application
-description and your application itself in an about section.
-
 Project dependecies
 -------------------
-*Action bar for Android:* https://github.com/johannilsson/android-actionbar
-
-*Google's Gson library:* http://code.google.com/p/google-gson/
-
+[ActionBarSherlock](http://abs.io)
 
 Changelog
 ---------
+**version 2.1.0**
+
+- setting to bring back the old background color
+- the "jump to" dialog is back!
+- support for deleting bookmarks from the bookmarks screen
+- setting for those who have their arabic render backwards
+- app is now localized in Russian and Farsi
+
+**version 2.0.2**
+
+- exactly like 2.0.1, just compiled with utf8 files to fix arabic
+
+**version 2.0.1**
+
+- fix market crashes
+
+**version 2.0.0**
+
+- new, improved ui and code rewrite
+- gapless audio support
+- ayah actions (bookmark, share, copy, tafseer)
+- only supports sdks 2.1+
+
 **version 1.6.1**
+
 - download issue fixed
 - restore locale issue fixed
 
