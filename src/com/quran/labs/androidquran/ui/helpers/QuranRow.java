@@ -18,7 +18,7 @@ public class QuranRow {
    public String imageText;
    
    // For Bookmarks
-   public long bookmarkMapId;
+   public long categoryId;
    public long bookmarkId;
 
    public QuranRow(String text, String metadata, int rowType, 
@@ -31,7 +31,7 @@ public class QuranRow {
       this.metadata = metadata;
       this.imageResource = imageResource;
       this.imageText = "";
-      this.bookmarkMapId = -1;
+      this.categoryId = -1;
       this.bookmarkId = -1;
    }
 

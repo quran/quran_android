@@ -199,7 +199,7 @@
     <string name="bookmarks_list_empty">لا توجد أي مرجعيات</string>
     
     <!-- sample bookmarks -->
-    <string name="sample_bookmark_reading">* الورد اليومي (مرجعية)</string>
-    <string name="sample_bookmark_duas">أدعية قرآنية (مجموعة)</string>
+    <string name="sample_bookmark_reading">الورد اليومي</string>
+    <string name="sample_bookmark_duas">أدعية قرآنية</string>
     <string name="sample_bookmark_uncategorized">غير مصنفة</string>
 </resources>

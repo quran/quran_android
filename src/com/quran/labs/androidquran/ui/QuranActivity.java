@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.ui;
 
-import java.util.Locale;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -26,20 +25,23 @@ import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
-import com.quran.labs.androidquran.ui.fragment.JumpFragment;
-import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
-import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
+import com.quran.labs.androidquran.ui.fragment.*;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+import java.util.Locale;
+
 public class QuranActivity extends SherlockFragmentActivity
-        implements ActionBar.TabListener {
+        implements ActionBar.TabListener,
+                   AddCategoryDialog.OnCategoryChangedListener {
    public final String TAG = "QuranActivity";
    
    private static final int SURA_LIST = 0;
    private static final int JUZ2_LIST = 1;
    private static final int BOOKMARKS_LIST = 2;
+
+   private static final int REFRESH_BOOKMARKS = 1;
    
    private int[] mTabs = new int[]{ R.string.quran_sura,
                                     R.string.quran_juz2,
@@ -48,6 +50,7 @@ public class QuranActivity extends SherlockFragmentActivity
    
    private ViewPager mPager = null;
    private PagerAdapter mPagerAdapter = null;
+   private BookmarksDBAdapter mBookmarksDBAdapter = null;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -78,6 +81,8 @@ public class QuranActivity extends SherlockFragmentActivity
          tab.setTabListener(this);
          actionbar.addTab(tab);
       }
+
+      mBookmarksDBAdapter = new BookmarksDBAdapter(this);
    }
 
    @Override
@@ -85,6 +90,31 @@ public class QuranActivity extends SherlockFragmentActivity
       super.onResume();
       startService(new Intent(AudioService.ACTION_STOP));
    }
+
+   @Override
+   protected void onDestroy() {
+      mBookmarksDBAdapter.close();
+      super.onDestroy();
+   }
+
+   public BookmarksDBAdapter getBookmarksAdapter(){
+      return mBookmarksDBAdapter;
+   }
+
+   private Handler mHandler = new Handler(){
+      @Override
+      public void handleMessage(Message msg) {
+         if (msg.what == REFRESH_BOOKMARKS){
+            String bookmarksTag = mPagerAdapter.getFragmentTag(
+                    R.id.index_pager, 2);
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment f = fm.findFragmentByTag(bookmarksTag);
+            if (f != null && f instanceof BookmarksFragment){
+               ((BookmarksFragment)f).refreshData();
+            }
+         }
+      }
+   };
 
    @Override
    public void onTabSelected(Tab tab, FragmentTransaction transaction){
@@ -174,7 +204,49 @@ public class QuranActivity extends SherlockFragmentActivity
       i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah);
       startActivity(i);
    }
-   
+
+   public void gotoPageDialog() {
+      FragmentManager fm = getSupportFragmentManager();
+      JumpFragment jumpDialog = new JumpFragment();
+      jumpDialog.show(fm, "jumpDialogTag");
+   }
+
+   public void addCategory(){
+      FragmentManager fm = getSupportFragmentManager();
+      AddCategoryDialog addCategoryDialog = new AddCategoryDialog();
+      addCategoryDialog.show(fm, "addCategoryDialogTag");
+   }
+
+   public void editCategory(long id, String name, String description){
+      FragmentManager fm = getSupportFragmentManager();
+      AddCategoryDialog addCategoryDialog =
+              new AddCategoryDialog(id, name, description);
+      addCategoryDialog.show(fm, "addCategoryDialogTag");
+   }
+
+   @Override
+   public void onCategoryAdded(final String name, final String description) {
+      new Thread(new Runnable() {
+         @Override
+         public void run() {
+            mBookmarksDBAdapter.addCategory(name, description);
+            mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
+         }
+      }).start();
+   }
+
+   @Override
+   public void onCategoryUpdated(final long id, final String name,
+                                 final String description) {
+      new Thread(new Runnable() {
+         @Override
+         public void run() {
+            mBookmarksDBAdapter.updateCategory(id, name, description);
+            mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
+         }
+      }).start();
+   }
+
    public static class PagerAdapter extends FragmentPagerAdapter {
       public PagerAdapter(FragmentManager fm){
          super(fm);
@@ -197,11 +269,18 @@ public class QuranActivity extends SherlockFragmentActivity
             return BookmarksFragment.newInstance();
          }
       }
+
+      /**
+       * this is a private method in FragmentPagerAdapter that
+       * allows getting the tag that it uses to store the fragment
+       * in (for use by getFragmentByTag).  in the future, this could
+       * change and cause us issues...
+       * @param viewId the view id of the viewpager
+       * @param index the index of the fragment to get
+       * @return the tag in which it would be stored under
+       */
+      public static String getFragmentTag(int viewId, int index){
+         return "android:switcher:" + viewId + ":" + index;
+      }
    }
-   
-	public void gotoPageDialog() {
-      FragmentManager fm = getSupportFragmentManager();
-      JumpFragment jumpDialog = new JumpFragment();
-      jumpDialog.show(fm, "jumpDialogTag");
-	}
 }
