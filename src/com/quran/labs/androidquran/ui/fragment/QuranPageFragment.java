@@ -16,19 +16,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.HapticFeedbackConstants;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
@@ -38,14 +32,11 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask;
-import com.quran.labs.androidquran.ui.helpers.ShowBookmarkListTask.OnBookmarkSelectedListener;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
@@ -251,7 +242,8 @@ public class QuranPageFragment extends SherlockFragment {
          int[] optionIds = {
                  R.string.bookmark_ayah,
                  R.string.translation_ayah, R.string.share_ayah,
-                 R.string.copy_ayah, R.string.play_from_here/*, R.string.ayah_notes*/}; // TODO Enable notes
+                 R.string.copy_ayah, R.string.play_from_here
+                 /*, R.string.ayah_notes*/}; // TODO Enable notes
          CharSequence[] options = new CharSequence[optionIds.length];
          for (int i=0; i<optionIds.length; i++){
             options[i] = activity.getString(optionIds[i]);
@@ -263,14 +255,10 @@ public class QuranPageFragment extends SherlockFragment {
 				@Override
 				public void onClick(DialogInterface dialog, int selection) {
 					if (selection == 0) {
-					   final int ayahId = QuranInfo.getAyahId(sura, ayah);
-				      ShowBookmarkListTask task = new ShowBookmarkListTask(
-				            activity, new OnBookmarkSelectedListener() {
-				         public void onBookmarkSelected(Bookmark bookmark) {
-		                  new BookmarkAyahTask(ayahId, bookmark.id).execute();
-				         }
-				      });
-				      task.execute(page);
+					   if (activity != null && activity instanceof PagerActivity){
+                     PagerActivity pagerActivity = (PagerActivity) activity;
+                     pagerActivity.bookmark(sura, ayah, page);
+                  }
 					} else if (selection == 1) {
 						new ShowTafsirTask(sura, ayah).execute();
 					} else if (selection == 2) {
@@ -297,31 +285,6 @@ public class QuranPageFragment extends SherlockFragment {
 			mTranslationDialog = builder.create();
 			mTranslationDialog.show();
 	}
-
-   class BookmarkAyahTask extends AsyncTask<Void, Void, Long> {
-      
-      private int ayahId;
-      private long bookmarkId;
-
-      public BookmarkAyahTask(int ayahId, long bookmarkId) {
-         this.ayahId = ayahId;
-         this.bookmarkId = bookmarkId;
-      }
-      
-      @Override
-      protected Long doInBackground(Void... params) {
-         Long result = null;
-         BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-         dba.open();
-         result = dba.bookmarkAyah(ayahId, bookmarkId);
-         dba.close();
-         return result;
-      }
-      
-      @Override
-      protected void onPostExecute(Long result) {
-      }
-   }
 	
 	class ShareAyahTask extends AsyncTask<Void, Void, String> {
 		private int sura, ayah;
@@ -469,9 +432,11 @@ public class QuranPageFragment extends SherlockFragment {
          String result;
          BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
          dba.open();
-         result = dba.getAyahNote(ayahId);
+         // TODO figure this out
+         // result = dba.getAyahNote(ayahId);
          dba.close();
-         return result;
+         // return result;
+         return "";
       }
       
       @Override
@@ -506,10 +471,11 @@ public class QuranPageFragment extends SherlockFragment {
       protected Void doInBackground(Void... params) {
          BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
          dba.open();
+         // TODO figure this out
          if (note != null && !note.trim().equals("")) {
-            dba.saveAyahNote(ayahId, note);
+            //dba.saveAyahNote(ayahId, note);
          } else {
-            dba.deleteAyahNote(ayahId);
+            //dba.deleteAyahNote(ayahId);
          }
          dba.close();
          return null;

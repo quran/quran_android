@@ -28,12 +28,12 @@ public class QuranInfo {
       return title + context.getResources().getStringArray(R.array.sura_names)[sura-1];
    }
 
-   public static String getSuraNameFromPage(Context context, int page,
-                                            boolean wantTitle){
-      int sura = 0;
+   public static int getSuraNumberFromPage(int page){
+      int sura = -1;
       for (int i = 0; i < Constants.SURAS_COUNT; i++){
          if (SURA_PAGE_START[i] == page){
-            sura = i + 1; break;
+            sura = i + 1;
+            break;
          }
          else if (SURA_PAGE_START[i] > page){
             sura = i;
@@ -41,6 +41,12 @@ public class QuranInfo {
          }
       }
 
+      return sura;
+   }
+
+   public static String getSuraNameFromPage(Context context, int page,
+                                            boolean wantTitle){
+      int sura = getSuraNumberFromPage(page);
       return (sura > 0)? getSuraName(context, sura, wantTitle) : "";
    }
 

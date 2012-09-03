@@ -1,257 +1,235 @@
 package com.quran.labs.androidquran.database;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.AyahNotesTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkMapTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkCategoriesTable;
+import static com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
 
 public class BookmarksDBAdapter {
 
-	private SQLiteDatabase db;
-	private BookmarksDBHelper dbHelper;
+	private SQLiteDatabase mDb;
+	private BookmarksDBHelper mDbHelper;
 	
 	public BookmarksDBAdapter(Context context) {
-		this.dbHelper = new BookmarksDBHelper(context);
+		mDbHelper = new BookmarksDBHelper(context);
 	}
 
-	// TODO Add error handling for SQLExceptions and such..
-
 	public void open() throws SQLException {
-		db = dbHelper.getWritableDatabase();
+      if (mDb == null){
+		   mDb = mDbHelper.getWritableDatabase();
+      }
 	}
 
 	public void close() {
-		dbHelper.close();
-	}
-	
-	public String getAyahNote(int ayahId) {
-	   Cursor cursor = db.query(AyahNotesTable.TABLE_NAME,
-	         new String[] {AyahNotesTable.NOTE},
-	         AyahNotesTable.AYAH_ID + "=" + ayahId, null, null, null, null);
-	   String result = null;
-	   if (cursor.moveToFirst()) {
-	      result = cursor.getString(0);
-	   }
-	   cursor.close();
-	   return result;
-	}
-	
-	public void saveAyahNote(int ayahId, String note) {
-      ContentValues values = new ContentValues();
-      values.put(AyahNotesTable.AYAH_ID, ayahId);
-      values.put(AyahNotesTable.NOTE, note == null ? "" : note);
-	   int rowsChanged = db.update(AyahNotesTable.TABLE_NAME, values,
-	         AyahNotesTable.AYAH_ID + "=" + ayahId, null);
-	   if (rowsChanged == 0) {
-	      db.insert(AyahNotesTable.TABLE_NAME, null, values);
-	   }
-	}
-	
-   public void deleteAyahNote(int ayahId) {
-      db.delete(AyahNotesTable.TABLE_NAME,
-            AyahNotesTable.AYAH_ID + "=" + ayahId, null);
-   }
-   
-	public Bookmark getBookmark(long bookmarkId) {
-      Cursor cursor = db.query(BookmarksTable.TABLE_NAME,
-            new String[] {BookmarksTable.ID, BookmarksTable.NAME, BookmarksTable.TYPE, BookmarksTable.DESCRIPTION},
-				BookmarksTable.ID + "=" + bookmarkId, null, null, null, BookmarksTable.ID);
-		Bookmark bookmark = null;
-		if (cursor.moveToFirst()) {
-         boolean isCollection = cursor.getInt(2) == BookmarksTable.TYPE_COLLECTION ? true : false;
-         bookmark = new Bookmark(cursor.getLong(0), cursor.getString(1), isCollection);
-         if (!cursor.isNull(3))
-            bookmark.description = cursor.getString(3);
-		}
-		cursor.close();
-		return bookmark;
-	}
-	
-	public Map<Long, Bookmark> getBookmarks() {
-		Cursor cursor = db.query(BookmarksTable.TABLE_NAME,
-				new String[] {BookmarksTable.ID, BookmarksTable.NAME, BookmarksTable.TYPE, BookmarksTable.DESCRIPTION},
-				null, null, null, null, BookmarksTable.NAME + " ASC");
-		Map<Long, Bookmark> bookmarkList = new LinkedHashMap<Long, Bookmark>();
-		while (cursor.moveToNext()) {
-		   long id = cursor.getLong(0);
-		   boolean isCollection = cursor.getInt(2) == BookmarksTable.TYPE_COLLECTION ? true : false;
-			Bookmark bookmark = new Bookmark(cursor.getLong(0), cursor.getString(1), isCollection);
-			if (!cursor.isNull(3))
-				bookmark.description = cursor.getString(3);
-			bookmarkList.put(id, bookmark);
-		}
-		cursor.close();
-		return bookmarkList;
-	}
-	
-	public List<Bookmark> getBookmarksAsList() {
-	   return new ArrayList<Bookmark>(getBookmarks().values());
-	}
-
-	public void saveBookmark(Bookmark bookmark) {
-	   if (bookmark == null) return;
-      ContentValues values = new ContentValues();
-      values.put(BookmarksTable.NAME, bookmark.name);
-      values.put(BookmarksTable.TYPE, bookmark.isCollection ? 1 : 0);
-      values.put(BookmarksTable.DESCRIPTION, bookmark.description);
-      int rowsUpdated = 0;
-	   if (bookmark.id != null) {
-	      rowsUpdated = db.update(BookmarksTable.TABLE_NAME, values, BookmarksTable.ID+"="+bookmark.id, null);
-	   }
-	   if (rowsUpdated < 1) {
-	      db.insert(BookmarksTable.TABLE_NAME, null, values);
-	   }
-	}
-
-	public void deleteBookmark(long bookmarkId) {
-	   db.delete(BookmarkMapTable.TABLE_NAME, BookmarkMapTable.BOOKMARK_ID+"="+bookmarkId, null);
-		db.delete(BookmarksTable.TABLE_NAME, BookmarksTable.ID+"="+bookmarkId, null);
-	}
-	
-	public void deleteBookmarkMap(long bookmarkMapId) {
-	   db.delete(BookmarkMapTable.TABLE_NAME, BookmarkMapTable.ID+"="+bookmarkMapId, null);
-	}
-
-	public boolean isBookmarkCollection(long bookmarkId) {
-	   boolean result = false;
-      Cursor c = db.query(BookmarksTable.TABLE_NAME, new String[] {BookmarksTable.TYPE},
-            BookmarksTable.ID+"="+bookmarkId, null, null, null, null);
-      if (c.moveToFirst()) {
-         result = (c.getInt(0) == BookmarksTable.TYPE_COLLECTION);
+      if (mDb != null){
+		   mDbHelper.close();
+         mDb = null;
       }
-      c.close();
-      return result;
-	}
-	
-	public long bookmarkPage(int page, long bookmarkId) {
-	   int ayahId = QuranInfo.getAyahId(page);
-	   return bookmark(ayahId, bookmarkId, true);
-	}
-	
-	public long bookmarkAyah(int ayahId, long bookmarkId) {
-	   return bookmark(ayahId, bookmarkId, false);
-	}
-	
-   private long bookmark(int ayahId, long bookmarkId, boolean isPageBookmark) {
-      ContentValues values = new ContentValues();
-      values.put(BookmarkMapTable.AYAH_ID, ayahId);
-      values.put(BookmarkMapTable.BOOKMARK_ID, bookmarkId);
-      values.put(BookmarkMapTable.TYPE, isPageBookmark ? 
-            BookmarkMapTable.TYPE_PAGE : BookmarkMapTable.TYPE_AYAH);
-      if (isBookmarkCollection(bookmarkId)) {
-         Cursor c = db.query(BookmarkMapTable.TABLE_NAME,
-               new String[] {BookmarkMapTable.ID},
-               BookmarkMapTable.AYAH_ID+"="+ayahId+" AND "+BookmarkMapTable.BOOKMARK_ID+"="+bookmarkId,
-               null, null, null, null);
-         if (c.moveToFirst())
-            return c.getLong(0);
-         return db.insert(BookmarkMapTable.TABLE_NAME, null, values);
-      } else {
-         db.delete(BookmarkMapTable.TABLE_NAME, BookmarkMapTable.BOOKMARK_ID+"="+bookmarkId, null);
-         return db.insert(BookmarkMapTable.TABLE_NAME, null, values);
-      }
-   }
-
-   public boolean isAyahBookmarked(int sura, int ayah) {
-      int ayahId = QuranInfo.getAyahId(sura, ayah);
-      return isBookmarked(ayahId, BookmarkMapTable.TYPE_AYAH);
-   }
-   
-   public boolean isPageBookmarked(int page){
-      if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
-         return false;
-      }
-      int ayahId = QuranInfo.getAyahId(page);
-      return isBookmarked(ayahId, BookmarkMapTable.TYPE_PAGE);
-   }
-   
-	private boolean isBookmarked(int ayahId, int bookmarkType){
-	   boolean result = false;
-	   Cursor cursor = db.query(BookmarkMapTable.TABLE_NAME,
-	         new String[] {BookmarkMapTable.ID},
-	         BookmarkMapTable.AYAH_ID + "=" + ayahId + " AND "+ 
-	         BookmarkMapTable.TYPE + "=" + bookmarkType,
-	         null, null, null, null);
-	   if (cursor.moveToFirst())
-	      result = true;
-	   cursor.close();
-	   return result;
 	}
 
-	// Retruns a map with K as bookmarkId and V as a bookmark with its
-	// bookmarkMaps field populated with the appropriate ayah-bookmark maps
-   public Map<Long, Bookmark> getBookmarkMaps() {
-      Map<Long, Bookmark> bookmarks = getBookmarks();
-      Cursor c = db.query(BookmarkMapTable.TABLE_NAME,
-            new String[] {BookmarkMapTable.ID, BookmarkMapTable.AYAH_ID,
-            BookmarkMapTable.BOOKMARK_ID, BookmarkMapTable.TYPE},
-            null, null, null, null, BookmarkMapTable.AYAH_ID + " ASC");
-      while(c.moveToNext()) {
-         long bookmarkMapId = c.getLong(0);
-         int ayahId = c.getInt(1);
-         long bookmarkId = c.getLong(2);
-         boolean isPageBookmark = (c.getInt(3) == 1) ? true : false;
-         BookmarkMap b = new BookmarkMap(bookmarkMapId, ayahId, bookmarkId, isPageBookmark);
-         Bookmark bookmark = bookmarks.get(bookmarkId);
-         if (bookmark != null && bookmark.bookmarkMaps != null) {
-            bookmark.bookmarkMaps.add(b);
+   public List<Bookmark> getBookmarks(){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return null; }
+      }
+
+      List<Bookmark> bookmarks = null;
+      Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
+              null, null, null, null, null,
+              BookmarksTable.ADDED_DATE + " DESC");
+      if (cursor != null){
+         bookmarks = new ArrayList<Bookmark>();
+         while (cursor.moveToNext()){
+            long id = cursor.getLong(0);
+            Integer sura = cursor.getInt(1);
+            Integer ayah = cursor.getInt(2);
+            int page = cursor.getInt(3);
+            Long category = cursor.getLong(4);
+            long time = cursor.getLong(5);
+
+            if (sura == 0 || ayah == 0){
+               sura = null;
+               ayah = null;
+            }
+
+            if (category == 0){ category = null; }
+
+            Bookmark bookmark = new Bookmark(id, sura, ayah, page,
+                    category, time);
+            bookmarks.add(bookmark);
          }
+         cursor.close();
       }
-      c.close();
       return bookmarks;
    }
+
+   public boolean isPageBookmarked(int page){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return false; }
+      }
+
+      boolean result = false;
+      Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
+              null, BookmarksTable.PAGE + "=" + page + " AND " +
+              BookmarksTable.SURA + " IS NULL AND " +
+              BookmarksTable.AYAH + " IS NULL", null, null, null, null);
+      if (cursor != null && cursor.getCount() > 0){
+         result = true;
+      }
+      return result;
+   }
+
+   public long addBookmark(int page, long category){
+      return addBookmark(null, null, page, category);
+   }
+
+   public long addBookmark(int sura, int ayah, int page, Long category){
+      return addBookmark(sura, ayah, page, category);
+   }
+
+   public long addBookmark(Integer sura, Integer ayah,
+                           int page, Long category){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return -1; }
+      }
+
+      if (category != null && category == 0){
+         category = null;
+      }
+
+      ContentValues values = new ContentValues();
+      values.put(BookmarksTable.SURA, sura);
+      values.put(BookmarksTable.AYAH, ayah);
+      values.put(BookmarksTable.PAGE, page);
+      values.put(BookmarksTable.CATEGORY_ID, category);
+      return mDb.insert(BookmarksTable.TABLE_NAME, null, values);
+   }
+
+   public boolean removeBookmark(long bookmarkId){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return false; }
+      }
+
+      return mDb.delete(BookmarksTable.TABLE_NAME,
+              BookmarksTable.ID + "=" + bookmarkId, null) == 1;
+   }
+
+   public List<BookmarkCategory> getCategories(){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return null; }
+      }
+
+      List<BookmarkCategory> categories = null;
+      Cursor cursor = mDb.query(BookmarkCategoriesTable.TABLE_NAME,
+              null, null, null, null, null,
+              BookmarkCategoriesTable.NAME + " ASC");
+      if (cursor != null){
+         categories = new ArrayList<BookmarkCategory>();
+         while (cursor.moveToNext()){
+            long id = cursor.getLong(0);
+            String name = cursor.getString(1);
+            String description = cursor.getString(2);
+
+            BookmarkCategory category = new BookmarkCategory(
+                    id, name, description);
+            categories.add(category);
+         }
+         cursor.close();
+      }
+      return categories;
+   }
+
+   public long addCategory(String name, String description){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return -1; }
+      }
+
+      ContentValues values = new ContentValues();
+      values.put(BookmarkCategoriesTable.NAME, name);
+      values.put(BookmarkCategoriesTable.DESCRIPTION, description);
+      return mDb.insert(BookmarkCategoriesTable.TABLE_NAME, null, values);
+   }
+
+   public boolean updateCategory(long id, String name, String description){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return false; }
+      }
+
+      ContentValues values = new ContentValues();
+      values.put(BookmarkCategoriesTable.ID, id);
+      values.put(BookmarkCategoriesTable.NAME, name);
+      values.put(BookmarkCategoriesTable.DESCRIPTION, description);
+      return 1 == mDb.update(BookmarkCategoriesTable.TABLE_NAME, values,
+              BookmarkCategoriesTable.ID + "=" + id, null);
+   }
+
+   public boolean removeCategory(long categoryId, boolean removeBookmarks){
+      if (mDb == null){
+         open();
+         if (mDb == null){ return false; }
+      }
+
+      boolean removed = mDb.delete(BookmarkCategoriesTable.TABLE_NAME,
+              BookmarkCategoriesTable.ID + "=" + categoryId, null) == 1;
+      if (removeBookmarks){
+         mDb.delete(BookmarksTable.TABLE_NAME,
+                 BookmarksTable.CATEGORY_ID + "=" + categoryId, null);
+      }
+      else {
+         mDb.rawQuery("UPDATE " + BookmarksTable.TABLE_NAME + " SET " +
+                 BookmarksTable.CATEGORY_ID + " = NULL WHERE " +
+                 BookmarksTable.CATEGORY_ID + " = " + categoryId, null);
+      }
+
+      return removed;
+   }
    
-   public static class BookmarkMap {
-      public long bookmarkMapId, bookmarkId;
-      public int ayahId, page, sura, ayah;
-      public boolean isPageBookmark;
+   public static class BookmarkCategory {
+      public long mId;
+      public String mName;
+      public String mDescription;
       
-      public BookmarkMap(long bookmarkMapId, int ayahId, long bookmarkId, boolean isPageBookmark) {
-         this.bookmarkMapId = bookmarkMapId;
-         this.ayahId = ayahId;
-         this.bookmarkId = bookmarkId;
-         this.isPageBookmark = isPageBookmark;
-         int[] suraAyah = QuranInfo.getSuraAyahFromAyahId(ayahId);
-         sura = suraAyah[0];
-         ayah = suraAyah[1];
-         page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+      public BookmarkCategory(long id, String name, String description) {
+         mId = id;
+         mName = name;
+         mDescription = description;
+      }
+
+      @Override
+      public String toString() {
+         return mName == null? super.toString() : mName;
       }
    }
    
 	public static class Bookmark {
-		public Long id;
-		public String name, description;
-		public boolean isCollection;
-		public List<BookmarkMap> bookmarkMaps;
-		
-		public Bookmark(Long id, String name, boolean isCollection) {
-			this(id, name, isCollection, null);
-		}
-		
-		public Bookmark(Long id, String name, boolean isCollection, String description) {
-			this.id = id;
-			this.name = name;
-			this.isCollection = isCollection;
-			this.description = description;
-			this.bookmarkMaps = new ArrayList<BookmarkMap>();
-		}
-		
-		@Override
-		public String toString() {
-		   return (name != null) ? name : super.toString();
-		}
+		public long mId;
+      public Integer mSura;
+      public Integer mAyah;
+      public int mPage;
+      public long mTimestamp;
+      public Long mCategoryId;
+
+      public Bookmark(long id, Integer sura, Integer ayah, int page,
+                      Long categoryId, long timestamp){
+         mId = id;
+         mSura = sura;
+         mAyah = ayah;
+         mPage = page;
+         mCategoryId = categoryId;
+         mTimestamp = timestamp;
+      }
 	}
-	
 }

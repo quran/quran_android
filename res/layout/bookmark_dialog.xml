@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-    <LinearLayout android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="8dp"
@@ -33,30 +29,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text|textMultiLine" />
-    
-        <LinearLayout android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp" >
-            
-            <CheckBox
-                android:id="@+id/bookmark_is_collection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/bookmark_collection" />
-            
-            <ImageButton
-                android:id="@+id/bookmark_collection_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="center"
-                android:background="@null"
-                android:paddingLeft="16dp"
-                android:src="@drawable/ic_help" />
-            
-        </LinearLayout>
-        
-    </LinearLayout>
-    
-</ScrollView>
+</LinearLayout>

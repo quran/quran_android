@@ -1,30 +1,18 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -35,10 +23,16 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter.BookmarkMap;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.quran.labs.androidquran.database.BookmarksDBAdapter.BookmarkCategory;
 
 public class BookmarksFragment extends SherlockFragment {
 
@@ -104,7 +98,8 @@ public class BookmarksFragment extends SherlockFragment {
                if (mMode != null)
                   mMode.invalidate();
                else
-                  mMode = getSherlockActivity().startActionMode(new ModeCallback());
+                  mMode = getSherlockActivity().startActionMode(
+                          new ModeCallback());
             } else if (mMode != null) {
                mMode.finish();
             }
@@ -142,7 +137,8 @@ public class BookmarksFragment extends SherlockFragment {
 
       @Override
       public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-         MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
+         MenuInflater inflater =
+                 getSherlockActivity().getSupportMenuInflater();
          inflater.inflate(R.menu.bookmark_menu, menu);
          return true;
       }
@@ -157,14 +153,23 @@ public class BookmarksFragment extends SherlockFragment {
             removeItem.setVisible(false);
             return true;
          }
+
          QuranRow selected = (QuranRow)mAdapter.getItem(position);
          if (selected.isBookmarkHeader()) {
-            editItem.setVisible(true);
-            removeItem.setVisible(true);
-         } else if (selected.isBookmark()) {
+            if (selected.categoryId > 0){
+               editItem.setVisible(true);
+               removeItem.setVisible(true);
+            }
+            else {
+               editItem.setVisible(false);
+               removeItem.setVisible(false);
+            }
+         }
+         else if (selected.isBookmark()) {
             editItem.setVisible(false);
             removeItem.setVisible(true);
-         } else {
+         }
+         else {
             editItem.setVisible(false);
             removeItem.setVisible(false);
          }
@@ -173,6 +178,7 @@ public class BookmarksFragment extends SherlockFragment {
 
       @Override
       public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+         QuranActivity activity = (QuranActivity)getActivity();
          switch (item.getItemId()) {
          case R.id.cab_remove_bookmark:
             int position = mListView.getCheckedItemPosition();
@@ -182,17 +188,21 @@ public class BookmarksFragment extends SherlockFragment {
             new RemoveBookmarkTask().execute(row);
             return true;
          case R.id.cab_new_bookmark:
-            showBookmarkDialog(null);
+            activity.addCategory();
             mMode.finish();
             return true;
          case R.id.cab_edit_bookmark:
             int selectedBookmark = mListView.getCheckedItemPosition();
-            if (selectedBookmark < 0 || selectedBookmark >= mAdapter.getCount())
+            if (selectedBookmark < 0 ||
+                    selectedBookmark >= mAdapter.getCount()){
                return false;
-            QuranRow bookmark = (QuranRow)mAdapter.getItem(selectedBookmark);
-            if (!bookmark.isBookmarkHeader() || bookmark.bookmarkId < 0)
+            }
+            QuranRow category = (QuranRow)mAdapter.getItem(selectedBookmark);
+            if (!category.isBookmarkHeader() || category.categoryId < 0){
                return false;
-            new ShowBookmarkDialogTask().execute(bookmark.bookmarkId);
+            }
+            activity.editCategory(category.categoryId,
+                    category.text, category.metadata);
             mMode.finish();
             return true;
          default:
@@ -203,21 +213,32 @@ public class BookmarksFragment extends SherlockFragment {
       @Override
       public void onDestroyActionMode(ActionMode mode) {
          int checkedPosition = mListView.getCheckedItemPosition();
-         if (checkedPosition >= 0 && checkedPosition < mAdapter.getCount())
+         if (checkedPosition >= 0 && checkedPosition < mAdapter.getCount()){
             mListView.setItemChecked(checkedPosition, false);
-         if (mode == mMode)
-            mMode = null;
+         }
+         if (mode == mMode){ mMode = null; }
       }
       
    }
-   
-   private class SaveBookmarkTask extends AsyncTask<Bookmark, Void, Void> {
+
+   private class RemoveBookmarkTask extends AsyncTask<QuranRow, Void, Void> {
       @Override
-      protected Void doInBackground(Bookmark... params) {
-         BookmarksDBAdapter db = new BookmarksDBAdapter(getActivity());
-         db.open();
-         db.saveBookmark(params[0]);
-         db.close();
+      protected Void doInBackground(QuranRow... params) {
+         Activity activity = getActivity();
+         if (activity == null){ return null; }
+
+         QuranActivity quranActivity = (QuranActivity)activity;
+         BookmarksDBAdapter db = quranActivity.getBookmarksAdapter();
+
+         for (int i = 0; i < params.length; i++) {
+            QuranRow elem = params[i];
+            if (elem.isBookmarkHeader() && elem.categoryId >= 0) {
+               db.removeCategory(elem.categoryId, true);
+            }
+            else if (elem.isBookmark() && elem.bookmarkId >= 0) {
+               db.removeBookmark(elem.bookmarkId);
+            }
+         }
          return null;
       }
       
@@ -229,53 +250,17 @@ public class BookmarksFragment extends SherlockFragment {
          }
       }
    }
-   
-   private class RemoveBookmarkTask extends AsyncTask<QuranRow, Void, Void> {
-      @Override
-      protected Void doInBackground(QuranRow... params) {
-         BookmarksDBAdapter db = new BookmarksDBAdapter(getActivity());
-         db.open();
-         for (int i = 0; i < params.length; i++) {
-            QuranRow elem = params[i];
-            if (elem.isBookmarkHeader() && elem.bookmarkId >= 0) {
-               db.deleteBookmark(elem.bookmarkId);
-            } else if (elem.isBookmark() && elem.bookmarkMapId >= 0) {
-               db.deleteBookmarkMap(elem.bookmarkMapId);
-            }
-         }
-         db.close();
-         return null;
-      }
-      
-      @Override
-      protected void onPostExecute(Void result) {
-          if (loadingTask == null){
-              loadingTask = new BookmarksLoadingTask();
-              loadingTask.execute();
-           }
-      }
-   }
 
-   private class ShowBookmarkDialogTask extends AsyncTask<Long, Void, Bookmark> {
-      
-      @Override
-      protected Bookmark doInBackground(Long... params) {
-         if (params[0] == null) return null;
-         BookmarksDBAdapter db = new BookmarksDBAdapter(getActivity());
-         db.open();
-         Bookmark result = db.getBookmark(params[0]);
-         db.close();
-         return result;
+   public void refreshData(){
+      if (loadingTask != null){
+         loadingTask.cancel(true);
       }
-      
-      @Override
-      protected void onPostExecute(final Bookmark result) {
-         if (result == null) return;
-         showBookmarkDialog(result);
-      }
+      loadingTask = new BookmarksLoadingTask();
+      loadingTask.execute();
    }
    
-   private class BookmarksLoadingTask extends AsyncTask<Void, Void, QuranRow[]> {
+   private class BookmarksLoadingTask extends
+           AsyncTask<Void, Void, QuranRow[]> {
       @Override
       protected QuranRow[] doInBackground(Void... params) {
          return getBookmarks();
@@ -296,12 +281,18 @@ public class BookmarksFragment extends SherlockFragment {
    }
 
    private QuranRow[] getBookmarks(){
-      BookmarksDBAdapter db = new BookmarksDBAdapter(getActivity());
-      db.open();
-      Map<Long, Bookmark> bookmarks = db.getBookmarkMaps();
-      db.close();
-      
       Activity activity = getActivity();
+      if (activity == null){ return null; }
+
+      QuranActivity quranActivity = (QuranActivity)activity;
+      BookmarksDBAdapter db = quranActivity.getBookmarksAdapter();
+      List<BookmarkCategory> categories = db.getCategories();
+      List<Bookmark> bookmarks = db.getBookmarks();
+
+      // add uncategorized category
+      categories.add(new BookmarkCategory(0,
+              getString(R.string.sample_bookmark_uncategorized), null));
+      
       List<QuranRow> rows = new ArrayList<QuranRow>();
       
       SharedPreferences prefs = PreferenceManager
@@ -321,80 +312,64 @@ public class BookmarksFragment extends SherlockFragment {
                R.drawable.bookmark_page);
          rows.add(currentPosition);
       }
+
+      Map<Long, List<Bookmark>> bookmarkMap =
+              new HashMap<Long, List<Bookmark>>();
+      for (Bookmark bookmark : bookmarks){
+         Long category = bookmark.mCategoryId;
+         if (category == null){ category = 0l; }
+
+         List<Bookmark> catBookmarks = bookmarkMap.get(category);
+         if (catBookmarks == null){
+            catBookmarks = new ArrayList<Bookmark>();
+         }
+         catBookmarks.add(bookmark);
+         bookmarkMap.put(category, catBookmarks);
+      }
       
-      for (Bookmark bookmark : bookmarks.values()) {
+      for (BookmarkCategory category : categories) {
+         List<Bookmark> catBookmarks = bookmarkMap.get(category.mId);
+
+         // add the category itself
          QuranRow bookmarkHeader = new QuranRow(
-               bookmark.name,
-               null, QuranRow.BOOKMARK_HEADER, 0, 0, null);
-         bookmarkHeader.bookmarkId = bookmark.id;
+                 category.mName,
+                 category.mDescription,
+                 QuranRow.BOOKMARK_HEADER, 0, 0, null);
+         bookmarkHeader.categoryId = category.mId;
+
+         // don't add "uncategorized" if there is nothing there
+         if (category.mId == 0 && catBookmarks == null){ continue; }
          rows.add(bookmarkHeader);
-         for (BookmarkMap bookmarkMap : bookmark.bookmarkMaps) {
+
+         // no bookmarks in this category, so move on
+         if (catBookmarks == null){ continue; }
+
+         // and now the bookmarks
+         for (Bookmark bookmark : catBookmarks) {
             QuranRow row = null;
-            if (bookmarkMap.isPageBookmark) {
+            if (bookmark.mSura == null) {
+               int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
                row = new QuranRow(
-                     QuranInfo.getSuraNameString(activity, bookmarkMap.page),
-                     QuranInfo.getPageSubtitle(activity, bookmarkMap.page),
-                     QuranRow.PAGE_BOOKMARK, bookmarkMap.sura, bookmarkMap.page,
+                     QuranInfo.getSuraNameString(activity, bookmark.mPage),
+                     QuranInfo.getPageSubtitle(activity, bookmark.mPage),
+                     QuranRow.PAGE_BOOKMARK, sura, bookmark.mPage,
                      R.drawable.bookmark_page);
             } else {
                row = new QuranRow(
-                     QuranInfo.getAyahString(bookmarkMap.sura, bookmarkMap.ayah, getActivity()),
-                     QuranInfo.getPageSubtitle(activity, bookmarkMap.page),
-                     QuranRow.AYAH_BOOKMARK, bookmarkMap.sura, bookmarkMap.ayah, bookmarkMap.page,
+                     QuranInfo.getAyahString(bookmark.mSura,
+                             bookmark.mAyah, getActivity()),
+                     QuranInfo.getPageSubtitle(activity, bookmark.mPage),
+                     QuranRow.AYAH_BOOKMARK, bookmark.mSura,
+                       bookmark.mAyah, bookmark.mPage,
                      R.drawable.bookmark_ayah);
             }
-            row.bookmarkMapId = bookmarkMap.bookmarkMapId;
-            row.bookmarkId = bookmarkMap.bookmarkId;
+            row.categoryId = (bookmark.mCategoryId == null)?
+                    0 : bookmark.mCategoryId;
+            row.bookmarkId = bookmark.mId;
             rows.add(row);
          }
       }
       
       return rows.toArray(new QuranRow[rows.size()]);
-   }
-   
-   private void showBookmarkDialog(final Bookmark bookmark) {
-      LayoutInflater inflater = getActivity().getLayoutInflater();
-      View layout = inflater.inflate(R.layout.bookmark_dialog, null);
-
-      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      builder.setTitle(getString(R.string.bookmark_dlg_title));
-      
-      // Page text
-      final EditText nameText = (EditText)layout.findViewById(R.id.bookmark_name);
-      final EditText descriptionText = (EditText)layout.findViewById(R.id.bookmark_description);
-      final CheckBox isCollectionChkBx = (CheckBox)layout.findViewById(R.id.bookmark_is_collection);
-      final ImageButton collectionHint = (ImageButton)layout.findViewById(R.id.bookmark_collection_hint);
-      collectionHint.setOnClickListener(new OnClickListener() {
-         public void onClick(View v) {
-            Toast.makeText(getActivity(), R.string.bookmark_collection_hint, Toast.LENGTH_LONG).show();
-         }
-      });
-      
-      if (bookmark != null) {
-         nameText.setText(bookmark.name != null ? bookmark.name : "");
-         descriptionText.setText(bookmark.description != null ? bookmark.description : "");
-         isCollectionChkBx.setChecked(bookmark.isCollection);
-      }
-
-      builder.setView(layout);
-      builder.setPositiveButton(getString(R.string.dialog_ok),
-            new DialogInterface.OnClickListener() {
-               @Override
-               public void onClick(DialogInterface dialog, int which) {
-                  Long bookmarkId = null;
-                  if (bookmark != null && bookmark.id >= 0) {
-                     bookmarkId = bookmark.id;
-                  }
-                  String bookmarkName = nameText.getText().toString();
-                  String bookmarkDescription = descriptionText.getText().toString();
-                  boolean isCollection = isCollectionChkBx.isChecked();
-                  Bookmark bookmark = new Bookmark(bookmarkId, bookmarkName, isCollection, bookmarkDescription);
-                  new SaveBookmarkTask().execute(bookmark);
-                  dialog.dismiss();
-               }
-            });
-      
-      AlertDialog dlg = builder.create();
-      dlg.show();
    }
 }

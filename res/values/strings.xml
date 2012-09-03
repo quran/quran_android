@@ -230,7 +230,8 @@
     <string name="edit_bookmark">Edit Bookmark</string>
     <string name="new_bookmark">New Bookmark</string>
     
-    <!-- bookmark dialog -->
+    <!-- bookmark dialogs -->
+    <string name="bookmark_category_title">Bookmark Category</string>
     <string name="bookmark_dlg_title">Bookmark</string>
     <string name="bookmark_name">Name</string>
     <string name="bookmark_description">Description (optional)</string>
@@ -242,7 +243,7 @@
     <string name="bookmarks_list_empty">No Bookmarks</string>
     
     <!-- sample bookmarks -->
-    <string name="sample_bookmark_reading">Daily Reading (bookmark)</string>
-    <string name="sample_bookmark_duas">Quranic Duas (collection)</string>
+    <string name="sample_bookmark_reading">Daily Reading</string>
+    <string name="sample_bookmark_duas">Quranic Duas</string>
     <string name="sample_bookmark_uncategorized">Uncategorized</string>
 </resources>
