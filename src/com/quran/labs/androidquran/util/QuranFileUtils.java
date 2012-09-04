@@ -1,5 +1,11 @@
 package com.quran.labs.androidquran.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+import android.util.Log;
+import com.quran.labs.androidquran.data.QuranDataProvider;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,12 +13,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Locale;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
-import android.util.Log;
-import com.quran.labs.androidquran.data.QuranDataProvider;
 
 public class QuranFileUtils {
 	public static boolean failedToWrite = false;
@@ -53,10 +53,12 @@ public class QuranFileUtils {
 			File dir = new File(getQuranDirectory() + File.separator);
 			if (dir.isDirectory()) {
 				int files = dir.list().length;
-				if (files == 605)
+				if (files >= 604){
+               // ideally, we should loop for each page and ensure
+               // all pages are there, but this will do for now.
 					return true;
-			} else
-				QuranFileUtils.makeQuranDirectory();
+            }
+			} else { QuranFileUtils.makeQuranDirectory(); }
 		}
 		return false;
 	}
