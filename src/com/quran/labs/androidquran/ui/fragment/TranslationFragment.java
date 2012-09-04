@@ -1,14 +1,12 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -16,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -28,6 +25,9 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.TranslationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TranslationFragment extends SherlockFragment {
    private static final String TAG = "TranslationPageFragment";
@@ -98,12 +98,23 @@ public class TranslationFragment extends SherlockFragment {
 
       mTranslationView = (TranslationView)view
               .findViewById(R.id.translation_text);
-      mTranslationView.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            ((PagerActivity)getActivity()).toggleActionBar();
-         }
-      });
+      if (Build.VERSION.SDK_INT >= 11){
+         mTranslationView.setOnTextClickedListener(
+                 new TranslationView.OnTextClickedListener() {
+            @Override
+            public void onTextClicked() {
+               ((PagerActivity) getActivity()).toggleActionBar();
+            }
+         });
+      }
+      else {
+         mTranslationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               ((PagerActivity)getActivity()).toggleActionBar();
+            }
+         });
+      }
 
       String database = prefs.getString(
               Constants.PREF_ACTIVE_TRANSLATION, null);
