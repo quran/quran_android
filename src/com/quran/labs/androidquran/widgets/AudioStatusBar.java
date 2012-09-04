@@ -208,8 +208,10 @@ public class AudioStatusBar extends LinearLayout {
       mPromptText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
               mTextFontSize);
       mPromptText.setText(R.string.download_non_wifi_prompt);
-      addView(mPromptText, LayoutParams.WRAP_CONTENT,
+      LayoutParams params = new LayoutParams(0,
               LayoutParams.MATCH_PARENT);
+      params.weight = 1;
+      addView(mPromptText, params);
       addButton(R.drawable.ic_accept);
    }
 
