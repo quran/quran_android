@@ -17,6 +17,10 @@ public class AddCategoryDialog extends SherlockDialogFragment {
    private String mName;
    private String mDescription;
 
+   private static final String ID = "id";
+   private static final String NAME = "name";
+   private static final String DESCRIPTION = "description";
+
    public AddCategoryDialog(){
    }
 
@@ -27,7 +31,21 @@ public class AddCategoryDialog extends SherlockDialogFragment {
    }
 
    @Override
+   public void onSaveInstanceState(Bundle outState) {
+      outState.putLong(ID, mId);
+      outState.putString(NAME, mName);
+      outState.putString(DESCRIPTION, mDescription);
+      super.onSaveInstanceState(outState);
+   }
+
+   @Override
    public Dialog onCreateDialog(Bundle savedInstanceState) {
+      if (savedInstanceState != null){
+         mId = savedInstanceState.getLong(ID, -1);
+         mName = savedInstanceState.getString(NAME);
+         mDescription = savedInstanceState.getString(DESCRIPTION);
+      }
+
       LayoutInflater inflater = getActivity().getLayoutInflater();
       View layout = inflater.inflate(R.layout.bookmark_dialog, null);
 

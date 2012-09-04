@@ -26,7 +26,6 @@ public class QuranDataActivity extends SherlockActivity implements
         DefaultDownloadReceiver.SimpleDownloadListener {
    
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
-   private static final int SPLASH_WAIT_TIME = 2000;
 
    private boolean mIsPaused = false;
    private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
@@ -156,10 +155,9 @@ public class QuranDataActivity extends SherlockActivity implements
 
       @Override
       protected Boolean doInBackground(Void... params) {
-    	  try {
-    		  Thread.sleep(SPLASH_WAIT_TIME);
-    	  } catch (Exception e) {}
-    	  
+         // intentionally not sleeping because waiting
+         // for the splash screen is not cool.
+
          return QuranFileUtils.getQuranDirectory() != null &&
                 QuranFileUtils.haveAllImages();
       }

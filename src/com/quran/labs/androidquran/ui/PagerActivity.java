@@ -52,7 +52,6 @@ import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Locale;
 
 import static com.quran.labs.androidquran.database.BookmarksDBAdapter.BookmarkCategory;
@@ -90,7 +89,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private boolean mNeedsPermissionToDownloadOver3g = true;
    private AlertDialog mPromptDialog = null;
    private Handler mHandler = new Handler();
-   private boolean mIsPaused = false;
 
    public static final int VISIBLE_FLAGS =
              View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -260,7 +258,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onResume(){
-      mIsPaused = false;
       mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
       LocalBroadcastManager.getInstance(this).registerReceiver(
               mAudioReceiver,
@@ -408,7 +405,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onPause(){
-      mIsPaused = true;
       if (mPromptDialog != null){
          mPromptDialog.dismiss();
          mPromptDialog = null;
@@ -545,32 +541,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
-   public void bookmark(final Integer sura,
-                        final Integer ayah, final int page){
-      new Thread(new Runnable() {
-         @Override
-         public void run() {
-            BookmarksDBAdapter dba =
-                    new BookmarksDBAdapter(PagerActivity.this);
-            dba.open();
-            final List<BookmarkCategory> categories = dba.getCategories();
-            dba.close();
-
-            runOnUiThread(new Runnable() {
-               @Override
-               public void run() {
-                  showBookmarkPageDialog(sura, ayah, page, categories);
-               }
-            });
-         }
-      }).start();
-   }
-
-   public void showBookmarkPageDialog(Integer sura, Integer ayah, int page,
-                                      List<BookmarkCategory> categories){
-      if (mIsPaused){ return; }
+   public void bookmark(Integer sura, Integer ayah, int page){
       FragmentManager fm = getSupportFragmentManager();
-      BookmarkDialog dialog = new BookmarkDialog(sura, ayah, page, categories);
+      BookmarkDialog dialog = new BookmarkDialog(sura, ayah, page);
       dialog.show(fm, "BookmarkDialog");
    }
 
