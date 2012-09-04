@@ -19,7 +19,7 @@
             android:fillViewport="true">
         <com.quran.labs.androidquran.widgets.TranslationView
                 android:id="@+id/translation_text"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
     </ScrollView>
     <ImageView android:id="@id/right_border"

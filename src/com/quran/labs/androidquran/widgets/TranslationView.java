@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import java.util.List;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
@@ -13,13 +11,14 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import java.util.List;
 
 public class TranslationView extends LinearLayout {
 
@@ -35,6 +34,7 @@ public class TranslationView extends LinearLayout {
    private int mArabicStatus;
    private boolean mUseArabicFont;
    private boolean mShouldReshape;
+   private OnTextClickedListener mListener;
 
    public TranslationView(Context context){
       super(context);
@@ -141,11 +141,29 @@ public class TranslationView extends LinearLayout {
       }
    }
 
+   private OnClickListener mOnTextClickListener = new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+         if (mListener != null){
+            mListener.onTextClicked();
+         }
+      }
+   };
+
+   public void setOnTextClickedListener(OnTextClickedListener listener){
+      mListener = listener;
+   }
+
+   public interface OnTextClickedListener {
+      public void onTextClicked();
+   }
+
    private void addTextForSura(SpannableStringBuilder stringBuilder){
       TextView translationText = new TextView(mContext);
       translationText.setTextAppearance(mContext, mTextStyle);
       if (Build.VERSION.SDK_INT >= 11){
          translationText.setTextIsSelectable(true);
+         translationText.setOnClickListener(mOnTextClickListener);
       }
       translationText.setText(stringBuilder);
       translationText.setTextSize(mFontSize);
