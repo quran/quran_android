@@ -309,7 +309,7 @@ public class BookmarksFragment extends SherlockFragment {
                QuranInfo.getSuraNameString(activity, lastPage),
                QuranInfo.getPageSubtitle(activity, lastPage),
                QuranInfo.PAGE_SURA_START[lastPage-1], lastPage,
-               R.drawable.bookmark_page);
+               R.drawable.bookmark_currentpage);
          rows.add(currentPosition);
       }
 
