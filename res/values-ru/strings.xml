@@ -215,4 +215,27 @@
     <string name="search_key">Нажмите клавишу поиска, чтобы найти стих</string>
     <string name="copy_ayah">Скопировать аят</string>
     <string name="ayah_copied_popup">Аят скорирован</string>
+    <string name="show_more">Show More</string>
+
+    <!-- bookmark contextual action bar -->
+    <string name="remove_bookmark">Remove Bookmark</string>
+    <string name="edit_bookmark">Edit Bookmark</string>
+    <string name="new_bookmark">New Bookmark</string>
+
+    <!-- bookmark dialogs -->
+    <string name="bookmark_category_title">Bookmark Category</string>
+    <string name="bookmark_dlg_title">Bookmark</string>
+    <string name="bookmark_name">Name</string>
+    <string name="bookmark_description">Description (optional)</string>
+    <string name="bookmark_collection">Collection</string>
+    <string name="bookmark_collection_hint">Instead of changing automatically, collections hold multiple bookmarks</string>
+
+    <!-- bookmarks list -->
+    <string name="bookmarks_list_title">Select a bookmark</string>
+    <string name="bookmarks_list_empty">No Bookmarks</string>
+
+    <!-- sample bookmarks -->
+    <string name="sample_bookmark_reading">Daily Reading</string>
+    <string name="sample_bookmark_duas">Quranic Duas</string>
+    <string name="sample_bookmark_uncategorized">Uncategorized</string>
 </resources>

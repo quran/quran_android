@@ -490,17 +490,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          return true;
       }
       else if (item.getItemId() == R.id.goto_translation){
-         String activeDatabase = mPrefs.getString(
-                 Constants.PREF_ACTIVE_TRANSLATION, null);
-         if (activeDatabase == null){
-            Intent i = new Intent(this, TranslationManagerActivity.class);
-            startActivity(i);
-         }
-         else {
-            mPagerAdapter.setTranslationMode();
-            mShowingTranslation = true;
-            invalidateOptionsMenu();
-         }
+         switchToTranslation();
          return true;
       }
       else if (item.getItemId() == R.id.settings){
@@ -538,6 +528,20 @@ public class PagerActivity extends SherlockFragmentActivity implements
       int currentPage = Constants.PAGES_LAST - position;
       if (currentPage == page){
          setLoading(true);
+      }
+   }
+
+   public void switchToTranslation(){
+      String activeDatabase = mPrefs.getString(
+              Constants.PREF_ACTIVE_TRANSLATION, null);
+      if (activeDatabase == null){
+         Intent i = new Intent(this, TranslationManagerActivity.class);
+         startActivity(i);
+      }
+      else {
+         mPagerAdapter.setTranslationMode();
+         mShowingTranslation = true;
+         invalidateOptionsMenu();
       }
    }
 

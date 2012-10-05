@@ -224,6 +224,7 @@
     <string name="search_key">Press the search key to look up a verse</string>
     <string name="copy_ayah">Copy Ayah</string>
     <string name="ayah_copied_popup">Ayah Copied</string>
+    <string name="show_more">Show More</string>
     
     <!-- bookmark contextual action bar -->
     <string name="remove_bookmark">Remove Bookmark</string>

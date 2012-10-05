@@ -369,7 +369,7 @@ public class QuranPageFragment extends SherlockFragment {
 		
 		@Override
 		protected void onPostExecute(String text) {
-			Activity activity = getActivity();
+			final Activity activity = getActivity();
 			if (activity != null && text != null) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(activity)
 				   .setMessage(text)
@@ -381,7 +381,18 @@ public class QuranPageFragment extends SherlockFragment {
 						   dialog.dismiss();
                      mTranslationDialog = null;
 					   }
-				   }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+				   }).
+                 setNeutralButton(R.string.show_more,
+                         new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                      dialog.dismiss();
+                      mTranslationDialog = null;
+                      if (activity instanceof PagerActivity){
+                         ((PagerActivity)activity).switchToTranslation();
+                      }
+                    }
+                 }).setOnCancelListener(new DialogInterface.OnCancelListener() {
                   @Override
                   public void onCancel(DialogInterface dialogInterface) {
                      mTranslationDialog = null;
