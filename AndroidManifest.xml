@@ -24,14 +24,14 @@
 		</activity>
 
 		<activity android:name=".ui.QuranActivity"
-         android:configChanges="keyboardHidden|orientation" />
+            android:configChanges="keyboardHidden|orientation" />
 		<activity android:name=".AboutUsActivity"
 			android:screenOrientation="portrait" />
 		<activity android:name=".HelpActivity"
 			android:screenOrientation="portrait" />
 		<activity android:name=".ui.PagerActivity"
 		          android:launchMode="singleTask" />
-       <activity android:name=".ui.TranslationManagerActivity"
+        <activity android:name=".ui.TranslationManagerActivity"
                  android:screenOrientation="portrait" />
 		<activity android:name=".QuranPreferenceActivity"
 			android:screenOrientation="portrait" />
@@ -42,6 +42,13 @@
 			<meta-data android:name="android.app.searchable"
 				android:resource="@xml/searchable" />
 		</activity>
+        <activity android:name=".QuranForwarderActivity">
+           <intent-filter>
+               <action android:name="android.intent.action.VIEW"/>
+               <category android:name="android.intent.category.DEFAULT"/>
+               <data android:scheme="quran"/>
+           </intent-filter>
+        </activity>
 
 		<!-- declare the default searchable Activity for the whole app -->
 		<meta-data android:name="android.app.default_searchable"
@@ -60,8 +67,6 @@
         </receiver>
         
 		<service android:enabled="true" android:name=".service.QuranDownloadService" />
-		<service android:enabled="true" android:name=".service.QuranDataService" />
-		<service android:name=".service.QuranAudioService" />
         <service android:exported="false" android:name=".service.AudioService">
             <intent-filter>
                 <action android:name="com.quran.labs.androidquran.action.PLAYBACK" />
