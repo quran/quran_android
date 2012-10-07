@@ -40,6 +40,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.*;
+import com.quran.labs.androidquran.ui.fragment.AddCategoryDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
@@ -59,7 +60,8 @@ import static com.quran.labs.androidquran.database.BookmarksDBAdapter.BookmarkCa
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
         DefaultDownloadReceiver.DownloadListener,
-        BookmarkDialog.OnCategorySelectedListener {
+        BookmarkDialog.OnCategorySelectedListener,
+        AddCategoryDialog.OnCategoryChangedListener {
    private static final String TAG = "PagerActivity";
    private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
    private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
@@ -513,7 +515,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       else if (item.getItemId() == R.id.jump){
          FragmentManager fm = getSupportFragmentManager();
          JumpFragment jumpDialog = new JumpFragment();
-         jumpDialog.show(fm, "jumpDialogTag");
+         jumpDialog.show(fm, JumpFragment.TAG);
          return true;
       }
       return super.onOptionsItemSelected(item);
@@ -548,13 +550,55 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void bookmark(Integer sura, Integer ayah, int page){
       FragmentManager fm = getSupportFragmentManager();
       BookmarkDialog dialog = new BookmarkDialog(sura, ayah, page);
-      dialog.show(fm, "BookmarkDialog");
+      dialog.show(fm, BookmarkDialog.TAG);
+   }
+
+   @Override
+   public void onAddCategorySelected(){
+      FragmentManager fm = getSupportFragmentManager();
+      AddCategoryDialog dialog = new AddCategoryDialog();
+      dialog.show(fm, AddCategoryDialog.TAG);
+   }
+
+   public void refreshBookmarkCategories(){
+      runOnUiThread(new Runnable() {
+         @Override
+         public void run() {
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment f = fm.findFragmentByTag(BookmarkDialog.TAG);
+            if (f != null && f instanceof BookmarkDialog){
+               ((BookmarkDialog)f).requestCategoryData();
+            }
+         }
+      });
    }
 
    @Override
    public void onCategorySelected(BookmarkCategory category,
                                   Integer sura, Integer ayah, int page) {
       new BookmarkPageTask(category.mId).execute(sura, ayah, page);
+   }
+
+   @Override
+   public void onCategoryAdded(final String name, final String description){
+      new Thread(new Runnable() {
+         @Override
+         public void run() {
+            // add the category
+            BookmarksDBAdapter dba =
+                    new BookmarksDBAdapter(PagerActivity.this);
+            dba.open();
+            dba.addCategory(name, description);
+            dba.close();
+
+            refreshBookmarkCategories();
+         }
+      }).start();
+   }
+
+   @Override
+   public void onCategoryUpdated(long id, String name, String description){
+      // should not be called in this flow
    }
 
    private void updateActionBarTitle(int page){
