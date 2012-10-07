@@ -19,6 +19,7 @@ import java.util.List;
 import static com.quran.labs.androidquran.database.BookmarksDBAdapter.BookmarkCategory;
 
 public class BookmarkDialog extends SherlockDialogFragment {
+   public static final String TAG = "BookmarkDialog";
 
    private Integer mSura;
    private Integer mAyah;
@@ -65,8 +66,19 @@ public class BookmarkDialog extends SherlockDialogFragment {
             categories.add(new BookmarkCategory(0,
                     getString(R.string.sample_bookmark_uncategorized), null));
             mCategories = categories;
-            mAdapter.addAll(mCategories);
-            mAdapter.notifyDataSetChanged();
+            mCategories.add(new BookmarkCategory(-1,
+                    getString(R.string.add_category), null));
+
+            activity.runOnUiThread(new Runnable() {
+               @Override
+               public void run() {
+                  mAdapter.clear();
+                  for (BookmarkCategory bc : mCategories){
+                     mAdapter.add(bc);
+                  }
+                  mAdapter.notifyDataSetChanged();
+               }
+            });
          }
       }).start();
    }
@@ -101,6 +113,12 @@ public class BookmarkDialog extends SherlockDialogFragment {
             Activity currentActivity = getActivity();
             if (currentActivity != null &&
                     currentActivity instanceof OnCategorySelectedListener){
+               if (category.mId == -1){
+                  ((OnCategorySelectedListener)currentActivity)
+                          .onAddCategorySelected();
+                  return;
+               }
+
                ((OnCategorySelectedListener)currentActivity)
                        .onCategorySelected(category, mSura, mAyah, mPage);
             }
@@ -116,5 +134,6 @@ public class BookmarkDialog extends SherlockDialogFragment {
    public interface OnCategorySelectedListener {
       public void onCategorySelected(BookmarkCategory bookmark,
                                      Integer sura, Integer ayah, int page);
+      public void onAddCategorySelected();
    }
 }

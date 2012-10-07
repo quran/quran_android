@@ -242,6 +242,7 @@
     <!-- bookmarks list -->
     <string name="bookmarks_list_title">Select a bookmark</string>
     <string name="bookmarks_list_empty">No Bookmarks</string>
+    <string name="add_category">Add Category</string>
     
     <!-- sample bookmarks -->
     <string name="sample_bookmark_reading">Daily Reading</string>

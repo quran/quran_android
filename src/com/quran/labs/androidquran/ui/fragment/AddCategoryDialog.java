@@ -12,6 +12,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
 
 public class AddCategoryDialog extends SherlockDialogFragment {
+   public static final String TAG = "AddCategoryDialog";
 
    private long mId = -1;
    private String mName;

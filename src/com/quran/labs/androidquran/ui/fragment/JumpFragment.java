@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 
 public class JumpFragment extends SherlockDialogFragment {
+   public static final String TAG = "JumpFragment";
 
    public JumpFragment(){
    }

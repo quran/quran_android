@@ -208,20 +208,20 @@ public class QuranActivity extends SherlockFragmentActivity
    public void gotoPageDialog() {
       FragmentManager fm = getSupportFragmentManager();
       JumpFragment jumpDialog = new JumpFragment();
-      jumpDialog.show(fm, "jumpDialogTag");
+      jumpDialog.show(fm, JumpFragment.TAG);
    }
 
    public void addCategory(){
       FragmentManager fm = getSupportFragmentManager();
       AddCategoryDialog addCategoryDialog = new AddCategoryDialog();
-      addCategoryDialog.show(fm, "addCategoryDialogTag");
+      addCategoryDialog.show(fm, AddCategoryDialog.TAG);
    }
 
    public void editCategory(long id, String name, String description){
       FragmentManager fm = getSupportFragmentManager();
       AddCategoryDialog addCategoryDialog =
               new AddCategoryDialog(id, name, description);
-      addCategoryDialog.show(fm, "addCategoryDialogTag");
+      addCategoryDialog.show(fm, AddCategoryDialog.TAG);
    }
 
    @Override
