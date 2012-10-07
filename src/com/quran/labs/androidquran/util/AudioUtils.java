@@ -1,23 +1,24 @@
 package com.quran.labs.androidquran.util;
 
-import java.io.File;
-
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 
+import java.io.File;
+
 public class AudioUtils {
    private static final String TAG = "AudioUtils";
    public static final String DB_EXTENSION = ".db";
    public static final String AUDIO_EXTENSION = ".mp3";
    public static final String ZIP_EXTENSION = ".zip";
+   private static String AUDIO_DIRECTORY = "audio";
+
 
    public final static class LookAheadAmount {
       public static final int PAGE = 1;
@@ -58,7 +59,7 @@ public class AudioUtils {
                  .getStringArray(R.array.quran_readers_path);
       }
 
-      String rootDirectory = getAudioRootDirectory(context);
+      String rootDirectory = getAudioRootDirectory();
       return rootDirectory == null? null :
               rootDirectory + mQariFilePaths[position];
    }
@@ -247,7 +248,12 @@ public class AudioUtils {
       return true;
    }
 
-   public static String getAudioRootDirectory(Context context){
+   public static String getAudioRootDirectory(){
+      String s = QuranFileUtils.getQuranBaseDirectory();
+      return (s == null)? null : s + AUDIO_DIRECTORY + File.separator;
+   }
+
+   public static String getOldAudioRootDirectory(Context context){
       File f = null;
       String path = "";
       String sep = File.separator;

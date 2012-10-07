@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -15,6 +16,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class QuranFileUtils {
+   private static final String TAG = "QuranFileUtils";
+
 	public static boolean failedToWrite = false;
 	public static String IMG_HOST = "http://android.quran.com/data/";
 	private static String QURAN_BASE = File.separator + "quran_android"
@@ -38,7 +41,7 @@ public class QuranFileUtils {
 
 	public static void debugLsDir(String dir) {
 		File directory = new File(dir);
-		Log.d("quran_dbg", directory.getAbsolutePath());
+		Log.d(TAG, directory.getAbsolutePath());
 
 		if (directory.isDirectory()) {
 			String[] children = directory.list();
@@ -132,7 +135,7 @@ public class QuranFileUtils {
 		String urlString = IMG_HOST + "width"
 				+ instance.getWidthParam() + "/"
 				+ filename;
-		Log.d("quran_utils", "want to download: " + urlString);
+		Log.d(TAG, "want to download: " + urlString);
 
 		InputStream is;
 		try {
@@ -278,6 +281,37 @@ public class QuranFileUtils {
    public static String getArabicSearchDatabaseUrl(){
       return IMG_HOST + DATABASE_DIRECTORY + "/" +
               QuranDataProvider.QURAN_ARABIC_DATABASE;
+   }
+
+   public static void migrateAudio(Context context){
+      String oldAudioDirectory = AudioUtils.getOldAudioRootDirectory(context);
+      String destinationAudioDirectory = AudioUtils.getAudioRootDirectory();
+      if (oldAudioDirectory != null && destinationAudioDirectory != null){
+         File old = new File(oldAudioDirectory);
+         if (old.exists()){
+            Log.d(TAG, "old audio path exists");
+            File dest = new File(destinationAudioDirectory);
+            if (!dest.exists()){
+               Log.d(TAG, "new audio path doesn't exist, renaming...");
+               boolean result = old.renameTo(dest);
+               Log.d(TAG, "result of renaming: " + result);
+            }
+            else {
+               Log.d(TAG, "destination already exists..");
+               File[] oldFiles = old.listFiles();
+               if (oldFiles != null){
+                  for (File f : oldFiles){
+                     File newFile = new File(dest, f.getName());
+                     if (newFile != null){
+                        boolean result = f.renameTo(newFile);
+                        Log.d(TAG, "attempting to copy " + f +
+                                " to " + newFile + ", res: " + result);
+                     }
+                  }
+               }
+            }
+         }
+      }
    }
 
 }
