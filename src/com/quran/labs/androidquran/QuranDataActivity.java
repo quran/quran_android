@@ -158,6 +158,7 @@ public class QuranDataActivity extends SherlockActivity implements
          // intentionally not sleeping because waiting
          // for the splash screen is not cool.
 
+         QuranFileUtils.migrateAudio(QuranDataActivity.this);
          return QuranFileUtils.getQuranDirectory() != null &&
                 QuranFileUtils.haveAllImages();
       }
