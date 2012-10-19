@@ -292,6 +292,11 @@ public class QuranFileUtils {
             Log.d(TAG, "old audio path exists");
             File dest = new File(destinationAudioDirectory);
             if (!dest.exists()){
+               // just in case the user manually deleted /sdcard/quran_android
+               // and left the audio as is (unlikely, but just in case).
+               String parentDir = QuranFileUtils.getQuranBaseDirectory();
+               new File(parentDir).mkdir();
+
                Log.d(TAG, "new audio path doesn't exist, renaming...");
                boolean result = old.renameTo(dest);
                Log.d(TAG, "result of renaming: " + result);
