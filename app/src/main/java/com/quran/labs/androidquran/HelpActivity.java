@@ -40,7 +40,7 @@ public class HelpActivity extends SherlockActivity implements OnClickListener {
          String body = "\n\n";
          try {
         	 PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-        	 body = getString(R.string.app_name) + " Version: " + pInfo.versionName;
+        	 body = pInfo.packageName + " Version: " + pInfo.versionName;
          } catch (Exception e) {}
          
          try {
