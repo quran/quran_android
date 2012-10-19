@@ -65,8 +65,8 @@ description and your application itself in an about section.
 
 Open Source Projects Used
 -------------------------
-[ActionBarSherlock](http://abs.io)
-[maven-android-plugin](http://code.google.com/p/maven-android-plugin/)
+* [ActionBarSherlock](http://abs.io)
+* [maven-android-plugin](http://code.google.com/p/maven-android-plugin/)
 
 Changelog
 ---------
