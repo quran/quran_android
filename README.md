@@ -32,8 +32,24 @@ Russian by Rinat (Ринат Валеев).
 
 Terms of use
 ------------
-you are free to use parts of (or all of) the Quran Android code in your
-application with some conditions:
+you are free to use parts of the Quran Android code in your application
+with some conditions:
+
+* your app must be respectful of the book of Allah.  adding advertisements
+above and below each page of Quran is unacceptable, for example (yes,
+someone actually did that).
+
+* your app must provide some significant value over our app - otherwise,
+why not just contribute a patch instead?
+
+* your app cannot make money from ads or from sales.  there are many reasons
+for this:
+    - we made this app for the benefit of people and not to make a profit
+    - the app costs us money (for serving the pages, translations, etc), not to
+mention the time to develop it and to support it.
+    - not all of the data that we use is okay to be sold.  the images, along with
+some of the translations are **not** under public domain, which means that
+while we are allowed to use these for a free app, we cannot sell the app.
 
 * if you write an application using any of the Quran data (the images, the
 translations, etc), you must provide a link to the respective data source
@@ -47,12 +63,26 @@ must provide a link back to the [quran android
 project](http://github.com/ahmedre/quran_android) in your application
 description and your application itself in an about section.
 
-Project dependecies
--------------------
+Open Source Projects Used
+-------------------------
 [ActionBarSherlock](http://abs.io)
+[maven-android-plugin](http://code.google.com/p/maven-android-plugin/)
 
 Changelog
 ---------
+**version 2.2.0 (in development)**
+
+- move to maven
+- migrate audio files to `/sdcard/quran_android/audio` instead of temp app directory
+- bookmarks changes (still in progress)
+- exposed an intent to allow launching Quran directly to a page/verse - #183
+- navigation using volume keys - #172
+- fix navigation bar jumping on jellybean
+- option to overlay page number, sura name, and juz' on the page - #159
+- fix actionbar not toggling on translation view on honeycomb+ - #158
+- fix ldpi devices not being able to download over 3g in certain cases - #167
+- relax constraint on deciding whether or not data is downloaded - #196
+
 **version 2.1.0**
 
 - setting to bring back the old background color
