@@ -75,13 +75,14 @@ Changelog
 - move to maven
 - migrate audio files to `/sdcard/quran_android/audio` instead of temp app directory
 - bookmarks changes (still in progress)
-- exposed an intent to allow launching Quran directly to a page/verse - #183
-- navigation using volume keys - #172
+- exposed an intent to allow launching Quran directly to a
+  page/verse - [\#183](https://github.com/ahmedre/quran_android/issues/183)
+- navigation using volume keys - [\#172](https://github.com/ahmedre/quran_android/issues/172)
 - fix navigation bar jumping on jellybean
-- option to overlay page number, sura name, and juz' on the page - #159
-- fix actionbar not toggling on translation view on honeycomb+ - #158
-- fix ldpi devices not being able to download over 3g in certain cases - #167
-- relax constraint on deciding whether or not data is downloaded - #196
+- option to overlay page number, sura name, and juz' on the page - [\#159](https://github.com/ahmedre/quran_android/issues/159)
+- fix actionbar not toggling on translation view on honeycomb+ - [\#158](https://github.com/ahmedre/quran_android/issues/158)
+- fix ldpi devices not being able to download over 3g in certain cases - [\#167](https://github.com/ahmedre/quran_android/issues/167)
+- relax constraint on deciding whether or not data is downloaded - [\#196](https://github.com/ahmedre/quran_android/issues/196)
 
 **version 2.1.0**
 
