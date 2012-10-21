@@ -7,3 +7,5 @@ local.properties
 target
 gen-external-apklibs
 *.iml
+.idea
+classes
