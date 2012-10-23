@@ -316,6 +316,16 @@ public class QuranFileUtils {
                }
             }
          }
+
+         try {
+            // make the .nomedia file if it doesn't already exist
+            File noMediaFile = new File(destinationAudioDirectory, ".nomedia");
+            if (!noMediaFile.exists()){
+               noMediaFile.createNewFile();
+            }
+         }
+         catch (IOException ioe){
+         }
       }
    }
 
