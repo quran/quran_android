@@ -26,6 +26,7 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.*;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -34,19 +35,23 @@ import java.util.Locale;
 
 public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener,
-                   AddCategoryDialog.OnCategoryChangedListener {
+                   AddTagDialog.OnTagChangedListener,
+                   TagBookmarkDialog.OnTagSelectedListener {
    public final String TAG = "QuranActivity";
    
    private static final int SURA_LIST = 0;
    private static final int JUZ2_LIST = 1;
    private static final int BOOKMARKS_LIST = 2;
+   private static final int TAGS_LIST = 3;
 
    private static final int REFRESH_BOOKMARKS = 1;
+   private static final int REFRESH_TAGS = 2;
    
    private int[] mTabs = new int[]{ R.string.quran_sura,
                                     R.string.quran_juz2,
-                                    R.string.menu_bookmarks};
-   private int[] mTabTags = new int[]{ SURA_LIST, JUZ2_LIST, BOOKMARKS_LIST };
+                                    R.string.menu_bookmarks,
+                                    R.string.menu_help};
+   private int[] mTabTags = new int[]{ SURA_LIST, JUZ2_LIST, BOOKMARKS_LIST, TAGS_LIST };
    
    private ViewPager mPager = null;
    private PagerAdapter mPagerAdapter = null;
@@ -106,11 +111,19 @@ public class QuranActivity extends SherlockFragmentActivity
       public void handleMessage(Message msg) {
          if (msg.what == REFRESH_BOOKMARKS){
             String bookmarksTag = mPagerAdapter.getFragmentTag(
-                    R.id.index_pager, 2);
+                    R.id.index_pager, BOOKMARKS_LIST);
             FragmentManager fm = getSupportFragmentManager();
             Fragment f = fm.findFragmentByTag(bookmarksTag);
-            if (f != null && f instanceof BookmarksFragment){
-               ((BookmarksFragment)f).refreshData();
+            if (f != null && f instanceof AbsMarkersFragment){
+               ((AbsMarkersFragment)f).refreshData();
+            }
+         } else if (msg.what == REFRESH_TAGS){
+            String tagsTag = mPagerAdapter.getFragmentTag(
+                  R.id.index_pager, TAGS_LIST);
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment f = fm.findFragmentByTag(tagsTag);
+            if (f != null && f instanceof AbsMarkersFragment){
+               ((AbsMarkersFragment)f).refreshData();
             }
          }
       }
@@ -211,42 +224,76 @@ public class QuranActivity extends SherlockFragmentActivity
       jumpDialog.show(fm, JumpFragment.TAG);
    }
 
-   public void addCategory(){
+   public void addTag(){
       FragmentManager fm = getSupportFragmentManager();
-      AddCategoryDialog addCategoryDialog = new AddCategoryDialog();
-      addCategoryDialog.show(fm, AddCategoryDialog.TAG);
+      AddTagDialog addTagDialog = new AddTagDialog();
+      addTagDialog.show(fm, AddTagDialog.TAG);
    }
 
-   public void editCategory(long id, String name, String description){
+   public void editTag(long id, String name){
       FragmentManager fm = getSupportFragmentManager();
-      AddCategoryDialog addCategoryDialog =
-              new AddCategoryDialog(id, name, description);
-      addCategoryDialog.show(fm, AddCategoryDialog.TAG);
+      AddTagDialog addTagDialog =
+              new AddTagDialog(id, name);
+      addTagDialog.show(fm, AddTagDialog.TAG);
    }
 
+   public void tagBookmark(long id){
+      FragmentManager fm = getSupportFragmentManager();
+      TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(id);
+      tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
+   }
+   
    @Override
-   public void onCategoryAdded(final String name, final String description) {
+   public void onTagsUpdated(long bookmarkId) {
+      mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
+      mHandler.sendEmptyMessage(REFRESH_TAGS);
+   }
+   
+   @Override
+   public void onTagAdded(final String name) {
       new Thread(new Runnable() {
          @Override
          public void run() {
-            mBookmarksDBAdapter.addCategory(name, description);
-            mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
+            mBookmarksDBAdapter.addTag(name);
+            mHandler.sendEmptyMessage(REFRESH_TAGS);
          }
       }).start();
    }
 
    @Override
-   public void onCategoryUpdated(final long id, final String name,
-                                 final String description) {
+   public void onTagUpdated(final long id, final String name) {
       new Thread(new Runnable() {
          @Override
          public void run() {
-            mBookmarksDBAdapter.updateCategory(id, name, description);
-            mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
+            mBookmarksDBAdapter.updateTag(id, name);
+            mHandler.sendEmptyMessage(REFRESH_TAGS);
          }
       }).start();
    }
 
+   @Override
+   public void onTagSelected(Tag tag, long bookmarkId) {
+      final long bmid = bookmarkId;
+      final long tagId = tag.mId;
+      new Thread(new Runnable() {
+         @Override
+         public void run() {
+            mBookmarksDBAdapter.tagBookmark(bmid, tagId);
+            mHandler.sendEmptyMessage(REFRESH_TAGS);
+         }
+      }).start();
+   }
+
+   @Override
+   public void onTagSelected(Tag tag, Integer sura, Integer ayah, int page) {
+      // TODO Should never reach here
+   }
+
+   @Override
+   public void onAddTagSelected() {
+      // TODO Should never reach here
+   }
+   
    public static class PagerAdapter extends FragmentPagerAdapter {
       public PagerAdapter(FragmentManager fm){
          super(fm);
@@ -254,7 +301,7 @@ public class QuranActivity extends SherlockFragmentActivity
       
       @Override
       public int getCount(){
-         return 3;
+         return 4;
       }
       
       @Override
@@ -265,8 +312,10 @@ public class QuranActivity extends SherlockFragmentActivity
          case QuranActivity.JUZ2_LIST:
             return JuzListFragment.newInstance();
          case QuranActivity.BOOKMARKS_LIST:
-         default:
             return BookmarksFragment.newInstance();
+         case QuranActivity.TAGS_LIST:
+         default:
+            return TagsFragment.newInstance();
          }
       }
 

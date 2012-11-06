@@ -40,8 +40,8 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.*;
-import com.quran.labs.androidquran.ui.fragment.AddCategoryDialog;
-import com.quran.labs.androidquran.ui.fragment.BookmarkDialog;
+import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
+import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.helpers.JBVisibilityHelper;
@@ -55,13 +55,13 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Locale;
 
-import static com.quran.labs.androidquran.database.BookmarksDBAdapter.BookmarkCategory;
+import static com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
         DefaultDownloadReceiver.DownloadListener,
-        BookmarkDialog.OnCategorySelectedListener,
-        AddCategoryDialog.OnCategoryChangedListener {
+        TagBookmarkDialog.OnTagSelectedListener,
+        AddTagDialog.OnTagChangedListener {
    private static final String TAG = "PagerActivity";
    private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
    private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
@@ -482,7 +482,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public boolean onOptionsItemSelected(MenuItem item) {
       if (item.getItemId() == R.id.favorite_item){
          int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
-         bookmark(null, null, page);
+         toggleBookmark(null, null, page);
          return true;
       }
       else if (item.getItemId() == R.id.goto_quran){
@@ -547,57 +547,68 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
-   public void bookmark(Integer sura, Integer ayah, int page){
-      FragmentManager fm = getSupportFragmentManager();
-      BookmarkDialog dialog = new BookmarkDialog(sura, ayah, page);
-      dialog.show(fm, BookmarkDialog.TAG);
+   public void toggleBookmark(Integer sura, Integer ayah, int page){
+//      FragmentManager fm = getSupportFragmentManager();
+//      BookmarkDialog dialog = new BookmarkDialog(sura, ayah, page);
+//      dialog.show(fm, BookmarkDialog.TAG);
+      new ToggleBookmarkTask().execute(sura, ayah, page);
    }
 
    @Override
-   public void onAddCategorySelected(){
+   public void onAddTagSelected(){
       FragmentManager fm = getSupportFragmentManager();
-      AddCategoryDialog dialog = new AddCategoryDialog();
-      dialog.show(fm, AddCategoryDialog.TAG);
+      AddTagDialog dialog = new AddTagDialog();
+      dialog.show(fm, AddTagDialog.TAG);
    }
 
-   public void refreshBookmarkCategories(){
+   public void refreshBookmarkTags(){
       runOnUiThread(new Runnable() {
          @Override
          public void run() {
             FragmentManager fm = getSupportFragmentManager();
-            Fragment f = fm.findFragmentByTag(BookmarkDialog.TAG);
-            if (f != null && f instanceof BookmarkDialog){
-               ((BookmarkDialog)f).requestCategoryData();
+            Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
+            if (f != null && f instanceof TagBookmarkDialog){
+               ((TagBookmarkDialog)f).requestTagData();
             }
          }
       });
    }
 
    @Override
-   public void onCategorySelected(BookmarkCategory category,
+   public void onTagsUpdated(long bookmarkId) {
+      // Do nothing
+   }
+   
+   @Override
+   public void onTagSelected(Tag tag, long bookmarkId) {
+      // TODO Should never reach here
+   }
+   
+   @Override
+   public void onTagSelected(Tag tag,
                                   Integer sura, Integer ayah, int page) {
-      new BookmarkPageTask(category.mId).execute(sura, ayah, page);
+      new TagBookmarkTask(tag).execute(sura, ayah, page);
    }
 
    @Override
-   public void onCategoryAdded(final String name, final String description){
+   public void onTagAdded(final String name){
       new Thread(new Runnable() {
          @Override
          public void run() {
-            // add the category
+            // add the tag
             BookmarksDBAdapter dba =
                     new BookmarksDBAdapter(PagerActivity.this);
             dba.open();
-            dba.addCategory(name, description);
+            dba.addTag(name);
             dba.close();
 
-            refreshBookmarkCategories();
+            refreshBookmarkTags();
          }
       }).start();
    }
 
    @Override
-   public void onCategoryUpdated(long id, String name, String description){
+   public void onTagUpdated(long id, String name){
       // should not be called in this flow
    }
 
@@ -755,13 +766,50 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
-   class BookmarkPageTask extends AsyncTask<Integer, Void, Boolean> {
+   class ToggleBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
       private int mPage;
       private boolean mPageOnly;
-      private Long mCategoryId;
 
-      public BookmarkPageTask(Long categoryId){
-         mCategoryId = (categoryId == null? 0 : categoryId);
+      @Override
+      protected Boolean doInBackground(Integer... params) {
+         Integer sura = params[0];
+         Integer ayah = params[1];
+         mPage = params[2];
+         mPageOnly = (sura == null && ayah == null);
+
+         BookmarksDBAdapter dba = new BookmarksDBAdapter(PagerActivity.this);
+         dba.open();
+         boolean result = false;
+         long bookmarkId = dba.getBookmarkId(sura, ayah, mPage);
+         if (bookmarkId >= 0) {
+            if (dba.isTagged(bookmarkId)) {
+               // TODO show warning dialog that all tags will be removed
+            }
+            dba.removeBookmark(bookmarkId);
+         } else {
+            dba.addBookmark(sura, ayah, mPage);
+            result = true;
+         }
+         dba.close();
+         return result;
+      }
+
+      @Override
+      protected void onPostExecute(Boolean result) {
+         if (result != null && mPageOnly){
+            mBookmarksCache.put(mPage, result);
+            invalidateOptionsMenu();
+         }
+      }
+   }
+
+   class TagBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+      private int mPage;
+      private boolean mPageOnly;
+      private Tag mTag;
+      
+      public TagBookmarkTask(Tag tag) {
+         mTag = tag;
       }
 
       @Override
@@ -773,15 +821,24 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
          BookmarksDBAdapter dba = new BookmarksDBAdapter(PagerActivity.this);
          dba.open();
-         long id = dba.addBookmark(sura, ayah, mPage, mCategoryId);
+         boolean result = false;
+         long bookmarkId = dba.getBookmarkId(sura, ayah, mPage);
+         if (bookmarkId < 0) {
+            bookmarkId = dba.addBookmark(sura, ayah, mPage);
+            result = bookmarkId >= 0;
+            if (!result) {
+               dba.close();
+               return result;
+            }
+         }
+         dba.tagBookmark(bookmarkId, mTag.mId);
          dba.close();
-
-         return id != -1;
+         return result;
       }
 
       @Override
       protected void onPostExecute(Boolean result) {
-         if (result != null && result && mPageOnly){
+         if (result != null && mPageOnly){
             mBookmarksCache.put(mPage, result);
             invalidateOptionsMenu();
          }

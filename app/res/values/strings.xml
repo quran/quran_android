@@ -214,6 +214,7 @@
     <!-- long press -->
     <string name="bookmark_ayah">Bookmark this Ayah</string>
     <string name="unbookmark_ayah">Remove bookmark for this Ayah</string>
+    <string name="tag_ayah">Tag this Ayah</string>
     <string name="share_ayah">Share Ayah</string>
     <string name="translation_ayah">Ayah Translation/Tafseer</string>
     <string name="play_from_here">Play from Here</string>
@@ -227,12 +228,16 @@
     <string name="show_more">Show More</string>
     
     <!-- bookmark contextual action bar -->
-    <string name="remove_bookmark">Remove Bookmark</string>
+    <string name="delete_bookmark">Delete Bookmark</string>
     <string name="edit_bookmark">Edit Bookmark</string>
     <string name="new_bookmark">New Bookmark</string>
+    <string name="tag_bookmark">Tag Bookmark</string>
+    <string name="delete_tag">Delete Tag</string>
+    <string name="edit_tag">Edit Tag</string>
+    <string name="new_tag">New Tag</string>
     
     <!-- bookmark dialogs -->
-    <string name="bookmark_category_title">Bookmark Category</string>
+    <string name="bookmark_tag_title">Bookmark Tag</string>
     <string name="bookmark_dlg_title">Bookmark</string>
     <string name="bookmark_name">Name</string>
     <string name="bookmark_description">Description (optional)</string>
@@ -242,7 +247,7 @@
     <!-- bookmarks list -->
     <string name="bookmarks_list_title">Select a bookmark</string>
     <string name="bookmarks_list_empty">No Bookmarks</string>
-    <string name="add_category">Add Category</string>
+    <string name="add_tag">Add Tag</string>
     
     <!-- sample bookmarks -->
     <string name="sample_bookmark_reading">Daily Reading</string>
