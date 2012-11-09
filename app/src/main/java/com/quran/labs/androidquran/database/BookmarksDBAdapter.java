@@ -8,6 +8,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.Checkable;
 
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
@@ -173,15 +175,10 @@ public class BookmarksDBAdapter {
          if (mDb == null){ return -1; }
       }
 
-//      if (category != null && category == 0){
-//         category = null;
-//      }
-
       ContentValues values = new ContentValues();
       values.put(BookmarksTable.SURA, sura);
       values.put(BookmarksTable.AYAH, ayah);
       values.put(BookmarksTable.PAGE, page);
-//      values.put(BookmarksTable.CATEGORY_ID, category);
       return mDb.insert(BookmarksTable.TABLE_NAME, null, values);
    }
 
@@ -242,31 +239,19 @@ public class BookmarksDBAdapter {
             TagsTable.ID + "=" + id, null);
    }
 
-   public boolean removeTag(long tagId, boolean removeBookmarks){
+   public boolean removeTag(long tagId){
       if (mDb == null){
          open();
          if (mDb == null){ return false; }
       }
 
-      boolean removed = mDb.delete(TagsTable.TABLE_NAME,
-            TagsTable.ID + "=" + tagId, null) == 1;
-/*      if (removeBookmarks){
-         mDb.delete(BookmarksTable.TABLE_NAME,
-                 BookmarksTable.CATEGORY_ID + "=" + categoryId, null);
+      boolean removed = mDb.delete(TagsTable.TABLE_NAME, TagsTable.ID + "=" + tagId, null) == 1;
+      if (removed) {
+    	  mDb.delete(BookmarkTagTable.TABLE_NAME, BookmarkTagTable.TAG_ID + "=" + tagId, null);
       }
-      else {
-         mDb.rawQuery("UPDATE " + BookmarksTable.TABLE_NAME + " SET " +
-                 BookmarksTable.CATEGORY_ID + " = NULL WHERE " +
-                 BookmarksTable.CATEGORY_ID + " = " + categoryId, null);
-      }
-*/
+      
       return removed;
    }
-   
-//   public List<Tag> getBookmarkTags(long bookmarkId) {
-//      // TODO
-//      return null;
-//   }
    
    public long getBookmarkTagId(long bookmarkId, long tagId) {
       if (mDb == null){
@@ -342,7 +327,7 @@ public class BookmarksDBAdapter {
             BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
    }
    
-   public static class Tag implements Checkable {
+   public static class Tag implements Checkable, Parcelable {
       public long mId;
       public String mName;
       public boolean mChecked = false;
@@ -350,6 +335,10 @@ public class BookmarksDBAdapter {
       public Tag(long id, String name) {
          mId = id;
          mName = name;
+      }
+      
+      public Tag(Parcel parcel) {
+    	  readFromParcel(parcel);
       }
 
       @Override
@@ -371,6 +360,34 @@ public class BookmarksDBAdapter {
       public void toggle() {
          mChecked = !mChecked;
       }
+
+      @Override
+      public int describeContents() {
+         return 0;
+      }
+
+      @Override
+      public void writeToParcel(Parcel dest, int flags) {
+         dest.writeLong(mId);
+         dest.writeString(mName);
+         dest.writeByte((byte) (mChecked ? 1 : 0));
+      }
+      
+      public void readFromParcel(Parcel parcel) {
+         mId = parcel.readLong();
+         mName = parcel.readString();
+         mChecked = parcel.readByte() == 1;
+      }
+      
+      public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+         public Tag createFromParcel(Parcel in) {
+            return new Tag(in);
+         }
+         
+         public Tag[] newArray(int size) {
+            return new Tag[size];
+         }
+      };
    }
    
 	public static class Bookmark {

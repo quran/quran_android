@@ -60,7 +60,7 @@ import static com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
         DefaultDownloadReceiver.DownloadListener,
-        TagBookmarkDialog.OnTagSelectedListener,
+        TagBookmarkDialog.OnBookmarkTagsUpdateListener,
         AddTagDialog.OnTagChangedListener {
    private static final String TAG = "PagerActivity";
    private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
@@ -561,50 +561,20 @@ public class PagerActivity extends SherlockFragmentActivity implements
       dialog.show(fm, AddTagDialog.TAG);
    }
 
-   public void refreshBookmarkTags(){
-      runOnUiThread(new Runnable() {
-         @Override
-         public void run() {
-            FragmentManager fm = getSupportFragmentManager();
-            Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
-            if (f != null && f instanceof TagBookmarkDialog){
-               ((TagBookmarkDialog)f).requestTagData();
-            }
-         }
-      });
-   }
-
    @Override
-   public void onTagsUpdated(long bookmarkId) {
+   public void onBookmarkTagsUpdated(long bookmarkId) {
       // Do nothing
    }
    
    @Override
-   public void onTagSelected(Tag tag, long bookmarkId) {
-      // TODO Should never reach here
-   }
-   
-   @Override
-   public void onTagSelected(Tag tag,
-                                  Integer sura, Integer ayah, int page) {
-      new TagBookmarkTask(tag).execute(sura, ayah, page);
-   }
-
-   @Override
    public void onTagAdded(final String name){
-      new Thread(new Runnable() {
-         @Override
-         public void run() {
-            // add the tag
-            BookmarksDBAdapter dba =
-                    new BookmarksDBAdapter(PagerActivity.this);
-            dba.open();
-            dba.addTag(name);
-            dba.close();
-
-            refreshBookmarkTags();
-         }
-      }).start();
+	   if (TextUtils.isEmpty(name))
+		   return;
+       FragmentManager fm = getSupportFragmentManager();
+       Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
+       if (f != null && f instanceof TagBookmarkDialog){
+          ((TagBookmarkDialog)f).handleTagAdded(name);
+       }
    }
 
    @Override

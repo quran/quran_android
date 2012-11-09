@@ -14,6 +14,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -26,7 +28,6 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.*;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -36,7 +37,7 @@ import java.util.Locale;
 public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener,
                    AddTagDialog.OnTagChangedListener,
-                   TagBookmarkDialog.OnTagSelectedListener {
+                   TagBookmarkDialog.OnBookmarkTagsUpdateListener {
    public final String TAG = "QuranActivity";
    
    private static final int SURA_LIST = 0;
@@ -50,7 +51,7 @@ public class QuranActivity extends SherlockFragmentActivity
    private int[] mTabs = new int[]{ R.string.quran_sura,
                                     R.string.quran_juz2,
                                     R.string.menu_bookmarks,
-                                    R.string.menu_help};
+                                    R.string.menu_tags};
    private int[] mTabTags = new int[]{ SURA_LIST, JUZ2_LIST, BOOKMARKS_LIST, TAGS_LIST };
    
    private ViewPager mPager = null;
@@ -244,20 +245,28 @@ public class QuranActivity extends SherlockFragmentActivity
    }
    
    @Override
-   public void onTagsUpdated(long bookmarkId) {
+   public void onBookmarkTagsUpdated(long bookmarkId) {
       mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
       mHandler.sendEmptyMessage(REFRESH_TAGS);
    }
    
    @Override
    public void onTagAdded(final String name) {
-      new Thread(new Runnable() {
-         @Override
-         public void run() {
-            mBookmarksDBAdapter.addTag(name);
-            mHandler.sendEmptyMessage(REFRESH_TAGS);
-         }
-      }).start();
+      if (TextUtils.isEmpty(name))
+         return;
+      FragmentManager fm = getSupportFragmentManager();
+      Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
+      if (f != null && f instanceof TagBookmarkDialog){
+         ((TagBookmarkDialog)f).handleTagAdded(name);
+      } else {
+	     new Thread(new Runnable() {
+	        @Override
+	        public void run() {
+	           mBookmarksDBAdapter.addTag(name);
+	           mHandler.sendEmptyMessage(REFRESH_TAGS);
+	        }
+	     }).start();
+      }
    }
 
    @Override
@@ -272,26 +281,10 @@ public class QuranActivity extends SherlockFragmentActivity
    }
 
    @Override
-   public void onTagSelected(Tag tag, long bookmarkId) {
-      final long bmid = bookmarkId;
-      final long tagId = tag.mId;
-      new Thread(new Runnable() {
-         @Override
-         public void run() {
-            mBookmarksDBAdapter.tagBookmark(bmid, tagId);
-            mHandler.sendEmptyMessage(REFRESH_TAGS);
-         }
-      }).start();
-   }
-
-   @Override
-   public void onTagSelected(Tag tag, Integer sura, Integer ayah, int page) {
-      // TODO Should never reach here
-   }
-
-   @Override
    public void onAddTagSelected() {
-      // TODO Should never reach here
+      FragmentManager fm = getSupportFragmentManager();
+      AddTagDialog dialog = new AddTagDialog();
+      dialog.show(fm, AddTagDialog.TAG);
    }
    
    public static class PagerAdapter extends FragmentPagerAdapter {

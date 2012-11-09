@@ -189,7 +189,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
          for (int i = 0; i < params.length; i++) {
             QuranRow elem = params[i];
             if (elem.isBookmarkHeader() && elem.tagId >= 0) {
-               db.removeTag(elem.tagId, true);
+               db.removeTag(elem.tagId);
             }
             else if (elem.isBookmark() && elem.bookmarkId >= 0) {
                db.removeBookmark(elem.bookmarkId);
