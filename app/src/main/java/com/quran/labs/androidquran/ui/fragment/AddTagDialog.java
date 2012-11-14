@@ -11,31 +11,27 @@ import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
 
-public class AddCategoryDialog extends SherlockDialogFragment {
-   public static final String TAG = "AddCategoryDialog";
+public class AddTagDialog extends SherlockDialogFragment {
+   public static final String TAG = "AddTagDialog";
 
    private long mId = -1;
    private String mName;
-   private String mDescription;
 
    private static final String ID = "id";
    private static final String NAME = "name";
-   private static final String DESCRIPTION = "description";
 
-   public AddCategoryDialog(){
+   public AddTagDialog(){
    }
 
-   public AddCategoryDialog(long id, String name, String description){
+   public AddTagDialog(long id, String name){
       mId = id;
       mName = name;
-      mDescription = description;
    }
 
    @Override
    public void onSaveInstanceState(Bundle outState) {
       outState.putLong(ID, mId);
       outState.putString(NAME, mName);
-      outState.putString(DESCRIPTION, mDescription);
       super.onSaveInstanceState(outState);
    }
 
@@ -44,23 +40,19 @@ public class AddCategoryDialog extends SherlockDialogFragment {
       if (savedInstanceState != null){
          mId = savedInstanceState.getLong(ID, -1);
          mName = savedInstanceState.getString(NAME);
-         mDescription = savedInstanceState.getString(DESCRIPTION);
       }
 
       LayoutInflater inflater = getActivity().getLayoutInflater();
       View layout = inflater.inflate(R.layout.bookmark_dialog, null);
 
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      builder.setTitle(getString(R.string.bookmark_category_title));
+      builder.setTitle(getString(R.string.bookmark_tag_title));
 
       final EditText nameText =
               (EditText)layout.findViewById(R.id.bookmark_name);
-      final EditText descriptionText =
-              (EditText)layout.findViewById(R.id.bookmark_description);
 
       if (mId > -1) {
          nameText.setText(mName == null? "" : mName);
-         descriptionText.setText(mDescription == null ? "" : mDescription);
       }
 
       builder.setView(layout);
@@ -70,17 +62,15 @@ public class AddCategoryDialog extends SherlockDialogFragment {
                  public void onClick(DialogInterface dialog, int which) {
                     Activity activity = getActivity();
                     if (activity != null &&
-                        activity instanceof OnCategoryChangedListener){
-                       OnCategoryChangedListener listener =
-                               (OnCategoryChangedListener)activity;
+                        activity instanceof OnTagChangedListener){
+                       OnTagChangedListener listener =
+                               (OnTagChangedListener)activity;
                        String name = nameText.getText().toString();
-                       String description =
-                               descriptionText.getText().toString();
                        if (mId > 0){
-                          listener.onCategoryUpdated(mId, name, description);
+                          listener.onTagUpdated(mId, name);
                        }
                        else {
-                          listener.onCategoryAdded(name,  description);
+                          listener.onTagAdded(name);
                        }
                     }
 
@@ -91,8 +81,8 @@ public class AddCategoryDialog extends SherlockDialogFragment {
       return builder.create();
    }
 
-   public interface OnCategoryChangedListener {
-      public void onCategoryAdded(String name, String description);
-      public void onCategoryUpdated(long id, String name, String description);
+   public interface OnTagChangedListener {
+      public void onTagAdded(String name);
+      public void onTagUpdated(long id, String name);
    }
 }

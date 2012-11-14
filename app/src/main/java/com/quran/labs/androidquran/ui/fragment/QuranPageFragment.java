@@ -14,6 +14,8 @@ import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
@@ -212,7 +214,7 @@ public class QuranPageFragment extends SherlockFragment {
                     HapticFeedbackConstants.LONG_PRESS);
             
             // TODO Temporary UI until new UI is implemented
-            showAyahMenu(mPageNumber, result.getSura(), result.getAyah());
+            new ShowAyahMenuTask().execute(result.getSura(), result.getAyah(), mPageNumber);
          }
       }
 
@@ -235,12 +237,37 @@ public class QuranPageFragment extends SherlockFragment {
       }
    }
    
-   private void showAyahMenu(final int page, final int sura, final int ayah) {
+   class ShowAyahMenuTask extends AsyncTask<Integer, Void, Boolean> {
+      int mSura;
+      int mAyah;
+      int mPage;
+
+      @Override
+      protected Boolean doInBackground(Integer... params) {
+         mSura = params[0];
+         mAyah = params[1];
+         mPage = params[2];
+         BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
+         dba.open();
+         boolean bookmarked = dba.getBookmarkId(mSura, mAyah, mPage) >= 0;
+         dba.close();
+         return bookmarked;
+      }
+      
+      @Override
+      protected void onPostExecute(Boolean result) {
+         showAyahMenu(mSura, mAyah, mPage, result);
+      }
+      
+   }
+   
+   private void showAyahMenu(final int sura, final int ayah, final int page, boolean bookmarked) {
          final Activity activity = getActivity();
          if (activity == null){ return; }
 
          int[] optionIds = {
-                 R.string.bookmark_ayah,
+                 bookmarked ? R.string.unbookmark_ayah : R.string.bookmark_ayah,
+                 R.string.tag_ayah,
                  R.string.translation_ayah, R.string.share_ayah,
                  R.string.copy_ayah, R.string.play_from_here
                  /*, R.string.ayah_notes*/}; // TODO Enable notes
@@ -257,15 +284,22 @@ public class QuranPageFragment extends SherlockFragment {
 					if (selection == 0) {
 					   if (activity != null && activity instanceof PagerActivity){
                      PagerActivity pagerActivity = (PagerActivity) activity;
-                     pagerActivity.bookmark(sura, ayah, page);
+                     pagerActivity.toggleBookmark(sura, ayah, page);
                   }
 					} else if (selection == 1) {
-						new ShowTafsirTask(sura, ayah).execute();
+                  if (activity != null && activity instanceof PagerActivity){
+                     PagerActivity pagerActivity = (PagerActivity) activity;
+                     FragmentManager fm = pagerActivity.getSupportFragmentManager();
+                     TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(sura, ayah, page);
+                     tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
+                  }
 					} else if (selection == 2) {
-						new ShareAyahTask(sura, ayah, false).execute();
+					   new ShowTafsirTask(sura, ayah).execute();
 					} else if (selection == 3) {
-						new ShareAyahTask(sura, ayah, true).execute();
+						new ShareAyahTask(sura, ayah, false).execute();
 					} else if (selection == 4) {
+						new ShareAyahTask(sura, ayah, true).execute();
+					} else if (selection == 5) {
 						if (activity instanceof PagerActivity) {
 							PagerActivity pagerActivity = (PagerActivity) activity;
 							pagerActivity.playFromAyah(mPageNumber, sura, ayah);
