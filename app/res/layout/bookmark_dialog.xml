@@ -18,15 +18,4 @@
             android:layout_height="wrap_content"
             android:inputType="text|textMultiLine" />
     
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/bookmark_description"
-            android:textStyle="bold" />
-    
-        <EditText
-            android:id="@+id/bookmark_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text|textMultiLine" />
 </LinearLayout>
