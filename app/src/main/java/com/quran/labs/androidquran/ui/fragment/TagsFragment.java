@@ -1,26 +1,21 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.ui.fragment.AbsMarkersFragment.RemoveBookmarkTask;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TagsFragment extends AbsMarkersFragment {
    
@@ -153,8 +148,7 @@ public class TagsFragment extends AbsMarkersFragment {
       
       if (unTagged.size() > 0) {
          QuranRow header = new QuranRow(
-                 "Untagged",
-                 /*tag.mDescription*/"NOTAGS",
+                 activity.getString(R.string.not_tagged), "",
                  QuranRow.BOOKMARK_HEADER, 0, 0, null);
          header.tagId = -1;
          
