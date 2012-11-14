@@ -236,6 +236,7 @@
     <string name="delete_tag">Delete Tag</string>
     <string name="edit_tag">Edit Tag</string>
     <string name="new_tag">New Tag</string>
+    <string name="not_tagged">Not Tagged</string>
     
     <!-- bookmark dialogs -->
     <string name="bookmark_tag_title">Bookmark Tag</string>

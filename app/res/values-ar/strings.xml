@@ -13,6 +13,7 @@
     <string name="menu_about">عنا</string>
     <string name="menu_settings">الاعدادات</string>
     <string name="menu_jump_last_page">الصفحة الأخيرة</string>
+    <string name="menu_tags">Tags</string>
     <string name="menu_bookmarks">مرجعيات</string>
     <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
     <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
@@ -187,8 +188,14 @@
     <string name="remove_bookmark">حذف المرجعية</string>
     <string name="edit_bookmark">تغيير تفاصيل المرجعية</string>
     <string name="new_bookmark">إضافة مرجعية</string>
+    <string name="tag_bookmark">Tag Bookmark</string>
+    <string name="delete_tag">Delete Tag</string>
+    <string name="edit_tag">Edit Tag</string>
+    <string name="new_tag">New Tag</string>
+    <string name="not_tagged">Not Tagged</string>
     
     <!-- bookmark dialog -->
+    <string name="bookmark_tag_title">Bookmark Tag</string>
     <string name="bookmark_dlg_title">مرجعية</string>
     <string name="bookmark_name">إسم المرجعية</string>
     <string name="bookmark_description">وصف المرجعية (اختياري)</string>

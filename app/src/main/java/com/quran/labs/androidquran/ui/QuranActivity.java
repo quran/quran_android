@@ -76,6 +76,7 @@ public class QuranActivity extends SherlockFragmentActivity
       actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
       mPager = (ViewPager)findViewById(R.id.index_pager);
+      mPager.setOffscreenPageLimit(3);
       mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
       mPager.setAdapter(mPagerAdapter);
       mPager.setOnPageChangeListener(mOnPageChangeListener);
