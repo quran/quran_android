@@ -32,4 +32,5 @@ public class Constants {
    public static final String PREF_AYAH_BEFORE_TRANSLATION = "ayahBeforeTranslation";
    public static final String PREF_PREFER_STREAMING = "preferStreaming";
    public static final String PREF_DOWNLOAD_AMOUNT = "preferredDownloadAmount";
+   public static final String PREF_NEW_BACKGROUND = "useNewBackground";
 }
