@@ -41,6 +41,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 @SuppressWarnings("deprecation")
@@ -54,6 +55,54 @@ public class QuranPageFragment extends SherlockFragment {
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
    private AlertDialog mTranslationDialog = null;
+   
+   private View view;
+   
+  @Override
+   public void onResume() {
+	   Log.i("tester", "onResume");
+      super.onResume();
+
+      int lineImageId = R.drawable.dark_line;
+      int leftBorderImageId = R.drawable.border_left;
+      int rightBorderImageId = R.drawable.border_right;
+      
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+      
+      if (prefs.getBoolean(Constants.PREF_NEW_BACKGROUND, false)) {
+         view.setBackgroundColor(Color.WHITE);
+      }else{
+      	view.setBackgroundColor(getResources().getColor(R.color.page_background));
+      }
+
+      if (QuranSettings.isNightMode(getActivity())){
+         leftBorderImageId = R.drawable.night_left_border;
+         rightBorderImageId = R.drawable.night_right_border;
+         lineImageId = R.drawable.light_line;
+         view.setBackgroundColor(Color.BLACK);
+      }
+
+      ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
+      ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
+      if (mPageNumber % 2 == 0){
+         rightBorder.setVisibility(View.GONE);
+         leftBorder.setBackgroundResource(leftBorderImageId);
+      }
+      else {
+         rightBorder.setVisibility(View.VISIBLE);
+         rightBorder.setBackgroundResource(rightBorderImageId);
+         leftBorder.setBackgroundResource(lineImageId);
+      }
+      
+      try {
+	      if (prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true)) {
+	         mImageView.setOverlayText(mPageNumber, true);
+	      }else {
+	      	mImageView.setOverlayText(0, false);
+	      }
+	      mImageView.invalidate();
+      } catch (Exception e) {/*do nothing*/} // Temporary to avoid any unanticipated FC's
+   }
 
    public static QuranPageFragment newInstance(int page){
       final QuranPageFragment f = new QuranPageFragment();
@@ -78,38 +127,10 @@ public class QuranPageFragment extends SherlockFragment {
    @Override
    public View onCreateView(LayoutInflater inflater,
                             ViewGroup container, Bundle savedInstanceState){
-      final View view = inflater.inflate(R.layout.quran_page_layout,
+      view = inflater.inflate(R.layout.quran_page_layout,
               container, false);
       view.setBackgroundDrawable((mPageNumber % 2 == 0?
               mLeftGradient : mRightGradient));
-      int lineImageId = R.drawable.dark_line;
-      int leftBorderImageId = R.drawable.border_left;
-      int rightBorderImageId = R.drawable.border_right;
-      
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-      
-      if (!prefs.getBoolean(getResources().getString(R.string.prefs_new_background), true)) {
-    	  view.setBackgroundColor(getResources().getColor(R.color.page_background));
-      }
-
-      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
-         leftBorderImageId = R.drawable.night_left_border;
-         rightBorderImageId = R.drawable.night_right_border;
-         lineImageId = R.drawable.light_line;
-         view.setBackgroundColor(Color.BLACK);
-      }
-
-      ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
-      ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
-      if (mPageNumber % 2 == 0){
-         rightBorder.setVisibility(View.GONE);
-         leftBorder.setBackgroundResource(leftBorderImageId);
-      }
-      else {
-         rightBorder.setVisibility(View.VISIBLE);
-         rightBorder.setBackgroundResource(rightBorderImageId);
-         leftBorder.setBackgroundResource(lineImageId);
-      }
 
       mImageView = (HighlightingImageView)view.findViewById(R.id.page_image);
       mScrollView = (ScrollView)view.findViewById(R.id.page_scroller);
@@ -125,10 +146,7 @@ public class QuranPageFragment extends SherlockFragment {
       mImageView.setOnTouchListener(gestureListener);
       mImageView.setClickable(true);
       mImageView.setLongClickable(true);
-      if (prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true)) {
-         try {mImageView.setOverlayText(mPageNumber, true);}
-         catch (Exception e) {/*do nothing*/} // Temporary to avoid any unanticipated FC's
-      }
+
       return view;
    }
 

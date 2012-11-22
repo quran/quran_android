@@ -216,22 +216,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       // just got created, need to reconnect to service
       mShouldReconnect = true;
-
-      // enforce orientation lock
-      if (QuranSettings.isLockOrientation(this)){
-         int current = getResources().getConfiguration().orientation;
-         if (QuranSettings.isLandscapeOrientation(this)){
-            if (current == Configuration.ORIENTATION_PORTRAIT){
-               setRequestedOrientation(
-                       ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-               return;
-            }
-         }
-         else if (current == Configuration.ORIENTATION_LANDSCAPE){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            return;
-         }
-      }
    }
    
    @Override
@@ -286,6 +270,24 @@ public class PagerActivity extends SherlockFragmentActivity implements
                        highlightAyah(mHighlightedSura, mHighlightedAyah, false);
                     }
                  }, 750);
+      }
+      
+      // enforce orientation lock
+      if (QuranSettings.isLockOrientation(this)){
+         int current = getResources().getConfiguration().orientation;
+         if (QuranSettings.isLandscapeOrientation(this)){
+            if (current == Configuration.ORIENTATION_PORTRAIT){
+               setRequestedOrientation(
+                       ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+               return;
+            }
+         }
+         else if (current == Configuration.ORIENTATION_LANDSCAPE){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            return;
+         }
+      }else{
+         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
       }
    }
 
