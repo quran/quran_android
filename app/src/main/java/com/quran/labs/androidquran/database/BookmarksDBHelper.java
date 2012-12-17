@@ -38,26 +38,35 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
       public static final String ADDED_DATE = "added_date";
    }
    
-	private static final String CREATE_BOOKMARKS_TABLE=
+	private static final String CREATE_BOOKMARKS_TABLE =
 			" create table " + BookmarksTable.TABLE_NAME + " (" + 
-					BookmarksTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + // XXX Auto-increment necessary?
+					BookmarksTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 					BookmarksTable.SURA + " INTEGER, " +
                BookmarksTable.AYAH + " INTEGER, " +
                BookmarksTable.PAGE + " INTEGER NOT NULL, " +
-               BookmarksTable.ADDED_DATE + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+               BookmarksTable.ADDED_DATE +
+                 " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 	
-	private static final String CREATE_TAGS_TABLE=
+	private static final String CREATE_TAGS_TABLE =
 	      " create table " + TagsTable.TABLE_NAME + " (" + 
 	            TagsTable.ID + " INTEGER PRIMARY KEY, " +
 	            TagsTable.NAME + " TEXT NOT NULL, " +
 	            TagsTable.ADDED_DATE + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 	
-	private static final String CREATE_BOOKMARK_TAG_TABLE=
+	private static final String CREATE_BOOKMARK_TAG_TABLE =
 	      " create table " + BookmarkTagTable.TABLE_NAME + " (" + 
 	            BookmarkTagTable.ID + " INTEGER PRIMARY KEY, " +
 	            BookmarkTagTable.BOOKMARK_ID + " INTEGER NOT NULL, " +
 	            BookmarkTagTable.TAG_ID + " INTEGER NOT NULL, " +
-	            BookmarkTagTable.ADDED_DATE + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+	            BookmarkTagTable.ADDED_DATE +
+                 " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+
+   private static final String BOOKMARK_TAGS_INDEX =
+           "create unique index if not exists " +
+                   BookmarkTagTable.TABLE_NAME + "_index on " +
+                   BookmarkTagTable.TABLE_NAME + "(" +
+                     BookmarkTagTable.BOOKMARK_ID + "," +
+                     BookmarkTagTable.TAG_ID + ");";
 	
 	public BookmarksDBHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -69,7 +78,7 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
 		db.execSQL(CREATE_BOOKMARKS_TABLE);
 		db.execSQL(CREATE_TAGS_TABLE);
 		db.execSQL(CREATE_BOOKMARK_TAG_TABLE);
-//      createSampleBookmarks(db);
+      db.execSQL(BOOKMARK_TAGS_INDEX);
 	}
 
 	@Override
@@ -92,30 +101,13 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
       db.execSQL(CREATE_BOOKMARKS_TABLE);
       db.execSQL(CREATE_TAGS_TABLE);
       db.execSQL(CREATE_BOOKMARK_TAG_TABLE);
-//      createSampleBookmarks(db);
       copyOldBookmarks(db);
    }
-/*   
-   private void createSampleBookmarks(SQLiteDatabase db) {
-      try {
-         db.execSQL("INSERT INTO bookmark_categories VALUES (1, ?, null)",
-               new String[] {cx.getString(R.string.sample_bookmark_reading)});
-         db.execSQL("INSERT INTO bookmark_categories VALUES (2, ?, null)",
-               new String[] {cx.getString(R.string.sample_bookmark_duas)});
-         final String s = "INSERT INTO bookmarks(_id, sura, ayah, " +
-            "page, category_id)";
-         db.execSQL(s + " VALUES(NULL, NULL, NULL, 1, 1)"); // Readings (pg 1)
-         db.execSQL(s + " VALUES(NULL, 3, 16, 52, 2)");     // Duas (3:16)
-         db.execSQL(s + " VALUES(NULL, 25, 65, 365, 2)");   // Duas (25:65)
-      } catch (Exception e) {
-         Log.e(TAG, "Failed to create sample bookmarks", e);
-      }
-   }
-*/   
+
    private void copyOldBookmarks(SQLiteDatabase db) {
       try {
          // Copy over ayah bookmarks
-         db.execSQL("INSERT INTO bookmarks(_id, sura, ayah, page) " + // XXX Should we insert _id?
+         db.execSQL("INSERT INTO bookmarks(_id, sura, ayah, page) " +
          		"SELECT _id, sura, ayah, page FROM ayah_bookmarks WHERE " +
                "bookmarked = 1");
 
