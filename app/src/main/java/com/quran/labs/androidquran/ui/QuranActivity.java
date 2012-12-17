@@ -259,6 +259,7 @@ public class QuranActivity extends SherlockFragmentActivity
       Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
       if (f != null && f instanceof TagBookmarkDialog){
          ((TagBookmarkDialog)f).handleTagAdded(name);
+         mHandler.sendEmptyMessage(REFRESH_TAGS);
       } else {
 	     new Thread(new Runnable() {
 	        @Override

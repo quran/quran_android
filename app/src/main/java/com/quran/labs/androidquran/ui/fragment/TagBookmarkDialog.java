@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,13 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
@@ -36,7 +31,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    private int mPage = -1;
    private List<Tag> mTags;
    private List<Long> mBookmarkTags;
-   private ArrayAdapter<Tag> mAdapter;
+   private TagsAdapter mAdapter;
 
    private ListView mListView;
 
@@ -56,6 +51,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       mPage = page;
    }
 
+   // do not remove - this is required when resuming from onSaveInstanceState
    public TagBookmarkDialog(){
    }
 
@@ -65,7 +61,8 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       outState.putInt(PAGE, mPage);
       outState.putInt(SURA, mSura == null? 0 : mSura);
       outState.putInt(AYAH, mAyah == null? 0 : mAyah);
-      outState.putParcelableArrayList(TAG_LIST, (ArrayList<? extends Parcelable>) mTags);
+      outState.putParcelableArrayList(TAG_LIST,
+              (ArrayList<? extends Parcelable>) mTags);
       super.onSaveInstanceState(outState);
    }
    
@@ -95,80 +92,117 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
       final LayoutInflater inflater = LayoutInflater.from(activity);
-      mAdapter = new ArrayAdapter<Tag>(
-              activity, R.layout.bookmark_row,
-              R.id.bookmark_text, mTags) {
-         @Override
-         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            
-            if (convertView == null) {
-               convertView = inflater.inflate(R.layout.tag_row, null);
-               holder = new ViewHolder();
-               holder.chk = (CheckBox) convertView.findViewById(R.id.tag_checkbox);
-               holder.txt = (TextView) convertView.findViewById(R.id.tag_name);
-               holder.img_new = (ImageView) convertView.findViewById(R.id.tag_add_image);
-               convertView.setTag(holder);
-            }
-            final Tag tag = getItem(position);
-            holder = (ViewHolder) convertView.getTag();
-            holder.txt.setText(tag.toString());
-            if (tag.mId == -1) {
-               holder.img_new.setVisibility(View.VISIBLE);
-               holder.chk.setVisibility(View.GONE);
-            } else {
-               holder.img_new.setVisibility(View.GONE);
-               holder.chk.setVisibility(View.VISIBLE);
-               holder.chk.setChecked(tag.isChecked());
-               holder.chk.setOnClickListener(new OnClickListener() {
-                  public void onClick(View v) {
-                     tag.toggle();
-                  }
-               });
-            }
-            return convertView;
-         }
-         class ViewHolder {
-            CheckBox chk;
-            TextView txt;
-            ImageView img_new;
-         }
-      };
+      mAdapter = new TagsAdapter(activity);
 
       mListView = new ListView(activity);
       mListView.setAdapter(mAdapter);
       mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
       mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Tag tag = mAdapter.getItem(position);
+            Tag tag = (Tag)mAdapter.getItem(position);
             if (tag.mId >= 0) {
             	tag.toggle();
-            } else if (tag.mId == -1) {
-	           Activity currentActivity = getActivity();
-	           if (currentActivity != null && currentActivity instanceof OnBookmarkTagsUpdateListener) {
-                  ((OnBookmarkTagsUpdateListener) currentActivity).onAddTagSelected();
+            }
+            else if (tag.mId == -1) {
+	           Context context = getActivity();
+	           if (context != null &&
+                      context instanceof OnBookmarkTagsUpdateListener) {
+                  ((OnBookmarkTagsUpdateListener)context).onAddTagSelected();
 	           }
+            }
+
+            if (view.getTag() != null){
+               Object viewTag = view.getTag();
+               if (viewTag instanceof ViewHolder){
+                  ViewHolder holder = (ViewHolder)viewTag;
+                  holder.checkBox.setChecked(tag.isChecked());
+               }
             }
          }
       });
 
       builder.setView(mListView);
-      builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+      builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
          @Override
          public void onClick(DialogInterface dialog, int which) {
              final Activity curAct = getActivity();
-             if (curAct != null && curAct instanceof OnBookmarkTagsUpdateListener){
-                 new UpdateBookmarkTagsTask((OnBookmarkTagsUpdateListener)curAct).execute();
-              }
+             if (curAct != null &&
+                     curAct instanceof OnBookmarkTagsUpdateListener){
+                 new UpdateBookmarkTagsTask(
+                         (OnBookmarkTagsUpdateListener)curAct).execute();
+             }
          }
       });
-      builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+      builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
          @Override
          public void onClick(DialogInterface dialog, int which) {
             dismiss();
          }
       });
       return builder.create();
+   }
+
+   public class TagsAdapter extends BaseAdapter {
+      private LayoutInflater mInflater;
+
+      public TagsAdapter(Context context){
+         mInflater = LayoutInflater.from(context);
+      }
+
+      @Override
+      public int getCount() {
+         return mTags.size();
+      }
+
+      @Override
+      public Object getItem(int position) {
+         return mTags.get(position);
+      }
+
+      @Override
+      public long getItemId(int position) {
+         return mTags.get(position).mId;
+      }
+
+      @Override
+      public boolean hasStableIds() {
+         return false;
+      }
+
+      @Override
+      public View getView(int position, View convertView,
+                          ViewGroup parent) {
+         ViewHolder holder;
+         if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.tag_row, null);
+            holder = new ViewHolder();
+            holder.checkBox = (CheckBox)convertView
+                    .findViewById(R.id.tag_checkbox);
+            holder.tagName = (TextView)convertView
+                    .findViewById(R.id.tag_name);
+            holder.addImage = (ImageView)convertView
+                    .findViewById(R.id.tag_add_image);
+            convertView.setTag(holder);
+         }
+         final Tag tag = (Tag)getItem(position);
+         holder = (ViewHolder) convertView.getTag();
+         holder.tagName.setText(tag.toString());
+         if (tag.mId == -1) {
+            holder.addImage.setVisibility(View.VISIBLE);
+            holder.checkBox.setVisibility(View.GONE);
+         }
+         else {
+            holder.addImage.setVisibility(View.GONE);
+            holder.checkBox.setVisibility(View.VISIBLE);
+            holder.checkBox.setChecked(tag.isChecked());
+            holder.checkBox.setOnClickListener(new OnClickListener() {
+               public void onClick(View v) {
+                  tag.toggle();
+               }
+            });
+         }
+         return convertView;
+      }
    }
    
    class RefreshTagsTask extends AsyncTask<Void, Void, Void> {
@@ -177,7 +211,8 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
           BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
           dba.open();
           final List<Tag> tags = dba.getTags();
-          final List<Long> bookmarkTags = mBookmarkId >= 0 ? dba.getBookmarkTagIds(mBookmarkId) : null;
+          final List<Long> bookmarkTags = mBookmarkId >= 0?
+                  dba.getBookmarkTagIds(mBookmarkId) : null;
           dba.close();
 
           mTags = tags;
@@ -188,14 +223,19 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       
       @Override
       protected void onPostExecute(Void result) {
-          mAdapter.clear();
           for (Tag tag : mTags){
-             mAdapter.add(tag);
-             if (mBookmarkTags != null && mBookmarkTags.contains(tag.mId))
+             if (mBookmarkTags != null && mBookmarkTags.contains(tag.mId)){
                 tag.setChecked(true);
+             }
           }
           mAdapter.notifyDataSetChanged();
       }
+   }
+
+   class ViewHolder {
+      CheckBox checkBox;
+      TextView tagName;
+      ImageView addImage;
    }
    
    class AddTagTask extends AsyncTask<String, Void, Tag> {
@@ -211,13 +251,8 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
        @Override
        protected void onPostExecute(Tag result) {
           if (mTags != null && mAdapter != null) {
-        	  result.setChecked(true);
-             mTags.add(mTags.size()-1, result);
-             // TODO Hack to get around android adapter storing copy instead of reference. Use custom adapter.
-             mAdapter.clear();
-             for (Tag tag : mTags) {
-                mAdapter.add(tag);
-             }
+             result.setChecked(true);
+             mTags.add(mTags.size() - 1, result);
              mAdapter.notifyDataSetChanged();
           }
        };
