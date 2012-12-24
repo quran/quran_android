@@ -35,6 +35,7 @@ public class TranslationFragment extends SherlockFragment {
    private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
    private int mPageNumber;
+   private boolean mIsPaused;
    private TranslationView mTranslationView;
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
@@ -49,6 +50,7 @@ public class TranslationFragment extends SherlockFragment {
    @Override
    public void onCreate(Bundle savedInstanceState){
       super.onCreate(savedInstanceState);
+      mIsPaused = false;
       mPageNumber = getArguments() != null?
               getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
       int width = getActivity().getWindowManager()
@@ -70,13 +72,12 @@ public class TranslationFragment extends SherlockFragment {
               .getDefaultSharedPreferences(getActivity());
 
       Resources res = getResources();
-      String newBackground = res.getString(R.string.prefs_new_background);
-      if (!prefs.getBoolean(newBackground, true)) {
+      if (!prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
     	  view.setBackgroundColor(res.getColor(R.color.page_background));
       }
-      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){ 
-    	  view.setBackgroundColor(Color.BLACK); 
-	  }
+      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
+    	  view.setBackgroundColor(Color.BLACK);
+	   }
 
       int lineImageId = R.drawable.dark_line;
       int leftBorderImageId = R.drawable.border_left;
@@ -123,6 +124,21 @@ public class TranslationFragment extends SherlockFragment {
               Constants.PREF_ACTIVE_TRANSLATION, null);
       refresh(database);
       return view;
+   }
+
+   @Override
+   public void onResume() {
+      super.onResume();
+      if (mIsPaused){
+         mTranslationView.refresh();
+      }
+      mIsPaused = false;
+   }
+
+   @Override
+   public void onPause() {
+      mIsPaused = true;
+      super.onPause();
    }
 
    public void refresh(String database){
