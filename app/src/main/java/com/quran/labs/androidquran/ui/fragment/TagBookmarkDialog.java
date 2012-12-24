@@ -211,8 +211,11 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
           BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
           dba.open();
           final List<Tag> tags = dba.getTags();
-          final List<Long> bookmarkTags = mBookmarkId >= 0?
-                  dba.getBookmarkTagIds(mBookmarkId) : null;
+          if (mBookmarkId < 0 && mPage > 0) {
+             mBookmarkId = dba.getBookmarkId(mSura, mAyah, mPage);
+          }
+          final List<Long> bookmarkTags = mBookmarkId < 0 ?
+                  null : dba.getBookmarkTagIds(mBookmarkId);
           dba.close();
 
           mTags = tags;
