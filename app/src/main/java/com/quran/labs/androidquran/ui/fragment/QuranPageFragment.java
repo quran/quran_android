@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,7 +15,6 @@ import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -29,6 +29,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -41,7 +42,10 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
+
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class QuranPageFragment extends SherlockFragment {
@@ -86,10 +90,13 @@ public class QuranPageFragment extends SherlockFragment {
       int leftBorderImageId = R.drawable.border_left;
       int rightBorderImageId = R.drawable.border_right;
       
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-      
-      if (!prefs.getBoolean(getResources().getString(R.string.prefs_new_background), true)) {
-    	  view.setBackgroundColor(getResources().getColor(R.color.page_background));
+      SharedPreferences prefs =
+              PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+      Resources res = getResources();
+      String newBackground = res.getString(R.string.prefs_new_background);
+      if (!prefs.getBoolean(newBackground, true)) {
+    	  view.setBackgroundColor(res.getColor(R.color.page_background));
       }
 
       if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
@@ -126,8 +133,8 @@ public class QuranPageFragment extends SherlockFragment {
       mImageView.setClickable(true);
       mImageView.setLongClickable(true);
       if (prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true)) {
-         try {mImageView.setOverlayText(mPageNumber, true);}
-         catch (Exception e) {/*do nothing*/} // Temporary to avoid any unanticipated FC's
+         try { mImageView.setOverlayText(mPageNumber, true); }
+         catch (Exception e){ }
       }
       return view;
    }
@@ -214,7 +221,8 @@ public class QuranPageFragment extends SherlockFragment {
                     HapticFeedbackConstants.LONG_PRESS);
             
             // TODO Temporary UI until new UI is implemented
-            new ShowAyahMenuTask().execute(result.getSura(), result.getAyah(), mPageNumber);
+            new ShowAyahMenuTask().execute(
+                    result.getSura(), result.getAyah(), mPageNumber);
          }
       }
 
@@ -261,12 +269,13 @@ public class QuranPageFragment extends SherlockFragment {
       
    }
    
-   private void showAyahMenu(final int sura, final int ayah, final int page, boolean bookmarked) {
+   private void showAyahMenu(final int sura, final int ayah,
+                             final int page, boolean bookmarked) {
          final Activity activity = getActivity();
          if (activity == null){ return; }
 
          int[] optionIds = {
-                 bookmarked ? R.string.unbookmark_ayah : R.string.bookmark_ayah,
+                 bookmarked? R.string.unbookmark_ayah : R.string.bookmark_ayah,
                  R.string.tag_ayah,
                  R.string.translation_ayah, R.string.share_ayah,
                  R.string.copy_ayah, R.string.play_from_here
@@ -289,8 +298,10 @@ public class QuranPageFragment extends SherlockFragment {
 					} else if (selection == 1) {
                   if (activity != null && activity instanceof PagerActivity){
                      PagerActivity pagerActivity = (PagerActivity) activity;
-                     FragmentManager fm = pagerActivity.getSupportFragmentManager();
-                     TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(sura, ayah, page);
+                     FragmentManager fm =
+                             pagerActivity.getSupportFragmentManager();
+                     TagBookmarkDialog tagBookmarkDialog =
+                             new TagBookmarkDialog(sura, ayah, page);
                      tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
                   }
 					} else if (selection == 2) {
@@ -358,7 +369,8 @@ public class QuranPageFragment extends SherlockFragment {
 				ClipboardManager cm = (ClipboardManager) activity.
 							getSystemService(Activity.CLIPBOARD_SERVICE);
 				cm.setText(ayah);
-				Toast.makeText(activity, activity.getString(R.string.ayah_copied_popup), 
+				Toast.makeText(activity, activity.getString(
+                    R.string.ayah_copied_popup),
 						Toast.LENGTH_SHORT).show();
 			} else if (ayah != null && activity != null) {
 				ayah += activity.getString(R.string.via_string);
@@ -382,8 +394,14 @@ public class QuranPageFragment extends SherlockFragment {
 		@Override
 		protected String doInBackground(Void... params) {
          Activity activity = getActivity();
-			String db = PreferenceManager.getDefaultSharedPreferences(activity)
-				.getString(Constants.PREF_ACTIVE_TRANSLATION, null);
+         List<TranslationItem> translationItems = null;
+         if (activity instanceof PagerActivity){
+            translationItems = ((PagerActivity)activity).getTranslations();
+         }
+
+         String db = TranslationUtils.getDefaultTranslation(activity,
+                 translationItems);
+
 			if (db != null) {
             try {
                DatabaseHandler tafsirHandler = new DatabaseHandler(db);
@@ -497,7 +515,8 @@ public class QuranPageFragment extends SherlockFragment {
                new SaveNotesTask(ayahId, note).execute();
             }
          });
-         int background = getResources().getColor(R.color.transparent_dialog_color);
+         int background = getResources().getColor(
+                 R.color.transparent_dialog_color);
          dlg.getWindow().setBackgroundDrawable(new ColorDrawable(background));
          dlg.show();
       }

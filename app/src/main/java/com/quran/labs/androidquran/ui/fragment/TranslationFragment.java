@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
@@ -67,9 +68,11 @@ public class TranslationFragment extends SherlockFragment {
 
       SharedPreferences prefs = PreferenceManager
               .getDefaultSharedPreferences(getActivity());
-      
-      if (!prefs.getBoolean(getResources().getString(R.string.prefs_new_background), true)) {
-    	  view.setBackgroundColor(getResources().getColor(R.color.page_background));
+
+      Resources res = getResources();
+      String newBackground = res.getString(R.string.prefs_new_background);
+      if (!prefs.getBoolean(newBackground, true)) {
+    	  view.setBackgroundColor(res.getColor(R.color.page_background));
       }
       if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){ 
     	  view.setBackgroundColor(Color.BLACK); 
@@ -118,10 +121,14 @@ public class TranslationFragment extends SherlockFragment {
 
       String database = prefs.getString(
               Constants.PREF_ACTIVE_TRANSLATION, null);
+      refresh(database);
+      return view;
+   }
+
+   public void refresh(String database){
       if (database != null){
          new TranslationTask(database).execute(mPageNumber);
       }
-      return view;
    }
 
    class TranslationTask extends AsyncTask<Integer, Void, List<QuranAyah>> {

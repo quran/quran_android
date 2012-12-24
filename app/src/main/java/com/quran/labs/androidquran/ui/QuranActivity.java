@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -38,8 +40,10 @@ public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener,
                    AddTagDialog.OnTagChangedListener,
                    TagBookmarkDialog.OnBookmarkTagsUpdateListener {
-   public final String TAG = "QuranActivity";
-   
+   public static final String TAG = "QuranActivity";
+   public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
+   public static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
+
    private static final int SURA_LIST = 0;
    private static final int JUZ2_LIST = 1;
    private static final int BOOKMARKS_LIST = 2;
@@ -52,11 +56,14 @@ public class QuranActivity extends SherlockFragmentActivity
                                     R.string.quran_juz2,
                                     R.string.menu_bookmarks,
                                     R.string.menu_tags};
-   private int[] mTabTags = new int[]{ SURA_LIST, JUZ2_LIST, BOOKMARKS_LIST, TAGS_LIST };
+   private int[] mTabTags = new int[]{ SURA_LIST, JUZ2_LIST,
+           BOOKMARKS_LIST, TAGS_LIST };
    
    private ViewPager mPager = null;
+   private AlertDialog mUpgradeDialog = null;
    private PagerAdapter mPagerAdapter = null;
    private BookmarksDBAdapter mBookmarksDBAdapter = null;
+   private boolean mShowedTranslationUpgradeDialog = false;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -90,6 +97,23 @@ public class QuranActivity extends SherlockFragmentActivity
       }
 
       mBookmarksDBAdapter = new BookmarksDBAdapter(this);
+
+      if (savedInstanceState != null){
+         mShowedTranslationUpgradeDialog = savedInstanceState.getBoolean(
+                 SI_SHOWED_UPGRADE_DIALOG, false);
+      }
+
+      Intent intent = getIntent();
+      if (intent != null){
+         Bundle extras = intent.getExtras();
+         if (extras != null){
+            if (extras.getBoolean(EXTRA_SHOW_TRANSLATION_UPGRADE, false)){
+               if (!mShowedTranslationUpgradeDialog){
+                  showTranslationsUpgradeDialog();
+               }
+            }
+         }
+      }
    }
 
    @Override
@@ -205,6 +229,46 @@ public class QuranActivity extends SherlockFragmentActivity
 	   
       return super.onOptionsItemSelected(item);
 	}
+
+   @Override
+   protected void onSaveInstanceState(Bundle outState) {
+      outState.putBoolean(SI_SHOWED_UPGRADE_DIALOG,
+              mShowedTranslationUpgradeDialog);
+      super.onSaveInstanceState(outState);
+   }
+
+   private void showTranslationsUpgradeDialog(){
+      mShowedTranslationUpgradeDialog = true;
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setMessage(R.string.translation_updates_available);
+      builder.setCancelable(false);
+      builder.setPositiveButton(R.string.translation_dialog_yes,
+              new DialogInterface.OnClickListener() {
+                 @Override
+                 public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                    mUpgradeDialog = null;
+                    launchTranslationActivity();
+                 }
+              });
+
+      builder.setNegativeButton(R.string.translation_dialog_later,
+              new DialogInterface.OnClickListener() {
+                 @Override
+                 public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    mUpgradeDialog = null;
+                 }
+              });
+
+      mUpgradeDialog = builder.create();
+      mUpgradeDialog.show();
+   }
+
+   public void launchTranslationActivity(){
+      Intent i = new Intent(this, TranslationManagerActivity.class);
+      startActivity(i);
+   }
    
    public void jumpTo(int page) {
       Intent i = new Intent(this, PagerActivity.class);

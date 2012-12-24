@@ -9,11 +9,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
+import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -21,10 +22,17 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.TranslationListTask;
+
+import java.util.Date;
+import java.util.List;
 
 public class QuranDataActivity extends SherlockActivity implements
-        DefaultDownloadReceiver.SimpleDownloadListener {
-   
+        DefaultDownloadReceiver.SimpleDownloadListener,
+        TranslationListTask.TranslationsUpdatedListener {
+
+   public static final String TAG =
+           "com.quran.labs.androidquran.QuranDataActivity";
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
 
    private boolean mIsPaused = false;
@@ -143,7 +151,7 @@ public class QuranDataActivity extends SherlockActivity implements
       mErrorDialog = builder.create();
       mErrorDialog.show();
    }
-   
+
    private void removeErrorPreferences(){
       mSharedPreferences.edit()
       .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
@@ -186,8 +194,37 @@ public class QuranDataActivity extends SherlockActivity implements
                promptForDownload();
             }
          }
-         else { runListView(); }
+         else {
+            long time = mSharedPreferences.getLong(
+                    Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
+            Date now = new Date();
+            Log.d(TAG, "checking whether we should update translations..");
+            if (now.getTime() - time > Constants.TRANSLATION_REFRESH_TIME){
+               Log.d(TAG, "updating translations list...");
+               new TranslationListTask(QuranDataActivity.this,
+                       QuranDataActivity.this).execute();
+            }
+            else { runListView(); }
+         }
       }      
+   }
+
+   @Override
+   public void translationsUpdated(List<TranslationItem> items){
+      boolean needsUpgrade = false;
+      for (TranslationItem item : items){
+         if (item.exists && item.localVersion != null &&
+                 item.latestVersion > 0 &&
+                 item.latestVersion > item.localVersion){
+            needsUpgrade = true;
+            break;
+         }
+      }
+
+      if (needsUpgrade){
+         runListView(true);
+      }
+      else { runListView(); }
    }
 
    /**
@@ -270,9 +307,16 @@ public class QuranDataActivity extends SherlockActivity implements
       QuranScreenInfo.initialize(width, height);
    }
 
-   protected void runListView(){
+   protected void runListView(boolean showTranslations){
       Intent i = new Intent(this, QuranActivity.class);
+      if (showTranslations){
+         i.putExtra(QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, true);
+      }
       startActivity(i);
       finish();
+   }
+
+   protected void runListView(){
+      runListView(false);
    }
 }
