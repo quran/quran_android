@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran;
 
-import java.util.Locale;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -9,8 +7,10 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.quran.labs.androidquran.data.Constants;
+
+import java.util.Locale;
 
 public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 	
@@ -27,8 +27,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
       // special handling for the arabic checkbox
 		CheckBoxPreference arabicPreference = (CheckBoxPreference)
-              findPreference(getResources().getString(
-                      R.string.prefs_use_arabic_names));
+              findPreference(Constants.PREF_USE_ARABIC_NAMES);
       mInitiallyIsArabic = arabicPreference.isChecked();
       mIsArabic = mInitiallyIsArabic;
 		arabicPreference.setOnPreferenceChangeListener(

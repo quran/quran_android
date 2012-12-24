@@ -94,8 +94,7 @@ public class QuranPageFragment extends SherlockFragment {
               PreferenceManager.getDefaultSharedPreferences(getActivity());
 
       Resources res = getResources();
-      String newBackground = res.getString(R.string.prefs_new_background);
-      if (!prefs.getBoolean(newBackground, true)) {
+      if (!prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
     	  view.setBackgroundColor(res.getColor(R.color.page_background));
       }
 

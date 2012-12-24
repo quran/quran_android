@@ -47,11 +47,8 @@ public class QuranDataActivity extends SherlockActivity implements
    public void onCreate(Bundle savedInstanceState) {
       setTheme(R.style.Theme_Sherlock);
       requestWindowFeature(Window.FEATURE_NO_TITLE);
-      
+
       super.onCreate(savedInstanceState);
-      getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
       setContentView(R.layout.splash_screen);
 
       /*
@@ -165,7 +162,6 @@ public class QuranDataActivity extends SherlockActivity implements
       protected Boolean doInBackground(Void... params) {
          // intentionally not sleeping because waiting
          // for the splash screen is not cool.
-
          QuranFileUtils.migrateAudio(QuranDataActivity.this);
          return QuranFileUtils.getQuranDirectory() != null &&
                 QuranFileUtils.haveAllImages();

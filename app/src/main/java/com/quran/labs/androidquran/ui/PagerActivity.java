@@ -6,10 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.*;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -68,6 +65,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private static final String LAST_READ_PAGE = "LAST_READ_PAGE";
    private static final String LAST_READING_MODE_IS_TRANSLATION =
            "LAST_READING_MODE_IS_TRANSLATION";
+   private static final String LAST_ACTIONBAR_STATE = "LAST_ACTIONBAR_STATE";
 
    public static final String EXTRA_JUMP_TO_TRANSLATION = "jumpToTranslation";
    public static final String EXTRA_HIGHLIGHT_SURA = "highlightSura";
@@ -90,7 +88,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private DefaultDownloadReceiver mDownloadReceiver;
    private boolean mNeedsPermissionToDownloadOver3g = true;
    private AlertDialog mPromptDialog = null;
-   private Handler mHandler = new Handler();
    private List<TranslationItem> mTranslations;
    private String[] mTranslationItems;
    private TranslationReaderTask mTranslationReaderTask;
@@ -102,6 +99,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public static final int INVISIBLE_FLAGS =
            View.SYSTEM_UI_FLAG_LOW_PROFILE
            | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+   public static final int MSG_TOGGLE_ACTIONBAR = 1;
+
+   private Handler mHandler = new Handler(){
+      @Override
+      public void handleMessage(Message msg) {
+         if (msg.what == MSG_TOGGLE_ACTIONBAR){
+            toggleActionBar();
+         }
+         else { super.handleMessage(msg); }
+      }
+   };
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -116,7 +125,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       setTheme(R.style.QuranAndroid);
       getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
       requestWindowFeature(
-             com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
+              com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
 
       super.onCreate(savedInstanceState);
       mBookmarksCache = new SparseArray<Boolean>();
@@ -127,6 +136,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       int page = -1;
 
+      mIsActionBarHidden = true;
+      boolean shouldAnimateActionBarAway = true;
       if (savedInstanceState != null){
          android.util.Log.d(TAG, "non-null saved instance state!");
          Serializable lastAudioRequest =
@@ -140,6 +151,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
          if (page != -1){ page = Constants.PAGES_LAST - page; }
          mShowingTranslation = savedInstanceState
                  .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
+         if (savedInstanceState.containsKey(LAST_ACTIONBAR_STATE)){
+            shouldAnimateActionBarAway = false;
+            mIsActionBarHidden = !savedInstanceState
+                    .getBoolean(LAST_ACTIONBAR_STATE);
+         }
       }
       
       mPrefs = PreferenceManager.getDefaultSharedPreferences(
@@ -147,7 +163,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       getSupportActionBar().setDisplayShowHomeEnabled(true);
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-      mIsActionBarHidden = false;
 
       int background = getResources().getColor(
               R.color.transparent_actionbar_color);
@@ -183,14 +198,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mViewPager = (ViewPager)findViewById(R.id.quran_pager);
       mViewPager.setAdapter(mPagerAdapter);
 
-      mViewPager.setOnPageChangeListener(new OnPageChangeListener(){
+      mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 
          @Override
-         public void onPageScrollStateChanged(int state) {}
+         public void onPageScrollStateChanged(int state) {
+         }
 
          @Override
          public void onPageScrolled(int position, float positionOffset,
-               int positionOffsetPixels) {
+                                    int positionOffsetPixels) {
          }
 
          @Override
@@ -198,13 +214,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
             Log.d(TAG, "onPageSelected(): " + position);
             int page = Constants.PAGES_LAST - position;
             QuranSettings.setLastPage(PagerActivity.this, page);
-            if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)){
+            if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)) {
                mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
                        PagerActivity.this, page, mLastPopupTime);
             }
-            updateActionBarTitle(page);
 
-            if (mBookmarksCache.get(page) == null){
+            if (!mShowingTranslation){
+               updateActionBarTitle(page);
+            }
+
+            if (mBookmarksCache.get(page) == null) {
                // we don't have the key
                new IsPageBookmarkedTask().execute(page);
             }
@@ -214,12 +233,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
          JBVisibilityHelper.setVisibilityChangeListener(this, mViewPager);
       }
-      
+      toggleActionBar();
+
+      if (shouldAnimateActionBarAway){
+         mHandler.sendEmptyMessageDelayed(MSG_TOGGLE_ACTIONBAR, 1000);
+      }
+
       mViewPager.setCurrentItem(page);
       QuranSettings.setLastPage(this, Constants.PAGES_LAST - page);
       setLoading(false);
-
-      toggleActionBar();
 
       // just got created, need to reconnect to service
       mShouldReconnect = true;
@@ -243,9 +265,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
    
    @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	   boolean navigate = mAudioStatusBar.getCurrentMode() != AudioStatusBar.PLAYING_MODE
+	   boolean navigate = mAudioStatusBar.getCurrentMode() !=
+              AudioStatusBar.PLAYING_MODE
 			   && PreferenceManager.getDefaultSharedPreferences(this).
-	   				getBoolean(getString(R.string.prefs_volume_key_navigation), false);
+	   				getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
 	   if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 		   mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
 		   return true;
@@ -258,13 +281,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
    
    @Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-      String volumePref = getString(R.string.prefs_volume_key_navigation);
 		return ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
                keyCode == KeyEvent.KEYCODE_VOLUME_UP) &&
 				   mAudioStatusBar.getCurrentMode() !=
                        AudioStatusBar.PLAYING_MODE &&
 				   PreferenceManager.getDefaultSharedPreferences(this)
-					   .getBoolean(volumePref, false))
+					   .getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false))
             || super.onKeyUp(keyCode, event);
 	}
 
@@ -457,6 +479,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       state.putSerializable(LAST_READ_PAGE,
               Constants.PAGES_LAST - mViewPager.getCurrentItem());
       state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
+      state.putBoolean(LAST_ACTIONBAR_STATE, mIsActionBarHidden);
       super.onSaveInstanceState(state);
    }
 
@@ -505,9 +528,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
       else if (item.getItemId() == R.id.goto_quran){
          mPagerAdapter.setQuranMode();
          mShowingTranslation = false;
-         getSupportActionBar().setNavigationMode(
-                 ActionBar.NAVIGATION_MODE_STANDARD);
+         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
          invalidateOptionsMenu();
+         updateActionBarTitle(page);
          return true;
       }
       else if (item.getItemId() == R.id.goto_translation){
@@ -555,7 +578,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void switchToTranslation(){
       String activeDatabase = TranslationUtils.getDefaultTranslation(
               this, mTranslations);
-      if (activeDatabase == null){
+      String setDatabase = mPrefs.getString(
+              Constants.PREF_ACTIVE_TRANSLATION, null);
+      if (activeDatabase == null && setDatabase == null){
          Intent i = new Intent(this, TranslationManagerActivity.class);
          startActivity(i);
       }
@@ -632,6 +657,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private void updateActionBarTitle(int page){
       String sura = QuranInfo.getSuraNameFromPage(this, page, true);
       ActionBar actionBar = getSupportActionBar();
+      actionBar.setDisplayShowTitleEnabled(true);
+      actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
       actionBar.setTitle(sura);
       String desc = QuranInfo.getPageSubtitle(this, page);
       actionBar.setSubtitle(desc);
@@ -639,12 +666,30 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    private void updateActionBarSpinner(){
       SpinnerAdapter spinnerAdapter = new ArrayAdapter<String>(this,
-              android.R.layout.simple_spinner_dropdown_item,
+              R.layout.sherlock_spinner_dropdown_item,
               mTranslationItems);
+
+      // figure out which translation should be selected
+      int selected = 0;
+      String activeTranslation = TranslationUtils
+              .getDefaultTranslation(this, mTranslations);
+      if (activeTranslation != null){
+         int index = 0;
+         for (TranslationItem item : mTranslations){
+            if (item.filename.equals(activeTranslation)){
+               selected = index;
+               break;
+            }
+            else { index++; }
+         }
+      }
+
       getSupportActionBar().setNavigationMode(
               ActionBar.NAVIGATION_MODE_LIST);
       getSupportActionBar().setListNavigationCallbacks(spinnerAdapter,
               mNavigationCallback);
+      getSupportActionBar().setSelectedNavigationItem(selected);
+      getSupportActionBar().setDisplayShowTitleEnabled(false);
    }
 
    BroadcastReceiver mAudioReceiver = new BroadcastReceiver(){
@@ -730,7 +775,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             getWindow().addFlags(
                  WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             getWindow().clearFlags(
-                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getSupportActionBar().show();
          }
 

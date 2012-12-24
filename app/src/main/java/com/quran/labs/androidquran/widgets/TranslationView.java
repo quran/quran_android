@@ -34,6 +34,7 @@ public class TranslationView extends LinearLayout {
    private int mArabicStatus;
    private boolean mUseArabicFont;
    private boolean mShouldReshape;
+   private List<QuranAyah> mAyat;
    private OnTextClickedListener mListener;
 
    public TranslationView(Context context){
@@ -75,8 +76,18 @@ public class TranslationView extends LinearLayout {
               R.style.translation_text;
    }
 
+   public void refresh(){
+      int size = QuranSettings.getTranslationTextSize(mContext);
+
+      if (size != mFontSize){
+         mFontSize = size;
+         setAyahs(mAyat);
+      }
+   }
+
    public void setAyahs(List<QuranAyah> ayat){
       removeAllViews();
+      mAyat = ayat;
 
       int currentSura = 0;
       boolean isFirst = true;

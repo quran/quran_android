@@ -39,4 +39,6 @@ public class Constants {
    public static final String PREF_DOWNLOAD_AMOUNT = "preferredDownloadAmount";
    public static final String PREF_LAST_UPDATED_TRANSLATIONS =
            "lastTranslationsUpdate";
+   public static final String PREF_USE_NEW_BACKGROUND = "useNewBackground";
+   public static final String PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation";
 }
