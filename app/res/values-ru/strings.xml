@@ -142,7 +142,13 @@
     <string name="available_translations">Доступные для загрузки</string>
     <string name="remove_button">Удалить</string>
     <string name="dialog_ok">OK</string>
-    
+
+    <!-- translation updates -->
+    <string name="update_available">Update Available</string>
+    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
+    <string name="translation_dialog_yes">Yes</string>
+    <string name="translation_dialog_later">Later</string>
+
     <!-- used for screen readers -->
     <string name="border">граница</string>
     

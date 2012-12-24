@@ -122,7 +122,13 @@
     <string name="available_translations">فعال براي بارگذاي</string>
     <string name="remove_button">حذف</string>
     <string name="dialog_ok">بله</string>
-    
+
+    <!-- translation updates -->
+    <string name="update_available">Update Available</string>
+    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
+    <string name="translation_dialog_yes">Yes</string>
+    <string name="translation_dialog_later">Later</string>
+
     <!-- used for screen readers -->
     <string name="border">مرز</string>
     
