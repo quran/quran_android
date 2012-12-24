@@ -11,8 +11,6 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
    
 	private static final String DB_NAME = "bookmarks.db";
 	private static final int DB_VERSION = 2;
-	
-   private Context cx;
 
    public static class BookmarksTable {
       public static final String TABLE_NAME = "bookmarks";
@@ -70,7 +68,6 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
 	
 	public BookmarksDBHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
-		this.cx = context;
 	}
 	
 	@Override

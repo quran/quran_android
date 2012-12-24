@@ -1,12 +1,11 @@
 package com.quran.labs.androidquran.database;
 
-import java.io.File;
-
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-
 import com.quran.labs.androidquran.util.QuranFileUtils;
+
+import java.io.File;
 
 
 public class DatabaseHandler {
@@ -76,6 +75,28 @@ public class DatabaseHandler {
 			return version;
 		}
 	}
+
+   public int getTextVersion(){
+      int version = 1;
+      if (!validDatabase()){ return version; }
+
+      Cursor result = null;
+      try {
+         result = mDatabase.query(PROPERTIES_TABLE, new String[]{ COL_VALUE },
+                 COL_PROPERTY + "= ?", new String[]{ "text_version" },
+                 null, null, null);
+         if ((result != null) && (result.moveToFirst()))
+            version = result.getInt(0);
+         if (result != null)
+            result.close();
+         return version;
+      }
+      catch (SQLException se){
+         if (result != null)
+            result.close();
+         return version;
+      }
+   }
 	
 	public Cursor getVerses(int sura, int minAyah, int maxAyah, String table){
       return getVerses(sura, minAyah, sura, maxAyah, table);

@@ -1,61 +1,41 @@
 package com.quran.labs.androidquran.ui;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.TranslationListTask;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TranslationManagerActivity extends SherlockActivity
-        implements DefaultDownloadReceiver.SimpleDownloadListener {
+        implements DefaultDownloadReceiver.SimpleDownloadListener,
+                   TranslationListTask.TranslationsUpdatedListener {
    public static final String TAG = "TranslationManager";
    public static final String TRANSLATION_DOWNLOAD_KEY =
            "TRANSLATION_DOWNLOAD_KEY";
-
-   public static final String WEB_SERVICE_URL =
-           "http://android.quran.com/data/translations.php?v=2";
-   
-   private static final String CACHED_RESPONSE_FILE_NAME = "cached-translation-list";
+   private static final String UPGRADING_EXTENSION = ".old";
 
    private List<TranslationItem> mItems;
    private List<TranslationItem> mAllItems;
@@ -63,12 +43,11 @@ public class TranslationManagerActivity extends SherlockActivity
    private ListView mListView;
    private TextView mMessageArea;
    private TranslationsAdapter mAdapter;
-   private SharedPreferences mPrefs;
-
-   private String mActiveTranslation;
-   private int mDownloadedTranslations;
+   private TranslationItem mDownloadingItem;
+   private String mDatabaseDirectory;
 
    private DefaultDownloadReceiver mDownloadReceiver = null;
+   private TranslationListTask mTask = null;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -90,9 +69,10 @@ public class TranslationManagerActivity extends SherlockActivity
       });
 
       setSupportProgressBarIndeterminateVisibility(true);
-      mPrefs = PreferenceManager.getDefaultSharedPreferences(
-              getApplicationContext());
-      new LoadTranslationsTask().execute();
+      mDatabaseDirectory = QuranFileUtils.getQuranDatabaseDirectory();
+
+      mTask = new TranslationListTask(this, this);
+      mTask.execute();
    }
 
    @Override
@@ -107,94 +87,97 @@ public class TranslationManagerActivity extends SherlockActivity
    }
 
    @Override
+   protected void onDestroy() {
+      if (mTask != null){
+         mTask.cancel(true);
+      }
+      mTask = null;
+      super.onDestroy();
+   }
+
+   @Override
    public void handleDownloadSuccess(){
+      if (mDownloadingItem != null){
+         if (mDownloadingItem.exists){
+            try {
+               File f = new File(mDatabaseDirectory,
+                    mDownloadingItem.filename + UPGRADING_EXTENSION);
+               if (f.exists()){ f.delete(); }
+            }
+            catch (Exception e){
+               Log.d(TAG, "error removing old database file", e);
+            }
+         }
+         mDownloadingItem.exists = true;
+         mDownloadingItem.localVersion = mDownloadingItem.latestVersion;
+
+         writeDatabaseUpdate(mDownloadingItem);
+      }
+      mDownloadingItem = null;
       generateListItems();
    }
 
    @Override
    public void handleDownloadFailure(int errId){
+      if (mDownloadingItem != null && mDownloadingItem.exists){
+         try {
+            File f = new File(mDatabaseDirectory,
+                    mDownloadingItem.filename + UPGRADING_EXTENSION);
+            File destFile = new File(mDatabaseDirectory,
+                    mDownloadingItem.filename);
+            if (f.exists() && !destFile.exists()){
+               f.renameTo(destFile);
+            }
+            else { f.delete(); }
+         }
+         catch (Exception e){
+            Log.d(TAG, "error restoring translation after failed download", e);
+         }
+      }
+      mDownloadingItem = null;
    }
 
-   private class LoadTranslationsTask extends
-           AsyncTask<Void, Void, List<TranslationItem>> {
+   private void writeDatabaseUpdate(TranslationItem item){
+      final List<TranslationItem> updates =
+              new ArrayList<TranslationItem>();
+      updates.add(item);
 
-      @Override
-      public List<TranslationItem> doInBackground(Void... params) {
-         String text = downloadUrl(WEB_SERVICE_URL);
-         if (text == null && ((text = loadCachedResponse()) == null)) {
-        	 return null; 
-    	 } else {
-    		 cacheResponse(text);
-    	 }
-
-         List<TranslationItem> items = new ArrayList<TranslationItem>();
-         try {
-            Object responseItem = new JSONTokener(text).nextValue();
-            if (!(responseItem instanceof JSONObject)){ return null; }
-            JSONObject data = (JSONObject)responseItem;
-            JSONArray translations = data.getJSONArray("data");
-            int length = translations.length();
-            for (int i = 0; i < length; i++){
-               JSONObject translation = translations.getJSONObject(i);
-               int id = Integer.parseInt(translation.getString("id"));
-               String name = translation.getString("displayName");
-               String who = translation.getString("translator_foreign");
-               if (TextUtils.isEmpty(who) || "null".equals(who)){
-                  who = translation.getString("translator");
-                  if (!TextUtils.isEmpty(who) && "null".equals(who)){
-                     who = null;
-                  }
-               }
-               String url = translation.getString("fileUrl");
-               String filename = translation.getString("fileName");
-
-               int firstParen = name.indexOf("(");
-               if (firstParen != -1){
-                  name = name.substring(0, firstParen-1);
-               }
-
-               TranslationItem item = new TranslationItem(
-                       id, name, who, filename, url, false);
-               items.add(item);
-            }
+      final Activity activity = this;
+      new Thread(new Runnable() {
+         @Override
+         public void run() {
+            TranslationsDBAdapter adapter =
+                    new TranslationsDBAdapter(activity);
+            adapter.writeTranslationUpdates(updates);
+            adapter.close();
          }
-         catch (JSONException je){
-            Log.d(TAG, "error parsing json: " + je);
-         }
+      }).start();
+   }
 
-         return items;
+   @Override
+   public void translationsUpdated(List<TranslationItem> items){
+      mAllItems = items;
+      setSupportProgressBarIndeterminateVisibility(false);
+
+      if (mAllItems == null){
+         mMessageArea.setText(R.string.error_getting_translation_list);
       }
-
-      @Override
-      public void onPostExecute(List<TranslationItem> items){
-         mAllItems = items;
-         setSupportProgressBarIndeterminateVisibility(false);
-
-         if (mAllItems == null){
-            mMessageArea.setText(R.string.error_getting_translation_list);
-         }
-         else {
-            mMessageArea.setVisibility(View.GONE);
-            mListView.setVisibility(View.VISIBLE);
-            generateListItems();
-         }
+      else {
+         mMessageArea.setVisibility(View.GONE);
+         mListView.setVisibility(View.VISIBLE);
+         generateListItems();
       }
+      mTask = null;
    }
 
    private void generateListItems(){
-      mActiveTranslation = mPrefs.getString(
-              Constants.PREF_ACTIVE_TRANSLATION, null);
       if (mAllItems == null){ return; }
 
       List<TranslationItem> downloaded = new ArrayList<TranslationItem>();
       List<TranslationItem> notDownloaded =
               new ArrayList<TranslationItem>();
 
-      String databaseDir = QuranFileUtils.getQuranDatabaseDirectory();
       for (TranslationItem item : mAllItems){
-         String path = databaseDir + File.separator + item.filename;
-         item.exists = new File(path).exists();
-
          if (item.exists){ downloaded.add(item); }
          else { notDownloaded.add(item); }
       }
@@ -205,21 +188,8 @@ public class TranslationManagerActivity extends SherlockActivity
       hdr.isSeparator = true;
       res.add(hdr);
 
-      mDownloadedTranslations = downloaded.size();
       for (TranslationItem item : downloaded){
-         if (mActiveTranslation != null &&
-                 mActiveTranslation.equals(item.filename)){
-            item.active = true;
-         }
-         else { item.active = false; }
          res.add(item);
-      }
-
-      if (mDownloadedTranslations > 0 && mActiveTranslation == null){
-         res.get(1).active = true;
-         mActiveTranslation = res.get(1).filename;
-         mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION,
-                 mActiveTranslation).commit();
       }
 
       hdr = new TranslationItem(getString(R.string.available_translations));
@@ -240,7 +210,15 @@ public class TranslationManagerActivity extends SherlockActivity
 
       TranslationItem selectedItem =
               (TranslationItem)mAdapter.getItem(pos);
-      if (selectedItem == null || selectedItem.exists){ return; }
+      if (selectedItem == null){ return; }
+      if (selectedItem.exists &&
+              (selectedItem.latestVersion <= 0 ||
+               selectedItem.localVersion == null ||
+               selectedItem.latestVersion <= selectedItem.localVersion)){
+         return;
+      }
+
+      mDownloadingItem = selectedItem;
 
       if (mDownloadReceiver == null){
          mDownloadReceiver = new DefaultDownloadReceiver(this,
@@ -254,8 +232,24 @@ public class TranslationManagerActivity extends SherlockActivity
       // actually start the download
       String url = selectedItem.url;
       if (selectedItem.url == null){ return; }
-      String destination = QuranFileUtils.getQuranDatabaseDirectory();
+      String destination = mDatabaseDirectory;
       Log.d(TAG, "downloading " + url + " to " + destination);
+
+      if (selectedItem.exists){
+         try {
+            File f = new File(destination, selectedItem.filename);
+            if (f.exists()){
+               File newPath = new File(destination,
+                       selectedItem.filename + UPGRADING_EXTENSION);
+               if (newPath.exists()){ newPath.delete(); }
+               f.renameTo(newPath);
+            }
+         }
+         catch (Exception e){
+            Log.d(TAG, "error backing database file up", e);
+         }
+      }
+
       // start the download
       String notificationTitle = selectedItem.name;
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
@@ -280,15 +274,11 @@ public class TranslationManagerActivity extends SherlockActivity
              .setPositiveButton(R.string.remove_button,
                      new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                           if (selectedItem.active){
-                              mActiveTranslation = null;
-                              mPrefs.edit().remove(
-                                      Constants
-                                              .PREF_ACTIVE_TRANSLATION)
-                                      .commit();
-                           }
                            QuranFileUtils.removeTranslation(
                                    selectedItem.filename);
+                           selectedItem.localVersion = null;
+                           selectedItem.exists = false;
+                           writeDatabaseUpdate(selectedItem);
                            generateListItems();
                         }
                      })
@@ -300,27 +290,6 @@ public class TranslationManagerActivity extends SherlockActivity
                          }
                       });
       builder.show();
-   }
-
-   private void activateTranslation(int pos){
-      if (mItems == null || mAdapter == null){ return; }
-
-      final TranslationItem selectedItem =
-              (TranslationItem)mAdapter.getItem(pos);
-      if (mActiveTranslation != null){
-         for (int i=0; i<mDownloadedTranslations; i++){
-            TranslationItem item = mItems.get(i);
-            if (item.active){
-               item.active = false;
-            }
-         }
-      }
-
-      selectedItem.active = true;
-      mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION,
-              selectedItem.filename).commit();
-      mActiveTranslation = selectedItem.filename;
-      generateListItems();
    }
 
    private class TranslationsAdapter extends BaseAdapter {
@@ -408,22 +377,15 @@ public class TranslationManagerActivity extends SherlockActivity
             }
 
             if (item.exists){
-               if (item.active){
-                  holder.leftImage.setImageResource(R.drawable.favorite);
-               }
-               else {
-                  holder.leftImage.setImageResource(R.drawable.not_favorite);
+               if (item.latestVersion > -1 && item.localVersion != null &&
+                   item.latestVersion > item.localVersion){
+                  holder.leftImage.setImageResource(R.drawable.ic_download);
+                  holder.leftImage.setVisibility(View.VISIBLE);
 
-                  final int pos = position;
-                  holder.leftImage.setOnClickListener(new View.OnClickListener() {
-                     @Override
-                     public void onClick(View view) {
-                        activateTranslation(pos);
-                     }
-                  });
+                  holder.translationInfo.setText(R.string.update_available);
+                  holder.translationInfo.setVisibility(View.VISIBLE);
                }
-
-               holder.leftImage.setVisibility(View.VISIBLE);
+               else { holder.leftImage.setVisibility(View.GONE); }
                holder.rightImage.setImageResource(R.drawable.ic_cancel);
                holder.rightImage.setVisibility(View.VISIBLE);
 
@@ -454,96 +416,5 @@ public class TranslationManagerActivity extends SherlockActivity
 
          TextView separatorText;
       }
-   }
-
-   public static class TranslationItem {
-      public int id;
-      public String name;
-      public String translator;
-      public String filename;
-      public String url;
-      public boolean active;
-      public boolean exists;
-      public boolean isSeparator = false;
-
-      public TranslationItem(String name){
-         this.name = name;
-      }
-
-      public TranslationItem(int id, String name, String translator,
-                             String filename, String url, boolean exists){
-         this.id = id;
-         this.name = name;
-         this.translator = translator;
-         this.filename = filename;
-         this.url = url;
-         this.exists = false;
-      }
-   }
-   
-   private void cacheResponse(String response) {
-		try {
-			PrintWriter pw = new PrintWriter(getCachedResponseFilePath());
-			pw.write(response);
-			pw.close();
-		} catch (Exception e) {
-			Log.e(TAG, "failed to cache response", e);
-		}
-   }
-   
-   private String loadCachedResponse() {
-	   String response = null;
-	   try {
-		   FileReader fr = new FileReader(getCachedResponseFilePath());
-		   BufferedReader br = new BufferedReader(fr);
-		   response = "";
-		   String line = "";
-		   while ((line = br.readLine()) != null) {
-			   response += line + "\n";
-		   }
-		   br.close();
-	   } catch (Exception e) {
-		   Log.e(TAG, "failed reading cached response", e);
-	   }
-	   return response;
-   }
-   
-	private File getCachedResponseFilePath() {
-		String fileName = CACHED_RESPONSE_FILE_NAME;
-      String dir = QuranFileUtils.getQuranDatabaseDirectory();
-		return new File(dir + File.separator + fileName);
-	}
-
-   private String downloadUrl(String urlString){
-      InputStream stream = null;
-      try {
-         URL url = new URL(urlString);
-         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-         conn.setReadTimeout(10000);
-         conn.setConnectTimeout(15000);
-         conn.setDoInput(true);
-
-         conn.connect();
-         stream = conn.getInputStream();
-
-         String result = "";
-         BufferedReader reader =
-                 new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-
-         String line = "";
-         while ((line = reader.readLine()) != null){
-            result += line;
-         }
-
-         try { reader.close(); }
-         catch (Exception e){ }
-
-         return result;
-      }
-      catch (Exception e){
-         Log.d(TAG, "error downloading translation data: " + e);
-      }
-
-      return null;
    }
 }

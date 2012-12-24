@@ -1,0 +1,239 @@
+package com.quran.labs.androidquran.util;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.SparseArray;
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.database.TranslationsDBAdapter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class TranslationListTask extends
+        AsyncTask<Void, Void, List<TranslationItem>> {
+
+   public static final String WEB_SERVICE_URL =
+           "http://android.quran.com/data/translations.php?v=2";
+   private static final String CACHED_RESPONSE_FILE_NAME =
+           "cached-translation-list";
+   private static final String TAG = "TranslationListTask";
+
+   private Context mContext;
+   private String mDatabaseDir;
+   private TranslationsUpdatedListener mListener;
+
+   public TranslationListTask(Context context,
+                              TranslationsUpdatedListener listener){
+      mContext = context;
+      mListener = listener;
+      mDatabaseDir = QuranFileUtils.getQuranDatabaseDirectory();
+   }
+
+   @Override
+   public List<TranslationItem> doInBackground(Void... params) {
+      boolean refreshed = true;
+      String text = downloadUrl(WEB_SERVICE_URL);
+      if (text == null || text.isEmpty()){ refreshed = false; }
+      if (text == null && ((text = loadCachedResponse()) == null)) {
+         return null;
+      } else {
+         cacheResponse(text);
+      }
+
+      SparseArray<TranslationItem> cachedItems;
+      TranslationsDBAdapter adapter =
+              new TranslationsDBAdapter(mContext);
+      cachedItems = adapter.getTranslationsHash();
+      if (cachedItems == null){
+         cachedItems = new SparseArray<TranslationItem>();
+      }
+
+      List<TranslationItem> items = new ArrayList<TranslationItem>();
+      List<TranslationItem> updates = new ArrayList<TranslationItem>();
+
+      try {
+         Object responseItem = new JSONTokener(text).nextValue();
+         if (!(responseItem instanceof JSONObject)){ return null; }
+         JSONObject data = (JSONObject)responseItem;
+         JSONArray translations = data.getJSONArray("data");
+         int length = translations.length();
+         for (int i = 0; i < length; i++){
+            JSONObject translation = translations.getJSONObject(i);
+            int id = Integer.parseInt(translation.getString("id"));
+            String name = translation.getString("displayName");
+            String who = translation.getString("translator_foreign");
+            if (TextUtils.isEmpty(who) || "null".equals(who)){
+               who = translation.getString("translator");
+               if (!TextUtils.isEmpty(who) && "null".equals(who)){
+                  who = null;
+               }
+            }
+            String url = translation.getString("fileUrl");
+            String filename = translation.getString("fileName");
+            int version = -1;
+            try {
+               version = Integer.parseInt(
+                       translation.getString("current_version"));
+            }
+            catch (Exception e){
+               // this could happen if we have an older cached translation list
+            }
+
+            int firstParen = name.indexOf("(");
+            if (firstParen != -1){
+               name = name.substring(0, firstParen-1);
+            }
+
+            String path = mDatabaseDir + File.separator + filename;
+            boolean exists = new File(path).exists();
+
+            boolean needsUpdate = false;
+            TranslationItem item = new TranslationItem(
+                    id, name, who, version, filename, url, exists);
+            if (exists){
+               TranslationItem localItem = cachedItems.get(id);
+               if (localItem != null){
+                  item.localVersion = localItem.localVersion;
+               }
+               else if (version > -1) {
+                  needsUpdate = true;
+                  try {
+                     DatabaseHandler mHandler = new DatabaseHandler(filename);
+                     if (mHandler.validDatabase()){
+                        item.localVersion = mHandler.getTextVersion();
+                     }
+                     mHandler.closeDatabase();
+                  }
+                  catch (Exception e){
+                     Log.d(TAG, "exception opening database: " + name, e);
+                  }
+               }
+               else { needsUpdate = true; }
+            }
+            else if (cachedItems.get(id) != null){
+               needsUpdate = true;
+            }
+
+            if (needsUpdate){
+               updates.add(item);
+            }
+
+            if (item.exists){
+               Log.d(TAG, "found: " + name + " with " +
+                       item.localVersion + " vs server's " +
+                       item.latestVersion);
+            }
+            items.add(item);
+         }
+
+         if (refreshed){
+            Date today = new Date();
+            long now = today.getTime();
+            PreferenceManager.getDefaultSharedPreferences(mContext)
+                    .edit().putLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS,
+                    now).commit();
+         }
+
+         if (updates.size() > 0){
+            adapter.writeTranslationUpdates(updates);
+         }
+         adapter.close();
+      }
+      catch (JSONException je){
+         Log.d(TAG, "error parsing json: " + je);
+      }
+
+      return items;
+   }
+
+   @Override
+   public void onPostExecute(List<TranslationItem> items){
+      if (mListener != null){
+         mListener.translationsUpdated(items);
+      }
+      mListener = null;
+   }
+
+   private void cacheResponse(String response) {
+      try {
+         PrintWriter pw = new PrintWriter(getCachedResponseFilePath());
+         pw.write(response);
+         pw.close();
+      } catch (Exception e) {
+         Log.e(TAG, "failed to cache response", e);
+      }
+   }
+
+   private String loadCachedResponse() {
+      String response = null;
+      try {
+         FileReader fr = new FileReader(getCachedResponseFilePath());
+         BufferedReader br = new BufferedReader(fr);
+         response = "";
+         String line = "";
+         while ((line = br.readLine()) != null) {
+            response += line + "\n";
+         }
+         br.close();
+      } catch (Exception e) {
+         Log.e(TAG, "failed reading cached response", e);
+      }
+      return response;
+   }
+
+   private File getCachedResponseFilePath() {
+      String fileName = CACHED_RESPONSE_FILE_NAME;
+      String dir = QuranFileUtils.getQuranDatabaseDirectory();
+      return new File(dir + File.separator + fileName);
+   }
+
+   private String downloadUrl(String urlString){
+      InputStream stream = null;
+      try {
+         URL url = new URL(urlString);
+         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+         conn.setReadTimeout(10000);
+         conn.setConnectTimeout(15000);
+         conn.setDoInput(true);
+
+         conn.connect();
+         stream = conn.getInputStream();
+
+         String result = "";
+         BufferedReader reader =
+                 new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+
+         String line = "";
+         while ((line = reader.readLine()) != null){
+            result += line;
+         }
+
+         try { reader.close(); }
+         catch (Exception e){ }
+
+         return result;
+      }
+      catch (Exception e){
+         Log.d(TAG, "error downloading translation data: " + e);
+      }
+
+      return null;
+   }
+
+   public interface TranslationsUpdatedListener {
+      public void translationsUpdated(List<TranslationItem> items);
+   }
+}
