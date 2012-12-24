@@ -32,30 +32,76 @@ public class TranslationListTask extends
    private static final String TAG = "TranslationListTask";
 
    private Context mContext;
-   private String mDatabaseDir;
    private TranslationsUpdatedListener mListener;
 
    public TranslationListTask(Context context,
                               TranslationsUpdatedListener listener){
       mContext = context;
       mListener = listener;
-      mDatabaseDir = QuranFileUtils.getQuranDatabaseDirectory();
    }
 
    @Override
    public List<TranslationItem> doInBackground(Void... params) {
+      return downloadTranslations(mContext, true, TAG);
+   }
+
+   @Override
+   public void onPostExecute(List<TranslationItem> items){
+      if (mListener != null){
+         mListener.translationsUpdated(items);
+      }
+      mListener = null;
+   }
+
+   private static void cacheResponse(String response) {
+      try {
+         PrintWriter pw = new PrintWriter(getCachedResponseFilePath());
+         pw.write(response);
+         pw.close();
+      } catch (Exception e) {
+         Log.e(TAG, "failed to cache response", e);
+      }
+   }
+
+   private static String loadCachedResponse() {
+      String response = null;
+      try {
+         FileReader fr = new FileReader(getCachedResponseFilePath());
+         BufferedReader br = new BufferedReader(fr);
+         response = "";
+         String line = "";
+         while ((line = br.readLine()) != null) {
+            response += line + "\n";
+         }
+         br.close();
+      } catch (Exception e) {
+         Log.e(TAG, "failed reading cached response", e);
+      }
+      return response;
+   }
+
+   public static List<TranslationItem> downloadTranslations(Context context,
+                                                            boolean useCache,
+                                                            String tag){
       boolean refreshed = true;
       String text = downloadUrl(WEB_SERVICE_URL);
       if (text == null || text.isEmpty()){ refreshed = false; }
-      if (text == null && ((text = loadCachedResponse()) == null)) {
-         return null;
-      } else {
-         cacheResponse(text);
+
+      // warning - the cache is *not* thread safe.  the service doesn't
+      // use the cache to avoid conflicting with a running TranslationManager
+      if (useCache){
+         if (text == null && ((text = loadCachedResponse()) == null)) {
+            return null;
+         } else {
+            cacheResponse(text);
+         }
       }
+
+      if (text == null){ return null; }
 
       SparseArray<TranslationItem> cachedItems;
       TranslationsDBAdapter adapter =
-              new TranslationsDBAdapter(mContext);
+              new TranslationsDBAdapter(context);
       cachedItems = adapter.getTranslationsHash();
       if (cachedItems == null){
          cachedItems = new SparseArray<TranslationItem>();
@@ -97,7 +143,8 @@ public class TranslationListTask extends
                name = name.substring(0, firstParen-1);
             }
 
-            String path = mDatabaseDir + File.separator + filename;
+            String databaseDir = QuranFileUtils.getQuranDatabaseDirectory();
+            String path = databaseDir + File.separator + filename;
             boolean exists = new File(path).exists();
 
             boolean needsUpdate = false;
@@ -118,7 +165,7 @@ public class TranslationListTask extends
                      mHandler.closeDatabase();
                   }
                   catch (Exception e){
-                     Log.d(TAG, "exception opening database: " + name, e);
+                     Log.d(tag, "exception opening database: " + name, e);
                   }
                }
                else { needsUpdate = true; }
@@ -132,7 +179,7 @@ public class TranslationListTask extends
             }
 
             if (item.exists){
-               Log.d(TAG, "found: " + name + " with " +
+               Log.d(tag, "found: " + name + " with " +
                        item.localVersion + " vs server's " +
                        item.latestVersion);
             }
@@ -142,7 +189,7 @@ public class TranslationListTask extends
          if (refreshed){
             Date today = new Date();
             long now = today.getTime();
-            PreferenceManager.getDefaultSharedPreferences(mContext)
+            PreferenceManager.getDefaultSharedPreferences(context)
                     .edit().putLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS,
                     now).commit();
          }
@@ -153,54 +200,19 @@ public class TranslationListTask extends
          adapter.close();
       }
       catch (JSONException je){
-         Log.d(TAG, "error parsing json: " + je);
+         Log.d(tag, "error parsing json: " + je);
       }
 
       return items;
    }
 
-   @Override
-   public void onPostExecute(List<TranslationItem> items){
-      if (mListener != null){
-         mListener.translationsUpdated(items);
-      }
-      mListener = null;
-   }
-
-   private void cacheResponse(String response) {
-      try {
-         PrintWriter pw = new PrintWriter(getCachedResponseFilePath());
-         pw.write(response);
-         pw.close();
-      } catch (Exception e) {
-         Log.e(TAG, "failed to cache response", e);
-      }
-   }
-
-   private String loadCachedResponse() {
-      String response = null;
-      try {
-         FileReader fr = new FileReader(getCachedResponseFilePath());
-         BufferedReader br = new BufferedReader(fr);
-         response = "";
-         String line = "";
-         while ((line = br.readLine()) != null) {
-            response += line + "\n";
-         }
-         br.close();
-      } catch (Exception e) {
-         Log.e(TAG, "failed reading cached response", e);
-      }
-      return response;
-   }
-
-   private File getCachedResponseFilePath() {
+   private static File getCachedResponseFilePath() {
       String fileName = CACHED_RESPONSE_FILE_NAME;
       String dir = QuranFileUtils.getQuranDatabaseDirectory();
       return new File(dir + File.separator + fileName);
    }
 
-   private String downloadUrl(String urlString){
+   private static String downloadUrl(String urlString){
       InputStream stream = null;
       try {
          URL url = new URL(urlString);

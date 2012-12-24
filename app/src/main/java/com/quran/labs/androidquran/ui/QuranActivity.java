@@ -258,6 +258,14 @@ public class QuranActivity extends SherlockFragmentActivity
                  public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                     mUpgradeDialog = null;
+
+                    // pretend we don't have updated translations.  we'll
+                    // check again after 10 days.
+                    PreferenceManager.getDefaultSharedPreferences(
+                            getApplicationContext()).edit()
+                            .putBoolean(
+                                    Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
+                                    false).commit();
                  }
               });
 
