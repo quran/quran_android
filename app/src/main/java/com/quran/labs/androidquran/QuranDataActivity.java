@@ -14,7 +14,6 @@ import android.view.Display;
 import android.view.WindowManager;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
-import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -22,14 +21,11 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.TranslationListTask;
 
 import java.util.Date;
-import java.util.List;
 
 public class QuranDataActivity extends SherlockActivity implements
-        DefaultDownloadReceiver.SimpleDownloadListener,
-        TranslationListTask.TranslationsUpdatedListener {
+        DefaultDownloadReceiver.SimpleDownloadListener {
 
    public static final String TAG =
            "com.quran.labs.androidquran.QuranDataActivity";
@@ -197,30 +193,15 @@ public class QuranDataActivity extends SherlockActivity implements
             Log.d(TAG, "checking whether we should update translations..");
             if (now.getTime() - time > Constants.TRANSLATION_REFRESH_TIME){
                Log.d(TAG, "updating translations list...");
-               new TranslationListTask(QuranDataActivity.this,
-                       QuranDataActivity.this).execute();
+               Intent intent = new Intent(QuranDataActivity.this,
+                       QuranDownloadService.class);
+               intent.setAction(
+                       QuranDownloadService.ACTION_CHECK_TRANSLATIONS);
+               startService(intent);
             }
-            else { runListView(); }
+            runListView();
          }
       }      
-   }
-
-   @Override
-   public void translationsUpdated(List<TranslationItem> items){
-      boolean needsUpgrade = false;
-      for (TranslationItem item : items){
-         if (item.exists && item.localVersion != null &&
-                 item.latestVersion > 0 &&
-                 item.latestVersion > item.localVersion){
-            needsUpgrade = true;
-            break;
-         }
-      }
-
-      if (needsUpgrade){
-         runListView(true);
-      }
-      else { runListView(); }
    }
 
    /**
@@ -313,6 +294,8 @@ public class QuranDataActivity extends SherlockActivity implements
    }
 
    protected void runListView(){
-      runListView(false);
+      boolean value = (mSharedPreferences.getBoolean(
+              Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false));
+      runListView(value);
    }
 }

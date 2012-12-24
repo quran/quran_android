@@ -2,11 +2,9 @@ package com.quran.labs.androidquran.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +16,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -45,6 +44,7 @@ public class TranslationManagerActivity extends SherlockActivity
    private TranslationsAdapter mAdapter;
    private TranslationItem mDownloadingItem;
    private String mDatabaseDirectory;
+   private SharedPreferences mSharedPreferences = null;
 
    private DefaultDownloadReceiver mDownloadReceiver = null;
    private TranslationListTask mTask = null;
@@ -71,6 +71,8 @@ public class TranslationManagerActivity extends SherlockActivity
       setSupportProgressBarIndeterminateVisibility(true);
       mDatabaseDirectory = QuranFileUtils.getQuranDatabaseDirectory();
 
+      mSharedPreferences = PreferenceManager
+              .getDefaultSharedPreferences(getApplicationContext());
       mTask = new TranslationListTask(this, this);
       mTask.execute();
    }
@@ -188,8 +190,16 @@ public class TranslationManagerActivity extends SherlockActivity
       hdr.isSeparator = true;
       res.add(hdr);
 
+      boolean needsUpgrade = false;
       for (TranslationItem item : downloaded){
          res.add(item);
+         if (hasUpgrade(item)){ needsUpgrade = true; }
+      }
+
+      if (!needsUpgrade){
+         mSharedPreferences.edit()
+              .putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
+                      needsUpgrade).commit();
       }
 
       hdr = new TranslationItem(getString(R.string.available_translations));
@@ -292,6 +302,11 @@ public class TranslationManagerActivity extends SherlockActivity
       builder.show();
    }
 
+   public boolean hasUpgrade(TranslationItem item){
+      return item.latestVersion > -1 && item.localVersion != null &&
+              item.latestVersion > item.localVersion;
+   }
+
    private class TranslationsAdapter extends BaseAdapter {
       private LayoutInflater mInflater;
       private List<TranslationItem> mElements;
@@ -377,8 +392,7 @@ public class TranslationManagerActivity extends SherlockActivity
             }
 
             if (item.exists){
-               if (item.latestVersion > -1 && item.localVersion != null &&
-                   item.latestVersion > item.localVersion){
+               if (hasUpgrade(item)){
                   holder.leftImage.setImageResource(R.drawable.ic_download);
                   holder.leftImage.setVisibility(View.VISIBLE);
 
