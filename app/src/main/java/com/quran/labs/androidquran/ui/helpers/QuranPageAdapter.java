@@ -2,9 +2,7 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.ViewGroup;
-
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
@@ -24,7 +22,6 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
    public void setTranslationMode(){
       if (!mIsShowingTranslation){
-         Log.d("are", "okay, translation notifying data set changed..");
          mIsShowingTranslation = true;
          notifyDataSetChanged();
       }
@@ -32,7 +29,6 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
    public void setQuranMode(){
       if (mIsShowingTranslation){
-         Log.d("are", "okay, quran notifying data set changed..");
          mIsShowingTranslation = false;
          notifyDataSetChanged();
       }
