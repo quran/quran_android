@@ -16,12 +16,10 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -91,6 +89,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private List<TranslationItem> mTranslations;
    private String[] mTranslationItems;
    private TranslationReaderTask mTranslationReaderTask;
+   private SpinnerAdapter mSpinnerAdapter;
 
    public static final int VISIBLE_FLAGS =
              View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -221,6 +220,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
             if (!mShowingTranslation){
                updateActionBarTitle(page);
+            }
+            else {
+               refreshActionBarSpinner();
             }
 
             if (mBookmarksCache.get(page) == null) {
@@ -450,7 +452,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          mPromptDialog.dismiss();
          mPromptDialog = null;
       }
-
+      mSpinnerAdapter = null;
       LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mAudioReceiver);
       mDownloadReceiver.setListener(null);
@@ -662,12 +664,56 @@ public class PagerActivity extends SherlockFragmentActivity implements
       actionBar.setTitle(sura);
       String desc = QuranInfo.getPageSubtitle(this, page);
       actionBar.setSubtitle(desc);
+      mSpinnerAdapter = null;
+   }
+
+   private static class SpinnerHolder {
+      TextView title;
+      TextView subtitle;
+   }
+
+   private void refreshActionBarSpinner(){
+      if (mSpinnerAdapter != null){
+         if (mSpinnerAdapter instanceof ArrayAdapter){
+            ((ArrayAdapter)mSpinnerAdapter).notifyDataSetChanged();
+         }
+         else { updateActionBarSpinner(); }
+      }
+      else { updateActionBarSpinner(); }
    }
 
    private void updateActionBarSpinner(){
-      SpinnerAdapter spinnerAdapter = new ArrayAdapter<String>(this,
+      if (mTranslationItems == null || mTranslationItems.length == 0){
+         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+         updateActionBarTitle(page);
+         return;
+      }
+
+      mSpinnerAdapter = new ArrayAdapter<String>(this,
               R.layout.sherlock_spinner_dropdown_item,
-              mTranslationItems);
+              mTranslationItems){
+         @Override
+         public View getView(int position, View convertView, ViewGroup parent){
+            SpinnerHolder holder;
+            if (convertView == null){
+               holder = new SpinnerHolder();
+               convertView = getLayoutInflater().inflate(
+                       R.layout.translation_ab_spinner_selected,
+                       parent, false);
+               holder.title = (TextView)convertView.findViewById(R.id.title);
+               holder.subtitle = (TextView)convertView.findViewById(
+                       R.id.subtitle);
+               convertView.setTag(holder);
+            }
+            holder = (SpinnerHolder)convertView.getTag();
+
+            holder.title.setText(mTranslationItems[position]);
+            int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+            holder.subtitle.setText(QuranInfo.getPageSubtitle(
+                    PagerActivity.this, page));
+            return convertView;
+         }
+      };
 
       // figure out which translation should be selected
       int selected = 0;
@@ -686,7 +732,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       getSupportActionBar().setNavigationMode(
               ActionBar.NAVIGATION_MODE_LIST);
-      getSupportActionBar().setListNavigationCallbacks(spinnerAdapter,
+      getSupportActionBar().setListNavigationCallbacks(mSpinnerAdapter,
               mNavigationCallback);
       getSupportActionBar().setSelectedNavigationItem(selected);
       getSupportActionBar().setDisplayShowTitleEnabled(false);
