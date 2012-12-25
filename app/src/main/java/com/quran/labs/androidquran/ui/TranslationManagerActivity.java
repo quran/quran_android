@@ -289,6 +289,12 @@ public class TranslationManagerActivity extends SherlockActivity
                            selectedItem.localVersion = null;
                            selectedItem.exists = false;
                            writeDatabaseUpdate(selectedItem);
+                           String current = mSharedPreferences.getString(
+                                   Constants.PREF_ACTIVE_TRANSLATION, "");
+                           if (current.compareTo(selectedItem.filename) == 0){
+                              mSharedPreferences.edit().remove(
+                                   Constants.PREF_ACTIVE_TRANSLATION).commit();
+                           }
                            generateListItems();
                         }
                      })

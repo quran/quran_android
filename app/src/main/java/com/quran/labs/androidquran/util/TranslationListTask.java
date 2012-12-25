@@ -83,21 +83,28 @@ public class TranslationListTask extends
    public static List<TranslationItem> downloadTranslations(Context context,
                                                             boolean useCache,
                                                             String tag){
-      boolean refreshed = true;
-      String text = downloadUrl(WEB_SERVICE_URL);
-      if (text == null || text.isEmpty()){ refreshed = false; }
-
-      // warning - the cache is *not* thread safe.  the service doesn't
-      // use the cache to avoid conflicting with a running TranslationManager
+      boolean shouldUseCache = false;
       if (useCache){
-         if (text == null && ((text = loadCachedResponse()) == null)) {
-            return null;
-         } else {
-            cacheResponse(text);
+         long when = PreferenceManager.getDefaultSharedPreferences(context).
+                 getLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
+         Date now = new Date();
+         if (now.getTime() - when < Constants.MIN_TRANSLATION_REFRESH_TIME){
+            shouldUseCache = true;
          }
       }
 
-      if (text == null){ return null; }
+      String text = null;
+      if (shouldUseCache){
+         text = loadCachedResponse();
+      }
+
+      boolean refreshed = false;
+      if (TextUtils.isEmpty(text)){
+         text = downloadUrl(WEB_SERVICE_URL);
+         if (TextUtils.isEmpty(text)){ return null; }
+         if (useCache){ cacheResponse(text); }
+         refreshed = true;
+      }
 
       SparseArray<TranslationItem> cachedItems;
       TranslationsDBAdapter adapter =
