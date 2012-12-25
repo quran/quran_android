@@ -364,23 +364,25 @@ public class QuranPageFragment extends SherlockFragment {
 		@Override
 		protected void onPostExecute(String ayah) {
 			Activity activity = getActivity();
-			if (copy && ayah != null && activity != null) {
-				ClipboardManager cm = (ClipboardManager) activity.
-							getSystemService(Activity.CLIPBOARD_SERVICE);
-				cm.setText(ayah);
-				Toast.makeText(activity, activity.getString(
-                    R.string.ayah_copied_popup),
-						Toast.LENGTH_SHORT).show();
-			} else if (ayah != null && activity != null) {
-				ayah = "(" + ayah + ")" + " " + "["
+            if (ayah != null && activity != null) {
+                ayah = "(" + ayah + ")" + " " + "["
                         + QuranInfo.getSuraName(activity, this.sura, true)
                         + " : " + this.ayah + "]" + activity.getString(R.string.via_string);
-				final Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain");
-				intent.putExtra(Intent.EXTRA_TEXT, ayah);
-				startActivity(Intent.createChooser(intent,
-                    activity.getString(R.string.share_ayah)));
-			}
+                if (copy) {
+                    ClipboardManager cm = (ClipboardManager) activity.
+                            getSystemService(Activity.CLIPBOARD_SERVICE);
+                    cm.setText(ayah);
+                    Toast.makeText(activity, activity.getString(
+                            R.string.ayah_copied_popup),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    final Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, ayah);
+                    startActivity(Intent.createChooser(intent,
+                            activity.getString(R.string.share_ayah)));
+                }
+            }
 		}
 	}
 	
