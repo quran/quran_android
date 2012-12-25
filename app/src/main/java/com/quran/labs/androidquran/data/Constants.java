@@ -7,6 +7,9 @@ public class Constants {
    // 10 days in ms
    public static final int TRANSLATION_REFRESH_TIME = 60 * 60 * 24 * 10 * 1000;
 
+   // 1 hour in ms
+   public static final int MIN_TRANSLATION_REFRESH_TIME = 60 * 60 * 1000;
+
    // Pages
    public static final int PAGES_FIRST = 1;
    public static final int PAGES_LAST = 604;
