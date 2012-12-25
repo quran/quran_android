@@ -98,6 +98,7 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
       db.execSQL(CREATE_BOOKMARKS_TABLE);
       db.execSQL(CREATE_TAGS_TABLE);
       db.execSQL(CREATE_BOOKMARK_TAG_TABLE);
+      db.execSQL(BOOKMARK_TAGS_INDEX);
       copyOldBookmarks(db);
    }
 
