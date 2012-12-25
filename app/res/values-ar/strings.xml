@@ -13,8 +13,8 @@
     <string name="menu_about">عنا</string>
     <string name="menu_settings">الاعدادات</string>
     <string name="menu_jump_last_page">الصفحة الأخيرة</string>
-    <string name="menu_tags">الوسوم</string>
-    <string name="menu_bookmarks">مرجعيات</string>
+    <string name="menu_tags">الإشارات</string>
+    <string name="menu_bookmarks">المرجعيات</string>
     <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
     <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
     <string name="menu_translation">التفسير/الترجمة</string>
@@ -177,7 +177,7 @@
     <!-- long press -->
     <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
     <string name="unbookmark_ayah">حذف الآية من المرجعيات</string>
-    <string name="tag_ayah">اضف الآية لوسم</string>
+    <string name="tag_ayah">اضف الآية لإشارة</string>
     <string name="share_ayah">شارك</string>
     <string name="translation_ayah">تفسير/ترجمة الآية</string>
     <string name="play_from_here">بدء التلاوة من هذه الآية</string>
@@ -194,14 +194,14 @@
     <string name="remove_bookmark">حذف المرجعية</string>
     <string name="edit_bookmark">تغيير تفاصيل المرجعية</string>
     <string name="new_bookmark">إضافة مرجعية</string>
-    <string name="tag_bookmark">إضافة وسم للمرجعية</string>
-    <string name="delete_tag">حذف الوسم</string>
-    <string name="edit_tag">تعديل الوسم</string>
-    <string name="new_tag">وسم جديد</string>
+    <string name="tag_bookmark">إضافة إشارة للمرجعية</string>
+    <string name="delete_tag">حذف الإشارة</string>
+    <string name="edit_tag">تعديل الإشارة</string>
+    <string name="new_tag">إشارة جديدة</string>
     <string name="not_tagged">غير مصنف</string>
     
     <!-- bookmark dialog -->
-    <string name="bookmark_tag_title">إضافة وسم للمرجعية</string>
+    <string name="bookmark_tag_title">إضافة إشارة للمرجعية</string>
     <string name="bookmark_dlg_title">مرجعية</string>
     <string name="bookmark_name">إسم المرجعية</string>
     <string name="bookmark_description">وصف المرجعية (اختياري)</string>
@@ -211,7 +211,7 @@
     <!-- bookmarks list -->
     <string name="bookmarks_list_title">إختر مرجعية</string>
     <string name="bookmarks_list_empty">لا توجد أي مرجعيات</string>
-    <string name="add_tag">إضافة وسم</string>
+    <string name="add_tag">إضافة إشارة</string>
 
     <!-- sample bookmarks -->
     <string name="sample_bookmark_reading">الورد اليومي</string>
