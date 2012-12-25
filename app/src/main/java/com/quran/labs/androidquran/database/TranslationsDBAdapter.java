@@ -20,23 +20,33 @@ public class TranslationsDBAdapter {
            "com.quran.labs.androidquran.database.TranslationsDBAdapter";
 
    private SQLiteDatabase mDb;
-   private TranslationsDBHelper mDbHelper;
+   private static TranslationsDBHelper sDbHelper;
 
    public TranslationsDBAdapter(Context context) {
-      mDbHelper = new TranslationsDBHelper(context);
+      initHelper(context.getApplicationContext());
+   }
+
+   public static synchronized void initHelper(Context context){
+      if (sDbHelper == null){
+         sDbHelper = new TranslationsDBHelper(context);
+      }
    }
 
    public void open() throws SQLException {
-      if (mDb == null){
-         mDb = mDbHelper.getWritableDatabase();
+      if (mDb == null && sDbHelper != null){
+         mDb = sDbHelper.getWritableDatabase();
       }
    }
 
    public void close() {
+      // http://touchlabblog.tumblr.com/post/24474750219/
+
+      /*
       if (mDb != null){
-         mDbHelper.close();
+         sDbHelper.close();
          mDb = null;
       }
+      */
    }
 
    public SparseArray<TranslationItem> getTranslationsHash(){
