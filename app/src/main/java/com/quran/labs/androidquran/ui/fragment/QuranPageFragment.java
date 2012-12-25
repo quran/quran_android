@@ -372,7 +372,9 @@ public class QuranPageFragment extends SherlockFragment {
                     R.string.ayah_copied_popup),
 						Toast.LENGTH_SHORT).show();
 			} else if (ayah != null && activity != null) {
-				ayah += activity.getString(R.string.via_string);
+				ayah = "(" + ayah + ")" + " " + "["
+                        + QuranInfo.getSuraName(activity, this.sura, true)
+                        + " : " + this.ayah + "]" + activity.getString(R.string.via_string);
 				final Intent intent = new Intent(Intent.ACTION_SEND);
 				intent.setType("text/plain");
 				intent.putExtra(Intent.EXTRA_TEXT, ayah);
