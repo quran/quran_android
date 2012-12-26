@@ -148,7 +148,6 @@
     <string name="sura_ayah_notification_str">سوره %1$s, آيه %2$d</string>
 
     <string name="bookmarks_current_page">صفحه کنوني</string>
-    <string name="no_bookmarks">نشانه گذاري نشده</string>
     <string name="index_loading">بارگذاري...</string>
 
     <string name="canceling">در حال لغو</string>
@@ -196,42 +195,30 @@
     <!-- long press -->
     <string name="bookmark_ayah">نشانه گذاري آيه</string>
     <string name="unbookmark_ayah">خذف نشانک از اين آيه</string>
+    <string name="tag_ayah">Tag this Ayah</string>
     <string name="share_ayah">اشتراک گذاري آيه</string>
     <string name="translation_ayah">ترجمه آيه</string>
     <string name="play_from_here">شروع از اينجا</string>
-    <string name="bookmarked_ayah">آيه نشانه گذاري شد</string>
-    <string name="unbookmarked_ayah">حذف نشانک از آيه</string>
+    <string name="ayah_notes">Notes</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
     <string name="search_key">کليد جستجو را کليک نماييد</string>
     <string name="copy_ayah">کپي کردن آيه</string>
     <string name="ayah_copied_popup">آيه کپي شد</string>
     <string name="show_more">بيشتر</string>
 
-    <!-- bookmark contextual action bar -->
-    <string name="remove_bookmark">حذف نشانک</string>
-    <string name="edit_bookmark">ويرايش نشانک</string>
-    <string name="new_bookmark">نشانک جديد</string>
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="delete_bookmark">حذف نشانک</string>
     <string name="tag_bookmark">Tag Bookmark</string>
     <string name="delete_tag">Delete Tag</string>
     <string name="edit_tag">Edit Tag</string>
     <string name="new_tag">New Tag</string>
     <string name="not_tagged">Not Tagged</string>
 
-    <!-- bookmark dialogs -->
-    <string name="bookmark_tag_title">Bookmark Tag</string>
-    <string name="bookmark_dlg_title">نشانک</string>
-    <string name="bookmark_name">نام</string>
-    <string name="bookmark_description">توضيحات (اختياري)</string>
-    <string name="bookmark_collection">مجموعه</string>
-    <string name="bookmark_collection_hint">به جاي تغيير به صورت خودکار،مجموعه اي داراي نشانک هاي مختلف ايجاد کنيد</string>
-
-    <!-- bookmarks list -->
-    <string name="bookmarks_list_title">انتخاب نشانک</string>
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">Tag</string>
+    <string name="tag_name">نام</string>
+    
+    <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">بدون نشانه</string>
-    <string name="add_category">اضافه کردن دسته</string>
-
-    <!-- sample bookmarks -->
-    <string name="sample_bookmark_reading">خواندن روزانه</string>
-    <string name="sample_bookmark_duas">دعاهاي قرآني</string>
-    <string name="sample_bookmark_uncategorized">بدون دسته بندي</string>
+    <string name="tags_list_empty">No Tags</string>
 </resources>

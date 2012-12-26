@@ -43,13 +43,13 @@ public class AddTagDialog extends SherlockDialogFragment {
       }
 
       LayoutInflater inflater = getActivity().getLayoutInflater();
-      View layout = inflater.inflate(R.layout.bookmark_dialog, null);
+      View layout = inflater.inflate(R.layout.tag_dialog, null);
 
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      builder.setTitle(getString(R.string.bookmark_tag_title));
+      builder.setTitle(getString(R.string.tag_dlg_title));
 
       final EditText nameText =
-              (EditText)layout.findViewById(R.id.bookmark_name);
+              (EditText)layout.findViewById(R.id.tag_name);
 
       if (mId > -1) {
          nameText.setText(mName == null? "" : mName);

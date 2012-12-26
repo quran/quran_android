@@ -91,7 +91,6 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       }
 
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      final LayoutInflater inflater = LayoutInflater.from(activity);
       mAdapter = new TagsAdapter(activity);
 
       mListView = new ListView(activity);
@@ -219,7 +218,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
           dba.close();
 
           mTags = tags;
-          mTags.add(new Tag(-1, getString(R.string.add_tag)));
+          mTags.add(new Tag(-1, getString(R.string.new_tag)));
           mBookmarkTags = bookmarkTags;
           return null;
       }
