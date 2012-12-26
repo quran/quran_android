@@ -17,6 +17,7 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.QuranActivity;
@@ -30,9 +31,11 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    private QuranListAdapter mAdapter;
    private TextView mEmptyTextView;
    private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
+   protected int mCurrentSortCriteria = 0;
 
    protected abstract int getContextualMenuId();
    protected abstract int getEmptyListStringId();
+   protected abstract int[] getValidSortOptions();
    protected abstract boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow selected);
    protected abstract boolean actionItemClicked(ActionMode mode, int menuItemId, QuranActivity activity, QuranRow selected);
    protected abstract QuranRow[] getItems();
@@ -40,6 +43,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    @Override
    public View onCreateView(LayoutInflater inflater,
          ViewGroup container, Bundle savedInstanceState){
+      setHasOptionsMenu(true);
       View view = inflater.inflate(R.layout.quran_list, container, false);
       mListView = (ListView)view.findViewById(R.id.list);
       mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
@@ -123,7 +127,34 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
          mMode.finish();
       }
    }
-   
+
+   @Override
+   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+      super.onCreateOptionsMenu(menu, inflater);
+      MenuItem sortItem = menu.findItem(R.id.sort);
+      sortItem.setVisible(true);
+      sortItem.setEnabled(true);
+      SubMenu subMenu = sortItem.getSubMenu();
+      for (int validOption : getValidSortOptions()) {
+         MenuItem subMenuItem = subMenu.findItem(validOption);
+         subMenuItem.setVisible(true);
+         subMenuItem.setEnabled(true);
+      }
+   }
+
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item) {
+      int id = item.getItemId();
+      for (int validId : getValidSortOptions()) {
+         if (id == validId) {
+            mCurrentSortCriteria = id;
+            refreshData();
+            return true;
+         }
+      }
+      return false;
+   }
+
    protected void finishActionMode() {
       mMode.finish();
    }

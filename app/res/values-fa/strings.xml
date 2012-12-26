@@ -16,6 +16,10 @@
     <string name="menu_bookmarks">نشانکها</string>
     <string name="menu_bookmarks_page">صفحه نشانکها</string>
     <string name="menu_bookmarks_ayah">نشانکهاي آيه</string>
+    <string name="menu_sort">Sort</string>
+    <string name="menu_sort_date">Date Added</string>
+    <string name="menu_sort_location">Location in Quran</string>
+    <string name="menu_sort_alphabetical">Alphabetical</string>
     <string name="menu_translation">مشاهده ترجمه</string>
     <string name="menu_back_to_page">مشاهده قرآن</string>
     <string name="menu_help">راهنما</string>
