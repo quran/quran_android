@@ -385,8 +385,8 @@ public class BookmarksDBAdapter {
          mChecked = parcel.readByte() == 1;
       }
       
-      public static final Parcelable.Creator CREATOR =
-              new Parcelable.Creator() {
+      public static final Parcelable.Creator<Tag> CREATOR =
+              new Parcelable.Creator<Tag>() {
          public Tag createFromParcel(Parcel in) {
             return new Tag(in);
          }

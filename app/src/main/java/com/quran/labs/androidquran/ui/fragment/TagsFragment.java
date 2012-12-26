@@ -29,6 +29,11 @@ public class TagsFragment extends AbsMarkersFragment {
    }
    
    @Override
+   protected int getEmptyListStringId() {
+      return R.string.tags_list_empty;
+   }
+   
+   @Override
    protected boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow selected) {
       MenuItem editItem = menu.findItem(R.id.cab_edit_tag);
       MenuItem removeItem = menu.findItem(R.id.cab_delete_tag);
@@ -98,9 +103,6 @@ public class TagsFragment extends AbsMarkersFragment {
       List<Tag> tags = db.getTags();
       List<Bookmark> bookmarks = db.getBookmarks(true);
 
-      // add uncategorized category
-//      tags.add(new Tag(0, getString(R.string.sample_bookmark_uncategorized)));
-      
       List<QuranRow> rows = new ArrayList<QuranRow>();
       
       List<Bookmark> unTagged = new ArrayList<Bookmark>();

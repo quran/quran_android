@@ -172,7 +172,6 @@
     <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
 
     <string name="bookmarks_current_page">Current Page</string>
-    <string name="no_bookmarks">No Bookmarks!</string>
     <string name="index_loading">Loading…</string>
 
     <string name="canceling">Canceling&#8230;</string>
@@ -229,8 +228,6 @@
     <string name="translation_ayah">Ayah Translation/Tafseer</string>
     <string name="play_from_here">Play from Here</string>
     <string name="ayah_notes">Notes</string>
-    <string name="bookmarked_ayah">Bookmarked Ayah</string>
-    <string name="unbookmarked_ayah">Removed bookmark from Ayah</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
     <string name="search_key">Press the search key to look up a verse</string>
     <string name="copy_ayah">Copy Ayah</string>
@@ -239,29 +236,17 @@
     
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Delete Bookmark</string>
-    <string name="edit_bookmark">Edit Bookmark</string>
-    <string name="new_bookmark">New Bookmark</string>
     <string name="tag_bookmark">Tag Bookmark</string>
     <string name="delete_tag">Delete Tag</string>
     <string name="edit_tag">Edit Tag</string>
     <string name="new_tag">New Tag</string>
     <string name="not_tagged">Not Tagged</string>
     
-    <!-- bookmark dialogs -->
-    <string name="bookmark_tag_title">Bookmark Tag</string>
-    <string name="bookmark_dlg_title">Bookmark</string>
-    <string name="bookmark_name">Name</string>
-    <string name="bookmark_description">Description (optional)</string>
-    <string name="bookmark_collection">Collection</string>
-    <string name="bookmark_collection_hint">Instead of changing automatically, collections hold multiple bookmarks</string>
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">Tag</string>
+    <string name="tag_name">Name</string>
     
-    <!-- bookmarks list -->
-    <string name="bookmarks_list_title">Select a bookmark</string>
+    <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">No Bookmarks</string>
-    <string name="add_tag">Add Tag</string>
-    
-    <!-- sample bookmarks -->
-    <string name="sample_bookmark_reading">Daily Reading</string>
-    <string name="sample_bookmark_duas">Quranic Duas</string>
-    <string name="sample_bookmark_uncategorized">Uncategorized</string>
+    <string name="tags_list_empty">No Tags</string>
 </resources>

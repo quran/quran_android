@@ -1,9 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -17,9 +15,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.ui.fragment.AbsMarkersFragment.RemoveBookmarkTask;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
 public class BookmarksFragment extends AbsMarkersFragment {
@@ -31,6 +27,11 @@ public class BookmarksFragment extends AbsMarkersFragment {
    @Override
    protected int getContextualMenuId() {
       return R.menu.bookmark_menu;
+   }
+   
+   @Override
+   protected int getEmptyListStringId() {
+      return R.string.bookmarks_list_empty;
    }
    
    @Override

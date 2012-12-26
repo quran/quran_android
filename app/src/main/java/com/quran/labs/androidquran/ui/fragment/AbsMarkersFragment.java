@@ -1,11 +1,8 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,27 +11,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
-import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 
 public abstract class AbsMarkersFragment extends SherlockFragment {
 
@@ -44,6 +31,12 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    private TextView mEmptyTextView;
    private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
 
+   protected abstract int getContextualMenuId();
+   protected abstract int getEmptyListStringId();
+   protected abstract boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow selected);
+   protected abstract boolean actionItemClicked(ActionMode mode, int menuItemId, QuranActivity activity, QuranRow selected);
+   protected abstract QuranRow[] getItems();
+   
    @Override
    public View onCreateView(LayoutInflater inflater,
          ViewGroup container, Bundle savedInstanceState){
@@ -130,10 +123,6 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
          mMode.finish();
       }
    }
-   
-   protected abstract int getContextualMenuId();
-   protected abstract boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow selected);
-   protected abstract boolean actionItemClicked(ActionMode mode, int menuItemId, QuranActivity activity, QuranRow selected);
    
    protected void finishActionMode() {
       mMode.finish();
@@ -225,7 +214,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       @Override
       protected void onPostExecute(QuranRow[] result) {
          if (result.length == 0){
-            mEmptyTextView.setText(R.string.no_bookmarks);
+            mEmptyTextView.setText(getEmptyListStringId());
          }
          mAdapter.setElements(result);
          mAdapter.notifyDataSetChanged();
@@ -236,6 +225,4 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       }
    }
 
-   protected abstract QuranRow[] getItems();
-   
 }
