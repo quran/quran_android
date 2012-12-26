@@ -19,6 +19,10 @@
     <string name="menu_bookmarks">Закладки</string>
     <string name="menu_bookmarks_page">Закладки страниц</string>
     <string name="menu_bookmarks_ayah">Закладки аятов</string>
+    <string name="menu_sort">Sort</string>
+    <string name="menu_sort_date">Date Added</string>
+    <string name="menu_sort_location">Location in Quran</string>
+    <string name="menu_sort_alphabetical">Alphabetical</string>
     <string name="menu_translation">Показать перевод</string>
     <string name="menu_back_to_page">Показать Коран</string>
     <string name="menu_help">Помощь</string>

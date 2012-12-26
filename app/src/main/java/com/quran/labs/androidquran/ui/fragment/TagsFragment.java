@@ -1,6 +1,12 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import android.app.Activity;
+
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -12,13 +18,10 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class TagsFragment extends AbsMarkersFragment {
    
+   private static final int[] VALID_SORT_OPTIONS = {R.id.sort_alphabetical, R.id.sort_date};
+
    public static TagsFragment newInstance(){
       return new TagsFragment();
    }
@@ -31,6 +34,11 @@ public class TagsFragment extends AbsMarkersFragment {
    @Override
    protected int getEmptyListStringId() {
       return R.string.tags_list_empty;
+   }
+   
+   @Override
+   protected int[] getValidSortOptions() {
+      return VALID_SORT_OPTIONS;
    }
    
    @Override
@@ -99,8 +107,17 @@ public class TagsFragment extends AbsMarkersFragment {
 
       QuranActivity quranActivity = (QuranActivity)activity;
       BookmarksDBAdapter db = quranActivity.getBookmarksAdapter();
-      
-      List<Tag> tags = db.getTags();
+
+      List<Tag> tags;
+      switch (mCurrentSortCriteria) {
+      case R.id.sort_date:
+         tags = db.getTags(BookmarksDBAdapter.SORT_DATE_ADDED);
+         break;
+      case R.id.sort_alphabetical:
+      default:
+         tags = db.getTags(BookmarksDBAdapter.SORT_ALPHABETICAL);
+         break;
+      }
       List<Bookmark> bookmarks = db.getBookmarks(true);
 
       List<QuranRow> rows = new ArrayList<QuranRow>();
