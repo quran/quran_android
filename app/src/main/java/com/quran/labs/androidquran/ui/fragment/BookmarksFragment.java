@@ -20,6 +20,8 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
 public class BookmarksFragment extends AbsMarkersFragment {
    
+   private static final int[] VALID_SORT_OPTIONS = {R.id.sort_location, R.id.sort_date};
+
    public static BookmarksFragment newInstance(){
       return new BookmarksFragment();
    }
@@ -32,6 +34,11 @@ public class BookmarksFragment extends AbsMarkersFragment {
    @Override
    protected int getEmptyListStringId() {
       return R.string.bookmarks_list_empty;
+   }
+   
+   @Override
+   protected int[] getValidSortOptions() {
+      return VALID_SORT_OPTIONS;
    }
    
    @Override
@@ -76,9 +83,18 @@ public class BookmarksFragment extends AbsMarkersFragment {
    }
    
    private QuranRow[] getBookmarks(){
+      List<Bookmark> bookmarks;
       BookmarksDBAdapter db = new BookmarksDBAdapter(getActivity());
       db.open();
-      List<Bookmark> bookmarks = db.getBookmarks(false);
+      switch (mCurrentSortCriteria) {
+      case R.id.sort_location:
+         bookmarks = db.getBookmarks(false, BookmarksDBAdapter.SORT_LOCATION);
+         break;
+      case R.id.sort_date:
+      default:
+         bookmarks = db.getBookmarks(false, BookmarksDBAdapter.SORT_DATE_ADDED);
+         break;
+      }
       db.close();
       
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(

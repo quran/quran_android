@@ -20,6 +20,10 @@ public class BookmarksDBAdapter {
    private static final String TAG =
            "com.quran.labs.androidquran.database.BookmarksDBAdapter";
 
+   public static final int SORT_DATE_ADDED = 0;
+   public static final int SORT_LOCATION = 1;
+   public static final int SORT_ALPHABETICAL = 2;
+   
 	private SQLiteDatabase mDb;
 	private BookmarksDBHelper mDbHelper;
 	
@@ -40,16 +44,30 @@ public class BookmarksDBAdapter {
       }
 	}
 
-   public List<Bookmark> getBookmarks(boolean loadTags){
+	public List<Bookmark> getBookmarks(boolean loadTags){
+	   return getBookmarks(loadTags, SORT_DATE_ADDED);
+	}
+
+   public List<Bookmark> getBookmarks(boolean loadTags, int sortOrder){
       if (mDb == null){
          open();
          if (mDb == null){ return null; }
       }
 
+      String orderBy = null;
+      switch (sortOrder) {
+      case SORT_LOCATION:
+         orderBy = BookmarksTable.PAGE + " ASC, "
+               + BookmarksTable.SURA + " ASC, " + BookmarksTable.AYAH + " ASC";
+         break;
+      case SORT_DATE_ADDED:
+      default:
+         orderBy = BookmarksTable.ADDED_DATE + " DESC";
+         break;
+      }
       List<Bookmark> bookmarks = null;
       Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
-              null, null, null, null, null,
-              BookmarksTable.ADDED_DATE + " DESC");
+              null, null, null, null, null, orderBy);
       if (cursor != null){
          bookmarks = new ArrayList<Bookmark>();
          while (cursor.moveToNext()){
@@ -192,15 +210,28 @@ public class BookmarksDBAdapter {
    }
 
    public List<Tag> getTags(){
+      return getTags(SORT_ALPHABETICAL);
+   }
+
+   public List<Tag> getTags(int sortOrder){
       if (mDb == null){
          open();
          if (mDb == null){ return null; }
       }
 
+      String orderBy = null;
+      switch (sortOrder) {
+      case SORT_DATE_ADDED:
+         orderBy = TagsTable.ADDED_DATE + " DESC";
+         break;
+      case SORT_ALPHABETICAL:
+      default:
+         orderBy = TagsTable.NAME + " ASC";
+         break;
+      }
       List<Tag> tags = null;
       Cursor cursor = mDb.query(TagsTable.TABLE_NAME,
-              null, null, null, null, null,
-              TagsTable.NAME + " ASC");
+              null, null, null, null, null, orderBy);
       if (cursor != null){
          tags = new ArrayList<Tag>();
          while (cursor.moveToNext()){
