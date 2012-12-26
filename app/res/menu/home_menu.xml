@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/sort"
+          android:icon="@drawable/ic_sort"
+          android:title="@string/menu_sort"
+          android:visible="false"
+          android:enabled="false"
+          android:showAsAction="ifRoom" >
+          <menu>
+              <item android:id="@+id/sort_date"
+                    android:title="@string/menu_sort_date"
+                    android:showAsAction="withText" />
+              <item android:id="@+id/sort_location"
+                    android:title="@string/menu_sort_location"
+                    android:visible="false"
+                    android:enabled="false"
+                    android:showAsAction="withText" />
+              <item android:id="@+id/sort_alphabetical"
+                    android:title="@string/menu_sort_alphabetical"
+                    android:visible="false"
+                    android:enabled="false"
+                    android:showAsAction="withText" />
+          </menu>
+    </item>
     <item android:id="@+id/last_page"
           android:icon="@drawable/ic_goto_quran"
           android:title="@string/menu_jump_last_page"
