@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/favorite_item"
+          android:icon="@drawable/favorite"
+          android:title="@string/menu_bookmarks"
+          android:showAsAction="ifRoom" />
+    <item android:id="@+id/goto_translation"
+          android:icon="@drawable/ic_translation"
+          android:title="@string/menu_translation"
+          android:showAsAction="ifRoom" />
+    <item android:id="@+id/goto_quran"
+          android:icon="@drawable/ic_goto_quran"
+          android:title="@string/menu_back_to_page"
+          android:showAsAction="ifRoom" />
+    <item android:id="@+id/search"
+          android:icon="@drawable/ic_ab_search"
+          android:title="@string/menu_search"
+          android:showAsAction="ifRoom" />
+    <item android:id="@+id/jump"
+          android:title="@string/menu_jump"
+          android:showAsAction="never" />
+    <item android:id="@+id/settings"
+          android:icon="@drawable/ic_ab_settings"
+          android:title="@string/menu_settings"
+          android:showAsAction="ifRoom" />
+    <item android:id="@+id/help"
+          android:title="@string/menu_help"
+          android:showAsAction="never"/>
+</menu>

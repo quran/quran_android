@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+	<TextView android:id="@+id/txtHelpTitle"
+        android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="#FFFFFF"
+		android:singleLine="true"
+        android:text="@string/help_title"
+        android:textStyle="bold"
+		android:padding="10dip"
+        android:layout_alignParentTop="true" />
+
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtHelpTitle"
+                android:layout_above="@+id/btnEmailUs">
+	    <TextView android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:textAppearance="?android:attr/textAppearanceSmall"
+		    android:textColor="#FFFFFF"
+            android:id="@+id/txtHelp"
+		    android:textSize="16dip"
+		    android:padding="10dip"
+            android:lineSpacingExtra="4dip" />
+    </ScrollView>
+
+	<Button android:id="@id/btnEmailUs"
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+        android:text="@string/email_quran_android"
+        android:layout_alignParentBottom="true"  />
+</RelativeLayout>

@@ -6,7 +6,7 @@ this is a simple (madani based) quran app for android.
 - translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
 - audio from [Every Ayah](http://everyayah.com/).
 
-suggestions, comments, etc are welcome.
+patches, comments, etc are welcome.
 
 contributors:
 [Hussein Maher](http://twitter.com/husseinmaher),
@@ -19,41 +19,6 @@ graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
 Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_rrr), based on Arabic Reshaper project by [Ahmed Essam](http://twitter.com/Neo_4583).
 
-Important Message from the Developers
--------------------------------------
-Two years ago when we started Quran Android as an open source project,
-our intention was:
-
- * to provide a free, highly featured Quran application on the Android
- platform.
- * to build a community where all muslims can suggest new ideas and see
-them get implemented.
- * to allow muslim developers all over the world to contribute and share
-thawab.
- * to allow computer science students and new Android developers to 
- learn from the source code.
-
-Al7amdulillah, we have exceeded 2M downloads and over 1M active users,
-which was a dream that wouldn't have become a reality without the mercy of
-Allah followed by your du3a2s and continuous feedback.
-
-Yet, due to irresponsible actions, a few people have cloned our app and
-redistributed it without our permission.  initially, we were ok with that,
-until we found that one of these apps added advertisements above each Quran 
-image.  This is totally unacceptable, in addition to being disrespectful to
-the word of Allah. As a result, we have decided to restrict access to our
-code repository and make our code base only shared between our team members.
-
-Please note that we **do not** have a paid version nor an ad supported 
-version.  If you see an application using our source code with
-advertisements or charging for it, please let us know.
-
-We will keep this project open to keep track of specific issues, bugs, and
-features that we are working on insha'Allah.  Please feel free to report
-any issues or suggestions [here](http://github.com/quran_android/issues).
-
-JazakumAllah Khairan.
-
 App localization
 ------------------------
 Farsi for version 2.0 by M. Jafar Nakar
@@ -64,12 +29,63 @@ Turkish by Mehmed Mahmudoglu.
 
 Russian by Rinat (Ринат Валеев).
 
-Project dependecies
--------------------
-[ActionBarSherlock](http://abs.io)
+
+Terms of use
+------------
+you are free to use parts of the Quran Android code in your application
+with some conditions:
+
+* your app must be respectful of the book of Allah.  adding advertisements
+above and below each page of Quran is unacceptable, for example (yes,
+someone actually did that).
+
+* your app must provide some significant value over our app - otherwise,
+why not just contribute a patch instead?
+
+* your app cannot make money from ads or from sales.  there are many reasons
+for this:
+    - we made this app for the benefit of people and not to make a profit
+    - the app costs us money (for serving the pages, translations, etc), not to
+mention the time to develop it and to support it.
+    - not all of the data that we use is okay to be sold.  the images, along with
+some of the translations are **not** under public domain, which means that
+while we are allowed to use these for a free app, we cannot sell the app.
+
+* if you write an application using any of the Quran data (the images, the
+translations, etc), you must provide a link to the respective data source
+page ([tanzil.net](http://tanzil.net) for the translations and the
+[quran images project](http://github.com/quran/quran.com-images) for the images)
+both within your application (in an about page) and in your application
+description in the market or app store.
+
+* if you use part of (or all of) the quran android code or graphics, you
+must provide a link back to the [quran android
+project](http://github.com/ahmedre/quran_android) in your application
+description and your application itself in an about section.
+
+Open Source Projects Used
+-------------------------
+* [ActionBarSherlock](http://abs.io)
+* [maven-android-plugin](http://code.google.com/p/maven-android-plugin/)
 
 Changelog
 ---------
+**version 2.2.0 (in development)**
+
+- fast switching between translations [\#218](https://github.com/ahmedre/quran_android/issues/218)
+- upgrade process for translations
+- move to maven
+- migrate audio files to `/sdcard/quran_android/audio` instead of temp app directory
+- bookmarks changes
+- exposed an intent to allow launching Quran directly to a
+  page/verse - [\#183](https://github.com/ahmedre/quran_android/issues/183)
+- navigation using volume keys - [\#172](https://github.com/ahmedre/quran_android/issues/172)
+- fix navigation bar jumping on jellybean
+- option to overlay page number, sura name, and juz' on the page - [\#159](https://github.com/ahmedre/quran_android/issues/159)
+- fix actionbar not toggling on translation view on honeycomb+ - [\#158](https://github.com/ahmedre/quran_android/issues/158)
+- fix ldpi devices not being able to download over 3g in certain cases - [\#167](https://github.com/ahmedre/quran_android/issues/167)
+- relax constraint on deciding whether or not data is downloaded - [\#196](https://github.com/ahmedre/quran_android/issues/196)
+
 **version 2.1.0**
 
 - setting to bring back the old background color

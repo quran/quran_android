@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="quran_readers_name">
+        <item>المنشاوي (متصل)</item>
+        <item>الحصري (متصل)</item>
+        <item>عبد الباسط عبد الصمد</item>
+        <item>عبد الباسط عبد الصمد مجود</item>
+        <item>عبد الله بصفر</item>
+        <item>عبد الرحمن السديس</item>
+        <item>أبو بكر الشاطري</item>
+        <item>مشاري بن راشد العفاسي</item>
+        <item>سعد الغامدي</item>
+        <item>إبراهيم والك (ترجمة انجليزية)</item>
+        <item>هاني الرفاعي</item>
+        <item>الحصري مجود</item>
+        <item>الحذيفي</item>
+        <item>ماهر المعيلقي</item>
+        <item>المنشاوي مجود</item>
+        <item>محمد الطبلاوي</item>
+        <item>محمد أيوب</item>
+        <item>محمد جبريل</item>
+        <item>سعود الشريم</item>
+    </string-array>
+   
+</resources>

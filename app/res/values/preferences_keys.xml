@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- This file will only hold preference-keys 
+    		(DONT TRANSLATE - DONT ADD UNRELATED STRINGS) 
+ 		-->
+ 		
+ 		<string name="prefs_path">QuranAndroid_Settings</string>
+    <string name="prefs_use_arabic_names">useArabicNames</string>
+    <string name="prefs_new_background">useNewBackground</string>
+    <string name="prefs_night_mode">nightMode</string>
+    <string name="prefs_overlay_page_info">overlayPageInfo</string>
+    <string name="prefs_display_marker_popup">displayMarkerPopup</string>
+    <string name="prefs_lock_orientation">lockOrientation</string>
+    <string name="prefs_landscape_orientation">landscapeOrientation</string>
+    <string name="prefs_translation_text_size">translationTextSize</string>
+    <string name="prefs_ayah_before_translation">ayahBeforeTranslation</string>
+    <string name="prefs_prefer_streaming">preferStreaming</string>
+    <string name="prefs_download_amount">preferredDownloadAmount</string>
+    <string name="prefs_use_arabic_reshaper">useArabicReshaper</string>
+    <string name="prefs_volume_key_navigation">volumeKeyNavigation</string>
+</resources>

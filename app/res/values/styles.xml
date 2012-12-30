@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NotificationText">
+      <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+    
+    <style name="NotificationTitle">
+      <item name="android:textColor">?android:attr/textColorPrimary</item>
+      <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="translation_sura_title">
+        <item name="android:textColor">@color/translation_hdr_color</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="translation_text">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="QuranAndroid" parent="Theme.Sherlock.ForceOverflow">
+    </style>
+    <style name="translation_night_mode">
+        <item name="android:background">@android:color/black</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+</resources>

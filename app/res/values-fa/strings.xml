@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">قرآن</string>
+    <string name="downloadPrompt_title">فايلهاي مورد نياز بارگذاري شود؟</string>
+    <string name="downloadPrompt">براي عملکرد بهينه، برخي از فايل ها را بايد دريافت کنيد، ممکن است اين کار مقداري به طول بيانجامد، آيا براي اين کار آماده هستيد؟
+</string>
+    <string name="downloadPrompt_ok">بله</string>
+    <string name="downloadPrompt_no">خير</string>
+    <string name="downloading_title">بارگيري</string>
+    <string name="downloading_message">لطفا براي بارگيري فايلها صبر نماييد. (Resume supported)</string>
+    <string name="extracting_title">پردازش</string>
+    <string name="menu_about">درباره ما</string>
+    <string name="menu_settings">تنظيمات</string>
+    <string name="menu_jump_last_page">آخرين صفحه</string>
+    <string name="menu_tags">Tags</string>
+    <string name="menu_bookmarks">نشانکها</string>
+    <string name="menu_bookmarks_page">صفحه نشانکها</string>
+    <string name="menu_bookmarks_ayah">نشانکهاي آيه</string>
+    <string name="menu_sort">Sort</string>
+    <string name="menu_sort_date">Date Added</string>
+    <string name="menu_sort_location">Location in Quran</string>
+    <string name="menu_sort_alphabetical">Alphabetical</string>
+    <string name="menu_translation">مشاهده ترجمه</string>
+    <string name="menu_back_to_page">مشاهده قرآن</string>
+    <string name="menu_help">راهنما</string>
+    <string name="menu_search">جستجو</string>
+    <string name="menu_get_translations">دريافت ترجمه</string>
+    <string name="menu_jump">پرش</string>
+    <string name="gotoPage">برو به صفحه</string>
+    <string name="cancel">لغو</string>
+    <string name="developedBy">التماس دعا، محمدجعفر نعناکار</string>
+    <string name="copyRights">حق تکثير براي همه مسلمانان محفوظ است</string>
+    <string name="email_subject">بازخورد</string>
+    <string name="email_to">quran.android@gmail.com</string>
+    <string name="send_email">ارسال ايميل</string>
+    <string name="aboutUs">برنامه قرآن آندرويد برنامه اي متن باز است که فايل هاي عکس آن از سايت 
+            &lt;a href="http://quran.com">quran.com&lt;/a>
+و صوت آن از پروژه سايت 
+            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
+و ترجمه هاي آن از سايت 
+            &lt;a href="http://tanzil.net">tanzil.net&lt;/a>دريافت شده است.
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
+            &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
+            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
+            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
+            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
+            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
+            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
+            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
+            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
+            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
+            &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
+            &lt;br/>Mehmed Mahmudoglu - Turkish
+            &lt;br/>Mohammad Jafar Nanakar (محمدجعفرنعناکار) - Farsi (فارسي)
+            &lt;br/>Rinat (Ринат Валеев) - Russian
+            &lt;br/>khajavi (on github) - previous Farsi translation
+            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
+            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
+            &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
+            &lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
+            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
+            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+    <string name="help_title">پرسش و پاسخ هاي متداول</string>
+    <string name="help"> 
+        &lt;b>چگونه صوت را فعال کنم؟&lt;/b>
+        &lt;br/>براي فعال کردن صوت در اين برنامه کافي است روي صفحه مورد نظر کليک کنيد بعد دکمه صدا را مشاهده خواهيد کرد مي توانيد آن را فعال نماييد.
+        &lt;br/>
+        &lt;br/>&lt;b>چگونه مي توانم ترجمه را مشاهده نمايم؟&lt;/b>
+        &lt;br/>کافي است صفحه مورد نظر را کليک نماييد سپس علامت جهان  يا در برخي دستگاه ها علامت سه نقطه را کليک کنيد.
+        &lt;br/>
+       اگر شما هيچ ترجمه اي را بر روي دستگاه خود نداريد مي توانيد ابتدا آن را از قسمت تنظيمات بارگذاري نماييد.
+        &lt;br/>
+        &lt;br/>&lt;b>چگونه مي توانم يک صفحه را نشانه گذاري کنم&lt;/b>
+        &lt;br/>صفحه مورد نظر خود را انتخاب نماييد سپس صفحه را کليک کنيد و روبان را لمس نماييد.
+        &lt;br/>
+        &lt;br/>&lt;b>چگونه مي توانم فونت را بزرگتر کنم؟&lt;/b>
+        &lt;br/>براي متن عربي گوشي خود را عمودي کنيد و براي اندازه متن ترجمه به قسمت تنظيمات مراجعه نماييد.
+        &lt;br/>
+        &lt;br/>&lt;b>چگونه يک آيه را به اشتراک بگذارم؟&lt;/b>
+        &lt;br/>کافي است آيه مورد نظر خود را براي مدت زمان کوتاهي لمس نماييد.
+        &lt;br/>
+        &lt;br/>&lt;b>در ديدن فونت مشکل دارم؟&lt;/b>
+        &lt;br/>متاسفانه برخي از فونت هاي  براي آندرويد 4 پيش بيني نشده است.
+    </string>
+<string name="search_hint">جستجو در قرآن</string>
+<string name="quranSearchType">آيات قرآن</string>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+        <item quantity="one">جستجو براي \"%s\": </item>
+        <item quantity="other">جستجو براي \"%s\": </item>
+    </plurals>
+
+    <!-- Search messages -->
+    <string name="found_in_sura">در سوره</string>
+    <string name="no_results">هيچ نتيجه اي يافت نشد براي \"%s\"</string>
+    <string name="no_active_translation">شما هيچ ترجمه را فعال نکرده ايد</string>
+    <string name="translation_settings">تنظيمات ترجمه</string>
+    <string name="no_arabic_search_available">شما متن عربي قرآن را براي جستجو بارگذاري نکرده ايد، لطفا آنرا ابتدا دريافت نماييد</string>
+    <string name="get_arabic_search_db">دريافت متن عربي قرآن براي جستجوي در متن</string>
+        
+    <!-- Quran Preference Activity -->
+    <string name="prefs_category_reading">تنظيمات خواندن</string>
+    <string name="prefs_category_translation">تنظيمات ترجمه</string>
+    <string name="prefs_category_display_settings">تنظيمات صفحه</string>
+    <string name="prefs_use_arabic_title">حالت عربي</string>
+    <string name="prefs_use_arabic_summary_on">به عربي برگردان خواهد شد</string>
+    <string name="prefs_lock_orientation_title">جهت قفل شدن صفحه نمايش</string>
+    <string name="prefs_lock_orientation_summary_on">تنظيمات جهت نمايش</string>
+    <string name="prefs_lock_orientation_summary_off">تطبيق به حالت جهت گيري فعلي</string>
+    <string name="prefs_landscape_orientation_title">جهت عمودي</string>
+    <string name="prefs_landscape_orientation_summary_on">استفاده در جهت عمودي</string>
+    <string name="prefs_landscape_orientation_summary_off">استفاده در جهت افقي</string>
+    <string name="prefs_night_mode_title">نمايش شبانه</string>
+    <string name="prefs_night_mode_summary">تاريک نمودن صفحه و روشن نمودن متن</string>
+    <string name="prefs_display_marker_title">نمايش پيغام</string>
+    <string name="prefs_display_marker_summary">نمايش پيغام ها فعال گردد</string>
+    <string name="prefs_translation_text_title">اندازه قلم ترجمه</string>
+    <string name="prefs_translations">ترجمه ها</string>
+    <string name="prefs_translations_summary">بارگذاري و مديريت ترجمه</string>
+    <string name="prefs_ayah_before_translation_title">آيه قبل از ترجمه</string>
+    <string name="prefs_ayah_before_translation_summary">نشان دادن آيه عربي بعد از ترجمه</string>
+    <string name="prefs_category_download">بارگذاري تنظيمات</string>
+    <string name="prefs_streaming_title">جريان</string>
+    <string name="prefs_streaming_summary">زماني که صوت فعال است</string>
+    <string name="prefs_download_amount_title">بارگذاري مقدار</string>
+    <string name="prefs_download_amount_summary">مقدار ترجيهي بارگذاري صوت</string>
+    <string name="downloaded_translations">بارگذاري شد</string>
+    <string name="available_translations">فعال براي بارگذاي</string>
+    <string name="remove_button">حذف</string>
+    <string name="dialog_ok">بله</string>
+
+    <!-- translation updates -->
+    <string name="update_available">Update Available</string>
+    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
+    <string name="translation_dialog_yes">Yes</string>
+    <string name="translation_dialog_later">Later</string>
+
+    <!-- used for screen readers -->
+    <string name="border">مرز</string>
+    
+    <!-- End Number picker Strings -->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
+    <string name="quran_hizb">حزب</string>
+    <string name="quran_juz2">جزء</string>
+    <string name="quran_page">صفحه</string>
+    <string name="quran_sura">سوره</string>
+    <string name="quran_ayah">آيه</string>
+    <string name="quran_sura_title">سوره</string>
+    <string name="sura_ayah_notification_str">سوره %1$s, آيه %2$d</string>
+
+    <string name="bookmarks_current_page">صفحه کنوني</string>
+    <string name="index_loading">بارگذاري...</string>
+
+    <string name="canceling">در حال لغو</string>
+    <string name="page_description">صفحه %1$d, جزء %2$d</string>
+    <string name="highlighting_database">فايل هاي مورد نياز</string>
+    <string name="timing_database">فايل هاي مورد نياز</string>
+    <string name="infinity">همیشه</string>
+    
+    <!-- download statuses and errors -->
+    <string name="download_successful">با موفقيت بارگذاري انجام شد</string>
+    <string name="download_processing">در حال بارگذاري;</string>
+    <string name="download_error_general">خطا در بارگذاري</string>
+    <string name="download_error_disk">فضاي کافي براي بارگذاري وجود ندارد</string>
+    <string name="download_error_network">خطاي در شبکه ديتا</string>
+    <string name="download_error_perms">خطا در دسترسي</string>
+    <string name="download_error_invalid_download">بارگذاري با خطا مواجه شد</string>
+    <string name="download_error_invalid_download_retry">فايل خراب است، دوباره بارگذاري نماييد</string>
+    <string name="download_error_network_retry">خطاي شبکه;</string>
+    <string name="notification_download_canceled">بارگذاري لغو شده ها</string>
+    <string name="download_non_wifi_prompt">شبکه بي سيم شما خاموش است، در هر صورت بارگذاري نمايد؟</string>
+    
+    <!-- downloading dialogs -->
+    <string name="download_progress">بارگذاري %1$s / %2$s</string>
+    <string name="process_progress">پردازش %1$d / %2$d</string>
+    <string name="download_retry">تلاش دوباره</string>
+    <string name="download_cancel">لغو</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">حذف ترجمه</string>
+    <string name="remove_dlg_msg">آيا مطمئن هستيد که مي خواهيد حذف کنيد %1$s?</string>
+    <string name="error_getting_translation_list">مشکلي وجود دارد، لطفا بعداً دوباره تلاش نماييد.</string>
+    <string name="search_data">جستجو</string>
+
+    <!-- about us -->
+    <string name="email_quran_android">پست الکترونيکي قرآن آندرويد</string>
+
+    <!-- sura metainfo -->
+    <string name="makki">مکي</string>
+    <string name="madani">مدني</string>
+    <plurals name="verses">
+        <item quantity="one">آيه</item>
+        <item quantity="other">آيات</item>
+    </plurals>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">نشانه گذاري آيه</string>
+    <string name="unbookmark_ayah">خذف نشانک از اين آيه</string>
+    <string name="tag_ayah">Tag this Ayah</string>
+    <string name="share_ayah">اشتراک گذاري آيه</string>
+    <string name="translation_ayah">ترجمه آيه</string>
+    <string name="play_from_here">شروع از اينجا</string>
+    <string name="ayah_notes">Notes</string>
+    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="search_key">کليد جستجو را کليک نماييد</string>
+    <string name="copy_ayah">کپي کردن آيه</string>
+    <string name="ayah_copied_popup">آيه کپي شد</string>
+    <string name="show_more">بيشتر</string>
+
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="delete_bookmark">حذف نشانک</string>
+    <string name="tag_bookmark">Tag Bookmark</string>
+    <string name="delete_tag">Delete Tag</string>
+    <string name="edit_tag">Edit Tag</string>
+    <string name="new_tag">New Tag</string>
+    <string name="not_tagged">Not Tagged</string>
+
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">Tag</string>
+    <string name="tag_name">نام</string>
+    
+    <!-- bookmark & tag list -->
+    <string name="bookmarks_list_empty">بدون نشانه</string>
+    <string name="tags_list_empty">No Tags</string>
+</resources>

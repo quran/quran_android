@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="download_amount_preference">
+        <item>@string/quran_page</item>
+        <item>@string/quran_sura</item>
+        <item>@string/quran_juz2</item>
+    </string-array>
+
+    <string-array name="download_amount_preference_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+</resources>

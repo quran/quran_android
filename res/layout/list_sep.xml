@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/separator_txt"
-          android:layout_width="fill_parent"
-          android:layout_height="fill_parent"
-          android:textColor="#F3F4E6"
-          android:background="#2B497B"
-          android:textSize="16sp" />

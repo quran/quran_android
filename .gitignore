@@ -1,6 +1,11 @@
-.classpath
 .project
 .settings
 bin
 gen
 .DS_Store
+local.properties
+target
+gen-external-apklibs
+*.iml
+.idea
+classes

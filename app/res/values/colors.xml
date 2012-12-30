@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="actionbar_separator">#0f2d4d</color>
+	<color name="page_border_color">#802A2A</color>
+	<color name="page_background">#FFF4CB</color>
+	<color name="header_text_color">#31B6E7</color>
+	<color name="sura_info_color">#FFFFFF</color>
+	<color name="sura_details_color">#D1D1D1</color>
+	<color name="hizb_number_color">#FF000000</color>
+    <color name="transparent_actionbar_color">#AA000000</color>
+    <color name="transparent_dialog_color">#AA000000</color>
+    <color name="translation_hdr_color">#ff649ab8</color>
+    <color name="translation_sura_header">#ff649ab8</color>
+    <color name="overlay_text_color">#ff888888</color>
+</resources>

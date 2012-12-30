@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Коран</string>
+    <string name="downloadPrompt_title">Загрузить необходимые файлы?</string>
+    <string name="downloadPrompt">Для оптимальной работы необходимо скачать некоторые
+        	файлы. Если Вы выберите не делать этого сейчас, загрузка каждой страницы
+			будет занимать значительно большее время. Вы хотите загрузить выбранные 
+			файлы сейчас?
+		</string>
+    <string name="downloadPrompt_ok">Да</string>
+    <string name="downloadPrompt_no">Нет</string>
+    <string name="downloading_title">Загрузка &#8230;</string>
+    <string name="downloading_message">Пожалуйста, дождитесь загрузки файлов. (Имеется возможность возобновить)</string>
+    <string name="extracting_title">Извлечение&#8230;</string>
+    <string name="menu_about">О нас</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_jump_last_page">Последняя страница</string>
+    <string name="menu_tags">Tags</string>
+    <string name="menu_bookmarks">Закладки</string>
+    <string name="menu_bookmarks_page">Закладки страниц</string>
+    <string name="menu_bookmarks_ayah">Закладки аятов</string>
+    <string name="menu_sort">Sort</string>
+    <string name="menu_sort_date">Date Added</string>
+    <string name="menu_sort_location">Location in Quran</string>
+    <string name="menu_sort_alphabetical">Alphabetical</string>
+    <string name="menu_translation">Показать перевод</string>
+    <string name="menu_back_to_page">Показать Коран</string>
+    <string name="menu_help">Помощь</string>
+    <string name="menu_search">Поиск</string>
+    <string name="menu_get_translations">Скачать перевод</string>
+    <string name="cancel">Отмена</string>
+    <string name="developedBy">La tansawna men saleh el doaa.</string>
+    <string name="copyRights">Авторское право принадлежит мусульманской умме</string>
+    <string name="email_subject">Обратная связь</string>
+    <string name="email_to">quran.android@gmail.com</string>
+    <string name="send_email">Отправить email..</string>
+    <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное 
+            Коран-приложение для Android с открытым исходным кодом. 
+			Используемые изображения были заимствованы из проекта 
+            &lt;a href="http://quran.com">quran.com&lt;/a>
+			, аудио - 
+            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>, 
+			перевод и арабский текст - из
+            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> и
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
+            &lt;br/>&lt;br/>&lt;b>Авторы Корана для Андроид:&lt;/b>
+            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
+            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
+            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
+            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
+            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
+            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
+            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
+            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
+            &lt;br/>&lt;br/>&lt;b>Переводено:&lt;/b>
+			&lt;br/>Mehmed Mahmudoglu - Turkish
+			&lt;br/>khajavi (on github) - Farsi
+			&lt;br/>Rinat (Ринат) - Russian
+            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
+            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
+            &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
+			&lt;br/>&lt;br/>&lt;b>Особая благодарность:&lt;/b>
+            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
+            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+    <string name="help_title">Часто задаваемые вопросы (FAQ)</string>
+    <string name="help">
+        &lt;b>Как мне воспроизвести аудио?&lt;/b>
+        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку проигрывания
+        и текст с именем чтеца. Нажмите на имени чтеца для выбора другого чтеца. Нажмите на 
+		кнопку проигрывания для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
+        &lt;br/>&lt;b>Как мне посмотреть перевод?
+		&lt;/b>
+        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса 
+        (или, если ее нет, Вы можете увидеть иконку с тремя квадратными точками) - нажмте на нее и выберите 
+        перевод для просмотра. 
+		&lt;br/>
+        Если Вы не имеете загруженных переводов, Вас переместит на экран, где Вы сможете скачать перевод. 
+        Выберите и скачайте нужный Вам перевод, затем вернитесь и вновь нажмите на иконку глобуса для просмотра 
+        перевода.
+        &lt;br/>
+        &lt;br/>&lt;b>Как мне сделать закладку страницы?&lt;/b>
+        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху справа Вы увидите 
+        иконку звезды. Для создания закладки нажмите на данную иконку (она закрасится белым цветом). 
+        Нажмите снова на иконку звезды для удаления закладки. 
+        &lt;br/>
+        &lt;br/>&lt;b>Как мне увеличить текст?&lt;/b>
+        &lt;br/>Для арабского текста держите Ваш телефон в альбомном режиме (горизонтально).  Это сделает текст крупнее. 
+        Для переводов перейдите в настройки и выберите размер шрифта перевода.
+        &lt;br/>
+        &lt;br/>&lt;b> Как я могу поделиться аятом?&lt;/b>
+        &lt;br/>Во время нахождения на любой арабской странице Корана, нажмите и удерживайте на аяте до того While on any arabic page, press and hold on any ayah to get a menu where you can
+        как появится контекстное меню, где Вы сможете сделать закладку данного аята, поделиться им, посмотреть перевод или
+		скопировать аят в буфер обмена.
+        &lt;br/>
+        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu шрифты не работают!&lt;/b>
+        &lt;br/>К сожалению, Android версии до 4.0 не поддерживают эти шрифты, и мы ничего не можем сделать,
+        чтобы помочь Вам в этом.
+		&lt;br/>
+        &lt;br/>&lt;b>У меня есть замечания или предложения по программе!&lt;/b>
+        &lt;br/>Пожалуйста, напишите нам e-mail (в разделе "О нас"). Тем самым Вы способствуете развитию проекта. Возможно,
+		Ваше предложение будет полезно многим братьям и сестрам. К сожалению, разработчики не просматривают
+		и не могут просматривать (в силу незнания русского языка) отзывы на Google Play, поэтому не могут учесть Ваши комментарии.
+		Если Вы не знаете английского языка, используйте для написания e-mail Google Translate.        
+    </string>
+	<string name="search_hint">Поиск по Корану</string>
+	<string name="quranSearchType">Стихи Корана</string>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+        <item quantity="one">Результат для \"%s\": </item>
+        <item quantity="other">Результаты для \"%s\": </item>
+    </plurals>
+
+    <!-- Search messages -->
+    <string name="found_in_sura">Найдено в суре</string>
+    <string name="no_results">Результатов для \"%s\" не найдено</string>
+    <string name="no_active_translation">Вы не выбрали активный перевод. Сначала выберите активный перевод и воспользуйтесь поиском снова.</string>
+    <string name="translation_settings">Найстройки перевода</string>
+    <string name="no_arabic_search_available">Вы не скачали пакет данных для арабского поиска. Пожалуйста, сначала скачайте его и воспользуйтесь поиском снова.</string>
+    <string name="get_arabic_search_db">Скачать данные для арабского поиска</string>
+        
+    <!-- Quran Preference Activity -->
+    <string name="prefs_category_reading">Настройки чтения</string>
+    <string name="prefs_category_translation">Настройки перевода</string>
+    <string name="prefs_category_display_settings">Настройки экрана</string>
+    <string name="prefs_use_arabic_title">Режим арабского</string>
+    <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык (необходима перезагрузка)</string>
+    <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
+    <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
+    <string name="prefs_lock_orientation_summary_off">Адаптировать под текущую ориентацию</string>
+    <string name="prefs_landscape_orientation_title">Альбомный режим</string>
+    <string name="prefs_landscape_orientation_summary_on">Использовать альбомный режим</string>
+    <string name="prefs_landscape_orientation_summary_off">Использовать книжный режим</string>
+    <string name="prefs_night_mode_title">Бета - Ночной режим</string>
+    <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
+    <string name="prefs_display_marker_title">Показывать всплывающие сообщения</string>
+    <string name="prefs_display_marker_summary">Показывать всплывающие сообщения по достижении джуза, хизба и т.д.</string>
+    <string name="prefs_translation_text_title">Размер текста перевода</string>
+    <string name="prefs_translations">Переводы</string>
+    <string name="prefs_translations_summary">Загрузка и управление переводами</string>
+    <string name="prefs_ayah_before_translation_title">Аят до перевода</string>
+    <string name="prefs_ayah_before_translation_summary">Показывать аят раньше перевода</string>
+    <string name="prefs_category_download">Настройки загрузки</string>
+    <string name="prefs_streaming_title">Потоковое</string>
+    <string name="prefs_streaming_summary">При возможности потоковое аудио (только non-gapless аудио).</string>
+    <string name="prefs_download_amount_title">Объем скачивания</string>
+    <string name="prefs_download_amount_summary">Предпочтительный объем загрузки для non-gapless аудио.</string>
+    <string name="downloaded_translations">Загруженные переводы</string>
+    <string name="available_translations">Доступные для загрузки</string>
+    <string name="remove_button">Удалить</string>
+    <string name="dialog_ok">OK</string>
+
+    <!-- translation updates -->
+    <string name="update_available">Update Available</string>
+    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
+    <string name="translation_dialog_yes">Yes</string>
+    <string name="translation_dialog_later">Later</string>
+
+    <!-- used for screen readers -->
+    <string name="border">граница</string>
+    
+    <!-- End Number picker Strings -->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
+    <string name="quran_hizb">Хизб</string>
+    <string name="quran_juz2">Джуз</string>
+    <string name="quran_page">Страница</string>
+    <string name="quran_sura">Сура</string>
+    <string name="quran_ayah">Аят</string>
+    <string name="quran_sura_title">Сура</string>
+    <string name="sura_ayah_notification_str">Сура %1$s, Аят %2$d</string>
+
+    <string name="bookmarks_current_page">Текущая страница</string>
+    <string name="index_loading">Загрузка…</string>
+
+    <string name="canceling">Отмена&#8230;</string>
+    <string name="page_description">стр. %1$d, джуз %2$d</string>
+    <string name="highlighting_database">Необходимые файлы</string>
+    <string name="timing_database">Необходимые файлы</string>
+    <string name="infinity">&#8734;</string>
+    
+    <!-- download statuses and errors -->
+    <string name="download_successful">Загрузка завершена</string>   
+    <string name="download_processing">Загрузка &#8230;</string>              
+    <string name="download_error_general">Загрузка оборвалась</string>             
+    <string name="download_error_disk">Для загрузки недостаточно места на дискеNot enough disk space to download</string>               
+    <string name="download_error_network">Не удалось загрузить из-за ошибки соединения</string>                    
+    <string name="download_error_perms">Не удалось загрузить из-за ошибки разрешений</string>                  
+    <string name="download_error_invalid_download">Загруженный файл был поврежден</string>
+    <string name="download_error_invalid_download_retry">Поврежденный файл, попытка загрузить заново</string> 
+    <string name="download_error_network_retry">Ошибка соединения, попробуйте возобновить&#8230;</string>
+    <string name="notification_download_canceled">Загрузка отменена</string>
+    <string name="download_non_wifi_prompt">Вы не подключены к wi-fi. Все равно продолжить загрузку?</string>
+    
+    <!-- downloading dialogs -->
+    <string name="download_progress">Загружено %1$s / %2$s</string>
+    <string name="process_progress">Загрузка файла %1$d / %2$d</string>
+    <string name="download_retry">Повторить</string>
+    <string name="download_cancel">Отмена</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">Удалить перевод?</string>
+    <string name="remove_dlg_msg">Вы уверены, что хотите удалить %1$s?</string>
+    <string name="error_getting_translation_list">Невозможно удалить лист переводов. Пожалуйста, попробуйте позже.</string>
+    <string name="search_data">Поиск данных</string>
+
+    <!-- about us -->
+    <string name="email_quran_android">Email Quran Android</string>
+
+    <!-- sura metainfo -->
+    <string name="makki">Мекка</string>
+    <string name="madani">Медина</string>
+    <plurals name="verses">
+        <item quantity="one">стих</item>
+        <item quantity="other">стихи</item>
+    </plurals>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">Создать закладку этого аята</string>
+    <string name="unbookmark_ayah">Удалить закладку для этого аята</string>
+    <string name="tag_ayah">Tag this Ayah</string>
+    <string name="share_ayah">Поделиться аятом</string>
+    <string name="translation_ayah">Перевод/тафсир аята</string>
+    <string name="play_from_here">Воспроизвести отсюда</string>
+    <string name="ayah_notes">Notes</string>
+    <string name="via_string">\n\nчерез @QuranAndroid</string>
+    <string name="search_key">Нажмите клавишу поиска, чтобы найти стих</string>
+    <string name="copy_ayah">Скопировать аят</string>
+    <string name="ayah_copied_popup">Аят скорирован</string>
+    <string name="show_more">Show More</string>
+
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="delete_bookmark">Remove Bookmark</string>
+    <string name="tag_bookmark">Tag Bookmark</string>
+    <string name="delete_tag">Delete Tag</string>
+    <string name="edit_tag">Edit Tag</string>
+    <string name="new_tag">New Tag</string>
+    <string name="not_tagged">Not Tagged</string>
+
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">Tag</string>
+    <string name="tag_name">Name</string>
+    
+    <!-- bookmark & tag list -->
+    <string name="bookmarks_list_empty">Закладки отсутствуют!</string>
+    <string name="tags_list_empty">No Tags</string>
+</resources>

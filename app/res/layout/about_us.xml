@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:linksClickable="true"
+		android:id="@+id/txtDevelopedBy" android:text="@string/developedBy"
+		android:textSize="12dip" android:layout_alignParentBottom="true"
+        android:paddingBottom="4dp"
+		android:textColor="#FFFFFF" android:paddingLeft="10dip" />
+
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:linksClickable="true"
+		android:id="@+id/txtCopyRights" android:text="@string/copyRights"
+		android:textSize="14dip" android:layout_above="@id/txtDevelopedBy"
+		android:textColor="#FFFFFF" android:paddingLeft="10dip" />
+
+	<Button android:layout_width="300dip" android:id="@+id/btnQuestions"
+		android:layout_height="wrap_content" android:text="@string/help_title"
+		android:layout_centerHorizontal="true" android:layout_above="@id/txtCopyRights"
+		android:visibility="visible"/>
+
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:visibility="visible"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="#FFFFFF" android:textSize="16dip" android:id="@+id/txtAbout"
+		android:singleLine="false" android:scrollbarAlwaysDrawVerticalTrack="true"
+		android:scrollbars="vertical"
+		android:layout_above="@id/btnQuestions" android:padding="10dip"
+		android:lineSpacingExtra="4dip" />
+
+</RelativeLayout>
