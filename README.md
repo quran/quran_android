@@ -70,7 +70,12 @@ Open Source Projects Used
 
 Changelog
 ---------
-**version 2.2.0 (in development)**
+**version 2.3.0 (in development)**
+
+- sort bookmarks by date added or by location in the Quran
+- bugfixes - [\#234](https://github.com/ahmedre/quran_android/issues/234)
+
+**version 2.2.0**
 
 - fast switching between translations [\#218](https://github.com/ahmedre/quran_android/issues/218)
 - upgrade process for translations

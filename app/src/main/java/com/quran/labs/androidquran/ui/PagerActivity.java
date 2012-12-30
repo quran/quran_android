@@ -608,6 +608,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
                     int pos = mViewPager.getCurrentItem() - 1;
                     for (int count = 0; count < 3; count++){
+                       if (pos + count < 0){ continue; }
                        Fragment f = mPagerAdapter
                                .getFragmentIfExists(pos + count);
                        if (f != null && f instanceof TranslationFragment){
