@@ -32,10 +32,7 @@ import com.quran.labs.androidquran.util.TranslationListTask;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -468,7 +465,7 @@ public class QuranDownloadService extends Service {
          if (isGapless){
             if (i == endSura && endAyah == 0){ continue; }
             String destDir = destination + File.separator;
-            String url = String.format(urlString, i);
+            String url = String.format(Locale.US,  urlString, i);
             Log.d(TAG, "gapless asking to download " + url + " to " + destDir);
             result = downloadFileWrapper(url, destDir, null, details);
             if (!result){ return false; }
@@ -481,7 +478,7 @@ public class QuranDownloadService extends Service {
          new File(destDir).mkdirs();
 
          for (int j = firstAyah; j <= lastAyah; j++){
-            String url = String.format(urlString, i, j);
+            String url = String.format(Locale.US, urlString, i, j);
             String destFile = j + extension;
             result = downloadFileWrapper(url, destDir, destFile, details);
             if (!result){ return false; }
@@ -498,7 +495,7 @@ public class QuranDownloadService extends Service {
             File basmallah = new File(destDir, "1" + extension);
             if (!basmallah.exists()){
                Log.d(TAG, "basmallah doesn't exist, downloading...");
-               String url = String.format(urlString, 1, 1);
+               String url = String.format(Locale.US, urlString, 1, 1);
                String destFile = 1 + extension;
                result = downloadFileWrapper(url, destDir, destFile, details);
                if (!result){ return false; }

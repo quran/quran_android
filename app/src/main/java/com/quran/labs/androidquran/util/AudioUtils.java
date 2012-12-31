@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 
 import java.io.File;
+import java.util.Locale;
 
 public class AudioUtils {
    private static final String TAG = "AudioUtils";
@@ -117,10 +118,32 @@ public class AudioUtils {
 
    public static QuranAyah getLastAyahToPlay(QuranAyah startAyah,
                                              int page, int mode){
+      int pageLastSura = 114;
+      int pageLastAyah = 6;
+      if (page > 604 || page < 0){ return null; }
+      if (page < 604){
+         int nextPageSura = QuranInfo.PAGE_SURA_START[page];
+         int nextPageAyah = QuranInfo.PAGE_AYAH_START[page];
+
+         pageLastSura = nextPageSura;
+         pageLastAyah = nextPageAyah - 1;
+         if (pageLastAyah < 1){
+            pageLastSura--;
+            if (pageLastSura < 1){ pageLastSura = 1; }
+            pageLastAyah = QuranInfo.getNumAyahs(pageLastSura);
+         }
+      }
+
       if (mode == LookAheadAmount.SURA){
          int sura = startAyah.getSura();
          int lastAyah = QuranInfo.getNumAyahs(sura);
          if (lastAyah == -1){ return null; }
+
+         // if we start playback between two suras, download both suras
+         if (pageLastSura > sura){
+            sura = pageLastSura;
+            lastAyah = QuranInfo.getNumAyahs(sura);
+         }
          return new QuranAyah(sura, lastAyah);
       }
       else if (mode == LookAheadAmount.JUZ){
@@ -130,19 +153,22 @@ public class AudioUtils {
          }
          else if (juz >= 1 && juz < 30){
             int[] endJuz = QuranInfo.QUARTERS[juz * 8];
+            if (pageLastSura > endJuz[0]){
+               // ex between jathiya and a7qaf
+               endJuz = QuranInfo.QUARTERS[(juz+1) * 8];
+            }
+            else if (pageLastSura == endJuz[0] &&
+                     pageLastAyah > endJuz[1]){
+               // ex surat al anfal
+               endJuz = QuranInfo.QUARTERS[(juz+1) * 8];
+            }
+
             return new QuranAyah(endJuz[0], endJuz[1]);
          }
       }
 
       // page mode (fallback also from errors above)
-      if (page > 604 || page < 1){ return null; }
-      else if (page == 604){ return new QuranAyah(114, 6); }
-      else {
-         // get sura and ayah for the next page
-         int sura = QuranInfo.PAGE_SURA_START[page];
-         int ayah = QuranInfo.PAGE_AYAH_START[page];
-         return new QuranAyah(sura, ayah-1);
-      }
+      return new QuranAyah(pageLastSura, pageLastAyah);
    }
 
    public static boolean shouldDownloadBasmallah(Context context,
@@ -230,7 +256,7 @@ public class AudioUtils {
          if (isGapless){
             if (i == endSura && endAyah == 0){ continue; }
             String p = request.getBaseUrl();
-            String fileName = String.format(p, i);
+            String fileName = String.format(Locale.US, p, i);
             Log.d(TAG, "gapless, checking if we have " + fileName);
             f = new File(fileName);
             if (!f.exists()){ return false; }

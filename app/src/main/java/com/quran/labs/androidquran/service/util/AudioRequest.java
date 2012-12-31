@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.service.util;
 
-import java.io.Serializable;
-
 import android.content.Context;
 import android.util.Log;
-
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+
+import java.io.Serializable;
+import java.util.Locale;
 
 public class AudioRequest implements Serializable {
 
@@ -128,9 +128,9 @@ public class AudioRequest implements Serializable {
       }
 
       if (isGapless()){
-         Log.d(TAG, "isGapless, url: " +
-                 String.format(mBaseUrl, mCurrentSura));
-         return String.format(mBaseUrl, mCurrentSura);
+         String url = String.format(Locale.US, mBaseUrl, mCurrentSura);
+         Log.d(TAG, "isGapless, url: " + url);
+         return url;
       }
 
       int sura = mCurrentSura;
@@ -150,7 +150,7 @@ public class AudioRequest implements Serializable {
          }
       }
 
-      return String.format(mBaseUrl, sura, ayah);
+      return String.format(Locale.US, mBaseUrl, sura, ayah);
    }
 
    public boolean haveSuraAyah(int sura, int ayah){
