@@ -72,6 +72,8 @@ Changelog
 ---------
 **version 2.3.0 (in development)**
 
+**version 2.2.1**
+
 - sort bookmarks by date added or by location in the Quran
 - bugfixes - [\#234](https://github.com/ahmedre/quran_android/issues/234)
 
