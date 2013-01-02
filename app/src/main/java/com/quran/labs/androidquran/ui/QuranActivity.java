@@ -311,14 +311,24 @@ public class QuranActivity extends SherlockFragmentActivity
       addTagDialog.show(fm, AddTagDialog.TAG);
    }
 
+   public void tagBookmarks(long[] ids){
+      FragmentManager fm = getSupportFragmentManager();
+      TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(ids);
+      tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
+   }
+
    public void tagBookmark(long id){
       FragmentManager fm = getSupportFragmentManager();
       TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(id);
       tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
    }
    
+   public void onBookmarkDeleted() {
+      mHandler.sendEmptyMessage(REFRESH_TAGS);
+   }
+   
    @Override
-   public void onBookmarkTagsUpdated(long bookmarkId) {
+   public void onBookmarkTagsUpdated() {
       mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
       mHandler.sendEmptyMessage(REFRESH_TAGS);
    }
