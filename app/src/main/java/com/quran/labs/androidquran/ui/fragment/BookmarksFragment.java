@@ -42,22 +42,29 @@ public class BookmarksFragment extends AbsMarkersFragment {
    }
    
    @Override
-   protected boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow selected) {
+   protected boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow[] selected) {
       MenuItem removeItem = menu.findItem(R.id.cab_delete_bookmark);
       MenuItem tagItem = menu.findItem(R.id.cab_tag_bookmark);
-      if (selected == null || !selected.isBookmark()) {
+      if (selected == null || selected.length == 0) {
          removeItem.setVisible(false);
          tagItem.setVisible(false);
-      } else {
-         removeItem.setVisible(true);
-         tagItem.setVisible(true);
+         return true;
       }
+      for (QuranRow row : selected) {
+         if (row == null || !row.isBookmark()) {
+            removeItem.setVisible(false);
+            tagItem.setVisible(false);
+            return true;
+         }
+      }
+      removeItem.setVisible(true);
+      tagItem.setVisible(true);
       return true;
    }
    
    @Override
    protected boolean actionItemClicked(ActionMode mode, int menuItemId,
-         QuranActivity activity, QuranRow selected) {
+         QuranActivity activity, QuranRow[] selected) {
       if (selected == null)
          return false;
       switch (menuItemId) {
@@ -65,12 +72,11 @@ public class BookmarksFragment extends AbsMarkersFragment {
          new RemoveBookmarkTask().execute(selected);
          return true;
       case R.id.cab_tag_bookmark:
-         if (selected.isBookmark() && selected.bookmarkId >= 0) {
-            activity.tagBookmark(selected.bookmarkId);
-         } else {
-            return false;
+         long[] ids = new long[selected.length];
+         for (int i = 0; i < selected.length; i++) {
+            ids[i] = selected[i].bookmarkId;
          }
-         finishActionMode();
+         activity.tagBookmarks(ids);
          return true;
       default:
          return false;

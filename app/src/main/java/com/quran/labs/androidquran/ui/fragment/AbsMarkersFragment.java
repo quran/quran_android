@@ -1,8 +1,12 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +40,8 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    protected abstract int getContextualMenuId();
    protected abstract int getEmptyListStringId();
    protected abstract int[] getValidSortOptions();
-   protected abstract boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow selected);
-   protected abstract boolean actionItemClicked(ActionMode mode, int menuItemId, QuranActivity activity, QuranRow selected);
+   protected abstract boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow[] selected);
+   protected abstract boolean actionItemClicked(ActionMode mode, int menuItemId, QuranActivity activity, QuranRow[] selected);
    protected abstract QuranRow[] getItems();
    
    @Override
@@ -54,7 +58,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       mListView.setAdapter(mAdapter);
       
       mMode = null;
-      mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+      mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
       mListView.setItemsCanFocus(false);
       
       mListView.setOnItemClickListener(new OnItemClickListener(){
@@ -155,10 +159,6 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       return false;
    }
 
-   protected void finishActionMode() {
-      mMode.finish();
-   }
-
    private class ModeCallback implements ActionMode.Callback {
 
       @Override
@@ -168,37 +168,51 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
          return true;
       }
 
+      private QuranRow[] getSelectedRows() {
+         List<QuranRow> rows = new ArrayList<QuranRow>();
+         SparseBooleanArray sel = mListView.getCheckedItemPositions();
+         for (int i = 0; i < sel.size(); i++) {
+            if (sel.valueAt(i)) {
+               int position = sel.keyAt(i);
+               if (position < 0 || position >= mAdapter.getCount())
+                  continue;
+               QuranRow elem = (QuranRow)mAdapter.getItem(position);
+               rows.add(elem);
+            }
+         }
+         QuranRow[] rowsArr = rows.toArray(new QuranRow[rows.size()]);
+         return rowsArr;
+      }
+
       @Override
       public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-         int position = mListView.getCheckedItemPosition();
-         boolean positionValid = position >= 0 && position < mAdapter.getCount();
-         QuranRow selected = positionValid ? (QuranRow)mAdapter.getItem(position) : null;
+         QuranRow[] selected = getSelectedRows();
          return prepareActionMode(mode, menu, selected);
       }
 
       @Override
       public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
          QuranActivity activity = (QuranActivity)getActivity();
-         int position = mListView.getCheckedItemPosition();
-         boolean positionValid = position >= 0 && position < mAdapter.getCount();
-         QuranRow selected = positionValid ? (QuranRow)mAdapter.getItem(position) : null;
+         QuranRow[] selected = getSelectedRows();
+         mMode.finish();
          return actionItemClicked(mode, item.getItemId(), activity, selected);
       }
 
       @Override
       public void onDestroyActionMode(ActionMode mode) {
-         int checkedPosition = mListView.getCheckedItemPosition();
-         if (checkedPosition >= 0 && checkedPosition < mAdapter.getCount()){
-            mListView.setItemChecked(checkedPosition, false);
-         }
+         for (int i = 0; i < mAdapter.getCount(); i++)
+            mListView.setItemChecked(i, false);
          if (mode == mMode){ mMode = null; }
       }
       
    }
 
-   class RemoveBookmarkTask extends AsyncTask<QuranRow, Void, Void> {
+   class RemoveBookmarkTask extends AsyncTask<QuranRow, Void, Boolean> {
+      boolean mUntagOnly = false;
+      public RemoveBookmarkTask() {}
+      public RemoveBookmarkTask(boolean untagOnly) {mUntagOnly=untagOnly;}
       @Override
-      protected Void doInBackground(QuranRow... params) {
+      protected Boolean doInBackground(QuranRow... params) {
          Activity activity = getActivity();
          if (activity == null){ return null; }
 
@@ -206,24 +220,33 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
          BookmarksDBAdapter db = quranActivity.getBookmarksAdapter();
 
          // TODO Confirm dialog
+         boolean bookmarkDeleted = false;
          for (int i = 0; i < params.length; i++) {
             QuranRow elem = params[i];
             if (elem.isBookmarkHeader() && elem.tagId >= 0) {
                db.removeTag(elem.tagId);
             }
             else if (elem.isBookmark() && elem.bookmarkId >= 0) {
-               db.removeBookmark(elem.bookmarkId);
+               if (mUntagOnly) {
+                  db.untagBookmark(elem.bookmarkId, elem.tagId);
+               } else {
+                  db.removeBookmark(elem.bookmarkId);
+                  bookmarkDeleted = true;
+               }
             }
          }
-         return null;
+         return bookmarkDeleted;
       }
       
       @Override
-      protected void onPostExecute(Void result) {
+      protected void onPostExecute(Boolean result) {
          if (loadingTask == null){
             loadingTask = new BookmarksLoadingTask();
             loadingTask.execute();
          }
+         QuranActivity activity = (QuranActivity)getActivity();
+         if (activity != null)
+            activity.onBookmarkDeleted();
       }
    }
 

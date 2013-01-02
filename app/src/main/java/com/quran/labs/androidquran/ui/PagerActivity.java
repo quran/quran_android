@@ -637,7 +637,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    }
 
    @Override
-   public void onBookmarkTagsUpdated(long bookmarkId) {
+   public void onBookmarkTagsUpdated() {
       // Do nothing
    }
    
