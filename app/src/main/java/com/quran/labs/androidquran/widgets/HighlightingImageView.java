@@ -259,7 +259,7 @@ public class HighlightingImageView extends ImageView {
       if (page == null) return false;
       PageScalingData scalingData = new PageScalingData(page);
       
-      overlayParams.paint = new Paint();
+      overlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
       overlayParams.paint.setTextSize(MAX_FONT_SIZE);
       overlayParams.paint.setColor(getResources().getColor(R.color.overlay_text_color));
       
