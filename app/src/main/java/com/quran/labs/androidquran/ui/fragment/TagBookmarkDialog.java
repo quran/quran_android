@@ -26,6 +26,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    public static final String TAG = "TagBookmarkDialog";
 
    private long mBookmarkId = -1;
+   private long[] mBookmarkIds = null;
    private Integer mSura;
    private Integer mAyah;
    private int mPage = -1;
@@ -36,6 +37,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    private ListView mListView;
 
    private static final String BOOKMARK_ID = "bookmarkid";
+   private static final String BOOKMARK_IDS = "bookmarkids";
    private static final String PAGE = "page";
    private static final String SURA = "sura";
    private static final String AYAH = "ayah";
@@ -43,6 +45,10 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
    public TagBookmarkDialog(long bookmarkId){
       mBookmarkId = bookmarkId;
+   }
+   
+   public TagBookmarkDialog(long[] bookmarkIds){
+      mBookmarkIds = bookmarkIds;
    }
    
    public TagBookmarkDialog(Integer sura, Integer ayah, int page){
@@ -58,6 +64,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    @Override
    public void onSaveInstanceState(Bundle outState) {
       outState.putLong(BOOKMARK_ID, mBookmarkId);
+      outState.putLongArray(BOOKMARK_IDS, mBookmarkIds);
       outState.putInt(PAGE, mPage);
       outState.putInt(SURA, mSura == null? 0 : mSura);
       outState.putInt(AYAH, mAyah == null? 0 : mAyah);
@@ -76,6 +83,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
       if (savedInstanceState != null){
          mBookmarkId = savedInstanceState.getLong(BOOKMARK_ID);
+         mBookmarkIds = savedInstanceState.getLongArray(BOOKMARK_IDS);
          mSura = savedInstanceState.getInt(SURA);
          mAyah = savedInstanceState.getInt(AYAH);
          mPage = savedInstanceState.getInt(PAGE);
@@ -209,17 +217,18 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       protected Void doInBackground(Void... params) {
           BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
           dba.open();
-          final List<Tag> tags = dba.getTags();
-          if (mBookmarkId < 0 && mPage > 0) {
-             mBookmarkId = dba.getBookmarkId(mSura, mAyah, mPage);
-          }
-          final List<Long> bookmarkTags = mBookmarkId < 0 ?
-                  null : dba.getBookmarkTagIds(mBookmarkId);
-          dba.close();
-
-          mTags = tags;
+          mTags = new ArrayList<Tag>();
+          mTags.addAll(dba.getTags());
           mTags.add(new Tag(-1, getString(R.string.new_tag)));
-          mBookmarkTags = bookmarkTags;
+          if (mBookmarkIds == null) {
+             if (mBookmarkId < 0 && mPage > 0) {
+                mBookmarkId = dba.getBookmarkId(mSura, mAyah, mPage);
+             }
+             mBookmarkTags = mBookmarkId < 0 ? null : dba.getBookmarkTagIds(mBookmarkId);
+          } else {
+             mBookmarkTags = null;
+          }
+          dba.close();
           return null;
       }
       
@@ -260,31 +269,34 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
        };
    }
    
-   class UpdateBookmarkTagsTask extends AsyncTask<Void, Void, Long> {
+   class UpdateBookmarkTagsTask extends AsyncTask<Void, Void, Void> {
       private OnBookmarkTagsUpdateListener mListener;
       public UpdateBookmarkTagsTask(OnBookmarkTagsUpdateListener listener) {
          mListener = listener;
       }
       @Override
-      protected Long doInBackground(Void... params) {
+      protected Void doInBackground(Void... params) {
           BookmarksDBAdapter dba = new BookmarksDBAdapter((Activity)mListener);
           dba.open();
-          long bookmarkId = mBookmarkId;
-          if (bookmarkId < 0) {
-             bookmarkId = dba.addBookmarkIfNotExists(mSura, mAyah, mPage);
+          if (mBookmarkIds == null) {
+             if (mBookmarkId < 0) {
+                mBookmarkId = dba.addBookmarkIfNotExists(mSura, mAyah, mPage);
+             }
+             dba.tagBookmark(mBookmarkId, mTags);
+          } else {
+             dba.tagBookmarks(mBookmarkIds, mTags);
           }
-          dba.tagBookmark(bookmarkId, mTags);
           dba.close();
-          return bookmarkId;
+          return null;
       }
       @Override
-      protected void onPostExecute(Long result) {
-         mListener.onBookmarkTagsUpdated(result);
+      protected void onPostExecute(Void result) {
+         mListener.onBookmarkTagsUpdated();
       }
    }
 
    public interface OnBookmarkTagsUpdateListener {
-      public void onBookmarkTagsUpdated(long bookmarkId);
+      public void onBookmarkTagsUpdated();
       public void onAddTagSelected();
    }
    
