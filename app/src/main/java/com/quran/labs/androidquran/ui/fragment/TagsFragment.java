@@ -42,54 +42,63 @@ public class TagsFragment extends AbsMarkersFragment {
    }
    
    @Override
-   protected boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow selected) {
+   protected boolean isValidSelection(QuranRow selected) {
+      return (selected.isBookmark() || selected.isBookmarkHeader()) && selected.tagId >= 0;
+   }
+   
+   @Override
+   protected boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow[] selected) {
       MenuItem editItem = menu.findItem(R.id.cab_edit_tag);
       MenuItem removeItem = menu.findItem(R.id.cab_delete_tag);
       MenuItem tagItem = menu.findItem(R.id.cab_tag_bookmark);
-      if (selected == null) {
-         editItem.setVisible(false);
-         removeItem.setVisible(false);
-         tagItem.setVisible(false);
-      } else if (selected.isBookmarkHeader()) {
-         tagItem.setVisible(false);
-         editItem.setVisible(selected.tagId >= 0);
-         removeItem.setVisible(selected.tagId >= 0);
-      } else if (selected.isBookmark()) {
-         tagItem.setVisible(true);
-         editItem.setVisible(false);
-         removeItem.setVisible(selected.tagId >= 0);
+      
+      int headers = 0;
+      int bookmarks = 0;
+      boolean uncategorizedHeader = false;
+      boolean uncategorizedBookmark = false;
+
+      for (QuranRow row : selected) {
+         if (row.isBookmarkHeader()) {
+            headers++;
+            if (row.tagId < 0)
+               uncategorizedHeader = true;
+         } else if (row.isBookmark()) {
+            bookmarks++;
+            if (row.tagId < 0)
+               uncategorizedBookmark = true;
+         }
       }
+
+      boolean canEdit = headers == 1 && bookmarks == 0 && !uncategorizedHeader;
+      boolean canRemove = ((headers + bookmarks) > 0) && !uncategorizedHeader && !uncategorizedBookmark;
+      boolean canTag = headers == 0 && bookmarks > 0 && !uncategorizedHeader;
+      editItem.setVisible(canEdit);
+      removeItem.setVisible(canRemove);
+      tagItem.setVisible(canTag);
       return true;
    }
    
    @Override
    protected boolean actionItemClicked(ActionMode mode, int menuItemId,
-         QuranActivity activity, QuranRow selected) {
+         QuranActivity activity, QuranRow[] selected) {
       switch (menuItemId) {
       case R.id.cab_delete_tag:
-         if (selected == null)
-            return false;
-         new RemoveBookmarkTask().execute(selected);
+         new RemoveBookmarkTask(true).execute(selected);
          return true;
       case R.id.cab_new_tag:
          activity.addTag();
-         finishActionMode();
          return true;
       case R.id.cab_edit_tag:
-         if (selected != null && selected.isBookmarkHeader()){
-            activity.editTag(selected.tagId, selected.text);
-         } else {
-            return false;
+         if (selected.length == 1) {
+            activity.editTag(selected[0].tagId, selected[0].text);
          }
-         finishActionMode();
          return true;
       case R.id.cab_tag_bookmark:
-         if (selected != null && selected.isBookmark()) {
-            activity.tagBookmark(selected.bookmarkId);
-         } else {
-            return false;
+         long[] ids = new long[selected.length];
+         for (int i = 0; i < selected.length; i++) {
+            ids[i] = selected[i].bookmarkId;
          }
-         finishActionMode();
+         activity.tagBookmarks(ids);
          return true;
       default:
          return false;
@@ -148,9 +157,7 @@ public class TagsFragment extends AbsMarkersFragment {
 
          // add the tag header
          QuranRow bookmarkHeader = new QuranRow(
-                 tag.mName,
-                 /*tag.mDescription*/"TAG",
-                 QuranRow.BOOKMARK_HEADER, 0, 0, null);
+                 tag.mName, null, QuranRow.BOOKMARK_HEADER, 0, 0, null);
          bookmarkHeader.tagId = tag.mId;
          
          rows.add(bookmarkHeader);

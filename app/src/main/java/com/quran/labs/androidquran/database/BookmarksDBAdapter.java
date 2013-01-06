@@ -301,6 +301,32 @@ public class BookmarksDBAdapter {
       return -1;
    }
    
+   public void tagBookmarks(long[] bookmarkIds, List<Tag> tags) {
+      if (mDb == null){
+         open();
+         if (mDb == null){ return; }
+      }
+      
+      mDb.beginTransaction();
+      try {
+         for (Tag t : tags){
+            if (t.mId < 0 || !t.isChecked()){ continue; }
+            for (int i = 0; i < bookmarkIds.length; i++) {
+               ContentValues values = new ContentValues();
+               values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkIds[i]);
+               values.put(BookmarkTagTable.TAG_ID, t.mId);
+               mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
+            }
+         }
+      }
+      catch (Exception e){
+         Log.d(TAG, "exception in tagBookmark", e);
+      }
+      
+      mDb.setTransactionSuccessful();
+      mDb.endTransaction();
+   }
+   
    public void tagBookmark(long bookmarkId, List<Tag> tags) {
       if (mDb == null){
          open();
