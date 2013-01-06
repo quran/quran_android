@@ -312,6 +312,10 @@ public class QuranActivity extends SherlockFragmentActivity
    }
 
    public void tagBookmarks(long[] ids){
+      if (ids != null && ids.length == 1) {
+         tagBookmark(ids[0]);
+         return;
+      }
       FragmentManager fm = getSupportFragmentManager();
       TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(ids);
       tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);

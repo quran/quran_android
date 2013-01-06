@@ -42,6 +42,11 @@ public class TagsFragment extends AbsMarkersFragment {
    }
    
    @Override
+   protected boolean isValidSelection(QuranRow selected) {
+      return (selected.isBookmark() || selected.isBookmarkHeader()) && selected.tagId >= 0;
+   }
+   
+   @Override
    protected boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow[] selected) {
       MenuItem editItem = menu.findItem(R.id.cab_edit_tag);
       MenuItem removeItem = menu.findItem(R.id.cab_delete_tag);
