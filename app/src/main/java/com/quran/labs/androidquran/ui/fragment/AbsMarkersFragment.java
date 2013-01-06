@@ -40,6 +40,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    protected abstract int getContextualMenuId();
    protected abstract int getEmptyListStringId();
    protected abstract int[] getValidSortOptions();
+   protected abstract boolean isValidSelection(QuranRow selected);
    protected abstract boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow[] selected);
    protected abstract boolean actionItemClicked(ActionMode mode, int menuItemId, QuranActivity activity, QuranRow[] selected);
    protected abstract QuranRow[] getItems();
@@ -68,8 +69,8 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
             
             // If we're in CAB mode don't handle the click
             if (mMode != null){
-               mListView.setItemChecked(position,
-                       mListView.isItemChecked(position));
+               boolean checked = isValidSelection(elem) && mListView.isItemChecked(position);
+               mListView.setItemChecked(position, checked);
                mMode.invalidate();
                return;
             } else {
@@ -92,7 +93,10 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
          public boolean onItemLongClick(AdapterView<?> parent, View view,
                int position, long id) {
-            if (!mListView.isItemChecked(position)) {
+            QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
+            if (!isValidSelection(elem)) {
+               return false;
+            } else if (!mListView.isItemChecked(position)) {
                mListView.setItemChecked(position, true);
                if (mMode != null)
                   mMode.invalidate();

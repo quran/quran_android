@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
@@ -19,6 +20,8 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
 public class BookmarksFragment extends AbsMarkersFragment {
+   private static final String TAG =
+         "com.quran.labs.androidquran.ui.fragment.BookmarksFragment";
    
    private static final int[] VALID_SORT_OPTIONS = {R.id.sort_location, R.id.sort_date};
 
@@ -39,6 +42,11 @@ public class BookmarksFragment extends AbsMarkersFragment {
    @Override
    protected int[] getValidSortOptions() {
       return VALID_SORT_OPTIONS;
+   }
+   
+   @Override
+   protected boolean isValidSelection(QuranRow selected) {
+      return selected.isBookmark();
    }
    
    @Override
@@ -107,6 +115,11 @@ public class BookmarksFragment extends AbsMarkersFragment {
             getActivity().getApplicationContext());
       int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE, Constants.NO_PAGE_SAVED);
       boolean showLastPage = lastPage != Constants.NO_PAGE_SAVED;
+      // Need to figure out root cause lastPage is being stored with an invalid value
+      if (showLastPage && (lastPage > Constants.PAGES_LAST || lastPage < Constants.PAGES_FIRST)) {
+         showLastPage = false;
+         Log.w(TAG, "Got invalid last saved page as: "+lastPage);
+      }
       
       Activity activity = getActivity();
 
