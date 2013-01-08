@@ -34,53 +34,53 @@
     <string name="email_to">quran.android@gmail.com</string>
     <string name="send_email">ارسال ايميل</string>
     <string name="aboutUs">برنامه قرآن آندرويد برنامه اي متن باز است که فايل هاي عکس آن از سايت 
-            &lt;a href="http://quran.com">quran.com&lt;/a>
+            &lt;a href="http://quran.com">quran.com&lt;/a&gt;
 و صوت آن از پروژه سايت 
-            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
+            &lt;a href="http://everyayah.com">everyayah.com&lt;/a&gt;,
 و ترجمه هاي آن از سايت 
-            &lt;a href="http://tanzil.net">tanzil.net&lt;/a>دريافت شده است.
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
-            &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
-            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
-            &lt;br/>Mehmed Mahmudoglu - Turkish
-            &lt;br/>Mohammad Jafar Nanakar (محمدجعفرنعناکار) - Farsi (فارسي)
-            &lt;br/>Rinat (Ринат Валеев) - Russian
-            &lt;br/>khajavi (on github) - previous Farsi translation
-            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
-            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+            &lt;a href="http://tanzil.net">tanzil.net&lt;/a&gt;دريافت شده است.
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a&gt;
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Quran for Android Contributors:&lt;/b&gt;
+            &lt;br/&gt;Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a&gt;)
+            &lt;br/&gt;Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a&gt;)
+            &lt;br/&gt;Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a&gt;)
+            &lt;br/&gt;Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a&gt;)
+            &lt;br/&gt;Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a&gt;)
+            &lt;br/&gt;Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a&gt;)
+            &lt;br/&gt;Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a&gt;)
+            &lt;br/&gt;Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a&gt;)
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Translators:&lt;/b&gt;
+            &lt;br/&gt;Mehmed Mahmudoglu - Turkish
+            &lt;br/&gt;Mohammad Jafar Nanakar (محمدجعفرنعناکار) - Farsi (فارسي)
+            &lt;br/&gt;Rinat (Ринат Валеев) - Russian
+            &lt;br/&gt;khajavi (on github) - previous Farsi translation
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Open Source Projects:&lt;/b&gt;
+            &lt;br/&gt;ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a&gt;)
+            &lt;br/&gt;maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a&gt;)
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Special Thanks:&lt;/b&gt;
+            &lt;br/&gt;Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a&gt;)
+            &lt;br/&gt;Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a&gt;)</string>
     <string name="help_title">پرسش و پاسخ هاي متداول</string>
     <string name="help"> 
-        &lt;b>چگونه صوت را فعال کنم؟&lt;/b>
-        &lt;br/>براي فعال کردن صوت در اين برنامه کافي است روي صفحه مورد نظر کليک کنيد بعد دکمه صدا را مشاهده خواهيد کرد مي توانيد آن را فعال نماييد.
-        &lt;br/>
-        &lt;br/>&lt;b>چگونه مي توانم ترجمه را مشاهده نمايم؟&lt;/b>
-        &lt;br/>کافي است صفحه مورد نظر را کليک نماييد سپس علامت جهان  يا در برخي دستگاه ها علامت سه نقطه را کليک کنيد.
-        &lt;br/>
+        &lt;b&gt;چگونه صوت را فعال کنم؟&lt;/b&gt;
+        &lt;br/&gt;براي فعال کردن صوت در اين برنامه کافي است روي صفحه مورد نظر کليک کنيد بعد دکمه صدا را مشاهده خواهيد کرد مي توانيد آن را فعال نماييد.
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;چگونه مي توانم ترجمه را مشاهده نمايم؟&lt;/b&gt;
+        &lt;br/&gt;کافي است صفحه مورد نظر را کليک نماييد سپس علامت جهان  يا در برخي دستگاه ها علامت سه نقطه را کليک کنيد.
+        &lt;br/&gt;
        اگر شما هيچ ترجمه اي را بر روي دستگاه خود نداريد مي توانيد ابتدا آن را از قسمت تنظيمات بارگذاري نماييد.
-        &lt;br/>
-        &lt;br/>&lt;b>چگونه مي توانم يک صفحه را نشانه گذاري کنم&lt;/b>
-        &lt;br/>صفحه مورد نظر خود را انتخاب نماييد سپس صفحه را کليک کنيد و روبان را لمس نماييد.
-        &lt;br/>
-        &lt;br/>&lt;b>چگونه مي توانم فونت را بزرگتر کنم؟&lt;/b>
-        &lt;br/>براي متن عربي گوشي خود را عمودي کنيد و براي اندازه متن ترجمه به قسمت تنظيمات مراجعه نماييد.
-        &lt;br/>
-        &lt;br/>&lt;b>چگونه يک آيه را به اشتراک بگذارم؟&lt;/b>
-        &lt;br/>کافي است آيه مورد نظر خود را براي مدت زمان کوتاهي لمس نماييد.
-        &lt;br/>
-        &lt;br/>&lt;b>در ديدن فونت مشکل دارم؟&lt;/b>
-        &lt;br/>متاسفانه برخي از فونت هاي  براي آندرويد 4 پيش بيني نشده است.
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;چگونه مي توانم يک صفحه را نشانه گذاري کنم&lt;/b&gt;
+        &lt;br/&gt;صفحه مورد نظر خود را انتخاب نماييد سپس صفحه را کليک کنيد و روبان را لمس نماييد.
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;چگونه مي توانم فونت را بزرگتر کنم؟&lt;/b&gt;
+        &lt;br/&gt;براي متن عربي گوشي خود را عمودي کنيد و براي اندازه متن ترجمه به قسمت تنظيمات مراجعه نماييد.
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;چگونه يک آيه را به اشتراک بگذارم؟&lt;/b&gt;
+        &lt;br/&gt;کافي است آيه مورد نظر خود را براي مدت زمان کوتاهي لمس نماييد.
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;در ديدن فونت مشکل دارم؟&lt;/b&gt;
+        &lt;br/&gt;متاسفانه برخي از فونت هاي  براي آندرويد 4 پيش بيني نشده است.
     </string>
 <string name="search_hint">جستجو در قرآن</string>
 <string name="quranSearchType">آيات قرآن</string>
