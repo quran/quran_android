@@ -1,12 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
-
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -16,7 +10,13 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TagsFragment extends AbsMarkersFragment {
    
@@ -111,23 +111,25 @@ public class TagsFragment extends AbsMarkersFragment {
    }
    
    private QuranRow[] getTags(){
+      BookmarksDBAdapter adapter = null;
       Activity activity = getActivity();
-      if (activity == null){ return null; }
+      if (activity != null && activity instanceof BookmarkHandler){
+         adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
+      }
 
-      QuranActivity quranActivity = (QuranActivity)activity;
-      BookmarksDBAdapter db = quranActivity.getBookmarksAdapter();
+      if (adapter == null){ return null; }
 
       List<Tag> tags;
       switch (mCurrentSortCriteria) {
       case R.id.sort_date:
-         tags = db.getTags(BookmarksDBAdapter.SORT_DATE_ADDED);
+         tags = adapter.getTags(BookmarksDBAdapter.SORT_DATE_ADDED);
          break;
       case R.id.sort_alphabetical:
       default:
-         tags = db.getTags(BookmarksDBAdapter.SORT_ALPHABETICAL);
+         tags = adapter.getTags(BookmarksDBAdapter.SORT_ALPHABETICAL);
          break;
       }
-      List<Bookmark> bookmarks = db.getBookmarks(true);
+      List<Bookmark> bookmarks = adapter.getBookmarks(true);
 
       List<QuranRow> rows = new ArrayList<QuranRow>();
       
@@ -189,8 +191,9 @@ public class TagsFragment extends AbsMarkersFragment {
       return rows.toArray(new QuranRow[rows.size()]);
    }
 
-   private QuranRow createRow(Activity activity, long tagId, Bookmark bookmark) {
-      QuranRow row = null;
+   private QuranRow createRow(Activity activity,
+                              long tagId, Bookmark bookmark) {
+      QuranRow row;
       if (bookmark.mSura == null) {
          int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
          row = new QuranRow(

@@ -1,8 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,18 +12,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
+import com.actionbarsherlock.view.*;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbsMarkersFragment extends SherlockFragment {
 
@@ -41,8 +37,15 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    protected abstract int getEmptyListStringId();
    protected abstract int[] getValidSortOptions();
    protected abstract boolean isValidSelection(QuranRow selected);
-   protected abstract boolean prepareActionMode(ActionMode mode, Menu menu, QuranRow[] selected);
-   protected abstract boolean actionItemClicked(ActionMode mode, int menuItemId, QuranActivity activity, QuranRow[] selected);
+   protected abstract boolean prepareActionMode(ActionMode mode,
+                                                Menu menu,
+                                                QuranRow[] selected);
+
+   protected abstract boolean actionItemClicked(ActionMode mode,
+                                                int menuItemId,
+                                                QuranActivity activity,
+                                                QuranRow[] selected);
+
    protected abstract QuranRow[] getItems();
    
    @Override
@@ -213,28 +216,31 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
 
    class RemoveBookmarkTask extends AsyncTask<QuranRow, Void, Boolean> {
       boolean mUntagOnly = false;
-      public RemoveBookmarkTask() {}
-      public RemoveBookmarkTask(boolean untagOnly) {mUntagOnly=untagOnly;}
+      public RemoveBookmarkTask(){}
+      public RemoveBookmarkTask(boolean untagOnly){ mUntagOnly = untagOnly; }
+
       @Override
       protected Boolean doInBackground(QuranRow... params) {
+         BookmarksDBAdapter adapter = null;
          Activity activity = getActivity();
-         if (activity == null){ return null; }
+         if (activity != null && activity instanceof BookmarkHandler){
+            adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
+         }
 
-         QuranActivity quranActivity = (QuranActivity)activity;
-         BookmarksDBAdapter db = quranActivity.getBookmarksAdapter();
+         if (adapter == null){ return null; }
 
          // TODO Confirm dialog
          boolean bookmarkDeleted = false;
          for (int i = 0; i < params.length; i++) {
             QuranRow elem = params[i];
             if (elem.isBookmarkHeader() && elem.tagId >= 0) {
-               db.removeTag(elem.tagId);
+               adapter.removeTag(elem.tagId);
             }
             else if (elem.isBookmark() && elem.bookmarkId >= 0) {
                if (mUntagOnly) {
-                  db.untagBookmark(elem.bookmarkId, elem.tagId);
+                  adapter.untagBookmark(elem.bookmarkId, elem.tagId);
                } else {
-                  db.removeBookmark(elem.bookmarkId);
+                  adapter.removeBookmark(elem.bookmarkId);
                   bookmarkDeleted = true;
                }
             }

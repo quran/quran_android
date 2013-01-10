@@ -2,15 +2,12 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +18,6 @@ import android.util.Log;
 import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnTouchListener;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -38,6 +34,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -254,10 +251,16 @@ public class QuranPageFragment extends SherlockFragment {
          mSura = params[0];
          mAyah = params[1];
          mPage = params[2];
-         BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-         dba.open();
-         boolean bookmarked = dba.getBookmarkId(mSura, mAyah, mPage) >= 0;
-         dba.close();
+
+         BookmarksDBAdapter adapter = null;
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof BookmarkHandler){
+            adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
+         }
+
+         if (adapter == null){ return null; }
+
+         boolean bookmarked = adapter.getBookmarkId(mSura, mAyah, mPage) >= 0;
          return bookmarked;
       }
       
@@ -314,9 +317,9 @@ public class QuranPageFragment extends SherlockFragment {
 							PagerActivity pagerActivity = (PagerActivity) activity;
 							pagerActivity.playFromAyah(mPageNumber, sura, ayah);
 						}
-               } else if (selection == 5) {
+               } /* else if (selection == 5) {
                   new ShowNotesTask(sura, ayah).execute();
-					}
+					} */
 				}
 			}).setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -485,7 +488,8 @@ public class QuranPageFragment extends SherlockFragment {
          }
 		}
 	}
-	
+
+   /*
    class ShowNotesTask extends AsyncTask<Void, Void, String> {
       private int ayahId;
       
@@ -524,7 +528,7 @@ public class QuranPageFragment extends SherlockFragment {
          dlg.show();
       }
    }
-   
+
    class SaveNotesTask extends AsyncTask<Void, Void, Void> {
       private int ayahId;
       private String note;
@@ -548,5 +552,6 @@ public class QuranPageFragment extends SherlockFragment {
          return null;
       }
    }
+   */
    
 }

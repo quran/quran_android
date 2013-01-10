@@ -37,7 +37,7 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
    }
    
 	private static final String CREATE_BOOKMARKS_TABLE =
-			" create table " + BookmarksTable.TABLE_NAME + " (" + 
+			" create table if not exists " + BookmarksTable.TABLE_NAME + " (" +
 					BookmarksTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 					BookmarksTable.SURA + " INTEGER, " +
                BookmarksTable.AYAH + " INTEGER, " +
@@ -46,13 +46,13 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
                  " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 	
 	private static final String CREATE_TAGS_TABLE =
-	      " create table " + TagsTable.TABLE_NAME + " (" + 
+	      " create table if not exists " + TagsTable.TABLE_NAME + " (" +
 	            TagsTable.ID + " INTEGER PRIMARY KEY, " +
 	            TagsTable.NAME + " TEXT NOT NULL, " +
 	            TagsTable.ADDED_DATE + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 	
 	private static final String CREATE_BOOKMARK_TAG_TABLE =
-	      " create table " + BookmarkTagTable.TABLE_NAME + " (" + 
+	      " create table if not exists " + BookmarkTagTable.TABLE_NAME + " (" +
 	            BookmarkTagTable.ID + " INTEGER PRIMARY KEY, " +
 	            BookmarkTagTable.BOOKMARK_ID + " INTEGER NOT NULL, " +
 	            BookmarkTagTable.TAG_ID + " INTEGER NOT NULL, " +

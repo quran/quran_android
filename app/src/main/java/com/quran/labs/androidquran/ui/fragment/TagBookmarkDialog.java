@@ -18,6 +18,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -215,21 +216,29 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    class RefreshTagsTask extends AsyncTask<Void, Void, Void> {
       @Override
       protected Void doInBackground(Void... params) {
-          BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-          dba.open();
-          mTags = new ArrayList<Tag>();
-          mTags.addAll(dba.getTags());
-          mTags.add(new Tag(-1, getString(R.string.new_tag)));
-          if (mBookmarkIds == null) {
-             if (mBookmarkId < 0 && mPage > 0) {
-                mBookmarkId = dba.getBookmarkId(mSura, mAyah, mPage);
-             }
-             mBookmarkTags = mBookmarkId < 0 ? null : dba.getBookmarkTagIds(mBookmarkId);
-          } else {
-             mBookmarkTags = null;
-          }
-          dba.close();
-          return null;
+         BookmarksDBAdapter adapter = null;
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof BookmarkHandler) {
+            adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
+         }
+
+         if (adapter == null) {
+            return null;
+         }
+
+         mTags = new ArrayList<Tag>();
+         mTags.addAll(adapter.getTags());
+         mTags.add(new Tag(-1, getString(R.string.new_tag)));
+         if (mBookmarkIds == null) {
+            if (mBookmarkId < 0 && mPage > 0) {
+               mBookmarkId = adapter.getBookmarkId(mSura, mAyah, mPage);
+            }
+            mBookmarkTags = mBookmarkId < 0 ? null :
+                    adapter.getBookmarkTagIds(mBookmarkId);
+         } else {
+            mBookmarkTags = null;
+         }
+         return null;
       }
       
       @Override
@@ -252,16 +261,20 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    class AddTagTask extends AsyncTask<String, Void, Tag> {
        @Override
        protected Tag doInBackground(String... params) {
-          BookmarksDBAdapter dba = new BookmarksDBAdapter(getActivity());
-          dba.open();
-          long id = dba.addTag(params[0]);
-          dba.close();
+          BookmarksDBAdapter adapter = null;
+          Activity activity = getActivity();
+          if (activity != null && activity instanceof BookmarkHandler){
+             adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
+          }
+
+          if (adapter == null){ return null; }
+          long id = adapter.addTag(params[0]);
           Tag t = new Tag(id, params[0]);
           return t;
        }
        @Override
        protected void onPostExecute(Tag result) {
-          if (mTags != null && mAdapter != null) {
+          if (result != null && mTags != null && mAdapter != null) {
              result.setChecked(true);
              mTags.add(mTags.size() - 1, result);
              mAdapter.notifyDataSetChanged();
@@ -274,21 +287,31 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       public UpdateBookmarkTagsTask(OnBookmarkTagsUpdateListener listener) {
          mListener = listener;
       }
+
       @Override
       protected Void doInBackground(Void... params) {
-          BookmarksDBAdapter dba = new BookmarksDBAdapter((Activity)mListener);
-          dba.open();
-          if (mBookmarkIds == null) {
-             if (mBookmarkId < 0) {
-                mBookmarkId = dba.addBookmarkIfNotExists(mSura, mAyah, mPage);
-             }
-             dba.tagBookmark(mBookmarkId, mTags);
-          } else {
-             dba.tagBookmarks(mBookmarkIds, mTags);
-          }
-          dba.close();
-          return null;
+         BookmarksDBAdapter adapter = null;
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof BookmarkHandler) {
+            adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
+         }
+
+         if (adapter == null) {
+            return null;
+         }
+
+         if (mBookmarkIds == null) {
+            if (mBookmarkId < 0) {
+               mBookmarkId = adapter.addBookmarkIfNotExists(mSura,
+                       mAyah, mPage);
+            }
+            adapter.tagBookmark(mBookmarkId, mTags);
+         } else {
+            adapter.tagBookmarks(mBookmarkIds, mTags);
+         }
+         return null;
       }
+
       @Override
       protected void onPostExecute(Void result) {
          mListener.onBookmarkTagsUpdated();

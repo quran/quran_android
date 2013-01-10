@@ -160,17 +160,6 @@ public class BookmarksDBAdapter {
       return -1;
    }
    
-   public boolean isTagged(long bookmarkId){
-      if (mDb == null){
-         open();
-         if (mDb == null){ return false; }
-      }
-      Cursor cursor = mDb.query(BookmarkTagTable.TABLE_NAME,
-            null, BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
-            null, null, null, null);
-      return cursor.moveToFirst();
-   }
-   
    public long addBookmark(int page){
       return addBookmark(null, null, page);
    }
@@ -285,22 +274,6 @@ public class BookmarksDBAdapter {
       return removed;
    }
    
-   public long getBookmarkTagId(long bookmarkId, long tagId) {
-      if (mDb == null){
-         open();
-         if (mDb == null){ return -1; }
-      }
-      
-      Cursor cursor = mDb.query(BookmarkTagTable.TABLE_NAME, null,
-            BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId + " AND "
-                  + BookmarkTagTable.TAG_ID + "=" + tagId,
-              null, null, null, null);
-      if (cursor.moveToFirst()){
-         return cursor.getLong(0);
-      }
-      return -1;
-   }
-   
    public void tagBookmarks(long[] bookmarkIds, List<Tag> tags) {
       if (mDb == null){
          open();
@@ -356,18 +329,6 @@ public class BookmarksDBAdapter {
 
       mDb.setTransactionSuccessful();
       mDb.endTransaction();
-   }
-   
-   public long tagBookmark(long bookmarkId, long tagId) {
-      if (mDb == null){
-         open();
-         if (mDb == null){ return -1; }
-      }
-
-      ContentValues values = new ContentValues();
-      values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
-      values.put(BookmarkTagTable.TAG_ID, tagId);
-      return mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
    }
    
    public void untagBookmark(long bookmarkId, long tagId) {
