@@ -1,13 +1,9 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -17,7 +13,11 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookmarksFragment extends AbsMarkersFragment {
    private static final String TAG =
@@ -98,30 +98,35 @@ public class BookmarksFragment extends AbsMarkersFragment {
    
    private QuranRow[] getBookmarks(){
       List<Bookmark> bookmarks;
-      BookmarksDBAdapter db = new BookmarksDBAdapter(getActivity());
-      db.open();
+      Activity activity = getActivity();
+      BookmarksDBAdapter adapter = null;
+      if (activity != null && activity instanceof BookmarkHandler){
+         adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
+      }
+      if (adapter == null){ return null; }
+
       switch (mCurrentSortCriteria) {
       case R.id.sort_location:
-         bookmarks = db.getBookmarks(false, BookmarksDBAdapter.SORT_LOCATION);
+         bookmarks = adapter.getBookmarks(false,
+                 BookmarksDBAdapter.SORT_LOCATION);
          break;
       case R.id.sort_date:
       default:
-         bookmarks = db.getBookmarks(false, BookmarksDBAdapter.SORT_DATE_ADDED);
+         bookmarks = adapter.getBookmarks(false,
+                 BookmarksDBAdapter.SORT_DATE_ADDED);
          break;
       }
-      db.close();
-      
+
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
             getActivity().getApplicationContext());
-      int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE, Constants.NO_PAGE_SAVED);
+      int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
+              Constants.NO_PAGE_SAVED);
       boolean showLastPage = lastPage != Constants.NO_PAGE_SAVED;
-      // Need to figure out root cause lastPage is being stored with an invalid value
-      if (showLastPage && (lastPage > Constants.PAGES_LAST || lastPage < Constants.PAGES_FIRST)) {
+      if (showLastPage && (lastPage > Constants.PAGES_LAST ||
+              lastPage < Constants.PAGES_FIRST)) {
          showLastPage = false;
          Log.w(TAG, "Got invalid last saved page as: "+lastPage);
       }
-      
-      Activity activity = getActivity();
 
       List<QuranRow> rows = new ArrayList<QuranRow>();
       if (showLastPage){
@@ -160,7 +165,7 @@ public class BookmarksFragment extends AbsMarkersFragment {
    }
    
    private QuranRow createRow(Activity activity, Bookmark bookmark) {
-      QuranRow row = null;
+      QuranRow row;
       if (bookmark.isPageBookmark()) {
          int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
          row = new QuranRow(

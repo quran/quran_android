@@ -40,10 +40,7 @@ import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.*;
 import com.quran.labs.androidquran.ui.fragment.*;
-import com.quran.labs.androidquran.ui.helpers.JBVisibilityHelper;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.ui.helpers.*;
 import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
@@ -54,6 +51,7 @@ import java.util.Locale;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
+        BookmarkHandler,
         DefaultDownloadReceiver.DownloadListener,
         TagBookmarkDialog.OnBookmarkTagsUpdateListener,
         AddTagDialog.OnTagChangedListener {
@@ -90,6 +88,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private String[] mTranslationItems;
    private TranslationReaderTask mTranslationReaderTask;
    private SpinnerAdapter mSpinnerAdapter;
+   private BookmarksDBAdapter mBookmarksAdapter;
 
    public static final int VISIBLE_FLAGS =
              View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -128,6 +127,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       super.onCreate(savedInstanceState);
       mBookmarksCache = new SparseArray<Boolean>();
+      mBookmarksAdapter = new BookmarksDBAdapter(this);
 
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
@@ -330,6 +330,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
+   @Override
+   public BookmarksDBAdapter getBookmarksAdapter(){
+      return mBookmarksAdapter;
+   }
+
    public void showGetRequiredFilesDialog(){
       if (mPromptDialog != null){ return; }
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -469,6 +474,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          JBVisibilityHelper.clearVisibilityChangeListener(mViewPager);
       }
 
+      mBookmarksAdapter.close();
       super.onDestroy();
    }
 
@@ -933,20 +939,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
          mPage = params[2];
          mPageOnly = (sura == null && ayah == null);
 
-         BookmarksDBAdapter dba = new BookmarksDBAdapter(PagerActivity.this);
-         dba.open();
          boolean result = false;
-         long bookmarkId = dba.getBookmarkId(sura, ayah, mPage);
+         long bookmarkId = mBookmarksAdapter.getBookmarkId(sura, ayah, mPage);
          if (bookmarkId >= 0) {
-            if (dba.isTagged(bookmarkId)) {
-               // TODO show warning dialog that all tags will be removed
-            }
-            dba.removeBookmark(bookmarkId);
+            // if (mBookmarksAdapter.isTagged(bookmarkId)) {
+            // TODO show warning dialog that all tags will be removed
+            // }
+            mBookmarksAdapter.removeBookmark(bookmarkId);
          } else {
-            dba.addBookmark(sura, ayah, mPage);
+            mBookmarksAdapter.addBookmark(sura, ayah, mPage);
             result = true;
          }
-         dba.close();
          return result;
       }
 
@@ -964,14 +967,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       @Override
       protected Boolean doInBackground(Integer... params) {
-         Boolean bookmarked = null;
          mPage = params[0];
-
-         BookmarksDBAdapter dba = new BookmarksDBAdapter(PagerActivity.this);
-         dba.open();
-         bookmarked = dba.isPageBookmarked(mPage);
-         dba.close();
-
+         Boolean bookmarked = mBookmarksAdapter.isPageBookmarked(mPage);
          return bookmarked;
       }
 

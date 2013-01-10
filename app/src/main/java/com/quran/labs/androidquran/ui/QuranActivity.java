@@ -32,12 +32,13 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.*;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.Locale;
 
 public class QuranActivity extends SherlockFragmentActivity
-        implements ActionBar.TabListener,
+        implements ActionBar.TabListener, BookmarkHandler,
                    AddTagDialog.OnTagChangedListener,
                    TagBookmarkDialog.OnBookmarkTagsUpdateListener {
    public static final String TAG = "QuranActivity";
@@ -128,6 +129,7 @@ public class QuranActivity extends SherlockFragmentActivity
       super.onDestroy();
    }
 
+   @Override
    public BookmarksDBAdapter getBookmarksAdapter(){
       return mBookmarksDBAdapter;
    }
