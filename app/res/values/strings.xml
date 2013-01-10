@@ -38,63 +38,63 @@
     <string name="send_email">Send email..</string>
     <string name="aboutUs">Quran Android is a free, open source Quran
 			application for Android.  The images used are from the
-            &lt;a href="http://quran.com">quran.com&lt;/a>
+            &lt;a href="http://quran.com">quran.com&lt;/a&gt;
 			project, the audio comes from
-            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
+            &lt;a href="http://everyayah.com">everyayah.com&lt;/a&gt;,
 			the data used in the translations and Arabic comes from
-            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> and
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
-            &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
-            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu - Turkish
-         &lt;br/>M. Jafar Nanakar - Farsi
-         &lt;br/>Rinat (Ринат Валеев) - Russian
-         &lt;br/>khajavi (on github) - previous Farsi translation
-            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
-            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+            &lt;a href="http://tanzil.net">tanzil.net&lt;/a&gt; and
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a&gt;
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Quran for Android Contributors:&lt;/b&gt;
+            &lt;br/&gt;Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a&gt;)
+            &lt;br/&gt;Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a&gt;)
+            &lt;br/&gt;Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a&gt;)
+            &lt;br/&gt;Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a&gt;)
+            &lt;br/&gt;Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a&gt;)
+            &lt;br/&gt;Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a&gt;)
+            &lt;br/&gt;Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a&gt;)
+            &lt;br/&gt;Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a&gt;)
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Translators:&lt;/b&gt;
+			&lt;br/&gt;Mehmed Mahmudoglu - Turkish
+         &lt;br/&gt;M. Jafar Nanakar - Farsi
+         &lt;br/&gt;Rinat (Ринат Валеев) - Russian
+         &lt;br/&gt;khajavi (on github) - previous Farsi translation
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Open Source Projects:&lt;/b&gt;
+            &lt;br/&gt;ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a&gt;)
+            &lt;br/&gt;maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a&gt;)
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Special Thanks:&lt;/b&gt;
+            &lt;br/&gt;Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a&gt;)
+            &lt;br/&gt;Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a&gt;)</string>
     <string name="help_title">Frequently Asked Questions</string>
     <string name="help">
-        &lt;b>How do I play audio?&lt;/b>
-        &lt;br/>Open any Quran page.  Tap on the screen once.  At the bottom, you will notice
+        &lt;b&gt;How do I play audio?&lt;/b&gt;
+        &lt;br/&gt;Open any Quran page.  Tap on the screen once.  At the bottom, you will notice
         a play button and some text with the name of a qari.  click the name of the qari to
         choose a different qari.  Click play to download and play the current page or sura.
-        &lt;br/>
-        &lt;br/>&lt;b>How do I view the translation?&lt;/b>
-        &lt;br/>Open any Quran page.  Tap on the screen once.  In the top, you will notice a
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;How do I view the translation?&lt;/b&gt;
+        &lt;br/&gt;Open any Quran page.  Tap on the screen once.  In the top, you will notice a
         globe icon (or, if you don\'t see it, you may see an icon with three square dots - click
         this and choose translation to view the translation).
-        &lt;br/>
+        &lt;br/&gt;
         If you do not have any translations downloaded, it will take
         you to a screen where you can download a translation.  Choose and download a translation,
         then return back and tap the globe icon again to view the translation.
-        &lt;br/>
-        &lt;br/>&lt;b>How do I bookmark a page?&lt;/b>
-        &lt;br/>Open any Quran page.  Tap on the screen once.  In the top right, you will see a
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;How do I bookmark a page?&lt;/b&gt;
+        &lt;br/&gt;Open any Quran page.  Tap on the screen once.  In the top right, you will see a
         star icon.  Tap the star icon to bookmark it (it will be solid white).  Tap the star icon
         again to remove the bookmark.
-        &lt;br/>
-        &lt;br/>&lt;b>How do I make the text larger?&lt;/b>
-        &lt;br/>For the arabic pages, hold your phone in landscape.  This makes the text larger.
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;How do I make the text larger?&lt;/b&gt;
+        &lt;br/&gt;For the arabic pages, hold your phone in landscape.  This makes the text larger.
         For translations, go to settings and choose translation size.
-        &lt;br/>
-        &lt;br/>&lt;b>How do I share an ayah?&lt;/b>
-        &lt;br/>While on any arabic page, press and hold on any ayah to get a menu where you can
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;How do I share an ayah?&lt;/b&gt;
+        &lt;br/&gt;While on any arabic page, press and hold on any ayah to get a menu where you can
         choose to bookmark this ayah, share it, see the tafseer, or copy the ayah to the clipboard.
-        &lt;br/>
-        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu fonts don\'t work!&lt;/b>
-        &lt;br/>Unfortunately, Android versions before 4.0 do not support these fonts, and there is
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;Malayalm/Tamil/Bangla/Urdu fonts don\'t work!&lt;/b&gt;
+        &lt;br/&gt;Unfortunately, Android versions before 4.0 do not support these fonts, and there is
         little we can do to help with this.
     </string>
 	<string name="search_hint">Search the Quran</string>

@@ -37,67 +37,67 @@
     <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное 
             Коран-приложение для Android с открытым исходным кодом. 
 			Используемые изображения были заимствованы из проекта 
-            &lt;a href="http://quran.com">quran.com&lt;/a>
+            &lt;a href="http://quran.com">quran.com&lt;/a&gt;
 			, аудио - 
-            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>, 
+            &lt;a href="http://everyayah.com">everyayah.com&lt;/a&gt;, 
 			перевод и арабский текст - из
-            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> и
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
-            &lt;br/>&lt;br/>&lt;b>Авторы Корана для Андроид:&lt;/b>
-            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Переводено:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu - Turkish
-			&lt;br/>khajavi (on github) - Farsi
-			&lt;br/>Rinat (Ринат) - Russian
-            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
-			&lt;br/>&lt;br/>&lt;b>Особая благодарность:&lt;/b>
-            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+            &lt;a href="http://tanzil.net">tanzil.net&lt;/a&gt; и
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a&gt;
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Авторы Корана для Андроид:&lt;/b&gt;
+            &lt;br/&gt;Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a&gt;)
+            &lt;br/&gt;Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a&gt;)
+            &lt;br/&gt;Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a&gt;)
+            &lt;br/&gt;Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a&gt;)
+            &lt;br/&gt;Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a&gt;)
+            &lt;br/&gt;Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a&gt;)
+            &lt;br/&gt;Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a&gt;)
+            &lt;br/&gt;Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a&gt;)
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Переводено:&lt;/b&gt;
+			&lt;br/&gt;Mehmed Mahmudoglu - Turkish
+			&lt;br/&gt;khajavi (on github) - Farsi
+			&lt;br/&gt;Rinat (Ринат) - Russian
+            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Open Source Projects:&lt;/b&gt;
+            &lt;br/&gt;ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a&gt;)
+            &lt;br/&gt;maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a&gt;)
+			&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Особая благодарность:&lt;/b&gt;
+            &lt;br/&gt;Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a&gt;)
+            &lt;br/&gt;Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a&gt;)</string>
     <string name="help_title">Часто задаваемые вопросы (FAQ)</string>
     <string name="help">
-        &lt;b>Как мне воспроизвести аудио?&lt;/b>
-        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку проигрывания
+        &lt;b&gt;Как мне воспроизвести аудио?&lt;/b&gt;
+        &lt;br/&gt;Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку проигрывания
         и текст с именем чтеца. Нажмите на имени чтеца для выбора другого чтеца. Нажмите на 
-		кнопку проигрывания для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
-        &lt;br/>&lt;b>Как мне посмотреть перевод?
-		&lt;/b>
-        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса 
+		кнопку проигрывания для скачивания и вопроизведения текущей страницы или суры. &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;Как мне посмотреть перевод?
+		&lt;/b&gt;
+        &lt;br/&gt;Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса 
         (или, если ее нет, Вы можете увидеть иконку с тремя квадратными точками) - нажмте на нее и выберите 
         перевод для просмотра. 
-		&lt;br/>
+		&lt;br/&gt;
         Если Вы не имеете загруженных переводов, Вас переместит на экран, где Вы сможете скачать перевод. 
         Выберите и скачайте нужный Вам перевод, затем вернитесь и вновь нажмите на иконку глобуса для просмотра 
         перевода.
-        &lt;br/>
-        &lt;br/>&lt;b>Как мне сделать закладку страницы?&lt;/b>
-        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху справа Вы увидите 
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;Как мне сделать закладку страницы?&lt;/b&gt;
+        &lt;br/&gt;Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху справа Вы увидите 
         иконку звезды. Для создания закладки нажмите на данную иконку (она закрасится белым цветом). 
         Нажмите снова на иконку звезды для удаления закладки. 
-        &lt;br/>
-        &lt;br/>&lt;b>Как мне увеличить текст?&lt;/b>
-        &lt;br/>Для арабского текста держите Ваш телефон в альбомном режиме (горизонтально).  Это сделает текст крупнее. 
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;Как мне увеличить текст?&lt;/b&gt;
+        &lt;br/&gt;Для арабского текста держите Ваш телефон в альбомном режиме (горизонтально).  Это сделает текст крупнее. 
         Для переводов перейдите в настройки и выберите размер шрифта перевода.
-        &lt;br/>
-        &lt;br/>&lt;b> Как я могу поделиться аятом?&lt;/b>
-        &lt;br/>Во время нахождения на любой арабской странице Корана, нажмите и удерживайте на аяте до того While on any arabic page, press and hold on any ayah to get a menu where you can
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt; Как я могу поделиться аятом?&lt;/b&gt;
+        &lt;br/&gt;Во время нахождения на любой арабской странице Корана, нажмите и удерживайте на аяте до того While on any arabic page, press and hold on any ayah to get a menu where you can
         как появится контекстное меню, где Вы сможете сделать закладку данного аята, поделиться им, посмотреть перевод или
 		скопировать аят в буфер обмена.
-        &lt;br/>
-        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu шрифты не работают!&lt;/b>
-        &lt;br/>К сожалению, Android версии до 4.0 не поддерживают эти шрифты, и мы ничего не можем сделать,
+        &lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;Malayalm/Tamil/Bangla/Urdu шрифты не работают!&lt;/b&gt;
+        &lt;br/&gt;К сожалению, Android версии до 4.0 не поддерживают эти шрифты, и мы ничего не можем сделать,
         чтобы помочь Вам в этом.
-		&lt;br/>
-        &lt;br/>&lt;b>У меня есть замечания или предложения по программе!&lt;/b>
-        &lt;br/>Пожалуйста, напишите нам e-mail (в разделе "О нас"). Тем самым Вы способствуете развитию проекта. Возможно,
+		&lt;br/&gt;
+        &lt;br/&gt;&lt;b&gt;У меня есть замечания или предложения по программе!&lt;/b&gt;
+        &lt;br/&gt;Пожалуйста, напишите нам e-mail (в разделе "О нас"). Тем самым Вы способствуете развитию проекта. Возможно,
 		Ваше предложение будет полезно многим братьям и сестрам. К сожалению, разработчики не просматривают
 		и не могут просматривать (в силу незнания русского языка) отзывы на Google Play, поэтому не могут учесть Ваши комментарии.
 		Если Вы не знаете английского языка, используйте для написания e-mail Google Translate.        
