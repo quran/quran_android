@@ -237,7 +237,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
                adapter.removeTag(elem.tagId);
             }
             else if (elem.isBookmark() && elem.bookmarkId >= 0) {
-               if (mUntagOnly) {
+               if (elem.tagId >= 0 && mUntagOnly) {
                   adapter.untagBookmark(elem.bookmarkId, elem.tagId);
                } else {
                   adapter.removeBookmark(elem.bookmarkId);
