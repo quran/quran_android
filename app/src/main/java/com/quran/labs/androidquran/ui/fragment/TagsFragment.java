@@ -54,24 +54,18 @@ public class TagsFragment extends AbsMarkersFragment {
       
       int headers = 0;
       int bookmarks = 0;
-      boolean uncategorizedHeader = false;
-      boolean uncategorizedBookmark = false;
 
       for (QuranRow row : selected) {
          if (row.isBookmarkHeader()) {
             headers++;
-            if (row.tagId < 0)
-               uncategorizedHeader = true;
          } else if (row.isBookmark()) {
             bookmarks++;
-            if (row.tagId < 0)
-               uncategorizedBookmark = true;
          }
       }
 
-      boolean canEdit = headers == 1 && bookmarks == 0 && !uncategorizedHeader;
-      boolean canRemove = ((headers + bookmarks) > 0) && !uncategorizedHeader && !uncategorizedBookmark;
-      boolean canTag = headers == 0 && bookmarks > 0 && !uncategorizedHeader;
+      boolean canEdit = headers == 1 && bookmarks == 0;
+      boolean canRemove = (headers + bookmarks) > 0;
+      boolean canTag = headers == 0 && bookmarks > 0;
       editItem.setVisible(canEdit);
       removeItem.setVisible(canRemove);
       tagItem.setVisible(canTag);
