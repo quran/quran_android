@@ -43,7 +43,7 @@ public class TagsFragment extends AbsMarkersFragment {
    
    @Override
    protected boolean isValidSelection(QuranRow selected) {
-      return (selected.isBookmark() || selected.isBookmarkHeader()) && selected.tagId >= 0;
+      return selected.isBookmark() || (selected.isBookmarkHeader() && selected.tagId >= 0);
    }
    
    @Override
