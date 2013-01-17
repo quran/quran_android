@@ -1,8 +1,10 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +33,13 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    private QuranListAdapter mAdapter;
    private TextView mEmptyTextView;
    private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
+   private SharedPreferences mPrefs = null;
    protected int mCurrentSortCriteria = 0;
 
    protected abstract int getContextualMenuId();
    protected abstract int getEmptyListStringId();
    protected abstract int[] getValidSortOptions();
+   protected abstract String getSortPref();
    protected abstract boolean isValidSelection(QuranRow selected);
    protected abstract boolean prepareActionMode(ActionMode mode,
                                                 Menu menu,
@@ -47,6 +51,14 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
                                                 QuranRow[] selected);
 
    protected abstract QuranRow[] getItems();
+
+   @Override
+   public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+      mMode = null;
+      mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+      mCurrentSortCriteria = mPrefs.getInt(getSortPref(), 0);
+   };
    
    @Override
    public View onCreateView(LayoutInflater inflater,
@@ -61,7 +73,6 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
             R.layout.index_sura_row, new QuranRow[]{});
       mListView.setAdapter(mAdapter);
       
-      mMode = null;
       mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
       mListView.setItemsCanFocus(false);
       
@@ -159,6 +170,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       for (int validId : getValidSortOptions()) {
          if (id == validId) {
             mCurrentSortCriteria = id;
+            mPrefs.edit().putInt(getSortPref(), id).commit();
             refreshData();
             return true;
          }

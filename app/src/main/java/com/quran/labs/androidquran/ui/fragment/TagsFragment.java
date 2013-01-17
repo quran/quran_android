@@ -5,6 +5,7 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
@@ -39,6 +40,11 @@ public class TagsFragment extends AbsMarkersFragment {
    @Override
    protected int[] getValidSortOptions() {
       return VALID_SORT_OPTIONS;
+   }
+   
+   @Override
+   protected String getSortPref() {
+      return Constants.PREF_SORT_TAGS;
    }
    
    @Override
