@@ -5,6 +5,7 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
@@ -42,6 +43,11 @@ public class TagsFragment extends AbsMarkersFragment {
    }
    
    @Override
+   protected String getSortPref() {
+      return Constants.PREF_SORT_TAGS;
+   }
+   
+   @Override
    protected boolean isValidSelection(QuranRow selected) {
       return selected.isBookmark() || (selected.isBookmarkHeader() && selected.tagId >= 0);
    }
@@ -54,24 +60,18 @@ public class TagsFragment extends AbsMarkersFragment {
       
       int headers = 0;
       int bookmarks = 0;
-      boolean uncategorizedHeader = false;
-      boolean uncategorizedBookmark = false;
 
       for (QuranRow row : selected) {
          if (row.isBookmarkHeader()) {
             headers++;
-            if (row.tagId < 0)
-               uncategorizedHeader = true;
          } else if (row.isBookmark()) {
             bookmarks++;
-            if (row.tagId < 0)
-               uncategorizedBookmark = true;
          }
       }
 
-      boolean canEdit = headers == 1 && bookmarks == 0 && !uncategorizedHeader;
-      boolean canRemove = ((headers + bookmarks) > 0) && !uncategorizedHeader && !uncategorizedBookmark;
-      boolean canTag = headers == 0 && bookmarks > 0 && !uncategorizedHeader;
+      boolean canEdit = headers == 1 && bookmarks == 0;
+      boolean canRemove = (headers + bookmarks) > 0;
+      boolean canTag = headers == 0 && bookmarks > 0;
       editItem.setVisible(canEdit);
       removeItem.setVisible(canRemove);
       tagItem.setVisible(canTag);
