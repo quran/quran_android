@@ -12,7 +12,7 @@
   <string name="menu_about">À propos</string>
   <string name="menu_settings">Paramètres</string>
   <string name="menu_jump_last_page">Dernière page</string>
-  <string name="menu_tags">Marquages</string>
+  <string name="menu_tags">Étiquettes</string>
   <string name="menu_bookmarks">Favoris</string>
   <string name="menu_bookmarks_page">Pages en favoris</string>
   <string name="menu_bookmarks_ayah">Ayāt en favoris</string>
@@ -36,7 +36,7 @@
   <string name="aboutUs">Quran Android est une application pour le Noble Coran gratuite et open source pour Android.  Les images utilisées sont du projet 
             &lt;a href=\"http://quran.com\">quran.com&lt;/a>
 			, les audios de
-            &lt;a href=\"http://everyâya.com\">everyâya.com&lt;/a>,
+            &lt;a href=\"http://everyayah.com\">everyayah.com&lt;/a>,
 			les données de pour les traductions et l\'arabe viennent de
             &lt;a href=\"http://tanzil.net\">tanzil.net&lt;/a> et
             &lt;a href=\"http://quran.ksu.edu.sa\">quran.ksu.edu.sa&lt;/a>
@@ -54,7 +54,7 @@
          &lt;br/>M. Jafar Nanakar - Perse
          &lt;br/>Rinat (Ринат Валеев) - Russe
          &lt;br/>khajavi (on github) - traduction Perse précédente
-	 &lt;br/>Yasser Kadddour - Français
+	 &lt;br/>Yasser Kaddour - Français
             &lt;br/>&lt;br/>&lt;b>Projets Open Source:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href=\"http://abs.io\">abs.io&lt;/a>)
             &lt;br/>maven-android-plugin (&lt;a href=\"http://code.google.com/p/maven-android-plugin\">maven-android-plugin&lt;/a>)
@@ -66,13 +66,13 @@
         &lt;br/>Ouvrir une page du Coran.  Cliquez sur l\'écran une fois.  En bas, vous verrez un bouton de lecture et le nom d\'un qari. Cliquez sur le nom pour choisir un qari.  Cliquez sur le bouton de lecture pour télécharger la page ou la sourate courante.
         &lt;br/>
         &lt;br/>&lt;b>Comment afficher une traduction?&lt;/b>
-        &lt;br/>Ouvrir une page du Coran.  Cliquez sur l\'écrans une fois.  En haut, vous verrez un petit
+        &lt;br/>Ouvrir une page du Coran.  Cliquez sur l\'écran une fois.  En haut, vous verrez un petit
         globe (ou, si vous ne le voyez pas, vous verrez un icone avec trois points carrés - cliquez dessus
         et choisissez une traduction pour la voir).
         &lt;br/>
         Si vous n\'avez pas de traduction téléchargé, il vous sera affiché un écran 
         pour en télécharger.  Choisissez et téléchargez une traduction,
-        puis retourné en arrière et cliqué encore sur le petit globe pour voir la traduction.
+        puis retournez en arrière et cliquez encore sur le petit globe pour voir la traduction.
         &lt;br/>
         &lt;br/>&lt;b>Comment marquer une page dans ses favoris?&lt;/b>
         &lt;br/>Ouvrir une page du Coran.  Cliquez sur l’écran une fois.  En haut à droite, vous verrez une petite étoile.
@@ -86,24 +86,28 @@
         &lt;br/>Allez à l\'Aya qui vous intéresse dans les pages en arabe, cliquez et maintenez enfoncé sur l\'Aya pour accéder à un menu d\'où vous pourrez ajoutez l\'Aya en favoris, la partager, lire sa traduction/exégèse ou copier l\'Aya dans le presse papier.
         &lt;br/>
         &lt;br/>&lt;b>Police Malayalm/Tamil/Bangla/Urdu ne fonctionne pas !&lt;/b>
-        &lt;br/>Malheureusement, Android avant la version 4.0 ne prend pas en charge ses polices, et nous ne pouvons pas faire grand chose pour y remédiez.   </string>
+        &lt;br/>Malheureusement, Android avant la version 4.0 ne prend pas en charge ses polices, et nous ne pouvons pas faire grand chose pour y remédier.   </string>
   <string name="search_hint">Recherchez dans le coran</string>
   <string name="quranSearchType">Ayāt du Coran</string>
+  
+  <!-- Search messages -->
   <string name="found_in_sura">Trouvée dans la sourate</string>
   <string name="no_results">Aucun resultats pour \"%s\"</string>
-  <string name="no_active_translation">Vous n\'avez aucune traduction active définie. S\'il vous plaît définir une traduction active tout d\'abord, puis recherchez à nouveau.</string>
+  <string name="no_active_translation">Vous n\'avez aucune traduction active définie. S\'il vous plaît définissez une traduction active tout d\'abord, puis recherchez à nouveau.</string>
   <string name="translation_settings">Paramètres de traduction</string>
   <string name="no_arabic_search_available">Vous n\'avez pas téléchargé le pack de recherche arabe.  S\'il vous plaît veuillez la télécharger et recommencez votre recherche.</string>
   <string name="get_arabic_search_db">Téléchargez la base de données de recherche arabe</string>
+  
+  <!-- Quran Preference Activity -->
   <string name="prefs_category_navigation">Navigation</string>
   <string name="prefs_volume_key_navigation_title">Navigations touche de son</string>
-  <string name="prefs_volume_key_navigation_summary">Naviguer entre les pages avec les touche du contrôle du volume.</string>
+  <string name="prefs_volume_key_navigation_summary">Naviguer entre les pages avec les touches du contrôle du volume.</string>
   <string name="prefs_category_reading">Preférences de lecture</string>
   <string name="prefs_category_translation">Préférences de traduction</string>
   <string name="prefs_category_display_settings">Parametres d\'affichage</string>
   <string name="prefs_use_arabic_title">Mode arabe</string>
   <string name="prefs_use_arabic_summary_on">L\'application sera traduite en arabe (redémarrage de l\'application nécessaire).</string>
-  <string name="prefs_use_arabic_reshaper_title">Activez Arabic Reshaper</string>
+  <string name="prefs_use_arabic_reshaper_title">Activer Arabic Reshaper</string>
   <string name="prefs_use_arabic_reshaper_summary_on">Si l\'arabe s\'affiche à l\'envers, désactiver cette option.</string>
   <string name="prefs_use_arabic_reshaper_summary_off">Si le texte arabe est espacé, activé cette option.</string>
   <string name="prefs_new_background_title">Nouvel arriere-plan</string>
@@ -114,31 +118,37 @@
   <string name="prefs_landscape_orientation_summary_on">L\'orientation paysage sera utilisé.</string>
   <string name="prefs_landscape_orientation_summary_off">L\'orientation portrait sera utilisé.</string>
   <string name="prefs_night_mode_title">Mode nuit</string>
-  <string name="prefs_night_mode_summary">Fond sombre et des polices lumineuses seront utilisés.</string>
-  <string name="prefs_overlay_page_info_title">Afficher des information (beta)</string>
+  <string name="prefs_night_mode_summary">Un fond sombre et des polices lumineuses seront utilisés.</string>
+  <string name="prefs_overlay_page_info_title">Afficher des infos (beta)</string>
   <string name="prefs_overlay_page_info_summary">Affiche le numéro de page, le nom de la sourate et le numéro du juz\' lors la lecture.</string>
-  <string name="prefs_display_marker_title">Afficher un popup de repère</string>
+  <string name="prefs_display_marker_title">Montrer un popup de repère</string>
   <string name="prefs_display_marker_summary">Affiche un popup quand on atteint un juz\', un hizb, etc.</string>
   <string name="prefs_translation_text_title">Taille du texte traduit</string>
-  <string name="prefs_translations">Translations</string>
+  <string name="prefs_translations">Traductions</string>
   <string name="prefs_translations_summary">Télécharger et gérer les traductions</string>
   <string name="prefs_ayah_before_translation_title">Aya avant la traduction</string>
   <string name="prefs_ayah_before_translation_summary">Voir l\'aya en arabe au-dessus de la traduction</string>
   <string name="prefs_category_download">Options de téléchargement</string>
   <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Flux audio lorsque cela est possible (audio espacé seulement).</string>
+  <string name="prefs_streaming_summary">Streaming lorsque cela est possible (audio espacé seulement).</string>
   <string name="prefs_download_amount_title">Quantité de téléchargement</string>
   <string name="prefs_download_amount_summary">Quantité du téléchargement préféré pour l\'audio espacé.</string>
   <string name="downloaded_translations">Téléchargées</string>
   <string name="available_translations">Disponible en téléchargement</string>
   <string name="remove_button">Supprimer</string>
-  <string name="dialog_ok">OK</string>
+  <string name="dialog_ok">Ok</string>
+  
+  <!-- translation updates -->
   <string name="update_available">Mise à jour disponible</string>
   <string name="translation_updates_available">Une mise à jour est disponible pour certains de vos traductions.  Visitez maintenant l\'écran de traductions ?</string>
   <string name="translation_dialog_yes">Oui</string>
   <string name="translation_dialog_later">plus tard
 </string>
+
+  <!-- used for screen readers -->
   <string name="border">bordure</string>
+      
+  <!-- End Number picker Strings -->
   <string name="quran_rob3">¼</string>
   <string name="quran_nos">½</string>
   <string name="quran_talt_arb3">¾</string>
@@ -149,7 +159,7 @@
   <string name="quran_ayah">Aya</string>
   <string name="quran_sura_title">Sourate</string>
   <string name="sura_ayah_notification_str">Sourate %1$s, Aya %2$d</string>
-  <string name="bookmarks_current_page">Page active</string>
+  <string name="bookmarks_current_page">Page courante</string>
   <string name="index_loading">Chargement…</string>
   <string name="canceling">Annulation…</string>
   <string name="juz2_description">Juz\' %1$d</string>
@@ -157,6 +167,8 @@
   <string name="highlighting_database">Fichiers requis</string>
   <string name="timing_database">Fichiers requis</string>
   <string name="infinity">∞</string>
+  
+  <!-- download statuses and errors -->
   <string name="download_successful">Téléchargement réussi</string>
   <string name="download_processing">Traitement du téléchargement…</string>
   <string name="download_error_general">Echec du téléchargement</string>
@@ -168,23 +180,37 @@
   <string name="download_error_network_retry">Erreur réseau, tentative de reprise …</string>
   <string name="notification_download_canceled">Téléchargement annulé</string>
   <string name="download_non_wifi_prompt">Vous n\'êtes pas en wifi.  Télécharger les données malgré tout ?</string>
+  
+  <!-- downloading dialogs -->
   <string name="download_progress">Téléchargé %1$s / %2$s</string>
   <string name="process_progress">Traitement du fichier %1$d / %2$d</string>
   <string name="download_retry">Réessayer</string>
   <string name="download_cancel">Annuler</string>
   <string name="download_extra_data">Nous avons besoin de télécharger un ou deux petits fichiers pour la traduction.  Télécharger maintenant ?</string>
+  
+  <!-- translation database stuff -->
   <string name="remove_dlg_title">Supprimer la traduction ?</string>
   <string name="remove_dlg_msg">Êtes-vous sûr de bien vouloir supprimer les %1$s ?</string>
   <string name="error_getting_translation_list">Impossible de télécharger la liste des traductions.  Veuillez réessayer plus tard.</string>
   <string name="search_data">Données de recherche</string>
   <string name="need_translation">Vous n\'avez encore téléchargé aucune traductions/exégèses .</string>
   <string name="get_translations">Obtenir des traductions</string>
+  
+  <!-- about us -->
   <string name="email_quran_android">Ecrire à Quran Android</string>
+  
+  <!-- sura metainfo -->
   <string name="makki">Makki</string>
   <string name="madani">Madani</string>
+    <plurals name="verses">
+    <item quantity="one">Aya</item>
+    <item quantity="other">Ayāt</item>
+  </plurals>
+  
+  <!-- long press -->
   <string name="bookmark_ayah">Ajouter l\'Aya aux favoris</string>
   <string name="unbookmark_ayah">Supprimer l\'Aya des favoris</string>
-  <string name="tag_ayah">Marquer cette Aya</string>
+  <string name="tag_ayah">Étiqueter cette Aya</string>
   <string name="share_ayah">Partager cette Aya</string>
   <string name="translation_ayah">Traduction/exégèse de l\'Aya</string>
   <string name="play_from_here">Jouer à partir d\'ici</string>
@@ -194,22 +220,28 @@
   <string name="copy_ayah">Copier l\'Aya</string>
   <string name="ayah_copied_popup">Aya copié</string>
   <string name="show_more">Afficher plus</string>
+  
+  <!-- bookmarks & tags contextual action bar -->
   <string name="delete_bookmark">Supprimer le favori</string>
-  <string name="tag_bookmark">Marqué le favoris</string>
-  <string name="delete_tag">Supprimez le marquage</string>
-  <string name="edit_tag">Modifier le marquage</string>
-  <string name="new_tag">Nouveau marquage</string>
+  <string name="tag_bookmark">Étiqueter le favori</string>
+  <string name="delete_tag">Supprimez l\'étiquette</string>
+  <string name="edit_tag">Modifier l\'étiquette</string>
+  <string name="new_tag">Nouvelle étiquette</string>
   <string name="not_tagged">Aucune étiquette</string>
-  <string name="tag_dlg_title">Tag</string>
-  <string name="tag_name">Name</string>
-  <string name="bookmarks_list_empty">Aucun favoris</string>
-  <string name="tags_list_empty">Aucun marquage</string>
+  
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Étiquette</string>
+  <string name="tag_name">Nom</string>
+  
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">Aucun favori</string>
+  <string name="tags_list_empty">Aucune étiquette</string>
+  
+  <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">résultat for \"%s\": </item>
     <item quantity="other">résultats for \"%s\": </item>
   </plurals>
-  <plurals name="verses">
-    <item quantity="one">Aya</item>
-    <item quantity="other">Ayāt</item>
-  </plurals>
+  
+  
 </resources>
