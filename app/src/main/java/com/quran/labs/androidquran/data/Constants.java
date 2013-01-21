@@ -46,4 +46,6 @@ public class Constants {
            "haveUpdatedTranslations";
    public static final String PREF_USE_NEW_BACKGROUND = "useNewBackground";
    public static final String PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation";
+   public static final String PREF_SORT_BOOKMARKS = "sortBookmarks";
+   public static final String PREF_SORT_TAGS = "sortTags";
 }
