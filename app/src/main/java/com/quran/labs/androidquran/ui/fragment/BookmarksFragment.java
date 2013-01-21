@@ -45,6 +45,11 @@ public class BookmarksFragment extends AbsMarkersFragment {
    }
    
    @Override
+   protected String getSortPref() {
+      return Constants.PREF_SORT_BOOKMARKS;
+   }
+   
+   @Override
    protected boolean isValidSelection(QuranRow selected) {
       return selected.isBookmark();
    }
