@@ -9,3 +9,4 @@ gen-external-apklibs
 *.iml
 .idea
 classes
+ApiKeys.java

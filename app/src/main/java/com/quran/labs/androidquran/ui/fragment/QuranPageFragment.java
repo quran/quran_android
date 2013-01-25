@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -37,6 +39,7 @@ import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.util.QuranAppUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.TranslationUtils;
@@ -55,6 +58,8 @@ public class QuranPageFragment extends SherlockFragment {
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
    private AlertDialog mTranslationDialog = null;
+   private ProgressDialog mProgressDialog;
+   private AsyncTask mCurrentTask;
 
    public static QuranPageFragment newInstance(int page){
       final QuranPageFragment f = new QuranPageFragment();
@@ -142,6 +147,18 @@ public class QuranPageFragment extends SherlockFragment {
          QuranPageWorker worker = ((PagerActivity)getActivity()).getQuranPageWorker();
          worker.loadPage(mPageNumber, mImageView);
       }
+   }
+
+   @Override
+   public void onDestroyView() {
+      if (mProgressDialog != null){
+         mProgressDialog.hide();
+         mProgressDialog = null;
+      }
+
+      if (mCurrentTask != null){ mCurrentTask.cancel(true); }
+      mCurrentTask = null;
+      super.onDestroyView();
    }
 
    @Override
@@ -280,7 +297,8 @@ public class QuranPageFragment extends SherlockFragment {
                  bookmarked? R.string.unbookmark_ayah : R.string.bookmark_ayah,
                  R.string.tag_ayah,
                  R.string.translation_ayah, R.string.share_ayah,
-                 R.string.copy_ayah, R.string.play_from_here
+                 R.string.share_ayah_text, R.string.copy_ayah,
+                 R.string.play_from_here
                  /*, R.string.ayah_notes*/}; // TODO Enable notes
          CharSequence[] options = new CharSequence[optionIds.length];
          for (int i=0; i<optionIds.length; i++){
@@ -297,7 +315,8 @@ public class QuranPageFragment extends SherlockFragment {
                      PagerActivity pagerActivity = (PagerActivity) activity;
                      pagerActivity.toggleBookmark(sura, ayah, page);
                   }
-					} else if (selection == 1) {
+					}
+               else if (selection == 1) {
                   if (activity != null && activity instanceof PagerActivity){
                      PagerActivity pagerActivity = (PagerActivity) activity;
                      FragmentManager fm =
@@ -306,18 +325,26 @@ public class QuranPageFragment extends SherlockFragment {
                              new TagBookmarkDialog(sura, ayah, page);
                      tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
                   }
-					} else if (selection == 2) {
-					   new ShowTafsirTask(sura, ayah).execute();
-					} else if (selection == 3) {
-						new ShareAyahTask(sura, ayah, false).execute();
-					} else if (selection == 4) {
-						new ShareAyahTask(sura, ayah, true).execute();
-					} else if (selection == 5) {
+					}
+               else if (selection == 2) {
+					   mCurrentTask = new ShowTafsirTask(sura, ayah).execute();
+               }
+               else if (selection == 3){
+                  mCurrentTask = new ShareQuranApp().execute(sura, ayah);
+               }
+               else if (selection == 4) {
+                  mCurrentTask = new ShareAyahTask(sura, ayah, false).execute();
+					}
+               else if (selection == 5) {
+                  mCurrentTask = new ShareAyahTask(sura, ayah, true).execute();
+					}
+               else if (selection == 6) {
 						if (activity instanceof PagerActivity) {
 							PagerActivity pagerActivity = (PagerActivity) activity;
 							pagerActivity.playFromAyah(mPageNumber, sura, ayah);
 						}
-               } /* else if (selection == 5) {
+               }
+               /* else if (selection == 5) {
                   new ShowNotesTask(sura, ayah).execute();
 					} */
 				}
@@ -332,6 +359,59 @@ public class QuranPageFragment extends SherlockFragment {
 			mTranslationDialog = builder.create();
 			mTranslationDialog.show();
 	}
+
+   class ShareQuranApp extends AsyncTask<Integer, Void, String> {
+
+      @Override
+      protected void onPreExecute() {
+         Activity activity = getActivity();
+         if (activity != null){
+            mProgressDialog = new ProgressDialog(activity);
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage(
+                    activity.getString(R.string.index_loading));
+            mProgressDialog.show();
+         }
+      }
+
+      @Override
+      protected String doInBackground(Integer... params){
+         String url = null;
+         if (params.length > 0){
+            Integer endAyah = null;
+            Integer startAyah = null;
+            int sura = params[0];
+            if (params.length > 1){
+               startAyah = params[1];
+               if (params.length > 2){
+                  endAyah = params[2];
+               }
+            }
+            url = QuranAppUtils.getQuranAppUrl(sura,
+                    startAyah, endAyah);
+         }
+         return url;
+      }
+
+      @Override
+      protected void onPostExecute(String url) {
+         if (mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+         }
+
+         Activity activity = getActivity();
+         if (activity != null && !TextUtils.isEmpty(url)){
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, url);
+            startActivity(Intent.createChooser(intent,
+                    activity.getString(R.string.share_ayah)));
+         }
+
+         mCurrentTask = null;
+      }
+   }
 	
 	class ShareAyahTask extends AsyncTask<Void, Void, String> {
 		private int sura, ayah;
@@ -367,26 +447,27 @@ public class QuranPageFragment extends SherlockFragment {
 		@Override
 		protected void onPostExecute(String ayah) {
 			Activity activity = getActivity();
-            if (ayah != null && activity != null) {
-                ayah = "(" + ayah + ")" + " " + "["
-                        + QuranInfo.getSuraName(activity, this.sura, true)
-                        + " : " + this.ayah + "]" + activity.getString(R.string.via_string);
-                if (copy) {
-                    ClipboardManager cm = (ClipboardManager) activity.
-                            getSystemService(Activity.CLIPBOARD_SERVICE);
-                    cm.setText(ayah);
-                    Toast.makeText(activity, activity.getString(
-                            R.string.ayah_copied_popup),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    final Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_TEXT, ayah);
-                    startActivity(Intent.createChooser(intent,
-                            activity.getString(R.string.share_ayah)));
-                }
-            }
-		}
+         if (ayah != null && activity != null) {
+             ayah = "(" + ayah + ")" + " " + "["
+                     + QuranInfo.getSuraName(activity, this.sura, true)
+                     + " : " + this.ayah + "]" + activity.getString(R.string.via_string);
+             if (copy) {
+                 ClipboardManager cm = (ClipboardManager) activity.
+                         getSystemService(Activity.CLIPBOARD_SERVICE);
+                 cm.setText(ayah);
+                 Toast.makeText(activity, activity.getString(
+                         R.string.ayah_copied_popup),
+                         Toast.LENGTH_SHORT).show();
+             } else {
+                 final Intent intent = new Intent(Intent.ACTION_SEND);
+                 intent.setType("text/plain");
+                 intent.putExtra(Intent.EXTRA_TEXT, ayah);
+                 startActivity(Intent.createChooser(intent,
+                         activity.getString(R.string.share_ayah)));
+             }
+         }
+         mCurrentTask = null;
+      }
 	}
 	
 	class ShowTafsirTask extends AsyncTask<Void, Void, String> {
@@ -485,6 +566,7 @@ public class QuranPageFragment extends SherlockFragment {
                             });
             mTranslationDialog = builder.create();
             mTranslationDialog.show();
+            mCurrentTask = null;
          }
 		}
 	}
