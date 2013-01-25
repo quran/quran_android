@@ -35,7 +35,7 @@ public class QuranAppUtils {
          }
          params.put("key", Constants.QURAN_APP_KEY);
          String result = getQuranAppUrl(params);
-         if (!TextUtils.isEmpty(url)){
+         if (!TextUtils.isEmpty(result)){
             JSONObject json = new JSONObject(result);
             url = json.getString("url");
          }
