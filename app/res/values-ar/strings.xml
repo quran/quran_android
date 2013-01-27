@@ -68,6 +68,7 @@
     <string name="translation_settings">إعدادات التفسير</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
     <string name="no_active_translation">يرجى الذهاب أولا إلى إعدادت التفاسير والتراجم..</string>
+    <string name="translation_settings">إعدادات التفسير</string>
     <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
     <string name="get_arabic_search_db">حمل قاعدة البيانات</string>
     
@@ -155,6 +156,7 @@
     <string name="download_cancel">إلغاء</string>
     <string name="download_extra_data">لدعم الترجمة و المشاركة يجب تحميل بعض
        الملفات .. حمل الأن؟</string>
+    <string name="download_non_wifi_prompt">أنت لست على وأي فأي.  تحميل البيانات على أية حال؟</string>
 
     <!-- translation database stuff -->
     <string name="remove_dlg_title">امسح التفسير/الترجمة؟</string>
