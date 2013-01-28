@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,7 +17,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnTouchListener;
@@ -45,7 +45,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 public class QuranPageFragment extends SherlockFragment {
@@ -60,6 +60,10 @@ public class QuranPageFragment extends SherlockFragment {
    private AlertDialog mTranslationDialog = null;
    private ProgressDialog mProgressDialog;
    private AsyncTask mCurrentTask;
+
+   private Rect mPageBoundsRect;
+   private boolean mOverlayText;
+   private Map<String, List<AyahBounds>> mCoordinateData;
 
    public static QuranPageFragment newInstance(int page){
       final QuranPageFragment f = new QuranPageFragment();
@@ -100,11 +104,13 @@ public class QuranPageFragment extends SherlockFragment {
     	  view.setBackgroundColor(res.getColor(R.color.page_background));
       }
 
+      boolean nightMode = false;
       if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
          lineImageId = R.drawable.light_line;
          view.setBackgroundColor(Color.BLACK);
+         nightMode = true;
       }
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
@@ -120,6 +126,8 @@ public class QuranPageFragment extends SherlockFragment {
       }
 
       mImageView = (HighlightingImageView)view.findViewById(R.id.page_image);
+      mImageView.setNightMode(nightMode);
+
       mScrollView = (ScrollView)view.findViewById(R.id.page_scroller);
       
       final GestureDetector gestureDetector = new GestureDetector(
@@ -133,10 +141,20 @@ public class QuranPageFragment extends SherlockFragment {
       mImageView.setOnTouchListener(gestureListener);
       mImageView.setClickable(true);
       mImageView.setLongClickable(true);
-      if (prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true)) {
-         try { mImageView.setOverlayText(mPageNumber, true); }
-         catch (Exception e){ }
+
+      mOverlayText = prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
+
+      if (mCoordinateData != null){
+         mImageView.setCoordinateData(mCoordinateData);
       }
+
+      if (mPageBoundsRect != null){
+         mImageView.setPageBounds(mPageBoundsRect);
+         if (mOverlayText){
+            mImageView.setOverlayText(mPageNumber, true);
+         }
+      }
+
       return view;
    }
 
@@ -146,6 +164,10 @@ public class QuranPageFragment extends SherlockFragment {
       if (PagerActivity.class.isInstance(getActivity())){
          QuranPageWorker worker = ((PagerActivity)getActivity()).getQuranPageWorker();
          worker.loadPage(mPageNumber, mImageView);
+
+         if (mPageBoundsRect == null){
+            new QueryPageCoordsTask().execute();
+         }
       }
    }
 
@@ -180,7 +202,136 @@ public class QuranPageFragment extends SherlockFragment {
       }
    }
 
+   private class QueryPageCoordsTask extends AsyncTask<Void, Void, Rect> {
+      private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
+
+      public QueryPageCoordsTask(){
+         mAyahInfoDatabaseHandler = null;
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof PagerActivity){
+            mAyahInfoDatabaseHandler =
+                    ((PagerActivity)activity).getAyahInfoDatabase();
+         }
+      }
+
+      @Override
+      protected Rect doInBackground(Void... params){
+         if (mAyahInfoDatabaseHandler == null){ return null; }
+         return mAyahInfoDatabaseHandler.getPageBounds(mPageNumber);
+      }
+
+      @Override
+      protected void onPostExecute(Rect rect) {
+         if (rect != null){
+            mPageBoundsRect = rect;
+            if (mImageView != null){
+               mImageView.setPageBounds(mPageBoundsRect);
+               if (mOverlayText){
+                  mImageView.setOverlayText(mPageNumber, true);
+               }
+            }
+         }
+      }
+   }
+
+   private class QueryAyahCoordsTask extends
+           AsyncTask<Void, Void, Map<String, List<AyahBounds>>> {
+      private int mSura;
+      private int mAyah;
+      private boolean mHighlightAyah;
+      private MotionEvent mEvent;
+      private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
+
+      public QueryAyahCoordsTask(MotionEvent event){
+         this(0, 0);
+         mEvent = event;
+         mHighlightAyah = false;
+      }
+
+      public QueryAyahCoordsTask(int sura, int ayah){
+         mSura = sura;
+         mAyah = ayah;
+         mHighlightAyah = true;
+         mAyahInfoDatabaseHandler = null;
+
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof PagerActivity){
+            mAyahInfoDatabaseHandler =
+                    ((PagerActivity)activity).getAyahInfoDatabase();
+         }
+      }
+
+      @Override
+      protected Map<String, List<AyahBounds>> doInBackground(Void... params) {
+         if (mAyahInfoDatabaseHandler == null){ return null; }
+         Cursor cursor = mAyahInfoDatabaseHandler
+                 .getVersesBoundsForPage(mPageNumber);
+         if (cursor == null || !cursor.moveToFirst()){ return null; }
+
+         Map<String, List<AyahBounds>> map =
+                 new HashMap<String, List<AyahBounds>>();
+         do {
+            int sura = cursor.getInt(2);
+            int ayah = cursor.getInt(3);
+            String key = sura + ":" + ayah;
+            List<AyahBounds> bounds = map.get(key);
+            if (bounds == null){
+               bounds = new ArrayList<AyahBounds>();
+            }
+
+            AyahBounds last = null;
+            if (bounds.size() > 0){ last = bounds.get(bounds.size() - 1); }
+
+            AyahBounds bound = new AyahBounds(cursor.getInt(1),
+                    cursor.getInt(4), cursor.getInt(5),
+                    cursor.getInt(6), cursor.getInt(7),
+                    cursor.getInt(8));
+            if (last != null && last.getLine() == bound.getLine()){
+               last.engulf(bound);
+            }
+            else { bounds.add(bound); }
+            map.put(key, bounds);
+         }
+         while (cursor.moveToNext());
+         cursor.close();
+         return map;
+      }
+
+      @Override
+      protected void onPostExecute(Map<String, List<AyahBounds>> map) {
+         if (map != null){
+            mCoordinateData = map;
+
+            if (mImageView != null){
+               mImageView.setCoordinateData(map);
+            }
+         }
+
+         if (mHighlightAyah){
+            handleHighlightAyah(mSura,  mAyah);
+         }
+         else { handleLongPress(mEvent); }
+
+         mCurrentTask = null;
+      }
+   }
+
    public void highlightAyah(int sura, int ayah){
+      if (mCoordinateData == null){
+         if (mCurrentTask != null &&
+                 !(mCurrentTask instanceof QueryAyahCoordsTask)){
+            mCurrentTask.cancel(true);
+            mCurrentTask = null;
+         }
+
+         if (mCurrentTask == null){
+            mCurrentTask = new QueryAyahCoordsTask(sura, ayah).execute();
+         }
+      }
+      else { handleHighlightAyah(sura, ayah); }
+   }
+
+   private void handleHighlightAyah(int sura, int ayah){
       mImageView.highlightAyah(sura, ayah);
       if (mScrollView != null){
          AyahBounds yBounds = mImageView.getYBoundsForCurrentHighlight();
@@ -195,6 +346,74 @@ public class QuranPageFragment extends SherlockFragment {
 
    public void unhighlightAyah(){
       mImageView.unhighlight();
+   }
+
+   private void handleLongPress(MotionEvent event){
+      QuranAyah result = getAyahFromCoordinates(event.getX(), event.getY());
+      if (result != null) {
+         mImageView.highlightAyah(result.getSura(), result.getAyah());
+         mImageView.invalidate();
+         mImageView.performHapticFeedback(
+                 HapticFeedbackConstants.LONG_PRESS);
+
+         // TODO Temporary UI until new UI is implemented
+         new ShowAyahMenuTask().execute(
+                 result.getSura(), result.getAyah(), mPageNumber);
+      }
+   }
+
+   private QuranAyah getAyahFromKey(String key){
+      String[] parts = key.split(":");
+      QuranAyah result = null;
+      if (parts.length == 2){
+         try {
+            int sura = Integer.parseInt(parts[0]);
+            int ayah = Integer.parseInt(parts[1]);
+            result = new QuranAyah(sura, ayah);
+         }
+         catch (Exception e){}
+      }
+      return result;
+   }
+
+   private QuranAyah getAyahFromCoordinates(float xc, float yc) {
+      if (mCoordinateData == null){ return null; }
+
+      float[] pageXY = mImageView.getPageXY(xc, yc);
+      float x = pageXY[0];
+      float y = pageXY[1];
+
+      Set<String> keys = mCoordinateData.keySet();
+      for (String key : keys){
+         List<AyahBounds> bounds = mCoordinateData.get(key);
+         if (bounds == null){ continue; }
+
+         String closestKey = null;
+         int closestDelta = -1;
+         for (AyahBounds b : bounds){
+            if (b.getMaxX() >= x && b.getMinX() <= x &&
+                b.getMaxY() >= y && b.getMinY() <= y){
+               return getAyahFromKey(key);
+            }
+
+            int midY = (b.getMaxY() - b.getMinY()) / 2;
+            int delta = Math.abs((int)(midY - y));
+            if (closestDelta == -1){
+               closestKey = null;
+               closestDelta = delta;
+            }
+
+            if (delta < closestDelta){
+               closestDelta = delta;
+               closestKey = key;
+            }
+         }
+
+         if (closestKey != null && closestDelta < 50){
+            return getAyahFromKey(closestKey);
+         }
+      }
+      return null;
    }
 
    private class PageGestureDetector extends SimpleOnGestureListener {
@@ -226,35 +445,10 @@ public class QuranPageFragment extends SherlockFragment {
             }
          }
 
-         QuranAyah result = getAyahFromCoordinates(event.getX(), event.getY());
-         if (result != null) {
-            mImageView.highlightAyah(result.getSura(), result.getAyah());
-            mImageView.invalidate();
-            mImageView.performHapticFeedback(
-                    HapticFeedbackConstants.LONG_PRESS);
-            
-            // TODO Temporary UI until new UI is implemented
-            new ShowAyahMenuTask().execute(
-                    result.getSura(), result.getAyah(), mPageNumber);
+         if (mCoordinateData == null){
+            mCurrentTask = new QueryAyahCoordsTask(event).execute();
          }
-      }
-
-      private QuranAyah getAyahFromCoordinates(float x, float y) {
-         float[] pageXY = mImageView.getPageXY(x, y);
-         QuranAyah result = null;
-         if (pageXY != null) {
-            String filename = QuranFileUtils.getAyaPositionFileName();
-            try {
-               AyahInfoDatabaseHandler handler =
-                       new AyahInfoDatabaseHandler(filename);
-               result = handler.getVerseAtPoint(mPageNumber,
-                       pageXY[0], pageXY[1]);
-               handler.closeDatabase();
-            } catch (Exception e) {
-               Log.e(TAG, e.getMessage(), e);
-            }
-         }
-         return result;
+         else { handleLongPress(event); }
       }
    }
    

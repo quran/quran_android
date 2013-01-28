@@ -31,6 +31,7 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -89,6 +90,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private TranslationReaderTask mTranslationReaderTask;
    private SpinnerAdapter mSpinnerAdapter;
    private BookmarksDBAdapter mBookmarksAdapter;
+   private AyahInfoDatabaseHandler mAyahInfoAdapter;
 
    public static final int VISIBLE_FLAGS =
              View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -132,6 +134,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
       QuranScreenInfo.getOrMakeInstance(this);
+
+      // initialize ayah info database
+      String filename = QuranFileUtils.getAyaPositionFileName();
+      mAyahInfoAdapter = new AyahInfoDatabaseHandler(filename);
 
       int page = -1;
 
@@ -335,6 +341,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
       return mBookmarksAdapter;
    }
 
+   public AyahInfoDatabaseHandler getAyahInfoDatabase(){
+      return mAyahInfoAdapter;
+   }
+
    public void showGetRequiredFilesDialog(){
       if (mPromptDialog != null){ return; }
       AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -475,6 +485,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       mBookmarksAdapter.close();
+      mAyahInfoAdapter.closeDatabase();
       super.onDestroy();
    }
 

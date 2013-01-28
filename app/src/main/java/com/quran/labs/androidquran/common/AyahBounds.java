@@ -19,14 +19,21 @@ public class AyahBounds {
 	}
 	
 	public void engulf(AyahBounds other){
-		if (this.minX > other.minX)
+		if (this.minX > other.minX){
 			this.minX = other.minX;
-		if (this.minY > other.minY)
+      }
+
+		if (this.minY > other.minY){
 			this.minY = other.minY;
-		if (this.maxX < other.maxX)
+      }
+
+		if (this.maxX < other.maxX){
 			this.maxX = other.maxX;
-		if (this.maxY < other.maxY)
+      }
+
+		if (this.maxY < other.maxY){
 			this.maxY = other.maxY;
+      }
 	}
 	
 	public int getMinX() {
