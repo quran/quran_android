@@ -383,35 +383,39 @@ public class QuranPageFragment extends SherlockFragment {
       float x = pageXY[0];
       float y = pageXY[1];
 
+      int closestDelta = -1;
+      String closestKey = null;
       Set<String> keys = mCoordinateData.keySet();
       for (String key : keys){
          List<AyahBounds> bounds = mCoordinateData.get(key);
          if (bounds == null){ continue; }
 
-         String closestKey = null;
-         int closestDelta = -1;
          for (AyahBounds b : bounds){
             if (b.getMaxX() >= x && b.getMinX() <= x &&
                 b.getMaxY() >= y && b.getMinY() <= y){
                return getAyahFromKey(key);
             }
 
-            int midY = (b.getMaxY() - b.getMinY()) / 2;
-            int delta = Math.abs((int)(midY - y));
+            int delta = Math.min((int)Math.abs(b.getMaxY() - y),
+                                 (int)Math.abs(b.getMinY() - y));
             if (closestDelta == -1){
-               closestKey = null;
+               closestKey = key;
                closestDelta = delta;
             }
-
-            if (delta < closestDelta){
+            else if (delta < closestDelta){
                closestDelta = delta;
                closestKey = key;
             }
          }
+      }
 
-         if (closestKey != null && closestDelta < 50){
-            return getAyahFromKey(closestKey);
-         }
+      // the code above gives us the best line, not necessarily the best
+      // ayah.  ideally, need to re-loop through all ayat, find ayat in
+      // the same line, and find the ones with the least delta x from our
+      // x, and that's what we return back.
+
+      if (closestKey != null && closestDelta < 50){
+         return getAyahFromKey(closestKey);
       }
       return null;
    }
