@@ -4,7 +4,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class QuranUtils {
+   private static boolean mIsArabicFormatter = false;
+   private static NumberFormat mNumberFormatter;
     
     public static boolean doesStringContainArabic(String s){
     	if (s == null) return false;
@@ -39,5 +45,24 @@ public class QuranUtils {
          return activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
       }
       else { return false; }
+   }
+
+   public static String getLocalizedNumber(Context context, int number){
+      if (QuranSettings.isArabicNames(context)){
+         if (mNumberFormatter == null || !mIsArabicFormatter){
+            mIsArabicFormatter = true;
+            mNumberFormatter =
+                    DecimalFormat.getIntegerInstance(new Locale("ar"));
+         }
+      }
+      else {
+         if (mNumberFormatter == null || mIsArabicFormatter){
+            mIsArabicFormatter = false;
+            mNumberFormatter =
+                    DecimalFormat.getIntegerInstance();
+         }
+      }
+
+      return mNumberFormatter.format(number);
    }
 }

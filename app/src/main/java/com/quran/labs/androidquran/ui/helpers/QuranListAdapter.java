@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranListAdapter extends BaseAdapter {
 
@@ -78,10 +79,11 @@ public class QuranListAdapter extends BaseAdapter {
          text = ArabicStyle.reshape(mContext, text);
       }
 
-      holder.page.setText("" + item.page);
+      holder.page.setText(QuranUtils.getLocalizedNumber(mContext, item.page));
       holder.text.setText(text);
       holder.header.setText(text);
-      holder.number.setText("" + item.sura);
+      holder.number.setText(
+              QuranUtils.getLocalizedNumber(mContext, item.sura));
 
       int color = R.color.sura_details_color;
       if (mElements[position].isHeader()){
@@ -115,9 +117,11 @@ public class QuranListAdapter extends BaseAdapter {
       holder.page.setVisibility(pageVisibility);
       
       // If the row is checked (for CAB mode), theme its bg appropriately
-      if (parent != null && parent instanceof ListView)
-         convertView.setBackgroundResource(((ListView)parent).isItemChecked(position) ?
-               R.drawable.abs__list_activated_holo : 0);
+      if (parent != null && parent instanceof ListView){
+         int background = ((ListView)parent).isItemChecked(position)?
+                 R.drawable.abs__list_activated_holo : 0;
+         convertView.setBackgroundResource(background);
+      }
       
       return convertView;
    }

@@ -155,7 +155,7 @@
     <string name="index_loading">بارگذاري...</string>
 
     <string name="canceling">در حال لغو</string>
-    <string name="page_description">صفحه %1$d, جزء %2$d</string>
+    <string name="page_description">صفحه %1$s, جزء %2$s</string>
     <string name="highlighting_database">فايل هاي مورد نياز</string>
     <string name="timing_database">فايل هاي مورد نياز</string>
     <string name="infinity">همیشه</string>

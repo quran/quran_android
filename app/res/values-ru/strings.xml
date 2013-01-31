@@ -175,7 +175,7 @@
     <string name="index_loading">Загрузка…</string>
 
     <string name="canceling">Отмена&#8230;</string>
-    <string name="page_description">стр. %1$d, джуз %2$d</string>
+    <string name="page_description">стр. %1$s, джуз %2$s</string>
     <string name="highlighting_database">Необходимые файлы</string>
     <string name="timing_database">Необходимые файлы</string>
     <string name="infinity">&#8734;</string>

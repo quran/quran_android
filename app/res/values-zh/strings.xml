@@ -169,8 +169,8 @@
     <string name="index_loading">正在载入…</string>
 
     <string name="canceling">正在取消&#8230;</string>
-    <string name="juz2_description">第%1$d卷</string>
-    <string name="page_description">第%2$d卷，第%1$d页</string>
+    <string name="juz2_description">第%1$s卷</string>
+    <string name="page_description">第%2$s卷，第%1$s页</string>
     <string name="highlighting_database">所需文件</string>
     <string name="timing_database">所需文件</string>
     <string name="infinity">&#8734;</string>
