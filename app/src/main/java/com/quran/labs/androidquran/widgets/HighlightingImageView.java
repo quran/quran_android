@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,7 +183,8 @@ public class HighlightingImageView extends ImageView {
       mOverlayParams.suraText = QuranInfo.getSuraNameFromPage(
               getContext(), page, true);
       mOverlayParams.juzText = QuranInfo.getJuzString(getContext(), page);
-      mOverlayParams.pageText = String.format("%1$d", page);
+      mOverlayParams.pageText = QuranUtils.getLocalizedNumber(
+              getContext(), page);
       mOverlayParams.showOverlay = show;
 
       if (show && !mDidDraw){
@@ -201,7 +203,7 @@ public class HighlightingImageView extends ImageView {
       if (mOverlayParams.init){ return true; }
       
       Drawable page = this.getDrawable();
-      if (page == null) return false;
+      if (page == null){ return false; }
       PageScalingData scalingData = new PageScalingData(page);
       
       mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG
@@ -237,7 +239,6 @@ public class HighlightingImageView extends ImageView {
          // Set the scaled text size, and update the metrics
          mOverlayParams.paint.setTextSize(MAX_FONT_SIZE*scale);
          fm = mOverlayParams.paint.getFontMetrics();
-         textHeight = fm.bottom-fm.top;
       }
       
       // Calculate where the text's baseline should be

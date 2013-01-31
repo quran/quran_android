@@ -8,28 +8,31 @@ import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.widget.Toast;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranDisplayHelper {
    private static final String TAG = "QuranDisplayHelper";
    
    public static Bitmap getQuranPage(int page){
-      Bitmap bitmap = null;
+      Bitmap bitmap;
 
       String filename = QuranFileUtils.getPageFileName(page);
       bitmap = QuranFileUtils.getImageFromSD(filename);
       if (bitmap == null) {
-         android.util.Log.d(TAG, "failed to get " + page + " with name " + filename + " from sd...");
+         android.util.Log.d(TAG, "failed to get " + page +
+                 " with name " + filename + " from sd...");
          bitmap = QuranFileUtils.getImageFromWeb(filename);
       }
       return bitmap;
    }
    
-   public static long displayMarkerPopup(Context context, int page, long lastPopupTime) {
+   public static long displayMarkerPopup(Context context, int page,
+                                         long lastPopupTime) {
       if (System.currentTimeMillis() - lastPopupTime < 3000)
          return lastPopupTime;
       int rub3 = QuranInfo.getRub3FromPage(page);
@@ -39,18 +42,29 @@ public class QuranDisplayHelper {
       StringBuilder sb = new StringBuilder();
 
       if (rub3 % 8 == 0) {
-         sb.append(context.getString(R.string.quran_juz2)).append(' ').append((hizb/2) + 1);
-      } else {
-         int remainder = rub3 % 4;
-         if (remainder == 1)
-            sb.append(context.getString(R.string.quran_rob3)).append(' ');
-         else if (remainder == 2)
-            sb.append(context.getString(R.string.quran_nos)).append(' ');
-         else if (remainder == 3)
-            sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
-         sb.append(context.getString(R.string.quran_hizb)).append(' ').append(hizb);
+         sb.append(context.getString(R.string.quran_juz2)).append(' ')
+                 .append(QuranUtils.getLocalizedNumber(context, (hizb / 2) + 1));
       }
-      Toast.makeText(context, ArabicStyle.reshape(context, sb.toString()), Toast.LENGTH_SHORT).show();
+      else {
+         int remainder = rub3 % 4;
+         if (remainder == 1){
+            sb.append(context.getString(R.string.quran_rob3)).append(' ');
+         }
+         else if (remainder == 2){
+            sb.append(context.getString(R.string.quran_nos)).append(' ');
+         }
+         else if (remainder == 3){
+            sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
+         }
+         sb.append(context.getString(R.string.quran_hizb)).append(' ')
+                 .append(QuranUtils.getLocalizedNumber(context, hizb));
+      }
+
+      String result = sb.toString();
+      if (QuranSettings.isReshapeArabic(context)){
+         result = ArabicStyle.reshape(context, result);
+      }
+      Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
       return System.currentTimeMillis();
    }
    

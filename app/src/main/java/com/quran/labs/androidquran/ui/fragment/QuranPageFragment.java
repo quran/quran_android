@@ -17,6 +17,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnTouchListener;
@@ -383,14 +385,25 @@ public class QuranPageFragment extends SherlockFragment {
       float x = pageXY[0];
       float y = pageXY[1];
 
+      int closestLine = -1;
       int closestDelta = -1;
-      String closestKey = null;
+
+      SparseArray<List<String>> lineAyahs = new SparseArray<List<String>>();
       Set<String> keys = mCoordinateData.keySet();
       for (String key : keys){
          List<AyahBounds> bounds = mCoordinateData.get(key);
          if (bounds == null){ continue; }
 
          for (AyahBounds b : bounds){
+            // only one AyahBound will exist for an ayah on a particular line
+            int line = b.getLine();
+            List<String> items = lineAyahs.get(line);
+            if (items == null){
+               items = new ArrayList<String>();
+            }
+            items.add(key);
+            lineAyahs.put(line, items);
+
             if (b.getMaxX() >= x && b.getMinX() <= x &&
                 b.getMaxY() >= y && b.getMinY() <= y){
                return getAyahFromKey(key);
@@ -398,24 +411,50 @@ public class QuranPageFragment extends SherlockFragment {
 
             int delta = Math.min((int)Math.abs(b.getMaxY() - y),
                                  (int)Math.abs(b.getMinY() - y));
-            if (closestDelta == -1){
-               closestKey = key;
+            if (closestDelta == -1 || delta < closestDelta){
+               closestLine = b.getLine();
                closestDelta = delta;
-            }
-            else if (delta < closestDelta){
-               closestDelta = delta;
-               closestKey = key;
             }
          }
       }
 
-      // the code above gives us the best line, not necessarily the best
-      // ayah.  ideally, need to re-loop through all ayat, find ayat in
-      // the same line, and find the ones with the least delta x from our
-      // x, and that's what we return back.
+      if (closestLine > -1){
+         int leastDeltaX = -1;
+         String closestAyah = null;
+         List<String> ayat = lineAyahs.get(closestLine);
+         if (ayat != null){
+            Log.d(TAG, "no exact match, " + ayat.size() + " candidates.");
+            for (String ayah : ayat){
+               List<AyahBounds> bounds = mCoordinateData.get(ayah);
+               if (bounds == null){ continue; }
+               for (AyahBounds b : bounds){
+                  if (b.getLine() > closestLine){
+                     // this is the last ayah in ayat list
+                     break;
+                  }
 
-      if (closestKey != null && closestDelta < 50){
-         return getAyahFromKey(closestKey);
+                  if (b.getLine() == closestLine){
+                     // if x is within the x of this ayah, that's our answer
+                     if (b.getMaxX() >= x && b.getMinX() <= x){
+                        return getAyahFromKey(ayah);
+                     }
+
+                     // otherwise, keep track of the least delta and return it
+                     int delta = Math.min((int)Math.abs(b.getMaxX() - x),
+                                          (int)Math.abs(b.getMinX() - x));
+                     if (leastDeltaX == -1 || delta < leastDeltaX){
+                        closestAyah = ayah;
+                        leastDeltaX = delta;
+                     }
+                  }
+               }
+            }
+         }
+
+         if (closestAyah != null){
+            Log.d(TAG, "fell back to closest ayah of " + closestAyah);
+            return getAyahFromKey(closestAyah);
+         }
       }
       return null;
    }

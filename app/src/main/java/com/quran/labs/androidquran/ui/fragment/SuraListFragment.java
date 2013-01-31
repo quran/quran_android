@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
-import static com.quran.labs.androidquran.data.Constants.SURAS_COUNT;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -22,6 +17,9 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranUtils;
+
+import static com.quran.labs.androidquran.data.Constants.*;
 
 public class SuraListFragment extends SherlockFragment {
 
@@ -82,7 +80,9 @@ public class SuraListFragment extends SherlockFragment {
       Activity activity = getActivity();
       for (int juz=1; juz <= JUZ2_COUNT; juz++){
          elements[pos++] = new QuranRow(QuranInfo.getJuzTitle(activity) + " " +
-               juz, null, QuranRow.HEADER, juz, QuranInfo.JUZ_PAGE_START[juz-1], null);
+               QuranUtils.getLocalizedNumber(activity, juz),
+                 null, QuranRow.HEADER, juz,
+               QuranInfo.JUZ_PAGE_START[juz-1], null);
          next = (juz == JUZ2_COUNT) ? PAGES_LAST+1 :
             QuranInfo.JUZ_PAGE_START[juz];
          

@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -13,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -21,6 +18,9 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranUtils;
+
+import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 
 public class JuzListFragment extends SherlockFragment {
 
@@ -85,15 +85,18 @@ public class JuzListFragment extends SherlockFragment {
          if (i % 8 == 0){
             int juz = 1 + (i / 8);
             elements[ctr++] = new QuranRow(QuranInfo.getJuzTitle(activity) +
-                    " " + juz, null, QuranRow.HEADER, juz,
+                    " " + QuranUtils.getLocalizedNumber(activity, juz), null,
+                    QuranRow.HEADER, juz,
                     QuranInfo.JUZ_PAGE_START[juz-1], null);
          }
          String verseString = getString(R.string.quran_ayah) + " " + pos[1];
          elements[ctr++] = new QuranRow(quarters[i],
                QuranInfo.getSuraName(activity, pos[0], true) +
                        ", " + verseString, 0, page, images[i % 4]);
-         if (i % 4 == 0)
-            elements[ctr-1].imageText = (1 + (i / 4)) + "";
+         if (i % 4 == 0){
+            elements[ctr-1].imageText = QuranUtils.getLocalizedNumber(
+                    activity, 1 + (i / 4));
+         }
       }
       
       return elements;

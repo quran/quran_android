@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranInfo {
 
@@ -21,11 +22,13 @@ public class QuranInfo {
 
    public static String getSuraName(Context context, int sura,
                                     boolean wantTitle){
-      if (sura < Constants.SURA_FIRST || sura > Constants.SURA_LAST){ return ""; }
+      if (sura < Constants.SURA_FIRST ||
+              sura > Constants.SURA_LAST){ return ""; }
       String title = "";
       if (wantTitle){ title = getSuraTitle(context) + " "; }
 
-      return title + context.getResources().getStringArray(R.array.sura_names)[sura-1];
+      return title + context.getResources()
+              .getStringArray(R.array.sura_names)[sura-1];
    }
 
    public static int getSuraNumberFromPage(int page){
@@ -52,12 +55,16 @@ public class QuranInfo {
 
    public static String getPageSubtitle(Context context, int page){
       String description = context.getString(R.string.page_description);
-      return String.format(description, page, QuranInfo.getJuzFromPage(page));
+      return String.format(description,
+              QuranUtils.getLocalizedNumber(context, page),
+              QuranUtils.getLocalizedNumber(context,
+                      QuranInfo.getJuzFromPage(page)));
    }
 
    public static String getJuzString(Context context, int page){
       String description = context.getString(R.string.juz2_description);
-      return String.format(description, QuranInfo.getJuzFromPage(page));
+      return String.format(description, QuranUtils.getLocalizedNumber(
+              context, QuranInfo.getJuzFromPage(page)));
    }
    
    public static String getSuraAyahString(Context context, int sura, int ayah){
@@ -104,7 +111,7 @@ public class QuranInfo {
       info = context.getString(resId) + " - ";
 
       int ayahs = QuranInfo.SURA_NUM_AYAHS[sura-1];
-      info += ayahs + " " +
+      info += QuranUtils.getLocalizedNumber(context, ayahs) + " " +
               context.getResources().getQuantityString(
                       R.plurals.verses, ayahs);
 		return info;
