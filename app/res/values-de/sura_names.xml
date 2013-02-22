@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Aus "Der edle Quran und die Übersetzung seiner Bedeutungen in die deutsche Sprache" von Nadeem Elyas und Frank Bubenheim (alias "Abdullah as-Samit") -->
+<resources>
+    <string-array name="sura_names">
+        <item>Die Eröffnende (Al-Fatiha)</item>
+        <item>Die Kuh (Al-Baqara)</item>
+        <item>Die Sippe Imrans (Al-i-\'Imran)</item>
+        <item>Die Frauen (An-Nisa\')</item>
+        <item>Der Tisch (Al-Ma\'ida)</item>
+        <item>Das Vieh (Al-An\'am)</item>
+        <item>Die Höhen (Al-A\'raf)</item>
+        <item>Die Beute (Al-Anfal)</item>
+        <item>Die Reue (At-Tauba)</item>
+        <item>Yunus</item><!-- 10 -->
+        <item>Hud</item>
+        <item>Yusuf</item>
+        <item>Der Donner (Ar-Ra\'d)</item>
+        <item>Ibrahim</item>
+        <item>Al-Higr</item>
+        <item>Die Bienen (An-Nahl)</item>
+        <item>Die Nachtreise (Al-Isra\')</item>
+        <item>Die Höhle (Al-Kahf)</item>
+        <item>Maryam</item>
+        <item>Ta-Ha</item><!-- 20 -->
+        <item>Die Propheten (Al-Anbiya\')</item>
+        <item>Die Pilgerfahrt (Al-Hagg)</item>
+        <item>Die Gläubigen (Al-Mu\'minun)</item>
+        <item>Das Licht (An-Nur)</item>
+        <item>Die Unterscheidung (Al-Furqan)</item>
+        <item>Die Dichter (As-Su\'ara)</item>
+        <item>Die Ameisen (An-Naml)</item>
+        <item>Die Geschichten (Al-Qasas)</item>
+        <item>Die Spinne (Al-\'Ankabut)</item>
+        <item>Die Römer (Ar-Rom)</item><!-- 30 -->
+        <item>Luqman</item>
+        <item>Die Niederwerfung (As-Sagda)</item>
+        <item>Die Gruppierungen (Al-Ahzab)</item>
+        <item>Die Sabaer (Saba\')</item>
+        <item>Der Erschaffer (Fatir)</item>
+        <item>Ya-Sin</item>
+        <item>Die sich Reihenden (As-Saffat)</item>
+        <item>Sad</item>
+        <item>Die Scharen (Az-Zumar)</item>
+        <item>Der Vergebende (Gafir)</item><!-- 40 -->
+        <item>Ausführlich dargelegt (Fussilat)</item>
+        <item>Die Beratung (As-Sura)</item>
+        <item>Die Zierde (Az-Zuhruf)</item>
+        <item>Der Rauch (Ad-Duhan)</item>
+        <item>Die Kniende (Al-Gatiya)</item>
+        <item>Al-Ahqaf</item>
+        <item>Muhammad</item>
+        <item>Der Sieg (Al-Fath)</item>
+        <item>Die Gemächer (Al-Hugurat)</item>
+        <item>Qaf</item><!-- 50 -->
+        <item>Die Zerstreuenden (Adh-Dariyat)</item>
+        <item>Der Berg (At-Tur)</item>
+        <item>Der Stern (An-Nagm)</item>
+        <item>Der Mond (Al-Qamar)</item>
+        <item>Der Allerbarmer (Ar-Rahman)</item>
+        <item>Die eintreffen wird (Al-Waqi\'a)</item>
+        <item>Das Eisen (Al-Hadid)</item>
+        <item>Die Streitende (Al-Mugadila)</item>
+        <item>Die Versammlung (Al-Hasr)</item>
+        <item>Die Geprüfte (Al-Mumtahana)</item><!-- 60 -->
+        <item>Die Reihe (As-Saff)</item>
+        <item>Der Freitag (Al-Gumu\'a)</item>
+        <item>Die Heuchler (Al-Munafiqun)</item>
+        <item>Die Übervorteilung (At-Tagabun)</item>
+        <item>Die Scheidung (At-Talaq)</item>
+        <item>Das Verbieten (At-Tahrim)</item>
+        <item>Die Herrschaft (Al-Mulk)</item>
+        <item>Das Schreibrohr (Al-Qalam)</item>
+        <item>Die fällig Werdende (Al-Haqqa)</item>
+        <item>Die Aufstiegswege (Al-Ma\'arig)</item><!-- 70 -->
+        <item>Nuh</item>
+        <item>Die Ginn (Al-Ginn)</item>
+        <item>Der Eingehüllte (Al-Muzzammil)</item>
+        <item>Der Zugedeckte (Al-Muddattir)</item>
+        <item>Die Auferstehung (Al-Qiyama)</item>
+        <item>Der Mensch (Al-Insan)</item>
+        <item>Die Entsandten (Al-Mursalat)</item>
+        <item>Die Kunde (An-Naba\')</item>
+        <item>Die Entreißenden (An-Naziat)</item>
+        <item>Er blickte düster (\'Abasa)</item><!-- 80 -->
+        <item>Das Umschlingen (At-Takwir)</item>
+        <item>Das Zerbrechen (Al-lnfitar)</item>
+        <item>Die das Maß Kürzenden (Al-Mutaffifin)</item>
+        <item>Das Sichspalten (Al-lnsiqaq)</item>
+        <item>Die Türme (Al-Burug)</item>
+        <item>Der Pochende (At-Tariq)</item>
+        <item>Der Höchste (Al-A\'la)</item>
+        <item>Die Überdeckende (Al-Gasiya)</item>
+        <item>Die Morgendämmerung (Al-Fagr)</item>
+        <item>Die Ortschaft (Al-Balad)</item><!-- 90 -->
+        <item>Die Sonne (As-Sams)</item>
+        <item>Die Nacht (Al-Lail)</item>
+        <item>Die Morgenhelle (Ad-Duha)</item>
+        <item>Das Auftun (As-Sarh)</item>
+        <item>Die Feige (At-Tin)</item>
+        <item>Das Anhängsel (Al-\'Alaq)</item>
+        <item>Die Bestimmung (Al-Qadr)</item>
+        <item>Der klare Beweis (Al-Bayyina)</item>
+        <item>Das Beben (Az-Zalzala)</item>
+        <item>Die Rennenden (Al-Adiyat)</item><!-- 100 -->
+        <item>Das Verhängnis (Al-Qari\'a)</item>
+        <item>Die Vermehrung (At-Takatur)</item>
+        <item>Das Zeitalter (Al-\'Asr)</item>
+        <item>Der Stichler (Al-Humaza)</item>
+        <item>Der Elefant (Al-Fil)</item>
+        <item>Qurais</item>
+        <item>Die Hilfeleistung (Al-Ma\'un)</item>
+        <item>Al-Kautar</item>
+        <item>Die Ungläubigen (Al-Kafirun)</item>
+        <item>Die Hilfe (An-Nasr)</item>
+        <item>Die Palmfasern (Al-Masad)</item>
+        <item>Die Aufrichtigkeit (Al-Ihlas)</item>
+        <item>Der Tagesanbruch (Al-Falaq)</item>
+        <item>Die Menschen (An-Nas)</item>
+    </string-array>
+</resources>
