@@ -260,5 +260,5 @@
     
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Keine Lesezeichen</string>
-    <string name="tags_list_empty">Keine Stichworte</string>
+    <string name="tags_list_empty">Keine Tags</string>
 </resources>
