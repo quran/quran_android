@@ -71,6 +71,15 @@ Open Source Projects Used
 Changelog
 ---------
 **version 2.3.0 (in development)**
+- tag improvements (batch tag operations, etc) [\#235](https://github.com/ahmedre/quran_android/issues/235)
+- anti-alias overlay text (thanks @boussouira)
+- bookmark and highlighting code improvements and bugfixes
+- french translation (thanks @yasserkad)
+- chinese translation (thanks Bo Li)
+- german translation (thanks @ArminSupuk)
+- numbers are now localized properly
+- [quranapp.com](quranapp.com) sharing support
+- translation text highlights when audio is playing [\#254](https://github.com/ahmedre/quran_android/issues/254)
 
 **version 2.2.1**
 

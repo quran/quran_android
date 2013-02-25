@@ -580,27 +580,7 @@ public class QuranInfo {
 		ayahId += ayah;
 		return ayahId;
 	}
-	
-   public static int getAyahId(int page) {
-      int sura = PAGE_SURA_START[page-1];
-      int ayah = PAGE_AYAH_START[page-1];
-      return getAyahId(sura, ayah);
-   }
-   
-   public static int[] getSuraAyahFromAyahId(int ayahId) {
-      int lastCount = 0;
-      int ayahCount = 0;
-      int sura = 0;
-      while (ayahCount < ayahId) {
-         lastCount = ayahCount;
-         ayahCount += SURA_NUM_AYAHS[sura];
-         sura++;
-      }
-      int ayah = ayahId - lastCount;
-      int[] values = {sura, ayah};
-      return values;
-   }
-   
+
 	public static int getNumAyahs(int sura){
 		if ((sura < 1) || (sura > Constants.SURAS_COUNT)) return -1;
 		return SURA_NUM_AYAHS[sura-1];

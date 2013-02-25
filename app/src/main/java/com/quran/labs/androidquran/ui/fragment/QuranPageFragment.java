@@ -38,6 +38,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -50,7 +51,9 @@ import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
-public class QuranPageFragment extends SherlockFragment {
+public class QuranPageFragment extends SherlockFragment
+   implements AyahTracker {
+
    private static final String TAG = "QuranPageFragment";
    private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
@@ -318,6 +321,7 @@ public class QuranPageFragment extends SherlockFragment {
       }
    }
 
+   @Override
    public void highlightAyah(int sura, int ayah){
       if (mCoordinateData == null){
          if (mCurrentTask != null &&
@@ -346,7 +350,8 @@ public class QuranPageFragment extends SherlockFragment {
       mImageView.invalidate();
    }
 
-   public void unhighlightAyah(){
+   @Override
+   public void unHighlightAyat(){
       mImageView.unhighlight();
    }
 
@@ -472,7 +477,7 @@ public class QuranPageFragment extends SherlockFragment {
 
       @Override
       public boolean onDoubleTap(MotionEvent event) {
-         unhighlightAyah();
+         unHighlightAyat();
          return true;
       }
 

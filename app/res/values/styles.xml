@@ -14,15 +14,24 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="translation_text">
+    <style name="TranslationText">
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="TranslationText.Highlighted">
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
+    </style>
+
     <style name="QuranAndroid" parent="Theme.Sherlock.ForceOverflow">
     </style>
-    <style name="translation_night_mode">
+
+    <style name="TranslationText.NightMode">
         <item name="android:background">@android:color/black</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TranslationText.NightMode.Highlighted">
+        <item name="android:textColor">@color/abs__holo_blue_light</item>
     </style>
 </resources>
