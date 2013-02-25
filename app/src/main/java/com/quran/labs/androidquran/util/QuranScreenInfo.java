@@ -41,10 +41,9 @@ public class QuranScreenInfo {
 	public static void initialize(int width, int height){
 		instance = new QuranScreenInfo(width, height);
 	}
-	
-	public int getWidth(){ return this.width; }
+
 	public int getHeight(){ return this.height; }
-	
+
 	public String getWidthParam(){
 		return "_" + getWidthParamNoUnderScore();
 	}

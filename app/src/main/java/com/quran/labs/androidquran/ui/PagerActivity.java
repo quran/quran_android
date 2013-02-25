@@ -887,18 +887,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       Fragment f = mPagerAdapter.getFragmentIfExists(position);
-      if (f != null && f instanceof QuranPageFragment){
-         QuranPageFragment qpf = (QuranPageFragment)f;
-         qpf.highlightAyah(sura, ayah);
+      if (f != null && f instanceof AyahTracker){
+         ((AyahTracker)f).highlightAyah(sura, ayah);
       }
    }
 
    public void unhighlightAyah(){
       int position = mViewPager.getCurrentItem();
       Fragment f = mPagerAdapter.getFragmentIfExists(position);
-      if (f!= null && f instanceof QuranPageFragment){
-         QuranPageFragment qpf = (QuranPageFragment)f;
-         qpf.unhighlightAyah();
+      if (f!= null && f instanceof AyahTracker){
+         ((AyahTracker)f).unHighlightAyat();
       }
    }
 

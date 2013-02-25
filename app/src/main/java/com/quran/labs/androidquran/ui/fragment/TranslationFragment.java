@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -23,6 +22,7 @@ import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.TranslationView;
@@ -30,12 +30,17 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranslationFragment extends SherlockFragment {
+public class TranslationFragment extends SherlockFragment
+   implements AyahTracker {
    private static final String TAG = "TranslationPageFragment";
    private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
+   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
+   private static final String SI_HIGHLIGHTED_AYAH = "SI_HIGHLIGHTED_AYAH";
+
    private int mPageNumber;
    private boolean mIsPaused;
+   private int mHighlightedAyah;
    private TranslationView mTranslationView;
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
@@ -53,6 +58,16 @@ public class TranslationFragment extends SherlockFragment {
       mIsPaused = false;
       mPageNumber = getArguments() != null?
               getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
+      if (savedInstanceState != null){
+         int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
+         if (page == mPageNumber){
+            int highlightedAyah =
+                    savedInstanceState.getInt(SI_HIGHLIGHTED_AYAH, -1);
+            if (highlightedAyah > 0){
+               mHighlightedAyah = highlightedAyah;
+            }
+         }
+      }
       int width = getActivity().getWindowManager()
               .getDefaultDisplay().getWidth();
       mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
@@ -102,28 +117,34 @@ public class TranslationFragment extends SherlockFragment {
 
       mTranslationView = (TranslationView)view
               .findViewById(R.id.translation_text);
-      if (Build.VERSION.SDK_INT >= 11){
-         mTranslationView.setOnTextClickedListener(
-                 new TranslationView.OnTextClickedListener() {
-            @Override
-            public void onTextClicked() {
-               ((PagerActivity) getActivity()).toggleActionBar();
-            }
-         });
-      }
-      else {
-         mTranslationView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               ((PagerActivity)getActivity()).toggleActionBar();
-            }
-         });
-      }
+      mTranslationView.setTranslationClickedListener(
+              new TranslationView.TranslationClickedListener() {
+         @Override
+         public void onTranslationClicked() {
+            ((PagerActivity) getActivity()).toggleActionBar();
+         }
+      });
 
       String database = prefs.getString(
               Constants.PREF_ACTIVE_TRANSLATION, null);
       refresh(database);
       return view;
+   }
+
+   @Override
+   public void highlightAyah(int sura, int ayah){
+      if (mTranslationView != null){
+         mHighlightedAyah = QuranInfo.getAyahId(sura, ayah);
+         mTranslationView.highlightAyah(mHighlightedAyah);
+      }
+   }
+
+   @Override
+   public void unHighlightAyat(){
+      if (mTranslationView != null){
+         mTranslationView.unhighlightAyat();
+         mHighlightedAyah = -1;
+      }
    }
 
    @Override
@@ -147,6 +168,14 @@ public class TranslationFragment extends SherlockFragment {
       }
    }
 
+   @Override
+   public void onSaveInstanceState(Bundle outState) {
+      if (mHighlightedAyah > 0){
+         outState.putInt(SI_HIGHLIGHTED_AYAH, mHighlightedAyah);
+      }
+      super.onSaveInstanceState(outState);
+   }
+
    class TranslationTask extends AsyncTask<Integer, Void, List<QuranAyah>> {
       private String mDatabaseName = null;
 
@@ -168,6 +197,10 @@ public class TranslationFragment extends SherlockFragment {
          if (bounds == null){ return null; }
 
          String databaseName = mDatabaseName;
+
+         // is this an arabic translation/tafseer or not
+         boolean isArabic = mDatabaseName.contains(".ar.") ||
+                 mDatabaseName.equals("quran.muyassar.db");
          List<QuranAyah> verses = new ArrayList<QuranAyah>();
 
          try {
@@ -211,6 +244,7 @@ public class TranslationFragment extends SherlockFragment {
                         String text = ayahCursor.getString(2);
                         verse.setText(text);
                      }
+                     verse.setArabic(isArabic);
                      verses.add(verse);
                   }
                   while (translationCursor.moveToNext() &&
@@ -237,6 +271,15 @@ public class TranslationFragment extends SherlockFragment {
       protected void onPostExecute(List<QuranAyah> result) {
          if (result != null){
             mTranslationView.setAyahs(result);
+            if (mHighlightedAyah > 0){
+               // give a chance for translation view to render
+               mTranslationView.postDelayed(new Runnable() {
+                  @Override
+                  public void run() {
+                     mTranslationView.highlightAyah(mHighlightedAyah);
+                  }
+               }, 100);
+            }
          }
 
          Activity activity = getActivity();

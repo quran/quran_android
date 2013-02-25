@@ -2,40 +2,43 @@ package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.List;
 
-public class TranslationView extends LinearLayout {
+public class TranslationView extends ScrollView {
 
    private Context mContext;
    private int mDividerColor;
    private int mLeftRightMargin;
    private int mTopBottomMargin;
    private int mTextStyle;
+   private int mHighlightedStyle;
    private int mFontSize;
    private int mHeaderColor;
    private int mHeaderStyle;
    private boolean mIsArabic;
-   private int mArabicStatus;
    private boolean mUseArabicFont;
    private boolean mShouldReshape;
+   private int mLastHighlightedAyah;
+
    private List<QuranAyah> mAyat;
-   private OnTextClickedListener mListener;
+
+   private LinearLayout mLinearLayout;
+   private TranslationClickedListener mTranslationClickedListener;
 
    public TranslationView(Context context){
       super(context);
@@ -54,7 +57,19 @@ public class TranslationView extends LinearLayout {
 
    public void init(Context context){
       mContext = context;
-      setOrientation(VERTICAL);
+      setFillViewport(true);
+      mLinearLayout = new LinearLayout(context);
+      mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+      addView(mLinearLayout, ScrollView.LayoutParams.MATCH_PARENT,
+              ScrollView.LayoutParams.WRAP_CONTENT);
+      mLinearLayout.setOnClickListener(new OnClickListener() {
+         @Override
+         public void onClick(View v) {
+            if (mTranslationClickedListener != null){
+               mTranslationClickedListener.onTranslationClicked();
+            }
+         }
+      });
 
       Resources resources = getResources();
       mDividerColor = resources.getColor(R.color.translation_hdr_color);
@@ -69,11 +84,13 @@ public class TranslationView extends LinearLayout {
       mIsArabic = QuranSettings.isArabicNames(mContext);
       mShouldReshape = QuranSettings.isReshapeArabic(mContext);
       mUseArabicFont = QuranSettings.needArabicFont(mContext);
-      mArabicStatus = 0;
 
       boolean nightMode = QuranSettings.isNightMode(mContext);
-      mTextStyle = nightMode ? R.style.translation_night_mode :
-              R.style.translation_text;
+      mTextStyle = nightMode ? R.style.TranslationText_NightMode :
+              R.style.TranslationText;
+      mHighlightedStyle = nightMode?
+              R.style.TranslationText_NightMode_Highlighted :
+              R.style.TranslationText_Highlighted;
    }
 
    public void refresh(){
@@ -86,123 +103,132 @@ public class TranslationView extends LinearLayout {
    }
 
    public void setAyahs(List<QuranAyah> ayat){
-      removeAllViews();
+      mLastHighlightedAyah = -1;
+
+      mLinearLayout.removeAllViews();
       mAyat = ayat;
 
       int currentSura = 0;
-      boolean isFirst = true;
-      SpannableStringBuilder ayatInSura = new SpannableStringBuilder();
       for (QuranAyah ayah : ayat){
          if (ayah.getSura() != currentSura){
-            if (ayatInSura.length() > 0){
-               addTextForSura(ayatInSura);
-            }
-            ayatInSura.clear();
+            addSuraHeader(ayah.getSura());
             currentSura = ayah.getSura();
-            addSuraHeader(currentSura);
-
-            isFirst = true;
          }
-
-         if (!isFirst){ ayatInSura.append("\n\n"); }
-         isFirst = false;
-         int start = ayatInSura.length();
-         // Ayah Header
-         ayatInSura.append(ayah.getSura() + ":" + ayah.getAyah());
-         int end = ayatInSura.length();
-         ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
-         ayatInSura.append("\n");
-         start = end+1;
-
-         String ayahText = ayah.getText();
-         if (!TextUtils.isEmpty(ayahText)){
-            // Ayah Text
-            if (mShouldReshape){
-               ayahText = ArabicStyle.reshape(mContext, ayahText);
-               mArabicStatus = 1;
-            }
-
-            ayatInSura.append(ayahText);
-            end = ayatInSura.length();
-            ayatInSura.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
-            ayatInSura.append("\n");
-            start = end+1;
-         }
-         
-         // Translation
-         String translationText = ayah.getTranslation();
-         if (mShouldReshape && mArabicStatus != 2){
-            if (mArabicStatus == 0){  // 0 means we didn't check yet
-               if (QuranUtils.doesStringContainArabic(translationText)){
-                  mArabicStatus = 1;  // 1 means we have arabic
-               }
-               else { mArabicStatus= 2; } // no arabic in this translation
-            }
-
-            if (mArabicStatus == 1){
-               translationText = ArabicStyle.reshape(mContext,
-                       translationText);
-            }
-         }
-         ayatInSura.append(translationText);
-         end = ayatInSura.length();
-      }
-      if (ayatInSura.length() > 0){
-         addTextForSura(ayatInSura);
+         addTextForAyah(ayah);
       }
    }
 
-   private OnClickListener mOnTextClickListener = new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-         if (mListener != null){
-            mListener.onTextClicked();
+   public void unhighlightAyat(){
+      if (mLastHighlightedAyah > 0){
+         TextView text = (TextView)mLinearLayout
+                 .findViewById(mLastHighlightedAyah);
+         if (text != null){
+            text.setTextAppearance(getContext(), mTextStyle);
          }
       }
-   };
-
-   public void setOnTextClickedListener(OnTextClickedListener listener){
-      mListener = listener;
+      mLastHighlightedAyah = -1;
    }
 
-   public interface OnTextClickedListener {
-      public void onTextClicked();
+   public void highlightAyah(int ayahId){
+      if (mLastHighlightedAyah > 0){
+         TextView text = (TextView)mLinearLayout.
+                 findViewById(mLastHighlightedAyah);
+         text.setTextColor(Color.BLACK);
+      }
+
+      TextView text = (TextView)mLinearLayout.findViewById(ayahId);
+      if (text != null){
+         text.setTextAppearance(getContext(), mHighlightedStyle);
+         mLastHighlightedAyah = ayahId;
+
+         int screenHeight = QuranScreenInfo.getInstance().getHeight();
+         int y = text.getTop() - (int)(0.25 * screenHeight);
+         smoothScrollTo(getScrollX(), y);
+      }
+      else { mLastHighlightedAyah = -1; }
    }
 
-   private void addTextForSura(SpannableStringBuilder stringBuilder){
-      TextView translationText = new TextView(mContext);
-      translationText.setTextAppearance(mContext, mTextStyle);
-      if (Build.VERSION.SDK_INT >= 11){
-         translationText.setTextIsSelectable(true);
-         translationText.setOnClickListener(mOnTextClickListener);
-      }
-      translationText.setText(stringBuilder);
-      translationText.setTextSize(mFontSize);
-      if (mUseArabicFont && mArabicStatus == 1){
-         translationText.setTypeface(ArabicStyle.getTypeface(mContext));
-      }
-      LinearLayout.LayoutParams params = new LayoutParams(
+   private void addTextForAyah(QuranAyah ayah){
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
               LayoutParams.MATCH_PARENT,
               LayoutParams.WRAP_CONTENT);
       params.setMargins(mLeftRightMargin, mTopBottomMargin,
               mLeftRightMargin, mTopBottomMargin);
-      translationText.setLineSpacing(1.4f, 1.4f);
-      addView(translationText, params);
+
+      TextView ayahHeader = new TextView(mContext);
+      ayahHeader.setTextAppearance(mContext, mTextStyle);
+      ayahHeader.setTextSize(mFontSize);
+      ayahHeader.setText(ayah.getSura() + ":" + ayah.getAyah());
+      ayahHeader.setTypeface(null, Typeface.BOLD);
+      mLinearLayout.addView(ayahHeader, params);
+
+      // arabic
+      String ayahText = ayah.getText();
+      if (!TextUtils.isEmpty(ayahText)){
+         // Ayah Text
+         TextView arabicText = new TextView(mContext);
+         arabicText.setTextAppearance(mContext, mTextStyle);
+         arabicText.setTextSize(mFontSize);
+         arabicText.setLineSpacing(1.4f, 1.4f);
+         arabicText.setTypeface(null, Typeface.BOLD);
+
+         if (mShouldReshape){
+            ayahText = ArabicStyle.reshape(mContext, ayahText);
+            if (mUseArabicFont){
+               arabicText.setTypeface(
+                       ArabicStyle.getTypeface(mContext), Typeface.BOLD);
+            }
+         }
+
+         arabicText.setText(ayahText);
+
+         params = new LinearLayout.LayoutParams(
+                 LayoutParams.MATCH_PARENT,
+                 LayoutParams.WRAP_CONTENT);
+         params.setMargins(mLeftRightMargin, mTopBottomMargin,
+                 mLeftRightMargin, mTopBottomMargin);
+         mLinearLayout.addView(arabicText, params);
+      }
+
+      // translation
+      TextView translationView = new TextView(mContext);
+      translationView.setId(
+              QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah()));
+
+      translationView.setTextAppearance(mContext, mTextStyle);
+      translationView.setTextSize(mFontSize);
+
+      String translationText = ayah.getTranslation();
+      if (mShouldReshape && mIsArabic){
+         if (ayah.isArabic()){
+            translationText = ArabicStyle.reshape(mContext,
+                    translationText);
+            translationView.setTypeface(ArabicStyle.getTypeface(mContext));
+         }
+      }
+
+      params = new LinearLayout.LayoutParams(
+              LayoutParams.MATCH_PARENT,
+              LayoutParams.WRAP_CONTENT);
+      params.setMargins(mLeftRightMargin, mTopBottomMargin,
+              mLeftRightMargin, mTopBottomMargin);
+      translationView.setText(translationText);
+      mLinearLayout.addView(translationView, params);
    }
 
    private void addSuraHeader(int currentSura){
       View view = new View(mContext);
       
       view.setBackgroundColor(mHeaderColor);
-      LinearLayout.LayoutParams params = new LayoutParams(
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
               LayoutParams.MATCH_PARENT, 2);
       params.topMargin = mTopBottomMargin;
-      addView(view, params);
+      mLinearLayout.addView(view, params);
 
       String suraName = QuranInfo.getSuraName(mContext, currentSura, true);
 
       TextView headerView = new TextView(mContext);
-      params = new LayoutParams(LayoutParams.MATCH_PARENT,
+      params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
               LayoutParams.WRAP_CONTENT);
       params.leftMargin = mLeftRightMargin;
       params.rightMargin = mLeftRightMargin;
@@ -219,10 +245,19 @@ public class TranslationView extends LinearLayout {
          }
       }
       headerView.setText(suraName);
-      addView(headerView, params);
+      mLinearLayout.addView(headerView, params);
 
       view = new View(mContext);
       view.setBackgroundColor(mDividerColor);
-      addView(view, LayoutParams.MATCH_PARENT, 2);
+      mLinearLayout.addView(view, LayoutParams.MATCH_PARENT, 2);
+   }
+
+   public void setTranslationClickedListener(
+           TranslationClickedListener listener){
+      mTranslationClickedListener = listener;
+   }
+
+   public interface TranslationClickedListener {
+      public void onTranslationClicked();
    }
 }
