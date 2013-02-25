@@ -78,10 +78,10 @@ Changelog
 - chinese translation (thanks Bo Li)
 - german translation (thanks @ArminSupuk)
 - numbers are now localized properly
-- [quranapp.com](quranapp.com) sharing support
+- [quranapp.com](http://quranapp.com) sharing support
 - translation text highlights when audio is playing [\#254](https://github.com/ahmedre/quran_android/issues/254)
 
-**version 2.2.1**
+**version 2.2.1** (released 12/31/2012)
 
 - sort bookmarks by date added or by location in the Quran
 - bugfixes - [\#234](https://github.com/ahmedre/quran_android/issues/234)
