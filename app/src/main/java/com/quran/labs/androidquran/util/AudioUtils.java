@@ -264,7 +264,7 @@ public class AudioUtils {
          }
 
          Log.d(TAG, "not gapless, checking each ayah...");
-         for (int j = firstAyah; j < lastAyah; j++){
+         for (int j = firstAyah; j <= lastAyah; j++){
             String filename = i + File.separator + j + AUDIO_EXTENSION;
             f = new File(baseDirectory + File.separator + filename);
             if (!f.exists()){ return false; }
