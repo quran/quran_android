@@ -183,7 +183,8 @@
     <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
     <string name="unbookmark_ayah">حذف الآية من المرجعيات</string>
     <string name="tag_ayah">تصنيف الآية</string>
-    <string name="share_ayah">شارك</string>
+    <string name="share_ayah">شارك رابط الآية</string>
+    <string name="share_ayah_text">شارك نص الآية</string>
     <string name="translation_ayah">تفسير/ترجمة الآية</string>
     <string name="play_from_here">بدء التلاوة من هذه الآية</string>
     <string name="ayah_notes">ملاحظات</string>
