@@ -137,7 +137,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       // initialize ayah info database
       String filename = QuranFileUtils.getAyaPositionFileName();
-      mAyahInfoAdapter = new AyahInfoDatabaseHandler(filename);
+      try {
+         mAyahInfoAdapter = new AyahInfoDatabaseHandler(filename);
+      }
+      catch (Exception e){
+         // no ayah info database available
+      }
 
       int page = -1;
 
@@ -485,7 +490,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       mBookmarksAdapter.close();
-      mAyahInfoAdapter.closeDatabase();
+      if (mAyahInfoAdapter != null){
+         mAyahInfoAdapter.closeDatabase();
+      }
       super.onDestroy();
    }
 

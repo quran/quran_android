@@ -70,7 +70,8 @@ Open Source Projects Used
 
 Changelog
 ---------
-**version 2.3.0 (in development)**
+**version 2.3.0** (released 3/31/2013)
+- sheikh Sudais gapless (thanks br Redouane Chaar)
 - tag improvements (batch tag operations, etc) [\#235](https://github.com/ahmedre/quran_android/issues/235)
 - anti-alias overlay text (thanks @boussouira)
 - bookmark and highlighting code improvements and bugfixes
@@ -80,6 +81,7 @@ Changelog
 - numbers are now localized properly
 - [quranapp.com](http://quranapp.com) sharing support
 - translation text highlights when audio is playing [\#254](https://github.com/ahmedre/quran_android/issues/254)
+- assorted bugfixes
 
 **version 2.2.1** (released 12/31/2012)
 
