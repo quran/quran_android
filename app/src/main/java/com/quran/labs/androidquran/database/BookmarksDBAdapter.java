@@ -148,14 +148,25 @@ public class BookmarksDBAdapter {
          open();
          if (mDb == null){ return -1; }
       }
-      
-      Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
+
+      Cursor cursor = null;
+      try {
+         cursor = mDb.query(BookmarksTable.TABLE_NAME,
               null, BookmarksTable.PAGE + "=" + page + " AND " +
               BookmarksTable.SURA + (sura == null? " IS NULL" : "=" + sura) +
               " AND " + BookmarksTable.AYAH +
               (ayah == null?" IS NULL" : "=" + ayah), null, null, null, null);
-      if (cursor.moveToFirst()){
-         return cursor.getLong(0);
+         if (cursor != null && cursor.moveToFirst()){
+            return cursor.getLong(0);
+         }
+      }
+      catch (Exception e){
+         // swallow the error for now
+      }
+      finally {
+         if (cursor != null){
+            try { cursor.close(); } catch (Exception e){ }
+         }
       }
       return -1;
    }
