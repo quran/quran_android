@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -213,6 +214,11 @@ public class TranslationView extends ScrollView {
       params.setMargins(mLeftRightMargin, mTopBottomMargin,
               mLeftRightMargin, mTopBottomMargin);
       translationView.setText(translationText);
+
+      if (Build.VERSION.SDK_INT >= 11){
+         translationView.setTextIsSelectable(true);
+      }
+
       mLinearLayout.addView(translationView, params);
    }
 

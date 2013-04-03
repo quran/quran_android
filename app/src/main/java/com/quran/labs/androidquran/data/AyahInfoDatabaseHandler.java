@@ -45,20 +45,33 @@ public class AyahInfoDatabaseHandler {
    }
 	
 	public Rect getPageBounds(int page) {
-		if (!validDatabase()) return null;
-		String[] colNames = new String[] {
-				"MIN("+MIN_X+")", "MIN("+MIN_Y+")",
-				"MAX("+MAX_X+")", "MAX("+MAX_Y+")"};
-		Cursor c = database.query(GLYPHS_TABLE, colNames, COL_PAGE + "=" + page,
-				null, null, null, null);
-		if (!c.moveToFirst()) return null;
-		Rect r = new Rect(c.getInt(0), c.getInt(1), c.getInt(2), c.getInt(3));
-		c.close();
-		return r;
-	}
+		if (!validDatabase()){ return null; }
+
+      Cursor c = null;
+      try {
+         String[] colNames = new String[] {
+               "MIN("+MIN_X+")", "MIN("+MIN_Y+")",
+               "MAX("+MAX_X+")", "MAX("+MAX_Y+")"};
+         c = database.query(GLYPHS_TABLE,
+                 colNames, COL_PAGE + "=" + page, null, null, null, null);
+         if (!c.moveToFirst()){ return null; }
+         Rect r = new Rect(c.getInt(0), c.getInt(1), c.getInt(2), c.getInt(3));
+         return r;
+      }
+      catch (Exception e){
+         return null;
+      }
+      finally {
+         if (c != null){
+            try { c.close(); } catch (Exception e){ }
+         }
+      }
+   }
 	
 	public void closeDatabase() {
-		if (database != null)
-			database.close();
+		if (database != null){
+			try { database.close(); }
+         catch (Exception e){}
+      }
 	}
 }
