@@ -70,6 +70,11 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.3.1** (released 4/2/2013)
+- re-add long-press support on translation text
+- fix several crashes based on google play console
+- remove sura name translations in various languages
+
 **version 2.3.0** (released 3/31/2013)
 - sheikh Sudais gapless (thanks br Redouane Chaar)
 - tag improvements (batch tag operations, etc) [\#235](https://github.com/ahmedre/quran_android/issues/235)
