@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="quran_readers_name">
+        <item>Minshawi Murattal (lückenlos)</item>
+        <item>Husary (lückenlos)</item>
+        <item>Abdurrahman As-Sudais (lückenlos)</item>
+        <item>Abd Al-Basit</item>
+        <item>Abd Al-Basit Mujawwad</item>
+        <item>Abdullah Basfar</item>
+        <item>Abdurrahmaan As-Sudais</item>
+        <item>Abu Bakr Ash-Shatri</item>
+        <item>Mishary Al-Afasy</item>
+        <item>Saad Al-Ghamdi</item>
+        <item>Ibrahim Walk (Englische Übersetzung)</item>
+        <item>Hani Ar-Rifai</item>
+        <item>Husary Mujawwad</item>
+        <item>Ali Al-Hudhaify</item>
+        <item>Maher Al Muaiqly</item>
+        <item>Minshawy Mujawwad</item>
+        <item>Mohammad al Tablaway</item>
+        <item>Muhammad Ayyoub</item>
+        <item>Muhammad Jibreel</item>
+        <item>Saood Ash-Shuraym</item>
+    </string-array>
+</resources>
