@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.data;
 
-import com.quran.labs.androidquran.util.ApiKeys;
-
 public class Constants {
    // Numerics
    public static final int DEFAULT_TEXT_SIZE = 15;
@@ -24,7 +22,6 @@ public class Constants {
    public static final int NO_PAGE_SAVED = -1;
 
    // quranapp
-   public static final String QURAN_APP_KEY = ApiKeys.QURAN_APP_KEY;
    public static final String QURAN_APP_BASE = "http://quranapp.com/";
    public static final String QURAN_APP_ENDPOINT = "http://quranapp.com/note";
 
