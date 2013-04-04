@@ -33,7 +33,7 @@ public class QuranAppUtils {
             }
             else { params.put("end_ayah", startAyah.toString()); }
          }
-         params.put("key", Constants.QURAN_APP_KEY);
+         params.put("key", ApiKeys.QURAN_APP_KEY);
          String result = getQuranAppUrl(params);
          if (!TextUtils.isEmpty(result)){
             JSONObject json = new JSONObject(result);
