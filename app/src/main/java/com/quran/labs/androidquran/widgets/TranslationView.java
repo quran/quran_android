@@ -125,6 +125,7 @@ public class TranslationView extends ScrollView {
                  .findViewById(mLastHighlightedAyah);
          if (text != null){
             text.setTextAppearance(getContext(), mTextStyle);
+            text.setTextSize(mFontSize);
          }
       }
       mLastHighlightedAyah = -1;
@@ -140,6 +141,7 @@ public class TranslationView extends ScrollView {
       TextView text = (TextView)mLinearLayout.findViewById(ayahId);
       if (text != null){
          text.setTextAppearance(getContext(), mHighlightedStyle);
+         text.setTextSize(mFontSize);
          mLastHighlightedAyah = ayahId;
 
          int screenHeight = QuranScreenInfo.getInstance().getHeight();
@@ -200,7 +202,7 @@ public class TranslationView extends ScrollView {
       translationView.setTextSize(mFontSize);
 
       String translationText = ayah.getTranslation();
-      if (mShouldReshape && mIsArabic){
+      if (mShouldReshape){
          if (ayah.isArabic()){
             translationText = ArabicStyle.reshape(mContext,
                     translationText);
