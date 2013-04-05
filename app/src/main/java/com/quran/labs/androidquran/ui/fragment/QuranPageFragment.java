@@ -269,8 +269,17 @@ public class QuranPageFragment extends SherlockFragment
       @Override
       protected Map<String, List<AyahBounds>> doInBackground(Void... params) {
          if (mAyahInfoDatabaseHandler == null){ return null; }
-         Cursor cursor = mAyahInfoDatabaseHandler
+
+         Cursor cursor;
+         try {
+            cursor = mAyahInfoDatabaseHandler
                  .getVersesBoundsForPage(mPageNumber);
+         }
+         catch (Exception e){
+            // happens when the glyphs table doesn't exist somehow
+            return null;
+         }
+
          if (cursor == null || !cursor.moveToFirst()){ return null; }
 
          Map<String, List<AyahBounds>> map =
@@ -338,6 +347,7 @@ public class QuranPageFragment extends SherlockFragment
    }
 
    private void handleHighlightAyah(int sura, int ayah){
+      if (mImageView == null){ return; }
       mImageView.highlightAyah(sura, ayah);
       if (mScrollView != null){
          AyahBounds yBounds = mImageView.getYBoundsForCurrentHighlight();
@@ -525,7 +535,9 @@ public class QuranPageFragment extends SherlockFragment
       
       @Override
       protected void onPostExecute(Boolean result) {
-         showAyahMenu(mSura, mAyah, mPage, result);
+         if (result != null){
+            showAyahMenu(mSura, mAyah, mPage, result);
+         }
       }
       
    }

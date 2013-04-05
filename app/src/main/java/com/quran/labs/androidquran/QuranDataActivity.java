@@ -41,7 +41,7 @@ public class QuranDataActivity extends SherlockActivity implements
    /** Called when the activity is first created. */
    @Override
    public void onCreate(Bundle savedInstanceState) {
-      setTheme(R.style.Theme_Sherlock);
+      setTheme(R.style.Theme_Sherlock_NoActionBar);
       requestWindowFeature(Window.FEATURE_NO_TITLE);
 
       super.onCreate(savedInstanceState);

@@ -39,7 +39,7 @@ public class BookmarksDBAdapter {
 
 	public void close() {
       if (mDb != null){
-		   mDbHelper.close();
+		   try { mDbHelper.close(); } catch (Exception e){ }
          mDb = null;
       }
 	}
