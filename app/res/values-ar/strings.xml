@@ -102,6 +102,16 @@
     <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)، هذا الخيار متاح للتلاوات الغير متصلة فقط</string>
     <string name="prefs_download_amount_title">كم التحميل</string>
     <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
+    <string name="prefs_advanced_settings_title">إعدادات متقدمة</string>
+    <string name="prefs_app_location_title">مكان التطبيق</string>
+    <string name="prefs_app_location_summary">اختر الذاكرة التي سيتم تخزين الملفات عليها</string>
+    <string name="prefs_sdcard_internal">الذاكرة الداخلية</string>
+    <string name="prefs_sdcard_external">الذاكرة الخارجية</string>
+    <string name="prefs_sdcard_auto">تلقائي</string>
+    <string name="prefs_app_size">مساحة التطبيق</string>
+    <string name="prefs_copying_app_files">جاري نسخ ملفات التطبيق</string>
+    <string name="prefs_custom_location_title">مكان التطبيق اختياري</string>
+    <string name="prefs_err_moving_app_files">حدث خطأ اثناء نقل ملفات التطبيق</string>
     <!-- Preferences End -->
     
     <string name="downloaded_translations">الملفات المحملة</string>

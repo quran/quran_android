@@ -53,9 +53,9 @@ public class TranslationListTask extends
       mListener = null;
    }
 
-   private static void cacheResponse(String response) {
+   private static void cacheResponse(Context context, String response) {
       try {
-         PrintWriter pw = new PrintWriter(getCachedResponseFilePath());
+         PrintWriter pw = new PrintWriter(getCachedResponseFilePath(context));
          pw.write(response);
          pw.close();
       } catch (Exception e) {
@@ -63,10 +63,10 @@ public class TranslationListTask extends
       }
    }
 
-   private static String loadCachedResponse() {
+   private static String loadCachedResponse(Context context) {
       String response = null;
       try {
-         FileReader fr = new FileReader(getCachedResponseFilePath());
+         FileReader fr = new FileReader(getCachedResponseFilePath(context));
          BufferedReader br = new BufferedReader(fr);
          response = "";
          String line = "";
@@ -95,14 +95,14 @@ public class TranslationListTask extends
 
       String text = null;
       if (shouldUseCache){
-         text = loadCachedResponse();
+         text = loadCachedResponse(context);
       }
 
       boolean refreshed = false;
       if (TextUtils.isEmpty(text)){
          text = downloadUrl(WEB_SERVICE_URL);
          if (TextUtils.isEmpty(text)){ return null; }
-         if (useCache){ cacheResponse(text); }
+         if (useCache){ cacheResponse(context, text); }
          refreshed = true;
       }
 
@@ -150,7 +150,7 @@ public class TranslationListTask extends
                name = name.substring(0, firstParen-1);
             }
 
-            String databaseDir = QuranFileUtils.getQuranDatabaseDirectory();
+            String databaseDir = QuranFileUtils.getQuranDatabaseDirectory(context);
             String path = databaseDir + File.separator + filename;
             boolean exists = new File(path).exists();
 
@@ -165,7 +165,7 @@ public class TranslationListTask extends
                else if (version > -1) {
                   needsUpdate = true;
                   try {
-                     DatabaseHandler mHandler = new DatabaseHandler(filename);
+                     DatabaseHandler mHandler = new DatabaseHandler(context, filename);
                      if (mHandler.validDatabase()){
                         item.localVersion = mHandler.getTextVersion();
                      }
@@ -213,9 +213,9 @@ public class TranslationListTask extends
       return items;
    }
 
-   private static File getCachedResponseFilePath() {
+   private static File getCachedResponseFilePath(Context context) {
       String fileName = CACHED_RESPONSE_FILE_NAME;
-      String dir = QuranFileUtils.getQuranDatabaseDirectory();
+      String dir = QuranFileUtils.getQuranDatabaseDirectory(context);
       return new File(dir + File.separator + fileName);
    }
 

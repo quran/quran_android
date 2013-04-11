@@ -17,8 +17,10 @@ public class QuranPageWorker {
    private static final String TAG = "QuranPageWorker";
    
    private LruCache<Integer, Bitmap> mMemoryCache = null;
+   private Context mContext;
 
    public QuranPageWorker(FragmentActivity activity){
+      mContext = activity;
       ImageCacheFragment fragment = ImageCacheFragment.getImageCacheFragment(
               activity.getSupportFragmentManager());
       mMemoryCache = fragment.mRetainedCache;
@@ -78,7 +80,7 @@ public class QuranPageWorker {
       @Override
       protected Bitmap doInBackground(Integer... params) {
          data = params[0];
-         final Bitmap bitmap = QuranDisplayHelper.getQuranPage(data);
+         final Bitmap bitmap = QuranDisplayHelper.getQuranPage(mContext, data);
          if (bitmap == null){ Log.w(TAG, "got bitmap back as null..."); }
 
          addBitmapToCache(data, bitmap);

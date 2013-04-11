@@ -205,7 +205,7 @@ public class TranslationFragment extends SherlockFragment
 
          try {
             DatabaseHandler translationHandler =
-                    new DatabaseHandler(databaseName);
+                    new DatabaseHandler(getActivity(), databaseName);
             Cursor translationCursor =
                     translationHandler.getVerses(bounds[0], bounds[1],
                             bounds[2], bounds[3],
@@ -216,7 +216,7 @@ public class TranslationFragment extends SherlockFragment
 
             if (QuranSettings.wantArabicInTranslationView(activity)){
                try {
-                  ayahHandler = new DatabaseHandler(
+                  ayahHandler = new DatabaseHandler(getActivity(),
                        QuranDataProvider.QURAN_ARABIC_DATABASE);
                   ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
                        bounds[2], bounds[3],

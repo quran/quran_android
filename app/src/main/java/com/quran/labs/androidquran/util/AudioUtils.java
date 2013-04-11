@@ -60,7 +60,7 @@ public class AudioUtils {
                  .getStringArray(R.array.quran_readers_path);
       }
 
-      String rootDirectory = getAudioRootDirectory();
+      String rootDirectory = getAudioRootDirectory(context);
       return rootDirectory == null? null :
               rootDirectory + mQariFilePaths[position];
    }
@@ -274,8 +274,8 @@ public class AudioUtils {
       return true;
    }
 
-   public static String getAudioRootDirectory(){
-      String s = QuranFileUtils.getQuranBaseDirectory();
+   public static String getAudioRootDirectory(Context context){
+      String s = QuranFileUtils.getQuranBaseDirectory(context);
       return (s == null)? null : s + AUDIO_DIRECTORY + File.separator;
    }
 

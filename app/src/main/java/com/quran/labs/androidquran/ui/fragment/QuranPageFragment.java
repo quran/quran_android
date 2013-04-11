@@ -493,8 +493,8 @@ public class QuranPageFragment extends SherlockFragment
 
       @Override
       public void onLongPress(MotionEvent event) {
-         if (!QuranFileUtils.haveAyaPositionFile() ||
-             !QuranFileUtils.hasArabicSearchDatabase()){
+         if (!QuranFileUtils.haveAyaPositionFile(getActivity()) ||
+             !QuranFileUtils.hasArabicSearchDatabase(getActivity())){
             Activity activity = getActivity();
             if (activity != null){
                PagerActivity pagerActivity = (PagerActivity)activity;
@@ -682,7 +682,7 @@ public class QuranPageFragment extends SherlockFragment
          String text = null;
          try {
             DatabaseHandler ayahHandler =
-                    new DatabaseHandler(
+                    new DatabaseHandler(getActivity(),
                             QuranDataProvider.QURAN_ARABIC_DATABASE);
             Cursor cursor = ayahHandler.getVerses(sura, ayah, sura, ayah,
                     DatabaseHandler.ARABIC_TEXT_TABLE);
@@ -745,7 +745,7 @@ public class QuranPageFragment extends SherlockFragment
 
 			if (db != null) {
             try {
-               DatabaseHandler tafsirHandler = new DatabaseHandler(db);
+               DatabaseHandler tafsirHandler = new DatabaseHandler(getActivity(), db);
                Cursor cursor = tafsirHandler.getVerse(sura, ayah);
                if (cursor.moveToFirst()) {
                   String text = cursor.getString(2);

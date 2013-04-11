@@ -69,7 +69,7 @@ public class TranslationManagerActivity extends SherlockActivity
       });
 
       setSupportProgressBarIndeterminateVisibility(true);
-      mDatabaseDirectory = QuranFileUtils.getQuranDatabaseDirectory();
+      mDatabaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);
 
       mSharedPreferences = PreferenceManager
               .getDefaultSharedPreferences(getApplicationContext());
@@ -284,7 +284,7 @@ public class TranslationManagerActivity extends SherlockActivity
              .setPositiveButton(R.string.remove_button,
                      new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                           QuranFileUtils.removeTranslation(
+                           QuranFileUtils.removeTranslation(TranslationManagerActivity.this,
                                    selectedItem.filename);
                            selectedItem.localVersion = null;
                            selectedItem.exists = false;
