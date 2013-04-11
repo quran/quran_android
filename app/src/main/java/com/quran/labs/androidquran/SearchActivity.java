@@ -97,7 +97,7 @@ public class SearchActivity extends SherlockActivity
       String url = QuranFileUtils.getArabicSearchDatabaseUrl();
       String notificationTitle = getString(R.string.search_data);
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-              QuranFileUtils.getQuranDatabaseDirectory(), notificationTitle,
+              QuranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
               SEARCH_INFO_DOWNLOAD_KEY,
               QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
@@ -150,7 +150,7 @@ public class SearchActivity extends SherlockActivity
 			if (mIsArabicSearch){
 				// if we come from muyassar and don't have arabic db, we set
 				// arabic search to false so we jump to the translation.
-				if (!QuranFileUtils.hasArabicSearchDatabase()){
+				if (!QuranFileUtils.hasArabicSearchDatabase(this)){
 					mIsArabicSearch = false;
             }
 			}
@@ -197,7 +197,7 @@ public class SearchActivity extends SherlockActivity
 	private void showResults(String query){
 		mIsArabicSearch = QuranUtils.doesStringContainArabic(query);
 		boolean showArabicWarning = (mIsArabicSearch &&
-			!QuranFileUtils.hasArabicSearchDatabase());
+			!QuranFileUtils.hasArabicSearchDatabase(this));
 		if (showArabicWarning){ mIsArabicSearch = false; }
 		
 		Cursor cursor = getContentResolver().query(

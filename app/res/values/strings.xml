@@ -155,6 +155,18 @@
     <string name="available_translations">Available for Download</string>
     <string name="remove_button">Remove</string>
     <string name="dialog_ok">OK</string>
+    <string name="prefs_advanced_settings_title">Advanced Settings</string>
+    <string name="prefs_app_location_title">App Location</string>
+    <string name="prefs_app_location_summary">Select which sdcard to store files on</string>
+    <string name="prefs_sdcard_internal">Internal Storage</string>
+    <string name="prefs_sdcard_external">External SD Card</string>
+    <string name="prefs_sdcard_auto">Auto</string>
+    <string name="prefs_app_szie">App size is</string>
+    <string name="prefs_copying_app_files">Copying App files</string>
+    <string name="prefs_custom_location_title">Custom location</string>
+    <string name="prefs_err_moving_app_files">Failed to move app files</string>
+    <string name="prefs_megabytes">MB</string>
+    <!-- Preferences End -->
 
     <!-- translation updates -->
     <string name="update_available">Update Available</string>

@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.database;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,8 +28,8 @@ public class DatabaseHandler {
 	
 	private int schemaVersion = 1;
 	
-	public DatabaseHandler(String databaseName) throws SQLException {
-		String base = QuranFileUtils.getQuranDatabaseDirectory();
+	public DatabaseHandler(Context context, String databaseName) throws SQLException {
+		String base = QuranFileUtils.getQuranDatabaseDirectory(context);
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
 		mDatabase = SQLiteDatabase.openDatabase(path, null,

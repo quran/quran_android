@@ -8,11 +8,14 @@ import android.util.Log;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class QuranFileUtils {
@@ -20,8 +23,7 @@ public class QuranFileUtils {
 
 	public static boolean failedToWrite = false;
 	public static String IMG_HOST = "http://android.quran.com/data/";
-	private static String QURAN_BASE = File.separator + "quran_android"
-			+ File.separator;
+	private static String QURAN_BASE = "quran_android/";
 	private static String DATABASE_DIRECTORY = "databases";
 	private static int BUFF_SIZE = 1024;
 	public static final String PACKAGE_NAME = "com.quran.labs.androidquran";
@@ -50,10 +52,10 @@ public class QuranFileUtils {
 		}
 	}
 
-	public static boolean haveAllImages() {
+	public static boolean haveAllImages(Context context) {
 		String state = Environment.getExternalStorageState();
 		if (state.equals(Environment.MEDIA_MOUNTED)) {
-			File dir = new File(getQuranDirectory() + File.separator);
+			File dir = new File(getQuranDirectory(context) + File.separator);
 			if (dir.isDirectory()) {
 				int files = dir.list().length;
 				if (files >= 604){
@@ -61,7 +63,7 @@ public class QuranFileUtils {
                // all pages are there, but this will do for now.
 					return true;
             }
-			} else { QuranFileUtils.makeQuranDirectory(); }
+			} else { QuranFileUtils.makeQuranDirectory(context); }
 		}
 		return false;
 	}
@@ -77,8 +79,8 @@ public class QuranFileUtils {
 		return state.equals(Environment.MEDIA_MOUNTED);
 	}
 	
-	public static Bitmap getImageFromSD(String filename){
-		String location = getQuranDirectory();
+	public static Bitmap getImageFromSD(Context context, String filename){
+		String location = getQuranDirectory(context);
 		if (location == null)
 			return null;
 		
@@ -87,8 +89,8 @@ public class QuranFileUtils {
 		return BitmapFactory.decodeFile(location + File.separator + filename, options);
 	}
 
-	public static boolean writeNoMediaFile() {
-		File f = new File(getQuranDirectory() + "/.nomedia");
+	public static boolean writeNoMediaFile(Context context) {
+		File f = new File(getQuranDirectory(context) + "/.nomedia");
 		if (f.exists()) {
 			return true;
 		}
@@ -100,22 +102,22 @@ public class QuranFileUtils {
 		}
 	}
 
-	public static boolean makeQuranDirectory() {
-		String path = getQuranDirectory();
+	public static boolean makeQuranDirectory(Context context) {
+		String path = getQuranDirectory(context);
 		if (path == null)
 			return false;
 
 		File directory = new File(path);
 		if (directory.exists() && directory.isDirectory()) {
-			return writeNoMediaFile();
+			return writeNoMediaFile(context);
 		} else if (directory.mkdirs()) {
-			return writeNoMediaFile();
+			return writeNoMediaFile(context);
 		} else
 			return false;
 	}
 
-	public static boolean makeQuranDatabaseDirectory() {
-		String path = getQuranDatabaseDirectory();
+	public static boolean makeQuranDatabaseDirectory(Context context) {
+		String path = getQuranDatabaseDirectory(context);
 		if (path == null)
 			return false;
 
@@ -128,7 +130,7 @@ public class QuranFileUtils {
 			return false;
 	}
 
-	public static Bitmap getImageFromWeb(String filename) {
+	public static Bitmap getImageFromWeb(Context context, String filename) {
 		QuranScreenInfo instance = QuranScreenInfo.getInstance();
 		if (instance == null) return null;
 		
@@ -148,11 +150,11 @@ public class QuranFileUtils {
 		if (failedToWrite)
 			return BitmapFactory.decodeStream(is);
 
-		String path = getQuranDirectory();
+		String path = getQuranDirectory(context);
 		if (path != null) {
 			path += File.separator + filename;
 
-			if (!QuranFileUtils.makeQuranDirectory()) {
+			if (!QuranFileUtils.makeQuranDirectory(context)) {
 				failedToWrite = true;
 				return BitmapFactory.decodeStream(is);
 			}
@@ -162,13 +164,13 @@ public class QuranFileUtils {
 				readPhase = true;
 				saveStream(is, path);
 
-				return QuranFileUtils.getImageFromSD(filename);
+				return QuranFileUtils.getImageFromSD(context, filename);
 			} catch (Exception e) {
 				Log.d("quran_utils", e.toString());
 				if (readPhase == false)
 					return BitmapFactory.decodeStream(is);
 				failedToWrite = true;
-				return QuranFileUtils.getImageFromWeb(filename);
+				return QuranFileUtils.getImageFromWeb(context, filename);
 			}
 		} else
 			return BitmapFactory.decodeStream(is);
@@ -186,21 +188,50 @@ public class QuranFileUtils {
 		is.close();
 	}
 
-	public static String getQuranBaseDirectory() {
-		String state = Environment.getExternalStorageState();
-		if (state.equals(Environment.MEDIA_MOUNTED))
-			return Environment.getExternalStorageDirectory() + QURAN_BASE;
-		else
-			return null;
+	public static String getQuranBaseDirectory(Context context) {
+        String basePath = null;
+        if (QuranSettings.useCustomLocation(context)) {
+            basePath = QuranSettings.getAppCustomLocation(context);
+        } else if (isSDCardMounted()) {
+            basePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+
+        if (basePath != null) {
+            if (!basePath.endsWith("/"))
+                basePath += "/";
+            return basePath + QURAN_BASE;
+        }
+        return null;
 	}
 
-	public static String getQuranDatabaseDirectory() {
-		String base = getQuranBaseDirectory();
+    /**
+     * Returns the app used space in megabytes
+     * @return
+     */
+    public static int getAppUsedSpace(Context context) {
+        File base = new File(getQuranBaseDirectory(context));
+        ArrayList<File> files = new ArrayList<File>();
+        files.add(base);
+        long size = 0;
+        while (!files.isEmpty()) {
+            File f = files.remove(0);
+            if (f.isDirectory()) {
+                File[] subFiles = f.listFiles();
+                for (File sf: subFiles) files.add(sf);
+            } else {
+                size += f.length();
+            }
+        }
+        return (int) (size / (long) (1024 * 1024));
+    }
+
+	public static String getQuranDatabaseDirectory(Context context) {
+		String base = getQuranBaseDirectory(context);
 		return (base == null) ? null : base + DATABASE_DIRECTORY;
 	}
 
-	public static String getQuranDirectory() {
-		String base = getQuranBaseDirectory();
+	public static String getQuranDirectory(Context context) {
+		String base = getQuranBaseDirectory(context);
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
 		if (qsi == null)
 			return null;
@@ -238,10 +269,10 @@ public class QuranFileUtils {
       return IMG_HOST + "databases/audio/";
    }
 
-	public static boolean haveAyaPositionFile(){
-		String base = QuranFileUtils.getQuranDatabaseDirectory();
+	public static boolean haveAyaPositionFile(Context context){
+		String base = QuranFileUtils.getQuranDatabaseDirectory(context);
 		if (base == null)
-			QuranFileUtils.makeQuranDatabaseDirectory();
+			QuranFileUtils.makeQuranDatabaseDirectory(context);
 		String filename = QuranFileUtils.getAyaPositionFileName();
 		if (filename != null){
 			String ayaPositionDb = base + File.separator + filename;
@@ -255,8 +286,8 @@ public class QuranFileUtils {
 		return false;
 	}
 
-	public static boolean hasTranslation(String fileName) {
-		String path = getQuranDatabaseDirectory();
+	public static boolean hasTranslation(Context context, String fileName) {
+		String path = getQuranDatabaseDirectory(context);
 		if (path != null) {
 			path += File.separator + fileName;
 			return new File(path).exists();
@@ -264,8 +295,8 @@ public class QuranFileUtils {
 		return false;
 	}
 	
-	public static boolean removeTranslation(String fileName) {
-		String path = getQuranDatabaseDirectory();
+	public static boolean removeTranslation(Context context, String fileName) {
+		String path = getQuranDatabaseDirectory(context);
 		if (path != null) {
 			path += File.separator + fileName;
 			File f = new File(path);
@@ -274,8 +305,8 @@ public class QuranFileUtils {
 		return false;
 	}
 
-   public static boolean hasArabicSearchDatabase(){
-      return hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE);
+   public static boolean hasArabicSearchDatabase(Context context){
+      return hasTranslation(context, QuranDataProvider.QURAN_ARABIC_DATABASE);
    }
 
    public static String getArabicSearchDatabaseUrl(){
@@ -285,7 +316,7 @@ public class QuranFileUtils {
 
    public static void migrateAudio(Context context){
       String oldAudioDirectory = AudioUtils.getOldAudioRootDirectory(context);
-      String destinationAudioDirectory = AudioUtils.getAudioRootDirectory();
+      String destinationAudioDirectory = AudioUtils.getAudioRootDirectory(context);
       if (oldAudioDirectory != null && destinationAudioDirectory != null){
          File old = new File(oldAudioDirectory);
          if (old.exists()){
@@ -294,7 +325,7 @@ public class QuranFileUtils {
             if (!dest.exists()){
                // just in case the user manually deleted /sdcard/quran_android
                // and left the audio as is (unlikely, but just in case).
-               String parentDir = QuranFileUtils.getQuranBaseDirectory();
+               String parentDir = QuranFileUtils.getQuranBaseDirectory(context);
                new File(parentDir).mkdir();
 
                Log.d(TAG, "new audio path doesn't exist, renaming...");
@@ -329,4 +360,62 @@ public class QuranFileUtils {
       }
    }
 
+    public static boolean moveAppFiles(Context context, String newLocation) {
+        if (QuranSettings.getAppCustomLocation(context).equals(newLocation))
+            return true;
+        File currentDirectory = new File(getQuranBaseDirectory(context));
+        File newDirectory = new File(newLocation, QURAN_BASE);
+        if (newDirectory.exists() || newDirectory.mkdirs()) {
+            try {
+                copyFileOrDirectory(currentDirectory, newDirectory);
+                deleteFileOrDirectory(currentDirectory);
+                return true;
+            } catch (IOException e) {
+                Log.e(TAG, "error moving app files", e);
+            }
+        }
+        return false;
+    }
+
+    private static void deleteFileOrDirectory(File file) {
+        if (file.isDirectory()) {
+            File[] subFiles = file.listFiles();
+            for (File sf: subFiles) {
+                if (sf.isFile())
+                    sf.delete();
+                else
+                    deleteFileOrDirectory(sf);
+            }
+        }
+        file.delete();
+    }
+
+    private static void copyFileOrDirectory(File source, File destination) throws IOException {
+        if (source.isDirectory()) {
+            if (!destination.exists()) {
+                destination.mkdirs();
+            }
+
+            File[] files = source.listFiles();
+            for (File f: files) {
+                copyFileOrDirectory(f, new File(destination, f.getName()));
+            }
+        } else {
+            copyFile(source, destination);
+        }
+    }
+
+    private static void copyFile(File source, File destination) throws IOException {
+        InputStream in = new FileInputStream(source);
+        OutputStream out = new FileOutputStream(destination);
+
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = in.read(buffer)) > 0) {
+            out.write(buffer, 0, length);
+        }
+        out.flush();
+        out.close();
+        in.close();
+    }
 }

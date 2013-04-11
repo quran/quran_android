@@ -18,15 +18,15 @@ import com.quran.labs.androidquran.util.QuranUtils;
 public class QuranDisplayHelper {
    private static final String TAG = "QuranDisplayHelper";
    
-   public static Bitmap getQuranPage(int page){
+   public static Bitmap getQuranPage(Context context, int page){
       Bitmap bitmap;
 
       String filename = QuranFileUtils.getPageFileName(page);
-      bitmap = QuranFileUtils.getImageFromSD(filename);
+      bitmap = QuranFileUtils.getImageFromSD(context, filename);
       if (bitmap == null) {
          android.util.Log.d(TAG, "failed to get " + page +
                  " with name " + filename + " from sd...");
-         bitmap = QuranFileUtils.getImageFromWeb(filename);
+         bitmap = QuranFileUtils.getImageFromWeb(context, filename);
       }
       return bitmap;
    }

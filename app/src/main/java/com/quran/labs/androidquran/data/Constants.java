@@ -52,4 +52,7 @@ public class Constants {
    public static final String PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation";
    public static final String PREF_SORT_BOOKMARKS = "sortBookmarks";
    public static final String PREF_SORT_TAGS = "sortTags";
+
+    // Sdcards
+    public static final String APP_DEFAULT_LOCATION = "/mnt/sdcard/";
 }

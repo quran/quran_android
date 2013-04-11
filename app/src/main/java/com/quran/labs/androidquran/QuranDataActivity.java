@@ -159,8 +159,8 @@ public class QuranDataActivity extends SherlockActivity implements
          // intentionally not sleeping because waiting
          // for the splash screen is not cool.
          QuranFileUtils.migrateAudio(QuranDataActivity.this);
-         return QuranFileUtils.getQuranDirectory() != null &&
-                QuranFileUtils.haveAllImages();
+         return QuranFileUtils.getQuranDirectory(QuranDataActivity.this) != null &&
+                QuranFileUtils.haveAllImages(QuranDataActivity.this);
       }
       
       @Override
@@ -229,7 +229,7 @@ public class QuranDataActivity extends SherlockActivity implements
       if (mIsPaused){ return; }
       
       String url = QuranFileUtils.getZipFileUrl();
-      String destination = QuranFileUtils.getQuranBaseDirectory();
+      String destination = QuranFileUtils.getQuranBaseDirectory(QuranDataActivity.this);
       
       // start service
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,

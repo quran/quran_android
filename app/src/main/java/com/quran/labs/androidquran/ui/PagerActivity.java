@@ -138,7 +138,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       // initialize ayah info database
       String filename = QuranFileUtils.getAyaPositionFileName();
       try {
-         mAyahInfoAdapter = new AyahInfoDatabaseHandler(filename);
+         mAyahInfoAdapter = new AyahInfoDatabaseHandler(this, filename);
       }
       catch (Exception e){
          // no ayah info database available
@@ -387,9 +387,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       boolean haveDownload = false;
-      if (!QuranFileUtils.haveAyaPositionFile()){
+      if (!QuranFileUtils.haveAyaPositionFile(this)){
          String url = QuranFileUtils.getAyaPositionFileUrl();
-         String destination = QuranFileUtils.getQuranDatabaseDirectory();
+         String destination = QuranFileUtils.getQuranDatabaseDirectory(this);
          // start the download
          String notificationTitle = getString(R.string.highlighting_database);
          Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
@@ -400,7 +400,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          haveDownload = true;
       }
 
-      if (!QuranFileUtils.hasArabicSearchDatabase()){
+      if (!QuranFileUtils.hasArabicSearchDatabase(this)){
          String url = QuranFileUtils.getArabicSearchDatabaseUrl();
 
          // show "downloading required files" unless we already showed that for
@@ -411,7 +411,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          }
 
          Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-                 QuranFileUtils.getQuranDatabaseDirectory(), notificationTitle,
+                 QuranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
                  AUDIO_DOWNLOAD_KEY, downloadType);
          intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
                  QuranDataProvider.QURAN_ARABIC_DATABASE);
@@ -1086,7 +1086,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       Log.d(TAG, "seeing if we can play audio request...");
-      if (!QuranFileUtils.haveAyaPositionFile()){
+      if (!QuranFileUtils.haveAyaPositionFile(this)){
          if (needsPermission){
             mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
             return;
@@ -1095,7 +1095,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          if (mIsActionBarHidden){ toggleActionBar(); }
          mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
          String url = QuranFileUtils.getAyaPositionFileUrl();
-         String destination = QuranFileUtils.getQuranDatabaseDirectory();
+         String destination = QuranFileUtils.getQuranDatabaseDirectory(this);
          // start the download
          String notificationTitle = getString(R.string.highlighting_database);
          Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,

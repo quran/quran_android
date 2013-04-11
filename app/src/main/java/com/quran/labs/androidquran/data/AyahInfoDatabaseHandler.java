@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.data;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,8 +23,8 @@ public class AyahInfoDatabaseHandler {
 	public static String MAX_Y = "max_y";
 	public static String GLYPHS_TABLE = "glyphs";
 	
-	public AyahInfoDatabaseHandler(String databaseName) throws SQLException {
-		String base = QuranFileUtils.getQuranDatabaseDirectory();
+	public AyahInfoDatabaseHandler(Context context, String databaseName) throws SQLException {
+		String base = QuranFileUtils.getQuranDatabaseDirectory(context);
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
 		database = SQLiteDatabase.openDatabase(path, null,

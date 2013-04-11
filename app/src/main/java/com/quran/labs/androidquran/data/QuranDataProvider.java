@@ -91,7 +91,7 @@ public class QuranDataProvider extends ContentProvider {
 
 	private Cursor search(String query){
 		if (QuranUtils.doesStringContainArabic(query) &&
-				QuranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)){
+				QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE)){
 			Cursor c = search(query, QURAN_ARABIC_DATABASE, true);
 			if (c != null) return c;
 		}
@@ -111,7 +111,7 @@ public class QuranDataProvider extends ContentProvider {
 		
 		int numItems = 1;
 		if (QuranUtils.doesStringContainArabic(query) &&
-				QuranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)){
+				QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE)){
 			numItems = 2;
 		}
 		
@@ -170,11 +170,11 @@ public class QuranDataProvider extends ContentProvider {
 		if (language == null) return null;
 
 		if (mDatabase == null){
-			mDatabase = new DatabaseHandler(language);
+			mDatabase = new DatabaseHandler(getContext(), language);
       }
       else if (language != null && !language.equals(mCurrentLanguage)){
          mDatabase.closeDatabase();
-         mDatabase = new DatabaseHandler(language);
+         mDatabase = new DatabaseHandler(getContext(), language);
          mCurrentLanguage = language;
       }
 
@@ -193,11 +193,11 @@ public class QuranDataProvider extends ContentProvider {
 			Log.d("qdp", "uri part: " + s);
 
 		if (mDatabase == null){
-			mDatabase = new DatabaseHandler(lang);
+			mDatabase = new DatabaseHandler(getContext(), lang);
       }
       else if (lang != null && !lang.equals(mCurrentLanguage)){
          mDatabase.closeDatabase();
-         mDatabase = new DatabaseHandler(lang);
+         mDatabase = new DatabaseHandler(getContext(), lang);
          mCurrentLanguage = lang;
       }
 
