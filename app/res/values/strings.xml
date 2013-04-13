@@ -165,6 +165,7 @@
     <string name="prefs_copying_app_files">Copying App files</string>
     <string name="prefs_custom_location_title">Custom location</string>
     <string name="prefs_err_moving_app_files">Failed to move app files</string>
+    <string name="prefs_no_enough_space_to_move_files">Insufficient space to move app files</string>
     <string name="prefs_megabytes">MB</string>
     <!-- Preferences End -->
 

@@ -110,7 +110,8 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
                         moveFilesTask = new MoveFilesAsyncTask(newLocation);
                         moveFilesTask.execute();
                     } else {
-
+                        Toast.makeText(QuranPreferenceActivity.this,
+                                getString(R.string.prefs_no_enough_space_to_move_files), Toast.LENGTH_LONG);
                     }
                     return false;
                 }
@@ -167,7 +168,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
                 QuranSettings.setAppCustomLocation(QuranPreferenceActivity.this, newLocation);
             } else {
                 Toast.makeText(QuranPreferenceActivity.this,
-                        "Failed to move app files", Toast.LENGTH_LONG).show();
+                        getString(R.string.prefs_err_moving_app_files), Toast.LENGTH_LONG).show();
             }
             dialog = null;
             moveFilesTask = null;
