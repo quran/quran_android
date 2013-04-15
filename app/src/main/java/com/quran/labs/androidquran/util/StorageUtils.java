@@ -28,7 +28,7 @@ public class StorageUtils {
     /**
      * @return A List of all storage locations available
      */
-    public static List<Storage> getAllStorageLocations(Context context) {
+    public static List<Storage> getAllStorageLocations(Context context){
         List<String> mMounts = readMountsFile();
         List<String> mVold = readVoldsFile();
 
@@ -43,37 +43,50 @@ public class StorageUtils {
         return buildMountsList(context, mMounts);
     }
 
-    private static List<Storage> buildMountsList(Context context, List<String> mounts) {
+    private static List<Storage> buildMountsList(Context context,
+                                                 List<String> mounts){
         List<Storage> list = new ArrayList<Storage>(mounts.size());
 
         int externalSdcardsCount = 0;
         if (mounts.size() > 0) {
 
             // Follow Android SDCards naming conventions
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                list.add(new Storage(context.getString(R.string.prefs_sdcard_auto), mounts.get(0)));
-            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                if (Environment.isExternalStorageRemovable()) {
-                    list.add(new Storage(context.getString(R.string.prefs_sdcard_external) + " 1", mounts.get(0)));
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD){
+                list.add(new Storage(
+                        context.getString(R.string.prefs_sdcard_auto),
+                        mounts.get(0)));
+            }
+            else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB){
+                if (Environment.isExternalStorageRemovable()){
+                    list.add(new Storage(context.getString(
+                            R.string.prefs_sdcard_external) +
+                            " 1", mounts.get(0)));
                     externalSdcardsCount = 1;
-                } else {
-                    list.add(new Storage(context.getString(R.string.prefs_sdcard_internal), mounts.get(0)));
+                }
+                else {
+                    list.add(new Storage(context.getString(
+                            R.string.prefs_sdcard_internal), mounts.get(0)));
                 }
             } else {
-                if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
-                    list.add(new Storage(context.getString(R.string.prefs_sdcard_internal), mounts.get(0)));
+                if (!Environment.isExternalStorageRemovable() ||
+                        Environment.isExternalStorageEmulated()) {
+                    list.add(new Storage(context.getString(
+                            R.string.prefs_sdcard_internal), mounts.get(0)));
                 } else {
-                    list.add(new Storage(context.getString(R.string.prefs_sdcard_external) + " 1", mounts.get(0)));
+                    list.add(new Storage(context.getString(
+                            R.string.prefs_sdcard_external) +
+                            " 1", mounts.get(0)));
                     externalSdcardsCount = 1;
                 }
             }
 
             // All other mounts rather than the first mount point, are considered as External SD Card
             if (mounts.size() > 1) {
-                for (int i = 1; i < mounts.size(); i++) {
-                    list.add(new Storage(context.getString(R.string.prefs_sdcard_external)
-                            + " " + (i + externalSdcardsCount), mounts.get(i)));
+                for (int i = 1; i < mounts.size(); i++){
+                    list.add(new Storage(context.getString(
+                            R.string.prefs_sdcard_external)
+                            + " " + (i + externalSdcardsCount),
+                            mounts.get(i)));
                 }
             }
         }
@@ -130,7 +143,8 @@ public class StorageUtils {
                         String element = lineElements[2];
 
                         if (element.contains(":"))
-                            element = element.substring(0, element.indexOf(":"));
+                            element = element.substring(
+                                    0, element.indexOf(":"));
                         if (!element.equals("/mnt/sdcard"))
                             mVold.add(element);
                     }
@@ -157,8 +171,10 @@ public class StorageUtils {
 
         private void computeSpace() {
             StatFs stat = new StatFs(mountPoint);
-            long totalBytes = (long) stat.getBlockCount() * (long) stat.getBlockSize();
-            long bytesAvailable = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+            long totalBytes = (long) stat.getBlockCount() *
+                    (long)stat.getBlockSize();
+            long bytesAvailable = (long) stat.getAvailableBlocks() *
+                    (long)stat.getBlockSize();
             // Convert total bytes to megabytes
             totalSpace = Math.round(totalBytes / (1024 * 1024));
             freeSpace = Math.round(bytesAvailable / (1024 * 1024));

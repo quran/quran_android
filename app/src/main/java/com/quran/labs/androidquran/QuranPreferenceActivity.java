@@ -24,12 +24,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class QuranPreferenceActivity extends SherlockPreferenceActivity {
+    private static final String TAG =
+           "com.quran.labs.androidquran.QuranPreferenceActivity";
 
-	private boolean mInitiallyIsArabic = false;
+	 private boolean mInitiallyIsArabic = false;
     private boolean mIsArabic = false;
-    private ListPreference lstStorageOptions;
-    private MoveFilesAsyncTask moveFilesTask;
-    private List<StorageUtils.Storage> storageList;
+    private ListPreference mListStorageOptions;
+    private MoveFilesAsyncTask mMoveFilesTask;
+    private List<StorageUtils.Storage> mStorageList;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +66,11 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 		});
 
 
-        lstStorageOptions = (ListPreference) findPreference(getString(R.string.prefs_app_location));
+        mListStorageOptions = (ListPreference)findPreference(
+                getString(R.string.prefs_app_location));
 
-        CheckBoxPreference chkCustomLocation = (CheckBoxPreference)
-                findPreference(getString(R.string.prefs_use_custom_location));
-
-        Preference advancedPrefs = findPreference(getString(R.string.prefs_advanced_settings));
+        Preference advancedPrefs = findPreference(
+                getString(R.string.prefs_advanced_settings));
         advancedPrefs.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -81,43 +82,48 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
     private void loadStorageOptions() {
         try {
-            String msg = lstStorageOptions.getSummary().toString();
+            String msg = mListStorageOptions.getSummary().toString();
             final int appSize = QuranFileUtils.getAppUsedSpace(this);
             msg += "\n" + getString(R.string.prefs_app_size) + " " + appSize
                     + " " + getString(R.string.prefs_megabytes);
-            lstStorageOptions.setSummary(msg);
-            storageList = StorageUtils.getAllStorageLocations(getBaseContext());
-            CharSequence[] values = new CharSequence[storageList.size()];
-            CharSequence[] displayNames = new CharSequence[storageList.size()];
+            mListStorageOptions.setSummary(msg);
+            mStorageList = StorageUtils
+                    .getAllStorageLocations(getApplicationContext());
+            CharSequence[] values = new CharSequence[mStorageList.size()];
+            CharSequence[] displayNames = new CharSequence[mStorageList.size()];
             int i = 0;
-            final HashMap<String, Integer> storageEmptySpaceMap = new HashMap<String, Integer>(storageList.size());
-            for (StorageUtils.Storage storage: storageList) {
+            final HashMap<String, Integer> storageEmptySpaceMap =
+                    new HashMap<String, Integer>(mStorageList.size());
+            for (StorageUtils.Storage storage: mStorageList) {
                 values[i] = storage.getMountPoint();
-                displayNames[i] = storage.getLabel() + " " + storage.getFreeSpace()
+                displayNames[i] = storage.getLabel() + " " +
+                        storage.getFreeSpace()
                         + " " + getString(R.string.prefs_megabytes);
                 i++;
-                storageEmptySpaceMap.put(storage.getMountPoint(), storage.getFreeSpace());
+                storageEmptySpaceMap.put(storage.getMountPoint(),
+                        storage.getFreeSpace());
             }
 
-            lstStorageOptions.setEntries(displayNames);
-            lstStorageOptions.setEntryValues(values);
+            mListStorageOptions.setEntries(displayNames);
+            mListStorageOptions.setEntryValues(values);
 
-            lstStorageOptions.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    String newLocation = (String) newValue;
-                    if (appSize < storageEmptySpaceMap.get(newLocation)) {
-                        moveFilesTask = new MoveFilesAsyncTask(newLocation);
-                        moveFilesTask.execute();
-                    } else {
-                        Toast.makeText(QuranPreferenceActivity.this,
-                                getString(R.string.prefs_no_enough_space_to_move_files), Toast.LENGTH_LONG);
-                    }
-                    return false;
-                }
+            mListStorageOptions.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+               @Override
+               public boolean onPreferenceChange(Preference preference, Object newValue) {
+                  String newLocation = (String) newValue;
+                  if (appSize < storageEmptySpaceMap.get(newLocation)) {
+                     mMoveFilesTask = new MoveFilesAsyncTask(newLocation);
+                     mMoveFilesTask.execute();
+                  } else {
+                     Toast.makeText(QuranPreferenceActivity.this, getString(
+                             R.string.prefs_no_enough_space_to_move_files),
+                             Toast.LENGTH_LONG);
+                  }
+                  return false;
+               }
             });
         } catch(Exception e) {
-            Log.e("QPA", "error loading storage options", e);
+            Log.e(TAG, "error loading storage options", e);
         }
     }
 
@@ -135,7 +141,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
     @Override
     public void onBackPressed() {
         // disable back press while task in progress
-        if (moveFilesTask == null)
+        if (mMoveFilesTask == null)
             super.onBackPressed();
     }
 
@@ -144,7 +150,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
         private String newLocation;
         private ProgressDialog dialog;
 
-        private MoveFilesAsyncTask(String newLocation) {
+        private MoveFilesAsyncTask(String newLocation){
             this.newLocation = newLocation;
         }
 
@@ -158,20 +164,24 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            return QuranFileUtils.moveAppFiles(QuranPreferenceActivity.this, newLocation);
+            return QuranFileUtils.moveAppFiles(
+                    QuranPreferenceActivity.this, newLocation);
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             dialog.dismiss();
-            if (result) {
-                QuranSettings.setAppCustomLocation(QuranPreferenceActivity.this, newLocation);
-            } else {
+            if (result){
+                QuranSettings.setAppCustomLocation(
+                        QuranPreferenceActivity.this, newLocation);
+            }
+            else {
                 Toast.makeText(QuranPreferenceActivity.this,
-                        getString(R.string.prefs_err_moving_app_files), Toast.LENGTH_LONG).show();
+                        getString(R.string.prefs_err_moving_app_files),
+                        Toast.LENGTH_LONG).show();
             }
             dialog = null;
-            moveFilesTask = null;
+            mMoveFilesTask = null;
         }
     }
 }
