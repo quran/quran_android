@@ -161,7 +161,7 @@
     <string name="prefs_sdcard_internal">Internal Storage</string>
     <string name="prefs_sdcard_external">External SD Card</string>
     <string name="prefs_sdcard_auto">Auto</string>
-    <string name="prefs_app_szie">App size is</string>
+    <string name="prefs_app_size">App size is</string>
     <string name="prefs_copying_app_files">Copying App files</string>
     <string name="prefs_custom_location_title">Custom location</string>
     <string name="prefs_err_moving_app_files">Failed to move app files</string>
