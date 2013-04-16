@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <abs.version>4.1.0</abs.version>
+        <abs.version>4.3.0</abs.version>
     </properties>
     <dependencies>
         <dependency>
@@ -25,18 +25,11 @@
         </dependency>
         <dependency>
             <groupId>com.actionbarsherlock</groupId>
-            <artifactId>library</artifactId>
+            <artifactId>actionbarsherlock</artifactId>
             <version>${abs.version}</version>
             <type>apklib</type>
         </dependency>
-        <dependency>
-            <groupId>com.actionbarsherlock</groupId>
-            <artifactId>library</artifactId>
-            <version>${abs.version}</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+   </dependencies>
     <build>
         <plugins>
             <plugin>

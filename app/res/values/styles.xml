@@ -20,10 +20,10 @@
     </style>
 
     <style name="TranslationText.Highlighted">
-        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:textColor">@color/translation_highlight</item>
     </style>
 
-    <style name="QuranAndroid" parent="Theme.Sherlock.ForceOverflow">
+    <style name="QuranAndroid" parent="Theme.Sherlock">
     </style>
 
     <style name="TranslationText.NightMode">
@@ -32,6 +32,6 @@
     </style>
 
     <style name="TranslationText.NightMode.Highlighted">
-        <item name="android:textColor">@color/abs__holo_blue_light</item>
+        <item name="android:textColor">@color/translation_highlight</item>
     </style>
 </resources>
