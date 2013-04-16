@@ -29,7 +29,7 @@
 		<activity android:name=".HelpActivity"
 			android:screenOrientation="portrait" />
 		<activity android:name=".ui.PagerActivity"
-		          android:launchMode="singleTask" />
+		          android:launchMode="singleTop" />
         <activity android:name=".ui.TranslationManagerActivity"
                  android:screenOrientation="portrait" />
 		<activity android:name=".QuranPreferenceActivity"

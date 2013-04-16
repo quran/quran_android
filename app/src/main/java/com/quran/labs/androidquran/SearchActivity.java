@@ -9,6 +9,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 import android.text.SpannableString;
@@ -18,8 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.*;
-import android.widget.AdapterView.OnItemClickListener;
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -36,16 +38,19 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends SherlockActivity
-        implements DefaultDownloadReceiver.SimpleDownloadListener {
+public class SearchActivity extends SherlockFragmentActivity
+        implements DefaultDownloadReceiver.SimpleDownloadListener,
+                   LoaderManager.LoaderCallbacks<Cursor> {
 
    public static final String SEARCH_INFO_DOWNLOAD_KEY =
            "SEARCH_INFO_DOWNLOAD_KEY";
+   private static final String EXTRA_QUERY = "EXTRA_QUERY";
 
 	private TextView mMessageView, mWarningView;
 	private Button mBtnGetTranslations;
 	private boolean mDownloadArabicSearchDb = false;
 	private boolean mIsArabicSearch = false;
+   private String mQuery;
    private DefaultDownloadReceiver mDownloadReceiver = null;
 
 	@Override
@@ -97,8 +102,8 @@ public class SearchActivity extends SherlockActivity
       String url = QuranFileUtils.getArabicSearchDatabaseUrl();
       String notificationTitle = getString(R.string.search_data);
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-              QuranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
-              SEARCH_INFO_DOWNLOAD_KEY,
+              QuranFileUtils.getQuranDatabaseDirectory(this),
+              notificationTitle, SEARCH_INFO_DOWNLOAD_KEY,
               QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
               QuranDataProvider.QURAN_ARABIC_DATABASE);
@@ -122,6 +127,103 @@ public class SearchActivity extends SherlockActivity
 		handleIntent(intent);
 	}
 
+   @Override
+   public Loader<Cursor> onCreateLoader(int id, Bundle args){
+      String query = args.getString(EXTRA_QUERY);
+      mQuery = query;
+      return new CursorLoader(this, QuranDataProvider.SEARCH_URI,
+              null, null, new String[]{ query }, null);
+   }
+
+   @Override
+   public void onLoadFinished(Loader<Cursor> loader, Cursor cursor){
+      mIsArabicSearch = QuranUtils.doesStringContainArabic(mQuery);
+      boolean showArabicWarning = (mIsArabicSearch &&
+              !QuranFileUtils.hasArabicSearchDatabase(this));
+      if (showArabicWarning){ mIsArabicSearch = false; }
+
+      if (cursor == null) {
+         SharedPreferences prefs =
+                 PreferenceManager.getDefaultSharedPreferences(
+                         getApplicationContext());
+         String active = prefs.getString(
+                 Constants.PREF_ACTIVE_TRANSLATION, "");
+         if (TextUtils.isEmpty(active)) {
+            int resource = R.string.no_active_translation;
+            int buttonResource = R.string.translation_settings;
+            if (showArabicWarning){
+               resource = R.string.no_arabic_search_available;
+               mDownloadArabicSearchDb = true;
+               buttonResource = R.string.get_arabic_search_db;
+            }
+            mMessageView.setText(getString(resource, new Object[]{ mQuery }));
+            mBtnGetTranslations.setText(getString(buttonResource));
+            mBtnGetTranslations.setVisibility(View.VISIBLE);
+         } else {
+            if (showArabicWarning){
+               mWarningView.setText(
+                       getString(R.string.no_arabic_search_available));
+               mWarningView.setVisibility(View.VISIBLE);
+               mBtnGetTranslations.setText(
+                       getString(R.string.get_arabic_search_db));
+               mBtnGetTranslations.setVisibility(View.VISIBLE);
+            }
+            mMessageView.setText(getString(R.string.no_results,
+                    new Object[]{ mQuery }));
+         }
+      } else {
+         if (showArabicWarning){
+            mWarningView.setText(getString(R.string.no_arabic_search_available,
+                    new Object[]{ mQuery }));
+            mWarningView.setVisibility(View.VISIBLE);
+            mBtnGetTranslations.setText(
+                    getString(R.string.get_arabic_search_db));
+            mBtnGetTranslations.setVisibility(View.VISIBLE);
+            mDownloadArabicSearchDb = true;
+         }
+
+         // Display the number of results
+         int count = cursor.getCount();
+         String countString = count + " " + getResources().getQuantityString(
+                 R.plurals.search_results,
+                 count, new Object[] { mQuery });
+         mMessageView.setText(countString);
+
+         List<SearchElement> res = new ArrayList<SearchElement>();
+         if (cursor.moveToFirst()){
+            do {
+               int sura = cursor.getInt(0);
+               int ayah = cursor.getInt(1);
+               String text = cursor.getString(2);
+               SearchElement elem = new SearchElement(sura, ayah, text);
+               res.add(elem);
+            }
+            while (cursor.moveToNext());
+         }
+
+         ListView listView = (ListView)findViewById(R.id.results_list);
+         EfficientResultAdapter adapter = new EfficientResultAdapter(this,
+                 res, mIsArabicSearch);
+         listView.setAdapter(adapter);
+         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+               ListView p = (ListView)parent;
+               SearchElement res = (SearchElement)p.getAdapter()
+                       .getItem(position);
+               jumpToResult(res.sura, res.ayah);
+            }
+         });
+      }
+   }
+
+   @Override
+   public void onLoaderReset(Loader<Cursor> loader){
+      ListView listView = (ListView)findViewById(R.id.results_list);
+      listView.setAdapter(null);
+   }
+
 	private void handleIntent(Intent intent) {
       if (intent == null){ return; }
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -138,7 +240,7 @@ public class SearchActivity extends SherlockActivity
 					// http://code.google.com/p/android/issues/detail?id=22978
 					Object q = extras.get(SearchManager.USER_QUERY);
 					if (q != null && q instanceof SpannableString){
-						query = ((SpannableString)q).toString();
+						query = q.toString();
 					}
 				}
 			}
@@ -195,89 +297,9 @@ public class SearchActivity extends SherlockActivity
 	}
 
 	private void showResults(String query){
-		mIsArabicSearch = QuranUtils.doesStringContainArabic(query);
-		boolean showArabicWarning = (mIsArabicSearch &&
-			!QuranFileUtils.hasArabicSearchDatabase(this));
-		if (showArabicWarning){ mIsArabicSearch = false; }
-		
-		Cursor cursor = getContentResolver().query(
-              QuranDataProvider.SEARCH_URI,
-              null, null, new String[]{query}, null);
-		if (cursor == null) {
-         SharedPreferences prefs =
-                 PreferenceManager.getDefaultSharedPreferences(
-                         getApplicationContext());
-         String active = prefs.getString(
-                 Constants.PREF_ACTIVE_TRANSLATION, "");
-			if (TextUtils.isEmpty(active)) {
-				int resource = R.string.no_active_translation;
-				int buttonResource = R.string.translation_settings;
-				if (showArabicWarning){
-					resource = R.string.no_arabic_search_available;
-					mDownloadArabicSearchDb = true;
-					buttonResource = R.string.get_arabic_search_db;
-				}
-				mMessageView.setText(getString(resource, new Object[]{query}));
-				mBtnGetTranslations.setText(getString(buttonResource));
-				mBtnGetTranslations.setVisibility(View.VISIBLE);
-			} else {
-				if (showArabicWarning){
-					mWarningView.setText(
-                       getString(R.string.no_arabic_search_available));
-					mWarningView.setVisibility(View.VISIBLE);
-					mBtnGetTranslations.setText(
-                       getString(R.string.get_arabic_search_db));
-					mBtnGetTranslations.setVisibility(View.VISIBLE);
-				}
-				mMessageView.setText(getString(R.string.no_results,
-                    new Object[]{query}));
-			}
-		} else {
-			if (showArabicWarning){
-				mWarningView.setText(getString(R.string.no_arabic_search_available,
-                    new Object[]{query}));
-				mWarningView.setVisibility(View.VISIBLE);
-				mBtnGetTranslations.setText(
-                    getString(R.string.get_arabic_search_db));
-				mBtnGetTranslations.setVisibility(View.VISIBLE);
-				mDownloadArabicSearchDb = true;
-			}
-			
-			// Display the number of results
-			int count = cursor.getCount();
-			String countString = count + " " + getResources().getQuantityString(
-					R.plurals.search_results,
-					count, new Object[] {query});
-			mMessageView.setText(countString);
-			
-			List<SearchElement> res = new ArrayList<SearchElement>();
-			if (cursor.moveToFirst()){
-				do {
-					int sura = cursor.getInt(0);
-					int ayah = cursor.getInt(1);
-					String text = cursor.getString(2);
-					SearchElement elem = new SearchElement(sura, ayah, text);
-					res.add(elem);
-				}
-				while (cursor.moveToNext());
-			}
-			cursor.close();
-			
-			ListView listView = (ListView)findViewById(R.id.results_list);
-			EfficientResultAdapter adapter = new EfficientResultAdapter(this,
-                 res, mIsArabicSearch);
-			listView.setAdapter(adapter);
-			listView.setOnItemClickListener(new OnItemClickListener(){
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					ListView p = (ListView)parent;
-					SearchElement res = (SearchElement)p.getAdapter()
-                       .getItem(position);
-					jumpToResult(res.sura, res.ayah);
-				}
-			});
-		}
+      Bundle args = new Bundle();
+      args.putString(EXTRA_QUERY, query);
+      getSupportLoaderManager().restartLoader(0, args, this);
 	}
 	
 	private class SearchElement {
