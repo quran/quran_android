@@ -96,7 +96,6 @@ public class StorageUtils {
 
     private static List<String> readMountsFile() {
         List<String> mMounts = new ArrayList<String>();
-        mMounts.add(Constants.APP_DEFAULT_LOCATION);
 
         try {
             File mountFile = new File("/proc/mounts");
@@ -130,7 +129,6 @@ public class StorageUtils {
      */
     private static List<String> readVoldsFile() {
         List<String> mVold = new ArrayList<String>();
-        mVold.add(Constants.APP_DEFAULT_LOCATION);
 
         try {
             File voldFile = new File("/system/etc/vold.fstab");
