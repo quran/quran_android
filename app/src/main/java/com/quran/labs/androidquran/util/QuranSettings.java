@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -102,7 +103,7 @@ public class QuranSettings {
    public static String getAppCustomLocation(Context context) {
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
       return prefs.getString(context.getString(R.string.prefs_app_location),
-              Constants.APP_DEFAULT_LOCATION);
+            Environment.getExternalStorageDirectory().getAbsolutePath());
    }
 
    public static void setAppCustomLocation(Context context, String newLocation) {

@@ -82,10 +82,10 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
     private void loadStorageOptions() {
         try {
-            String msg = mListStorageOptions.getSummary().toString();
             final int appSize = QuranFileUtils.getAppUsedSpace(this);
-            msg += "\n" + getString(R.string.prefs_app_size) + " " + appSize
-                    + " " + getString(R.string.prefs_megabytes);
+            String msg = getString(R.string.prefs_app_location_summary) + "\n"
+                     + getString(R.string.prefs_app_size) + " " + appSize
+                     + " " + getString(R.string.prefs_megabytes);
             mListStorageOptions.setSummary(msg);
             mStorageList = StorageUtils
                     .getAllStorageLocations(getApplicationContext());
@@ -106,6 +106,10 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
             mListStorageOptions.setEntries(displayNames);
             mListStorageOptions.setEntryValues(values);
+            if (values.length <= 1) {
+               // if there is only one option then
+               mListStorageOptions.setEnabled(false);
+            }
 
             mListStorageOptions.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                @Override

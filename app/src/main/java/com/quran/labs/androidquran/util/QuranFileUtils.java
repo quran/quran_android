@@ -365,7 +365,10 @@ public class QuranFileUtils {
             return true;
         File currentDirectory = new File(getQuranBaseDirectory(context));
         File newDirectory = new File(newLocation, QURAN_BASE);
-        if (newDirectory.exists() || newDirectory.mkdirs()) {
+        if (!currentDirectory.exists()) {
+            // No files to copy, so change the app directory directly
+            return true;
+        } else if (newDirectory.exists() || newDirectory.mkdirs()) {
             try {
                 copyFileOrDirectory(currentDirectory, newDirectory);
                 deleteFileOrDirectory(currentDirectory);
