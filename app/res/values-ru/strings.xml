@@ -15,19 +15,21 @@
     <string name="menu_about">О нас</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_jump_last_page">Последняя страница</string>
-    <string name="menu_tags">Tags</string>
+    <string name="menu_tags">Метки</string>
     <string name="menu_bookmarks">Закладки</string>
     <string name="menu_bookmarks_page">Закладки страниц</string>
     <string name="menu_bookmarks_ayah">Закладки аятов</string>
-    <string name="menu_sort">Sort</string>
-    <string name="menu_sort_date">Date Added</string>
-    <string name="menu_sort_location">Location in Quran</string>
-    <string name="menu_sort_alphabetical">Alphabetical</string>
+    <string name="menu_sort">Сортироват</string>
+    <string name="menu_sort_date">По дате добавления</string>
+    <string name="menu_sort_location">По расположению в Коране</string>
+    <string name="menu_sort_alphabetical">По алфавиту</string>
     <string name="menu_translation">Показать перевод</string>
     <string name="menu_back_to_page">Показать Коран</string>
     <string name="menu_help">Помощь</string>
     <string name="menu_search">Поиск</string>
     <string name="menu_get_translations">Скачать перевод</string>
+    <string name="menu_jump">Перейти</string>
+    <string name="gotoPage">Перейти на страницу</string>
     <string name="cancel">Отмена</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Авторское право принадлежит мусульманской умме</string>
@@ -37,8 +39,8 @@
     <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное 
             Коран-приложение для Android с открытым исходным кодом. 
 			Используемые изображения были заимствованы из проекта 
-            &lt;a href="http://quran.com">quran.com&lt;/a>
-			, аудио - 
+            &lt;a href="http://quran.com">quran.com&lt;/a>,
+			 аудио - 
             &lt;a href="http://everyayah.com">everyayah.com&lt;/a>, 
 			перевод и арабский текст - из
             &lt;a href="http://tanzil.net">tanzil.net&lt;/a> и
@@ -56,7 +58,9 @@
 			&lt;br/>Mehmed Mahmudoglu - Turkish
 			&lt;br/>khajavi (on github) - Farsi
 			&lt;br/>Rinat (Ринат) - Russian
-            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
+			&lt;br/>khajavi (on github) - предыдущий Farsi перевод
+	      &lt;br/>Yasser Kadddour - Français
+            &lt;br/>&lt;br/>&lt;b>Проекты с открытым исходным кодом:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
             &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
 			&lt;br/>&lt;br/>&lt;b>Особая благодарность:&lt;/b>
@@ -66,41 +70,42 @@
     <string name="help">
         &lt;b>Как мне воспроизвести аудио?&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку проигрывания
-        и текст с именем чтеца. Нажмите на имени чтеца для выбора другого чтеца. Нажмите на 
+        и текст с именем чтеца. Для выбора другого чтеца нажмите на имени текущего чтеца . Нажмите на 
 		кнопку проигрывания для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
         &lt;br/>&lt;b>Как мне посмотреть перевод?
 		&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса 
-        (или, если ее нет, Вы можете увидеть иконку с тремя квадратными точками) - нажмте на нее и выберите 
+        (или, если ее нет, Вы увидете иконку с тремя квадратными точками) - нажмите на нее и выберите 
         перевод для просмотра. 
 		&lt;br/>
-        Если Вы не имеете загруженных переводов, Вас переместит на экран, где Вы сможете скачать перевод. 
-        Выберите и скачайте нужный Вам перевод, затем вернитесь и вновь нажмите на иконку глобуса для просмотра 
+        Если Вы не имеете загруженных переводов, Вас переместят на экран, где Вы сможете скачать перевод. 
+        Выберите и загрузите нужный Вам перевод, затем вернитесь обратно и вновь нажмите на иконку глобуса для просмотра 
         перевода.
         &lt;br/>
         &lt;br/>&lt;b>Как мне сделать закладку страницы?&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху справа Вы увидите 
         иконку звезды. Для создания закладки нажмите на данную иконку (она закрасится белым цветом). 
-        Нажмите снова на иконку звезды для удаления закладки. 
+        Для удаления закладки снова нажмите на иконку звезды. 
         &lt;br/>
         &lt;br/>&lt;b>Как мне увеличить текст?&lt;/b>
         &lt;br/>Для арабского текста держите Ваш телефон в альбомном режиме (горизонтально).  Это сделает текст крупнее. 
-        Для переводов перейдите в настройки и выберите размер шрифта перевода.
+        Для переводов - перейдите в настройки и выберите размер шрифта перевода.
         &lt;br/>
         &lt;br/>&lt;b> Как я могу поделиться аятом?&lt;/b>
-        &lt;br/>Во время нахождения на любой арабской странице Корана, нажмите и удерживайте на аяте до того While on any arabic page, press and hold on any ayah to get a menu where you can
-        как появится контекстное меню, где Вы сможете сделать закладку данного аята, поделиться им, посмотреть перевод или
-		скопировать аят в буфер обмена.
+        &lt;br/>Во время нахождения на любой арабской странице Корана, нажмите и удерживайте на аяте до того,
+        как появится контекстное меню, где Вы сможете сделать закладку данного аята, поделиться им, посмотреть перевод
+        или скопировать аят в буфер обмена.
         &lt;br/>
         &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu шрифты не работают!&lt;/b>
         &lt;br/>К сожалению, Android версии до 4.0 не поддерживают эти шрифты, и мы ничего не можем сделать,
-        чтобы помочь Вам в этом.
+        чтобы как-то помочь Вам в этом вопросе.
 		&lt;br/>
         &lt;br/>&lt;b>У меня есть замечания или предложения по программе!&lt;/b>
-        &lt;br/>Пожалуйста, напишите нам e-mail (в разделе "О нас"). Тем самым Вы способствуете развитию проекта. Возможно,
-		Ваше предложение будет полезно многим братьям и сестрам. К сожалению, разработчики не просматривают
-		и не могут просматривать (в силу незнания русского языка) отзывы на Google Play, поэтому не могут учесть Ваши комментарии.
-		Если Вы не знаете английского языка, используйте для написания e-mail Google Translate.        
+        &lt;br/>К сожалению, разработчики не просматривают и не могут просматривать (в силу незнания русского языка) отзывы
+        в русской части Google Play, поэтому не могут учесть Ваши комментарии. Пожалуйста, напишите нам e-mail
+        (кнопка внизу экрана). Тем самым Вы способствуете развитию проекта. Возможно, Ваше предложение будет
+        полезно многим братьям и сестрам. Если Вы не знаете английского языка, используйте для написания e-mail
+        Google Translate.        
     </string>
 	<string name="search_hint">Поиск по Корану</string>
 	<string name="quranSearchType">Стихи Корана</string>
@@ -120,20 +125,30 @@
     <string name="get_arabic_search_db">Скачать данные для арабского поиска</string>
         
     <!-- Quran Preference Activity -->
+    <string name="prefs_category_navigation">Перемещение</string>
+    <string name="prefs_volume_key_navigation_title">Переход клавишами громкости</string>
+    <string name="prefs_volume_key_navigation_summary">Листать страницы с помощью кнопок громкости звука</string>
     <string name="prefs_category_reading">Настройки чтения</string>
     <string name="prefs_category_translation">Настройки перевода</string>
     <string name="prefs_category_display_settings">Настройки экрана</string>
     <string name="prefs_use_arabic_title">Режим арабского</string>
-    <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык (необходима перезагрузка)</string>
+    <string name="prefs_use_arabic_reshaper_title">Арабский формирователь</string>
+    <string name="prefs_use_arabic_reshaper_summary_on">Если Вы видите арабский текст в обратном направлении, отключите эту опцию.</string>
+    <string name="prefs_use_arabic_reshaper_summary_off">Если Вы видите несоединенный арабский текст, для исправления этого включите данную опцию.</string>
+    <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык (требуется перезагрузка)</string>
+    <string name="prefs_new_background_title">Новый фон</string>
     <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
     <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
     <string name="prefs_lock_orientation_summary_off">Адаптировать под текущую ориентацию</string>
     <string name="prefs_landscape_orientation_title">Альбомный режим</string>
     <string name="prefs_landscape_orientation_summary_on">Использовать альбомный режим</string>
     <string name="prefs_landscape_orientation_summary_off">Использовать книжный режим</string>
-    <string name="prefs_night_mode_title">Бета - Ночной режим</string>
+    <string name="prefs_night_mode_title">Ночной режим</string>
     <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
-    <string name="prefs_display_marker_title">Показывать всплывающие сообщения</string>
+    <string name="prefs_overlay_page_info_title">Показать инфо страницы (beta)</string>
+    <string name="prefs_overlay_page_info_summary">При чтении использовать наложение поверх экрана номера страницы,
+    названия суры и номера джуза</string>
+    <string name="prefs_display_marker_title">Всплывающие сообщения</string>
     <string name="prefs_display_marker_summary">Показывать всплывающие сообщения по достижении джуза, хизба и т.д.</string>
     <string name="prefs_translation_text_title">Размер текста перевода</string>
     <string name="prefs_translations">Переводы</string>
@@ -142,19 +157,31 @@
     <string name="prefs_ayah_before_translation_summary">Показывать аят раньше перевода</string>
     <string name="prefs_category_download">Настройки загрузки</string>
     <string name="prefs_streaming_title">Потоковое</string>
-    <string name="prefs_streaming_summary">При возможности потоковое аудио (только non-gapless аудио).</string>
+    <string name="prefs_streaming_summary">При возможности потоковое аудио (только прерывистое аудио).</string>
     <string name="prefs_download_amount_title">Объем скачивания</string>
-    <string name="prefs_download_amount_summary">Предпочтительный объем загрузки для non-gapless аудио.</string>
+    <string name="prefs_download_amount_summary">Предпочтительный объем загрузки для прерывистого аудио.</string>
     <string name="downloaded_translations">Загруженные переводы</string>
     <string name="available_translations">Доступные для загрузки</string>
     <string name="remove_button">Удалить</string>
     <string name="dialog_ok">OK</string>
+    <string name="prefs_advanced_settings_title">Расширенные настройки</string>
+    <string name="prefs_app_location_title">Расположение приложения</string>
+    <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
+    <string name="prefs_sdcard_internal">Внутренняя память</string>
+    <string name="prefs_sdcard_external">Внешняя SD карта</string>
+    <string name="prefs_sdcard_auto">Автоматически</string>
+    <string name="prefs_app_size">Размер приложения</string>
+    <string name="prefs_copying_app_files">Копирование файлов приложения</string>
+    <string name="prefs_custom_location_title">Другое место</string>
+    <string name="prefs_err_moving_app_files">Ошибка перемещения файлов приложения</string>
+    <string name="prefs_no_enough_space_to_move_files">Недостаточно свободного места для перемещения файлов приложения</string>
+    <string name="prefs_megabytes">MБ</string>
 
     <!-- translation updates -->
-    <string name="update_available">Update Available</string>
-    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
-    <string name="translation_dialog_yes">Yes</string>
-    <string name="translation_dialog_later">Later</string>
+    <string name="update_available">Доступно обновление</string>
+    <string name="translation_updates_available">Для Ваших переводов доступны обновления. Перейти на экран переводов?</string>
+    <string name="translation_dialog_yes">Да</string>
+    <string name="translation_dialog_later">Позже</string>
 
     <!-- used for screen readers -->
     <string name="border">граница</string>
@@ -184,12 +211,12 @@
     <string name="download_successful">Загрузка завершена</string>   
     <string name="download_processing">Загрузка &#8230;</string>              
     <string name="download_error_general">Загрузка оборвалась</string>             
-    <string name="download_error_disk">Для загрузки недостаточно места на дискеNot enough disk space to download</string>               
+    <string name="download_error_disk">Для загрузки недостаточно места на диске</string>               
     <string name="download_error_network">Не удалось загрузить из-за ошибки соединения</string>                    
     <string name="download_error_perms">Не удалось загрузить из-за ошибки разрешений</string>                  
     <string name="download_error_invalid_download">Загруженный файл был поврежден</string>
     <string name="download_error_invalid_download_retry">Поврежденный файл, попытка загрузить заново</string> 
-    <string name="download_error_network_retry">Ошибка соединения, попробуйте возобновить&#8230;</string>
+    <string name="download_error_network_retry">Ошибка соединения, попытка возобновить&#8230;</string>
     <string name="notification_download_canceled">Загрузка отменена</string>
     <string name="download_non_wifi_prompt">Вы не подключены к wi-fi. Все равно продолжить загрузку?</string>
     
@@ -202,8 +229,10 @@
     <!-- translation database stuff -->
     <string name="remove_dlg_title">Удалить перевод?</string>
     <string name="remove_dlg_msg">Вы уверены, что хотите удалить %1$s?</string>
-    <string name="error_getting_translation_list">Невозможно удалить лист переводов. Пожалуйста, попробуйте позже.</string>
+    <string name="error_getting_translation_list">Нет возможности скачать лист переводов. Пожалуйста, попробуйте позже.</string>
     <string name="search_data">Поиск данных</string>
+    <string name="need_translation">У Вас еще нет ни одного скачанного перевода/тафсира.</string>
+    <string name="get_translations">Скачать перевод</string>
 
     <!-- about us -->
     <string name="email_quran_android">Email Quran Android</string>
@@ -213,36 +242,37 @@
     <string name="madani">Медина</string>
     <plurals name="verses">
         <item quantity="one">стих</item>
-        <item quantity="other">стихи</item>
+        <item quantity="other">стиха/стихов</item>
     </plurals>
 
     <!-- long press -->
     <string name="bookmark_ayah">Создать закладку этого аята</string>
     <string name="unbookmark_ayah">Удалить закладку для этого аята</string>
-    <string name="tag_ayah">Tag this Ayah</string>
+    <string name="tag_ayah">Создать тэк этого аята</string>
     <string name="share_ayah">Поделиться аятом</string>
+    <string name="share_ayah_text">Поделиться текстом аята</string>
     <string name="translation_ayah">Перевод/тафсир аята</string>
     <string name="play_from_here">Воспроизвести отсюда</string>
-    <string name="ayah_notes">Notes</string>
+    <string name="ayah_notes">Заметки</string>
     <string name="via_string">\n\nчерез @QuranAndroid</string>
     <string name="search_key">Нажмите клавишу поиска, чтобы найти стих</string>
     <string name="copy_ayah">Скопировать аят</string>
     <string name="ayah_copied_popup">Аят скорирован</string>
-    <string name="show_more">Show More</string>
+    <string name="show_more">Показать еще</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Remove Bookmark</string>
-    <string name="tag_bookmark">Tag Bookmark</string>
-    <string name="delete_tag">Delete Tag</string>
-    <string name="edit_tag">Edit Tag</string>
-    <string name="new_tag">New Tag</string>
-    <string name="not_tagged">Not Tagged</string>
+    <string name="delete_bookmark">Удалить закладку</string>
+    <string name="tag_bookmark">Отметить закладку</string>
+    <string name="delete_tag">Удалить метку</string>
+    <string name="edit_tag">Редактировать метку</string>
+    <string name="new_tag">Новая метка</string>
+    <string name="not_tagged">Без метки</string>
 
     <!-- tag dialog -->
-    <string name="tag_dlg_title">Tag</string>
-    <string name="tag_name">Name</string>
+    <string name="tag_dlg_title">Метка</string>
+    <string name="tag_name">Название</string>
     
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Закладки отсутствуют!</string>
-    <string name="tags_list_empty">No Tags</string>
+    <string name="tags_list_empty">Метки отсутствуют</string>
 </resources>
