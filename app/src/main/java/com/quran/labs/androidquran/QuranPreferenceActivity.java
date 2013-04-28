@@ -53,8 +53,8 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 				boolean isArabic = (Boolean)newValue;
                 mIsArabic = isArabic;
 
-            Locale lang = (isArabic? new Locale("ar") :
-               Resources.getSystem().getConfiguration().locale);
+                Locale lang = (isArabic? new Locale("ar") :
+                    Resources.getSystem().getConfiguration().locale);
 				Locale.setDefault(lang);
 				Configuration config = new Configuration();
 				config.locale = lang;
@@ -71,23 +71,13 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
         Preference advancedPrefs = findPreference(
                 getString(R.string.prefs_advanced_settings));
-        if (Constants.ENABLE_CUSTOM_LOCATION){
-         advancedPrefs.setOnPreferenceClickListener(
-                 new Preference.OnPreferenceClickListener() {
+        advancedPrefs.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 loadStorageOptions();
                 return false;
-             }
-         });
-        }
-        else {
-           // we disable custom location on bb10 for now
-           // remove the advanced preferences area (note - this will have
-           // to be modified to only remove the custom location stuff once
-           // there are more items under advanced preferences).
-           getPreferenceScreen().removePreference(advancedPrefs);
-        }
+            }
+        });
 	}
 
     private void loadStorageOptions() {
