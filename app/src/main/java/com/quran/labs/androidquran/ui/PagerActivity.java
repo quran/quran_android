@@ -115,9 +115,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    public void onCreate(Bundle savedInstanceState){
       if (QuranSettings.isArabicNames(this)){
+         Locale locale = new Locale("ar");
+         Locale.setDefault(locale);
          Resources resources = getResources();
          Configuration config = resources.getConfiguration();
-         config.locale = new Locale("ar");
+         config.locale = locale;
          resources.updateConfiguration(config,
                  resources.getDisplayMetrics());
       }
