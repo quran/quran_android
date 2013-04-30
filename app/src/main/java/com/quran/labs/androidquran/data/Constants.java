@@ -10,6 +10,9 @@ public class Constants {
    // 1 hour in ms
    public static final int MIN_TRANSLATION_REFRESH_TIME = 60 * 60 * 1000;
 
+   // Tablet
+   public static final boolean IS_TABLET_ENABLED = false;
+
    // Pages
    public static final int PAGES_FIRST = 1;
    public static final int PAGES_LAST = 604;

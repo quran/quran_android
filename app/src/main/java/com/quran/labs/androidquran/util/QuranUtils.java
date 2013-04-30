@@ -1,8 +1,10 @@
 package com.quran.labs.androidquran.util;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import com.quran.labs.androidquran.data.Constants;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -64,5 +66,13 @@ public class QuranUtils {
       }
 
       return mNumberFormatter.format(number);
+   }
+
+   public static boolean isDualPages(Context context){
+      if (Constants.IS_TABLET_ENABLED){
+         return context.getResources().getConfiguration().orientation ==
+                 Configuration.ORIENTATION_LANDSCAPE;
+      }
+      return false;
    }
 }

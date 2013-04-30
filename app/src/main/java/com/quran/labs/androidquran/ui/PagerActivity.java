@@ -91,6 +91,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private SpinnerAdapter mSpinnerAdapter;
    private BookmarksDBAdapter mBookmarksAdapter;
    private AyahInfoDatabaseHandler mAyahInfoAdapter;
+   private boolean mDualPages = false;
 
    public static final int VISIBLE_FLAGS =
              View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -133,6 +134,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mBookmarksCache = new SparseArray<Boolean>();
       mBookmarksAdapter = new BookmarksDBAdapter(this);
 
+      mDualPages = QuranUtils.isDualPages(this);
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
       QuranScreenInfo.getOrMakeInstance(this);
@@ -206,7 +208,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mWorker = new QuranPageWorker(this);
       mLastPopupTime = System.currentTimeMillis();
       mPagerAdapter = new QuranPageAdapter(
-              getSupportFragmentManager(), mShowingTranslation);
+              getSupportFragmentManager(), mDualPages, mShowingTranslation);
       mViewPager = (ViewPager)findViewById(R.id.quran_pager);
       mViewPager.setAdapter(mPagerAdapter);
 
@@ -225,6 +227,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
          public void onPageSelected(int position) {
             Log.d(TAG, "onPageSelected(): " + position);
             int page = Constants.PAGES_LAST - position;
+            if (mDualPages){ page = (302 - position) * 2; }
             QuranSettings.setLastPage(PagerActivity.this, page);
             if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)) {
                mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
@@ -254,7 +257,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
          mHandler.sendEmptyMessageDelayed(MSG_TOGGLE_ACTIONBAR, 1000);
       }
 
-      mViewPager.setCurrentItem(page);
+      if (mDualPages){ mViewPager.setCurrentItem(page / 2); }
+      else { mViewPager.setCurrentItem(page); }
+
       QuranSettings.setLastPage(this, Constants.PAGES_LAST - page);
       setLoading(false);
 
@@ -456,7 +461,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
             // this will jump to the right page automagically
             highlightAyah(mHighlightedSura, mHighlightedAyah, true);
          }
-         else { mViewPager.setCurrentItem(page); }
+         else {
+            if (mDualPages){ page = page / 2; }
+            mViewPager.setCurrentItem(page);
+         }
 
          setIntent(intent);
       }
@@ -549,7 +557,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    public boolean onOptionsItemSelected(MenuItem item) {
       if (item.getItemId() == R.id.favorite_item){
-         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+         int page = getCurrentPage();
          toggleBookmark(null, null, page);
          return true;
       }
@@ -709,9 +717,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
       else { updateActionBarSpinner(); }
    }
 
+   private int getCurrentPage(){
+      if (mDualPages){
+         return (302 - mViewPager.getCurrentItem()) * 2;
+      }
+      return Constants.PAGES_LAST - mViewPager.getCurrentItem();
+   }
+
    private void updateActionBarSpinner(){
       if (mTranslationItems == null || mTranslationItems.length == 0){
-         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+         int page = getCurrentPage();
          updateActionBarTitle(page);
          return;
       }
