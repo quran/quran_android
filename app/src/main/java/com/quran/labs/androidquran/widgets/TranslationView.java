@@ -35,6 +35,8 @@ public class TranslationView extends ScrollView {
    private boolean mUseArabicFont;
    private boolean mShouldReshape;
    private int mLastHighlightedAyah;
+   private boolean mIsNightMode;
+   private int mNightModeTextColor;
 
    private List<QuranAyah> mAyat;
 
@@ -86,10 +88,14 @@ public class TranslationView extends ScrollView {
       mShouldReshape = QuranSettings.isReshapeArabic(mContext);
       mUseArabicFont = QuranSettings.needArabicFont(mContext);
 
-      boolean nightMode = QuranSettings.isNightMode(mContext);
-      mTextStyle = nightMode ? R.style.TranslationText_NightMode :
+      mIsNightMode = QuranSettings.isNightMode(mContext);
+      if (mIsNightMode) {
+         int textBrightness = QuranSettings.getNightModeTextBrightness(mContext);
+         mNightModeTextColor = Color.rgb(textBrightness, textBrightness, textBrightness);
+      }
+      mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
               R.style.TranslationText;
-      mHighlightedStyle = nightMode?
+      mHighlightedStyle = mIsNightMode?
               R.style.TranslationText_NightMode_Highlighted :
               R.style.TranslationText_Highlighted;
    }
@@ -125,6 +131,7 @@ public class TranslationView extends ScrollView {
                  .findViewById(mLastHighlightedAyah);
          if (text != null){
             text.setTextAppearance(getContext(), mTextStyle);
+            if (mIsNightMode) text.setTextColor(mNightModeTextColor);
             text.setTextSize(mFontSize);
          }
       }
@@ -160,6 +167,7 @@ public class TranslationView extends ScrollView {
 
       TextView ayahHeader = new TextView(mContext);
       ayahHeader.setTextAppearance(mContext, mTextStyle);
+      if (mIsNightMode) ayahHeader.setTextColor(mNightModeTextColor);
       ayahHeader.setTextSize(mFontSize);
       ayahHeader.setText(ayah.getSura() + ":" + ayah.getAyah());
       ayahHeader.setTypeface(null, Typeface.BOLD);
@@ -171,6 +179,7 @@ public class TranslationView extends ScrollView {
          // Ayah Text
          TextView arabicText = new TextView(mContext);
          arabicText.setTextAppearance(mContext, mTextStyle);
+         if (mIsNightMode) arabicText.setTextColor(mNightModeTextColor);
          arabicText.setTextSize(mFontSize);
          arabicText.setLineSpacing(1.4f, 1.4f);
          arabicText.setTypeface(null, Typeface.BOLD);
@@ -199,6 +208,7 @@ public class TranslationView extends ScrollView {
               QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah()));
 
       translationView.setTextAppearance(mContext, mTextStyle);
+      if (mIsNightMode) translationView.setTextColor(mNightModeTextColor);
       translationView.setTextSize(mFontSize);
 
       String translationText = ayah.getTranslation();

@@ -119,6 +119,8 @@
   <string name="prefs_landscape_orientation_summary_off">L\'orientation portrait sera utilisé.</string>
   <string name="prefs_night_mode_title">Mode nuit</string>
   <string name="prefs_night_mode_summary">Un fond sombre et des polices lumineuses seront utilisés.</string>
+  <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
+  <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
   <string name="prefs_overlay_page_info_title">Afficher des infos (beta)</string>
   <string name="prefs_overlay_page_info_summary">Affiche le numéro de page, le nom de la sourate et le numéro du juz\' lors la lecture.</string>
   <string name="prefs_display_marker_title">Montrer un popup de repère</string>
