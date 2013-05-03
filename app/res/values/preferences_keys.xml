@@ -9,6 +9,7 @@
     <string name="prefs_use_arabic_names">useArabicNames</string>
     <string name="prefs_new_background">useNewBackground</string>
     <string name="prefs_night_mode">nightMode</string>
+    <string name="prefs_night_mode_text_brightness">nightModeTextBrightness</string>
     <string name="prefs_overlay_page_info">overlayPageInfo</string>
     <string name="prefs_display_marker_popup">displayMarkerPopup</string>
     <string name="prefs_lock_orientation">lockOrientation</string>

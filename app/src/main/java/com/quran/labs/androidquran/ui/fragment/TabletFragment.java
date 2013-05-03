@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 public class TabletFragment extends SherlockFragment implements AyahTracker {
@@ -88,6 +89,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       }
 
       boolean nightMode = false;
+      int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
       if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
@@ -95,6 +97,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
          leftArea.setBackgroundColor(Color.BLACK);
          rightArea.setBackgroundColor(Color.BLACK);
          nightMode = true;
+         nightModeTextBrightness = QuranSettings.getNightModeTextBrightness(getActivity());
       }
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
@@ -107,6 +110,10 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
       mLeftImageView.setNightMode(nightMode);
       mRightImageView.setNightMode(nightMode);
+      if (nightMode) {
+         mLeftImageView.setNightModeTextBrightness(nightModeTextBrightness);
+         mRightImageView.setNightModeTextBrightness(nightModeTextBrightness);
+      }
 
       mLeftImageView.setOnClickListener(new View.OnClickListener() {
          @Override
