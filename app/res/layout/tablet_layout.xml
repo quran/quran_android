@@ -19,8 +19,8 @@
         <com.quran.labs.androidquran.widgets.HighlightingImageView
             android:id="@+id/left_page_image"
             android:layout_toRightOf="@id/left_border"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </RelativeLayout>
 
     <ImageView android:id="@+id/line"
@@ -40,8 +40,8 @@
             android:layout_alignParentRight="true" />
        <com.quran.labs.androidquran.widgets.HighlightingImageView
             android:id="@+id/right_page_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_toLeftOf="@id/right_border" />
     </RelativeLayout>
 </LinearLayout>
