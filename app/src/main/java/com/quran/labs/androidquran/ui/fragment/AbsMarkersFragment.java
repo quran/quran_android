@@ -154,13 +154,15 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
       super.onCreateOptionsMenu(menu, inflater);
       MenuItem sortItem = menu.findItem(R.id.sort);
-      sortItem.setVisible(true);
-      sortItem.setEnabled(true);
-      SubMenu subMenu = sortItem.getSubMenu();
-      for (int validOption : getValidSortOptions()) {
-         MenuItem subMenuItem = subMenu.findItem(validOption);
-         subMenuItem.setVisible(true);
-         subMenuItem.setEnabled(true);
+      if (sortItem != null){
+         sortItem.setVisible(true);
+         sortItem.setEnabled(true);
+         SubMenu subMenu = sortItem.getSubMenu();
+         for (int validOption : getValidSortOptions()) {
+            MenuItem subMenuItem = subMenu.findItem(validOption);
+            subMenuItem.setVisible(true);
+            subMenuItem.setEnabled(true);
+         }
       }
    }
 
