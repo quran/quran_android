@@ -145,6 +145,8 @@
     <string name="prefs_landscape_orientation_summary_off">Использовать книжный режим</string>
     <string name="prefs_night_mode_title">Ночной режим</string>
     <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
+    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
+    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
     <string name="prefs_overlay_page_info_title">Показать инфо страницы (beta)</string>
     <string name="prefs_overlay_page_info_summary">При чтении использовать наложение поверх экрана номера страницы,
     названия суры и номера джуза</string>

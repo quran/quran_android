@@ -48,6 +48,13 @@ public class QuranSettings {
               Constants.PREF_NIGHT_MODE, false);
    }
 
+   public static int getNightModeTextBrightness(Context context){
+      SharedPreferences prefs =
+              PreferenceManager.getDefaultSharedPreferences(context);
+      return prefs.getInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+              Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
+   }
+
    public static boolean shouldOverlayPageInfo(Context context){
       return getBooleanPreference(context,
             Constants.PREF_OVERLAY_PAGE_INFO, true);
