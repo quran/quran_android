@@ -67,6 +67,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public static final String EXTRA_JUMP_TO_TRANSLATION = "jumpToTranslation";
    public static final String EXTRA_HIGHLIGHT_SURA = "highlightSura";
    public static final String EXTRA_HIGHLIGHT_AYAH = "highlightAyah";
+   public static final String LAST_WAS_DUAL_PAGES = "wasDualPages";
 
    private QuranPageWorker mWorker = null;
    private SharedPreferences mPrefs = null;
@@ -134,6 +135,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mBookmarksCache = new SparseArray<Boolean>();
       mBookmarksAdapter = new BookmarksDBAdapter(this);
 
+      boolean refresh = false;
       mDualPages = QuranUtils.isDualPages(this);
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
@@ -170,6 +172,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
             mIsActionBarHidden = !savedInstanceState
                     .getBoolean(LAST_ACTIONBAR_STATE);
          }
+         boolean lastWasDualPages = savedInstanceState.getBoolean(
+                 LAST_WAS_DUAL_PAGES, mDualPages);
+         refresh = (lastWasDualPages != mDualPages);
       }
       
       mPrefs = PreferenceManager.getDefaultSharedPreferences(
@@ -280,6 +285,26 @@ public class PagerActivity extends SherlockFragmentActivity implements
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             return;
          }
+      }
+
+      if (refresh){
+         final int curPage = Constants.PAGES_LAST - page;
+         mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+               mPagerAdapter.notifyDataSetChanged();
+               int page = curPage;
+               if (mDualPages){
+                  if (page % 2 != 0){ page++; }
+                  page = 302 - (page / 2);
+               }
+               else {
+                  if (page % 2 == 0){ page--; }
+                  page = Constants.PAGES_LAST - page;
+               }
+               mViewPager.setCurrentItem(page);
+            }
+         });
       }
    }
    
@@ -512,10 +537,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
          state.putSerializable(LAST_AUDIO_DL_REQUEST,
                  mLastAudioDownloadRequest);
       }
-      state.putSerializable(LAST_READ_PAGE,
-              Constants.PAGES_LAST - mViewPager.getCurrentItem());
+      int lastPage = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+      if (mDualPages){
+         lastPage = 302 - mViewPager.getCurrentItem();
+         lastPage *= 2;
+      }
+      state.putSerializable(LAST_READ_PAGE, lastPage);
       state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
       state.putBoolean(LAST_ACTIONBAR_STATE, mIsActionBarHidden);
+      state.putBoolean(LAST_WAS_DUAL_PAGES, mDualPages);
       super.onSaveInstanceState(state);
    }
 
