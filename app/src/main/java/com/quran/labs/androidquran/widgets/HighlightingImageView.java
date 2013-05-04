@@ -9,7 +9,9 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class HighlightingImageView extends ImageView {
 	private String mHighightedAyah = null;
    private Bitmap mHighlightBitmap = null;
    private boolean mIsNightMode = false;
+   private int mNightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
    
    // Params for drawing text
    private OverlayParams mOverlayParams = null;
@@ -67,6 +70,10 @@ public class HighlightingImageView extends ImageView {
       mIsNightMode = isNightMode;
    }
 	
+   public void setNightModeTextBrightness(int nightModeTextBrightness){
+      mNightModeTextBrightness = nightModeTextBrightness;
+   }
+   
 	public void highlightAyah(int sura, int ayah){
       String key = sura + ":" + ayah;
       if (mCoordinatesData != null){
@@ -121,9 +128,9 @@ public class HighlightingImageView extends ImageView {
 	public void adjustNightMode() {
 		if (mIsNightMode && !mColorFilterOn) {
 			float[] matrix = { 
-				-1, 0, 0, 0, 255,
-				0, -1, 0, 0, 255,
-				0, 0, -1, 0, 255,
+				-1, 0, 0, 0, mNightModeTextBrightness,
+				0, -1, 0, 0, mNightModeTextBrightness,
+				0, 0, -1, 0, mNightModeTextBrightness,
 				0, 0, 0, 1, 0 
 			};
 			setColorFilter(new ColorMatrixColorFilter(matrix));
@@ -209,8 +216,12 @@ public class HighlightingImageView extends ImageView {
       mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG
                                      | Paint.DEV_KERN_TEXT_FLAG);
       mOverlayParams.paint.setTextSize(MAX_FONT_SIZE);
-      mOverlayParams.paint.setColor(getResources().getColor(
-              R.color.overlay_text_color));
+      int overlayColor = getResources().getColor(R.color.overlay_text_color);
+      if (mIsNightMode) {
+         overlayColor = Color.rgb(mNightModeTextBrightness,
+               mNightModeTextBrightness, mNightModeTextBrightness);
+      }
+      mOverlayParams.paint.setColor(overlayColor);
       
       // Use font metrics to calculate the maximum possible height of the text
       FontMetrics fm = mOverlayParams.paint.getFontMetrics();

@@ -142,6 +142,8 @@
     <string name="prefs_landscape_orientation_summary_off">Hochformat wird genutzt</string>
     <string name="prefs_night_mode_title">Nachtmodus</string>
     <string name="prefs_night_mode_summary">Dunkler Hintergrund und helle Schrift</string>
+    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
+    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
     <string name="prefs_overlay_page_info_title">Zeige Seiteninfo (Beta)</string>
     <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sura und die Juz\' Nummer während dem Lesen ein.</string>
 	<string name="prefs_display_marker_title">Meilenstein-Popup anzeigen</string>

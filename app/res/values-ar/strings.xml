@@ -88,6 +88,8 @@
     <string name="prefs_landscape_orientation_summary_off">سيتم استخدام الوضع الرأسي</string>
     <string name="prefs_night_mode_title">القراءة الليلية</string>
     <string name="prefs_night_mode_summary">الخلفية باللون اﻷسود والخطوط باللون اﻷبيض</string>
+    <string name="prefs_night_mode_text_brightness_title">إضاءة الخط</string>
+    <string name="prefs_night_mode_text_brightness_summary">إضاءة الخط عند تفعيل القراءة الليلية</string>
     <string name="prefs_overlay_page_info_title">عرض بيانات الصفحة (تجريبية)</string>
     <string name="prefs_overlay_page_info_summary">عرض رقم الصفحة، إسم السورة، ورقم الجزء أثناء القراءة</string>
     <string name="prefs_display_marker_title">التنبيه</string>

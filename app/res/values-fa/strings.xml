@@ -113,6 +113,8 @@
     <string name="prefs_landscape_orientation_summary_off">استفاده در جهت افقي</string>
     <string name="prefs_night_mode_title">نمايش شبانه</string>
     <string name="prefs_night_mode_summary">تاريک نمودن صفحه و روشن نمودن متن</string>
+    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
+    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
     <string name="prefs_display_marker_title">نمايش پيغام</string>
     <string name="prefs_display_marker_summary">نمايش پيغام ها فعال گردد</string>
     <string name="prefs_translation_text_title">اندازه قلم ترجمه</string>
