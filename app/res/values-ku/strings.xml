@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">قورئان</string>
+    <string name="downloadPrompt_title">داگرتنی فایلە پێویستەکان؟</string>
+    <string name="downloadPrompt">بۆ کارکردنی بەرنامە، پێویستە ھەندێ فایل دابگریت. ئەگەر ئێستا ئەم فرمانە ئەنجام نەدەیت، ھەر پەڕەیەک کاتێکی زیاتری ئەوێت بۆ کردنەوە. ئەتەوێ ئێستا فایلە پێویستەکان دابگریت؟
+		</string>
+    <string name="downloadPrompt_ok">بەڵێ</string>
+    <string name="downloadPrompt_no">نەخێر</string>
+    <string name="downloading_title">داگرتن&#8230;</string>
+    <string name="downloading_message">تکایە چاوەڕوانبە ھەتا فایلەکان دادەگیرێت. (پشگیری بەردەوامبون دەکرێت)</string>
+    <string name="extracting_title">ئەنجامدان&#8230;</string>
+    <string name="menu_about">دەربارەی ئێمە</string>
+    <string name="menu_settings">ڕێکخستنەکان</string>
+    <string name="menu_jump_last_page">دواین پەڕە</string>
+    <string name="menu_tags">بڕگەکان</string>
+    <string name="menu_bookmarks">نیشانەکراوەکان</string>
+    <string name="menu_bookmarks_page">پەڕە نیشانەکراوەکان</string>
+    <string name="menu_bookmarks_ayah">ئایەتە نیشانەکراوەکان</string>
+    <string name="menu_sort">ڕیزکردن</string>
+    <string name="menu_sort_date">بەرواری زیادکردن</string>
+    <string name="menu_sort_location">شوێن لە قورئاندا</string>
+    <string name="menu_sort_alphabetical">بەپێی ئەلف و بێ</string>
+    <string name="menu_translation">پیشاندانی وەرگێڕان</string>
+    <string name="menu_back_to_page">پیشاندانی قورئان</string>
+    <string name="menu_help">یارمەتی</string>
+    <string name="menu_search">گەڕان</string>
+    <string name="menu_get_translations">داگرتنی وەرگێڕان</string>
+    <string name="menu_jump">چوون بۆ</string>
+    <string name="gotoPage">چوون بۆ پەڕەی</string>
+    <string name="cancel">پاشگەزبونەوە</string>
+    <string name="developedBy">وەرگێڕانی (گۆران غەریب) لە دۆعای خێر بێبەشمان مەکەن.</string>
+    <string name="copyRights">مافی بڵاوکردنەوەی ھەموو مسوڵمانێکە</string>
+    <string name="email_subject">سەرنج و تێبینی</string>
+    <string name="email_to">quran.android@gmail.com</string>
+    <string name="send_email">ناردنی پۆستی ئەلکترۆنی..</string>
+    <string name="aboutUs">بەرنامەی قورئان ئەندرۆید، بەرنامەیەکی سەرچاوە کراوەیە بۆ ئەندرۆید
+			  وێنەکان بەکاردێن لە ڕێی ماڵپەڕی
+            &lt;a href="http://quran.com">quran.com&lt;/a>
+			وە دەنگەکان بەکاردێن لە ڕێی ماڵپەری
+            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
+			وە هەروەها داتاکان و وەرگێڕانەکان بەکاردێن لە ڕێی ماڵپەڕی
+            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> و
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
+            &lt;br/>&lt;br/>&lt;b>داڕێژەرەکانی بەرنامەی قورئان:&lt;/b>
+            &lt;br/>ئەحمەد ئەلحلو (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
+            &lt;br/>حسێن ماهیر (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
+            &lt;br/>ئەحمەد فەڕا (&lt;a href="https://github.com/afarra">github&lt;/a>)
+            &lt;br/>وائیل نەفی (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
+            &lt;br/>ئەحمەد فوئاد (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
+            &lt;br/>سومەییە جابر (&lt;a href="http://somaiagabr.com">web&lt;/a>)
+            &lt;br/>مەحمود حوسام (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
+            &lt;br/>ڕیحاب محەمەد (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
+            &lt;br/>&lt;br/>&lt;b>وەرگێڕەکان:&lt;/b>
+			&lt;br/>محەمەد مەحمود ئۆغلۆ - تورکی
+         &lt;br/>محەمەد جەعفەر نەعناکار - فارسی
+         &lt;br/>ڕینات (Ринат Валеев) - ڕووسی
+         &lt;br/>خەجەوی (لە گێت هوب) - وەرگێڕانی پێشووی فارسی
+	      &lt;br/>یاسر خەدوور - فەڕەنسی
+         &lt;br/>بۆ لی (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>)
+         &lt;br/>گۆران غەریب کەریم - کوردی
+            &lt;br/>&lt;br/>&lt;b>پڕۆژەی سەرچاوە کراوە:&lt;/b>
+            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
+            &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
+            &lt;br/>&lt;br/>&lt;b>سوپاسی تایبەتی بۆ:&lt;/b>
+            &lt;br/>ئەحمەد عیسام (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
+            &lt;br/>باتوول ئاپس (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+    <string name="help_title">ئەو پرسیارانەی کە زۆر کراون</string>
+    <string name="help">
+        &lt;b>چۆن دەنگ چالاک بکەم؟&lt;/b>
+        &lt;br/>هەر پەڕەیەکی قورئانت کردەوە یەک جار پەنجە بنێ بە شاشەکەدا، لە بەشی خوارەوەدا دوگمەی لێدان دەرئەکەوێت لەگەڵ هەندێک نوسین و ناوی قورئانخوێن. کلیک لەسەر ناوی قورئانخوێن بکە و بۆ هەڵبژاردنی قورئانخوێنی جیاواز. پەنجە بنێ بە دوگمەی لێداندا بۆ داگرتن و لێدانی پەڕە یان سورەت.
+        &lt;br/>
+        &lt;br/>&lt;b>چۆن وەرگێڕانەکان ببینم؟&lt;/b>
+        &lt;br/>هەر پەڕەیەکی قورئانت کردەوە یەک جار پەنجە بنێ بەشاشەکەدا، لە بەشی سەرەوەدا ئایکۆنی گۆی زەوی دەرئەکەوێت (یان ئەگەر دەرنەکەوت، ئەوا  ئایکۆنێک دەرئەکەوێت لەگەڵ سێ خاڵدا - پەنجەی پێدا بنێ و وەرگێڕانێک دیاریبکە بۆ بینینی وەرگێڕان).
+        &lt;br/>
+       ئەگەر هیچ وەرگێڕانێک دانەگیرابێت، ئەوا ئەتباتە بەشی وەرگێڕانەکان و ئەتوانی لەوێ دایبگریت.
+         وەرگێڕانێک دیاریبکە و دایبگرە، دواتر بگەڕێوە و دووبارە پەنجە بنێ بە ئایکۆنی گۆی زەویەکەدا بۆ بینینی وەرگێڕان.
+        &lt;br/>
+        &lt;br/>&lt;b>چۆن پەڕەیەک نیشانە بکەم؟&lt;/b>
+        &lt;br/>هەر پەڕەیەکی قورئانت کردەوە یەک جار پەنجە بنێ بە شاشەکەدا، لە بەشی سەرەوەدا ئایکۆنی ئەستێرەیەک دەرئەکەوێت. پەنجە بنێ بە ئەستێرەکەدا بۆ نیشانەکردن (ڕەنگەکەی ئەبێ بە سپی).
+دووبارە پەنجە بنێرەوە بە ئایکۆنی ئەستێرەکەدا بۆ لابردنی نیشانەکردن.
+        &lt;br/>
+        &lt;br/>&lt;b>چۆن نوسین (فۆنت) گەورەتر بکەم؟&lt;/b>
+        &lt;br/>بۆ پەڕە عەرەبیەکان ئامێرەکەت بخەرە سەرلا، ئەمە ئەبێتە هۆی گەورەکردنی نوسینەکان. بۆ گەورەکردنی نوسینی وەرگێڕانەکان، بچۆ بۆ ڕێکخستنەکان و قەبارەی نوسینی وەرگێڕان دیاریبکە.
+        &lt;br/>
+        &lt;br/>&lt;b>چۆن ئایەتێک بڵاوبکەمەوە؟&lt;/b>
+        &lt;br/>کاتێک لە پەڕەیەکی عەرەبیدا بوویت پەنجە بنێ بە هەر ئایەتێکدا و پەنجەت ڕاگرە بۆ ئەوەی لیستی هەڵبژاردن دەربکەوێت کە ئەو ئایەتە نیشانە بکەیت، بڵاوی بکەیتەوە، وەرگێڕان (تەفسیر) ببینیت، وە یان ئایەتەکە لەبەر بگریتەوە بۆ شوێنی کاتی. 
+        &lt;br/>
+        &lt;br/>&lt;b>فۆنتی زمانەکانی مالایلامی/تامیلی/بەنگالی/ئۆردۆ پیشان نادرێن!&lt;/b>
+        &lt;br/>بەداخەوە، لە وەشانەکانی ئەندرۆیدی پێش ٤.٠ پشگیری ئەو فۆنتانە ناکرێت، بەڵام لەم بەرنامەیەدا چارەسەری ئەو کێشەیە کراوە.
+    </string>
+	<string name="search_hint">گەڕان لە قورئاندا</string>
+	<string name="quranSearchType">ئایەتەکانی قورئان</string>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+        <item quantity="one">ئەنجامی گەڕان بۆ \"%s\": </item>
+        <item quantity="other">ئەنجامی گەڕان بۆ \"%s\": </item>
+    </plurals>
+
+    <!-- Search messages -->
+    <string name="found_in_sura">دۆزرایەوە لە سورەتدا</string>
+    <string name="no_results">ھیچ ئەنجامێک نەدۆزایەوە بۆ \"%s\"</string>
+    <string name="no_active_translation">هیچ وەرگێڕانێک چالاک نەکراوە. تکایە یەکەمجار وەرگێڕانێک چالاک بکە و دواتر دووبارە هەوڵی گەڕان بدەرەوە.</string>
+    <string name="translation_settings">ڕێکخستنەکانی وەرگێڕان</string>
+    <string name="no_arabic_search_available">داتاکانی گەڕان بە عەرەبی دانەگیراوە. تکایە دایبگرە و دووبارە هەوڵێ گەڕان بدەرەوە.</string>
+    <string name="get_arabic_search_db">داگرتنی داتابەیسی گەڕانی عەرەبی</string>
+        
+    <!-- Quran Preference Activity -->
+    <string name="prefs_category_navigation">گەڕان</string>
+    <string name="prefs_volume_key_navigation_title">فرمانی دوگمەی دەنگ</string>
+    <string name="prefs_volume_key_navigation_summary">گۆڕینی پەڕەکان بەهۆی دوگمەکانی دەنگەوە</string>
+    <string name="prefs_category_reading">ڕێکخستنی خوێندنەوە</string>
+    <string name="prefs_category_translation">ڕێکخستنی وەرگێڕان</string>
+    <string name="prefs_category_display_settings">ڕێکخستنی پیشاندان</string>
+    <string name="prefs_use_arabic_title">شێوازی عەرەبی</string>
+    <string name="prefs_use_arabic_summary_on">زمانی بەرنامەکە ئەبێت بە عەرەبی (دووبارە ئیشپێکردنەوە پێویستە).</string>
+    <string name="prefs_use_arabic_reshaper_title">بەکارهێنانی ڕاستکردنەوەی عەرەبی</string>
+    <string name="prefs_use_arabic_reshaper_summary_on">ئەگەر نوسینی عەرەبی پاش و پێش دەکەوێ، ئەم هەڵبژرادنە بەکاربهێنە.</string>
+    <string name="prefs_use_arabic_reshaper_summary_off">ئەگەر نوسینە عەرەبیەکان نانوسێن پێکەوە، ئەم هەڵبژاردنە بەکاربهێنە بۆ چارەسەرکردنی.</string>
+    <string name="prefs_new_background_title">پشت شاشەی نوێ</string>
+    <string name="prefs_lock_orientation_title">قفڵکردنی گۆڕینی ئاڕاستەی شاشە</string>
+    <string name="prefs_lock_orientation_summary_on">پەڕەکانی قورئان تەنها بەیەک ئاڕاستە پیشان ئەدرێن</string>
+    <string name="prefs_lock_orientation_summary_off">گونجاندن بۆ شێوازی ئاڕاستەی ئێستا</string>
+    <string name="prefs_landscape_orientation_title">ئاڕاستەی لەسەرلا (ئاسۆیی)</string>
+    <string name="prefs_landscape_orientation_summary_on">شێوازی ئاسۆیی بەکاردێت</string>
+    <string name="prefs_landscape_orientation_summary_off">شێوازی ستوونی بەکاردێت</string>
+    <string name="prefs_night_mode_title">شێوازی شەو (تاریک)</string>
+    <string name="prefs_night_mode_summary">پشت شاشەی ڕەش و نوسینی سپی </string>
+    <string name="prefs_night_mode_text_brightness_title">ڕووناکی نوسین</string>
+    <string name="prefs_night_mode_text_brightness_summary">ڕووناکی نوسین کاتێک شیوازی شەو چالاککرا</string>
+    <string name="prefs_overlay_page_info_title">پیشاندانی زانیاری پەڕە (تاقیکاری)</string>
+    <string name="prefs_overlay_page_info_summary">پیشاندانی ژمارەی پەڕە، ناوی سورەت، وە ژمارەی جوزئـ لەکاتی خوێندنەوەدا</string>
+    <string name="prefs_display_marker_title">ئاگادارکردنەوە لە بەشەکان</string>
+    <string name="prefs_display_marker_summary">پیشاندانی ئاگادارکردنەوە لەکاتی گەیشتن بە چارەکی بەش یان جوزئـ، هتد.</string>
+    <string name="prefs_translation_text_title">قەبارەی نوسینی وەرگێڕان</string>
+    <string name="prefs_translations">وەرگێڕانەکان</string>
+    <string name="prefs_translations_summary">داگرتن و ڕێکخستنی وەرگێڕان</string>
+    <string name="prefs_ayah_before_translation_title">ئایەت پێش وەرگێڕان</string>
+    <string name="prefs_ayah_before_translation_summary">پیشاندانی ئایەت بە عەرەبی لەسەرووی وەرگیڕان</string>
+    <string name="prefs_category_download">ھەڵبژاردنەکانی داگرتن</string>
+    <string name="prefs_streaming_title">شەپۆلی دەنگی سەرهێڵ</string>
+    <string name="prefs_streaming_summary">لێدانی دەنگ لەڕێی شەپۆلی ئینتەرنێتەوە لەکاتی شیاودا (تەنها ئەو دەنگانەی کە دانەگیراون).</string>
+    <string name="prefs_download_amount_title">ڕێژەی داگرتن</string>
+    <string name="prefs_download_amount_summary">ڕێژەی پەسەندی داگرتن بۆ دەنگە دانەگیراوەکان.</string>
+    <string name="downloaded_translations">داگیرا</string>
+    <string name="available_translations">ئامادەیە بۆ داگرتن</string>
+    <string name="remove_button">لابردن</string>
+    <string name="dialog_ok">باشە</string> 
+    <string name="prefs_advanced_settings_title">ڕێکخستنی پەرەسەندوو</string>
+    <string name="prefs_app_location_title">شوێنی بەرنامە</string>
+    <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
+    <string name="prefs_sdcard_internal">یادگەی ناوەکی</string>
+    <string name="prefs_sdcard_external">یادگەی دەرەکی SD</string>
+    <string name="prefs_sdcard_auto">خۆکار</string>
+    <string name="prefs_app_size">قەبارەی بەرنامە</string>
+    <string name="prefs_copying_app_files">لەبەرگرتنەوەی فایلەکانی بەرنامە</string>
+    <string name="prefs_custom_location_title">شوێنی تایبەت</string>
+    <string name="prefs_err_moving_app_files">گواستنەوەی فایلەکانی بەرنامە سەرکەوتو نەبوو</string>
+    <string name="prefs_no_enough_space_to_move_files">شوێنی بەتاڵ کەمە بۆ گواستنەوەی فایلەکانی بەرنامە</string>
+    <string name="prefs_megabytes">مێگابایت</string>
+    <!-- Preferences End -->
+
+    <!-- translation updates -->
+    <string name="update_available">نوێکردنەوە ئامادەیە</string>
+    <string name="translation_updates_available">نوێکردنەوە ئامادەیە بۆ هەندێک لە وەرگێڕانەکان. کردنەوەی بەشی وەرگێڕانەکان ئێستا؟</string>
+    <string name="translation_dialog_yes">بەڵێ</string>
+    <string name="translation_dialog_later">دواتر</string>
+
+    <!-- used for screen readers -->
+    <string name="border">لێوار</string>
+    
+    <!-- End Number picker Strings -->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
+    <string name="quran_hizb">بەشی</string>
+    <string name="quran_juz2">جوزئـ\'</string>
+    <string name="quran_page">پەڕەی</string>
+    <string name="quran_sura">سورەتی</string>
+    <string name="quran_ayah">ئایەت</string>
+    <string name="quran_sura_title">سورەت</string>
+    <string name="sura_ayah_notification_str">سورەتی %1$s, ئایەتی %2$d</string>
+
+    <string name="bookmarks_current_page">پەڕەی ئێستا</string>
+    <string name="index_loading">چاوەڕوانبە…</string>
+
+    <string name="canceling">هەڵوەشاندنەوە&#8230;</string>
+    <string name="juz2_description">جوزئی %1$s</string>
+    <string name="page_description">پەڕەی %1$s, جوزئی %2$s</string>
+    <string name="highlighting_database">فایلە پێویستەکان</string>
+    <string name="timing_database">فایلە پێویستەکان</string>
+    <string name="infinity">نا کۆتایی</string>
+    
+    <!-- download statuses and errors -->
+    <string name="download_successful">داگرتن سەرکەوتو بوو</string>   
+    <string name="download_processing">داگرتن لە ئەنجامداندایە&#8230;</string>              
+    <string name="download_error_general">داگرتن سەرکەوتو نەبوو</string>             
+    <string name="download_error_disk">شوێنی بەتاڵی پێویست نیە بۆ داگرتن</string>               
+    <string name="download_error_network">ناتوانرێت دابگیرێت بەهۆی هەڵە لە تۆڕدا</string>                    
+    <string name="download_error_perms">ناتوانرێت دابگیرێت بەهۆی هەڵە لە ڕێگەپێداندا</string>                  
+    <string name="download_error_invalid_download">فایلی داگیراو تێکچووە</string>
+    <string name="download_error_invalid_download_retry">فایل تێکچووە، هەوڵدان بۆ داگرتنەوە.</string> 
+    <string name="download_error_network_retry">هەڵە هەیە لە تۆڕدا، هەوڵدان بۆ بەردەوامبون&#8230;</string>
+    <string name="notification_download_canceled">داگرتن هەڵوەشێنرایەوە</string>
+    <string name="download_non_wifi_prompt">تۆ لەسەر تۆڕی بێتەل نیت WiFi. داگرتن بەهەرحاڵ؟</string>
+    
+    <!-- downloading dialogs -->
+    <string name="download_progress">داگیرا %1$s / %2$s</string>
+    <string name="process_progress">ئەنجامدان %1$d / %2$d</string>
+    <string name="download_retry">ھەوڵدانەوە</string>
+    <string name="download_cancel">پاشگەزبونەوە</string>
+    <string name="download_extra_data">پێویستە فایلێک یان دوو فایلی بچووک دابگریت بۆ پاڵپشتیکردنی بڵاوکردنەوە. داگرتن ئێستا؟</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">لابردنی وەرگێڕان؟</string>
+    <string name="remove_dlg_msg">ئایا دڵنیایت لە لابردنی %1$s?</string>
+    <string name="error_getting_translation_list">ناتوانرێت لیستی وەرگێڕانەکان دابگیرێت، تکایە دواتر هەوڵبدەرەوە.</string>
+    <string name="search_data">گەڕان بەدوای داتادا</string>
+    <string name="need_translation">تۆ هێشتا هیچ وەرگێڕانێک/تەفسیرێکت دانگرتووە.</string>
+    <string name="get_translations">داگرتنی وەرگێڕان</string>
+
+    <!-- about us -->
+    <string name="email_quran_android">ناردنی پۆستی ئەلکترۆنی</string>
+
+    <!-- sura metainfo -->
+    <string name="makki">مه ککه یی</string>
+    <string name="madani">مه د ینه يی</string>
+    <plurals name="verses">
+        <item quantity="one">ئایەت</item>
+        <item quantity="other">ئایەت</item>
+    </plurals>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">نیشانەکردنی ئەم ئایەتە</string>
+    <string name="unbookmark_ayah">لابردنی نیشانەکراو لەم ئایەتەوە</string>
+    <string name="tag_ayah">بڕگەکردنی ئەم ئایەتە</string>
+    <string name="share_ayah">ناردنی ئایەت</string>
+    <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
+    <string name="translation_ayah">وەرگێڕانی ئایەت/تەفسیر</string>
+    <string name="play_from_here">لێدان لێرەوە</string>
+    <string name="ayah_notes">تێبینی</string>
+    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
+    <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>
+    <string name="ayah_copied_popup">ئایەت لەبەریگیراوە</string>
+    <string name="show_more">پیشاندانی زیاتر</string>
+    
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="delete_bookmark">سڕینەوەی نیشانەکراوە</string>
+    <string name="tag_bookmark">بڕگە نیشانەکرا</string>
+    <string name="delete_tag">سڕینەوەی بڕگە</string>
+    <string name="edit_tag">دەستکاریکردنی بڕگە</string>
+    <string name="new_tag">بڕگەی نوێ</string>
+    <string name="not_tagged">بڕگە نەکراوە</string>
+    
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">بڕگە</string>
+    <string name="tag_name">ناو</string>
+    
+    <!-- bookmark & tag list -->
+    <string name="bookmarks_list_empty">ھیچ نیشانەکراوێک نیە</string>
+    <string name="tags_list_empty">بێ بڕگە</string>
+</resources>
