@@ -28,7 +28,7 @@ App localization
 * Farsi for version 1.6 by [@khajavi](http://github.com/khajavi).
 * Turkish by Mehmed Mahmudoglu.
 * Russian by Rinat (Ринат Валеев).
-* Kurdish by Gharib Karim.
+* Kurdish by Goran Gharib Karim.
 * French by Yasser [@yasserkad](http://github.com/yasserkad).
 * German by Armin Supuk
 * Chinese by Bo Li
