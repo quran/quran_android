@@ -205,8 +205,11 @@ public class QuranPageFragment extends SherlockFragment
 
    public void cleanup(){
       android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
-      mImageView.setImageDrawable(null);
-      mImageView = null;
+      if (mImageView != null){
+         mImageView.setImageDrawable(null);
+         mImageView = null;
+      }
+
       if (mTranslationDialog != null){
          mTranslationDialog.dismiss();
          mTranslationDialog = null;

@@ -151,10 +151,15 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
    public void cleanup(){
       android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
-      mLeftImageView.setImageDrawable(null);
-      mRightImageView.setImageDrawable(null);
-      mLeftImageView = null;
-      mRightImageView = null;
+      if (mLeftImageView != null){
+         mLeftImageView.setImageDrawable(null);
+         mLeftImageView = null;
+      }
+
+      if (mRightImageView != null){
+         mRightImageView.setImageDrawable(null);
+         mRightImageView = null;
+      }
    }
 
    @Override
