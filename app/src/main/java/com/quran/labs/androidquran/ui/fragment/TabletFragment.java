@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -12,13 +14,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.ui.helpers.TranslationTask;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.widgets.TranslationView;
+
+import java.util.List;
 
 public class TabletFragment extends SherlockFragment implements AyahTracker {
 
@@ -34,6 +41,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
    private int mPageNumber;
    private PaintDrawable mLeftGradient, mRightGradient = null;
+   private TranslationView mLeftTranslation, mRightTranslation = null;
    private HighlightingImageView mLeftImageView, mRightImageView = null;
 
    public static TabletFragment newInstance(int firstPage, int mode){
@@ -73,10 +81,6 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
       View leftArea = view.findViewById(R.id.left_page_area);
       View rightArea = view.findViewById(R.id.right_page_area);
-      mLeftImageView = (HighlightingImageView)view
-              .findViewById(R.id.left_page_image);
-      mRightImageView = (HighlightingImageView)view
-              .findViewById(R.id.right_page_image);
 
       if (!prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
          int color = res.getColor(R.color.page_background);
@@ -108,32 +112,72 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       ImageView line = (ImageView)view.findViewById(R.id.line);
       line.setImageResource(lineImageId);
 
-      mLeftImageView.setNightMode(nightMode);
-      mRightImageView.setNightMode(nightMode);
-      if (nightMode) {
-         mLeftImageView.setNightModeTextBrightness(nightModeTextBrightness);
-         mRightImageView.setNightModeTextBrightness(nightModeTextBrightness);
+      mLeftImageView = (HighlightingImageView)view
+              .findViewById(R.id.left_page_image);
+      mRightImageView = (HighlightingImageView)view
+              .findViewById(R.id.right_page_image);
+      mLeftTranslation = (TranslationView)view
+              .findViewById(R.id.left_page_translation);
+      mRightTranslation = (TranslationView)view
+              .findViewById(R.id.right_page_translation);
+
+      int mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
+      if (mode == Mode.ARABIC){
+         mLeftTranslation.setVisibility(View.GONE);
+         mRightTranslation.setVisibility(View.GONE);
+
+         mLeftImageView.setVisibility(View.VISIBLE);
+         mRightImageView.setVisibility(View.VISIBLE);
+
+         mLeftImageView.setNightMode(nightMode);
+         mRightImageView.setNightMode(nightMode);
+         if (nightMode) {
+            mLeftImageView.setNightModeTextBrightness(nightModeTextBrightness);
+            mRightImageView.setNightModeTextBrightness(nightModeTextBrightness);
+         }
+
+         mLeftImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               PagerActivity pagerActivity = ((PagerActivity)getActivity());
+               if (pagerActivity != null){
+                  pagerActivity.toggleActionBar();
+               }
+            }
+         });
+
+         mRightImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               PagerActivity pagerActivity = ((PagerActivity)getActivity());
+               if (pagerActivity != null){
+                  pagerActivity.toggleActionBar();
+               }
+            }
+         });
       }
+      else if (mode == Mode.TRANSLATION){
+         mLeftImageView.setVisibility(View.GONE);
+         mRightImageView.setVisibility(View.GONE);
 
-      mLeftImageView.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            PagerActivity pagerActivity = ((PagerActivity)getActivity());
-            if (pagerActivity != null){
-               pagerActivity.toggleActionBar();
-            }
-         }
-      });
+         mLeftTranslation.setVisibility(View.VISIBLE);
+         mRightTranslation.setVisibility(View.VISIBLE);
 
-      mRightImageView.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            PagerActivity pagerActivity = ((PagerActivity)getActivity());
-            if (pagerActivity != null){
-               pagerActivity.toggleActionBar();
-            }
-         }
-      });
+         mLeftTranslation.setTranslationClickedListener(
+                 new TranslationView.TranslationClickedListener() {
+                    @Override
+                    public void onTranslationClicked() {
+                       ((PagerActivity) getActivity()).toggleActionBar();
+                    }
+                 });
+         mRightTranslation.setTranslationClickedListener(
+                 new TranslationView.TranslationClickedListener() {
+                    @Override
+                    public void onTranslationClicked() {
+                       ((PagerActivity) getActivity()).toggleActionBar();
+                    }
+                 });
+      }
 
       return view;
    }
@@ -141,11 +185,60 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
    @Override
    public void onActivityCreated(Bundle savedInstanceState){
       super.onActivityCreated(savedInstanceState);
-      if (PagerActivity.class.isInstance(getActivity())){
-         QuranPageWorker worker =
-                 ((PagerActivity)getActivity()).getQuranPageWorker();
-         worker.loadPage(mPageNumber-1, mRightImageView);
-         worker.loadPage(mPageNumber, mLeftImageView);
+
+      int mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
+      if (mode == Mode.ARABIC){
+         if (PagerActivity.class.isInstance(getActivity())){
+            QuranPageWorker worker =
+                    ((PagerActivity)getActivity()).getQuranPageWorker();
+            worker.loadPage(mPageNumber-1, mRightImageView);
+            worker.loadPage(mPageNumber, mLeftImageView);
+         }
+      }
+      else if (mode == Mode.TRANSLATION){
+         Context context = getActivity();
+         if (context != null){
+            SharedPreferences prefs =
+                    PreferenceManager.getDefaultSharedPreferences(context);
+            String database = prefs.getString(
+                    Constants.PREF_ACTIVE_TRANSLATION, null);
+
+            new PageTranslationTask(context,
+                    database, mPageNumber-1).execute(mPageNumber-1);
+            new PageTranslationTask(context,
+                    database, mPageNumber).execute(mPageNumber);
+         }
+      }
+   }
+
+   class PageTranslationTask extends TranslationTask {
+      private int mLookupPageNumber;
+
+      public PageTranslationTask(Context context,
+                                 String databaseName, int page){
+         super(context.getApplicationContext(), databaseName);
+         if (context instanceof PagerActivity){
+            ((PagerActivity)context).setLoadingIfPage(page);
+         }
+
+         mLookupPageNumber = page;
+      }
+
+      @Override
+      protected void onPostExecute(List<QuranAyah> result) {
+         if (result != null){
+            if (mLookupPageNumber == mPageNumber){
+               mLeftTranslation.setAyahs(result);
+            }
+            else {
+               mRightTranslation.setAyahs(result);
+            }
+         }
+
+         Activity activity = getActivity();
+         if (activity != null && activity instanceof PagerActivity){
+            ((PagerActivity)activity).setLoading(false);
+         }
       }
    }
 

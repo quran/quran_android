@@ -1,15 +1,13 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +16,13 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.ui.helpers.TranslationTask;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TranslationFragment extends SherlockFragment
@@ -164,7 +159,11 @@ public class TranslationFragment extends SherlockFragment
 
    public void refresh(String database){
       if (database != null){
-         new TranslationTask(database).execute(mPageNumber);
+         Activity activity = getActivity();
+         if (activity != null){
+            new PageTranslationTask(activity,
+                    database).execute(mPageNumber);
+         }
       }
    }
 
@@ -176,95 +175,13 @@ public class TranslationFragment extends SherlockFragment
       super.onSaveInstanceState(outState);
    }
 
-   class TranslationTask extends AsyncTask<Integer, Void, List<QuranAyah>> {
-      private String mDatabaseName = null;
+   class PageTranslationTask extends TranslationTask {
 
-      public TranslationTask(String databaseName){
-         mDatabaseName = databaseName;
-         Activity activity = getActivity();
-         if (activity != null && activity instanceof PagerActivity){
-            ((PagerActivity)activity).setLoadingIfPage(mPageNumber);
+      public PageTranslationTask(Context context, String databaseName){
+         super(context.getApplicationContext(), databaseName);
+         if (context instanceof PagerActivity){
+            ((PagerActivity)context).setLoadingIfPage(mPageNumber);
          }
-      }
-
-      @Override
-      protected List<QuranAyah> doInBackground(Integer... params) {
-         Activity activity = getActivity();
-         if (activity == null){ return null; }
-
-         int page = params[0];
-         Integer[] bounds = QuranInfo.getPageBounds(page);
-         if (bounds == null){ return null; }
-
-         String databaseName = mDatabaseName;
-
-         // is this an arabic translation/tafseer or not
-         boolean isArabic = mDatabaseName.contains(".ar.") ||
-                 mDatabaseName.equals("quran.muyassar.db");
-         List<QuranAyah> verses = new ArrayList<QuranAyah>();
-
-         try {
-            DatabaseHandler translationHandler =
-                    new DatabaseHandler(getActivity(), databaseName);
-            Cursor translationCursor =
-                    translationHandler.getVerses(bounds[0], bounds[1],
-                            bounds[2], bounds[3],
-                            DatabaseHandler.VERSE_TABLE);
-
-            DatabaseHandler ayahHandler = null;
-            Cursor ayahCursor = null;
-
-            if (QuranSettings.wantArabicInTranslationView(activity)){
-               try {
-                  ayahHandler = new DatabaseHandler(getActivity(),
-                       QuranDataProvider.QURAN_ARABIC_DATABASE);
-                  ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
-                       bounds[2], bounds[3],
-                       DatabaseHandler.ARABIC_TEXT_TABLE);
-               }
-               catch (Exception e){
-                  // ignore any exceptions due to no arabic database
-               }
-            }
-
-            if (translationCursor != null) {
-               boolean validAyahCursor = false;
-               if (ayahCursor != null && ayahCursor.moveToFirst()){
-                  validAyahCursor = true;
-               }
-
-               if (translationCursor.moveToFirst()) {
-                  do {
-                     int sura = translationCursor.getInt(0);
-                     int ayah = translationCursor.getInt(1);
-                     String translation = translationCursor.getString(2);
-                     QuranAyah verse = new QuranAyah(sura, ayah);
-                     verse.setTranslation(translation);
-                     if (validAyahCursor){
-                        String text = ayahCursor.getString(2);
-                        verse.setText(text);
-                     }
-                     verse.setArabic(isArabic);
-                     verses.add(verse);
-                  }
-                  while (translationCursor.moveToNext() &&
-                          (!validAyahCursor || ayahCursor.moveToNext()));
-               }
-               translationCursor.close();
-               if (ayahCursor != null){
-                  ayahCursor.close();
-               }
-            }
-            translationHandler.closeDatabase();
-            if (ayahHandler != null){
-               ayahHandler.closeDatabase();
-            }
-         }
-         catch (Exception e){
-            Log.d(TAG, "unable to open " + databaseName + " - " + e);
-         }
-
-         return verses;
       }
 
       @Override
