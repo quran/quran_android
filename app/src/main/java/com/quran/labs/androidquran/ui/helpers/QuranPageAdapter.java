@@ -67,7 +67,8 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 	   android.util.Log.d(TAG, "getting page: " + (count-position));
       if (mIsDualPages){
          return TabletFragment.newInstance((count-position)*2,
-                 TabletFragment.Mode.ARABIC);
+                mIsShowingTranslation? TabletFragment.Mode.TRANSLATION :
+                        TabletFragment.Mode.ARABIC);
       }
 
       if (mIsShowingTranslation){
