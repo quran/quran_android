@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
@@ -24,8 +22,6 @@ import com.quran.labs.androidquran.ui.helpers.TranslationTask;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.TranslationView;
-
-import java.util.List;
 
 public class TabletFragment extends SherlockFragment implements AyahTracker {
 
@@ -203,41 +199,10 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
             String database = prefs.getString(
                     Constants.PREF_ACTIVE_TRANSLATION, null);
 
-            new PageTranslationTask(context,
-                    database, mPageNumber-1).execute(mPageNumber-1);
-            new PageTranslationTask(context,
-                    database, mPageNumber).execute(mPageNumber);
-         }
-      }
-   }
-
-   class PageTranslationTask extends TranslationTask {
-      private int mLookupPageNumber;
-
-      public PageTranslationTask(Context context,
-                                 String databaseName, int page){
-         super(context.getApplicationContext(), databaseName);
-         if (context instanceof PagerActivity){
-            ((PagerActivity)context).setLoadingIfPage(page);
-         }
-
-         mLookupPageNumber = page;
-      }
-
-      @Override
-      protected void onPostExecute(List<QuranAyah> result) {
-         if (result != null){
-            if (mLookupPageNumber == mPageNumber){
-               mLeftTranslation.setAyahs(result);
-            }
-            else {
-               mRightTranslation.setAyahs(result);
-            }
-         }
-
-         Activity activity = getActivity();
-         if (activity != null && activity instanceof PagerActivity){
-            ((PagerActivity)activity).setLoading(false);
+            new TranslationTask(context, mPageNumber-1, 0,
+                    database, mRightTranslation).execute();
+            new TranslationTask(context, mPageNumber, 0,
+                    database, mLeftTranslation).execute();
          }
       }
    }

@@ -8,8 +8,11 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.TranslationView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,20 +22,33 @@ import java.util.List;
  * Date: 5/7/13
  * Time: 11:03 PM
  */
-public class TranslationTask extends AsyncTask<Integer, Void, List<QuranAyah>> {
+public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
    private static final String TAG = "TranslationTask";
 
    private Context mContext;
-   private String mDatabaseName = null;
 
-   public TranslationTask(Context context, String databaseName){
-      mDatabaseName = databaseName;
+   private int mPageNumber;
+   private int mHighlightedAyah;
+   private String mDatabaseName = null;
+   private WeakReference<TranslationView> mTranslationView;
+
+   public TranslationTask(Context context, int pageNumber,
+                          int highlightedAyah, String databaseName,
+                          TranslationView view){
       mContext = context;
+      mDatabaseName = databaseName;
+      mPageNumber = pageNumber;
+      mHighlightedAyah = highlightedAyah;
+      mTranslationView = new WeakReference<TranslationView>(view);
+
+      if (context instanceof PagerActivity){
+         ((PagerActivity)context).setLoadingIfPage(mPageNumber);
+      }
    }
 
    @Override
-   protected List<QuranAyah> doInBackground(Integer... params) {
-      int page = params[0];
+   protected List<QuranAyah> doInBackground(Void... params) {
+      int page = mPageNumber;
       Integer[] bounds = QuranInfo.getPageBounds(page);
       if (bounds == null){ return null; }
 
@@ -105,5 +121,28 @@ public class TranslationTask extends AsyncTask<Integer, Void, List<QuranAyah>> {
       }
 
       return verses;
+   }
+
+   @Override
+   protected void onPostExecute(List<QuranAyah> result) {
+      if (result != null){
+         final TranslationView view = mTranslationView.get();
+         if (view != null){
+            view.setAyahs(result);
+            if (mHighlightedAyah > 0){
+               // give a chance for translation view to render
+               view.postDelayed(new Runnable() {
+                  @Override
+                  public void run() {
+                     view.highlightAyah(mHighlightedAyah);
+                  }
+               }, 100);
+            }
+         }
+
+         if (mContext != null && mContext instanceof PagerActivity){
+            ((PagerActivity)mContext).setLoading(false);
+         }
+      }
    }
 }
