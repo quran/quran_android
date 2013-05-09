@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -14,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -22,8 +20,6 @@ import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.TranslationTask;
 import com.quran.labs.androidquran.widgets.TranslationView;
-
-import java.util.List;
 
 public class TranslationFragment extends SherlockFragment
    implements AyahTracker {
@@ -161,8 +157,8 @@ public class TranslationFragment extends SherlockFragment
       if (database != null){
          Activity activity = getActivity();
          if (activity != null){
-            new PageTranslationTask(activity,
-                    database).execute(mPageNumber);
+            new TranslationTask(activity, mPageNumber,
+                    mHighlightedAyah, database, mTranslationView).execute();
          }
       }
    }
@@ -173,36 +169,5 @@ public class TranslationFragment extends SherlockFragment
          outState.putInt(SI_HIGHLIGHTED_AYAH, mHighlightedAyah);
       }
       super.onSaveInstanceState(outState);
-   }
-
-   class PageTranslationTask extends TranslationTask {
-
-      public PageTranslationTask(Context context, String databaseName){
-         super(context.getApplicationContext(), databaseName);
-         if (context instanceof PagerActivity){
-            ((PagerActivity)context).setLoadingIfPage(mPageNumber);
-         }
-      }
-
-      @Override
-      protected void onPostExecute(List<QuranAyah> result) {
-         if (result != null){
-            mTranslationView.setAyahs(result);
-            if (mHighlightedAyah > 0){
-               // give a chance for translation view to render
-               mTranslationView.postDelayed(new Runnable() {
-                  @Override
-                  public void run() {
-                     mTranslationView.highlightAyah(mHighlightedAyah);
-                  }
-               }, 100);
-            }
-         }
-
-         Activity activity = getActivity();
-         if (activity != null && activity instanceof PagerActivity){
-            ((PagerActivity)activity).setLoading(false);
-         }
-      }
    }
 }
