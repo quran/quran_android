@@ -4,24 +4,27 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.ui.helpers.TranslationTask;
+import com.quran.labs.androidquran.ui.helpers.*;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.TranslationView;
+
+import java.util.List;
+import java.util.Map;
 
 public class TabletFragment extends SherlockFragment implements AyahTracker {
 
@@ -35,7 +38,10 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       public static final int MIXED = 3;
    }
 
+   private int mMode;
    private int mPageNumber;
+   private boolean mOverlayText;
+   private List<Map<String, List<AyahBounds>>> mCoordinateData;
    private PaintDrawable mLeftGradient, mRightGradient = null;
    private TranslationView mLeftTranslation, mRightTranslation = null;
    private HighlightingImageView mLeftImageView, mRightImageView = null;
@@ -89,7 +95,8 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       }
 
       boolean nightMode = false;
-      int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+      int nightModeTextBrightness =
+              Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
       if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
@@ -97,7 +104,8 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
          leftArea.setBackgroundColor(Color.BLACK);
          rightArea.setBackgroundColor(Color.BLACK);
          nightMode = true;
-         nightModeTextBrightness = QuranSettings.getNightModeTextBrightness(getActivity());
+         nightModeTextBrightness =
+                 QuranSettings.getNightModeTextBrightness(getActivity());
       }
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
@@ -117,8 +125,8 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       mRightTranslation = (TranslationView)view
               .findViewById(R.id.right_page_translation);
 
-      int mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
-      if (mode == Mode.ARABIC){
+      mMode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
+      if (mMode == Mode.ARABIC){
          mLeftTranslation.setVisibility(View.GONE);
          mRightTranslation.setVisibility(View.GONE);
 
@@ -152,7 +160,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
             }
          });
       }
-      else if (mode == Mode.TRANSLATION){
+      else if (mMode == Mode.TRANSLATION){
          mLeftImageView.setVisibility(View.GONE);
          mRightImageView.setVisibility(View.GONE);
 
@@ -175,6 +183,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
                  });
       }
 
+      mOverlayText = prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
       return view;
    }
 
@@ -182,17 +191,19 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
    public void onActivityCreated(Bundle savedInstanceState){
       super.onActivityCreated(savedInstanceState);
 
-      int mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
-      if (mode == Mode.ARABIC){
+      Context context = getActivity();
+      if (mMode == Mode.ARABIC){
          if (PagerActivity.class.isInstance(getActivity())){
             QuranPageWorker worker =
                     ((PagerActivity)getActivity()).getQuranPageWorker();
             worker.loadPage(mPageNumber-1, mRightImageView);
             worker.loadPage(mPageNumber, mLeftImageView);
          }
+
+         new QueryPageCoordinatesTask(context)
+                 .execute(mPageNumber - 1, mPageNumber);
       }
-      else if (mode == Mode.TRANSLATION){
-         Context context = getActivity();
+      else if (mMode == Mode.TRANSLATION){
          if (context != null){
             SharedPreferences prefs =
                     PreferenceManager.getDefaultSharedPreferences(context);
@@ -220,8 +231,74 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       }
    }
 
+   private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
+      public QueryPageCoordinatesTask(Context context){
+         super(context);
+      }
+
+      @Override
+      protected void onPostExecute(Rect[] rect) {
+         if (rect != null){
+            if (mMode == Mode.ARABIC && rect.length == 2){
+               if (mRightImageView != null && mLeftImageView != null){
+                  mRightImageView.setPageBounds(rect[0]);
+                  mLeftImageView.setPageBounds(rect[1]);
+                  if (mOverlayText){
+                     mRightImageView.setOverlayText(mPageNumber-1, true);
+                     mLeftImageView.setOverlayText(mPageNumber, true);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   private class GetAyahCoordsTask extends QueryAyahCoordsTask {
+
+      public GetAyahCoordsTask(Context context, MotionEvent event){
+         super(context, event);
+      }
+
+      public GetAyahCoordsTask(Context context, int sura, int ayah){
+         super(context, sura, ayah);
+      }
+
+      @Override
+      protected void onPostExecute(List<Map<String, List<AyahBounds>>> maps){
+         if (maps != null && maps.size() > 0){
+            if (mMode == Mode.ARABIC && maps.size() == 2){
+               mRightImageView.setCoordinateData(maps.get(0));
+               mLeftImageView.setCoordinateData(maps.get(1));
+
+               mCoordinateData = maps;
+
+               if (mHighlightAyah){
+                  handleHighlightAyah(mSura, mAyah);
+               }
+               // else { handleLongPress(mEvent); }
+            }
+         }
+      }
+   }
+
    @Override
    public void highlightAyah(int sura, int ayah){
+      if (mCoordinateData == null){
+         new GetAyahCoordsTask(getActivity(), sura, ayah)
+                 .execute(mPageNumber - 1, mPageNumber);
+      }
+      else { handleHighlightAyah(sura, ayah); }
+   }
+
+   private void handleHighlightAyah(int sura, int ayah){
+      if (mMode == Mode.ARABIC){
+         // TODO - no need to do this twice, figure out correct page then call
+         if (mLeftImageView == null || mRightImageView == null){ return; }
+         mLeftImageView.highlightAyah(sura, ayah);
+         mRightImageView.highlightAyah(sura, ayah);
+         mLeftImageView.invalidate();
+         mRightImageView.invalidate();
+      }
    }
 
    @Override

@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,7 +31,6 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -38,18 +38,14 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
-import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.util.QuranAppUtils;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.TranslationUtils;
+import com.quran.labs.androidquran.ui.helpers.*;
+import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 public class QuranPageFragment extends SherlockFragment
@@ -67,7 +63,6 @@ public class QuranPageFragment extends SherlockFragment
    private ProgressDialog mProgressDialog;
    private AsyncTask mCurrentTask;
 
-   private Rect mPageBoundsRect;
    private boolean mOverlayText;
    private Map<String, List<AyahBounds>> mCoordinateData;
 
@@ -159,26 +154,19 @@ public class QuranPageFragment extends SherlockFragment
          mImageView.setCoordinateData(mCoordinateData);
       }
 
-      if (mPageBoundsRect != null){
-         mImageView.setPageBounds(mPageBoundsRect);
-         if (mOverlayText){
-            mImageView.setOverlayText(mPageNumber, true);
-         }
-      }
-
       return view;
    }
 
    @Override
    public void onActivityCreated(Bundle savedInstanceState){
       super.onActivityCreated(savedInstanceState);
-      if (PagerActivity.class.isInstance(getActivity())){
-         QuranPageWorker worker = ((PagerActivity)getActivity()).getQuranPageWorker();
+      Activity activity = getActivity();
+      if (PagerActivity.class.isInstance(activity)){
+         QuranPageWorker worker =
+                 ((PagerActivity)activity).getQuranPageWorker();
          worker.loadPage(mPageNumber, mImageView);
 
-         if (mPageBoundsRect == null){
-            new QueryPageCoordsTask().execute();
-         }
+         new QueryPageCoordinatesTask(activity).execute(mPageNumber);
       }
    }
 
@@ -216,30 +204,16 @@ public class QuranPageFragment extends SherlockFragment
       }
    }
 
-   private class QueryPageCoordsTask extends AsyncTask<Void, Void, Rect> {
-      private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
-
-      public QueryPageCoordsTask(){
-         mAyahInfoDatabaseHandler = null;
-         Activity activity = getActivity();
-         if (activity != null && activity instanceof PagerActivity){
-            mAyahInfoDatabaseHandler =
-                    ((PagerActivity)activity).getAyahInfoDatabase();
-         }
+   private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
+      public QueryPageCoordinatesTask(Context context){
+         super(context);
       }
 
       @Override
-      protected Rect doInBackground(Void... params){
-         if (mAyahInfoDatabaseHandler == null){ return null; }
-         return mAyahInfoDatabaseHandler.getPageBounds(mPageNumber);
-      }
-
-      @Override
-      protected void onPostExecute(Rect rect) {
-         if (rect != null){
-            mPageBoundsRect = rect;
+      protected void onPostExecute(Rect[] rect) {
+         if (rect != null && rect.length == 1){
             if (mImageView != null){
-               mImageView.setPageBounds(mPageBoundsRect);
+               mImageView.setPageBounds(rect[0]);
                if (mOverlayText){
                   mImageView.setOverlayText(mPageNumber, true);
                }
@@ -248,85 +222,23 @@ public class QuranPageFragment extends SherlockFragment
       }
    }
 
-   private class QueryAyahCoordsTask extends
-           AsyncTask<Void, Void, Map<String, List<AyahBounds>>> {
-      private int mSura;
-      private int mAyah;
-      private boolean mHighlightAyah;
-      private MotionEvent mEvent;
-      private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
+   private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
-      public QueryAyahCoordsTask(MotionEvent event){
-         this(0, 0);
-         mEvent = event;
-         mHighlightAyah = false;
+      public GetAyahCoordsTask(Context context, MotionEvent event){
+         super(context, event);
       }
 
-      public QueryAyahCoordsTask(int sura, int ayah){
-         mSura = sura;
-         mAyah = ayah;
-         mHighlightAyah = true;
-         mAyahInfoDatabaseHandler = null;
-
-         Activity activity = getActivity();
-         if (activity != null && activity instanceof PagerActivity){
-            mAyahInfoDatabaseHandler =
-                    ((PagerActivity)activity).getAyahInfoDatabase();
-         }
+      public GetAyahCoordsTask(Context context, int sura, int ayah){
+         super(context, sura, ayah);
       }
 
       @Override
-      protected Map<String, List<AyahBounds>> doInBackground(Void... params) {
-         if (mAyahInfoDatabaseHandler == null){ return null; }
-
-         Cursor cursor;
-         try {
-            cursor = mAyahInfoDatabaseHandler
-                 .getVersesBoundsForPage(mPageNumber);
-         }
-         catch (Exception e){
-            // happens when the glyphs table doesn't exist somehow
-            return null;
-         }
-
-         if (cursor == null || !cursor.moveToFirst()){ return null; }
-
-         Map<String, List<AyahBounds>> map =
-                 new HashMap<String, List<AyahBounds>>();
-         do {
-            int sura = cursor.getInt(2);
-            int ayah = cursor.getInt(3);
-            String key = sura + ":" + ayah;
-            List<AyahBounds> bounds = map.get(key);
-            if (bounds == null){
-               bounds = new ArrayList<AyahBounds>();
-            }
-
-            AyahBounds last = null;
-            if (bounds.size() > 0){ last = bounds.get(bounds.size() - 1); }
-
-            AyahBounds bound = new AyahBounds(cursor.getInt(1),
-                    cursor.getInt(4), cursor.getInt(5),
-                    cursor.getInt(6), cursor.getInt(7),
-                    cursor.getInt(8));
-            if (last != null && last.getLine() == bound.getLine()){
-               last.engulf(bound);
-            }
-            else { bounds.add(bound); }
-            map.put(key, bounds);
-         }
-         while (cursor.moveToNext());
-         cursor.close();
-         return map;
-      }
-
-      @Override
-      protected void onPostExecute(Map<String, List<AyahBounds>> map) {
-         if (map != null){
-            mCoordinateData = map;
+      protected void onPostExecute(List<Map<String, List<AyahBounds>>> maps){
+         if (maps != null && maps.size() > 0){
+            mCoordinateData = maps.get(0);
 
             if (mImageView != null){
-               mImageView.setCoordinateData(map);
+               mImageView.setCoordinateData(mCoordinateData);
             }
          }
 
@@ -334,7 +246,6 @@ public class QuranPageFragment extends SherlockFragment
             handleHighlightAyah(mSura,  mAyah);
          }
          else { handleLongPress(mEvent); }
-
          mCurrentTask = null;
       }
    }
@@ -349,7 +260,8 @@ public class QuranPageFragment extends SherlockFragment
          }
 
          if (mCurrentTask == null){
-            mCurrentTask = new QueryAyahCoordsTask(sura, ayah).execute();
+            mCurrentTask = new GetAyahCoordsTask(
+                    getActivity(), sura, ayah).execute(mPageNumber);
          }
       }
       else { handleHighlightAyah(sura, ayah); }
@@ -513,7 +425,8 @@ public class QuranPageFragment extends SherlockFragment
          }
 
          if (mCoordinateData == null){
-            mCurrentTask = new QueryAyahCoordsTask(event).execute();
+            mCurrentTask = new GetAyahCoordsTask(getActivity(),
+                    event).execute(mPageNumber);
          }
          else { handleLongPress(event); }
       }
