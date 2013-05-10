@@ -935,6 +935,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
               Constants.PAGES_LAST < page){ return; }
 
       int position = Constants.PAGES_LAST - page;
+      if (mDualPages){
+         if (page % 2 != 0){ page++; }
+         position = 302 - (page / 2);
+      }
+
       if (position != mViewPager.getCurrentItem() && force){
          unhighlightAyah();
          mViewPager.setCurrentItem(position);
@@ -1054,6 +1059,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       int position = mViewPager.getCurrentItem();
       int page = Constants.PAGES_LAST - position;
+      if (mDualPages){
+         page = ((302 - position) * 2) - 1;
+      }
 
       int startSura = QuranInfo.PAGE_SURA_START[page - 1];
       int startAyah = QuranInfo.PAGE_AYAH_START[page - 1];
@@ -1100,7 +1108,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       if (endAyah == null || baseUri == null){ return; }
       String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, qari);
 
-      String fileUrl = "";
+      String fileUrl;
       if (TextUtils.isEmpty(dbFile)){
          fileUrl = baseUri + File.separator + "%d" + File.separator +
               "%d" + AudioUtils.AUDIO_EXTENSION;
