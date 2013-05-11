@@ -17,6 +17,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.*;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -41,6 +42,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
    private int mMode;
    private int mPageNumber;
    private boolean mOverlayText;
+   private int mLastHighlightedPage;
    private List<Map<String, List<AyahBounds>>> mCoordinateData;
    private PaintDrawable mLeftGradient, mRightGradient = null;
    private TranslationView mLeftTranslation, mRightTranslation = null;
@@ -183,6 +185,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
                  });
       }
 
+      mLastHighlightedPage = 0;
       mOverlayText = prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
       return view;
    }
@@ -292,16 +295,33 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
    private void handleHighlightAyah(int sura, int ayah){
       if (mMode == Mode.ARABIC){
-         // TODO - no need to do this twice, figure out correct page then call
          if (mLeftImageView == null || mRightImageView == null){ return; }
-         mLeftImageView.highlightAyah(sura, ayah);
-         mRightImageView.highlightAyah(sura, ayah);
-         mLeftImageView.invalidate();
-         mRightImageView.invalidate();
+
+         int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+         if (page == mPageNumber - 1){
+            mRightImageView.highlightAyah(sura, ayah);
+            mRightImageView.invalidate();
+            if (mLastHighlightedPage == mPageNumber){
+               mLeftImageView.unhighlight();
+            }
+         }
+         else if (page == mPageNumber){
+            mLeftImageView.highlightAyah(sura, ayah);
+            mLeftImageView.invalidate();
+            if (mLastHighlightedPage == mPageNumber-1){
+               mRightImageView.unhighlight();
+            }
+         }
+         mLastHighlightedPage = page;
       }
    }
 
    @Override
    public void unHighlightAyat(){
+      if (mMode == Mode.ARABIC){
+         if (mLeftImageView == null || mRightImageView == null){ return; }
+         mLeftImageView.unhighlight();
+         mRightImageView.unhighlight();
+      }
    }
 }
