@@ -18,8 +18,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnTouchListener;
@@ -39,13 +37,12 @@ import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.helpers.*;
+import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @SuppressWarnings("deprecation")
 public class QuranPageFragment extends SherlockFragment
@@ -225,7 +222,7 @@ public class QuranPageFragment extends SherlockFragment
    private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
       public GetAyahCoordsTask(Context context, MotionEvent event){
-         super(context, event);
+         super(context, event, mPageNumber);
       }
 
       public GetAyahCoordsTask(Context context, int sura, int ayah){
@@ -287,7 +284,8 @@ public class QuranPageFragment extends SherlockFragment
    }
 
    private void handleLongPress(MotionEvent event){
-      QuranAyah result = getAyahFromCoordinates(event.getX(), event.getY());
+      QuranAyah result = ImageAyahUtils.getAyahFromCoordinates(
+              mCoordinateData, mImageView, event.getX(), event.getY());
       if (result != null) {
          mImageView.highlightAyah(result.getSura(), result.getAyah());
          mImageView.invalidate();
@@ -298,101 +296,6 @@ public class QuranPageFragment extends SherlockFragment
          new ShowAyahMenuTask().execute(
                  result.getSura(), result.getAyah(), mPageNumber);
       }
-   }
-
-   private QuranAyah getAyahFromKey(String key){
-      String[] parts = key.split(":");
-      QuranAyah result = null;
-      if (parts.length == 2){
-         try {
-            int sura = Integer.parseInt(parts[0]);
-            int ayah = Integer.parseInt(parts[1]);
-            result = new QuranAyah(sura, ayah);
-         }
-         catch (Exception e){}
-      }
-      return result;
-   }
-
-   private QuranAyah getAyahFromCoordinates(float xc, float yc) {
-      if (mCoordinateData == null){ return null; }
-
-      float[] pageXY = mImageView.getPageXY(xc, yc);
-      float x = pageXY[0];
-      float y = pageXY[1];
-
-      int closestLine = -1;
-      int closestDelta = -1;
-
-      SparseArray<List<String>> lineAyahs = new SparseArray<List<String>>();
-      Set<String> keys = mCoordinateData.keySet();
-      for (String key : keys){
-         List<AyahBounds> bounds = mCoordinateData.get(key);
-         if (bounds == null){ continue; }
-
-         for (AyahBounds b : bounds){
-            // only one AyahBound will exist for an ayah on a particular line
-            int line = b.getLine();
-            List<String> items = lineAyahs.get(line);
-            if (items == null){
-               items = new ArrayList<String>();
-            }
-            items.add(key);
-            lineAyahs.put(line, items);
-
-            if (b.getMaxX() >= x && b.getMinX() <= x &&
-                b.getMaxY() >= y && b.getMinY() <= y){
-               return getAyahFromKey(key);
-            }
-
-            int delta = Math.min((int)Math.abs(b.getMaxY() - y),
-                                 (int)Math.abs(b.getMinY() - y));
-            if (closestDelta == -1 || delta < closestDelta){
-               closestLine = b.getLine();
-               closestDelta = delta;
-            }
-         }
-      }
-
-      if (closestLine > -1){
-         int leastDeltaX = -1;
-         String closestAyah = null;
-         List<String> ayat = lineAyahs.get(closestLine);
-         if (ayat != null){
-            Log.d(TAG, "no exact match, " + ayat.size() + " candidates.");
-            for (String ayah : ayat){
-               List<AyahBounds> bounds = mCoordinateData.get(ayah);
-               if (bounds == null){ continue; }
-               for (AyahBounds b : bounds){
-                  if (b.getLine() > closestLine){
-                     // this is the last ayah in ayat list
-                     break;
-                  }
-
-                  if (b.getLine() == closestLine){
-                     // if x is within the x of this ayah, that's our answer
-                     if (b.getMaxX() >= x && b.getMinX() <= x){
-                        return getAyahFromKey(ayah);
-                     }
-
-                     // otherwise, keep track of the least delta and return it
-                     int delta = Math.min((int)Math.abs(b.getMaxX() - x),
-                                          (int)Math.abs(b.getMinX() - x));
-                     if (leastDeltaX == -1 || delta < leastDeltaX){
-                        closestAyah = ayah;
-                        leastDeltaX = delta;
-                     }
-                  }
-               }
-            }
-         }
-
-         if (closestAyah != null){
-            Log.d(TAG, "fell back to closest ayah of " + closestAyah);
-            return getAyahFromKey(closestAyah);
-         }
-      }
-      return null;
    }
 
    private class PageGestureDetector extends SimpleOnGestureListener {
