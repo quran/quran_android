@@ -23,14 +23,16 @@ public class QueryAyahCoordsTask extends
         AsyncTask<Integer, Void, List<Map<String, List<AyahBounds>>>> {
    protected int mSura;
    protected int mAyah;
+   protected int mPage;
    protected boolean mHighlightAyah;
    protected MotionEvent mEvent;
    private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
 
-   public QueryAyahCoordsTask(Context context, MotionEvent event){
+   public QueryAyahCoordsTask(Context context, MotionEvent event, int page){
       this(context, 0, 0);
       mEvent = event;
       mHighlightAyah = false;
+      mPage = page;
    }
 
    public QueryAyahCoordsTask(Context context, int sura, int ayah){
