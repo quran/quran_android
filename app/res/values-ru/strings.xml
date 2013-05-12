@@ -19,7 +19,7 @@
     <string name="menu_bookmarks">Закладки</string>
     <string name="menu_bookmarks_page">Закладки страниц</string>
     <string name="menu_bookmarks_ayah">Закладки аятов</string>
-    <string name="menu_sort">Сортироват</string>
+    <string name="menu_sort">Сортировать</string>
     <string name="menu_sort_date">По дате добавления</string>
     <string name="menu_sort_location">По расположению в Коране</string>
     <string name="menu_sort_alphabetical">По алфавиту</string>
@@ -36,9 +36,8 @@
     <string name="email_subject">Обратная связь</string>
     <string name="email_to">quran.android@gmail.com</string>
     <string name="send_email">Отправить email..</string>
-    <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное 
-            Коран-приложение для Android с открытым исходным кодом. 
-			Используемые изображения были заимствованы из проекта 
+    <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное Коран-приложение для Android
+    		с открытым исходным кодом. Используемые изображения были заимствованы из проекта 
             &lt;a href="http://quran.com">quran.com&lt;/a>,
 			 аудио - 
             &lt;a href="http://everyayah.com">everyayah.com&lt;/a>, 
@@ -55,11 +54,13 @@
             &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
             &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
             &lt;br/>&lt;br/>&lt;b>Переводено:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu - Turkish
-			&lt;br/>khajavi (on github) - Farsi
-			&lt;br/>Rinat (Ринат) - Russian
-			&lt;br/>khajavi (on github) - предыдущий Farsi перевод
-	      &lt;br/>Yasser Kadddour - Français
+			&lt;br/>Mehmed Mahmudoglu - турецкий
+			&lt;br/>khajavi (на github) - Фарси
+			&lt;br/>Rinat (Ринат) - русский
+			&lt;br/>khajavi (на github) - предыдущий Фарси перевод
+	      &lt;br/>Yasser Kadddour - французский
+	      &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>)
+         &lt;br/>Goran Gharib Karim - Курдский
             &lt;br/>&lt;br/>&lt;b>Проекты с открытым исходным кодом:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
             &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
@@ -70,7 +71,7 @@
     <string name="help">
         &lt;b>Как мне воспроизвести аудио?&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку проигрывания
-        и текст с именем чтеца. Для выбора другого чтеца нажмите на имени текущего чтеца . Нажмите на 
+        и текст с именем чтеца. Для выбора другого чтеца нажмите на имени текущего чтеца. Нажмите на 
 		кнопку проигрывания для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
         &lt;br/>&lt;b>Как мне посмотреть перевод?
 		&lt;/b>
@@ -78,7 +79,7 @@
         (или, если ее нет, Вы увидете иконку с тремя квадратными точками) - нажмите на нее и выберите 
         перевод для просмотра. 
 		&lt;br/>
-        Если Вы не имеете загруженных переводов, Вас переместят на экран, где Вы сможете скачать перевод. 
+        Если у Вас нет ранее загруженных переводов, Вас переместят на экран, где Вы сможете скачать перевод. 
         Выберите и загрузите нужный Вам перевод, затем вернитесь обратно и вновь нажмите на иконку глобуса для просмотра 
         перевода.
         &lt;br/>
@@ -88,7 +89,7 @@
         Для удаления закладки снова нажмите на иконку звезды. 
         &lt;br/>
         &lt;br/>&lt;b>Как мне увеличить текст?&lt;/b>
-        &lt;br/>Для арабского текста держите Ваш телефон в альбомном режиме (горизонтально).  Это сделает текст крупнее. 
+        &lt;br/>Для арабского текста - держите Ваш телефон в альбомном режиме (горизонтально). Это сделает текст крупнее. 
         Для переводов - перейдите в настройки и выберите размер шрифта перевода.
         &lt;br/>
         &lt;br/>&lt;b> Как я могу поделиться аятом?&lt;/b>
@@ -101,10 +102,8 @@
         чтобы как-то помочь Вам в этом вопросе.
 		&lt;br/>
         &lt;br/>&lt;b>У меня есть замечания или предложения по программе!&lt;/b>
-        &lt;br/>К сожалению, разработчики не просматривают и не могут просматривать (в силу незнания русского языка) отзывы
-        в русской части Google Play, поэтому не могут учесть Ваши комментарии. Пожалуйста, напишите нам e-mail
-        (кнопка внизу экрана). Тем самым Вы способствуете развитию проекта. Возможно, Ваше предложение будет
-        полезно многим братьям и сестрам. Если Вы не знаете английского языка, используйте для написания e-mail
+        &lt;br/>Пожалуйста, напишите нам e-mail (кнопка внизу экрана). Тем самым Вы способствуете развитию проекта. Возможно,
+        Ваше предложение будет полезно многим братьям и сестрам. Если Вы не знаете английского языка, используйте для написания e-mail
         Google Translate.        
     </string>
 	<string name="search_hint">Поиск по Корану</string>
@@ -132,10 +131,10 @@
     <string name="prefs_category_translation">Настройки перевода</string>
     <string name="prefs_category_display_settings">Настройки экрана</string>
     <string name="prefs_use_arabic_title">Режим арабского</string>
+    <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык (требуется перезагрузка)</string>
     <string name="prefs_use_arabic_reshaper_title">Арабский формирователь</string>
     <string name="prefs_use_arabic_reshaper_summary_on">Если Вы видите арабский текст в обратном направлении, отключите эту опцию.</string>
     <string name="prefs_use_arabic_reshaper_summary_off">Если Вы видите несоединенный арабский текст, для исправления этого включите данную опцию.</string>
-    <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык (требуется перезагрузка)</string>
     <string name="prefs_new_background_title">Новый фон</string>
     <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
     <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
@@ -145,11 +144,11 @@
     <string name="prefs_landscape_orientation_summary_off">Использовать книжный режим</string>
     <string name="prefs_night_mode_title">Ночной режим</string>
     <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
-    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
-    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
+    <string name="prefs_night_mode_text_brightness_title">Яркость текста</string>
+    <string name="prefs_night_mode_text_brightness_summary">Яркость текста при включенном ночном режиме</string>
     <string name="prefs_overlay_page_info_title">Показать инфо страницы (beta)</string>
     <string name="prefs_overlay_page_info_summary">При чтении использовать наложение поверх экрана номера страницы,
-    названия суры и номера джуза</string>
+    название суры и номера джуза</string>
     <string name="prefs_display_marker_title">Всплывающие сообщения</string>
     <string name="prefs_display_marker_summary">Показывать всплывающие сообщения по достижении джуза, хизба и т.д.</string>
     <string name="prefs_translation_text_title">Размер текста перевода</string>
@@ -250,7 +249,7 @@
     <!-- long press -->
     <string name="bookmark_ayah">Создать закладку этого аята</string>
     <string name="unbookmark_ayah">Удалить закладку для этого аята</string>
-    <string name="tag_ayah">Создать тэк этого аята</string>
+    <string name="tag_ayah">Создать метку для этого аята</string>
     <string name="share_ayah">Поделиться аятом</string>
     <string name="share_ayah_text">Поделиться текстом аята</string>
     <string name="translation_ayah">Перевод/тафсир аята</string>
