@@ -1103,7 +1103,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    private void downloadAndPlayAudio(QuranAyah ayah, int page, int qari){
       QuranAyah endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
-              QuranSettings.getPreferredDownloadAmount(this));
+              QuranSettings.getPreferredDownloadAmount(this), mDualPages);
       String baseUri = AudioUtils.getLocalQariUrl(this, qari);
       if (endAyah == null || baseUri == null){ return; }
       String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, qari);
