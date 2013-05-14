@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
@@ -40,7 +41,10 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.*;
-import com.quran.labs.androidquran.ui.fragment.*;
+import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
+import com.quran.labs.androidquran.ui.fragment.JumpFragment;
+import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
+import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 import com.quran.labs.androidquran.ui.helpers.*;
 import com.quran.labs.androidquran.util.*;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
@@ -247,8 +251,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
             }
 
             if (mBookmarksCache.get(page) == null) {
-               // we don't have the key
-               new IsPageBookmarkedTask().execute(page);
+               if (mDualPages){
+                  if (mBookmarksCache.get(page-1) == null){
+                     new IsPageBookmarkedTask().execute(page-1, page);
+                  }
+               }
+               else {
+                  // we don't have the key
+                  new IsPageBookmarkedTask().execute(page);
+               }
             }
          }
       });
@@ -563,10 +574,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
       MenuItem item = menu.findItem(R.id.favorite_item);
       if (item != null){
          int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+         if (mDualPages){ page = (302 - mViewPager.getCurrentItem()) * 2; }
+
          boolean bookmarked = false;
          if (mBookmarksCache.get(page) != null){
             bookmarked = mBookmarksCache.get(page);
          }
+
+         if (!bookmarked && mDualPages && mBookmarksCache.get(page-1) != null){
+            bookmarked = mBookmarksCache.get(page-1);
+         }
+
          if (bookmarked){ item.setIcon(R.drawable.favorite); }
          else { item.setIcon(R.drawable.not_favorite); }
       }
@@ -1030,20 +1048,30 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
-   class IsPageBookmarkedTask extends AsyncTask<Integer, Void, Boolean> {
-      private int mPage;
+   class IsPageBookmarkedTask extends AsyncTask<Integer, Void, SparseBooleanArray> {
 
       @Override
-      protected Boolean doInBackground(Integer... params) {
-         mPage = params[0];
-         Boolean bookmarked = mBookmarksAdapter.isPageBookmarked(mPage);
-         return bookmarked;
+      protected SparseBooleanArray doInBackground(Integer... params) {
+         if (params == null){ return null; }
+
+         SparseBooleanArray result = new SparseBooleanArray();
+         for (Integer page : params){
+            boolean bookmarked = mBookmarksAdapter.isPageBookmarked(page);
+            result.put(page, bookmarked);
+         }
+
+         return result;
       }
 
       @Override
-      protected void onPostExecute(Boolean result) {
+      protected void onPostExecute(SparseBooleanArray result) {
          if (result != null){
-            mBookmarksCache.put(mPage, result);
+            int size = result.size();
+            for (int i=0; i<size; i++){
+               int page = result.keyAt(i);
+               boolean bookmarked = result.get(page);
+               mBookmarksCache.put(page, bookmarked);
+            }
             invalidateOptionsMenu();
          }
       }
