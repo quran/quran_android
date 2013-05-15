@@ -19,7 +19,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.*;
-import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
+import com.quran.labs.androidquran.ui.util.*;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
@@ -44,6 +44,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
    private int mPageNumber;
    private boolean mOverlayText;
    private int mLastHighlightedPage;
+   private AyahMenuUtils mAyahMenuUtils;
    private List<Map<String, List<AyahBounds>>> mCoordinateData;
    private PaintDrawable mLeftGradient, mRightGradient = null;
    private TranslationView mLeftTranslation, mRightTranslation = null;
@@ -226,6 +227,15 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       }
    }
 
+   @Override
+   public void onDestroyView() {
+      if (mAyahMenuUtils != null){
+         mAyahMenuUtils.cleanup();
+         mAyahMenuUtils = null;
+      }
+      super.onDestroyView();
+   }
+
    public void cleanup(){
       android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
       if (mLeftImageView != null){
@@ -236,6 +246,11 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       if (mRightImageView != null){
          mRightImageView.setImageDrawable(null);
          mRightImageView = null;
+      }
+
+      if (mAyahMenuUtils != null){
+         mAyahMenuUtils.cleanup();
+         mAyahMenuUtils = null;
       }
    }
 
@@ -396,9 +411,17 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
             }
          }
 
-         // TODO Temporary UI until new UI is implemented
-         //new ShowAyahMenuTask().execute(
-         //        result.getSura(), result.getAyah(), mPageNumber);
+         if (mAyahMenuUtils == null){
+            Activity activity = getActivity();
+            if (activity != null){
+               mAyahMenuUtils = new AyahMenuUtils(activity);
+            }
+         }
+
+         if (mAyahMenuUtils != null){
+            mAyahMenuUtils.showMenu(result.getSura(),
+                    result.getAyah(), mPageNumber);
+         }
       }
    }
 
