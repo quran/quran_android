@@ -18,7 +18,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.helpers.TranslationTask;
+import com.quran.labs.androidquran.ui.util.TranslationTask;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 public class TranslationFragment extends SherlockFragment
