@@ -349,7 +349,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
    @Override
    public void highlightAyah(int sura, int ayah){
-      if (mCoordinateData == null){
+      if (mMode == Mode.ARABIC && mCoordinateData == null){
          new GetAyahCoordsTask(getActivity(), sura, ayah)
                  .execute(mPageNumber - 1, mPageNumber);
       }
@@ -357,10 +357,10 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
    }
 
    private void handleHighlightAyah(int sura, int ayah){
+      int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
       if (mMode == Mode.ARABIC){
          if (mLeftImageView == null || mRightImageView == null){ return; }
 
-         int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
          if (page == mPageNumber - 1){
             mRightImageView.highlightAyah(sura, ayah);
             mRightImageView.invalidate();
@@ -376,6 +376,18 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
             }
          }
          mLastHighlightedPage = page;
+      }
+      else if (mMode == Mode.TRANSLATION){
+         int ayahId = QuranInfo.getAyahId(sura, ayah);
+         if (mLeftTranslation == null || mRightTranslation == null){ return; }
+         if (page == mPageNumber - 1){
+            mRightTranslation.highlightAyah(ayahId);
+            mLeftTranslation.unhighlightAyat();
+         }
+         else {
+            mLeftTranslation.highlightAyah(ayahId);
+            mRightTranslation.unhighlightAyat();
+         }
       }
    }
 
