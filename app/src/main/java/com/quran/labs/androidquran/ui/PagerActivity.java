@@ -612,7 +612,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       else if (item.getItemId() == R.id.goto_quran){
          mPagerAdapter.setQuranMode();
          mShowingTranslation = false;
-         int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
+         int page = getCurrentPage();
          invalidateOptionsMenu();
          updateActionBarTitle(page);
          return true;
@@ -669,10 +669,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
          startActivity(i);
       }
       else {
-         updateActionBarSpinner();
          mPagerAdapter.setTranslationMode();
          mShowingTranslation = true;
          invalidateOptionsMenu();
+         updateActionBarSpinner();
       }
    }
 
@@ -798,9 +798,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
             holder = (SpinnerHolder)convertView.getTag();
 
             holder.title.setText(mTranslationItems[position]);
-            int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
-            holder.subtitle.setText(QuranInfo.getPageSubtitle(
-                    PagerActivity.this, page));
+            int page = getCurrentPage();
+            String subtitle = QuranInfo.getPageSubtitle(
+                    PagerActivity.this, page);
+            holder.subtitle.setText(subtitle);
             return convertView;
          }
       };
