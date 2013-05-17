@@ -15,7 +15,7 @@
     <TextView android:id="@+id/subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|left"
         android:singleLine="true"
         android:ellipsize="end" />
 </LinearLayout>
