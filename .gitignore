@@ -2,6 +2,7 @@
 .settings
 bin
 gen
+out
 .DS_Store
 local.properties
 target
