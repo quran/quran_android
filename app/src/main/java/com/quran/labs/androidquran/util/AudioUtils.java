@@ -117,7 +117,14 @@ public class AudioUtils {
    }
 
    public static QuranAyah getLastAyahToPlay(QuranAyah startAyah,
-                                             int page, int mode){
+                                             int page, int mode,
+                                             boolean isDualPages){
+      if (isDualPages && mode == LookAheadAmount.PAGE && (page % 2 == 1)){
+         // if we download page by page and we are currently in tablet mode
+         // and playing from the right page, get the left page as well.
+         page++;
+      }
+
       int pageLastSura = 114;
       int pageLastAyah = 6;
       if (page > 604 || page < 0){ return null; }

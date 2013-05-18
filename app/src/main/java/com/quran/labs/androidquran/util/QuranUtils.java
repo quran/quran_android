@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import com.quran.labs.androidquran.R;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -64,5 +65,13 @@ public class QuranUtils {
       }
 
       return mNumberFormatter.format(number);
+   }
+
+   public static boolean isDualPages(Context context){
+      if (context != null){
+         return context.getResources()
+                 .getBoolean(R.bool.use_tablet_interface);
+      }
+      return false;
    }
 }

@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="quran_readers_name">
+        <item>مەنشاوی (مورەتەل)</item>
+        <item>حوساری (مورەتەل)</item>
+        <item>عەبدولباست</item>
+        <item>عەبدولباست موجەوەد</item>
+        <item>عەبدوڵا بەسفەر</item>
+        <item>عەبدولڕەحمان سودەیس</item>
+        <item>ئەبوبەکر شاتری</item>
+        <item>مەشاری ئەلعەفاسی</item>
+        <item>سەعد ئەلغامدی</item>
+        <item>ئیبراھیم واڵک (ئینگلیزی)</item>
+        <item>ھانی ڕەفاعی</item>
+        <item>حوساری موجەوەد</item>
+        <item>عەلی حوزەیفی</item>
+        <item>ماھیر موعەیقلی</item>
+        <item>مەنشاوی موجەوەد</item>
+        <item>محەمەد تەبڵاوی</item>
+        <item>محەمەد ئەیوب</item>
+        <item>محەمەد جبریل</item>
+        <item>سعود شورەیم</item>
+    </string-array>
+
+    <string-array name="quran_readers_path">
+        <item>مەنشاوی (مورەتەل)</item>
+        <item>حوساری</item>
+        <item>0</item>  <!-- عەبدولباست -->
+        <item>1</item>  <!-- عەبدولباست موجەوەد -->
+        <item>2</item>  <!-- عەبدوڵا بەسفەر -->
+        <item>3</item>  <!-- عەبدولڕەحمان سودەیس -->
+        <item>4</item>  <!-- ئەبوبەکر شاتری -->
+        <item>5</item>  <!-- مەشاری ئەلعەفاسی -->
+        <item>18</item> <!-- سەعد ئەلغامدی -->
+        <item>19</item> <!-- ئیبراھیم واڵک -->
+        <item>6</item>  <!-- ھانی ڕەفاعی -->
+        <item>8</item>  <!-- حوساری موجەوەد -->
+        <item>9</item>  <!-- حوزەیفی -->
+        <item>11</item> <!-- ماھیر موعەیقلی -->
+        <item>13</item> <!-- مەنشاوی موجەوەد -->
+        <item>14</item> <!-- محەمەد تەبڵاوی -->
+        <item>15</item> <!-- محەمەد ئەیوب -->
+        <item>16</item> <!-- محەمەد جبریل -->
+        <item>17</item> <!-- سعود شورەیم -->
+    </string-array>
+
+    <string-array name="quran_readers_db_name">
+        <item>مەنشاوی (مورەتەل)</item>
+        <item>حوساری</item>
+        <item></item> <!-- عەبدولباست -->
+        <item></item> <!-- عەبدولباست موجەوەد -->
+        <item></item> <!-- عەبدوڵا بەسفەر -->
+        <item></item> <!-- عەبدولڕەحمان سودەیس -->
+        <item></item> <!-- ئەبوبەکر شاتری -->
+        <item></item> <!-- مەشاری ئەلعەفاسی -->
+        <item></item> <!-- سەعد ئەلغامدی -->
+        <item></item> <!-- ئیبراھیم واڵک -->
+        <item></item> <!-- ھانی ڕەفاعی -->
+        <item></item> <!-- حوساری موجەوەد -->
+        <item></item> <!-- حوزەیفی -->
+        <item></item> <!-- ماھیر موعەیقلی -->
+        <item></item> <!-- مەنشاوی موجەوەد -->
+        <item></item> <!-- محەمەد تەبڵاوی -->
+        <item></item> <!-- محەمەد ئەیوب -->
+        <item></item> <!-- محەمەد جبریل -->
+        <item></item> <!-- سعود شورەیم -->
+    </string-array>
+
+    <string-array name="quran_readers_urls">
+        <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
+        <item>http://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdul_Basit_Murattal_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdul_Basit_Mujawwad_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdullah_Basfar_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdurrahmaan_As-Sudais_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abu_Bakr_Ash-Shaatree_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Alafasy_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Ghamadi_40kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Ibrahim_Walk_192kbps_TEST/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Hani_Rifai_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Husary_128kbps_Mujawwad/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Hudhaify_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Maher_AlMuaiqly_64kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Minshawy_Mujawwad_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Mohammad_al_Tablaway_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Muhammad_Ayyoub_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Muhammad_Jibreel_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Saood_ash-Shuraym_128kbps/</item>
+    </string-array>
+   
+</resources>

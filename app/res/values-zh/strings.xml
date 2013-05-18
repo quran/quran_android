@@ -125,6 +125,8 @@
     <string name="prefs_landscape_orientation_summary_off">锁定竖屏</string>
     <string name="prefs_night_mode_title">夜间模式</string>
     <string name="prefs_night_mode_summary">黑色背景和白色字体</string>
+    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
+    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
     <string name="prefs_overlay_page_info_title">显示页面信息（测试中）</string>
     <string name="prefs_overlay_page_info_summary">阅读时显示页数，章名和卷数</string>
     <string name="prefs_display_marker_title">显示卷章标记弹出窗口</string>

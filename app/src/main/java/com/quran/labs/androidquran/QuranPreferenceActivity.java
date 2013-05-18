@@ -53,8 +53,8 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 				boolean isArabic = (Boolean)newValue;
                 mIsArabic = isArabic;
 
-                Locale lang = (isArabic? new Locale("ar") :
-                    Resources.getSystem().getConfiguration().locale);
+            Locale lang = (isArabic? new Locale("ar") :
+               Resources.getSystem().getConfiguration().locale);
 				Locale.setDefault(lang);
 				Configuration config = new Configuration();
 				config.locale = lang;
