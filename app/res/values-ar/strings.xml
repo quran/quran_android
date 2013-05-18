@@ -111,6 +111,7 @@
     <string name="prefs_sdcard_external">الذاكرة الخارجية</string>
     <string name="prefs_sdcard_auto">تلقائي</string>
     <string name="prefs_app_size">مساحة التطبيق</string>
+    <string name="prefs_calculating_app_size">جاري حساب مساحة التطبيق</string>
     <string name="prefs_copying_app_files">جاري نسخ ملفات التطبيق</string>
     <string name="prefs_custom_location_title">مكان التطبيق اختياري</string>
     <string name="prefs_err_moving_app_files">حدث خطأ اثناء نقل ملفات التطبيق</string>
