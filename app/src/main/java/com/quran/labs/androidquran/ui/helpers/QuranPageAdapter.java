@@ -4,19 +4,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.ViewGroup;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
+import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
    private static String TAG = "QuranPageAdapter";
 
    private boolean mIsShowingTranslation = false;
+   private boolean mIsDualPages = false;
 
-	public QuranPageAdapter(FragmentManager fm){
+	public QuranPageAdapter(FragmentManager fm, boolean dualPages){
 		super(fm);
+      mIsDualPages = dualPages;
 	}
 
-   public QuranPageAdapter(FragmentManager fm, boolean isShowingTranslation){
+   public QuranPageAdapter(FragmentManager fm, boolean dualPages,
+                           boolean isShowingTranslation){
       super(fm);
+      mIsDualPages = dualPages;
       mIsShowingTranslation = isShowingTranslation;
    }
 
@@ -54,15 +59,22 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
    }
 
 	@Override
-	public int getCount(){ return 604; }
+	public int getCount(){ return mIsDualPages ? 302 : 604; }
 
 	@Override
 	public Fragment getItem(int position){
-	   android.util.Log.d(TAG, "getting page: " + (604-position));
-      if (mIsShowingTranslation){
-         return TranslationFragment.newInstance(604-position);
+      int count = getCount();
+	   android.util.Log.d(TAG, "getting page: " + (count-position));
+      if (mIsDualPages){
+         return TabletFragment.newInstance((count-position)*2,
+                mIsShowingTranslation? TabletFragment.Mode.TRANSLATION :
+                        TabletFragment.Mode.ARABIC);
       }
-	   else { return QuranPageFragment.newInstance(604-position); }
+
+      if (mIsShowingTranslation){
+         return TranslationFragment.newInstance(count-position);
+      }
+	   else { return QuranPageFragment.newInstance(count-position); }
 	}
 	
 	@Override
@@ -70,6 +82,9 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
       Fragment f = (Fragment)object;
       if (f instanceof QuranPageFragment){
          ((QuranPageFragment)f).cleanup();
+      }
+      else if (f instanceof TabletFragment){
+         ((TabletFragment)f).cleanup();
       }
 	   super.destroyItem(container, position, object);
 	}

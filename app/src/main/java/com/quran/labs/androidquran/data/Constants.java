@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.data;
 
 public class Constants {
    // Numerics
+   public static final int DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 98;
    public static final int DEFAULT_TEXT_SIZE = 15;
 
    // 10 days in ms
@@ -36,6 +37,7 @@ public class Constants {
    public static final String PREF_ACTIVE_TRANSLATION = "activeTranslation";
    public static final String PREF_RESHAPE_ARABIC = "reshapeArabic";
    public static final String PREF_NIGHT_MODE = "nightMode";
+   public static final String PREF_NIGHT_MODE_TEXT_BRIGHTNESS = "nightModeTextBrightness";
    public static final String PREF_DEFAULT_QARI = "defaultQari";
    public static final String PREF_SHOULD_FETCH_PAGES ="shouldFetchPages";
    public static final String PREF_OVERLAY_PAGE_INFO = "overlayPageInfo";

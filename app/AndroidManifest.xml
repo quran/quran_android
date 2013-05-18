@@ -23,17 +23,15 @@
 		</activity>
 
 		<activity android:name=".ui.QuranActivity"
-            android:configChanges="keyboardHidden|orientation" />
-		<activity android:name=".AboutUsActivity"
-			android:screenOrientation="portrait" />
-		<activity android:name=".HelpActivity"
-			android:screenOrientation="portrait" />
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+		<activity android:name=".AboutUsActivity" />
+		<activity android:name=".HelpActivity" />
 		<activity android:name=".ui.PagerActivity"
 		          android:launchMode="singleTop" />
         <activity android:name=".ui.TranslationManagerActivity"
                  android:screenOrientation="portrait" />
 		<activity android:name=".QuranPreferenceActivity"
-			android:screenOrientation="portrait" />
+                  android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity android:name=".SearchActivity" android:launchMode="singleTop">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />

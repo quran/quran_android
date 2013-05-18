@@ -2,18 +2,20 @@ quran for android
 ==================================
 
 this is a simple (madani based) quran app for android.
-- images from [quran images project](http://github.com/quran/quran.com-images) on github.
-- translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
-- audio from [Every Ayah](http://everyayah.com/).
+
+* images from [quran images project](http://github.com/quran/quran.com-images) on github.
+* translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
+* audio from [Every Ayah](http://everyayah.com/).
 
 patches, comments, etc are welcome.
 
 contributors:
-[Hussein Maher](http://twitter.com/husseinmaher),
-[Ahmed Farra](http://github.com/afarra),
-[Wael Nafee](http://twitter.com/wnafee),
-[Ahmed Fouad](http://twitter.com/fo2ad),
-[Mahmoud Hossam](http://github.com/mahmoudhossam).
+
+* [Hussein Maher](http://twitter.com/husseinmaher),
+* [Ahmed Farra](http://github.com/afarra),
+* [Wael Nafee](http://twitter.com/wnafee),
+* [Ahmed Fouad](http://twitter.com/fo2ad),
+* [Mahmoud Hossam](http://github.com/mahmoudhossam).
 
 graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
@@ -21,13 +23,15 @@ Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_
 
 App localization
 ------------------------
-Farsi for version 2.0 by M. Jafar Nakar
 
-Farsi for version 1.6 by [@khajavi](http://github.com/khajavi).
-
-Turkish by Mehmed Mahmudoglu.
-
-Russian by Rinat (Ринат Валеев).
+* Farsi for version 2.0 by M. Jafar Nakar
+* Farsi for version 1.6 by [@khajavi](http://github.com/khajavi).
+* Turkish by Mehmed Mahmudoglu.
+* Russian by Rinat (Ринат Валеев).
+* Kurdish by Goran Gharib Karim.
+* French by Yasser [@yasserkad](http://github.com/yasserkad).
+* German by Armin Supuk
+* Chinese by Bo Li
 
 
 Terms of use
@@ -48,8 +52,8 @@ for this:
     - the app costs us money (for serving the pages, translations, etc), not to
 mention the time to develop it and to support it.
     - not all of the data that we use is okay to be sold.  the images, along with
-some of the translations are **not** under public domain, which means that
-while we are allowed to use these for a free app, we cannot sell the app.
+some of the translations are on a license that allows their use and distribution
+for free for non-profit uses, but does not allow users to make money from them.
 
 * if you write an application using any of the Quran data (the images, the
 translations, etc), you must provide a link to the respective data source
@@ -70,12 +74,23 @@ Open Source Projects Used
 
 Changelog
 ---------
+**development**
+
+- update to german translation (thanks br Armin Supuk)
+- kurdish translation (thanks br Gharib Karim)
+- improvements to search
+- multiple sdcard support
+- tablet support (experimental)
+- change color of text in translation view and night mode
+
 **version 2.3.1** (released 4/2/2013)
+
 - re-add long-press support on translation text
 - fix several crashes based on google play console
 - remove sura name translations in various languages
 
 **version 2.3.0** (released 3/31/2013)
+
 - sheikh Sudais gapless (thanks br Redouane Chaar)
 - tag improvements (batch tag operations, etc) [\#235](https://github.com/ahmedre/quran_android/issues/235)
 - anti-alias overlay text (thanks @boussouira)
