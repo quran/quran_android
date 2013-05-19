@@ -1,16 +1,16 @@
 package com.quran.labs.androidquran.service.util;
 
-import java.text.DecimalFormat;
-
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+
+import java.text.DecimalFormat;
 
 public class DefaultDownloadReceiver extends BroadcastReceiver {
    private int mDownloadType = -1;
@@ -18,10 +18,15 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
    private ProgressDialog mProgressDialog = null;
    private Context mContext = null;
    private boolean mDidReceiveBroadcast = false;
+   private boolean mCanCancelDownload = false;
 
    public DefaultDownloadReceiver(Context context, int downloadType){
       mContext = context;
       mDownloadType = downloadType;
+   }
+
+   public void setCanCancelDownload(boolean canCancel){
+      mCanCancelDownload = canCancel;
    }
 
    @Override
@@ -128,11 +133,36 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
       if (mProgressDialog == null){
          mProgressDialog = new ProgressDialog(mContext);
          mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-         mProgressDialog.setCancelable(false);
+         mProgressDialog.setCancelable(mCanCancelDownload);
+         if (mCanCancelDownload){
+            mProgressDialog.setOnCancelListener(
+                    new DialogInterface.OnCancelListener(){
+               @Override
+               public void onCancel(DialogInterface dialog) {
+                  cancelDownload();
+               }
+            });
+            
+            mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                    mContext.getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+               @Override
+               public void onClick(DialogInterface dialog, int which) {
+                  cancelDownload();
+               }
+            });
+         }
+
          mProgressDialog.setTitle(R.string.downloading_title);
          mProgressDialog.setMessage(mContext.getString(
                  R.string.downloading_message));
       }
+   }
+
+   private void cancelDownload(){
+      Intent i = new Intent(mContext, QuranDownloadService.class);
+      i.setAction(QuranDownloadService.ACTION_CANCEL_DOWNLOADS);
+      mContext.startService(i);
    }
 
    private void updateDownloadProgress(int progress,
@@ -202,8 +232,7 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
          mProgressDialog.dismiss();
          mProgressDialog = null;
       }
-      else if (mListener != null &&
-              mListener instanceof SimpleDownloadListener){
+      else if (mListener != null){
          makeProgressDialog();
       }
    }

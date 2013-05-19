@@ -64,6 +64,7 @@ public class QuranDataActivity extends SherlockActivity implements
       mIsPaused = false;
       mDownloadReceiver = new DefaultDownloadReceiver(this,
               QuranDownloadService.DOWNLOAD_TYPE_PAGES);
+      mDownloadReceiver.setCanCancelDownload(true);
       String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
       LocalBroadcastManager.getInstance(this).registerReceiver(
             mDownloadReceiver,
@@ -229,7 +230,8 @@ public class QuranDataActivity extends SherlockActivity implements
       if (mIsPaused){ return; }
       
       String url = QuranFileUtils.getZipFileUrl();
-      String destination = QuranFileUtils.getQuranBaseDirectory(QuranDataActivity.this);
+      String destination = QuranFileUtils.getQuranBaseDirectory(
+              QuranDataActivity.this);
       
       // start service
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
