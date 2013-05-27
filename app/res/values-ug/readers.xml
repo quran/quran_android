@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="quran_readers_name">
+        <item>مىنشاۋى مۇراتتال (يوچۇقسىز)</item>
+        <item>ھۇسارى (يوچۇقسىز)</item>
+        <item>ئابدۇرراھمان ئەلسۇدەيس (يوچۇقسىز)</item>
+        <item>ئابدۇلباسىت ئابدۇلسەمەد</item>
+        <item>ئابدۇلباسىت ئادۇلسەمەد مۇجاۋۋاد</item>
+        <item>ئابدۇللاھ باسفار</item>
+        <item>ئابدۇرراھمان ئەلسۇدەيس</item>
+        <item>ئەبۇ بەكىر ئەششاتىرى</item>
+        <item>مىشارى بىن راشىد ئافاسى</item>
+        <item>سەئەد غامدى</item>
+        <item>ئىبراھىم ۋالىك (ئىنگلىزچە تەرجىمە)</item>
+        <item>ھانى رىفائى</item>
+        <item>ھۇسارى مۇجاۋۋاد</item>
+        <item>ئالى ھۇدەيفى</item>
+        <item>ماھەر ئال مۇئائىقلى</item>
+        <item>مىنشاۋى مۇجاۋۋاد</item>
+        <item>مۇھەممەد ئال تابلاۋى</item>
+        <item>مۇھەممەد ئەييۇب</item>
+        <item>مۇھەممەد جىبرىل</item>
+        <item>سەئود ئەششۇرايىم</item>
+    </string-array>
+</resources>

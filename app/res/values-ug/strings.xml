@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">قۇرئان</string>
+    <string name="downloadPrompt_title">لازىملىق ھۆججەتلەرنى چۈشۈرەمدۇ؟</string>
+    <string name="downloadPrompt">ئەڭ ياخشى ئۈنۈمگە ئېرىشىش ئۈچۈن، بەزى ھۆججەتلەرنى چۈشۈرۈش زۆرۈر. ئەگەر ھازىر بۇنداق قىلىشنى تاللىمىسىڭىز، ھەر بىر بەتنى يۈكلەشكە تېخىمۇ ئۇزۇن ۋاقىت كېتىدۇ. لازىملىق ھۆججەتلەرنى ھازىرلا چۈشۈرەمسىز؟</string>
+    <string name="downloadPrompt_ok">ھەئە</string>
+    <string name="downloadPrompt_no">ياق</string>
+    <string name="downloading_title">چۈشۈرۈۋاتىدۇ…</string>
+    <string name="downloading_message">ھۆججەتلەرنى چۈشۈرۈشنى كۈتۈڭ. (داۋاملاشتۇرۇشنى قوللايدۇ)</string>
+    <string name="extracting_title">بىر تەرەپ قىلىۋاتىدۇ…</string>
+    <string name="menu_about">بىز ھەققىدە</string>
+    <string name="menu_settings">تەڭشەكلەر</string>
+    <string name="menu_jump_last_page">ئاخىرقى بەت</string>
+    <string name="menu_tags">خەتكۈچلەر</string>
+    <string name="menu_bookmarks">خەتكۈچلەر</string>
+    <string name="menu_bookmarks_page">بەت خەتكۈچلىرى</string>
+    <string name="menu_bookmarks_ayah">ئايەت بەتكۈچلىرى</string>
+    <string name="menu_sort">تەرتىپلە</string>
+    <string name="menu_sort_date">قوشۇلغان چېسلا</string>
+    <string name="menu_sort_location">قۇرئاندىكى ئورنى</string>
+    <string name="menu_sort_alphabetical">ئېلىپبە تەرتىپىدە</string>
+    <string name="menu_translation">تەرجىمە كۆرسەت</string>
+    <string name="menu_back_to_page">قۇرئاننى كۆرسەت</string>
+    <string name="menu_help">ياردەم</string>
+    <string name="menu_search">ئىزدە</string>
+    <string name="menu_get_translations">تەرجىمىگە ئېرىش</string>
+    <string name="menu_jump">يۆتكەل</string>
+    <string name="gotoPage">بەتكە يۆتكەل</string>
+    <string name="cancel">ۋاز كەچ</string>
+    <string name="developedBy">La tansawna men saleh el doaa.</string>
+    <string name="copyRights">نەشر ھوقۇقى بارلىق مۇسۇلمانلارغا تەۋە</string>
+    <string name="email_subject">قايتۇرما ئىنكاس</string>
+    <string name="email_to">quran.android@gmail.com</string>
+    <string name="send_email">تورخەت يوللا</string>
+    <string name="aboutUs">قۇرئان ئاندىرويىد ھەقسىز، ئوچۇق مەنبەلىك ئاندىرويىد ئۈچۈن يېزىلغان قۇرئان ئەپى. ئىشلىتىلگەن سۈرەتلەرنى &lt;a href=http://quran.com&gt;quran.com&lt;/a&gt; قۇرۇلۇشىدىن، ئاۋازنى &lt;a href=http://everyayah.com&gt;everyayah.com&lt;/a&gt; دىن،  ئىشلىتىلگەن سانلىق مەلۇماتلاردىن تەرجىمە ۋە ئەرەبچە &lt;a href=http://tanzil.net&gt;tanzil.net&lt;/a&gt; ۋە &lt;a href=http://quran.ksu.edu.sa&gt;quran.ksu.edu.sa&lt;/a&gt; تىن كەلگەن.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;قۇرئان ئاندىرويىد تۆھپىكارلار:&lt;/b&gt; &lt;br/&gt;Ahmed El-Helw (&lt;a href=http://twitter.com/ahmedre&gt;@ahmedre&lt;/a&gt;) &lt;br/&gt;Hussein Maher (&lt;a href=http://twitter.com/husseinmaher&gt;@husseinmaher&lt;/a&gt;) &lt;br/&gt;Ahmed Farra (&lt;a href=https://github.com/afarra&gt;github&lt;/a&gt;) &lt;br/&gt;Wael Nafee (&lt;a href=http://twitter.com/wnafee&gt;@wnafee&lt;/a&gt;) &lt;br/&gt;Ahmed Fouad (&lt;a href=http://twitter.com/fo2ad&gt;@fo2ad&lt;/a&gt;) &lt;br/&gt;Somaia Gabr (&lt;a href=http://somaiagabr.com&gt;web&lt;/a&gt;) &lt;br/&gt;Mahmoud Hossam (&lt;a href=https://github.com/mahmoudhossam&gt;github&lt;/a&gt;) &lt;br/&gt;Rehab Mohamed (&lt;a href=http://twitter.com/hams_rrr&gt;@hams_rrr&lt;/a&gt;) &lt;br/&gt;&lt;br/&gt;&lt;b&gt;تەرجىمانلار:&lt;/b&gt; &lt;br/&gt;Mehmed Mahmudoglu - تۈركچە &lt;br/&gt;M. Jafar Nanakar - پارىسچە &lt;br/&gt;Rinat (Ринат Валеев) - رۇسچە &lt;br/&gt;khajavi (on github) - ئىلگىرىكى پارسچە تەرجىمە &lt;br/&gt;Yasser Kadddour - فىرانسۇزچە &lt;br/&gt;Bo Li (&lt;a href=http://twitter.com/liboat&gt;@liboat&lt;/a&gt;) &lt;br/&gt;&lt;br/&gt;&lt;b&gt;ئوچۇق مەنبەلىك قۇرۇلۇشلار:&lt;/b&gt; &lt;br/&gt;ActionBarSherlock (&lt;a href=http://abs.io&gt;abs.io&lt;/a&gt;) &lt;br/&gt;maven-android-plugin (&lt;a href=http://code.google.com/p/maven-android-plugin&gt;maven-android-plugin&lt;/a&gt;) &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Special Thanks:&lt;/b&gt; &lt;br/&gt;Ahmed Essam (&lt;a href=http://twitter.com/neo_4583&gt;@neo_4583&lt;/a&gt;) &lt;br/&gt;Batoul Apps (&lt;a href=http://twitter.com/batoulapps&gt;@batoulapps&lt;/a&gt;).</string>
+    <string name="help_title">كۆپ سورىلىدىغان سوئاللار</string>
+    <string name="help">&lt;b&gt;قىرائەت ئاۋازىنى قانداق چالىدۇ؟&lt;/b&gt; &lt;br/&gt; خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران ئاستىدا قىرائەت توپچىسى ۋە قىرائەت قىلغۇچىنىڭ ئىسمى كۆرۈنىدۇ. قىرائەت قىلغۇچىنىڭ ئىسمىنى چېكىپ قىرائەت قىلغۇچىلارنى تاللىغىلى بولىدۇ، چېلىش توپچىسىنى چېكىلسە نۆۋەتتىكى بەت ياكى نۆۋەتتىكى سۈرەنىڭ قىرائەت ئاۋازىنى چۈشۈرگەندىن كېيىن ئاۋازنى چېلىشنى باشلايدۇ . &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تەرجىمىنى قانداق كۆرۈمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدىكى يەر شارى سىنبەلگە (ياكى ئۈچ يۇمۇلاق چېكىتتىن شەكىللەنگەن سىنبەلگە) نى چەككەندىن كېيىن تەرجىمە بېتىنى كۆرگىلى بولىدۇ. &lt;br/&gt; ئەگەر سىز تېخى ھېچقانداق تەرجىمە نەشرىنى چۈشۈرمىگەن بولسىڭىز، بۇ چاغدا تەرجىمە تېكىستىنى چۈشۈرۈش ۋە باشقۇرۇش بېتىگە كىرىدۇ، لازىملىق تەرجىمىنى تاللاپ چۈشۈرگەندىن كېيىن قايتىدۇ، يەر شارى سىنبەلگە قايتا چېكىلسە تەرجىمە تېكىست بېتىگە كىرىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بەتكە خەتكۈچنى قانداق قوشىمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدا بەش يۇلتۇز سىنبەلگىسى كۆرۈنىدۇ، ئۇنى چەككەندىن كېيىن نۆۋەتتىكى بەتنى خەتكۈچكە قوشقىلى بولىدۇ، شۇنىڭ بىلەن بىللە كاۋاك بەش يۇلتۇز ئۇيۇل بەش يۇلتۇزغا ئۆزگىرىدۇ. سىنبەلگە قايتا چېكىلسە خەتكۈچ بىكار قىلىنىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تېكىستنى قانداق چوڭايتىمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، توغرىسىغا ئېكرانغا ئالماشقاندا خەت چوڭىيىدۇ. تەرجىمە تېكىست بېتىدە تەڭشەكلەردىن خەت چوڭلۇقىنى تاللىغىلى بولىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بىر ئايەتنى قانداق ھەمبەھىرلەيمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، مەلۇم بىر ئايەت ئۇزۇن چېكىلسە تىل مۇھىت تىزىملىكى قاڭقىپ چىقىدۇ، ئۇنىڭدا خەتكۈچ، ھەمبەھىر، تەرجىمىنى كۆرۈش، چاپلاش تاختىسىغا كۆچۈرۈش قاتارلىق ئىقتىدارلار بار. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;مالايالام/تامىل/بىنگال/ئوردۇچە خەت نۇسخىسى ئىشلىمەيدۇ!&lt;/b&gt; &lt;br/&gt;ناھايىتى ئەپسۇس، ئاندىرويىد 4.0 دىن ئىلگىرىكى نەشرىلىرىدە بۇ خەت نۇسخىلىرىنى قوللىماىدۇ، ھازىرچە ياخشىراق ھەل قىلىش چارىسى يوق.</string>
+	<string name="search_hint">قۇرئاندىن ئىزدە</string>
+	<string name="quranSearchType">قۇرئان سۈرەلىرى</string>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+        <item quantity="one">\&quot;%s\&quot; نىڭ نەتىجىسى:</item>
+        <item quantity="other">\&quot;%s\&quot; نىڭ نەتىجىلىرى:</item>
+    </plurals>
+
+    <!-- Search messages -->
+    <string name="found_in_sura">سۈرىدە بايقالدى</string>
+    <string name="no_results">\&quot;%s\&quot; نىڭ نەتىجىلىرى تېپىلمىدى</string>
+    <string name="no_active_translation">ھېچقانداق ئاكتىپ تەرجىمە تەڭشەلمىدىڭىز، ئالدى بىلەن بىر ئاكتىپ تەرجىمىنى تەڭشەڭ، ئاندىن قايتا ئىزدەڭ.</string>
+    <string name="translation_settings">تەرجىمە تەڭشەكلىرى</string>
+    <string name="no_arabic_search_available">سىز ئەرەبچە ئىزدەش بوغچىسىنى چۈشۈرمىگەن. ئۇنى چۈشۈرۈپ ئاندىن قايتا ئىزدەڭ.</string>
+    <string name="get_arabic_search_db">ئەرەبچە ئىزدەش ساندانىغا ئېرىش</string>
+        
+    <!-- Quran Preference Activity -->
+    <string name="prefs_category_navigation">يولباشچى</string>
+    <string name="prefs_volume_key_navigation_title">ئاۋاز كۇنۇپكا يولباشچى</string>
+    <string name="prefs_volume_key_navigation_summary">ئاۋاز كۇنۇپكىسىدا بەت ئۆرۈشكە يول باشلايدۇ</string>
+    <string name="prefs_category_reading">ئوقۇش مايىللىقى</string>
+    <string name="prefs_category_translation">تەرجىمە مايىللىقى</string>
+    <string name="prefs_category_display_settings">كۆرۈنۈش تەڭشەكلىرى</string>
+    <string name="prefs_use_arabic_title">ئەرەبچە ھالەت</string>
+    <string name="prefs_use_arabic_summary_on">ئەپ ئەرەبچە ئارايۈزنى ئىشلىتىدۇ (قايتا قوزغىتىش زۆرۈر)</string>
+    <string name="prefs_use_arabic_reshaper_title">ئەرەبچە شەكىل تۈزىتىشنى ئىشلەت</string>
+    <string name="prefs_use_arabic_reshaper_summary_on">ئەگەر ئەرەبچە تېكىست تەتۈر يۆنىلىشتە بولسا، بۇ تاللانمىنى تاللىماڭ.</string>
+    <string name="prefs_use_arabic_reshaper_summary_off">ئەگەر ئەرەبچە تېكىست ئۇلانمىغان بولسا، بۇ تاللانما تاللانسا ئۇنى تۈزىتىدۇ.</string>
+    <string name="prefs_new_background_title">يېڭى تەگلىك</string>
+    <string name="prefs_lock_orientation_title">قۇلۇپ ئېكران يۆنىلىشى</string>
+    <string name="prefs_lock_orientation_summary_on">قۇرئان بەتلىرىنىڭ ئېكران ئايلاندۇرۇش يۆنىلىشى</string>
+    <string name="prefs_lock_orientation_summary_off">نۆۋەتتىكى يۆنىلىش ھالىتىگە ماسلىشىدۇ</string>
+    <string name="prefs_landscape_orientation_title">توغرىسىغا يۆنىلىش</string>
+    <string name="prefs_landscape_orientation_summary_on">توغرىسىغا يۆنىلىش ئىشلىتىلىدۇ</string>
+    <string name="prefs_landscape_orientation_summary_off">بويىغا يۆنىلىش ئىشلىتىلىدۇ</string>
+    <string name="prefs_night_mode_title">كېچە ھالىتى</string>
+    <string name="prefs_night_mode_summary">قارا تەگلىك يورۇق خەت نۇسخىسى ئىشلىتىلىدۇ</string>
+    <string name="prefs_night_mode_text_brightness_title">تېكىست يورۇقلۇقى</string>
+    <string name="prefs_night_mode_text_brightness_summary">كېچە ھالىتى قوزغىتىلغان ۋاقىتتىكى تېكىستنىڭ يورۇقلۇقى</string>
+    <string name="prefs_overlay_page_info_title">بەت ئۇچۇرىنى كۆرسەت (سىناق)</string>
+    <string name="prefs_overlay_page_info_summary">قىرائەت قىلىۋاتقاندا بەت سانى، سۈرە ئىسمى ۋە پارە سانىنى كۆرسىتىدۇ</string>
+    <string name="prefs_display_marker_title">بەلگە قاڭقىش كۆزنىكىنى كۆرسەت</string>
+    <string name="prefs_display_marker_summary">يېتىپ كەلگەن پارە، ھىزب قاتارلىقلارنى قاڭقىش كۆزنىكىدە كۆرسىتىدۇ.</string>
+    <string name="prefs_translation_text_title">تەرجىمە تېكىست چوڭلۇقى</string>
+    <string name="prefs_translations">تەرجىمىلەر</string>
+    <string name="prefs_translations_summary">تەرجىمىلەرنى چۈشۈرۈش ۋە باشقۇرۇش</string>
+    <string name="prefs_ayah_before_translation_title">تەرجىمىدىن ئىلگىرى ئايەت</string>
+    <string name="prefs_ayah_before_translation_summary">تەرجىمىدىن ئىلگىرى ئەرەبچە ئەسلى تېكىستنى كۆرسىتىدۇ</string>
+    <string name="prefs_category_download">چۈشۈرۈش تاللانمىلىرى</string>
+    <string name="prefs_streaming_title">ئېقىم</string>
+    <string name="prefs_streaming_summary">مۇمكىن بولسا ئېقىم ئاۋازىنى ئىشلىتىدۇ (غەيرى يوچۇقسىز ئاۋازلا)</string>
+    <string name="prefs_download_amount_title">چۈشۈرۈش ئۇسۇلى</string>
+    <string name="prefs_download_amount_summary">ئالدى بىلەن غەيرى يوچۇقسىز ئاۋازنى چۈشۈرىدۇ</string>
+    <string name="downloaded_translations">چۈشۈرۈلدى</string>
+    <string name="available_translations">چۈشۈرگىلى بولىدۇ</string>
+    <string name="remove_button">چىقىرىۋەت</string>
+    <string name="dialog_ok">جەزملە</string>
+    <string name="prefs_advanced_settings_title">ئالىي تەڭشەكلەر</string>
+    <string name="prefs_app_location_title">ئەپ ئورنى</string>
+    <string name="prefs_app_location_summary">ھۆججەتلەرنى قايسى sd كارتىغا ساقلايدىغانلىقىڭىزنى تاللاڭ</string>
+    <string name="prefs_sdcard_internal">ئىچىدىكى ساقلىغۇچ</string>
+    <string name="prefs_sdcard_external">سىرتقى SD كارتا</string>
+    <string name="prefs_sdcard_auto">ئاپتوماتىك</string>
+    <string name="prefs_app_size">ئەپ چوڭلۇقى</string>
+    <string name="prefs_calculating_app_size">ئەپ چوڭلۇقىنى ھېسابلاۋاتىدۇ</string>
+    <string name="prefs_copying_app_files">ئەپ ھۆججەتلىرىنى كۆچۈرۈۋاتىدۇ</string>
+    <string name="prefs_custom_location_title">ئىختىيارىي ئورنى</string>
+    <string name="prefs_err_moving_app_files">ئەپ ھۆججەتلىرىنى يۆتكىيەلمىدى</string>
+    <string name="prefs_no_enough_space_to_move_files">ئەپ ھۆججەتلىرىنى يۆتكەشكە يېتەرلىك بوشلۇق يوق</string>
+    <string name="prefs_megabytes">MB</string>
+    <!-- Preferences End -->
+
+    <!-- translation updates -->
+    <string name="update_available">يېڭىلانما بار</string>
+    <string name="translation_updates_available">تەرجىمە ئۈچۈن بىر يېڭىلانما بار. تەرجىمە ئېكرانىنى ھازىرلا زىيارەت قىلامسىز؟</string>
+    <string name="translation_dialog_yes">ھەئە</string>
+    <string name="translation_dialog_later">كېيىن</string>
+
+    <!-- used for screen readers -->
+    <string name="border">گىرۋەك</string>
+    
+    <!-- End Number picker Strings -->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
+    <string name="quran_hizb">ھىزب</string>
+    <string name="quran_juz2">پارە</string>
+    <string name="quran_page">بەت</string>
+    <string name="quran_sura">سۈرە</string>
+    <string name="quran_ayah">ئايەت</string>
+    <string name="quran_sura_title">سۇرات</string>
+    <string name="sura_ayah_notification_str">%1$s -سۈرە، %2$d - ئايەت</string>
+
+    <string name="bookmarks_current_page">نۆۋەتتىكى بەت</string>
+    <string name="index_loading">يۈكلەۋاتىدۇ…</string>
+
+    <string name="canceling">ۋاز كېچىۋاتىدۇ…</string>
+    <string name="juz2_description">%1$s -پارە</string>
+    <string name="page_description">%2$s -پارە، %1$s -بەت</string>
+    <string name="highlighting_database">زۆرۈر ھۆججەتلەر</string>
+    <string name="timing_database">زۆرۈر ھۆججەتلەر</string>
+    <string name="infinity">∞</string>
+    
+    <!-- download statuses and errors -->
+    <string name="download_successful">چۈشۈرۈش مۇۋەپپەقىيەتلىك</string>   
+    <string name="download_processing">چۈشۈرۈشنى بىر تەرەپ قىلىۋاتىدۇ…</string>              
+    <string name="download_error_general">چۈشۈرەلمىدى</string>             
+    <string name="download_error_disk">چۈشۈرۈشكە يېتەرلىك دىسكا بوشلۇقى يوق</string>               
+    <string name="download_error_network">تور خاتالىقى تۈپەيلىدىن چۈشۈرەلمەيدۇ</string>                    
+    <string name="download_error_perms">ھوقۇق خاتالىقى تۈپەيلىدىن چۈشۈرەلمەيدۇ</string>                  
+    <string name="download_error_invalid_download">چۈشۈرگەن ھۆججەت بۇزۇلدى</string>
+    <string name="download_error_invalid_download_retry">ھۆججەت بۇزۇلغان، قايتا چۈشۈرۈشنى سىناۋاتىدۇ</string> 
+    <string name="download_error_network_retry">تور خاتالىقى، داۋاملاشتۇرۇشنى سىناۋاتىدۇ…</string>
+    <string name="notification_download_canceled">چۈشۈرۈشتىن ۋاز كەچتى</string>
+    <string name="download_non_wifi_prompt">سىز wifi تورىدا ئەمەس. سانلىق مەلۇماتنى چۈشۈرىۋېرەمسىز؟</string>
+    
+    <!-- downloading dialogs -->
+    <string name="download_progress">%1$s / %2$s چۈشۈرۈلدى</string>
+    <string name="process_progress">بىر تەرەپ قىلىۋاتقىنى %1$d / %2$d</string>
+    <string name="download_retry">قايتا سىنا</string>
+    <string name="download_cancel">ۋاز كەچ</string>
+    <string name="download_extra_data">ھەمبەھىر ۋە تەرجىمە ئىقتىدارىنى قوللاش ئۈچۈن بىر ياكى ئىككى كىچىك ھۆججەت چۈشۈرۈشىمىز كېرەك. ھازىر چۈشۈرەمدۇ؟</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">تەرجىمىنى چىقىرىۋېتەمدۇ؟</string>
+    <string name="remove_dlg_msg">سىز %1$s نى راسلا چىقىرىۋېتەمسىز؟</string>
+    <string name="error_getting_translation_list">تەرجىمە تىزىمىنى چۈشۈرەلمىدى. كېيىن قايتا سىناڭ.</string>
+    <string name="search_data">سانلىق مەلۇمات ئىزدە</string>
+    <string name="need_translation">سىز تېخى ھېچقانداق تەرجىمە/تەپسىر چۈشۈرمىگەن.</string>
+    <string name="get_translations">تەرجىمىگە ئېرىش</string>
+
+    <!-- about us -->
+    <string name="email_quran_android">قۇرئان ئاندىرويىدقا تورخەت يوللا</string>
+
+    <!-- sura metainfo -->
+    <string name="makki">مەككە</string>
+    <string name="madani">مەدىنە</string>
+    <plurals name="verses">
+        <item quantity="one">سۈرە</item>
+        <item quantity="other">سۈرە</item>
+    </plurals>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">بۇ ئايەتنى خەتكۈچلە</string>
+    <string name="unbookmark_ayah">بۇ ئايەتنىڭ خەتكۈچىنى چىقىرىۋەت</string>
+    <string name="tag_ayah">بۇ ئايەتكە بەلگە قوش</string>
+    <string name="share_ayah">ئايەت ئۇلانمىسىنى ھەمبەھىرلە</string>
+    <string name="share_ayah_text">ئايەت تېكىستتىنى ھەمبەھىرلە</string>
+    <string name="translation_ayah">ئايەت تەرجىمە/تەپسىر</string>
+    <string name="play_from_here">بۇ جايدىن باشلاپ چال</string>
+    <string name="ayah_notes">ئىزاھاتلار</string>
+    <string name="via_string">\n\n @QuranAndroid ئارقىلىق</string>
+    <string name="search_key">ئىزدە كۇنۇپكىسى بېسىلسا سۈرە ئىزدەيدۇ</string>
+    <string name="copy_ayah">ئايەت كۆچۈر</string>
+    <string name="ayah_copied_popup">ئايەت كۆچۈرۈلدى</string>
+    <string name="show_more">تېخىمۇ كۆپ كۆرسەت</string>
+    
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="delete_bookmark">خەتكۈچ ئۆچۈر</string>
+    <string name="tag_bookmark">خەتكۈچكە بەلگە قوش</string>
+    <string name="delete_tag">بەلگە ئۆچۈر</string>
+    <string name="edit_tag">بەلگە تەھرىر</string>
+    <string name="new_tag">يېڭى بەلگە</string>
+    <string name="not_tagged">بەلگە قوشۇلمىدى</string>
+    
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">بەلگە</string>
+    <string name="tag_name">ئاتى</string>
+    
+    <!-- bookmark & tag list -->
+    <string name="bookmarks_list_empty">خەتكۈچ يوق</string>
+    <string name="tags_list_empty">بەلگە يوق</string>
+</resources>
