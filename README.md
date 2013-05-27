@@ -25,13 +25,14 @@ App localization
 ------------------------
 
 * Farsi for version 2.0 by M. Jafar Nakar
-* Farsi for version 1.6 by [@khajavi](http://github.com/khajavi).
+* Farsi for version 1.6 by [khajavi](http://github.com/khajavi).
 * Turkish by Mehmed Mahmudoglu.
 * Russian by Rinat (Ринат Валеев).
 * Kurdish by Goran Gharib Karim.
-* French by Yasser [@yasserkad](http://github.com/yasserkad).
+* French by Yasser [yasserkad](http://github.com/yasserkad).
 * German by Armin Supuk
 * Chinese by Bo Li
+* Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran)
 
 
 Terms of use
@@ -82,6 +83,7 @@ Changelog
 - multiple sdcard support
 - tablet support (experimental)
 - change color of text in translation view and night mode
+- uyghur translation (thanks br Abduqadir Abliz)
 
 **version 2.3.1** (released 4/2/2013)
 
