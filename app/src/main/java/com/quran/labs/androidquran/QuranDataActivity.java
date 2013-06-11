@@ -268,7 +268,7 @@ public class QuranDataActivity extends SherlockActivity implements
          }
          else {
             // otherwise download one zip with both image sets
-            String widthParam = qsi.getWidthParam() + "_" +
+            String widthParam = qsi.getWidthParam() +
                     qsi.getTabletWidthParam();
             url = QuranFileUtils.getZipFileUrl(widthParam);
          }
