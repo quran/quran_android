@@ -152,7 +152,8 @@ public class QuranPageFragment extends SherlockFragment
       if (PagerActivity.class.isInstance(activity)){
          QuranPageWorker worker =
                  ((PagerActivity)activity).getQuranPageWorker();
-         worker.loadPage(mPageNumber, mImageView);
+         worker.loadPage(QuranScreenInfo.getInstance().getWidthParam(),
+                 mPageNumber, mImageView);
 
          new QueryPageCoordinatesTask(activity).execute(mPageNumber);
       }
@@ -185,7 +186,7 @@ public class QuranPageFragment extends SherlockFragment
 
    private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
       public QueryPageCoordinatesTask(Context context){
-         super(context);
+         super(context, QuranScreenInfo.getInstance().getWidthParam());
       }
 
       @Override
@@ -204,11 +205,13 @@ public class QuranPageFragment extends SherlockFragment
    private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
       public GetAyahCoordsTask(Context context, MotionEvent event){
-         super(context, event, mPageNumber);
+         super(context, event,
+               QuranScreenInfo.getInstance().getWidthParam(), mPageNumber);
       }
 
       public GetAyahCoordsTask(Context context, int sura, int ayah){
-         super(context, sura, ayah);
+         super(context, QuranScreenInfo.getInstance().getWidthParam(),
+               sura, ayah);
       }
 
       @Override

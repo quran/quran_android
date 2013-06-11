@@ -7,6 +7,8 @@
 			significantly longer to load. Would you like to download the required
 			files now?
 		</string>
+    <string name="downloadTabletPrompt">We recently added improved images for
+        tablets. Would you like to download these images now?</string>
     <string name="downloadPrompt_ok">Yes</string>
     <string name="downloadPrompt_no">No</string>
     <string name="downloading_title">Downloading&#8230;</string>

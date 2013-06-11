@@ -15,11 +15,11 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 public class QueryPageCoordsTask extends AsyncTask<Integer, Void, Rect[]> {
    private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
 
-   public QueryPageCoordsTask(Context context){
+   public QueryPageCoordsTask(Context context, String widthParam){
       mAyahInfoDatabaseHandler = null;
       if (context != null && context instanceof PagerActivity){
          mAyahInfoDatabaseHandler =
-                 ((PagerActivity)context).getAyahInfoDatabase();
+                 ((PagerActivity)context).getAyahInfoDatabase(widthParam);
       }
    }
 

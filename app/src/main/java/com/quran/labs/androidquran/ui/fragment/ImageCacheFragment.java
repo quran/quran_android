@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class ImageCacheFragment extends Fragment {
    private static final String TAG = "ImageCacheFragment";
-   public LruCache<Integer, Bitmap> mRetainedCache;
+   public LruCache<String, Bitmap> mRetainedCache;
 
    public static ImageCacheFragment getImageCacheFragment(FragmentManager fm){
       ImageCacheFragment fragment =

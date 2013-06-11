@@ -24,26 +24,30 @@ public class QueryAyahCoordsTask extends
    protected int mSura;
    protected int mAyah;
    protected int mPage;
+   protected String mWidthParam;
    protected boolean mHighlightAyah;
    protected MotionEvent mEvent;
    private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
 
-   public QueryAyahCoordsTask(Context context, MotionEvent event, int page){
-      this(context, 0, 0);
+   public QueryAyahCoordsTask(Context context, MotionEvent event,
+                              String widthParam, int page){
+      this(context, widthParam, 0, 0);
       mEvent = event;
       mHighlightAyah = false;
       mPage = page;
    }
 
-   public QueryAyahCoordsTask(Context context, int sura, int ayah){
+   public QueryAyahCoordsTask(Context context, String widthParam,
+                              int sura, int ayah){
       mSura = sura;
       mAyah = ayah;
       mHighlightAyah = true;
+      mWidthParam = widthParam;
       mAyahInfoDatabaseHandler = null;
 
       if (context != null && context instanceof PagerActivity){
          mAyahInfoDatabaseHandler =
-                 ((PagerActivity)context).getAyahInfoDatabase();
+                 ((PagerActivity)context).getAyahInfoDatabase(mWidthParam);
       }
    }
 

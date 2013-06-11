@@ -52,10 +52,13 @@ public class QuranFileUtils {
 		}
 	}
 
-	public static boolean haveAllImages(Context context) {
+   public static boolean haveAllImages(Context context, String widthParam){
+      String quranDirectory = getQuranDirectory(context, widthParam);
+      if (quranDirectory == null){ return false; }
+
 		String state = Environment.getExternalStorageState();
 		if (state.equals(Environment.MEDIA_MOUNTED)) {
-			File dir = new File(getQuranDirectory(context) + File.separator);
+			File dir = new File(quranDirectory + File.separator);
 			if (dir.isDirectory()) {
 				int files = dir.list().length;
 				if (files >= 604){
@@ -78,15 +81,26 @@ public class QuranFileUtils {
 		String state = Environment.getExternalStorageState();
 		return state.equals(Environment.MEDIA_MOUNTED);
 	}
-	
-	public static Bitmap getImageFromSD(Context context, String filename){
-		String location = getQuranDirectory(context);
-		if (location == null)
+   public static Bitmap getImageFromSD(Context context, String filename){
+      return getImageFromSD(context, null, filename);
+   }
+
+	public static Bitmap getImageFromSD(Context context, String widthParam,
+                                       String filename){
+		String location;
+      if (widthParam != null){
+         location = getQuranDirectory(context, widthParam);
+      }
+      else { location = getQuranDirectory(context); }
+
+		if (location == null){
 			return null;
+      }
 		
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inPreferredConfig = Bitmap.Config.ALPHA_8;
-		return BitmapFactory.decodeFile(location + File.separator + filename, options);
+		return BitmapFactory.decodeFile(location +
+              File.separator + filename, options);
 	}
 
 	public static boolean writeNoMediaFile(Context context) {
@@ -231,36 +245,51 @@ public class QuranFileUtils {
 	}
 
 	public static String getQuranDirectory(Context context) {
-		String base = getQuranBaseDirectory(context);
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-		if (qsi == null)
+		if (qsi == null){
 			return null;
-		return (base == null) ? null : base + "width" + qsi.getWidthParam();
+      }
+      return getQuranDirectory(context, qsi.getWidthParam());
 	}
 
-	public static String getZipFileUrl() {
+   public static String getQuranDirectory(Context context, String widthParam){
+      String base = getQuranBaseDirectory(context);
+      return (base == null) ? null : base + "width" + widthParam;
+   }
+
+   public static String getZipFileUrl() {
+      QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+      if (qsi == null){ return null; }
+      return getZipFileUrl(qsi.getWidthParam());
+   }
+
+   public static String getZipFileUrl(String widthParam) {
 		String url = IMG_HOST;
-		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-		if (qsi == null)
-			return null;
-		url += "images" + qsi.getWidthParam() + ".zip";
+		url += "images" + widthParam + ".zip";
 		return url;
 	}
 	
 	public static String getAyaPositionFileName(){
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
 		if (qsi == null) return null;
-		return "ayahinfo" + qsi.getWidthParam() + ".db";
+		return getAyaPositionFileName(qsi.getWidthParam());
 	}
+
+   public static String getAyaPositionFileName(String widthParam){
+      return "ayahinfo" + widthParam + ".db";
+   }
 
 	public static String getAyaPositionFileUrl() {
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-		if (qsi == null)
-			return null;
-		String url = IMG_HOST + "width" + qsi.getWidthParam();
-		url += "/ayahinfo" + qsi.getWidthParam() + ".zip";
-		return url;
+		if (qsi == null){ return null; }
+      return getAyaPositionFileUrl(qsi.getWidthParam());
 	}
+
+   public static String getAyaPositionFileUrl(String widthParam) {
+      String url = IMG_HOST + "width" + widthParam;
+      url += "/ayahinfo" + widthParam + ".zip";
+      return url;
+   }
 
    public static String getGaplessDatabaseRootUrl() {
       QuranScreenInfo qsi = QuranScreenInfo.getInstance();

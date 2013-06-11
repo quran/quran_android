@@ -21,6 +21,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.*;
 import com.quran.labs.androidquran.ui.util.*;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.TranslationView;
@@ -205,8 +206,10 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
          if (PagerActivity.class.isInstance(getActivity())){
             QuranPageWorker worker =
                     ((PagerActivity)getActivity()).getQuranPageWorker();
-            worker.loadPage(mPageNumber-1, mRightImageView);
-            worker.loadPage(mPageNumber, mLeftImageView);
+            String widthParam =
+                    QuranScreenInfo.getInstance().getTabletWidthParam();
+            worker.loadPage(widthParam, mPageNumber-1, mRightImageView);
+            worker.loadPage(widthParam, mPageNumber, mLeftImageView);
          }
 
          new QueryPageCoordinatesTask(context)
@@ -256,7 +259,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
    private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
       public QueryPageCoordinatesTask(Context context){
-         super(context);
+         super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
       }
 
       @Override
@@ -279,11 +282,14 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
    private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
       public GetAyahCoordsTask(Context context, MotionEvent event, int page){
-         super(context, event, page);
+         super(context, event,
+               QuranScreenInfo.getInstance().getTabletWidthParam(), page);
       }
 
       public GetAyahCoordsTask(Context context, int sura, int ayah){
-         super(context, sura, ayah);
+         super(context,
+               QuranScreenInfo.getInstance().getTabletWidthParam(),
+               sura, ayah);
       }
 
       @Override
