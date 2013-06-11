@@ -18,11 +18,12 @@ import com.quran.labs.androidquran.util.QuranUtils;
 public class QuranDisplayHelper {
    private static final String TAG = "QuranDisplayHelper";
    
-   public static Bitmap getQuranPage(Context context, int page){
+   public static Bitmap getQuranPage(Context context,
+                                     String widthParam, int page){
       Bitmap bitmap;
 
       String filename = QuranFileUtils.getPageFileName(page);
-      bitmap = QuranFileUtils.getImageFromSD(context, filename);
+      bitmap = QuranFileUtils.getImageFromSD(context, widthParam, filename);
       if (bitmap == null) {
          android.util.Log.d(TAG, "failed to get " + page +
                  " with name " + filename + " from sd...");
@@ -43,7 +44,8 @@ public class QuranDisplayHelper {
 
       if (rub3 % 8 == 0) {
          sb.append(context.getString(R.string.quran_juz2)).append(' ')
-                 .append(QuranUtils.getLocalizedNumber(context, (hizb / 2) + 1));
+                 .append(QuranUtils.getLocalizedNumber(context,
+                         (hizb / 2) + 1));
       }
       else {
          int remainder = rub3 % 4;

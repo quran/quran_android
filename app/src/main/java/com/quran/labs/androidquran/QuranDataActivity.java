@@ -37,6 +37,8 @@ public class QuranDataActivity extends SherlockActivity implements
    private AlertDialog mPromptForDownloadDialog = null;
    private SharedPreferences mSharedPreferences = null;
    private DefaultDownloadReceiver mDownloadReceiver = null;
+   private boolean mNeedPortraitImages = false;
+   private boolean mNeedLandscapeImages = false;
 
    /** Called when the activity is first created. */
    @Override
@@ -160,8 +162,26 @@ public class QuranDataActivity extends SherlockActivity implements
          // intentionally not sleeping because waiting
          // for the splash screen is not cool.
          QuranFileUtils.migrateAudio(QuranDataActivity.this);
-         return QuranFileUtils.getQuranDirectory(QuranDataActivity.this) != null &&
-                QuranFileUtils.haveAllImages(QuranDataActivity.this);
+
+         if (QuranScreenInfo.getInstance().isTablet(QuranDataActivity.this)){
+            boolean haveLandscape = QuranFileUtils.haveAllImages(
+                    QuranDataActivity.this,
+                    QuranScreenInfo.getInstance().getTabletWidthParam());
+            boolean havePortrait = QuranFileUtils.haveAllImages(
+                    QuranDataActivity.this,
+                    QuranScreenInfo.getInstance().getWidthParam());
+            mNeedPortraitImages = !havePortrait;
+            mNeedLandscapeImages = !haveLandscape;
+            return haveLandscape && havePortrait;
+         }
+         else {
+            boolean haveAll = QuranFileUtils.haveAllImages(
+                        QuranDataActivity.this,
+                        QuranScreenInfo.getInstance().getWidthParam());
+            mNeedPortraitImages = !haveAll;
+            mNeedLandscapeImages = false;
+            return haveAll;
+         }
       }
       
       @Override
@@ -228,8 +248,32 @@ public class QuranDataActivity extends SherlockActivity implements
       if (mDownloadReceiver != null &&
               mDownloadReceiver.didReceieveBroadcast() && !force){ return; }
       if (mIsPaused){ return; }
+
+      QuranScreenInfo qsi = QuranScreenInfo.getInstance();
       
-      String url = QuranFileUtils.getZipFileUrl();
+      String url;
+      if (mNeedPortraitImages && !mNeedLandscapeImages){
+         // phone (and tablet when upgrading on some devices, ex n10)
+         url = QuranFileUtils.getZipFileUrl();
+      }
+      else if (mNeedLandscapeImages && !mNeedPortraitImages){
+         // tablet (when upgrading from pre-tablet on some devices, ex n7).
+         url = QuranFileUtils.getZipFileUrl(qsi.getTabletWidthParam());
+      }
+      else {
+         // new tablet installation - if both image sets are the same
+         // size, then just get the correct one only
+         if (qsi.getTabletWidthParam().equals(qsi.getWidthParam())){
+            url = QuranFileUtils.getZipFileUrl();
+         }
+         else {
+            // otherwise download one zip with both image sets
+            String widthParam = qsi.getWidthParam() + "_" +
+                    qsi.getTabletWidthParam();
+            url = QuranFileUtils.getZipFileUrl(widthParam);
+         }
+      }
+
       String destination = QuranFileUtils.getQuranBaseDirectory(
               QuranDataActivity.this);
       
@@ -248,8 +292,14 @@ public class QuranDataActivity extends SherlockActivity implements
    }
 
    private void promptForDownload(){
+      int message = R.string.downloadPrompt;
+      if (QuranScreenInfo.getInstance().isTablet(this) &&
+              (mNeedPortraitImages != mNeedLandscapeImages)){
+         message = R.string.downloadTabletPrompt;
+      }
+
       AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-      dialog.setMessage(R.string.downloadPrompt);
+      dialog.setMessage(message);
       dialog.setCancelable(false);
       dialog.setPositiveButton(R.string.downloadPrompt_ok,
             new DialogInterface.OnClickListener() {

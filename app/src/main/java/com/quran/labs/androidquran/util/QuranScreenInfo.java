@@ -1,35 +1,34 @@
 package com.quran.labs.androidquran.util;
 
 import android.app.Activity;
-import android.content.res.Configuration;
+import android.content.Context;
 import android.view.Display;
 import android.view.WindowManager;
+import com.quran.labs.androidquran.R;
 
 public class QuranScreenInfo {
 
-	private static QuranScreenInfo instance = null;
+	private static QuranScreenInfo sInstance = null;
 	
-	private int width;
-	private int height;
-	private int max_width;
-	private int orientation;
-	
+	private int mHeight;
+   private int mMinWidth;
+	private int mMaxWidth;
+
 	private QuranScreenInfo(int width, int height){
-		this.orientation = Configuration.ORIENTATION_PORTRAIT;
-		this.width = width;
-		this.height = height;
-		this.max_width = (width > height)? width : height;
+		mHeight = height;
+      mMinWidth = (width > height)? height : width;
+		mMaxWidth = (width > height)? width : height;
 	}
 	
 	public static QuranScreenInfo getInstance(){
-		return instance;
+		return sInstance;
 	}
 
    public static QuranScreenInfo getOrMakeInstance(Activity activity){
-      if (instance == null){
-         instance = initialize(activity);
+      if (sInstance == null){
+         sInstance = initialize(activity);
       }
-      return instance;
+      return sInstance;
    }
 
    private static QuranScreenInfo initialize(Activity activity){
@@ -39,27 +38,43 @@ public class QuranScreenInfo {
    }
 
 	public static void initialize(int width, int height){
-		instance = new QuranScreenInfo(width, height);
+		sInstance = new QuranScreenInfo(width, height);
 	}
 
-	public int getHeight(){ return this.height; }
+	public int getHeight(){ return mHeight; }
 
 	public String getWidthParam(){
 		return "_" + getWidthParamNoUnderScore();
 	}
-	
-	public String getWidthParamNoUnderScore(){
-		if (this.max_width <= 320) return "320";
-		else if (this.max_width <= 480) return "480";
-		else if (this.max_width <= 800) return "800";
-		else return "1024";
+
+   public String getTabletWidthParam(){
+      int width = mMaxWidth / 2;
+      return "_" + getBestTabletLandscapeSizeMatch(width);
+   }
+
+   public String getWidthParamNoUnderScore(){
+      // the default image size is based on the width
+      return getWidthParamNoUnderScore(mMaxWidth);
+   }
+
+   private String getWidthParamNoUnderScore(int width){
+		if (width <= 320){ return "320"; }
+		else if (width <= 480){ return "480"; }
+		else if (width <= 800){ return "800"; }
+		else if (width <= 1280){ return "1024"; }
+      else return "1920";
 	}
-	
-	public boolean isLandscapeOrientation() {
-		return this.orientation == Configuration.ORIENTATION_LANDSCAPE;
-	}
-		
-	public void setOrientation(int orientation) {
-		this.orientation = orientation;
-	}
+
+   private String getBestTabletLandscapeSizeMatch(int width){
+      if (width <= 640){ return "512"; }
+      else { return "1024"; }
+   }
+
+   public boolean isTablet(Context context){
+      if (context != null && mMaxWidth > 800){
+         return context.getResources()
+                 .getBoolean(R.bool.is_tablet);
+      }
+      return false;
+   }
 }

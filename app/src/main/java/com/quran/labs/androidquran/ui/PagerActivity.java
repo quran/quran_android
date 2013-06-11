@@ -95,7 +95,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private TranslationReaderTask mTranslationReaderTask;
    private SpinnerAdapter mSpinnerAdapter;
    private BookmarksDBAdapter mBookmarksAdapter;
-   private AyahInfoDatabaseHandler mAyahInfoAdapter;
+   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
    private boolean mDualPages = false;
 
    public static final int VISIBLE_FLAGS =
@@ -152,6 +152,19 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
       catch (Exception e){
          // no ayah info database available
+      }
+
+      mTabletAyahInfoAdapter = null;
+      if (QuranScreenInfo.getInstance().isTablet(this)){
+         try {
+            filename = QuranFileUtils.getAyaPositionFileName(
+                    QuranScreenInfo.getInstance().getTabletWidthParam());
+            mTabletAyahInfoAdapter =
+                    new AyahInfoDatabaseHandler(this, filename);
+         }
+         catch (Exception e){
+            // no ayah info database available for tablet
+         }
       }
 
       int page = -1;
@@ -389,8 +402,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
       return mBookmarksAdapter;
    }
 
-   public AyahInfoDatabaseHandler getAyahInfoDatabase(){
-      return mAyahInfoAdapter;
+   public AyahInfoDatabaseHandler getAyahInfoDatabase(String widthParam){
+      if (QuranScreenInfo.getInstance().getWidthParam().equals(widthParam)){
+         return mAyahInfoAdapter;
+      }
+      else { return mTabletAyahInfoAdapter; }
    }
 
    public void showGetRequiredFilesDialog(){
@@ -432,6 +448,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
       boolean haveDownload = false;
       if (!QuranFileUtils.haveAyaPositionFile(this)){
          String url = QuranFileUtils.getAyaPositionFileUrl();
+         if (QuranUtils.isDualPages(this)){
+            url = QuranFileUtils.getAyaPositionFileUrl(
+                    QuranScreenInfo.getInstance().getTabletWidthParam());
+         }
          String destination = QuranFileUtils.getQuranDatabaseDirectory(this);
          // start the download
          String notificationTitle = getString(R.string.highlighting_database);
@@ -538,6 +558,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mBookmarksAdapter.close();
       if (mAyahInfoAdapter != null){
          mAyahInfoAdapter.closeDatabase();
+      }
+
+      if (mTabletAyahInfoAdapter != null){
+         mTabletAyahInfoAdapter.closeDatabase();
       }
       super.onDestroy();
    }
