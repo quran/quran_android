@@ -178,7 +178,7 @@ public class DatabaseHandler {
 		
 		return mDatabase.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
 				", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
-				operator + query + endOperator + " limit 50", null);
+				operator + query + endOperator + " limit 150", null);
 	}
 	
 	public void closeDatabase() {
