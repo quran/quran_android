@@ -85,6 +85,7 @@ Changelog
 - change color of text in translation view and night mode
 - uyghur translation (thanks br Abduqadir Abliz)
 - crash reporting to help us fix issues
+- better images for galaxy s4 and htc one
 
 **version 2.3.1** (released 4/2/2013)
 
