@@ -19,8 +19,11 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.ApiKeys;
+import com.quran.labs.androidquran.util.QuranCrashListener;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import net.hockeyapp.android.CrashManager;
 
 import java.util.Date;
 
@@ -63,6 +66,11 @@ public class QuranDataActivity extends SherlockActivity implements
    @Override
    protected void onResume(){
       super.onResume();
+      if (Constants.CRASH_REPORTING_ENABLED){
+         CrashManager.register(this, ApiKeys.HOCKEY_APP_KEY,
+              QuranCrashListener.getInstance());
+      }
+
       mIsPaused = false;
       mDownloadReceiver = new DefaultDownloadReceiver(this,
               QuranDownloadService.DOWNLOAD_TYPE_PAGES);

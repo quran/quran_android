@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.widgets;
 
+import android.app.Service;
+import android.text.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -163,6 +166,29 @@ public class TranslationView extends ScrollView {
       else { mLastHighlightedAyah = -1; }
    }
 
+   private OnClickListener mOnAyahClickListener = new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+         if (mTranslationClickedListener != null){
+            mTranslationClickedListener.onTranslationClicked();
+         }
+      }
+   };
+
+   private OnLongClickListener mOnCopyAyahListener = new OnLongClickListener(){
+      @Override
+      public boolean onLongClick(View v) {
+         if (v instanceof TextView){
+            ClipboardManager mgr = (ClipboardManager)mContext.
+                    getSystemService(Service.CLIPBOARD_SERVICE);
+            mgr.setText(((TextView)v).getText());
+            Toast.makeText(mContext, R.string.ayah_copied_popup,
+                    Toast.LENGTH_SHORT).show();
+         }
+         return true;
+      }
+   };
+
    private void addTextForAyah(QuranAyah ayah){
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
               LayoutParams.MATCH_PARENT,
@@ -181,6 +207,7 @@ public class TranslationView extends ScrollView {
       TextView ayahView = new TextView(mContext);
       ayahView.setId(
               QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah()));
+      ayahView.setOnClickListener(mOnAyahClickListener);
 
       ayahView.setTextAppearance(mContext, mTextStyle);
       if (mIsNightMode){ ayahView.setTextColor(mNightModeTextColor); }
@@ -241,6 +268,9 @@ public class TranslationView extends ScrollView {
 
       if (Build.VERSION.SDK_INT >= 11){
          ayahView.setTextIsSelectable(true);
+      }
+      else {
+         ayahView.setOnLongClickListener(mOnCopyAyahListener);
       }
 
       mLinearLayout.addView(ayahView, params);

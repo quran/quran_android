@@ -29,6 +29,11 @@
             <version>${abs.version}</version>
             <type>apklib</type>
         </dependency>
+        <dependency>
+            <groupId>net.hockeyapp.android</groupId>
+            <artifactId>HockeySDK</artifactId>
+            <version>2.2.1</version>
+        </dependency>
    </dependencies>
     <build>
         <plugins>

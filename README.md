@@ -75,15 +75,16 @@ Open Source Projects Used
 
 Changelog
 ---------
-**development**
+**version 2.4.0** (released 6/15/2013)
 
 - update to german translation (thanks br Armin Supuk)
 - kurdish translation (thanks br Gharib Karim)
 - improvements to search
 - multiple sdcard support
-- tablet support (experimental)
+- tablet support for reading view
 - change color of text in translation view and night mode
 - uyghur translation (thanks br Abduqadir Abliz)
+- crash reporting to help us fix issues
 
 **version 2.3.1** (released 4/2/2013)
 

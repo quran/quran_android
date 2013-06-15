@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.data;
 
 public class Constants {
+   public static final boolean CRASH_REPORTING_ENABLED = false;
+
    // Numerics
    public static final int DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 98;
    public static final int DEFAULT_TEXT_SIZE = 15;
