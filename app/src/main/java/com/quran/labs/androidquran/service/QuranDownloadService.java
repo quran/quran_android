@@ -739,8 +739,8 @@ public class QuranDownloadService extends Service {
                ostream.close();
             }
             
-            android.util.Log.d(TAG, "progress: " + processedFiles +
-                  " from " + numberOfFiles);
+            //android.util.Log.d(TAG, "progress: " + processedFiles +
+            //      " from " + numberOfFiles);
             notifyDownloadProcessing(notificationInfo,
                     processedFiles, numberOfFiles);
          }
