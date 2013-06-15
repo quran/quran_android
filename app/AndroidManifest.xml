@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.quran.labs.androidquran" android:versionCode="231"
-	android:versionName="2.3.1"
+	package="com.quran.labs.androidquran" android:versionCode="240"
+	android:versionName="2.4.0"
 	android:installLocation="auto">
 	
    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
@@ -76,6 +76,8 @@
                 <action android:name="com.quran.labs.androidquran.action.UPDATE_REPEAT" />
             </intent-filter>
        </service>
-       
-	</application>
+
+       <activity android:name="net.hockeyapp.android.UpdateActivity" />
+
+   </application>
 </manifest> 
