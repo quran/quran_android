@@ -75,6 +75,10 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.4.1** (released 6/16/2013)
+- option to disable tablet mode
+- many bugfixes
+
 **version 2.4.0** (released 6/15/2013)
 
 - update to german translation (thanks br Armin Supuk)
