@@ -60,7 +60,9 @@ public class QuranFileUtils {
 		if (state.equals(Environment.MEDIA_MOUNTED)) {
 			File dir = new File(quranDirectory + File.separator);
 			if (dir.isDirectory()) {
-				int files = dir.list().length;
+            String[] fileList = dir.list();
+            if (fileList == null){ return false; }
+				int files = fileList.length;
 				if (files >= 604){
                // ideally, we should loop for each page and ensure
                // all pages are there, but this will do for now.
