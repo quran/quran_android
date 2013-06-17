@@ -1,9 +1,12 @@
 package com.quran.labs.androidquran.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -69,8 +72,12 @@ public class QuranUtils {
 
    public static boolean isDualPages(Context context){
       if (context != null){
-         return context.getResources()
-                 .getBoolean(R.bool.use_tablet_interface);
+         if (context.getResources()
+                 .getBoolean(R.bool.use_tablet_interface)){
+            SharedPreferences prefs =
+                    PreferenceManager.getDefaultSharedPreferences(context);
+            return prefs.getBoolean(Constants.PREF_TABLET_ENABLED, true);
+         }
       }
       return false;
    }

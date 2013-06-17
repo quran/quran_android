@@ -11,11 +11,13 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
+import android.preference.PreferenceCategory;
 import android.util.Log;
 import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
@@ -66,6 +68,16 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 				return true;
 			}
 		});
+
+      // remove the tablet mode preference if it doesn't exist
+      if (!QuranScreenInfo.getOrMakeInstance(this).isTablet(this)){
+         Preference tabletModePreference =
+                 findPreference(Constants.PREF_TABLET_ENABLED);
+         PreferenceCategory category =
+                 (PreferenceCategory)findPreference(
+                         Constants.PREF_DISPLAY_CATEGORY);
+         category.removePreference(tabletModePreference);
+      }
 
       Preference advancedPrefs = findPreference(
                 getString(R.string.prefs_advanced_settings));
