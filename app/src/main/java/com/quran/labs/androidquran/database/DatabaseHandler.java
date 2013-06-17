@@ -39,7 +39,7 @@ public class DatabaseHandler {
 	}
 	
 	public boolean validDatabase(){
-		return (mDatabase == null)? false : mDatabase.isOpen();
+		return (mDatabase != null) && mDatabase.isOpen();
 	}
 
    public boolean reopenDatabase(){
