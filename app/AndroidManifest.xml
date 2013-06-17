@@ -5,6 +5,7 @@
 	android:installLocation="auto">
 	
    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
+   <supports-screens android:largeScreens="true" android:xlargeScreens="true" />
 
    <uses-permission android:name="android.permission.INTERNET" />
    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
