@@ -8,6 +8,7 @@
  	<string name="prefs_path">QuranAndroid_Settings</string>
     <string name="prefs_use_arabic_names">useArabicNames</string>
     <string name="prefs_new_background">useNewBackground</string>
+    <string name="prefs_tablet_enabled">useTabletMode</string>
     <string name="prefs_night_mode">nightMode</string>
     <string name="prefs_night_mode_text_brightness">nightModeTextBrightness</string>
     <string name="prefs_overlay_page_info">overlayPageInfo</string>
@@ -23,4 +24,5 @@
     <string name="prefs_use_custom_location">useCustomLocation</string>
     <string name="prefs_app_location">appLocation</string>
     <string name="prefs_advanced_settings">advanced_preferences_screen</string>
+    <string name="prefs_display_category_key">displayCategoryKey</string>
 </resources>

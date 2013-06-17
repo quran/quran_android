@@ -3,7 +3,7 @@
     android:key="@string/prefs_path"
     android:title="Quran Settings" >
 
-    <PreferenceCategory
+    <PreferenceCategory android:key="@string/prefs_display_category_key"
        android:title="@string/prefs_category_display_settings" >
         
         <CheckBoxPreference
@@ -28,6 +28,14 @@
             android:persistent="true"
             android:defaultValue="true"
             android:key="@string/prefs_new_background" />
+
+        <CheckBoxPreference
+            android:title="@string/prefs_tablet_mode_title"
+            android:summaryOn="@string/prefs_tablet_mode_enabled"
+            android:summaryOff="@string/prefs_tablet_mode_disabled"
+            android:persistent="true"
+            android:defaultValue="true"
+            android:key="@string/prefs_tablet_enabled" />
         
         <CheckBoxPreference
             android:defaultValue="false"
