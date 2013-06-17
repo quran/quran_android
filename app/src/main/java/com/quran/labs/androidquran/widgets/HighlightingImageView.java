@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HighlightingImageView extends ImageView {
+public class HighlightingImageView extends RecyclingImageView {
    // Max/Min font sizes for text overlay
    private static final float MAX_FONT_SIZE = 28.0f;
    private static final float MIN_FONT_SIZE = 16.0f;
@@ -43,12 +43,6 @@ public class HighlightingImageView extends ImageView {
 	
 	public HighlightingImageView(Context context, AttributeSet attrs){
 		super(context, attrs);
-      init(context);
-	}
-	
-	public HighlightingImageView(Context context, AttributeSet attrs,
-			int defStyle) {
-		super(context, attrs, defStyle);
       init(context);
 	}
 

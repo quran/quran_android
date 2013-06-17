@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,7 +10,7 @@ import android.util.Log;
 
 public class ImageCacheFragment extends Fragment {
    private static final String TAG = "ImageCacheFragment";
-   public LruCache<String, Bitmap> mRetainedCache;
+   public LruCache<String, BitmapDrawable> mRetainedCache;
 
    public static ImageCacheFragment getImageCacheFragment(FragmentManager fm){
       ImageCacheFragment fragment =

@@ -6,7 +6,10 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
-import android.os.*;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -1004,7 +1007,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
    }
 
-   class TranslationReaderTask extends AsyncTask<Void, Void, Void>{
+   class TranslationReaderTask extends AsyncTask<Void, Void, Void> {
       List<TranslationItem> items = null;
 
       @Override

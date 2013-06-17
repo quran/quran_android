@@ -2,13 +2,16 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
 import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
+import com.quran.labs.androidquran.util.AsyncTask;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import java.lang.ref.WeakReference;
@@ -16,11 +19,13 @@ import java.lang.ref.WeakReference;
 public class QuranPageWorker {
    private static final String TAG = "QuranPageWorker";
    
-   private LruCache<String, Bitmap> mMemoryCache = null;
+   private LruCache<String, BitmapDrawable> mMemoryCache = null;
    private Context mContext;
+   private Resources mResources;
 
    public QuranPageWorker(FragmentActivity activity){
       mContext = activity;
+      mResources = activity.getResources();
       ImageCacheFragment fragment = ImageCacheFragment.getImageCacheFragment(
               activity.getSupportFragmentManager());
       mMemoryCache = fragment.mRetainedCache;
@@ -32,13 +37,27 @@ public class QuranPageWorker {
       final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
       Log.d(TAG, "memory class: " + memClass + ", cache size: " +
               cacheSize + ", max memory: " + maxMemory);
-      mMemoryCache = new LruCache<String, Bitmap>(cacheSize){
+      mMemoryCache = new LruCache<String, BitmapDrawable>(cacheSize){
          @Override
-         protected int sizeOf(String key, Bitmap bitmap){
-            Log.d(TAG, "row bytes: " + bitmap.getRowBytes() + ", height: " +
+         protected void entryRemoved(boolean evicted, String key,
+                                     BitmapDrawable oldValue,
+                                     BitmapDrawable newValue){
+            if (RecyclingBitmapDrawable.class.isInstance(oldValue)){
+               ((RecyclingBitmapDrawable)oldValue).setIsCached(false);
+            }
+         }
+
+         @Override
+         protected int sizeOf(String key, BitmapDrawable bitmapDrawable){
+             Bitmap bitmap = bitmapDrawable.getBitmap();
+             if (Build.VERSION.SDK_INT >= 12){
+                 return bitmap.getByteCount();
+             }
+
+             Log.d(TAG, "row bytes: " + bitmap.getRowBytes() + ", height: " +
                   bitmap.getHeight() + ", " + (bitmap.getRowBytes() *
                         bitmap.getHeight()));
-            return bitmap.getRowBytes() * bitmap.getHeight();
+             return bitmap.getRowBytes() * bitmap.getHeight();
          }
       };
       fragment.mRetainedCache = mMemoryCache;
@@ -46,9 +65,12 @@ public class QuranPageWorker {
       Log.d(TAG, "initial LruCache size: " + (memClass/8));
    }
    
-   private void addBitmapToCache(String key, Bitmap bitmap) {
-      if (bitmap != null && getBitmapFromCache(key) == null) {
-         mMemoryCache.put(key, bitmap);
+   private void addBitmapToCache(String key, BitmapDrawable drawable) {
+      if (drawable != null && getBitmapFromCache(key) == null) {
+         if (RecyclingBitmapDrawable.class.isInstance(drawable)) {
+            ((RecyclingBitmapDrawable)drawable).setIsCached(true);
+         }
+         mMemoryCache.put(key, drawable);
          Log.d(TAG, "cache size: " + mMemoryCache.size());
       }
       
@@ -56,24 +78,27 @@ public class QuranPageWorker {
             ", number of evicts: " + mMemoryCache.evictionCount());
    }
 
-   private Bitmap getBitmapFromCache(String key) {
+   private BitmapDrawable getBitmapFromCache(String key) {
       return mMemoryCache.get(key);
    }
 
    public void loadPage(String widthParam, int page, ImageView imageView){
-      final Bitmap bitmap = getBitmapFromCache(page + widthParam);
-      if (bitmap != null){
-         imageView.setImageBitmap(bitmap);
+      final BitmapDrawable drawable = getBitmapFromCache(page + widthParam);
+      if (drawable != null){
+         imageView.setImageDrawable(drawable);
       }
       else {
-         // TODO: restrict so only three of these are running at a time
+         // AsyncTask included in our code now and by default
+         // uses a SerialExecutor (or a SingleThreadExecutor on
+         // pre honeycomb devices).
          QuranPageWorkerTask task = new QuranPageWorkerTask(
                  widthParam, imageView);
          task.execute(page);
       }
    }
 
-   private class QuranPageWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
+   private class QuranPageWorkerTask extends
+           AsyncTask<Integer, Void, BitmapDrawable> {
       private final WeakReference<ImageView> imageViewReference;
       private int data = 0;
       private String mWidthParam;
@@ -85,7 +110,7 @@ public class QuranPageWorker {
       }
 
       @Override
-      protected Bitmap doInBackground(Integer... params) {
+      protected BitmapDrawable doInBackground(Integer... params) {
          data = params[0];
          Bitmap bitmap = QuranDisplayHelper.getQuranPage(
                  mContext, mWidthParam, data);
@@ -104,17 +129,28 @@ public class QuranPageWorker {
             Log.w(TAG, "got bitmap back as null...");
          }
 
-         addBitmapToCache(data + mWidthParam, bitmap);
-         return bitmap;
+         BitmapDrawable drawable = null;
+         if (bitmap != null){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+               drawable = new BitmapDrawable(mResources, bitmap);
+            }
+            else {
+               drawable = new RecyclingBitmapDrawable(mResources, bitmap);
+            }
+
+            addBitmapToCache(data + mWidthParam, drawable);
+         }
+
+         return drawable;
       }
 
       // once complete, see if ImageView is still around and set bitmap.
       @Override
-      protected void onPostExecute(Bitmap bitmap) {
-         if (imageViewReference != null && bitmap != null) {
+      protected void onPostExecute(BitmapDrawable drawable) {
+         if (imageViewReference != null && drawable != null) {
             final ImageView imageView = imageViewReference.get();
             if (imageView != null) {
-               imageView.setImageBitmap(bitmap);
+               imageView.setImageDrawable(drawable);
             }
             else { Log.w(TAG, "failed to set bitmap in imageview"); }
          }
