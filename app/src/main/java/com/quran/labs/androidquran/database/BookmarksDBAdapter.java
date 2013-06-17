@@ -28,7 +28,7 @@ public class BookmarksDBAdapter {
 	private BookmarksDBHelper mDbHelper;
 	
 	public BookmarksDBAdapter(Context context) {
-		mDbHelper = new BookmarksDBHelper(context);
+		mDbHelper = BookmarksDBHelper.getInstance(context);
 	}
 
 	public void open() throws SQLException {
@@ -38,10 +38,15 @@ public class BookmarksDBAdapter {
 	}
 
 	public void close() {
+      // disabling for now - since we have a singleton helper,
+      // we should be okay...
+
+      /*
       if (mDb != null){
 		   try { mDbHelper.close(); } catch (Exception e){ }
          mDb = null;
       }
+      */
 	}
 
 	public List<Bookmark> getBookmarks(boolean loadTags){

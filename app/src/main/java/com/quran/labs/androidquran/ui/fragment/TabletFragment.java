@@ -221,11 +221,12 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
                     PreferenceManager.getDefaultSharedPreferences(context);
             String database = prefs.getString(
                     Constants.PREF_ACTIVE_TRANSLATION, null);
-
-            new TranslationTask(context, mPageNumber-1, 0,
+            if (database != null){
+               new TranslationTask(context, mPageNumber-1, 0,
                     database, mRightTranslation).execute();
-            new TranslationTask(context, mPageNumber, 0,
+               new TranslationTask(context, mPageNumber, 0,
                     database, mLeftTranslation).execute();
+            }
          }
       }
    }
@@ -295,7 +296,8 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       @Override
       protected void onPostExecute(List<Map<String, List<AyahBounds>>> maps){
          if (maps != null && maps.size() > 0){
-            if (mMode == Mode.ARABIC && maps.size() == 2){
+            if (mMode == Mode.ARABIC && maps.size() == 2 &&
+                mRightImageView != null && mLeftImageView != null){
                mRightImageView.setCoordinateData(maps.get(0));
                mLeftImageView.setCoordinateData(maps.get(1));
 

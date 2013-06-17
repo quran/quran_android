@@ -29,6 +29,9 @@ public class QuranPageWorker {
       final int memClass = ((ActivityManager)activity.getSystemService(
             Context.ACTIVITY_SERVICE)).getMemoryClass();
       final int cacheSize = 1024 * 1024 * memClass / 8;
+      final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+      Log.d(TAG, "memory class: " + memClass + ", cache size: " +
+              cacheSize + ", max memory: " + maxMemory);
       mMemoryCache = new LruCache<String, Bitmap>(cacheSize){
          @Override
          protected int sizeOf(String key, Bitmap bitmap){
@@ -46,6 +49,7 @@ public class QuranPageWorker {
    private void addBitmapToCache(String key, Bitmap bitmap) {
       if (bitmap != null && getBitmapFromCache(key) == null) {
          mMemoryCache.put(key, bitmap);
+         Log.d(TAG, "cache size: " + mMemoryCache.size());
       }
       
       Log.d(TAG, "cache: number of puts: " + mMemoryCache.putCount() + 

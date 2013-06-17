@@ -19,16 +19,21 @@ public class SuraTimingDatabaseHandler {
    }
 
    public boolean validDatabase(){
-      return (mDatabase == null)? false : mDatabase.isOpen();
+      return (mDatabase != null) && mDatabase.isOpen();
    }
 
    public Cursor getAyahTimings(int sura){
       if (!validDatabase()) return null;
-      return mDatabase.query(TimingsTable.TABLE_NAME,
+      try {
+         return mDatabase.query(TimingsTable.TABLE_NAME,
               new String[]{ TimingsTable.COL_SURA,
                       TimingsTable.COL_AYAH, TimingsTable.COL_TIME },
               TimingsTable.COL_SURA + "=" + sura,
               null, null, null, TimingsTable.COL_AYAH + " ASC");
+      }
+      catch (Exception e){
+         return null;
+      }
    }
 
    public void closeDatabase() {

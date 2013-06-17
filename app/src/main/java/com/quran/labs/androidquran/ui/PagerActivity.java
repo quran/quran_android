@@ -541,10 +541,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mSpinnerAdapter = null;
       LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mAudioReceiver);
-      mDownloadReceiver.setListener(null);
-      LocalBroadcastManager.getInstance(this)
-              .unregisterReceiver(mDownloadReceiver);
-      mDownloadReceiver = null;
+      if (mDownloadReceiver != null){
+         mDownloadReceiver.setListener(null);
+         LocalBroadcastManager.getInstance(this)
+                 .unregisterReceiver(mDownloadReceiver);
+         mDownloadReceiver = null;
+      }
       super.onPause();
    }
 

@@ -265,12 +265,14 @@ public class AyahMenuUtils {
                     + QuranInfo.getSuraName(activity, this.sura, true)
                     + " : " + this.ayah + "]" + activity.getString(R.string.via_string);
             if (copy) {
-               ClipboardManager cm = (ClipboardManager) activity.
+               ClipboardManager cm = (ClipboardManager)activity.
                        getSystemService(Activity.CLIPBOARD_SERVICE);
-               cm.setText(ayah);
-               Toast.makeText(activity, activity.getString(
+               if (cm != null){
+                  cm.setText(ayah);
+                  Toast.makeText(activity, activity.getString(
                        R.string.ayah_copied_popup),
                        Toast.LENGTH_SHORT).show();
+               }
             } else {
                final Intent intent = new Intent(Intent.ACTION_SEND);
                intent.setType("text/plain");

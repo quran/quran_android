@@ -65,8 +65,17 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
                    BookmarkTagTable.TABLE_NAME + "(" +
                      BookmarkTagTable.BOOKMARK_ID + "," +
                      BookmarkTagTable.TAG_ID + ");";
+
+   private static BookmarksDBHelper sInstance;
+
+   public static BookmarksDBHelper getInstance(Context context){
+      if (sInstance == null){
+         sInstance = new BookmarksDBHelper(context.getApplicationContext());
+      }
+      return sInstance;
+   }
 	
-	public BookmarksDBHelper(Context context) {
+	private BookmarksDBHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 	}
 	

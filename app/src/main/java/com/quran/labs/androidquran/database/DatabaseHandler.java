@@ -158,27 +158,31 @@ public class DatabaseHandler {
 		return search(query, VERSE_TABLE, withSnippets);
 	}
 	
-	public Cursor search(String query, String table, boolean withSnippets){
+	public Cursor search(String q, String table, boolean withSnippets){
 		if (!validDatabase()){
          if (!reopenDatabase()){ return null; }
       }
 
-		String operator = " like '%";
-		String endOperator = "%'";
+      String query = q;
+		String operator = " like ";
 		String whatTextToSelect = COL_TEXT;
 		
 		boolean useFullTextIndex = (schemaVersion > 1);
 		if (useFullTextIndex){
-			operator = " MATCH '";
-			endOperator = "*'";
+			operator = " MATCH ";
+         query = query + "*";
 		}
+      else {
+         query = "%" + query + "%";
+      }
 		
-		if (useFullTextIndex && withSnippets)
+		if (useFullTextIndex && withSnippets){
 			whatTextToSelect = "snippet(" + table + ")";
+      }
 		
 		return mDatabase.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
 				", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
-				operator + query + endOperator + " limit 150", null);
+				operator + " ? " + " limit 150", new String[]{ query });
 	}
 	
 	public void closeDatabase() {
