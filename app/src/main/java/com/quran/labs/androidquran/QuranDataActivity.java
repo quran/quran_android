@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.Constants;
@@ -51,6 +53,16 @@ public class QuranDataActivity extends SherlockActivity implements
 
       super.onCreate(savedInstanceState);
       setContentView(R.layout.splash_screen);
+
+      ImageView splash = (ImageView)findViewById(R.id.splashview);
+      if (splash != null){
+         try {
+            splash.setImageResource(R.drawable.splash);
+         }
+         catch (OutOfMemoryError error){
+            splash.setBackgroundColor(Color.BLACK);
+         }
+      }
 
       /*
         // remove files for debugging purposes
