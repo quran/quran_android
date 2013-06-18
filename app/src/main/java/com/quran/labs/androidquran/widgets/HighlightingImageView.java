@@ -114,9 +114,11 @@ public class HighlightingImageView extends RecyclingImageView {
 	}
 
    @Override
-   public void setImageBitmap(Bitmap bitmap){
-      super.setImageBitmap(bitmap);
-      adjustNightMode();
+   public void setImageDrawable(Drawable bitmap){
+      super.setImageDrawable(bitmap);
+      if (bitmap != null){
+         adjustNightMode();
+      }
    }
 
 	public void adjustNightMode() {

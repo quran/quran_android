@@ -5,6 +5,7 @@
     <string name="downloadPrompt">لأداء أفضل، بعض الملفات في حاجه للتحميل على بطاقة الذاكرة الرقمية.
 		 إذا لم تقم بذلك الاختيار فإن الصفحات ستستغرق وقت أطول للتحميل.
 		 هل ترغب في تحميل الملفات الآن؟</string>
+    <string name="downloadImportantPrompt">هناك تحديث هام صغير على ملفات الصور على هاتفكم. هل تود  تحميل الملف حالا؟</string>
     <string name="downloadPrompt_ok">نعم</string>
     <string name="downloadPrompt_no">لا</string>
     <string name="downloading_title">جاري التحميل....</string>

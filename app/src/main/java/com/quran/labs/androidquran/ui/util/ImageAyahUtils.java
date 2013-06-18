@@ -41,6 +41,7 @@ public class ImageAyahUtils {
       if (coords == null){ return null; }
 
       float[] pageXY = imageView.getPageXY(xc, yc);
+      if (pageXY == null){ return null; }
       float x = pageXY[0];
       float y = pageXY[1];
 

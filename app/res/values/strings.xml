@@ -9,6 +9,9 @@
 		</string>
     <string name="downloadTabletPrompt">We recently added improved images for
         tablets. Would you like to download these images now?</string>
+    <string name="downloadImportantPrompt">There is a small yet important update
+        for the Quran images you have on your device. Would you like to download this
+        patch now?</string>
     <string name="downloadPrompt_ok">Yes</string>
     <string name="downloadPrompt_no">No</string>
     <string name="downloading_title">Downloading&#8230;</string>

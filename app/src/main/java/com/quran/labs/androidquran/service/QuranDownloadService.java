@@ -725,19 +725,21 @@ public class QuranDownloadService extends Service {
                continue;
             }
 
-            // ignore files that already exist
+            // delete files that already exist
             File f = new File(destDirectory, entry.getName());
-            if (!f.exists()) {
-               InputStream is = zip.getInputStream(entry);
-               FileOutputStream ostream = new FileOutputStream(f);
-
-               int size;
-               byte[] buf = new byte[BUFFER_SIZE];
-               while ((size = is.read(buf)) > 0)
-                  ostream.write(buf, 0, size);
-               is.close();
-               ostream.close();
+            if (f.exists()){
+               f.delete();
             }
+
+            InputStream is = zip.getInputStream(entry);
+            FileOutputStream ostream = new FileOutputStream(f);
+
+            int size;
+            byte[] buf = new byte[BUFFER_SIZE];
+            while ((size = is.read(buf)) > 0)
+               ostream.write(buf, 0, size);
+            is.close();
+            ostream.close();
             
             //android.util.Log.d(TAG, "progress: " + processedFiles +
             //      " from " + numberOfFiles);
