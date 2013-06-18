@@ -75,10 +75,11 @@ Open Source Projects Used
 
 Changelog
 ---------
-**version 2.4.2** (released 6/18/2013)
+**version 2.4.2 and 2.4.3** (released 6/18/2013)
 - critical bugfix for night mode font issue
 - changed default font to white for night mode
 - patch download for 1920 resolution images to fix 3 incomplete images
+- patch download for people who recently downloaded page 270
 
 **version 2.4.1** (released 6/16/2013)
 - option to disable tablet mode

@@ -77,32 +77,37 @@ public class QuranDataActivity extends SherlockActivity implements
       mSharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(getApplicationContext());
 
-      // one time upgrade to v2.4.2
-      if (!mSharedPreferences.contains(Constants.PREF_UPGRADE_TO_242)){
+      // one time upgrade to v2.4.3
+      if (!mSharedPreferences.contains(Constants.PREF_UPGRADE_TO_243)){
          String baseDir = QuranFileUtils.getQuranBaseDirectory(this);
          if (baseDir != null){
-            // one time delete of partial downloads since the
-            // contents of these zip files has changed
-            String[] partials = new String[]{ "images_1920_1024.zip.part",
-                                              "images_1920_512.zip.part",
-                                              "images_1920.zip.part" };
-            for (String p : partials){
-               try {
-                  File f = new File(baseDir + File.separator + p);
-                  if (f.exists()){
-                     f.delete();
+            baseDir = baseDir + File.separator;
+            try {
+               File f = new File(baseDir);
+               if (f.exists() && f.isDirectory()){
+                  String[] files = f.list();
+                  if (files != null){
+                     for (String file : files){
+                        if (file.endsWith(".part")){
+                           try {
+                              new File(baseDir + file).delete();
+                           }
+                           catch (Exception e){}
+                        }
+                     }
                   }
                }
-               catch (Exception e){
-               }
             }
-
-            // update night mode preference and mark that we upgraded to 2.4.2
-            mSharedPreferences.edit()
-                    .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
-                            Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS)
-                    .putBoolean(Constants.PREF_UPGRADE_TO_242, true).commit();
+            catch (Exception e){
+            }
          }
+
+         // update night mode preference and mark that we upgraded to 2.4.2
+         mSharedPreferences.edit()
+                 .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+                         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS)
+                 .remove(Constants.PREF_UPGRADE_TO_242)
+                 .putBoolean(Constants.PREF_UPGRADE_TO_243, true).commit();
       }
    }
    
@@ -260,13 +265,27 @@ public class QuranDataActivity extends SherlockActivity implements
             }
          }
          else {
-            // force a check for the 1920 images version 3, if it's not
+            // force a check for the images version 3, if it's not
             // there, download the patch.
             QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-            if ("_1920".equals(qsi.getWidthParam()) &&
-                !QuranFileUtils.isVersion(QuranDataActivity.this, "_1920", 3)){
-               // explicitly check whether we need to fix the 1920 images
-               mPatchUrl = QuranFileUtils.getPatchFileUrl("_1920", 3);
+            String widthParam = qsi.getWidthParam();
+            if (qsi.isTablet(QuranDataActivity.this)){
+               String tabletWidth = qsi.getTabletWidthParam();
+               if ((!QuranFileUtils.isVersion(QuranDataActivity.this,
+                       widthParam, 3)) ||
+                   (!QuranFileUtils.isVersion(QuranDataActivity.this,
+                       tabletWidth, 3))){
+                  widthParam += tabletWidth;
+                  // get patch for both landscape/portrait tablet images
+                  mPatchUrl = QuranFileUtils.getPatchFileUrl(widthParam, 3);
+                  promptForDownload();
+                  return;
+               }
+            }
+            else if (!QuranFileUtils.isVersion(QuranDataActivity.this,
+                    widthParam, 3)){
+               // explicitly check whether we need to fix the images
+               mPatchUrl = QuranFileUtils.getPatchFileUrl(widthParam, 3);
                promptForDownload();
                return;
             }
