@@ -4,7 +4,7 @@ public class Constants {
    public static final boolean CRASH_REPORTING_ENABLED = false;
 
    // Numerics
-   public static final int DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 98;
+   public static final int DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255;
    public static final int DEFAULT_TEXT_SIZE = 15;
 
    // 10 days in ms
@@ -58,4 +58,5 @@ public class Constants {
    public static final String PREF_SORT_TAGS = "sortTags";
    public static final String PREF_DISPLAY_CATEGORY = "displayCategoryKey";
    public static final String PREF_TABLET_ENABLED = "useTabletMode";
+   public static final String PREF_UPGRADE_TO_242 = "upgradeTo242";
 }

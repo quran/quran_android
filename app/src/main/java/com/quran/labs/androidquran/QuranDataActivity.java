@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -27,6 +28,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import net.hockeyapp.android.CrashManager;
 
+import java.io.File;
 import java.util.Date;
 
 public class QuranDataActivity extends SherlockActivity implements
@@ -44,6 +46,7 @@ public class QuranDataActivity extends SherlockActivity implements
    private DefaultDownloadReceiver mDownloadReceiver = null;
    private boolean mNeedPortraitImages = false;
    private boolean mNeedLandscapeImages = false;
+   private String mPatchUrl;
 
    /** Called when the activity is first created. */
    @Override
@@ -73,6 +76,34 @@ public class QuranDataActivity extends SherlockActivity implements
       initializeQuranScreen();
       mSharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(getApplicationContext());
+
+      // one time upgrade to v2.4.2
+      if (!mSharedPreferences.contains(Constants.PREF_UPGRADE_TO_242)){
+         String baseDir = QuranFileUtils.getQuranBaseDirectory(this);
+         if (baseDir != null){
+            // one time delete of partial downloads since the
+            // contents of these zip files has changed
+            String[] partials = new String[]{ "images_1920_1024.zip.part",
+                                              "images_1920_512.zip.part",
+                                              "images_1920.zip.part" };
+            for (String p : partials){
+               try {
+                  File f = new File(baseDir + File.separator + p);
+                  if (f.exists()){
+                     f.delete();
+                  }
+               }
+               catch (Exception e){
+               }
+            }
+
+            // update night mode preference and mark that we upgraded to 2.4.2
+            mSharedPreferences.edit()
+                    .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+                            Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS)
+                    .putBoolean(Constants.PREF_UPGRADE_TO_242, true).commit();
+         }
+      }
    }
    
    @Override
@@ -207,6 +238,7 @@ public class QuranDataActivity extends SherlockActivity implements
       @Override
       protected void onPostExecute(Boolean result) {
          mCheckPagesTask = null;
+         mPatchUrl = null;
          if (mIsPaused){ return; }
                   
          if (result == null || !result){
@@ -228,6 +260,17 @@ public class QuranDataActivity extends SherlockActivity implements
             }
          }
          else {
+            // force a check for the 1920 images version 3, if it's not
+            // there, download the patch.
+            QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+            if ("_1920".equals(qsi.getWidthParam()) &&
+                !QuranFileUtils.isVersion(QuranDataActivity.this, "_1920", 3)){
+               // explicitly check whether we need to fix the 1920 images
+               mPatchUrl = QuranFileUtils.getPatchFileUrl("_1920", 3);
+               promptForDownload();
+               return;
+            }
+
             long time = mSharedPreferences.getLong(
                     Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
             Date now = new Date();
@@ -294,6 +337,11 @@ public class QuranDataActivity extends SherlockActivity implements
          }
       }
 
+      // if we have a patch url, just use that
+      if (!TextUtils.isEmpty(mPatchUrl)){
+         url = mPatchUrl;
+      }
+
       String destination = QuranFileUtils.getQuranBaseDirectory(
               QuranDataActivity.this);
       
@@ -316,6 +364,11 @@ public class QuranDataActivity extends SherlockActivity implements
       if (QuranScreenInfo.getInstance().isTablet(this) &&
               (mNeedPortraitImages != mNeedLandscapeImages)){
          message = R.string.downloadTabletPrompt;
+      }
+
+      if (!TextUtils.isEmpty(mPatchUrl)){
+         // patch message if applicable
+         message = R.string.downloadImportantPrompt;
       }
 
       AlertDialog.Builder dialog = new AlertDialog.Builder(this);

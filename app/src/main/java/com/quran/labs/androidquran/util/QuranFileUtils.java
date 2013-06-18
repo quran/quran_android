@@ -52,6 +52,22 @@ public class QuranFileUtils {
 		}
 	}
 
+   // check if the images with the given width param have a version
+   // that we specify (ex if version is 3, check for a .v3 file).
+   public static boolean isVersion(Context context,
+                                   String widthParam, int version){
+      String quranDirectory = getQuranDirectory(context, widthParam);
+      if (quranDirectory == null){ return false; }
+      try {
+         File vFile = new File(quranDirectory +
+                 File.separator + ".v" + version);
+         return vFile.exists();
+      }
+      catch (Exception e){
+         return false;
+      }
+   }
+
    public static boolean haveAllImages(Context context, String widthParam){
       String quranDirectory = getQuranDirectory(context, widthParam);
       if (quranDirectory == null){ return false; }
@@ -270,6 +286,11 @@ public class QuranFileUtils {
 		url += "images" + widthParam + ".zip";
 		return url;
 	}
+
+   public static String getPatchFileUrl(String widthParam, int toVersion){
+      return IMG_HOST + "patches/patch" +
+              widthParam + "_v" + toVersion + ".zip";
+   }
 	
 	public static String getAyaPositionFileName(){
 		QuranScreenInfo qsi = QuranScreenInfo.getInstance();

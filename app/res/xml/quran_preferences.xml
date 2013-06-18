@@ -64,7 +64,7 @@
         
         <com.quran.labs.androidquran.widgets.SeekBarPreference
             android:dependency="@string/prefs_night_mode"
-            android:defaultValue="98"
+            android:defaultValue="255"
             android:key="@string/prefs_night_mode_text_brightness"
             android:max="255"
             android:persistent="true"
