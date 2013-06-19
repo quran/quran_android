@@ -7,6 +7,13 @@
 			Laden jeder Seite spürbar länger dauern. Willst du die benötigten
 			Dateien herunterladen?
 	</string>
+    <string name="downloadTabletPrompt">Wir haben kürzlich verbesserte Bilder für Tablets hinzugefügt.
+			Wollen Sie diese Bilder jetzt herunterladen?
+	</string>
+    <string name="downloadImportantPrompt">Es ist eine kleine, aber wichtige Aktualisierung der
+			Quran-Abbildungen auf ihrem Gerät vorhanden. Wollen Sie diese Aktualisierung jetzt
+			herunterladen?
+	</string>
     <string name="downloadPrompt_ok">Ja</string>
     <string name="downloadPrompt_no">Nein</string>
     <string name="downloading_title">Dateien werden heruntergeladen&#8230;</string>
@@ -142,8 +149,8 @@
     <string name="prefs_landscape_orientation_summary_off">Hochformat wird genutzt</string>
     <string name="prefs_night_mode_title">Nachtmodus</string>
     <string name="prefs_night_mode_summary">Dunkler Hintergrund und helle Schrift</string>
-    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
-    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
+    <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
+    <string name="prefs_night_mode_text_brightness_summary">Helligkeit des Textes, wenn der Nachtmodus aktiv ist</string>
     <string name="prefs_overlay_page_info_title">Zeige Seiteninfo (Beta)</string>
     <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sura und die Juz\' Nummer während dem Lesen ein.</string>
 	<string name="prefs_display_marker_title">Meilenstein-Popup anzeigen</string>
@@ -162,6 +169,23 @@
     <string name="available_translations">Zum Download verfügbar</string>
     <string name="remove_button">Entfernen</string>
     <string name="dialog_ok">OK</string>
+    <string name="prefs_advanced_settings_title">Erweiterte Einstellungen</string>
+    <string name="prefs_app_location_title">Speicherort</string>
+    <string name="prefs_app_location_summary">Wähle den Speicherort der Dateien</string>
+    <string name="prefs_sdcard_internal">Interner Speicher</string>
+    <string name="prefs_sdcard_external">Externe SD-Karte</string>
+    <string name="prefs_sdcard_auto">Automatisch</string>
+    <string name="prefs_app_size">Der vom Programm verwendete Speicherplatz ist</string>
+    <string name="prefs_calculating_app_size">Die Grösse des Programms wird berechnet</string>
+    <string name="prefs_copying_app_files">Programmdateien werden kopiert</string>
+    <string name="prefs_custom_location_title">Festgelegter Speicherort</string>
+    <string name="prefs_err_moving_app_files">Die Programmdateien konnten nicht verschoben werden</string>
+    <string name="prefs_no_enough_space_to_move_files">Sie haben nicht genug Speicherplatz um die Dateien zu verschieben</string>
+    <string name="prefs_megabytes">MB</string>
+    <string name="prefs_tablet_mode_title">Tablet-Modus</string>
+    <string name="prefs_tablet_mode_enabled">Im Querformat werden zwei Seiten nebeneinander dargestellt.</string>
+    <string name="prefs_tablet_mode_disabled">Im Querformat wird nur eine Seite dargestellt.</string>
+    <!-- Preferences End -->
 
     <!-- translation updates -->
     <string name="update_available">Update vorhanden</string>
