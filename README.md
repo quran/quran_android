@@ -30,7 +30,7 @@ App localization
 * Russian by Rinat (Ринат Валеев).
 * Kurdish by Goran Gharib Karim.
 * French by Yasser [yasserkad](http://github.com/yasserkad).
-* German by Armin Supuk
+* German by Armin Supuk [Armin Supuk](http://github.com/ArminSupuk).
 * Chinese by Bo Li
 * Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran)
 
