@@ -69,7 +69,6 @@
     <string name="translation_settings">إعدادات التفسير</string>
     <string name="no_results">لا توجد نتائج ل \"%s\"</string>
     <string name="no_active_translation">يرجى الذهاب أولا إلى إعدادت التفاسير والتراجم..</string>
-    <string name="translation_settings">إعدادات التفسير</string>
     <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
     <string name="get_arabic_search_db">حمل قاعدة البيانات</string>
     

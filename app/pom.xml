@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <abs.version>4.3.0</abs.version>
+        <abs.version>4.3.1</abs.version>
     </properties>
     <dependencies>
         <dependency>

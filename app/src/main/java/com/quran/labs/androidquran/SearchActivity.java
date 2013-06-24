@@ -358,11 +358,11 @@ public class SearchActivity extends SherlockFragmentActivity
 				convertView = mInflater.inflate(R.layout.search_result, null);
 				holder = new ViewHolder();
 				holder.text = (TextView)convertView.findViewById(R.id.verseText);
-				holder.text.setTypeface(ArabicStyle.getTypeface(mContext));
 				holder.metadata = (TextView)convertView
                     .findViewById(R.id.verseLocation);
             if (mUseArabicFont){
-				   holder.metadata.setTypeface(ArabicStyle.getTypeface(mContext));
+               holder.text.setTypeface(ArabicStyle.getTypeface(mContext));
+               holder.metadata.setTypeface(ArabicStyle.getTypeface(mContext));
             }
 				convertView.setTag(holder);
 			}
