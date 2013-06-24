@@ -20,8 +20,6 @@ package com.quran.labs.androidquran.ui.helpers;
  * - added getFragmentIfExists() to return a fragment without recreating it
  */
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -31,6 +29,8 @@ import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
 
 /**
  * Implementation of {@link android.support.v4.view.PagerAdapter} that
@@ -155,7 +155,17 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
       while (mSavedState.size() <= position) {
          mSavedState.add(null);
       }
-      mSavedState.set(position, mFragmentManager.saveFragmentInstanceState(fragment));
+
+      try {
+         mSavedState.set(position,
+                 mFragmentManager.saveFragmentInstanceState(fragment));
+      }
+      catch (IllegalStateException ise){
+         // when the fragment isn't in the fragment manager, just don't
+         // write saved state for this particular fragment
+         mSavedState.set(position, null);
+      }
+
       mFragments.set(position, null);
 
       mCurTransaction.remove(fragment);
