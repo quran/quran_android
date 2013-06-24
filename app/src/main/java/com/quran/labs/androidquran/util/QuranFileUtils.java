@@ -21,7 +21,6 @@ import java.util.Locale;
 public class QuranFileUtils {
    private static final String TAG = "QuranFileUtils";
 
-	public static boolean failedToWrite = false;
 	public static String IMG_HOST = "http://android.quran.com/data/";
 	private static String QURAN_BASE = "quran_android/";
 	private static String DATABASE_DIRECTORY = "databases";
@@ -38,7 +37,7 @@ public class QuranFileUtils {
 			}
 		}
 
-		return deleteDirectory ? directory.delete() : true;
+		return !deleteDirectory || directory.delete();
 	}
 
 	public static void debugLsDir(String dir) {
@@ -164,7 +163,7 @@ public class QuranFileUtils {
 
 	public static Bitmap getImageFromWeb(Context context, String filename) {
 		QuranScreenInfo instance = QuranScreenInfo.getInstance();
-		if (instance == null) return null;
+		if (instance == null){ return null; }
 		
 		String urlString = IMG_HOST + "width"
 				+ instance.getWidthParam() + "/"
@@ -175,38 +174,36 @@ public class QuranFileUtils {
 		try {
 			URL url = new URL(urlString);
 			is = (InputStream) url.getContent();
-		} catch (Exception e) {
-			return null;
 		}
-
-		if (failedToWrite)
-			return BitmapFactory.decodeStream(is);
+      catch (Exception e) { return null; }
 
 		String path = getQuranDirectory(context);
 		if (path != null) {
 			path += File.separator + filename;
 
-			if (!QuranFileUtils.makeQuranDirectory(context)) {
-				failedToWrite = true;
-				return BitmapFactory.decodeStream(is);
+         // can't write to the sdcard, try to decode in memory
+			if (!QuranFileUtils.makeQuranDirectory(context)){
+            return decodeBitmapStream(is);
 			}
 
-			boolean readPhase = false;
-			try {
-				readPhase = true;
-				saveStream(is, path);
-
-				return QuranFileUtils.getImageFromSD(context, filename);
-			} catch (Exception e) {
+			try { saveStream(is, path); }
+         catch (Exception e) {
+            // failed to save the image, try to decode
 				Log.d("quran_utils", e.toString());
-				if (readPhase == false)
-					return BitmapFactory.decodeStream(is);
-				failedToWrite = true;
-				return QuranFileUtils.getImageFromWeb(context, filename);
+            return decodeBitmapStream(is);
 			}
-		} else
-			return BitmapFactory.decodeStream(is);
+
+         // we were able to save the bitmap, load from the sdcard...
+         return QuranFileUtils.getImageFromSD(context, filename);
+      }
+      else { return decodeBitmapStream(is); }
 	}
+
+   private static Bitmap decodeBitmapStream(InputStream is){
+      BitmapFactory.Options options = new BitmapFactory.Options();
+      options.inPreferredConfig = Bitmap.Config.ALPHA_8;
+      return BitmapFactory.decodeStream(is, null, options);
+   }
 
 	private static void saveStream(InputStream is, String savePath)
 			throws IOException {
@@ -214,10 +211,11 @@ public class QuranFileUtils {
 		int readlen;
 
 		byte[] buf = new byte[BUFF_SIZE];
-		while ((readlen = is.read(buf)) > 0)
+		while ((readlen = is.read(buf)) > 0){
 			output.write(buf, 0, readlen);
+      }
 		output.close();
-		is.close();
+		try { is.close(); } catch (Exception e){}
 	}
 
 	public static String getQuranBaseDirectory(Context context) {
