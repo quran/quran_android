@@ -21,6 +21,7 @@
         <item>Muhammad Ayyoub</item>
         <item>Muhammad Jibreel</item>
         <item>Saood Ash-Shuraym</item>
+        <item>Yasser Ad-Dussary</item>
     </string-array>
 
     <string-array name="quran_readers_path">
@@ -44,6 +45,7 @@
         <item>15</item> <!-- muhammad ayyoub -->
         <item>16</item> <!-- muhammad jibreel -->
         <item>17</item> <!-- sa3ood al shuraim -->
+        <item>ydussary</item> <!-- yasser ad dussary -->
     </string-array>
 
     <string-array name="quran_readers_db_name">
@@ -67,6 +69,7 @@
         <item></item> <!-- muhammad ayyoub -->
         <item></item> <!-- muhammad jibreel -->
         <item></item> <!-- sa3ood al shuraim -->
+        <item></item> <!-- yasser ad dussary -->
     </string-array>
 
     <string-array name="quran_readers_urls">
@@ -90,6 +93,7 @@
         <item>http://mirrors.quranicaudio.com/everyayah/Muhammad_Ayyoub_128kbps/</item>
         <item>http://mirrors.quranicaudio.com/everyayah/Muhammad_Jibreel_128kbps/</item>
         <item>http://mirrors.quranicaudio.com/everyayah/Saood_ash-Shuraym_128kbps/</item>
+        <item>http://www.everyayah.com/data/Yasser_Ad-Dussary_128kbps/</item>
     </string-array>
    
 </resources>
