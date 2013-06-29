@@ -116,6 +116,9 @@
     <string name="prefs_custom_location_title">مكان التطبيق اختياري</string>
     <string name="prefs_err_moving_app_files">حدث خطأ اثناء نقل ملفات التطبيق</string>
     <string name="prefs_no_enough_space_to_move_files">لا يوجد مساحة كافية لنقل ملفات التطبيق</string>
+    <string name="prefs_tablet_mode_title">وضع الأجهزة اللوحية</string>
+    <string name="prefs_tablet_mode_enabled">عرض صفحتين في الوضع الأفقي</string>
+    <string name="prefs_tablet_mode_disabled">عرض صفحة واحدة في الوضع الأفقي</string>
     <!-- Preferences End -->
     
     <string name="downloaded_translations">الملفات المحملة</string>
