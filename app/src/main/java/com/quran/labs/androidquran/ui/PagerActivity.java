@@ -100,6 +100,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    private BookmarksDBAdapter mBookmarksAdapter;
    private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
    private boolean mDualPages = false;
+   private boolean mJustCreated = false;
 
    public static final int VISIBLE_FLAGS =
              View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -333,6 +334,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             }
          });
       }
+      mJustCreated = true;
    }
    
    @Override
@@ -364,6 +366,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onResume(){
+      if (!mJustCreated){
+        toggleActionBarVisibility(true);
+      }
+      mJustCreated = false;
+
       // read the list of translations
       if (mTranslationReaderTask != null){
          mTranslationReaderTask.cancel(true);
