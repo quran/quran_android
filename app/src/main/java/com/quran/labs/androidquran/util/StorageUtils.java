@@ -23,7 +23,7 @@ import java.util.Scanner;
  */
 public class StorageUtils {
 
-    private static final String TAG = "StorageUtils";
+    private static final String TAG = "com.quran.labs.androidquran.util.StorageUtils";
 
     /**
      * @return A List of all storage locations available
@@ -35,10 +35,13 @@ public class StorageUtils {
         // make sure that the each entry in mounts exists in volds list
         for (int i = 0; i < mMounts.size(); i++) {
             String mount = mMounts.get(i);
-            if (!mVold.contains(mount))
+            if (!mVold.contains(mount)) {
+                Log.d(TAG, "removing mount point as it isn't in the volds list: " + mount);
                 mMounts.remove(i--);
+            }
         }
         mVold.clear();
+        Log.d(TAG, "mounts list is: " + mMounts);
 
         return buildMountsList(context, mMounts);
     }
@@ -91,31 +94,41 @@ public class StorageUtils {
             }
         }
 
+        Log.d(TAG, "final storage list is: " + list);
+
         return list;
     }
 
     private static List<String> readMountsFile() {
         List<String> mMounts = new ArrayList<String>();
-
+        Log.d(TAG, "reading mounts file begin");
         try {
             File mountFile = new File("/proc/mounts");
             if(mountFile.exists()){
+                Log.d(TAG, "mounts file exists");
                 Scanner scanner = new Scanner(mountFile);
                 while (scanner.hasNext()) {
                     String line = scanner.nextLine();
+                    Log.d(TAG, "line: " + line);
                     if (line.startsWith("/dev/block/vold/")) {
                         String[] lineElements = line.split(" ");
                         String element = lineElements[1];
+                        Log.d(TAG, "mount element is: " + element);
 
                         // don't add the default mount path
                         // it's already in the list.
-                        if (!element.equals("/mnt/sdcard"))
-                            mMounts.add(element);
+                        if (!element.equals("/mnt/sdcard")) {
+                           Log.d(TAG, "adding mount point to mounts list: " + element);
+                           mMounts.add(element);
+                        }
+                    } else {
+                       Log.d(TAG, "skipping mount line: " + line);
                     }
                 }
+            } else {
+               Log.d(TAG, "mounts file doesn't exist");
             }
-
-
+            Log.d(TAG, "reading mounts file end.. list is: " + mMounts);
         } catch (Exception e) {
             Log.e(TAG, "Error reading mounts file", e);
         }
@@ -129,25 +142,38 @@ public class StorageUtils {
      */
     private static List<String> readVoldsFile() {
         List<String> mVold = new ArrayList<String>();
-
+        Log.d(TAG, "reading volds file");
         try {
             File voldFile = new File("/system/etc/vold.fstab");
             if(voldFile.exists()){
+                Log.d(TAG, "reading volds file begin");
                 Scanner scanner = new Scanner(voldFile);
                 while (scanner.hasNext()) {
                     String line = scanner.nextLine();
+                    Log.d(TAG, "line: " + line);
                     if (line.startsWith("dev_mount")) {
                         String[] lineElements = line.split(" ");
                         String element = lineElements[2];
+                        Log.d(TAG, "volds element is: " + element);
 
-                        if (element.contains(":"))
+                        if (element.contains(":")) {
                             element = element.substring(
                                     0, element.indexOf(":"));
-                        if (!element.equals("/mnt/sdcard"))
-                            mVold.add(element);
+                            Log.d(TAG, "volds element is: " + element);
+                        }
+
+                        if (!element.equals("/mnt/sdcard")) {
+                           Log.d(TAG, "adding volds element to list: " + element);
+                           mVold.add(element);
+                        }
+                    } else {
+                       Log.d(TAG, "skipping volds line: " + line);
                     }
                 }
+            } else {
+               Log.d(TAG, "volds file doesn't exit");
             }
+            Log.d(TAG, "reading volds file end.. list is: " + mVold);
         } catch (Exception e) {
             Log.e(TAG, "Error reading vold file", e);
         }

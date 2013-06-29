@@ -2,9 +2,11 @@ package com.quran.labs.androidquran;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -21,6 +23,8 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +37,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
     private boolean mIsArabic = false;
     private ListPreference mListStorageOptions;
     private MoveFilesAsyncTask mMoveFilesTask;
+    private ReadLogsTask mReadLogsTask;
     private List<StorageUtils.Storage> mStorageList;
     private LoadStorageOptionsTask loadStorageOptionsTask;
    private int appSize;
@@ -90,6 +95,10 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
         }
         });
 
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+         mReadLogsTask = new ReadLogsTask();
+         mReadLogsTask.execute();
+      }
 
       mListStorageOptions = (ListPreference)findPreference(
             getString(R.string.prefs_app_location));
@@ -99,6 +108,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
       // Hide Advanced Preferences Screen if there is no storage option
       if (mStorageList.size() <= 1) {
+         Log.d(TAG, "removing advanced settings from preferences");
          getPreferenceScreen().removePreference(advancedPrefs);
       }
 	}
@@ -233,6 +243,53 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
           loadStorageOptionsTask = null;
           dialog.dismiss();
           dialog = null;
+       }
+    }
+
+    private class ReadLogsTask extends AsyncTask<Void, Void, Void> {
+       StringBuilder logs = new StringBuilder();
+
+       @Override
+       protected Void doInBackground(Void... voids) {
+          try {
+             Process process = Runtime.getRuntime().exec("logcat -d");
+             BufferedReader bufferedReader = new BufferedReader(
+                   new InputStreamReader(process.getInputStream()));
+
+             String line;
+             while ((line = bufferedReader.readLine()) != null) {
+                logs.append(line);
+             }
+          } catch (Exception e) {
+             Log.d(TAG, "error reading logs", e);
+          }
+          return null;
+       }
+
+       @Override
+       protected void onPostExecute(Void aVoid) {
+          Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+          emailIntent.setType("plain/text");
+          String body = "\n\n";
+          try {
+             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+             body = pInfo.packageName + " Version: " + pInfo.versionName;
+          } catch (Exception e) {}
+
+          try {
+             body += "\nPhone: " + android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
+             body += "\nAndroid Version: " + android.os.Build.VERSION.CODENAME + " "
+                   + android.os.Build.VERSION.RELEASE;
+             body += "\nLogs: " + logs.toString();
+          } catch (Exception e) {}
+
+          emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+          emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                getString(R.string.email_subject));
+          emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
+                new String[] { getString(R.string.email_to) });
+          startActivity(Intent.createChooser(emailIntent,
+                getString(R.string.send_email)));
        }
     }
 }
