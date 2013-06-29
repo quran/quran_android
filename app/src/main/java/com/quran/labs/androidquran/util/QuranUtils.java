@@ -70,9 +70,9 @@ public class QuranUtils {
       return mNumberFormatter.format(number);
    }
 
-   public static boolean isDualPages(Context context){
-      if (context != null){
-         if (context.getResources()
+   public static boolean isDualPages(Context context, QuranScreenInfo qsi){
+      if (context != null && qsi != null){
+         if (qsi.isTablet(context) && context.getResources()
                  .getBoolean(R.bool.use_tablet_interface)){
             SharedPreferences prefs =
                     PreferenceManager.getDefaultSharedPreferences(context);

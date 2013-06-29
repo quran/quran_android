@@ -144,10 +144,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mBookmarksAdapter = new BookmarksDBAdapter(this);
 
       boolean refresh = false;
-      mDualPages = QuranUtils.isDualPages(this);
       // make sure to remake QuranScreenInfo if it doesn't exist, as it
       // is needed to get images, to get the highlighting db, etc.
-      QuranScreenInfo.getOrMakeInstance(this);
+      QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
+      mDualPages = QuranUtils.isDualPages(this, qsi);
 
       // initialize ayah info database
       String filename = QuranFileUtils.getAyaPositionFileName();
@@ -159,10 +159,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       mTabletAyahInfoAdapter = null;
-      if (QuranScreenInfo.getInstance().isTablet(this)){
+      if (qsi.isTablet(this)){
          try {
             filename = QuranFileUtils.getAyaPositionFileName(
-                    QuranScreenInfo.getInstance().getTabletWidthParam());
+                    qsi.getTabletWidthParam());
             mTabletAyahInfoAdapter =
                     new AyahInfoDatabaseHandler(this, filename);
          }
@@ -456,11 +456,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       boolean haveDownload = false;
+      QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
       if (!QuranFileUtils.haveAyaPositionFile(this)){
          String url = QuranFileUtils.getAyaPositionFileUrl();
-         if (QuranUtils.isDualPages(this)){
+         if (QuranUtils.isDualPages(this, qsi)){
             url = QuranFileUtils.getAyaPositionFileUrl(
-                    QuranScreenInfo.getInstance().getTabletWidthParam());
+                    qsi.getTabletWidthParam());
          }
          String destination = QuranFileUtils.getQuranDatabaseDirectory(this);
          // start the download
