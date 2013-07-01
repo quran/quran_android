@@ -293,7 +293,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
             + android.os.Build.VERSION.RELEASE;
 
         qsi = QuranScreenInfo.getOrMakeInstance(QuranPreferenceActivity.this);
-        body += "Display: " + qsi.getWidthParam();
+        body += "\nDisplay: " + qsi.getWidthParam();
         if (qsi.isTablet(QuranPreferenceActivity.this)){
           body += ", tablet width: " + qsi.getWidthParam();
         }
@@ -323,7 +323,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
       emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
       emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,
-          getString(R.string.email_subject));
+          getString(R.string.email_logs_subject));
       emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
           new String[]{getString(R.string.email_to)});
       startActivity(Intent.createChooser(emailIntent,
