@@ -39,6 +39,7 @@
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright All Muslims</string>
     <string name="email_subject">Feedback</string>
+    <string name="email_logs_subject">Log File</string>
     <string name="email_to">quran.android@gmail.com</string>
     <string name="send_email">Send email..</string>
     <string name="aboutUs">Quran Android is a free, open source Quran
