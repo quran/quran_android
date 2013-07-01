@@ -115,6 +115,8 @@ public class QuranPageWorker {
          Bitmap bitmap = QuranDisplayHelper.getQuranPage(
                  mContext, mWidthParam, data);
          if (bitmap == null){
+           Log.w(TAG, "null bitmap. items in cache: " + mMemoryCache.size() +
+               " vs " + mMemoryCache.maxSize());
             if (QuranScreenInfo.getInstance().isTablet(mContext)){
                Log.w(TAG, "tablet got bitmap null, trying alternate width...");
                String param = QuranScreenInfo.getInstance().getWidthParam();
