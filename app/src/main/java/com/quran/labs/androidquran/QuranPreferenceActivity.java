@@ -298,6 +298,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
           body += ", tablet width: " + qsi.getWidthParam();
         }
         body += "\n";
+        body += "max bitmap height: " + qsi.getBitmapMaxHeight() + "\n";
 
         if (QuranFileUtils.haveAllImages(
             QuranPreferenceActivity.this, qsi.getWidthParam())){

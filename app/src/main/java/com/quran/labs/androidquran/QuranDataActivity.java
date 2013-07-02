@@ -7,14 +7,16 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
-import android.widget.ImageView;
+import android.view.View;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.Constants;
@@ -26,6 +28,8 @@ import com.quran.labs.androidquran.util.ApiKeys;
 import com.quran.labs.androidquran.util.QuranCrashListener;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.widgets.QuranMaxImageView;
+
 import net.hockeyapp.android.CrashManager;
 
 import java.io.File;
@@ -37,6 +41,7 @@ public class QuranDataActivity extends SherlockActivity implements
    public static final String TAG =
            "com.quran.labs.androidquran.QuranDataActivity";
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
+   private static final int MSG_REFRESH_MAX_HEIGHT = 1;
 
    private boolean mIsPaused = false;
    private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
@@ -47,8 +52,9 @@ public class QuranDataActivity extends SherlockActivity implements
    private boolean mNeedPortraitImages = false;
    private boolean mNeedLandscapeImages = false;
    private String mPatchUrl;
+   private int mRefreshHeightTries;
+   private QuranMaxImageView mSplashView;
 
-   /** Called when the activity is first created. */
    @Override
    public void onCreate(Bundle savedInstanceState) {
       setTheme(R.style.Theme_Sherlock_NoActionBar);
@@ -57,13 +63,19 @@ public class QuranDataActivity extends SherlockActivity implements
       super.onCreate(savedInstanceState);
       setContentView(R.layout.splash_screen);
 
-      ImageView splash = (ImageView)findViewById(R.id.splashview);
-      if (splash != null){
+     mSplashView = (QuranMaxImageView)findViewById(R.id.splashview);
+      if (Build.VERSION.SDK_INT >= 14){
+        // actually requires 11+, but the other call we need
+        // for getting max bitmap height requires 14+
+        mSplashView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+      }
+
+      if (mSplashView != null){
          try {
-            splash.setImageResource(R.drawable.splash);
+            mSplashView.setImageResource(R.drawable.splash);
          }
          catch (OutOfMemoryError error){
-            splash.setBackgroundColor(Color.BLACK);
+            mSplashView.setBackgroundColor(Color.BLACK);
          }
       }
 
@@ -116,7 +128,7 @@ public class QuranDataActivity extends SherlockActivity implements
       super.onResume();
       if (Constants.CRASH_REPORTING_ENABLED){
          CrashManager.register(this, ApiKeys.HOCKEY_APP_KEY,
-              QuranCrashListener.getInstance());
+             QuranCrashListener.getInstance());
       }
 
       mIsPaused = false;
@@ -128,6 +140,23 @@ public class QuranDataActivity extends SherlockActivity implements
             mDownloadReceiver,
             new IntentFilter(action));
       mDownloadReceiver.setListener(this);
+
+      if (mSharedPreferences.getInt(
+          Constants.PREF_MAX_BITMAP_HEIGHT, -1) == -1){
+        if (Build.VERSION.SDK_INT >= 14){
+          int height = mSplashView.getMaxBitmapHeight();
+          if (height == -1){
+            Log.d(TAG, "retrying to get max height in 500...");
+            mHandler.sendEmptyMessageDelayed(MSG_REFRESH_MAX_HEIGHT, 500);
+            return;
+          }
+
+          Log.d(TAG, "got max height height of " + height);
+          mSharedPreferences.edit().putInt(
+              Constants.PREF_MAX_BITMAP_HEIGHT, height).commit();
+          QuranScreenInfo.getInstance().setBitmapMaxHeight(height);
+        }
+      }
 
       // check whether or not we need to download
       mCheckPagesTask = new CheckPagesAsyncTask();
@@ -154,6 +183,41 @@ public class QuranDataActivity extends SherlockActivity implements
       
       super.onPause();
    }
+
+   private Handler mHandler = new Handler(){
+     @Override
+     public void handleMessage(Message msg) {
+       if (msg.what == MSG_REFRESH_MAX_HEIGHT){
+         if (mSplashView == null || isFinishing() || mIsPaused){
+           return;
+         }
+
+         int height = mSplashView.getMaxBitmapHeight();
+         if (height > -1){
+           android.util.Log.d(TAG, "in handler, got max height: " + height);
+           mSharedPreferences.edit().putInt(
+               Constants.PREF_MAX_BITMAP_HEIGHT, height).commit();
+           QuranScreenInfo.getInstance().setBitmapMaxHeight(height);
+           // check whether or not we need to download
+           mCheckPagesTask = new CheckPagesAsyncTask();
+           mCheckPagesTask.execute();
+           return;
+         }
+
+         mRefreshHeightTries++;
+         if (mRefreshHeightTries == 5){
+           android.util.Log.d(TAG, "giving up on getting the max height...");
+           mCheckPagesTask = new CheckPagesAsyncTask();
+           mCheckPagesTask.execute();
+           return;
+         }
+         else {
+           android.util.Log.d(TAG, "trying to get the max height in a sec...");
+           mHandler.sendEmptyMessageDelayed(MSG_REFRESH_MAX_HEIGHT, 1000);
+         }
+       }
+     }
+   };
 
    @Override
    public void handleDownloadSuccess(){
@@ -420,12 +484,7 @@ public class QuranDataActivity extends SherlockActivity implements
    }
 
    protected void initializeQuranScreen() {
-      // get the screen size
-      WindowManager w = getWindowManager();
-      Display d = w.getDefaultDisplay();
-      int width = d.getWidth();
-      int height = d.getHeight();
-      QuranScreenInfo.initialize(width, height);
+      QuranScreenInfo.getOrMakeInstance(this);
    }
 
    protected void runListView(boolean showTranslations){
