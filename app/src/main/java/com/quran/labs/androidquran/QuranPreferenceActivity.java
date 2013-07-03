@@ -113,7 +113,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
         .getAllStorageLocations(getApplicationContext());
 
     // Hide Advanced Preferences Screen if there is no storage option
-    if (mStorageList.size() <= 1) {
+    if (mStorageList.size() == 0) {
       Log.d(TAG, "removing advanced settings from preferences");
       getPreferenceScreen().removePreference(advancedPrefs);
     }
