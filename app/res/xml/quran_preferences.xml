@@ -146,11 +146,7 @@
 
     <PreferenceScreen android:key="@string/prefs_advanced_settings"
                 android:title="@string/prefs_advanced_settings_title">
-        <CheckBoxPreference android:key="@string/prefs_use_custom_location"
-                            android:title="@string/prefs_custom_location_title"
-                            android:defaultValue="false" />
         <ListPreference android:key="@string/prefs_app_location"
-                        android:dependency="@string/prefs_use_custom_location"
                         android:title="@string/prefs_app_location_title"
                         android:summary="@string/prefs_app_location_summary" />
     </PreferenceScreen>

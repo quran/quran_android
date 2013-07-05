@@ -241,12 +241,13 @@ public class QuranFileUtils {
   }
 
   public static String getQuranBaseDirectory(Context context) {
-    String basePath = null;
-    if (QuranSettings.useCustomLocation(context)) {
-      basePath = QuranSettings.getAppCustomLocation(context);
-    }
-    else if (isSDCardMounted()) {
-      basePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    String basePath = QuranSettings.getAppCustomLocation(context);
+
+    if (!isSDCardMounted()) {
+      if (basePath == null || basePath.equals(
+          Environment.getExternalStorageDirectory().getAbsolutePath())){
+        basePath = null;
+      }
     }
 
     if (basePath != null) {

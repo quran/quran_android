@@ -21,7 +21,6 @@
     <string name="prefs_download_amount">preferredDownloadAmount</string>
     <string name="prefs_use_arabic_reshaper">useArabicReshaper</string>
     <string name="prefs_volume_key_navigation">volumeKeyNavigation</string>
-    <string name="prefs_use_custom_location">useCustomLocation</string>
     <string name="prefs_app_location">appLocation</string>
     <string name="prefs_advanced_settings">advanced_preferences_screen</string>
     <string name="prefs_display_category_key">displayCategoryKey</string>
