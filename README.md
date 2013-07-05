@@ -75,6 +75,15 @@ Open Source Projects Used
 
 Changelog
 ---------
+**development**
+- fix bug where devices that should not get tablet mode were getting it
+- fixed issue on some asus tablets where images weren't showing up
+- improve issues with notifications while playing audio
+- added sheikh Yasser Ad-Dussary
+- fixes for "move to sdcard"
+- fix miui actionbar toggle issue
+- fixed some crashes
+
 **version 2.4.2 and 2.4.3** (released 6/18/2013)
 - critical bugfix for night mode font issue
 - changed default font to white for night mode
