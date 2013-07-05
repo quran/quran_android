@@ -20,10 +20,6 @@
 
 package com.quran.labs.androidquran.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -52,8 +48,17 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
-import com.quran.labs.androidquran.service.util.*;
+import com.quran.labs.androidquran.service.util.AudioFocusHelper;
+import com.quran.labs.androidquran.service.util.AudioFocusable;
+import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.MediaButtonHelper;
+import com.quran.labs.androidquran.service.util.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Service that handles media playback. This is the Service through which we
@@ -169,6 +174,9 @@ public class AudioService extends Service implements OnCompletionListener,
    // whether the audio we are playing is streaming from the network
    private boolean mIsStreaming = false;
 
+   // are we already in the foreground
+   private boolean mIsSetupAsForeground = false;
+
    // should we stop (after preparing is done) or not
    private boolean mShouldStop = false;
 
@@ -282,19 +290,14 @@ public class AudioService extends Service implements OnCompletionListener,
          else {
             int sura = -1;
             int ayah = -1;
-            int state = AudioUpdateIntent.STOPPED;
+            int state = AudioUpdateIntent.PLAYING;
             if (mState == State.Paused){
                state = AudioUpdateIntent.PAUSED;
             }
-            else if (mState != State.Stopped){
-               state = AudioUpdateIntent.PLAYING;
-            }
 
-            if (mState != State.Stopped){
-               if (mAudioRequest != null){
-                  sura = mAudioRequest.getCurrentSura();
-                  ayah = mAudioRequest.getCurrentAyah();
-               }
+            if (mAudioRequest != null){
+               sura = mAudioRequest.getCurrentSura();
+               ayah = mAudioRequest.getCurrentAyah();
             }
 
             Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
@@ -562,7 +565,7 @@ public class AudioService extends Service implements OnCompletionListener,
          mHandler.removeCallbacksAndMessages(null);
          mPlayer.pause();
          // while paused, we always retain the MediaPlayer
-         relaxResources(false);
+         relaxResources(false, true);
       }
    }
 
@@ -622,14 +625,14 @@ public class AudioService extends Service implements OnCompletionListener,
 
       if (mState == State.Preparing){
          mShouldStop = true;
-         relaxResources(false);
+         relaxResources(false, true);
       }
 
       if (mState == State.Playing || mState == State.Paused || force) {
          mState = State.Stopped;
 
          // let go of all resources...
-         relaxResources(true);
+         relaxResources(true, true);
          giveUpAudioFocus();
 
          // service is no longer necessary. Will be started again if needed.
@@ -658,9 +661,13 @@ public class AudioService extends Service implements OnCompletionListener,
     * @param releaseMediaPlayer Indicates whether the Media Player should also
     *                           be released or not
     */
-   private void relaxResources(boolean releaseMediaPlayer) {
-      // stop being a foreground service
-      stopForeground(true);
+   private void relaxResources(boolean releaseMediaPlayer,
+                               boolean stopForeground){
+      if (stopForeground){
+        // stop being a foreground service
+        stopForeground(true);
+        mIsSetupAsForeground = false;
+      }
 
       // stop and release the Media Player, if it's available
       if (releaseMediaPlayer && mPlayer != null) {
@@ -750,7 +757,7 @@ public class AudioService extends Service implements OnCompletionListener,
     */
    private void playAudio() {
       mState = State.Stopped;
-      relaxResources(false); // release everything except MediaPlayer
+      relaxResources(false, false); // release everything except MediaPlayer
 
       try {
          String url = mAudioRequest == null? null : mAudioRequest.getUrl();
@@ -788,7 +795,9 @@ public class AudioService extends Service implements OnCompletionListener,
          mAudioTitle = mAudioRequest.getTitle(getApplicationContext());
 
          mState = State.Preparing;
-         setUpAsForeground(mAudioTitle);
+         if (!mIsSetupAsForeground){
+            setUpAsForeground(mAudioTitle);
+         }
 
          // Use the media button APIs (if available) to register ourselves
          // for media button events
@@ -869,6 +878,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
    /** Updates the notification. */
    void updateNotification(String text) {
+      mAudioTitle = text;
       PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
             new Intent(getApplicationContext(), PagerActivity.class),
             PendingIntent.FLAG_UPDATE_CURRENT);
@@ -894,6 +904,7 @@ public class AudioService extends Service implements OnCompletionListener,
       mNotification.setLatestEventInfo(getApplicationContext(),
               mNotificationName, text, pi);
       startForeground(NOTIFICATION_ID, mNotification);
+      mIsSetupAsForeground = true;
    }
 
    /**
@@ -908,7 +919,7 @@ public class AudioService extends Service implements OnCompletionListener,
               ", extra=" + String.valueOf(extra));
 
       mState = State.Stopped;
-      relaxResources(true);
+      relaxResources(true, true);
       giveUpAudioFocus();
       return true; // true indicates we handled the error
    }
@@ -940,7 +951,7 @@ public class AudioService extends Service implements OnCompletionListener,
    public void onDestroy() {
       // Service is being killed, so make sure we release our resources
       mState = State.Stopped;
-      relaxResources(true);
+      relaxResources(true, true);
       giveUpAudioFocus();
    }
 
