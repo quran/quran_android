@@ -8,11 +8,13 @@ import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceCategory;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,8 +41,8 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
   private MoveFilesAsyncTask mMoveFilesTask;
   private ReadLogsTask mReadLogsTask;
   private List<StorageUtils.Storage> mStorageList;
-  private LoadStorageOptionsTask loadStorageOptionsTask;
-  private int appSize;
+  private LoadStorageOptionsTask mLoadStorageOptionsTask;
+  private int mAppSize;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +91,8 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
     advancedPrefs.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        loadStorageOptionsTask = new LoadStorageOptionsTask();
-        loadStorageOptionsTask.execute();
+        mLoadStorageOptionsTask = new LoadStorageOptionsTask();
+        mLoadStorageOptionsTask.execute();
         return false;
       }
     });
@@ -113,7 +115,8 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
         .getAllStorageLocations(getApplicationContext());
 
     // Hide Advanced Preferences Screen if there is no storage option
-    if (mStorageList.size() == 0) {
+    // except for the normal Environment.getExternalStorageDirectory
+    if (mStorageList.size() <= 1) {
       Log.d(TAG, "removing advanced settings from preferences");
       getPreferenceScreen().removePreference(advancedPrefs);
     }
@@ -121,10 +124,6 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
   private void loadStorageOptions() {
     try {
-      String msg = getString(R.string.prefs_app_location_summary) + "\n"
-          + getString(R.string.prefs_app_size) + " " + appSize
-          + " " + getString(R.string.prefs_megabytes);
-      mListStorageOptions.setSummary(msg);
       CharSequence[] values = new CharSequence[mStorageList.size()];
       CharSequence[] displayNames = new CharSequence[mStorageList.size()];
       int i = 0;
@@ -140,30 +139,52 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
             storage.getFreeSpace());
       }
 
+      String msg = getString(R.string.prefs_app_location_summary) + "\n"
+          + getString(R.string.prefs_app_size) + " " + mAppSize
+          + " " + getString(R.string.prefs_megabytes);
+      mListStorageOptions.setSummary(msg);
       mListStorageOptions.setEntries(displayNames);
       mListStorageOptions.setEntryValues(values);
-      if (values.length <= 1) {
-        // if there is only one option then
-        mListStorageOptions.setEnabled(false);
+
+      String current = QuranSettings.getAppCustomLocation(this);
+      if (TextUtils.isEmpty(current)){
+        current = values[0].toString();
       }
+      mListStorageOptions.setValue(current);
 
       mListStorageOptions.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-          String newLocation = (String) newValue;
-          if (appSize < storageEmptySpaceMap.get(newLocation)) {
-            mMoveFilesTask = new MoveFilesAsyncTask(newLocation);
-            mMoveFilesTask.execute();
-          } else {
+          if (TextUtils.isEmpty(QuranSettings
+              .getAppCustomLocation(QuranPreferenceActivity.this)) &&
+              Environment.getExternalStorageDirectory().equals(newValue)){
+            // do nothing since we're moving from empty settings to
+            // the default sdcard setting, which are the same, but write it.
+            return false;
+          }
+
+          // this is called right before the preference is saved
+          String newLocation = (String)newValue;
+          String current = QuranSettings.getAppCustomLocation(
+              QuranPreferenceActivity.this);
+          if (mAppSize < storageEmptySpaceMap.get(newLocation)) {
+            if (current == null || !current.equals(newLocation)){
+              mMoveFilesTask = new MoveFilesAsyncTask(newLocation);
+              mMoveFilesTask.execute();
+            }
+          }
+          else {
             Toast.makeText(QuranPreferenceActivity.this,
                 getString(
                     R.string.prefs_no_enough_space_to_move_files),
                 Toast.LENGTH_LONG).show();
           }
+          // this says, "don't write the preference"
           return false;
         }
       });
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       Log.e(TAG, "error loading storage options", e);
     }
   }
@@ -215,6 +236,9 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
       if (result) {
         QuranSettings.setAppCustomLocation(
             QuranPreferenceActivity.this, newLocation);
+        if (mListStorageOptions != null){
+          mListStorageOptions.setValue(newLocation);
+        }
       } else {
         Toast.makeText(QuranPreferenceActivity.this,
             getString(R.string.prefs_err_moving_app_files),
@@ -239,14 +263,14 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
     @Override
     protected Void doInBackground(Void... voids) {
-      appSize = QuranFileUtils.getAppUsedSpace(QuranPreferenceActivity.this);
+      mAppSize = QuranFileUtils.getAppUsedSpace(QuranPreferenceActivity.this);
       return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
       loadStorageOptions();
-      loadStorageOptionsTask = null;
+      mLoadStorageOptionsTask = null;
       dialog.dismiss();
       dialog = null;
     }

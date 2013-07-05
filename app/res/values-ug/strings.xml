@@ -102,7 +102,6 @@
     <string name="prefs_app_size">ئەپ چوڭلۇقى</string>
     <string name="prefs_calculating_app_size">ئەپ چوڭلۇقىنى ھېسابلاۋاتىدۇ</string>
     <string name="prefs_copying_app_files">ئەپ ھۆججەتلىرىنى كۆچۈرۈۋاتىدۇ</string>
-    <string name="prefs_custom_location_title">ئىختىيارىي ئورنى</string>
     <string name="prefs_err_moving_app_files">ئەپ ھۆججەتلىرىنى يۆتكىيەلمىدى</string>
     <string name="prefs_no_enough_space_to_move_files">ئەپ ھۆججەتلىرىنى يۆتكەشكە يېتەرلىك بوشلۇق يوق</string>
     <string name="prefs_megabytes">MB</string>

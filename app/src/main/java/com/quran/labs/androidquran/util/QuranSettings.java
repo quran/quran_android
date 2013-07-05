@@ -108,7 +108,8 @@ public class QuranSettings {
    }
 
    public static String getAppCustomLocation(Context context) {
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+      SharedPreferences prefs =
+          PreferenceManager.getDefaultSharedPreferences(context);
       return prefs.getString(context.getString(R.string.prefs_app_location),
             Environment.getExternalStorageDirectory().getAbsolutePath());
    }
@@ -116,9 +117,5 @@ public class QuranSettings {
    public static void setAppCustomLocation(Context context, String newLocation) {
        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
        prefs.edit().putString(context.getString(R.string.prefs_app_location), newLocation).commit();
-   }
-
-   public static boolean useCustomLocation(Context context) {
-       return getBooleanPreference(context, context.getString(R.string.prefs_use_custom_location), false);
    }
 }
