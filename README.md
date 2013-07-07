@@ -75,7 +75,7 @@ Open Source Projects Used
 
 Changelog
 ---------
-**development**
+**version 2.4.4** (released 7/6/2013)
 - fix bug where devices that should not get tablet mode were getting it
 - fixed issue on some asus tablets where images weren't showing up
 - improve issues with notifications while playing audio
