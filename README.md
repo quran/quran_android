@@ -75,6 +75,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.4.5** (released 7/9/2013)
+- fix a bug which caused s4/htc one/etc to load smaller images
+
 **version 2.4.4** (released 7/6/2013)
 - fix bug where devices that should not get tablet mode were getting it
 - fixed issue on some asus tablets where images weren't showing up
