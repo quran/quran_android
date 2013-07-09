@@ -165,6 +165,21 @@ public class QuranDataActivity extends SherlockActivity implements
    
    @Override
    protected void onPause() {
+      // one more attempt to get the max height if we
+      // haven't gotten it already...
+      if (mSharedPreferences.getInt(
+          Constants.PREF_MAX_BITMAP_HEIGHT, -1) == -1){
+        if (Build.VERSION.SDK_INT >= 14){
+          int height = mSplashView.getMaxBitmapHeight();
+          if (height > 0){
+            Log.d(TAG, "got max height height of " + height);
+            mSharedPreferences.edit().putInt(
+              Constants.PREF_MAX_BITMAP_HEIGHT, height).commit();
+            QuranScreenInfo.getInstance().setBitmapMaxHeight(height);
+          }
+        }
+      }
+
       mIsPaused = true;
       mDownloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this).
