@@ -18,7 +18,7 @@ public class QuranScreenInfo {
 	
 	private int mHeight;
 	private int mMaxWidth;
-  private int mMaxBitmapHeight;
+  private int mMaxBitmapHeight = -1;
 
 	private QuranScreenInfo(int width, int height){
 		mHeight = height;
