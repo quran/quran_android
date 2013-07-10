@@ -7,6 +7,10 @@
 			будет занимать значительно большее время. Вы хотите загрузить выбранные 
 			файлы сейчас?
 		</string>
+    <string name="downloadTabletPrompt">Недавно мы добавили улучшенные изображения текста Корана для планшетов. 
+    			Хотите ли Вы загрузить эти изображения сейчас?</string>
+    <string name="downloadImportantPrompt">Для Вашего устройства имеется небольшое, но важное обновление изображений текста Корана. 
+    			Хотите ли Вы загрузить это обновление сейчас?</string>
     <string name="downloadPrompt_ok">Да</string>
     <string name="downloadPrompt_no">Нет</string>
     <string name="downloading_title">Загрузка &#8230;</string>
@@ -34,6 +38,7 @@
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Авторское право принадлежит мусульманской умме</string>
     <string name="email_subject">Обратная связь</string>
+    <string name="email_logs_subject">Log File</string>
     <string name="email_to">quran.android@gmail.com</string>
     <string name="send_email">Отправить email..</string>
     <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное Коран-приложение для Android
@@ -59,8 +64,9 @@
 			&lt;br/>Rinat (Ринат) - русский
 			&lt;br/>khajavi (на github) - предыдущий Фарси перевод
 	      &lt;br/>Yasser Kadddour - французский
-	      &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>)
+	      &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - китайский
          &lt;br/>Goran Gharib Karim - Курдский
+         &lt;br/>Abduqadir Abliz - Уйгурский
             &lt;br/>&lt;br/>&lt;b>Проекты с открытым исходным кодом:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
             &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
@@ -70,9 +76,9 @@
     <string name="help_title">Часто задаваемые вопросы (FAQ)</string>
     <string name="help">
         &lt;b>Как мне воспроизвести аудио?&lt;/b>
-        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку проигрывания
+        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку воспроизведения
         и текст с именем чтеца. Для выбора другого чтеца нажмите на имени текущего чтеца. Нажмите на 
-		кнопку проигрывания для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
+		кнопку воспроизведения для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
         &lt;br/>&lt;b>Как мне посмотреть перевод?
 		&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса 
@@ -119,7 +125,7 @@
     <string name="found_in_sura">Найдено в суре</string>
     <string name="no_results">Результатов для \"%s\" не найдено</string>
     <string name="no_active_translation">Вы не выбрали активный перевод. Сначала выберите активный перевод и воспользуйтесь поиском снова.</string>
-    <string name="translation_settings">Найстройки перевода</string>
+    <string name="translation_settings">Настройки перевода</string>
     <string name="no_arabic_search_available">Вы не скачали пакет данных для арабского поиска. Пожалуйста, сначала скачайте его и воспользуйтесь поиском снова.</string>
     <string name="get_arabic_search_db">Скачать данные для арабского поиска</string>
         
@@ -172,10 +178,14 @@
     <string name="prefs_sdcard_external">Внешняя SD карта</string>
     <string name="prefs_sdcard_auto">Автоматически</string>
     <string name="prefs_app_size">Размер приложения</string>
+    <string name="prefs_calculating_app_size">Расчет размера приложения</string>
     <string name="prefs_copying_app_files">Копирование файлов приложения</string>
     <string name="prefs_err_moving_app_files">Ошибка перемещения файлов приложения</string>
     <string name="prefs_no_enough_space_to_move_files">Недостаточно свободного места для перемещения файлов приложения</string>
     <string name="prefs_megabytes">MБ</string>
+    <string name="prefs_tablet_mode_title">Режим планшета</string>
+    <string name="prefs_tablet_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом.</string>
+    <string name="prefs_tablet_mode_disabled">В альбомном режиме будет отображена только одна страницы.</string>
 
     <!-- translation updates -->
     <string name="update_available">Доступно обновление</string>
@@ -225,6 +235,7 @@
     <string name="process_progress">Загрузка файла %1$d / %2$d</string>
     <string name="download_retry">Повторить</string>
     <string name="download_cancel">Отмена</string>
+     <string name="download_extra_data">Для поддержки перевода и обмена аятами необходимо скачать один или два маленьких файла. Загрузить сейчас?</string>
 
     <!-- translation database stuff -->
     <string name="remove_dlg_title">Удалить перевод?</string>
@@ -257,7 +268,7 @@
     <string name="via_string">\n\nчерез @QuranAndroid</string>
     <string name="search_key">Нажмите клавишу поиска, чтобы найти стих</string>
     <string name="copy_ayah">Скопировать аят</string>
-    <string name="ayah_copied_popup">Аят скорирован</string>
+    <string name="ayah_copied_popup">Аят скопирован</string>
     <string name="show_more">Показать еще</string>
 
     <!-- bookmarks & tags contextual action bar -->
@@ -273,6 +284,6 @@
     <string name="tag_name">Название</string>
     
     <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">Закладки отсутствуют!</string>
+    <string name="bookmarks_list_empty">Закладки отсутствуют</string>
     <string name="tags_list_empty">Метки отсутствуют</string>
 </resources>
