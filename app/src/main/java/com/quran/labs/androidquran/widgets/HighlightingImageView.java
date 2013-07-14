@@ -31,10 +31,14 @@ public class HighlightingImageView extends RecyclingImageView {
 
   private List<AyahBounds> mCurrentlyHighlighting = null;
   private boolean mColorFilterOn = false;
-  private String mHighightedAyah = null;
   private Bitmap mHighlightBitmap = null;
   private boolean mIsNightMode = false;
-  private int mNightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+  private int mNightModeTextBrightness =
+      Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+
+  // cached objects for onDraw
+  private Rect mSrcRect = new Rect();
+  private RectF mScaledRect = new RectF();
 
   // Params for drawing text
   private OverlayParams mOverlayParams = null;
@@ -68,10 +72,14 @@ public class HighlightingImageView extends RecyclingImageView {
 
   public void setNightMode(boolean isNightMode) {
     mIsNightMode = isNightMode;
+    adjustNightMode();
   }
 
   public void setNightModeTextBrightness(int nightModeTextBrightness) {
     mNightModeTextBrightness = nightModeTextBrightness;
+
+    // we need a new color filter now
+    mColorFilterOn = false;
   }
 
   public void highlightAyah(int sura, int ayah) {
@@ -122,6 +130,11 @@ public class HighlightingImageView extends RecyclingImageView {
 
   @Override
   public void setImageDrawable(Drawable bitmap) {
+    // clear the color filter before setting the image
+    clearColorFilter();
+    // this allows the filter to be enabled again if needed
+    mColorFilterOn = false;
+
     super.setImageDrawable(bitmap);
     if (bitmap != null) {
       adjustNightMode();
@@ -138,10 +151,12 @@ public class HighlightingImageView extends RecyclingImageView {
       };
       setColorFilter(new ColorMatrixColorFilter(matrix));
       mColorFilterOn = true;
-    } else if (!mIsNightMode && mColorFilterOn) {
+    }
+    else if (!mIsNightMode && mColorFilterOn) {
       clearColorFilter();
       mColorFilterOn = false;
     }
+
     invalidate();
   }
 
@@ -158,7 +173,8 @@ public class HighlightingImageView extends RecyclingImageView {
         scaledPageHeight = getHeight();
         scaledPageWidth = (float) (1.0 * getHeight() /
             page.getIntrinsicHeight() * page.getIntrinsicWidth());
-      } else {
+      }
+      else {
         scaledPageWidth = getWidth();
         scaledPageHeight = (float) (1.0 * getWidth() /
             page.getIntrinsicWidth() * page.getIntrinsicHeight());
@@ -312,17 +328,17 @@ public class HighlightingImageView extends RecyclingImageView {
         PageScalingData scalingData = new PageScalingData(page);
 
         for (AyahBounds b : mCurrentlyHighlighting) {
-          RectF scaled = new RectF(b.getMinX() * scalingData.widthFactor,
+          mScaledRect.set(b.getMinX() * scalingData.widthFactor,
               b.getMinY() * scalingData.heightFactor,
               b.getMaxX() * scalingData.widthFactor,
               b.getMaxY() * scalingData.heightFactor);
-          scaled.offset(scalingData.offsetX, scalingData.offsetY);
+          mScaledRect.offset(scalingData.offsetX, scalingData.offsetY);
 
           // work around a 4.0.2 bug where src as null throws npe
           // http://code.google.com/p/android/issues/detail?id=24830
-          Rect src = new Rect(0, 0, mHighlightBitmap.getWidth(),
+          mSrcRect.set(0, 0, mHighlightBitmap.getWidth(),
               mHighlightBitmap.getHeight());
-          canvas.drawBitmap(mHighlightBitmap, src, scaled, null);
+          canvas.drawBitmap(mHighlightBitmap, mSrcRect, mScaledRect, null);
         }
       }
     }
@@ -335,7 +351,6 @@ public class HighlightingImageView extends RecyclingImageView {
     PageScalingData scalingData = new PageScalingData(page);
     float pageX = screenX / scalingData.widthFactor - scalingData.offsetX;
     float pageY = screenY / scalingData.heightFactor - scalingData.offsetY;
-    float[] pageXY = {pageX, pageY};
-    return pageXY;
+    return new float[]{pageX, pageY};
   }
 }

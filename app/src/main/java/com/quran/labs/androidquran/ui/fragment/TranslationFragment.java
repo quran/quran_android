@@ -30,12 +30,18 @@ public class TranslationFragment extends SherlockFragment
    private static final String SI_HIGHLIGHTED_AYAH = "SI_HIGHLIGHTED_AYAH";
 
    private int mPageNumber;
-   private boolean mIsPaused;
    private int mHighlightedAyah;
    private TranslationView mTranslationView;
    private PaintDrawable mLeftGradient, mRightGradient = null;
 
-   public static TranslationFragment newInstance(int page){
+   private View mMainView;
+   private ImageView mLeftBorder, mRightBorder;
+
+   private Resources mResources;
+   private SharedPreferences mPrefs;
+   private boolean mJustCreated;
+
+  public static TranslationFragment newInstance(int page){
       final TranslationFragment f = new TranslationFragment();
       final Bundle args = new Bundle();
       args.putInt(PAGE_NUMBER_EXTRA, page);
@@ -46,7 +52,6 @@ public class TranslationFragment extends SherlockFragment
    @Override
    public void onCreate(Bundle savedInstanceState){
       super.onCreate(savedInstanceState);
-      mIsPaused = false;
       mPageNumber = getArguments() != null?
               getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
       if (savedInstanceState != null){
@@ -74,37 +79,13 @@ public class TranslationFragment extends SherlockFragment
       view.setBackgroundDrawable((mPageNumber % 2 == 0?
               mLeftGradient : mRightGradient));
 
-      SharedPreferences prefs = PreferenceManager
+      mPrefs = PreferenceManager
               .getDefaultSharedPreferences(getActivity());
+      mResources = getResources();
 
-      Resources res = getResources();
-      if (!prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
-    	  view.setBackgroundColor(res.getColor(R.color.page_background));
-      }
-      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
-    	  view.setBackgroundColor(Color.BLACK);
-	   }
 
-      int lineImageId = R.drawable.dark_line;
-      int leftBorderImageId = R.drawable.border_left;
-      int rightBorderImageId = R.drawable.border_right;
-      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
-         leftBorderImageId = R.drawable.night_left_border;
-         rightBorderImageId = R.drawable.night_right_border;
-         lineImageId = R.drawable.light_line;
-      }
-
-      ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
-      ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
-      if (mPageNumber % 2 == 0){
-         rightBorder.setVisibility(View.GONE);
-         leftBorder.setBackgroundResource(leftBorderImageId);
-      }
-      else {
-         rightBorder.setVisibility(View.VISIBLE);
-         rightBorder.setBackgroundResource(rightBorderImageId);
-         leftBorder.setBackgroundResource(lineImageId);
-      }
+      mLeftBorder = (ImageView)view.findViewById(R.id.left_border);
+      mRightBorder = (ImageView)view.findViewById(R.id.right_border);
 
       mTranslationView = (TranslationView)view
               .findViewById(R.id.translation_text);
@@ -116,10 +97,45 @@ public class TranslationFragment extends SherlockFragment
          }
       });
 
-      String database = prefs.getString(
+      mMainView = view;
+      updateView();
+      mJustCreated = true;
+
+      String database = mPrefs.getString(
               Constants.PREF_ACTIVE_TRANSLATION, null);
       refresh(database);
       return view;
+   }
+
+   private void updateView(){
+     mMainView.setBackgroundDrawable((mPageNumber % 2 == 0?
+         mLeftGradient : mRightGradient));
+
+     if (!mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
+       mMainView.setBackgroundColor(mResources.getColor(R.color.page_background));
+     }
+     if (mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
+       mMainView.setBackgroundColor(Color.BLACK);
+     }
+
+     int lineImageId = R.drawable.dark_line;
+     int leftBorderImageId = R.drawable.border_left;
+     int rightBorderImageId = R.drawable.border_right;
+     if (mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
+       leftBorderImageId = R.drawable.night_left_border;
+       rightBorderImageId = R.drawable.night_right_border;
+       lineImageId = R.drawable.light_line;
+     }
+
+     if (mPageNumber % 2 == 0){
+       mRightBorder.setVisibility(View.GONE);
+       mLeftBorder.setBackgroundResource(leftBorderImageId);
+     }
+     else {
+       mRightBorder.setVisibility(View.VISIBLE);
+       mRightBorder.setBackgroundResource(rightBorderImageId);
+       mLeftBorder.setBackgroundResource(lineImageId);
+     }
    }
 
    @Override
@@ -141,16 +157,11 @@ public class TranslationFragment extends SherlockFragment
    @Override
    public void onResume() {
       super.onResume();
-      if (mIsPaused){
-         mTranslationView.refresh();
+      if (!mJustCreated){
+        updateView();
+        mTranslationView.refresh();
       }
-      mIsPaused = false;
-   }
-
-   @Override
-   public void onPause() {
-      mIsPaused = true;
-      super.onPause();
+      mJustCreated = false;
    }
 
    public void refresh(String database){

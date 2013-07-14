@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.app.Service;
-import android.text.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.text.ClipboardManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -85,11 +86,15 @@ public class TranslationView extends ScrollView {
       Resources resources = getResources();
       mDividerColor = resources.getColor(R.color.translation_hdr_color);
       mLeftRightMargin = resources.getDimensionPixelSize(
-              R.dimen.translation_left_right_margin);
+          R.dimen.translation_left_right_margin);
       mTopBottomMargin = resources.getDimensionPixelSize(
-              R.dimen.translation_top_bottom_margin);
+          R.dimen.translation_top_bottom_margin);
       mHeaderColor = resources.getColor(R.color.translation_sura_header);
       mHeaderStyle = R.style.translation_sura_title;
+      initResources();
+   }
+
+   private void initResources(){
       mFontSize = QuranSettings.getTranslationTextSize(mContext);
 
       mIsArabic = QuranSettings.isArabicNames(mContext);
@@ -98,8 +103,8 @@ public class TranslationView extends ScrollView {
 
       mIsNightMode = QuranSettings.isNightMode(mContext);
       if (mIsNightMode) {
-         int textBrightness = QuranSettings.getNightModeTextBrightness(mContext);
-         mNightModeTextColor = Color.rgb(textBrightness, textBrightness, textBrightness);
+         int brightness = QuranSettings.getNightModeTextBrightness(mContext);
+         mNightModeTextColor = Color.rgb(brightness, brightness, brightness);
       }
       mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
               R.style.TranslationText;
@@ -109,12 +114,8 @@ public class TranslationView extends ScrollView {
    }
 
    public void refresh(){
-      int size = QuranSettings.getTranslationTextSize(mContext);
-
-      if (size != mFontSize){
-         mFontSize = size;
-         setAyahs(mAyat);
-      }
+      initResources();
+      setAyahs(mAyat);
    }
 
    public void setAyahs(List<QuranAyah> ayat){
