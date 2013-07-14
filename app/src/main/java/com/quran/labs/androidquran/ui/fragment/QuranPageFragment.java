@@ -94,14 +94,16 @@ public class QuranPageFragment extends SherlockFragment
       }
 
       boolean nightMode = false;
-      int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+      int nightModeTextBrightness =
+          Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
       if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
          leftBorderImageId = R.drawable.night_left_border;
          rightBorderImageId = R.drawable.night_right_border;
          lineImageId = R.drawable.light_line;
          view.setBackgroundColor(Color.BLACK);
          nightMode = true;
-         nightModeTextBrightness = QuranSettings.getNightModeTextBrightness(getActivity());
+         nightModeTextBrightness =
+             QuranSettings.getNightModeTextBrightness(getActivity());
       }
 
       ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
