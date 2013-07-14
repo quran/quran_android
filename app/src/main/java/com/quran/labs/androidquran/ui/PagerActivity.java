@@ -367,8 +367,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
    @Override
    public void onResume(){
       if (!mJustCreated){
-        mIsActionBarHidden = false;
-        toggleActionBarVisibility(false);
+        mIsActionBarHidden = !mIsActionBarHidden;
+        toggleActionBar();
       }
       mJustCreated = false;
 
