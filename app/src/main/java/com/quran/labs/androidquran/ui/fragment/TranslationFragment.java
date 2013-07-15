@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -108,6 +109,11 @@ public class TranslationFragment extends SherlockFragment
    }
 
    private void updateView(){
+     if (getActivity() == null || mResources == null ||
+         mMainView == null || !isAdded()){
+       return;
+     }
+
      mMainView.setBackgroundDrawable((mPageNumber % 2 == 0?
          mLeftGradient : mRightGradient));
 

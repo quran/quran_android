@@ -51,6 +51,14 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
    private TranslationView mLeftTranslation, mRightTranslation = null;
    private HighlightingImageView mLeftImageView, mRightImageView = null;
 
+   private View mMainView;
+   private ImageView mLeftBorder, mRightBorder, mLine;
+   private View mLeftArea, mRightArea;
+
+   private boolean mJustCreated;
+   private Resources mResources;
+   private SharedPreferences mPrefs;
+
    public static TabletFragment newInstance(int firstPage, int mode){
       final TabletFragment f = new TabletFragment();
       final Bundle args = new Bundle();
@@ -77,49 +85,16 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
                             ViewGroup container, Bundle savedInstanceState){
       final View view = inflater.inflate(R.layout.tablet_layout,
               container, false);
-      int leftBorderImageId = R.drawable.border_left;
-      int rightBorderImageId = R.drawable.border_right;
-      int lineImageId = R.drawable.dark_line;
 
-      SharedPreferences prefs =
-              PreferenceManager.getDefaultSharedPreferences(getActivity());
+      mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+      mResources = getResources();
 
-      Resources res = getResources();
+      mLeftArea = view.findViewById(R.id.left_page_area);
+      mRightArea = view.findViewById(R.id.right_page_area);
 
-      View leftArea = view.findViewById(R.id.left_page_area);
-      View rightArea = view.findViewById(R.id.right_page_area);
-
-      if (!prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
-         int color = res.getColor(R.color.page_background);
-         leftArea.setBackgroundColor(color);
-         rightArea.setBackgroundColor(color);
-      }
-      else {
-         leftArea.setBackgroundDrawable(mLeftGradient);
-         rightArea.setBackgroundDrawable(mRightGradient);
-      }
-
-      boolean nightMode = false;
-      int nightModeTextBrightness =
-              Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
-      if (prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
-         leftBorderImageId = R.drawable.night_left_border;
-         rightBorderImageId = R.drawable.night_right_border;
-         lineImageId = R.drawable.light_line;
-         leftArea.setBackgroundColor(Color.BLACK);
-         rightArea.setBackgroundColor(Color.BLACK);
-         nightMode = true;
-         nightModeTextBrightness =
-                 QuranSettings.getNightModeTextBrightness(getActivity());
-      }
-
-      ImageView leftBorder = (ImageView)view.findViewById(R.id.left_border);
-      ImageView rightBorder = (ImageView)view.findViewById(R.id.right_border);
-      leftBorder.setBackgroundResource(leftBorderImageId);
-      rightBorder.setBackgroundResource(rightBorderImageId);
-
-      ImageView line = (ImageView)view.findViewById(R.id.line);
-      line.setImageResource(lineImageId);
+      mLeftBorder = (ImageView)view.findViewById(R.id.left_border);
+      mRightBorder = (ImageView)view.findViewById(R.id.right_border);
+      mLine = (ImageView)view.findViewById(R.id.line);
 
       mLeftImageView = (HighlightingImageView)view
               .findViewById(R.id.left_page_image);
@@ -137,13 +112,6 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
          mLeftImageView.setVisibility(View.VISIBLE);
          mRightImageView.setVisibility(View.VISIBLE);
-
-         mLeftImageView.setNightMode(nightMode);
-         mRightImageView.setNightMode(nightMode);
-         if (nightMode) {
-            mLeftImageView.setNightModeTextBrightness(nightModeTextBrightness);
-            mRightImageView.setNightModeTextBrightness(nightModeTextBrightness);
-         }
 
          final GestureDetector rightGestureDetector = new GestureDetector(
                  getActivity(), new PageGestureDetector(mPageNumber - 1));
@@ -192,9 +160,76 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
                  });
       }
 
+      mMainView = view;
+      updateView();
+      mJustCreated = true;
+
       mLastHighlightedPage = 0;
-      mOverlayText = prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
+      mOverlayText = mPrefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
       return view;
+   }
+
+   @Override
+   public void onResume() {
+     super.onResume();
+     if (!mJustCreated){
+       updateView();
+       if (mMode == Mode.TRANSLATION){
+         mRightTranslation.refresh();
+         mLeftTranslation.refresh();
+       }
+     }
+     mJustCreated = false;
+   }
+
+  private void updateView(){
+     int leftBorderImageId = R.drawable.border_left;
+     int rightBorderImageId = R.drawable.border_right;
+     int lineImageId = R.drawable.dark_line;
+
+     Context context = getActivity();
+     if (context == null || mResources == null ||
+         mMainView == null || !isAdded()){
+       return;
+     }
+
+     if (!mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
+       int color = mResources.getColor(R.color.page_background);
+       mLeftArea.setBackgroundColor(color);
+       mRightArea.setBackgroundColor(color);
+     }
+     else {
+       mLeftArea.setBackgroundDrawable(mLeftGradient);
+       mRightArea.setBackgroundDrawable(mRightGradient);
+     }
+
+     boolean nightMode = false;
+     int nightModeTextBrightness =
+         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+     if (mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false)){
+       leftBorderImageId = R.drawable.night_left_border;
+       rightBorderImageId = R.drawable.night_right_border;
+       lineImageId = R.drawable.light_line;
+       mLeftArea.setBackgroundColor(Color.BLACK);
+       mRightArea.setBackgroundColor(Color.BLACK);
+       nightMode = true;
+       nightModeTextBrightness =
+           QuranSettings.getNightModeTextBrightness(context);
+     }
+
+     mLeftBorder.setBackgroundResource(leftBorderImageId);
+     mRightBorder.setBackgroundResource(rightBorderImageId);
+     mLine.setImageResource(lineImageId);
+
+
+     if (mMode == Mode.ARABIC){
+       mLeftImageView.setNightMode(nightMode);
+       mRightImageView.setNightMode(nightMode);
+       if (nightMode) {
+         mLeftImageView.setNightModeTextBrightness(nightModeTextBrightness);
+         mRightImageView.setNightModeTextBrightness(nightModeTextBrightness);
+       }
+     }
    }
 
    @Override
