@@ -21,6 +21,15 @@ graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
 Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_rrr), based on Arabic Reshaper project by [Ahmed Essam](http://twitter.com/Neo_4583).
 
+Code Style
+------------------------
+- tab size: 2
+- indent : 2
+- continuous indent: 4
+
+you can set these under code style and code style java in android studio or 
+intellij.
+
 App localization
 ------------------------
 

@@ -1,9 +1,12 @@
 package com.quran.labs.androidquran.data;
 
-import java.util.List;
-
 import android.app.SearchManager;
-import android.content.*;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
@@ -17,7 +20,11 @@ import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import java.util.List;
+
 public class QuranDataProvider extends ContentProvider {
+  private static final String TAG =
+      "com.quran.labs.androidquran.data.QuranDataProvider";
 
 	public static String AUTHORITY =
 		"com.quran.labs.androidquran.data.QuranDataProvider";
@@ -166,13 +173,13 @@ public class QuranDataProvider extends ContentProvider {
 	}
 
 	private Cursor search(String query, String language, boolean wantSnippets) {
-		Log.d("qdp", "q: " + query + ", l: " + language);
+		Log.d(TAG, "q: " + query + ", l: " + language);
 		if (language == null) return null;
 
 		if (mDatabase == null){
 			mDatabase = new DatabaseHandler(getContext(), language);
       }
-      else if (language != null && !language.equals(mCurrentLanguage)){
+      else if (!language.equals(mCurrentLanguage)){
          mDatabase.closeDatabase();
          mDatabase = new DatabaseHandler(getContext(), language);
          mCurrentLanguage = language;
@@ -190,12 +197,12 @@ public class QuranDataProvider extends ContentProvider {
 
 		List<String> parts = uri.getPathSegments();
 		for (String s : parts)
-			Log.d("qdp", "uri part: " + s);
+			Log.d(TAG, "uri part: " + s);
 
 		if (mDatabase == null){
 			mDatabase = new DatabaseHandler(getContext(), lang);
       }
-      else if (lang != null && !lang.equals(mCurrentLanguage)){
+      else if (!lang.equals(mCurrentLanguage)){
          mDatabase.closeDatabase();
          mDatabase = new DatabaseHandler(getContext(), lang);
          mCurrentLanguage = lang;
