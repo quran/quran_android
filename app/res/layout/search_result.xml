@@ -7,10 +7,9 @@
    	<TextView android:id="@+id/verseText"
     	android:layout_width="wrap_content"
     	android:layout_height="wrap_content"
-    	android:textSize="14sp"
-    	android:textColor="#fff"/>
+    	android:textAppearance="@style/SearchResult"/>
     <TextView android:id="@+id/verseLocation"
               android:layout_width="match_parent"
     	      android:layout_height="wrap_content"
-    	      android:textSize="12sp"/>
+    	      android:textAppearance="@style/SearchResult.Location" />
 </LinearLayout>

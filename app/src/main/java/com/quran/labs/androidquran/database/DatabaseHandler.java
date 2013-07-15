@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.io.File;
@@ -20,23 +21,29 @@ public class DatabaseHandler {
   public static String COL_TEXT = "text";
   public static String VERSE_TABLE = "verses";
   public static String ARABIC_TEXT_TABLE = "arabic_text";
-  public static String AR_SEARCH_TABLE = "search";
-  public static String TRANSLITERATION_TABLE = "transliteration";
 
   public static String PROPERTIES_TABLE = "properties";
   public static String COL_PROPERTY = "property";
   public static String COL_VALUE = "value";
 
-  private int schemaVersion = 1;
+  private int mSchemaVersion = 1;
+  private String mMatchString;
 
-  public DatabaseHandler(Context context, String databaseName) throws SQLException {
+  private static final String MATCH_END = "</font>";
+  private static final String ELLIPSES = "<b>...</b>";
+
+  public DatabaseHandler(Context context, String databaseName)
+      throws SQLException {
     String base = QuranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
     String path = base + File.separator + databaseName;
     mDatabase = SQLiteDatabase.openDatabase(path, null,
         SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-    schemaVersion = getSchemaVersion();
+    mSchemaVersion = getSchemaVersion();
     mDatabasePath = path;
+    mMatchString = "<font color=\"" +
+        context.getResources().getColor(R.color.translation_highlight) +
+        "\">";
   }
 
   public boolean validDatabase() {
@@ -174,7 +181,7 @@ public class DatabaseHandler {
     String operator = " like ";
     String whatTextToSelect = COL_TEXT;
 
-    boolean useFullTextIndex = (schemaVersion > 1);
+    boolean useFullTextIndex = (mSchemaVersion > 1);
     if (useFullTextIndex) {
       operator = " MATCH ";
       query = query + "*";
@@ -183,7 +190,9 @@ public class DatabaseHandler {
     }
 
     if (useFullTextIndex && withSnippets) {
-      whatTextToSelect = "snippet(" + table + ")";
+      whatTextToSelect = "snippet(" + table + ", '" +
+          mMatchString + "', '" + MATCH_END +
+          "', '" + ELLIPSES + "', -1, 64)";
     }
 
     return mDatabase.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
