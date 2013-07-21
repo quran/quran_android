@@ -43,6 +43,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
   private List<StorageUtils.Storage> mStorageList;
   private LoadStorageOptionsTask mLoadStorageOptionsTask;
   private int mAppSize;
+  private boolean mIsPaused;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -190,7 +191,14 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
   }
 
   @Override
+  protected void onResume() {
+    super.onResume();
+    mIsPaused = false;
+  }
+
+  @Override
   protected void onPause() {
+    mIsPaused = true;
     if (mIsArabic != mInitiallyIsArabic) {
       Intent i = new Intent(this,
           com.quran.labs.androidquran.ui.QuranActivity.class);
@@ -232,20 +240,22 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
     @Override
     protected void onPostExecute(Boolean result) {
-      dialog.dismiss();
-      if (result) {
-        QuranSettings.setAppCustomLocation(
-            QuranPreferenceActivity.this, newLocation);
-        if (mListStorageOptions != null){
-          mListStorageOptions.setValue(newLocation);
+      if (!mIsPaused){
+        dialog.dismiss();
+        if (result) {
+          QuranSettings.setAppCustomLocation(
+              QuranPreferenceActivity.this, newLocation);
+          if (mListStorageOptions != null){
+            mListStorageOptions.setValue(newLocation);
+          }
+        } else {
+          Toast.makeText(QuranPreferenceActivity.this,
+              getString(R.string.prefs_err_moving_app_files),
+              Toast.LENGTH_LONG).show();
         }
-      } else {
-        Toast.makeText(QuranPreferenceActivity.this,
-            getString(R.string.prefs_err_moving_app_files),
-            Toast.LENGTH_LONG).show();
+        dialog = null;
+        mMoveFilesTask = null;
       }
-      dialog = null;
-      mMoveFilesTask = null;
     }
   }
 
@@ -269,10 +279,12 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-      loadStorageOptions();
-      mLoadStorageOptionsTask = null;
-      dialog.dismiss();
-      dialog = null;
+      if (!mIsPaused){
+        loadStorageOptions();
+        mLoadStorageOptionsTask = null;
+        dialog.dismiss();
+        dialog = null;
+      }
     }
   }
 
@@ -298,6 +310,10 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
     @Override
     protected void onPostExecute(String logs) {
+      if (mIsPaused){
+        return;
+      }
+
       Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
       emailIntent.setType("plain/text");
 
