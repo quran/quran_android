@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,25 +15,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.quran.labs.androidquran.AboutUsActivity;
-import com.quran.labs.androidquran.HelpActivity;
-import com.quran.labs.androidquran.QuranPreferenceActivity;
-import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.*;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.*;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
-import com.quran.labs.androidquran.util.QuranSettings;
-
-import java.util.Locale;
 
 public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener, BookmarkHandler,
@@ -68,15 +59,7 @@ public class QuranActivity extends SherlockFragmentActivity
 
    @Override
    public void onCreate(Bundle savedInstanceState){
-      if (QuranSettings.isArabicNames(this)){
-         Locale locale = new Locale("ar");
-         Locale.setDefault(locale);
-         Resources resources = getResources();
-         Configuration config = resources.getConfiguration();
-         config.locale = locale;
-         resources.updateConfiguration(config,
-                 resources.getDisplayMetrics());
-      }
+      ((QuranApplication)getApplication()).refreshLocale(false);
 
       setTheme(R.style.QuranAndroid);
       super.onCreate(savedInstanceState);

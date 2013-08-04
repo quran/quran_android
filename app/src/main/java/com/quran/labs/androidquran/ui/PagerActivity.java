@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +30,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.HelpActivity;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -55,7 +55,6 @@ import com.quran.labs.androidquran.widgets.AudioStatusBar;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Locale;
 
 public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.AudioBarListener,
@@ -124,15 +123,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
    @Override
    public void onCreate(Bundle savedInstanceState){
-      if (QuranSettings.isArabicNames(this)){
-         Locale locale = new Locale("ar");
-         Locale.setDefault(locale);
-         Resources resources = getResources();
-         Configuration config = resources.getConfiguration();
-         config.locale = locale;
-         resources.updateConfiguration(config,
-                 resources.getDisplayMetrics());
-      }
+      ((QuranApplication)getApplication()).refreshLocale(false);
 
       setTheme(R.style.QuranAndroid);
       getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
