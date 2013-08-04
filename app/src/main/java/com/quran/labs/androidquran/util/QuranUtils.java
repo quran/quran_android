@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.util;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -81,4 +82,36 @@ public class QuranUtils {
       }
       return false;
    }
+
+  public static String getDebugInfo(Context context){
+    StringBuilder builder = new StringBuilder();
+    QuranScreenInfo info = QuranScreenInfo.getInstance();
+    if (info != null){
+      builder.append("\nDisplay: ").append(info.getWidthParam());
+      if (info.isTablet(context)){
+        builder.append(", tablet width: ").append(info.getWidthParam());
+      }
+      builder.append("\n");
+      builder.append("max bitmap height: ")
+          .append(info.getBitmapMaxHeight()).append("\n");
+
+      if (QuranFileUtils.haveAllImages(
+          context, info.getWidthParam())){
+        builder.append("all images found for ").
+            append(info.getWidthParam()).append("\n");
+      }
+
+      if (info.isTablet(context) &&
+          QuranFileUtils.haveAllImages(context,
+              info.getTabletWidthParam())){
+        builder.append("all tablet images found for ")
+            .append(info.getTabletWidthParam()).append("\n");
+      }
+    }
+
+    int memClass = ((ActivityManager)context
+        .getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+    builder.append("memory class: ").append(memClass).append("\n\n");
+    return builder.toString();
+  }
 }

@@ -1,13 +1,11 @@
 package com.quran.labs.androidquran.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
@@ -30,20 +28,21 @@ public class QuranScreenInfo {
 		return sInstance;
 	}
 
-   public static QuranScreenInfo getOrMakeInstance(Activity activity){
+   public static QuranScreenInfo getOrMakeInstance(Context context){
       if (sInstance == null){
-         sInstance = initialize(activity);
+         sInstance = initialize(context);
       }
       return sInstance;
    }
 
-   private static QuranScreenInfo initialize(Activity activity){
-      WindowManager w = activity.getWindowManager();
+   private static QuranScreenInfo initialize(Context context){
+      WindowManager w = (WindowManager)context
+          .getSystemService(Context.WINDOW_SERVICE);
       Display d = w.getDefaultDisplay();
       QuranScreenInfo qsi = new QuranScreenInfo(d.getWidth(), d.getHeight());
       if ("1920".equals(qsi.getWidthParamNoUnderScore())){
         SharedPreferences prefs = PreferenceManager
-            .getDefaultSharedPreferences(activity.getApplicationContext());
+            .getDefaultSharedPreferences(context.getApplicationContext());
         int height = prefs.getInt(Constants.PREF_MAX_BITMAP_HEIGHT, -1);
         if (height > -1){
           qsi.setBitmapMaxHeight(height);

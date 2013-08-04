@@ -6,17 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.Constants;
@@ -24,13 +19,9 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.util.ApiKeys;
-import com.quran.labs.androidquran.util.QuranCrashListener;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.widgets.QuranMaxImageView;
-
-import net.hockeyapp.android.CrashManager;
 
 import java.io.File;
 import java.util.Date;
@@ -114,7 +105,7 @@ public class QuranDataActivity extends SherlockActivity implements
             }
          }
 
-         // update night mode preference and mark that we upgraded to 2.4.2
+         // update night mode preference and mark that we upgraded to 2.4.2ts
          mSharedPreferences.edit()
                  .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
                          Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS)
@@ -126,10 +117,6 @@ public class QuranDataActivity extends SherlockActivity implements
    @Override
    protected void onResume(){
       super.onResume();
-      if (Constants.CRASH_REPORTING_ENABLED){
-         CrashManager.register(this, ApiKeys.HOCKEY_APP_KEY,
-             QuranCrashListener.getInstance());
-      }
 
       mIsPaused = false;
       mDownloadReceiver = new DefaultDownloadReceiver(this,

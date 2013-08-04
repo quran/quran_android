@@ -1,15 +1,12 @@
 package com.quran.labs.androidquran;
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -17,26 +14,20 @@ import android.preference.PreferenceCategory;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.StorageUtils;
+import com.quran.labs.androidquran.util.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
-public class QuranPreferenceActivity extends SherlockPreferenceActivity {
+public class QuranPreferenceActivity extends SherlockPreferenceActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
   private static final String TAG =
       "com.quran.labs.androidquran.QuranPreferenceActivity";
 
-  private boolean mInitiallyIsArabic = false;
-  private boolean mIsArabic = false;
   private ListPreference mListStorageOptions;
   private MoveFilesAsyncTask mMoveFilesTask;
   private ReadLogsTask mReadLogsTask;
@@ -47,35 +38,13 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    ((QuranApplication)getApplication()).refreshLocale(false);
+
     setTheme(R.style.Theme_Sherlock);
     super.onCreate(savedInstanceState);
 
     // add preferences
     addPreferencesFromResource(R.xml.quran_preferences);
-
-    // special handling for the arabic checkbox
-    CheckBoxPreference arabicPreference = (CheckBoxPreference)
-        findPreference(Constants.PREF_USE_ARABIC_NAMES);
-    mInitiallyIsArabic = arabicPreference.isChecked();
-    mIsArabic = mInitiallyIsArabic;
-    arabicPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-      @Override
-      public boolean onPreferenceChange(Preference preference,
-                                        Object newValue) {
-        boolean isArabic = (Boolean) newValue;
-        mIsArabic = isArabic;
-
-        Locale lang = (isArabic ? new Locale("ar") :
-            getResources().getConfiguration().locale);
-        Locale.setDefault(lang);
-        Configuration config = new Configuration();
-        config.locale = lang;
-        getResources().updateConfiguration(config,
-            getResources().getDisplayMetrics());
-
-        return true;
-      }
-    });
 
     // remove the tablet mode preference if it doesn't exist
     if (!QuranScreenInfo.getOrMakeInstance(this).isTablet(this)) {
@@ -194,17 +163,15 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
   protected void onResume() {
     super.onResume();
     mIsPaused = false;
+    getPreferenceScreen().getSharedPreferences()
+            .registerOnSharedPreferenceChangeListener(this);
   }
 
   @Override
   protected void onPause() {
     mIsPaused = true;
-    if (mIsArabic != mInitiallyIsArabic) {
-      Intent i = new Intent(this,
-          com.quran.labs.androidquran.ui.QuranActivity.class);
-      i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      startActivity(i);
-    }
+    getPreferenceScreen().getSharedPreferences()
+            .unregisterOnSharedPreferenceChangeListener(this);
     super.onPause();
   }
 
@@ -213,6 +180,17 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
     // disable back press while task in progress
     if (mMoveFilesTask == null)
       super.onBackPressed();
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+                                        String key) {
+    if (key.equals(Constants.PREF_USE_ARABIC_NAMES)) {
+      ((QuranApplication) getApplication()).refreshLocale(true);
+      Intent intent = getIntent();
+      finish();
+      startActivity(intent);
+    }
   }
 
   private class MoveFilesAsyncTask extends AsyncTask<Void, Void, Boolean> {
@@ -317,46 +295,22 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity {
       Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
       emailIntent.setType("plain/text");
 
-      QuranScreenInfo qsi;
       String body = "\n\n";
       try {
         PackageInfo pInfo = getPackageManager()
             .getPackageInfo(getPackageName(), 0);
         body = pInfo.packageName + " Version: " + pInfo.versionName;
       } catch (Exception e) {
+        // no handling for now
       }
 
-      try {
-        body += "\nPhone: " + android.os.Build.MANUFACTURER +
-            " " + android.os.Build.MODEL;
-        body += "\nAndroid Version: " + android.os.Build.VERSION.CODENAME + " "
-            + android.os.Build.VERSION.RELEASE;
+      body += "\nPhone: " + android.os.Build.MANUFACTURER +
+          " " + android.os.Build.MODEL;
+      body += "\nAndroid Version: " + android.os.Build.VERSION.CODENAME + " "
+          + android.os.Build.VERSION.RELEASE;
 
-        qsi = QuranScreenInfo.getOrMakeInstance(QuranPreferenceActivity.this);
-        body += "\nDisplay: " + qsi.getWidthParam();
-        if (qsi.isTablet(QuranPreferenceActivity.this)){
-          body += ", tablet width: " + qsi.getWidthParam();
-        }
-        body += "\n";
-        body += "max bitmap height: " + qsi.getBitmapMaxHeight() + "\n";
+      body += QuranUtils.getDebugInfo(QuranPreferenceActivity.this);
 
-        if (QuranFileUtils.haveAllImages(
-            QuranPreferenceActivity.this, qsi.getWidthParam())){
-          body += "all images found for " + qsi.getWidthParam() + "\n";
-        }
-
-        if (qsi.isTablet(QuranPreferenceActivity.this) &&
-            QuranFileUtils.haveAllImages(QuranPreferenceActivity.this,
-                qsi.getTabletWidthParam())){
-          body += "all tablet images found for " +
-              qsi.getTabletWidthParam() + "\n";
-        }
-      } catch (Exception e) {
-      }
-
-      int memClass = ((ActivityManager)QuranPreferenceActivity.this
-          .getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
-      body += "memory class: " + memClass + "\n\n";
 
       body += "\n\n";
       body += "\nLogs: " + logs;
