@@ -11,3 +11,5 @@ gen-external-apklibs
 .idea
 classes
 ApiKeys.java
+.gradle
+*/build
