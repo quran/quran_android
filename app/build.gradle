@@ -1,0 +1,38 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.5.+'
+    }
+}
+apply plugin: 'android'
+
+repositories {
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 18
+    buildToolsVersion "17.0.0"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 17
+    }
+
+    sourceSets {
+       main {
+         java.srcDir 'src/main/java'
+         manifest.srcFile 'AndroidManifest.xml'
+         res.srcDirs = ['res']
+         assets.srcDirs = ['assets']
+       }
+    }
+}
+
+dependencies {
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.android.support:support-v4:18.0.0'
+    compile 'net.hockeyapp.android:HockeySDK:2.2.1'
+}
