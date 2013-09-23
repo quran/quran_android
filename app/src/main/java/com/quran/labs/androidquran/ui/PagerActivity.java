@@ -249,6 +249,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
             if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)) {
                mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
                        PagerActivity.this, page, mLastPopupTime);
+               if (mDualPages){
+                  mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+                      PagerActivity.this, page-1, mLastPopupTime);
+               }
             }
 
             if (!mShowingTranslation){
