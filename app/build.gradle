@@ -21,13 +21,11 @@ android {
         targetSdkVersion 17
     }
 
-    sourceSets {
-       main {
-         java.srcDir 'src/main/java'
-         manifest.srcFile 'AndroidManifest.xml'
-         res.srcDirs = ['res']
-         assets.srcDirs = ['assets']
-       }
+    buildTypes {
+      release {
+         runProguard true
+         proguardFile 'proguard.cfg'
+      }
     }
 }
 
