@@ -5,10 +5,9 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
+
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.ApiKeys;
-import com.quran.labs.androidquran.util.QuranCrashListener;
-import net.hockeyapp.android.CrashManager;
 
 import java.util.Locale;
 
@@ -21,8 +20,7 @@ public class QuranApplication extends Application {
   public void onCreate() {
     super.onCreate();
     if (Constants.CRASH_REPORTING_ENABLED) {
-      CrashManager.register(this, ApiKeys.HOCKEY_APP_KEY,
-          QuranCrashListener.getInstance(this));
+      Crashlytics.start(this);
     }
     refreshLocale(false);
   }

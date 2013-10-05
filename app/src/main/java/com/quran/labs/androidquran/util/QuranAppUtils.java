@@ -16,7 +16,8 @@ import java.util.Map;
 public class QuranAppUtils {
    private static final String TAG = "QuranAppUtils";
 
-   public static String getQuranAppUrl(int sura, Integer startAyah,
+   public static String getQuranAppUrl(String key, int sura,
+                                       Integer startAyah,
                                        Integer endAyah){
       String url = null;
       String fallbackUrl = null;
@@ -33,7 +34,7 @@ public class QuranAppUtils {
             }
             else { params.put("end_ayah", startAyah.toString()); }
          }
-         params.put("key", ApiKeys.QURAN_APP_KEY);
+         params.put("key", key);
          String result = getQuranAppUrl(params);
          if (!TextUtils.isEmpty(result)){
             JSONObject json = new JSONObject(result);
