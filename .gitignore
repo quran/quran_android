@@ -13,3 +13,4 @@ classes
 ApiKeys.java
 .gradle
 */build
+app/src/release

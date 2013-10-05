@@ -124,13 +124,13 @@ public class AyahMenuUtils {
          @Override
          public void onClick(DialogInterface dialog, int selection) {
             if (selection == 0) {
-               if (activity != null && activity instanceof PagerActivity){
+               if (activity instanceof PagerActivity){
                   PagerActivity pagerActivity = (PagerActivity) activity;
                   pagerActivity.toggleBookmark(sura, ayah, page);
                }
             }
             else if (selection == 1) {
-               if (activity != null && activity instanceof PagerActivity){
+               if (activity instanceof PagerActivity){
                   PagerActivity pagerActivity = (PagerActivity) activity;
                   FragmentManager fm =
                           pagerActivity.getSupportFragmentManager();
@@ -174,11 +174,13 @@ public class AyahMenuUtils {
    }
 
    class ShareQuranApp extends AsyncTask<Integer, Void, String> {
+     private String mKey;
 
       @Override
       protected void onPreExecute() {
          Activity activity = getActivity();
          if (activity != null){
+            mKey = activity.getString(R.string.quranapp_key);
             mProgressDialog = new ProgressDialog(activity);
             mProgressDialog.setIndeterminate(true);
             mProgressDialog.setMessage(
@@ -200,8 +202,7 @@ public class AyahMenuUtils {
                   endAyah = params[2];
                }
             }
-            url = QuranAppUtils.getQuranAppUrl(sura,
-                    startAyah, endAyah);
+            url = QuranAppUtils.getQuranAppUrl(mKey, sura, startAyah, endAyah);
          }
          return url;
       }

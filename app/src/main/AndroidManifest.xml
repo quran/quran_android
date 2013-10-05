@@ -79,7 +79,8 @@
             </intent-filter>
        </service>
 
-       <activity android:name="net.hockeyapp.android.UpdateActivity" />
+      <meta-data android:name="com.crashlytics.ApiKey"
+                 android:value="@string/crashlytics_key"/>
 
    </application>
 </manifest> 
