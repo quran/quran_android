@@ -80,7 +80,6 @@ description and your application itself in an about section.
 Open Source Projects Used
 -------------------------
 * [ActionBarSherlock](http://abs.io)
-* [maven-android-plugin](http://code.google.com/p/maven-android-plugin/)
 * [HockeySDK](https://github.com/bitstadium/HockeySDK-Android)
 
 Changelog
@@ -92,6 +91,7 @@ Changelog
 - improve highlighting of search results
 - fix issues with app being in a confused language state
 - Russian translation updates
+- switch build to gradle
 
 **version 2.4.5** (released 7/9/2013)
 - fix a bug which caused s4/htc one/etc to load smaller images
