@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class JumpFragment extends SherlockDialogFragment {
    public static final String TAG = "JumpFragment";
@@ -34,14 +35,19 @@ public class JumpFragment extends SherlockDialogFragment {
       View layout = inflater.inflate(R.layout.jump_dialog, null);
 
       AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-      builder.setTitle(getString(R.string.menu_jump));
+      builder.setTitle(activity.getString(R.string.menu_jump));
 
       // Sura Spinner
       final Spinner suraSpinner = (Spinner)layout.findViewById(
               R.id.sura_spinner);
-      ArrayAdapter<CharSequence> adapter = ArrayAdapter
-              .createFromResource(activity, R.array.sura_names,
-                      android.R.layout.simple_spinner_item);
+      String[] suras = activity.getResources().
+          getStringArray(R.array.sura_names);
+      for (int i=0; i<suras.length; i++){
+        suras[i] = QuranUtils.getLocalizedNumber(activity, (i+1)) +
+            ". " + suras[i];
+      }
+      ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(
+          activity, android.R.layout.simple_spinner_item, suras);
       adapter.setDropDownViewResource(
               android.R.layout.simple_spinner_dropdown_item);
       suraSpinner.setAdapter(adapter);
@@ -83,12 +89,11 @@ public class JumpFragment extends SherlockDialogFragment {
                     }
 
                     int page = QuranInfo.getPageFromSuraAyah(sura, 1);
-                    input.setText(String.valueOf(page));
+                    input.setHint(String.valueOf(page));
                  }
 
                  @Override
                  public void onNothingSelected(AdapterView<?> arg0) {
-
                  }
               });
 
@@ -100,7 +105,7 @@ public class JumpFragment extends SherlockDialogFragment {
                     int ayah = position + 1;
                     int sura = suraSpinner.getSelectedItemPosition() + 1;
                     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
-                    input.setText(String.valueOf(page));
+                    input.setHint(String.valueOf(page));
                  }
 
                  @Override
