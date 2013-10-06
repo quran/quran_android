@@ -2,21 +2,18 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url 'http://download.crashlytics.com/maven' }
-
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.5.+'
         classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
-
     }
 }
 apply plugin: 'android'
-apply plugin: 'crashlytics'
+//apply plugin: 'crashlytics'
 
 repositories {
     mavenCentral()
     maven { url 'http://download.crashlytics.com/maven' }
-
 }
 
 android {
@@ -40,5 +37,4 @@ dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.android.support:support-v4:18.0.0'
     compile 'com.crashlytics.android:crashlytics:1.+'
-
 }
