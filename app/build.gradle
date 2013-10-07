@@ -25,10 +25,20 @@ android {
         targetSdkVersion 17
     }
 
+    signingConfigs {
+        release {
+            storeFile file("release.keystore")
+            storePassword "password"
+            keyAlias "alias"
+            keyPassword "password"
+        }
+    }
+
     buildTypes {
       release {
          runProguard true
          proguardFile 'proguard.cfg'
+         signingConfig signingConfigs.release
       }
     }
 }

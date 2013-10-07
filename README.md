@@ -85,7 +85,7 @@ Open Source Projects Used
 
 Changelog
 ---------
-**Development**
+**version 2.4.6** (released 10/6/2013)
 - hide actionbar on resume if it was hidden
 - change 14:50 to 14:49 in juz' list
 - settings take effect right away for pages and translations
