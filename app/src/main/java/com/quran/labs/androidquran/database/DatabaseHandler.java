@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -37,6 +38,7 @@ public class DatabaseHandler {
     String base = QuranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
     String path = base + File.separator + databaseName;
+    Crashlytics.log("opening database file: " + path);
     mDatabase = SQLiteDatabase.openDatabase(path, null,
         SQLiteDatabase.NO_LOCALIZED_COLLATORS);
     mSchemaVersion = getSchemaVersion();

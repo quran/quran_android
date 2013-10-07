@@ -42,6 +42,7 @@ App localization
 * German by [Armin Supuk](http://github.com/ArminSupuk).
 * Chinese by Bo Li
 * Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran)
+* Indonesian by [Saiful Khaliq](http://twitter.com/saifious)
 
 
 Terms of use
@@ -91,6 +92,11 @@ Changelog
 - improve highlighting of search results
 - fix issues with app being in a confused language state
 - Russian translation updates
+- added Turkish and Indonesian translations
+- added sheikh Nasser al Qatami
+- fix an issue where search results weren't highlighting in some cases
+- fix an issue where next sura wasn't playing in some cases
+- improve the jump to dialog
 - switch build to gradle
 
 **version 2.4.5** (released 7/9/2013)

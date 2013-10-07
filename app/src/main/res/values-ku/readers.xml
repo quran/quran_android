@@ -3,6 +3,8 @@
      <string-array name="quran_readers_name">
         <item>مەنشاوی (مورەتەل)</item>
         <item>حوساری (مورەتەل)</item>
+        <item>Abdurrahman As-Sudais (gapless)</item>
+        <item>Nasser Al Qatami (gapless)</item>
         <item>عەبدولباست</item>
         <item>عەبدولباست موجەوەد</item>
         <item>عەبدوڵا بەسفەر</item>
@@ -22,5 +24,4 @@
         <item>سعود شورەیم</item>
         <item>ياسر الدوسري</item>
      </string-array>
-   
 </resources>

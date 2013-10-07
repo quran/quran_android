@@ -37,10 +37,6 @@
     <string name="cancel">Отмена</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Авторское право принадлежит мусульманской умме</string>
-    <string name="email_subject">Обратная связь</string>
-    <string name="email_logs_subject">Log File</string>
-    <string name="email_to">quran.android@gmail.com</string>
-    <string name="send_email">Отправить email..</string>
     <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное Коран-приложение для Android
     		с открытым исходным кодом. Используемые изображения были заимствованы из проекта 
             &lt;a href="http://quran.com">quran.com&lt;/a>,
@@ -245,8 +241,8 @@
     <string name="need_translation">У Вас еще нет ни одного скачанного перевода/тафсира.</string>
     <string name="get_translations">Скачать перевод</string>
 
-    <!-- about us -->
-    <string name="email_quran_android">Email Quran Android</string>
+    <!-- help -->
+    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
 
     <!-- sura metainfo -->
     <string name="makki">Мекка</string>

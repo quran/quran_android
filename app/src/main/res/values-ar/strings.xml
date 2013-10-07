@@ -32,8 +32,6 @@
     <string name="cancel">الغاء</string>
     <string name="developedBy">لا تنسونا من صالح دعاءكم</string>
     <string name="copyRights">حقوق الطبع محفوظة لجميع المسلمين</string>
-    <string name="email_subject">ردود الفعل</string>
-    <string name="send_email">ارسل رسالة..</string>
 
     <string name="help_title">الاسئلة المتداولة</string>
     <string name="help">
@@ -181,10 +179,10 @@
     <string name="search_data">بيانات البحث</string>
     <string name="need_translation">لم يتم تحميل أي تفسير أو ترجمة</string>
     <string name="get_translations">حمّل التفسير أو الترجمة</string>
-    
-    <!-- about us -->
-    <string name="email_quran_android">راسلنا</string>
-    
+
+    <!-- help -->
+    <string name="email_us">اذا لم تجد اجابه سؤالكم بالاعلى فيمكنكم مراسلتنا على هذا البريد quranandroid@gmail.com للدعم. ونحيط بكم علما انه تصلنا كثير من الاسئله ، ولهذا قد لا نرد على جميع الرسائل.‎</string>
+
     <!-- sura metainfo -->
     <string name="makki">مكية</string>
     <string name="madani">مدنية</string>

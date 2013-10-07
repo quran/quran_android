@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -120,7 +121,12 @@ public class JumpFragment extends SherlockDialogFragment {
                  public void onClick(DialogInterface dialog, int which) {
                     try {
                        dialog.dismiss();
-                       int page = Integer.parseInt(input.getText().toString());
+                       String text = input.getText().toString();
+                       if (TextUtils.isEmpty(text)){
+                         text = input.getHint().toString();
+                       }
+                      
+                       int page = Integer.parseInt(text);
                        if (page >= Constants.PAGES_FIRST && page
                                <= Constants.PAGES_LAST) {
                           Activity activity = getActivity();

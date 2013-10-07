@@ -3,7 +3,6 @@ package com.quran.labs.androidquran;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,12 +13,14 @@ import android.preference.PreferenceCategory;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.*;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.StorageUtils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
 
   private ListPreference mListStorageOptions;
   private MoveFilesAsyncTask mMoveFilesTask;
-  private ReadLogsTask mReadLogsTask;
+  //private ReadLogsTask mReadLogsTask;
   private List<StorageUtils.Storage> mStorageList;
   private LoadStorageOptionsTask mLoadStorageOptionsTask;
   private int mAppSize;
@@ -266,6 +267,7 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
     }
   }
 
+  /*
   private class ReadLogsTask extends AsyncTask<Void, Void, String> {
 
     @Override
@@ -325,4 +327,5 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
           getString(R.string.send_email)));
     }
   }
+  */
 }

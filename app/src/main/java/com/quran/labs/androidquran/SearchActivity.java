@@ -282,6 +282,11 @@ public class SearchActivity extends SherlockFragmentActivity
           }
         }
 
+        if (total == 0){
+          sura--;
+          total = QuranInfo.getNumAyahs(sura);
+        }
+
         jumpToResult(sura, total);
         finish();
       }

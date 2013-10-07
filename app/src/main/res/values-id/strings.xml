@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Quran</string>
+    <string name="downloadPrompt_title">Download File yang Diperlukan?</string>
+    <string name="downloadPrompt">Untuk performa yang optimal, beberapa file perlu didownload. Jika anda memilih untuk tidak mendownload sekarang, setiap halaman yang dibuka nanti akan membutuhkan waktu lebih lama. Apakah anda ingin mendownload file yang dibutuhkan sekarang?</string>
+    <string name="downloadTabletPrompt">Kami baru saja memutakhirkan halaman untuk tablet. Apakah anda ingin mendownloadnya sekarang?</string>
+    <string name="downloadImportantPrompt">Ada sedikit update penting untuk mengoptimalkan Quran di perangkat anda. Apakah Anda ingin mendownloadnya sekarang?</string>
+	<string name="downloadPrompt_ok">Ya</string>
+    <string name="downloadPrompt_no">Tidak</string>
+    <string name="downloading_title">Sedang Mendownload&#8230;</string>
+    <string name="downloading_message">Silakan tunggu. Sedang mendownload file. (Resumable)</string>
+    <string name="extracting_title">Sedang Proses&#8230;</string>
+    <string name="menu_about">Tentang Kami</string>
+    <string name="menu_settings">Pengaturan</string>
+    <string name="menu_jump_last_page">Halaman terakhir</string>
+    <string name="menu_tags">Label</string>
+    <string name="menu_bookmarks">Bookmark</string>
+    <string name="menu_bookmarks_page">Bookmark Halaman</string>
+    <string name="menu_bookmarks_ayah">Bookmark Ayat</string>
+    <string name="menu_sort">Urutkan Berdasar</string>
+    <string name="menu_sort_date">Tanggal Ditambahkan</string>
+    <string name="menu_sort_location">Lokasi dalam Quran</string>
+    <string name="menu_sort_alphabetical">Abjad</string>
+    <string name="menu_translation">Tampilkan Terjemahan</string>
+    <string name="menu_back_to_page">Tampilkan Quran Mode Mushaf</string>
+    <string name="menu_help">Bantuan</string>
+    <string name="menu_search">Cari</string>
+    <string name="menu_get_translations">Dapatkan Terjemahan</string>
+    <string name="menu_jump">Loncat</string>
+    <string name="gotoPage">Ke halaman</string>
+    <string name="cancel">Batal</string>
+    <string name="developedBy">La tansawna men saleh el doaa.</string>
+    <string name="copyRights">Copyright All Muslims</string>
+    <string name="aboutUs">Quran Android adalah aplikasi untuk Android gratis, yang dibangun secara open source. Materi gambar yang digunakan bersumber dari &lt;a href="http://quran.com">quran.com&lt;/a>, audio tilawah dari &lt;a href="http://everyayah.com">everyayah.com&lt;/a>. Data teks Arab dan terjemahan dari &lt;a href="http://tanzil.net">tanzil.net&lt;/a> dan &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>&lt;br/>
+			&lt;br/>&lt;b>Kontributor Quran Android:&lt;/b>
+            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
+            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
+            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
+            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
+            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
+            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
+            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
+            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
+            &lt;br/>&lt;br/>&lt;b>Penerjemah Aplikasi:&lt;/b>
+			&lt;br/>Mehmed Mahmudoglu - Turkish
+         	&lt;br/>M. Jafar Nanakar - Farsi
+         	&lt;br/>Rinat (Ринат) - Russian
+         	&lt;br/>khajavi (on github) - previous Farsi translation
+			&lt;br/>Yasser Kadddour - Français
+        	&lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
+         	&lt;br/>Goran Gharib Karim - Kurdish
+         	&lt;br/>Abduqadir Abliz - Uyghur
+            &lt;br/>&lt;b>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesian / Bahasa Indonesia&lt;/b>
+            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
+            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
+            &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
+            &lt;br/>&lt;br/>&lt;b>Terima Kasih Khusus:&lt;/b>
+            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
+            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+    <string name="help_title">Pertanyaan yang Sering Diajukan (FAQ)</string>
+    <string name="help">
+&lt;b>Bagaimana cara memutar audio tilawah?&lt;/b>
+&lt;br/>Buka Quran pada halaman yang anda inginkan. Tap (tekan) satu kali pada layar. Di bagian bawah, Anda akan melihat tombol play dan beberapa teks dengan nama qari. Klik nama qari untuk mengganti pilihan qari. Klik tombol play untuk mendownload dan/atau memutar audio dari halaman yang ditampilkan.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara menampilkan terjemahan?&lt;/b>
+&lt;br/>Buka Quran pada halaman yang anda inginkan. Tap satu kali pada layar. Di bagian atas, tap pada ikon globe. Atau, jika anda tidak menemukannya, anda mungkin melihat ikon dengan tiga titik persegi. Tap ikon tersebut dan pilih terjemahan) .
+&lt;br/>Jika anda tidak memiliki set data terjemahan yang terdownload, akan tampil screen arahan untuk mendownload file terjemahan yang dibutuhkan. Pilih dan download terjemahan, kemudian kembali ke halaman dan tap ikon globe lagi untuk melihat terjemahan.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara membookmark halaman?&lt;/b>
+&lt;br/>Buka Quran pada halaman yang anda inginkan. Tap satu kali pada layar. Di bagian kanan atas, anda akan melihat ikon bintang. Tap ikon bintang untuk mem-bookmark-nya (akan berwarna putih). Dengan men-tap ikon bintang sekali lagi akan menghapus bookmarknya.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara memperbesar teks?&lt;/b>
+&lt;br/>Pada mode halaman arab (tampilan mushaf), pegang perangkat anda dalam posisi bentang (landscape). Ini akan membuat teks lebih besar (tergantung pada pangaturan). Pada mode terjemahan, masuk ke pengaturan dan pilih ukuran teks terjemahan.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara membagikan ayat? &lt;/b>
+&lt;br/>Pada mode halaman arab, tap dan tahan pada ayat yang dimaksud, akan tampil berbagai menu di mana anda dapat memilih untuk membookmark, berbagi, lihat terjemah atau menyalin ayat.
+&lt;br/>
+&lt;br/>&lt;b>Font Malayalam/Tamil/Bangla/Urdu tidak berfungsi! &lt;/b>
+&lt;br/>Android sebelum versi 4.0 memang tidak mendukung font tersebut.
+</string>
+<string name="search_hint">Cari dalam Quran</string>
+<string name="quranSearchType">Ayat Quran</string>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+        <item quantity="one">hasil untuk \"%s\": </item>
+        <item quantity="other">hasil untuk \"%s\": </item>
+    </plurals>
+
+    <!-- Search messages -->
+    <string name="found_in_sura">Ditemukan dalam Surat</string>
+    <string name="no_results">Tidak menemukan \"%s\"</string>
+    <string name="no_active_translation">Anda belum mengatur terjemahan aktif. Ubah sesuaikan terjemahan pada menu pengaturan, kemudian ulangi pencarian.</string>
+    <string name="translation_settings">Pengaturan Terjemahan</string>
+    <string name="no_arabic_search_available">Anda belum mendownload paket pencarian Arab. Silakan download dan ulangi pencarian</string>
+    <string name="get_arabic_search_db">Dapatkan Database Pencarian Arab</string>
+        
+    <!-- Quran Preference Activity -->
+    <string name="prefs_category_navigation">Navigasi</string>
+    <string name="prefs_volume_key_navigation_title">Navigasi tombol volume</string>
+    <string name="prefs_volume_key_navigation_summary">Berpindah halaman dengan menggunakan tombol volume</string>
+    <string name="prefs_category_reading">Preferensi Baca</string>
+    <string name="prefs_category_translation">Preferensi Terjemahan</string>
+    <string name="prefs_category_display_settings">Pengaturan Tampilan</string>
+    <string name="prefs_use_arabic_title">Mode Aplikasi Arab</string>
+    <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab (diperlukan restart program untuk menerapkan)</string>
+    <string name="prefs_use_arabic_reshaper_title">Gunakan Reshaper Arab</string>
+    <string name="prefs_use_arabic_reshaper_summary_on">Jika teks Arab anda terbalik, jangan centang opsi ini.</string>
+    <string name="prefs_use_arabic_reshaper_summary_off">Jika teks Arab anda terputus, centang opsi ini untuk memperbaikinya.</string>
+    <string name="prefs_new_background_title">Background Baru</string>
+    <string name="prefs_lock_orientation_title">Lock orientasi layar</string>
+    <string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mode orientasi tetap</string>
+    <string name="prefs_lock_orientation_summary_off">Menyesuaikan orientasi layar secara otomatis</string>
+    <string name="prefs_landscape_orientation_title">Orientasi Landscape</string>
+    <string name="prefs_landscape_orientation_summary_on">Menggunakan orientasi layar landscape (bentang/melebar)</string>
+    <string name="prefs_landscape_orientation_summary_off">Menggunakan orientasi layar portrait (tegak/memanjang)</string>
+    <string name="prefs_night_mode_title">Modus malam</string>
+    <string name="prefs_night_mode_summary">Menggunakan background gelap dan teks terang</string>
+    <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>
+    <string name="prefs_night_mode_text_brightness_summary">Kecerahan teks ketika modus malam aktif</string>
+    <string name="prefs_overlay_page_info_title">Tampilkan info halaman (beta)</string>
+    <string name="prefs_overlay_page_info_summary">Nomor halaman, nama surat dan nomor juz\' akan ditampilkan</string>
+    <string name="prefs_display_marker_title">Tampilkan popup penanda</string>
+    <string name="prefs_display_marker_summary">Tampilan popup saat mencapai pergantian juz\', hizb, dll</string>
+    <string name="prefs_translation_text_title">Ukuran teks terjemahan</string>
+    <string name="prefs_translations">Terjemahan</string>
+    <string name="prefs_translations_summary">Download dan pengaturan terjemahan</string>
+    <string name="prefs_ayah_before_translation_title">Tampilkan ayat sebelum terjemahan</string>
+    <string name="prefs_ayah_before_translation_summary">Tampilkan ayat (dalam bahasa Arab) di atas terjemahan</string>
+    <string name="prefs_category_download">Opsi Download</string>
+    <string name="prefs_streaming_title">Streaming</string>
+    <string name="prefs_streaming_summary">Stream audio bila memungkinkan (khusus audio non-gapless)</string>
+    <string name="prefs_download_amount_title">Paket Download</string>
+    <string name="prefs_download_amount_summary">Paket file per download untuk audio non-gapless.</string>
+    <string name="downloaded_translations">Terdownload</string>
+    <string name="available_translations">Tersedia untuk didownload</string>
+    <string name="remove_button">Hapus</string>
+    <string name="dialog_ok">OK</string>
+    <string name="prefs_advanced_settings_title">Setting lebih lanjut</string>
+    <string name="prefs_app_location_title">Lokasi aplikasi</string>
+    <string name="prefs_app_location_summary">Pilih penyimpanan file</string>
+    <string name="prefs_sdcard_internal">Penyimpanan Internal</string>
+    <string name="prefs_sdcard_external">SD Card Eksternal</string>
+    <string name="prefs_sdcard_auto">Auto</string>
+    <string name="prefs_app_size">Ukuran aplikasi</string>
+    <string name="prefs_calculating_app_size">Menghitung ukuran aplikasi</string>
+    <string name="prefs_copying_app_files">Menyalin file aplikasi</string>
+    <string name="prefs_err_moving_app_files">Gagal memindahkan file aplikasi</string>
+    <string name="prefs_no_enough_space_to_move_files">Ruang yang tersedia tidak cukup untuk memindahkan file aplikasi</string>
+    <string name="prefs_megabytes">MB</string>
+    <string name="prefs_tablet_mode_title">Mode Tablet</string>
+    <string name="prefs_tablet_mode_enabled">Dalam mode landscape, dua halaman akan muncul berdampingan.</string>
+    <string name="prefs_tablet_mode_disabled">Dalam mode landscape, hanya menampilkan satu halaman.</string>
+    <!-- Preferences End -->
+
+    <!-- translation updates -->
+    <string name="update_available">Update Tersedia</string>
+    <string name="translation_updates_available">Pemutakhiran tersedia untuk terjemahan anda. Tampilkan terjemahan sekarang?</string>
+    <string name="translation_dialog_yes">Ya</string>
+    <string name="translation_dialog_later">Nanti</string>
+
+    <!-- used for screen readers -->
+    <string name="border">border</string>
+    
+    <!-- End Number picker Strings -->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
+    <string name="quran_hizb">Hizb</string>
+    <string name="quran_juz2">Juz\'</string>
+    <string name="quran_page">Halaman</string>
+    <string name="quran_sura">Surat</string>
+    <string name="quran_ayah">Ayat</string>
+    <string name="quran_sura_title">Surat</string>
+    <string name="sura_ayah_notification_str">Surat %1$s, Ayat %2$d</string>
+
+    <string name="bookmarks_current_page">Halaman Saat Ini</string>
+    <string name="index_loading">Memuat...</string>
+
+    <string name="canceling">Membatalkan&#8230;</string>
+    <string name="juz2_description">Juz\' %1$s</string>
+    <string name="page_description">Halaman %1$s, Juz\' %2$s</string>
+    <string name="highlighting_database">File yang Diperlukan</string>
+    <string name="timing_database">File yang Diperlukan</string>
+    <string name="infinity">&#8734;</string>
+    
+    <!-- download statuses and errors -->
+    <string name="download_successful">Download Berhasil</string>
+    <string name="download_processing">Proses Download&#8230;</string>
+    <string name="download_error_general">Download gagal</string>
+    <string name="download_error_disk">Tidak cukup ruang disk untuk mendownload</string>
+    <string name="download_error_network">Tidak dapat mendownload karena kesalahan jaringan</string>
+    <string name="download_error_perms">Tidak dapat mendownload karena kesalahan otoritas pada perangkat (permissions error)</string>
+    <string name="download_error_invalid_download">File terdownload rusak/tidak lengkap</string>
+    <string name="download_error_invalid_download_retry">File terdownload rusak/tidak lengkap, mencoba untuk download ulang</string>
+    <string name="download_error_network_retry">Jaringan error, mencoba untuk melanjutkan&#8230;</string>
+    <string name="notification_download_canceled">Download dibatalkan</string>
+    <string name="download_non_wifi_prompt">Anda tidak berada pada jaringan wifi. Lanjutkan download data?</string>
+    
+    <!-- downloading dialogs -->
+    <string name="download_progress">Terdownload %1$s / %2$s</string>
+    <string name="process_progress">Memproses file %1$d / %2$d</string>
+    <string name="download_retry">Coba lagi</string>
+    <string name="download_cancel">Batal</string>
+    <string name="download_extra_data">Perlu mendownload beberapa file kecil untuk mendukung fitur berbagi dan terjemahan. Download sekarang?</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">Hapus Terjemahan?</string>
+    <string name="remove_dlg_msg">Apakah anda yakin ingin menghapus %1$s?</string>
+    <string name="error_getting_translation_list">Tidak dapat mendownload daftar terjemahan. Silakan coba lagi nanti.</string>
+    <string name="search_data">Cari Data</string>
+    <string name="need_translation">Anda belum mendowload file terjemahan/tafsir.</string>
+    <string name="get_translations">Download Terjemahan</string>
+
+    <!-- help -->
+    <string name="email_us">If your question is not answered above, you can
+       email quranandroid@gmail.com for support. Please note that we get lots
+       of email, so we may not be able to reply to all emails we
+       receive.</string>
+
+    <!-- sura metainfo -->
+    <string name="makki">Makkiyah</string>
+    <string name="madani">Madaniyah</string>
+    <plurals name="verses">
+        <item quantity="one">ayat</item>
+        <item quantity="other">ayat</item>
+    </plurals>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">Bookmark ayat ini</string>
+    <string name="unbookmark_ayah">Hapus bookmark pada ayat ini</string>
+    <string name="tag_ayah">Beri label ayat ini</string>
+    <string name="share_ayah">Bagikan tautan (URL) ayat</string>
+    <string name="share_ayah_text">Bagikan teks ayat</string>
+    <string name="translation_ayah">Terjemah/tafsir ayat</string>
+    <string name="play_from_here">Putar tilawah dari sini</string>
+    <string name="ayah_notes">Catatan</string>
+    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="search_key">Tekan tombol pencarian untuk mencari ayat</string>
+    <string name="copy_ayah">Salin ayat</string>
+    <string name="ayah_copied_popup">Ayat telah tersalin</string>
+    <string name="show_more">Tampilkan Lebih</string>
+    
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="delete_bookmark">Hapus Bookmark</string>
+    <string name="tag_bookmark">Beri Label pada Bookmark</string>
+    <string name="delete_tag">Hapus Label</string>
+    <string name="edit_tag">Edit Label</string>
+    <string name="new_tag">Label Baru</string>
+    <string name="not_tagged">Bookmark tanpa Label</string>
+    
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">Label</string>
+    <string name="tag_name">Nama</string>
+    
+    <!-- bookmark & tag list -->
+    <string name="bookmarks_list_empty">Tidak ada Bookmark</string>
+    <string name="tags_list_empty">Tidak ada Label</string>
+</resources>

@@ -4,6 +4,7 @@
         <item>Minshawi Murattal (gapless)</item>
         <item>Husary (gapless)</item>
         <item>Abdurrahman As-Sudais (gapless)</item>
+        <item>Nasser Al Qatami (gapless)</item>
         <item>Abd Al-Basit</item>
         <item>Abd Al-Basit Mujawwad</item>
         <item>Abdullah Basfar</item>
@@ -28,6 +29,7 @@
         <item>minshawi_murattal</item>
         <item>husary</item>
         <item>sudais</item>
+        <item>qatami</item>
         <item>0</item>  <!-- abdul basit -->
         <item>1</item>  <!-- abdul basit mujawwad -->
         <item>2</item>  <!-- abdullah basfar -->
@@ -52,6 +54,7 @@
         <item>minshawi_murattal</item>
         <item>husary</item>
         <item>sudais_murattal</item>
+        <item>qatami</item>
         <item></item> <!-- abdul basit -->
         <item></item> <!-- abdul basit mujawwad -->
         <item></item> <!-- abdullah basfar -->
@@ -76,6 +79,7 @@
         <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
         <item>http://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
         <item>http://download.quranicaudio.com/quran/abdurrahmaan_as-sudays/</item>
+        <item>http://download.quranicaudio.com/quran/nasser_bin_ali_alqatami/</item>
         <item>http://mirrors.quranicaudio.com/everyayah/Abdul_Basit_Murattal_192kbps/</item>
         <item>http://mirrors.quranicaudio.com/everyayah/Abdul_Basit_Mujawwad_128kbps/</item>
         <item>http://mirrors.quranicaudio.com/everyayah/Abdullah_Basfar_192kbps/</item>
