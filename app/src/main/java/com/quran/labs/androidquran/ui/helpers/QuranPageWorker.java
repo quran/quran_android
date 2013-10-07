@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
+
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
 import com.quran.labs.androidquran.util.AsyncTask;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -112,23 +114,35 @@ public class QuranPageWorker {
       @Override
       protected BitmapDrawable doInBackground(Integer... params) {
          data = params[0];
-         Bitmap bitmap = QuranDisplayHelper.getQuranPage(
+         Bitmap bitmap = null;
+         OutOfMemoryError oom = null;
+
+         try {
+            bitmap = QuranDisplayHelper.getQuranPage(
                  mContext, mWidthParam, data);
+         } catch (OutOfMemoryError me){
+           Crashlytics.log(Log.WARN, TAG,
+               "out of memory exception loading page " +
+               data + ", " + mWidthParam);
+           oom = me;
+         }
+
          if (bitmap == null){
-           Log.w(TAG, "null bitmap. items in cache: " + mMemoryCache.size() +
-               " vs " + mMemoryCache.maxSize());
+           Crashlytics.log(Log.WARN, TAG, "items in cache: " +
+               mMemoryCache.size() + " vs " + mMemoryCache.maxSize());
             if (QuranScreenInfo.getInstance().isTablet(mContext)){
-               Log.w(TAG, "tablet got bitmap null, trying alternate width...");
+               Crashlytics.log(Log.WARN, TAG,
+                   "tablet got bitmap null, trying alternate width...");
                String param = QuranScreenInfo.getInstance().getWidthParam();
                if (param.equals(mWidthParam)){
                   param = QuranScreenInfo.getInstance().getTabletWidthParam();
                }
                bitmap = QuranDisplayHelper.getQuranPage(mContext, param, data);
                if (bitmap == null){
-                  Log.w(TAG, "bitmap still null, giving up...");
+                  Crashlytics.log(Log.WARN, TAG, "bitmap still null, giving up...");
                }
             }
-            Log.w(TAG, "got bitmap back as null...");
+            Crashlytics.log(Log.WARN, TAG, "got bitmap back as null...");
          }
 
          BitmapDrawable drawable = null;
@@ -141,6 +155,9 @@ public class QuranPageWorker {
             }
 
             addBitmapToCache(data + mWidthParam, drawable);
+         } else if (oom != null){
+           // throw the exception since we couldn't handle it
+           throw oom;
          }
 
          return drawable;

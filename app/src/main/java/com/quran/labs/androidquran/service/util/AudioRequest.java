@@ -86,6 +86,7 @@ public class AudioRequest implements Serializable {
       else {
          mCurrentSura = sura;
          mCurrentAyah = ayah;
+         mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura-1];
          mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
          return null;
       }

@@ -38,10 +38,7 @@
     <string name="cancel">Cancel</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright All Muslims</string>
-    <string name="email_subject">Feedback</string>
     <string name="email_logs_subject">Log File</string>
-    <string name="email_to">quran.android@gmail.com</string>
-    <string name="send_email">Send email..</string>
     <string name="aboutUs">Quran Android is a free, open source Quran
 			application for Android.  The images used are from the
             &lt;a href="http://quran.com">quran.com&lt;/a>
@@ -61,13 +58,14 @@
             &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
             &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
 			&lt;br/>Mehmed Mahmudoglu - Turkish
-         &lt;br/>M. Jafar Nanakar - Farsi
-         &lt;br/>Rinat (Ринат) - Russian
-         &lt;br/>khajavi (on github) - previous Farsi translation
-	      &lt;br/>Yasser Kadddour - Français
-         &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
-         &lt;br/>Goran Gharib Karim - Kurdish
-         &lt;br/>Abduqadir Abliz - Uyghur
+            &lt;br/>M. Jafar Nanakar - Farsi
+            &lt;br/>Rinat (Ринат) - Russian
+            &lt;br/>khajavi (on github) - previous Farsi translation
+	        &lt;br/>Yasser Kadddour - Français
+            &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
+            &lt;br/>Goran Gharib Karim - Kurdish
+            &lt;br/>Abduqadir Abliz - Uyghur
+            &lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesian
             &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
             &lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
@@ -241,8 +239,8 @@
     <string name="need_translation">You don\'t have any translations/tafaseer downloaded yet.</string>
     <string name="get_translations">Get Translations</string>
 
-    <!-- about us -->
-    <string name="email_quran_android">Email Quran Android</string>
+    <!-- help -->
+    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
 
     <!-- sura metainfo -->
     <string name="makki">Makki</string>
