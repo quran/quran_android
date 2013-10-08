@@ -85,6 +85,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.4.7** (released 10/8/2013)
+- fix some crashes
+
 **version 2.4.6** (released 10/6/2013)
 - hide actionbar on resume if it was hidden
 - change 14:50 to 14:49 in juz' list

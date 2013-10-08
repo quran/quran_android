@@ -39,8 +39,15 @@ public class DatabaseHandler {
     if (base == null) return;
     String path = base + File.separator + databaseName;
     Crashlytics.log("opening database file: " + path);
-    mDatabase = SQLiteDatabase.openDatabase(path, null,
+    try {
+      mDatabase = SQLiteDatabase.openDatabase(path, null,
         SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+    } catch (SQLException se){
+      Crashlytics.log("database file " + path +
+          (new File(path).exists()? " exists" : " doesn't exist"));
+      throw se;
+    }
+
     mSchemaVersion = getSchemaVersion();
     mDatabasePath = path;
     mMatchString = "<font color=\"" +

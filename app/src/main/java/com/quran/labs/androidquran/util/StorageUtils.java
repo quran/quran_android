@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 
 import java.io.File;
@@ -213,6 +214,7 @@ public class StorageUtils {
     }
 
     private void computeSpace() {
+      Crashlytics.log("computeSpace() for " + mountPoint);
       StatFs stat = new StatFs(mountPoint);
       long totalBytes = (long) stat.getBlockCount() *
           (long) stat.getBlockSize();

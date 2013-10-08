@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.io.File;
+
 public class SuraTimingDatabaseHandler {
    private SQLiteDatabase mDatabase = null;
    public static class TimingsTable {
@@ -17,8 +19,14 @@ public class SuraTimingDatabaseHandler {
 
    public SuraTimingDatabaseHandler(String path) throws SQLException {
       Crashlytics.log("opening gapless data file, " + path);
-      mDatabase = SQLiteDatabase.openDatabase(path, null,
+      try {
+        mDatabase = SQLiteDatabase.openDatabase(path, null,
               SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+      } catch (SQLException se){
+        Crashlytics.log("database at " + path +
+            (new File(path).exists()? " exists" : " doesn't exist"));
+        throw se;
+      }
    }
 
    public boolean validDatabase(){
