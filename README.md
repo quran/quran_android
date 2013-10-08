@@ -124,7 +124,7 @@ Changelog
 **version 2.4.0** (released 6/15/2013)
 
 - update to german translation (thanks br Armin Supuk)
-- kurdish translation (thanks br Gharib Karim)
+- Kurdish translation (thanks bro Goran Gharib Karim)
 - improvements to search
 - multiple sdcard support
 - tablet support for reading view
