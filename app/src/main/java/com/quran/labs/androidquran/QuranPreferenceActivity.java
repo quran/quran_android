@@ -15,12 +15,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,8 +84,13 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
     mListStorageOptions = (ListPreference) findPreference(
         getString(R.string.prefs_app_location));
 
-    mStorageList = StorageUtils
+    try {
+      mStorageList = StorageUtils
         .getAllStorageLocations(getApplicationContext());
+    } catch (Exception e){
+      Crashlytics.logException(e);
+      mStorageList = new ArrayList<StorageUtils.Storage>();
+    }
 
     // Hide Advanced Preferences Screen if there is no storage option
     // except for the normal Environment.getExternalStorageDirectory

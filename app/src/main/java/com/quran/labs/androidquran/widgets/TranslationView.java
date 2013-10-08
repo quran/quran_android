@@ -115,7 +115,9 @@ public class TranslationView extends ScrollView {
 
    public void refresh(){
       initResources();
-      setAyahs(mAyat);
+      if (mAyat != null){
+        setAyahs(mAyat);
+      }
    }
 
    public void setAyahs(List<QuranAyah> ayat){

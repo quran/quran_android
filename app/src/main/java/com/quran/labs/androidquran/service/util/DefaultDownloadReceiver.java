@@ -62,19 +62,13 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
          String state = intent.getStringExtra(
                  QuranDownloadService.ProgressIntent.STATE);
          if (QuranDownloadService.STATE_SUCCESS.equals(state)){
-            if (mProgressDialog != null){
-               mProgressDialog.dismiss();
-               mProgressDialog = null;
-            }
+            dismissDialog();
             mListener.handleDownloadSuccess();
          }
          else if (QuranDownloadService.STATE_ERROR.equals(state)){
             int msgId = ServiceIntentHelper.
                     getErrorResourceFromDownloadIntent(intent, true);
-            if (mProgressDialog != null){
-               mProgressDialog.dismiss();
-               mProgressDialog = null;
-            }
+            dismissDialog();
             mListener.handleDownloadFailure(msgId);
          }
          else if (QuranDownloadService.STATE_DOWNLOADING.equals(state)){
@@ -119,6 +113,17 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
          }
       }
    };
+
+   private void dismissDialog(){
+     if (mProgressDialog != null){
+       try {
+         mProgressDialog.dismiss();
+       }
+       catch (Exception e){
+       }
+       mProgressDialog = null;
+     }
+   }
 
    public boolean didReceieveBroadcast(){
       return mDidReceiveBroadcast;

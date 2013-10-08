@@ -37,8 +37,8 @@ public class QuranPageWorker {
             Context.ACTIVITY_SERVICE)).getMemoryClass();
       final int cacheSize = 1024 * 1024 * memClass / 8;
       final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-      Log.d(TAG, "memory class: " + memClass + ", cache size: " +
-              cacheSize + ", max memory: " + maxMemory);
+      Crashlytics.log(Log.DEBUG, TAG, "memory class: " + memClass +
+         ", cache size: " + cacheSize + ", max memory: " + maxMemory);
       mMemoryCache = new LruCache<String, BitmapDrawable>(cacheSize){
          @Override
          protected void entryRemoved(boolean evicted, String key,
@@ -56,15 +56,17 @@ public class QuranPageWorker {
                  return bitmap.getByteCount();
              }
 
-             Log.d(TAG, "row bytes: " + bitmap.getRowBytes() + ", height: " +
+             Crashlytics.log(Log.DEBUG, TAG, "row bytes: " +
+                  bitmap.getRowBytes() + ", height: " +
                   bitmap.getHeight() + ", " + (bitmap.getRowBytes() *
                         bitmap.getHeight()));
              return bitmap.getRowBytes() * bitmap.getHeight();
          }
       };
       fragment.mRetainedCache = mMemoryCache;
-      
-      Log.d(TAG, "initial LruCache size: " + (memClass/8));
+
+      Crashlytics.log(Log.DEBUG, TAG,
+          "initial LruCache size: " + (memClass/8));
    }
    
    private void addBitmapToCache(String key, BitmapDrawable drawable) {
@@ -73,10 +75,11 @@ public class QuranPageWorker {
             ((RecyclingBitmapDrawable)drawable).setIsCached(true);
          }
          mMemoryCache.put(key, drawable);
-         Log.d(TAG, "cache size: " + mMemoryCache.size());
+         Crashlytics.log(Log.DEBUG, TAG, "cache size: " + mMemoryCache.size());
       }
       
-      Log.d(TAG, "cache: number of puts: " + mMemoryCache.putCount() + 
+      Crashlytics.log(Log.DEBUG, TAG, "cache: number of puts: " +
+          mMemoryCache.putCount() +
             ", number of evicts: " + mMemoryCache.evictionCount());
    }
 
@@ -128,7 +131,7 @@ public class QuranPageWorker {
          }
 
          if (bitmap == null){
-           Crashlytics.log(Log.WARN, TAG, "items in cache: " +
+           Crashlytics.log(Log.WARN, TAG, "cache memory: " +
                mMemoryCache.size() + " vs " + mMemoryCache.maxSize());
             if (QuranScreenInfo.getInstance().isTablet(mContext)){
                Crashlytics.log(Log.WARN, TAG,

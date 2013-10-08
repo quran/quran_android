@@ -38,7 +38,7 @@ public class ImageAyahUtils {
    public static QuranAyah getAyahFromCoordinates(
            Map<String, List<AyahBounds>> coords,
            HighlightingImageView imageView, float xc, float yc) {
-      if (coords == null){ return null; }
+      if (coords == null || imageView == null){ return null; }
 
       float[] pageXY = imageView.getPageXY(xc, yc);
       if (pageXY == null){ return null; }
