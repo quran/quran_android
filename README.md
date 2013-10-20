@@ -11,11 +11,11 @@ patches, comments, etc are welcome.
 
 contributors:
 
-* [Hussein Maher](http://twitter.com/husseinmaher),
-* [Ahmed Farra](http://github.com/afarra),
-* [Wael Nafee](http://twitter.com/wnafee),
-* [Ahmed Fouad](http://twitter.com/fo2ad),
-* [Mahmoud Hossam](http://github.com/mahmoudhossam).
+* [Hussein Maher](http://twitter.com/husseinmaher)
+* [Ahmed Farra](http://github.com/afarra)
+* [Wael Nafee](http://twitter.com/wnafee)
+* [Ahmed Fouad](http://twitter.com/fo2ad)
+* [Mahmoud Hossam](http://github.com/mahmoudhossam)
 
 graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
@@ -81,10 +81,12 @@ description and your application itself in an about section.
 Open Source Projects Used
 -------------------------
 * [ActionBarSherlock](http://abs.io)
-* [HockeySDK](https://github.com/bitstadium/HockeySDK-Android)
 
 Changelog
 ---------
+**development**
+- fix numerous crashes related to search
+
 **version 2.4.7** (released 10/8/2013)
 - fix some crashes
 
