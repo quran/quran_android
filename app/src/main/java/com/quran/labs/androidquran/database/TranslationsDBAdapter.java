@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.SparseArray;
 import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,12 @@ public class TranslationsDBAdapter {
            "com.quran.labs.androidquran.database.TranslationsDBAdapter";
 
    private SQLiteDatabase mDb;
+   private Context mContext;
    private static TranslationsDBHelper sDbHelper;
 
    public TranslationsDBAdapter(Context context) {
-      initHelper(context.getApplicationContext());
+      mContext = context.getApplicationContext();
+      initHelper(mContext);
    }
 
    public static synchronized void initHelper(Context context){
@@ -82,10 +85,12 @@ public class TranslationsDBAdapter {
             String url = cursor.getString(4);
             int version = cursor.getInt(5);
 
-            TranslationItem item = new TranslationItem(id, name, translator,
-                    -1, filename, url, true);
-            item.localVersion = version;
-            items.add(item);
+            if (QuranFileUtils.hasTranslation(mContext, filename)){
+               TranslationItem item = new TranslationItem(id, name, translator,
+                       -1, filename, url, true);
+               item.localVersion = version;
+               items.add(item);
+            }
          }
          cursor.close();
       }

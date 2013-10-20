@@ -204,9 +204,11 @@ public class DatabaseHandler {
           "', '" + ELLIPSES + "', -1, 64)";
     }
 
-    return mDatabase.rawQuery("select " + COL_SURA + ", " + COL_AYAH +
+    String qtext = "select " + COL_SURA + ", " + COL_AYAH +
         ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
-        operator + " ? " + " limit 150", new String[]{query});
+        operator + " ? " + " limit 150";
+    Crashlytics.log("search query: " + qtext);
+    return mDatabase.rawQuery(qtext, new String[]{query});
   }
 
   public void closeDatabase() {

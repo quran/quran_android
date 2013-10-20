@@ -680,7 +680,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
       return super.onOptionsItemSelected(item);
    }
 
-   public void setLoading(boolean isLoading){
+  @Override
+  public boolean onSearchRequested() {
+    mWorker.clearCache();
+    return super.onSearchRequested();
+  }
+
+  public void setLoading(boolean isLoading){
       setSupportProgressBarIndeterminateVisibility(isLoading);
    }
 
@@ -695,9 +701,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
    public void switchToTranslation(){
       String activeDatabase = TranslationUtils.getDefaultTranslation(
               this, mTranslations);
-      String setDatabase = mPrefs.getString(
-              Constants.PREF_ACTIVE_TRANSLATION, null);
-      if (activeDatabase == null && setDatabase == null){
+      if (activeDatabase == null){
          Intent i = new Intent(this, TranslationManagerActivity.class);
          startActivity(i);
       }
