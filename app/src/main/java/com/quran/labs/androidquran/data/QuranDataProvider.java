@@ -15,10 +15,14 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.TranslationUtils;
 
 import java.util.List;
 
@@ -109,8 +113,29 @@ public class QuranDataProvider extends ContentProvider {
 	}
 
 	private String getActiveTranslation(){
-		return mPrefs.getString(
+		String db = mPrefs.getString(
               Constants.PREF_ACTIVE_TRANSLATION, "");
+    if (!TextUtils.isEmpty(db)){
+      if (QuranFileUtils.hasTranslation(getContext(), db)){
+        return db;
+      }
+      // our active database no longer exists, remove the pref
+      mPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).commit();
+    }
+
+    try {
+      Crashlytics.log("couldn't find database, searching for another..");
+      TranslationsDBAdapter adapter =
+        new TranslationsDBAdapter(getContext());
+      List<TranslationItem> items = adapter.getTranslations();
+      if (items != null && items.size() > 0){
+        return TranslationUtils
+            .getDefaultTranslation(getContext(), items);
+      }
+    } catch (Exception e){
+      Crashlytics.logException(e);
+    }
+    return null;
 	}
 	
 	private Cursor getSuggestions(String query){

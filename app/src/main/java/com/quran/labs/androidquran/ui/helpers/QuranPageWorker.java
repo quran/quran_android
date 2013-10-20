@@ -68,6 +68,14 @@ public class QuranPageWorker {
       Crashlytics.log(Log.DEBUG, TAG,
           "initial LruCache size: " + (memClass/8));
    }
+
+   public void clearCache(){
+     if (mMemoryCache != null){
+       Crashlytics.log(Log.DEBUG, TAG,
+           "evicting all items in cache...");
+       mMemoryCache.evictAll();
+     }
+   }
    
    private void addBitmapToCache(String key, BitmapDrawable drawable) {
       if (drawable != null && getBitmapFromCache(key) == null) {
