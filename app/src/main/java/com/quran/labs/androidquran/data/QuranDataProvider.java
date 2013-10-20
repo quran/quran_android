@@ -140,20 +140,33 @@ public class QuranDataProvider extends ContentProvider {
 	
 	private Cursor getSuggestions(String query){
 		if (query.length() < 3) return null;
-		
-		int numItems = 1;
+
+    boolean haveArabic = false;
 		if (QuranUtils.doesStringContainArabic(query) &&
 				QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE)){
-			numItems = 2;
+			haveArabic = true;
 		}
+
+    boolean haveTranslation = false;
+    String active = getActiveTranslation();
+    if (!TextUtils.isEmpty(active)){
+      haveTranslation = true;
+    }
+
+    int numItems = (haveArabic? 1 : 0) + (haveTranslation? 1 : 0);
+    if (numItems == 0){
+      return null;
+    }
 		
 		String[] items = new String[numItems];
-		if (numItems == 1){ items[0] = getActiveTranslation(); }
-		else {
-			items[0] = QURAN_ARABIC_DATABASE;
-			items[1] = getActiveTranslation();
-		}
-				
+    if (haveArabic){
+      items[0] = QURAN_ARABIC_DATABASE;
+    }
+
+    if (haveTranslation){
+      items[numItems-1] = active;
+    }
+
 		String[] cols = new String[]{ BaseColumns._ID,
 				SearchManager.SUGGEST_COLUMN_TEXT_1,
 				SearchManager.SUGGEST_COLUMN_TEXT_2,
