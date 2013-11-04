@@ -1,10 +1,11 @@
+<!-- 2. Person Plural -->
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Quran</string>
-    <string name="downloadPrompt_title">Benötigte Dateien herunterladen?</string>
+    <string name="downloadPrompt_title">Möchten Sie die benötigten Dateien herunterladen?</string>
     <string name="downloadPrompt">Für die optimale Leistung müssen einige Dateien 
-			heruntergeladen werden.  Wenn du dich dagegen entscheidest, wird das 
-			Laden jeder Seite spürbar länger dauern. Willst du die benötigten
+			heruntergeladen werden.  Wenn Sie sich dagegen entscheiden, wird das 
+			Laden jeder Seite spürbar länger dauern. Wollen Sie die benötigten
 			Dateien herunterladen?
 	</string>
     <string name="downloadTabletPrompt">Wir haben kürzlich verbesserte Bilder für Tablets hinzugefügt.
@@ -17,12 +18,13 @@
     <string name="downloadPrompt_ok">Ja</string>
     <string name="downloadPrompt_no">Nein</string>
     <string name="downloading_title">Dateien werden heruntergeladen&#8230;</string>
-    <string name="downloading_message">Bitte warte bis die Dateien heruntergeladen wurden. (unterbrechen möglich)</string>
+    <string name="downloading_message">Bitte warten Sie bis die Dateien heruntergeladen wurden. 
+			Sie dürfen den Vorgang unterbrechen, falls es nötig sein sollte.</string>
     <string name="extracting_title">Dateien werden verarbeitet&#8230;</string>
     <string name="menu_about">Über uns</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_jump_last_page">Letzte Seite</string>
-    <string name="menu_tags">Tags</string>
+    <string name="menu_tags">Schlagwörter</string>
     <string name="menu_bookmarks">Lesezeichen</string>
     <string name="menu_bookmarks_page">Seiten-Lesezeichen</string>
     <string name="menu_bookmarks_ayah">Vers-Lesezeichen</string>
@@ -34,7 +36,7 @@
     <string name="menu_back_to_page">Quran anzeigen</string>
     <string name="menu_help">Hilfe</string>
     <string name="menu_search">Suche</string>
-	<string name="menu_get_translations">Hole Übersetzungen</string>
+	<string name="menu_get_translations">Lade die Übersetzungen</string>
     <string name="menu_jump">Springe zu</string>
     <string name="gotoPage">Gehe zur Seite</string>
     <string name="cancel">Abbrechen</string>
@@ -47,8 +49,8 @@
 			&lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
 			die benutzen Texte in den Übersetzungen und dem Arabischen kommen von
 			&lt;a href="http://tanzil.net">tanzil.net&lt;/a> und
-			&lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
-			&lt;br/>&lt;br/>&lt;b>Quran for Android Mitwirkende:&lt;/b>
+			&lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.
+			&lt;br/>&lt;br/>&lt;b>Quran für Android Mitwirkende:&lt;/b>
 			&lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
 			&lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
 			&lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
@@ -63,8 +65,11 @@
 			&lt;br/>Rinat (Ринат Валеев) - Russisch
 			&lt;br/>khajavi (on github) - ehemalige Farsi Übersetzung
 			&lt;br/>Yasser Kadddour - Französisch
-			&lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>)
+			&lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinesisch
 			&lt;br/>Armin Šupuk - Deutsch
+			&lt;br/>Goran Gharib Karim - Kurdisch
+			&lt;br/>Abduqadir Abliz - Uigurisch
+			&lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesisch
 			&lt;br/>&lt;br/>&lt;b>Quelloffene Projekte:&lt;/b>
 			&lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
 			&lt;br/>maven-android-plugin (&lt;a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin&lt;/a>)
@@ -75,41 +80,50 @@
     <string name="help_title">Häufig gestellte Fragen</string>
 	<string name="help">
 		&lt;b>Wie starte ich die Wiedergabe der Audio-Dateien?&lt;/b>
-		&lt;br/>Öffne irgendeine Quran Seite.  Berühre den Bildschirm einmal.  Am unteren Bildschirmrand werden
-		ein Abspiel-Knopf und der Name des Qari erscheinen.  Berühre den Namen des Qari um einen anderen auszuwählen.
-		Drücke den Abspiel-Knopf um die ausgewählte Seite oder Sura herunterzuladen und abzuspielen.
+		&lt;br/>Öffnen Sie eine beliebige Seite im Quran.  Berühren Sie nun den Bildschirm einmal.  
+		Am unteren Bildschirmrand werden ein Abspiel-Knopf in der Form eines Pfeiles und der Name 
+		des Rezitators erscheinen.  Berühren Sie den Namen des Rezitators um zwischen den Rezitatoren 
+		zu wechseln.
+		Drücken Sie den Abspiel-Knopf um die ausgewählte Seite oder Sura herunterzuladen, falls Sie 
+		das bereits getan haben, wird die Seite oder Sura sofort wiedergegeben, ansonsten müssen Sie 
+		sich gedulden bis die Dateien heruntergeladen wurden, danach wird auch sofort die Wiedergabe gestartet.
 		&lt;br/>
 		&lt;br/>&lt;b>Wie kann ich eine Übersetzung öffnen?&lt;/b>
-		&lt;br/>Öffne irgendeine Quran Seite.  Berühre den Bildschirm einmal.  Am oberen Bildschirmrand wird
-		eine kleine Weltkugel erscheinen, um die Übersetzung zu öffnen klicke auf das Icon. (Möglicherweise
-		wird bei dir keine Weltkugel sondern nur ein Icon mit drei Punkten angezeigt, klicke auf dieses und
-		wähle Übersetzungen aus).
+		&lt;br/>Öffnen Sie eine beliebige Seite im Quran.  Berühren Sie nun den Bildschirm einmal.  
+		Am oberen Bildschirmrand wird eine kleine Weltkugel erscheinen. Um nun die Übersetzungen zu 
+		öffnen müssen Sie auf die Weltkugel tippen. Möglicherweise wird bei Ihnen keine Weltkugel angezeigt, 
+		sondern nur ein Symbol mit drei Punkten, in solch einem Fall tippen Sie auf die drei Punkte und wählen 
+		die Option \'Übersetzungen\' aus.).
 		&lt;br/>
-		Falls ihr keine Übersetzungen heruntergeladen habt, wird euch dieser Vorgang zu einer Seite
-		weiterleiten, wo ihr die Übersetzungen herunterladen könnt.  Wähle eine Übersetzung aus und lade sie
-		dann herunter, kehre danach wieder zurück und drücke erneut die kleine Weltkugel.
+		Falls Sie keine Übersetzung heruntergeladen haben, wird Sie dieser Vorgang zu einer Seite
+		weiterleiten auf der Sie die Übersetzungen herunterladen können.  Wählen Sie auf dieser Seite 
+		nun eine Übersetzung aus. Durch das bloße antippen der Übersetzung wird das Herunterladen 
+		beginnen. Sobald das Herunterladen abgeschlossen ist können Sie zur vorherigen Seite zurückkehren 
+		und erneut auf die Weltkugel tippen beziehungsweise die Option \'Übersetzungen\' auswählen.
 		&lt;br/>
 		&lt;br/>&lt;b>Wie füge ich ein Lesezeichen hinzu?&lt;/b>
-		&lt;br/>Öffne irgendeine Quran Seite.  Berühre den Bildschirm einmal.  In der oberen rechten Ecke
-		wirst du einen kleinen Stern sehen.  Berühre den Stern um ein Lesezeichen hinzuzufügen (der Stern wird
-		dann ausgefüllt angezeigt).  Um das Lesezeichen wieder zu entfernen, berühre den Stern nochmals.
+		&lt;br/>Öffnen Sie eine beliebige Seite im Quran.  Berühren Sie nun den Bildschirm einmal.  
+		In der oberen rechten Ecke werden Sie daraufhin einen kleinen Stern sehen.  Berühren Sie nun 
+		den Stern um ein Lesezeichen hinzuzufügen. Der Stern wird dadurch ausgefüllt. Um das Lesezeichen 
+		wieder zu entfernen, müssen Sie den Stern nochmals berühren.
 		&lt;br/>
-		&lt;br/>&lt;b>Wie mache ich den Text grösser?&lt;/b>
-		&lt;br/>Für die arabischen Seiten kannst du dein Handy ins Querformat drehen.  Das macht den Text
-		grösser.  Um den Text von Übersetzungen zu vergrössern, gehe in die Einstellungen und wähle dort
-		die gewünschte Schriftgrösse aus.
+		&lt;br/>&lt;b>Wie mache ich den Text größer?&lt;/b>
+		&lt;br/>Für die arabischen Seiten können Sie Ihr Handy ins Querformat drehen.  Das macht den Text
+		größer.  Um den Text von Übersetzungen zu vergrößern, müssen Sie in die Einstellungen gehen und 
+		dort die gewünschte Schrittgröße auswählen.
 		&lt;br/>
 		&lt;br/>&lt;b>Wie teile ich einen Vers?&lt;/b>
-		&lt;br/>Gehe zu einer arabischen Seite und drücke auf den gewünschten Vers, bis sich ein
-		Menü öffnet, im Menu kannst du ein Lesezeichen hinzufügen, den Vers teilen, die Übersetzung anzeigen oder
-		den Vers kopieren.
+		&lt;br/>Um einen Vers zu teilen müssen Sie die Original Schrift öffnen, dürfen also keine 
+		Übersetzung ansehen, halten Sie dann einen Vers solange gedrückt bis nicht ein Kontextmenü 
+		erscheint. In diesem Menu können Sie nun ein Lesezeichen hinzufügen, den Vers teilen, die 
+		Übersetzung anzeigen lassen oder den Vers kopieren.
 		&lt;br/>
 		&lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu Schriften funktionieren nicht!&lt;/b>
-		&lt;br/>Leider unterstützen Android Versionen vor 4.0 diese Schriften nicht, wir können dir bei diesem
-		Problem leider nicht weiterhelfen.
+		&lt;br/>Leider unterstützen Android Versionen vor 4.0 diese Schriften nicht, da können 
+		wir Ihnen leider auch nicht weiterhelfen.
 	</string>
 	<string name="search_hint">Durchsuche den Quran</string>
-	<string name="quranSearchType">Quran-Verse</string>
+	<string name="quranSearchType">Quranverse</string>
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
@@ -120,63 +134,65 @@
     <!-- Search messages -->
     <string name="found_in_sura">Gefunden in Sura</string>
     <string name="no_results">Es wurden keine Resultate für \"%s\" gefunden.</string>
-	<string name="no_active_translation">Du hast keine aktiven Übersetzungen im Moment.  Bitte wähle zuerst eine aktive Übersetzung aus und suche danach erneut.</string>
-    <string name="translation_settings">Übersetzungs-Einstellungen</string>
-    <string name="no_arabic_search_available">Sie haben das arabische Such-Paket noch nicht heruntergeladen.  Bitte laden sie es herunter und probieren es danach erneut.</string>
-	<string name="get_arabic_search_db">Hole die arabische Such-Datenbank</string>
+	<string name="no_active_translation">Sie haben keine Übersetzung ausgewählt.  Bitte wählen Sie 
+	zuerst eine Übersetzung aus und suchen Sie danach erneut.</string>
+    <string name="translation_settings">Übersetzungsoptionen</string>
+    <string name="no_arabic_search_available">Sie haben das arabische Such-Paket noch nicht 
+	heruntergeladen.  Bitte laden Sie dieses herunter und versuchen Sie es danach erneut.</string>
+	<string name="get_arabic_search_db">Lade die arabische Such-Datenbank herunter</string>
         
     <!-- Quran Preference Activity -->
     <string name="prefs_category_navigation">Navigation</string>
-    <string name="prefs_volume_key_navigation_title">Lautstärketasten-Navigation</string>
-    <string name="prefs_volume_key_navigation_summary">Wechseln sie zwischen verschiedenen Seiten mittels der Lautstärketasten</string>
-    <string name="prefs_category_reading">Lese-Einstellungen</string>
-    <string name="prefs_category_translation">Übersetzungs-Einstellungen</string>
-    <string name="prefs_category_display_settings">Bildschirm-Einstellungen</string>
+    <string name="prefs_volume_key_navigation_title">Navigation mittels Lautstärketasten</string>
+    <string name="prefs_volume_key_navigation_summary">Wechseln Sie zwischen verschiedenen Seiten mittels der Lautstärketasten.</string>
+    <string name="prefs_category_reading">Lese Optionen</string>
+    <string name="prefs_category_translation">Übersetzungsoptionen</string>
+    <string name="prefs_category_display_settings">Bildschirmoptionen</string>
     <string name="prefs_use_arabic_title">Arabischer Modus</string>
-    <string name="prefs_use_arabic_summary_on">Das Programm wird ins Arabische umgestellt (Neustart erforderlich)</string>
+    <string name="prefs_use_arabic_summary_on">Das Programm wird ins Arabische umgestellt, dafür ist ein Neustart erforderlich.</string>
     <string name="prefs_use_arabic_reshaper_title">Benutze den Arabisch-Umformer</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Wenn die Arabische-Schrift rückwärts angezeigt wird, deaktiviere diese Funktion.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Wenn die Arabische-Schrift nicht verbunden angezeigt wird, aktiviere diese Funktion um den Fehler zu beheben.</string>
-    <string name="prefs_new_background_title">Neuen Hintergrund</string>
+    <string name="prefs_use_arabic_reshaper_summary_on">Wenn die Arabische-Schrift rückwärts angezeigt wird, deaktivieren Sie diese Funktion.</string>
+    <string name="prefs_use_arabic_reshaper_summary_off">Wenn die Arabische-Schrift nicht gebunden wird, aktivieren Sie diese Funktion um den Fehler zu beheben.</string>
+    <string name="prefs_new_background_title">Neuen Hintergrund verwenden</string>
     <string name="prefs_lock_orientation_title">Bildschirmausrichtung sperren</string>
-    <string name="prefs_lock_orientation_summary_on">Die Quran Seiten werden immer in einer bestimmten Bildschirmausrichtung angezeigt</string>
-    <string name="prefs_lock_orientation_summary_off">Verwendet für die Bildschirmausrichtung die aktuellen System-Einstellungen</string>
+    <string name="prefs_lock_orientation_summary_on">Die Quranseiten werden immer in einer bestimmten Bildschirmausrichtung angezeigt.</string>
+    <string name="prefs_lock_orientation_summary_off">Verwendet für die Bildschirmausrichtung die aktuellen System-Einstellungen.</string>
     <string name="prefs_landscape_orientation_title">Querformat</string>
-    <string name="prefs_landscape_orientation_summary_on">Querformat wird genutzt</string>
-    <string name="prefs_landscape_orientation_summary_off">Hochformat wird genutzt</string>
+    <string name="prefs_landscape_orientation_summary_on">Querformat wird genutzt.</string>
+    <string name="prefs_landscape_orientation_summary_off">Hochformat wird genutzt.</string>
     <string name="prefs_night_mode_title">Nachtmodus</string>
-    <string name="prefs_night_mode_summary">Dunkler Hintergrund und helle Schrift</string>
+    <string name="prefs_night_mode_summary">Es werden ein dunkler Hintergrund und eine helle Schrift benutzt.</string>
     <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
-    <string name="prefs_night_mode_text_brightness_summary">Helligkeit des Textes, wenn der Nachtmodus aktiv ist</string>
-    <string name="prefs_overlay_page_info_title">Zeige Seiteninfo (Beta)</string>
+    <string name="prefs_night_mode_text_brightness_summary">Die Helligkeit des Textes im Nachtmodus.</string>
+    <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen (Beta)</string>
     <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sura und die Juz\' Nummer während dem Lesen ein.</string>
-	<string name="prefs_display_marker_title">Meilenstein-Popup anzeigen</string>
-	<string name="prefs_display_marker_summary">Popup anzeigen beim Erreichen eines neuen Juz\', einer neuen Hizb, etc.</string>
-    <string name="prefs_translation_text_title">Schriftgrösse der Übersetzungen</string>
+	<string name="prefs_display_marker_title">Meilenstein-Fenster anzeigen</string>
+	<string name="prefs_display_marker_summary">Ein Fenster anzeigen beim Erreichen eines neuen Juz\', einer neuen Hizb, etc.</string>
+    <string name="prefs_translation_text_title">Schrittgröße der Übersetzungen</string>
     <string name="prefs_translations">Übersetzungen</string>
-    <string name="prefs_translations_summary">Verwalte und lade Übersetzungen herunter</string>
-    <string name="prefs_ayah_before_translation_title">Vers vor der Übersetzung</string>
-    <string name="prefs_ayah_before_translation_summary">Vers in Arabisch über der Übersetzung anzeigen</string>
-    <string name="prefs_category_download">Download Optionen</string>
+    <string name="prefs_translations_summary">Verwalte und lade Übersetzungen herunter.</string>
+    <string name="prefs_ayah_before_translation_title">Original vor dem Vers</string>
+    <string name="prefs_ayah_before_translation_summary">Das arabische Original vor jedem übersetzten Vers anzeigen.</string>
+    <string name="prefs_category_download">Downloadoptionen</string>
     <string name="prefs_streaming_title">Streaming</string>
-    <string name="prefs_streaming_summary">Wenn vorhanden, Audio streamen (nicht unterbrechungsfreie Wiedergabe)</string>
-    <string name="prefs_download_amount_title">Download-Menge</string>
-    <string name="prefs_download_amount_summary">Bevorzugte Download-Menge für nicht unterbrechungsfreie Wiedergabe</string>
+    <string name="prefs_streaming_summary">Wenn möglich, Audio streamen (nicht unterbrechungsfreie Wiedergabe).</string>
+    <string name="prefs_download_amount_title">Downloadgröße</string>
+    <string name="prefs_download_amount_summary">Bevorzugte Downloadgröße für nicht unterbrechungsfreie Wiedergabe.</string>
     <string name="downloaded_translations">Heruntergeladen</string>
     <string name="available_translations">Zum Download verfügbar</string>
     <string name="remove_button">Entfernen</string>
-    <string name="dialog_ok">OK</string>
+    <string name="dialog_ok">Ok</string>
     <string name="prefs_advanced_settings_title">Erweiterte Einstellungen</string>
     <string name="prefs_app_location_title">Speicherort</string>
-    <string name="prefs_app_location_summary">Wähle den Speicherort der Dateien</string>
+    <string name="prefs_app_location_summary">Wählen Sie den Speicherort der Dateien aus.</string>
     <string name="prefs_sdcard_internal">Interner Speicher</string>
     <string name="prefs_sdcard_external">Externe SD-Karte</string>
     <string name="prefs_sdcard_auto">Automatisch</string>
     <string name="prefs_app_size">Der vom Programm verwendete Speicherplatz ist</string>
-    <string name="prefs_calculating_app_size">Die Grösse des Programms wird berechnet</string>
+    <string name="prefs_calculating_app_size">Die Größe des Programms wird berechnet</string>
     <string name="prefs_copying_app_files">Programmdateien werden kopiert</string>
-    <string name="prefs_err_moving_app_files">Die Programmdateien konnten nicht verschoben werden</string>
-    <string name="prefs_no_enough_space_to_move_files">Sie haben nicht genug Speicherplatz um die Dateien zu verschieben</string>
+    <string name="prefs_err_moving_app_files">Die Programmdateien konnten nicht verschoben werden.</string>
+    <string name="prefs_no_enough_space_to_move_files">Sie haben nicht genug Speicherplatz um die Dateien zu verschieben.</string>
     <string name="prefs_megabytes">MB</string>
     <string name="prefs_tablet_mode_title">Tablet-Modus</string>
     <string name="prefs_tablet_mode_enabled">Im Querformat werden zwei Seiten nebeneinander dargestellt.</string>
@@ -185,7 +201,7 @@
 
     <!-- translation updates -->
     <string name="update_available">Update vorhanden</string>
-    <string name="translation_updates_available">Es ist ein Update für eine ihrer Übersetzungen vorhanden.  Wollen sie die Übersetzung jetzt aktualisieren?</string>
+    <string name="translation_updates_available">Es ist ein Update für eine Ihrer Übersetzungen vorhanden.  Wollen Sie die Übersetzung jetzt aktualisieren?</string>
     <string name="translation_dialog_yes">Ja</string>
     <string name="translation_dialog_later">Später</string>
 
@@ -218,32 +234,37 @@
     <string name="download_successful">Download erfolgreich</string>   
 	<string name="download_processing">Download wird durchgeführt&#8230;</string>              
     <string name="download_error_general">Download fehlgeschlagen</string>             
-    <string name="download_error_disk">Nicht genug Speicherplatz zum Herunterladen</string>               
-	<string name="download_error_network">Die Datei konnte wegen eines Netzwerk-Fehlers nicht heruntergeladen werden</string>                    
-	<string name="download_error_perms">Die Datei konnte mangels Berechtigungen nicht heruntergeladen werden</string>                  
-	<string name="download_error_invalid_download">Die heruntergeladene Datei war fehlerhaft</string>
-	<string name="download_error_invalid_download_retry">Fehlerhafte Datei, es wird versucht die Datei erneut herunterzuladen</string> 
+    <string name="download_error_disk">Sie verfügen nicht über genug Speicherplatz um die Dateien herunterzuladen.</string>               
+	<string name="download_error_network">Die Datei konnte wegen eines Netzwerk-Fehlers nicht heruntergeladen werden.</string>
+	<string name="download_error_perms">Die Datei konnte mangels Berechtigungen nicht heruntergeladen werden.</string>
+	<string name="download_error_invalid_download">Die heruntergeladene Datei war fehlerhaft.</string>
+	<string name="download_error_invalid_download_retry">Fehlerhafte Datei, es wird versucht die Datei erneut herunterzuladen.</string>
     <string name="download_error_network_retry">Netzwerk-Fehler, es wird versucht eine Verbindung aufzubauen&#8230;</string>
     <string name="notification_download_canceled">Download abgebrochen</string>
-    <string name="download_non_wifi_prompt">Sie sind nicht mit dem W-LAN verbunden.  Die Dateien trotzdem herunterladen?</string>
+    <string name="download_non_wifi_prompt">Sie sind nicht mit einem W-LAN verbunden.  Möchten Sie die Dateien trotzdem herunterladen?</string>
     
     <!-- downloading dialogs -->
     <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
     <string name="process_progress">Datei wird verarbeitet %1$d / %2$d</string>
     <string name="download_retry">Nochmals versuchen</string>
     <string name="download_cancel">Abbrechen</string>
-    <string name="download_extra_data">Wir müssen ein paar kleine Dateien herunterladen, um von der Teilen- und Übersetzungs-Funktion Gebrauch machen zu können.  Die Dateien jetzt herunterladen?</string>
+    <string name="download_extra_data">Wir müssen ein paar kleine Dateien herunterladen, um von der 
+	Teilen- und Übersetzungs-Funktion Gebrauch machen zu können.  Möchten Sie die Dateien jetzt herunterladen?</string>
 
     <!-- translation database stuff -->
     <string name="remove_dlg_title">Übersetzung entfernen?</string>
-    <string name="remove_dlg_msg">Sind sie sicher, dass sie die %1$s entfernen wollen?</string>
-    <string name="error_getting_translation_list">Es ist zurzeit nicht möglich die Liste mit den Übersetzungen herunterzuladen.  Versuchen sie es später erneut.</string>
+    <string name="remove_dlg_msg">Sind Sie sicher, dass Sie die %1$s entfernen wollen?</string>
+    <string name="error_getting_translation_list">Es ist zurzeit nicht möglich die Liste 
+	mit den Übersetzungen herunterzuladen.  Versuchen Sie es später erneut.</string>
     <string name="search_data">Suche Dateien</string>
     <string name="need_translation">Sie haben noch keine Übersetzung/Koranexegese heruntergeladen.</string>
     <string name="get_translations">Übersetzungen herunterladen</string>
 
     <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+    <string name="email_us">Wenn Ihre Frage oben nicht beantwortet werden konnte und Sie 
+	Unterstützung benötigen, dann können Sie uns eine E-Mail an quranandroid@gmail.com senden. 
+	Bitte haben Sie Verständnis dafür, dass wir sehr viele E-Mails bekommen und wir möglicherweise 
+	nicht im Stande sein werden alle zu beantworten.</string>
 
     <!-- sura metainfo -->
     <string name="makki">Mekkanisch</string>
@@ -256,9 +277,9 @@
     <!-- long press -->
     <string name="bookmark_ayah">Lesezeichen für diesen Vers hinzufügen</string>
     <string name="unbookmark_ayah">Lesezeichen für diesen Vers entfernen</string>
-    <string name="tag_ayah">Vers taggen</string>
-    <string name="share_ayah">Vers-Link teilen</string>
-    <string name="share_ayah_text">Vers Text teilen</string>
+    <string name="tag_ayah">Ein Schlagwort zum Vers hinzufügen</string>
+    <string name="share_ayah">Vers Link teilen</string>
+    <string name="share_ayah_text">Versinhalt teilen</string>
     <string name="translation_ayah">Vers Übersetzung/Koranexegese</string>
     <string name="play_from_here">Ab hier abspielen</string>
     <string name="ayah_notes">Bemerkungen</string>
@@ -270,17 +291,17 @@
     
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Lesezeichen löschen</string>
-    <string name="tag_bookmark">Lesezeichen taggen</string>
-    <string name="delete_tag">Tag löschen</string>
-    <string name="edit_tag">Tag bearbeiten</string>
-    <string name="new_tag">Neuer Tag</string>
-    <string name="not_tagged">Noch nicht getaggt</string>
+    <string name="tag_bookmark">Ein Schlagwort zum Lesezeichen hinzufügen</string>
+    <string name="delete_tag">Schlagwort löschen</string>
+    <string name="edit_tag">Schlagwort bearbeiten</string>
+    <string name="new_tag">Neues Schlagwort</string>
+    <string name="not_tagged">Noch kein Schlagwort hinzugefügt</string>
     
     <!-- tag dialog -->
-    <string name="tag_dlg_title">Tag</string>
+    <string name="tag_dlg_title">Schlagwort</string>
     <string name="tag_name">Name</string>
     
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Keine Lesezeichen</string>
-    <string name="tags_list_empty">Keine Tags</string>
+    <string name="tags_list_empty">Keine Schlagwörter</string>
 </resources>
