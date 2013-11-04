@@ -355,9 +355,9 @@ public class AudioService extends Service implements OnCompletionListener,
       protected SparseArray<Integer> doInBackground(Integer... params){
          int sura = params[0];
          mSura = sura;
-         SuraTimingDatabaseHandler db =
-                 new SuraTimingDatabaseHandler(mDatabasePath);
 
+         SuraTimingDatabaseHandler db =
+                 SuraTimingDatabaseHandler.getDatabaseHandler(mDatabasePath);
          SparseArray<Integer> map = null;
          Cursor cursor = db.getAyahTimings(sura);
          Log.d(TAG, "got cursor of data");
@@ -373,8 +373,6 @@ public class AudioService extends Service implements OnCompletionListener,
             while (cursor.moveToNext());
          }
          if (cursor != null){ cursor.close(); }
-         db.closeDatabase();
-
          return map;
       }
 
@@ -637,6 +635,11 @@ public class AudioService extends Service implements OnCompletionListener,
 
          // service is no longer necessary. Will be started again if needed.
          stopSelf();
+
+         // stop async task if it's running
+         if (mTimingTask != null){
+           mTimingTask.cancel(true);
+         }
       }
    }
 
