@@ -84,8 +84,10 @@ Open Source Projects Used
 
 Changelog
 ---------
-**development**
+**version 2.4.8** (released 11/3/2013)
 - fix numerous crashes related to search
+- fix many various other crashes
+- added icon for nexus 5
 
 **version 2.4.7** (released 10/8/2013)
 - fix some crashes
