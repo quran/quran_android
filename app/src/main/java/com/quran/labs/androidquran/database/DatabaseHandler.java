@@ -207,7 +207,7 @@ public class DatabaseHandler {
     String qtext = "select " + COL_SURA + ", " + COL_AYAH +
         ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
         operator + " ? " + " limit 150";
-    Crashlytics.log("search query: " + qtext);
+    Crashlytics.log("search query: " + qtext + ", query: " + query);
     return mDatabase.rawQuery(qtext, new String[]{query});
   }
 
