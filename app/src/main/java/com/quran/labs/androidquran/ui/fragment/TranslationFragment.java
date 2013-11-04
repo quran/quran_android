@@ -94,7 +94,10 @@ public class TranslationFragment extends SherlockFragment
         new TranslationView.TranslationClickedListener() {
           @Override
           public void onTranslationClicked() {
-            ((PagerActivity) getActivity()).toggleActionBar();
+            final Activity activity = getActivity();
+            if (activity != null && activity instanceof PagerActivity){
+              ((PagerActivity) getActivity()).toggleActionBar();
+            }
           }
         });
 

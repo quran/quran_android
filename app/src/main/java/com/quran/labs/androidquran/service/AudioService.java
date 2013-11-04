@@ -44,6 +44,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -793,7 +794,15 @@ public class AudioService extends Service implements OnCompletionListener,
                  mIsStreaming);
          createMediaPlayerIfNeeded();
          mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-         mPlayer.setDataSource(url);
+         try {
+            mPlayer.setDataSource(url);
+         } catch (IllegalStateException ie){
+           Crashlytics.log("IllegalStateException() while " +
+               "setting data source, trying to reset...");
+           mPlayer.reset();
+           mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+           mPlayer.setDataSource(url);
+         }
 
          mAudioTitle = mAudioRequest.getTitle(getApplicationContext());
 
