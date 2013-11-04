@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.widget.Toast;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -65,14 +67,19 @@ public class AyahMenuUtils {
       return null;
    }
 
-   public void showMenu(int sura, int ayah, int page){
-      new ShowAyahMenuTask().execute(sura, ayah, page);
+   public void showMenu(Fragment fragment, int sura, int ayah, int page){
+      new ShowAyahMenuTask(fragment).execute(sura, ayah, page);
    }
 
    class ShowAyahMenuTask extends AsyncTask<Integer, Void, Boolean> {
       int mSura;
       int mAyah;
       int mPage;
+      Fragment mFragment;
+
+      public ShowAyahMenuTask(Fragment fragment){
+        mFragment = fragment;
+      }
 
       @Override
       protected Boolean doInBackground(Integer... params) {
@@ -94,7 +101,7 @@ public class AyahMenuUtils {
 
       @Override
       protected void onPostExecute(Boolean result) {
-         if (result != null){
+         if (result != null && mFragment.isAdded()){
             showAyahMenu(mSura, mAyah, mPage, result);
          }
       }

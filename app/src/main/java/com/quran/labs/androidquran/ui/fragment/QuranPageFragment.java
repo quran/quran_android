@@ -327,7 +327,7 @@ public class QuranPageFragment extends SherlockFragment
       }
 
       if (mAyahMenuUtils != null) {
-        mAyahMenuUtils.showMenu(result.getSura(),
+        mAyahMenuUtils.showMenu(this, result.getSura(),
             result.getAyah(), mPageNumber);
       }
     }

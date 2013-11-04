@@ -478,7 +478,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       }
 
       if (mAyahMenuUtils != null) {
-        mAyahMenuUtils.showMenu(result.getSura(),
+        mAyahMenuUtils.showMenu(this, result.getSura(),
             result.getAyah(), mPageNumber);
       }
     }
