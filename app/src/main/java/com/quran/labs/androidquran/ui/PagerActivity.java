@@ -1,7 +1,13 @@
 package com.quran.labs.androidquran.ui;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
@@ -19,7 +25,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -44,13 +54,27 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.util.*;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
-import com.quran.labs.androidquran.ui.helpers.*;
-import com.quran.labs.androidquran.util.*;
+import com.quran.labs.androidquran.ui.helpers.AyahTracker;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
+import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
+import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.util.AsyncTask;
+import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
 import java.io.File;
@@ -75,6 +99,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public static final String EXTRA_HIGHLIGHT_SURA = "highlightSura";
   public static final String EXTRA_HIGHLIGHT_AYAH = "highlightAyah";
   public static final String LAST_WAS_DUAL_PAGES = "wasDualPages";
+
+  private static final long DEFAULT_HIDE_AFTER_TIME = 2000;
 
   private QuranPageWorker mWorker = null;
   private SharedPreferences mPrefs = null;
@@ -102,21 +128,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private boolean mDualPages = false;
   private boolean mJustCreated = false;
 
-  public static final int VISIBLE_FLAGS =
-      View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-
-  public static final int INVISIBLE_FLAGS =
-      View.SYSTEM_UI_FLAG_LOW_PROFILE
-          | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-  public static final int MSG_TOGGLE_ACTIONBAR = 1;
+  public static final int MSG_HIDE_ACTIONBAR = 1;
 
   private Handler mHandler = new Handler() {
     @Override
     public void handleMessage(Message msg) {
-      if (msg.what == MSG_TOGGLE_ACTIONBAR) {
-        toggleActionBar();
+      if (msg.what == MSG_HIDE_ACTIONBAR) {
+        toggleActionBarVisibility(false);
       } else {
         super.handleMessage(msg);
       }
@@ -165,7 +183,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
     int page = -1;
 
     mIsActionBarHidden = true;
-    boolean shouldAnimateActionBarAway = true;
     if (savedInstanceState != null) {
       android.util.Log.d(TAG, "non-null saved instance state!");
       Serializable lastAudioRequest =
@@ -182,7 +199,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mShowingTranslation = savedInstanceState
           .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
       if (savedInstanceState.containsKey(LAST_ACTIONBAR_STATE)) {
-        shouldAnimateActionBarAway = false;
         mIsActionBarHidden = !savedInstanceState
             .getBoolean(LAST_ACTIONBAR_STATE);
       }
@@ -280,13 +296,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
     });
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      JBVisibilityHelper.setVisibilityChangeListener(this, mViewPager);
+      setUiVisibilityListener();
+      mAudioStatusBar.setVisibility(View.VISIBLE);
     }
-    toggleActionBar();
-
-    if (shouldAnimateActionBarAway) {
-      mHandler.sendEmptyMessageDelayed(MSG_TOGGLE_ACTIONBAR, 1000);
-    }
+    toggleActionBarVisibility(true);
 
     if (mDualPages) {
       mViewPager.setCurrentItem(page / 2);
@@ -337,7 +350,56 @@ public class PagerActivity extends SherlockFragmentActivity implements
         }
       });
     }
-    mJustCreated = true;
+  }
+
+  @Override
+  public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    if (hasFocus) {
+      mHandler.sendEmptyMessageDelayed(
+          MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME);
+    } else {
+      mHandler.removeMessages(MSG_HIDE_ACTIONBAR);
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+  private void setUiVisibility(boolean isVisible){
+    int flags;
+    if (isVisible){
+      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+    } else {
+      flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
+          | View.SYSTEM_UI_FLAG_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    }
+    mViewPager.setSystemUiVisibility(flags);
+  }
+
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+  private void setUiVisibilityListener(){
+    mViewPager.setOnSystemUiVisibilityChangeListener(
+        new View.OnSystemUiVisibilityChangeListener() {
+      @Override
+      public void onSystemUiVisibilityChange(int flags) {
+        boolean visible =
+            (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
+        if (visible){
+          mAudioStatusBar.updateSelectedItem();
+        }
+        mAudioStatusBar.animate()
+            .translationY(visible? 0 : mAudioStatusBar.getHeight())
+            .setDuration(250)
+            .start();
+      }
+    });
+  }
+
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+  private void clearUiVisibilityListener(){
+    mViewPager.setOnSystemUiVisibilityChangeListener(null);
   }
 
   @Override
@@ -369,12 +431,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onResume() {
-    if (!mJustCreated) {
-      mIsActionBarHidden = !mIsActionBarHidden;
-      toggleActionBar();
-    }
-    mJustCreated = false;
-
     // read the list of translations
     if (mTranslationReaderTask != null) {
       mTranslationReaderTask.cancel(true);
@@ -577,7 +633,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   protected void onDestroy() {
     android.util.Log.d(TAG, "onDestroy()");
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      JBVisibilityHelper.clearVisibilityChangeListener(mViewPager);
+      clearUiVisibilityListener();
     }
 
     mBookmarksAdapter.close();
@@ -956,33 +1012,33 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void toggleActionBar() {
     if (mIsActionBarHidden) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        int visibility = VISIBLE_FLAGS;
-        mViewPager.setSystemUiVisibility(visibility);
+        setUiVisibility(true);
       } else {
         getWindow().addFlags(
             WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().clearFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().show();
+
+        mAudioStatusBar.updateSelectedItem();
+        mAudioStatusBar.setVisibility(View.VISIBLE);
       }
 
-      mAudioStatusBar.updateSelectedItem();
-      mAudioStatusBar.setVisibility(View.VISIBLE);
       mIsActionBarHidden = false;
     } else {
+      mHandler.removeMessages(MSG_HIDE_ACTIONBAR);
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        int visibility = VISIBLE_FLAGS;
-        visibility |= INVISIBLE_FLAGS;
-        mViewPager.setSystemUiVisibility(visibility);
+        setUiVisibility(false);
       } else {
         getWindow().addFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(
             WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getSupportActionBar().hide();
+
+        mAudioStatusBar.setVisibility(View.GONE);
       }
 
-      mAudioStatusBar.setVisibility(View.GONE);
       mIsActionBarHidden = true;
     }
   }
