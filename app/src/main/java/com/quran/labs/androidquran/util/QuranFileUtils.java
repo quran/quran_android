@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 
 import java.io.File;
@@ -22,11 +23,10 @@ import java.util.Locale;
 public class QuranFileUtils {
   private static final String TAG = "QuranFileUtils";
 
-  public static String IMG_HOST = "http://android.quran.com/data/";
-  private static String QURAN_BASE = "quran_android/";
-  private static String DATABASE_DIRECTORY = "databases";
-  private static int BUFF_SIZE = 1024;
-  public static final String PACKAGE_NAME = "com.quran.labs.androidquran";
+  public static final String IMG_HOST = "http://android.quran.com/data/";
+  private static final String QURAN_BASE = "quran_android/";
+  private static final String DATABASE_DIRECTORY = "databases";
+  private static final int BUFF_SIZE = 1024;
 
   public static boolean debugRmDir(String dir, boolean deleteDirectory) {
     File directory = new File(dir);
@@ -203,14 +203,18 @@ public class QuranFileUtils {
 
       try {
         saveStream(is, path);
+        return decodeBitmapStream(is);
       } catch (Exception e) {
         // failed to save the image, try to decode
-        Log.d("quran_utils", e.toString());
+        Crashlytics.logException(e);
         return decodeBitmapStream(is);
+      } finally {
+        try {
+          is.close();
+        } catch (Exception e){
+          // ignore
+        }
       }
-
-      // we were able to save the bitmap, load from the sdcard...
-      return QuranFileUtils.getImageFromSD(context, filename);
     }
     else {
       return decodeBitmapStream(is);
@@ -233,11 +237,6 @@ public class QuranFileUtils {
       output.write(buf, 0, readlen);
     }
     output.close();
-    try {
-      is.close();
-    }
-    catch (Exception e) {
-    }
   }
 
   public static String getQuranBaseDirectory(Context context) {
