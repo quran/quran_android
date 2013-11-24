@@ -208,7 +208,19 @@ public class DatabaseHandler {
         ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
         operator + " ? " + " limit 150";
     Crashlytics.log("search query: " + qtext + ", query: " + query);
-    return mDatabase.rawQuery(qtext, new String[]{query});
+
+    try {
+      Cursor c = mDatabase.rawQuery(qtext, new String[]{query});
+      return c;
+    } catch (Exception e){
+      if (withSnippets && useFullTextIndex){
+        Crashlytics.log("error querying, trying again without snippets...");
+        return search(q, table, false);
+      } else {
+        Crashlytics.logException(e);
+        return null;
+      }
+    }
   }
 
   public void closeDatabase() {
