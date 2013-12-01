@@ -28,7 +28,6 @@ import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
@@ -40,6 +39,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -146,9 +146,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
     ((QuranApplication) getApplication()).refreshLocale(false);
 
     setTheme(R.style.QuranAndroid);
-    getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-    requestWindowFeature(
-        com.actionbarsherlock.view.Window.FEATURE_INDETERMINATE_PROGRESS);
+    requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
     super.onCreate(savedInstanceState);
     mBookmarksCache = new SparseArray<Boolean>();
@@ -367,12 +366,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private void setUiVisibility(boolean isVisible){
     int flags;
     if (isVisible){
-      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
     } else {
       flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
           | View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
           | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
     }
     mViewPager.setSystemUiVisibility(flags);
@@ -386,9 +383,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
       public void onSystemUiVisibilityChange(int flags) {
         boolean visible =
             (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
+        mIsActionBarHidden = !visible;
         if (visible){
           mAudioStatusBar.updateSelectedItem();
+          getSherlock().getActionBar().show();
+        } else {
+          getSherlock().getActionBar().hide();
         }
+
         mAudioStatusBar.animate()
             .translationY(visible? 0 : mAudioStatusBar.getHeight())
             .setDuration(250)
