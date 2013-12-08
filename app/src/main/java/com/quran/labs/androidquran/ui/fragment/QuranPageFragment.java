@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -65,6 +66,7 @@ public class QuranPageFragment extends SherlockFragment
 
   private Resources mResources;
   private SharedPreferences mPrefs;
+  private Handler mHandler = new Handler();
 
   public static QuranPageFragment newInstance(int page) {
     final QuranPageFragment f = new QuranPageFragment();
@@ -186,12 +188,23 @@ public class QuranPageFragment extends SherlockFragment
     super.onActivityCreated(savedInstanceState);
     Activity activity = getActivity();
     if (PagerActivity.class.isInstance(activity)) {
-      QuranPageWorker worker =
-          ((PagerActivity) activity).getQuranPageWorker();
-      worker.loadPage(QuranScreenInfo.getInstance().getWidthParam(),
-          mPageNumber, mImageView);
+      final PagerActivity pagerActivity = (PagerActivity)activity;
 
-      new QueryPageCoordinatesTask(activity).execute(mPageNumber);
+      mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          QuranPageWorker worker = pagerActivity.getQuranPageWorker();
+          worker.loadPage(QuranScreenInfo.getInstance().getWidthParam(),
+              mPageNumber, mImageView);
+        }
+      }, 250);
+
+      mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          new QueryPageCoordinatesTask(pagerActivity).execute(mPageNumber);
+        }
+      }, 1000);
     }
   }
 
@@ -211,6 +224,7 @@ public class QuranPageFragment extends SherlockFragment
 
   public void cleanup() {
     android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
+    mHandler.removeCallbacksAndMessages(null);
     if (mImageView != null) {
       mImageView.setImageDrawable(null);
       mImageView = null;
