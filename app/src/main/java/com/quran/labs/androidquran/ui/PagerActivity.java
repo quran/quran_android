@@ -240,7 +240,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       updateActionBarTitle(Constants.PAGES_LAST - page);
     }
 
-    mWorker = new QuranPageWorker(this);
+    mWorker = QuranPageWorker.getInstance(this);
     mLastPopupTime = System.currentTimeMillis();
     mPagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), mDualPages, mShowingTranslation);
@@ -753,7 +753,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public boolean onSearchRequested() {
-    mWorker.clearCache();
     return super.onSearchRequested();
   }
 
