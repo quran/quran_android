@@ -6,13 +6,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.ui.fragment.ImageCacheFragment;
 import com.quran.labs.androidquran.util.AsyncTask;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
@@ -21,19 +19,23 @@ import java.lang.ref.WeakReference;
 public class QuranPageWorker {
    private static final String TAG = "QuranPageWorker";
    
-   private LruCache<String, BitmapDrawable> mMemoryCache = null;
    private Context mContext;
    private Resources mResources;
+   private static QuranPageWorker mInstance;
+   private LruCache<String, BitmapDrawable> mMemoryCache = null;
 
-   public QuranPageWorker(FragmentActivity activity){
-      mContext = activity;
-      mResources = activity.getResources();
-      ImageCacheFragment fragment = ImageCacheFragment.getImageCacheFragment(
-              activity.getSupportFragmentManager());
-      mMemoryCache = fragment.mRetainedCache;
-      if (mMemoryCache != null){ return; }
+   public static synchronized QuranPageWorker getInstance(Context context){
+     if (mInstance == null){
+       mInstance = new QuranPageWorker(context);
+     }
+     return mInstance;
+   }
 
-      final int memClass = ((ActivityManager)activity.getSystemService(
+   private QuranPageWorker(Context context){
+      mContext = context.getApplicationContext();
+      mResources = context.getResources();
+
+      final int memClass = ((ActivityManager)context.getSystemService(
             Context.ACTIVITY_SERVICE)).getMemoryClass();
       final int cacheSize = 1024 * 1024 * memClass / 8;
       final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
@@ -63,18 +65,9 @@ public class QuranPageWorker {
              return bitmap.getRowBytes() * bitmap.getHeight();
          }
       };
-      fragment.mRetainedCache = mMemoryCache;
 
       Crashlytics.log(Log.DEBUG, TAG,
           "initial LruCache size: " + (memClass/8));
-   }
-
-   public void clearCache(){
-     if (mMemoryCache != null){
-       Crashlytics.log(Log.DEBUG, TAG,
-           "evicting all items in cache...");
-       mMemoryCache.evictAll();
-     }
    }
    
    private void addBitmapToCache(String key, BitmapDrawable drawable) {
@@ -112,14 +105,14 @@ public class QuranPageWorker {
 
    private class QuranPageWorkerTask extends
            AsyncTask<Integer, Void, BitmapDrawable> {
-      private final WeakReference<ImageView> imageViewReference;
+      private final WeakReference<ImageView> mImageViewReference;
       private int data = 0;
       private String mWidthParam;
 
       public QuranPageWorkerTask(String widthParam, ImageView imageView) {
          mWidthParam = widthParam;
          // use a WeakReference to ensure the ImageView can be garbage collected
-         imageViewReference = new WeakReference<ImageView>(imageView);
+         mImageViewReference = new WeakReference<ImageView>(imageView);
       }
 
       @Override
@@ -177,8 +170,8 @@ public class QuranPageWorker {
       // once complete, see if ImageView is still around and set bitmap.
       @Override
       protected void onPostExecute(BitmapDrawable drawable) {
-         if (imageViewReference != null && drawable != null) {
-            final ImageView imageView = imageViewReference.get();
+         if (drawable != null) {
+            final ImageView imageView = mImageViewReference.get();
             if (imageView != null) {
                imageView.setImageDrawable(drawable);
             }
