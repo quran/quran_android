@@ -34,18 +34,25 @@ public class StorageUtils {
    */
   public static List<Storage> getAllStorageLocations(Context context) {
     Collection<String> mounts = readMountsFile();
-    Collection<String> vold = readVoldsFile();
 
-    List<String> toRemove = new ArrayList<String>();
-    for (Iterator<String> iter = mounts.iterator(); iter.hasNext(); ){
-      String mount = iter.next();
-      if (!vold.contains(mount)){
-        toRemove.add(mount);
-      }
-    }
+    // As per http://source.android.com/devices/tech/storage/config.html
+    // device-specific vold.fstab file is removed after Android 4.2.2
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        Collection<String> vold = readVoldsFile();
 
-    for (String s : toRemove){
-      mounts.remove(s);
+        List<String> toRemove = new ArrayList<String>();
+        for (Iterator<String> iter = mounts.iterator(); iter.hasNext(); ){
+            String mount = iter.next();
+            if (!vold.contains(mount)){
+                toRemove.add(mount);
+            }
+        }
+
+        for (String s : toRemove){
+            mounts.remove(s);
+        }
+    } else {
+        Log.d(TAG, "Android version: " + Build.VERSION.CODENAME + " skip reading vold.fstab file");
     }
 
     Log.d(TAG, "mounts list is: " + mounts);
