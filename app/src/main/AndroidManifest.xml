@@ -4,7 +4,6 @@
 	android:versionName="2.4.9"
 	android:installLocation="auto">
 	
-   <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
    <supports-screens android:largeScreens="true" android:xlargeScreens="true" />
 
    <uses-permission android:name="android.permission.INTERNET" />
