@@ -84,6 +84,18 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.5.1** (released 2/17/2014)
+- minor fixes
+
+**version 2.5.0** (released 2/10/2014)
+- fixes for indonesian
+- fix sdcard issue on 4.3+
+- various bugfixes and improvements
+
+**version 2.4.9** (released 12/21/2013)
+- fix galaxy note 8 black bar issue
+- various bugfixes and improvements
+
 **version 2.4.8** (released 11/3/2013)
 - fix numerous crashes related to search
 - fix many various other crashes

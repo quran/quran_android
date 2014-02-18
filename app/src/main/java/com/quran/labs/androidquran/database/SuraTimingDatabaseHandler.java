@@ -51,7 +51,8 @@ public class SuraTimingDatabaseHandler {
     } catch (SQLException se) {
       Crashlytics.log("database at " + path +
           (new File(path).exists() ? " exists" : " doesn't exist"));
-      throw se;
+      Crashlytics.logException(se);
+      mDatabase = null;
     }
   }
 

@@ -35,7 +35,12 @@ android {
     }
 
     buildTypes {
+      debug {
+         buildConfigField "boolean", "LOG_CRASHES", "false"
+      }
+
       release {
+         buildConfigField "boolean", "LOG_CRASHES", "true"
          runProguard true
          proguardFile 'proguard.cfg'
          signingConfig signingConfigs.release

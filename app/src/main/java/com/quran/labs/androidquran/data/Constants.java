@@ -1,7 +1,10 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.labs.androidquran.BuildConfig;
+
 public class Constants {
-   public static final boolean CRASH_REPORTING_ENABLED = false;
+   public static final boolean CRASH_REPORTING_ENABLED =
+       BuildConfig.LOG_CRASHES;
 
    // Numerics
    public static final int DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255;

@@ -76,6 +76,7 @@ public class QuranDataProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
+    Crashlytics.log("uri: " + uri.toString());
 		switch (sURIMatcher.match(uri)) {
 		case SEARCH_SUGGEST:
 			if (selectionArgs == null) {
