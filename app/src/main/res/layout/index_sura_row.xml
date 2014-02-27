@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <com.quran.labs.androidquran.ui.helpers.CheckableRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:quranandroid="http://schemas.android.com/apk/res/com.quran.labs.androidquran"
@@ -7,17 +6,18 @@
     android:orientation="horizontal" >
     <!-- android:background="?android:attr/activatedBackgroundIndicator"
     This only works on 3.0+, otherwise a custom RelativeLayout won't be needed -->
-    
-    <TextView android:id="@+id/suraNumber"
-              android:layout_width="34dp"
-              android:layout_height="fill_parent"
-              android:layout_marginLeft="10dp"
-              android:layout_marginRight="20dp"
-              android:layout_alignParentLeft="true"
-              android:layout_centerInParent="true"
-              android:gravity="center"
-              android:textSize="18sp"
-              android:textColor="@color/sura_info_color" />
+
+    <TextView
+        android:id="@+id/suraNumber"
+        android:layout_width="34dp"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
+        android:gravity="center"
+        android:textColor="@color/sura_info_color"
+        android:textSize="18sp" />
 
     <TextView android:id="@+id/rowIcon"
         android:layout_width="wrap_content"
@@ -41,22 +41,24 @@
         android:textSize="12sp"
         android:visibility="gone"
         android:textColor="@color/header_text_color" />
-        
-    <TextView android:id="@+id/suraName"
+
+    <TextView
+        android:id="@+id/suraName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/rowIcon"
         android:layout_toLeftOf="@+id/pageNumber"
-        android:gravity="left"
-        android:maxLines="1"
-        android:lines="1"
+        android:layout_toRightOf="@id/rowIcon"
         android:ellipsize="end"
-        android:scrollHorizontally="true"
-        android:paddingTop="5dp"
+        android:gravity="left"
+        android:lines="1"
+        android:maxLines="1"
         android:paddingRight="16dp"
-        android:textSize="16sp"
-        android:textColor="@color/sura_info_color" />
-    
+        android:paddingTop="5dp"
+        android:scrollHorizontally="true"
+        android:text="555"
+        android:textColor="@color/sura_info_color"
+        android:textSize="16sp" />
+
     <TextView android:id="@+id/suraDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,8 +66,20 @@
         android:layout_below="@id/suraName"
         android:paddingBottom="5dp"
         android:textSize="10sp"
+        android:text="5588"
         android:textColor="@color/sura_details_color" />
-    
+
+    <TextView
+        android:id="@+id/AduioDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/suraName"
+        android:layout_toLeftOf="@id/pageNumber"
+        android:paddingBottom="5dp"
+        android:text="AAA"
+        android:textColor="@color/header_text_color"
+        android:textSize="10sp" />
+
     <TextView android:id="@id/pageNumber"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
@@ -74,5 +88,14 @@
         android:layout_marginRight="10dp"
         android:textSize="14sp"
         android:textColor="@color/sura_details_color" />
-       
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AduioDetails"
+        android:layout_marginRight="28dp"
+        android:layout_toLeftOf="@+id/AduioDetails"
+        android:src="@drawable/speaker" />
+
 </com.quran.labs.androidquran.ui.helpers.CheckableRelativeLayout>

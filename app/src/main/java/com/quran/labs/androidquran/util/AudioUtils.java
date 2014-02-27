@@ -9,8 +9,10 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class AudioUtils {
@@ -20,8 +22,41 @@ public class AudioUtils {
    public static final String ZIP_EXTENSION = ".zip";
    private static String AUDIO_DIRECTORY = "audio";
 
+    public static int getAudioDownloadStatus(Context con, int qariID, String qariUrl, int sura, QuranRow QuranRowelement) {
 
-   public final static class LookAheadAmount {
+        //the function will have  three possible returen values
+        //1 mean i have the Sura completely
+        //2 mean i have partially
+        //3 mean I don't have it
+
+        int returnValue=3;
+
+        if (AudioUtils.isQariGapless(con, qariID))
+        {
+            //do you have the file for this Qari and this sura
+            returnValue=   AudioUtils.haveSuraForGaplessQari(qariUrl, sura) ? 1:3;
+        }else
+        {
+            QuranRowelement.AudioInfo=new Boolean[QuranInfo.SURA_NUM_AYAHS[sura]];
+            int DownloadedAyahCounter=QuranInfo.SURA_NUM_AYAHS[sura];
+            for (int AyahI=1;AyahI <QuranInfo.SURA_NUM_AYAHS[sura];AyahI++)
+            {
+                QuranRowelement.AudioInfo[AyahI]= AudioUtils.haveSuraAndAyahForQari(qariUrl, sura, AyahI);
+                if (  !QuranRowelement.AudioInfo[AyahI]  )
+                    DownloadedAyahCounter--;
+            }
+            if (DownloadedAyahCounter<QuranInfo.SURA_NUM_AYAHS[sura])
+                returnValue=2;
+            else if(DownloadedAyahCounter==QuranInfo.SURA_NUM_AYAHS[sura])
+                returnValue=1;
+            else
+                returnValue=3;
+        }
+        return returnValue;
+    }
+
+
+    public final static class LookAheadAmount {
       public static final int PAGE = 1;
       public static final int SURA = 2;
       public static final int JUZ = 3;
@@ -199,13 +234,17 @@ public class AudioUtils {
       return doesRequireBasmallah(request);
    }
 
-   public static boolean haveSuraAyahForQari(String baseDir, int sura, int ayah){
-      String filename = baseDir + File.separator + sura +
-              File.separator + ayah + AUDIO_EXTENSION;
-      File f = new File(filename);
-      return f.exists();
-   }
-
+   public static boolean haveSuraAndAyahForQari(String baseDir, int sura, int ayah){
+        String filename = baseDir + File.separator + sura +
+                File.separator + ayah + AUDIO_EXTENSION;
+        File f = new File(filename);
+        return f.exists();
+    }
+    public static boolean haveSuraForGaplessQari(String baseDir, int sura){
+        String filename = baseDir + File.separator + sura + AUDIO_EXTENSION;
+        File f = new File(filename);
+        return f.exists();
+    }
    private static boolean doesRequireBasmallah(AudioRequest request){
       QuranAyah minAyah = request.getMinAyah();
       int startSura = minAyah.getSura();
@@ -304,4 +343,41 @@ public class AudioUtils {
       if (f == null){ return null; }
       return f.getAbsolutePath() + path;
    }
+
+
+
+	public static String getAudioSammary(ArrayList list)
+	{
+		ArrayList<AudioRange> list2=new ArrayList<AudioRange>();
+		Integer h;
+		AudioRange y =new AudioRange();
+		while ( (h = (Integer) list.remove(0) )!= null) {
+		   // console.log("~~"+h)
+		    if (y.Start == null)
+		    {
+		        y.Start = h;
+		        continue;
+		    }
+		    if (y.End == null)
+		    {
+		        y.End = h;
+		        continue;
+		    }
+		    if ((h - y.End) == 1)
+		    {
+		        y.End++;
+		    }
+		    else {
+		        list2.add(y);
+			    y = new AudioRange();
+		        y.Start = h;
+		        y.End = h;
+
+		    }
+		}
+		list2.add(y);
+
+		return AUDIO_DIRECTORY;
+	}
+
 }

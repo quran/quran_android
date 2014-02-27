@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,6 +18,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import static com.quran.labs.androidquran.data.Constants.*;
@@ -75,7 +77,14 @@ public class SuraListFragment extends SherlockFragment {
       int pos = 0;
       int sura = 1;
       int next = 1;
-      QuranRow[] elements = new QuranRow[SURAS_COUNT + JUZ2_COUNT];
+	      //TODO:2.....
+	  Context Con=   getActivity().getApplicationContext();
+	  int QariID=1;
+	  String qariUrl = AudioUtils.getQariUrl(Con,QariID, true);
+
+
+
+       QuranRow[] elements = new QuranRow[SURAS_COUNT + JUZ2_COUNT];
 
       Activity activity = getActivity();
       for (int juz=1; juz <= JUZ2_COUNT; juz++){
@@ -89,9 +98,14 @@ public class SuraListFragment extends SherlockFragment {
          while ((sura <= SURAS_COUNT) &&
                 (QuranInfo.SURA_PAGE_START[sura-1] < next)) {
             String title = QuranInfo.getSuraName(activity, sura, true);
-            elements[pos++] = new QuranRow(title, 
+            int newPos=pos++ ;
+            elements[newPos] = new QuranRow(title,
                   QuranInfo.getSuraListMetaString(activity, sura),
                   sura, QuranInfo.SURA_PAGE_START[sura-1], null);
+             //TODO: make   elements[newPos].AudioInfoInt as reff
+             elements[newPos].AudioInfoInt=AudioUtils.getAudioDownloadStatus(Con, QariID, qariUrl, sura, elements[newPos]);
+
+
             sura++;
          }
       }
