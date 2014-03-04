@@ -77,15 +77,13 @@ public class SuraListFragment extends SherlockFragment {
       int pos = 0;
       int sura = 1;
       int next = 1;
-	      //TODO:2.....
+
 	  Context Con=   getActivity().getApplicationContext();
-	  int QariID=1;
-	  String qariUrl = AudioUtils.getQariUrl(Con,QariID, true);
-
-
-
-       QuranRow[] elements = new QuranRow[SURAS_COUNT + JUZ2_COUNT];
-
+      SharedPreferences mSharedPreferences = PreferenceManager
+               .getDefaultSharedPreferences(Con.getApplicationContext());
+	  int QariID=mSharedPreferences.getInt(Constants.PREF_DEFAULT_QARI, 0);
+	  String qariUrl = AudioUtils.getLocalQariUrl(Con,QariID);
+      QuranRow[] elements = new QuranRow[SURAS_COUNT + JUZ2_COUNT];
       Activity activity = getActivity();
       for (int juz=1; juz <= JUZ2_COUNT; juz++){
          elements[pos++] = new QuranRow(QuranInfo.getJuzTitle(activity) + " " +
@@ -103,8 +101,18 @@ public class SuraListFragment extends SherlockFragment {
                   QuranInfo.getSuraListMetaString(activity, sura),
                   sura, QuranInfo.SURA_PAGE_START[sura-1], null);
              //TODO: make   elements[newPos].AudioInfoInt as reff
-             elements[newPos].AudioInfoInt=AudioUtils.getAudioDownloadStatus(Con, QariID, qariUrl, sura, elements[newPos]);
 
+
+             //1 mean i have the Sura completely
+             //2 mean i have partially
+             //3 mean I don't have it
+
+             int[] images = { R.drawable.audio_full, R.drawable.audio_partial,
+                     R.drawable.audio_none };
+
+             elements[newPos].AudioInfoInt=AudioUtils.getAudioDownloadStatus(
+                     Con, QariID, qariUrl, sura, elements[newPos]);
+             elements[newPos].imageResource=images[elements[newPos].AudioInfoInt-1 ];
 
             sura++;
          }

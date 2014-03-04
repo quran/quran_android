@@ -35,6 +35,7 @@ public class AudioUtils {
         {
             //do you have the file for this Qari and this sura
             returnValue=   AudioUtils.haveSuraForGaplessQari(qariUrl, sura) ? 1:3;
+
         }else
         {
             QuranRowelement.AudioInfo=new Boolean[QuranInfo.SURA_NUM_AYAHS[sura]];
@@ -52,6 +53,9 @@ public class AudioUtils {
             else
                 returnValue=3;
         }
+
+
+
         return returnValue;
     }
 

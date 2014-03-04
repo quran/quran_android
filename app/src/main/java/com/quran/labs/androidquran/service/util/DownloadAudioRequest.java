@@ -21,6 +21,6 @@ public class DownloadAudioRequest extends AudioRequest {
 
    @Override
    public boolean haveSuraAyah(int sura, int ayah){
-      return AudioUtils.haveSuraAyahForQari(mLocalDirectoryPath, sura, ayah);
+      return AudioUtils.haveSuraAndAyahForQari(mLocalDirectoryPath, sura, ayah);
    }
 }
