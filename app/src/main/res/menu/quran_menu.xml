@@ -19,6 +19,9 @@
     <item android:id="@+id/jump"
           android:title="@string/menu_jump"
           android:showAsAction="never" />
+    <item android:id="@+id/aduio_info"
+        android:title="@string/menu_aduio_info"
+        android:showAsAction="never" />
     <item android:id="@+id/settings"
           android:icon="@drawable/ic_ab_settings"
           android:title="@string/menu_settings"

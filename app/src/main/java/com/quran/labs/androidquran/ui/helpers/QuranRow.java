@@ -17,13 +17,19 @@ public class QuranRow {
    public Integer imageResource;
    public String imageText;
    
-	//TODO:mb 22-04-2013 / i need to think about some way
+
+    //for Audio information
 	public  Boolean   AudioInfo[];
+    public Integer AudioimageResource;
+    //////
+
+
 
    // For Bookmarks
    public long tagId;
    public long bookmarkId;
     public int AudioInfoInt;
+
 
     public QuranRow(String text, String metadata, int rowType, 
         int sura, int ayah, int page, Integer imageResource){

@@ -213,11 +213,14 @@ public class QuranActivity extends SherlockFragmentActivity
     	  gotoPageDialog();
     	  return true;
       }
-	   
+
+
       return super.onOptionsItemSelected(item);
 	}
 
-   @Override
+
+
+    @Override
    protected void onSaveInstanceState(Bundle outState) {
       outState.putBoolean(SI_SHOWED_UPGRADE_DIALOG,
               mShowedTranslationUpgradeDialog);

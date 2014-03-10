@@ -1,7 +1,11 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +18,9 @@ import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import java.util.HashMap;
+
+
 public class QuranListAdapter extends BaseAdapter {
 
    private Context mContext;
@@ -22,7 +29,7 @@ public class QuranListAdapter extends BaseAdapter {
    private int mLayout;
    private boolean mReshapeArabic;
    private boolean mUseArabicFont;
-
+   private HashMap<Integer, BitmapDrawable> AudioStatuses ;
    public QuranListAdapter(Context context, int layout, QuranRow[] items){
       mInflater = LayoutInflater.from(context);
       mElements = items;
@@ -32,9 +39,23 @@ public class QuranListAdapter extends BaseAdapter {
       // should we reshape if we have arabic?
       mUseArabicFont = QuranSettings.needArabicFont(context);
       mReshapeArabic = QuranSettings.isReshapeArabic(context);
+
+       AudioStatuses= new  HashMap<Integer, BitmapDrawable>();
+
+       AudioStatuses.put(R.drawable.audio_full,createBackground(R.drawable.audio_full));
+       AudioStatuses.put(R.drawable.audio_partial,createBackground(R.drawable.audio_partial));
+       AudioStatuses.put(R.drawable.audio_none,createBackground(R.drawable.audio_none));
+
    }
 
-   public int getCount() {
+    private BitmapDrawable createBackground(int audio_status) {
+        BitmapDrawable TileMe = new BitmapDrawable(BitmapFactory.decodeResource(mContext.getResources(), audio_status));
+        TileMe.setGravity(Gravity.RIGHT); // Bottom
+       // TileMe.setTileModeX(Shader.TileMode);
+        return TileMe;
+    }
+
+    public int getCount() {
       return mElements.length;
    }
 
@@ -81,6 +102,7 @@ public class QuranListAdapter extends BaseAdapter {
 
       holder.page.setText(QuranUtils.getLocalizedNumber(mContext, item.page));
       holder.text.setText(text);
+
       holder.header.setText(text);
       holder.number.setText(
               QuranUtils.getLocalizedNumber(mContext, item.sura));
@@ -111,6 +133,11 @@ public class QuranListAdapter extends BaseAdapter {
             holder.image.setVisibility(View.VISIBLE);
             holder.number.setVisibility(View.GONE);
          }
+
+          if (item.AudioimageResource!=null)
+          {
+              holder.text.setBackgroundDrawable(AudioStatuses.get(item.AudioimageResource));
+          }
       }
       holder.page.setTextColor(mContext.getResources().getColor(color));
       int pageVisibility = item.page == 0? View.GONE : View.VISIBLE;

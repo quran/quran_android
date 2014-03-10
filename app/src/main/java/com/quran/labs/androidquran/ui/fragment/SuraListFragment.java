@@ -110,9 +110,10 @@ public class SuraListFragment extends SherlockFragment {
              int[] images = { R.drawable.audio_full, R.drawable.audio_partial,
                      R.drawable.audio_none };
 
+
              elements[newPos].AudioInfoInt=AudioUtils.getAudioDownloadStatus(
-                     Con, QariID, qariUrl, sura, elements[newPos]);
-             elements[newPos].imageResource=images[elements[newPos].AudioInfoInt-1 ];
+                     Con, QariID, qariUrl, sura, null);
+             elements[newPos].AudioimageResource=images[elements[newPos].AudioInfoInt-1 ];
 
             sura++;
          }

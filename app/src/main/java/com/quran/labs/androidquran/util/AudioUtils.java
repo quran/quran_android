@@ -22,40 +22,38 @@ public class AudioUtils {
    public static final String ZIP_EXTENSION = ".zip";
    private static String AUDIO_DIRECTORY = "audio";
 
-    public static int getAudioDownloadStatus(Context con, int qariID, String qariUrl, int sura, QuranRow QuranRowelement) {
+    public static int getAudioDownloadStatus(Context con, int qariID, String qariUrl, int sura, ArrayList<Integer> AudioInfoArray) {
 
         //the function will have  three possible returen values
         //1 mean i have the Sura completely
         //2 mean i have partially
         //3 mean I don't have it
-
-        int returnValue=3;
-
-        if (AudioUtils.isQariGapless(con, qariID))
-        {
+        int returnValue = 3;
+        if (AudioUtils.isQariGapless(con, qariID)) {
             //do you have the file for this Qari and this sura
-            returnValue=   AudioUtils.haveSuraForGaplessQari(qariUrl, sura) ? 1:3;
-
-        }else
-        {
-            QuranRowelement.AudioInfo=new Boolean[QuranInfo.SURA_NUM_AYAHS[sura]];
-            int DownloadedAyahCounter=QuranInfo.SURA_NUM_AYAHS[sura];
-            for (int AyahI=1;AyahI <QuranInfo.SURA_NUM_AYAHS[sura];AyahI++)
-            {
-                QuranRowelement.AudioInfo[AyahI]= AudioUtils.haveSuraAndAyahForQari(qariUrl, sura, AyahI);
-                if (  !QuranRowelement.AudioInfo[AyahI]  )
-                    DownloadedAyahCounter--;
+            returnValue = AudioUtils.haveSuraForGaplessQari(qariUrl, sura) ? 1 : 3;
+        } else {
+            int DownloadedAyahCounter = QuranInfo.SURA_NUM_AYAHS[sura - 1];
+            if (AudioUtils.haveSuraFolderForQari(qariUrl, sura)) {
+                for (int AyahI = 1; AyahI < QuranInfo.SURA_NUM_AYAHS[sura - 1]; AyahI++) {
+                    //TODO:remove QuranRowelement
+                    boolean isAudioExistForAyah = AudioUtils.haveSuraAndAyahForQari(qariUrl, sura, AyahI);
+                    if (isAudioExistForAyah) {
+                        if (AudioInfoArray != null)
+                            AudioInfoArray.add(AyahI);
+                    } else
+                        DownloadedAyahCounter--;
+                }
+            } else {
+                DownloadedAyahCounter = 0;
             }
-            if (DownloadedAyahCounter<QuranInfo.SURA_NUM_AYAHS[sura])
-                returnValue=2;
-            else if(DownloadedAyahCounter==QuranInfo.SURA_NUM_AYAHS[sura])
-                returnValue=1;
+            if (DownloadedAyahCounter < QuranInfo.SURA_NUM_AYAHS[sura - 1]&&DownloadedAyahCounter>0)
+                returnValue = 2;
+            else if (DownloadedAyahCounter == QuranInfo.SURA_NUM_AYAHS[sura - 1])
+                returnValue = 1;
             else
-                returnValue=3;
+                returnValue = 3;
         }
-
-
-
         return returnValue;
     }
 
@@ -237,7 +235,12 @@ public class AudioUtils {
 
       return doesRequireBasmallah(request);
    }
+    public static boolean haveSuraFolderForQari(String baseDir, int sura){
+        String folderName = baseDir + File.separator + sura ;
 
+        File f = new File(folderName);
+        return f.exists();
+    }
    public static boolean haveSuraAndAyahForQari(String baseDir, int sura, int ayah){
         String filename = baseDir + File.separator + sura +
                 File.separator + ayah + AUDIO_EXTENSION;
@@ -350,13 +353,15 @@ public class AudioUtils {
 
 
 
-	public static String getAudioSammary(ArrayList list)
+	public static String getAudioSammary(ArrayList<Integer> list)
 	{
 		ArrayList<AudioRange> list2=new ArrayList<AudioRange>();
 		Integer h;
+
 		AudioRange y =new AudioRange();
-		while ( (h = (Integer) list.remove(0) )!= null) {
-		   // console.log("~~"+h)
+		while (  list.size()!= 0) {
+            h =  list.remove(0);
+
 		    if (y.Start == null)
 		    {
 		        y.Start = h;
@@ -381,7 +386,15 @@ public class AudioUtils {
 		}
 		list2.add(y);
 
-		return AUDIO_DIRECTORY;
+        StringBuilder builder = new StringBuilder();
+
+for ( int i=0;i<list2.size() ;i++)
+{
+    builder.append("from "+ list2.get(i).Start +" ~ "+ list2.get(i).End );
+    builder.append("\r\n");
+}
+
+		return builder.toString();
 	}
 
 }

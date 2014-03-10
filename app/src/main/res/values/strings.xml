@@ -281,4 +281,11 @@
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">No Bookmarks</string>
     <string name="tags_list_empty">No Tags</string>
+    <string name="menu_aduio_info">Aduio Info</string>
+    <string name="reader_name_label">Reader Name</string>
+    <string name="file_status">File Status</string>
+    <string name="detailed_file_status">Detailed File Status</string>
+    <string name="AudioStatus_completely">Completely</string>
+    <string name="AudioStatus_partially">Partially</string>
+    <string name="AudioStatus_missing">Missing</string>
 </resources>

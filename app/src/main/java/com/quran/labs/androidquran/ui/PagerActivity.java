@@ -63,6 +63,7 @@ import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
+import com.quran.labs.androidquran.ui.fragment.audioInformationFragment;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
@@ -748,9 +749,21 @@ public class PagerActivity extends SherlockFragmentActivity implements
       jumpDialog.show(fm, JumpFragment.TAG);
       return true;
     }
+
+    else if (item.getItemId() == R.id.aduio_info) {
+        gotoAduioInfoDialog();
+        return true;
+    }
     return super.onOptionsItemSelected(item);
   }
 
+
+    private void gotoAduioInfoDialog() { FragmentManager fm = getSupportFragmentManager();
+        audioInformationFragment AduioInfoDialog = new audioInformationFragment();
+        int page = getCurrentPage();
+        AduioInfoDialog.suraNumber= QuranInfo.getSuraNumberFromPage( page);
+        AduioInfoDialog.show(fm, audioInformationFragment.TAG);
+    }
   @Override
   public boolean onSearchRequested() {
     return super.onSearchRequested();
