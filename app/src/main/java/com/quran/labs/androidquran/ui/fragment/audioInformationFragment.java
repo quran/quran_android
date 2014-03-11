@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
@@ -35,7 +36,7 @@ public class audioInformationFragment extends SherlockDialogFragment {
         View layout = inflater.inflate(R.layout.audio_information_dialog, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(activity.getString(R.string.menu_aduio_info));
+        builder.setTitle(activity.getString(R.string.menu_audio_info));
 
 
         SharedPreferences mSharedPreferences = PreferenceManager
@@ -50,11 +51,18 @@ public class audioInformationFragment extends SherlockDialogFragment {
                 (TextView) layout.findViewById(R.id.files_status_value);
         final TextView reader_name_label_value =
                 (TextView) layout.findViewById(R.id.reader_name_label_value);
+        final TextView quran_sura_name_label_value=   (TextView) layout.findViewById(R.id.quran_sura_name_label_value);
+
+
+        final LinearLayout detailed_file_statusLinearLayout =
+                (LinearLayout) layout.findViewById(R.id.detailed_file_statusLinearLayout);
+
+
         String[] quran_readers_name =
                 activity.getBaseContext().getResources().getStringArray(R.array.quran_readers_name);
 
         reader_name_label_value.setText(quran_readers_name[QariID]);
-
+        quran_sura_name_label_value.setText(QuranInfo.getSuraName(Con,suraNumber,true));
         ArrayList<Integer> AudioInfoArray;
         AudioInfoArray = new ArrayList<Integer>();
         int AudioInfoInt = AudioUtils.getAudioDownloadStatus(
@@ -74,6 +82,7 @@ public class audioInformationFragment extends SherlockDialogFragment {
             detailed_file_status_value_text = getString(R.string.AudioStatus_partially);
             String detailed_file_status_value_Audio_output = AudioUtils.getAudioSammary(AudioInfoArray);
             detailed_file_status_value.setText(detailed_file_status_value_Audio_output);
+            detailed_file_statusLinearLayout.setVisibility(View.VISIBLE);
 
         }
         if (AudioInfoInt == 3) {

@@ -7,31 +7,83 @@
    android:orientation="vertical">
 
 
-   <TextView android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:textStyle="bold"
-             android:text="@string/reader_name_label" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <TextView android:layout_width="match_parent"
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textStyle="bold"
+                  android:text="@string/reader_name_label" />
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:id="@+id/reader_name_label_value"
+
+            android:autoText="false"
+            style="@style/translation_sura_title"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/quran_sura" />
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:id="@+id/quran_sura_name_label_value"
+
+            android:autoText="false"
+            style="@style/translation_sura_title"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/file_status" />
+
+
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:id="@+id/files_status_value"
+            style="@style/translation_sura_title"
+            android:layout_marginLeft="10dp"/>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:id="@+id/reader_name_label_value" />
-    <TextView android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="@string/file_status" />
-    <TextView android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:id="@+id/files_status_value" />
-    <TextView android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="@string/detailed_file_status" />
-    <TextView android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:id="@+id/detailed_file_status_value" />
+        android:id="@+id/detailed_file_statusLinearLayout"
+        android:visibility="gone">
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/detailed_file_status" />
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:id="@+id/detailed_file_status_value"
+            style="@style/translation_sura_title" />
+    </LinearLayout>
 </LinearLayout>
 
 

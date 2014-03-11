@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Shader;
 import android.graphics.Typeface;
@@ -50,7 +51,8 @@ public class QuranListAdapter extends BaseAdapter {
 
     private BitmapDrawable createBackground(int audio_status) {
         BitmapDrawable TileMe = new BitmapDrawable(BitmapFactory.decodeResource(mContext.getResources(), audio_status));
-        TileMe.setGravity(Gravity.RIGHT); // Bottom
+        TileMe.setGravity(Gravity.RIGHT  ); // Bottom
+
        // TileMe.setTileModeX(Shader.TileMode);
         return TileMe;
     }

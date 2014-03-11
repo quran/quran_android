@@ -58,7 +58,8 @@
         android:textSize="16sp"
         android:textColor="@color/sura_info_color"
 
-        />
+
+        android:focusable="false" />
 
     <TextView android:id="@+id/suraDetails"
         android:layout_width="wrap_content"

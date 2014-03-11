@@ -390,7 +390,7 @@ public class AudioUtils {
 
 for ( int i=0;i<list2.size() ;i++)
 {
-    builder.append("from "+ list2.get(i).Start +" ~ "+ list2.get(i).End );
+    builder.append("[ "+ list2.get(i).Start +" ~ "+ list2.get(i).End+" ]" );
     builder.append("\r\n");
 }
 

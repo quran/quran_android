@@ -20,7 +20,7 @@
           android:title="@string/menu_jump"
           android:showAsAction="never" />
     <item android:id="@+id/aduio_info"
-        android:title="@string/menu_aduio_info"
+        android:title="@string/menu_audio_info"
         android:showAsAction="never" />
     <item android:id="@+id/settings"
           android:icon="@drawable/ic_ab_settings"

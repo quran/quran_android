@@ -100,8 +100,6 @@ public class SuraListFragment extends SherlockFragment {
             elements[newPos] = new QuranRow(title,
                   QuranInfo.getSuraListMetaString(activity, sura),
                   sura, QuranInfo.SURA_PAGE_START[sura-1], null);
-             //TODO: make   elements[newPos].AudioInfoInt as reff
-
 
              //1 mean i have the Sura completely
              //2 mean i have partially
