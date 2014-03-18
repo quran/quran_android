@@ -69,8 +69,10 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
       mListView.setEmptyView(mEmptyTextView);
       
-      mAdapter = new QuranListAdapter(getActivity(),
-            R.layout.index_sura_row, new QuranRow[]{});
+
+      int layoytResource = QuranSettings.needArabicFont(getActivity()) ? R.layout.index_sura_row_ar: R.layout.index_sura_row;
+      mAdapter = new QuranListAdapter(getActivity(), layoytResource, new QuranRow[]{});
+
       mListView.setAdapter(mAdapter);
       
       mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);

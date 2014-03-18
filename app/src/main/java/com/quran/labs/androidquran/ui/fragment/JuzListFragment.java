@@ -36,8 +36,10 @@ public class JuzListFragment extends SherlockFragment {
          ViewGroup container, Bundle savedInstanceState){
       View view = inflater.inflate(R.layout.quran_list, container, false);
       mListView = (ListView)view.findViewById(R.id.list);
-      mAdapter = new QuranListAdapter(getActivity(),
-            R.layout.index_sura_row, getJuz2List());
+
+      int layoytResource = QuranSettings.needArabicFont(getActivity()) ? R.layout.index_sura_row_ar: R.layout.index_sura_row;
+      mAdapter = new QuranListAdapter(getActivity(), layoytResource, getJuz2List());
+
       mListView.setAdapter(mAdapter);
       
       mListView.setOnItemClickListener(new OnItemClickListener(){
