@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import static com.quran.labs.androidquran.data.Constants.*;
@@ -34,23 +35,7 @@ public class SuraListFragment extends SherlockFragment {
    public View onCreateView(LayoutInflater inflater,
          ViewGroup container, Bundle savedInstanceState){
       View view = inflater.inflate(R.layout.quran_list, container, false);
-      mListView = (ListView)view.findViewById(R.id.list);
 
-      int layoytResource = QuranSettings.needArabicFont(getActivity()) ? R.layout.index_sura_row_ar: R.layout.index_sura_row;
-      mAdapter = new QuranListAdapter(getActivity(), layoytResource, getSuraList());
-
-      mListView.setAdapter(mAdapter);
-      
-      mListView.setOnItemClickListener(new OnItemClickListener(){
-         public void onItemClick(AdapterView<?> parent, View v,
-               int position, long id){
-            QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-            if (elem.page > 0){
-               ((QuranActivity)getActivity()).jumpTo(elem.page);
-            }
-         }
-      });
-      
       return view;
    }
    
@@ -59,6 +44,22 @@ public class SuraListFragment extends SherlockFragment {
       SharedPreferences prefs = PreferenceManager
             .getDefaultSharedPreferences(
                   getActivity().getApplicationContext());
+       mListView = (ListView)getView().findViewById(R.id.list);
+
+       mAdapter = new QuranListAdapter(getActivity(), R.layout.index_sura_row, getSuraList());
+
+       mListView.setAdapter(mAdapter);
+
+       mListView.setOnItemClickListener(new OnItemClickListener(){
+           public void onItemClick(AdapterView<?> parent, View v,
+                                   int position, long id){
+               QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
+               if (elem.page > 0){
+                   ((QuranActivity)getActivity()).jumpTo(elem.page);
+               }
+           }
+       });
+
       int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
             Constants.NO_PAGE_SAVED);
       if (lastPage != Constants.NO_PAGE_SAVED &&
