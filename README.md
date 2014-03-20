@@ -30,6 +30,21 @@ Code Style
 you can set these under code style and code style java in android studio or 
 intellij.
 
+
+Setup
+------------------------
+1. download the latest canary version of [android studio](http://tools.android.com/download/studio/canary) (latest as of this writing is version 0.5.1)
+2. make sure you have the android sdk installed, along with the sdk tools,
+platform-tools, android 4.2.2 sdk platform, android support repository, android support library, and google repository.
+3. make a file called `local.properties` with one line in it:
+`sdk.dir=/path/to/your/android/sdk` 
+(make sure to replace `/path/to/your/android/sdk` with the directory to which you downloaded the android sdk).
+4. run android studio, choose import project, then choose build.gradle from
+the main quran source code directory.
+5. if you want to build from the command line instead, you can build by running `./gradlew assembleDebug` (after completing steps 1-3 above).
+
+and that's it!
+
 App localization
 ------------------------
 
