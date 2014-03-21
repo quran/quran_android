@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +13,18 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranAppUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import java.util.Locale;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 
@@ -27,17 +32,35 @@ public class JuzListFragment extends SherlockFragment {
 
    private ListView mListView;
    private QuranListAdapter mAdapter;
-   
+   private Boolean lastArabicSelection;
    public static JuzListFragment newInstance(){
       return new JuzListFragment();
    }
-   
+
+    private void loadUI(View view){
+        mListView = (ListView)view.findViewById(R.id.list);
+
+        mAdapter = new QuranListAdapter(getActivity(), R.layout.index_sura_row, getJuz2List());
+
+        mListView.setAdapter(mAdapter);
+
+        mListView.setOnItemClickListener(new OnItemClickListener(){
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id){
+                QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
+                if (elem.page > 0){
+                    ((QuranActivity)getActivity()).jumpTo(elem.page);
+                }
+            }
+        });
+    }
    @Override
    public View onCreateView(LayoutInflater inflater,
          ViewGroup container, Bundle savedInstanceState){
       View view = inflater.inflate(R.layout.quran_list, container, false);
 
-      
+      loadUI(view);
+       lastArabicSelection = QuranSettings.needArabicFont(getActivity().getApplicationContext());
       return view;
    }
    
@@ -46,22 +69,11 @@ public class JuzListFragment extends SherlockFragment {
       SharedPreferences prefs = PreferenceManager
             .getDefaultSharedPreferences(
                   getActivity().getApplicationContext());
+       if(lastArabicSelection!=QuranSettings.needArabicFont(getActivity().getApplicationContext())){
+           lastArabicSelection=QuranSettings.needArabicFont(getActivity().getApplicationContext());
+           loadUI(getView());
+       }
 
-       mListView = (ListView)getView().findViewById(R.id.list);
-
-       mAdapter = new QuranListAdapter(getActivity(), R.layout.index_sura_row, getJuz2List());
-
-       mListView.setAdapter(mAdapter);
-
-       mListView.setOnItemClickListener(new OnItemClickListener(){
-           public void onItemClick(AdapterView<?> parent, View v,
-                                   int position, long id){
-               QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-               if (elem.page > 0){
-                   ((QuranActivity)getActivity()).jumpTo(elem.page);
-               }
-           }
-       });
 
       int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
             Constants.NO_PAGE_SAVED);

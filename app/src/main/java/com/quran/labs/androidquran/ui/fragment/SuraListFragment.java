@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -20,31 +21,20 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import java.util.Locale;
+
 import static com.quran.labs.androidquran.data.Constants.*;
 
 public class SuraListFragment extends SherlockFragment {
 
    private ListView mListView;
    private QuranListAdapter mAdapter;
-   
+    private Boolean lastArabicSelection;
    public static SuraListFragment newInstance(){
       return new SuraListFragment();
    }
-   
-   @Override
-   public View onCreateView(LayoutInflater inflater,
-         ViewGroup container, Bundle savedInstanceState){
-      View view = inflater.inflate(R.layout.quran_list, container, false);
-
-      return view;
-   }
-   
-   @Override
-   public void onResume() {
-      SharedPreferences prefs = PreferenceManager
-            .getDefaultSharedPreferences(
-                  getActivity().getApplicationContext());
-       mListView = (ListView)getView().findViewById(R.id.list);
+   private void loadUI(View view){
+       mListView = (ListView)view.findViewById(R.id.list);
 
        mAdapter = new QuranListAdapter(getActivity(), R.layout.index_sura_row, getSuraList());
 
@@ -59,6 +49,23 @@ public class SuraListFragment extends SherlockFragment {
                }
            }
        });
+   }
+   @Override
+   public View onCreateView(LayoutInflater inflater,
+         ViewGroup container, Bundle savedInstanceState){
+      View view = inflater.inflate(R.layout.quran_list, container, false);
+       loadUI(view);
+       lastArabicSelection = QuranSettings.needArabicFont(getActivity().getApplicationContext());
+      return view;
+   }
+   
+   @Override
+   public void onResume() {
+      SharedPreferences prefs = PreferenceManager
+            .getDefaultSharedPreferences(
+                  getActivity().getApplicationContext());
+       ((QuranApplication)getActivity().getApplication()).refreshLocale(false);
+
 
       int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
             Constants.NO_PAGE_SAVED);
@@ -70,7 +77,10 @@ public class SuraListFragment extends SherlockFragment {
          int position = sura + juz - 1;
          mListView.setSelectionFromTop(position, 20);
       }
-
+       if(lastArabicSelection!=QuranSettings.needArabicFont(getActivity().getApplicationContext())){
+           lastArabicSelection=QuranSettings.needArabicFont(getActivity().getApplicationContext());
+           loadUI(getView());
+       }
       super.onResume();
    }
 
