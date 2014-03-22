@@ -21,15 +21,13 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-import java.util.Locale;
-
 import static com.quran.labs.androidquran.data.Constants.*;
 
 public class SuraListFragment extends SherlockFragment {
 
    private ListView mListView;
    private QuranListAdapter mAdapter;
-    private Boolean lastArabicSelection;
+    private Boolean mLastArabicSelection;
    public static SuraListFragment newInstance(){
       return new SuraListFragment();
    }
@@ -55,7 +53,7 @@ public class SuraListFragment extends SherlockFragment {
          ViewGroup container, Bundle savedInstanceState){
       View view = inflater.inflate(R.layout.quran_list, container, false);
        loadUI(view);
-       lastArabicSelection = QuranSettings.needArabicFont(getActivity().getApplicationContext());
+       mLastArabicSelection = QuranSettings.isArabicNames(getActivity().getApplicationContext());
       return view;
    }
    
@@ -77,8 +75,8 @@ public class SuraListFragment extends SherlockFragment {
          int position = sura + juz - 1;
          mListView.setSelectionFromTop(position, 20);
       }
-       if(lastArabicSelection!=QuranSettings.needArabicFont(getActivity().getApplicationContext())){
-           lastArabicSelection=QuranSettings.needArabicFont(getActivity().getApplicationContext());
+       if(mLastArabicSelection !=QuranSettings.needArabicFont(getActivity().getApplicationContext())){
+           mLastArabicSelection =QuranSettings.needArabicFont(getActivity().getApplicationContext());
            loadUI(getView());
        }
       super.onResume();

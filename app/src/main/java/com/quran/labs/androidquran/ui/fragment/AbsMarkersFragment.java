@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.*;
-import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.QuranActivity;
@@ -53,8 +52,9 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
                                                 QuranRow[] selected);
 
    protected abstract QuranRow[] getItems();
-    private Boolean lastArabicSelection;
+    private Boolean mLastArabicSelection;
     private void loadUI(View view){
+        mLastArabicSelection = QuranSettings.isArabicNames(getActivity().getApplicationContext());
         mListView = (ListView)view.findViewById(R.id.list);
         mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
         mListView.setEmptyView(mEmptyTextView);
@@ -134,14 +134,13 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       setHasOptionsMenu(true);
       View view = inflater.inflate(R.layout.quran_list, container, false);
        loadUI(view);
-       lastArabicSelection=QuranSettings.needArabicFont(getActivity().getApplicationContext());
+
       return view;
    }
    
    @Override
    public void onResume() {
-       if(lastArabicSelection!=QuranSettings.needArabicFont(getActivity().getApplicationContext())){
-           lastArabicSelection=QuranSettings.needArabicFont(getActivity().getApplicationContext());
+       if(mLastArabicSelection !=QuranSettings.isArabicNames(getActivity().getApplicationContext())){
            loadUI(getView());
        }
       super.onResume();
