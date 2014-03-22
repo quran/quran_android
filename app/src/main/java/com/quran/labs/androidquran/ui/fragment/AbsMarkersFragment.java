@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,74 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
                                                 QuranRow[] selected);
 
    protected abstract QuranRow[] getItems();
+    private Boolean mLastArabicSelection;
+    private void loadUI(View view){
+        mLastArabicSelection = QuranSettings.isArabicNames(getActivity().getApplicationContext());
+        mListView = (ListView)view.findViewById(R.id.list);
+        mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
+        mListView.setEmptyView(mEmptyTextView);
 
+        mAdapter = new QuranListAdapter(getActivity(), R.layout.index_sura_row, new QuranRow[]{});
+
+        mListView.setAdapter(mAdapter);
+
+        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        mListView.setItemsCanFocus(false);
+
+        mListView.setOnItemClickListener(new OnItemClickListener(){
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id){
+                QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
+
+                // If we're in CAB mode don't handle the click
+                if (mMode != null){
+                    boolean checked = isValidSelection(elem) && mListView.isItemChecked(position);
+                    mListView.setItemChecked(position, checked);
+                    mMode.invalidate();
+                    return;
+                } else {
+                    mListView.setItemChecked(position, false);
+                }
+
+                // We're not in CAB mode so handle the click normally
+                if (!elem.isHeader()) {
+                    if (elem.isAyahBookmark()){
+                        ((QuranActivity)getActivity()).jumpToAndHighlight(
+                                elem.page, elem.sura, elem.ayah);
+                    }
+                    else {
+                        ((QuranActivity)getActivity()).jumpTo(elem.page);
+                    }
+                }
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+                QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
+                if (!isValidSelection(elem)) {
+                    return false;
+                } else if (!mListView.isItemChecked(position)) {
+                    mListView.setItemChecked(position, true);
+                    if (mMode != null)
+                        mMode.invalidate();
+                    else
+                        mMode = getSherlockActivity().startActionMode(
+                                new ModeCallback());
+                } else if (mMode != null) {
+                    mMode.finish();
+                }
+
+                return true;
+            }
+        });
+
+        if (loadingTask == null){
+            loadingTask = new BookmarksLoadingTask();
+            loadingTask.execute();
+        }
+    }
    @Override
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -65,76 +133,17 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
          ViewGroup container, Bundle savedInstanceState){
       setHasOptionsMenu(true);
       View view = inflater.inflate(R.layout.quran_list, container, false);
-      mListView = (ListView)view.findViewById(R.id.list);
-      mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
-      mListView.setEmptyView(mEmptyTextView);
-      
-      mAdapter = new QuranListAdapter(getActivity(),
-            R.layout.index_sura_row, new QuranRow[]{});
-      mListView.setAdapter(mAdapter);
-      
-      mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-      mListView.setItemsCanFocus(false);
-      
-      mListView.setOnItemClickListener(new OnItemClickListener(){
-         public void onItemClick(AdapterView<?> parent, View v,
-               int position, long id){
-            QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-            
-            // If we're in CAB mode don't handle the click
-            if (mMode != null){
-               boolean checked = isValidSelection(elem) && mListView.isItemChecked(position);
-               mListView.setItemChecked(position, checked);
-               mMode.invalidate();
-               return;
-            } else {
-               mListView.setItemChecked(position, false);
-            }
-            
-            // We're not in CAB mode so handle the click normally
-            if (!elem.isHeader()) {
-               if (elem.isAyahBookmark()){
-                  ((QuranActivity)getActivity()).jumpToAndHighlight(
-                        elem.page, elem.sura, elem.ayah);
-               }
-               else {
-                  ((QuranActivity)getActivity()).jumpTo(elem.page);
-               }
-            }
-         }
-      });
-      
-      mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-         public boolean onItemLongClick(AdapterView<?> parent, View view,
-               int position, long id) {
-            QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-            if (!isValidSelection(elem)) {
-               return false;
-            } else if (!mListView.isItemChecked(position)) {
-               mListView.setItemChecked(position, true);
-               if (mMode != null)
-                  mMode.invalidate();
-               else
-                  mMode = getSherlockActivity().startActionMode(
-                          new ModeCallback());
-            } else if (mMode != null) {
-               mMode.finish();
-            }
-            
-            return true;
-         }
-      });
-      
+       loadUI(view);
+
       return view;
    }
    
    @Override
    public void onResume() {
+       if(mLastArabicSelection !=QuranSettings.isArabicNames(getActivity().getApplicationContext())){
+           loadUI(getView());
+       }
       super.onResume();
-      if (loadingTask == null){
-         loadingTask = new BookmarksLoadingTask();
-         loadingTask.execute();
-      }
    }
    
    @Override

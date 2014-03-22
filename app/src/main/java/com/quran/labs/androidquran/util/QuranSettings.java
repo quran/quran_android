@@ -33,7 +33,9 @@ public class QuranSettings {
    }
 
    public static boolean needArabicFont(Context context){
-      return Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+       boolean defValue = Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+       return getBooleanPreference(context, Constants.PREF_USE_ARABIC_NAMES,
+               defValue);
    }
 
    public static boolean isReshapeArabic(Context context){

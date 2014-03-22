@@ -49,7 +49,30 @@ public class QuranListAdapter extends BaseAdapter {
    public void setElements(QuranRow[] elements){
       mElements = elements;
    }
+    public void makeNumbersArabic(ViewHolder holder){
 
+        if(mUseArabicFont && holder!=null){
+            if(holder.number!=null){
+                holder.number.setText(ArabicStyle.MakeItArabicNumbers(holder.number.getText().toString()));
+            }
+            if(holder.text!=null){
+                holder.text.setText(ArabicStyle.MakeItArabicNumbers(holder.text.getText().toString()));
+            }
+            if(holder.header!=null){
+                holder.header.setText(ArabicStyle.MakeItArabicNumbers(holder.header.getText().toString()));
+            }
+            if(holder.metadata!=null){
+                holder.metadata.setText(ArabicStyle.MakeItArabicNumbers(holder.metadata.getText().toString()));
+            }
+            if(holder.page!=null){
+                holder.page.setText(ArabicStyle.MakeItArabicNumbers(holder.page.getText().toString()));
+            }
+
+            if(holder.image!=null){
+                holder.image.setText(ArabicStyle.MakeItArabicNumbers(holder.image.getText().toString()));
+            }
+        }
+    }
    public View getView(final int position, View convertView, ViewGroup parent) {
       ViewHolder holder;
 
@@ -122,7 +145,8 @@ public class QuranListAdapter extends BaseAdapter {
                  R.drawable.abs__list_activated_holo : 0;
          convertView.setBackgroundResource(background);
       }
-      
+
+      makeNumbersArabic(holder);
       return convertView;
    }
 
