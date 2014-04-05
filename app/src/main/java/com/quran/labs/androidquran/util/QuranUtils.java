@@ -1,13 +1,15 @@
 package com.quran.labs.androidquran.util;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -54,6 +56,11 @@ public class QuranUtils {
 
    public static String getLocalizedNumber(Context context, int number){
       if (QuranSettings.isArabicNames(context)){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+          // TODO: fix this to take a number directly
+          return ArabicStyle.legacyGetArabicNumbers("" + number);
+        }
+
          if (mNumberFormatter == null || !mIsArabicFormatter){
             mIsArabicFormatter = true;
             mNumberFormatter =

@@ -1,5 +1,30 @@
 package com.quran.labs.androidquran.ui;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.quran.labs.androidquran.AboutUsActivity;
+import com.quran.labs.androidquran.HelpActivity;
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.QuranPreferenceActivity;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.service.AudioService;
+import com.quran.labs.androidquran.ui.fragment.AbsMarkersFragment;
+import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
+import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
+import com.quran.labs.androidquran.ui.fragment.JumpFragment;
+import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
+import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
+import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
+import com.quran.labs.androidquran.ui.fragment.TagsFragment;
+import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
+import com.quran.labs.androidquran.util.QuranSettings;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,18 +40,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.quran.labs.androidquran.*;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.ui.fragment.*;
-import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 
 public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener, BookmarkHandler,
@@ -56,6 +69,7 @@ public class QuranActivity extends SherlockFragmentActivity
    private PagerAdapter mPagerAdapter = null;
    private BookmarksDBAdapter mBookmarksDBAdapter = null;
    private boolean mShowedTranslationUpgradeDialog = false;
+   private boolean mIsArabic;
 
    @Override
    public void onCreate(Bundle savedInstanceState){
@@ -100,12 +114,21 @@ public class QuranActivity extends SherlockFragmentActivity
             }
          }
       }
+
+      mIsArabic = QuranSettings.isArabicNames(this);
    }
 
    @Override
    public void onResume(){
       super.onResume();
-      startService(new Intent(AudioService.ACTION_STOP));
+      final boolean isArabic = QuranSettings.isArabicNames(this);
+      if (isArabic != mIsArabic) {
+        final Intent i = getIntent();
+        finish();
+        startActivity(i);
+      } else {
+        startService(new Intent(AudioService.ACTION_STOP));
+      }
    }
 
    @Override
