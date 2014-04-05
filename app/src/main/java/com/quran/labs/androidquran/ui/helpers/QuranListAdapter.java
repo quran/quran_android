@@ -1,5 +1,10 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -8,11 +13,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranListAdapter extends BaseAdapter {
 
@@ -49,30 +49,7 @@ public class QuranListAdapter extends BaseAdapter {
    public void setElements(QuranRow[] elements){
       mElements = elements;
    }
-    public void makeNumbersArabic(ViewHolder holder){
 
-        if(mUseArabicFont && holder!=null){
-            if(holder.number!=null){
-                holder.number.setText(ArabicStyle.MakeItArabicNumbers(holder.number.getText().toString()));
-            }
-            if(holder.text!=null){
-                holder.text.setText(ArabicStyle.MakeItArabicNumbers(holder.text.getText().toString()));
-            }
-            if(holder.header!=null){
-                holder.header.setText(ArabicStyle.MakeItArabicNumbers(holder.header.getText().toString()));
-            }
-            if(holder.metadata!=null){
-                holder.metadata.setText(ArabicStyle.MakeItArabicNumbers(holder.metadata.getText().toString()));
-            }
-            if(holder.page!=null){
-                holder.page.setText(ArabicStyle.MakeItArabicNumbers(holder.page.getText().toString()));
-            }
-
-            if(holder.image!=null){
-                holder.image.setText(ArabicStyle.MakeItArabicNumbers(holder.image.getText().toString()));
-            }
-        }
-    }
    public View getView(final int position, View convertView, ViewGroup parent) {
       ViewHolder holder;
 
@@ -146,7 +123,6 @@ public class QuranListAdapter extends BaseAdapter {
          convertView.setBackgroundResource(background);
       }
 
-      makeNumbersArabic(holder);
       return convertView;
    }
 

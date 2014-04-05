@@ -1,13 +1,14 @@
 package com.quran.labs.androidquran;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.QuranSettings;
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.data.Constants;
 
 import java.util.Locale;
 
@@ -28,8 +29,7 @@ public class QuranApplication extends Application {
   public void refreshLocale(boolean force) {
     SharedPreferences prefs = PreferenceManager
         .getDefaultSharedPreferences(this);
-    String language = prefs.getBoolean(
-        Constants.PREF_USE_ARABIC_NAMES, false) ? "ar" : null;
+    String language = QuranSettings.isArabicNames(this) ? "ar" : null;
 
     Locale locale = null;
     if ("ar".equals(language)) {

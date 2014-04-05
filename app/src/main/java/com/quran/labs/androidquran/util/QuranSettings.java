@@ -1,13 +1,13 @@
 package com.quran.labs.androidquran.util;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
 
 
 public class QuranSettings {
@@ -33,9 +33,7 @@ public class QuranSettings {
    }
 
    public static boolean needArabicFont(Context context){
-       boolean defValue = Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-       return getBooleanPreference(context, Constants.PREF_USE_ARABIC_NAMES,
-               defValue);
+     return Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH;
    }
 
    public static boolean isReshapeArabic(Context context){
