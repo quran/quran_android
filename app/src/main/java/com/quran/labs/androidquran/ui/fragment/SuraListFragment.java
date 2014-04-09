@@ -8,12 +8,13 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,13 +57,10 @@ public class SuraListFragment extends SherlockFragment {
 
   @Override
   public void onResume() {
-    SharedPreferences prefs = PreferenceManager
-        .getDefaultSharedPreferences(
-            getActivity().getApplicationContext());
-    ((QuranApplication) getActivity().getApplication()).refreshLocale(false);
+    final Activity activity = getActivity();
+    ((QuranApplication) activity.getApplication()).refreshLocale(false);
 
-    int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
-        Constants.NO_PAGE_SAVED);
+    int lastPage = QuranSettings.getLastPage(activity);
     if (lastPage != Constants.NO_PAGE_SAVED &&
         lastPage >= Constants.PAGES_FIRST &&
         lastPage <= Constants.PAGES_LAST) {
@@ -72,7 +70,17 @@ public class SuraListFragment extends SherlockFragment {
       mListView.setSelectionFromTop(position, 20);
     }
 
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
+        QuranSettings.isArabicNames(activity)) {
+      updateScrollBarPositionHoneycomb();
+    }
+
     super.onResume();
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  private void updateScrollBarPositionHoneycomb() {
+    mListView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
   }
 
   private QuranRow[] getSuraList() {

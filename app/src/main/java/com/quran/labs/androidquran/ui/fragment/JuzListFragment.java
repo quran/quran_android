@@ -10,11 +10,11 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,19 +59,26 @@ public class JuzListFragment extends SherlockFragment {
 
   @Override
   public void onResume() {
-    SharedPreferences prefs = PreferenceManager
-        .getDefaultSharedPreferences(
-            getActivity().getApplicationContext());
+    final Activity activity = getActivity();
 
-    int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
-        Constants.NO_PAGE_SAVED);
+    int lastPage = QuranSettings.getLastPage(activity);
     if (lastPage != Constants.NO_PAGE_SAVED) {
       int juz = QuranInfo.getJuzFromPage(lastPage);
       int position = (juz - 1) * 9;
       mListView.setSelectionFromTop(position, 20);
     }
 
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
+        QuranSettings.isArabicNames(activity)) {
+      updateScrollBarPositionHoneycomb();
+    }
+
     super.onResume();
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  private void updateScrollBarPositionHoneycomb() {
+    mListView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
   }
 
   private QuranRow[] getJuz2List() {

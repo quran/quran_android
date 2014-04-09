@@ -28,7 +28,6 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -216,10 +215,7 @@ public class QuranActivity extends SherlockFragmentActivity
          return true;
       }
       else if (item.getItemId() == R.id.last_page){
-         SharedPreferences prefs =
-                 PreferenceManager.getDefaultSharedPreferences(
-                         getApplicationContext());
-         int page = prefs.getInt(Constants.PREF_LAST_PAGE, 1);
+         int page = QuranSettings.getLastPage(this);
          jumpTo(page);
          return true;
       }
