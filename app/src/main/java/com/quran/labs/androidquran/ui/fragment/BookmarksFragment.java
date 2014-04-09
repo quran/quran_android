@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -15,6 +11,10 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranSettings;
+
+import android.app.Activity;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,10 +122,7 @@ public class BookmarksFragment extends AbsMarkersFragment {
          break;
       }
 
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-            getActivity().getApplicationContext());
-      int lastPage = prefs.getInt(Constants.PREF_LAST_PAGE,
-              Constants.NO_PAGE_SAVED);
+      int lastPage = QuranSettings.getLastPage(activity);
       boolean showLastPage = lastPage != Constants.NO_PAGE_SAVED;
       if (showLastPage && (lastPage > Constants.PAGES_LAST ||
               lastPage < Constants.PAGES_FIRST)) {

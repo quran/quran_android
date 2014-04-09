@@ -12,10 +12,13 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranSettings;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.SparseBooleanArray;
@@ -151,7 +154,22 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       }
    }
 
-   @Override
+  @Override
+  public void onResume() {
+    super.onResume();
+    final Activity activity = getActivity();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
+        QuranSettings.isArabicNames(activity)) {
+      updateScrollBarPositionHoneycomb();
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  private void updateScrollBarPositionHoneycomb() {
+    mListView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
+  }
+
+  @Override
    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
       super.onCreateOptionsMenu(menu, inflater);
       MenuItem sortItem = menu.findItem(R.id.sort);

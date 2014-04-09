@@ -101,6 +101,12 @@ public class QuranSettings {
               Constants.DEFAULT_TEXT_SIZE);
    }
 
+  public static int getLastPage(Context context){
+    SharedPreferences prefs =
+        PreferenceManager.getDefaultSharedPreferences(context);
+    return prefs.getInt(Constants.PREF_LAST_PAGE, Constants.NO_PAGE_SAVED);
+  }
+
    public static void setLastPage(Context context, int page){
       SharedPreferences prefs =
               PreferenceManager.getDefaultSharedPreferences(context);
