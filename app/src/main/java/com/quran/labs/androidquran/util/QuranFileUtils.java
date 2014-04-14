@@ -1,19 +1,19 @@
 package com.quran.labs.androidquran.util;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.data.QuranDataProvider;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.data.QuranDataProvider;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -203,7 +203,7 @@ public class QuranFileUtils {
 
       try {
         saveStream(is, path);
-        return decodeBitmapStream(is);
+        return getImageFromSD(context, filename);
       } catch (Exception e) {
         // failed to save the image, try to decode
         Crashlytics.logException(e);

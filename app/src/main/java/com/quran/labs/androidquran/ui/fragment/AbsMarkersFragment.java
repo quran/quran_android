@@ -134,10 +134,6 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
        }
      });
 
-     if (loadingTask == null){
-       loadingTask = new BookmarksLoadingTask();
-       loadingTask.execute();
-     }
       return view;
    }
    
@@ -162,6 +158,9 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
         QuranSettings.isArabicNames(activity)) {
       updateScrollBarPositionHoneycomb();
     }
+
+    loadingTask = new BookmarksLoadingTask();
+    loadingTask.execute();
   }
 
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
