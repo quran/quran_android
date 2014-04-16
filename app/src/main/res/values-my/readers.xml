@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="quran_readers_name">
+        <item>Minshawi Murattal (tiada jurang)</item>
+        <item>Husary (tiada jurang)</item>
+        <item>Abdurrahman As-Sudais (tiada jurang)</item>
+        <item>Nasser Al Qatami (tiada jurang)</item>
+        <item>Abd Al-Basit</item>
+        <item>Abd Al-Basit Mujawwad</item>
+        <item>Abdullah Basfar</item>
+        <item>Abdurrahmaan As-Sudais</item>
+        <item>Abu Bakr Ash-Shatri</item>
+        <item>Mishary Al-Afasy</item>
+        <item>Saad Al-Ghamdi</item>
+        <item>Ibrahim Walk (English Trans.)</item>
+        <item>Hani Ar-Rifai</item>
+        <item>Husary Mujawwad</item>
+        <item>Ali Al-Hudhaify</item>
+        <item>Maher Al Muaiqly</item>
+        <item>Minshawy Mujawwad</item>
+        <item>Mohammad al Tablaway</item>
+        <item>Muhammad Ayyoub</item>
+        <item>Muhammad Jibreel</item>
+        <item>Saood Ash-Shuraym</item>
+        <item>Yasser Ad-Dussary</item>
+    </string-array>
+</resources>
