@@ -58,6 +58,7 @@ App localization
 * Chinese by Bo Li
 * Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran)
 * Indonesian by [Saiful Khaliq](http://twitter.com/saifious)
+* Malaysian by [Ahmad Syazwan](https://github.com/asyazwan)
 
 
 Terms of use
@@ -99,6 +100,12 @@ Open Source Projects Used
 
 Changelog
 ---------
+**current**
+- malaysian translation (thanks @asyazwan)
+- uyghur translation (thanks @Sahran)
+- right to left layout for arabic (thanks @aessam)
+- bugfixes
+
 **version 2.5.1** (released 2/17/2014)
 - minor fixes
 
