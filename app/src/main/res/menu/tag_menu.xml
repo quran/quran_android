@@ -3,17 +3,17 @@
     <item android:id="@+id/cab_tag_bookmark"
           android:icon="@drawable/ic_tag"
           android:title="@string/tag_bookmark"
-          android:showAsAction="always" />
+          android:showAsAction="ifRoom" />
     <item android:id="@+id/cab_edit_tag"
           android:icon="@drawable/ic_edit"
           android:title="@string/edit_tag"
-          android:showAsAction="always" />
+          android:showAsAction="ifRoom" />
     <item android:id="@+id/cab_delete_tag"
           android:icon="@drawable/ic_cancel"
           android:title="@string/delete_tag"
-          android:showAsAction="always" />
+          android:showAsAction="ifRoom" />
     <item android:id="@+id/cab_new_tag"
           android:icon="@drawable/ic_new"
           android:title="@string/new_tag"
-          android:showAsAction="always" />
+          android:showAsAction="ifRoom" />
 </menu>

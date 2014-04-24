@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:layout_gravity ="center">
 	<ImageView android:id="@+id/left_border"
@@ -17,7 +18,8 @@
  		android:layout_toRightOf="@id/left_border"
         android:layout_toLeftOf="@+id/right_border"
  		android:layout_gravity="center_horizontal"
- 		android:fillViewport="true">
+ 		android:fillViewport="true"
+        tools:ignore="InconsistentLayout">
 	<com.quran.labs.androidquran.widgets.HighlightingImageView
         android:id="@+id/page_image"
 		android:layout_gravity="center_horizontal"

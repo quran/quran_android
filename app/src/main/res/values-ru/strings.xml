@@ -113,8 +113,10 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">Результат для \"%s\": </item>
-        <item quantity="other">Результаты для \"%s\": </item>
+        <item quantity="one">Результат для \"%1$s\": </item>
+        <item quantity="few">%2$d Результаты для \"%1$s\": </item>
+        <item quantity="many">%2$d Результаты для \"%1$s\": </item>
+        <item quantity="other">%2$d Результаты для \"%1$s\": </item>
     </plurals>
 
     <!-- Search messages -->
@@ -248,8 +250,10 @@
     <string name="makki">Мекка</string>
     <string name="madani">Медина</string>
     <plurals name="verses">
-        <item quantity="one">стих</item>
-        <item quantity="other">стиха/стихов</item>
+        <item quantity="one">%s стих</item>
+        <item quantity="few">%s стиха/стихов</item>
+        <item quantity="many">%s стиха/стихов</item>
+        <item quantity="other">%s стиха/стихов</item>
     </plurals>
 
     <!-- long press -->
@@ -260,7 +264,6 @@
     <string name="share_ayah_text">Поделиться текстом аята</string>
     <string name="translation_ayah">Перевод/тафсир аята</string>
     <string name="play_from_here">Воспроизвести отсюда</string>
-    <string name="ayah_notes">Заметки</string>
     <string name="via_string">\n\nчерез @QuranAndroid</string>
     <string name="search_key">Нажмите клавишу поиска, чтобы найти стих</string>
     <string name="copy_ayah">Скопировать аят</string>

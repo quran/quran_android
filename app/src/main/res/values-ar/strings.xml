@@ -58,8 +58,11 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one"> نتيجة البحث عن \"%s\": </item>
-        <item quantity="other">نتائج البحث عن \"%s\": </item>
+        <item quantity="zero">لا توجد نتائج في البحث عن \"%1$s\"</item>
+        <item quantity="one">نتيجة واحده في البحث عن \"%1$s\"</item>
+        <item quantity="two">نتيجتان في البحث عن \"%1$s\"</item>
+        <item quantity="few">%2$d نتائج في البحث عن \"%1$s\"</item>
+        <item quantity="many">%2$d نتيجة في البحث عن \"%1$s\"</item>
     </plurals>
 
     <!-- Search messages -->
@@ -187,10 +190,12 @@
     <string name="makki">مكية</string>
     <string name="madani">مدنية</string>
     <plurals name="verses">
+        <item quantity="zero">آية</item>
         <item quantity="one">آية</item>
-        <item quantity="few">آيات</item>
-        <item quantity="many">آية</item>
-        <item quantity="other">آية</item>
+        <item quantity="two">آيتان</item>
+        <item quantity="few">%s آيات</item>
+        <item quantity="many">%s آية</item>
+        <item quantity="other">%s آية</item>
     </plurals>
 
     <!-- long press -->
@@ -201,7 +206,6 @@
     <string name="share_ayah_text">شارك نص الآية</string>
     <string name="translation_ayah">تفسير/ترجمة الآية</string>
     <string name="play_from_here">بدء التلاوة من هذه الآية</string>
-    <string name="ayah_notes">ملاحظات</string>
    	<string name="via_string">\n\nبواسطة @QuranAndroid</string>	
     <string name="search_key">للبحث عن آية</string>
     <string name="copy_ayah">نسخ الآية</string>

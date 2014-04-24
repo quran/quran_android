@@ -1,14 +1,17 @@
 package com.quran.labs.androidquran.util;
 
-import android.content.Context;
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.util.Locale;
@@ -287,12 +290,12 @@ public class AudioUtils {
    }
 
    public static String getOldAudioRootDirectory(Context context){
-      File f = null;
-      String path = "";
+      File f;
+      String path;
       String sep = File.separator;
 
       if (android.os.Build.VERSION.SDK_INT >= 8){
-         f = context.getExternalFilesDir(null);
+         f = getExternalFilesDirectoryFroyo(context);
          path = sep + "audio" + sep;
       }
       else {
@@ -304,4 +307,9 @@ public class AudioUtils {
       if (f == null){ return null; }
       return f.getAbsolutePath() + path;
    }
+
+  @TargetApi(Build.VERSION_CODES.FROYO)
+  private static File getExternalFilesDirectoryFroyo(Context context) {
+    return context.getExternalFilesDir(null);
+  }
 }

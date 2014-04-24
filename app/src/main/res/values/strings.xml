@@ -38,7 +38,6 @@
     <string name="cancel">Cancel</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright All Muslims</string>
-    <string name="email_logs_subject">Log File</string>
     <string name="aboutUs">Quran Android is a free, open source Quran
 			application for Android.  The images used are from the
             &lt;a href="http://quran.com">quran.com&lt;/a>
@@ -112,8 +111,8 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">result for \"%s\": </item>
-        <item quantity="other">results for \"%s\": </item>
+        <item quantity="one">One result for \"%1$s\": </item>
+        <item quantity="other">%2$d results for \"%1$s\": </item>
     </plurals>
 
     <!-- Search messages -->
@@ -248,8 +247,8 @@
     <string name="makki">Makki</string>
     <string name="madani">Madani</string>
     <plurals name="verses">
-        <item quantity="one">verse</item>
-        <item quantity="other">verses</item>
+        <item quantity="one">One verse</item>
+        <item quantity="other">%s verses</item>
     </plurals>
 
     <!-- long press -->
@@ -260,7 +259,6 @@
     <string name="share_ayah_text">Share Ayah Text</string>
     <string name="translation_ayah">Ayah Translation/Tafseer</string>
     <string name="play_from_here">Play from Here</string>
-    <string name="ayah_notes">Notes</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
     <string name="search_key">Press the search key to look up a verse</string>
     <string name="copy_ayah">Copy Ayah</string>

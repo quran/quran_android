@@ -89,8 +89,7 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">搜索\"%s\"的结果: </item>
-        <item quantity="other">搜索\"%s\"的结果: </item>
+        <item quantity="other">%2$d 搜索\"%1$s\"的结果: </item>
     </plurals>
 
     <!-- Search messages -->
@@ -161,7 +160,6 @@
     <string name="quran_page">页</string>
     <string name="quran_sura">章</string>
     <string name="quran_ayah">节</string>
-    <string name="quran_sura_title"></string>
     <string name="sura_ayah_notification_str">第%1$s章，第%2$d节</string>
 
     <string name="bookmarks_current_page">当前页</string>
@@ -209,8 +207,7 @@
     <string name="makki">麦加章</string>
     <string name="madani">麦地那章</string>
     <plurals name="verses">
-        <item quantity="one">节</item>
-        <item quantity="other">节</item>
+        <item quantity="other">%s 节</item>
     </plurals>
 
     <!-- long press -->
@@ -220,12 +217,11 @@
     <string name="share_ayah">分享此节</string>
     <string name="translation_ayah">翻译此节</string>
     <string name="play_from_here">从当前节开始播放</string>
-    <string name="ayah_notes">注释</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
     <string name="search_key">按住搜索键来查找某节</string>
     <string name="copy_ayah">复制此节</string>
     <string name="ayah_copied_popup">复制成功</string>
-    <string name="show_more">更多...</string>
+    <string name="show_more">更多…</string>
     
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">取消收藏</string>

@@ -1,39 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -77,6 +43,39 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
@@ -110,7 +109,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private ViewPager mViewPager = null;
   private QuranPageAdapter mPagerAdapter = null;
   private boolean mShouldReconnect = false;
-  private SparseArray<Boolean> mBookmarksCache = null;
+  private SparseBooleanArray mBookmarksCache = null;
   private DownloadAudioRequest mLastAudioDownloadRequest = null;
   private boolean mShowingTranslation = false;
   private int mHighlightedSura = -1;
@@ -126,7 +125,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private boolean mDualPages = false;
-  private boolean mJustCreated = false;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
 
@@ -150,7 +148,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
     super.onCreate(savedInstanceState);
-    mBookmarksCache = new SparseArray<Boolean>();
+    mBookmarksCache = new SparseBooleanArray();
     mBookmarksAdapter = new BookmarksDBAdapter(this);
 
     boolean refresh = false;
@@ -281,9 +279,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
           refreshActionBarSpinner();
         }
 
-        if (mBookmarksCache.get(page) == null) {
+        if (mBookmarksCache.indexOfKey(page) < 0) {
           if (mDualPages) {
-            if (mBookmarksCache.get(page - 1) == null) {
+            if (mBookmarksCache.indexOfKey(page - 1) < 0) {
               new IsPageBookmarkedTask().execute(page - 1, page);
             }
           } else {
@@ -686,11 +684,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
 
       boolean bookmarked = false;
-      if (mBookmarksCache.get(page) != null) {
+      if (mBookmarksCache.indexOfKey(page) >= 0) {
         bookmarked = mBookmarksCache.get(page);
       }
 
-      if (!bookmarked && mDualPages && mBookmarksCache.get(page - 1) != null) {
+      if (!bookmarked && mDualPages &&
+          mBookmarksCache.indexOfKey(page - 1) >= 0) {
         bookmarked = mBookmarksCache.get(page - 1);
       }
 

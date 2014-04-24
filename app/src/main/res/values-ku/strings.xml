@@ -90,8 +90,8 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">ئەنجامی گەڕان بۆ \"%s\": </item>
-        <item quantity="other">ئەنجامی گەڕان بۆ \"%s\": </item>
+        <item quantity="one">ئەنجامی گەڕان بۆ \"%1$s\": </item>
+        <item quantity="other">%2$d ئەنجامی گەڕان بۆ \"%1$s\": </item>
     </plurals>
 
     <!-- Search messages -->
@@ -222,8 +222,8 @@
     <string name="makki">مه ککه یی</string>
     <string name="madani">مه د ینه يی</string>
     <plurals name="verses">
-        <item quantity="one">ئایەت</item>
-        <item quantity="other">ئایەت</item>
+        <item quantity="one">%s ئایەت</item>
+        <item quantity="other">%s ئایەت</item>
     </plurals>
 
     <!-- long press -->
@@ -234,7 +234,6 @@
     <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
     <string name="translation_ayah">وەرگێڕانی ئایەت/تەفسیر</string>
     <string name="play_from_here">لێدان لێرەوە</string>
-    <string name="ayah_notes">تێبینی</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
     <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
     <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>

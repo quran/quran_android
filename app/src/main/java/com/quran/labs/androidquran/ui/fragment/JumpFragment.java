@@ -1,10 +1,17 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.QuranUtils;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -14,14 +21,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 public class JumpFragment extends SherlockDialogFragment {
    public static final String TAG = "JumpFragment";
@@ -80,14 +79,9 @@ public class JumpFragment extends SherlockDialogFragment {
                     }
                     ayahAdapter.clear();
 
-                    if (Build.VERSION.SDK_INT >= 11){
-                       ayahAdapter.addAll(ayahs);
-                    }
-                    else {
-                       for (int i=0; i<ayahCount; i++){
-                          ayahAdapter.add(ayahs[i]);
-                       }
-                    }
+                     for (int i=0; i<ayahCount; i++){
+                        ayahAdapter.add(ayahs[i]);
+                     }
 
                     int page = QuranInfo.getPageFromSuraAyah(sura, 1);
                     input.setHint(String.valueOf(page));

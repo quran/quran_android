@@ -20,8 +20,10 @@
 
 package com.quran.labs.androidquran.service.util;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Build;
 
 /** 
  * Convenience class to deal with audio focus. This class deals with everything related to audio
@@ -31,6 +33,7 @@ import android.media.AudioManager;
  * This class can only be used on SDK level 8 and above, since it uses API features that are not
  * available on previous SDK's.
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
     AudioManager mAM;
     AudioFocusable mFocusable;

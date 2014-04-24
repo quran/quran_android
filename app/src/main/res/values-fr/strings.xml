@@ -32,7 +32,6 @@
   <string name="cancel">Annuler</string>
   <string name="developedBy">La tansawna men saleh el doaa.</string>
   <string name="copyRights">Copyright tous les musulmans</string>
-  <string name="email_logs_subject">Fichier de log</string>
   <string name="aboutUs">Quran Android est une application pour le Noble Coran gratuite et open source pour Android.  Les images utilisées sont du projet 
             &lt;a href=\"http://quran.com\">quran.com&lt;/a>
 			, les audios de
@@ -221,8 +220,8 @@
   <string name="makki">Makki</string>
   <string name="madani">Madani</string>
     <plurals name="verses">
-    <item quantity="one">Aya</item>
-    <item quantity="other">Ayāt</item>
+    <item quantity="one">%s Aya</item>
+    <item quantity="other">%s Ayāt</item>
   </plurals>
   
   <!-- long press -->
@@ -233,7 +232,6 @@
   <string name="share_ayah_text">Partager le texte de l\'Aya</string>
   <string name="translation_ayah">Traduction/exégèse de l\'Aya</string>
   <string name="play_from_here">Jouer à partir d\'ici</string>
-  <string name="ayah_notes">Notes</string>
   <string name="via_string">\n\nvia @QuranAndroid</string>
   <string name="search_key">Appuyez sur la touche de recherche pour rechercher une Aya</string>
   <string name="copy_ayah">Copier l\'Aya</string>
@@ -258,8 +256,8 @@
   
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
-    <item quantity="one">résultat pour \"%s\": </item>
-    <item quantity="other">résultats pour \"%s\": </item>
+    <item quantity="one">résultat pour \"%1$s\": </item>
+    <item quantity="other">%2$d résultats pour \"%1$s\": </item>
   </plurals>
   
   

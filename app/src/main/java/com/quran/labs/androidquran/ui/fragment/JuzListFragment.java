@@ -41,7 +41,7 @@ public class JuzListFragment extends SherlockFragment {
 
     mListView = (ListView) view.findViewById(R.id.list);
     mAdapter = new QuranListAdapter(getActivity(),
-        R.layout.index_sura_row, getJuz2List());
+        R.layout.index_sura_row, getJuz2List(), true);
     mListView.setAdapter(mAdapter);
 
     mListView.setOnItemClickListener(new OnItemClickListener() {

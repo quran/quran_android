@@ -31,10 +31,6 @@
     <string name="cancel">ۋاز كەچ</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">نەشر ھوقۇقى بارلىق مۇسۇلمانلارغا تەۋە</string>
-    <string name="email_subject">قايتۇرما ئىنكاس</string>
-    <string name="email_logs_subject">خاتىرە ھۆججەت</string>
-    <string name="email_to">quran.android@gmail.com</string>
-    <string name="send_email">تورخەت يوللا</string>
     <string name="aboutUs">قۇرئان ئاندىرويىد ھەقسىز، ئوچۇق مەنبەلىك ئاندىرويىد ئۈچۈن يېزىلغان قۇرئان ئەپى. ئىشلىتىلگەن سۈرەتلەرنى
             &lt;a href="http://quran.com"&gt;quran.com&lt;/a&gt;
 			قۇرۇلۇشىدىن، ئاۋازنى
@@ -70,12 +66,6 @@
     <string name="help">&lt;b&gt;قىرائەت ئاۋازىنى قانداق چالىدۇ؟&lt;/b&gt; &lt;br/&gt; خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران ئاستىدا قىرائەت توپچىسى ۋە قىرائەت قىلغۇچىنىڭ ئىسمى كۆرۈنىدۇ. قىرائەت قىلغۇچىنىڭ ئىسمىنى چېكىپ قىرائەت قىلغۇچىلارنى تاللىغىلى بولىدۇ، چېلىش توپچىسىنى چېكىلسە نۆۋەتتىكى بەت ياكى نۆۋەتتىكى سۈرەنىڭ قىرائەت ئاۋازىنى چۈشۈرگەندىن كېيىن ئاۋازنى چېلىشنى باشلايدۇ . &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تەرجىمىنى قانداق كۆرۈمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدىكى يەر شارى سىنبەلگە (ياكى ئۈچ يۇمۇلاق چېكىتتىن شەكىللەنگەن سىنبەلگە) نى چەككەندىن كېيىن تەرجىمە بېتىنى كۆرگىلى بولىدۇ. &lt;br/&gt; ئەگەر سىز تېخى ھېچقانداق تەرجىمە نەشرىنى چۈشۈرمىگەن بولسىڭىز، بۇ چاغدا تەرجىمە تېكىستىنى چۈشۈرۈش ۋە باشقۇرۇش بېتىگە كىرىدۇ، لازىملىق تەرجىمىنى تاللاپ چۈشۈرگەندىن كېيىن قايتىدۇ، يەر شارى سىنبەلگە قايتا چېكىلسە تەرجىمە تېكىست بېتىگە كىرىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بەتكە خەتكۈچنى قانداق قوشىمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدا بەش يۇلتۇز سىنبەلگىسى كۆرۈنىدۇ، ئۇنى چەككەندىن كېيىن نۆۋەتتىكى بەتنى خەتكۈچكە قوشقىلى بولىدۇ، شۇنىڭ بىلەن بىللە كاۋاك بەش يۇلتۇز ئۇيۇل بەش يۇلتۇزغا ئۆزگىرىدۇ. سىنبەلگە قايتا چېكىلسە خەتكۈچ بىكار قىلىنىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تېكىستنى قانداق چوڭايتىمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، توغرىسىغا ئېكرانغا ئالماشقاندا خەت چوڭىيىدۇ. تەرجىمە تېكىست بېتىدە تەڭشەكلەردىن خەت چوڭلۇقىنى تاللىغىلى بولىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بىر ئايەتنى قانداق ھەمبەھىرلەيمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، مەلۇم بىر ئايەت ئۇزۇن چېكىلسە تىل مۇھىت تىزىملىكى قاڭقىپ چىقىدۇ، ئۇنىڭدا خەتكۈچ، ھەمبەھىر، تەرجىمىنى كۆرۈش، چاپلاش تاختىسىغا كۆچۈرۈش قاتارلىق ئىقتىدارلار بار. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;مالايالام/تامىل/بىنگال/ئوردۇچە خەت نۇسخىسى ئىشلىمەيدۇ!&lt;/b&gt; &lt;br/&gt;ناھايىتى ئەپسۇس، ئاندىرويىد 4.0 دىن ئىلگىرىكى نەشرىلىرىدە بۇ خەت نۇسخىلىرىنى قوللىماىدۇ، ھازىرچە ياخشىراق ھەل قىلىش چارىسى يوق.</string>
 	<string name="search_hint">قۇرئاندىن ئىزدە</string>
 	<string name="quranSearchType">قۇرئان سۈرەلىرى</string>
-
-    <!-- Shown above search results when we receive a search request. -->
-    <plurals name="search_results">
-        <item quantity="one">"%s" نىڭ نەتىجىسى:</item>
-        <item quantity="other">"%s" نىڭ نەتىجىلىرى:</item>
-    </plurals>
 
     <!-- Search messages -->
     <string name="found_in_sura">سۈرىدە بايقالدى</string>
@@ -202,15 +192,12 @@
     <string name="need_translation">سىز تېخى ھېچقانداق تەرجىمە/تەپسىر چۈشۈرمىگەن.</string>
     <string name="get_translations">تەرجىمىگە ئېرىش</string>
 
-    <!-- about us -->
-    <string name="email_quran_android">قۇرئان ئاندىرويىدقا تورخەت يوللا</string>
-
     <!-- sura metainfo -->
     <string name="makki">مەككە</string>
     <string name="madani">مەدىنە</string>
     <plurals name="verses">
-        <item quantity="one">سۈرە</item>
-        <item quantity="other">سۈرە</item>
+        <item quantity="one">%s سۈرە</item>
+        <item quantity="other">%s سۈرە</item>
     </plurals>
 
     <!-- long press -->
@@ -221,7 +208,6 @@
     <string name="share_ayah_text">ئايەت تېكىستتىنى ھەمبەھىرلە</string>
     <string name="translation_ayah">ئايەت تەرجىمە/تەپسىر</string>
     <string name="play_from_here">بۇ جايدىن باشلاپ چال</string>
-    <string name="ayah_notes">ئىزاھاتلار</string>
     <string name="via_string">\n\n @QuranAndroid ئارقىلىق</string>
     <string name="search_key">ئىزدە كۇنۇپكىسى بېسىلسا سۈرە ئىزدەيدۇ</string>
     <string name="copy_ayah">ئايەت كۆچۈر</string>

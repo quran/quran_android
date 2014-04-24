@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import android.app.Activity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -14,10 +13,11 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
+import android.app.Activity;
+import android.support.v4.util.LongSparseArray;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TagsFragment extends AbsMarkersFragment {
    
@@ -134,7 +134,8 @@ public class TagsFragment extends AbsMarkersFragment {
       List<QuranRow> rows = new ArrayList<QuranRow>();
       
       List<Bookmark> unTagged = new ArrayList<Bookmark>();
-      Map<Long, List<Bookmark>> tagMap = new HashMap<Long, List<Bookmark>>();
+      LongSparseArray<List<Bookmark>> tagMap =
+          new LongSparseArray<List<Bookmark>>();
       
       for (Bookmark bookmark : bookmarks){
          List<Tag> bookmarkTags = bookmark.mTags;

@@ -1,13 +1,14 @@
 package com.quran.labs.androidquran.util;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class StorageUtils {
             firstItem));
       }
       else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-        if (Environment.isExternalStorageRemovable()) {
+        if (isExternalStorageRemovableGingerbread()) {
           list.add(new Storage(context.getString(
               R.string.prefs_sdcard_external) +
               " 1", firstItem));
@@ -86,8 +87,8 @@ public class StorageUtils {
         }
       }
       else {
-        if (!Environment.isExternalStorageRemovable() ||
-            Environment.isExternalStorageEmulated()) {
+        if (!isExternalStorageRemovableGingerbread() ||
+            isExternalStorageEmulatedHoneycomb()) {
           list.add(new Storage(context.getString(
               R.string.prefs_sdcard_internal), firstItem));
         }
@@ -120,6 +121,16 @@ public class StorageUtils {
 
     Log.d(TAG, "final storage list is: " + list);
     return list;
+  }
+
+  @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+  private static boolean isExternalStorageRemovableGingerbread() {
+    return Environment.isExternalStorageRemovable();
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  private static boolean isExternalStorageEmulatedHoneycomb() {
+    return Environment.isExternalStorageEmulated();
   }
 
   private static Collection<String> readMountsFile() {

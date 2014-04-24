@@ -18,7 +18,7 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "19.0.3"
 
     defaultConfig {
         minSdkVersion 7
@@ -50,6 +50,6 @@ android {
 
 dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:support-v4:19.1.0'
     compile 'com.crashlytics.android:crashlytics:1.+'
 }

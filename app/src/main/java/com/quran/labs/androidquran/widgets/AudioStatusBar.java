@@ -1,9 +1,11 @@
 package com.quran.labs.androidquran.widgets;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -71,6 +73,7 @@ public class AudioStatusBar extends LinearLayout {
       init(context);
    }
 
+   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
    public AudioStatusBar(Context context, AttributeSet attrs, int defStyle) {
       super(context, attrs, defStyle);
       init(context);
