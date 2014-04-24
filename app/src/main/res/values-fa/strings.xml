@@ -84,8 +84,8 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">جستجو براي \"%s\": </item>
-        <item quantity="other">جستجو براي \"%s\": </item>
+        <item quantity="one">جستجو براي \"%1$s\": </item>
+        <item quantity="other">%2$d جستجو براي \"%1$s\": </item>
     </plurals>
 
     <!-- Search messages -->
@@ -151,7 +151,7 @@
     <string name="sura_ayah_notification_str">سوره %1$s, آيه %2$d</string>
 
     <string name="bookmarks_current_page">صفحه کنوني</string>
-    <string name="index_loading">بارگذاري...</string>
+    <string name="index_loading">بارگذاري…</string>
 
     <string name="canceling">در حال لغو</string>
     <string name="page_description">صفحه %1$s, جزء %2$s</string>
@@ -191,8 +191,8 @@
     <string name="makki">مکي</string>
     <string name="madani">مدني</string>
     <plurals name="verses">
-        <item quantity="one">آيه</item>
-        <item quantity="other">آيات</item>
+        <item quantity="one">%s آيه</item>
+        <item quantity="other">%s آيات</item>
     </plurals>
 
     <!-- long press -->
@@ -202,7 +202,6 @@
     <string name="share_ayah">اشتراک گذاري آيه</string>
     <string name="translation_ayah">ترجمه آيه</string>
     <string name="play_from_here">شروع از اينجا</string>
-    <string name="ayah_notes">Notes</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
     <string name="search_key">کليد جستجو را کليک نماييد</string>
     <string name="copy_ayah">کپي کردن آيه</string>

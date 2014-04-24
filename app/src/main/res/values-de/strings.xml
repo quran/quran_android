@@ -126,8 +126,8 @@
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">Resultat für \"%s\": </item>
-        <item quantity="other">Resultate für \"%s\": </item>
+        <item quantity="one">Resultat für \"%1$s\": </item>
+        <item quantity="other">%2$d Resultate für \"%1$s\": </item>
     </plurals>
 
     <!-- Search messages -->
@@ -269,8 +269,8 @@
     <string name="makki">Mekkanisch</string>
     <string name="madani">Medinensisch</string>
     <plurals name="verses">
-        <item quantity="one">Vers</item>
-        <item quantity="other">Verse</item>
+        <item quantity="one">%s Vers</item>
+        <item quantity="other">%s Verse</item>
     </plurals>
 
     <!-- long press -->
@@ -281,7 +281,6 @@
     <string name="share_ayah_text">Versinhalt teilen</string>
     <string name="translation_ayah">Vers Übersetzung/Koranexegese</string>
     <string name="play_from_here">Ab hier abspielen</string>
-    <string name="ayah_notes">Bemerkungen</string>
     <string name="via_string">\n\nvia @QuranAndroid</string>
     <string name="search_key">Drücken Sie die Suchtaste zum Nachschlagen eines Verses</string>
     <string name="copy_ayah">Kopiere Vers</string>

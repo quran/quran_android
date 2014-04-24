@@ -9,9 +9,9 @@
 		</string>
     <string name="downloadPrompt_ok">Evet</string>
     <string name="downloadPrompt_no">Hayır</string>
-    <string name="downloading_title">Yükleniyor...</string>
+    <string name="downloading_title">Yükleniyor…</string>
     <string name="downloading_message">Dosyaların indirilmesi için lütfen bekleyin</string>
-    <string name="extracting_title">İşlem yapılıyor...</string>
+    <string name="extracting_title">İşlem yapılıyor…</string>
     <string name="menu_jump">Atla</string>
     <string name="menu_about">Hakkında</string>
     <string name="menu_settings">Ayarlar</string>
@@ -32,8 +32,8 @@ http://android.quran.com/</string>
 		Kaynak kodlar http://github.com/ahmedre/quran_android  adresinden ve kuran-i 
 		kerim resimleri de http://github.com/quran/quran.com-images  adresinden alınmıştır.
 	-Ekranı yan yatırarak daha büyük bir görüntü elde edebilirsiniz
-	    \n-Ekran üzerinde parmağınızla kaydırarak yada iztopunu kullanarak sayfalar arasında gezinebilirsiniz.
-	    \n- Ekran Döndürme modunu yatay yada dikey modda iken sabitleyebilirsiniz.
+	    \n-Ekran üzerinde parmağınızla kaydırarak ya da iztopunu kullanarak sayfalar arasında gezinebilirsiniz.
+	    \n- Ekran Döndürme modunu yatay ya da dikey modda iken sabitleyebilirsiniz.
 	    \n- Kuran Mealini metin büyüklüğünü Ayarlar kısmından değiştirebilirsiniz. 
 	    \n- Sayfa İşaretlemeyi Menü&amp;gt; Sayfa İşaretle &amp;gt; Görüntüle 
 	    \n- İstediğiniz kadar çok sayfa işareti ekleyebilirsiniz. Sayfa işareti üzerin uzun süreli basarak silebilirsiniz.	    
@@ -46,8 +46,7 @@ http://android.quran.com/</string>
     <string name="quranSearchType">Kuran-i Kerim ayetlerinde arama</string>
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">arama sonuçları \"%s\": </item>
-        <item quantity="other">arama sonuçları  \"%s\": </item>
+        <item quantity="other">%2$d arama sonuçları  \"%1$s\": </item>
      </plurals>
 
     <!-- help -->
@@ -111,7 +110,6 @@ http://android.quran.com/</string>
     <string name="show_more">Daha Fazla Göster</string>
     <string name="share_ayah_text">Ayet mealini paylaş</string>
     <string name="share_ayah">Ayet kısayolu paylaş</string>
-    <string name="send_email">E-posta gönder</string>
     <string name="search_key">Kuranda arama yapmak için Arama tuşuna bas</string>
     <string name="search_data">Veri arama</string>
     <string name="remove_dlg_title">Meâli kaldır?</string>
@@ -184,7 +182,6 @@ http://android.quran.com/</string>
     <string name="bookmarks_list_empty">Sayfa İşareti Yok</string>
     <string name="bookmarks_current_page">Mevcut Sayfa</string>
     <string name="bookmark_ayah">Bu ayeti işaretle</string>
-    <string name="ayah_notes">Notlar</string>
     <string name="ayah_copied_popup">Ayet Kopyalandı</string>
     <string name="dialog_ok">Tamam</string>
     <string name="download_cancel">İptal</string>
@@ -201,11 +198,10 @@ http://android.quran.com/</string>
     <string name="error_getting_translation_list">Meal ve Tercüme sayfası açılmıyor daha sonra tekrar deneyiniz</string>
     <string name="download_retry">Tekrar dene</string>
     <string name="download_error_network_retry">İnternet bağlantısı hatası, kurtarılmaya çalışılıyor</string>
-    <string name="download_processing">İndirme devam ediyor...</string>
+    <string name="download_processing">İndirme devam ediyor…</string>
     <string name="edit_tag">Etiket Güncelle</string>
     <string name="download_error_perms">İzin verilmediği için indirilemedi</string>
-      <plurals name="verses">
-        <item quantity="one">ayet</item>
-        <item quantity="other">ayet</item>
+    <plurals name="verses">
+        <item quantity="other">%s ayet</item>
     </plurals>
 </resources>

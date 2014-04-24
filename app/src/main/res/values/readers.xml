@@ -25,7 +25,7 @@
         <item>Yasser Ad-Dussary</item>
     </string-array>
 
-    <string-array name="quran_readers_path">
+    <string-array translatable="false" name="quran_readers_path">
         <item>minshawi_murattal</item>
         <item>husary</item>
         <item>sudais</item>
@@ -50,7 +50,7 @@
         <item>ydussary</item> <!-- yasser ad dussary -->
     </string-array>
 
-    <string-array name="quran_readers_db_name">
+    <string-array translatable="false" name="quran_readers_db_name">
         <item>minshawi_murattal</item>
         <item>husary</item>
         <item>sudais_murattal</item>
@@ -75,7 +75,7 @@
         <item></item> <!-- yasser ad dussary -->
     </string-array>
 
-    <string-array name="quran_readers_urls">
+    <string-array translatable="false" name="quran_readers_urls">
         <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
         <item>http://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
         <item>http://download.quranicaudio.com/quran/abdurrahmaan_as-sudays/</item>

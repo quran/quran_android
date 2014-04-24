@@ -1,17 +1,5 @@
 package com.quran.labs.androidquran;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.*;
-import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.Constants;
@@ -22,6 +10,24 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.widgets.QuranMaxImageView;
+
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 
 import java.io.File;
 import java.util.Date;
@@ -54,11 +60,9 @@ public class QuranDataActivity extends SherlockActivity implements
       super.onCreate(savedInstanceState);
       setContentView(R.layout.splash_screen);
 
-     mSplashView = (QuranMaxImageView)findViewById(R.id.splashview);
+      mSplashView = (QuranMaxImageView)findViewById(R.id.splashview);
       if (Build.VERSION.SDK_INT >= 14){
-        // actually requires 11+, but the other call we need
-        // for getting max bitmap height requires 14+
-        mSplashView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        setSplashViewHardwareAcceleratedICS();
       }
 
       if (mSplashView != null){
@@ -113,6 +117,13 @@ public class QuranDataActivity extends SherlockActivity implements
                  .putBoolean(Constants.PREF_UPGRADE_TO_243, true).commit();
       }
    }
+
+  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+  private void setSplashViewHardwareAcceleratedICS() {
+    // actually requires 11+, but the other call we need
+    // for getting max bitmap height requires 14+
+    mSplashView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+  }
    
    @Override
    protected void onResume(){

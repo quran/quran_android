@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.widgets;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
@@ -31,8 +32,13 @@ public class QuranMaxImageView extends ImageView {
   @Override
   protected void onDraw(Canvas canvas) {
     if (Build.VERSION.SDK_INT >= 14){
-      mMaxHeight = canvas.getMaximumBitmapHeight();
+      mMaxHeight = getMaxBitmapHeightIcs(canvas);
     }
     super.onDraw(canvas);
+  }
+
+  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+  private int getMaxBitmapHeightIcs(Canvas canvas) {
+    return canvas.getMaximumBitmapHeight();
   }
 }

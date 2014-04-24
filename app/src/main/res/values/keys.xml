@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="quranapp_key">PLACE_YOUR_KEY_HERE</string>
+    <string translatable="false" name="quranapp_key">PLACE_YOUR_KEY_HERE</string>
 </resources>

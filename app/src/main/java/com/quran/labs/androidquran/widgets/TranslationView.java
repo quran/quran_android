@@ -1,5 +1,14 @@
 package com.quran.labs.androidquran.widgets;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.util.ArabicTypefaceSpan;
+import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Resources;
@@ -18,14 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.util.ArabicTypefaceSpan;
-import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
 
@@ -269,14 +270,19 @@ public class TranslationView extends ScrollView {
       params.setMargins(mLeftRightMargin, mTopBottomMargin,
               mLeftRightMargin, mTopBottomMargin);
 
-      if (Build.VERSION.SDK_INT >= 11){
-         ayahView.setTextIsSelectable(true);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+         setTextSelectableHoneycomb(ayahView);
       }
       else {
          ayahView.setOnLongClickListener(mOnCopyAyahListener);
       }
 
       mLinearLayout.addView(ayahView, params);
+   }
+
+   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+   private void setTextSelectableHoneycomb(TextView ayahView) {
+     ayahView.setTextIsSelectable(true);
    }
 
    private void addSuraHeader(int currentSura){

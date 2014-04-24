@@ -1,5 +1,11 @@
 package com.quran.labs.androidquran.widgets;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.QuranUtils;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,12 +19,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +35,7 @@ public class HighlightingImageView extends RecyclingImageView {
   private boolean mIsNightMode = false;
   private int mNightModeTextBrightness =
       Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+  private PageScalingData mScalingData;
 
   // cached objects for onDraw
   private Rect mSrcRect = new Rect();
@@ -136,6 +137,7 @@ public class HighlightingImageView extends RecyclingImageView {
     mColorFilterOn = false;
 
     super.setImageDrawable(bitmap);
+    mScalingData = null;
     if (bitmap != null) {
       adjustNightMode();
     }
@@ -325,14 +327,16 @@ public class HighlightingImageView extends RecyclingImageView {
     if (this.mCurrentlyHighlighting != null) {
       Drawable page = this.getDrawable();
       if (page != null) {
-        PageScalingData scalingData = new PageScalingData(page);
+        if (mScalingData == null) {
+          mScalingData = new PageScalingData(page);
+        }
 
         for (AyahBounds b : mCurrentlyHighlighting) {
-          mScaledRect.set(b.getMinX() * scalingData.widthFactor,
-              b.getMinY() * scalingData.heightFactor,
-              b.getMaxX() * scalingData.widthFactor,
-              b.getMaxY() * scalingData.heightFactor);
-          mScaledRect.offset(scalingData.offsetX, scalingData.offsetY);
+          mScaledRect.set(b.getMinX() * mScalingData.widthFactor,
+              b.getMinY() * mScalingData.heightFactor,
+              b.getMaxX() * mScalingData.widthFactor,
+              b.getMaxY() * mScalingData.heightFactor);
+          mScaledRect.offset(mScalingData.offsetX, mScalingData.offsetY);
 
           // work around a 4.0.2 bug where src as null throws npe
           // http://code.google.com/p/android/issues/detail?id=24830

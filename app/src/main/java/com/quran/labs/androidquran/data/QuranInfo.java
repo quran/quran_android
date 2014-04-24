@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.data;
 
-import android.content.Context;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import android.content.Context;
 
 public class QuranInfo {
 
@@ -111,9 +111,9 @@ public class QuranInfo {
       info = context.getString(resId) + " - ";
 
       int ayahs = QuranInfo.SURA_NUM_AYAHS[sura-1];
-      info += QuranUtils.getLocalizedNumber(context, ayahs) + " " +
-              context.getResources().getQuantityString(
-                      R.plurals.verses, ayahs);
+      info += context.getResources().getQuantityString(
+                      R.plurals.verses, ayahs,
+                      QuranUtils.getLocalizedNumber(context, ayahs));
 		return info;
 	}
 

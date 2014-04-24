@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-        <string-array name="quarter_prefix_array">
+    <string-array name="quarter_prefix_array" translatable="false">
         <item>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</item>
         <item>إِنَّ اللَّهَ لَا يَسْتَحْيِي أَن</item>
         <item>أَتَأْمُرُونَ النَّاسَ بِالْبِرِّ</item>

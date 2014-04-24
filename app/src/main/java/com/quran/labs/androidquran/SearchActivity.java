@@ -1,5 +1,19 @@
 package com.quran.labs.androidquran;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranDataProvider;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.TranslationManagerActivity;
+import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -20,21 +34,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.*;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranDataProvider;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
-import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.TranslationManagerActivity;
-import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,9 +191,8 @@ public class SearchActivity extends SherlockFragmentActivity
 
       // Display the number of results
       int count = cursor.getCount();
-      String countString = count + " " + getResources().getQuantityString(
-          R.plurals.search_results,
-          count, new Object[]{mQuery});
+      String countString = getResources().getQuantityString(
+          R.plurals.search_results, count, mQuery, count);
       mMessageView.setText(countString);
 
       List<SearchElement> res = new ArrayList<SearchElement>();

@@ -22,12 +22,15 @@ public class QuranListAdapter extends BaseAdapter {
    private int mLayout;
    private boolean mReshapeArabic;
    private boolean mUseArabicFont;
+   private boolean mSelectableHeaders;
 
-   public QuranListAdapter(Context context, int layout, QuranRow[] items){
+   public QuranListAdapter(Context context, int layout,
+       QuranRow[] items, boolean selectableHeaders){
       mInflater = LayoutInflater.from(context);
       mElements = items;
       mLayout = layout;
       mContext = context;
+      mSelectableHeaders = selectableHeaders;
 
       // should we reshape if we have arabic?
       mUseArabicFont = QuranSettings.needArabicFont(context);
@@ -126,7 +129,12 @@ public class QuranListAdapter extends BaseAdapter {
       return convertView;
    }
 
-   class ViewHolder {
+  @Override
+  public boolean isEnabled(int position) {
+    return mSelectableHeaders || !mElements[position].isHeader();
+  }
+
+  class ViewHolder {
       TextView text;
       TextView page;
       TextView number;

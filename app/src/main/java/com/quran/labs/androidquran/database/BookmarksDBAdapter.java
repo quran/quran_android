@@ -1,5 +1,9 @@
 package com.quran.labs.androidquran.database;
 
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,9 +13,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Checkable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class BookmarksDBAdapter {
          if (mDb == null){ return null; }
       }
 
-      String orderBy = null;
+      String orderBy;
       switch (sortOrder) {
       case SORT_LOCATION:
          orderBy = BookmarksTable.PAGE + " ASC, "

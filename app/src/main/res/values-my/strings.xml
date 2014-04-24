@@ -84,8 +84,7 @@
 
 	<!-- Shown above search results when we receive a search request. -->
 	<plurals name="search_results">
-		<item quantity="one">hasil carian untuk \"%s\": </item>
-		<item quantity="other">hasil carian untuk \"%s\": </item>
+		<item quantity="other">%2$d hasil carian untuk \"%1$s\": </item>
 	</plurals>
 
 	<!-- Search messages -->
@@ -176,7 +175,7 @@
 	<string name="sura_ayah_notification_str">Surah %1$s, Ayat %2$d</string>
 
 	<string name="bookmarks_current_page">Halaman Ketika Ini</string>
-	<string name="index_loading">Memuat...</string>
+	<string name="index_loading">Memuat…</string>
 
 	<string name="canceling">Membatalkan&#8230;</string>
 	<string name="juz2_description">Juz\' %1$s</string>
@@ -220,8 +219,7 @@
 	<string name="makki">Makkiyah</string>
 	<string name="madani">Madaniyah</string>
 	<plurals name="verses">
-		<item quantity="one">ayat</item>
-		<item quantity="other">ayat-ayat</item>
+		<item quantity="other">%s ayat-ayat</item>
 	</plurals>
 
 	<!-- long press -->
@@ -232,7 +230,6 @@
 	<string name="share_ayah_text">Kongsikan teks ayat</string>
 	<string name="translation_ayah">Terjemah/tafsir ayat</string>
 	<string name="play_from_here">Mainkan tilawah dari sini</string>
-	<string name="ayah_notes">Catatan</string>
 	<string name="via_string">\n\nvia @QuranAndroid</string>
 	<string name="search_key">Tekan butang carian untuk mencari ayat</string>
 	<string name="copy_ayah">Salin ayat</string>

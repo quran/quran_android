@@ -20,6 +20,19 @@
 
 package com.quran.labs.androidquran.service;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.service.util.AudioFocusHelper;
+import com.quran.labs.androidquran.service.util.AudioFocusable;
+import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.MediaButtonHelper;
+import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -42,20 +55,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.util.SparseArray;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
-import com.quran.labs.androidquran.service.util.AudioFocusHelper;
-import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.MediaButtonHelper;
-import com.quran.labs.androidquran.service.util.RepeatInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
+import android.util.SparseIntArray;
 
 import java.io.File;
 import java.io.IOException;
@@ -201,8 +201,8 @@ public class AudioService extends Service implements OnCompletionListener,
    private LocalBroadcastManager mBroadcastManager = null;
 
    private int mGaplessSura = 0;
-   private SparseArray<Integer> mGaplessSuraData = null;
-   private AsyncTask<Integer, Void, SparseArray<Integer>> mTimingTask = null;
+   private SparseIntArray mGaplessSuraData = null;
+   private AsyncTask<Integer, Void, SparseIntArray> mTimingTask = null;
 
    public static final int MSG_START_AUDIO = 1;
    public static final int MSG_UPDATE_AUDIO_POS = 2;
@@ -344,7 +344,7 @@ public class AudioService extends Service implements OnCompletionListener,
    }
 
    private class ReadGaplessDataTask extends AsyncTask<Integer, Void,
-           SparseArray<Integer>> {
+           SparseIntArray> {
       private int mSura = 0;
       private String mDatabasePath = null;
 
@@ -353,18 +353,18 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       @Override
-      protected SparseArray<Integer> doInBackground(Integer... params){
+      protected SparseIntArray doInBackground(Integer... params){
          int sura = params[0];
          mSura = sura;
 
          SuraTimingDatabaseHandler db =
                  SuraTimingDatabaseHandler.getDatabaseHandler(mDatabasePath);
-         SparseArray<Integer> map = null;
+         SparseIntArray map = null;
          Cursor cursor = db.getAyahTimings(sura);
          Log.d(TAG, "got cursor of data");
 
          if (cursor != null && cursor.moveToFirst()){
-            map = new SparseArray<Integer>();
+            map = new SparseIntArray();
             do {
                int ayah = cursor.getInt(1);
                int time = cursor.getInt(2);
@@ -378,7 +378,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       @Override
-      protected void onPostExecute(SparseArray<Integer> map){
+      protected void onPostExecute(SparseIntArray map){
          mGaplessSura = mSura;
          mGaplessSuraData = map;
          mTimingTask = null;

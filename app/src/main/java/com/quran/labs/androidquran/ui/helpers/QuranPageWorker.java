@@ -1,5 +1,10 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.util.AsyncTask;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
@@ -9,10 +14,6 @@ import android.os.Build;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.util.AsyncTask;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import java.lang.ref.WeakReference;
 
@@ -54,8 +55,11 @@ public class QuranPageWorker {
          @Override
          protected int sizeOf(String key, BitmapDrawable bitmapDrawable){
              Bitmap bitmap = bitmapDrawable.getBitmap();
-             if (Build.VERSION.SDK_INT >= 12){
-                 return bitmap.getByteCount();
+             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+               return getBitmapSizeKitkat(bitmap);
+             } else if (Build.VERSION.SDK_INT >=
+                 Build.VERSION_CODES.HONEYCOMB_MR1) {
+                 return getBitmapSizeHoneycombMr1(bitmap);
              }
 
              Crashlytics.log(Log.DEBUG, TAG, "row bytes: " +
@@ -69,6 +73,16 @@ public class QuranPageWorker {
       Crashlytics.log(Log.DEBUG, TAG,
           "initial LruCache size: " + (memClass/8));
    }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+  private int getBitmapSizeHoneycombMr1(Bitmap bitmap) {
+    return bitmap.getByteCount();
+  }
+
+  @TargetApi(Build.VERSION_CODES.KITKAT)
+  private int getBitmapSizeKitkat(Bitmap bitmap) {
+    return bitmap.getAllocationByteCount();
+  }
    
    private void addBitmapToCache(String key, BitmapDrawable drawable) {
       if (drawable != null && getBitmapFromCache(key) == null) {
