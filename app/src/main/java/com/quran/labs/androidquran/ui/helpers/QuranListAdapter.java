@@ -131,7 +131,9 @@ public class QuranListAdapter extends BaseAdapter {
 
   @Override
   public boolean isEnabled(int position) {
-    return mSelectableHeaders || !mElements[position].isHeader();
+    final QuranRow selected = mElements[position];
+    return mSelectableHeaders || selected.isBookmark() ||
+        (selected.isBookmarkHeader() && selected.tagId >= 0);
   }
 
   class ViewHolder {
