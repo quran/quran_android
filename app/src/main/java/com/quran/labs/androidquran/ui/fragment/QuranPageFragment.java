@@ -184,6 +184,10 @@ public class QuranPageFragment extends SherlockFragment
       mImageView.setNightModeTextBrightness(nightModeTextBrightness);
     }
     mImageView.setNightMode(nightMode);
+
+    if (!mPrefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true)) {
+      mImageView.unHighlight(HighlightType.BOOKMARK);
+    }
   }
 
   @Override
@@ -209,12 +213,14 @@ public class QuranPageFragment extends SherlockFragment
         }
       }, 1000);
 
-      mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          new HighlightTagsTask(pagerActivity).execute(mPageNumber);
-        }
-      }, 250);
+      if (QuranSettings.shouldHighlightBookmarks(pagerActivity)) {
+        mHandler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            new HighlightTagsTask(pagerActivity).execute(mPageNumber);
+          }
+        }, 250);
+      }
     }
   }
 

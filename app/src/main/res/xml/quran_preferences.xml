@@ -98,6 +98,14 @@
             android:summary="@string/prefs_display_marker_summary"
             android:title="@string/prefs_display_marker_title" >
         </CheckBoxPreference>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/prefs_highlight_bookmarks"
+            android:persistent="true"
+            android:summary="@string/prefs_highlight_bookmarks_summary"
+            android:title="@string/prefs_highlight_bookmarks_title" >
+        </CheckBoxPreference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/prefs_category_translation" >

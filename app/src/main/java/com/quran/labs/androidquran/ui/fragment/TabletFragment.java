@@ -230,6 +230,11 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
         mRightImageView.setNightModeTextBrightness(nightModeTextBrightness);
       }
     }
+
+    if (!mPrefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true)) {
+      mRightImageView.unHighlight(HighlightType.BOOKMARK);
+      mLeftImageView.unHighlight(HighlightType.BOOKMARK);
+    }
   }
 
   @Override
@@ -250,8 +255,10 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       new QueryPageCoordinatesTask(context)
           .execute(mPageNumber - 1, mPageNumber);
 
-      new HighlightTagsTask(context)
-          .execute(mPageNumber - 1, mPageNumber);
+      if (QuranSettings.shouldHighlightBookmarks(context)) {
+        new HighlightTagsTask(context)
+            .execute(mPageNumber - 1, mPageNumber);
+      }
     } else if (mMode == Mode.TRANSLATION) {
       if (context != null) {
         SharedPreferences prefs =
