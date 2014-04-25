@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.*;
 import com.quran.labs.androidquran.ui.util.*;
@@ -248,6 +249,9 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
       new QueryPageCoordinatesTask(context)
           .execute(mPageNumber - 1, mPageNumber);
+
+      new HighlightTagsTask(context)
+          .execute(mPageNumber - 1, mPageNumber);
     } else if (mMode == Mode.TRANSLATION) {
       if (context != null) {
         SharedPreferences prefs =
@@ -291,6 +295,35 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     }
   }
 
+  private class HighlightTagsTask extends QueryBookmarkedAyahsTask {
+
+    public HighlightTagsTask(Context context) {
+      super(context);
+    }
+
+    @Override
+    protected void onPostExecute(List<BookmarksDBAdapter.Bookmark> result) {
+      if (result != null && !result.isEmpty() && mMode == Mode.ARABIC &&
+          mRightImageView != null && mLeftImageView != null) {
+        for (BookmarksDBAdapter.Bookmark taggedAyah : result) {
+          if (taggedAyah.mPage == mPageNumber - 1) {
+            mRightImageView.highlightAyah(
+                taggedAyah.mSura, taggedAyah.mAyah, HighlightType.BOOKMARK);
+          } else if (taggedAyah.mPage == mPageNumber) {
+            mLeftImageView.highlightAyah(
+                taggedAyah.mSura, taggedAyah.mAyah, HighlightType.BOOKMARK);
+          }
+        }
+        if (mCoordinateData == null) {
+          new GetAyahCoordsTask(getActivity()).execute(mPageNumber - 1, mPageNumber);
+        } else {
+          mRightImageView.invalidate();
+          mLeftImageView.invalidate();
+        }
+      }
+    }
+  }
+
   private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
     public QueryPageCoordinatesTask(Context context) {
       super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
@@ -315,15 +348,19 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
   private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
+    public GetAyahCoordsTask(Context context) {
+      super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
+    }
+
     public GetAyahCoordsTask(Context context, MotionEvent event, int page) {
       super(context, event,
           QuranScreenInfo.getInstance().getTabletWidthParam(), page);
     }
 
-    public GetAyahCoordsTask(Context context, int sura, int ayah) {
+    public GetAyahCoordsTask(Context context, int sura, int ayah, HighlightType type) {
       super(context,
           QuranScreenInfo.getInstance().getTabletWidthParam(),
-          sura, ayah);
+          sura, ayah, type);
     }
 
     @Override
@@ -337,9 +374,12 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
           mCoordinateData = maps;
 
           if (mHighlightAyah) {
-            handleHighlightAyah(mSura, mAyah);
-          } else {
+            handleHighlightAyah(mSura, mAyah, mHighlightType);
+          } else if (mEvent != null) {
             handleLongPress(mEvent, mPage);
+          } else {
+            mRightImageView.invalidate();
+            mLeftImageView.invalidate();
           }
         }
       }
@@ -366,7 +406,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-      unHighlightAyat();
+      unHighlightAyat(HighlightType.SELECTION);
       return true;
     }
 
@@ -392,16 +432,16 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   }
 
   @Override
-  public void highlightAyah(int sura, int ayah) {
+  public void highlightAyah(int sura, int ayah, HighlightType type) {
     if (mMode == Mode.ARABIC && mCoordinateData == null) {
-      new GetAyahCoordsTask(getActivity(), sura, ayah)
+      new GetAyahCoordsTask(getActivity(), sura, ayah, type)
           .execute(mPageNumber - 1, mPageNumber);
     } else {
-      handleHighlightAyah(sura, ayah);
+      handleHighlightAyah(sura, ayah, type);
     }
   }
 
-  private void handleHighlightAyah(int sura, int ayah) {
+  private void handleHighlightAyah(int sura, int ayah, HighlightType type) {
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (mMode == Mode.ARABIC) {
       if (mLeftImageView == null || mRightImageView == null) {
@@ -409,16 +449,16 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       }
 
       if (page == mPageNumber - 1) {
-        mRightImageView.highlightAyah(sura, ayah);
+        mRightImageView.highlightAyah(sura, ayah, type);
         mRightImageView.invalidate();
         if (mLastHighlightedPage == mPageNumber) {
-          mLeftImageView.unhighlight();
+          mLeftImageView.unhighlight(type);
         }
       } else if (page == mPageNumber) {
-        mLeftImageView.highlightAyah(sura, ayah);
+        mLeftImageView.highlightAyah(sura, ayah, type);
         mLeftImageView.invalidate();
         if (mLastHighlightedPage == mPageNumber - 1) {
-          mRightImageView.unhighlight();
+          mRightImageView.unhighlight(type);
         }
       }
       mLastHighlightedPage = page;
@@ -438,13 +478,13 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   }
 
   @Override
-  public void unHighlightAyat() {
+  public void unHighlightAyat(HighlightType type) {
     if (mMode == Mode.ARABIC) {
       if (mLeftImageView == null || mRightImageView == null) {
         return;
       }
-      mLeftImageView.unhighlight();
-      mRightImageView.unhighlight();
+      mLeftImageView.unhighlight(type);
+      mRightImageView.unhighlight(type);
     }
   }
 
@@ -455,18 +495,18 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       if (mMode == Mode.ARABIC) {
         if (page == mPageNumber - 1) {
           mRightImageView.highlightAyah(result.getSura(),
-              result.getAyah());
+              result.getAyah(), HighlightType.SELECTION);
           mRightImageView.invalidate();
           mRightImageView.performHapticFeedback(
               HapticFeedbackConstants.LONG_PRESS);
-          mLeftImageView.unhighlight();
+          mLeftImageView.unhighlight(HighlightType.SELECTION);
         } else if (page == mPageNumber) {
           mLeftImageView.highlightAyah(result.getSura(),
-              result.getAyah());
+              result.getAyah(), HighlightType.SELECTION);
           mLeftImageView.invalidate();
           mLeftImageView.performHapticFeedback(
               HapticFeedbackConstants.LONG_PRESS);
-          mRightImageView.unhighlight();
+          mRightImageView.unhighlight(HighlightType.SELECTION);
         }
       }
 
