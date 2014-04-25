@@ -365,8 +365,13 @@ public class QuranPageFragment extends SherlockFragment
   }
 
   @Override
-  public void unHighlightAyat(HighlightType type) {
-    mImageView.unhighlight(type);
+  public void unHighlightAyah(int sura, int ayah, HighlightType type) {
+    mImageView.unHighlight(sura, ayah, type);
+  }
+
+  @Override
+  public void unHighlightAyahs(HighlightType type) {
+    mImageView.unHighlight(type);
   }
 
   private void handleLongPress(MotionEvent event) {
@@ -406,7 +411,7 @@ public class QuranPageFragment extends SherlockFragment
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-      unHighlightAyat(HighlightType.SELECTION);
+      unHighlightAyahs(HighlightType.SELECTION);
       return true;
     }
 

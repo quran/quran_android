@@ -406,7 +406,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-      unHighlightAyat(HighlightType.SELECTION);
+      unHighlightAyahs(HighlightType.SELECTION);
       return true;
     }
 
@@ -452,13 +452,13 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
         mRightImageView.highlightAyah(sura, ayah, type);
         mRightImageView.invalidate();
         if (mLastHighlightedPage == mPageNumber) {
-          mLeftImageView.unhighlight(type);
+          mLeftImageView.unHighlight(type);
         }
       } else if (page == mPageNumber) {
         mLeftImageView.highlightAyah(sura, ayah, type);
         mLeftImageView.invalidate();
         if (mLastHighlightedPage == mPageNumber - 1) {
-          mRightImageView.unhighlight(type);
+          mRightImageView.unHighlight(type);
         }
       }
       mLastHighlightedPage = page;
@@ -478,13 +478,26 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   }
 
   @Override
-  public void unHighlightAyat(HighlightType type) {
+  public void unHighlightAyah(int sura, int ayah, HighlightType type) {
     if (mMode == Mode.ARABIC) {
-      if (mLeftImageView == null || mRightImageView == null) {
-        return;
+      int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+      if (page == mPageNumber - 1 && mRightImageView != null) {
+        mRightImageView.unHighlight(sura, ayah, type);
+      } else if (page == mPageNumber && mLeftImageView != null) {
+        mLeftImageView.unHighlight(sura, ayah, type);
       }
-      mLeftImageView.unhighlight(type);
-      mRightImageView.unhighlight(type);
+    }
+  }
+
+  @Override
+  public void unHighlightAyahs(HighlightType type) {
+    if (mMode == Mode.ARABIC) {
+      if (mRightImageView != null) {
+        mRightImageView.unHighlight(type);
+      }
+      if (mLeftImageView != null) {
+        mLeftImageView.unHighlight(type);
+      }
     }
   }
 
@@ -499,14 +512,14 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
           mRightImageView.invalidate();
           mRightImageView.performHapticFeedback(
               HapticFeedbackConstants.LONG_PRESS);
-          mLeftImageView.unhighlight(HighlightType.SELECTION);
+          mLeftImageView.unHighlight(HighlightType.SELECTION);
         } else if (page == mPageNumber) {
           mLeftImageView.highlightAyah(result.getSura(),
               result.getAyah(), HighlightType.SELECTION);
           mLeftImageView.invalidate();
           mLeftImageView.performHapticFeedback(
               HapticFeedbackConstants.LONG_PRESS);
-          mRightImageView.unhighlight(HighlightType.SELECTION);
+          mRightImageView.unHighlight(HighlightType.SELECTION);
         }
       }
 

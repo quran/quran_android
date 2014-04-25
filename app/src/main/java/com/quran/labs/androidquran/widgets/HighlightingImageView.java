@@ -70,7 +70,14 @@ public class HighlightingImageView extends RecyclingImageView {
         getResources(), R.drawable.highlight);
   }
 
-  public void unhighlight(HighlightType type) {
+  public void unHighlight(int sura, int ayah, HighlightType type) {
+    Set<String> highlights = mCurrentHighlights.get(type.getId());
+    if (highlights != null && highlights.remove(sura + ":" + ayah)) {
+      invalidate();
+    }
+  }
+
+  public void unHighlight(HighlightType type) {
     mCurrentHighlights.remove(type.getId());
     invalidate();
   }
