@@ -1164,7 +1164,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         if (mPageOnly) {
           mBookmarksCache.put(mPage, result);
           invalidateOptionsMenu();
-        } else {
+        } else if (QuranSettings.shouldHighlightBookmarks(PagerActivity.this)) {
           if (result) {
             highlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
           } else {
