@@ -27,13 +27,16 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.AyahMenuUtils;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.ui.util.QueryAyahCoordsTask;
+import com.quran.labs.androidquran.ui.util.QueryBookmarkedAyahsTask;
 import com.quran.labs.androidquran.ui.util.QueryPageCoordsTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -205,6 +208,13 @@ public class QuranPageFragment extends SherlockFragment
           new QueryPageCoordinatesTask(pagerActivity).execute(mPageNumber);
         }
       }, 1000);
+
+      mHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          new HighlightTagsTask(pagerActivity).execute(mPageNumber);
+        }
+      }, 250);
     }
   }
 
@@ -236,6 +246,35 @@ public class QuranPageFragment extends SherlockFragment
     }
   }
 
+  private class HighlightTagsTask extends QueryBookmarkedAyahsTask {
+
+    public HighlightTagsTask(Context context) {
+      super(context);
+    }
+
+    @Override
+    protected void onPostExecute(List<BookmarksDBAdapter.Bookmark> result) {
+      if (result != null && !result.isEmpty() && mImageView != null) {
+        for (BookmarksDBAdapter.Bookmark taggedAyah : result) {
+          mImageView.highlightAyah(taggedAyah.mSura, taggedAyah.mAyah, HighlightType.BOOKMARK);
+        }
+        if (mCoordinateData == null) {
+          if (mCurrentTask != null &&
+              !(mCurrentTask instanceof QueryAyahCoordsTask)) {
+            mCurrentTask.cancel(true);
+            mCurrentTask = null;
+          }
+
+          if (mCurrentTask == null) {
+            mCurrentTask = new GetAyahCoordsTask(getActivity()).execute(mPageNumber);
+          }
+        } else {
+          mImageView.invalidate();
+        }
+      }
+    }
+  }
+
   private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
     public QueryPageCoordinatesTask(Context context) {
       super(context, QuranScreenInfo.getInstance().getWidthParam());
@@ -256,14 +295,18 @@ public class QuranPageFragment extends SherlockFragment
 
   private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
+    public GetAyahCoordsTask(Context context) {
+      super(context, QuranScreenInfo.getInstance().getWidthParam());
+    }
+
     public GetAyahCoordsTask(Context context, MotionEvent event) {
       super(context, event,
           QuranScreenInfo.getInstance().getWidthParam(), mPageNumber);
     }
 
-    public GetAyahCoordsTask(Context context, int sura, int ayah) {
+    public GetAyahCoordsTask(Context context, int sura, int ayah, HighlightType type) {
       super(context, QuranScreenInfo.getInstance().getWidthParam(),
-          sura, ayah);
+          sura, ayah, type);
     }
 
     @Override
@@ -277,16 +320,18 @@ public class QuranPageFragment extends SherlockFragment
       }
 
       if (mHighlightAyah) {
-        handleHighlightAyah(mSura, mAyah);
-      } else {
+        handleHighlightAyah(mSura, mAyah, mHighlightType);
+      } else if (mEvent != null) {
         handleLongPress(mEvent);
+      } else {
+        mImageView.invalidate();
       }
       mCurrentTask = null;
     }
   }
 
   @Override
-  public void highlightAyah(int sura, int ayah) {
+  public void highlightAyah(int sura, int ayah, HighlightType type) {
     if (mCoordinateData == null) {
       if (mCurrentTask != null &&
           !(mCurrentTask instanceof QueryAyahCoordsTask)) {
@@ -296,20 +341,20 @@ public class QuranPageFragment extends SherlockFragment
 
       if (mCurrentTask == null) {
         mCurrentTask = new GetAyahCoordsTask(
-            getActivity(), sura, ayah).execute(mPageNumber);
+            getActivity(), sura, ayah, type).execute(mPageNumber);
       }
     } else {
-      handleHighlightAyah(sura, ayah);
+      handleHighlightAyah(sura, ayah, type);
     }
   }
 
-  private void handleHighlightAyah(int sura, int ayah) {
+  private void handleHighlightAyah(int sura, int ayah, HighlightType type) {
     if (mImageView == null) {
       return;
     }
-    mImageView.highlightAyah(sura, ayah);
+    mImageView.highlightAyah(sura, ayah, type);
     if (mScrollView != null) {
-      AyahBounds yBounds = mImageView.getYBoundsForCurrentHighlight();
+      AyahBounds yBounds = mImageView.getYBoundsForHighlight(sura, ayah);
       if (yBounds != null) {
         int screenHeight = QuranScreenInfo.getInstance().getHeight();
         int y = yBounds.getMinY() - (int) (0.05 * screenHeight);
@@ -320,15 +365,15 @@ public class QuranPageFragment extends SherlockFragment
   }
 
   @Override
-  public void unHighlightAyat() {
-    mImageView.unhighlight();
+  public void unHighlightAyat(HighlightType type) {
+    mImageView.unhighlight(type);
   }
 
   private void handleLongPress(MotionEvent event) {
     QuranAyah result = ImageAyahUtils.getAyahFromCoordinates(
         mCoordinateData, mImageView, event.getX(), event.getY());
     if (result != null) {
-      mImageView.highlightAyah(result.getSura(), result.getAyah());
+      mImageView.highlightAyah(result.getSura(), result.getAyah(), HighlightType.SELECTION);
       mImageView.invalidate();
       mImageView.performHapticFeedback(
           HapticFeedbackConstants.LONG_PRESS);
@@ -361,7 +406,7 @@ public class QuranPageFragment extends SherlockFragment
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-      unHighlightAyat();
+      unHighlightAyat(HighlightType.SELECTION);
       return true;
     }
 

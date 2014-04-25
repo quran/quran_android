@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.content.Context;
@@ -21,15 +22,22 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class HighlightingImageView extends RecyclingImageView {
+
   // Max/Min font sizes for text overlay
   private static final float MAX_FONT_SIZE = 28.0f;
   private static final float MIN_FONT_SIZE = 16.0f;
 
-  private List<AyahBounds> mCurrentlyHighlighting = null;
+  // Sorted map so we use highest priority highlighting when iterating
+  private SortedMap<Long, Set<String>> mCurrentHighlights =
+      new TreeMap<Long, Set<String>>();
   private boolean mColorFilterOn = false;
   private Bitmap mHighlightBitmap = null;
   private boolean mIsNightMode = false;
@@ -62,8 +70,8 @@ public class HighlightingImageView extends RecyclingImageView {
         getResources(), R.drawable.highlight);
   }
 
-  public void unhighlight() {
-    mCurrentlyHighlighting = null;
+  public void unhighlight(HighlightType type) {
+    mCurrentHighlights.remove(type.getId());
     invalidate();
   }
 
@@ -83,36 +91,26 @@ public class HighlightingImageView extends RecyclingImageView {
     mColorFilterOn = false;
   }
 
-  public void highlightAyah(int sura, int ayah) {
-    String key = sura + ":" + ayah;
-    if (mCoordinatesData != null) {
-      List<AyahBounds> bounds = mCoordinatesData.get(key);
-      if (bounds != null) {
-        doHighlightAyah(bounds);
-      }
+  public void highlightAyah(int sura, int ayah, HighlightType type) {
+    Set<String> highlights = mCurrentHighlights.get(type.getId());
+    if (highlights == null) {
+      highlights = new HashSet<String>();
+      mCurrentHighlights.put(type.getId(), highlights);
+    } else if (type.isUnique()) {
+      // If unique highlighting (i.e. not bookmarks) clear any others first
+      highlights.clear();
     }
+    highlights.add(sura + ":" + ayah);
   }
 
-  private void doHighlightAyah(List<AyahBounds> lineCoordinates) {
-    if (lineCoordinates == null || lineCoordinates.size() == 0) {
-      return;
-    }
-
-    ArrayList<AyahBounds> rangesToDraw = new ArrayList<AyahBounds>();
-    for (AyahBounds bound : lineCoordinates) {
-      rangesToDraw.add(bound);
-    }
-    mCurrentlyHighlighting = rangesToDraw;
-  }
-
-  public AyahBounds getYBoundsForCurrentHighlight() {
-    if (mCurrentlyHighlighting == null) {
+  public AyahBounds getYBoundsForHighlight(int sura, int ayah) {
+    if (mCoordinatesData == null || mCoordinatesData.get(sura + ":" + ayah) == null) {
       return null;
     }
 
     Integer upperBound = null;
     Integer lowerBound = null;
-    for (AyahBounds bounds : mCurrentlyHighlighting) {
+    for (AyahBounds bounds : mCoordinatesData.get(sura + ":" + ayah)) {
       if (upperBound == null || bounds.getMinY() < upperBound) {
         upperBound = bounds.getMinY();
       }
@@ -324,25 +322,38 @@ public class HighlightingImageView extends RecyclingImageView {
       }
     }
 
-    if (this.mCurrentlyHighlighting != null) {
-      Drawable page = this.getDrawable();
-      if (page != null) {
-        if (mScalingData == null) {
-          mScalingData = new PageScalingData(page);
-        }
+    // Draw each ayah highlight
+    if (mCoordinatesData != null && !mCurrentHighlights.isEmpty() && this.getDrawable() != null) {
+      if (mScalingData == null) {
+        mScalingData = new PageScalingData(this.getDrawable());
+      }
+      // Keep track of already highlighted ayahs so we don't re-highlight
+      Set<String> highlighted = new HashSet<String>();
 
-        for (AyahBounds b : mCurrentlyHighlighting) {
-          mScaledRect.set(b.getMinX() * mScalingData.widthFactor,
-              b.getMinY() * mScalingData.heightFactor,
-              b.getMaxX() * mScalingData.widthFactor,
-              b.getMaxY() * mScalingData.heightFactor);
-          mScaledRect.offset(mScalingData.offsetX, mScalingData.offsetY);
+      // Iterate over each highlight type
+      for (Long highlightId : mCurrentHighlights.keySet()) {
+        Set<String> ayahs = mCurrentHighlights.get(highlightId);
+        // Iterate over each ayah to be highlighted
+        for (String ayah : ayahs) {
+           if (highlighted.contains(ayah)) continue;
+           List<AyahBounds> rangesToDraw = mCoordinatesData.get(ayah);
+           if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
+             for (AyahBounds b : rangesToDraw) {
+               mScaledRect.set(b.getMinX() * mScalingData.widthFactor,
+                   b.getMinY() * mScalingData.heightFactor,
+                   b.getMaxX() * mScalingData.widthFactor,
+                   b.getMaxY() * mScalingData.heightFactor);
+               mScaledRect.offset(mScalingData.offsetX, mScalingData.offsetY);
 
-          // work around a 4.0.2 bug where src as null throws npe
-          // http://code.google.com/p/android/issues/detail?id=24830
-          mSrcRect.set(0, 0, mHighlightBitmap.getWidth(),
-              mHighlightBitmap.getHeight());
-          canvas.drawBitmap(mHighlightBitmap, mSrcRect, mScaledRect, null);
+               // work around a 4.0.2 bug where src as null throws npe
+               // http://code.google.com/p/android/issues/detail?id=24830
+               //mSrcRect.set(0, 0, mHighlightBitmap.getWidth(),
+               //    mHighlightBitmap.getHeight());
+               //canvas.drawBitmap(mHighlightBitmap, mSrcRect, mScaledRect, null);
+               canvas.drawRect(mScaledRect, HighlightType.values()[highlightId.intValue()].getPaint());
+             }
+             highlighted.add(ayah);
+           }
         }
       }
     }

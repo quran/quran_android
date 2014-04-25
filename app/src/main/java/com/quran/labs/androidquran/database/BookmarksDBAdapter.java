@@ -50,11 +50,19 @@ public class BookmarksDBAdapter {
       */
 	}
 
+  public List<Bookmark> getBookmarkedAyahsOnPage(int page) {
+    return getBookmarks(true, SORT_LOCATION, page);
+  }
+
 	public List<Bookmark> getBookmarks(boolean loadTags){
 	   return getBookmarks(loadTags, SORT_DATE_ADDED);
 	}
 
    public List<Bookmark> getBookmarks(boolean loadTags, int sortOrder){
+     return getBookmarks(loadTags, sortOrder, null);
+   }
+
+   public List<Bookmark> getBookmarks(boolean loadTags, int sortOrder, Integer pageFilter){
       if (mDb == null){
          open();
          if (mDb == null){ return null; }
@@ -72,8 +80,14 @@ public class BookmarksDBAdapter {
          break;
       }
       List<Bookmark> bookmarks = null;
+      String query = null;
+      if (pageFilter != null) {
+        query = BookmarksTable.PAGE + "=" + pageFilter +
+            " AND " + BookmarksTable.SURA + " IS NOT NULL" +
+            " AND " + BookmarksTable.AYAH + " IS NOT NULL";
+      }
       Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
-              null, null, null, null, null, orderBy);
+              null, query, null, null, null, orderBy);
       if (cursor != null){
          bookmarks = new ArrayList<Bookmark>();
          while (cursor.moveToNext()){

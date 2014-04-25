@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,22 +27,29 @@ public class QueryAyahCoordsTask extends
    protected int mPage;
    protected String mWidthParam;
    protected boolean mHighlightAyah;
+   protected HighlightType mHighlightType;
    protected MotionEvent mEvent;
    private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
 
+   public QueryAyahCoordsTask(Context context, String widthParam){
+      this(context, widthParam, 0, 0, null);
+      mHighlightAyah = false;
+   }
+
    public QueryAyahCoordsTask(Context context, MotionEvent event,
                               String widthParam, int page){
-      this(context, widthParam, 0, 0);
+      this(context, widthParam, 0, 0, null);
       mEvent = event;
       mHighlightAyah = false;
       mPage = page;
    }
 
    public QueryAyahCoordsTask(Context context, String widthParam,
-                              int sura, int ayah){
+                              int sura, int ayah, HighlightType type){
       mSura = sura;
       mAyah = ayah;
       mHighlightAyah = true;
+      mHighlightType = type;
       mWidthParam = widthParam;
       mAyahInfoDatabaseHandler = null;
 

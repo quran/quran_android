@@ -31,6 +31,7 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -461,7 +462,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mHandler.postDelayed(
           new Runnable() {
             public void run() {
-              highlightAyah(mHighlightedSura, mHighlightedAyah, false);
+              highlightAyah(mHighlightedSura, mHighlightedAyah, false, HighlightType.SELECTION);
             }
           }, 750);
     }
@@ -593,7 +594,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
       if (mHighlightedAyah > 0 && mHighlightedSura > 0) {
         // this will jump to the right page automagically
-        highlightAyah(mHighlightedSura, mHighlightedAyah, true);
+        highlightAyah(mHighlightedSura, mHighlightedAyah, true, HighlightType.SELECTION);
       } else {
         if (mDualPages) {
           page = page / 2;
@@ -951,13 +952,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
             AudioService.AudioUpdateIntent.AYAH, -1);
         if (state == AudioService.AudioUpdateIntent.PLAYING) {
           mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
-          highlightAyah(sura, ayah);
+          highlightAyah(sura, ayah, HighlightType.AUDIO);
         } else if (state == AudioService.AudioUpdateIntent.PAUSED) {
           mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
-          highlightAyah(sura, ayah);
+          highlightAyah(sura, ayah, HighlightType.AUDIO);
         } else if (state == AudioService.AudioUpdateIntent.STOPPED) {
           mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-          unhighlightAyah();
+          unhighlightAyah(HighlightType.AUDIO);
 
           Serializable qi = intent.getSerializableExtra(
               AudioService.EXTRA_PLAY_INFO);
@@ -1047,11 +1048,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
     return mWorker;
   }
 
-  public void highlightAyah(int sura, int ayah) {
-    highlightAyah(sura, ayah, true);
+  public void highlightAyah(int sura, int ayah, HighlightType type) {
+    highlightAyah(sura, ayah, true, type);
   }
 
-  public void highlightAyah(int sura, int ayah, boolean force) {
+  public void highlightAyah(int sura, int ayah, boolean force, HighlightType type) {
     Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST ||
@@ -1068,21 +1069,21 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
 
     if (position != mViewPager.getCurrentItem() && force) {
-      unhighlightAyah();
+      unhighlightAyah(type);
       mViewPager.setCurrentItem(position);
     }
 
     Fragment f = mPagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
-      ((AyahTracker) f).highlightAyah(sura, ayah);
+      ((AyahTracker) f).highlightAyah(sura, ayah, type);
     }
   }
 
-  public void unhighlightAyah() {
+  public void unhighlightAyah(HighlightType type) {
     int position = mViewPager.getCurrentItem();
     Fragment f = mPagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
-      ((AyahTracker) f).unHighlightAyat();
+      ((AyahTracker) f).unHighlightAyat(type);
     }
   }
 
@@ -1429,7 +1430,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void onStopPressed() {
     startService(new Intent(AudioService.ACTION_STOP));
     mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-    unhighlightAyah();
+    unhighlightAyah(HighlightType.AUDIO);
   }
 
   @Override
