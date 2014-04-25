@@ -958,7 +958,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
           highlightAyah(sura, ayah, HighlightType.AUDIO);
         } else if (state == AudioService.AudioUpdateIntent.STOPPED) {
           mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-          unhighlightAyah(HighlightType.AUDIO);
+          unHighlightAyahs(HighlightType.AUDIO);
 
           Serializable qi = intent.getSerializableExtra(
               AudioService.EXTRA_PLAY_INFO);
@@ -1069,7 +1069,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
 
     if (position != mViewPager.getCurrentItem() && force) {
-      unhighlightAyah(type);
+      unHighlightAyahs(type);
       mViewPager.setCurrentItem(position);
     }
 
@@ -1079,11 +1079,19 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  public void unhighlightAyah(HighlightType type) {
+  public void unHighlightAyah(int sura, int ayah, HighlightType type) {
     int position = mViewPager.getCurrentItem();
     Fragment f = mPagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
-      ((AyahTracker) f).unHighlightAyat(type);
+      ((AyahTracker) f).unHighlightAyah(sura, ayah, type);
+    }
+  }
+
+  public void unHighlightAyahs(HighlightType type) {
+    int position = mViewPager.getCurrentItem();
+    Fragment f = mPagerAdapter.getFragmentIfExists(position);
+    if (f != null && f instanceof AyahTracker) {
+      ((AyahTracker) f).unHighlightAyahs(type);
     }
   }
 
@@ -1124,25 +1132,27 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   class ToggleBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
+    private Integer mSura;
+    private Integer mAyah;
     private int mPage;
     private boolean mPageOnly;
 
     @Override
     protected Boolean doInBackground(Integer... params) {
-      Integer sura = params[0];
-      Integer ayah = params[1];
+      mSura = params[0];
+      mAyah = params[1];
       mPage = params[2];
-      mPageOnly = (sura == null && ayah == null);
+      mPageOnly = (mSura == null || mAyah == null);
 
       boolean result = false;
-      long bookmarkId = mBookmarksAdapter.getBookmarkId(sura, ayah, mPage);
+      long bookmarkId = mBookmarksAdapter.getBookmarkId(mSura, mAyah, mPage);
       if (bookmarkId >= 0) {
         // if (mBookmarksAdapter.isTagged(bookmarkId)) {
         // TODO show warning dialog that all tags will be removed
         // }
         mBookmarksAdapter.removeBookmark(bookmarkId);
       } else {
-        mBookmarksAdapter.addBookmark(sura, ayah, mPage);
+        mBookmarksAdapter.addBookmark(mSura, mAyah, mPage);
         result = true;
       }
       return result;
@@ -1150,9 +1160,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     @Override
     protected void onPostExecute(Boolean result) {
-      if (result != null && mPageOnly) {
-        mBookmarksCache.put(mPage, result);
-        invalidateOptionsMenu();
+      if (result != null) {
+        if (mPageOnly) {
+          mBookmarksCache.put(mPage, result);
+          invalidateOptionsMenu();
+        } else {
+          if (result) {
+            highlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
+          } else {
+            unHighlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
+          }
+        }
       }
     }
   }
@@ -1430,7 +1448,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void onStopPressed() {
     startService(new Intent(AudioService.ACTION_STOP));
     mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-    unhighlightAyah(HighlightType.AUDIO);
+    unHighlightAyahs(HighlightType.AUDIO);
   }
 
   @Override
