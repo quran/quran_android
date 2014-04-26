@@ -1,36 +1,38 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import android.graphics.Color;
+import android.content.Context;
 import android.graphics.Paint;
+
+import com.quran.labs.androidquran.R;
 
 public class HighlightType implements Comparable<HighlightType> {
 
-  private static final int BLUE =   Color.argb(64, 70,  148, 166);  //#404694A6
-  private static final int GREEN =  Color.argb(64, 70,  166, 70);   //#4046A646
-  private static final int YELLOW = Color.argb(64, 235, 235, 33);   //#40EBEB21
-  private static final int GRAY =   Color.argb(64, 164, 164, 164);  //#40A4A4A4
-
-  public static final HighlightType SELECTION = new HighlightType(1, false, BLUE);
-  public static final HighlightType AUDIO =     new HighlightType(2, false, GREEN);
-  public static final HighlightType NOTE =      new HighlightType(3, true,  YELLOW);
-  public static final HighlightType BOOKMARK =  new HighlightType(4, true,  GRAY);
+  public static final HighlightType SELECTION = new HighlightType(1, false, R.color.selection_highlight);
+  public static final HighlightType AUDIO =     new HighlightType(2, false, R.color.audio_highlight);
+  public static final HighlightType NOTE =      new HighlightType(3, true,  R.color.note_highlight);
+  public static final HighlightType BOOKMARK =  new HighlightType(4, true,  R.color.bookmark_highlight);
 
   private Long mId;
   private boolean mMultipleHighlightsAllowed;
+  private int mColorId;
   private Paint mPaint;
 
-  private HighlightType(long id, boolean multipleHighlightsAllowed, int color) {
+  private HighlightType(long id, boolean multipleHighlightsAllowed, int colorId) {
     mId = id;
     mMultipleHighlightsAllowed = multipleHighlightsAllowed;
-    mPaint = new Paint();
-    mPaint.setColor(color);
+    mColorId = colorId;
   }
 
   public boolean isMultipleHighlightsAllowed() {
     return mMultipleHighlightsAllowed;
   }
 
-  public Paint getPaint() {
+  public Paint getPaint(Context context) {
+    if (mPaint == null) {
+      int color = context.getResources().getColor(mColorId);
+      mPaint = new Paint();
+      mPaint.setColor(color);
+    }
     return mPaint;
   }
 

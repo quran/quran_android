@@ -334,7 +334,7 @@ public class HighlightingImageView extends RecyclingImageView {
                    b.getMaxX() * mScalingData.widthFactor,
                    b.getMaxY() * mScalingData.heightFactor);
                mScaledRect.offset(mScalingData.offsetX, mScalingData.offsetY);
-               canvas.drawRect(mScaledRect, entry.getKey().getPaint());
+               canvas.drawRect(mScaledRect, entry.getKey().getPaint(getContext()));
              }
              mAlreadyHighlighted.add(ayah);
            }
