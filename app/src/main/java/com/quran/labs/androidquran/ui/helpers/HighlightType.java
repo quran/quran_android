@@ -10,24 +10,24 @@ public class HighlightType implements Comparable<HighlightType> {
   private static final int YELLOW = Color.argb(64, 235, 235, 33);   //#40EBEB21
   private static final int GRAY =   Color.argb(64, 164, 164, 164);  //#40A4A4A4
 
-  public static final HighlightType SELECTION = new HighlightType(1, true,  BLUE);
-  public static final HighlightType AUDIO =     new HighlightType(2, true,  GREEN);
+  public static final HighlightType SELECTION = new HighlightType(1, false, BLUE);
+  public static final HighlightType AUDIO =     new HighlightType(2, false, GREEN);
   public static final HighlightType NOTE =      new HighlightType(3, true,  YELLOW);
-  public static final HighlightType BOOKMARK =  new HighlightType(4, false, GRAY);
+  public static final HighlightType BOOKMARK =  new HighlightType(4, true,  GRAY);
 
   private Long mId;
-  private boolean mUnique;
+  private boolean mMultipleHighlightsAllowed;
   private Paint mPaint;
 
-  private HighlightType(long id, boolean unique, int color) {
+  private HighlightType(long id, boolean multipleHighlightsAllowed, int color) {
     mId = id;
-    mUnique = unique;
+    mMultipleHighlightsAllowed = multipleHighlightsAllowed;
     mPaint = new Paint();
     mPaint.setColor(color);
   }
 
-  public boolean isUnique() {
-    return mUnique;
+  public boolean isMultipleHighlightsAllowed() {
+    return mMultipleHighlightsAllowed;
   }
 
   public Paint getPaint() {
