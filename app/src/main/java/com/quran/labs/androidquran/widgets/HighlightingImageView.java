@@ -21,7 +21,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +35,8 @@ public class HighlightingImageView extends RecyclingImageView {
   private static final float MIN_FONT_SIZE = 16.0f;
 
   // Sorted map so we use highest priority highlighting when iterating
-  private SortedMap<Long, Set<String>> mCurrentHighlights =
-      new TreeMap<Long, Set<String>>();
+  private SortedMap<HighlightType, Set<String>> mCurrentHighlights =
+      new TreeMap<HighlightType, Set<String>>();
   private boolean mColorFilterOn = false;
   private Bitmap mHighlightBitmap = null;
   private boolean mIsNightMode = false;
@@ -71,14 +70,14 @@ public class HighlightingImageView extends RecyclingImageView {
   }
 
   public void unHighlight(int sura, int ayah, HighlightType type) {
-    Set<String> highlights = mCurrentHighlights.get(type.getId());
+    Set<String> highlights = mCurrentHighlights.get(type);
     if (highlights != null && highlights.remove(sura + ":" + ayah)) {
       invalidate();
     }
   }
 
   public void unHighlight(HighlightType type) {
-    mCurrentHighlights.remove(type.getId());
+    mCurrentHighlights.remove(type);
     invalidate();
   }
 
@@ -99,10 +98,10 @@ public class HighlightingImageView extends RecyclingImageView {
   }
 
   public void highlightAyah(int sura, int ayah, HighlightType type) {
-    Set<String> highlights = mCurrentHighlights.get(type.getId());
+    Set<String> highlights = mCurrentHighlights.get(type);
     if (highlights == null) {
       highlights = new HashSet<String>();
-      mCurrentHighlights.put(type.getId(), highlights);
+      mCurrentHighlights.put(type, highlights);
     } else if (type.isUnique()) {
       // If unique highlighting (i.e. not bookmarks) clear any others first
       highlights.clear();
@@ -338,8 +337,8 @@ public class HighlightingImageView extends RecyclingImageView {
       Set<String> highlighted = new HashSet<String>();
 
       // Iterate over each highlight type
-      for (Long highlightId : mCurrentHighlights.keySet()) {
-        Set<String> ayahs = mCurrentHighlights.get(highlightId);
+      for (HighlightType highlightType : mCurrentHighlights.keySet()) {
+        Set<String> ayahs = mCurrentHighlights.get(highlightType);
         // Iterate over each ayah to be highlighted
         for (String ayah : ayahs) {
            if (highlighted.contains(ayah)) continue;
@@ -357,7 +356,7 @@ public class HighlightingImageView extends RecyclingImageView {
                //mSrcRect.set(0, 0, mHighlightBitmap.getWidth(),
                //    mHighlightBitmap.getHeight());
                //canvas.drawBitmap(mHighlightBitmap, mSrcRect, mScaledRect, null);
-               canvas.drawRect(mScaledRect, HighlightType.values()[highlightId.intValue()].getPaint());
+               canvas.drawRect(mScaledRect, highlightType.getPaint());
              }
              highlighted.add(ayah);
            }
