@@ -8,8 +8,6 @@ import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
@@ -38,15 +36,14 @@ public class HighlightingImageView extends RecyclingImageView {
   private SortedMap<HighlightType, Set<String>> mCurrentHighlights =
       new TreeMap<HighlightType, Set<String>>();
   private boolean mColorFilterOn = false;
-  private Bitmap mHighlightBitmap = null;
   private boolean mIsNightMode = false;
   private int mNightModeTextBrightness =
       Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
   private PageScalingData mScalingData;
 
   // cached objects for onDraw
-  private Rect mSrcRect = new Rect();
   private RectF mScaledRect = new RectF();
+  private Set<String> mAlreadyHighlighted = new HashSet<String>();
 
   // Params for drawing text
   private OverlayParams mOverlayParams = null;
@@ -56,17 +53,10 @@ public class HighlightingImageView extends RecyclingImageView {
 
   public HighlightingImageView(Context context) {
     super(context);
-    init(context);
   }
 
   public HighlightingImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    init(context);
-  }
-
-  public void init(Context context) {
-    mHighlightBitmap = BitmapFactory.decodeResource(
-        getResources(), R.drawable.highlight);
   }
 
   public void unHighlight(int sura, int ayah, HighlightType type) {
@@ -102,8 +92,8 @@ public class HighlightingImageView extends RecyclingImageView {
     if (highlights == null) {
       highlights = new HashSet<String>();
       mCurrentHighlights.put(type, highlights);
-    } else if (type.isUnique()) {
-      // If unique highlighting (i.e. not bookmarks) clear any others first
+    } else if (!type.isMultipleHighlightsAllowed()) {
+      // If multiple highlighting not allowed (e.g. audio) clear all others of this type first
       highlights.clear();
     }
     highlights.add(sura + ":" + ayah);
@@ -166,35 +156,34 @@ public class HighlightingImageView extends RecyclingImageView {
     invalidate();
   }
 
-  private class PageScalingData {
+  private static class PageScalingData {
     float screenRatio, pageRatio, scaledPageHeight, scaledPageWidth,
         widthFactor, heightFactor, offsetX, offsetY;
 
-    public PageScalingData(Drawable page) {
-      screenRatio = (1.0f * getHeight()) / (1.0f * getWidth());
+    private PageScalingData(Drawable page, int width, int height) {
+      screenRatio = (1.0f * height) / (1.0f * width);
       pageRatio = (float) (1.0 * page.getIntrinsicHeight() /
           page.getIntrinsicWidth());
       // depending on whether or not you will have a top or bottom offset
       if (screenRatio < pageRatio) {
-        scaledPageHeight = getHeight();
-        scaledPageWidth = (float) (1.0 * getHeight() /
+        scaledPageHeight = height;
+        scaledPageWidth = (float) (1.0 * height /
             page.getIntrinsicHeight() * page.getIntrinsicWidth());
-      }
-      else {
-        scaledPageWidth = getWidth();
-        scaledPageHeight = (float) (1.0 * getWidth() /
+      } else {
+        scaledPageWidth = width;
+        scaledPageHeight = (float) (1.0 * width /
             page.getIntrinsicWidth() * page.getIntrinsicHeight());
       }
 
       widthFactor = scaledPageWidth / page.getIntrinsicWidth();
       heightFactor = scaledPageHeight / page.getIntrinsicHeight();
 
-      offsetX = (getWidth() - scaledPageWidth) / 2;
-      offsetY = (getHeight() - scaledPageHeight) / 2;
+      offsetX = (width - scaledPageWidth) / 2;
+      offsetY = (height - scaledPageHeight) / 2;
     }
   }
 
-  private class OverlayParams {
+  private static class OverlayParams {
     boolean init = false;
     boolean showOverlay = false;
     Paint paint = null;
@@ -243,7 +232,7 @@ public class HighlightingImageView extends RecyclingImageView {
     if (page == null) {
       return false;
     }
-    PageScalingData scalingData = new PageScalingData(page);
+    PageScalingData scalingData = new PageScalingData(page, getWidth(), getHeight());
 
     mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG
         | Paint.DEV_KERN_TEXT_FLAG);
@@ -320,6 +309,7 @@ public class HighlightingImageView extends RecyclingImageView {
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
+    // Draw overlay text
     mDidDraw = false;
     if (mOverlayParams != null && mOverlayParams.showOverlay) {
       try {
@@ -327,21 +317,15 @@ public class HighlightingImageView extends RecyclingImageView {
       } catch (Exception e) {
       }
     }
-
     // Draw each ayah highlight
     if (mCoordinatesData != null && !mCurrentHighlights.isEmpty() && this.getDrawable() != null) {
       if (mScalingData == null) {
-        mScalingData = new PageScalingData(this.getDrawable());
+        mScalingData = new PageScalingData(this.getDrawable(), getWidth(), getHeight());
       }
-      // Keep track of already highlighted ayahs so we don't re-highlight
-      Set<String> highlighted = new HashSet<String>();
-
-      // Iterate over each highlight type
-      for (HighlightType highlightType : mCurrentHighlights.keySet()) {
-        Set<String> ayahs = mCurrentHighlights.get(highlightType);
-        // Iterate over each ayah to be highlighted
-        for (String ayah : ayahs) {
-           if (highlighted.contains(ayah)) continue;
+      mAlreadyHighlighted.clear();
+      for (Map.Entry<HighlightType, Set<String>> entry : mCurrentHighlights.entrySet()) {
+        for (String ayah : entry.getValue()) {
+           if (mAlreadyHighlighted.contains(ayah)) continue;
            List<AyahBounds> rangesToDraw = mCoordinatesData.get(ayah);
            if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
              for (AyahBounds b : rangesToDraw) {
@@ -350,15 +334,9 @@ public class HighlightingImageView extends RecyclingImageView {
                    b.getMaxX() * mScalingData.widthFactor,
                    b.getMaxY() * mScalingData.heightFactor);
                mScaledRect.offset(mScalingData.offsetX, mScalingData.offsetY);
-
-               // work around a 4.0.2 bug where src as null throws npe
-               // http://code.google.com/p/android/issues/detail?id=24830
-               //mSrcRect.set(0, 0, mHighlightBitmap.getWidth(),
-               //    mHighlightBitmap.getHeight());
-               //canvas.drawBitmap(mHighlightBitmap, mSrcRect, mScaledRect, null);
-               canvas.drawRect(mScaledRect, highlightType.getPaint());
+               canvas.drawRect(mScaledRect, entry.getKey().getPaint());
              }
-             highlighted.add(ayah);
+             mAlreadyHighlighted.add(ayah);
            }
         }
       }
@@ -369,7 +347,7 @@ public class HighlightingImageView extends RecyclingImageView {
     Drawable page = this.getDrawable();
     if (page == null)
       return null;
-    PageScalingData scalingData = new PageScalingData(page);
+    PageScalingData scalingData = new PageScalingData(page, getWidth(), getHeight());
     float pageX = screenX / scalingData.widthFactor - scalingData.offsetX;
     float pageY = screenY / scalingData.heightFactor - scalingData.offsetY;
     return new float[]{pageX, pageY};
