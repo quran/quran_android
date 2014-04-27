@@ -31,7 +31,7 @@
   <string name="gotoPage">Aller à la page</string>
   <string name="cancel">Annuler</string>
   <string name="developedBy">La tansawna men saleh el doaa.</string>
-  <string name="copyRights">Copyright tous les musulmans</string>
+  <string name="copyRights">Copyright à tout les musulmans</string>
   <string name="aboutUs">Quran Android est une application pour le Noble Coran gratuite et open source pour Android.  Les images utilisées sont du projet 
             &lt;a href=\"http://quran.com\">quran.com&lt;/a>
 			, les audios de
@@ -49,11 +49,17 @@
             &lt;br/>Mahmoud Hossam (&lt;a href=\"https://github.com/mahmoudhossam\">github&lt;/a>)
             &lt;br/>Rehab Mohamed (&lt;a href=\"http://twitter.com/hams_rrr\">@hams_rrr&lt;/a>)
             &lt;br/>&lt;br/>&lt;b>Traducteurs:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu - Turc
-         &lt;br/>M. Jafar Nanakar - Perse
-         &lt;br/>Rinat (Ринат Валеев) - Russe
-         &lt;br/>khajavi (sur github) - traduction Perse précédente
-	 &lt;br/>Yasser Kaddour - Français
+	 		&lt;br/>Mehmed Mahmudoglu - Turc
+         		&lt;br/>M. Jafar Nanakar - Perse
+        		&lt;br/>Rinat (Ринат Валеев) - Russe
+         		&lt;br/>khajavi (sur github) - traduction Perse précédente
+	 		&lt;br/>Yasser Kaddour - Français
+	 		&lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
+	 		&lt;br/>Armin Šupuk - Allemand
+         		&lt;br/>Goran Gharib Karim - Kurde
+         		&lt;br/>Abduqadir Abliz - Uyghur
+         		&lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonésien
+         		&lt;br/>Ahmad Syazwan - Malaisien
             &lt;br/>&lt;br/>&lt;b>Projets Open Source:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href=\"http://abs.io\">abs.io&lt;/a>)
             &lt;br/>maven-android-plugin (&lt;a href=\"http://code.google.com/p/maven-android-plugin\">maven-android-plugin&lt;/a>)
@@ -124,6 +130,8 @@
   <string name="prefs_overlay_page_info_summary">Affiche le numéro de page, le nom de la sourate et le numéro du juz\' lors la lecture.</string>
   <string name="prefs_display_marker_title">Montrer un popup de repère</string>
   <string name="prefs_display_marker_summary">Affiche un popup quand on atteint un juz\', un hizb, etc.</string>
+  <string name="prefs_highlight_bookmarks_title">Surligner les favoris</string>
+ +<string name="prefs_highlight_bookmarks_summary">Surligner les Ayāt en favoris durant la lecture</string>
   <string name="prefs_translation_text_title">Taille du texte traduit</string>
   <string name="prefs_translations">Traductions</string>
   <string name="prefs_translations_summary">Télécharger et gérer les traductions</string>
@@ -214,7 +222,7 @@
   <string name="get_translations">Obtenir des traductions</string>
 
   <!-- help -->
-  <string name="email_us">Si vous n\'avez pas eu de réponse à votre question, vous pouvez envoyer un email à quranandroid@gmail.com. Notez bien que nous recevons beaucoup d\'emails, nous ne sommes donc pas en mesure de répondre à tous les emails que nous avons.</string>
+  <string name="email_us">Si vous n\'avez pas eu de réponse à votre question, vous pouvez envoyer un email à quranandroid@gmail.com. Notez bien que nous recevons beaucoup d\'emails, nous ne sommes donc pas en mesure de répondre à tous les emails.</string>
 
   <!-- sura metainfo -->
   <string name="makki">Makki</string>
