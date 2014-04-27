@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.TranslationTask;
 import com.quran.labs.androidquran.widgets.TranslationView;
@@ -147,7 +148,7 @@ public class TranslationFragment extends SherlockFragment
   }
 
   @Override
-  public void highlightAyah(int sura, int ayah) {
+  public void highlightAyah(int sura, int ayah, HighlightType type) {
     if (mTranslationView != null) {
       mHighlightedAyah = QuranInfo.getAyahId(sura, ayah);
       mTranslationView.highlightAyah(mHighlightedAyah);
@@ -155,7 +156,14 @@ public class TranslationFragment extends SherlockFragment
   }
 
   @Override
-  public void unHighlightAyat() {
+  public void unHighlightAyah(int sura, int ayah, HighlightType type) {
+    if (mHighlightedAyah == QuranInfo.getAyahId(sura, ayah)) {
+      unHighlightAyahs(type);
+    }
+  }
+
+  @Override
+  public void unHighlightAyahs(HighlightType type) {
     if (mTranslationView != null) {
       mTranslationView.unhighlightAyat();
       mHighlightedAyah = -1;

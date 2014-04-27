@@ -65,6 +65,11 @@ public class QuranSettings {
               Constants.PREF_DISPLAY_MARKER_POPUP, true);
    }
 
+   public static boolean shouldHighlightBookmarks(Context context){
+      return getBooleanPreference(context,
+              Constants.PREF_HIGHLIGHT_BOOKMARKS, true);
+   }
+
    public static boolean wantArabicInTranslationView(Context context){
       return getBooleanPreference(context,
               Constants.PREF_AYAH_BEFORE_TRANSLATION, true);
