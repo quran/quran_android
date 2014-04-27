@@ -18,6 +18,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,7 @@ public class HighlightingImageView extends RecyclingImageView {
   private PageScalingData mScalingData;
 
   // cached objects for onDraw
+  private static SparseArray<Paint> mSparsePaintArray = new SparseArray<Paint>();
   private RectF mScaledRect = new RectF();
   private Set<String> mAlreadyHighlighted = new HashSet<String>();
 
@@ -306,6 +308,17 @@ public class HighlightingImageView extends RecyclingImageView {
     mDidDraw = true;
   }
 
+  private Paint getPaintForHighlightType(HighlightType type) {
+    int color = type.getColor(getContext());
+    Paint paint = mSparsePaintArray.get(color);
+    if (paint == null) {
+      paint = new Paint();
+      paint.setColor(color);
+      mSparsePaintArray.put(color, paint);
+    }
+    return paint;
+  }
+
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
@@ -324,6 +337,7 @@ public class HighlightingImageView extends RecyclingImageView {
       }
       mAlreadyHighlighted.clear();
       for (Map.Entry<HighlightType, Set<String>> entry : mCurrentHighlights.entrySet()) {
+        Paint paint = getPaintForHighlightType(entry.getKey());
         for (String ayah : entry.getValue()) {
            if (mAlreadyHighlighted.contains(ayah)) continue;
            List<AyahBounds> rangesToDraw = mCoordinatesData.get(ayah);
@@ -334,7 +348,7 @@ public class HighlightingImageView extends RecyclingImageView {
                    b.getMaxX() * mScalingData.widthFactor,
                    b.getMaxY() * mScalingData.heightFactor);
                mScaledRect.offset(mScalingData.offsetX, mScalingData.offsetY);
-               canvas.drawRect(mScaledRect, entry.getKey().getPaint(getContext()));
+               canvas.drawRect(mScaledRect, paint);
              }
              mAlreadyHighlighted.add(ayah);
            }
