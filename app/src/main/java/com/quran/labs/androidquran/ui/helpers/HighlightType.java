@@ -15,7 +15,7 @@ public class HighlightType implements Comparable<HighlightType> {
   private Long mId;
   private boolean mMultipleHighlightsAllowed;
   private int mColorId;
-  private Paint mPaint;
+  private Integer mColor = null;
 
   private HighlightType(long id, boolean multipleHighlightsAllowed, int colorId) {
     mId = id;
@@ -27,13 +27,11 @@ public class HighlightType implements Comparable<HighlightType> {
     return mMultipleHighlightsAllowed;
   }
 
-  public Paint getPaint(Context context) {
-    if (mPaint == null) {
-      int color = context.getResources().getColor(mColorId);
-      mPaint = new Paint();
-      mPaint.setColor(color);
+  public int getColor(Context context) {
+    if (mColor == null) {
+      mColor = context.getResources().getColor(mColorId);
     }
-    return mPaint;
+    return mColor;
   }
 
   @Override
