@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.quran.labs.androidquran.widgets.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:quran="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sliding_panel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    quran:panelHeight="@dimen/audiobar_height"
+    quran:shadowHeight="4dp"
+    quran:overlay="true">
+
+    <!--Main layout -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/quran_page_activity"/>
+
+    <!-- Slider layout -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/ayah_action_panel_layout"/>
+
+</com.quran.labs.androidquran.widgets.SlidingUpPanelLayout>

@@ -21,6 +21,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.TranslationTask;
+import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 public class TranslationFragment extends SherlockFragment
@@ -168,6 +169,11 @@ public class TranslationFragment extends SherlockFragment
       mTranslationView.unhighlightAyat();
       mHighlightedAyah = -1;
     }
+  }
+
+  @Override
+  public HighlightingImageView getHighlightingImageView(int page) {
+    return null;
   }
 
   @Override

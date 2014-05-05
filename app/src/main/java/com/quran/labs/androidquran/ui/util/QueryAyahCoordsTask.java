@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class QueryAyahCoordsTask extends
    protected boolean mHighlightAyah;
    protected HighlightType mHighlightType;
    protected MotionEvent mEvent;
+   protected AyahSelectedListener.EventType mEventType;
    private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
 
    public QueryAyahCoordsTask(Context context, String widthParam){
@@ -36,10 +38,11 @@ public class QueryAyahCoordsTask extends
       mHighlightAyah = false;
    }
 
-   public QueryAyahCoordsTask(Context context, MotionEvent event,
+   public QueryAyahCoordsTask(Context context, MotionEvent event, AyahSelectedListener.EventType eventType,
                               String widthParam, int page){
       this(context, widthParam, 0, 0, null);
       mEvent = event;
+      mEventType = eventType;
       mHighlightAyah = false;
       mPage = page;
    }

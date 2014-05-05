@@ -13,6 +13,7 @@ import android.view.*;
 import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -31,6 +32,8 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 import java.util.List;
 import java.util.Map;
 
+import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
+
 public class TabletFragment extends SherlockFragment implements AyahTracker {
 
   private static final String TAG = "TabletFragment";
@@ -47,7 +50,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   private int mPageNumber;
   private boolean mOverlayText;
   private int mLastHighlightedPage;
-  private AyahMenuUtils mAyahMenuUtils;
+  private AyahSelectedListener mAyahSelectedListener;
   private List<Map<String, List<AyahBounds>>> mCoordinateData;
   private PaintDrawable mLeftGradient, mRightGradient = null;
   private TranslationView mLeftTranslation, mRightTranslation = null;
@@ -238,6 +241,20 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   }
 
   @Override
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    if (activity instanceof AyahSelectedListener) {
+      mAyahSelectedListener = (AyahSelectedListener) activity;
+    }
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    mAyahSelectedListener = null;
+  }
+
+  @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
@@ -275,15 +292,6 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     }
   }
 
-  @Override
-  public void onDestroyView() {
-    if (mAyahMenuUtils != null) {
-      mAyahMenuUtils.cleanup();
-      mAyahMenuUtils = null;
-    }
-    super.onDestroyView();
-  }
-
   public void cleanup() {
     android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
     if (mLeftImageView != null) {
@@ -294,11 +302,6 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     if (mRightImageView != null) {
       mRightImageView.setImageDrawable(null);
       mRightImageView = null;
-    }
-
-    if (mAyahMenuUtils != null) {
-      mAyahMenuUtils.cleanup();
-      mAyahMenuUtils = null;
     }
   }
 
@@ -359,8 +362,8 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
     }
 
-    public GetAyahCoordsTask(Context context, MotionEvent event, int page) {
-      super(context, event,
+    public GetAyahCoordsTask(Context context, MotionEvent event, EventType eventType, int page) {
+      super(context, event, eventType,
           QuranScreenInfo.getInstance().getTabletWidthParam(), page);
     }
 
@@ -383,7 +386,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
           if (mHighlightAyah) {
             handleHighlightAyah(mSura, mAyah, mHighlightType);
           } else if (mEvent != null) {
-            handleLongPress(mEvent, mPage);
+            handlePress(mEvent, mEventType, mPage);
           } else {
             mRightImageView.invalidate();
             mLeftImageView.invalidate();
@@ -401,40 +404,64 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     }
 
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-      PagerActivity pagerActivity = ((PagerActivity) getActivity());
-      if (pagerActivity != null) {
-        pagerActivity.toggleActionBar();
-        return true;
-      } else {
-        return false;
-      }
+    public boolean onSingleTapUp(MotionEvent event) {
+      return handleEvent(event, EventType.SINGLE_TAP);
     }
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
       unHighlightAyahs(HighlightType.SELECTION);
-      return true;
+      return handleEvent(event, EventType.DOUBLE_TAP);
     }
 
     @Override
     public void onLongPress(MotionEvent event) {
+      handleEvent(event, EventType.LONG_PRESS);
+    }
+
+    private boolean checkCoordinateData(MotionEvent event, EventType eventType) {
+      // Check files downloaded
       if (!QuranFileUtils.haveAyaPositionFile(getActivity()) ||
           !QuranFileUtils.hasArabicSearchDatabase(getActivity())) {
         Activity activity = getActivity();
         if (activity != null) {
           PagerActivity pagerActivity = (PagerActivity) activity;
           pagerActivity.showGetRequiredFilesDialog();
-          return;
+          return false;
         }
       }
-
+      // Check we fetched the data
       if (mCoordinateData == null) {
-        new GetAyahCoordsTask(getActivity(), event,
+        new GetAyahCoordsTask(getActivity(), event, eventType,
             mDetectedPage).execute(mPageNumber - 1, mPageNumber);
-      } else {
-        handleLongPress(event, mDetectedPage);
+        return false;
       }
+      // All good
+      return true;
+    }
+
+    private boolean handleEvent(MotionEvent event, EventType eventType) {
+      if (mAyahSelectedListener == null) return false;
+      if (mAyahSelectedListener.isListeningForAyahSelection(eventType)) {
+        if (checkCoordinateData(event, eventType)) {
+          handlePress(event, eventType, mDetectedPage);
+        }
+        return true;
+      } else {
+        return mAyahSelectedListener.onClick(eventType);
+      }
+    }
+
+  }
+
+  @Override
+  public HighlightingImageView getHighlightingImageView(int page) {
+    if (page == mPageNumber - 1) {
+      return mRightImageView;
+    } else if (page == mPageNumber) {
+      return mLeftImageView;
+    } else {
+      return null;
     }
   }
 
@@ -508,39 +535,23 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     }
   }
 
-  private void handleLongPress(MotionEvent event, int page) {
+  private void handlePress(MotionEvent event, EventType eventType, int page) {
     QuranAyah result = getAyahFromCoordinates(
         page, event.getX(), event.getY());
-    if (result != null) {
+    if (result != null && mAyahSelectedListener != null) {
+      HighlightingImageView hv = null;
       if (mMode == Mode.ARABIC) {
+        // TODO use getHighlightingImageView?
         if (page == mPageNumber - 1) {
-          mRightImageView.highlightAyah(result.getSura(),
-              result.getAyah(), HighlightType.SELECTION);
-          mRightImageView.invalidate();
-          mRightImageView.performHapticFeedback(
-              HapticFeedbackConstants.LONG_PRESS);
-          mLeftImageView.unHighlight(HighlightType.SELECTION);
+          hv = mRightImageView;
+          // TODO unhighlight the other page?
         } else if (page == mPageNumber) {
-          mLeftImageView.highlightAyah(result.getSura(),
-              result.getAyah(), HighlightType.SELECTION);
-          mLeftImageView.invalidate();
-          mLeftImageView.performHapticFeedback(
-              HapticFeedbackConstants.LONG_PRESS);
-          mRightImageView.unHighlight(HighlightType.SELECTION);
+          hv = mLeftImageView;
+          // TODO unhighlight the other page?
         }
       }
-
-      if (mAyahMenuUtils == null) {
-        Activity activity = getActivity();
-        if (activity != null) {
-          mAyahMenuUtils = new AyahMenuUtils(activity);
-        }
-      }
-
-      if (mAyahMenuUtils != null) {
-        mAyahMenuUtils.showMenu(this, result.getSura(),
-            result.getAyah(), mPageNumber);
-      }
+      mAyahSelectedListener.onAyahSelected(eventType,
+          result.getSura(), result.getAyah(), page, hv);
     }
   }
 
