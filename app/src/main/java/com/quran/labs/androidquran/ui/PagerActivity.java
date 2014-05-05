@@ -1199,7 +1199,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             unHighlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
           }
           if (mAyahActionPanel != null) {
-            mAyahActionPanel.onAyahBookmarkUpdated(new SuraAyah(mSura, mPage), result);
+            mAyahActionPanel.onAyahBookmarkUpdated(new SuraAyah(mSura, mAyah), result);
           }
         }
       }
@@ -1603,13 +1603,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
       // Determine the start and end of the selection
       int minPage = Math.min(mAyahActionPanel.mStart.getPage(), mAyahActionPanel.mEnd.getPage());
       int maxPage = Math.max(mAyahActionPanel.mStart.getPage(), mAyahActionPanel.mEnd.getPage());
-      SuraAyah start = new SuraAyah(mAyahActionPanel.mStart.sura, mAyahActionPanel.mStart.ayah);
-      SuraAyah end = new SuraAyah(mAyahActionPanel.mEnd.sura, mAyahActionPanel.mEnd.ayah);
-      if (start.compareTo(end) > 0) {
-        SuraAyah swap = start;
-        start = end;
-        end = swap;
-      }
+      SuraAyah start = SuraAyah.min(mAyahActionPanel.mStart, mAyahActionPanel.mEnd);
+      SuraAyah end = SuraAyah.max(mAyahActionPanel.mStart, mAyahActionPanel.mEnd);
       // Iterate from beginning to end
       for (int i = minPage; i <= maxPage; i++) {
         AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
