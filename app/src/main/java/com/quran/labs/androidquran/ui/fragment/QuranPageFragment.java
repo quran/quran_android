@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,11 +28,11 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.ui.util.AyahMenuUtils;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.ui.util.QueryAyahCoordsTask;
 import com.quran.labs.androidquran.ui.util.QueryBookmarkedAyahsTask;
@@ -45,6 +44,8 @@ import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class QuranPageFragment extends SherlockFragment
     implements AyahTracker {
@@ -58,7 +59,7 @@ public class QuranPageFragment extends SherlockFragment
   private ScrollView mScrollView;
   private PaintDrawable mLeftGradient, mRightGradient = null;
 
-  private AyahMenuUtils mAyahMenuUtils;
+  private AyahSelectedListener mAyahSelectedListener;
 
   private boolean mOverlayText;
   private boolean mJustCreated;
@@ -191,6 +192,20 @@ public class QuranPageFragment extends SherlockFragment
   }
 
   @Override
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    if (activity instanceof AyahSelectedListener) {
+      mAyahSelectedListener = (AyahSelectedListener) activity;
+    }
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    mAyahSelectedListener = null;
+  }
+
+  @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     Activity activity = getActivity();
@@ -226,11 +241,6 @@ public class QuranPageFragment extends SherlockFragment
 
   @Override
   public void onDestroyView() {
-    if (mAyahMenuUtils != null) {
-      mAyahMenuUtils.cleanup();
-      mAyahMenuUtils = null;
-    }
-
     if (mCurrentTask != null) {
       mCurrentTask.cancel(true);
     }
@@ -246,10 +256,6 @@ public class QuranPageFragment extends SherlockFragment
       mImageView = null;
     }
 
-    if (mAyahMenuUtils != null) {
-      mAyahMenuUtils.cleanup();
-      mAyahMenuUtils = null;
-    }
   }
 
   private class HighlightTagsTask extends QueryBookmarkedAyahsTask {
@@ -305,8 +311,8 @@ public class QuranPageFragment extends SherlockFragment
       super(context, QuranScreenInfo.getInstance().getWidthParam());
     }
 
-    public GetAyahCoordsTask(Context context, MotionEvent event) {
-      super(context, event,
+    public GetAyahCoordsTask(Context context, MotionEvent event, EventType eventType) {
+      super(context, event, eventType,
           QuranScreenInfo.getInstance().getWidthParam(), mPageNumber);
     }
 
@@ -328,12 +334,17 @@ public class QuranPageFragment extends SherlockFragment
       if (mHighlightAyah) {
         handleHighlightAyah(mSura, mAyah, mHighlightType);
       } else if (mEvent != null) {
-        handleLongPress(mEvent);
+        handlePress(mEvent, mEventType);
       } else {
         mImageView.invalidate();
       }
       mCurrentTask = null;
     }
+  }
+
+  @Override
+  public HighlightingImageView getHighlightingImageView(int page) {
+    return page == mPageNumber ? mImageView : null;
   }
 
   @Override
@@ -380,65 +391,64 @@ public class QuranPageFragment extends SherlockFragment
     mImageView.unHighlight(type);
   }
 
-  private void handleLongPress(MotionEvent event) {
+  private void handlePress(MotionEvent event, EventType eventType) {
     QuranAyah result = ImageAyahUtils.getAyahFromCoordinates(
         mCoordinateData, mImageView, event.getX(), event.getY());
-    if (result != null) {
-      mImageView.highlightAyah(result.getSura(), result.getAyah(), HighlightType.SELECTION);
-      mImageView.invalidate();
-      mImageView.performHapticFeedback(
-          HapticFeedbackConstants.LONG_PRESS);
-
-      if (mAyahMenuUtils == null) {
-        Activity activity = getActivity();
-        if (activity != null) {
-          mAyahMenuUtils = new AyahMenuUtils(activity);
-        }
-      }
-
-      if (mAyahMenuUtils != null) {
-        mAyahMenuUtils.showMenu(this, result.getSura(),
-            result.getAyah(), mPageNumber);
-      }
+    if (result != null && mAyahSelectedListener != null) {
+      mAyahSelectedListener.onAyahSelected(eventType,
+          result.getSura(), result.getAyah(), mPageNumber, mImageView);
     }
   }
 
   private class PageGestureDetector extends SimpleOnGestureListener {
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent event) {
-      PagerActivity pagerActivity = ((PagerActivity) getActivity());
-      if (pagerActivity != null) {
-        pagerActivity.toggleActionBar();
-        return true;
-      } else {
-        return false;
-      }
+    public boolean onSingleTapUp(MotionEvent event) {
+      return handleEvent(event, EventType.SINGLE_TAP);
     }
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
       unHighlightAyahs(HighlightType.SELECTION);
-      return true;
+      return handleEvent(event, EventType.DOUBLE_TAP);
     }
 
     @Override
     public void onLongPress(MotionEvent event) {
+      handleEvent(event, EventType.LONG_PRESS);
+    }
+
+    private boolean checkCoordinateData(MotionEvent event, EventType eventType) {
+      // Check files downloaded
       if (!QuranFileUtils.haveAyaPositionFile(getActivity()) ||
           !QuranFileUtils.hasArabicSearchDatabase(getActivity())) {
         Activity activity = getActivity();
         if (activity != null) {
           PagerActivity pagerActivity = (PagerActivity) activity;
           pagerActivity.showGetRequiredFilesDialog();
-          return;
+          return false;
         }
       }
-
+      // Check we fetched the data
       if (mCoordinateData == null) {
         mCurrentTask = new GetAyahCoordsTask(getActivity(),
-            event).execute(mPageNumber);
+            event, eventType).execute(mPageNumber);
+        return false;
+      }
+      // All good
+      return true;
+    }
+
+    private boolean handleEvent(MotionEvent event, EventType eventType) {
+      if (mAyahSelectedListener == null) return false;
+      if (mAyahSelectedListener.isListeningForAyahSelection(eventType)) {
+        if (checkCoordinateData(event, eventType)) {
+          handlePress(event, eventType);
+        }
+        return true;
       } else {
-        handleLongPress(event);
+        return mAyahSelectedListener.onClick(eventType);
       }
     }
   }
+
 }

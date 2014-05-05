@@ -27,29 +27,41 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
    private Context mContext;
 
-   private int mPageNumber;
+   private Integer[] mAyahBounds;
    private int mHighlightedAyah;
    private String mDatabaseName = null;
    private WeakReference<TranslationView> mTranslationView;
+
+   public TranslationTask(Context context, Integer[] ayahBounds,
+                          String databaseName){
+     mContext = context;
+     mDatabaseName = databaseName;
+     mAyahBounds = ayahBounds;
+     mHighlightedAyah = 0;
+     mTranslationView = null;
+   }
 
    public TranslationTask(Context context, int pageNumber,
                           int highlightedAyah, String databaseName,
                           TranslationView view){
       mContext = context;
       mDatabaseName = databaseName;
-      mPageNumber = pageNumber;
+      mAyahBounds = QuranInfo.getPageBounds(pageNumber);
       mHighlightedAyah = highlightedAyah;
       mTranslationView = new WeakReference<TranslationView>(view);
 
       if (context instanceof PagerActivity){
-         ((PagerActivity)context).setLoadingIfPage(mPageNumber);
+         ((PagerActivity)context).setLoadingIfPage(pageNumber);
       }
+   }
+
+   protected boolean loadArabicAyahText() {
+     return QuranSettings.wantArabicInTranslationView(mContext);
    }
 
    @Override
    protected List<QuranAyah> doInBackground(Void... params) {
-      int page = mPageNumber;
-      Integer[] bounds = QuranInfo.getPageBounds(page);
+      Integer[] bounds = mAyahBounds;
       if (bounds == null){ return null; }
 
       String databaseName = mDatabaseName;
@@ -70,7 +82,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
          DatabaseHandler ayahHandler = null;
          Cursor ayahCursor = null;
 
-         if (QuranSettings.wantArabicInTranslationView(mContext)){
+         if (loadArabicAyahText()){
             try {
                ayahHandler = new DatabaseHandler(mContext,
                        QuranDataProvider.QURAN_ARABIC_DATABASE);
@@ -126,7 +138,8 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
    @Override
    protected void onPostExecute(List<QuranAyah> result) {
       if (result != null){
-         final TranslationView view = mTranslationView.get();
+         final TranslationView view = mTranslationView == null ?
+             null : mTranslationView.get();
          if (view != null){
             view.setAyahs(result);
             if (mHighlightedAyah > 0){

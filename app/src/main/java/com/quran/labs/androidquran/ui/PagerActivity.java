@@ -16,6 +16,7 @@ import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
@@ -29,12 +30,14 @@ import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.ui.helpers.AyahActionPanel;
 import com.quran.labs.androidquran.util.AsyncTask;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -43,6 +46,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
+import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -68,6 +72,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,14 +84,17 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PagerActivity extends SherlockFragmentActivity implements
     AudioStatusBar.AudioBarListener,
     BookmarkHandler,
     DefaultDownloadReceiver.DownloadListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
-    AddTagDialog.OnTagChangedListener {
+    AddTagDialog.OnTagChangedListener,
+    AyahSelectedListener {
   private static final String TAG = "PagerActivity";
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
   private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
@@ -126,6 +134,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private boolean mDualPages = false;
+  private AyahActionPanel mAyahActionPanel;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
 
@@ -213,11 +222,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     int background = getResources().getColor(
         R.color.transparent_actionbar_color);
-    setContentView(R.layout.quran_page_activity);
+    setContentView(R.layout.quran_page_activity_slider);
     getSupportActionBar().setBackgroundDrawable(
         new ColorDrawable(background));
     mAudioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
     mAudioStatusBar.setAudioBarListener(this);
+
+    // Try initializing the AyahActionPanel
+    try {
+      mAyahActionPanel = new AyahActionPanel(this);
+    } catch (Exception e) {
+      // TODO do something, at least report to crashlytics
+    }
 
     Intent intent = getIntent();
     Bundle extras = intent.getExtras();
@@ -627,6 +643,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
           .unregisterReceiver(mDownloadReceiver);
       mDownloadReceiver = null;
     }
+    if (mAyahActionPanel != null && mAyahActionPanel.isInActionMode()) {
+      mAyahActionPanel.endActionMode();
+    }
     super.onPause();
   }
 
@@ -645,6 +664,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
     if (mTabletAyahInfoAdapter != null) {
       mTabletAyahInfoAdapter.closeDatabase();
     }
+
+    if (mAyahActionPanel != null) {
+      mAyahActionPanel.cleanup();
+      mAyahActionPanel = null;
+    }
+
     super.onDestroy();
   }
 
@@ -821,30 +846,30 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onAddTagSelected() {
-    FragmentManager fm = getSupportFragmentManager();
-    AddTagDialog dialog = new AddTagDialog();
-    dialog.show(fm, AddTagDialog.TAG);
+    if (mAyahActionPanel != null) {
+      mAyahActionPanel.onAddTagSelected();
+    }
   }
 
   @Override
   public void onBookmarkTagsUpdated() {
-    // Do nothing
+    if (mAyahActionPanel != null) {
+      mAyahActionPanel.onBookmarkTagsUpdated();
+    }
   }
 
   @Override
   public void onTagAdded(final String name) {
-    if (TextUtils.isEmpty(name))
-      return;
-    FragmentManager fm = getSupportFragmentManager();
-    Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
-    if (f != null && f instanceof TagBookmarkDialog) {
-      ((TagBookmarkDialog) f).handleTagAdded(name);
+    if (mAyahActionPanel != null) {
+      mAyahActionPanel.onTagAdded(name);
     }
   }
 
   @Override
   public void onTagUpdated(long id, String name) {
-    // should not be called in this flow
+    if (mAyahActionPanel != null) {
+      mAyahActionPanel.onTagUpdated(id, name);
+    }
   }
 
   private void updateActionBarTitle(int page) {
@@ -1170,6 +1195,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
           } else {
             unHighlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
           }
+          if (mAyahActionPanel != null) {
+            mAyahActionPanel.onAyahBookmarkUpdated(mSura, mAyah, mPage, result);
+          }
         }
       }
     }
@@ -1473,4 +1501,144 @@ public class PagerActivity extends SherlockFragmentActivity implements
       playAudioRequest(mLastAudioDownloadRequest);
     }
   }
+
+  // #######################################################################
+  // ####################    AYAH ACTION PANEL STUFF    ####################
+  // #######################################################################
+
+  @Override
+  public void onBackPressed() {
+    if (mAyahActionPanel != null && mAyahActionPanel.isInActionMode()) {
+      mAyahActionPanel.endActionMode();
+    } else {
+      super.onBackPressed();
+    }
+  }
+
+  public boolean isInActionMode() {
+    return mAyahActionPanel != null && mAyahActionPanel.isInActionMode();
+  }
+
+
+  @Override
+  public boolean isListeningForAyahSelection(EventType eventType) {
+    return eventType == EventType.LONG_PRESS ||
+        eventType == EventType.SINGLE_TAP && isInActionMode();
+  }
+
+  @Override
+  public boolean onAyahSelected(EventType eventType,
+      int sura, int ayah, int page, HighlightingImageView hv) {
+    switch (eventType) {
+      case SINGLE_TAP:
+        if (isInActionMode()) {
+          updateAyahStartSelection(sura, ayah, page, hv);
+          return true;
+        }
+        return false;
+      case LONG_PRESS:
+        if (isInActionMode()) {
+          updateAyahEndSelection(sura, ayah, page);
+        } else {
+          startActionMode(sura, ayah, page, hv);
+        }
+        mViewPager.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  @Override
+  public boolean onClick(EventType eventType) {
+    switch (eventType) {
+      case SINGLE_TAP:
+        if (!isInActionMode()) {
+          toggleActionBar();
+          return true;
+        }
+        return false;
+      case DOUBLE_TAP:
+        if (!isInActionMode()) {
+          return false;
+        }
+        endActionMode();
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public void startActionMode(int sura, int ayah, int page, HighlightingImageView hv) {
+    if (mAyahActionPanel != null) {
+      mAyahActionPanel.startActionMode(sura, ayah, page);
+      showActionModeHighlights(sura, ayah, hv);
+    }
+  }
+
+  public void endActionMode() {
+    if (mAyahActionPanel != null) {
+      clearActionModeHighlights();
+      mAyahActionPanel.endActionMode();
+    }
+  }
+
+  public void updateAyahStartSelection(int sura, int ayah, int page, HighlightingImageView hv) {
+    if (mAyahActionPanel != null) {
+      clearActionModeHighlights();
+      mAyahActionPanel.updateStartSelection(sura, ayah, page);
+      showActionModeHighlights(sura, ayah, hv);
+    }
+  }
+
+  public void updateAyahEndSelection(int sura, int ayah, int page) {
+    if (mAyahActionPanel != null) {
+      clearActionModeHighlights();
+      mAyahActionPanel.updateEndSelection(sura, ayah, page);
+      // Determine the start and end of the selection
+      int minPage = Math.min(mAyahActionPanel.mStartPage, mAyahActionPanel.mEndPage);
+      int maxPage = Math.max(mAyahActionPanel.mStartPage, mAyahActionPanel.mEndPage);
+      SuraAyah start = new SuraAyah(mAyahActionPanel.mStartSura, mAyahActionPanel.mStartAyah);
+      SuraAyah end = new SuraAyah(mAyahActionPanel.mEndSura, mAyahActionPanel.mEndAyah);
+      if (start.compareTo(end) > 0) {
+        SuraAyah swap = start;
+        start = end;
+        end = swap;
+      }
+      // Iterate from beginning to end
+      for (int i = minPage; i <= maxPage; i++) {
+        AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
+        if (fragment != null) {
+          HighlightingImageView imageView = fragment.getHighlightingImageView(i);
+          if (imageView != null) {
+            Set<String> ayahKeys = QuranInfo.getAyahKeysOnPage(i, start, end);
+            imageView.highlightAyahs(ayahKeys, HighlightType.SELECTION);
+            imageView.invalidate();
+          }
+        }
+      }
+    }
+  }
+
+  private void showActionModeHighlights(int sura, int ayah, HighlightingImageView hv) {
+    if (hv != null) {
+      hv.highlightAyah(sura, ayah, HighlightType.SELECTION);
+      hv.invalidate();
+    }
+  }
+
+  private void clearActionModeHighlights() {
+    if (mAyahActionPanel != null) {
+      for (int i = mAyahActionPanel.mStartPage; i <= mAyahActionPanel.mEndPage; i++) {
+        AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
+        if (fragment != null) {
+          HighlightingImageView imageView = fragment.getHighlightingImageView(i);
+          if (imageView != null) {
+            imageView.unHighlight(HighlightType.SELECTION);
+          }
+        }
+      }
+    }
+  }
+
 }

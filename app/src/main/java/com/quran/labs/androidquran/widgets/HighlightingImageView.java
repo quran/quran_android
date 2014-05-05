@@ -68,6 +68,15 @@ public class HighlightingImageView extends RecyclingImageView {
     }
   }
 
+  public void highlightAyahs(Set<String> ayahKeys, HighlightType type) {
+    Set<String> highlights = mCurrentHighlights.get(type);
+    if (highlights == null) {
+      highlights = new HashSet<String>();
+      mCurrentHighlights.put(type, highlights);
+    }
+    highlights.addAll(ayahKeys);
+  }
+
   public void unHighlight(HighlightType type) {
     mCurrentHighlights.remove(type);
     invalidate();
