@@ -40,7 +40,7 @@
         android:textColor="@color/header_text_color" />
 
     <TextView android:id="@+id/suraName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/rowIcon"
         android:layout_toRightOf="@+id/pageNumber"
@@ -55,7 +55,7 @@
         android:textColor="@color/sura_info_color" />
 
     <TextView android:id="@+id/suraDetails"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/rowIcon"
         android:layout_below="@id/suraName"
