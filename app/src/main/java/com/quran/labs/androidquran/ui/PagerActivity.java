@@ -84,7 +84,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -745,11 +744,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       toggleBookmark(null, null, page);
       return true;
     } else if (item.getItemId() == R.id.goto_quran) {
-      mPagerAdapter.setQuranMode();
-      mShowingTranslation = false;
-      int page = getCurrentPage();
-      invalidateOptionsMenu();
-      updateActionBarTitle(page);
+      switchToQuran();
       return true;
     } else if (item.getItemId() == R.id.goto_translation) {
       switchToTranslation();
@@ -791,6 +786,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
     if (currentPage == page) {
       setLoading(true);
     }
+  }
+
+  public void switchToQuran() {
+    mPagerAdapter.setQuranMode();
+    mShowingTranslation = false;
+    int page = getCurrentPage();
+    invalidateOptionsMenu();
+    updateActionBarTitle(page);
   }
 
   public void switchToTranslation() {
@@ -1510,6 +1513,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void onBackPressed() {
     if (mAyahActionPanel != null && mAyahActionPanel.isInActionMode()) {
       mAyahActionPanel.endActionMode();
+    } else if (mShowingTranslation) {
+      switchToQuran();
     } else {
       super.onBackPressed();
     }
