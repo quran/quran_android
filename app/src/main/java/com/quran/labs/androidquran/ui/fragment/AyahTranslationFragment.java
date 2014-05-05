@@ -29,10 +29,6 @@ public class AyahTranslationFragment extends SherlockFragment {
   public AyahTranslationFragment(){
   }
 
-  public AyahTranslationFragment(SuraAyah start){
-    this(start, start);
-  }
-
   public AyahTranslationFragment(SuraAyah start, SuraAyah end){
     mStart = start;
     mEnd = end;
