@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
@@ -54,6 +55,10 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       mBookmarkIds = bookmarkIds;
    }
    
+   public TagBookmarkDialog(SuraAyah suraAyah){
+     this(suraAyah.sura, suraAyah.ayah, suraAyah.getPage());
+   }
+
    public TagBookmarkDialog(Integer sura, Integer ayah, int page){
       mSura = sura;
       mAyah = ayah;
@@ -62,6 +67,10 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
    // do not remove - this is required when resuming from onSaveInstanceState
    public TagBookmarkDialog(){
+   }
+
+   public void updateAyah(SuraAyah suraAyah) {
+     updateAyah(suraAyah.sura, suraAyah.ayah, suraAyah.getPage());
    }
 
    public void updateAyah(int sura, int ayah, int page) {

@@ -26,6 +26,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
@@ -395,8 +396,8 @@ public class QuranPageFragment extends SherlockFragment
     QuranAyah result = ImageAyahUtils.getAyahFromCoordinates(
         mCoordinateData, mImageView, event.getX(), event.getY());
     if (result != null && mAyahSelectedListener != null) {
-      mAyahSelectedListener.onAyahSelected(eventType,
-          result.getSura(), result.getAyah(), mPageNumber, mImageView);
+      SuraAyah suraAyah = new SuraAyah(result.getSura(), result.getAyah());
+      mAyahSelectedListener.onAyahSelected(eventType, suraAyah, mImageView);
     }
   }
 

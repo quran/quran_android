@@ -19,6 +19,7 @@ import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.*;
@@ -550,8 +551,8 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
           // TODO unhighlight the other page?
         }
       }
-      mAyahSelectedListener.onAyahSelected(eventType,
-          result.getSura(), result.getAyah(), page, hv);
+      SuraAyah suraAyah = new SuraAyah(result.getSura(), result.getAyah());
+      mAyahSelectedListener.onAyahSelected(eventType, suraAyah, hv);
     }
   }
 

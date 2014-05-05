@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 public interface AyahSelectedListener {
@@ -12,7 +13,7 @@ public interface AyahSelectedListener {
 
   /** Click event with ayah info and highlighter passed */
   public boolean onAyahSelected(EventType eventType,
-          int sura, int ayah, int page, HighlightingImageView hv);
+          SuraAyah suraAyah, HighlightingImageView hv);
 
   /** General click event without ayah info */
   public boolean onClick(EventType eventType);

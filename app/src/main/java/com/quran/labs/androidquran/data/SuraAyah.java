@@ -1,12 +1,47 @@
 package com.quran.labs.androidquran.data;
 
-public class SuraAyah implements Comparable<SuraAyah> {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
   final public int sura;
   final public int ayah;
+  private int page = -1;
 
   public SuraAyah(int sura, int ayah) {
     this.sura = sura;
     this.ayah = ayah;
+  }
+
+  public SuraAyah(Parcel parcel) {
+    this.sura = parcel.readInt();
+    this.ayah = parcel.readInt();
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags) {
+    dest.writeInt(sura);
+    dest.writeInt(ayah);
+  }
+
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  public static final Parcelable.Creator<SuraAyah> CREATOR =
+      new Parcelable.Creator<SuraAyah>() {
+        public SuraAyah createFromParcel(Parcel in) {
+          return new SuraAyah(in);
+        }
+
+        public SuraAyah[] newArray(int size) {
+          return new SuraAyah[size];
+        }
+      };
+
+  public int getPage() {
+    return page > 0 ? page : (page = QuranInfo.getPageFromSuraAyah(sura, ayah));
   }
 
   @Override
