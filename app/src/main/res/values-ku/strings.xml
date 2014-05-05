@@ -234,7 +234,7 @@
     <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
     <string name="translation_ayah">وەرگێڕانی ئایەت/تەفسیر</string>
     <string name="play_from_here">لێدان لێرەوە</string>
-    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="via_string">via @QuranAndroid</string>
     <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
     <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>
     <string name="ayah_copied_popup">ئایەت لەبەریگیراوە</string>

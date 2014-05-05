@@ -217,7 +217,7 @@
     <string name="share_ayah">分享此节</string>
     <string name="translation_ayah">翻译此节</string>
     <string name="play_from_here">从当前节开始播放</string>
-    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="via_string">via @QuranAndroid</string>
     <string name="search_key">按住搜索键来查找某节</string>
     <string name="copy_ayah">复制此节</string>
     <string name="ayah_copied_popup">复制成功</string>

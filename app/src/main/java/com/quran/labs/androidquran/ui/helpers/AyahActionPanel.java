@@ -27,8 +27,10 @@ import com.actionbarsherlock.internal.view.menu.MenuPresenter;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -39,6 +41,8 @@ import com.quran.labs.androidquran.util.QuranAppUtils;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AyahActionPanel implements
     MenuBuilder.Callback, MenuPresenter.Callback,
@@ -69,29 +73,21 @@ public class AyahActionPanel implements
 
   // State
   public boolean isShowing;
-  public int mStartSura;
-  public int mStartAyah;
-  public int mStartPage;
-  public int mEndSura;
-  public int mEndAyah;
-  public int mEndPage;
+  public SuraAyah mStart;
+  public SuraAyah mEnd;
 
   public AyahActionPanel(PagerActivity activity){
     mActivityRef = new WeakReference<PagerActivity>(activity);
     init(activity);
   }
 
-  private boolean isCurrentSelection(int sura, int ayah, int page) {
-    return mStartSura == sura && mStartAyah == ayah && mStartPage == page;
-  }
-
   public boolean isInActionMode() {
     return isShowing;
   }
 
-  public void startActionMode(int sura, int ayah, int page) {
+  public void startActionMode(SuraAyah start) {
     if (!isShowing) {
-      updateStartSelection(sura, ayah, page);
+      updateStartSelection(start);
     } else {
       // TODO
     }
@@ -101,38 +97,34 @@ public class AyahActionPanel implements
     if (isShowing) {
       mSlidingPanel.hidePane();
       isShowing = false;
-      mStartSura = mStartAyah = mStartPage = mEndSura = mEndAyah = mEndPage = 0;
     }
   }
 
-  public void updateStartSelection(int sura, int ayah, int page) {
-    mStartSura = mEndSura = sura;
-    mStartAyah = mEndAyah = ayah;
-    mStartPage = mEndPage = page;
-    new RefreshBookmarkIconTask(sura, ayah, page).execute();
+  public void updateStartSelection(SuraAyah start) {
+    mStart = start;
+    mEnd = start;
+    new RefreshBookmarkIconTask(start).execute();
     // Update Tags
     TagBookmarkDialog tagsFrag = getTagFragment();
     if (tagsFrag != null) {
-      tagsFrag.updateAyah(sura, ayah, page);
+      tagsFrag.updateAyah(start);
     }
     // Update Tafsir
     AyahTranslationFragment transFrag = getTranslationFragment();
     if (transFrag != null) {
-      transFrag.updateAyahSelection(mStartSura, mStartAyah, mEndSura, mEndAyah);
+      transFrag.updateAyahSelection(mStart, mEnd);
     }
     isShowing = true;
     mSlidingPanel.showPane();
   }
 
-  public void updateEndSelection(int sura, int ayah, int page) {
-    mEndSura = sura;
-    mEndAyah = ayah;
-    mEndPage = page;
+  public void updateEndSelection(SuraAyah end) {
+    mEnd = end;
     // TODO
     // Update Tafsir
     AyahTranslationFragment f = getTranslationFragment();
     if (f != null) {
-      f.updateAyahSelection(mStartSura, mStartAyah, mEndSura, mEndAyah);
+      f.updateAyahSelection(mStart, mEnd);
     }
   }
 
@@ -153,17 +145,17 @@ public class AyahActionPanel implements
     }
   }
 
-  private void updateAyahBookmarkIcon(int sura, int ayah, int page, boolean bookmarked) {
-    if (isCurrentSelection(sura, ayah, page)) {
+  private void updateAyahBookmarkIcon(SuraAyah suraAyah, boolean bookmarked) {
+    if (mStart.equals(suraAyah)) {
       MenuItem bookmarkItem = mMenu.findItem(R.id.cab_bookmark_ayah);
       bookmarkItem.setIcon(bookmarked ? R.drawable.favorite : R.drawable.not_favorite);
       bookmarkItem.setTitle(bookmarked ? R.string.unbookmark_ayah : R.string.bookmark_ayah);
     }
   }
 
-  public void onAyahBookmarkUpdated(int sura, int ayah, int page, boolean bookmarked) {
-    if (isCurrentSelection(sura, ayah, page)) {
-      updateAyahBookmarkIcon(sura, ayah, page, bookmarked);
+  public void onAyahBookmarkUpdated(SuraAyah suraAyah, boolean bookmarked) {
+    if (mStart.equals(suraAyah)) {
+      updateAyahBookmarkIcon(suraAyah, bookmarked);
     }
   }
 
@@ -181,7 +173,7 @@ public class AyahActionPanel implements
   }
 
   @Override public void onBookmarkTagsUpdated() {
-    new RefreshBookmarkIconTask(mStartSura, mStartAyah, mStartPage).execute();
+    new RefreshBookmarkIconTask(mStart).execute();
   }
 
   @Override public void onAddTagSelected() {
@@ -210,20 +202,12 @@ public class AyahActionPanel implements
       return false;
     }
 
-    View menuItemView = mMenuPresenter.getItemView((MenuItemImpl) item, null, mMenuView);
-    if (menuItemView != null) {
-      menuItemView.setBackgroundResource(R.color.selection_highlight);
-      menuItemView.setPressed(true);
-      menuItemView.setSelected(true);
-      mMenuPresenter.updateMenuView(false);
-    }
-
     boolean close = false;
     boolean expand = mSlidingPanel.isExpanded();
     int switchTo = -1;
     switch (item.getItemId()) {
       case R.id.cab_bookmark_ayah:
-        activity.toggleBookmark(mStartSura, mStartAyah, mStartPage);
+        activity.toggleBookmark(mStart.sura, mStart.ayah, mStart.getPage());
         break;
       case R.id.cab_tag_ayah:
         expand = true;
@@ -232,28 +216,27 @@ public class AyahActionPanel implements
       case R.id.cab_ayah_translation:
         expand = true;
         switchTo = TRANSLATION_FRAGMENT_POS;
-        //mCurrentTask = new ShowTafsirTask(mStartSura, mStartAyah).execute();
         // TODO if no translation, go to translation download selection activity
         break;
       case R.id.cab_play_from_here:
         close = true;
         expand = false;
-        activity.playFromAyah(mStartPage, mStartSura, mStartAyah);
+        activity.playFromAyah(mStart.getPage(), mStart.sura, mStart.ayah);
         break;
       case R.id.cab_share_ayah_link:
         close = true;
         expand = false;
-        mCurrentTask = new ShareQuranApp().execute(mStartSura, mStartAyah);
+        mCurrentTask = new ShareQuranApp(mStart, mEnd).execute();
         break;
       case R.id.cab_share_ayah_text:
         close = true;
         expand = false;
-        mCurrentTask = new ShareAyahTask(mStartSura, mStartAyah, false).execute();
+        mCurrentTask = new ShareAyahTask(mStart, mEnd, false).execute();
         break;
       case R.id.cab_copy_ayah:
         close = true;
         expand = false;
-        mCurrentTask = new ShareAyahTask(mStartSura, mStartAyah, true).execute();
+        mCurrentTask = new ShareAyahTask(mStart, mEnd, true).execute();
         break;
       default:
         return false;
@@ -361,9 +344,9 @@ public class AyahActionPanel implements
     public Fragment getItem(int position) {
       switch (position) {
         case TAG_FRAGMENT_POS:
-          return new TagBookmarkDialog(mStartSura, mStartAyah, mStartPage);
+          return new TagBookmarkDialog(mStart);
         case TRANSLATION_FRAGMENT_POS:
-          return new AyahTranslationFragment(mStartSura, mStartAyah);
+          return new AyahTranslationFragment(mStart, mEnd);
       }
       return null;
     }
@@ -375,14 +358,10 @@ public class AyahActionPanel implements
   }
 
   private class RefreshBookmarkIconTask extends AsyncTask<Void, Void, Boolean> {
-    private int mSura;
-    private int mAyah;
-    private int mPage;
+    private SuraAyah mSuraAyah;
 
-    public RefreshBookmarkIconTask(int sura, int ayah, int page) {
-      mSura = sura;
-      mAyah = ayah;
-      mPage = page;
+    public RefreshBookmarkIconTask(SuraAyah suraAyah) {
+      mSuraAyah = suraAyah;
     }
 
     @Override
@@ -395,21 +374,29 @@ public class AyahActionPanel implements
 
       if (adapter == null){ return null; }
 
-      boolean bookmarked = adapter.getBookmarkId(mSura, mAyah, mPage) >= 0;
+      boolean bookmarked = adapter.getBookmarkId(
+          mSuraAyah.sura, mSuraAyah.ayah, mSuraAyah.getPage()) >= 0;
       return bookmarked;
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
       if (result != null){
-        updateAyahBookmarkIcon(mSura, mAyah, mPage, result);
+        updateAyahBookmarkIcon(mSuraAyah, result);
       }
     }
 
   }
 
-  private class ShareQuranApp extends AsyncTask<Integer, Void, String> {
+  private class ShareQuranApp extends AsyncTask<Void, Void, String> {
+    private SuraAyah start;
+    private SuraAyah end;
     private String mKey;
+
+    public ShareQuranApp(SuraAyah start, SuraAyah end) {
+      this.start = start;
+      this.end = end;
+    }
 
     @Override
     protected void onPreExecute() {
@@ -425,20 +412,12 @@ public class AyahActionPanel implements
     }
 
     @Override
-    protected String doInBackground(Integer... params){
-      String url = null;
-      if (params.length > 0){
-        Integer endAyah = null;
-        Integer startAyah = null;
-        int sura = params[0];
-        if (params.length > 1){
-          startAyah = params[1];
-          if (params.length > 2){
-            endAyah = params[2];
-          }
-        }
-        url = QuranAppUtils.getQuranAppUrl(mKey, sura, startAyah, endAyah);
-      }
+    protected String doInBackground(Void... params){
+      int sura = start.sura;
+      int startAyah = start.ayah;
+      int endAyah = end.sura == start.sura ? end.ayah : QuranInfo.getNumAyahs(start.sura);
+      // TODO support spanning multiple suras
+      String url = QuranAppUtils.getQuranAppUrl(mKey, sura, startAyah, endAyah);
       return url;
     }
 
@@ -462,27 +441,29 @@ public class AyahActionPanel implements
     }
   }
 
-  private class ShareAyahTask extends AsyncTask<Void, Void, String> {
-    private int sura, ayah;
+  private class ShareAyahTask extends AsyncTask<Void, Void, List<QuranAyah>> {
+    private SuraAyah start, end;
     private boolean copy;
 
-    public ShareAyahTask(int sura, int ayah, boolean copy) {
-      this.sura = sura;
-      this.ayah = ayah;
+    public ShareAyahTask(SuraAyah start, SuraAyah end, boolean copy) {
+      this.start = start;
+      this.end = end;
       this.copy = copy;
     }
 
     @Override
-    protected String doInBackground(Void... params) {
-      String text = null;
+    protected List<QuranAyah> doInBackground(Void... params) {
+      List<QuranAyah> verses = new ArrayList<QuranAyah>();
       try {
         DatabaseHandler ayahHandler =
             new DatabaseHandler(getActivity(),
                 QuranDataProvider.QURAN_ARABIC_DATABASE);
-        Cursor cursor = ayahHandler.getVerses(sura, ayah, sura, ayah,
-            DatabaseHandler.ARABIC_TEXT_TABLE);
-        if (cursor.moveToFirst()) {
-          text = cursor.getString(2);
+        Cursor cursor = ayahHandler.getVerses(start.sura, start.ayah,
+            end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
+        while (cursor.moveToNext()) {
+          QuranAyah verse = new QuranAyah(cursor.getInt(0), cursor.getInt(1));
+          verse.setText(cursor.getString(2));
+          verses.add(verse);
         }
         cursor.close();
         ayahHandler.closeDatabase();
@@ -490,21 +471,27 @@ public class AyahActionPanel implements
       catch (Exception e){
       }
 
-      return text;
+      return verses;
     }
 
     @Override
-    protected void onPostExecute(String ayah) {
+    protected void onPostExecute(List<QuranAyah> verses) {
       Activity activity = getActivity();
-      if (ayah != null && activity != null) {
-        ayah = "(" + ayah + ")" + " " + "["
-            + QuranInfo.getSuraName(activity, this.sura, true)
-            + " : " + this.ayah + "]" + activity.getString(R.string.via_string);
+      if (verses != null && !verses.isEmpty() && activity != null) {
+        StringBuilder sb = new StringBuilder();
+        // TODO what's the best text format for multiple ayahs
+        for (QuranAyah verse : verses) {
+          sb.append("(").append(verse.getText()).append(") [");
+          sb.append(QuranInfo.getSuraName(activity, verse.getSura(), true));
+          sb.append(" : ").append(verse.getAyah()).append("]").append("\n\n");
+        }
+        sb.append(activity.getString(R.string.via_string));
+        String text = sb.toString();
         if (copy) {
           ClipboardManager cm = (ClipboardManager)activity.
               getSystemService(Activity.CLIPBOARD_SERVICE);
           if (cm != null){
-            cm.setText(ayah);
+            cm.setText(text);
             Toast.makeText(activity, activity.getString(
                     R.string.ayah_copied_popup),
                 Toast.LENGTH_SHORT
@@ -513,7 +500,7 @@ public class AyahActionPanel implements
         } else {
           final Intent intent = new Intent(Intent.ACTION_SEND);
           intent.setType("text/plain");
-          intent.putExtra(Intent.EXTRA_TEXT, ayah);
+          intent.putExtra(Intent.EXTRA_TEXT, text);
           activity.startActivity(Intent.createChooser(intent,
               activity.getString(R.string.share_ayah)));
         }
@@ -521,65 +508,5 @@ public class AyahActionPanel implements
       mCurrentTask = null;
     }
   }
-/*
-  private class ShowTafsirTask extends TranslationTask {
-    private int sura, ayah;
 
-    public ShowTafsirTask() {
-      super(getActivity(), new Integer[] {mStartSura, mStartAyah, mEndSura, mEndAyah},
-          TranslationUtils.getDefaultTranslation(getActivity(), getActivity().getTranslations()), null);
-      this.sura = mStartSura;
-      this.ayah = mStartAyah;
-    }
-
-    @Override
-    protected void onPostExecute(List<QuranAyah> result) {
-      if (result != null && isCurrentSelection(this.sura, this.ayah)) {
-        AyahTranslationFragment f = (AyahTranslationFragment) findFragmentByPosition(TRANSLATION_FRAGMENT_POS);
-        final TranslationView view = f == null ? null : f.getTranslationView();
-        if (view != null) {
-          view.setAyahs(result);
-        }
-      } else {
-        // TODO show button in the fragment showing no translation, download here
-        //showGetTranslationDialog();
-      }
-      mCurrentTask = null;
-    }
-  }
-
-  private void showGetTranslationDialog() {
-    final SherlockFragmentActivity activity = getActivity();
-    if (activity == null) {
-      return;
-    }
-    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-    builder.setMessage(R.string.need_translation)
-        .setPositiveButton(R.string.get_translations,
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog,
-                                  int i) {
-                dialog.dismiss();
-                mTranslationDialog = null;
-                Intent tm = new Intent(getActivity(),
-                    TranslationManagerActivity.class);
-                activity.startActivity(tm);
-              }
-            }
-        )
-        .setNegativeButton(R.string.cancel,
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog,
-                                  int i) {
-                dialog.dismiss();
-                mTranslationDialog = null;
-              }
-            }
-        );
-    mTranslationDialog = builder.create();
-    mTranslationDialog.show();
-  }
-*/
 }

@@ -264,7 +264,7 @@
     <string name="share_ayah_text">Поделиться текстом аята</string>
     <string name="translation_ayah">Перевод/тафсир аята</string>
     <string name="play_from_here">Воспроизвести отсюда</string>
-    <string name="via_string">\n\nчерез @QuranAndroid</string>
+    <string name="via_string">через @QuranAndroid</string>
     <string name="search_key">Нажмите клавишу поиска, чтобы найти стих</string>
     <string name="copy_ayah">Скопировать аят</string>
     <string name="ayah_copied_popup">Аят скопирован</string>

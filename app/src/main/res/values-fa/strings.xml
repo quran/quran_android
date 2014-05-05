@@ -202,7 +202,7 @@
     <string name="share_ayah">اشتراک گذاري آيه</string>
     <string name="translation_ayah">ترجمه آيه</string>
     <string name="play_from_here">شروع از اينجا</string>
-    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="via_string">via @QuranAndroid</string>
     <string name="search_key">کليد جستجو را کليک نماييد</string>
     <string name="copy_ayah">کپي کردن آيه</string>
     <string name="ayah_copied_popup">آيه کپي شد</string>

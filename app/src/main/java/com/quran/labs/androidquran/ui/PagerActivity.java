@@ -1196,7 +1196,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             unHighlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
           }
           if (mAyahActionPanel != null) {
-            mAyahActionPanel.onAyahBookmarkUpdated(mSura, mAyah, mPage, result);
+            mAyahActionPanel.onAyahBookmarkUpdated(new SuraAyah(mSura, mPage), result);
           }
         }
       }
@@ -1528,19 +1528,19 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public boolean onAyahSelected(EventType eventType,
-      int sura, int ayah, int page, HighlightingImageView hv) {
+      SuraAyah suraAyah, HighlightingImageView hv) {
     switch (eventType) {
       case SINGLE_TAP:
         if (isInActionMode()) {
-          updateAyahStartSelection(sura, ayah, page, hv);
+          updateAyahStartSelection(suraAyah, hv);
           return true;
         }
         return false;
       case LONG_PRESS:
         if (isInActionMode()) {
-          updateAyahEndSelection(sura, ayah, page);
+          updateAyahEndSelection(suraAyah);
         } else {
-          startActionMode(sura, ayah, page, hv);
+          startActionMode(suraAyah, hv);
         }
         mViewPager.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         return true;
@@ -1569,10 +1569,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  public void startActionMode(int sura, int ayah, int page, HighlightingImageView hv) {
+  public void startActionMode(SuraAyah suraAyah, HighlightingImageView hv) {
     if (mAyahActionPanel != null) {
-      mAyahActionPanel.startActionMode(sura, ayah, page);
-      showActionModeHighlights(sura, ayah, hv);
+      mAyahActionPanel.startActionMode(suraAyah);
+      showActionModeHighlights(suraAyah, hv);
     }
   }
 
@@ -1583,23 +1583,23 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  public void updateAyahStartSelection(int sura, int ayah, int page, HighlightingImageView hv) {
+  public void updateAyahStartSelection(SuraAyah suraAyah, HighlightingImageView hv) {
     if (mAyahActionPanel != null) {
       clearActionModeHighlights();
-      mAyahActionPanel.updateStartSelection(sura, ayah, page);
-      showActionModeHighlights(sura, ayah, hv);
+      mAyahActionPanel.updateStartSelection(suraAyah);
+      showActionModeHighlights(suraAyah, hv);
     }
   }
 
-  public void updateAyahEndSelection(int sura, int ayah, int page) {
+  public void updateAyahEndSelection(SuraAyah suraAyah) {
     if (mAyahActionPanel != null) {
       clearActionModeHighlights();
-      mAyahActionPanel.updateEndSelection(sura, ayah, page);
+      mAyahActionPanel.updateEndSelection(suraAyah);
       // Determine the start and end of the selection
-      int minPage = Math.min(mAyahActionPanel.mStartPage, mAyahActionPanel.mEndPage);
-      int maxPage = Math.max(mAyahActionPanel.mStartPage, mAyahActionPanel.mEndPage);
-      SuraAyah start = new SuraAyah(mAyahActionPanel.mStartSura, mAyahActionPanel.mStartAyah);
-      SuraAyah end = new SuraAyah(mAyahActionPanel.mEndSura, mAyahActionPanel.mEndAyah);
+      int minPage = Math.min(mAyahActionPanel.mStart.getPage(), mAyahActionPanel.mEnd.getPage());
+      int maxPage = Math.max(mAyahActionPanel.mStart.getPage(), mAyahActionPanel.mEnd.getPage());
+      SuraAyah start = new SuraAyah(mAyahActionPanel.mStart.sura, mAyahActionPanel.mStart.ayah);
+      SuraAyah end = new SuraAyah(mAyahActionPanel.mEnd.sura, mAyahActionPanel.mEnd.ayah);
       if (start.compareTo(end) > 0) {
         SuraAyah swap = start;
         start = end;
@@ -1620,16 +1620,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  private void showActionModeHighlights(int sura, int ayah, HighlightingImageView hv) {
+  private void showActionModeHighlights(SuraAyah suraAyah, HighlightingImageView hv) {
     if (hv != null) {
-      hv.highlightAyah(sura, ayah, HighlightType.SELECTION);
+      hv.highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION);
       hv.invalidate();
     }
   }
 
   private void clearActionModeHighlights() {
     if (mAyahActionPanel != null) {
-      for (int i = mAyahActionPanel.mStartPage; i <= mAyahActionPanel.mEndPage; i++) {
+      for (int i = mAyahActionPanel.mStart.getPage(); i <= mAyahActionPanel.mEnd.getPage(); i++) {
         AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
         if (fragment != null) {
           HighlightingImageView imageView = fragment.getHighlightingImageView(i);
