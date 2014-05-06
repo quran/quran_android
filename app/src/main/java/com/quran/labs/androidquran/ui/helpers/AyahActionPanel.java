@@ -203,6 +203,7 @@ public class AyahActionPanel implements
     if (activity == null) {
       return false;
     }
+    boolean end = false;
     switch (item.getItemId()) {
       case R.id.cab_bookmark_ayah:
         activity.toggleBookmark(mStart.sura, mStart.ayah, mStart.getPage());
@@ -212,17 +213,20 @@ public class AyahActionPanel implements
         break;
       case R.id.cab_share_ayah_link:
         mCurrentTask = new ShareQuranApp(mStart, mEnd).execute();
+        end = true;
         break;
       case R.id.cab_share_ayah_text:
         mCurrentTask = new ShareAyahTask(mStart, mEnd, false).execute();
+        end = true;
         break;
       case R.id.cab_copy_ayah:
         mCurrentTask = new ShareAyahTask(mStart, mEnd, true).execute();
+        end = true;
         break;
       default:
         return false;
     }
-    activity.endActionMode();
+    if (end) activity.endActionMode();
     return true;
   }
 
