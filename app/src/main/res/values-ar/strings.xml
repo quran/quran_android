@@ -200,6 +200,10 @@
         <item quantity="other">%s آية</item>
     </plurals>
 
+    <!-- ayah action panel -->
+    <string name="ayah_tags_page">تصنيفات</string>
+    <string name="ayah_translation_page">ترجمة</string>
+
     <!-- long press -->
     <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
     <string name="unbookmark_ayah">حذف الآية من المرجعيات</string>
