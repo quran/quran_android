@@ -4,14 +4,6 @@
           android:icon="@drawable/not_favorite"
           android:title="@string/bookmark_ayah"
           android:showAsAction="ifRoom" />
-    <item android:id="@+id/cab_tag_ayah"
-          android:icon="@drawable/ic_tag"
-          android:title="@string/tag_ayah"
-          android:showAsAction="ifRoom" />
-    <item android:id="@+id/cab_ayah_translation"
-          android:icon="@drawable/ic_translation"
-          android:title="@string/translation_ayah"
-          android:showAsAction="ifRoom" />
     <item android:id="@+id/cab_play_from_here"
           android:icon="@drawable/ic_play"
           android:title="@string/play_from_here"

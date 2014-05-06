@@ -253,6 +253,10 @@
         <item quantity="other">%s verses</item>
     </plurals>
 
+    <!-- ayah action panel -->
+    <string name="ayah_tags_page">Tags</string>
+    <string name="ayah_translation_page">Translation</string>
+
     <!-- long press -->
     <string name="bookmark_ayah">Bookmark this Ayah</string>
     <string name="unbookmark_ayah">Remove bookmark for this Ayah</string>

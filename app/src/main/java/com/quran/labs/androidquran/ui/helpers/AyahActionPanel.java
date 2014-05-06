@@ -50,8 +50,10 @@ public class AyahActionPanel implements
     TagBookmarkDialog.OnBookmarkTagsUpdateListener {
 
   // FragmentPagerAdapter Positions
-  private static final int TAG_FRAGMENT_POS = 0;
-  private static final int TRANSLATION_FRAGMENT_POS = 1;
+  private static final int TAG_PAGE = 0;
+  private static final int TRANSLATION_PAGE = 1;
+  private static final int[] PAGE_TITLES = {
+      R.string.ayah_tags_page, R.string.ayah_translation_page};
 
   private static final float PANEL_HEIGHT = 0.6f;
 
@@ -120,7 +122,7 @@ public class AyahActionPanel implements
 
   public void updateEndSelection(SuraAyah end) {
     mEnd = end;
-    // TODO
+    // TODO handle multiple selection case for tags
     // Update Tafsir
     AyahTranslationFragment f = getTranslationFragment();
     if (f != null) {
@@ -201,58 +203,26 @@ public class AyahActionPanel implements
     if (activity == null) {
       return false;
     }
-
-    boolean close = false;
-    boolean expand = mSlidingPanel.isExpanded();
-    int switchTo = -1;
     switch (item.getItemId()) {
       case R.id.cab_bookmark_ayah:
         activity.toggleBookmark(mStart.sura, mStart.ayah, mStart.getPage());
         break;
-      case R.id.cab_tag_ayah:
-        expand = true;
-        switchTo = TAG_FRAGMENT_POS;
-        break;
-      case R.id.cab_ayah_translation:
-        expand = true;
-        switchTo = TRANSLATION_FRAGMENT_POS;
-        // TODO if no translation, go to translation download selection activity
-        break;
       case R.id.cab_play_from_here:
-        close = true;
-        expand = false;
         activity.playFromAyah(mStart.getPage(), mStart.sura, mStart.ayah);
         break;
       case R.id.cab_share_ayah_link:
-        close = true;
-        expand = false;
         mCurrentTask = new ShareQuranApp(mStart, mEnd).execute();
         break;
       case R.id.cab_share_ayah_text:
-        close = true;
-        expand = false;
         mCurrentTask = new ShareAyahTask(mStart, mEnd, false).execute();
         break;
       case R.id.cab_copy_ayah:
-        close = true;
-        expand = false;
         mCurrentTask = new ShareAyahTask(mStart, mEnd, true).execute();
         break;
       default:
         return false;
     }
-    // Switch to selected tab if not already there
-    if (switchTo != -1 && switchTo != mSlidingPager.getCurrentItem()) {
-      mSlidingPager.setCurrentItem(switchTo, true);
-    }
-    // Close (or collapse/expand) the sliding panel
-    if (close) {
-      getActivity().endActionMode();
-    } else if (expand && !mSlidingPanel.isExpanded()) {
-      mSlidingPanel.expandPane();
-    } else if (!expand && mSlidingPanel.isExpanded()) {
-      mSlidingPanel.collapsePane();
-    }
+    activity.endActionMode();
     return true;
   }
 
@@ -263,18 +233,15 @@ public class AyahActionPanel implements
   @Override public boolean onOpenSubMenu(MenuBuilder subMenu) {return false;}
 
   private PagerActivity getActivity(){
-    if (mActivityRef != null){
-      return mActivityRef.get();
-    }
-    return null;
+    return mActivityRef != null ? mActivityRef.get() : null;
   }
 
   private AyahTranslationFragment getTranslationFragment() {
-    return (AyahTranslationFragment) findFragmentByPosition(TRANSLATION_FRAGMENT_POS);
+    return (AyahTranslationFragment) findFragmentByPosition(TRANSLATION_PAGE);
   }
 
   private TagBookmarkDialog getTagFragment() {
-    return (TagBookmarkDialog) findFragmentByPosition(TAG_FRAGMENT_POS);
+    return (TagBookmarkDialog) findFragmentByPosition(TAG_PAGE);
   }
 
   // TODO there's got to be a better way than this hack
@@ -341,19 +308,24 @@ public class AyahActionPanel implements
     }
 
     @Override
+    public int getCount() {
+      return PAGE_TITLES.length;
+    }
+
+    @Override
     public Fragment getItem(int position) {
       switch (position) {
-        case TAG_FRAGMENT_POS:
+        case TAG_PAGE:
           return new TagBookmarkDialog(mStart);
-        case TRANSLATION_FRAGMENT_POS:
+        case TRANSLATION_PAGE:
           return new AyahTranslationFragment(mStart, mEnd);
       }
       return null;
     }
 
     @Override
-    public int getCount() {
-      return 2;
+    public CharSequence getPageTitle(int position) {
+      return getActivity().getString(PAGE_TITLES[position]);
     }
   }
 
