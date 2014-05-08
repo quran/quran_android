@@ -14,17 +14,11 @@ import android.text.ClipboardManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.internal.view.menu.ActionMenuPresenter;
-import com.actionbarsherlock.internal.view.menu.ActionMenuView;
 import com.actionbarsherlock.internal.view.menu.MenuBuilder;
-import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
 import com.actionbarsherlock.internal.view.menu.MenuPresenter;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -38,6 +32,7 @@ import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.util.QuranAppUtils;
+import com.quran.labs.androidquran.widgets.IconPageIndicator;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import java.lang.ref.WeakReference;
@@ -46,14 +41,14 @@ import java.util.List;
 
 public class AyahActionPanel implements
     MenuBuilder.Callback, MenuPresenter.Callback,
-    View.OnClickListener, AddTagDialog.OnTagChangedListener,
+    AddTagDialog.OnTagChangedListener, View.OnClickListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener {
 
   // FragmentPagerAdapter Positions
   private static final int TAG_PAGE = 0;
   private static final int TRANSLATION_PAGE = 1;
-  private static final int[] PAGE_TITLES = {
-      R.string.ayah_tags_page, R.string.ayah_translation_page};
+  private static final int[] PAGE_ICONS = {
+      R.drawable.ic_tag, R.drawable.ic_translation};
 
   private static final float PANEL_HEIGHT = 0.6f;
 
@@ -61,11 +56,8 @@ public class AyahActionPanel implements
   private SlidingUpPanelLayout mSlidingPanel;
   private ViewPager mSlidingPager;
   private FragmentPagerAdapter mSlidingPagerAdapter;
-  private RelativeLayout mSlidingLayout;
-  private MenuBuilder mMenu;
-  private ActionMenuPresenter mMenuPresenter;
-  private ActionMenuView mMenuView;
-  private HorizontalScrollView mMenuScrollView;
+  private ViewGroup mSlidingLayout;
+  private IconPageIndicator mSlidingPagerIndicator;
 
   // References
   private AsyncTask mCurrentTask;
@@ -148,11 +140,7 @@ public class AyahActionPanel implements
   }
 
   private void updateAyahBookmarkIcon(SuraAyah suraAyah, boolean bookmarked) {
-    if (mStart.equals(suraAyah)) {
-      MenuItem bookmarkItem = mMenu.findItem(R.id.cab_bookmark_ayah);
-      bookmarkItem.setIcon(bookmarked ? R.drawable.favorite : R.drawable.not_favorite);
-      bookmarkItem.setTitle(bookmarked ? R.string.unbookmark_ayah : R.string.bookmark_ayah);
-    }
+    mSlidingPagerIndicator.notifyDataSetChanged();
   }
 
   public void onAyahBookmarkUpdated(SuraAyah suraAyah, boolean bookmarked) {
@@ -259,53 +247,31 @@ public class AyahActionPanel implements
 
   private void init(final PagerActivity activity) {
     mSlidingPanel = (SlidingUpPanelLayout) activity.findViewById(R.id.sliding_panel);
-    mSlidingLayout = (RelativeLayout) mSlidingPanel.findViewById(R.id.sliding_layout);
-    mMenuScrollView = (HorizontalScrollView) mSlidingPanel.findViewById(R.id.sliding_menu_scroll_view);
+    mSlidingLayout = (ViewGroup) mSlidingPanel.findViewById(R.id.sliding_layout);
     mSlidingPager = (ViewPager) mSlidingPanel.findViewById(R.id.sliding_layout_pager);
+    mSlidingPagerIndicator = (IconPageIndicator) mSlidingPanel.findViewById(R.id.sliding_pager_indicator);
 
     // Find close button and set listener
     final View closeButton = mSlidingPanel.findViewById(R.id.sliding_menu_close);
     closeButton.setOnClickListener(this);
 
-    // Create Menu
-    mMenu = new MenuBuilder(activity);
-    mMenu.setCallback(this);
-    MenuInflater menuInflater = activity.getSupportMenuInflater();
-    menuInflater.inflate(R.menu.ayah_menu, mMenu);
-    for (int i = 0; i < mMenu.size(); i++) {
-      ((MenuItemImpl)mMenu.getItem(i)).setIsActionButton(true);
-    }
+    // Create and set fragment pager adapter
+    mSlidingPagerAdapter = new SlidingPagerAdapter(activity.getSupportFragmentManager());
+    mSlidingPager.setAdapter(mSlidingPagerAdapter);
 
-    // Create Presenter
-    mMenuPresenter = new ActionMenuPresenter(activity);
-    mMenuPresenter.setCallback(this);
-    mMenuPresenter.setReserveOverflow(false);
-    mMenuPresenter.setItemLimit(8);
-    int width = activity.getResources().getDisplayMetrics().widthPixels;
-    mMenuPresenter.setWidthLimit(width, false);
-    mMenu.addMenuPresenter(mMenuPresenter);
-
-    // Create MenuView and add to HorizontalScrollView
-    mMenuView = (ActionMenuView) mMenuPresenter.getMenuView(mSlidingPanel);
-    mMenuView.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
-    mMenuView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-    mMenuScrollView.addView(mMenuView);
-
-    // Set sliding panel parameters
-    mSlidingPanel.setDragView(mMenuView);
-    mSlidingPanel.setEnableDragViewTouchEvents(true);
+    // Attach the view pager to the action bar
+    mSlidingPagerIndicator.setViewPager(mSlidingPager);
 
     // Set sliding layout parameters
     int displayHeigh = activity.getResources().getDisplayMetrics().heightPixels;
     mSlidingLayout.getLayoutParams().height = (int) (displayHeigh * PANEL_HEIGHT);
+    mSlidingPanel.setDragView(mSlidingPanel.findViewById(R.id.ayah_action_bar));
+    mSlidingPanel.setEnableDragViewTouchEvents(true);
     mSlidingLayout.setVisibility(View.GONE);
-
-    // Create and set fragment pager adapter
-    mSlidingPagerAdapter = new SlidingPagerAdapter(activity.getSupportFragmentManager());
-    mSlidingPager.setAdapter(mSlidingPagerAdapter);
   }
 
-  private class SlidingPagerAdapter extends FragmentPagerAdapter {
+  private class SlidingPagerAdapter extends FragmentPagerAdapter implements
+      IconPageIndicator.IconPagerAdapter {
 
     public SlidingPagerAdapter(FragmentManager fm) {
       super(fm);
@@ -313,23 +279,23 @@ public class AyahActionPanel implements
 
     @Override
     public int getCount() {
-      return PAGE_TITLES.length;
+      return PAGE_ICONS.length;
     }
 
     @Override
     public Fragment getItem(int position) {
       switch (position) {
         case TAG_PAGE:
-          return new TagBookmarkDialog(mStart);
+          return new TagBookmarkDialog();
         case TRANSLATION_PAGE:
-          return new AyahTranslationFragment(mStart, mEnd);
+          return new AyahTranslationFragment();
       }
       return null;
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
-      return getActivity().getString(PAGE_TITLES[position]);
+    public int getIconResId(int index) {
+      return PAGE_ICONS[index];
     }
   }
 

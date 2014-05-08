@@ -46,7 +46,9 @@ public class AyahTranslationFragment extends SherlockFragment {
   @Override
   public void onViewStateRestored(Bundle savedInstanceState) {
     super.onViewStateRestored(savedInstanceState);
-    updateAyahSelection(mStart, mEnd);
+    if (mStart != null && mEnd != null) {
+      updateAyahSelection(mStart, mEnd);
+    }
   }
 
   public void updateAyahSelection(SuraAyah start, SuraAyah end) {
