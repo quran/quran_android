@@ -18,21 +18,10 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 
-public class AyahTranslationFragment extends SherlockFragment {
+public class AyahTranslationFragment extends AyahActionFragment {
   private static final String TAG = "AyahTranslationFragment";
 
-  private AsyncTask mCurrentTask;
   private TranslationView mTranslationView;
-  private SuraAyah mStart, mEnd;
-
-  // do not remove - this is required when resuming from onSaveInstanceState
-  public AyahTranslationFragment(){
-  }
-
-  public AyahTranslationFragment(SuraAyah start, SuraAyah end){
-    mStart = start;
-    mEnd = end;
-  }
 
   @Override
   public View onCreateView(LayoutInflater inflater,
@@ -44,20 +33,15 @@ public class AyahTranslationFragment extends SherlockFragment {
   }
 
   @Override
-  public void onViewStateRestored(Bundle savedInstanceState) {
-    super.onViewStateRestored(savedInstanceState);
-    if (mStart != null && mEnd != null) {
-      updateAyahSelection(mStart, mEnd);
-    }
-  }
-
-  public void updateAyahSelection(SuraAyah start, SuraAyah end) {
+  public void refreshView() {
+    super.refreshView();
+    if (mStart == null || mEnd == null) return;
     final Activity activity = getActivity();
     if (activity == null || !(activity instanceof PagerActivity)) return;
     String db = TranslationUtils.getDefaultTranslation(activity,
         ((PagerActivity)activity).getTranslations());
     if (db == null) return;
-    Integer[] bounds = new Integer[] {start.sura, start.ayah, end.sura, end.ayah};
+    Integer[] bounds = new Integer[] {mStart.sura, mStart.ayah, mEnd.sura, mEnd.ayah};
     if (mCurrentTask != null) {
       mCurrentTask.cancel(true);
     }

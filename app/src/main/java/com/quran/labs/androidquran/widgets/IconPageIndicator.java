@@ -58,6 +58,7 @@ public class IconPageIndicator extends HorizontalScrollView implements
 
   private ViewPager mViewPager;
   private OnPageChangeListener mListener;
+  private OnClickListener mClickListener;
   private Runnable mIconSelector;
   private int mSelectedIndex;
 
@@ -221,10 +222,17 @@ public class IconPageIndicator extends HorizontalScrollView implements
     mListener = listener;
   }
 
+  public void setOnClickListener(OnClickListener clickListener) {
+    mClickListener = clickListener;
+  }
+
   @Override
   public void onClick(View v) {
     if (mViewPager != null && v instanceof ImageView) {
       mViewPager.setCurrentItem((Integer) v.getTag());
+    }
+    if (mClickListener != null) {
+      mClickListener.onClick(v);
     }
   }
 
