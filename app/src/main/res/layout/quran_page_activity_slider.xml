@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.quran.labs.androidquran.widgets.SlidingUpPanelLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:quran="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    quran:panelHeight="@dimen/audiobar_height"
-    quran:shadowHeight="4dp"
-    quran:overlay="true">
+    app:panelHeight="@dimen/sliding_panel_min_height"
+    app:shadowHeight="4dp"
+    app:overlay="true"
+    app:dragView="@+id/ayah_action_bar">
 
     <!--Main layout -->
     <include

@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -13,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,40 +38,12 @@ public class AyahDetailsFragment extends AyahActionFragment implements View.OnCl
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//    View view = inflater.inflate(R.layout.ayah_details_fragment, container);
-//    mAyahDetails = (TextView) view.findViewById(R.id.ayah_details);
-//    mBookmarkAyah = (ImageButton) view.findViewById(R.id.bookmark_ayah);
-//    mShareAyahLink = (ImageButton) view.findViewById(R.id.share_ayah_link);
-//    mShareAyahText = (ImageButton) view.findViewById(R.id.share_ayah_text);
-//    mCopyAyah = (ImageButton) view.findViewById(R.id.copy_ayah);
-    // TODO for some reason, inflating xml throws class cast exception
-    // trying to convert FrameLayout.LayoutParams to LinearLayout.LayoutParams
-
-    Context context = getActivity();
-    LinearLayout view = new LinearLayout(context);
-    view.setOrientation(LinearLayout.VERTICAL);
-
-    mAyahDetails = new TextView(context);
-    mBookmarkAyah = new ImageButton(context);
-    mShareAyahLink = new ImageButton(context);
-    mShareAyahText = new ImageButton(context);
-    mCopyAyah = new ImageButton(context);
-
-    mBookmarkAyah.setImageResource(R.drawable.not_favorite);
-    mShareAyahLink.setImageResource(R.drawable.ic_share);
-    mShareAyahText.setImageResource(R.drawable.ic_share);
-    mCopyAyah.setImageResource(R.drawable.ic_copy);
-
-    mBookmarkAyah.setId(R.id.bookmark_ayah);
-    mShareAyahLink.setId(R.id.share_ayah_link);
-    mShareAyahText.setId(R.id.share_ayah_text);
-    mCopyAyah.setId(R.id.copy_ayah);
-
-    view.addView(mAyahDetails);
-    view.addView(mBookmarkAyah);
-    view.addView(mShareAyahLink);
-    view.addView(mShareAyahText);
-    view.addView(mCopyAyah);
+    View view = inflater.inflate(R.layout.ayah_details_fragment, container, false);
+    mAyahDetails = (TextView) view.findViewById(R.id.ayah_details);
+    mBookmarkAyah = (ImageButton) view.findViewById(R.id.bookmark_ayah);
+    mShareAyahLink = (ImageButton) view.findViewById(R.id.share_ayah_link);
+    mShareAyahText = (ImageButton) view.findViewById(R.id.share_ayah_text);
+    mCopyAyah = (ImageButton) view.findViewById(R.id.copy_ayah);
 
     mAyahDetails.setOnClickListener(this);
     mBookmarkAyah.setOnClickListener(this);
