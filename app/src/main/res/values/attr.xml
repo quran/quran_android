@@ -32,4 +32,9 @@
         <attr name="overlay" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="IconPageIndicator">
+        <attr name="indicatorHeight" format="dimension" />
+        <attr name="indicatorColor" format="color" />
+    </declare-styleable>
+
 </resources>

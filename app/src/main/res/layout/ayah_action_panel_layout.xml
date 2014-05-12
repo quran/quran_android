@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,7 +26,9 @@
         <com.quran.labs.androidquran.widgets.IconPageIndicator
             android:id="@+id/sliding_pager_indicator"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:indicatorColor="@color/icon_page_indicator_color"
+            app:indicatorHeight="@dimen/icon_page_indicator_height" />
     </LinearLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/sliding_layout_pager"

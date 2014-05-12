@@ -392,7 +392,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         if (f != null) {
           f.acceptChanges();
         }
-        endActionMode();
+        endAyahMode();
       }
     });
 
@@ -406,7 +406,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
     // Set sliding layout parameters
     int displayHeight = getResources().getDisplayMetrics().heightPixels;
     mSlidingLayout.getLayoutParams().height = (int) (displayHeight * PANEL_HEIGHT);
-    mSlidingPanel.setDragView(mSlidingPanel.findViewById(R.id.ayah_action_bar));
     mSlidingPanel.setEnableDragViewTouchEvents(true);
     mSlidingLayout.setVisibility(View.GONE);
 
@@ -698,8 +697,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
           .unregisterReceiver(mDownloadReceiver);
       mDownloadReceiver = null;
     }
-    if (isInActionMode()) {
-      endActionMode();
+    if (isInAyahMode()) {
+      endAyahMode();
     }
     super.onPause();
   }
@@ -907,7 +906,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onBookmarkTagsUpdated() {
-    if (isInActionMode()) {
+    if (isInAyahMode()) {
       AyahDetailsFragment f = (AyahDetailsFragment) mSlidingPagerAdapter.getFragmentIfExists(AYAH_DETAILS_PAGE);
       if (f != null) {
         f.refreshView();
@@ -917,7 +916,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onTagAdded(final String name) {
-    if (isInActionMode()) {
+    if (isInAyahMode()) {
       if (TextUtils.isEmpty(name))
         return;
       TagBookmarkDialog f = (TagBookmarkDialog) mSlidingPagerAdapter.getFragmentIfExists(TAG_PAGE);
@@ -1255,7 +1254,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
           } else {
             unHighlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
           }
-          if (isInActionMode()) {
+          if (isInAyahMode()) {
             SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
             if (mStart.equals(suraAyah)) {
               AyahDetailsFragment f = (AyahDetailsFragment) mSlidingPagerAdapter.getFragmentIfExists(AYAH_DETAILS_PAGE);
@@ -1575,8 +1574,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onBackPressed() {
-    if (isInActionMode()) {
-      endActionMode();
+    if (isInAyahMode()) {
+      endAyahMode();
     } else if (mShowingTranslation) {
       switchToQuran();
     } else {
@@ -1587,7 +1586,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public boolean isListeningForAyahSelection(EventType eventType) {
     return eventType == EventType.LONG_PRESS ||
-        eventType == EventType.SINGLE_TAP && isInActionMode();
+        eventType == EventType.SINGLE_TAP && isInAyahMode();
   }
 
   @Override
@@ -1595,16 +1594,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
       SuraAyah suraAyah, HighlightingImageView hv) {
     switch (eventType) {
       case SINGLE_TAP:
-        if (isInActionMode()) {
+        if (isInAyahMode()) {
           updateAyahStartSelection(suraAyah, hv);
           return true;
         }
         return false;
       case LONG_PRESS:
-        if (isInActionMode()) {
+        if (isInAyahMode()) {
           updateAyahEndSelection(suraAyah);
         } else {
-          startActionMode(suraAyah, hv);
+          startAyahMode(suraAyah, hv);
         }
         hv.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         return true;
@@ -1617,14 +1616,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public boolean onClick(EventType eventType) {
     switch (eventType) {
       case SINGLE_TAP:
-        if (!isInActionMode()) {
+        if (!isInAyahMode()) {
           toggleActionBar();
           return true;
         }
         return false;
       case DOUBLE_TAP:
-        if (isInActionMode()) {
-          endActionMode();
+        if (isInAyahMode()) {
+          endAyahMode();
           return true;
         }
         return false;
@@ -1633,7 +1632,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  public boolean isInActionMode() {
+  public boolean isInAyahMode() {
     return isAyahPanelShowing;
   }
 
@@ -1645,17 +1644,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
     return mEnd;
   }
 
-  public void startActionMode(SuraAyah suraAyah, HighlightingImageView hv) {
-    if (!isInActionMode()) {
+  public void startAyahMode(SuraAyah suraAyah, HighlightingImageView hv) {
+    if (!isInAyahMode()) {
       updateStartSelection(suraAyah);
     } else {
       // TODO
     }
-    showActionModeHighlights(suraAyah, hv);
+    showAyahModeHighlights(suraAyah, hv);
   }
 
-  public void endActionMode() {
-    clearActionModeHighlights();
+  public void endAyahMode() {
+    clearAyahModeHighlights();
     if (isAyahPanelShowing) {
       mSlidingPanel.hidePane();
       isAyahPanelShowing = false;
@@ -1663,10 +1662,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void updateAyahStartSelection(SuraAyah suraAyah, HighlightingImageView hv) {
-    if (isInActionMode()) {
-      clearActionModeHighlights();
+    if (isInAyahMode()) {
+      clearAyahModeHighlights();
       updateStartSelection(suraAyah);
-      showActionModeHighlights(suraAyah, hv);
+      showAyahModeHighlights(suraAyah, hv);
     }
   }
 
@@ -1679,11 +1678,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void updateAyahEndSelection(SuraAyah suraAyah) {
-    if (isInActionMode()) {
-      clearActionModeHighlights();
+    if (isInAyahMode()) {
+      clearAyahModeHighlights();
       mEnd = suraAyah;
       refreshPages();
-      showActionModeRangeHighlights();
+      showAyahModeRangeHighlights();
     }
   }
 
@@ -1703,7 +1702,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  private void showActionModeRangeHighlights() {
+  private void showAyahModeRangeHighlights() {
     // Determine the start and end of the selection
     int minPage = Math.min(mStart.getPage(), mEnd.getPage());
     int maxPage = Math.max(mStart.getPage(), mEnd.getPage());
@@ -1723,15 +1722,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  private void showActionModeHighlights(SuraAyah suraAyah, HighlightingImageView hv) {
+  private void showAyahModeHighlights(SuraAyah suraAyah, HighlightingImageView hv) {
     if (hv != null) {
       hv.highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION);
       hv.invalidate();
     }
   }
 
-  private void clearActionModeHighlights() {
-    if (isInActionMode()) {
+  private void clearAyahModeHighlights() {
+    if (isInAyahMode()) {
       for (int i = mStart.getPage(); i <= mEnd.getPage(); i++) {
         AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
         if (fragment != null) {

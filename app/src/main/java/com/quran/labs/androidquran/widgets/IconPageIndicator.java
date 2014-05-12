@@ -27,6 +27,7 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -51,8 +52,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 public class IconPageIndicator extends HorizontalScrollView implements
     ViewPager.OnPageChangeListener, View.OnClickListener {
 
-  private static final int INDICATOR_HEIGHT = 3; // dp
-  private static final int INDICATOR_COLOR = Color.WHITE;
+  private static final int DEF_INDICATOR_HEIGHT = 3; // dp
+  private static final int DEF_INDICATOR_COLOR = Color.WHITE;
 
   private final LinearLayout mIconsLayout;
 
@@ -77,12 +78,20 @@ public class IconPageIndicator extends HorizontalScrollView implements
     mIconsLayout = new LinearLayout(context);
     addView(mIconsLayout, new LayoutParams(WRAP_CONTENT, MATCH_PARENT));
 
-    // INDICATOR STUFF
-
-    mIndicatorColor = INDICATOR_COLOR;
-    mIndicatorPaint.setColor(mIndicatorColor);
+    // Set indicator attributes (to defaults)
     final float density = context.getResources().getDisplayMetrics().density;
-    mIndicatorHeight = (int) (INDICATOR_HEIGHT * density + 0.5f);
+    mIndicatorHeight = (int) (DEF_INDICATOR_HEIGHT * density + 0.5f);
+    mIndicatorColor = DEF_INDICATOR_COLOR;
+    // Read the user-specified values if set, otherwise use defaults
+    if (attrs != null) {
+      TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.IconPageIndicator);
+      mIndicatorHeight = ta.getDimensionPixelSize(
+          R.styleable.IconPageIndicator_indicatorHeight, mIndicatorHeight);
+      mIndicatorColor = ta.getColor(
+          R.styleable.IconPageIndicator_indicatorColor, mIndicatorColor);
+      ta.recycle();
+    }
+    mIndicatorPaint.setColor(mIndicatorColor);
   }
 
   private void animateToIcon(final int position) {
@@ -139,7 +148,6 @@ public class IconPageIndicator extends HorizontalScrollView implements
     }
   }
 
-  //@Override
   public void setViewPager(ViewPager view) {
     if (mViewPager == view) {
       return;
@@ -192,13 +200,11 @@ public class IconPageIndicator extends HorizontalScrollView implements
     requestLayout();
   }
 
-  //@Override
   public void setViewPager(ViewPager view, int initialPosition) {
     setViewPager(view);
     setCurrentItem(initialPosition);
   }
 
-  //@Override
   public void setCurrentItem(int item) {
     if (mViewPager == null) {
       throw new IllegalStateException("ViewPager has not been bound.");
@@ -217,7 +223,6 @@ public class IconPageIndicator extends HorizontalScrollView implements
     }
   }
 
-  //@Override
   public void setOnPageChangeListener(OnPageChangeListener listener) {
     mListener = listener;
   }
