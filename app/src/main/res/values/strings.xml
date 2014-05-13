@@ -253,6 +253,10 @@
         <item quantity="other">%s verses</item>
     </plurals>
 
+    <!-- ayah action panel -->
+    <string name="ayah_tags_page">Tags</string>
+    <string name="ayah_translation_page">Translation</string>
+
     <!-- long press -->
     <string name="bookmark_ayah">Bookmark this Ayah</string>
     <string name="unbookmark_ayah">Remove bookmark for this Ayah</string>
@@ -261,7 +265,7 @@
     <string name="share_ayah_text">Share Ayah Text</string>
     <string name="translation_ayah">Ayah Translation/Tafseer</string>
     <string name="play_from_here">Play from Here</string>
-    <string name="via_string">\n\nvia @QuranAndroid</string>
+    <string name="via_string">via @QuranAndroid</string>
     <string name="search_key">Press the search key to look up a verse</string>
     <string name="copy_ayah">Copy Ayah</string>
     <string name="ayah_copied_popup">Ayah Copied</string>

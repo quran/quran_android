@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/ayah_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageButton
+        android:id="@+id/bookmark_ayah"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/not_favorite"/>
+
+    <ImageButton
+        android:id="@+id/share_ayah_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_share"/>
+
+    <ImageButton
+        android:id="@+id/share_ayah_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_share"/>
+
+    <ImageButton
+        android:id="@+id/copy_ayah"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_copy"/>
+
+</LinearLayout>

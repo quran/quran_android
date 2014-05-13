@@ -230,7 +230,7 @@
 	<string name="share_ayah_text">Kongsikan teks ayat</string>
 	<string name="translation_ayah">Terjemah/tafsir ayat</string>
 	<string name="play_from_here">Mainkan tilawah dari sini</string>
-	<string name="via_string">\n\nvia @QuranAndroid</string>
+	<string name="via_string">via @QuranAndroid</string>
 	<string name="search_key">Tekan butang carian untuk mencari ayat</string>
 	<string name="copy_ayah">Salin ayat</string>
 	<string name="ayah_copied_popup">Ayat telah disalin</string>

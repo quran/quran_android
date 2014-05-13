@@ -6,6 +6,9 @@ import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.content.Context;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class QuranInfo {
 
 	public static String getAyahTitle(Context cx) {
@@ -594,4 +597,25 @@ public class QuranInfo {
 	public static String getSuraNameString(Context context, int page){
 		return getSuraTitle(context) + " " + getSuraNameFromPage(context, page);
 	}
+
+  public static Set<String> getAyahKeysOnPage(int page, SuraAyah lowerBound, SuraAyah upperBound) {
+    Set<String> ayahKeys = new LinkedHashSet<String>();
+    Integer[] bounds = QuranInfo.getPageBounds(page);
+    if (bounds != null) {
+      SuraAyah start = new SuraAyah(bounds[0], bounds[1]);
+      SuraAyah end = new SuraAyah(bounds[2], bounds[3]);
+      if (lowerBound != null) {
+        start = SuraAyah.max(start, lowerBound);
+      }
+      if (upperBound != null) {
+        end = SuraAyah.min(end, upperBound);
+      }
+      SuraAyah.Iterator iterator = SuraAyah.getIterator(start, end);
+      while (iterator.next()) {
+        ayahKeys.add(iterator.getSura() + ":" + iterator.getAyah());
+      }
+    }
+    return ayahKeys;
+  }
+
 }
