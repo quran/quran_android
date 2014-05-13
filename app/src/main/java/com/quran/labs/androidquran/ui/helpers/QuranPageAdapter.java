@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.ui.helpers;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.ViewGroup;
+
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
@@ -88,4 +90,23 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
       }
 	   super.destroyItem(container, position, object);
 	}
+
+  public AyahTracker getFragmentIfExistsForPage(int page){
+    if (page < Constants.PAGES_FIRST || Constants.PAGES_LAST < page) {
+      return null;
+    }
+
+    int position = Constants.PAGES_LAST - page;
+    if (mIsDualPages) {
+      if (page % 2 != 0) {
+        page++;
+      }
+      position = 302 - (page / 2);
+    }
+
+    Fragment fragment = getFragmentIfExists(position);
+    return fragment != null && fragment instanceof AyahTracker ?
+        (AyahTracker) fragment : null;
+  }
+
 }

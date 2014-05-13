@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
@@ -26,6 +27,7 @@ import java.util.List;
 public class TagBookmarkDialog extends SherlockDialogFragment {
    public static final String TAG = "TagBookmarkDialog";
 
+   private boolean mMadeChanges = false;
    private long mBookmarkId = -1;
    private long[] mBookmarkIds = null;
    private Integer mSura;
@@ -37,6 +39,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
    private ListView mListView;
 
+   private static final String MADE_CHANGES = "madeChanges";
    private static final String BOOKMARK_ID = "bookmarkid";
    private static final String BOOKMARK_IDS = "bookmarkids";
    private static final String PAGE = "page";
@@ -52,6 +55,10 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       mBookmarkIds = bookmarkIds;
    }
    
+   public TagBookmarkDialog(SuraAyah suraAyah){
+     this(suraAyah.sura, suraAyah.ayah, suraAyah.getPage());
+   }
+
    public TagBookmarkDialog(Integer sura, Integer ayah, int page){
       mSura = sura;
       mAyah = ayah;
@@ -62,8 +69,22 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    public TagBookmarkDialog(){
    }
 
-   @Override
+   public void updateAyah(SuraAyah suraAyah) {
+     updateAyah(suraAyah.sura, suraAyah.ayah, suraAyah.getPage());
+   }
+
+   public void updateAyah(int sura, int ayah, int page) {
+      mMadeChanges = false;
+      mBookmarkId = -1;
+      mSura = sura;
+      mAyah = ayah;
+      mPage = page;
+      new RefreshTagsTask().execute();
+   }
+
+  @Override
    public void onSaveInstanceState(Bundle outState) {
+      outState.putBoolean(MADE_CHANGES, mMadeChanges);
       outState.putLong(BOOKMARK_ID, mBookmarkId);
       outState.putLongArray(BOOKMARK_IDS, mBookmarkIds);
       outState.putInt(PAGE, mPage);
@@ -73,16 +94,17 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
               (ArrayList<? extends Parcelable>) mTags);
       super.onSaveInstanceState(outState);
    }
-   
-   public void handleTagAdded(String name) {
+
+  public void handleTagAdded(String name) {
 	   new AddTagTask().execute(name);
    }
 
    @Override
-   public Dialog onCreateDialog(Bundle savedInstanceState) {
-      final FragmentActivity activity = getActivity();
+   public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
 
       if (savedInstanceState != null){
+         mMadeChanges = savedInstanceState.getBoolean(MADE_CHANGES);
          mBookmarkId = savedInstanceState.getLong(BOOKMARK_ID);
          mBookmarkIds = savedInstanceState.getLongArray(BOOKMARK_IDS);
          mSura = savedInstanceState.getInt(SURA);
@@ -95,11 +117,13 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       }
 
       if (mTags == null) {
-         mTags = new ArrayList<Tag>();
          new RefreshTagsTask().execute();
       }
+   }
 
-      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+   private ListView createTagsListView() {
+      final FragmentActivity activity = getActivity();
+
       mAdapter = new TagsAdapter(activity);
 
       mListView = new ListView(activity);
@@ -109,6 +133,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Tag tag = (Tag)mAdapter.getItem(position);
             if (tag.mId >= 0) {
+               mMadeChanges = true;
             	tag.toggle();
             }
             else if (tag.mId == -1) {
@@ -128,17 +153,17 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
             }
          }
       });
+      return mListView;
+   }
 
-      builder.setView(mListView);
+   @Override
+   public Dialog onCreateDialog(Bundle savedInstanceState) {
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      builder.setView(createTagsListView());
       builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
          @Override
          public void onClick(DialogInterface dialog, int which) {
-             final Activity curAct = getActivity();
-             if (curAct != null &&
-                     curAct instanceof OnBookmarkTagsUpdateListener){
-                 new UpdateBookmarkTagsTask(
-                         (OnBookmarkTagsUpdateListener)curAct).execute();
-             }
+            acceptChanges();
          }
       });
       builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -150,7 +175,23 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       return builder.create();
    }
 
-   public class TagsAdapter extends BaseAdapter {
+   @Override
+   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+      // If in dialog mode, don't do anything (or else it will cause exception)
+      if (getShowsDialog()) {
+         return super.onCreateView(inflater, container, savedInstanceState);
+      }
+      // If not in dialog mode, treat as normal fragment onCreateView
+      return createTagsListView();
+   }
+
+   public void acceptChanges() {
+      if (mMadeChanges) {
+         new UpdateBookmarkTagsTask().execute();
+      }
+   }
+
+  public class TagsAdapter extends BaseAdapter {
       private LayoutInflater mInflater;
 
       public TagsAdapter(Context context){
@@ -159,7 +200,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
       @Override
       public int getCount() {
-         return mTags.size();
+         return mTags == null ? 0 : mTags.size();
       }
 
       @Override
@@ -205,6 +246,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
             holder.checkBox.setChecked(tag.isChecked());
             holder.checkBox.setOnClickListener(new OnClickListener() {
                public void onClick(View v) {
+                  mMadeChanges = true;
                   tag.toggle();
                }
             });
@@ -213,9 +255,9 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       }
    }
    
-   class RefreshTagsTask extends AsyncTask<Void, Void, Void> {
+   class RefreshTagsTask extends AsyncTask<Void, Void, ArrayList<Tag>> {
       @Override
-      protected Void doInBackground(Void... params) {
+      protected ArrayList<Tag> doInBackground(Void... params) {
          BookmarksDBAdapter adapter = null;
          Activity activity = getActivity();
          if (activity != null && activity instanceof BookmarkHandler) {
@@ -226,9 +268,9 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
             return null;
          }
 
-         mTags = new ArrayList<Tag>();
-         mTags.addAll(adapter.getTags());
-         mTags.add(new Tag(-1, getString(R.string.new_tag)));
+         ArrayList<Tag> newTags = new ArrayList<Tag>();
+         newTags.addAll(adapter.getTags());
+         newTags.add(new Tag(-1, getString(R.string.new_tag)));
          if (mBookmarkIds == null) {
             if (mBookmarkId < 0 && mPage > 0) {
                mBookmarkId = adapter.getBookmarkId(mSura, mAyah, mPage);
@@ -238,17 +280,23 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
          } else {
             mBookmarkTags = null;
          }
-         return null;
+         return newTags;
       }
       
       @Override
-      protected void onPostExecute(Void result) {
-          for (Tag tag : mTags){
-             if (mBookmarkTags != null && mBookmarkTags.contains(tag.mId)){
-                tag.setChecked(true);
-             }
-          }
-          mAdapter.notifyDataSetChanged();
+      protected void onPostExecute(ArrayList<Tag> result) {
+         if (result != null) {
+            for (Tag tag : result) {
+               if (mBookmarkTags != null && mBookmarkTags.contains(tag.mId)) {
+                  tag.setChecked(true);
+               }
+            }
+            mMadeChanges = false;
+            mTags = result;
+            if (mAdapter != null) {
+               mAdapter.notifyDataSetChanged();
+            }
+         }
       }
    }
 
@@ -275,6 +323,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
        @Override
        protected void onPostExecute(Tag result) {
           if (result != null && mTags != null && mAdapter != null) {
+             mMadeChanges = true;
              result.setChecked(true);
              mTags.add(mTags.size() - 1, result);
              mAdapter.notifyDataSetChanged();
@@ -283,10 +332,6 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
    }
    
    class UpdateBookmarkTagsTask extends AsyncTask<Void, Void, Void> {
-      private OnBookmarkTagsUpdateListener mListener;
-      public UpdateBookmarkTagsTask(OnBookmarkTagsUpdateListener listener) {
-         mListener = listener;
-      }
 
       @Override
       protected Void doInBackground(Void... params) {
@@ -314,7 +359,11 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
       @Override
       protected void onPostExecute(Void result) {
-         mListener.onBookmarkTagsUpdated();
+         mMadeChanges = false;
+         final Activity activity = getActivity();
+         if (activity != null && activity instanceof OnBookmarkTagsUpdateListener) {
+            ((OnBookmarkTagsUpdateListener)activity).onBookmarkTagsUpdated();
+         }
       }
    }
 

@@ -47,6 +47,7 @@ public class TranslationView extends ScrollView {
    private int mLastHighlightedAyah;
    private boolean mIsNightMode;
    private int mNightModeTextColor;
+   private boolean mIsInAyahActionMode;
 
    private List<QuranAyah> mAyat;
 
@@ -66,6 +67,10 @@ public class TranslationView extends ScrollView {
    public TranslationView(Context context, AttributeSet attrs, int defStyle){
       super(context, attrs, defStyle);
       init(context);
+   }
+
+   public void setIsInAyahActionMode(boolean isInAyahActionMode) {
+      mIsInAyahActionMode = isInAyahActionMode;
    }
 
    public void init(Context context){
@@ -129,7 +134,7 @@ public class TranslationView extends ScrollView {
 
       int currentSura = 0;
       for (QuranAyah ayah : ayat){
-         if (ayah.getSura() != currentSura){
+         if (!mIsInAyahActionMode && ayah.getSura() != currentSura){
             addSuraHeader(ayah.getSura());
             currentSura = ayah.getSura();
          }
@@ -202,7 +207,8 @@ public class TranslationView extends ScrollView {
 
       TextView ayahHeader = new TextView(mContext);
       ayahHeader.setTextAppearance(mContext, mTextStyle);
-      if (mIsNightMode) ayahHeader.setTextColor(mNightModeTextColor);
+      if (mIsInAyahActionMode) ayahHeader.setTextColor(Color.WHITE);
+      else if (mIsNightMode) ayahHeader.setTextColor(mNightModeTextColor);
       ayahHeader.setTextSize(mFontSize);
       ayahHeader.setText(ayah.getSura() + ":" + ayah.getAyah());
       ayahHeader.setTypeface(null, Typeface.BOLD);
@@ -214,7 +220,8 @@ public class TranslationView extends ScrollView {
       ayahView.setOnClickListener(mOnAyahClickListener);
 
       ayahView.setTextAppearance(mContext, mTextStyle);
-      if (mIsNightMode){ ayahView.setTextColor(mNightModeTextColor); }
+      if (mIsInAyahActionMode) ayahView.setTextColor(Color.WHITE);
+      else if (mIsNightMode) ayahView.setTextColor(mNightModeTextColor);
       ayahView.setTextSize(mFontSize);
 
       // arabic
