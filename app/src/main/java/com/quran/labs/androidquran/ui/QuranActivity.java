@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -115,6 +116,31 @@ public class QuranActivity extends SherlockFragmentActivity
       }
 
       mIsArabic = QuranSettings.isArabicNames(this);
+
+       boolean polite = QuranSettings.getPoliteMode(this);
+
+       if(polite==true) {
+           boolean isEnabled = Settings.System.getInt(
+                   getContentResolver(),
+                   Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
+           if(isEnabled==true){
+           }else{
+
+               AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+               alertDialogBuilder.setTitle("Enable Air plane mode");
+               alertDialogBuilder.setMessage("Do you wish to enable air plane mode?")
+                       .setCancelable(false)
+                       .setPositiveButton("OK!",new DialogInterface.OnClickListener() {
+                           public void onClick(DialogInterface dialog,int id) {
+                               startActivity(new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS));
+                           }});
+               AlertDialog alertDialog = alertDialogBuilder.create();
+
+               // show it
+               alertDialog.show();
+           }
+       }else{
+       }
    }
 
    @Override

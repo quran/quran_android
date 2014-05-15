@@ -48,6 +48,20 @@ public class QuranSettings {
               Constants.PREF_NIGHT_MODE, false);
    }
 
+   public static boolean getPoliteMode(Context context){
+       SharedPreferences prefs =
+               PreferenceManager.getDefaultSharedPreferences(context);
+
+       return prefs.getBoolean(Constants.POLITE_MODE,false);
+
+   }
+    public static void setPoliteMode(Context context){
+        SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        prefs.edit().putBoolean(Constants.POLITE_MODE, false).commit();
+    }
+
    public static int getNightModeTextBrightness(Context context){
       SharedPreferences prefs =
               PreferenceManager.getDefaultSharedPreferences(context);

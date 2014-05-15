@@ -3,6 +3,18 @@
     android:key="@string/prefs_path"
     android:title="Quran Settings" >
 
+    <PreferenceCategory android:key="@string/prefs_polite_mode_title"
+        android:title="@string/prefs_polite_mode_title" >
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:disableDependentsState="false"
+            android:key="@string/prefs_polite_mode"
+            android:persistent="true"
+            android:summary="@string/prefs_polite_mode_summary"
+            android:title="@string/prefs_polite_mode_title" >
+        </CheckBoxPreference>
+        </PreferenceCategory>
     <PreferenceCategory android:key="@string/prefs_display_category_key"
        android:title="@string/prefs_category_display_settings" >
         

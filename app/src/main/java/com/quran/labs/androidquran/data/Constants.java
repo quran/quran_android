@@ -65,4 +65,5 @@ public class Constants {
    public static final String PREF_UPGRADE_TO_242 = "upgradeTo242";
    public static final String PREF_UPGRADE_TO_243 = "upgradeTo243";
    public static final String PREF_MAX_BITMAP_HEIGHT = "maxBitmapHeight";
+   public static final String POLITE_MODE="politeMode";
 }
