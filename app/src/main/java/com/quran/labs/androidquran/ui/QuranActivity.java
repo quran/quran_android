@@ -120,11 +120,6 @@ public class QuranActivity extends SherlockFragmentActivity
        boolean polite = QuranSettings.getPoliteMode(this);
 
        if(polite==true) {
-           boolean isEnabled = Settings.System.getInt(
-                   getContentResolver(),
-                   Settings.Global.AIRPLANE_MODE_ON, 0) == 1;
-           if(isEnabled==true){
-           }else{
 
                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                alertDialogBuilder.setTitle("Enable Air plane mode");
@@ -138,7 +133,7 @@ public class QuranActivity extends SherlockFragmentActivity
 
                // show it
                alertDialog.show();
-           }
+
        }else{
        }
    }
