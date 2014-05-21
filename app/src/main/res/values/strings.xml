@@ -124,6 +124,8 @@
     <string name="get_arabic_search_db">Get Arabic Search Database</string>
         
     <!-- Quran Preference Activity -->
+    <string name="prefs_polite_mode_title">Polite mode</string>
+    <string name="prefs_polite_mode_summary">Enable flight mode for no interruption</string>
     <string name="prefs_category_navigation">Navigation</string>
     <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
     <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
