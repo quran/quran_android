@@ -19,6 +19,7 @@ repositories {
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.3"
+    lintOptions.checkReleaseBuilds false
 
     defaultConfig {
         minSdkVersion 7
@@ -27,10 +28,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("release.keystore")
-            storePassword "password"
-            keyAlias "alias"
-            keyPassword "password"
+            storeFile file(STORE_FILE)
+            storePassword STORE_PASSWORD
+            keyAlias KEY_ALIAS
+            keyPassword KEY_PASSWORD
         }
     }
 
