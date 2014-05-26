@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.util;
+package com.quran.labs.androidquran.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -10,6 +10,8 @@ import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.util;
+package com.quran.labs.androidquran.task;
 
 import android.annotation.TargetApi;
 import android.os.Build;

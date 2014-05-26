@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.ui.util;
+package com.quran.labs.androidquran.task;
 
 import android.content.Context;
 import android.database.Cursor;
