@@ -27,7 +27,7 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.util.TranslationListTask;
+import com.quran.labs.androidquran.task.TranslationListTask;
 
 import java.io.*;
 import java.net.HttpURLConnection;
