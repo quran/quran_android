@@ -4,6 +4,7 @@ import com.actionbarsherlock.internal.view.menu.MenuBuilder;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.nineoldandroids.view.ViewHelper;
 import com.quran.labs.androidquran.R;
 
 import android.annotation.TargetApi;
@@ -101,8 +102,8 @@ public class AyahToolBar extends LinearLayout implements
   }
 
   public void updatePosition(float x, float y) {
-    setX(x);
-    setY(y);
+    ViewHelper.setX(this, x);
+    ViewHelper.setY(this, y);
   }
 
   public boolean isShowing() {

@@ -97,7 +97,8 @@ description and your application itself in an about section.
 Open Source Projects Used
 -------------------------
 * [ActionBarSherlock](http://abs.io)
-* [AndroidSlidingUpPanel] (https://github.com/umano/AndroidSlidingUpPanel)
+* [AndroidSlidingUpPanel](https://github.com/umano/AndroidSlidingUpPanel)
+* [NineOldAndroids](https://github.com/JakeWharton/NineOldAndroids)
 
 Changelog
 ---------
