@@ -126,22 +126,23 @@ public class ImageAyahUtils {
       result = new float[2];
       final AyahBounds first = bounds.get(0);
       AyahBounds chosen = first;
-      float y = (first.getMinY() - toolBarHeight) * data.heightFactor;
+      float y = (first.getMinY() * data.heightFactor) -
+          toolBarHeight + data.offsetY;
       if (y < toolBarHeight) {
         // too close to the top, let's move to the bottom
         chosen = bounds.get(size - 1);
-        y = data.heightFactor * (chosen.getMaxY() + toolBarHeight);
+        y = (data.heightFactor * chosen.getMaxY()) + data.offsetY;
         if (y > (screenHeight - toolBarHeight)) {
           y = first.getMaxY();
           chosen = first;
         }
       }
 
-      float x = data.heightFactor * (chosen.getMaxX() - toolBarWidth);
+      float x = (data.heightFactor * chosen.getMaxX()) - toolBarWidth;
       if (x < 0 || x + toolBarWidth > screenWidth) {
         x = data.heightFactor * chosen.getMinX();
         if (x + toolBarWidth > screenWidth) {
-          x = (screenWidth - toolBarWidth - data.offsetX) * data.heightFactor;
+          x = screenWidth - data.offsetX - toolBarWidth;
         }
       }
 

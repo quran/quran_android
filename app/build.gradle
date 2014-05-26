@@ -51,6 +51,7 @@ android {
 
 dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.android.support:support-v4:19.1.0'
     compile 'com.crashlytics.android:crashlytics:1.+'
 }

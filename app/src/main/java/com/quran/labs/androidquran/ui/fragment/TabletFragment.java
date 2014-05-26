@@ -509,12 +509,26 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
       }
     }
 
-    final int width = mLeftImageView != null ? mLeftImageView.getWidth() :
-        (mRightImageView == null ? 0 : mRightImageView.getWidth());
+    final int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+    final ImageView imageView;
+    if (page == mPageNumber - 1) {
+      imageView = mRightImageView;
+    } else if (page == mPageNumber) {
+      imageView = mLeftImageView;
+    } else {
+      imageView = null;
+    }
+
+    final int width = imageView != null ? imageView.getWidth() : 0;
     if (bounds != null && width > 0) {
       final int screenHeight = QuranScreenInfo.getInstance().getHeight();
-      return ImageAyahUtils.getToolBarPosition(bounds, width,
+      final float[] result = ImageAyahUtils.getToolBarPosition(bounds, width,
           screenHeight, toolBarWidth, toolBarHeight);
+      if (page == mPageNumber - 1) {
+        // right page, need to adjust offset
+        result[0] += width;
+      }
+      return result;
     }
     return null;
   }

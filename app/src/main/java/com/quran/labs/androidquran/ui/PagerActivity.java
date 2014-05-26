@@ -291,7 +291,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mViewPager = (ViewPager) findViewById(R.id.quran_pager);
     mViewPager.setAdapter(mPagerAdapter);
 
-    mAyahToolBar.setOnItemSelectedListener(new AyahMenuItemSelecttionHandler());
+    mAyahToolBar.setOnItemSelectedListener(new AyahMenuItemSelectionHandler());
     mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 
       @Override
@@ -1784,7 +1784,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  private class AyahMenuItemSelecttionHandler implements AyahToolBar.OnItemSelectedListener {
+  private class AyahMenuItemSelectionHandler implements AyahToolBar.OnItemSelectedListener {
     @Override
     public void onItemSelected(int itemId) {
       switch (itemId) {
