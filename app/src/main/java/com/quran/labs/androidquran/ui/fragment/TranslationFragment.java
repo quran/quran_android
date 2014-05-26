@@ -8,7 +8,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.util.TranslationTask;
+import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 import android.app.Activity;
