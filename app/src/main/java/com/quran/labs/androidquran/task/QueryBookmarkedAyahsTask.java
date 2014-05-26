@@ -1,10 +1,10 @@
-package com.quran.labs.androidquran.ui.util;
+package com.quran.labs.androidquran.task;
 
 import android.content.Context;
 
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.util.AsyncTask;
+import com.quran.labs.androidquran.task.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;

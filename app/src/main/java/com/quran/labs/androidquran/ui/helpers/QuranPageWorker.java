@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.util.AsyncTask;
+import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import android.annotation.TargetApi;

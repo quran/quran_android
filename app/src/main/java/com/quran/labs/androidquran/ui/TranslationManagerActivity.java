@@ -22,7 +22,7 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.TranslationListTask;
+import com.quran.labs.androidquran.task.TranslationListTask;
 
 import java.io.File;
 import java.util.ArrayList;

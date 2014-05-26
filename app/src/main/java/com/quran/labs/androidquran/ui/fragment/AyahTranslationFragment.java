@@ -8,11 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.util.TranslationTask;
+import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
@@ -22,6 +20,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
   private static final String TAG = "AyahTranslationFragment";
 
   private TranslationView mTranslationView;
+  private AsyncTask mCurrentTask;
 
   @Override
   public View onCreateView(LayoutInflater inflater,
