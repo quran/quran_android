@@ -49,7 +49,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.IconPageIndicator;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
@@ -63,6 +63,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -92,7 +93,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.*;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AYAH_DETAILS_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
 
 public class PagerActivity extends SherlockFragmentActivity implements
     AudioStatusBar.AudioBarListener,
@@ -129,6 +132,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private boolean mShowingTranslation = false;
   private int mHighlightedSura = -1;
   private int mHighlightedAyah = -1;
+  private int mAyahToolBarTotalHeight;
   private boolean mShouldOverridePlaying = false;
   private DefaultDownloadReceiver mDownloadReceiver;
   private boolean mNeedsPermissionToDownloadOver3g = true;
@@ -139,6 +143,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private SpinnerAdapter mSpinnerAdapter;
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
+  private AyahToolBar mAyahToolBar;
   private boolean mDualPages = false;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -236,8 +241,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
     getSupportActionBar().setDisplayShowHomeEnabled(true);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    int background = getResources().getColor(
+    final Resources resources = getResources();
+    int background = resources.getColor(
         R.color.transparent_actionbar_color);
+    mAyahToolBarTotalHeight = resources
+        .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
     getSupportActionBar().setBackgroundDrawable(
         new ColorDrawable(background));
@@ -270,6 +278,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mLastPopupTime = System.currentTimeMillis();
     mPagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), mDualPages, mShowingTranslation);
+    mAyahToolBar = (AyahToolBar) findViewById(R.id.ayah_toolbar);
     mViewPager = (ViewPager) findViewById(R.id.quran_pager);
     mViewPager.setAdapter(mPagerAdapter);
 
@@ -1591,11 +1600,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public boolean onAyahSelected(EventType eventType,
-      SuraAyah suraAyah, HighlightingImageView hv) {
+      SuraAyah suraAyah, AyahTracker tracker) {
     switch (eventType) {
       case SINGLE_TAP:
         if (isInAyahMode()) {
-          updateAyahStartSelection(suraAyah, hv);
+          updateAyahStartSelection(suraAyah, tracker);
           return true;
         }
         return false;
@@ -1603,9 +1612,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
         if (isInAyahMode()) {
           updateAyahEndSelection(suraAyah);
         } else {
-          startAyahMode(suraAyah, hv);
+          startAyahMode(suraAyah, tracker);
         }
-        hv.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+        mViewPager.performHapticFeedback(
+            HapticFeedbackConstants.LONG_PRESS);
         return true;
       default:
         return false;
@@ -1644,16 +1654,25 @@ public class PagerActivity extends SherlockFragmentActivity implements
     return mEnd;
   }
 
-  public void startAyahMode(SuraAyah suraAyah, HighlightingImageView hv) {
+  public void startAyahMode(SuraAyah suraAyah, AyahTracker tracker) {
     if (!isInAyahMode()) {
+      /*
+      final float[] pos = tracker.getToolBarPosition(
+          suraAyah.sura, suraAyah.ayah, mAyahToolBar.getToolBarWidth(),
+          mAyahToolBarTotalHeight);
+      if (pos != null) {
+        mAyahToolBar.setX(pos[0]);
+        mAyahToolBar.setY(pos[1]);
+        mAyahToolBar.setVisibility(View.VISIBLE);
+      }
+      */
       updateStartSelection(suraAyah);
-    } else {
-      // TODO
     }
-    showAyahModeHighlights(suraAyah, hv);
+    showAyahModeHighlights(suraAyah, tracker);
   }
 
   public void endAyahMode() {
+    //mAyahToolBar.setVisibility(View.GONE);
     clearAyahModeHighlights();
     if (isAyahPanelShowing) {
       mSlidingPanel.hidePane();
@@ -1661,11 +1680,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  public void updateAyahStartSelection(SuraAyah suraAyah, HighlightingImageView hv) {
+  public void updateAyahStartSelection(
+      SuraAyah suraAyah, AyahTracker tracker) {
     if (isInAyahMode()) {
       clearAyahModeHighlights();
       updateStartSelection(suraAyah);
-      showAyahModeHighlights(suraAyah, hv);
+      showAyahModeHighlights(suraAyah, tracker);
     }
   }
 
@@ -1689,12 +1709,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private void refreshPages() {
     for (int page : PAGES) {
       if (page == TAG_PAGE) {
-        TagBookmarkDialog tagsFrag = (TagBookmarkDialog) mSlidingPagerAdapter.getFragmentIfExists(TAG_PAGE);
+        TagBookmarkDialog tagsFrag =
+            (TagBookmarkDialog) mSlidingPagerAdapter
+                .getFragmentIfExists(TAG_PAGE);
         if (tagsFrag != null) {
           tagsFrag.updateAyah(mStart);
         }
       } else {
-        AyahActionFragment f = (AyahActionFragment) mSlidingPagerAdapter.getFragmentIfExists(page);
+        AyahActionFragment f = (AyahActionFragment) mSlidingPagerAdapter
+            .getFragmentIfExists(page);
         if (f != null) {
           f.updateAyahSelection(mStart, mEnd);
         }
@@ -1712,21 +1735,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
     for (int i = minPage; i <= maxPage; i++) {
       AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
       if (fragment != null) {
-        HighlightingImageView imageView = fragment.getHighlightingImageView(i);
-        if (imageView != null) {
-          Set<String> ayahKeys = QuranInfo.getAyahKeysOnPage(i, start, end);
-          imageView.highlightAyahs(ayahKeys, HighlightType.SELECTION);
-          imageView.invalidate();
-        }
+        Set<String> ayahKeys = QuranInfo.getAyahKeysOnPage(i, start, end);
+        fragment.highlightAyat(i, ayahKeys, HighlightType.SELECTION);
       }
     }
   }
 
-  private void showAyahModeHighlights(SuraAyah suraAyah, HighlightingImageView hv) {
-    if (hv != null) {
-      hv.highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION);
-      hv.invalidate();
-    }
+  private void showAyahModeHighlights(SuraAyah suraAyah, AyahTracker tracker) {
+    tracker.highlightAyah(
+        suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION);
   }
 
   private void clearAyahModeHighlights() {
@@ -1734,10 +1751,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       for (int i = mStart.getPage(); i <= mEnd.getPage(); i++) {
         AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
         if (fragment != null) {
-          HighlightingImageView imageView = fragment.getHighlightingImageView(i);
-          if (imageView != null) {
-            imageView.unHighlight(HighlightType.SELECTION);
-          }
+          fragment.unHighlightAyahs(HighlightType.SELECTION);
         }
       }
     }

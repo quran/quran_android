@@ -1,26 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.PaintDrawable;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ScrollView;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
@@ -43,8 +22,30 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.PaintDrawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ScrollView;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
@@ -324,12 +325,13 @@ public class QuranPageFragment extends SherlockFragment
 
     @Override
     protected void onPostExecute(List<Map<String, List<AyahBounds>>> maps) {
+      if (mImageView == null) {
+        return;
+      }
+
       if (maps != null && maps.size() > 0) {
         mCoordinateData = maps.get(0);
-
-        if (mImageView != null) {
-          mImageView.setCoordinateData(mCoordinateData);
-        }
+        mImageView.setCoordinateData(mCoordinateData);
       }
 
       if (mHighlightAyah) {
@@ -344,8 +346,12 @@ public class QuranPageFragment extends SherlockFragment
   }
 
   @Override
-  public HighlightingImageView getHighlightingImageView(int page) {
-    return page == mPageNumber ? mImageView : null;
+  public void highlightAyat(
+      int page, Set<String> ayahKeys, HighlightType type) {
+    if (page == mPageNumber && mImageView != null) {
+      mImageView.highlightAyat(ayahKeys, type);
+      mImageView.invalidate();
+    }
   }
 
   @Override
@@ -372,7 +378,8 @@ public class QuranPageFragment extends SherlockFragment
     }
     mImageView.highlightAyah(sura, ayah, type);
     if (mScrollView != null) {
-      AyahBounds yBounds = mImageView.getYBoundsForHighlight(sura, ayah);
+      AyahBounds yBounds = ImageAyahUtils.
+          getYBoundsForHighlight(mCoordinateData, sura, ayah);
       if (yBounds != null) {
         int screenHeight = QuranScreenInfo.getInstance().getHeight();
         int y = yBounds.getMinY() - (int) (0.05 * screenHeight);
@@ -380,6 +387,20 @@ public class QuranPageFragment extends SherlockFragment
       }
     }
     mImageView.invalidate();
+  }
+
+  @Override
+  public float[] getToolBarPosition(int sura, int ayah,
+      int toolBarWidth, int toolBarHeight) {
+    final List<AyahBounds> bounds = mCoordinateData == null ? null :
+        mCoordinateData.get(sura + ":" + ayah);
+    final int screenWidth = mImageView == null ? 0 : mImageView.getWidth();
+    if (bounds != null && screenWidth > 0) {
+      final int screenHeight = QuranScreenInfo.getInstance().getHeight();
+      return ImageAyahUtils.getToolBarPosition(bounds, screenWidth,
+          screenHeight, toolBarWidth, toolBarHeight);
+    }
+    return null;
   }
 
   @Override
@@ -397,7 +418,7 @@ public class QuranPageFragment extends SherlockFragment
         mCoordinateData, mImageView, event.getX(), event.getY());
     if (result != null && mAyahSelectedListener != null) {
       SuraAyah suraAyah = new SuraAyah(result.getSura(), result.getAyah());
-      mAyahSelectedListener.onAyahSelected(eventType, suraAyah, mImageView);
+      mAyahSelectedListener.onAyahSelected(eventType, suraAyah, this);
     }
   }
 

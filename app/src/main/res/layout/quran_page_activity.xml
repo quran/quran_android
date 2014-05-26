@@ -9,6 +9,13 @@
       android:layout_height="match_parent"
       android:id="@+id/quran_pager"/>
 
+    <com.quran.labs.androidquran.widgets.AyahToolBar
+        android:id="@+id/ayah_toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/toolbar_background"
+        android:visibility="gone"/>
+
     <com.quran.labs.androidquran.widgets.AudioStatusBar
                   android:id="@+id/audio_area"
                   android:layout_width="match_parent"

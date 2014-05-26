@@ -1,11 +1,10 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 public interface AyahSelectedListener {
 
-  public enum EventType {SINGLE_TAP, LONG_PRESS, DOUBLE_TAP}
+  public enum EventType { SINGLE_TAP, LONG_PRESS, DOUBLE_TAP }
 
   /** Return true to receive the ayah info along with the
    * click event, false to receive just the event type */
@@ -13,7 +12,7 @@ public interface AyahSelectedListener {
 
   /** Click event with ayah info and highlighter passed */
   public boolean onAyahSelected(EventType eventType,
-          SuraAyah suraAyah, HighlightingImageView hv);
+          SuraAyah suraAyah, AyahTracker tracker);
 
   /** General click event without ayah info */
   public boolean onClick(EventType eventType);
