@@ -1,22 +1,20 @@
 package com.quran.labs.androidquran.ui.util;
 
-import android.util.Log;
-import android.util.SparseArray;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.ui.helpers.PageScalingData;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
+
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.util.SparseArray;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: ahmedre
- * Date: 5/11/13
- * Time: 10:34 PM
- */
 public class ImageAyahUtils {
    private static final String TAG =
            "com.quran.labs.androidquran.ui.util.ImageAyahUtils";
@@ -40,7 +38,7 @@ public class ImageAyahUtils {
            HighlightingImageView imageView, float xc, float yc) {
       if (coords == null || imageView == null){ return null; }
 
-      float[] pageXY = imageView.getPageXY(xc, yc);
+      float[] pageXY = getPageXY(xc, yc, imageView);
       if (pageXY == null){ return null; }
       float x = pageXY[0];
       float y = pageXY[1];
@@ -118,4 +116,83 @@ public class ImageAyahUtils {
       }
       return null;
    }
+
+  public static float[] getToolBarPosition(List<AyahBounds> bounds,
+      int screenWidth, int screenHeight, int toolBarWidth, int toolBarHeight) {
+    float[] result = null;
+    final PageScalingData data = PageScalingData.getScalingData();
+    final int size = bounds == null ? 0 : bounds.size();
+    if (size > 0 && data != null) {
+      result = new float[2];
+      final AyahBounds first = bounds.get(0);
+      AyahBounds chosen = first;
+      float y = (first.getMinY() - toolBarHeight) * data.heightFactor;
+      if (y < toolBarHeight) {
+        // too close to the top, let's move to the bottom
+        chosen = bounds.get(size - 1);
+        y = data.heightFactor * (chosen.getMaxY() + toolBarHeight);
+        if (y > (screenHeight - toolBarHeight)) {
+          y = first.getMaxY();
+          chosen = first;
+        }
+      }
+
+      float x = data.heightFactor * (chosen.getMaxX() - toolBarWidth);
+      if (x < 0 || x + toolBarWidth > screenWidth) {
+        x = data.heightFactor * chosen.getMinX();
+        if (x + toolBarWidth > screenWidth) {
+          x = (screenWidth - toolBarWidth - data.offsetX) * data.heightFactor;
+        }
+      }
+
+      result[0] = x;
+      result[1] = y;
+    }
+    return result;
+  }
+
+  private static float[] getPageXY(
+      float screenX, float screenY, ImageView imageView) {
+    PageScalingData scalingData = PageScalingData.getScalingData();
+    if (scalingData == null) {
+      final Drawable drawable = imageView.getDrawable();
+      if (drawable == null) {
+        return null;
+      }
+
+      // try to re-initialize scaling data from imageview
+      scalingData = PageScalingData.initialize(
+          drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+          imageView.getWidth(), imageView.getHeight());
+    }
+    float pageX = screenX / scalingData.widthFactor - scalingData.offsetX;
+    float pageY = screenY / scalingData.heightFactor - scalingData.offsetY;
+    return new float[]{ pageX, pageY };
+  }
+
+  public static AyahBounds getYBoundsForHighlight(
+      Map<String, List<AyahBounds>> coordinateData, int sura, int ayah) {
+    if (coordinateData == null ||
+        coordinateData.get(sura + ":" + ayah) == null) {
+      return null;
+    }
+
+    Integer upperBound = null;
+    Integer lowerBound = null;
+    for (AyahBounds bounds : coordinateData.get(sura + ":" + ayah)) {
+      if (upperBound == null || bounds.getMinY() < upperBound) {
+        upperBound = bounds.getMinY();
+      }
+
+      if (lowerBound == null || bounds.getMaxY() > lowerBound) {
+        lowerBound = bounds.getMaxY();
+      }
+    }
+
+    AyahBounds yBounds = null;
+    if (upperBound != null) {
+      yBounds = new AyahBounds(0, 0, 0, upperBound, 0, lowerBound);
+    }
+    return yBounds;
+  }
 }

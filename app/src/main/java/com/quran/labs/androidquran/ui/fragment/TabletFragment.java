@@ -1,5 +1,30 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.actionbarsherlock.app.SherlockFragment;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
+import com.quran.labs.androidquran.ui.helpers.AyahTracker;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
+import com.quran.labs.androidquran.ui.util.QueryAyahCoordsTask;
+import com.quran.labs.androidquran.ui.util.QueryBookmarkedAyahsTask;
+import com.quran.labs.androidquran.ui.util.QueryPageCoordsTask;
+import com.quran.labs.androidquran.ui.util.TranslationTask;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.widgets.TranslationView;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,29 +34,16 @@ import android.graphics.Rect;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.*;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.helpers.*;
-import com.quran.labs.androidquran.ui.util.*;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
-import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
@@ -456,13 +468,20 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   }
 
   @Override
-  public HighlightingImageView getHighlightingImageView(int page) {
+  public void highlightAyat(
+      int page, Set<String> ayahKeys, HighlightType type) {
+    final HighlightingImageView imageView;
     if (page == mPageNumber - 1) {
-      return mRightImageView;
+      imageView = mRightImageView;
     } else if (page == mPageNumber) {
-      return mLeftImageView;
+      imageView = mLeftImageView;
     } else {
-      return null;
+      imageView = null;
+    }
+
+    if (imageView != null) {
+      imageView.highlightAyat(ayahKeys, type);
+      imageView.invalidate();
     }
   }
 
@@ -474,6 +493,30 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     } else {
       handleHighlightAyah(sura, ayah, type);
     }
+  }
+
+  @Override
+  public float[] getToolBarPosition(int sura, int ayah,
+      int toolBarWidth, int toolBarHeight) {
+    final String key = sura + ":" + ayah;
+    List<AyahBounds> bounds = null;
+    if (mCoordinateData != null) {
+      for (final Map<String, List<AyahBounds>> pageBounds : mCoordinateData) {
+        if (pageBounds.containsKey(key)) {
+          bounds = pageBounds.get(key);
+          break;
+        }
+      }
+    }
+
+    final int width = mLeftImageView != null ? mLeftImageView.getWidth() :
+        (mRightImageView == null ? 0 : mRightImageView.getWidth());
+    if (bounds != null && width > 0) {
+      final int screenHeight = QuranScreenInfo.getInstance().getHeight();
+      return ImageAyahUtils.getToolBarPosition(bounds, width,
+          screenHeight, toolBarWidth, toolBarHeight);
+    }
+    return null;
   }
 
   private void handleHighlightAyah(int sura, int ayah, HighlightType type) {
@@ -552,7 +595,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
         }
       }
       SuraAyah suraAyah = new SuraAyah(result.getSura(), result.getAyah());
-      mAyahSelectedListener.onAyahSelected(eventType, suraAyah, hv);
+      mAyahSelectedListener.onAyahSelected(eventType, suraAyah, this);
     }
   }
 

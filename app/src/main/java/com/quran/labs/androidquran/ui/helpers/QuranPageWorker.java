@@ -22,14 +22,14 @@ public class QuranPageWorker {
    
    private Context mContext;
    private Resources mResources;
-   private static QuranPageWorker mInstance;
+   private static QuranPageWorker sInstance;
    private LruCache<String, BitmapDrawable> mMemoryCache = null;
 
    public static synchronized QuranPageWorker getInstance(Context context){
-     if (mInstance == null){
-       mInstance = new QuranPageWorker(context);
+     if (sInstance == null){
+       sInstance = new QuranPageWorker(context);
      }
-     return mInstance;
+     return sInstance;
    }
 
    private QuranPageWorker(Context context){

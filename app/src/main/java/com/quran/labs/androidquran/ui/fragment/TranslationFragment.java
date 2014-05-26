@@ -1,5 +1,16 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.actionbarsherlock.app.SherlockFragment;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahTracker;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.ui.util.TranslationTask;
+import com.quran.labs.androidquran.widgets.TranslationView;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -12,17 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.util.TranslationTask;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
-import com.quran.labs.androidquran.widgets.TranslationView;
+import java.util.Set;
 
 public class TranslationFragment extends SherlockFragment
     implements AyahTracker {
@@ -157,6 +158,19 @@ public class TranslationFragment extends SherlockFragment
   }
 
   @Override
+  public float[] getToolBarPosition(int sura, int ayah,
+      int toolBarWidth, int toolBarHeight) {
+    // not yet implemented
+    return null;
+  }
+
+  @Override
+  public void highlightAyat(
+      int page, Set<String> ayahKeys, HighlightType type) {
+    // not yet supported
+  }
+
+  @Override
   public void unHighlightAyah(int sura, int ayah, HighlightType type) {
     if (mHighlightedAyah == QuranInfo.getAyahId(sura, ayah)) {
       unHighlightAyahs(type);
@@ -169,11 +183,6 @@ public class TranslationFragment extends SherlockFragment
       mTranslationView.unhighlightAyat();
       mHighlightedAyah = -1;
     }
-  }
-
-  @Override
-  public HighlightingImageView getHighlightingImageView(int page) {
-    return null;
   }
 
   @Override
