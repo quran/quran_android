@@ -15,4 +15,3 @@ ApiKeys.java
 */build
 app/src/release
 app/seed.txt
-gradle.properties
