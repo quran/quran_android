@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
@@ -65,18 +66,17 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public Fragment getItem(int position){
-      int count = getCount();
-	   android.util.Log.d(TAG, "getting page: " + (count-position));
+    int page = QuranInfo.getPageFromPos(position, mIsDualPages);
+	   android.util.Log.d(TAG, "getting page: " + page);
       if (mIsDualPages){
-         return TabletFragment.newInstance((count-position)*2,
+         return TabletFragment.newInstance(page,
                 mIsShowingTranslation? TabletFragment.Mode.TRANSLATION :
                         TabletFragment.Mode.ARABIC);
+      } else if (mIsShowingTranslation){
+         return TranslationFragment.newInstance(page);
+      } else {
+        return QuranPageFragment.newInstance(page);
       }
-
-      if (mIsShowingTranslation){
-         return TranslationFragment.newInstance(count-position);
-      }
-	   else { return QuranPageFragment.newInstance(count-position); }
 	}
 	
 	@Override
@@ -95,15 +95,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     if (page < Constants.PAGES_FIRST || Constants.PAGES_LAST < page) {
       return null;
     }
-
-    int position = Constants.PAGES_LAST - page;
-    if (mIsDualPages) {
-      if (page % 2 != 0) {
-        page++;
-      }
-      position = 302 - (page / 2);
-    }
-
+    int position = QuranInfo.getPosFromPage(page, mIsDualPages);
     Fragment fragment = getFragmentIfExists(position);
     return fragment != null && fragment instanceof AyahTracker ?
         (AyahTracker) fragment : null;

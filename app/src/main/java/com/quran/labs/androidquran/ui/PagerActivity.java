@@ -151,6 +151,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
+  private float[] mAyahToolBarCurPos;
   private boolean mDualPages = false;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -301,6 +302,28 @@ public class PagerActivity extends SherlockFragmentActivity implements
       @Override
       public void onPageScrolled(int position, float positionOffset,
                                  int positionOffsetPixels) {
+        if (isInAyahMode()) {
+          int barPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
+          float x = mAyahToolBarCurPos[0];
+          if (position == barPos) {
+            // Swiping to next ViewPager page (i.e. prev quran page)
+            x -= positionOffsetPixels;
+          } else if (position == barPos - 1) {
+            // Swiping to prev ViewPager page (i.e. next quran page)
+            x += (mViewPager.getWidth() - positionOffsetPixels);
+          } else {
+            // Totally off screen, should hide toolbar
+            mAyahToolBar.setVisibility(View.GONE);
+            return;
+          }
+          mAyahToolBar.updatePosition(x, mAyahToolBarCurPos[1]);
+          // If the toolbar is not showing, show it
+          if (mAyahToolBar.getVisibility() != View.VISIBLE) {
+            mAyahToolBar.setVisibility(View.VISIBLE);
+          }
+          //Log.d(TAG, "pos="+position+"\tpixel="+positionOffsetPixels+
+          //    "\tcur="+ mAyahToolBarCurPos[0]+"\tfinal="+x);
+        }
       }
 
       @Override
@@ -884,6 +907,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void switchToTranslation() {
+    if (isInAyahMode()) {
+      endAyahMode();
+    }
     String activeDatabase = TranslationUtils.getDefaultTranslation(
         this, mTranslations);
     if (activeDatabase == null) {
@@ -1719,6 +1745,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         start.sura, start.ayah, mAyahToolBar.getToolBarWidth(),
         mAyahToolBarTotalHeight);
     if (pos != null) {
+      mAyahToolBarCurPos = pos;
       mAyahToolBar.updatePosition(pos[0], pos[1]);
       mAyahToolBar.showMenu();
     }
