@@ -268,9 +268,11 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
             return null;
          }
 
+         String newTagString = activity.getString(R.string.new_tag);
+
          ArrayList<Tag> newTags = new ArrayList<Tag>();
          newTags.addAll(adapter.getTags());
-         newTags.add(new Tag(-1, getString(R.string.new_tag)));
+         newTags.add(new Tag(-1, newTagString));
          if (mBookmarkIds == null) {
             if (mBookmarkId < 0 && mPage > 0) {
                mBookmarkId = adapter.getBookmarkId(mSura, mAyah, mPage);
