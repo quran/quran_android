@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.widgets;
 
+import com.actionbarsherlock.ActionBarSherlock;
 import com.actionbarsherlock.internal.view.menu.MenuBuilder;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -18,17 +19,16 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
+
 public class AyahToolBar extends LinearLayout implements
     View.OnClickListener, View.OnLongClickListener {
   private Context mContext;
   private Menu mMenu;
   private Menu mCurrentMenu;
   private int mItemWidth;
-  private OnItemSelectedListener mItemSelectedListener;
-
-  public interface OnItemSelectedListener {
-    void onItemSelected(int itemId);
-  }
+  private boolean mIsShowing;
+  private OnMenuItemSelectedListener mItemSelectedListener;
 
   public AyahToolBar(Context context) {
     super(context);
@@ -112,33 +112,33 @@ public class AyahToolBar extends LinearLayout implements
   }
 
   public boolean isShowing() {
-    return this.getVisibility() == VISIBLE;
+    return mIsShowing;
   }
 
   public void showMenu() {
     showMenu(mMenu);
     this.setVisibility(VISIBLE);
+    mIsShowing = true;
   }
 
   public void hideMenu() {
     this.setVisibility(GONE);
+    mIsShowing = false;
   }
 
-  public void setOnItemSelectedListener(OnItemSelectedListener listener) {
+  public void setOnItemSelectedListener(
+      OnMenuItemSelectedListener listener) {
     mItemSelectedListener = listener;
   }
 
   @Override
   public void onClick(View v) {
-    if (v.getId() == R.id.cab_share_ayah) {
-      final MenuItem item = mMenu.findItem(R.id.cab_share_ayah);
-      if (item != null && item.hasSubMenu()) {
-        showMenu(item.getSubMenu());
-      }
-    }
-
-    if (mItemSelectedListener != null) {
-      mItemSelectedListener.onItemSelected(v.getId());
+    final MenuItem item = mMenu.findItem(v.getId());
+    if (item == null) return;
+    if (item.hasSubMenu()) {
+      showMenu(item.getSubMenu());
+    } else if (mItemSelectedListener != null) {
+      mItemSelectedListener.onMenuItemSelected(0, item);
     }
   }
 
