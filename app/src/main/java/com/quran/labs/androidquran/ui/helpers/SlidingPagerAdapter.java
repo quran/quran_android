@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.fragment.AyahAudioFragment;
-import com.quran.labs.androidquran.ui.fragment.AyahDetailsFragment;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.widgets.IconPageIndicator;
@@ -13,16 +12,14 @@ import com.quran.labs.androidquran.widgets.IconPageIndicator;
 public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
     IconPageIndicator.IconPagerAdapter {
 
-  public static final int AYAH_DETAILS_PAGE = 0;
-  public static final int TAG_PAGE = 1;
-  public static final int TRANSLATION_PAGE = 2;
-  public static final int AUDIO_PAGE = 3;
+  public static final int TAG_PAGE = 0;
+  public static final int TRANSLATION_PAGE = 1;
+  public static final int AUDIO_PAGE = 2;
   public static final int[] PAGES = {
-      TAG_PAGE, TRANSLATION_PAGE, AYAH_DETAILS_PAGE, AUDIO_PAGE
+      TAG_PAGE, TRANSLATION_PAGE, AUDIO_PAGE
   };
   public static final int[] PAGE_ICONS = {
-      R.drawable.ic_copy, R.drawable.ic_tag,
-      R.drawable.ic_translation, R.drawable.ic_play
+      R.drawable.ic_tag, R.drawable.ic_translation, R.drawable.ic_play
   };
 
   public SlidingPagerAdapter(FragmentManager fm) {
@@ -37,8 +34,6 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
   @Override
   public Fragment getItem(int position) {
     switch (position) {
-      case AYAH_DETAILS_PAGE:
-        return new AyahDetailsFragment();
       case TAG_PAGE:
         return new TagBookmarkDialog();
       case TRANSLATION_PAGE:
