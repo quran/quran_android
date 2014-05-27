@@ -33,15 +33,12 @@ intellij.
 
 Setup
 ------------------------
-1. download the latest canary version of [android studio](http://tools.android.com/download/studio/canary) (latest as of this writing is version 0.5.1)
-2. make sure you have the android sdk installed, along with the sdk tools,
-platform-tools, android 4.2.2 sdk platform, android support repository, android support library, and google repository.
-3. make a file called `local.properties` with one line in it:
-`sdk.dir=/path/to/your/android/sdk` 
-(make sure to replace `/path/to/your/android/sdk` with the directory to which you downloaded the android sdk).
-4. run android studio, choose import project, then choose build.gradle from
+1. get and install the [android sdk](http://developer.android.com/sdk/index.html)
+2. make sure `$ANDROID_HOME` is set to the correct place.
+3. build from the command line by running `./gradlew assembleDebug`
+4. if you want an ide, download the latest version of [android studio](http://tools.android.com/download/studio/canary) (latest as of this writing is version 0.5.8)
+5. run android studio, choose import project, then choose build.gradle from
 the main quran source code directory.
-5. if you want to build from the command line instead, you can build by running `./gradlew assembleDebug` (after completing steps 1-3 above).
 
 and that's it!
 
@@ -99,6 +96,7 @@ Open Source Projects Used
 * [ActionBarSherlock](http://abs.io)
 * [AndroidSlidingUpPanel](https://github.com/umano/AndroidSlidingUpPanel)
 * [NineOldAndroids](https://github.com/JakeWharton/NineOldAndroids)
+* [sdk-manager-plugin](https://github.com/JakeWharton/sdk-manager-plugin)
 
 Changelog
 ---------
