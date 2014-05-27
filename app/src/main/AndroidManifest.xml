@@ -79,5 +79,7 @@
                 <action android:name="com.quran.labs.androidquran.action.UPDATE_REPEAT" />
             </intent-filter>
        </service>
+       <meta-data android:name="com.crashlytics.ApiKey"
+          android:value="000000000000000000000000000000000000000" />
    </application>
 </manifest> 
