@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
@@ -496,7 +497,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   }
 
   @Override
-  public float[] getToolBarPosition(int sura, int ayah,
+  public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
       int toolBarWidth, int toolBarHeight) {
     final String key = sura + ":" + ayah;
     List<AyahBounds> bounds = null;
@@ -522,11 +523,12 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     final int width = imageView != null ? imageView.getWidth() : 0;
     if (bounds != null && width > 0) {
       final int screenHeight = QuranScreenInfo.getInstance().getHeight();
-      final float[] result = ImageAyahUtils.getToolBarPosition(bounds, width,
-          screenHeight, toolBarWidth, toolBarHeight);
+      final AyahToolBar.AyahToolBarPosition result =
+          ImageAyahUtils.getToolBarPosition(bounds, width,
+            screenHeight, toolBarWidth, toolBarHeight);
       if (page == mPageNumber - 1) {
         // right page, need to adjust offset
-        result[0] += width;
+        result.x += width;
       }
       return result;
     }
