@@ -588,7 +588,26 @@ public class QuranInfo {
 		if ((sura < 1) || (sura > Constants.SURAS_COUNT)) return -1;
 		return SURA_NUM_AYAHS[sura-1];
 	}
-	
+
+  public static int getPageFromPos(int position, boolean dual) {
+    int page = Constants.PAGES_LAST - position;
+    if (dual) {
+      page = (302 - position) * 2;
+    }
+    return page;
+  }
+
+  public static int getPosFromPage(int page, boolean dual) {
+    int position = Constants.PAGES_LAST - page;
+    if (dual) {
+      if (page % 2 != 0) {
+        page++;
+      }
+      position = 302 - (page / 2);
+    }
+    return position;
+  }
+
 	public static String getAyahString(int sura, int ayah, Context cx){
 		return getSuraName(cx, sura, true) + " - "
 				+ getAyahTitle(cx) + " " + ayah;

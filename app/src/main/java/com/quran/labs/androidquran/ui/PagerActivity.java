@@ -31,7 +31,6 @@ import com.quran.labs.androidquran.task.ShareAyahTask;
 import com.quran.labs.androidquran.task.ShareQuranAppTask;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
-import com.quran.labs.androidquran.ui.fragment.AyahDetailsFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
@@ -98,11 +97,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AYAH_DETAILS_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
+import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.*;
 
 public class PagerActivity extends SherlockFragmentActivity implements
     AudioStatusBar.AudioBarListener,
@@ -151,6 +147,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
+  private float[] mAyahToolBarCurPos;
   private boolean mDualPages = false;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -164,7 +161,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private FragmentStatePagerAdapter mSlidingPagerAdapter;
   private ViewGroup mSlidingLayout;
   private IconPageIndicator mSlidingPagerIndicator;
-  private boolean isAyahPanelShowing;
+  private boolean isInAyahMode;
   private SuraAyah mStart;
   private SuraAyah mEnd;
 
@@ -301,6 +298,28 @@ public class PagerActivity extends SherlockFragmentActivity implements
       @Override
       public void onPageScrolled(int position, float positionOffset,
                                  int positionOffsetPixels) {
+        if (mAyahToolBar.isShowing() && mAyahToolBarCurPos != null) {
+          int barPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
+          float x = mAyahToolBarCurPos[0];
+          if (position == barPos) {
+            // Swiping to next ViewPager page (i.e. prev quran page)
+            x -= positionOffsetPixels;
+          } else if (position == barPos - 1) {
+            // Swiping to prev ViewPager page (i.e. next quran page)
+            x += (mViewPager.getWidth() - positionOffsetPixels);
+          } else {
+            // Totally off screen, should hide toolbar
+            mAyahToolBar.setVisibility(View.GONE);
+            return;
+          }
+          mAyahToolBar.updatePosition(x, mAyahToolBarCurPos[1]);
+          // If the toolbar is not showing, show it
+          if (mAyahToolBar.getVisibility() != View.VISIBLE) {
+            mAyahToolBar.setVisibility(View.VISIBLE);
+          }
+          //Log.d(TAG, "pos="+position+"\tpixel="+positionOffsetPixels+
+          //    "\tcur="+ mAyahToolBarCurPos[0]+"\tfinal="+x);
+        }
       }
 
       @Override
@@ -884,6 +903,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void switchToTranslation() {
+    if (isInAyahMode()) {
+      endAyahMode();
+    }
     String activeDatabase = TranslationUtils.getDefaultTranslation(
         this, mTranslations);
     if (activeDatabase == null) {
@@ -944,10 +966,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public void onBookmarkTagsUpdated() {
     if (isInAyahMode()) {
-      AyahDetailsFragment f = (AyahDetailsFragment) mSlidingPagerAdapter.getFragmentIfExists(AYAH_DETAILS_PAGE);
-      if (f != null) {
-        f.refreshView();
-      }
+      new RefreshBookmarkIconTask(this, mStart).execute();
     }
   }
 
@@ -1294,10 +1313,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
           if (isInAyahMode()) {
             SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
             if (mStart.equals(suraAyah)) {
-              AyahDetailsFragment f = (AyahDetailsFragment) mSlidingPagerAdapter.getFragmentIfExists(AYAH_DETAILS_PAGE);
-              if (f != null) {
-                f.updateAyahBookmarkIcon(suraAyah, result);
-              }
               updateAyahBookmarkIcon(suraAyah, result);
             }
 
@@ -1672,7 +1687,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public boolean isInAyahMode() {
-    return isAyahPanelShowing;
+    return isInAyahMode;
   }
 
   public SuraAyah getSelectionStart() {
@@ -1685,42 +1700,35 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   public void startAyahMode(SuraAyah suraAyah, AyahTracker tracker) {
     if (!isInAyahMode()) {
-      updateStartSelection(suraAyah, tracker);
+      mStart = mEnd = suraAyah;
+      updateToolbarPosition(suraAyah, tracker);
+      if (mAyahToolBarCurPos != null) {
+        mAyahToolBar.showMenu();
+      }
+      showAyahModeHighlights(suraAyah, tracker);
+      isInAyahMode = true;
     }
-    showAyahModeHighlights(suraAyah, tracker);
   }
 
   public void endAyahMode() {
     mAyahToolBar.hideMenu();
+    mSlidingPanel.hidePane();
     clearAyahModeHighlights();
-    if (isAyahPanelShowing) {
-      mSlidingPanel.hidePane();
-      isAyahPanelShowing = false;
-    }
+    isInAyahMode = false;
   }
 
   public void updateAyahStartSelection(
       SuraAyah suraAyah, AyahTracker tracker) {
     if (isInAyahMode()) {
       clearAyahModeHighlights();
-      updateStartSelection(suraAyah, tracker);
+      mStart = mEnd = suraAyah;
+      if (mAyahToolBar.isShowing()) {
+        updateToolbarPosition(suraAyah, tracker);
+      }
+      if (mSlidingPanel.isPaneVisible()) {
+        refreshPages();
+      }
       showAyahModeHighlights(suraAyah, tracker);
-    }
-  }
-
-  public void updateStartSelection(SuraAyah start, AyahTracker tracker) {
-    mStart = start;
-    mEnd = start;
-    new RefreshBookmarkIconTask(this, mStart).execute();
-    refreshPages();
-    isAyahPanelShowing = true;
-    //mSlidingPanel.showPane();
-    final float[] pos = tracker.getToolBarPosition(
-        start.sura, start.ayah, mAyahToolBar.getToolBarWidth(),
-        mAyahToolBarTotalHeight);
-    if (pos != null) {
-      mAyahToolBar.updatePosition(pos[0], pos[1]);
-      mAyahToolBar.showMenu();
     }
   }
 
@@ -1728,8 +1736,21 @@ public class PagerActivity extends SherlockFragmentActivity implements
     if (isInAyahMode()) {
       clearAyahModeHighlights();
       mEnd = suraAyah;
-      refreshPages();
+      if (mSlidingPanel.isPaneVisible()) {
+        refreshPages();
+      }
       showAyahModeRangeHighlights();
+    }
+  }
+
+  private void updateToolbarPosition(SuraAyah start, AyahTracker tracker) {
+    new RefreshBookmarkIconTask(this, start).execute();
+    final float[] pos = tracker.getToolBarPosition(
+        start.sura, start.ayah, mAyahToolBar.getToolBarWidth(),
+        mAyahToolBarTotalHeight);
+    mAyahToolBarCurPos = pos;
+    if (pos != null) {
+      mAyahToolBar.updatePosition(pos[0], pos[1]);
     }
   }
 
@@ -1784,44 +1805,44 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  private class AyahMenuItemSelectionHandler implements AyahToolBar.OnItemSelectedListener {
+  private class AyahMenuItemSelectionHandler implements OnMenuItemSelectedListener {
     @Override
-    public void onItemSelected(int itemId) {
-      switch (itemId) {
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+      int sliderPage = -1;
+      switch (item.getItemId()) {
         case R.id.cab_bookmark_ayah:
           toggleBookmark(mStart.sura, mStart.ayah, mStart.getPage());
           break;
         case R.id.cab_tag_ayah:
-          mSlidingPanel.showPane();
-          mSlidingPager.setCurrentItem(TAG_PAGE);
-          break;
-        case R.id.cab_share_ayah:
-          mSlidingPanel.showPane();
-          mSlidingPager.setCurrentItem(AYAH_DETAILS_PAGE);
+          sliderPage = TAG_PAGE;
           break;
         case R.id.cab_translate_ayah:
-          mSlidingPanel.showPane();
-          mSlidingPager.setCurrentItem(TRANSLATION_PAGE);
+          sliderPage = TRANSLATION_PAGE;
           break;
         case R.id.cab_play_from_here:
-          mSlidingPanel.showPane();
-          mSlidingPager.setCurrentItem(AUDIO_PAGE);
+          sliderPage = AUDIO_PAGE;
           break;
         case R.id.cab_share_ayah_link:
           new ShareQuranAppTask(PagerActivity.this, mStart, mEnd).execute();
-          endAyahMode();
           break;
         case R.id.cab_share_ayah_text:
           new ShareAyahTask(PagerActivity.this, mStart, mEnd, false).execute();
-          endAyahMode();
           break;
         case R.id.cab_copy_ayah:
           new ShareAyahTask(PagerActivity.this, mStart, mEnd, true).execute();
-          endAyahMode();
           break;
         default:
-          break;
+          return false;
       }
+      if (sliderPage < 0) {
+        endAyahMode();
+      } else {
+        mAyahToolBar.hideMenu();
+        refreshPages();
+        mSlidingPanel.showPane();
+        mSlidingPager.setCurrentItem(sliderPage);
+      }
+      return true;
     }
   }
 
