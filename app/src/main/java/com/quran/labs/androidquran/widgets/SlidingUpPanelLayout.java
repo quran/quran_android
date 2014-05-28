@@ -14,7 +14,8 @@
  * limitations under the License.
  *
  * Modifications:
- * - Changed touch event handling
+ * - computeScroll(): check mDragHelper != null
+ * - rename above/below_shadow to sliding_panel_above/below_shadow
  *
  */
 
@@ -763,8 +764,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     mDragHelper.processTouchEvent(ev);
 
     final int action = ev.getAction();
-//    boolean wantTouchEvents = true;
-    boolean wantTouchEvents = false;
+    boolean wantTouchEvents = true;
 
     switch (action & MotionEventCompat.ACTION_MASK) {
       case MotionEvent.ACTION_DOWN: {
@@ -772,9 +772,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final float y = ev.getY();
         mInitialMotionX = x;
         mInitialMotionY = y;
-        if (isDragViewUnder((int) x, (int) y) && !mIsUsingDragViewTouchEvents) {
-          wantTouchEvents = true;
-        }
         break;
       }
 
@@ -787,7 +784,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
         View dragView = mDragView != null ? mDragView : mSlideableView;
         if (dx * dx + dy * dy < slop * slop &&
             isDragViewUnder((int) x, (int) y)) {
-          wantTouchEvents = true;
           dragView.playSoundEffect(SoundEffectConstants.CLICK);
           if (!isExpanded() && !isAnchored()) {
             expandPane(mAnchorPoint);
