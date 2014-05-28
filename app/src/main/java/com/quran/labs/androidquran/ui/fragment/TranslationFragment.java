@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.task.TranslationTask;
+import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 import android.app.Activity;
@@ -158,7 +159,7 @@ public class TranslationFragment extends SherlockFragment
   }
 
   @Override
-  public float[] getToolBarPosition(int sura, int ayah,
+  public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
       int toolBarWidth, int toolBarHeight) {
     // not yet implemented
     return null;

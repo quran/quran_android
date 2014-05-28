@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.util;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.ui.helpers.PageScalingData;
+import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 import android.graphics.drawable.Drawable;
@@ -117,13 +118,14 @@ public class ImageAyahUtils {
       return null;
    }
 
-  public static float[] getToolBarPosition(List<AyahBounds> bounds,
-      int screenWidth, int screenHeight, int toolBarWidth, int toolBarHeight) {
-    float[] result = null;
+  public static AyahToolBar.AyahToolBarPosition getToolBarPosition(
+      List<AyahBounds> bounds, int screenWidth, int screenHeight,
+      int toolBarWidth, int toolBarHeight) {
+    boolean isToolBarUnderAyah = false;
+    AyahToolBar.AyahToolBarPosition result = null;
     final PageScalingData data = PageScalingData.getScalingData();
     final int size = bounds == null ? 0 : bounds.size();
     if (size > 0 && data != null) {
-      result = new float[2];
       final AyahBounds first = bounds.get(0);
       AyahBounds chosen = first;
       float y = (first.getMinY() * data.heightFactor) -
@@ -136,6 +138,7 @@ public class ImageAyahUtils {
           y = first.getMaxY();
           chosen = first;
         }
+        isToolBarUnderAyah = true;
       }
 
       float x = (data.heightFactor * chosen.getMaxX()) - toolBarWidth;
@@ -146,8 +149,11 @@ public class ImageAyahUtils {
         }
       }
 
-      result[0] = x;
-      result[1] = y;
+      result = new AyahToolBar.AyahToolBarPosition();
+      result.x = x;
+      result.y = y;
+      result.pipPosition = isToolBarUnderAyah ?
+          AyahToolBar.PipPosition.UP : AyahToolBar.PipPosition.DOWN;
     }
     return result;
   }

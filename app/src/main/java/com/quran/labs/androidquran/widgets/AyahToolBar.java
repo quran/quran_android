@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.actionbarsherlock.ActionBarSherlock;
 import com.actionbarsherlock.internal.view.menu.MenuBuilder;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -21,13 +20,18 @@ import android.widget.Toast;
 
 import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 
-public class AyahToolBar extends LinearLayout implements
+public class AyahToolBar extends ViewGroup implements
     View.OnClickListener, View.OnLongClickListener {
+  public static enum PipPosition { UP, DOWN };
+
   private Context mContext;
   private Menu mMenu;
   private Menu mCurrentMenu;
   private int mItemWidth;
   private boolean mIsShowing;
+  private LinearLayout mMenuLayout;
+  private AyahToolBarPip mToolBarPip;
+  private PipPosition mPipPosition;
   private OnMenuItemSelectedListener mItemSelectedListener;
 
   public AyahToolBar(Context context) {
@@ -50,12 +54,58 @@ public class AyahToolBar extends LinearLayout implements
     mContext = context;
     final Resources resources = context.getResources();
     mItemWidth = resources.getDimensionPixelSize(R.dimen.toolbar_item_width);
-    setOrientation(LinearLayout.HORIZONTAL);
+    final int toolBarHeight =
+        resources.getDimensionPixelSize(R.dimen.toolbar_height);
+    final int pipHeight =
+        resources.getDimensionPixelSize(R.dimen.toolbar_pip_height);
+    final int background = resources.getColor(R.color.toolbar_background);
+
+    mMenuLayout = new LinearLayout(context);
+    mMenuLayout.setLayoutParams(
+        new LayoutParams(LayoutParams.MATCH_PARENT, toolBarHeight));
+    mMenuLayout.setBackgroundColor(background);
+    addView(mMenuLayout);
+
+    mPipPosition = PipPosition.DOWN;
+    mToolBarPip = new AyahToolBarPip(context);
+    mToolBarPip.setLayoutParams(
+        new LayoutParams(LayoutParams.WRAP_CONTENT, pipHeight));
+    addView(mToolBarPip);
 
     mMenu = new MenuBuilder(mContext);
     final MenuInflater inflater = new MenuInflater(mContext);
     inflater.inflate(R.menu.ayah_menu, mMenu);
     showMenu(mMenu);
+  }
+
+  @Override
+  protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    final int totalWidth = getMeasuredWidth();
+    final int pipWidth = mToolBarPip.getMeasuredWidth();
+    final int pipHeight = mToolBarPip.getMeasuredHeight();
+    final int menuWidth = mMenuLayout.getMeasuredWidth();
+    final int menuHeight = mMenuLayout.getMeasuredHeight();
+
+    final int pipLeft = (totalWidth / 2) - (pipWidth / 2);
+    if (mPipPosition == PipPosition.UP) {
+      mToolBarPip.layout(pipLeft, 0, pipLeft + pipWidth, pipHeight);
+      mMenuLayout.layout(0, pipHeight, menuWidth, pipHeight + menuHeight);
+    } else {
+      mToolBarPip.layout(pipLeft, menuHeight,
+          pipLeft + pipWidth, menuHeight + pipHeight);
+      mMenuLayout.layout(0, 0, menuWidth, menuHeight);
+    }
+  }
+
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    measureChild(mMenuLayout, widthMeasureSpec, heightMeasureSpec);
+    final int width = mMenuLayout.getMeasuredWidth();
+    int height = mMenuLayout.getMeasuredHeight();
+    measureChild(mToolBarPip, widthMeasureSpec, heightMeasureSpec);
+    height += mToolBarPip.getMeasuredHeight();
+    setMeasuredDimension(resolveSize(width, widthMeasureSpec),
+        resolveSize(height, heightMeasureSpec));
   }
 
   private void showMenu(Menu menu) {
@@ -64,13 +114,13 @@ public class AyahToolBar extends LinearLayout implements
       return;
     }
 
-    removeAllViews();
+    mMenuLayout.removeAllViews();
     final int count = menu.size();
     for (int i=0; i<count; i++) {
       final MenuItem item = menu.getItem(i);
       if (item.isVisible()) {
         final View view = getMenuItemView(item);
-        addView(view);
+        mMenuLayout.addView(view);
       }
     }
 
@@ -109,6 +159,16 @@ public class AyahToolBar extends LinearLayout implements
   public void updatePosition(float x, float y) {
     ViewHelper.setX(this, x);
     ViewHelper.setY(this, y);
+  }
+
+  public void updatePosition(AyahToolBarPosition position) {
+    ensurePipPosition(position.pipPosition);
+    updatePosition(position.x, position.y);
+  }
+
+  private void ensurePipPosition(PipPosition position) {
+    mPipPosition = position;
+    mToolBarPip.ensurePosition(position);
   }
 
   public boolean isShowing() {
@@ -150,5 +210,11 @@ public class AyahToolBar extends LinearLayout implements
       return true;
     }
     return false;
+  }
+
+  public static class AyahToolBarPosition {
+    public float x;
+    public float y;
+    public PipPosition pipPosition;
   }
 }

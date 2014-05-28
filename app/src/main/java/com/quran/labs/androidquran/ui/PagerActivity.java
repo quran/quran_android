@@ -161,7 +161,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private FragmentStatePagerAdapter mSlidingPagerAdapter;
   private ViewGroup mSlidingLayout;
   private IconPageIndicator mSlidingPagerIndicator;
-  private boolean isInAyahMode;
+  private boolean mIsInAyahMode;
   private SuraAyah mStart;
   private SuraAyah mEnd;
 
@@ -1687,7 +1687,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public boolean isInAyahMode() {
-    return isInAyahMode;
+    return mIsInAyahMode;
   }
 
   public SuraAyah getSelectionStart() {
@@ -1706,7 +1706,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         mAyahToolBar.showMenu();
       }
       showAyahModeHighlights(suraAyah, tracker);
-      isInAyahMode = true;
+      mIsInAyahMode = true;
     }
   }
 
@@ -1714,7 +1714,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mAyahToolBar.hideMenu();
     mSlidingPanel.hidePane();
     clearAyahModeHighlights();
-    isInAyahMode = false;
+    mIsInAyahMode = false;
   }
 
   public void updateAyahStartSelection(
@@ -1745,13 +1745,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   private void updateToolbarPosition(SuraAyah start, AyahTracker tracker) {
     new RefreshBookmarkIconTask(this, start).execute();
-    final float[] pos = tracker.getToolBarPosition(
-        start.sura, start.ayah, mAyahToolBar.getToolBarWidth(),
-        mAyahToolBarTotalHeight);
+    final AyahToolBar.AyahToolBarPosition position =
+        tracker.getToolBarPosition(start.sura, start.ayah,
+            mAyahToolBar.getToolBarWidth(), mAyahToolBarTotalHeight);
+    final float[] pos = new float[2];
+    pos[0] = position.x;
+    pos[1] = position.y;
     mAyahToolBarCurPos = pos;
-    if (pos != null) {
-      mAyahToolBar.updatePosition(pos[0], pos[1]);
-    }
+    mAyahToolBar.updatePosition(position);
   }
 
   private void refreshPages() {
