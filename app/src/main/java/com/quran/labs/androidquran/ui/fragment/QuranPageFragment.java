@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.widgets.ObservableScrollView;
 
 import android.app.Activity;
 import android.content.Context;
@@ -42,7 +43,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,7 @@ import java.util.Set;
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class QuranPageFragment extends SherlockFragment
-    implements AyahTracker {
+    implements AyahTracker, ObservableScrollView.OnScrollListener {
 
   private static final String TAG = "QuranPageFragment";
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
@@ -59,7 +59,7 @@ public class QuranPageFragment extends SherlockFragment
   private int mPageNumber;
   private AsyncTask mCurrentTask;
   private HighlightingImageView mImageView;
-  private ScrollView mScrollView;
+  private ObservableScrollView mScrollView;
   private PaintDrawable mLeftGradient, mRightGradient = null;
 
   private AyahSelectedListener mAyahSelectedListener;
@@ -116,7 +116,7 @@ public class QuranPageFragment extends SherlockFragment
     mRightBorder = (ImageView) view.findViewById(R.id.right_border);
 
     mImageView = (HighlightingImageView) view.findViewById(R.id.page_image);
-    mScrollView = (ScrollView) view.findViewById(R.id.page_scroller);
+    mScrollView = (ObservableScrollView) view.findViewById(R.id.page_scroller);
 
     mMainView = view;
     mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -133,6 +133,10 @@ public class QuranPageFragment extends SherlockFragment
     mImageView.setOnTouchListener(gestureListener);
     mImageView.setClickable(true);
     mImageView.setLongClickable(true);
+
+    if (mScrollView != null) {
+      mScrollView.setOnScrollListener(this);
+    }
 
     mOverlayText = mPrefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
 
@@ -423,7 +427,21 @@ public class QuranPageFragment extends SherlockFragment
     }
   }
 
+  @Override
+  public void onScrollChanged(
+      ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+    PagerActivity activity = (PagerActivity) getActivity();
+    if (activity != null) {
+      activity.onQuranPageScroll(y);
+    }
+  }
+
   private class PageGestureDetector extends SimpleOnGestureListener {
+    @Override
+    public boolean onDown(MotionEvent e) {
+      return true;
+    }
+
     @Override
     public boolean onSingleTapUp(MotionEvent event) {
       return handleEvent(event, EventType.SINGLE_TAP);

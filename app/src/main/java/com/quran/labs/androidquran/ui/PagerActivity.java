@@ -148,6 +148,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
   private float[] mAyahToolBarCurPos;
+  private int mCurPageScroll = 0;
   private boolean mDualPages = false;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -305,6 +306,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         if (mAyahToolBar.isShowing() && mAyahToolBarCurPos != null) {
           int barPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
           float x = mAyahToolBarCurPos[0];
+          float y = mAyahToolBarCurPos[1] - mCurPageScroll;
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
             x -= positionOffsetPixels;
@@ -316,13 +318,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
             mAyahToolBar.setVisibility(View.GONE);
             return;
           }
-          mAyahToolBar.updatePosition(x, mAyahToolBarCurPos[1]);
+          mAyahToolBar.updatePosition(x, y);
           // If the toolbar is not showing, show it
           if (mAyahToolBar.getVisibility() != View.VISIBLE) {
             mAyahToolBar.setVisibility(View.VISIBLE);
           }
-          //Log.d(TAG, "pos="+position+"\tpixel="+positionOffsetPixels+
-          //    "\tcur="+ mAyahToolBarCurPos[0]+"\tfinal="+x);
         }
       }
 
@@ -1762,6 +1762,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
     pos[1] = position.y;
     mAyahToolBarCurPos = pos;
     mAyahToolBar.updatePosition(position);
+    if (mAyahToolBar.getVisibility() != View.VISIBLE) {
+      mAyahToolBar.setVisibility(View.VISIBLE);
+    }
+  }
+
+  // Used to sync toolbar position when scrolling
+  // quran page (landscape non-tablet mode)
+  public void onQuranPageScroll(int scrollY) {
+    mCurPageScroll = scrollY;
+    if (mIsInAyahMode) {
+      mAyahToolBar.updatePosition(mAyahToolBarCurPos[0], mAyahToolBarCurPos[1] - scrollY);
+    }
   }
 
   private void refreshPages() {
