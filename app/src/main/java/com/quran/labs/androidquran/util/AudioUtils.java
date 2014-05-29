@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
@@ -15,6 +16,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.Locale;
+
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
 public class AudioUtils {
    private static final String TAG = "AudioUtils";
@@ -130,8 +133,8 @@ public class AudioUtils {
 
       int pageLastSura = 114;
       int pageLastAyah = 6;
-      if (page > 604 || page < 0){ return null; }
-      if (page < 604){
+      if (page > PAGES_LAST || page < 0){ return null; }
+      if (page < PAGES_LAST){
          int nextPageSura = QuranInfo.PAGE_SURA_START[page];
          int nextPageAyah = QuranInfo.PAGE_AYAH_START[page];
 

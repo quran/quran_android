@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.util;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 
 import android.content.Context;
@@ -19,6 +20,8 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
 public class QuranFileUtils {
   private static final String TAG = "QuranFileUtils";
@@ -84,7 +87,7 @@ public class QuranFileUtils {
           return false;
         }
         int files = fileList.length;
-        if (files >= 604) {
+        if (files >= PAGES_LAST) {
           // ideally, we should loop for each page and ensure
           // all pages are there, but this will do for now.
           return true;
