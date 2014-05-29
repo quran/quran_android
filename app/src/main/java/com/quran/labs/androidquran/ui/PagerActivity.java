@@ -157,10 +157,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   // AYAH ACTION PANEL STUFF
   // Max height of sliding panel (% of screen)
-  private static final float PANEL_MAX_HEIGHT = 0.8f;
-  // % of sliding range to expand to (0.0=expanded, 1.0=collapsed)
-  private static final float PANEL_OPEN_OFFSET = 0.8f;
-  private static final float PANEL_EXPAND_OFFSET = 0.6f;
+  private static final float PANEL_MAX_HEIGHT = 0.6f;
   private SlidingUpPanelLayout mSlidingPanel;
   private ViewPager mSlidingPager;
   private FragmentStatePagerAdapter mSlidingPagerAdapter;
@@ -455,14 +452,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
     int displayHeight = getResources().getDisplayMetrics().heightPixels;
     mSlidingLayout.getLayoutParams().height = (int) (displayHeight * PANEL_MAX_HEIGHT);
     mSlidingPanel.setEnableDragViewTouchEvents(true);
+    mSlidingPanel.setPanelSlideListener(new SlidingPanelListener());
     mSlidingLayout.setVisibility(View.GONE);
 
     // When clicking any menu items, expand the panel
     mSlidingPagerIndicator.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (mSlidingPanel.getSlideOffset() > PANEL_EXPAND_OFFSET) {
-          mSlidingPanel.expandPane(PANEL_EXPAND_OFFSET);
+        if (!mSlidingPanel.isExpanded()) {
+          mSlidingPanel.expandPane();
         }
       }
     });
@@ -1717,7 +1715,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void endAyahMode() {
     mAyahToolBar.hideMenu();
     mSlidingPanel.collapsePane();
-    mSlidingLayout.setVisibility(View.GONE);
     clearAyahModeHighlights();
     mIsInAyahMode = false;
   }
@@ -1863,7 +1860,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         mHandler.post(new Runnable() {
           @Override
           public void run() {
-            mSlidingPanel.expandPane(PANEL_OPEN_OFFSET);
+            mSlidingPanel.expandPane();
           }
         });
       }
@@ -1877,4 +1874,26 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
+  private class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {
+
+    @Override
+    public void onPanelSlide(View panel, float slideOffset) {
+    }
+
+    @Override
+    public void onPanelCollapsed(View panel) {
+      if (mIsInAyahMode) {
+        endAyahMode();
+      }
+      mSlidingPanel.hidePane();
+    }
+
+    @Override
+    public void onPanelExpanded(View panel) {
+    }
+
+    @Override
+    public void onPanelAnchored(View panel) {
+    }
+  }
 }
