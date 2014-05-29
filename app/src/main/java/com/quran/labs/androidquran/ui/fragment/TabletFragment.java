@@ -493,6 +493,11 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
   @Override
   public void highlightAyah(int sura, int ayah, HighlightType type) {
+    highlightAyah(sura, ayah, type, true);
+  }
+
+  @Override
+  public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
     if (mMode == Mode.ARABIC && mCoordinateData == null) {
       new GetAyahCoordsTask(getActivity(), sura, ayah, type)
           .execute(mPageNumber - 1, mPageNumber);

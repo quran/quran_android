@@ -152,6 +152,11 @@ public class TranslationFragment extends SherlockFragment
 
   @Override
   public void highlightAyah(int sura, int ayah, HighlightType type) {
+    highlightAyah(sura, ayah, type, true);
+  }
+
+  @Override
+  public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
     if (mTranslationView != null) {
       mHighlightedAyah = QuranInfo.getAyahId(sura, ayah);
       mTranslationView.highlightAyah(mHighlightedAyah);
