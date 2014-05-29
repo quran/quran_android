@@ -21,6 +21,7 @@
  * - add getSlideOffset() method to expose the slide offset
  * - hidePane(): check if mSlideableView is already GONE
  * - draw(): if mSlideableView is GONE, don't draw its shadow
+ * - Add option to allow dragging to arbitrary position (false by default)
  * - DragHelperCallback.onViewReleased(): if yvel == 0 (i.e. drag, not fling),
  *   don't snap to top/bottom (to allow expanding to arbitrary positions)
  *
@@ -81,6 +82,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
    * Default is set to false because that is how it was written
    */
   private static final boolean DEFAULT_OVERLAY_FLAG = false;
+  /**
+   * Default is set to false because that is how it was written
+   */
+  private static final boolean DEFAULT_ARBITRARY_POS_FLAG = false;
   /**
    * Default attributes for layout
    */
@@ -196,6 +201,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
    * Flag indicating that sliding feature is enabled\disabled
    */
   private boolean mIsSlidingEnabled;
+
+  /**
+   * Flag indicating that the sliding panel can be dragged anywhere
+   */
+  private boolean mArbitraryPositionEnabled;
 
   /**
    * Flag indicating if a drag view can have its own touch events.  If set
@@ -317,6 +327,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         mDragViewResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_dragView, -1);
 
         mOverlayContent = ta.getBoolean(R.styleable.SlidingUpPanelLayout_overlay,DEFAULT_OVERLAY_FLAG);
+
+        mArbitraryPositionEnabled = ta.getBoolean(R.styleable.SlidingUpPanelLayout_arbitraryPosition,DEFAULT_ARBITRARY_POS_FLAG);
       }
 
       ta.recycle();
@@ -391,6 +403,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
    */
   public void setSlidingEnabled(boolean enabled) {
     mIsSlidingEnabled = enabled;
+  }
+
+  /**
+   * Set arbitrary position flag
+   * @param enabled flag value
+   */
+  public void setArbitraryPositionEnabled(boolean enabled) {
+    mArbitraryPositionEnabled = enabled;
   }
 
   /**
@@ -1194,9 +1214,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         top += mSlideRange;
       }
 
-      if (yvel == 0) {
+      // If arbitrary position enabled, don't snap to position
+      if (mArbitraryPositionEnabled && yvel == 0) {
         top = releasedChild.getTop();
       }
+
       mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top);
       invalidate();
     }
