@@ -402,8 +402,14 @@ public class QuranPageFragment extends SherlockFragment
     final int screenWidth = mImageView == null ? 0 : mImageView.getWidth();
     if (bounds != null && screenWidth > 0) {
       final int screenHeight = QuranScreenInfo.getInstance().getHeight();
-      return ImageAyahUtils.getToolBarPosition(bounds, screenWidth,
+      AyahToolBar.AyahToolBarPosition position =
+          ImageAyahUtils.getToolBarPosition(bounds, screenWidth,
           screenHeight, toolBarWidth, toolBarHeight);
+      // If we're in landscape mode (wrapped in SV) update the y-offset
+      if (mScrollView != null) {
+        position.yScroll = 0 - mScrollView.getScrollY();
+      }
+      return position;
     }
     return null;
   }

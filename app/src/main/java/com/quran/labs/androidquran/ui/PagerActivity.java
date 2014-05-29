@@ -99,6 +99,7 @@ import java.util.Set;
 
 import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.*;
+import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
 public class PagerActivity extends SherlockFragmentActivity implements
     AudioStatusBar.AudioBarListener,
@@ -147,8 +148,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
-  private float[] mAyahToolBarCurPos;
-  private int mCurPageScroll = 0;
+  private AyahToolBarPosition mAyahToolBarPos;
   private boolean mDualPages = false;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -303,22 +303,20 @@ public class PagerActivity extends SherlockFragmentActivity implements
       @Override
       public void onPageScrolled(int position, float positionOffset,
                                  int positionOffsetPixels) {
-        if (mAyahToolBar.isShowing() && mAyahToolBarCurPos != null) {
+        if (mAyahToolBar.isShowing() && mAyahToolBarPos != null) {
           int barPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
-          float x = mAyahToolBarCurPos[0];
-          float y = mAyahToolBarCurPos[1] - mCurPageScroll;
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
-            x -= positionOffsetPixels;
+            mAyahToolBarPos.xScroll = 0 - positionOffsetPixels;
           } else if (position == barPos - 1) {
             // Swiping to prev ViewPager page (i.e. next quran page)
-            x += (mViewPager.getWidth() - positionOffsetPixels);
+            mAyahToolBarPos.xScroll = mViewPager.getWidth() - positionOffsetPixels;
           } else {
             // Totally off screen, should hide toolbar
             mAyahToolBar.setVisibility(View.GONE);
             return;
           }
-          mAyahToolBar.updatePosition(x, y);
+          mAyahToolBar.updatePosition(mAyahToolBarPos);
           // If the toolbar is not showing, show it
           if (mAyahToolBar.getVisibility() != View.VISIBLE) {
             mAyahToolBar.setVisibility(View.VISIBLE);
@@ -1710,9 +1708,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     if (!mIsInAyahMode) {
       mStart = mEnd = suraAyah;
       updateToolbarPosition(suraAyah, tracker);
-      if (mAyahToolBarCurPos != null) {
-        mAyahToolBar.showMenu();
-      }
+      mAyahToolBar.showMenu();
       showAyahModeHighlights(suraAyah, tracker);
       mIsInAyahMode = true;
     }
@@ -1754,25 +1750,21 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   private void updateToolbarPosition(SuraAyah start, AyahTracker tracker) {
     new RefreshBookmarkIconTask(this, start).execute();
-    final AyahToolBar.AyahToolBarPosition position =
-        tracker.getToolBarPosition(start.sura, start.ayah,
+    mAyahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
             mAyahToolBar.getToolBarWidth(), mAyahToolBarTotalHeight);
-    final float[] pos = new float[2];
-    pos[0] = position.x;
-    pos[1] = position.y;
-    mAyahToolBarCurPos = pos;
-    mAyahToolBar.updatePosition(position);
+    mAyahToolBar.updatePosition(mAyahToolBarPos);
     if (mAyahToolBar.getVisibility() != View.VISIBLE) {
       mAyahToolBar.setVisibility(View.VISIBLE);
     }
   }
 
-  // Used to sync toolbar position when scrolling
-  // quran page (landscape non-tablet mode)
+  // Used to sync toolbar with page's SV (landscape non-tablet mode)
   public void onQuranPageScroll(int scrollY) {
-    mCurPageScroll = scrollY;
-    if (mIsInAyahMode) {
-      mAyahToolBar.updatePosition(mAyahToolBarCurPos[0], mAyahToolBarCurPos[1] - scrollY);
+    if (mAyahToolBarPos != null) {
+      mAyahToolBarPos.yScroll = 0 - scrollY;
+      if (mIsInAyahMode) {
+        mAyahToolBar.updatePosition(mAyahToolBarPos);
+      }
     }
   }
 
