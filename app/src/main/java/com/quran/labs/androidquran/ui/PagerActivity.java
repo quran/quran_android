@@ -1805,7 +1805,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   private void showAyahModeHighlights(SuraAyah suraAyah, AyahTracker tracker) {
     tracker.highlightAyah(
-        suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION);
+        suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION, false);
   }
 
   private void clearAyahModeHighlights() {

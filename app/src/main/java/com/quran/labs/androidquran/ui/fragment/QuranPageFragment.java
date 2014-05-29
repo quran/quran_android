@@ -314,6 +314,8 @@ public class QuranPageFragment extends SherlockFragment
 
   private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
+    private boolean mScrollToAyah = true;
+
     public GetAyahCoordsTask(Context context) {
       super(context, QuranScreenInfo.getInstance().getWidthParam());
     }
@@ -323,9 +325,11 @@ public class QuranPageFragment extends SherlockFragment
           QuranScreenInfo.getInstance().getWidthParam(), mPageNumber);
     }
 
-    public GetAyahCoordsTask(Context context, int sura, int ayah, HighlightType type) {
+    public GetAyahCoordsTask(Context context, int sura, int ayah,
+                             HighlightType type, boolean scrollToAyah) {
       super(context, QuranScreenInfo.getInstance().getWidthParam(),
           sura, ayah, type);
+      mScrollToAyah = scrollToAyah;
     }
 
     @Override
@@ -340,7 +344,7 @@ public class QuranPageFragment extends SherlockFragment
       }
 
       if (mHighlightAyah) {
-        handleHighlightAyah(mSura, mAyah, mHighlightType);
+        handleHighlightAyah(mSura, mAyah, mHighlightType, mScrollToAyah);
       } else if (mEvent != null) {
         handlePress(mEvent, mEventType);
       } else {
@@ -361,6 +365,11 @@ public class QuranPageFragment extends SherlockFragment
 
   @Override
   public void highlightAyah(int sura, int ayah, HighlightType type) {
+    highlightAyah(sura, ayah, type, true);
+  }
+
+  @Override
+  public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
     if (mCoordinateData == null) {
       if (mCurrentTask != null &&
           !(mCurrentTask instanceof QueryAyahCoordsTask)) {
@@ -370,19 +379,19 @@ public class QuranPageFragment extends SherlockFragment
 
       if (mCurrentTask == null) {
         mCurrentTask = new GetAyahCoordsTask(
-            getActivity(), sura, ayah, type).execute(mPageNumber);
+            getActivity(), sura, ayah, type, scrollToAyah).execute(mPageNumber);
       }
     } else {
-      handleHighlightAyah(sura, ayah, type);
+      handleHighlightAyah(sura, ayah, type, scrollToAyah);
     }
   }
 
-  private void handleHighlightAyah(int sura, int ayah, HighlightType type) {
+  private void handleHighlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
     if (mImageView == null) {
       return;
     }
     mImageView.highlightAyah(sura, ayah, type);
-    if (mScrollView != null) {
+    if (mScrollView != null && scrollToAyah) {
       AyahBounds yBounds = ImageAyahUtils.
           getYBoundsForHighlight(mCoordinateData, sura, ayah);
       if (yBounds != null) {
@@ -404,7 +413,7 @@ public class QuranPageFragment extends SherlockFragment
       final int screenHeight = QuranScreenInfo.getInstance().getHeight();
       AyahToolBar.AyahToolBarPosition position =
           ImageAyahUtils.getToolBarPosition(bounds, screenWidth,
-          screenHeight, toolBarWidth, toolBarHeight);
+              screenHeight, toolBarWidth, toolBarHeight);
       // If we're in landscape mode (wrapped in SV) update the y-offset
       if (mScrollView != null) {
         position.yScroll = 0 - mScrollView.getScrollY();
