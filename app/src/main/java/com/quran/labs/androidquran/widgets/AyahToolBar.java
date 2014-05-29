@@ -156,14 +156,12 @@ public class AyahToolBar extends ViewGroup implements
     }
   }
 
-  public void updatePosition(float x, float y) {
-    ViewHelper.setX(this, x);
-    ViewHelper.setY(this, y);
-  }
-
   public void updatePosition(AyahToolBarPosition position) {
     ensurePipPosition(position.pipPosition);
-    updatePosition(position.x, position.y);
+    float x = position.x + position.xScroll;
+    float y = position.y + position.yScroll;
+    ViewHelper.setX(this, x);
+    ViewHelper.setY(this, y);
   }
 
   private void ensurePipPosition(PipPosition position) {
@@ -215,6 +213,8 @@ public class AyahToolBar extends ViewGroup implements
   public static class AyahToolBarPosition {
     public float x;
     public float y;
+    public float xScroll;
+    public float yScroll;
     public PipPosition pipPosition;
   }
 }

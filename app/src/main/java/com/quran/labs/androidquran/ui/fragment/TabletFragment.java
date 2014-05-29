@@ -418,6 +418,11 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     }
 
     @Override
+    public boolean onDown(MotionEvent e) {
+      return true;
+    }
+
+    @Override
     public boolean onSingleTapUp(MotionEvent event) {
       return handleEvent(event, EventType.SINGLE_TAP);
     }
