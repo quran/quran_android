@@ -99,6 +99,7 @@ import java.util.Set;
 
 import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.*;
+import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
 public class PagerActivity extends SherlockFragmentActivity implements
     AudioStatusBar.AudioBarListener,
@@ -147,7 +148,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
-  private float[] mAyahToolBarCurPos;
+  private AyahToolBarPosition mAyahToolBarPos;
   private boolean mDualPages = false;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -155,7 +156,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private Set<AsyncTask> mCurrentTasks = new HashSet<AsyncTask>();
 
   // AYAH ACTION PANEL STUFF
-  private static final float PANEL_HEIGHT = 0.6f;
+  // Max height of sliding panel (% of screen)
+  private static final float PANEL_MAX_HEIGHT = 0.8f;
+  // % of sliding range to expand to (0.0=expanded, 1.0=collapsed)
+  private static final float PANEL_OPEN_OFFSET = 0.8f;
+  private static final float PANEL_EXPAND_OFFSET = 0.6f;
   private SlidingUpPanelLayout mSlidingPanel;
   private ViewPager mSlidingPager;
   private FragmentStatePagerAdapter mSlidingPagerAdapter;
@@ -298,27 +303,24 @@ public class PagerActivity extends SherlockFragmentActivity implements
       @Override
       public void onPageScrolled(int position, float positionOffset,
                                  int positionOffsetPixels) {
-        if (mAyahToolBar.isShowing() && mAyahToolBarCurPos != null) {
+        if (mAyahToolBar.isShowing() && mAyahToolBarPos != null) {
           int barPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
-          float x = mAyahToolBarCurPos[0];
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
-            x -= positionOffsetPixels;
+            mAyahToolBarPos.xScroll = 0 - positionOffsetPixels;
           } else if (position == barPos - 1) {
             // Swiping to prev ViewPager page (i.e. next quran page)
-            x += (mViewPager.getWidth() - positionOffsetPixels);
+            mAyahToolBarPos.xScroll = mViewPager.getWidth() - positionOffsetPixels;
           } else {
             // Totally off screen, should hide toolbar
             mAyahToolBar.setVisibility(View.GONE);
             return;
           }
-          mAyahToolBar.updatePosition(x, mAyahToolBarCurPos[1]);
+          mAyahToolBar.updatePosition(mAyahToolBarPos);
           // If the toolbar is not showing, show it
           if (mAyahToolBar.getVisibility() != View.VISIBLE) {
             mAyahToolBar.setVisibility(View.VISIBLE);
           }
-          //Log.d(TAG, "pos="+position+"\tpixel="+positionOffsetPixels+
-          //    "\tcur="+ mAyahToolBarCurPos[0]+"\tfinal="+x);
         }
       }
 
@@ -353,6 +355,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
           } else {
             // we don't have the key
             new IsPageBookmarkedTask().execute(page);
+          }
+        }
+
+        // If we're more than 1 page away from ayah selection end ayah mode
+        if (mIsInAyahMode) {
+          int ayahPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
+          if (Math.abs(ayahPos - position) > 1) {
+            endAyahMode();
           }
         }
       }
@@ -443,7 +453,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     // Set sliding layout parameters
     int displayHeight = getResources().getDisplayMetrics().heightPixels;
-    mSlidingLayout.getLayoutParams().height = (int) (displayHeight * PANEL_HEIGHT);
+    mSlidingLayout.getLayoutParams().height = (int) (displayHeight * PANEL_MAX_HEIGHT);
     mSlidingPanel.setEnableDragViewTouchEvents(true);
     mSlidingLayout.setVisibility(View.GONE);
 
@@ -451,8 +461,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mSlidingPagerIndicator.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (!mSlidingPanel.isExpanded()) {
-          mSlidingPanel.expandPane();
+        if (mSlidingPanel.getSlideOffset() > PANEL_EXPAND_OFFSET) {
+          mSlidingPanel.expandPane(PANEL_EXPAND_OFFSET);
         }
       }
     });
@@ -735,7 +745,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
           .unregisterReceiver(mDownloadReceiver);
       mDownloadReceiver = null;
     }
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       endAyahMode();
     }
     super.onPause();
@@ -903,7 +913,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void switchToTranslation() {
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       endAyahMode();
     }
     String activeDatabase = TranslationUtils.getDefaultTranslation(
@@ -965,14 +975,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onBookmarkTagsUpdated() {
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       new RefreshBookmarkIconTask(this, mStart).execute();
     }
   }
 
   @Override
   public void onTagAdded(final String name) {
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       if (TextUtils.isEmpty(name))
         return;
       TagBookmarkDialog f = (TagBookmarkDialog) mSlidingPagerAdapter.getFragmentIfExists(TAG_PAGE);
@@ -1310,7 +1320,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
           } else {
             unHighlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
           }
-          if (isInAyahMode()) {
+          if (mIsInAyahMode) {
             SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
             if (mStart.equals(suraAyah)) {
               updateAyahBookmarkIcon(suraAyah, result);
@@ -1627,7 +1637,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onBackPressed() {
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       endAyahMode();
     } else if (mShowingTranslation) {
       switchToQuran();
@@ -1639,7 +1649,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public boolean isListeningForAyahSelection(EventType eventType) {
     return eventType == EventType.LONG_PRESS ||
-        eventType == EventType.SINGLE_TAP && isInAyahMode();
+        eventType == EventType.SINGLE_TAP && mIsInAyahMode;
   }
 
   @Override
@@ -1647,13 +1657,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
       SuraAyah suraAyah, AyahTracker tracker) {
     switch (eventType) {
       case SINGLE_TAP:
-        if (isInAyahMode()) {
+        if (mIsInAyahMode) {
           updateAyahStartSelection(suraAyah, tracker);
           return true;
         }
         return false;
       case LONG_PRESS:
-        if (isInAyahMode()) {
+        if (mIsInAyahMode) {
           updateAyahEndSelection(suraAyah);
         } else {
           startAyahMode(suraAyah, tracker);
@@ -1670,13 +1680,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public boolean onClick(EventType eventType) {
     switch (eventType) {
       case SINGLE_TAP:
-        if (!isInAyahMode()) {
+        if (!mIsInAyahMode) {
           toggleActionBar();
           return true;
         }
         return false;
       case DOUBLE_TAP:
-        if (isInAyahMode()) {
+        if (mIsInAyahMode) {
           endAyahMode();
           return true;
         }
@@ -1684,10 +1694,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
       default:
         return false;
     }
-  }
-
-  public boolean isInAyahMode() {
-    return mIsInAyahMode;
   }
 
   public SuraAyah getSelectionStart() {
@@ -1699,12 +1705,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void startAyahMode(SuraAyah suraAyah, AyahTracker tracker) {
-    if (!isInAyahMode()) {
+    if (!mIsInAyahMode) {
       mStart = mEnd = suraAyah;
       updateToolbarPosition(suraAyah, tracker);
-      if (mAyahToolBarCurPos != null) {
-        mAyahToolBar.showMenu();
-      }
+      mAyahToolBar.showMenu();
       showAyahModeHighlights(suraAyah, tracker);
       mIsInAyahMode = true;
     }
@@ -1712,14 +1716,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   public void endAyahMode() {
     mAyahToolBar.hideMenu();
-    mSlidingPanel.hidePane();
+    mSlidingPanel.collapsePane();
+    mSlidingLayout.setVisibility(View.GONE);
     clearAyahModeHighlights();
     mIsInAyahMode = false;
   }
 
   public void updateAyahStartSelection(
       SuraAyah suraAyah, AyahTracker tracker) {
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       clearAyahModeHighlights();
       mStart = mEnd = suraAyah;
       if (mAyahToolBar.isShowing()) {
@@ -1733,7 +1738,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void updateAyahEndSelection(SuraAyah suraAyah) {
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       clearAyahModeHighlights();
       mEnd = suraAyah;
       if (mSlidingPanel.isPaneVisible()) {
@@ -1745,14 +1750,22 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   private void updateToolbarPosition(SuraAyah start, AyahTracker tracker) {
     new RefreshBookmarkIconTask(this, start).execute();
-    final AyahToolBar.AyahToolBarPosition position =
-        tracker.getToolBarPosition(start.sura, start.ayah,
+    mAyahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
             mAyahToolBar.getToolBarWidth(), mAyahToolBarTotalHeight);
-    final float[] pos = new float[2];
-    pos[0] = position.x;
-    pos[1] = position.y;
-    mAyahToolBarCurPos = pos;
-    mAyahToolBar.updatePosition(position);
+    mAyahToolBar.updatePosition(mAyahToolBarPos);
+    if (mAyahToolBar.getVisibility() != View.VISIBLE) {
+      mAyahToolBar.setVisibility(View.VISIBLE);
+    }
+  }
+
+  // Used to sync toolbar with page's SV (landscape non-tablet mode)
+  public void onQuranPageScroll(int scrollY) {
+    if (mAyahToolBarPos != null) {
+      mAyahToolBarPos.yScroll = 0 - scrollY;
+      if (mIsInAyahMode) {
+        mAyahToolBar.updatePosition(mAyahToolBarPos);
+      }
+    }
   }
 
   private void refreshPages() {
@@ -1796,7 +1809,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   private void clearAyahModeHighlights() {
-    if (isInAyahMode()) {
+    if (mIsInAyahMode) {
       for (int i = mStart.getPage(); i <= mEnd.getPage(); i++) {
         AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
         if (fragment != null) {
@@ -1840,8 +1853,19 @@ public class PagerActivity extends SherlockFragmentActivity implements
       } else {
         mAyahToolBar.hideMenu();
         refreshPages();
-        mSlidingPanel.showPane();
         mSlidingPager.setCurrentItem(sliderPage);
+        mSlidingPanel.showPane();
+        // TODO there's got to be a better way than this hack
+        // The issue is that smoothScrollTo returns if mCanSlide is false
+        // and it's false when the panel is GONE and showPane only calls
+        // requestLayout, and only in onLayout does mCanSlide become true.
+        // So by posting this later it gives time for onLayout to run.
+        mHandler.post(new Runnable() {
+          @Override
+          public void run() {
+            mSlidingPanel.expandPane(PANEL_OPEN_OFFSET);
+          }
+        });
       }
       return true;
     }

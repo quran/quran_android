@@ -16,6 +16,13 @@
  * Modifications:
  * - computeScroll(): check mDragHelper != null
  * - rename above/below_shadow to sliding_panel_above/below_shadow
+ * - change slider sensitivity to 1.0 (sensitive) at end of constructor
+ * - onMeasure(): even if slider is GONE, still set the mSlideableView
+ * - add getSlideOffset() method to expose the slide offset
+ * - hidePane(): check if mSlideableView is already GONE
+ * - draw(): if mSlideableView is GONE, don't draw its shadow
+ * - DragHelperCallback.onViewReleased(): if yvel == 0 (i.e. drag, not fling),
+ *   don't snap to top/bottom (to allow expanding to arbitrary positions)
  *
  */
 
@@ -339,7 +346,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     setWillNotDraw(false);
 
-    mDragHelper = ViewDragHelper.create(this, 0.5f, new DragHelperCallback());
+    mDragHelper = ViewDragHelper.create(this, 1.0f, new DragHelperCallback());
     mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
     mCanSlide = true;
@@ -578,6 +585,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
       int height = layoutHeight;
       if (child.getVisibility() == GONE) {
         lp.dimWhenOffset = false;
+        if (i == 1) mSlideableView = child;
         continue;
       }
 
@@ -863,6 +871,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
     return expandPane(mSlideableView, 0, mSlideOffset);
   }
 
+  public float getSlideOffset() {
+    return mSlideOffset;
+  }
+
   /**
    * Check if the layout is completely expanded.
    *
@@ -909,7 +921,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
   }
 
   public void hidePane() {
-    if (mSlideableView == null) {
+    if (mSlideableView == null || mSlideableView.getVisibility() == GONE) {
       return;
     }
     mSlideableView.setVisibility(View.GONE);
@@ -1013,7 +1025,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
   public void draw(Canvas c) {
     super.draw(c);
 
-    if (mSlideableView == null) {
+    if (mSlideableView == null || mSlideableView.getVisibility() == GONE) {
       // No need to draw a shadow if we don't have one.
       return;
     }
@@ -1182,6 +1194,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         top += mSlideRange;
       }
 
+      if (yvel == 0) {
+        top = releasedChild.getTop();
+      }
       mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top);
       invalidate();
     }
