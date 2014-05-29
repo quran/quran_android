@@ -30,6 +30,7 @@
         <attr name="flingVelocity" format="integer" />
         <attr name="dragView" format="reference" />
         <attr name="overlay" format="boolean"/>
+        <attr name="arbitraryPosition" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="IconPageIndicator">
