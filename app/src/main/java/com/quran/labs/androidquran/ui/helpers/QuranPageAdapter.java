@@ -10,6 +10,9 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
+
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
    private static String TAG = "QuranPageAdapter";
 
@@ -62,7 +65,9 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
    }
 
 	@Override
-	public int getCount(){ return mIsDualPages ? 302 : 604; }
+	public int getCount() {
+    return mIsDualPages ? PAGES_LAST_DUAL : PAGES_LAST;
+  }
 
 	@Override
 	public Fragment getItem(int position){
@@ -92,7 +97,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 	}
 
   public AyahTracker getFragmentIfExistsForPage(int page){
-    if (page < Constants.PAGES_FIRST || Constants.PAGES_LAST < page) {
+    if (page < Constants.PAGES_FIRST || PAGES_LAST < page) {
       return null;
     }
     int position = QuranInfo.getPosFromPage(page, mIsDualPages);
