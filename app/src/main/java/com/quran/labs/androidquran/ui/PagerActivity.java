@@ -98,6 +98,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.*;
 import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
@@ -230,7 +232,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
       if (page != -1) {
-        page = Constants.PAGES_LAST - page;
+        page = PAGES_LAST - page;
       }
       mShowingTranslation = savedInstanceState
           .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
@@ -266,7 +268,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     Bundle extras = intent.getExtras();
     if (extras != null) {
       if (page == -1) {
-        page = Constants.PAGES_LAST -
+        page = PAGES_LAST -
             extras.getInt("page", Constants.PAGES_FIRST);
       }
 
@@ -279,7 +281,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     if (mShowingTranslation && mTranslationItems != null) {
       updateActionBarSpinner();
     } else {
-      updateActionBarTitle(Constants.PAGES_LAST - page);
+      updateActionBarTitle(PAGES_LAST - page);
     }
 
     mWorker = QuranPageWorker.getInstance(this);
@@ -324,10 +326,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       @Override
       public void onPageSelected(int position) {
         Log.d(TAG, "onPageSelected(): " + position);
-        int page = Constants.PAGES_LAST - position;
-        if (mDualPages) {
-          page = (302 - position) * 2;
-        }
+        int page = QuranInfo.getPageFromPos(position, mDualPages);
         QuranSettings.setLastPage(PagerActivity.this, page);
         if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)) {
           mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
@@ -377,7 +376,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mViewPager.setCurrentItem(page);
     }
 
-    QuranSettings.setLastPage(this, Constants.PAGES_LAST - page);
+    QuranSettings.setLastPage(this, PAGES_LAST - page);
     setLoading(false);
 
     // just got created, need to reconnect to service
@@ -399,7 +398,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
 
     if (refresh) {
-      final int curPage = Constants.PAGES_LAST - page;
+      final int curPage = PAGES_LAST - page;
       mHandler.post(new Runnable() {
         @Override
         public void run() {
@@ -409,12 +408,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
             if (page % 2 != 0) {
               page++;
             }
-            page = 302 - (page / 2);
+            page = PAGES_LAST_DUAL - (page / 2);
           } else {
             if (page % 2 == 0) {
               page--;
             }
-            page = Constants.PAGES_LAST - page;
+            page = PAGES_LAST - page;
           }
           mViewPager.setCurrentItem(page);
         }
@@ -688,9 +687,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     Bundle extras = intent.getExtras();
     if (extras != null) {
-      int page = Constants.PAGES_LAST -
+      int page = PAGES_LAST -
           extras.getInt("page", Constants.PAGES_FIRST);
-      updateActionBarTitle(Constants.PAGES_LAST - page);
+      updateActionBarTitle(PAGES_LAST - page);
 
       boolean currentValue = mShowingTranslation;
       mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION,
@@ -792,11 +791,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       state.putSerializable(LAST_AUDIO_DL_REQUEST,
           mLastAudioDownloadRequest);
     }
-    int lastPage = Constants.PAGES_LAST - mViewPager.getCurrentItem();
-    if (mDualPages) {
-      lastPage = 302 - mViewPager.getCurrentItem();
-      lastPage *= 2;
-    }
+    int lastPage = QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
     state.putSerializable(LAST_READ_PAGE, lastPage);
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
     state.putBoolean(LAST_ACTIONBAR_STATE, mIsActionBarHidden);
@@ -817,10 +812,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     super.onPrepareOptionsMenu(menu);
     MenuItem item = menu.findItem(R.id.favorite_item);
     if (item != null) {
-      int page = Constants.PAGES_LAST - mViewPager.getCurrentItem();
-      if (mDualPages) {
-        page = (302 - mViewPager.getCurrentItem()) * 2;
-      }
+      int page = QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
 
       boolean bookmarked = false;
       if (mBookmarksCache.indexOfKey(page) >= 0) {
@@ -896,7 +888,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   public void setLoadingIfPage(int page) {
     int position = mViewPager.getCurrentItem();
-    int currentPage = Constants.PAGES_LAST - position;
+    int currentPage = PAGES_LAST - position;
     if (currentPage == page) {
       setLoading(true);
     }
@@ -1024,10 +1016,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   private int getCurrentPage() {
-    if (mDualPages) {
-      return (302 - mViewPager.getCurrentItem()) * 2;
-    }
-    return Constants.PAGES_LAST - mViewPager.getCurrentItem();
+    return QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
   }
 
   private void updateActionBarSpinner() {
@@ -1204,17 +1193,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
     Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST ||
-        Constants.PAGES_LAST < page) {
+        PAGES_LAST < page) {
       return;
     }
 
-    int position = Constants.PAGES_LAST - page;
-    if (mDualPages) {
-      if (page % 2 != 0) {
-        page++;
-      }
-      position = 302 - (page / 2);
-    }
+    int position = QuranInfo.getPosFromPage(page, mDualPages);
 
     if (position != mViewPager.getCurrentItem() && force) {
       unHighlightAyahs(type);
@@ -1370,9 +1353,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
 
     int position = mViewPager.getCurrentItem();
-    int page = Constants.PAGES_LAST - position;
+    int page = PAGES_LAST - position;
     if (mDualPages) {
-      page = ((302 - position) * 2) - 1;
+      page = ((PAGES_LAST_DUAL - position) * 2) - 1;
     }
 
     int startSura = QuranInfo.PAGE_SURA_START[page - 1];

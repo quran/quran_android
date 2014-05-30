@@ -9,6 +9,9 @@ import android.content.Context;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
+import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
+
 public class QuranInfo {
 
 	public static String getAyahTitle(Context cx) {
@@ -492,14 +495,14 @@ public class QuranInfo {
 	};
 	
 	public static Integer[] getPageBounds(int page){
-		if (page > Constants.PAGES_LAST)
-			page = Constants.PAGES_LAST;
+		if (page > PAGES_LAST)
+			page = PAGES_LAST;
 		if (page < 1) page = 1;
 		
 		Integer[] bounds = new Integer[4];
 		bounds[0] = PAGE_SURA_START[page-1];
 		bounds[1] = PAGE_AYAH_START[page-1];
-		if (page == Constants.PAGES_LAST){
+		if (page == PAGES_LAST){
 			bounds[2] = Constants.SURA_LAST;
 			bounds[3] = 6;
 		}
@@ -543,7 +546,7 @@ public class QuranInfo {
 	}
 	
 	public static int getRub3FromPage(int page) {
-		if ((page > Constants.PAGES_LAST) || (page < 1)) return -1;
+		if ((page > PAGES_LAST) || (page < 1)) return -1;
 		return PAGE_RUB3_START[page-1];
 	}
 	
@@ -557,7 +560,7 @@ public class QuranInfo {
 		
 		// what page does the sura start on?
 		int index = QuranInfo.SURA_PAGE_START[sura - 1] - 1;
-		while (index < Constants.PAGES_LAST){
+		while (index < PAGES_LAST){
 			// what's the first sura in that page?
 			int ss = QuranInfo.PAGE_SURA_START[index];
 			
@@ -590,20 +593,20 @@ public class QuranInfo {
 	}
 
   public static int getPageFromPos(int position, boolean dual) {
-    int page = Constants.PAGES_LAST - position;
+    int page = PAGES_LAST - position;
     if (dual) {
-      page = (302 - position) * 2;
+      page = (PAGES_LAST_DUAL - position) * 2;
     }
     return page;
   }
 
   public static int getPosFromPage(int page, boolean dual) {
-    int position = Constants.PAGES_LAST - page;
+    int position = PAGES_LAST - page;
     if (dual) {
       if (page % 2 != 0) {
         page++;
       }
-      position = 302 - (page / 2);
+      position = PAGES_LAST_DUAL - (page / 2);
     }
     return position;
   }
