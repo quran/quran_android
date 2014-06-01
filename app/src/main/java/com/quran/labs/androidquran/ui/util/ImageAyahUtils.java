@@ -141,9 +141,11 @@ public class ImageAyahUtils {
         isToolBarUnderAyah = true;
       }
 
-      float x = (data.heightFactor * chosen.getMaxX()) - toolBarWidth;
+      final float midpoint = (data.widthFactor *
+          (chosen.getMaxX() + chosen.getMinX())) / 2;
+      float x = midpoint - (toolBarWidth / 2) + data.offsetX;
       if (x < 0 || x + toolBarWidth > screenWidth) {
-        x = data.heightFactor * chosen.getMinX();
+        x = data.offsetX + (data.widthFactor * chosen.getMinX());
         if (x + toolBarWidth > screenWidth) {
           x = screenWidth - data.offsetX - toolBarWidth;
         }
@@ -152,6 +154,7 @@ public class ImageAyahUtils {
       result = new AyahToolBar.AyahToolBarPosition();
       result.x = x;
       result.y = y;
+      result.pipOffset = midpoint - x + data.offsetX;
       result.pipPosition = isToolBarUnderAyah ?
           AyahToolBar.PipPosition.UP : AyahToolBar.PipPosition.DOWN;
     }
