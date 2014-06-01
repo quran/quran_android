@@ -92,11 +92,12 @@ public class AyahToolBar extends ViewGroup implements
       pipLeft = (totalWidth / 2) - (pipWidth / 2);
     }
 
+    // overlap the pip and toolbar by 1px to avoid occasional gap
     if (mPipPosition == PipPosition.UP) {
-      mToolBarPip.layout(pipLeft, 0, pipLeft + pipWidth, pipHeight);
+      mToolBarPip.layout(pipLeft, 0, pipLeft + pipWidth, pipHeight + 1);
       mMenuLayout.layout(0, pipHeight, menuWidth, pipHeight + menuHeight);
     } else {
-      mToolBarPip.layout(pipLeft, menuHeight,
+      mToolBarPip.layout(pipLeft, menuHeight - 1,
           pipLeft + pipWidth, menuHeight + pipHeight);
       mMenuLayout.layout(0, 0, menuWidth, menuHeight);
     }
@@ -162,14 +163,16 @@ public class AyahToolBar extends ViewGroup implements
   }
 
   public void updatePosition(AyahToolBarPosition position) {
+    boolean needsLayout = position.pipPosition != mPipPosition ||
+        mPipOffset != position.pipOffset;
     ensurePipPosition(position.pipPosition);
+    mPipOffset = position.pipOffset;
     float x = position.x + position.xScroll;
     float y = position.y + position.yScroll;
     ViewHelper.setX(this, x);
     ViewHelper.setY(this, y);
 
-    if (mPipOffset != position.pipOffset) {
-      mPipOffset = position.pipOffset;
+    if (needsLayout) {
       requestLayout();
     }
   }
