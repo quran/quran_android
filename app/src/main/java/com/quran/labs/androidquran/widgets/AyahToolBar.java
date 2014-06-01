@@ -29,6 +29,7 @@ public class AyahToolBar extends ViewGroup implements
   private Menu mCurrentMenu;
   private int mItemWidth;
   private boolean mIsShowing;
+  private float mPipOffset;
   private LinearLayout mMenuLayout;
   private AyahToolBarPip mToolBarPip;
   private PipPosition mPipPosition;
@@ -86,7 +87,11 @@ public class AyahToolBar extends ViewGroup implements
     final int menuWidth = mMenuLayout.getMeasuredWidth();
     final int menuHeight = mMenuLayout.getMeasuredHeight();
 
-    final int pipLeft = (totalWidth / 2) - (pipWidth / 2);
+    int pipLeft = (int) mPipOffset;
+    if ((pipLeft + pipWidth) > totalWidth) {
+      pipLeft = (totalWidth / 2) - (pipWidth / 2);
+    }
+
     if (mPipPosition == PipPosition.UP) {
       mToolBarPip.layout(pipLeft, 0, pipLeft + pipWidth, pipHeight);
       mMenuLayout.layout(0, pipHeight, menuWidth, pipHeight + menuHeight);
@@ -162,6 +167,11 @@ public class AyahToolBar extends ViewGroup implements
     float y = position.y + position.yScroll;
     ViewHelper.setX(this, x);
     ViewHelper.setY(this, y);
+
+    if (mPipOffset != position.pipOffset) {
+      mPipOffset = position.pipOffset;
+      requestLayout();
+    }
   }
 
   private void ensurePipPosition(PipPosition position) {
@@ -215,6 +225,7 @@ public class AyahToolBar extends ViewGroup implements
     public float y;
     public float xScroll;
     public float yScroll;
+    public float pipOffset;
     public PipPosition pipPosition;
   }
 }
