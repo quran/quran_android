@@ -59,9 +59,11 @@ public class QuranActivity extends SherlockFragmentActivity
    private int[] mTabs = new int[]{ R.string.quran_sura,
                                     R.string.quran_juz2,
                                     R.string.menu_bookmarks,
-                                    R.string.menu_tags};
-   private int[] mTabTags = new int[]{ SURA_LIST, JUZ2_LIST,
-           BOOKMARKS_LIST, TAGS_LIST };
+                                    R.string.menu_tags };
+   private int[] mArabicTabs = new int[]{ R.string.menu_tags,
+                                          R.string.menu_bookmarks,
+                                          R.string.quran_juz2,
+                                          R.string.quran_sura };
    
    private ViewPager mPager = null;
    private AlertDialog mUpgradeDialog = null;
@@ -81,18 +83,24 @@ public class QuranActivity extends SherlockFragmentActivity
       ActionBar actionbar = getSupportActionBar();
       actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+      mIsArabic = QuranSettings.isArabicNames(this);
+      final int[] tabs = mIsArabic ? mArabicTabs : mTabs;
+      for (int i=0; i<tabs.length; i++){
+        ActionBar.Tab tab = actionbar.newTab();
+        tab.setText(tabs[i]);
+        tab.setTag(i);
+        tab.setTabListener(this);
+        actionbar.addTab(tab);
+      }
+
       mPager = (ViewPager)findViewById(R.id.index_pager);
       mPager.setOffscreenPageLimit(3);
-      mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
+      mPagerAdapter = new PagerAdapter(getSupportFragmentManager(), mIsArabic);
       mPager.setAdapter(mPagerAdapter);
       mPager.setOnPageChangeListener(mOnPageChangeListener);
-      
-      for (int i=0; i<mTabs.length; i++){
-         ActionBar.Tab tab = actionbar.newTab();
-         tab.setText(mTabs[i]);
-         tab.setTag(mTabTags[i]);
-         tab.setTabListener(this);
-         actionbar.addTab(tab);
+
+      if (mIsArabic) {
+        mPager.setCurrentItem(mTabs.length - 1);
       }
 
       mBookmarksDBAdapter = new BookmarksDBAdapter(this);
@@ -113,8 +121,6 @@ public class QuranActivity extends SherlockFragmentActivity
             }
          }
       }
-
-      mIsArabic = QuranSettings.isArabicNames(this);
    }
 
    @Override
@@ -167,7 +173,9 @@ public class QuranActivity extends SherlockFragmentActivity
    @Override
    public void onTabSelected(Tab tab, FragmentTransaction transaction){
       Integer tag = (Integer)tab.getTag();
-      mPager.setCurrentItem(tag);
+      if (mPager != null && tag != mPager.getCurrentItem()) {
+        mPager.setCurrentItem(tag);
+      }
    }
    
    @Override
@@ -192,7 +200,9 @@ public class QuranActivity extends SherlockFragmentActivity
       public void onPageSelected(int position) {
          ActionBar actionbar = getSherlock().getActionBar();
          Tab tab = actionbar.getTabAt(position);
-         actionbar.selectTab(tab);
+         if (actionbar.getSelectedTab() != tab) {
+           actionbar.selectTab(tab);
+         }
       }
    };
    
@@ -382,8 +392,10 @@ public class QuranActivity extends SherlockFragmentActivity
    }
    
    public static class PagerAdapter extends FragmentPagerAdapter {
-      public PagerAdapter(FragmentManager fm){
+      private boolean mIsArabic;
+      public PagerAdapter(FragmentManager fm, boolean isArabic){
          super(fm);
+         mIsArabic = isArabic;
       }
       
       @Override
@@ -393,17 +405,22 @@ public class QuranActivity extends SherlockFragmentActivity
       
       @Override
       public Fragment getItem(int position){
-         switch (position){
-         case QuranActivity.SURA_LIST:
-            return SuraListFragment.newInstance();
-         case QuranActivity.JUZ2_LIST:
-            return JuzListFragment.newInstance();
-         case QuranActivity.BOOKMARKS_LIST:
-            return BookmarksFragment.newInstance();
-         case QuranActivity.TAGS_LIST:
-         default:
-            return TagsFragment.newInstance();
+         int pos = position;
+         if (mIsArabic) {
+           pos = Math.abs(position - 3);
          }
+
+        switch (pos) {
+          case QuranActivity.SURA_LIST:
+            return SuraListFragment.newInstance();
+          case QuranActivity.JUZ2_LIST:
+            return JuzListFragment.newInstance();
+          case QuranActivity.BOOKMARKS_LIST:
+            return BookmarksFragment.newInstance();
+          case QuranActivity.TAGS_LIST:
+          default:
+            return TagsFragment.newInstance();
+        }
       }
 
       /**
