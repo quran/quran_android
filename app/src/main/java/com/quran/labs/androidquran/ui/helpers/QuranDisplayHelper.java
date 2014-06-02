@@ -1,19 +1,24 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.LinearGradient;
-import android.graphics.Shader;
-import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
-import android.widget.Toast;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.LinearGradient;
+import android.graphics.Point;
+import android.graphics.Shader;
+import android.graphics.drawable.PaintDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
+import android.os.Build;
+import android.view.Display;
+import android.widget.Toast;
 
 public class QuranDisplayHelper {
    private static final String TAG = "QuranDisplayHelper";
@@ -91,4 +96,11 @@ public class QuranDisplayHelper {
          }
       };
    }
+
+  @TargetApi(Build.VERSION_CODES.KITKAT)
+  public static int getWidthKitKat(Display display){
+    Point point = new Point();
+    display.getRealSize(point);
+    return point.x;
+  }
 }

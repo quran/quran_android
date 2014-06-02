@@ -7,6 +7,9 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
+import com.quran.labs.androidquran.task.QueryBookmarkedAyahsTask;
+import com.quran.labs.androidquran.task.QueryPageCoordsTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
@@ -14,9 +17,6 @@ import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
-import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
-import com.quran.labs.androidquran.task.QueryBookmarkedAyahsTask;
-import com.quran.labs.androidquran.task.QueryPageCoordsTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -24,17 +24,21 @@ import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.ObservableScrollView;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
@@ -88,8 +92,9 @@ public class QuranPageFragment extends SherlockFragment
     super.onCreate(savedInstanceState);
     mPageNumber = getArguments() != null ?
         getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
-    int width = getActivity().getWindowManager()
-        .getDefaultDisplay().getWidth();
+    Display display = getActivity().getWindowManager().getDefaultDisplay();
+    int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
+            QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
     mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
     mRightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
     setHasOptionsMenu(true);
