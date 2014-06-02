@@ -21,7 +21,6 @@ repositories {
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.3"
-    useOldManifestMerger false
     lintOptions.checkReleaseBuilds false
 
     defaultConfig {
@@ -40,6 +39,7 @@ android {
 
     buildTypes {
       debug {
+         ext.enableCrashlytics = false
          buildConfigField "boolean", "LOG_CRASHES", "false"
       }
 
