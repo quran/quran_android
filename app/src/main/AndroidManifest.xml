@@ -31,7 +31,7 @@
 		<activity android:name=".ui.PagerActivity"
 		          android:launchMode="singleTop" />
         <activity android:name=".ui.TranslationManagerActivity"
-                 android:screenOrientation="portrait" />
+            android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity android:name=".QuranPreferenceActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity android:name=".SearchActivity" android:launchMode="singleTop">

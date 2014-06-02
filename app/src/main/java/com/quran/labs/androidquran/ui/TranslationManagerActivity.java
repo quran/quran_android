@@ -1,18 +1,8 @@
 package com.quran.labs.androidquran.ui;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.*;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
@@ -21,8 +11,29 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
-import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.task.TranslationListTask;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,6 +82,10 @@ public class TranslationManagerActivity extends SherlockActivity
       setSupportProgressBarIndeterminateVisibility(true);
       mDatabaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);
 
+      final ActionBar actionBar = getSupportActionBar();
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(R.string.prefs_translations);
+
       mSharedPreferences = PreferenceManager
               .getDefaultSharedPreferences(getApplicationContext());
       mTask = new TranslationListTask(this, this);
@@ -78,14 +93,14 @@ public class TranslationManagerActivity extends SherlockActivity
    }
 
    @Override
-   public void onPause(){
+   public void onStop(){
       if (mDownloadReceiver != null){
          mDownloadReceiver.setListener(null);
          LocalBroadcastManager.getInstance(this)
               .unregisterReceiver(mDownloadReceiver);
          mDownloadReceiver = null;
       }
-      super.onPause();
+      super.onStop();
    }
 
    @Override
@@ -97,7 +112,17 @@ public class TranslationManagerActivity extends SherlockActivity
       super.onDestroy();
    }
 
-   @Override
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
+  }
+
+  @Override
    public void handleDownloadSuccess(){
       if (mDownloadingItem != null){
          if (mDownloadingItem.exists){
@@ -185,24 +210,30 @@ public class TranslationManagerActivity extends SherlockActivity
       }
 
       List<TranslationItem> res = new ArrayList<TranslationItem>();
-      TranslationItem hdr = new TranslationItem(
-              getString(R.string.downloaded_translations));
-      hdr.isSeparator = true;
-      res.add(hdr);
 
-      boolean needsUpgrade = false;
-      for (TranslationItem item : downloaded){
-         res.add(item);
-         if (hasUpgrade(item)){ needsUpgrade = true; }
-      }
+      if (downloaded.size() > 0) {
+        TranslationItem hdr = new TranslationItem(
+            getString(R.string.downloaded_translations));
+        hdr.isSeparator = true;
+        res.add(hdr);
 
-      if (!needsUpgrade){
-         mSharedPreferences.edit()
+        boolean needsUpgrade = false;
+        for (TranslationItem item : downloaded) {
+          res.add(item);
+          if (hasUpgrade(item)) {
+            needsUpgrade = true;
+          }
+        }
+
+        if (!needsUpgrade) {
+          mSharedPreferences.edit()
               .putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
-                      needsUpgrade).commit();
+                  needsUpgrade).commit();
+        }
       }
 
-      hdr = new TranslationItem(getString(R.string.available_translations));
+     TranslationItem hdr = new TranslationItem(
+         getString(R.string.available_translations));
       hdr.isSeparator = true;
       res.add(hdr);
 
@@ -422,6 +453,7 @@ public class TranslationManagerActivity extends SherlockActivity
                holder.rightImage.setImageResource(R.drawable.ic_download);
                holder.rightImage.setVisibility(View.VISIBLE);
                holder.rightImage.setOnClickListener(null);
+               holder.rightImage.setClickable(false);
             }
          }
 
