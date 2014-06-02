@@ -33,8 +33,10 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.PaintDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -92,8 +94,9 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     super.onCreate(savedInstanceState);
     mPageNumber = getArguments() != null ?
         getArguments().getInt(FIRST_PAGE_EXTRA) : -1;
-    int width = getActivity().getWindowManager()
-        .getDefaultDisplay().getWidth() / 2;
+    Display display = getActivity().getWindowManager().getDefaultDisplay();
+    int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
+        QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
     mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
     mRightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
     setHasOptionsMenu(true);

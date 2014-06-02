@@ -17,8 +17,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,8 +71,9 @@ public class TranslationFragment extends SherlockFragment
         }
       }
     }
-    int width = getActivity().getWindowManager()
-        .getDefaultDisplay().getWidth();
+    Display display = getActivity().getWindowManager().getDefaultDisplay();
+    int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
+        QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
     mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
     mRightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
     setHasOptionsMenu(true);

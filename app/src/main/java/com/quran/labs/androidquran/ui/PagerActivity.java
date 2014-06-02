@@ -152,6 +152,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private AyahToolBar mAyahToolBar;
   private AyahToolBarPosition mAyahToolBarPos;
   private boolean mDualPages = false;
+  private boolean mIsLandscape;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
 
@@ -252,6 +253,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     final Resources resources = getResources();
+    mIsLandscape = resources.getConfiguration().orientation ==
+        Configuration.ORIENTATION_LANDSCAPE;
     int background = resources.getColor(
         R.color.transparent_actionbar_color);
     mAyahToolBarTotalHeight = resources
@@ -478,6 +481,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibility(boolean isVisible){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mIsLandscape){
+      setUiVisibilityKitKat(isVisible);
+      return;
+    }
+
     int flags;
     if (isVisible){
       flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
@@ -485,6 +493,25 @@ public class PagerActivity extends SherlockFragmentActivity implements
       flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
           | View.SYSTEM_UI_FLAG_FULLSCREEN
           | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    }
+    mViewPager.setSystemUiVisibility(flags);
+  }
+
+  @TargetApi(Build.VERSION_CODES.KITKAT)
+  private void setUiVisibilityKitKat(boolean isVisible) {
+    int flags;
+    if (isVisible) {
+      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+    } else {
+      flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
+          | View.SYSTEM_UI_FLAG_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_IMMERSIVE;
     }
     mViewPager.setSystemUiVisibility(flags);
   }
