@@ -1,5 +1,15 @@
 package com.quran.labs.androidquran;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.StorageUtils;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,14 +23,6 @@ import android.preference.PreferenceCategory;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.StorageUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +47,12 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
 
     setTheme(R.style.Theme_Sherlock);
     super.onCreate(savedInstanceState);
+
+    final ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(R.string.menu_settings);
+    }
 
     // add preferences
     addPreferencesFromResource(R.xml.quran_preferences);
@@ -98,6 +106,15 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
       Log.d(TAG, "removing advanced settings from preferences");
       getPreferenceScreen().removePreference(advancedPrefs);
     }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   private void loadStorageOptions() {
