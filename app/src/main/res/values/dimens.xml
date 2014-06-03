@@ -10,9 +10,9 @@
     <dimen name="icon_page_indicator_height">3dp</dimen>
     <dimen name="translation_left_right_margin">20dp</dimen>
     <dimen name="translation_top_bottom_margin">10dp</dimen>
-    <dimen name="toolbar_height">36dp</dimen>
+    <dimen name="toolbar_height">42dp</dimen>
     <dimen name="toolbar_pip_height">12dp</dimen>
     <dimen name="toolbar_pip_width">14dp</dimen>
-    <dimen name="toolbar_item_width">36dp</dimen>
-    <dimen name="toolbar_total_height">48dp</dimen>
+    <dimen name="toolbar_item_width">42dp</dimen>
+    <dimen name="toolbar_total_height">54dp</dimen>
 </resources>
