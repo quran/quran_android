@@ -940,14 +940,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
     String activeDatabase = TranslationUtils.getDefaultTranslation(
         this, mTranslations);
     if (activeDatabase == null) {
-      Intent i = new Intent(this, TranslationManagerActivity.class);
-      startActivity(i);
+      startTranslationManager();
     } else {
       mPagerAdapter.setTranslationMode();
       mShowingTranslation = true;
       invalidateOptionsMenu();
       updateActionBarSpinner();
     }
+  }
+
+  public void startTranslationManager() {
+    Intent i = new Intent(this, TranslationManagerActivity.class);
+    startActivity(i);
   }
 
   ActionBar.OnNavigationListener mNavigationCallback =
