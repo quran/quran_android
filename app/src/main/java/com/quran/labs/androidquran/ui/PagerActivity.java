@@ -26,6 +26,7 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 import com.quran.labs.androidquran.service.util.RepeatInfo;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
+import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.task.RefreshBookmarkIconTask;
 import com.quran.labs.androidquran.task.ShareAyahTask;
 import com.quran.labs.androidquran.task.ShareQuranAppTask;
@@ -43,7 +44,6 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter;
-import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -100,7 +100,10 @@ import java.util.Set;
 import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.*;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
 public class PagerActivity extends SherlockFragmentActivity implements
@@ -422,6 +425,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
         }
       });
     }
+
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        mAudioReceiver,
+        new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
+
+    mDownloadReceiver = new DefaultDownloadReceiver(this,
+        QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+    String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
+    LocalBroadcastManager.getInstance(this).registerReceiver(
+        mDownloadReceiver,
+        new IntentFilter(action));
+    mDownloadReceiver.setListener(this);
   }
 
   private void initAyahActionPanel() {
@@ -580,19 +595,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
     mTranslationReaderTask = new TranslationReaderTask();
     mTranslationReaderTask.execute();
-
-    mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-    LocalBroadcastManager.getInstance(this).registerReceiver(
-        mAudioReceiver,
-        new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
-
-    mDownloadReceiver = new DefaultDownloadReceiver(this,
-        QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-    String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
-    LocalBroadcastManager.getInstance(this).registerReceiver(
-        mDownloadReceiver,
-        new IntentFilter(action));
-    mDownloadReceiver.setListener(this);
 
     super.onResume();
     if (mShouldReconnect) {
@@ -761,14 +763,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mPromptDialog = null;
     }
     mSpinnerAdapter = null;
-    LocalBroadcastManager.getInstance(this)
-        .unregisterReceiver(mAudioReceiver);
-    if (mDownloadReceiver != null) {
-      mDownloadReceiver.setListener(null);
-      LocalBroadcastManager.getInstance(this)
-          .unregisterReceiver(mDownloadReceiver);
-      mDownloadReceiver = null;
-    }
+
     if (mIsInAyahMode) {
       endAyahMode();
     }
@@ -789,6 +784,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     if (mTabletAyahInfoAdapter != null) {
       mTabletAyahInfoAdapter.closeDatabase();
+    }
+
+    // remove broadcast receivers
+    LocalBroadcastManager.getInstance(this)
+        .unregisterReceiver(mAudioReceiver);
+    if (mDownloadReceiver != null) {
+      mDownloadReceiver.setListener(null);
+      LocalBroadcastManager.getInstance(this)
+          .unregisterReceiver(mDownloadReceiver);
+      mDownloadReceiver = null;
     }
 
     // If there are any unfinished tasks, stop them
