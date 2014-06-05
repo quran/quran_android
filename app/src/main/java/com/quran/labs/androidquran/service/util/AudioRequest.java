@@ -1,9 +1,10 @@
 package com.quran.labs.androidquran.service.util;
 
-import android.content.Context;
-import android.util.Log;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+
+import android.content.Context;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -75,6 +76,10 @@ public class AudioRequest implements Serializable {
          mRepeatInfo.setRepeatCount(repeatInfo.getRepeatCount());
       }
       else { mRepeatInfo = repeatInfo; }
+   }
+
+   public RepeatInfo getRepeatInfo() {
+     return mRepeatInfo;
    }
 
    public QuranAyah setCurrentAyah(int sura, int ayah){

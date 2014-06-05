@@ -101,6 +101,7 @@ public class AudioService extends Service implements OnCompletionListener,
       public static final String STATUS = "status";
       public static final String SURA = "sura";
       public static final String AYAH = "ayah";
+      public static final String REPEAT_COUNT = "repeat_count";
 
       public static final int STOPPED = 0;
       public static final int PLAYING = 1;
@@ -291,6 +292,7 @@ public class AudioService extends Service implements OnCompletionListener,
          else {
             int sura = -1;
             int ayah = -1;
+            int repeatCount = -200;
             int state = AudioUpdateIntent.PLAYING;
             if (mState == State.Paused){
                state = AudioUpdateIntent.PAUSED;
@@ -299,12 +301,19 @@ public class AudioService extends Service implements OnCompletionListener,
             if (mAudioRequest != null){
                sura = mAudioRequest.getCurrentSura();
                ayah = mAudioRequest.getCurrentAyah();
+
+               final RepeatInfo repeatInfo = mAudioRequest.getRepeatInfo();
+               if (repeatInfo != null) {
+                 repeatCount = repeatInfo.getRepeatCount();
+               }
             }
 
             Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
             updateIntent.putExtra(AudioUpdateIntent.STATUS, state);
             updateIntent.putExtra(AudioUpdateIntent.SURA, sura);
             updateIntent.putExtra(AudioUpdateIntent.AYAH, ayah);
+            updateIntent.putExtra(AudioUpdateIntent.REPEAT_COUNT, repeatCount);
+
             mBroadcastManager.sendBroadcast(updateIntent);
          }
       }
