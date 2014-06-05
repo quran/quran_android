@@ -1,5 +1,10 @@
 package com.quran.labs.androidquran.widgets;
 
+import com.actionbarsherlock.internal.widget.IcsAdapterView;
+import com.actionbarsherlock.internal.widget.IcsSpinner;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,11 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.actionbarsherlock.internal.widget.IcsAdapterView;
-import com.actionbarsherlock.internal.widget.IcsSpinner;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
 
 public class AudioStatusBar extends LinearLayout {
 
@@ -305,10 +305,16 @@ public class AudioStatusBar extends LinearLayout {
       addView(separator, paddingParams);
    }
 
-   private void incrementRepeat(){
-      mCurrentRepeat++;
-      if (mCurrentRepeat == mRepeatValues.length){ mCurrentRepeat = 0; }
-      String str = null;
+   private void incrementRepeat() {
+     mCurrentRepeat++;
+     if (mCurrentRepeat == mRepeatValues.length) {
+       mCurrentRepeat = 0;
+     }
+     updateRepeatButtonText();
+   }
+
+   private void updateRepeatButtonText() {
+      String str;
       int value = mRepeatValues[mCurrentRepeat];
       if (value == 0){ str = ""; }
       else if (value > 0){
@@ -316,6 +322,23 @@ public class AudioStatusBar extends LinearLayout {
       }
       else { str = mContext.getString(R.string.infinity); }
       mRepeatButton.setText(str);
+   }
+
+   public void setRepeatCount(int repeatCount) {
+     boolean updated = false;
+     for (int i=0; i<mRepeatValues.length; i++) {
+       if (mRepeatValues[i] == repeatCount) {
+         if (mCurrentRepeat != i) {
+           mCurrentRepeat = i;
+           updated = true;
+         }
+         break;
+       }
+     }
+
+     if (updated) {
+       updateRepeatButtonText();
+     }
    }
 
    public void setAudioBarListener(AudioBarListener listener){

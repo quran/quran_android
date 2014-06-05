@@ -1119,9 +1119,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
             AudioService.AudioUpdateIntent.SURA, -1);
         int ayah = intent.getIntExtra(
             AudioService.AudioUpdateIntent.AYAH, -1);
+        int repeatCount = intent.getIntExtra(
+            AudioService.AudioUpdateIntent.REPEAT_COUNT, -200);
         if (state == AudioService.AudioUpdateIntent.PLAYING) {
           mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
           highlightAyah(sura, ayah, HighlightType.AUDIO);
+          if (repeatCount >= -1) {
+            mAudioStatusBar.setRepeatCount(repeatCount);
+          }
         } else if (state == AudioService.AudioUpdateIntent.PAUSED) {
           mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
           highlightAyah(sura, ayah, HighlightType.AUDIO);
