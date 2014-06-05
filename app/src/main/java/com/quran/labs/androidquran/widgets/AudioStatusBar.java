@@ -6,10 +6,8 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Debug;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,8 +22,6 @@ import com.actionbarsherlock.internal.widget.IcsAdapterView;
 import com.actionbarsherlock.internal.widget.IcsSpinner;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.RepeatInfo;
 
 public class AudioStatusBar extends LinearLayout {
 
@@ -54,12 +50,7 @@ public class AudioStatusBar extends LinearLayout {
    private TextView mRepeatButton;
    private AudioBarListener mAudioBarListener;
 
-   boolean firstTime=true;//check is it first time click on run
-   boolean secondTime=true;//check is it second time resume
-   boolean isPaused=false;//check is paused
-
-
-    private int[] mRepeatValues = { 0, 1, 2, -1 };
+   private int[] mRepeatValues = { 0, 1, 2, -1 };
 
    public interface AudioBarListener {
       public void onPlayPressed();
@@ -280,8 +271,8 @@ public class AudioStatusBar extends LinearLayout {
       addButton(button);
       addButton(R.drawable.ic_next);
 
+      mCurrentRepeat = 0;
       mRepeatButton = new TextView(mContext);
-
       mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
               R.drawable.ic_repeat, 0, 0, 0);
       mRepeatButton.setBackgroundResource(
@@ -290,24 +281,6 @@ public class AudioStatusBar extends LinearLayout {
       mRepeatButton.setOnClickListener(mOnClickListener);
       addView(mRepeatButton, LayoutParams.WRAP_CONTENT,
               LayoutParams.MATCH_PARENT);
-
-
-        //update the repeat values when resumes
-       if(!firstTime&&!secondTime&&!isPaused) {
-       String str = null;
-       int value = mRepeatValues[mCurrentRepeat];
-       if (value > 0) {
-           str = mRepeatValues[mCurrentRepeat] + "";
-
-       } else {
-           str = mContext.getString(R.string.infinity);
-       }
-       mRepeatButton.setText(str);
-       }
-       else{
-           secondTime=false;
-       }
-
    }
 
    private void addButton(int imageId){
@@ -334,7 +307,6 @@ public class AudioStatusBar extends LinearLayout {
 
    private void incrementRepeat(){
       mCurrentRepeat++;
-
       if (mCurrentRepeat == mRepeatValues.length){ mCurrentRepeat = 0; }
       String str = null;
       int value = mRepeatValues[mCurrentRepeat];
@@ -357,31 +329,13 @@ public class AudioStatusBar extends LinearLayout {
             int tag = (Integer)view.getTag();
             switch (tag){
                case R.drawable.ic_play:
-                    isPaused=false;
-                   mAudioBarListener.onPlayPressed();
-                //check is first time click on play
-                 if(firstTime) {
-                        firstTime=false;
-                 }
-                  else{
-                //     if (mCurrentRepeat == mRepeatValues.length){ mCurrentRepeat = 0; }
-                      String str = null;
-                     int value = mRepeatValues[mCurrentRepeat];
-                     if (value > 0){
-                         str = mRepeatValues[mCurrentRepeat] + "";
-
-                     }
-                     else { str = mContext.getString(R.string.infinity); }
-                     mRepeatButton.setText(str);
-
-                 }
-                   break;
+                  mAudioBarListener.onPlayPressed();
+                  break;
                case R.drawable.ic_stop:
                   mAudioBarListener.onStopPressed();
                   break;
                case R.drawable.ic_pause:
-                    isPaused=true;
-                   mAudioBarListener.onPausePressed();
+                  mAudioBarListener.onPausePressed();
                   break;
                case R.drawable.ic_next:
                   mAudioBarListener.onPreviousPressed();
@@ -390,14 +344,10 @@ public class AudioStatusBar extends LinearLayout {
                   mAudioBarListener.onNextPressed();
                   break;
                case R.drawable.ic_repeat:
-        //will not click while paused
-       if(!isPaused) {
-           incrementRepeat();
-
-           mAudioBarListener.setRepeatCount(
-                   mRepeatValues[mCurrentRepeat]);
-       }
-           break;
+                  incrementRepeat();
+                  mAudioBarListener.setRepeatCount(
+                          mRepeatValues[mCurrentRepeat]);
+                  break;
                case R.drawable.ic_cancel:
                   if (mHaveCriticalError){
                      mHaveCriticalError = false;
