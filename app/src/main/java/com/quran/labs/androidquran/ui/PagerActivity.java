@@ -100,7 +100,6 @@ import java.util.Set;
 import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
@@ -1851,7 +1850,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
           sliderPage = TRANSLATION_PAGE;
           break;
         case R.id.cab_play_from_here:
-          sliderPage = AUDIO_PAGE;
+          if (mStart != null) {
+            playFromAyah(mStart.getPage(), mStart.sura, mStart.ayah);
+            toggleActionBarVisibility(true);
+          }
           break;
         case R.id.cab_share_ayah_link:
           new ShareQuranAppTask(PagerActivity.this, mStart, mEnd).execute();

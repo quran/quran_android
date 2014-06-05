@@ -1,25 +1,23 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.ui.fragment.AyahAudioFragment;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.widgets.IconPageIndicator;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
     IconPageIndicator.IconPagerAdapter {
 
   public static final int TAG_PAGE = 0;
   public static final int TRANSLATION_PAGE = 1;
-  public static final int AUDIO_PAGE = 2;
   public static final int[] PAGES = {
-      TAG_PAGE, TRANSLATION_PAGE, AUDIO_PAGE
+      TAG_PAGE, TRANSLATION_PAGE
   };
   public static final int[] PAGE_ICONS = {
-      R.drawable.ic_tag, R.drawable.ic_translation, R.drawable.ic_play
+      R.drawable.ic_tag, R.drawable.ic_translation
   };
 
   public SlidingPagerAdapter(FragmentManager fm) {
@@ -38,8 +36,6 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
         return new TagBookmarkDialog();
       case TRANSLATION_PAGE:
         return new AyahTranslationFragment();
-      case AUDIO_PAGE:
-        return new AyahAudioFragment();
     }
     return null;
   }
