@@ -308,6 +308,18 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     }
   }
 
+  public void refresh(String database) {
+    if (database != null) {
+      Activity activity = getActivity();
+      if (activity != null) {
+        new TranslationTask(activity, mPageNumber - 1, 0,
+            database, mRightTranslation).execute();
+        new TranslationTask(activity, mPageNumber, 0,
+            database, mLeftTranslation).execute();
+      }
+    }
+  }
+
   public void cleanup() {
     android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
     if (mLeftImageView != null) {
