@@ -449,10 +449,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
     closeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        TagBookmarkDialog f = (TagBookmarkDialog) mSlidingPagerAdapter.getFragmentIfExists(TAG_PAGE);
-        if (f != null) {
-          f.acceptChanges();
-        }
         endAyahMode();
       }
     });
@@ -1001,7 +997,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public void onBookmarkTagsUpdated() {
     if (mIsInAyahMode) {
-      new RefreshBookmarkIconTask(this, mStart).execute();
+      new RefreshBookmarkIconTask(this, mStart, true).execute();
     }
   }
 
@@ -1335,19 +1331,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
         if (mPageOnly) {
           mBookmarksCache.put(mPage, result);
           invalidateOptionsMenu();
-        } else if (QuranSettings.shouldHighlightBookmarks(PagerActivity.this)) {
-          if (result) {
-            highlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
-          } else {
-            unHighlightAyah(mSura, mAyah, HighlightType.BOOKMARK);
-          }
-          if (mIsInAyahMode) {
-            SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
-            if (mStart.equals(suraAyah)) {
-              updateAyahBookmarkIcon(suraAyah, result);
-            }
-
-          }
+        } else {
+          SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
+          updateAyahBookmark(suraAyah, result, true);
         }
       }
     }
@@ -1769,7 +1755,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   private void updateToolbarPosition(SuraAyah start, AyahTracker tracker) {
-    new RefreshBookmarkIconTask(this, start).execute();
+    new RefreshBookmarkIconTask(this, start, false).execute();
     mAyahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
             mAyahToolBar.getToolBarWidth(), mAyahToolBarTotalHeight);
     mAyahToolBar.updatePosition(mAyahToolBarPos);
@@ -1875,7 +1861,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
         endAyahMode();
       } else {
         mAyahToolBar.hideMenu();
-        refreshPages();
         mSlidingPager.setCurrentItem(sliderPage);
         mSlidingPanel.showPane();
         // TODO there's got to be a better way than this hack
@@ -1883,10 +1868,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
         // and it's false when the panel is GONE and showPane only calls
         // requestLayout, and only in onLayout does mCanSlide become true.
         // So by posting this later it gives time for onLayout to run.
+        // Another issue is that the fragments haven't been created yet
+        // (on first run), so calling refreshPages() before then won't work.
         mHandler.post(new Runnable() {
           @Override
           public void run() {
             mSlidingPanel.expandPane();
+            refreshPages();
           }
         });
       }
@@ -1894,9 +1882,19 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  public void updateAyahBookmarkIcon(SuraAyah suraAyah, boolean bookmarked) {
-    if (mStart.equals(suraAyah)) {
+  public void updateAyahBookmark(
+      SuraAyah suraAyah, boolean bookmarked, boolean refreshHighlight) {
+    // Refresh toolbar icon
+    if (mIsInAyahMode && mStart.equals(suraAyah)) {
       mAyahToolBar.setBookmarked(bookmarked);
+    }
+    // Refresh highlight
+    if (refreshHighlight && QuranSettings.shouldHighlightBookmarks(this)) {
+      if (bookmarked) {
+        highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
+      } else {
+        unHighlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
+      }
     }
   }
 
