@@ -153,7 +153,7 @@ public class QuranPageFragment extends SherlockFragment
     return view;
   }
 
-  private void updateView() {
+  public void updateView() {
     int lineImageId = R.drawable.dark_line;
     int leftBorderImageId = R.drawable.border_left;
     int rightBorderImageId = R.drawable.border_right;
@@ -193,10 +193,7 @@ public class QuranPageFragment extends SherlockFragment
       mLeftBorder.setBackgroundResource(lineImageId);
     }
 
-    if (nightMode) {
-      mImageView.setNightModeTextBrightness(nightModeTextBrightness);
-    }
-    mImageView.setNightMode(nightMode);
+    mImageView.setNightMode(nightMode, nightModeTextBrightness);
 
     if (!mPrefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true)) {
       mImageView.unHighlight(HighlightType.BOOKMARK);
