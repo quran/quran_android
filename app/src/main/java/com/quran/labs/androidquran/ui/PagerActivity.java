@@ -882,6 +882,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
     } else if (item.getItemId() == R.id.goto_translation) {
       switchToTranslation();
       return true;
+    } else if (item.getItemId() == R.id.night_mode) {
+      SharedPreferences prefs =
+          PreferenceManager.getDefaultSharedPreferences(this);
+      boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+      SharedPreferences.Editor prefsEditor = prefs.edit();
+      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, !isNightMode).commit();
+      refreshQuranPages();
     } else if (item.getItemId() == R.id.settings) {
       Intent i = new Intent(this, QuranPreferenceActivity.class);
       startActivity(i);
@@ -902,6 +909,18 @@ public class PagerActivity extends SherlockFragmentActivity implements
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  private void refreshQuranPages() {
+    int pos = mViewPager.getCurrentItem();
+    int start = (pos == 0) ? pos : pos - 1;
+    int end = (pos == mPagerAdapter.getCount() - 1) ? pos : pos + 1;
+    for (int i = start; i <= end; i++) {
+      Fragment f = mPagerAdapter.getFragmentIfExists(i);
+      if (f != null && f instanceof AyahTracker) {
+        ((AyahTracker) f).updateView();
+      }
+    }
   }
 
   @Override

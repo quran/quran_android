@@ -97,16 +97,14 @@ public class HighlightingImageView extends RecyclingImageView {
     mCoordinatesData = data;
   }
 
-  public void setNightMode(boolean isNightMode) {
+  public void setNightMode(boolean isNightMode, int textBrightness) {
     mIsNightMode = isNightMode;
+    if (isNightMode) {
+      mNightModeTextBrightness = textBrightness;
+      // we need a new color filter now
+      mColorFilterOn = false;
+    }
     adjustNightMode();
-  }
-
-  public void setNightModeTextBrightness(int nightModeTextBrightness) {
-    mNightModeTextBrightness = nightModeTextBrightness;
-
-    // we need a new color filter now
-    mColorFilterOn = false;
   }
 
   public void highlightAyah(int sura, int ayah, HighlightType type) {
@@ -146,7 +144,7 @@ public class HighlightingImageView extends RecyclingImageView {
       setColorFilter(new ColorMatrixColorFilter(matrix));
       mColorFilterOn = true;
     }
-    else if (!mIsNightMode && mColorFilterOn) {
+    else if (!mIsNightMode) {
       clearColorFilter();
       mColorFilterOn = false;
     }
