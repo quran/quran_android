@@ -33,6 +33,7 @@ import com.quran.labs.androidquran.task.ShareQuranAppTask;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
+import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
@@ -990,6 +991,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
                   .getFragmentIfExists(pos + count);
               if (f != null && f instanceof TranslationFragment) {
                 ((TranslationFragment) f).refresh(item.filename);
+              } else if (f != null && f instanceof TabletFragment) {
+                ((TabletFragment) f).refresh(item.filename);
               }
             }
             return true;
