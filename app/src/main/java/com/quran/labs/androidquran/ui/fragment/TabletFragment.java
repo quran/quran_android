@@ -203,7 +203,7 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
     mJustCreated = false;
   }
 
-  private void updateView() {
+  public void updateView() {
     int leftBorderImageId = R.drawable.border_left;
     int rightBorderImageId = R.drawable.border_right;
     int lineImageId = R.drawable.dark_line;
@@ -243,12 +243,11 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
 
 
     if (mMode == Mode.ARABIC) {
-      mLeftImageView.setNightMode(nightMode);
-      mRightImageView.setNightMode(nightMode);
-      if (nightMode) {
-        mLeftImageView.setNightModeTextBrightness(nightModeTextBrightness);
-        mRightImageView.setNightModeTextBrightness(nightModeTextBrightness);
-      }
+      mLeftImageView.setNightMode(nightMode, nightModeTextBrightness);
+      mRightImageView.setNightMode(nightMode, nightModeTextBrightness);
+    } else if (mMode == Mode.TRANSLATION) {
+      mLeftTranslation.setNightMode(nightMode, nightModeTextBrightness);
+      mRightTranslation.setNightMode(nightMode, nightModeTextBrightness);
     }
 
     if (!mPrefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true)) {
@@ -305,6 +304,18 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
           new TranslationTask(context, mPageNumber, 0,
               database, mLeftTranslation).execute();
         }
+      }
+    }
+  }
+
+  public void refresh(String database) {
+    if (database != null) {
+      Activity activity = getActivity();
+      if (activity != null) {
+        new TranslationTask(activity, mPageNumber - 1, 0,
+            database, mRightTranslation).execute();
+        new TranslationTask(activity, mPageNumber, 0,
+            database, mLeftTranslation).execute();
       }
     }
   }

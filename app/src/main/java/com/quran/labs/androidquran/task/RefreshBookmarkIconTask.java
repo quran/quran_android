@@ -9,10 +9,13 @@ import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 
 public class RefreshBookmarkIconTask extends PagerActivityTask<Void, Void, Boolean> {
   private SuraAyah mSuraAyah;
+  private boolean mRefreshHighlight;
 
-  public RefreshBookmarkIconTask(PagerActivity activity, SuraAyah suraAyah) {
+  public RefreshBookmarkIconTask(
+      PagerActivity activity, SuraAyah suraAyah, boolean refreshHighlight) {
     super(activity);
     mSuraAyah = suraAyah;
+    mRefreshHighlight = refreshHighlight;
   }
 
   @Override
@@ -36,7 +39,7 @@ public class RefreshBookmarkIconTask extends PagerActivityTask<Void, Void, Boole
     super.onPostExecute(result);
     PagerActivity activity = getActivity();
     if (result != null && activity != null){
-      activity.updateAyahBookmarkIcon(mSuraAyah, result);
+      activity.updateAyahBookmark(mSuraAyah, result, mRefreshHighlight);
     }
   }
 

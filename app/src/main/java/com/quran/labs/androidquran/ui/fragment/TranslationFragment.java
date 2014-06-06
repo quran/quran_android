@@ -118,7 +118,7 @@ public class TranslationFragment extends SherlockFragment
     return view;
   }
 
-  private void updateView() {
+  public void updateView() {
     if (getActivity() == null || mResources == null ||
         mMainView == null || !isAdded()) {
       return;
@@ -130,7 +130,13 @@ public class TranslationFragment extends SherlockFragment
     if (!mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
       mMainView.setBackgroundColor(mResources.getColor(R.color.page_background));
     }
-    if (mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false)) {
+
+    boolean nightMode = mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    int nightModeTextBrightness = mPrefs.getInt(
+        Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+        Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
+    mTranslationView.setNightMode(nightMode, nightModeTextBrightness);
+    if (nightMode) {
       mMainView.setBackgroundColor(Color.BLACK);
     }
 
