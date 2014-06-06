@@ -13,4 +13,5 @@ public interface AyahTracker {
   public void unHighlightAyahs(HighlightType type);
   public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
       int toolBarWidth, int toolBarHeight);
+  public void updateView();
 }

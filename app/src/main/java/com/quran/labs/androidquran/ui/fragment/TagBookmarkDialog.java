@@ -39,6 +39,8 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
    private ListView mListView;
 
+   private AsyncTask mCurrentTask;
+
    private static final String MADE_CHANGES = "madeChanges";
    private static final String BOOKMARK_ID = "bookmarkid";
    private static final String BOOKMARK_IDS = "bookmarkids";
@@ -134,7 +136,12 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
             Tag tag = (Tag)mAdapter.getItem(position);
             if (tag.mId >= 0) {
                mMadeChanges = true;
-            	tag.toggle();
+               tag.toggle();
+               // If not in dialog mode, save the changes now, otherwise, on OK
+               if (!getShowsDialog()) {
+                  if (mCurrentTask != null) mCurrentTask.cancel(true);
+                  mCurrentTask = new UpdateBookmarkTagsTask().execute();
+               }
             }
             else if (tag.mId == -1) {
 	           Context context = getActivity();
@@ -163,7 +170,9 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
          @Override
          public void onClick(DialogInterface dialog, int which) {
-            acceptChanges();
+            if (mMadeChanges) {
+               mCurrentTask = new UpdateBookmarkTagsTask().execute();
+            }
          }
       });
       builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -183,12 +192,6 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       }
       // If not in dialog mode, treat as normal fragment onCreateView
       return createTagsListView();
-   }
-
-   public void acceptChanges() {
-      if (mMadeChanges) {
-         new UpdateBookmarkTagsTask().execute();
-      }
    }
 
   public class TagsAdapter extends BaseAdapter {
@@ -361,6 +364,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
       @Override
       protected void onPostExecute(Void result) {
+         mCurrentTask = null;
          mMadeChanges = false;
          final Activity activity = getActivity();
          if (activity != null && activity instanceof OnBookmarkTagsUpdateListener) {

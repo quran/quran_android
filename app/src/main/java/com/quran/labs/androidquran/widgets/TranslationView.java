@@ -126,6 +126,21 @@ public class TranslationView extends ScrollView {
       }
    }
 
+   public void setNightMode(boolean isNightMode, int textBrightness) {
+     mIsNightMode = isNightMode;
+     if (isNightMode) {
+       mNightModeTextColor = Color.rgb(textBrightness, textBrightness, textBrightness);
+     }
+     mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
+         R.style.TranslationText;
+     mHighlightedStyle = mIsNightMode?
+         R.style.TranslationText_NightMode_Highlighted :
+         R.style.TranslationText_Highlighted;
+     if (mAyat != null){
+       setAyahs(mAyat);
+     }
+   }
+
    public void setAyahs(List<QuranAyah> ayat){
       mLastHighlightedAyah = -1;
 
