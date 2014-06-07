@@ -287,7 +287,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
       if (action.equals(ACTION_CONNECT)){
          if (mState == State.Stopped){
-            processStopRequest();
+            processStopRequest(true);
          }
          else {
             int sura = -1;
