@@ -100,12 +100,12 @@ Open Source Projects Used
 
 Changelog
 ---------
-**current**
+**version 2.5.2 (released 6/7/2014)**
 - major ui improvements for long press actions
 - option to highlight ayah bookmarks by default
 - malaysian translation (thanks @asyazwan)
 - uyghur translation (thanks @Sahran)
 - right to left layout for arabic (thanks @aessam)
-- bugfixes
+- many bugfixes and improvements
 
 You can see our complete set of releases [here] (https://github.com/ahmedre/quran_android/releases)
