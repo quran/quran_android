@@ -133,6 +133,7 @@ public class QuranListAdapter extends BaseAdapter {
   public boolean isEnabled(int position) {
     final QuranRow selected = mElements[position];
     return mSelectableHeaders || selected.isBookmark() ||
+        selected.rowType == QuranRow.NONE ||
         (selected.isBookmarkHeader() && selected.tagId >= 0);
   }
 

@@ -100,6 +100,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**current**
+- bugfixes
+
 **version 2.5.2 (released 6/7/2014)**
 - major ui improvements for long press actions
 - option to highlight ayah bookmarks by default
