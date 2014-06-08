@@ -1,13 +1,13 @@
 package com.quran.labs.androidquran.database;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.io.File;
 
@@ -210,8 +210,26 @@ public class DatabaseHandler {
     Crashlytics.log("search query: " + qtext + ", query: " + query);
 
     try {
-      Cursor c = mDatabase.rawQuery(qtext, new String[]{query});
-      return c;
+      /* this check for getCount below is intentional.
+       * due to the fact that many devices ship with an older sqlite
+       * that doesn't support the snippet call. however, this doesn't
+       * fail until you actually try to read any data (ie rawQuery
+       * succeeds, but trying to do anything with the cursor throws
+       * an exception).
+       *
+       * since we intentionally try and fall back to not using snippet,
+       * we want this exception to be thrown here so we can handle it
+       * gracefully if we can. consequently, we add the (awkward) check
+       * for c.getCount, which, on 2.x, will cause a crash when our
+       * query contains a snippet() call, thus allowing us to fallback
+       * without killing the app.
+       */
+      final Cursor c = mDatabase.rawQuery(qtext, new String[]{query});
+      if (c != null && c.getCount() >= 0) {
+        return c;
+      } else {
+        return null;
+      }
     } catch (Exception e){
       if (withSnippets && useFullTextIndex){
         Crashlytics.log("error querying, trying again without snippets...");
