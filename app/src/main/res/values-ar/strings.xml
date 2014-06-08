@@ -63,6 +63,7 @@
         <item quantity="two">نتيجتان في البحث عن \"%1$s\"</item>
         <item quantity="few">%2$d نتائج في البحث عن \"%1$s\"</item>
         <item quantity="many">%2$d نتيجة في البحث عن \"%1$s\"</item>
+        <item quantity="other">%2$d نتيجة في البحث عن \"%1$s\"</item>
     </plurals>
 
     <!-- Search messages -->
