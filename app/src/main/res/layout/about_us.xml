@@ -1,33 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-	<TextView android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:linksClickable="true"
-		android:id="@+id/txtDevelopedBy" android:text="@string/developedBy"
-		android:textSize="12sp" android:layout_alignParentBottom="true"
+    <TextView
+        android:id="@+id/txtDevelopedBy"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:linksClickable="true"
         android:paddingBottom="4dp"
-		android:textColor="#FFFFFF" android:paddingLeft="10sp" />
+        android:paddingLeft="10sp"
+        android:text="@string/developedBy"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp" />
 
-	<TextView android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:linksClickable="true"
-		android:id="@+id/txtCopyRights" android:text="@string/copyRights"
-		android:textSize="14sp" android:layout_above="@id/txtDevelopedBy"
-		android:textColor="#FFFFFF" android:paddingLeft="10sp" />
+    <TextView
+        android:id="@+id/txtCopyRights"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/txtDevelopedBy"
+        android:linksClickable="true"
+        android:paddingLeft="10sp"
+        android:text="@string/copyRights"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
 
-	<Button android:layout_width="300dip" android:id="@+id/btnQuestions"
-		android:layout_height="wrap_content" android:text="@string/help_title"
-		android:layout_centerHorizontal="true" android:layout_above="@id/txtCopyRights"
-		android:visibility="visible"/>
+    <Button
+        android:id="@+id/btnQuestions"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/txtCopyRights"
+        android:layout_centerHorizontal="true"
+        android:text="@string/help_title"
+        android:visibility="visible" />
 
-	<TextView android:layout_width="fill_parent"
-		android:layout_height="fill_parent" android:visibility="visible"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="#FFFFFF" android:textSize="16sp" android:id="@+id/txtAbout"
-		android:singleLine="false" android:scrollbarAlwaysDrawVerticalTrack="true"
-		android:scrollbars="vertical"
-		android:layout_above="@id/btnQuestions" android:padding="10sp"
-		android:lineSpacingExtra="4dip" />
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/btnQuestions"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/txtAbout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:lineSpacingExtra="4dip"
+            android:padding="10sp"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical"
+            android:singleLine="false"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+    </ScrollView>
 
 </RelativeLayout>
