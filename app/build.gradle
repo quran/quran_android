@@ -4,7 +4,7 @@ buildscript {
         maven { url 'http://download.crashlytics.com/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.10.+'
+        classpath 'com.android.tools.build:gradle:0.11.+'
         classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.10.+'
     }
@@ -20,7 +20,7 @@ repositories {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion "19.1"
     lintOptions.checkReleaseBuilds false
 
     defaultConfig {
