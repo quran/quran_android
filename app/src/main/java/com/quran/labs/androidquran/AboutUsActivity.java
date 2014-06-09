@@ -12,39 +12,35 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class AboutUsActivity extends SherlockActivity {
 
-	public void onCreate(Bundle savedInstanceState) {
-      setTheme(R.style.Theme_Sherlock);
-      super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Sherlock);
+        super.onCreate(savedInstanceState);
 
-      getSupportActionBar().setDisplayShowHomeEnabled(true);
-      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		setContentView(R.layout.about_us);
-		TextView txtAbout = (TextView) findViewById(R.id.txtAbout);
-		txtAbout.setVerticalScrollBarEnabled(true);
-      txtAbout.setText(Html.fromHtml(getString(R.string.aboutUs)));
-      txtAbout.setMovementMethod(LinkMovementMethod.getInstance());
+        setContentView(R.layout.about_us);
+        TextView txtAbout = (TextView) findViewById(R.id.txtAbout);
+        txtAbout.setVerticalScrollBarEnabled(true);
+        txtAbout.setText(Html.fromHtml(getString(R.string.aboutUs)));
+        txtAbout.setMovementMethod(LinkMovementMethod.getInstance());
 
-      Button button = (Button)findViewById(R.id.btnQuestions);
-      button.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            onFaqClicked(view);
-         }
-      });
-	}
+        Button button = (Button)findViewById(R.id.btnQuestions);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent faqIntent = new Intent(view.getContext(), HelpActivity.class);
+                startActivity(faqIntent);
+            }
+        });
+    }
 
-	public void onFaqClicked(View v) {
-		Intent faqIntent = new Intent(this, HelpActivity.class);
-      startActivity(faqIntent);
-	}
-
-   @Override
-   public boolean onOptionsItemSelected(MenuItem item) {
-      if (item.getItemId() == android.R.id.home){
-         finish();
-         return true;
-      }
-      return false;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return false;
    }
 }
