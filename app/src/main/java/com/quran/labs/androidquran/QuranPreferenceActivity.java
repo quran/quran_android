@@ -14,16 +14,19 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceCategory;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,17 +95,35 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
     mListStorageOptions = (ListPreference) findPreference(
         getString(R.string.prefs_app_location));
 
-    try {
-      mStorageList = StorageUtils
-        .getAllStorageLocations(getApplicationContext());
-    } catch (Exception e){
-      Crashlytics.logException(e);
+    final File[] mountPoints = ContextCompat.getExternalFilesDirs(this, null);
+    if (mountPoints.length > 1) {
       mStorageList = new ArrayList<StorageUtils.Storage>();
+      for (int i=0; i<mountPoints.length; i++) {
+        final StorageUtils.Storage s;
+        if (i == 0) {
+          s = new StorageUtils.Storage(
+              getString(R.string.prefs_sdcard_internal),
+              mountPoints[i].getPath());
+        } else {
+          s = new StorageUtils.Storage(
+              getString(R.string.prefs_sdcard_external),
+              mountPoints[i].getPath());
+        }
+        mStorageList.add(s);
+      }
+    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+      try {
+        mStorageList = StorageUtils
+            .getAllStorageLocations(getApplicationContext());
+      } catch (Exception e) {
+        Crashlytics.logException(e);
+        mStorageList = new ArrayList<StorageUtils.Storage>();
+      }
     }
 
     // Hide Advanced Preferences Screen if there is no storage option
     // except for the normal Environment.getExternalStorageDirectory
-    if (mStorageList.size() <= 1) {
+    if (mStorageList == null || mStorageList.size() <= 1) {
       Log.d(TAG, "removing advanced settings from preferences");
       getPreferenceScreen().removePreference(advancedPrefs);
     }
