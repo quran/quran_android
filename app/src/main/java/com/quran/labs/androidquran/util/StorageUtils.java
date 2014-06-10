@@ -225,7 +225,7 @@ public class StorageUtils {
     private int freeSpace;
     private int totalSpace;
 
-    private Storage(String label, String mountPoint) {
+    public Storage(String label, String mountPoint) {
       this.label = label;
       this.mountPoint = mountPoint;
       computeSpace();
