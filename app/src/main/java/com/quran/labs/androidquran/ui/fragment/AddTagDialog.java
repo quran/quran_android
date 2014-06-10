@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.quran.labs.androidquran.R;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,38 +11,37 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.quran.labs.androidquran.R;
 
 public class AddTagDialog extends SherlockDialogFragment {
    public static final String TAG = "AddTagDialog";
 
-   private long mId = -1;
-   private String mName;
+   private static final String EXTRA_ID = "id";
+   private static final String EXTRA_NAME = "name";
 
-   private static final String ID = "id";
-   private static final String NAME = "name";
+   public static AddTagDialog newInstance(long id, String name) {
+     final Bundle args = new Bundle();
+     args.putLong(EXTRA_ID, id);
+     args.putString(EXTRA_NAME, name);
+     final AddTagDialog dialog = new AddTagDialog();
+     dialog.setArguments(args);
+     return dialog;
+   }
 
    public AddTagDialog(){
    }
 
-   public AddTagDialog(long id, String name){
-      mId = id;
-      mName = name;
-   }
-
-   @Override
-   public void onSaveInstanceState(Bundle outState) {
-      outState.putLong(ID, mId);
-      outState.putString(NAME, mName);
-      super.onSaveInstanceState(outState);
-   }
-
    @Override
    public Dialog onCreateDialog(Bundle savedInstanceState) {
-      if (savedInstanceState != null){
-         mId = savedInstanceState.getLong(ID, -1);
-         mName = savedInstanceState.getString(NAME);
+      final Bundle args = getArguments();
+
+      final long id;
+      final String name;
+      if (args != null) {
+        id = args.getLong(EXTRA_ID, -1);
+        name = args.getString(EXTRA_NAME);
+      } else {
+        id = -1;
+        name = null;
       }
 
       LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -51,8 +53,8 @@ public class AddTagDialog extends SherlockDialogFragment {
       final EditText nameText =
               (EditText)layout.findViewById(R.id.tag_name);
 
-      if (mId > -1) {
-         nameText.setText(mName == null? "" : mName);
+      if (id > -1) {
+         nameText.setText(name == null? "" : name);
       }
 
       builder.setView(layout);
@@ -66,8 +68,8 @@ public class AddTagDialog extends SherlockDialogFragment {
                        OnTagChangedListener listener =
                                (OnTagChangedListener)activity;
                        String name = nameText.getText().toString();
-                       if (mId > 0){
-                          listener.onTagUpdated(mId, name);
+                       if (id > 0){
+                          listener.onTagUpdated(id, name);
                        }
                        else {
                           listener.onTagAdded(name);
