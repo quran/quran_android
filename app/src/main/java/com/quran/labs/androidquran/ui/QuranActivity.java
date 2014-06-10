@@ -151,16 +151,18 @@ public class QuranActivity extends SherlockFragmentActivity
       @Override
       public void handleMessage(Message msg) {
          if (msg.what == REFRESH_BOOKMARKS){
+            final int pos = getPosition(BOOKMARKS_LIST);
             String bookmarksTag = mPagerAdapter.getFragmentTag(
-                    R.id.index_pager, BOOKMARKS_LIST);
+                    R.id.index_pager, pos);
             FragmentManager fm = getSupportFragmentManager();
             Fragment f = fm.findFragmentByTag(bookmarksTag);
             if (f != null && f instanceof AbsMarkersFragment){
                ((AbsMarkersFragment)f).refreshData();
             }
          } else if (msg.what == REFRESH_TAGS){
+            final int pos = getPosition(TAGS_LIST);
             String tagsTag = mPagerAdapter.getFragmentTag(
-                  R.id.index_pager, TAGS_LIST);
+                  R.id.index_pager, pos);
             FragmentManager fm = getSupportFragmentManager();
             Fragment f = fm.findFragmentByTag(tagsTag);
             if (f != null && f instanceof AbsMarkersFragment){
@@ -322,8 +324,7 @@ public class QuranActivity extends SherlockFragmentActivity
 
    public void editTag(long id, String name){
       FragmentManager fm = getSupportFragmentManager();
-      AddTagDialog addTagDialog =
-              new AddTagDialog(id, name);
+      AddTagDialog addTagDialog = AddTagDialog.newInstance(id, name);
       addTagDialog.show(fm, AddTagDialog.TAG);
    }
 
@@ -333,13 +334,13 @@ public class QuranActivity extends SherlockFragmentActivity
          return;
       }
       FragmentManager fm = getSupportFragmentManager();
-      TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(ids);
+      TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(ids);
       tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
    }
 
    public void tagBookmark(long id){
       FragmentManager fm = getSupportFragmentManager();
-      TagBookmarkDialog tagBookmarkDialog = new TagBookmarkDialog(id);
+      TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(id);
       tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
    }
    
@@ -389,6 +390,14 @@ public class QuranActivity extends SherlockFragmentActivity
       FragmentManager fm = getSupportFragmentManager();
       AddTagDialog dialog = new AddTagDialog();
       dialog.show(fm, AddTagDialog.TAG);
+   }
+
+   public int getPosition(int position) {
+     if (mIsArabic) {
+       return Math.abs(position - 3);
+     } else {
+       return position;
+     }
    }
    
    public static class PagerAdapter extends FragmentPagerAdapter {
