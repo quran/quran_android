@@ -113,14 +113,16 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       super.onCreate(savedInstanceState);
 
      final Bundle args = getArguments();
-     mBookmarkId = args.getLong(EXTRA_BOOKMARK_ID);
-     mBookmarkIds = args.getLongArray(EXTRA_BOOKMARK_IDS);
-     mSura = args.getInt(EXTRA_SURA);
-     mAyah = args.getInt(EXTRA_AYAH);
-     mPage = args.getInt(EXTRA_PAGE);
+     if (args != null) {
+       mBookmarkId = args.getLong(EXTRA_BOOKMARK_ID);
+       mBookmarkIds = args.getLongArray(EXTRA_BOOKMARK_IDS);
+       mSura = args.getInt(EXTRA_SURA);
+       mAyah = args.getInt(EXTRA_AYAH);
+       mPage = args.getInt(EXTRA_PAGE);
+     }
 
-     if (mSura == 0){ mSura = null; }
-     if (mAyah == 0){ mAyah = null; }
+     if (mSura != null && mSura == 0){ mSura = null; }
+     if (mAyah != null && mAyah == 0){ mAyah = null; }
 
       if (savedInstanceState != null) {
         mMadeChanges = savedInstanceState.getBoolean(MADE_CHANGES);
