@@ -10,7 +10,9 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -43,6 +45,8 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
   private LoadStorageOptionsTask mLoadStorageOptionsTask;
   private int mAppSize;
   private boolean mIsPaused;
+  private String mInternalSdcardLocation;
+  private AlertDialog mDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,9 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
     }
     */
 
+    mInternalSdcardLocation =
+        Environment.getExternalStorageDirectory().getAbsolutePath();
+
     mListStorageOptions = (ListPreference) findPreference(
         getString(R.string.prefs_app_location));
 
@@ -103,11 +110,11 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
         if (i == 0) {
           s = new StorageUtils.Storage(
               getString(R.string.prefs_sdcard_internal),
-              mountPoints[i].getPath());
+              mInternalSdcardLocation);
         } else {
           s = new StorageUtils.Storage(
               getString(R.string.prefs_sdcard_external),
-              mountPoints[i].getPath());
+              mountPoints[i].getAbsolutePath());
         }
         mStorageList.add(s);
       }
@@ -127,6 +134,14 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
       Log.d(TAG, "removing advanced settings from preferences");
       getPreferenceScreen().removePreference(advancedPrefs);
     }
+  }
+
+  @Override
+  protected void onDestroy() {
+    if (mDialog != null) {
+      mDialog.dismiss();
+    }
+    super.onDestroy();
   }
 
   @Override
@@ -185,8 +200,12 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
               QuranPreferenceActivity.this);
           if (mAppSize < storageEmptySpaceMap.get(newLocation)) {
             if (current == null || !current.equals(newLocation)){
-              mMoveFilesTask = new MoveFilesAsyncTask(newLocation);
-              mMoveFilesTask.execute();
+              if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ||
+                  newLocation.equals(mInternalSdcardLocation)) {
+                moveFiles(newLocation);
+              } else {
+                showKitKatConfirmation(newLocation);
+              }
             }
           }
           else {
@@ -203,6 +222,34 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
     catch (Exception e) {
       Log.e(TAG, "error loading storage options", e);
     }
+  }
+
+  private void showKitKatConfirmation(final String newLocation) {
+    final AlertDialog.Builder b = new AlertDialog.Builder(this)
+        .setTitle(R.string.kitkat_external_title)
+        .setMessage(R.string.kitkat_external_message)
+        .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            moveFiles(newLocation);
+            dialog.dismiss();
+            mDialog = null;
+          }
+        })
+        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+            mDialog = null;
+          }
+        });
+    mDialog = b.create();
+    mDialog.show();
+  }
+
+  private void moveFiles(String newLocation) {
+    mMoveFilesTask = new MoveFilesAsyncTask(newLocation);
+    mMoveFilesTask.execute();
   }
 
   @Override
