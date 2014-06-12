@@ -4,7 +4,6 @@ import com.actionbarsherlock.internal.view.menu.MenuBuilder;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.nineoldandroids.view.ViewHelper;
 import com.quran.labs.androidquran.R;
 
 import android.annotation.TargetApi;
@@ -23,16 +22,21 @@ import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener
 public class AyahToolBar extends ViewGroup implements
     View.OnClickListener, View.OnLongClickListener {
   public static enum PipPosition { UP, DOWN };
+  private static boolean sHoneycombPlus =
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 
   private Context mContext;
   private Menu mMenu;
   private Menu mCurrentMenu;
   private int mItemWidth;
+  private int mPipWidth;
+  private int mPipHeight;
   private boolean mIsShowing;
   private float mPipOffset;
   private LinearLayout mMenuLayout;
   private AyahToolBarPip mToolBarPip;
   private PipPosition mPipPosition;
+  private AyahToolBarPosition mLastAyahToolBarPosition;
   private OnMenuItemSelectedListener mItemSelectedListener;
 
   public AyahToolBar(Context context) {
@@ -57,8 +61,8 @@ public class AyahToolBar extends ViewGroup implements
     mItemWidth = resources.getDimensionPixelSize(R.dimen.toolbar_item_width);
     final int toolBarHeight =
         resources.getDimensionPixelSize(R.dimen.toolbar_height);
-    final int pipHeight =
-        resources.getDimensionPixelSize(R.dimen.toolbar_pip_height);
+    mPipHeight = resources.getDimensionPixelSize(R.dimen.toolbar_pip_height);
+    mPipWidth = resources.getDimensionPixelSize(R.dimen.toolbar_pip_width);
     final int background = resources.getColor(R.color.toolbar_background);
 
     mMenuLayout = new LinearLayout(context);
@@ -70,7 +74,7 @@ public class AyahToolBar extends ViewGroup implements
     mPipPosition = PipPosition.DOWN;
     mToolBarPip = new AyahToolBarPip(context);
     mToolBarPip.setLayoutParams(
-        new LayoutParams(LayoutParams.WRAP_CONTENT, pipHeight));
+        new LayoutParams(LayoutParams.WRAP_CONTENT, mPipHeight));
     addView(mToolBarPip);
 
     mMenu = new MenuBuilder(mContext);
@@ -101,6 +105,10 @@ public class AyahToolBar extends ViewGroup implements
           pipLeft + pipWidth, menuHeight + pipHeight);
       mMenuLayout.layout(0, 0, menuWidth, menuHeight);
     }
+
+    if (!sHoneycombPlus) {
+      setPositionEclairMr1();
+    }
   }
 
   @Override
@@ -108,7 +116,9 @@ public class AyahToolBar extends ViewGroup implements
     measureChild(mMenuLayout, widthMeasureSpec, heightMeasureSpec);
     final int width = mMenuLayout.getMeasuredWidth();
     int height = mMenuLayout.getMeasuredHeight();
-    measureChild(mToolBarPip, widthMeasureSpec, heightMeasureSpec);
+    measureChild(mToolBarPip,
+        MeasureSpec.makeMeasureSpec(mPipWidth, MeasureSpec.EXACTLY),
+        MeasureSpec.makeMeasureSpec(mPipHeight, MeasureSpec.EXACTLY));
     height += mToolBarPip.getMeasuredHeight();
     setMeasuredDimension(resolveSize(width, widthMeasureSpec),
         resolveSize(height, heightMeasureSpec));
@@ -167,13 +177,35 @@ public class AyahToolBar extends ViewGroup implements
         mPipOffset != position.pipOffset;
     ensurePipPosition(position.pipPosition);
     mPipOffset = position.pipOffset;
+    mLastAyahToolBarPosition = position;
     float x = position.x + position.xScroll;
     float y = position.y + position.yScroll;
-    ViewHelper.setX(this, x);
-    ViewHelper.setY(this, y);
+    if (sHoneycombPlus) {
+      setPositionHoneycomb(x, y);
+    } else if (!needsLayout) {
+      // if we need layout, layout will adjust the position anyway
+      setPositionEclairMr1();
+    }
 
     if (needsLayout) {
       requestLayout();
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  private void setPositionHoneycomb(float x, float y) {
+    setTranslationX(x);
+    setTranslationY(y);
+  }
+
+  private void setPositionEclairMr1() {
+    if (mLastAyahToolBarPosition != null) {
+      float x = mLastAyahToolBarPosition.x + mLastAyahToolBarPosition.xScroll;
+      float y = mLastAyahToolBarPosition.y + mLastAyahToolBarPosition.yScroll;
+      final int deltaY = (int) (y - getTop());
+      final int deltaX = (int) (x - getLeft());
+      offsetTopAndBottom(deltaY);
+      offsetLeftAndRight(deltaX);
     }
   }
 
@@ -188,13 +220,13 @@ public class AyahToolBar extends ViewGroup implements
 
   public void showMenu() {
     showMenu(mMenu);
-    this.setVisibility(VISIBLE);
+    setVisibility(VISIBLE);
     mIsShowing = true;
   }
 
   public void hideMenu() {
-    this.setVisibility(GONE);
     mIsShowing = false;
+    setVisibility(GONE);
   }
 
   public void setOnItemSelectedListener(

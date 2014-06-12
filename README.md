@@ -95,7 +95,6 @@ Open Source Projects Used
 -------------------------
 * [ActionBarSherlock](http://abs.io)
 * [AndroidSlidingUpPanel](https://github.com/umano/AndroidSlidingUpPanel)
-* [NineOldAndroids](https://github.com/JakeWharton/NineOldAndroids)
 * [sdk-manager-plugin](https://github.com/JakeWharton/sdk-manager-plugin)
 
 Changelog
