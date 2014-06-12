@@ -99,8 +99,12 @@ Open Source Projects Used
 
 Changelog
 ---------
-**current**
-- bugfixes
+**version 2.5.3 (released 6/11/2014)**
+- fix toolbar bugs on android 2.3
+- fix "current page" not being clickable
+- fix lots of search crashes
+- fix saving on external sdcard on kitkat
+- fix tags and bookmarks not refreshing
 
 **version 2.5.2 (released 6/7/2014)**
 - major ui improvements for long press actions
