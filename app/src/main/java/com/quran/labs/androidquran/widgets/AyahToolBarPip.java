@@ -14,8 +14,6 @@ import android.view.View;
 import static com.quran.labs.androidquran.widgets.AyahToolBar.PipPosition;
 
 public class AyahToolBarPip extends View {
-  private int mWidth;
-  private int mHeight;
   private Path mPath;
   private Paint mPaint;
   private PipPosition mPosition;
@@ -42,8 +40,6 @@ public class AyahToolBarPip extends View {
     mPaint.setAntiAlias(true);
     mPaint.setColor(resources.getColor(R.color.toolbar_background));
     mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-    mHeight = resources.getDimensionPixelSize(R.dimen.toolbar_pip_height);
-    mWidth = resources.getDimensionPixelSize(R.dimen.toolbar_pip_width);
   }
 
   public void ensurePosition(PipPosition position) {
@@ -80,13 +76,6 @@ public class AyahToolBarPip extends View {
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
     updatePoints();
-  }
-
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    setMeasuredDimension(MeasureSpec.makeMeasureSpec(mWidth, MeasureSpec.EXACTLY),
-        MeasureSpec.makeMeasureSpec(mHeight, MeasureSpec.EXACTLY));
   }
 
   @Override
