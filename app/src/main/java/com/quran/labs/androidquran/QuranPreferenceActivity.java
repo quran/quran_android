@@ -111,12 +111,17 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
           s = new StorageUtils.Storage(
               getString(R.string.prefs_sdcard_internal),
               mInternalSdcardLocation);
-        } else {
+        } else if (mountPoints[i] != null) {
           s = new StorageUtils.Storage(
               getString(R.string.prefs_sdcard_external),
               mountPoints[i].getAbsolutePath());
+        } else {
+          s = null;
         }
-        mStorageList.add(s);
+
+        if (s != null) {
+          mStorageList.add(s);
+        }
       }
     } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
       try {

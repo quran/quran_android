@@ -1756,6 +1756,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       clearAyahModeHighlights();
       mStart = mEnd = suraAyah;
       if (mAyahToolBar.isShowing()) {
+        mAyahToolBar.resetMenu();
         updateToolbarPosition(suraAyah, tracker);
       }
       if (mSlidingPanel.isPaneVisible()) {

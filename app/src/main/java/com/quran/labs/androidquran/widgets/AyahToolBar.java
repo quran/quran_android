@@ -218,6 +218,10 @@ public class AyahToolBar extends ViewGroup implements
     return mIsShowing;
   }
 
+  public void resetMenu() {
+    showMenu(mMenu);
+  }
+
   public void showMenu() {
     showMenu(mMenu);
     setVisibility(VISIBLE);
