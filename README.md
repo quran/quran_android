@@ -99,6 +99,10 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.5.4 (released 6/13/2014)**
+- bugfixes (mainly preferences crash)
+- reset toolbar when you choose a different ayah
+
 **version 2.5.3 (released 6/11/2014)**
 - fix toolbar bugs on android 2.3
 - fix "current page" not being clickable
