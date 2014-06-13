@@ -13,6 +13,7 @@ import com.quran.labs.androidquran.widgets.QuranMaxImageView;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -289,27 +290,28 @@ public class QuranDataActivity extends SherlockActivity implements
    }
    
    class CheckPagesAsyncTask extends AsyncTask<Void, Void, Boolean> {
+      private final Context mAppContext;
+      public CheckPagesAsyncTask() {
+        mAppContext = getApplicationContext();
+      }
 
       @Override
       protected Boolean doInBackground(Void... params) {
          // intentionally not sleeping because waiting
          // for the splash screen is not cool.
-         QuranFileUtils.migrateAudio(QuranDataActivity.this);
+         QuranFileUtils.migrateAudio(mAppContext);
 
-         if (QuranScreenInfo.getInstance().isTablet(QuranDataActivity.this)){
-            boolean haveLandscape = QuranFileUtils.haveAllImages(
-                    QuranDataActivity.this,
+         if (QuranScreenInfo.getInstance().isTablet(mAppContext)){
+            boolean haveLandscape = QuranFileUtils.haveAllImages(mAppContext,
                     QuranScreenInfo.getInstance().getTabletWidthParam());
-            boolean havePortrait = QuranFileUtils.haveAllImages(
-                    QuranDataActivity.this,
+            boolean havePortrait = QuranFileUtils.haveAllImages(mAppContext,
                     QuranScreenInfo.getInstance().getWidthParam());
             mNeedPortraitImages = !havePortrait;
             mNeedLandscapeImages = !haveLandscape;
             return haveLandscape && havePortrait;
          }
          else {
-            boolean haveAll = QuranFileUtils.haveAllImages(
-                        QuranDataActivity.this,
+            boolean haveAll = QuranFileUtils.haveAllImages(mAppContext,
                         QuranScreenInfo.getInstance().getWidthParam());
             mNeedPortraitImages = !haveAll;
             mNeedLandscapeImages = false;

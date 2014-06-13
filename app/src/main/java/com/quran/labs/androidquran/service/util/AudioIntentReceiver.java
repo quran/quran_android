@@ -20,12 +20,12 @@
 
 package com.quran.labs.androidquran.service.util;
 
+import com.quran.labs.androidquran.service.AudioService;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.view.KeyEvent;
-
-import com.quran.labs.androidquran.service.AudioService;
 
 /**
  * Receives broadcasted intents. In particular, we are interested in the
@@ -48,7 +48,8 @@ public class AudioIntentReceiver extends BroadcastReceiver {
         } else if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
             KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(
                     Intent.EXTRA_KEY_EVENT);
-            if (keyEvent.getAction() != KeyEvent.ACTION_DOWN){
+            if (keyEvent == null ||
+                keyEvent.getAction() != KeyEvent.ACTION_DOWN){
                 return;
             }
 

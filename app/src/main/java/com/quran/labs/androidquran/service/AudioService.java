@@ -285,7 +285,7 @@ public class AudioService extends Service implements OnCompletionListener,
    public int onStartCommand(Intent intent, int flags, int startId) {
       String action = intent.getAction();
 
-      if (action.equals(ACTION_CONNECT)){
+      if (ACTION_CONNECT.equals(action)){
          if (mState == State.Stopped){
             processStopRequest(true);
          }
@@ -317,7 +317,7 @@ public class AudioService extends Service implements OnCompletionListener,
             mBroadcastManager.sendBroadcast(updateIntent);
          }
       }
-      else if (action.equals(ACTION_PLAYBACK)){
+      else if (ACTION_PLAYBACK.equals(action)){
          Serializable playInfo = intent.getSerializableExtra(EXTRA_PLAY_INFO);
          if (playInfo != null && playInfo instanceof AudioRequest){
             if (mState == State.Stopped ||
@@ -333,12 +333,12 @@ public class AudioService extends Service implements OnCompletionListener,
 
          processTogglePlaybackRequest();
       }
-      else if (action.equals(ACTION_PLAY)){ processPlayRequest(); }
-      else if (action.equals(ACTION_PAUSE)){ processPauseRequest(); }
-      else if (action.equals(ACTION_SKIP)){ processSkipRequest(); }
-      else if (action.equals(ACTION_STOP)){ processStopRequest(); }
-      else if (action.equals(ACTION_REWIND)){ processRewindRequest(); }
-      else if (action.equals(ACTION_UPDATE_REPEAT)){
+      else if (ACTION_PLAY.equals(action)){ processPlayRequest(); }
+      else if (ACTION_PAUSE.equals(action)){ processPauseRequest(); }
+      else if (ACTION_SKIP.equals(action)){ processSkipRequest(); }
+      else if (ACTION_STOP.equals(action)){ processStopRequest(); }
+      else if (ACTION_REWIND.equals(action)){ processRewindRequest(); }
+      else if (ACTION_UPDATE_REPEAT.equals(action)){
          Serializable repeatInfo = intent.getSerializableExtra(
                  EXTRA_REPEAT_INFO);
          if (repeatInfo != null && mAudioRequest != null){
