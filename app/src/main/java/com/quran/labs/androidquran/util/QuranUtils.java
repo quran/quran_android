@@ -6,6 +6,8 @@ import com.quran.labs.androidquran.data.Constants;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -80,12 +82,15 @@ public class QuranUtils {
 
    public static boolean isDualPages(Context context, QuranScreenInfo qsi){
       if (context != null && qsi != null){
-         if (qsi.isTablet(context) && context.getResources()
-                 .getBoolean(R.bool.use_tablet_interface)){
-            SharedPreferences prefs =
+        final Resources resources = context.getResources();
+        if (qsi.isTablet(context) &&
+            resources.getBoolean(R.bool.use_tablet_interface) &&
+            resources.getConfiguration().orientation ==
+                Configuration.ORIENTATION_LANDSCAPE){
+            final SharedPreferences prefs =
                     PreferenceManager.getDefaultSharedPreferences(context);
             return prefs.getBoolean(Constants.PREF_TABLET_ENABLED, true);
-         }
+        }
       }
       return false;
    }
