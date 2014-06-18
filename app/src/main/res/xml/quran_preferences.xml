@@ -34,7 +34,7 @@
             android:summaryOn="@string/prefs_tablet_mode_enabled"
             android:summaryOff="@string/prefs_tablet_mode_disabled"
             android:persistent="true"
-            android:defaultValue="true"
+            android:defaultValue="@bool/use_tablet_interface_by_default"
             android:key="@string/prefs_tablet_enabled" />
         
         <CheckBoxPreference
