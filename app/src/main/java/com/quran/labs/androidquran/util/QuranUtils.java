@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
 import android.app.ActivityManager;
@@ -84,7 +83,6 @@ public class QuranUtils {
       if (context != null && qsi != null){
         final Resources resources = context.getResources();
         if (qsi.isTablet(context) &&
-            resources.getBoolean(R.bool.use_tablet_interface) &&
             resources.getConfiguration().orientation ==
                 Configuration.ORIENTATION_LANDSCAPE){
             final SharedPreferences prefs =
