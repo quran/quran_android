@@ -1210,9 +1210,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void toggleActionBarVisibility(boolean visible) {
-    if (visible && mIsActionBarHidden) {
-      toggleActionBar();
-    } else if (!visible && !mIsActionBarHidden) {
+    if (!(visible ^ mIsActionBarHidden)) {
       toggleActionBar();
     }
   }
