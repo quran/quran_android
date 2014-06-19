@@ -93,6 +93,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -173,16 +174,27 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private SuraAyah mStart;
   private SuraAyah mEnd;
 
-  private Handler mHandler = new Handler() {
+  private final PagerHandler mHandler = new PagerHandler(this);
+
+  private static class PagerHandler extends Handler {
+    private final WeakReference<PagerActivity> mActivity;
+
+    public PagerHandler(PagerActivity activity) {
+      mActivity = new WeakReference<PagerActivity>(activity);
+    }
+
     @Override
     public void handleMessage(Message msg) {
-      if (msg.what == MSG_HIDE_ACTIONBAR) {
-        toggleActionBarVisibility(false);
-      } else {
-        super.handleMessage(msg);
+      PagerActivity activity = mActivity.get();
+      if (activity != null) {
+        if (msg.what == MSG_HIDE_ACTIONBAR) {
+          activity.toggleActionBarVisibility(false);
+        } else {
+          super.handleMessage(msg);
+        }
       }
     }
-  };
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
