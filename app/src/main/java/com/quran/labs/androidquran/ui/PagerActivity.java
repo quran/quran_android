@@ -155,6 +155,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
   private AyahToolBarPosition mAyahToolBarPos;
+  private AudioRequest mLastAudioRequest;
   private boolean mDualPages = false;
   private boolean mIsLandscape;
 
@@ -1154,6 +1155,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
             AudioService.AudioUpdateIntent.AYAH, -1);
         int repeatCount = intent.getIntExtra(
             AudioService.AudioUpdateIntent.REPEAT_COUNT, -200);
+        Serializable request = intent.getSerializableExtra(
+            AudioService.AudioUpdateIntent.REQUEST);
+        if (request instanceof AudioRequest) {
+          mLastAudioRequest = (AudioRequest) request;
+        }
         if (state == AudioService.AudioUpdateIntent.PLAYING) {
           mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
           highlightAyah(sura, ayah, HighlightType.AUDIO);
@@ -1166,6 +1172,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         } else if (state == AudioService.AudioUpdateIntent.STOPPED) {
           mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
           unHighlightAyahs(HighlightType.AUDIO);
+          mLastAudioRequest = null;
 
           Serializable qi = intent.getSerializableExtra(
               AudioService.EXTRA_PLAY_INFO);
@@ -1421,45 +1428,65 @@ public class PagerActivity extends SherlockFragmentActivity implements
     playFromAyah(page, startSura, startAyah, false);
   }
 
-  public void playFromAyah(int page, int sura, int ayah) {
-    playFromAyah(page, sura, ayah, true);
-  }
-
   private void playFromAyah(int page, int startSura,
                             int startAyah, boolean force) {
+    final QuranAyah start = new QuranAyah(startSura, startAyah);
+    playFromAyah(start, null, page, force);
+  }
+
+  private void playFromAyah(QuranAyah start, QuranAyah end,
+                            int page, boolean force) {
     if (force) {
       mShouldOverridePlaying = true;
     }
     int currentQari = mAudioStatusBar.getCurrentQari();
 
-    QuranAyah ayah = new QuranAyah(startSura, startAyah);
     if (QuranSettings.shouldStream(this)) {
-      playStreaming(ayah, page, currentQari);
+      playStreaming(start, end, page, currentQari);
     } else {
-      downloadAndPlayAudio(ayah, page, currentQari);
+      downloadAndPlayAudio(start, end, page, currentQari);
     }
   }
 
-  private void playStreaming(QuranAyah ayah, int page, int qari) {
+  private void playStreaming(QuranAyah ayah, QuranAyah end,
+                            int page, int qari) {
     String qariUrl = AudioUtils.getQariUrl(this, qari, true);
     String dbFile = AudioUtils.getQariDatabasePathIfGapless(
         this, qari);
     if (!TextUtils.isEmpty(dbFile)) {
       // gapless audio is "download only"
-      downloadAndPlayAudio(ayah, page, qari);
+      downloadAndPlayAudio(ayah, end, page, qari);
       return;
     }
 
+    final boolean enforceBounds = end != null;
+    final QuranAyah ending;
+    if (end != null) {
+      ending = end;
+    } else {
+      // this won't be enforced unless the user sets a range
+      // repeat, but we set it to a sane default anyway.
+      ending = AudioUtils.getLastAyahToPlay(ayah, page,
+          QuranSettings.getPreferredDownloadAmount(this), mDualPages);
+    }
     AudioRequest request = new AudioRequest(qariUrl, ayah);
-    request.setGaplessDatabaseFilePath(dbFile);
+    request.setPlayBounds(ayah, ending);
+    request.setEnforceBounds(enforceBounds);
     play(request);
 
     mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
   }
 
-  private void downloadAndPlayAudio(QuranAyah ayah, int page, int qari) {
-    QuranAyah endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
-        QuranSettings.getPreferredDownloadAmount(this), mDualPages);
+  private void downloadAndPlayAudio(QuranAyah ayah, QuranAyah ending,
+                                    int page, int qari) {
+    final boolean enforceBounds = ending != null;
+    final QuranAyah endAyah;
+    if (ending != null) {
+      endAyah = ending;
+    } else {
+      endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
+          QuranSettings.getPreferredDownloadAmount(this), mDualPages);
+    }
     String baseUri = AudioUtils.getLocalQariUrl(this, qari);
     if (endAyah == null || baseUri == null) {
       return;
@@ -1479,6 +1506,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
         new DownloadAudioRequest(fileUrl, ayah, qari, baseUri);
     request.setGaplessDatabaseFilePath(dbFile);
     request.setPlayBounds(ayah, endAyah);
+    request.setEnforceBounds(enforceBounds);
     mLastAudioDownloadRequest = request;
     playAudioRequest(request);
   }
@@ -1538,7 +1566,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
     } else if (AudioUtils.haveAllFiles(request)) {
       if (!AudioUtils.shouldDownloadBasmallah(this, request)) {
         android.util.Log.d(TAG, "have all files, playing!");
-        request.removePlayBounds();
         play(request);
         mLastAudioDownloadRequest = null;
       } else {
@@ -1602,6 +1629,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     Intent i = new Intent(AudioService.ACTION_PLAYBACK);
     if (request != null) {
       i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
+      mLastAudioRequest = request;
     }
 
     if (mShouldOverridePlaying) {
@@ -1645,6 +1673,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     startService(new Intent(AudioService.ACTION_STOP));
     mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
     unHighlightAyahs(HighlightType.AUDIO);
+    mLastAudioRequest = null;
   }
 
   @Override
@@ -1874,7 +1903,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
           break;
         case R.id.cab_play_from_here:
           if (mStart != null) {
-            playFromAyah(mStart.getPage(), mStart.sura, mStart.ayah);
+            final QuranAyah end;
+            if (mEnd != null && !mEnd.equals(mStart)) {
+              end = mEnd.toQuranAyah();
+            } else {
+              end = null;
+            }
+            playFromAyah(mStart.toQuranAyah(), end,
+                mStart.getPage(), true);
             toggleActionBarVisibility(true);
           }
           break;
