@@ -77,6 +77,7 @@
                 <action android:name="com.quran.labs.androidquran.action.STOP" />
                 <action android:name="com.quran.labs.androidquran.action.CONNECT" />
                 <action android:name="com.quran.labs.androidquran.action.UPDATE_REPEAT" />
+                <action android:name="com.quran.labs.androidquran.action.ACTION_UPDATE_RANGE_REPEAT" />
             </intent-filter>
        </service>
    </application>

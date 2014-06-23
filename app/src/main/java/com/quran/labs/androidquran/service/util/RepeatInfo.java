@@ -30,8 +30,7 @@ public class RepeatInfo implements Serializable {
    }
 
    public boolean shouldRepeat(){
-      if (mRepeatCount == -1){ return true; }
-      return (mCurrentPlayCount < mRepeatCount);
+     return mRepeatCount == -1 || (mCurrentPlayCount < mRepeatCount);
    }
 
    public void incrementRepeat(){

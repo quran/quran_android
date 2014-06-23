@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.labs.androidquran.common.QuranAyah;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -53,6 +55,12 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     } else {
       return sura < another.sura ? -1 : 1;
     }
+  }
+
+  // temporarily, until we change PagerActivity and audio
+  // to only deal in SuraAyah.
+  public QuranAyah toQuranAyah() {
+    return new QuranAyah(sura, ayah);
   }
 
   @Override
