@@ -4,19 +4,31 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
+import android.os.Bundle;
+
 public abstract class AyahActionFragment extends SherlockFragment {
 
   protected SuraAyah mStart;
   protected SuraAyah mEnd;
+  private boolean mJustCreated;
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    mJustCreated = true;
+  }
 
   @Override
   public void onResume() {
     super.onResume();
-    PagerActivity activity = (PagerActivity) getActivity();
-    if (activity != null) {
-      mStart = activity.getSelectionStart();
-      mEnd = activity.getSelectionEnd();
-      refreshView();
+    if (mJustCreated) {
+      mJustCreated = false;
+      PagerActivity activity = (PagerActivity) getActivity();
+      if (activity != null) {
+        mStart = activity.getSelectionStart();
+        mEnd = activity.getSelectionEnd();
+        refreshView();
+      }
     }
   }
 
@@ -26,8 +38,6 @@ public abstract class AyahActionFragment extends SherlockFragment {
     refreshView();
   }
 
-  protected void refreshView(){
-    // Subclasses should override this and refresh their view
-  }
+  protected abstract void refreshView();
 
 }

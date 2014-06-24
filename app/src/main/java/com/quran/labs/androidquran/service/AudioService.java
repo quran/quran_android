@@ -95,8 +95,6 @@ public class AudioService extends Service implements OnCompletionListener,
            "com.quran.labs.androidquran.action.CONNECT";
    public static final String ACTION_UPDATE_REPEAT =
            "com.quran.labs.androidquran.action.UPDATE_REPEAT";
-   public static final String ACTION_UPDATE_RANGE_REPEAT =
-           "com.quran.labs.androidquran.action.ACTION_UPDATE_RANGE_REPEAT";
 
    public static class AudioUpdateIntent {
       public static final String INTENT_NAME =
@@ -143,8 +141,8 @@ public class AudioService extends Service implements OnCompletionListener,
            "com.quran.labs.androidquran.STOP_IF_PLAYING";
 
    // repeat info
-   public static final String EXTRA_REPEAT_INFO =
-           "com.quran.labs.androidquran.REPEAT_INFO";
+   public static final String EXTRA_VERSE_REPEAT_COUNT =
+           "com.quran.labs.androidquran.VERSE_REPEAT_COUNT";
    public static final String EXTRA_RANGE_REPEAT_COUNT =
            "com.quran.labs.androidquran.RANGE_REPEAT_COUNT";
    public static final String EXTRA_RANGE_RESTRICT =
@@ -347,19 +345,18 @@ public class AudioService extends Service implements OnCompletionListener,
       else if (ACTION_STOP.equals(action)){ processStopRequest(); }
       else if (ACTION_REWIND.equals(action)){ processRewindRequest(); }
       else if (ACTION_UPDATE_REPEAT.equals(action)){
-         Serializable repeatInfo = intent.getSerializableExtra(
-                 EXTRA_REPEAT_INFO);
-         if (repeatInfo != null && mAudioRequest != null){
-            if (repeatInfo instanceof RepeatInfo){
-               mAudioRequest.setRepeatInfo((RepeatInfo)repeatInfo);
-            }
-         }
-      }
-      else if (ACTION_UPDATE_RANGE_REPEAT.equals(action)) {
         if (mAudioRequest != null) {
-          final int repeatCount = intent.getIntExtra(
-            EXTRA_RANGE_REPEAT_COUNT, mAudioRequest.getRangeRepeatCount());
-          mAudioRequest.setRangeRepeatCount(repeatCount);
+          // set the repeat info if applicable
+          final int verseRepeatCount = intent.getIntExtra(
+              EXTRA_VERSE_REPEAT_COUNT, mAudioRequest.getVerseRepeatCount());
+          mAudioRequest.setVerseRepeatCount(verseRepeatCount);
+
+          // set the range repeat count
+          final int rangeRepeatCount = intent.getIntExtra(
+              EXTRA_RANGE_REPEAT_COUNT, mAudioRequest.getRangeRepeatCount());
+          mAudioRequest.setRangeRepeatCount(rangeRepeatCount);
+
+          // set the enforce range flag
           if (intent.hasExtra(EXTRA_RANGE_RESTRICT)) {
             final boolean enforceRange = intent.getBooleanExtra(
                 EXTRA_RANGE_RESTRICT, false);

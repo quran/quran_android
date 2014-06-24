@@ -54,7 +54,6 @@ public class AyahTranslationFragment extends AyahActionFragment {
 
   @Override
   public void refreshView() {
-    super.refreshView();
     if (mStart == null || mEnd == null) { return; }
 
     final Activity activity = getActivity();
