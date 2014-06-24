@@ -50,7 +50,7 @@ public class AudioStatusBar extends LinearLayout {
    private TextView mRepeatButton;
    private AudioBarListener mAudioBarListener;
 
-   private int[] mRepeatValues = { 0, 1, 2, -1 };
+   private int[] mRepeatValues = { 0, 1, 2, 3, -1 };
 
    public interface AudioBarListener {
       public void onPlayPressed();

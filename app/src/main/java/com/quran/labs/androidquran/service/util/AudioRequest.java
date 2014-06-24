@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.service.util;
 
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 
 import android.content.Context;
 import android.util.Log;
@@ -76,29 +77,36 @@ public class AudioRequest implements Serializable {
       return mGaplessDatabasePath != null;
    }
 
-   public void setRepeatInfo(RepeatInfo repeatInfo){
-      if (repeatInfo == null){
-         return;
-      }
+   public void setVerseRepeatCount(int count){
+      mRepeatInfo.setRepeatCount(count);
+   }
 
-      if (mRepeatInfo != null){
-         // just update the repeat count for now
-         mRepeatInfo.setRepeatCount(repeatInfo.getRepeatCount());
-      }
-      else { mRepeatInfo = repeatInfo; }
+   public int getVerseRepeatCount() {
+     return mRepeatInfo.getRepeatCount();
    }
 
    public void setRangeRepeatCount(int rangeRepeatCount) {
       mRangeRepeatInfo.setRepeatCount(rangeRepeatCount);
-      mEnforceBounds = true;
    }
 
    public void setEnforceBounds(boolean enforceBounds) {
      mEnforceBounds = enforceBounds;
    }
 
+   public boolean shouldEnforceBounds() {
+     return mEnforceBounds;
+   }
+
    public int getRangeRepeatCount() {
      return mRangeRepeatInfo.getRepeatCount();
+   }
+
+   public SuraAyah getRangeStart() {
+     return new SuraAyah(mMinSura, mMinAyah);
+   }
+
+   public SuraAyah getRangeEnd() {
+     return new SuraAyah(mMaxSura, mMaxAyah);
    }
 
    public RepeatInfo getRepeatInfo() {

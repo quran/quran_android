@@ -61,7 +61,6 @@ public class JumpFragment extends SherlockDialogFragment {
       ayahAdapter.setDropDownViewResource(
               android.R.layout.simple_spinner_dropdown_item);
       ayahSpinner.setAdapter(ayahAdapter);
-      ayahAdapter.setNotifyOnChange(true);
 
       // Page text
       final EditText input = (EditText)layout.findViewById(R.id.page_number);
