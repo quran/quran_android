@@ -7,12 +7,13 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/play_from" />
+            android:text="@string/play_from"
+            android:textAppearance="@style/PanelLabel"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +28,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/play_to" />
+            android:text="@string/play_to"
+            android:textAppearance="@style/PanelLabel"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,7 +44,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/play_options" />
+            android:text="@string/play_options"
+            android:textAppearance="@style/PanelLabel"/>
         <CheckBox android:id="@+id/restrict_to_range"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +58,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/repeat_verses_range" />
+                android:text="@string/repeat_verses_range"
+                android:textAppearance="@style/PanelLabel"/>
             <Spinner android:id="@+id/repeat_range_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -68,7 +72,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/repeat_each_verse" />
+                android:text="@string/repeat_each_verse"
+                android:textAppearance="@style/PanelLabel"/>
             <Spinner android:id="@+id/repeat_verse_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -76,6 +81,7 @@
         <Button android:id="@+id/apply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/play_apply" />
+            android:text="@string/play_apply"
+            android:layout_gravity="right"/>
     </LinearLayout>
 </ScrollView>

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/transparent_actionbar_color">
+    android:background="@color/panel_background_color">
     <LinearLayout
         android:id="@+id/ayah_action_bar"
         android:layout_width="match_parent"

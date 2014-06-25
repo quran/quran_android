@@ -44,4 +44,9 @@
         <item name="android:textColor">#aaaaaa</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="PanelLabel">
+        <item name="android:textColor">@color/translation_highlight</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>

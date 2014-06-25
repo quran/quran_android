@@ -34,7 +34,7 @@
         	android:title="@string/menu_jump"
         	android:showAsAction="never" />
     <item android:id="@+id/settings"
-          android:icon="@drawable/ic_ab_settings"
+          android:icon="@drawable/ic_action_settings"
           android:title="@string/menu_settings"
           android:showAsAction="never" />
     <item android:id="@+id/help"
