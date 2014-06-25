@@ -61,6 +61,7 @@ public class AudioStatusBar extends LinearLayout {
       public void onCancelPressed(boolean stopDownload);
       public void setRepeatCount(int repeatCount);
       public void onAcceptPressed();
+      public void onAudioSettingsPressed();
    }
 
    public AudioStatusBar(Context context) {
@@ -271,7 +272,6 @@ public class AudioStatusBar extends LinearLayout {
       addButton(button);
       addButton(R.drawable.ic_next);
 
-      mCurrentRepeat = 0;
       mRepeatButton = new TextView(mContext);
       mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
               R.drawable.ic_repeat, 0, 0, 0);
@@ -279,8 +279,11 @@ public class AudioStatusBar extends LinearLayout {
               R.drawable.abs__item_background_holo_dark);
       mRepeatButton.setTag(R.drawable.ic_repeat);
       mRepeatButton.setOnClickListener(mOnClickListener);
+      updateRepeatButtonText();
       addView(mRepeatButton, LayoutParams.WRAP_CONTENT,
               LayoutParams.MATCH_PARENT);
+
+      addButton(R.drawable.ic_action_settings);
    }
 
    private void addButton(int imageId){
@@ -336,7 +339,7 @@ public class AudioStatusBar extends LinearLayout {
        }
      }
 
-     if (updated) {
+     if (updated && mRepeatButton != null) {
        updateRepeatButtonText();
      }
    }
@@ -383,6 +386,9 @@ public class AudioStatusBar extends LinearLayout {
                   break;
                case R.drawable.ic_accept:
                   mAudioBarListener.onAcceptPressed();
+                  break;
+               case R.drawable.ic_action_settings:
+                  mAudioBarListener.onAudioSettingsPressed();
                   break;
             }
          }

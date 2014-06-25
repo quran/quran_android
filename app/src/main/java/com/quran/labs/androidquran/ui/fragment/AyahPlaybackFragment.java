@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.content.Context;
@@ -72,6 +73,17 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     rangeAdapter.setDropDownViewResource(
         android.R.layout.simple_spinner_dropdown_item);
     mRepeatRangeSpinner.setAdapter(rangeAdapter);
+    mRepeatRangeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(AdapterView<?> parent,
+          View view, int position, long id) {
+        updateEnforceBounds(position);
+      }
+
+      @Override
+      public void onNothingSelected(AdapterView<?> parent) {
+      }
+    });
     final ArrayAdapter<CharSequence> verseAdapter =
         new ArrayAdapter<CharSequence>(context,
             android.R.layout.simple_spinner_item, repeatOptions);
@@ -96,12 +108,24 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private void apply() {
     final Context context = getActivity();
     if (context instanceof PagerActivity) {
-      final SuraAyah currentStart = new SuraAyah(
+      final SuraAyah start = new SuraAyah(
           mStartSuraSpinner.getSelectedItemPosition() + 1,
           mStartAyahSpinner.getSelectedItemPosition() + 1);
-      final SuraAyah currentEnding = new SuraAyah(
+      final SuraAyah ending = new SuraAyah(
           mEndingSuraSpinner.getSelectedItemPosition() + 1,
           mEndingAyahSpinner.getSelectedItemPosition() + 1);
+
+      // force the correct order
+      final SuraAyah currentStart;
+      final SuraAyah currentEnding;
+      if (ending.after(start)) {
+        currentStart = start;
+        currentEnding = ending;
+      } else {
+        currentStart = ending;
+        currentEnding = start;
+      }
+
       final int page = QuranInfo.getPageFromSuraAyah(
           currentStart.sura, currentStart.ayah);
       final int verseRepeat = positionToRepeat(
@@ -116,6 +140,14 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           !currentEnding.equals(mDecidedEnd)) {
         // different range or not playing, so make a new request
         updatedRange = true;
+        if (mStart != null) {
+          final int origPage = mDecidedStart == null ?
+              mStart.getPage() : mDecidedStart.getPage();
+          if (page != origPage) {
+            pagerActivity.highlightAyah(currentStart.sura,
+                currentStart.ayah, HighlightType.AUDIO);
+          }
+        }
         pagerActivity.playFromAyah(currentStart.toQuranAyah(),
             currentEnding.toQuranAyah(), page, verseRepeat, rangeRepeat,
             enforceRange, true);
@@ -200,6 +232,15 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     }
   }
 
+  private void updateEnforceBounds(int rangeRepeatPosition) {
+    if (rangeRepeatPosition > 0) {
+      mRestrictToRange.setChecked(true);
+      mRestrictToRange.setEnabled(false);
+    } else {
+      mRestrictToRange.setEnabled(true);
+    }
+  }
+
   private int repeatToPosition(int repeat) {
     if (repeat == -1) {
       return REPEAT_MAX;
@@ -236,8 +277,14 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       } else {
         start = mStart;
         if (mStart.equals(mEnd)) {
-          ending = new SuraAyah(start.sura,
-              QuranInfo.getNumAyahs(start.sura));
+          final Integer[] pageBounds =
+              QuranInfo.getPageBounds(start.getPage());
+          if (pageBounds != null) {
+            ending = new SuraAyah(pageBounds[2], pageBounds[3]);
+          } else {
+            ending = new SuraAyah(start.sura,
+                QuranInfo.getNumAyahs(start.sura));
+          }
           mShouldEnforce = false;
         } else {
           ending = mEnd;

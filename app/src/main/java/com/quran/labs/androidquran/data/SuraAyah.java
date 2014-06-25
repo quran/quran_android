@@ -91,6 +91,10 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     return a.compareTo(b) >= 0 ? a : b;
   }
 
+  public boolean after(SuraAyah next) {
+    return sura > next.sura || (sura == next.sura && ayah > next.ayah);
+  }
+
   public static class Iterator {
 
     private SuraAyah mStart;

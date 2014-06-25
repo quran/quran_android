@@ -121,6 +121,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private static final String LAST_READING_MODE_IS_TRANSLATION =
       "LAST_READING_MODE_IS_TRANSLATION";
   private static final String LAST_ACTIONBAR_STATE = "LAST_ACTIONBAR_STATE";
+  private static final String LAST_AUDIO_REQUEST = "LAST_AUDIO_REQUEST";
+  private static final String LAST_START_POINT = "LAST_START_POINT";
+  private static final String LAST_ENDING_POINT = "LAST_ENDING_POINT";
 
   public static final String EXTRA_JUMP_TO_TRANSLATION = "jumpToTranslation";
   public static final String EXTRA_HIGHLIGHT_SURA = "highlightSura";
@@ -242,8 +245,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       android.util.Log.d(TAG, "non-null saved instance state!");
       Serializable lastAudioRequest =
           savedInstanceState.getSerializable(LAST_AUDIO_DL_REQUEST);
-      if (lastAudioRequest != null &&
-          lastAudioRequest instanceof DownloadAudioRequest) {
+      if (lastAudioRequest instanceof DownloadAudioRequest) {
         android.util.Log.d(TAG, "restoring request from saved instance!");
         mLastAudioDownloadRequest = (DownloadAudioRequest) lastAudioRequest;
       }
@@ -260,6 +262,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
       boolean lastWasDualPages = savedInstanceState.getBoolean(
           LAST_WAS_DUAL_PAGES, mDualPages);
       refresh = (lastWasDualPages != mDualPages);
+
+      mStart = savedInstanceState.getParcelable(LAST_START_POINT);
+      mEnd = savedInstanceState.getParcelable(LAST_ENDING_POINT);
+      mLastAudioRequest = (AudioRequest) savedInstanceState
+          .getSerializable(LAST_AUDIO_REQUEST);
     }
 
     mPrefs = PreferenceManager.getDefaultSharedPreferences(
@@ -832,11 +839,19 @@ public class PagerActivity extends SherlockFragmentActivity implements
       state.putSerializable(LAST_AUDIO_DL_REQUEST,
           mLastAudioDownloadRequest);
     }
-    int lastPage = QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
+    int lastPage = QuranInfo.getPageFromPos(
+        mViewPager.getCurrentItem(), mDualPages);
     state.putSerializable(LAST_READ_PAGE, lastPage);
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
     state.putBoolean(LAST_ACTIONBAR_STATE, mIsActionBarHidden);
     state.putBoolean(LAST_WAS_DUAL_PAGES, mDualPages);
+    if (mStart != null && mEnd != null) {
+      state.putParcelable(LAST_START_POINT, mStart);
+      state.putParcelable(LAST_ENDING_POINT, mEnd);
+    }
+    if (mLastAudioRequest != null) {
+      state.putSerializable(LAST_AUDIO_REQUEST, mLastAudioRequest);
+    }
     super.onSaveInstanceState(state);
   }
 
@@ -1264,7 +1279,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
     highlightAyah(sura, ayah, true, type);
   }
 
-  public void highlightAyah(int sura, int ayah, boolean force, HighlightType type) {
+  public void highlightAyah(int sura, int ayah,
+      boolean force, HighlightType type) {
     Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST ||
@@ -1273,7 +1289,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
 
     int position = QuranInfo.getPosFromPage(page, mDualPages);
-
     if (position != mViewPager.getCurrentItem() && force) {
       unHighlightAyahs(type);
       mViewPager.setCurrentItem(position);
@@ -1481,6 +1496,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     play(request);
 
     mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
+    mAudioStatusBar.setRepeatCount(verseRepeat);
   }
 
   private void downloadAndPlayAudio(QuranAyah ayah, QuranAyah ending,
@@ -1638,6 +1654,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     if (request != null) {
       i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
       mLastAudioRequest = request;
+      mAudioStatusBar.setRepeatCount(request.getVerseRepeatCount());
     }
 
     if (mShouldOverridePlaying) {
@@ -1669,6 +1686,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
     startService(new Intent(AudioService.ACTION_REWIND));
   }
 
+  @Override
+  public void onAudioSettingsPressed() {
+    showSlider(AUDIO_PAGE);
+  }
+
   public void updatePlayOptions(int rangeRepeat,
       int verseRepeat, boolean enforceRange) {
     Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
@@ -1676,6 +1698,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
     i.putExtra(AudioService.EXTRA_RANGE_REPEAT_COUNT, rangeRepeat);
     i.putExtra(AudioService.EXTRA_RANGE_RESTRICT, enforceRange);
     startService(i);
+
+    mLastAudioRequest.setVerseRepeatCount(verseRepeat);
+    mLastAudioRequest.setRangeRepeatCount(rangeRepeat);
+    mLastAudioRequest.setEnforceBounds(enforceRange);
+    mAudioStatusBar.setRepeatCount(verseRepeat);
   }
 
   @Override
@@ -1683,6 +1710,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
     i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, repeatCount);
     startService(i);
+    mLastAudioRequest.setVerseRepeatCount(repeatCount);
   }
 
   @Override
@@ -1829,7 +1857,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void updateAyahEndSelection(SuraAyah suraAyah) {
     if (mIsInAyahMode) {
       clearAyahModeHighlights();
-      mEnd = suraAyah;
+      if (suraAyah.after(mStart)) {
+        mEnd = suraAyah;
+      } else {
+        mEnd = mStart;
+        mStart = suraAyah;
+      }
       if (mSlidingPanel.isPaneVisible()) {
         refreshPages();
       }
@@ -1940,26 +1973,30 @@ public class PagerActivity extends SherlockFragmentActivity implements
       if (sliderPage < 0) {
         endAyahMode();
       } else {
-        mAyahToolBar.hideMenu();
-        mSlidingPager.setCurrentItem(sliderPage);
-        mSlidingPanel.showPane();
-        // TODO there's got to be a better way than this hack
-        // The issue is that smoothScrollTo returns if mCanSlide is false
-        // and it's false when the panel is GONE and showPane only calls
-        // requestLayout, and only in onLayout does mCanSlide become true.
-        // So by posting this later it gives time for onLayout to run.
-        // Another issue is that the fragments haven't been created yet
-        // (on first run), so calling refreshPages() before then won't work.
-        mHandler.post(new Runnable() {
-          @Override
-          public void run() {
-            mSlidingPanel.expandPane();
-            refreshPages();
-          }
-        });
+        showSlider(sliderPage);
       }
       return true;
     }
+  }
+
+  private void showSlider(int sliderPage) {
+    mAyahToolBar.hideMenu();
+    mSlidingPager.setCurrentItem(sliderPage);
+    mSlidingPanel.showPane();
+    // TODO there's got to be a better way than this hack
+    // The issue is that smoothScrollTo returns if mCanSlide is false
+    // and it's false when the panel is GONE and showPane only calls
+    // requestLayout, and only in onLayout does mCanSlide become true.
+    // So by posting this later it gives time for onLayout to run.
+    // Another issue is that the fragments haven't been created yet
+    // (on first run), so calling refreshPages() before then won't work.
+    mHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        mSlidingPanel.expandPane();
+        refreshPages();
+      }
+    });
   }
 
   public void updateAyahBookmark(
