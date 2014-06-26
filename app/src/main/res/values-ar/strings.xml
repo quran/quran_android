@@ -204,6 +204,22 @@
     <!-- ayah action panel -->
     <string name="ayah_tags_page">تصنيفات</string>
     <string name="ayah_translation_page">ترجمة</string>
+    <string name="play_from">من</string>
+    <string name="play_to">إلى</string>
+    <string name="play_options">اختيارات</string>
+    <string name="play_restrict_range"> شغل ما تم اختياره من الايات فقط</string>
+    <string name="repeat_verses_range">تكرار مجموعة الآيات:</string>
+    <string name="repeat_each_verse">تكرار كل اية :</string>
+    <string name="play_apply">تطبيق</string>
+    <string name="play_apply_and_play">تطبيق وتشغيل</string>
+
+    <string-array name="repeatValues">
+        <item>ابدا</item>
+        <item>مرة واحدة</item>
+        <item>مرتان</item>
+        <item>ثلاث مرات</item>
+        <item>لانهائي</item>
+    </string-array>
 
     <!-- long press -->
     <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>

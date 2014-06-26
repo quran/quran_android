@@ -22,7 +22,7 @@
             android:focusable="true"
             android:clickable="true"
             android:scaleType="fitCenter"
-            android:src="?attr/actionModeCloseDrawable" />
+            android:src="@drawable/ic_action_expand" />
         <com.quran.labs.androidquran.widgets.IconPageIndicator
             android:id="@+id/sliding_pager_indicator"
             android:layout_width="wrap_content"
