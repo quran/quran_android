@@ -155,8 +155,13 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           mRangeRepeatCount != rangeRepeat ||
           mVerseRepeatCount != verseRepeat) {
         // can just update repeat settings
-        pagerActivity.updatePlayOptions(
-            rangeRepeat, verseRepeat, enforceRange);
+        if (!pagerActivity.updatePlayOptions(
+            rangeRepeat, verseRepeat, enforceRange)) {
+          // audio stopped in the process, let's start it
+          pagerActivity.playFromAyah(currentStart.toQuranAyah(),
+              currentEnding.toQuranAyah(), page, verseRepeat, rangeRepeat,
+              enforceRange, true);
+        }
       }
       pagerActivity.endAyahMode();
       if (updatedRange) {

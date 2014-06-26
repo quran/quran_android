@@ -1691,18 +1691,23 @@ public class PagerActivity extends SherlockFragmentActivity implements
     showSlider(AUDIO_PAGE);
   }
 
-  public void updatePlayOptions(int rangeRepeat,
+  public boolean updatePlayOptions(int rangeRepeat,
       int verseRepeat, boolean enforceRange) {
-    Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
-    i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, verseRepeat);
-    i.putExtra(AudioService.EXTRA_RANGE_REPEAT_COUNT, rangeRepeat);
-    i.putExtra(AudioService.EXTRA_RANGE_RESTRICT, enforceRange);
-    startService(i);
+    if (mLastAudioRequest != null) {
+      Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
+      i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, verseRepeat);
+      i.putExtra(AudioService.EXTRA_RANGE_REPEAT_COUNT, rangeRepeat);
+      i.putExtra(AudioService.EXTRA_RANGE_RESTRICT, enforceRange);
+      startService(i);
 
-    mLastAudioRequest.setVerseRepeatCount(verseRepeat);
-    mLastAudioRequest.setRangeRepeatCount(rangeRepeat);
-    mLastAudioRequest.setEnforceBounds(enforceRange);
-    mAudioStatusBar.setRepeatCount(verseRepeat);
+      mLastAudioRequest.setVerseRepeatCount(verseRepeat);
+      mLastAudioRequest.setRangeRepeatCount(rangeRepeat);
+      mLastAudioRequest.setEnforceBounds(enforceRange);
+      mAudioStatusBar.setRepeatCount(verseRepeat);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
