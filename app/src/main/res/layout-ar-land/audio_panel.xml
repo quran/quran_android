@@ -6,14 +6,14 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
         android:fadeScrollbars="false"
         android:verticalScrollbarPosition="left">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingRight="12dp"
+            android:paddingLeft="12dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,10 +107,15 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-    <Button android:id="@+id/apply"
+
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/play_apply"
-        android:layout_gravity="left|bottom"
-        android:layout_marginRight="12dp"/>
+        android:paddingLeft="12dp"
+        android:layout_gravity="left|bottom">
+        <Button android:id="@+id/apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/play_apply"/>
+    </FrameLayout>
 </FrameLayout>
