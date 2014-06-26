@@ -270,6 +270,8 @@
     <string name="repeat_each_verse">Repeat each verse:</string>
     <string name="play_apply">Apply</string>
     <string name="play_apply_and_play">Apply and Play</string>
+    <string name="play">Play</string>
+    <string name="stop">Stop</string>
 
     <string-array name="repeatValues">
         <item>never</item>

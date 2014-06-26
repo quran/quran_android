@@ -33,7 +33,6 @@ import com.quran.labs.androidquran.service.util.MediaButtonHelper;
 import com.quran.labs.androidquran.service.util.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -50,10 +49,12 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -96,7 +97,15 @@ public class AudioService extends Service implements OnCompletionListener,
    public static final String ACTION_UPDATE_REPEAT =
            "com.quran.labs.androidquran.action.UPDATE_REPEAT";
 
-   public static class AudioUpdateIntent {
+   // pending notification request codes
+   private static final int REQUEST_CODE_MAIN = 0;
+   private static final int REQUEST_CODE_PREVIOUS = 1;
+   private static final int REQUEST_CODE_PAUSE = 2;
+   private static final int REQUEST_CODE_SKIP = 3;
+   private static final int REQUEST_CODE_STOP = 4;
+   private static final int REQUEST_CODE_RESUME = 5;
+
+  public static class AudioUpdateIntent {
       public static final String INTENT_NAME =
               "com.quran.labs.androidquran.audio.AudioUpdate";
       public static final String STATUS = "status";
@@ -204,7 +213,8 @@ public class AudioService extends Service implements OnCompletionListener,
    private AudioManager mAudioManager;
    private NotificationManager mNotificationManager;
 
-   private Notification mNotification = null;
+   private NotificationCompat.Builder mNotificationBuilder;
+   private NotificationCompat.Builder mPausedNotificationBuilder;
    private LocalBroadcastManager mBroadcastManager = null;
 
    private int mGaplessSura = 0;
@@ -575,8 +585,9 @@ public class AudioService extends Service implements OnCompletionListener,
          // If we're paused, just continue playback and restore the
          // 'foreground service' state.
          mState = State.Playing;
-         setUpAsForeground(mAudioTitle + " (playing)");
+         setUpAsForeground();
          configAndStartMediaPlayer(false);
+         notifyAudioStatus(AudioUpdateIntent.PLAYING);
       }
    }
 
@@ -586,8 +597,16 @@ public class AudioService extends Service implements OnCompletionListener,
          mState = State.Paused;
          mHandler.removeCallbacksAndMessages(null);
          mPlayer.pause();
-         // while paused, we always retain the MediaPlayer
-         relaxResources(false, true);
+         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+           // while paused, we always retain the MediaPlayer
+           relaxResources(false, true);
+         } else {
+           // on jellybean and above, stay in the foreground and
+           // update the notification.
+           relaxResources(false, false);
+           pauseNotification();
+           notifyAudioStatus(AudioUpdateIntent.PAUSED);
+         }
       }
    }
 
@@ -602,6 +621,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
          if (pos > 1500 && !mPlayerOverride){
             mPlayer.seekTo(seekTo);
+            mState = State.Playing; // in case we were paused
          }
          else {
             tryToGetAudioFocus();
@@ -613,6 +633,7 @@ public class AudioService extends Service implements OnCompletionListener,
                if (timing > -1){ mPlayer.seekTo(timing); }
                updateNotification(
                        mAudioRequest.getTitle(getApplicationContext()));
+               mState = State.Playing; // in case we were paused
                return;
             }
             playAudio();
@@ -634,6 +655,7 @@ public class AudioService extends Service implements OnCompletionListener,
              int timing = getSeekPosition(false);
              if (timing > -1) {
                mPlayer.seekTo(timing);
+               mState = State.Playing; // in case we were paused
              }
              updateNotification(
                  mAudioRequest.getTitle(getApplicationContext()));
@@ -670,6 +692,9 @@ public class AudioService extends Service implements OnCompletionListener,
          if (mTimingTask != null){
            mTimingTask.cancel(true);
          }
+
+         // tell the ui we've stopped
+         notifyAudioStatus(AudioUpdateIntent.STOPPED);
       }
    }
 
@@ -684,6 +709,12 @@ public class AudioService extends Service implements OnCompletionListener,
                  mAudioRequest.getCurrentAyah());
          mBroadcastManager.sendBroadcast(updateIntent);
       }
+   }
+
+   private void notifyAudioStatus(int status) {
+     Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
+     updateIntent.putExtra(AudioUpdateIntent.STATUS, status);
+     mBroadcastManager.sendBroadcast(updateIntent);
    }
 
    /**
@@ -884,7 +915,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
          mState = State.Preparing;
          if (!mIsSetupAsForeground){
-            setUpAsForeground(mAudioTitle);
+            setUpAsForeground();
          }
 
          // Use the media button APIs (if available) to register ourselves
@@ -981,12 +1012,15 @@ public class AudioService extends Service implements OnCompletionListener,
    /** Updates the notification. */
    void updateNotification(String text) {
       mAudioTitle = text;
-      PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-            new Intent(getApplicationContext(), PagerActivity.class),
-            PendingIntent.FLAG_UPDATE_CURRENT);
-      mNotification.setLatestEventInfo(getApplicationContext(),
-              mNotificationName, text, pi);
-      mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+      mNotificationBuilder.setContentText(text);
+      mNotificationManager.notify(NOTIFICATION_ID,
+          mNotificationBuilder.build());
+   }
+
+   void pauseNotification() {
+     mPausedNotificationBuilder.setContentText(mAudioTitle);
+     mNotificationManager.notify(NOTIFICATION_ID,
+         mPausedNotificationBuilder.build());
    }
 
    /**
@@ -995,17 +1029,60 @@ public class AudioService extends Service implements OnCompletionListener,
     * (such as playing music), and must appear to the user as a notification.
     * That's why we create the notification here.
     */
-   private void setUpAsForeground(String text) {
-      PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-            new Intent(getApplicationContext(), PagerActivity.class),
-            PendingIntent.FLAG_UPDATE_CURRENT);
-      mNotification = new Notification();
-      mNotification.tickerText = text;
-      mNotification.icon = R.drawable.icon;
-      mNotification.flags |= Notification.FLAG_ONGOING_EVENT;
-      mNotification.setLatestEventInfo(getApplicationContext(),
-              mNotificationName, text, pi);
-      startForeground(NOTIFICATION_ID, mNotification);
+   private void setUpAsForeground() {
+      // clear the "downloading complete" notification (if it exists)
+      mNotificationManager.cancel(
+          QuranDownloadService.DOWNLOADING_COMPLETE_NOTIFICATION);
+
+      final Context appContext = getApplicationContext();
+      final PendingIntent pi = PendingIntent.getActivity(appContext,
+         REQUEST_CODE_MAIN, new Intent(appContext, PagerActivity.class),
+         PendingIntent.FLAG_UPDATE_CURRENT);
+
+      final PendingIntent previousIntent = PendingIntent.getService(
+         appContext, REQUEST_CODE_PREVIOUS, new Intent(ACTION_REWIND),
+         PendingIntent.FLAG_UPDATE_CURRENT);
+     final PendingIntent nextIntent = PendingIntent.getService(
+         appContext, REQUEST_CODE_SKIP, new Intent(ACTION_SKIP),
+         PendingIntent.FLAG_UPDATE_CURRENT);
+     final PendingIntent pauseIntent = PendingIntent.getService(
+         appContext, REQUEST_CODE_PAUSE, new Intent(ACTION_PAUSE),
+         PendingIntent.FLAG_UPDATE_CURRENT);
+     final PendingIntent resumeIntent = PendingIntent.getService(
+         appContext, REQUEST_CODE_RESUME, new Intent(ACTION_PLAYBACK),
+         PendingIntent.FLAG_UPDATE_CURRENT);
+     final PendingIntent stopIntent = PendingIntent.getService(
+         appContext, REQUEST_CODE_STOP, new Intent(ACTION_STOP),
+         PendingIntent.FLAG_UPDATE_CURRENT);
+
+      if (mNotificationBuilder == null) {
+        mNotificationBuilder = new NotificationCompat.Builder(appContext);
+        mNotificationBuilder
+            .setSmallIcon(R.drawable.icon)
+            .setOngoing(true)
+            .setContentTitle(mNotificationName)
+            .setContentIntent(pi)
+            .addAction(R.drawable.ic_previous, "", previousIntent)
+            .addAction(R.drawable.ic_pause, "", pauseIntent)
+            .addAction(R.drawable.ic_next, "", nextIntent);
+      }
+      mNotificationBuilder.setTicker(mAudioTitle).setContentText(mAudioTitle);
+
+     if (mPausedNotificationBuilder == null) {
+       mPausedNotificationBuilder = new NotificationCompat.Builder(appContext);
+       mPausedNotificationBuilder
+           .setSmallIcon(R.drawable.icon)
+           .setOngoing(true)
+           .setContentTitle(mNotificationName)
+           .setContentIntent(pi)
+           .addAction(R.drawable.ic_play,
+               getString(R.string.play), resumeIntent)
+           .addAction(R.drawable.ic_stop,
+               getString(R.string.stop), stopIntent);
+     }
+     mPausedNotificationBuilder.setContentText(mAudioTitle);
+
+     startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
       mIsSetupAsForeground = true;
    }
 
