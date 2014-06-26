@@ -16,7 +16,7 @@
 
     <TextView android:id="@+id/rowIcon"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="10dp"
         android:layout_alignParentRight="true"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/rowIcon"
         android:layout_toRightOf="@+id/pageNumber"
-        android:gravity="right"
+        android:layout_gravity="right"
         android:maxLines="1"
         android:lines="1"
         android:ellipsize="end"
@@ -62,7 +62,7 @@
         android:layout_toRightOf="@+id/pageNumber"
         android:paddingBottom="5dp"
         android:textSize="10sp"
-        android:gravity="right"
+        android:layout_gravity="right"
         android:ellipsize="end"
         android:textColor="@color/sura_details_color" />
 
