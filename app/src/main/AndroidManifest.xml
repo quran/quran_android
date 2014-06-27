@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.quran.labs.androidquran" android:versionCode="254"
-	android:versionName="2.5.4"
+	package="com.quran.labs.androidquran" android:versionCode="255"
+	android:versionName="2.5.5"
 	android:installLocation="auto">
 	
    <supports-screens android:largeScreens="true" android:xlargeScreens="true" />

@@ -99,6 +99,11 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.5.5 (released 6/27/2014)**
+- advanced audio repeat options
+- rich audio notifications
+- fix tablet related issues
+
 **version 2.5.4 (released 6/13/2014)**
 - bugfixes (mainly preferences crash)
 - reset toolbar when you choose a different ayah
