@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.util;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
 import android.app.ActivityManager;
@@ -87,7 +88,8 @@ public class QuranUtils {
                 Configuration.ORIENTATION_LANDSCAPE){
             final SharedPreferences prefs =
                     PreferenceManager.getDefaultSharedPreferences(context);
-            return prefs.getBoolean(Constants.PREF_TABLET_ENABLED, true);
+            return prefs.getBoolean(Constants.PREF_TABLET_ENABLED,
+                 resources.getBoolean(R.bool.use_tablet_interface_by_default));
         }
       }
       return false;
