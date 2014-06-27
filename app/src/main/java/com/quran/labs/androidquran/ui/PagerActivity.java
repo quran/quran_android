@@ -779,10 +779,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mPromptDialog = null;
     }
     mSpinnerAdapter = null;
-
-    if (mIsInAyahMode) {
-      endAyahMode();
-    }
     super.onPause();
   }
 

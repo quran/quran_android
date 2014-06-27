@@ -43,10 +43,10 @@ public class ShareQuranAppTask extends PagerActivityTask<Void, Void, String> {
     if (start == null || end == null) return null;
     int sura = start.sura;
     int startAyah = start.ayah;
-    int endAyah = end.sura == start.sura ? end.ayah : QuranInfo.getNumAyahs(start.sura);
-    // TODO support spanning multiple suras
-    String url = QuranAppUtils.getQuranAppUrl(mKey, sura, startAyah, endAyah);
-    return url;
+    int endAyah = end.sura == start.sura ? end.ayah :
+            QuranInfo.getNumAyahs(start.sura);
+    // quranapp only supports sharing within a sura
+    return QuranAppUtils.getQuranAppUrl(mKey, sura, startAyah, endAyah);
   }
 
   @Override

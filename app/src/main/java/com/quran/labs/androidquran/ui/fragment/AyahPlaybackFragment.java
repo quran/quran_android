@@ -265,7 +265,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   @Override
   protected void refreshView() {
     final Context context = getActivity();
-    if (context instanceof PagerActivity) {
+    if (context instanceof PagerActivity && mStart != null && mEnd != null) {
       final AudioRequest lastRequest =
           ((PagerActivity) context).getLastAudioRequest();
       final SuraAyah start;
