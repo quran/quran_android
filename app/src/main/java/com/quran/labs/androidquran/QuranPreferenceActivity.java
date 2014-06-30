@@ -3,7 +3,6 @@ package com.quran.labs.androidquran;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -128,7 +127,6 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
         mStorageList = StorageUtils
             .getAllStorageLocations(getApplicationContext());
       } catch (Exception e) {
-        Crashlytics.logException(e);
         mStorageList = new ArrayList<StorageUtils.Storage>();
       }
     }

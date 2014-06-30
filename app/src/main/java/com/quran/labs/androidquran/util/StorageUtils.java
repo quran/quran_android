@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.util;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 
 import android.annotation.TargetApi;
@@ -232,7 +231,6 @@ public class StorageUtils {
     }
 
     private void computeSpace() {
-      Crashlytics.log("computeSpace() for " + mountPoint);
       StatFs stat = new StatFs(mountPoint);
       long totalBytes = (long) stat.getBlockCount() *
           (long) stat.getBlockSize();
