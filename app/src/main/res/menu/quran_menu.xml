@@ -17,6 +17,7 @@
           android:title="@string/menu_search"
           android:showAsAction="ifRoom" />
     <item android:id="@+id/night_mode"
+        android:checkable="true"
         android:icon="@drawable/ic_brightness"
         android:title="@string/prefs_night_mode_title"
         android:showAsAction="ifRoom" />
