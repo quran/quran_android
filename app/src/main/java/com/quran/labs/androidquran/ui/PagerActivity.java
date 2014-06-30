@@ -894,42 +894,47 @@ public class PagerActivity extends SherlockFragmentActivity implements
       quran.setVisible(true);
       translation.setVisible(false);
     }
+
+    MenuItem nightMode = menu.findItem(R.id.night_mode);
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    nightMode.setChecked(prefs.getBoolean(Constants.PREF_NIGHT_MODE, false));
+
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.favorite_item) {
+    final int itemId = item.getItemId();
+    if (itemId == R.id.favorite_item) {
       int page = getCurrentPage();
       toggleBookmark(null, null, page);
       return true;
-    } else if (item.getItemId() == R.id.goto_quran) {
+    } else if (itemId == R.id.goto_quran) {
       switchToQuran();
       return true;
-    } else if (item.getItemId() == R.id.goto_translation) {
+    } else if (itemId == R.id.goto_translation) {
       switchToTranslation();
       return true;
-    } else if (item.getItemId() == R.id.night_mode) {
-      SharedPreferences prefs =
-          PreferenceManager.getDefaultSharedPreferences(this);
-      boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    } else if (itemId == R.id.night_mode) {
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
       SharedPreferences.Editor prefsEditor = prefs.edit();
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, !isNightMode).commit();
+      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, !item.isChecked()).commit();
       refreshQuranPages();
-    } else if (item.getItemId() == R.id.settings) {
+      return true;
+    } else if (itemId == R.id.settings) {
       Intent i = new Intent(this, QuranPreferenceActivity.class);
       startActivity(i);
       return true;
-    } else if (item.getItemId() == R.id.help) {
+    } else if (itemId == R.id.help) {
       Intent i = new Intent(this, HelpActivity.class);
       startActivity(i);
       return true;
-    } else if (item.getItemId() == R.id.search) {
+    } else if (itemId == R.id.search) {
       return onSearchRequested();
-    } else if (item.getItemId() == android.R.id.home) {
+    } else if (itemId == android.R.id.home) {
       finish();
       return true;
-    } else if (item.getItemId() == R.id.jump) {
+    } else if (itemId == R.id.jump) {
       FragmentManager fm = getSupportFragmentManager();
       JumpFragment jumpDialog = new JumpFragment();
       jumpDialog.show(fm, JumpFragment.TAG);
