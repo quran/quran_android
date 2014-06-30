@@ -161,6 +161,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private AudioRequest mLastAudioRequest;
   private boolean mDualPages = false;
   private boolean mIsLandscape;
+  private Integer mLastPlayingSura;
+  private Integer mLastPlayingAyah;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
 
@@ -1272,6 +1274,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void highlightAyah(int sura, int ayah, HighlightType type) {
+    if (type == HighlightType.AUDIO) {
+        mLastPlayingSura = sura;
+        mLastPlayingAyah = ayah;
+    }
     highlightAyah(sura, ayah, true, type);
   }
 
@@ -1305,6 +1311,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   public void unHighlightAyahs(HighlightType type) {
+    if (type == HighlightType.AUDIO) {
+        mLastPlayingSura = null;
+        mLastPlayingAyah = null;
+    }
     int position = mViewPager.getCurrentItem();
     Fragment f = mPagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
@@ -1684,6 +1694,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onAudioSettingsPressed() {
+    if (mLastPlayingSura != null) {
+      mStart = new SuraAyah(mLastPlayingSura, mLastPlayingAyah);
+      mEnd = mStart;
+    }
+
+    if (mStart == null) {
+      final Integer[] bounds = QuranInfo.getPageBounds(getCurrentPage());
+      mStart = new SuraAyah(bounds[0], bounds[1]);
+      mEnd = mStart;
+    }
     showSlider(AUDIO_PAGE);
   }
 
@@ -1708,10 +1728,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void setRepeatCount(int repeatCount) {
-    Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
-    i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, repeatCount);
-    startService(i);
-    mLastAudioRequest.setVerseRepeatCount(repeatCount);
+    if (mLastAudioRequest != null) {
+      Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
+      i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, repeatCount);
+      startService(i);
+      mLastAudioRequest.setVerseRepeatCount(repeatCount);
+    }
   }
 
   @Override

@@ -96,6 +96,15 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       new RefreshTagsTask().execute();
    }
 
+   public void setMadeChanges() {
+     mMadeChanges = true;
+     // If not in dialog mode, save the changes now, otherwise, on OK
+     if (!getShowsDialog()) {
+       if (mCurrentTask != null) mCurrentTask.cancel(true);
+       mCurrentTask = new UpdateBookmarkTagsTask(false).execute();
+     }
+   }
+
   @Override
    public void onSaveInstanceState(Bundle outState) {
       outState.putBoolean(MADE_CHANGES, mMadeChanges);
@@ -146,13 +155,8 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Tag tag = (Tag)mAdapter.getItem(position);
             if (tag.mId >= 0) {
-               mMadeChanges = true;
                tag.toggle();
-               // If not in dialog mode, save the changes now, otherwise, on OK
-               if (!getShowsDialog()) {
-                  if (mCurrentTask != null) mCurrentTask.cancel(true);
-                  mCurrentTask = new UpdateBookmarkTagsTask(false).execute();
-               }
+               setMadeChanges();
             }
             else if (tag.mId == -1) {
 	           Context context = getActivity();
@@ -278,8 +282,8 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
             holder.checkBox.setChecked(tag.isChecked());
             holder.checkBox.setOnClickListener(new OnClickListener() {
                public void onClick(View v) {
-                  mMadeChanges = true;
                   tag.toggle();
+                  setMadeChanges();
                }
             });
          }
@@ -351,18 +355,18 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
 
           if (adapter == null){ return null; }
           long id = adapter.addTag(params[0]);
-          Tag t = new Tag(id, params[0]);
-          return t;
+          return new Tag(id, params[0]);
        }
+
        @Override
        protected void onPostExecute(Tag result) {
           if (result != null && mTags != null && mAdapter != null) {
-             mMadeChanges = true;
              result.setChecked(true);
              mTags.add(mTags.size() - 1, result);
              mAdapter.notifyDataSetChanged();
+             setMadeChanges();
           }
-       };
+       }
    }
    
    class UpdateBookmarkTagsTask extends AsyncTask<Void, Void, Void> {
