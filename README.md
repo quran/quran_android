@@ -99,6 +99,11 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.5.6 (released 6/29/2014)**
+- fix a crash with panel and audio settings
+- fix tags panel not updating
+- update single image downloading code
+
 **version 2.5.5 (released 6/27/2014)**
 - advanced audio repeat options
 - rich audio notifications
