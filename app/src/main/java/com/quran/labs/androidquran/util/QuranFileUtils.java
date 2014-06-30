@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.util;
 
 import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 
 import android.content.Context;
@@ -16,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -30,6 +30,9 @@ public class QuranFileUtils {
   private static final String QURAN_BASE = "quran_android/";
   private static final String DATABASE_DIRECTORY = "databases";
   private static final int BUFF_SIZE = 1024;
+
+  private static final int DEFAULT_READ_TIMEOUT = 20 * 1000; // 20s
+  private static final int DEFAULT_CONNECT_TIMEOUT = 15 * 1000; // 15s
 
   public static boolean debugRmDir(String dir, boolean deleteDirectory) {
     File directory = new File(dir);
@@ -176,6 +179,11 @@ public class QuranFileUtils {
   }
 
   public static Bitmap getImageFromWeb(Context context, String filename) {
+    return getImageFromWeb(context, filename, false);
+  }
+
+  private static Bitmap getImageFromWeb(Context context,
+      String filename, boolean isRetry) {
     QuranScreenInfo instance = QuranScreenInfo.getInstance();
     if (instance == null) {
       return null;
@@ -186,41 +194,61 @@ public class QuranFileUtils {
         + filename;
     Log.d(TAG, "want to download: " + urlString);
 
-    InputStream is;
+    InputStream is = null;
+    HttpURLConnection connection = null;
     try {
-      URL url = new URL(urlString);
-      is = (InputStream) url.getContent();
-    }
-    catch (Exception e) {
-      return null;
-    }
+      // thanks to Picasso URLConnectionDownloader
+      connection = (HttpURLConnection) (new URL(urlString).openConnection());
+      connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
+      connection.setReadTimeout(DEFAULT_READ_TIMEOUT);
+      if (connection.getResponseCode() >= 300) {
+        return isRetry ? null : getImageFromWeb(context, filename, true);
+      } else if (connection.getContentLength() == 0) {
+        return isRetry ? null : getImageFromWeb(context, filename, true);
+      }
+      is = connection.getInputStream();
 
-    String path = getQuranDirectory(context);
-    if (path != null) {
-      path += File.separator + filename;
+      String path = getQuranDirectory(context);
+      if (path != null) {
+        path += File.separator + filename;
 
-      // can't write to the sdcard, try to decode in memory
-      if (!QuranFileUtils.makeQuranDirectory(context)) {
+        // can't write to the sdcard, try to decode in memory
+        if (!QuranFileUtils.makeQuranDirectory(context)) {
+          return decodeBitmapStream(is);
+        }
+
+        try {
+          saveStream(is, path);
+          return getImageFromSD(context, filename);
+        } catch (Exception e) {
+          // failed to save the image, try to decode
+          return decodeBitmapStream(is);
+        }
+      } else {
         return decodeBitmapStream(is);
       }
-
-      try {
-        saveStream(is, path);
-        return getImageFromSD(context, filename);
-      } catch (Exception e) {
-        // failed to save the image, try to decode
+    } catch (Exception e) {
+      if (isRetry) {
         Crashlytics.logException(e);
-        return decodeBitmapStream(is);
-      } finally {
-        try {
-          is.close();
-        } catch (Exception e){
-          // ignore
+      } else {
+        Crashlytics.log("exception getImageFromWeb: " + e.toString());
+      }
+      return isRetry ? null : getImageFromWeb(context, filename, true);
+    } finally {
+      if (is != null) {
+        try { is.close(); }
+        catch (Exception e){
+          // no-op
         }
       }
-    }
-    else {
-      return decodeBitmapStream(is);
+
+      if (connection != null) {
+        try {
+          connection.disconnect();
+        } catch (Exception e) {
+          // no-op
+        }
+      }
     }
   }
 
