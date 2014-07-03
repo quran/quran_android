@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
@@ -13,7 +14,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
@@ -102,41 +102,41 @@ public class QuranPageWorker {
       return mMemoryCache.get(key);
    }
 
-   public void loadPage(String widthParam, int page, ImageView imageView){
+   public void loadPage(String widthParam, int page, AyahTracker tracker){
       final BitmapDrawable drawable = getBitmapFromCache(page + widthParam);
       if (drawable != null){
-         imageView.setImageDrawable(drawable);
+        tracker.onLoadImageResponse(drawable, Response.fromPage(page));
       }
       else {
          // AsyncTask included in our code now and by default
          // uses a SerialExecutor (or a SingleThreadExecutor on
          // pre honeycomb devices).
          QuranPageWorkerTask task = new QuranPageWorkerTask(
-                 widthParam, imageView);
+                 widthParam, tracker);
          task.execute(page);
       }
    }
 
    private class QuranPageWorkerTask extends
-           AsyncTask<Integer, Void, BitmapDrawable> {
-      private final WeakReference<ImageView> mImageViewReference;
+           AsyncTask<Integer, Void, Response> {
+      private final WeakReference<AyahTracker> mAyahTrackerWeakReference;
       private int data = 0;
       private String mWidthParam;
 
-      public QuranPageWorkerTask(String widthParam, ImageView imageView) {
+      public QuranPageWorkerTask(String widthParam, AyahTracker tracker) {
          mWidthParam = widthParam;
-         // use a WeakReference to ensure the ImageView can be garbage collected
-         mImageViewReference = new WeakReference<ImageView>(imageView);
+         // use a WeakReference to ensure the AyahTracker can be gc
+        mAyahTrackerWeakReference = new WeakReference<AyahTracker>(tracker);
       }
 
       @Override
-      protected BitmapDrawable doInBackground(Integer... params) {
+      protected Response doInBackground(Integer... params) {
          data = params[0];
-         Bitmap bitmap = null;
+         Response response = null;
          OutOfMemoryError oom = null;
 
          try {
-            bitmap = QuranDisplayHelper.getQuranPage(
+           response = QuranDisplayHelper.getQuranPage(
                  mContext, mWidthParam, data);
          } catch (OutOfMemoryError me){
            Crashlytics.log(Log.WARN, TAG,
@@ -145,7 +145,9 @@ public class QuranPageWorker {
            oom = me;
          }
 
-         if (bitmap == null){
+         if (response == null ||
+             (response.getBitmap() == null &&
+                 response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND)){
            Crashlytics.log(Log.WARN, TAG, "cache memory: " +
                mMemoryCache.size() + " vs " + mMemoryCache.maxSize());
             if (QuranScreenInfo.getInstance().isTablet(mContext)){
@@ -155,42 +157,52 @@ public class QuranPageWorker {
                if (param.equals(mWidthParam)){
                   param = QuranScreenInfo.getInstance().getTabletWidthParam();
                }
-               bitmap = QuranDisplayHelper.getQuranPage(mContext, param, data);
-               if (bitmap == null){
-                  Crashlytics.log(Log.WARN, TAG, "bitmap still null, giving up...");
+               response = QuranDisplayHelper.getQuranPage(mContext, param, data);
+               if (response.getBitmap() == null){
+                  Crashlytics.log(Log.WARN, TAG,
+                      "bitmap still null, giving up... [" +
+                          response.getErrorCode() + "]");
                }
             }
-            Crashlytics.log(Log.WARN, TAG, "got bitmap back as null...");
+            Crashlytics.log(Log.WARN, TAG, "got response back as null... [" +
+                (response == null ? "" : response.getErrorCode()));
          }
 
-         BitmapDrawable drawable = null;
-         if (bitmap != null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
-               drawable = new BitmapDrawable(mResources, bitmap);
-            }
-            else {
-               drawable = new RecyclingBitmapDrawable(mResources, bitmap);
-            }
-
-            addBitmapToCache(data + mWidthParam, drawable);
-         } else if (oom != null){
-           // throw the exception since we couldn't handle it
+         if ((response == null ||
+             response.getBitmap() == null) && oom != null) {
            throw oom;
          }
 
-         return drawable;
+         if (response != null) {
+           response.setPageNumber(data);
+         }
+
+        return response;
       }
 
       // once complete, see if ImageView is still around and set bitmap.
       @Override
-      protected void onPostExecute(BitmapDrawable drawable) {
-         if (drawable != null) {
-            final ImageView imageView = mImageViewReference.get();
-            if (imageView != null) {
-               imageView.setImageDrawable(drawable);
-            }
-            else { Log.w(TAG, "failed to set bitmap in imageview"); }
+      protected void onPostExecute(Response response) {
+         BitmapDrawable drawable = null;
+         if (response != null) {
+           final Bitmap bitmap = response.getBitmap();
+           if (bitmap != null){
+             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+               drawable = new BitmapDrawable(mResources, bitmap);
+             }
+             else {
+               drawable = new RecyclingBitmapDrawable(mResources, bitmap);
+             }
+
+             addBitmapToCache(data + mWidthParam, drawable);
+           }
          }
+
+        final AyahTracker ayahTracker = mAyahTrackerWeakReference.get();
+        if (ayahTracker != null) {
+          ayahTracker.onLoadImageResponse(drawable,
+              Response.lightResponse(response));
+        }
       }
    }
 }

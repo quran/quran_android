@@ -4,6 +4,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
@@ -24,14 +25,13 @@ import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.ObservableScrollView;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -46,7 +46,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
@@ -72,6 +74,8 @@ public class QuranPageFragment extends SherlockFragment
   private boolean mJustCreated;
 
   private View mMainView;
+  private View mErrorLayout;
+  private TextView mErrorReason;
   private ImageView mLeftBorder, mRightBorder;
   private Map<String, List<AyahBounds>> mCoordinateData;
 
@@ -122,6 +126,26 @@ public class QuranPageFragment extends SherlockFragment
 
     mImageView = (HighlightingImageView) view.findViewById(R.id.page_image);
     mScrollView = (ObservableScrollView) view.findViewById(R.id.page_scroller);
+
+    mErrorLayout = view.findViewById(R.id.error_layout);
+    final Button retryButton = (Button) view.findViewById(R.id.retry_button);
+    mErrorReason = (TextView) view.findViewById(R.id.reason_text);
+    retryButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        mErrorLayout.setVisibility(View.GONE);
+        downloadImage();
+      }
+    });
+
+    view.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (mAyahSelectedListener != null) {
+          mAyahSelectedListener.onClick(EventType.SINGLE_TAP);
+        }
+      }
+    });
 
     mMainView = view;
     mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -182,6 +206,9 @@ public class QuranPageFragment extends SherlockFragment
       nightMode = true;
       nightModeTextBrightness =
           QuranSettings.getNightModeTextBrightness(context);
+      mErrorReason.setTextColor(Color.WHITE);
+    } else {
+      mErrorReason.setTextColor(Color.BLACK);
     }
 
     if (mPageNumber % 2 == 0) {
@@ -224,9 +251,7 @@ public class QuranPageFragment extends SherlockFragment
       mHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
-          QuranPageWorker worker = pagerActivity.getQuranPageWorker();
-          worker.loadPage(QuranScreenInfo.getInstance().getWidthParam(),
-              mPageNumber, mImageView);
+          downloadImage();
         }
       }, 250);
 
@@ -245,6 +270,45 @@ public class QuranPageFragment extends SherlockFragment
           }
         }, 250);
       }
+    }
+  }
+
+  private void downloadImage() {
+    final Activity activity = getActivity();
+    if (activity instanceof PagerActivity) {
+      QuranPageWorker worker = ((PagerActivity) activity).getQuranPageWorker();
+      worker.loadPage(QuranScreenInfo.getInstance().getWidthParam(),
+          mPageNumber, QuranPageFragment.this);
+    }
+  }
+
+  @Override
+  public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
+    if (mImageView == null || mErrorLayout == null) {
+      return;
+    }
+
+    if (drawable != null) {
+      mImageView.setImageDrawable(drawable);
+      // TODO we should toast a warning if we couldn't save the image
+      // (which would likely happen if we can't write to the sdcard,
+      // but just got the page from the web).
+    } else if (response != null) {
+      // failed to get the image... let's notify the user
+      mErrorLayout.setVisibility(View.VISIBLE);
+      final int errorCode = response.getErrorCode();
+      final int errorRes;
+      switch (errorCode) {
+        case Response.ERROR_SD_CARD_NOT_FOUND:
+          errorRes = R.string.sdcard_error;
+          break;
+        case Response.ERROR_DOWNLOADING_ERROR:
+          errorRes = R.string.download_error_network;
+          break;
+        default:
+          errorRes = R.string.download_error_general;
+      }
+      mErrorReason.setText(errorRes);
     }
   }
 

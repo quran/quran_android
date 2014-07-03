@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -16,6 +17,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -116,6 +118,11 @@ public class TranslationFragment extends SherlockFragment
         Constants.PREF_ACTIVE_TRANSLATION, null);
     refresh(database);
     return view;
+  }
+
+  @Override
+  public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
+    // no op, we're not requesting images here
   }
 
   public void updateView() {

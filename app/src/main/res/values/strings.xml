@@ -2,10 +2,10 @@
 <resources>
     <string name="app_name">Quran</string>
     <string name="downloadPrompt_title">Download Required Files?</string>
-    <string name="downloadPrompt">For optimal performance, some files must be
-			downloaded.  If you choose not to do this now, each page will take
-			significantly longer to load. Would you like to download the required
-			files now?
+    <string name="downloadPrompt">In order for Quran Android to work properly,
+            we need to download some files. If you do not do this now, the app
+            may not work reliably and will require an internet connection for reading.
+            Would you like to download the required files now?
 		</string>
     <string name="downloadTabletPrompt">We recently added improved images for
         tablets. Would you like to download these images now?</string>
@@ -221,6 +221,7 @@
     <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
+    <string name="sdcard_error">Could not find sdcard. Please mount it and try again.</string>
     <string name="download_successful">Download Successful</string>   
     <string name="download_processing">Processing Download&#8230;</string>              
     <string name="download_error_general">Download failed</string>             
