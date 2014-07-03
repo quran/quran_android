@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.util;
 
-import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 
 import android.content.Context;
@@ -113,12 +113,12 @@ public class QuranFileUtils {
     return state.equals(Environment.MEDIA_MOUNTED);
   }
 
-  public static Bitmap getImageFromSD(Context context, String filename) {
+  public static Response getImageFromSD(Context context, String filename) {
     return getImageFromSD(context, null, filename);
   }
 
-  public static Bitmap getImageFromSD(Context context, String widthParam,
-                                      String filename) {
+  public static Response getImageFromSD(Context context, String widthParam,
+                                        String filename) {
     String location;
     if (widthParam != null) {
       location = getQuranDirectory(context, widthParam);
@@ -127,13 +127,15 @@ public class QuranFileUtils {
     }
 
     if (location == null) {
-      return null;
+      return new Response(Response.ERROR_SD_CARD_NOT_FOUND);
     }
 
     BitmapFactory.Options options = new BitmapFactory.Options();
     options.inPreferredConfig = Bitmap.Config.ALPHA_8;
-    return BitmapFactory.decodeFile(location +
+    final Bitmap bitmap = BitmapFactory.decodeFile(location +
         File.separator + filename, options);
+    return bitmap == null ? new Response(Response.ERROR_FILE_NOT_FOUND) :
+        new Response(bitmap);
   }
 
   public static boolean writeNoMediaFile(Context context) {
@@ -178,15 +180,15 @@ public class QuranFileUtils {
     else { return false; }
   }
 
-  public static Bitmap getImageFromWeb(Context context, String filename) {
+  public static Response getImageFromWeb(Context context, String filename) {
     return getImageFromWeb(context, filename, false);
   }
 
-  private static Bitmap getImageFromWeb(Context context,
+  private static Response getImageFromWeb(Context context,
       String filename, boolean isRetry) {
     QuranScreenInfo instance = QuranScreenInfo.getInstance();
     if (instance == null) {
-      return null;
+      instance = QuranScreenInfo.getOrMakeInstance(context);
     }
 
     String urlString = IMG_HOST + "width"
@@ -201,11 +203,15 @@ public class QuranFileUtils {
       connection = (HttpURLConnection) (new URL(urlString).openConnection());
       connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
       connection.setReadTimeout(DEFAULT_READ_TIMEOUT);
-      if (connection.getResponseCode() >= 300) {
-        return isRetry ? null : getImageFromWeb(context, filename, true);
-      } else if (connection.getContentLength() == 0) {
-        return isRetry ? null : getImageFromWeb(context, filename, true);
+      if (connection.getResponseCode() >= 300 ||
+          connection.getContentLength() == 0) {
+        if (isRetry) {
+          return new Response(Response.ERROR_DOWNLOADING_ERROR);
+        } else {
+          return getImageFromWeb(context, filename, true);
+        }
       }
+
       is = connection.getInputStream();
 
       String path = getQuranDirectory(context);
@@ -214,26 +220,41 @@ public class QuranFileUtils {
 
         // can't write to the sdcard, try to decode in memory
         if (!QuranFileUtils.makeQuranDirectory(context)) {
-          return decodeBitmapStream(is);
+          final Bitmap bitmap = decodeBitmapStream(is);
+          if (bitmap != null) {
+            return new Response(bitmap, Response.WARN_SD_CARD_NOT_FOUND);
+          }
         }
 
         try {
-          saveStream(is, path);
-          return getImageFromSD(context, filename);
+          final Bitmap bitmap = decodeBitmapStream(is);
+          if (bitmap != null) {
+            int warning = tryToSaveBitmap(bitmap, path) ? 0 :
+                Response.WARN_COULD_NOT_SAVE_FILE;
+            return new Response(bitmap, warning);
+          } else if (isRetry) {
+            return new Response(Response.ERROR_DOWNLOADING_ERROR);
+          } else {
+            return getImageFromWeb(context, filename, true);
+          }
         } catch (Exception e) {
-          // failed to save the image, try to decode
-          return decodeBitmapStream(is);
+          return isRetry ? new Response(Response.ERROR_DOWNLOADING_ERROR) :
+              getImageFromWeb(context, filename, true);
         }
       } else {
-        return decodeBitmapStream(is);
+        final Bitmap bitmap = decodeBitmapStream(is);
+        if (bitmap == null) {
+          return new Response(Response.ERROR_DOWNLOADING_ERROR);
+        } else {
+          return new Response(bitmap, Response.WARN_SD_CARD_NOT_FOUND);
+        }
       }
     } catch (Exception e) {
       if (isRetry) {
-        Crashlytics.logException(e);
+        return new Response(Response.ERROR_DOWNLOADING_ERROR);
       } else {
-        Crashlytics.log("exception getImageFromWeb: " + e.toString());
+        return getImageFromWeb(context, filename, true);
       }
-      return isRetry ? null : getImageFromWeb(context, filename, true);
     } finally {
       if (is != null) {
         try { is.close(); }
@@ -258,16 +279,19 @@ public class QuranFileUtils {
     return BitmapFactory.decodeStream(is, null, options);
   }
 
-  private static void saveStream(InputStream is, String savePath)
+  private static boolean tryToSaveBitmap(Bitmap bitmap, String savePath)
       throws IOException {
     FileOutputStream output = new FileOutputStream(savePath);
-    int readlen;
-
-    byte[] buf = new byte[BUFF_SIZE];
-    while ((readlen = is.read(buf)) > 0) {
-      output.write(buf, 0, readlen);
+    try {
+      return bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+    } finally {
+      try {
+        output.flush();
+        output.close();
+      } catch (Exception e) {
+        // ignore...
+      }
     }
-    output.close();
   }
 
   public static String getQuranBaseDirectory(Context context) {

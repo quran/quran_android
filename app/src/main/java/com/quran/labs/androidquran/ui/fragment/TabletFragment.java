@@ -4,6 +4,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -32,6 +33,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -271,6 +273,18 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   }
 
   @Override
+  public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
+    if (drawable != null && response != null) {
+      final int page = response.getPageNumber();
+      if (page == mPageNumber - 1) {
+        mRightImageView.setImageDrawable(drawable);
+      } else if (page == mPageNumber) {
+        mLeftImageView.setImageDrawable(drawable);
+      }
+    }
+  }
+
+  @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
@@ -281,8 +295,8 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
             ((PagerActivity) getActivity()).getQuranPageWorker();
         String widthParam =
             QuranScreenInfo.getInstance().getTabletWidthParam();
-        worker.loadPage(widthParam, mPageNumber - 1, mRightImageView);
-        worker.loadPage(widthParam, mPageNumber, mLeftImageView);
+        worker.loadPage(widthParam, mPageNumber - 1, this);
+        worker.loadPage(widthParam, mPageNumber, this);
       }
 
       new QueryPageCoordinatesTask(context)
