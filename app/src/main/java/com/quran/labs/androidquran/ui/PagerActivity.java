@@ -1866,6 +1866,44 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mIsInAyahMode = false;
   }
 
+  public void nextAyah() {
+    final int ayat = QuranInfo.getNumAyahs(mEnd.sura);
+
+    final SuraAyah s;
+    if (mEnd.ayah + 1 <= ayat) {
+      s = new SuraAyah(mEnd.sura, mEnd.ayah + 1);
+    } else if (mEnd.sura < 114) {
+      s = new SuraAyah(mEnd.sura + 1, 1);
+    } else {
+      return;
+    }
+    selectAyah(s);
+  }
+
+  public void previousAyah() {
+    final SuraAyah s;
+    if (mEnd.ayah > 1) {
+      s = new SuraAyah(mEnd.sura, mEnd.ayah - 1);
+    } else if (mEnd.sura > 1) {
+      s = new SuraAyah(mEnd.sura - 1, QuranInfo.getNumAyahs(mEnd.sura - 1));
+    } else {
+      return;
+    }
+    selectAyah(s);
+  }
+
+  private void selectAyah(SuraAyah s) {
+    final int page = s.getPage();
+    final int position = QuranInfo.getPosFromPage(page, mDualPages);
+    Fragment f = mPagerAdapter.getFragmentIfExists(position);
+    if (f instanceof AyahTracker) {
+      if (position != mViewPager.getCurrentItem()) {
+        mViewPager.setCurrentItem(position);
+      }
+      updateAyahStartSelection(s, (AyahTracker) f);
+    }
+  }
+
   public void updateAyahStartSelection(
       SuraAyah suraAyah, AyahTracker tracker) {
     if (mIsInAyahMode) {
