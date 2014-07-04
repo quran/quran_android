@@ -1,5 +1,14 @@
 package com.quran.labs.androidquran.data;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.database.TranslationsDBAdapter;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.TranslationUtils;
+
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -14,15 +23,6 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.database.DatabaseHandler;
-import com.quran.labs.androidquran.database.TranslationsDBAdapter;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.util.TranslationUtils;
 
 import java.util.List;
 
@@ -217,12 +217,12 @@ public class QuranDataProvider extends ContentProvider {
 
 		if (mDatabase == null){
 			mDatabase = new DatabaseHandler(getContext(), language);
-      }
-      else if (!language.equals(mCurrentLanguage)){
-         mDatabase.closeDatabase();
-         mDatabase = new DatabaseHandler(getContext(), language);
-         mCurrentLanguage = language;
-      }
+    }
+    else if (!language.equals(mCurrentLanguage)){
+       mDatabase.closeDatabase();
+       mDatabase = new DatabaseHandler(getContext(), language);
+       mCurrentLanguage = language;
+    }
 
 		return mDatabase.search(query, wantSnippets);
 	}

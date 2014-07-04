@@ -1,28 +1,23 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.view.ViewGroup;
-
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.view.ViewGroup;
+
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
-   private static String TAG = "QuranPageAdapter";
+   private static final String TAG = "QuranPageAdapter";
 
    private boolean mIsShowingTranslation = false;
    private boolean mIsDualPages = false;
-
-	public QuranPageAdapter(FragmentManager fm, boolean dualPages){
-		super(fm);
-      mIsDualPages = dualPages;
-	}
 
    public QuranPageAdapter(FragmentManager fm, boolean dualPages,
                            boolean isShowingTranslation){
