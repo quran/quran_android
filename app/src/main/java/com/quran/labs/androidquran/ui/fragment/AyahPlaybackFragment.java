@@ -303,6 +303,10 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       }
 
       final int maxAyat = QuranInfo.getNumAyahs(start.sura);
+      if (maxAyat == -1) {
+        return;
+      }
+
       updateAyahSpinner(mStartAyahSpinner, mStartAyahAdapter,
           maxAyat, start.ayah);
       final int endAyat = (ending.sura == start.sura) ? maxAyat :

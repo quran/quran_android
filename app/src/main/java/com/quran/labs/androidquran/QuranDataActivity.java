@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -56,7 +55,6 @@ public class QuranDataActivity extends SherlockActivity implements
    @Override
    public void onCreate(Bundle savedInstanceState) {
       setTheme(R.style.Theme_Sherlock_NoActionBar);
-      requestWindowFeature(Window.FEATURE_NO_TITLE);
 
       super.onCreate(savedInstanceState);
       setContentView(R.layout.splash_screen);
@@ -158,7 +156,7 @@ public class QuranDataActivity extends SherlockActivity implements
       }
 
       // check whether or not we need to download
-      mCheckPagesTask = new CheckPagesAsyncTask();
+      mCheckPagesTask = new CheckPagesAsyncTask(this);
       mCheckPagesTask.execute();
    }
    
@@ -180,10 +178,12 @@ public class QuranDataActivity extends SherlockActivity implements
       }
 
       mIsPaused = true;
-      mDownloadReceiver.setListener(null);
-      LocalBroadcastManager.getInstance(this).
-              unregisterReceiver(mDownloadReceiver);
-      mDownloadReceiver = null;
+      if (mDownloadReceiver != null) {
+        mDownloadReceiver.setListener(null);
+        LocalBroadcastManager.getInstance(this).
+            unregisterReceiver(mDownloadReceiver);
+        mDownloadReceiver = null;
+      }
 
       if (mPromptForDownloadDialog != null){
          mPromptForDownloadDialog.dismiss();
@@ -213,17 +213,20 @@ public class QuranDataActivity extends SherlockActivity implements
                Constants.PREF_MAX_BITMAP_HEIGHT, height).commit();
            QuranScreenInfo.getInstance().setBitmapMaxHeight(height);
            // check whether or not we need to download
-           mCheckPagesTask = new CheckPagesAsyncTask();
-           mCheckPagesTask.execute();
+           if (!mIsPaused) {
+             mCheckPagesTask = new CheckPagesAsyncTask(QuranDataActivity.this);
+             mCheckPagesTask.execute();
+           }
            return;
          }
 
          mRefreshHeightTries++;
          if (mRefreshHeightTries == 5){
            android.util.Log.d(TAG, "giving up on getting the max height...");
-           mCheckPagesTask = new CheckPagesAsyncTask();
-           mCheckPagesTask.execute();
-           return;
+           if (!mIsPaused) {
+             mCheckPagesTask = new CheckPagesAsyncTask(QuranDataActivity.this);
+             mCheckPagesTask.execute();
+           }
          }
          else {
            android.util.Log.d(TAG, "trying to get the max height in a sec...");
@@ -291,8 +294,8 @@ public class QuranDataActivity extends SherlockActivity implements
    
    class CheckPagesAsyncTask extends AsyncTask<Void, Void, Boolean> {
       private final Context mAppContext;
-      public CheckPagesAsyncTask() {
-        mAppContext = getApplicationContext();
+      public CheckPagesAsyncTask(Context context) {
+        mAppContext = context.getApplicationContext();
       }
 
       @Override

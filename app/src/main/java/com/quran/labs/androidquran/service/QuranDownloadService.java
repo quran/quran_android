@@ -985,6 +985,7 @@ public class QuranDownloadService extends Service {
       PendingIntent contentIntent = PendingIntent.getActivity(
             getApplicationContext(), 0, notificationIntent, 0);
       notification.contentIntent = contentIntent;
+      notification.defaults = Notification.DEFAULT_LIGHTS;
       
       mNotificationManager.notify(notificationId, notification);
    }
