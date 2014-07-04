@@ -183,7 +183,7 @@
   <string name="play_apply_and_play">Aplicar y reproducir</string>
   <string name="play">Reproducir</string>
   <string name="stop">Detener</string>
-  <string-array name="repeatValues"/>
+
   <!--long press-->
   <string name="bookmark_ayah">Agregar este versículo a Favoritos</string>
   <string name="unbookmark_ayah">Eliminar este versículo de los favoritos</string>
