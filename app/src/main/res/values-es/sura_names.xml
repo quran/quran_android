@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="sura_names">
+		<item>El Inicio</item>
+		<item>La Vaca</item>
+		<item>La Familia De ‘imrán</item>
+		<item>La Mujer</item>
+		<item>La Mesa Servida</item>
+		<item>Los Ganados</item>
+		<item>Los Lugares Elevados</item>
+		<item>Los Botines</item>
+		<item>El Arrepentimiento</item>
+		<item>Jonás</item>
+		<item>Hud</item>
+		<item>José</item>
+		<item>El Trueno</item>
+		<item>Abraham</item>
+		<item>Al Hiyr</item>
+		<item>Las Abejas</item>
+		<item>El Viaje Nocturno</item>
+		<item>La Caverna</item>
+		<item>María</item>
+		<item>Ta’ Ha’</item>
+		<item>Los Profetas</item>
+		<item>La Peregrinación</item>
+		<item>Los Creyentes</item>
+		<item>La Luz</item>
+		<item>El Criterio</item>
+		<item>Los Poetas</item>
+		<item>Las Hormigas</item>
+		<item>Los Relatos</item>
+		<item>La Araña</item>
+		<item>Los Bizantinos</item>
+		<item>Luqmán</item>
+		<item>La Prosternación</item>
+		<item>Los Aliados</item>
+		<item>Saba</item>
+		<item>El Originador</item>
+		<item>Iá’ Sín</item>
+		<item>Los Ordenados En Filas</item>
+		<item>Sad</item>
+		<item>Los Grupos</item>
+		<item>El Perdonador</item>
+		<item>La Descripción Detallada</item>
+		<item>La Consulta</item>
+		<item>Los Adornos</item>
+		<item>El Humo</item>
+		<item>La Arrodillada</item>
+		<item>Las Dunas</item>
+		<item>Mujámmad</item>
+		<item>La Victoria</item>
+		<item>Las Moradas</item>
+		<item>Qaf</item>
+		<item>Los Vientos</item>
+		<item>El Monte</item>
+		<item>La Estrella</item>
+		<item>La Luna</item>
+		<item>El Compasivo</item>
+		<item>El Suceso</item>
+		<item>El Hierro</item>
+		<item>La Que Reclama</item>
+		<item>El Encuentro</item>
+		<item>La Comprobación</item>
+		<item>Las Filas</item>
+		<item>El Viernes</item>
+		<item>Los Hipócritas</item>
+		<item>El Día Del Desengaño</item>
+		<item>El Divorcio</item>
+		<item>La Prohibición</item>
+		<item>El Reino</item>
+		<item>La Pluma</item>
+		<item>La Exposición De La Verdad</item>
+		<item>Las Vías De Ascensión</item>
+		<item>Noé</item>
+		<item>Los Yinn</item>
+		<item>El Arropado</item>
+		<item>El Envuelto En Un Manto</item>
+		<item>La Resurrección</item>
+		<item>El Ser Humano</item>
+		<item>Los Que Son Enviados</item>
+		<item>La Noticia</item>
+		<item>Los Ángeles Arrancadores</item>
+		<item>El Ceño</item>
+		<item>El Arrollamiento</item>
+		<item>La Ruptura</item>
+		<item>Los Tramposos</item>
+		<item>El Resquebrajamiento</item>
+		<item>Las Grandes Constelaciones</item>
+		<item>El Astro Nocturno</item>
+		<item>El Altísimo</item>
+		<item>El Día Que Todo Lo Alcanza</item>
+		<item>La Aurora</item>
+		<item>La Ciudad</item>
+		<item>El Sol</item>
+		<item>La Noche</item>
+		<item>El Resplandor Matinal</item>
+		<item>El Sosiego</item>
+		<item>La Higuera</item>
+		<item>La Célula Embrionaria</item>
+		<item>La Predestinación</item>
+		<item>La Evidencia Clara</item>
+		<item>El Terremoto</item>
+		<item>Los Corceles</item>
+		<item>El Evento Repentino</item>
+		<item>El Afán De Tener Más Y Más</item>
+		<item>El Tiempo</item>
+		<item>El Difamador</item>
+		<item>El Elefante</item>
+		<item>La Tribu De Quraish</item>
+		<item>La Ayuda Mínima</item>
+		<item>La Abundancia</item>
+		<item>Los Incrédulos</item>
+		<item>El Socorro</item>
+		<item>Las Fibras De Palmera</item>
+		<item>El Monoteísmo Puro</item>
+		<item>El Amanecer</item>
+		<item>Los Seres Humanos</item>
+    </string-array>
+</resources>
