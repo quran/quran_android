@@ -276,9 +276,9 @@ public class TabletFragment extends SherlockFragment implements AyahTracker {
   public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
     if (drawable != null && response != null) {
       final int page = response.getPageNumber();
-      if (page == mPageNumber - 1) {
+      if (page == mPageNumber - 1 && mRightImageView != null) {
         mRightImageView.setImageDrawable(drawable);
-      } else if (page == mPageNumber) {
+      } else if (page == mPageNumber && mLeftImageView != null) {
         mLeftImageView.setImageDrawable(drawable);
       }
     }

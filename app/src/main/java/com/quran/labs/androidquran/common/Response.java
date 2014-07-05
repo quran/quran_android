@@ -15,8 +15,15 @@ public class Response {
   private int mPageNumber;
 
   public static Response lightResponse(Response r) {
-    return r == null ? null :
-        new Response(r.getWarningCode(), r.getErrorCode());
+    final Response resp;
+    if (r != null) {
+      resp = new Response(r.getWarningCode(), r.getErrorCode());
+      resp.setPageNumber(r.getPageNumber());
+    } else {
+      resp = null;
+    }
+
+    return resp;
   }
 
   public static Response fromPage(int page) {
