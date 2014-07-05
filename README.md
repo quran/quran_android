@@ -101,6 +101,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.5.8 (released 7/5/2014)**
+- fixing tablet bugs causing the page not to show up
+
 **version 2.5.7 (released 7/4/2014)**
 - added arrows to switch to next/previous ayah from translation panel
 - added translator name in panel
