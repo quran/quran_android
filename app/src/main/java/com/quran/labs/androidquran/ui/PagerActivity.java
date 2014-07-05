@@ -174,8 +174,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private SlidingUpPanelLayout mSlidingPanel;
   private ViewPager mSlidingPager;
   private FragmentStatePagerAdapter mSlidingPagerAdapter;
-  private ViewGroup mSlidingLayout;
-  private IconPageIndicator mSlidingPagerIndicator;
   private boolean mIsInAyahMode;
   private SuraAyah mStart;
   private SuraAyah mEnd;
@@ -463,12 +461,17 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   private void initAyahActionPanel() {
     mSlidingPanel = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
-    mSlidingLayout = (ViewGroup) mSlidingPanel.findViewById(R.id.sliding_layout);
-    mSlidingPager = (ViewPager) mSlidingPanel.findViewById(R.id.sliding_layout_pager);
-    mSlidingPagerIndicator = (IconPageIndicator) mSlidingPanel.findViewById(R.id.sliding_pager_indicator);
+    final ViewGroup slidingLayout =
+        (ViewGroup) mSlidingPanel.findViewById(R.id.sliding_layout);
+    mSlidingPager = (ViewPager) mSlidingPanel
+        .findViewById(R.id.sliding_layout_pager);
+    final IconPageIndicator slidingPageIndicator =
+        (IconPageIndicator) mSlidingPanel
+            .findViewById(R.id.sliding_pager_indicator);
 
     // Find close button and set listener
-    final View closeButton = mSlidingPanel.findViewById(R.id.sliding_menu_close);
+    final View closeButton = mSlidingPanel
+        .findViewById(R.id.sliding_menu_close);
     closeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -477,21 +480,23 @@ public class PagerActivity extends SherlockFragmentActivity implements
     });
 
     // Create and set fragment pager adapter
-    mSlidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager());
+    mSlidingPagerAdapter = new SlidingPagerAdapter(
+        getSupportFragmentManager());
     mSlidingPager.setAdapter(mSlidingPagerAdapter);
 
     // Attach the view pager to the action bar
-    mSlidingPagerIndicator.setViewPager(mSlidingPager);
+    slidingPageIndicator.setViewPager(mSlidingPager);
 
     // Set sliding layout parameters
     int displayHeight = getResources().getDisplayMetrics().heightPixels;
-    mSlidingLayout.getLayoutParams().height = (int) (displayHeight * PANEL_MAX_HEIGHT);
+    slidingLayout.getLayoutParams().height =
+        (int) (displayHeight * PANEL_MAX_HEIGHT);
     mSlidingPanel.setEnableDragViewTouchEvents(true);
     mSlidingPanel.setPanelSlideListener(new SlidingPanelListener());
-    mSlidingLayout.setVisibility(View.GONE);
+    slidingLayout.setVisibility(View.GONE);
 
     // When clicking any menu items, expand the panel
-    mSlidingPagerIndicator.setOnClickListener(new View.OnClickListener() {
+    slidingPageIndicator.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         if (!mSlidingPanel.isExpanded()) {
