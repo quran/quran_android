@@ -47,7 +47,8 @@ App localization
 
 * Farsi for version 2.0 by M. Jafar Nakar
 * Farsi for version 1.6 by [khajavi](http://github.com/khajavi).
-* Turkish by Mehmed Mahmudoglu.
+* Turkish by Mehmed Mahmudoglu. 
+* Turkish updates by [Shuhrat Dehkanov](http://github.com/ozbek)
 * Russian by Rinat (Ринат Валеев).
 * Kurdish by Goran Gharib Karim.
 * French by Yasser [yasserkad](http://github.com/yasserkad).
@@ -56,6 +57,7 @@ App localization
 * Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran)
 * Indonesian by [Saiful Khaliq](http://twitter.com/saifious)
 * Malaysian by [Ahmad Syazwan](https://github.com/asyazwan)
+* Spanish by [Alexander Salas](https://github.com/alexsalas)
 
 
 Terms of use
@@ -99,6 +101,15 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.5.7 (released 7/4/2014)**
+- added arrows to switch to next/previous ayah from translation panel
+- added translator name in panel
+- more clear night mode setting (thanks @ozbek)
+- show an error and retry button instead of a blank page when page can't load
+- spanish translation (thanks @alexsalas)
+- update turkish translation (thanks @ozbek)
+- many bugfixes
+
 **version 2.5.6 (released 6/29/2014)**
 - fix a crash with panel and audio settings
 - fix tags panel not updating
