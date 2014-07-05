@@ -127,6 +127,7 @@ public class QuranPageFragment extends SherlockFragment
     mImageView = (HighlightingImageView) view.findViewById(R.id.page_image);
     mScrollView = (ObservableScrollView) view.findViewById(R.id.page_scroller);
 
+    mMainView = view;
     mErrorLayout = view.findViewById(R.id.error_layout);
     final Button retryButton = (Button) view.findViewById(R.id.retry_button);
     mErrorReason = (TextView) view.findViewById(R.id.reason_text);
@@ -134,20 +135,12 @@ public class QuranPageFragment extends SherlockFragment
       @Override
       public void onClick(View v) {
         mErrorLayout.setVisibility(View.GONE);
+        mMainView.setOnClickListener(null);
+        mMainView.setClickable(false);
         downloadImage();
       }
     });
 
-    view.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (mAyahSelectedListener != null) {
-          mAyahSelectedListener.onClick(EventType.SINGLE_TAP);
-        }
-      }
-    });
-
-    mMainView = view;
     mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
     updateView();
 
@@ -176,6 +169,15 @@ public class QuranPageFragment extends SherlockFragment
     mJustCreated = true;
     return view;
   }
+
+  private View.OnClickListener viewClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      if (mAyahSelectedListener != null) {
+        mAyahSelectedListener.onClick(EventType.SINGLE_TAP);
+      }
+    }
+  };
 
   public void updateView() {
     int lineImageId = R.drawable.dark_line;
@@ -309,6 +311,7 @@ public class QuranPageFragment extends SherlockFragment
           errorRes = R.string.download_error_general;
       }
       mErrorReason.setText(errorRes);
+      mMainView.setOnClickListener(viewClickListener);
     }
   }
 
