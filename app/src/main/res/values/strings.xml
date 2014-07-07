@@ -3,19 +3,20 @@
     <string name="app_name">Quran</string>
     <string name="downloadPrompt_title">Download Required Files?</string>
     <string name="downloadPrompt">In order for Quran Android to work properly,
-            we need to download some files. If you do not do this now, the app
-            may not work reliably and will require an internet connection for reading.
-            Would you like to download the required files now?
-		</string>
+        we need to download some files. If you do not do this now, the app
+        may not work reliably and will require an Internet connection for reading.
+        Would you like to download the required files now?
+	</string>
     <string name="downloadTabletPrompt">We recently added improved images for
         tablets. Would you like to download these images now?</string>
     <string name="downloadImportantPrompt">There is a small yet important update
         for the Quran images you have on your device. Would you like to download this
-        patch now?</string>
+        patch now?
+    </string>
     <string name="downloadPrompt_ok">Yes</string>
     <string name="downloadPrompt_no">No</string>
     <string name="downloading_title">Downloading&#8230;</string>
-    <string name="downloading_message">Please wait for the files to download. (Resume supported)</string>
+    <string name="downloading_message">Please wait for the files to download (resume supported).</string>
     <string name="extracting_title">Processing&#8230;</string>
     <string name="menu_about">About Us</string>
     <string name="menu_settings">Settings</string>
@@ -37,72 +38,72 @@
     <string name="gotoPage">Go to page</string>
     <string name="cancel">Cancel</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">Copyright All Muslims</string>
+    <string name="copyRights">&#169; All Muslims</string>
     <string name="aboutUs">Quran Android is a free, open source Quran
-			application for Android.  The images used are from the
-            &lt;a href="http://quran.com">quran.com&lt;/a>
-			project, the audio comes from
-            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
-			the data used in the translations and Arabic comes from
-            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> and
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
-            &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
-            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu, Shuhrat Dehkanov - Turkish
-            &lt;br/>M. Jafar Nanakar - Farsi
-            &lt;br/>Rinat (Ринат) - Russian
-            &lt;br/>khajavi (on github) - previous Farsi translation
-	        &lt;br/>Yasser Kadddour - Français
-            &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
-			&lt;br/>Armin Šupuk - German
-            &lt;br/>Goran Gharib Karim - Kurdish
-            &lt;br/>Abduqadir Abliz - Uyghur
-            &lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesian
-            &lt;br/>Ahmad Syazwan - Malaysian
-            &lt;br/>Alexander Salas - Spanish
-            &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
-            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+        application for Android.  The images used are from the
+        &lt;a href="http://quran.com">quran.com&lt;/a>
+        project, the audio comes from
+        &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
+        the data used in the translations and Arabic comes from
+        &lt;a href="http://tanzil.net">tanzil.net&lt;/a> and
+        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
+        &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
+        &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
+        &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
+        &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
+        &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
+        &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
+        &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
+        &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
+        &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
+        &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
+        &lt;br/>Mehmed Mahmudoglu, Shuhrat Dehkanov - Turkish
+        &lt;br/>M. Jafar Nanakar - Farsi
+        &lt;br/>Rinat (Ринат) - Russian
+        &lt;br/>khajavi (on github) - previous Farsi translation
+        &lt;br/>Yasser Kadddour - Français
+        &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
+        &lt;br/>Armin Šupuk - German
+        &lt;br/>Goran Gharib Karim - Kurdish
+        &lt;br/>Abduqadir Abliz - Uyghur
+        &lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesian
+        &lt;br/>Ahmad Syazwan - Malaysian
+        &lt;br/>Alexander Salas - Spanish
+        &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
+        &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
+        &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">github&lt;/a>)
+        &lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
+        &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
+        &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
     <string name="help_title">Frequently Asked Questions</string>
     <string name="help">
         &lt;b>How do I play audio?&lt;/b>
         &lt;br/>Open any Quran page.  Tap on the screen once.  At the bottom, you will notice
-        a play button and some text with the name of a qari.  click the name of the qari to
+        a play button and some text with the name of a qari.  Click the name of the qari to
         choose a different qari.  Click play to download and play the current page or sura.
         &lt;br/>
         &lt;br/>&lt;b>How do I view the translation?&lt;/b>
         &lt;br/>Open any Quran page.  Tap on the screen once.  In the top, you will notice a
-        globe icon (or, if you don\'t see it, you may see an icon with three square dots - click
-        this and choose translation to view the translation).
+        globe icon (or, if you don\'t see it, you may see an icon with three square dots) - click
+        this and choose translation to view the translation.
         &lt;br/>
         If you do not have any translations downloaded, it will take
-        you to a screen where you can download a translation.  Choose and download a translation,
+        you to a screen where you can download translations.  Choose and download a translation,
         then return back and tap the globe icon again to view the translation.
         &lt;br/>
         &lt;br/>&lt;b>How do I bookmark a page?&lt;/b>
         &lt;br/>Open any Quran page.  Tap on the screen once.  In the top right, you will see a
-        star icon.  Tap the star icon to bookmark it (it will be solid white).  Tap the star icon
+        star icon.  Tap the star icon to bookmark it (the color will turn solid white).  Tap the star icon
         again to remove the bookmark.
         &lt;br/>
         &lt;br/>&lt;b>How do I make the text larger?&lt;/b>
-        &lt;br/>For the arabic pages, hold your phone in landscape.  This makes the text larger.
+        &lt;br/>For the Arabic pages, hold your phone in landscape.  This makes the text larger.
         For translations, go to settings and choose translation size.
         &lt;br/>
         &lt;br/>&lt;b>How do I share an ayah?&lt;/b>
-        &lt;br/>While on any arabic page, press and hold on any ayah to get a menu where you can
-        choose to bookmark this ayah, share it, see the tafseer, or copy the ayah to the clipboard.
-        &lt;br/>
+        &lt;br/>While on any Arabic page, press and hold on any ayah to get a menu where you can
+        choose to bookmark it, tag it, share or copy the ayah to the clipboard, see the translation,
+        or listen to its recitation.&lt;br/>
         &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu fonts don\'t work!&lt;/b>
         &lt;br/>Unfortunately, Android versions before 4.0 do not support these fonts, and there is
         little we can do to help with this.
@@ -121,7 +122,7 @@
     <string name="no_results">No results found for \"%s\"</string>
     <string name="no_active_translation">You have no active translation set. Please set an active translation first and then search again.</string>
     <string name="translation_settings">Translation Settings</string>
-    <string name="no_arabic_search_available">You have not downloaded the arabic search pack.  Please download it and try your search again.</string>
+    <string name="no_arabic_search_available">You have not downloaded the Arabic search pack.  Please download it and try your search again.</string>
     <string name="get_arabic_search_db">Get Arabic Search Database</string>
         
     <!-- Quran Preference Activity -->
@@ -185,9 +186,9 @@
 
     <string name="kitkat_external_title">Warning</string>
     <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
-        data on your external sdcard and later uninstall or clear data for Quran Android, all Quran
+        data on your external SD card and later uninstall or clear data for Quran Android, all Quran
         Android pages and audio will be deleted and you will have to download them again. Are you
-        sure you want to use the external sdcard?</string>
+        sure you want to use the external SD card?</string>
     <!-- Preferences End -->
 
     <!-- translation updates -->
@@ -212,7 +213,7 @@
     <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
 
     <string name="bookmarks_current_page">Current Page</string>
-    <string name="index_loading">Loading…</string>
+    <string name="index_loading">Loading&#8230;</string>
 
     <string name="canceling">Canceling&#8230;</string>
     <string name="juz2_description">Juz\' %1$s</string>
@@ -222,7 +223,7 @@
     <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
-    <string name="sdcard_error">Could not find sdcard. Please mount it and try again.</string>
+    <string name="sdcard_error">Could not find SD card. Please mount it and try again.</string>
     <string name="download_successful">Download Successful</string>   
     <string name="download_processing">Processing Download&#8230;</string>              
     <string name="download_error_general">Download failed</string>             
@@ -230,10 +231,10 @@
     <string name="download_error_network">Could not download due to network error</string>                    
     <string name="download_error_perms">Could not download due to permissions error</string>                  
     <string name="download_error_invalid_download">Downloaded file was corrupted</string>
-    <string name="download_error_invalid_download_retry">Corrupted file, attempting to redownload</string> 
+    <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
     <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
     <string name="notification_download_canceled">Download canceled</string>
-    <string name="download_non_wifi_prompt">You are not on wifi.  Download data anyway?</string>
+    <string name="download_non_wifi_prompt">You are not on Wi-Fi.  Download data anyway?</string>
     
     <!-- downloading dialogs -->
     <string name="download_progress">Downloaded %1$s / %2$s</string>
@@ -251,7 +252,9 @@
     <string name="get_translations">Get Translations</string>
 
     <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.
+        Please note that we get lots of email, so we may not be able to reply to all emails we receive.
+    </string>
 
     <!-- sura metainfo -->
     <string name="makki">Makki</string>
