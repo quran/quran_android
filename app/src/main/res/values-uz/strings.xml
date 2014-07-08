@@ -7,7 +7,7 @@
         Fayllarni hozir saqlab olasizmi?</string>
     <string name="downloadTabletPrompt">Planshetlar uchun rasmlar yangilandi. Yangi fayllarni hozir saqlab olasizmi?</string>
     <string name="downloadImportantPrompt">Uskunangizdagi Qur\'on rasmlari uchun kichik, ammo muhim o\'zgartirishlar kiritish lozim.
-        O\'zgarish kiritilgan fayllarni hozir saqlab olasizmi?</string>
+        Yangilangan fayllarni hozir saqlab olasizmi?</string>
     <string name="downloadPrompt_ok">Ha</string>
     <string name="downloadPrompt_no">Yo\'q</string>
     <string name="downloading_title">Saqlanmoqda&#8230;</string>
@@ -33,7 +33,7 @@
     <string name="gotoPage">Sahifaga o\'tish</string>
     <string name="cancel">Bekor qilish</string>
     <string name="developedBy">Solih duoda bizni ham unutmang.</string>
-    <string name="copyRights">&#169; Musulmonlar ummati</string>
+    <string name="copyRights">&#169; Ummati Muhammadiya</string>
     <string name="aboutUs">Quran Android (programmaning rasmiy nomi) ochiq kodli bepul programmadir.
         Rasmlar &lt;a href="http://quran.com">quran.com&lt;/a> proyektidan,
         audio fayllar &lt;a href="http://everyayah.com">everyayah.com&lt;/a> saytidan,
@@ -81,226 +81,232 @@
         Agar avval saqlangan tarjimalar mavjud bo\'lmasa, tarjimalarni saqlab olish sahifasi ochiladi.
         Istalgan tarjimani tanlab, saqlab oling. Shundan keyin orqaga qaytib globus rasmini yana bir marta bosing.
         &lt;br/>
-        &lt;br/>&lt;b>How do I bookmark a page?&lt;/b>
-        &lt;br/>Open any Quran page.  Tap on the screen once.  In the top right, you will see a
-        star icon.  Tap the star icon to bookmark it (it will be solid white).  Tap the star icon
-        again to remove the bookmark.
+        &lt;br/>&lt;b>Sahifani qanday xatcho\'plash mumkin?&lt;/b>
+        &lt;br/>Qur\'onning istalgan sahifasini oching va ekranga bir marta bosing.
+        Ekranning yuqori qismida yulduz rasmini ko\'rasiz. Yulduzchaga bir marta bosish orqali sahifani
+        xatcho\'plang (rasm rangi to\'q oq rangga o\'zgaradi), yana bir marta bosilsa xatcho\'plardan o\'chiriladi.
         &lt;br/>
-        &lt;br/>&lt;b>How do I make the text larger?&lt;/b>
-        &lt;br/>For the arabic pages, hold your phone in landscape.  This makes the text larger.
-        For translations, go to settings and choose translation size.
+        &lt;br/>&lt;b>Shriftlarni qanday kattalashtirish mumkin?&lt;/b>
+        &lt;br/>Arabcha matnlarni kattalashtirish uchun uskunangizni landshaft (yotiq) holatda tuting.
+        Tarjima matnlari shriftini esa moslamalar orqali sozlashingiz mumkin.
         &lt;br/>
-        &lt;br/>&lt;b>How do I share an ayah?&lt;/b>
-        &lt;br/>While on any arabic page, press and hold on any ayah to get a menu where you can
-        choose to bookmark this ayah, share it, see the tafseer, or copy the ayah to the clipboard.
+        &lt;br/>&lt;b>Oyatni boshqalar bilan qanday bo\'lishish mumkin?&lt;/b>
+        &lt;br/>Qur\'onning istalgan sahifasini oching va biror oyat ustiga biroz bosib turing.
+        Yangi ochilgan menyu orqali oyatni xatcho\'plarga qo\'shishingiz, teglashingiz, bo\'lishingiz,
+        tarjimasini ko\'rishingiz hamda qiroatini tinglashingiz mumkin.
         &lt;br/>
-        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu fonts don\'t work!&lt;/b>
-        &lt;br/>Unfortunately, Android versions before 4.0 do not support these fonts, and there is
-        little we can do to help with this.
+        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu shriflari ishlamayabdi!&lt;/b>
+        &lt;br/>Afsuski, Android 4.0 dan avvalgi versiyalarda ushbu shriftlar umuman ishlamaydi va
+        bu boradi biz biror yordam qila olmaymiz.
     </string>
-    <string name="search_hint">Search the Quran</string>
-    <string name="quranSearchType">Verses of the Quran</string>
+    <string name="search_hint">Izlash</string>
+    <string name="quranSearchType">Suralar</string>
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">One result for \"%1$s\": </item>
-        <item quantity="other">%2$d results for \"%1$s\": </item>
+        <item quantity="one">\"%1$s\" bo\'yicha bitta natija: </item>
+        <item quantity="other">\"%1$s\" bo\'yicha %2$d ta natijalar: </item>
     </plurals>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Found in Sura</string>
-    <string name="no_results">No results found for \"%s\"</string>
-    <string name="no_active_translation">You have no active translation set. Please set an active translation first and then search again.</string>
-    <string name="translation_settings">Translation Settings</string>
-    <string name="no_arabic_search_available">You have not downloaded the arabic search pack.  Please download it and try your search again.</string>
-    <string name="get_arabic_search_db">Get Arabic Search Database</string>
+    <string name="found_in_sura">Surada topildi</string>
+    <string name="no_results">\"%s\" bo\'yicha natija topilmadi</string>
+    <string name="no_active_translation">Birorta ham tarjima faol foydalanishda emas.
+        Iltimos, avval biror tarjimani foydalanish uchun tanlang, so\'ngra qayta izlab ko\'ring.
+    </string>
+    <string name="translation_settings">Tarjima moslamalari</string>
+    <string name="no_arabic_search_available">Arabcha izlash moduli o\'rnatilmagan, iltimos, avval uni saqlab oling. So\'ngra qayta izlab ko\'ring.</string>
+    <string name="get_arabic_search_db">Arabcha izlash bazasini o\'rnatish</string>
 
     <!-- Quran Preference Activity -->
-    <string name="prefs_category_navigation">Navigation</string>
-    <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
-    <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
-    <string name="prefs_category_reading">Reading Preferences</string>
-    <string name="prefs_category_translation">Translation Preferences</string>
-    <string name="prefs_category_display_settings">Display Settings</string>
-    <string name="prefs_use_arabic_title">Arabic Mode</string>
-    <string name="prefs_use_arabic_summary_on">Application will be localized to Arabic (restart required)</string>
-    <string name="prefs_use_arabic_reshaper_title">Use Arabic Reshaper</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">If your Arabic text is backwards, uncheck this option.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">If your Arabic text is not joined, check this option to fix it.</string>
-    <string name="prefs_new_background_title">New background</string>
-    <string name="prefs_lock_orientation_title">Lock screen orientation</string>
-    <string name="prefs_lock_orientation_summary_on">Quran page will be in fixed orientation mode</string>
-    <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
-    <string name="prefs_landscape_orientation_title">Landscape orientation</string>
-    <string name="prefs_landscape_orientation_summary_on">Landscape orientation will be used</string>
-    <string name="prefs_landscape_orientation_summary_off">Portrait orientation will be used</string>
-    <string name="prefs_night_mode_title">Night mode</string>
-    <string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
-    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
-    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
-    <string name="prefs_overlay_page_info_title">Show page info (beta)</string>
-    <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
+    <string name="prefs_category_navigation">Varoqlash</string>
+    <string name="prefs_volume_key_navigation_title">Ovoz tugmalaridan foydalanish</string>
+    <string name="prefs_volume_key_navigation_summary">Qurilma yonida ovoz tugmalari yordamida varoqlash</string>
+    <string name="prefs_category_reading">O\'qish</string>
+    <string name="prefs_category_translation">Tarjima moslamalari</string>
+    <string name="prefs_category_display_settings">Ko\'rinish</string>
+    <string name="prefs_use_arabic_title">Arabcha rejim</string>
+    <string name="prefs_use_arabic_summary_on">Programma arab tilida ishlaydi (qayta ishga tushirish kerak)</string>
+    <string name="prefs_use_arabic_reshaper_title">\"Arabic Reshaper\"dan foydalanish</string>
+    <string name="prefs_use_arabic_reshaper_summary_on">Agar arabcha matnlar teskari ko\'rinishida bo\'lsa ushbu tanlovni bekor qiling</string>
+    <string name="prefs_use_arabic_reshaper_summary_off">Agar arabcha matnlar uzuq bo\'lsa ushbu tanlovni tanlang</string>
+    <string name="prefs_new_background_title">Yangi fon</string>
+    <string name="prefs_lock_orientation_title">Ekran oriyentatsiyasini qulflash</string>
+    <string name="prefs_lock_orientation_summary_on">Qur\'on sahifalari doim belgilangan oriyentatsiyada bo\'ladi</string>
+    <string name="prefs_lock_orientation_summary_off">Joriy oriyentatsiyadan foydalaniladi</string>
+    <string name="prefs_landscape_orientation_title">Landshaft rejim</string>
+    <string name="prefs_landscape_orientation_summary_on">Yotiq oriyentatsiyadan foydalaniladi</string>
+    <string name="prefs_landscape_orientation_summary_off">Tik oriyentatsiyadan foydalaniladi</string>
+    <string name="prefs_night_mode_title">Tunggi rejim</string>
+    <string name="prefs_night_mode_summary">Qora fon va porloq shriftlardan foydalaniladi</string>
+    <string name="prefs_night_mode_text_brightness_title">Matn porloqliligi</string>
+    <string name="prefs_night_mode_text_brightness_summary">Tunggi rejim ishga tushirilgan paytdagi matn porloqliligi</string>
+    <string name="prefs_overlay_page_info_title">Sahifa ma\'lumotlari (beta)</string>
+    <string name="prefs_overlay_page_info_summary">Sura nomi, sahifa va pora raqamlarini ko\'rsatish</string>
     <string name="prefs_display_marker_title">Display marker popups</string>
     <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
-    <string name="prefs_highlight_bookmarks_title">Highlight bookmarks</string>
-    <string name="prefs_highlight_bookmarks_summary">Highlight bookmarked ayahs while reading</string>
-    <string name="prefs_translation_text_title">Translation text size</string>
-    <string name="prefs_translations">Translations</string>
-    <string name="prefs_translations_summary">Download and manage translations</string>
-    <string name="prefs_ayah_before_translation_title">Ayah before Translation</string>
-    <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
-    <string name="prefs_category_download">Download Options</string>
-    <string name="prefs_streaming_title">Streaming</string>
-    <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
-    <string name="prefs_download_amount_title">Download Amount</string>
-    <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
-    <string name="downloaded_translations">Downloaded</string>
-    <string name="available_translations">Available for Download</string>
-    <string name="remove_button">Remove</string>
+    <string name="prefs_highlight_bookmarks_title">Xatcho\'plarni ko\'rsatish</string>
+    <string name="prefs_highlight_bookmarks_summary">Xatcho\'plangan oyatlarni alohida ajratib ko\'rsatish</string>
+    <string name="prefs_translation_text_title">Tarjima shrifti o\'lchami</string>
+    <string name="prefs_translations">Tarjimalar</string>
+    <string name="prefs_translations_summary">Tarjimalarni saqlab olish va boshqarish</string>
+    <string name="prefs_ayah_before_translation_title">Oyatni avval ko\'rsatish</string>
+    <string name="prefs_ayah_before_translation_summary">Arabcha oyatlarni tarjima matni ustida ko\'rsatish</string>
+    <string name="prefs_category_download">Saqlab olish</string>
+    <string name="prefs_streaming_title">Striming</string>
+    <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish (faqat \"non-gapless audio\" fayllar)</string>
+    <string name="prefs_download_amount_title">Hajm</string>
+    <string name="prefs_download_amount_summary">\"Non-gapless audio\" fayllarni saqlab olish hajmi</string>
+    <string name="downloaded_translations">Saqlandi</string>
+    <string name="available_translations">Saqlab olish mumkin</string>
+    <string name="remove_button">O\'chirish</string>
     <string name="dialog_ok">OK</string>
-    <string name="prefs_advanced_settings_title">Advanced Settings</string>
-    <string name="prefs_app_location_title">Quran Data Directory</string>
-    <string name="prefs_app_location_summary">Choose where to store Quran files.</string>
-    <string name="prefs_sdcard_internal">Internal Storage</string>
-    <string name="prefs_sdcard_external">External SD Card</string>
-    <string name="prefs_sdcard_auto">Auto</string>
-    <string name="prefs_app_size">Current data size is</string>
-    <string name="prefs_calculating_app_size">Calculating App Size</string>
-    <string name="prefs_copying_app_files">Copying App files</string>
-    <string name="prefs_err_moving_app_files">Failed to move app files</string>
-    <string name="prefs_no_enough_space_to_move_files">Insufficient space to move app files</string>
+    <string name="prefs_advanced_settings_title">Ilg\'or moslamalar</string>
+    <string name="prefs_app_location_title">Ma\'lumotlar jildi</string>
+    <string name="prefs_app_location_summary">Qur\'on fayllari saqlanadigan joy</string>
+    <string name="prefs_sdcard_internal">Ichki xotira</string>
+    <string name="prefs_sdcard_external">Tashqi xotira (SD karta)</string>
+    <string name="prefs_sdcard_auto">Avto</string>
+    <string name="prefs_app_size">Mavjud fayllar hajmi:</string>
+    <string name="prefs_calculating_app_size">Programma hajmi hisoblanmoqda&#8230;</string>
+    <string name="prefs_copying_app_files">Programma fayllari ko\'chirilmoqda&#8230;</string>
+    <string name="prefs_err_moving_app_files">Fayllarni ko\'chirib o\'tkazishda xatolik yuz berdi</string>
+    <string name="prefs_no_enough_space_to_move_files">Fayllarni ko\'chirib o\'tkazish uchun yetarli joy mavjud emas</string>
     <string name="prefs_megabytes">MB</string>
-    <string name="prefs_tablet_mode_title">Tablet Mode</string>
-    <string name="prefs_tablet_mode_enabled">In landscape, two pages will appear side by side.</string>
-    <string name="prefs_tablet_mode_disabled">In landscape, only one page will appear.</string>
+    <string name="prefs_tablet_mode_title">Planshet rejimi</string>
+    <string name="prefs_tablet_mode_enabled">Yotiq holatda ikki bet yonma-yon ko\'rinadi</string>
+    <string name="prefs_tablet_mode_disabled">Yotiq holatda ham faqat bitta bet ko\'rinadi</string>
 
-    <string name="kitkat_external_title">Warning</string>
-    <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
-        data on your external sdcard and later uninstall or clear data for Quran Android, all Quran
-        Android pages and audio will be deleted and you will have to download them again. Are you
-        sure you want to use the external sdcard?</string>
+    <string name="kitkat_external_title">Ogohlantirish</string>
+    <string name="kitkat_external_message">Programmani tashqi xotiraga (SD kartaga) ko\'chirib o\'tkazgach, agar u o\'chirib tashlab-qayta o\'rnatilsa
+        yoki ma\'lumotlari tozalansa barcha Qur\'on rasmlari va audio fayllar ham o\'chib ketadi va ushbu kerakli ma\'lumotlarni yana qayta saqlab
+        olishga to\'g\'ri keladi. Baribir tashqi xotiradan foydalanmoqchimisiz?
+    </string>
     <!-- Preferences End -->
 
     <!-- translation updates -->
-    <string name="update_available">Update Available</string>
-    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
-    <string name="translation_dialog_yes">Yes</string>
-    <string name="translation_dialog_later">Later</string>
+    <string name="update_available">Yangilanishlar mavjud</string>
+    <string name="translation_updates_available">Tarjimalar uchun yangilanishlar mavjud, hozir tekshirib ko\'rasizmi?</string>
+    <string name="translation_dialog_yes">Ha</string>
+    <string name="translation_dialog_later">Keyinroq</string>
 
     <!-- used for screen readers -->
-    <string name="border">border</string>
+    <string name="border">chegara</string>
 
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
     <string name="quran_talt_arb3">¾</string>
     <string name="quran_hizb">Hizb</string>
-    <string name="quran_juz2">Juz\'</string>
-    <string name="quran_page">Page</string>
+    <string name="quran_juz2">Pora</string>
+    <string name="quran_page">Sahifa</string>
     <string name="quran_sura">Sura</string>
-    <string name="quran_ayah">Ayah</string>
-    <string name="quran_sura_title">Surat</string>
-    <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
+    <string name="quran_ayah">Oyat</string>
+    <string name="quran_sura_title">Sura</string>
+    <string name="sura_ayah_notification_str">Sura %1$s, oyat %2$d</string>
 
-    <string name="bookmarks_current_page">Current Page</string>
-    <string name="index_loading">Loading…</string>
+    <string name="bookmarks_current_page">Joriy sahifa</string>
+    <string name="index_loading">Yuklanmoqda&#8230;</string>
 
-    <string name="canceling">Canceling&#8230;</string>
-    <string name="juz2_description">Juz\' %1$s</string>
-    <string name="page_description">page %1$s, Juz\' %2$s</string>
-    <string name="highlighting_database">Required Files</string>
-    <string name="timing_database">Required Files</string>
+    <string name="canceling">Bekor qilinmoqda&#8230;</string>
+    <string name="juz2_description">%1$s-pora</string>
+    <string name="page_description">%1$s-bet, %2$s-pora</string>
+    <string name="highlighting_database">Kerakli fayllar</string>
+    <string name="timing_database">Kerakli fayllar</string>
     <string name="infinity">&#8734;</string>
 
     <!-- download statuses and errors -->
-    <string name="sdcard_error">Could not find sdcard. Please mount it and try again.</string>
-    <string name="download_successful">Download Successful</string>
-    <string name="download_processing">Processing Download&#8230;</string>
-    <string name="download_error_general">Download failed</string>
-    <string name="download_error_disk">Not enough disk space to download</string>
-    <string name="download_error_network">Could not download due to network error</string>
-    <string name="download_error_perms">Could not download due to permissions error</string>
-    <string name="download_error_invalid_download">Downloaded file was corrupted</string>
-    <string name="download_error_invalid_download_retry">Corrupted file, attempting to redownload</string>
-    <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
-    <string name="notification_download_canceled">Download canceled</string>
-    <string name="download_non_wifi_prompt">You are not on wifi.  Download data anyway?</string>
+    <string name="sdcard_error">SD karta topilmadi.Iltimos, kartani montaj qiling va qayta harakat qilib ko\'ring.</string>
+    <string name="download_successful">Muvaffaqiyatli saqlandi</string>
+    <string name="download_processing">Saqlanmoqda&#8230;</string>
+    <string name="download_error_general">Saqlash muvaffaqiyatsiz bo\'ldi</string>
+    <string name="download_error_disk">Uskunada yetarli xotira mavjud emas</string>
+    <string name="download_error_network">Tarmoq bog\'lanishida xatolik yuz berdi</string>
+    <string name="download_error_perms">Ruhsat muammosi tufayli saqlab bo\'lmadi</string>
+    <string name="download_error_invalid_download">Saqlab olingan fayl buzilgan</string>
+    <string name="download_error_invalid_download_retry">Fayl buzilgan, qayta saqlab olishga harakat qilinmoqda&#8230;</string>
+    <string name="download_error_network_retry">Tarqmoq xatoligi, qayta harakat qilinmoqda&#8230;</string>
+    <string name="notification_download_canceled">Saqlash bekor qilindi</string>
+    <string name="download_non_wifi_prompt">Wi-Fi tarmog\'iga ulanmagansiz, baribir fayllarni saqlab olmoqchimisiz?</string>
 
     <!-- downloading dialogs -->
-    <string name="download_progress">Downloaded %1$s / %2$s</string>
-    <string name="process_progress">Processing file %1$d / %2$d</string>
-    <string name="download_retry">Retry</string>
-    <string name="download_cancel">Cancel</string>
-    <string name="download_extra_data">We need to download one or two small files to support sharing and translation.  Download now?</string>
+    <string name="download_progress">%1$s/%2$s saqlandi</string>
+    <string name="process_progress">%1$d/%2$d ishlandi</string>
+    <string name="download_retry">Qayta harakat qilish</string>
+    <string name="download_cancel">Bekor qilish</string>
+    <string name="download_extra_data">Bo\'lishish va tarjimalardan foydalana olish uchun bir-ikkita kichik hajmdagi fayllar lozim. Hozir saqlab olasizmi?</string>
 
     <!-- translation database stuff -->
-    <string name="remove_dlg_title">Remove Translation?</string>
-    <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
-    <string name="error_getting_translation_list">Unable to download the list of translations.  Please try again later.</string>
-    <string name="search_data">Search Data</string>
-    <string name="need_translation">You don\'t have any translations/tafaseer downloaded yet.</string>
-    <string name="get_translations">Get Translations</string>
+    <string name="remove_dlg_title">Tarjima o\'chirilsinmi?</string>
+    <string name="remove_dlg_msg">Haqiqatda \"%1$s\" tarjimasini o\'chirmoqchimisiz??</string>
+    <string name="error_getting_translation_list">Tarjimalar ro\'yxatini olib bo\'lmadi. Iltimos, birozdan keyin qayta harakat qilib ko\'ring.</string>
+    <string name="search_data">Ma\'lumot izlash</string>
+    <string name="need_translation">Birorta ham tarjima saqlab olinmagan.</string>
+    <string name="get_translations">Tarjimalar saqlab olish</string>
 
     <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+    <string name="email_us">Agar savollaringizga yuqorida javob olmagan bo\'lsangiz quranandroid@gmail.com adresiga maktub yo\'llashingiz mumkin.
+        Faqat, shuni yodda tutingki, biz juda ham ko\'plab E-mail xabarlar olamiz va shu sababli barcha xatlarga javob yoza olmasligimiz mumkin.
+        Iltimos, maktubni ingliz tilida yuborishni unutmang.
+    </string>
 
     <!-- sura metainfo -->
-    <string name="makki">Makki</string>
-    <string name="madani">Madani</string>
+    <string name="makki">Makkiy</string>
+    <string name="madani">Madaniy</string>
     <plurals name="verses">
-        <item quantity="one">One verse</item>
-        <item quantity="other">%s verses</item>
+        <item quantity="one">Bir oyat</item>
+        <item quantity="other">%s oyat</item>
     </plurals>
 
     <!-- ayah action panel -->
-    <string name="ayah_tags_page">Tags</string>
-    <string name="ayah_translation_page">Translation</string>
-    <string name="play_from">From</string>
-    <string name="play_to">To</string>
-    <string name="play_options">Options</string>
-    <string name="play_restrict_range">Only play the above verses</string>
-    <string name="repeat_verses_range">Repeat set of verses:</string>
-    <string name="repeat_each_verse">Repeat each verse:</string>
-    <string name="play_apply">Apply</string>
-    <string name="play_apply_and_play">Apply and Play</string>
-    <string name="play">Play</string>
-    <string name="stop">Stop</string>
+    <string name="ayah_tags_page">Teglar</string>
+    <string name="ayah_translation_page">Tarjima</string>
+    <string name="play_from">Boshi</string>
+    <string name="play_to">Oxiri</string>
+    <string name="play_options">Moslamalar</string>
+    <string name="play_restrict_range">Yuqorida oyatlarnigina eshitish</string>
+    <string name="repeat_verses_range">Bir necha oyatlarni takrorlash:</string>
+    <string name="repeat_each_verse">Har bir oyatni takrorlash:</string>
+    <string name="play_apply">Joriy qilish</string>
+    <string name="play_apply_and_play">Joriy qilish va chalish</string>
+    <string name="play">Chalish</string>
+    <string name="stop">To\'xtatish</string>
 
     <string-array name="repeatValues">
-        <item>never</item>
-        <item>1 time</item>
-        <item>2 times</item>
-        <item>3 times</item>
-        <item>infinitely</item>
+        <item>hech ham</item>
+        <item>1 marta</item>
+        <item>2 marta</item>
+        <item>3 marta</item>
+        <item>uzluksiz</item>
     </string-array>
 
     <!-- long press -->
-    <string name="bookmark_ayah">Bookmark this Ayah</string>
-    <string name="unbookmark_ayah">Remove bookmark for this Ayah</string>
-    <string name="tag_ayah">Tag this Ayah</string>
-    <string name="share_ayah">Share Ayah Link</string>
-    <string name="share_ayah_text">Share Ayah Text</string>
-    <string name="translation_ayah">Ayah Translation/Tafseer</string>
-    <string name="play_from_here">Play from Here</string>
-    <string name="via_string">via @QuranAndroid</string>
-    <string name="search_key">Press the search key to look up a verse</string>
-    <string name="copy_ayah">Copy Ayah</string>
-    <string name="ayah_copied_popup">Ayah Copied</string>
-    <string name="show_more">Show More</string>
+    <string name="bookmark_ayah">Oyatni xatcho\'plash</string>
+    <string name="unbookmark_ayah">Oyatni xatcho\'pdan o\'chirish</string>
+    <string name="tag_ayah">Oyatni teglash</string>
+    <string name="share_ayah">Oyat bog\'ichini bo\'lishish</string>
+    <string name="share_ayah_text">Oyat matnini bo\'lishish</string>
+    <string name="translation_ayah">Oyat tarjimasi</string>
+    <string name="play_from_here">Shu yerdan boshlab chal</string>
+    <string name="via_string">\u0040QuranAndroid orqali</string>
+    <string name="search_key">Sura topish uchun izlash tugmasiga bosing</string>
+    <string name="copy_ayah">Oyatni ko\'chirish</string>
+    <string name="ayah_copied_popup">Oyat xotiraga ko\'chirildi</string>
+    <string name="show_more">Yana</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Delete Bookmark</string>
-    <string name="tag_bookmark">Tag Bookmark</string>
-    <string name="delete_tag">Delete Tag</string>
-    <string name="edit_tag">Edit Tag</string>
-    <string name="new_tag">New Tag</string>
-    <string name="not_tagged">Not Tagged</string>
+    <string name="delete_bookmark">Xatcho\'pni o\'chirish</string>
+    <string name="tag_bookmark">Xatcho\'pni teglash</string>
+    <string name="delete_tag">Tegni o\'chirish</string>
+    <string name="edit_tag">Tegni tahrir qilish</string>
+    <string name="new_tag">Yangi teg</string>
+    <string name="not_tagged">Teglanmagan</string>
 
     <!-- tag dialog -->
-    <string name="tag_dlg_title">Tag</string>
-    <string name="tag_name">Name</string>
+    <string name="tag_dlg_title">Teg</string>
+    <string name="tag_name">Nom</string>
 
     <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">No Bookmarks</string>
-    <string name="tags_list_empty">No Tags</string>
+    <string name="bookmarks_list_empty">Xatcho\'plar mavjud emas</string>
+    <string name="tags_list_empty">Teglar mavjud emas</string>
 </resources>
