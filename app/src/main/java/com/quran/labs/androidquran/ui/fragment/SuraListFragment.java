@@ -102,7 +102,7 @@ public class SuraListFragment extends SherlockFragment {
 
       while ((sura <= SURAS_COUNT) &&
           (QuranInfo.SURA_PAGE_START[sura - 1] < next)) {
-        String title = QuranInfo.getSuraName(activity, sura, true);
+        String title = QuranInfo.getSuraName(activity, sura, false);
         elements[pos++] = new QuranRow(title,
             QuranInfo.getSuraListMetaString(activity, sura),
             sura, QuranInfo.SURA_PAGE_START[sura - 1], null);
