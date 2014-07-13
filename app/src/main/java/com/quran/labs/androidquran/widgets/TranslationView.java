@@ -177,7 +177,6 @@ public class TranslationView extends ScrollView {
                  .findViewById(mLastHighlightedAyah);
          if (text != null){
             text.setTextAppearance(getContext(), mTextStyle);
-            if (mIsNightMode) text.setTextColor(mNightModeTextColor);
             text.setTextSize(mFontSize);
          }
       }
@@ -188,7 +187,7 @@ public class TranslationView extends ScrollView {
       if (mLastHighlightedAyah > 0){
          TextView text = (TextView)mLinearLayout.
                  findViewById(mLastHighlightedAyah);
-         text.setTextColor(Color.BLACK);
+         text.setTextAppearance(getContext(), mTextStyle);
       }
 
       TextView text = (TextView)mLinearLayout.findViewById(ayahId);
