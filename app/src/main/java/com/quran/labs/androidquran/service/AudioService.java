@@ -500,11 +500,18 @@ public class AudioService extends Service implements OnCompletionListener,
                // if the ayah hasn't changed, we're repeating the ayah,
                // otherwise, we're repeating a range. this variable is
                // what determines whether or not we replay the basmallah.
-               final boolean ayahRepeat = ayah == nextAyah.getAyah();
+               final boolean ayahRepeat =
+                   (ayah == nextAyah.getAyah() && sura == nextAyah.getSura());
 
-               // jump back to the ayah we should repeat and play it
-               pos = getSeekPosition(ayahRepeat);
-               mPlayer.seekTo(pos);
+               if (ayahRepeat) {
+                 // jump back to the ayah we should repeat and play it
+                 pos = getSeekPosition(true);
+                 mPlayer.seekTo(pos);
+               } else {
+                 // we're repeating into a different sura
+                 final boolean flag = sura != mAudioRequest.getCurrentSura();
+                 playAudio(flag);
+               }
                return;
             }
 
@@ -541,15 +548,8 @@ public class AudioService extends Service implements OnCompletionListener,
             else if (t > 10000){ t = 10000; }
             mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
          }
-         else if (maxAyahs == updatedAyah){
-            // check for the end of sura marker if it exists
-            Integer t = mGaplessSuraData.get(999);
-            t = t - mPlayer.getCurrentPosition();
-            Log.d(TAG, "sura ends in " + t + "ms.");
-            if (t < 100){ t = 100; }
-            else if (t > 10000){ t = 10000; }
-            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
-         }
+         // if we're on the last ayah, don't do anything - let the file
+         // complete on its own to avoid getCurrentPosition() bugs.
       }
    }
 
