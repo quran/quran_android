@@ -126,9 +126,9 @@
     <string name="quran_nos">½</string>
     <string name="quran_talt_arb3">¾</string>
     <string name="quran_hizb">Hizb</string>
-    <string name="quran_juz2">Cüz\'</string>
+    <string name="quran_juz2">Cüz</string>
     <string name="quran_page">Sayfa</string>
-    <string name="quran_sura">Sure</string>
+    <string name="quran_sura">Sureler</string>
     <string name="quran_ayah">Âyet</string>
     <string name="notification_download_canceled">İndirme iptal edildi</string>
     <string name="unbookmark_ayah">Bu âyet için sayfa işaretini kaldır</string>
@@ -171,7 +171,7 @@
     <string name="prefs_sdcard_external">Harici SD kartı</string>
     <string name="prefs_sdcard_auto">Otomatik</string>
     <string name="prefs_overlay_page_info_title">Sayfa bilgisini göster (beta)</string>
-    <string name="prefs_overlay_page_info_summary">Cüz\' numarası, sure ismi ve sayfa numarası üstünde göster</string>
+    <string name="prefs_overlay_page_info_summary">Cüz numarası, sure ismi ve sayfa numarası üstünde göster</string>
     <string name="prefs_night_mode_text_brightness_title">Metin parlaklığı</string>
     <string name="prefs_night_mode_text_brightness_summary">Gece modu açıkken metin parlaklığı</string>
     <string name="prefs_new_background_title">Yeni arkaplan</string>
@@ -190,7 +190,7 @@
     <string name="prefs_app_location_summary">Lütfen hangi SD karta kopyalanacağını seçin</string>
     <string name="prefs_advanced_settings_title">İleri ayarlar</string>
     <string name="play_from_here">Buradan çalmaya başla</string>
-    <string name="page_description">sayfa  %1$s, cüz\' %2$s</string>
+    <string name="page_description">sayfa  %1$s, cüz %2$s</string>
     <string name="download_progress">%1$s / %2$s indirildi</string>
 
     <string name="not_tagged">Etiketlenmedi</string>
@@ -207,7 +207,7 @@
     <string name="makki">Mekkî</string>
     <string name="madani">Medenî</string>
     <string name="infinity">&#8734;</string>
-    <string name="juz2_description">Cüz\' %1$s</string>
+    <string name="juz2_description">Cüz %1$s</string>
     <string name="index_loading">Yükleniyor&#8230;</string>
     <string name="highlighting_database">Gerekli dosyalar</string>
     <string name="prefs_no_enough_space_to_move_files">Uygulamayı taşımak için yeterli boş alan bulunamadı</string>
