@@ -17,11 +17,7 @@ public class QuranInfo {
 	public static String getAyahTitle(Context cx) {
 		return cx.getString(R.string.quran_ayah);
 	}
-	
-	public static String getSuraTitle(Context cx) {
-		return cx.getString(R.string.quran_sura_title);
-	}
-	
+
 	public static String getJuzTitle(Context cx){
 		return cx.getString(R.string.quran_juz2);
    }
@@ -29,12 +25,15 @@ public class QuranInfo {
    public static String getSuraName(Context context, int sura,
                                     boolean wantTitle){
       if (sura < Constants.SURA_FIRST ||
-              sura > Constants.SURA_LAST){ return ""; }
-      String title = "";
-      if (wantTitle){ title = getSuraTitle(context) + " "; }
+              sura > Constants.SURA_LAST) {
+         return "";
+      }
+      if (wantTitle) {
+         return context.getString(R.string.quran_sura_title,
+              context.getResources().getStringArray(R.array.sura_names)[sura-1]);
+      }
 
-      return title + context.getResources()
-              .getStringArray(R.array.sura_names)[sura-1];
+      return context.getResources().getStringArray(R.array.sura_names)[sura-1];
    }
 
    public static int getSuraNumberFromPage(int page){
@@ -615,9 +614,9 @@ public class QuranInfo {
 		return getSuraName(cx, sura, true) + " - "
 				+ getAyahTitle(cx) + " " + ayah;
 	}
-	
+
 	public static String getSuraNameString(Context context, int page){
-		return getSuraTitle(context) + " " + getSuraNameFromPage(context, page);
+		return context.getString(R.string.quran_sura_title, getSuraNameFromPage(context, page));
 	}
 
   public static Set<String> getAyahKeysOnPage(int page, SuraAyah lowerBound, SuraAyah upperBound) {
