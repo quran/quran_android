@@ -125,7 +125,7 @@
   <string name="quran_page">Página</string>
   <string name="quran_sura">Capítulo</string>
   <string name="quran_ayah">Versículo</string>
-  <string name="quran_sura_title">Capítulo</string>
+  <string name="quran_sura_title">Capítulo %1$s</string>
   <string name="sura_ayah_notification_str">Capítulo %1$s, Versículo %2$d</string>
   <string name="bookmarks_current_page">Página corriente</string>
   <string name="index_loading">Cargando...</string>
