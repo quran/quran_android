@@ -59,10 +59,40 @@ public class ShareAyahTask extends PagerActivityTask<Void, Void, List<QuranAyah>
     if (verses != null && !verses.isEmpty() && activity != null) {
       StringBuilder sb = new StringBuilder();
       // TODO what's the best text format for multiple ayahs
+      int count = 0;
+      QuranAyah firstAayah = verses.get(0);
       for (QuranAyah verse : verses) {
-        sb.append("(").append(verse.getText()).append(") [");
-        sb.append(QuranInfo.getSuraName(activity, verse.getSura(), true));
-        sb.append(" : ").append(verse.getAyah()).append("]").append("\n\n");
+        // append ( before ayah start
+        if (count == 0) {
+          sb.append("(");
+        }
+        sb.append(verse.getText());
+        // append * between ayat
+        if (count < verses.size() - 1) {
+          sb.append(" * ");
+        }
+        count++;
+        // append ) after last ayah
+
+        // prepare ayat labels
+        if (count == verses.size()) {
+          sb.append(")");
+
+          // append [ before sura label
+          sb.append(" [");
+          sb.append(QuranInfo.getSuraName(activity, firstAayah.getSura(), true));
+          sb.append(" ");
+          if (count > 1) {
+            sb.append(firstAayah.getAyah()).append(" - ");
+          }
+          if (firstAayah.getSura() != verse.getSura()) {
+            sb.append(QuranInfo.getSuraName(activity, verse.getSura(), true));
+            sb.append(" ");
+          }
+          sb.append(verse.getAyah());
+          // close sura label
+          sb.append("]").append("\n\n");
+        }
       }
       sb.append(activity.getString(R.string.via_string));
       String text = sb.toString();
