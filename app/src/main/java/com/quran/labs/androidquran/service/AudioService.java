@@ -522,7 +522,7 @@ public class AudioService extends Service implements OnCompletionListener,
             // if we have end of sura info and we bypassed end of sura
             // line, switch the sura.
             ayahTime = mGaplessSuraData.get(999);
-            if (pos >= ayahTime){
+            if (ayahTime > 0 && pos >= ayahTime){
                QuranAyah repeat = mAudioRequest.setCurrentAyah(sura+1, 1);
                if (repeat != null && repeat.getSura() == sura){
                   // remove any messages currently in the queue
