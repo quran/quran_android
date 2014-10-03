@@ -39,6 +39,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener, BookmarkHandler,
@@ -231,6 +232,7 @@ public class QuranActivity extends SherlockFragmentActivity
          jumpTo(page);
          return true;
       }
+
       else if (item.getItemId() == R.id.help) {
          Intent i = new Intent(this, HelpActivity.class);
          startActivity(i);

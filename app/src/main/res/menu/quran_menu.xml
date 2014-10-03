@@ -31,4 +31,9 @@
     <item android:id="@+id/help"
           android:title="@string/menu_help"
           android:showAsAction="never"/>
+    <item android:id="@+id/Recite"
+        android:icon="@drawable/brain"
+        android:title="@string/recite_mode"
+        android:showAsAction="ifRoom"
+        />
 </menu>

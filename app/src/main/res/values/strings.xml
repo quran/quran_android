@@ -26,6 +26,10 @@
     <string name="menu_bookmarks_page">Page Bookmarks</string>
     <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
     <string name="menu_sort">Sort</string>
+
+    <string name="recite_mode">Recite</string>
+
+
     <string name="menu_sort_date">Date Added</string>
     <string name="menu_sort_location">Location in Quran</string>
     <string name="menu_sort_alphabetical">Alphabetical</string>

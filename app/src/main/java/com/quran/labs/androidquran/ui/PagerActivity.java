@@ -93,9 +93,16 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
@@ -177,7 +184,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private boolean mIsInAyahMode;
   private SuraAyah mStart;
   private SuraAyah mEnd;
+    boolean recitemode=false;
+//private Map<SuraAyah, Boolean> map = new HashMap<SuraAyah, Boolean>();
 
+    private ArrayList<SuraAyah> mainrecite=new ArrayList<SuraAyah>();
+
+    private ArrayList<SuraAyah> theaya=new ArrayList<SuraAyah>();
+    private ArrayList<SuraAyah> recitelist=new ArrayList<SuraAyah>();
+
+
+    //  private Map<SuraAyah, Boolean> recitemap = new HashMap<SuraAyah, Boolean>();
   private final PagerHandler mHandler = new PagerHandler(this);
 
   private static class PagerHandler extends Handler {
@@ -589,6 +605,29 @@ public class PagerActivity extends SherlockFragmentActivity implements
         AudioStatusBar.PLAYING_MODE
         && PreferenceManager.getDefaultSharedPreferences(this).
         getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
+      if((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN|| keyCode == KeyEvent.KEYCODE_VOLUME_UP)&&recitemode==true)
+      {
+
+          randomjumper();
+          return true;
+      }
+//      else if((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN|| keyCode == KeyEvent.KEYCODE_VOLUME_UP))
+//      {
+//
+//          return true;
+//      }
+      else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN&&!mainrecite.isEmpty()) {
+          stephide(1);
+          return true;
+      }
+          else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP&&!mainrecite.isEmpty()) {
+          stephide(-1);
+          return true;
+      }
+
+
+
+
     if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
       mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
       return true;
@@ -596,11 +635,33 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
       return true;
     }
+
     return super.onKeyDown(keyCode, event);
   }
 
   @Override
   public boolean onKeyUp(int keyCode, KeyEvent event) {
+      if((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN|| keyCode == KeyEvent.KEYCODE_VOLUME_UP)&&recitemode==true)
+      {
+
+        //  randomjumper();
+          //super.onKeyUp(keyCode, event);
+          return true;
+      }
+      if(keyCode == KeyEvent.KEYCODE_BACK)
+      {
+
+          //  randomjumper();
+          super.onKeyUp(keyCode, event);
+          return true;
+      }
+       if (!mainrecite.isEmpty()) {
+          //stephide(1);
+
+           super.onKeyUp(keyCode, event);
+           return true;
+
+      }
     return ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
         keyCode == KeyEvent.KEYCODE_VOLUME_UP) &&
         mAudioStatusBar.getCurrentMode() !=
@@ -609,6 +670,50 @@ public class PagerActivity extends SherlockFragmentActivity implements
             .getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false))
         || super.onKeyUp(keyCode, event);
   }
+
+    public void stephide(int updown)
+    {
+//  Map<SuraAyah, Boolean> temp = new HashMap<SuraAyah, Boolean>();
+        // temp.put(map.get(map.size()-1),true);
+//        Iterator it = map.entrySet().iterator();
+//        Map.Entry pairs=null;
+//        while (it.hasNext()) {
+//            pairs = (Map.Entry) it.next();
+//            System.out.println(pairs.getKey() + " = " + pairs.getValue());
+//        }
+        SuraAyah sa=mainrecite.get(mainrecite.size() - 1);
+        int lastaya=sa.ayah;
+        int nextaya;
+
+        if(lastaya>=QuranInfo.SURA_NUM_AYAHS[sa.sura-1]&&updown==1)
+        {
+            return;
+        }
+        if(lastaya<=1&&updown==-1)
+        {
+            return;
+        }
+            //return;
+      if(updown==-1)
+          nextaya=lastaya-1;
+        else
+        nextaya=lastaya+1;
+
+        //  map.get(map.size()-1);
+//map.remove(map.get(map.size()-1));
+        SuraAyah newsa=new SuraAyah(sa.sura,nextaya);
+        unHighlightAyah(sa.sura, sa.ayah, HighlightType.Recite);
+
+
+       // map.remove((SuraAyah) pairs.getKey());
+mainrecite.remove(sa);
+        mainrecite.add(newsa);
+    //    map.put(newsa,true);
+
+        highlightAyah(newsa.sura, newsa.ayah, HighlightType.Recite);
+        // highlightAyah();
+
+    }
 
   @Override
   public void onResume() {
@@ -917,7 +1022,12 @@ public class PagerActivity extends SherlockFragmentActivity implements
     } else if (itemId == R.id.goto_quran) {
       switchToQuran();
       return true;
-    } else if (itemId == R.id.goto_translation) {
+    }
+    else if (item.getItemId() == R.id.Recite){
+alertwithcheck();
+        return true;
+    }
+    else if (itemId == R.id.goto_translation) {
       switchToTranslation();
       return true;
     } else if (itemId == R.id.night_mode) {
@@ -947,7 +1057,137 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
     return super.onOptionsItemSelected(item);
   }
+    public void alertwithcheck()
+    {
+        //ArrayUtils.reverse(int[] array);
 
+   //     set=false;
+     //   Collections.reverse(Arrays.asList(keys));
+    //    Collections.reverse(Arrays.asList(values));
+      //  List<String> sowar = Arrays.asList(getResources().getStringArray(R.array.sura_names));
+        recitelist.clear();
+        final String[] sowar = getResources().getStringArray(R.array.sura_names);
+        AlertDialog dialog;
+        //AlertDialog.Builder dialog = new AlertDialog.Builder(listthefiles.this);
+     //   final CharSequence[] items = {" Easy "," Medium "," Hard "," Very Hard "};
+        // arraylist to keep the selected items
+     //   final ArrayList<SuraAyah> seletedItems=new ArrayList<SuraAyah>();
+        final ArrayList seletedItems=new ArrayList();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Connections");
+        builder.setMultiChoiceItems(sowar, null,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    // indexSelected contains the index of item (of which checkbox checked)
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int indexSelected,
+                                        boolean isChecked) {
+                        if (isChecked) {
+                            // If the user checked the item, add it to the selected items
+                            // write your code when user checked the checkbox
+                            //al.add(keys[indexSelected]);
+                     //       map.put(keys[indexSelected], values[indexSelected]);
+                            // chosenmonth+=keys[indexSelected];
+                            seletedItems.add(indexSelected);
+                        } else if (seletedItems.contains(indexSelected)) {
+                            // Else, if the item is already in the array, remove it
+                            // write your code when user Uchecked the checkbox
+                            //al.remove(keys[indexSelected]);
+                      //      map.remove(keys[indexSelected]);
+                            seletedItems.remove(Integer.valueOf(indexSelected));
+                        }
+                    }
+                })
+                // Set the action buttons
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+//                        Iterator<String> iterator = seletedItems.iterator();
+//                        while (iterator.hasNext()) {
+//
+//                           // System.out.println(iterator.next());
+//                        }
+                        if (!seletedItems.isEmpty()) {
+                            for (Object temp : seletedItems) {
+                                System.out.println((Integer) temp);
+                                int sura = ((Integer) temp) + 1;
+                                recitelist.add(new SuraAyah(sura, 1));
+                            }
+                            randomjumper();
+                            recitemode=true;
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+        .setNeutralButton("ALL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+              for(int i=0;i<sowar.length;i++)
+              {
+                  seletedItems.add(i);
+
+              }
+                if (!seletedItems.isEmpty()) {
+                    for (Object temp : seletedItems) {
+                        System.out.println((Integer) temp);
+                        int sura = ((Integer) temp) + 1;
+                        recitelist.add(new SuraAyah(sura, 1));
+                    }
+                }
+                randomjumper();
+                recitemode=true;
+                dialog.cancel();
+
+
+            }
+        });
+
+
+        dialog = builder.create();//AlertDialog dialog; create like this outside onClick
+        dialog.show();
+
+    }
+
+    public void randomjumper()
+    {
+      //  for (ArrayList temp : recitelist) {
+        if(recitelist.isEmpty())
+            return;
+            Random rand = new Random();
+        ArrayList<Integer> selected=new  ArrayList<Integer>();
+        for (SuraAyah temp : recitelist) {
+            selected.add(temp.sura);
+
+        }
+        int minsura=1;
+        int maxsura=selected.size();
+        int a=rand.nextInt((maxsura - minsura) + 1) + minsura;
+        int randomsurafromlist = selected.get(a-1);
+
+           int minaya=1;
+        int maxaya=QuranInfo.SURA_NUM_AYAHS[randomsurafromlist-1]-1;
+
+        int randomayafromlist = rand.nextInt((maxaya - minaya) + 1) + minaya;
+        int page=QuranInfo.getPageFromSuraAyah(randomsurafromlist,randomayafromlist);
+        jumpTo(page);
+      //  map.put(new SuraAyah(randomsurafromlist,randomayafromlist+1),true);
+        mainrecite.add(new SuraAyah(randomsurafromlist,randomayafromlist+1));
+        highlightAyah(randomsurafromlist, randomayafromlist + 1, HighlightType.Recite);
+        playFromAyah( new QuranAyah(randomsurafromlist, randomayafromlist),new QuranAyah(randomsurafromlist, randomayafromlist),
+                page,0,0,true,true);
+//        QuranAyah start, QuranAyah end,
+//        int page, int verseRepeat, int rangeRepeat,
+//        boolean enforceRange, boolean force
+
+      //  }
+
+    }
   private void refreshQuranPages() {
     int pos = mViewPager.getCurrentItem();
     int start = (pos == 0) ? pos : pos - 1;
@@ -1044,6 +1284,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void toggleBookmark(Integer sura, Integer ayah, int page) {
     new ToggleBookmarkTask().execute(sura, ayah, page);
   }
+    public void togglerecite(Integer sura, Integer ayah, int page) {
+        new ToggleReciteTask().execute(sura, ayah, page);
+    }
 
   @Override
   public void onAddTagSelected() {
@@ -1408,6 +1651,90 @@ public class PagerActivity extends SherlockFragmentActivity implements
       }
     }
   }
+    class ToggleReciteTask extends AsyncTask<Integer, Void, Boolean> {
+        private Integer mSura;
+        private Integer mAyah;
+        private int mPage;
+        private boolean mPageOnly;
+
+        @Override
+        protected Boolean doInBackground(Integer... params) {
+            mSura = params[0];
+            mAyah = params[1];
+            mPage = params[2];
+            mPageOnly = (mSura == null || mAyah == null);
+
+          boolean result = false;
+//            long bookmarkId = mBookmarksAdapter.getBookmarkId(mSura, mAyah, mPage);
+//            if (bookmarkId >= 0) {
+//                // if (mBookmarksAdapter.isTagged(bookmarkId)) {
+//                // TODO show warning dialog that all tags will be removed
+//                // }
+//                mBookmarksAdapter.removeBookmark(bookmarkId);
+//            } else {
+//                mBookmarksAdapter.addBookmark(mSura, mAyah, mPage);
+//                result = true;
+//            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+//            if (result != null) {
+//                if (mPageOnly) {
+//                    mBookmarksCache.put(mPage, result);
+//                    invalidateOptionsMenu();
+//                } else {
+//                    SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
+//                    updateAyahBookmark(suraAyah, result, true);
+//                }
+            //}
+            SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
+            boolean found=false;
+//            Iterator it;
+//            it = theaya.iterator();
+//            Iterator it = map.entrySet().iterator();
+//            while (it.hasNext()) {
+//                Map.Entry pairs = (Map.Entry)it.next();
+//                System.out.println(pairs.getKey() + " = " + pairs.getValue());
+//                if(pairs.getKey().equals(suraAyah))
+//                {
+//            //        if(pairs.getValue().equals(true))
+//            //        {
+//        found=true;
+//                       break;
+//               //     }
+//                }
+//       //         it.remove(); // avoids a ConcurrentModificationException
+//            }
+            for (SuraAyah temp : mainrecite) {
+            //    System.out.println(temp);
+                if(mainrecite.contains(suraAyah))
+                {
+                    //        if(pairs.getValue().equals(true))
+                    //        {
+                    found=true;
+                    break;
+                    //     }
+                }
+            }
+            if(found==false)
+            {
+              mainrecite.add(suraAyah);
+              //  map.put(suraAyah,true);
+                highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.Recite);
+
+            }
+            else
+            {
+                mainrecite.remove(suraAyah);
+                //map.remove(suraAyah);
+                unHighlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.Recite);
+
+            }
+           // updateAyahBookmark(suraAyah, result, true);
+        }
+    }
 
   class IsPageBookmarkedTask extends AsyncTask<Integer, Void, SparseBooleanArray> {
 
@@ -1783,7 +2110,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onBackPressed() {
-    if (mIsInAyahMode) {
+//   if(!mainrecite.isEmpty())
+//   {
+//
+//       super.onBackPressed();
+//   }
+//     else
+ if (mIsInAyahMode) {
       endAyahMode();
     } else if (mShowingTranslation) {
       switchToQuran();
@@ -2016,6 +2349,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
       int sliderPage = -1;
+        recitemode=false;
       switch (item.getItemId()) {
         case R.id.cab_bookmark_ayah:
           toggleBookmark(mStart.sura, mStart.ayah, mStart.getPage());
@@ -2029,7 +2363,13 @@ public class PagerActivity extends SherlockFragmentActivity implements
         case R.id.cab_play_from_here:
           sliderPage = AUDIO_PAGE;
           break;
-        case R.id.cab_share_ayah_link:
+          case R.id.tasmee3: {
+              sliderPage = -1;
+Log.d("one step close","one step close");
+              togglerecite(mStart.sura, mStart.ayah, mStart.getPage());
+          }
+          break;
+          case R.id.cab_share_ayah_link:
           new ShareQuranAppTask(PagerActivity.this, mStart, mEnd).execute();
           break;
         case R.id.cab_share_ayah_text:

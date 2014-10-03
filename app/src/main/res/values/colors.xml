@@ -15,6 +15,8 @@
     <color name="audio_highlight">#4046A646</color>
     <color name="note_highlight">#40EBEB21</color>
     <color name="bookmark_highlight">#40A4A4A4</color>
+    <color name="recite_highlight">#FFF4CB</color>
+
     <color name="translation_highlight">#ff33b5e5</color>
     <color name="toolbar_background">#ed2b5836</color>
     <color name="toolbar_item_pressed">#552bff36</color>

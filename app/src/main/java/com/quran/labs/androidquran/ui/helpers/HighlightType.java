@@ -11,8 +11,10 @@ public class HighlightType implements Comparable<HighlightType> {
   public static final HighlightType AUDIO =     new HighlightType(2, false, R.color.audio_highlight);
   public static final HighlightType NOTE =      new HighlightType(3, true,  R.color.note_highlight);
   public static final HighlightType BOOKMARK =  new HighlightType(4, true,  R.color.bookmark_highlight);
+    public static final HighlightType Recite =  new HighlightType(5, true,  R.color.recite_highlight);
 
-  private Long mId;
+
+    private Long mId;
   private boolean mMultipleHighlightsAllowed;
   private int mColorId;
   private Integer mColor = null;

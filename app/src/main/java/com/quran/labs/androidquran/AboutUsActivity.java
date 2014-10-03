@@ -31,6 +31,7 @@ public class AboutUsActivity extends SherlockActivity {
             public void onClick(View view) {
                 Intent faqIntent = new Intent(view.getContext(), HelpActivity.class);
                 startActivity(faqIntent);
+
             }
         });
     }
