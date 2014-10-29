@@ -1358,7 +1358,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
       int i = 0;
       String[] items = new String[mTranslations.size()];
       for (TranslationItem item : mTranslations) {
-        items[i++] = item.name;
+        if (TextUtils.isEmpty(item.translator)) {
+          items[i++] = item.name;
+        } else {
+          items[i++] = item.translator;
+        }
       }
       mTranslationItems = items;
       mTranslationReaderTask = null;

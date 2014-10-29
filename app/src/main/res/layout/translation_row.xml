@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:orientation="horizontal">
     <ImageView android:id="@+id/translation_icon"
         android:src="@drawable/ic_translation"
@@ -13,10 +14,10 @@
         android:scaleType="center" />
     <LinearLayout android:id="@+id/translation_area"
                   android:layout_width="0dp"
-                  android:layout_height="48dp"
+                  android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:orientation="vertical"
-                  android:gravity="center_vertical">
+                  android:layout_gravity="center_vertical">
         <TextView android:id="@+id/translation_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
