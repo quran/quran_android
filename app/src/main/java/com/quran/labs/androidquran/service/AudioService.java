@@ -1125,6 +1125,11 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
+   public static Intent getAudioIntent(Context context, String action) {
+     final Intent intent = new Intent(context, AudioService.class);
+     intent.setAction(action);
+     return intent;
+   }
 
    @Override
    public void onDestroy() {

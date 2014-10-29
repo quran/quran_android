@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.quran.labs.androidquran" android:versionCode="258"
-	android:versionName="2.5.8"
+	package="com.quran.labs.androidquran"
 	android:installLocation="auto">
-	
-   <supports-screens android:largeScreens="true" android:xlargeScreens="true" />
 
    <uses-permission android:name="android.permission.INTERNET" />
    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -67,17 +64,6 @@
         </receiver>
         
 		<service android:enabled="true" android:name=".service.QuranDownloadService" />
-        <service android:exported="false" android:name=".service.AudioService">
-            <intent-filter>
-                <action android:name="com.quran.labs.androidquran.action.PLAYBACK" />
-                <action android:name="com.quran.labs.androidquran.action.PLAY" />
-                <action android:name="com.quran.labs.androidquran.action.PAUSE" />
-                <action android:name="com.quran.labs.androidquran.action.SKIP" />
-                <action android:name="com.quran.labs.androidquran.action.REWIND" />
-                <action android:name="com.quran.labs.androidquran.action.STOP" />
-                <action android:name="com.quran.labs.androidquran.action.CONNECT" />
-                <action android:name="com.quran.labs.androidquran.action.UPDATE_REPEAT" />
-            </intent-filter>
-       </service>
+        <service android:exported="false" android:name=".service.AudioService" />
    </application>
 </manifest> 
