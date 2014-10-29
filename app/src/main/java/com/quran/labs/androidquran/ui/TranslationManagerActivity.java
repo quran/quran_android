@@ -395,7 +395,7 @@ public class TranslationManagerActivity extends SherlockActivity
             holder = new ViewHolder();
             if (getItemViewType(position) == TYPE_ITEM){
                convertView = mInflater.inflate(
-                       R.layout.translation_row, null);
+                       R.layout.translation_row, parent, false);
                holder.translationTitle = (TextView)convertView
                        .findViewById(R.id.translation_title);
                holder.translationInfo = (TextView)convertView
@@ -406,7 +406,7 @@ public class TranslationManagerActivity extends SherlockActivity
                        .findViewById(R.id.right_image);
             }
             else {
-               convertView = mInflater.inflate(R.layout.translation_sep, null);
+               convertView = mInflater.inflate(R.layout.translation_sep, parent, false);
                holder.separatorText = (TextView)convertView
                        .findViewById(R.id.separator_txt);
             }
