@@ -1,31 +1,16 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url 'http://download.crashlytics.com/maven' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
-        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.10.+'
-    }
-}
-apply plugin: 'android-sdk-manager'
-apply plugin: 'android'
-apply plugin: 'crashlytics'
-
-repositories {
-    mavenCentral()
-    maven { url 'http://download.crashlytics.com/maven' }
-}
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "19.1.0"
     lintOptions.checkReleaseBuilds false
 
     defaultConfig {
         minSdkVersion 7
-        targetSdkVersion 19
+        targetSdkVersion 21
+        versionCode 259
+        versionName "2.5.9"
     }
 
     signingConfigs {
@@ -40,20 +25,25 @@ android {
     buildTypes {
       debug {
          ext.enableCrashlytics = false
-         buildConfigField "boolean", "LOG_CRASHES", "false"
       }
 
       release {
-         buildConfigField "boolean", "LOG_CRASHES", "true"
          runProguard true
          proguardFile 'proguard.cfg'
          signingConfig signingConfigs.release
       }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
-    compile 'com.android.support:support-v4:19.1.0'
-    compile 'com.crashlytics.android:crashlytics:1.+'
+    compile 'com.android.support:support-v4:21.0.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.0.0@aar') {
+        transitive = true;
+    }
 }
