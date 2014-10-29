@@ -1,9 +1,12 @@
 package com.quran.labs.androidquran.task;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.text.ClipboardManager;
+import android.os.Build;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
@@ -55,64 +58,75 @@ public class ShareAyahTask extends PagerActivityTask<Void, Void, List<QuranAyah>
   @Override
   protected void onPostExecute(List<QuranAyah> verses) {
     super.onPostExecute(verses);
+    if (verses == null || verses.isEmpty()) {
+      return;
+    }
     Activity activity = getActivity();
-    if (verses != null && !verses.isEmpty() && activity != null) {
-      StringBuilder sb = new StringBuilder();
-      // TODO what's the best text format for multiple ayahs
-      int count = 0;
-      QuranAyah firstAayah = verses.get(0);
-      for (QuranAyah verse : verses) {
-        // append ( before ayah start
-        if (count == 0) {
-          sb.append("(");
-        }
-        sb.append(verse.getText());
-        // append * between ayat
-        if (count < verses.size() - 1) {
+    if (activity == null) {
+      return;
+    }
+    // TODO what's the best text format for multiple ayahs?
+    StringBuilder sb = new StringBuilder();
+    final int size = verses.size();
+    final QuranAyah firstAayah = verses.get(0);
+    final QuranAyah lastAayah = verses.get(size - 1);
+    // append ( before first ayah
+    sb.append("(").append(firstAayah.getText());
+
+    switch (size) {
+      case 1:
+        // nothing to do here, just
+        break;
+      case 2:
+        sb.append(" * ");
+        sb.append(lastAayah.getText());
+        break;
+      default:
+        sb.append(" * ");
+        for (int count = 1; count < size - 1; count++) {
+          sb.append(verses.get(count).getText());
           sb.append(" * ");
         }
-        count++;
-        // append ) after last ayah
+        // and append the last ayah
+        sb.append(lastAayah.getText());
+    }
 
-        // prepare ayat labels
-        if (count == verses.size()) {
-          sb.append(")");
-
-          // append [ before sura label
-          sb.append(" [");
-          sb.append(QuranInfo.getSuraName(activity, firstAayah.getSura(), true));
-          sb.append(" ");
-          if (count > 1) {
-            sb.append(firstAayah.getAyah()).append(" - ");
-          }
-          if (firstAayah.getSura() != verse.getSura()) {
-            sb.append(QuranInfo.getSuraName(activity, verse.getSura(), true));
-            sb.append(" ");
-          }
-          sb.append(verse.getAyah());
-          // close sura label
-          sb.append("]").append("\n\n");
-        }
+    // append ) and a new line after last ayah
+    sb.append(")\n");
+    // append [ before sura label
+    sb.append("[");
+    sb.append(QuranInfo.getSuraName(activity, firstAayah.getSura(), true));
+    sb.append(" ");
+    if (size > 1) {
+      sb.append(firstAayah.getAyah()).append(" - ");
+      if (firstAayah.getSura() != lastAayah.getSura()) {
+        sb.append(QuranInfo.getSuraName(activity, lastAayah.getSura(), true));
+        sb.append(" ");
       }
-      sb.append(activity.getString(R.string.via_string));
-      String text = sb.toString();
-      if (copy) {
-        ClipboardManager cm = (ClipboardManager)activity.
-            getSystemService(Activity.CLIPBOARD_SERVICE);
-        if (cm != null){
-          cm.setText(text);
-          Toast.makeText(activity, activity.getString(
-                  R.string.ayah_copied_popup),
-              Toast.LENGTH_SHORT
-          ).show();
-        }
+    }
+    sb.append(lastAayah.getAyah());
+    // close sura label and append two new lines
+    sb.append("]\n\n");
+
+    sb.append(activity.getString(R.string.via_string));
+    String text = sb.toString();
+    if (copy) {
+      if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+        ClipboardManager cm = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(activity.getString(R.string.app_name), text);
+        cm.setPrimaryClip(clip);
       } else {
-        final Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, text);
-        activity.startActivity(Intent.createChooser(intent,
-            activity.getString(R.string.share_ayah)));
+        android.text.ClipboardManager cm = (android.text.ClipboardManager)
+            activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        cm.setText(text);
       }
+      Toast.makeText(activity, activity.getString(R.string.ayah_copied_popup),
+          Toast.LENGTH_SHORT).show();
+    } else {
+      final Intent intent = new Intent(Intent.ACTION_SEND);
+      intent.setType("text/plain");
+      intent.putExtra(Intent.EXTRA_TEXT, text);
+      activity.startActivity(Intent.createChooser(intent, activity.getString(R.string.share_ayah)));
     }
   }
 }
