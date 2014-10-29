@@ -621,7 +621,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     super.onResume();
     if (mShouldReconnect) {
-      startService(new Intent(AudioService.ACTION_CONNECT));
+      startService(AudioService.getAudioIntent(
+          this, AudioService.ACTION_CONNECT));
       mShouldReconnect = false;
     }
 
@@ -1666,7 +1667,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   private void play(AudioRequest request) {
     mNeedsPermissionToDownloadOver3g = true;
-    Intent i = new Intent(AudioService.ACTION_PLAYBACK);
+    Intent i = new Intent(this, AudioService.class);
+    i.setAction(AudioService.ACTION_PLAYBACK);
     if (request != null) {
       i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
       mLastAudioRequest = request;
@@ -1688,18 +1690,21 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onPausePressed() {
-    startService(new Intent(AudioService.ACTION_PAUSE));
+    startService(AudioService.getAudioIntent(
+        this, AudioService.ACTION_PAUSE));
     mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
   }
 
   @Override
   public void onNextPressed() {
-    startService(new Intent(AudioService.ACTION_SKIP));
+    startService(AudioService.getAudioIntent(this,
+        AudioService.ACTION_SKIP));
   }
 
   @Override
   public void onPreviousPressed() {
-    startService(new Intent(AudioService.ACTION_REWIND));
+    startService(AudioService.getAudioIntent(this,
+        AudioService.ACTION_REWIND));
   }
 
   @Override
@@ -1720,7 +1725,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public boolean updatePlayOptions(int rangeRepeat,
       int verseRepeat, boolean enforceRange) {
     if (mLastAudioRequest != null) {
-      Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
+      Intent i = new Intent(this, AudioService.class);
+      i.setAction(AudioService.ACTION_UPDATE_REPEAT);
       i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, verseRepeat);
       i.putExtra(AudioService.EXTRA_RANGE_REPEAT_COUNT, rangeRepeat);
       i.putExtra(AudioService.EXTRA_RANGE_RESTRICT, enforceRange);
@@ -1739,7 +1745,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public void setRepeatCount(int repeatCount) {
     if (mLastAudioRequest != null) {
-      Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
+      Intent i = new Intent(this, AudioService.class);
+      i.setAction(AudioService.ACTION_UPDATE_REPEAT);
       i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, repeatCount);
       startService(i);
       mLastAudioRequest.setVerseRepeatCount(repeatCount);
@@ -1748,7 +1755,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onStopPressed() {
-    startService(new Intent(AudioService.ACTION_STOP));
+    startService(AudioService.getAudioIntent(this, AudioService.ACTION_STOP));
     mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
     unHighlightAyahs(HighlightType.AUDIO);
     mLastAudioRequest = null;

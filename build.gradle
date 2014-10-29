@@ -1,0 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/repo' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.13.+'
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/repo' }
+    }
+}
