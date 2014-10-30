@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -9,6 +8,10 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
+import com.quran.labs.androidquran.task.QueryBookmarkedAyahsTask;
+import com.quran.labs.androidquran.task.QueryPageCoordsTask;
+import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
@@ -16,10 +19,6 @@ import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
-import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
-import com.quran.labs.androidquran.task.QueryBookmarkedAyahsTask;
-import com.quran.labs.androidquran.task.QueryPageCoordsTask;
-import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -38,6 +37,7 @@ import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -52,7 +52,7 @@ import java.util.Set;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
-public class TabletFragment extends SherlockFragment implements AyahTracker {
+public class TabletFragment extends Fragment implements AyahTracker {
 
   private static final String TAG = "TabletFragment";
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
