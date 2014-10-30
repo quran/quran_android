@@ -1,11 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
@@ -38,11 +32,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
-public class QuranActivity extends SherlockFragmentActivity
-        implements ActionBar.TabListener, BookmarkHandler,
-                   AddTagDialog.OnTagChangedListener,
+public class QuranActivity extends ActionBarActivity
+        implements ActionBar.TabListener, BookmarkHandler, AddTagDialog.OnTagChangedListener,
                    TagBookmarkDialog.OnBookmarkTagsUpdateListener {
    public static final String TAG = "QuranActivity";
    public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
@@ -172,8 +170,10 @@ public class QuranActivity extends SherlockFragmentActivity
       }
    };
 
+
+
    @Override
-   public void onTabSelected(Tab tab, FragmentTransaction transaction){
+   public void onTabSelected(ActionBar.Tab tab, FragmentTransaction transaction){
       Integer tag = (Integer)tab.getTag();
       if (mPager != null && tag != mPager.getCurrentItem()) {
         mPager.setCurrentItem(tag);
@@ -181,11 +181,11 @@ public class QuranActivity extends SherlockFragmentActivity
    }
    
    @Override
-   public void onTabReselected(Tab tab, FragmentTransaction transaction){
+   public void onTabReselected(ActionBar.Tab tab, FragmentTransaction transaction){
    }
 
    @Override
-   public void onTabUnselected(Tab tab, FragmentTransaction transaction){
+   public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction transaction){
    }
    
    OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener(){
@@ -200,8 +200,8 @@ public class QuranActivity extends SherlockFragmentActivity
 
       @Override
       public void onPageSelected(int position) {
-         ActionBar actionbar = getSherlock().getActionBar();
-         Tab tab = actionbar.getTabAt(position);
+         ActionBar actionbar = getSupportActionBar();
+         ActionBar.Tab tab = actionbar.getTabAt(position);
          if (actionbar.getSelectedTab() != tab) {
            actionbar.selectTab(tab);
          }
@@ -211,7 +211,7 @@ public class QuranActivity extends SherlockFragmentActivity
    @Override
    public boolean onCreateOptionsMenu(Menu menu){
       super.onCreateOptionsMenu(menu);
-      MenuInflater inflater = getSupportMenuInflater();
+      MenuInflater inflater = getMenuInflater();
       inflater.inflate(R.menu.home_menu, menu);
       return true;
    }

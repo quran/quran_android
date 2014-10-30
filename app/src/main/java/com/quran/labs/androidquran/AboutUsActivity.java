@@ -2,18 +2,18 @@ package com.quran.labs.androidquran;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
 
-public class AboutUsActivity extends SherlockActivity {
+public class AboutUsActivity extends ActionBarActivity {
 
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.Theme_Sherlock);
+        setTheme(R.style.QuranAndroid);
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);

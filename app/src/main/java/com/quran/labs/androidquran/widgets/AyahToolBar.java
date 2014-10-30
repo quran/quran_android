@@ -1,23 +1,21 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.actionbarsherlock.internal.view.menu.MenuBuilder;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.R;
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.v7.internal.view.menu.MenuBuilder;
 import android.util.AttributeSet;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 
 public class AyahToolBar extends ViewGroup implements
     View.OnClickListener, View.OnLongClickListener {
@@ -37,7 +35,7 @@ public class AyahToolBar extends ViewGroup implements
   private AyahToolBarPip mToolBarPip;
   private PipPosition mPipPosition;
   private AyahToolBarPosition mLastAyahToolBarPosition;
-  private OnMenuItemSelectedListener mItemSelectedListener;
+  private MenuItem.OnMenuItemClickListener mItemSelectedListener;
 
   public AyahToolBar(Context context) {
     super(context);
@@ -234,7 +232,7 @@ public class AyahToolBar extends ViewGroup implements
   }
 
   public void setOnItemSelectedListener(
-      OnMenuItemSelectedListener listener) {
+      MenuItem.OnMenuItemClickListener listener) {
     mItemSelectedListener = listener;
   }
 
@@ -245,7 +243,7 @@ public class AyahToolBar extends ViewGroup implements
     if (item.hasSubMenu()) {
       showMenu(item.getSubMenu());
     } else if (mItemSelectedListener != null) {
-      mItemSelectedListener.onMenuItemSelected(0, item);
+      mItemSelectedListener.onMenuItemClick(item);
     }
   }
 

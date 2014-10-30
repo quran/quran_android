@@ -24,10 +24,17 @@
  * - Add option to allow dragging to arbitrary position (false by default)
  * - DragHelperCallback.onViewReleased(): if yvel == 0 (i.e. drag, not fling),
  *   don't snap to top/bottom (to allow expanding to arbitrary positions)
+ * - fixed the spelling of parallax
+ * - comment out the line causing us to need NineOldAndroids, since our value
+ *   for parallax is currently always 0. throw an exception during dev if this
+ *   changes so that we know to fix it.
  *
  */
 
 package com.quran.labs.androidquran.widgets;
+
+import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -51,9 +58,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
-
-import com.actionbarsherlock.internal.nineoldandroids.view.animation.AnimatorProxy;
-import com.quran.labs.androidquran.R;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
@@ -104,9 +108,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
   private int mCoveredFadeColor = DEFAULT_FADE_COLOR;
 
   /**
-   * Default paralax length of the main view
+   * Default parallax length of the main view
    */
-  private static final int DEFAULT_PARALAX_OFFSET = 0;
+  private static final int DEFAULT_PARALLAX_OFFSET = 0;
 
   /**
    * The paint used to dim the main layout when sliding
@@ -129,9 +133,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
   private int mShadowHeight = -1;
 
   /**
-   * Paralax offset
+   * Parallax offset
    */
-  private int mParalaxOffset = -1;
+  private int mParallaxOffset = -1;
 
   /**
    * True if the collapsed panel should be dragged up.
@@ -319,7 +323,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
       if (ta != null) {
         mPanelHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_panelHeight, -1);
         mShadowHeight = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_shadowHeight, -1);
-        mParalaxOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_paralaxOffset, -1);
+        mParallaxOffset = ta.getDimensionPixelSize(R.styleable.SlidingUpPanelLayout_parallaxOffset, -1);
 
         mMinFlingVelocity = ta.getInt(R.styleable.SlidingUpPanelLayout_flingVelocity, DEFAULT_MIN_FLING_VELOCITY);
         mCoveredFadeColor = ta.getColor(R.styleable.SlidingUpPanelLayout_fadeColor, DEFAULT_FADE_COLOR);
@@ -341,8 +345,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     if (mShadowHeight == -1) {
       mShadowHeight = (int) (DEFAULT_SHADOW_HEIGHT * density + 0.5f);
     }
-    if (mParalaxOffset == -1) {
-      mParalaxOffset = (int) (DEFAULT_PARALAX_OFFSET * density);
+    if (mParallaxOffset == -1) {
+      mParallaxOffset = (int) (DEFAULT_PARALLAX_OFFSET * density);
     }
     // If the shadow height is zero, don't show the shadow
     if (mShadowHeight > 0) {
@@ -431,10 +435,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
   }
 
   /**
-   * @return The current paralax offset
+   * @return The current parallax offset
    */
-  public int getCurrentParalaxOffset() {
-    int offset = (int)(mParalaxOffset * (1 - mSlideOffset));
+  public int getCurrentParallaxOffset() {
+    int offset = (int)(mParallaxOffset * (1 - mSlideOffset));
     return mIsSlidingUp ? -offset : offset;
   }
 
@@ -955,12 +959,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
         : (float) (topBound - newTop) / mSlideRange;
     dispatchOnPanelSlide(mSlideableView);
 
-    if (mParalaxOffset > 0) {
-      int mainViewOffset = getCurrentParalaxOffset();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        mMainView.setTranslationY(mainViewOffset);
+    if (mParallaxOffset > 0) {
+      if (BuildConfig.DEBUG) {
+        throw new IllegalArgumentException(
+            "Parallax will crash 2.x - see comment in SlidingUpPanelLayout.");
+        /* dear future self:
+         * this is an intentional, dev only, crash for Quran Android.
+         *
+         * the commented out else, below, is the single line that causes us
+         * to need NineOldAndroids. since we currently don't use a parallax
+         * value that is greater than 0, there is no point in including it.
+         * one day, however, things may change.
+         *
+         * if we want this to work, we can just include the AnimatorProxy
+         * class from NineOldAndroids (instead of the entire library).
+         */
       } else {
-        AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
+        int mainViewOffset = getCurrentParallaxOffset();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+          mMainView.setTranslationY(mainViewOffset);
+        } /* else {
+          AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
+        } */
       }
     }
   }

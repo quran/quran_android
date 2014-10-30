@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -27,6 +26,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -43,7 +43,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends SherlockFragmentActivity
+public class SearchActivity extends ActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -60,7 +60,7 @@ public class SearchActivity extends SherlockFragmentActivity
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    setTheme(R.style.Theme_Sherlock);
+    setTheme(R.style.QuranAndroid);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search);
     mMessageView = (TextView) findViewById(R.id.search_area);

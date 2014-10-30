@@ -41,8 +41,8 @@ android {
 }
 
 dependencies {
-    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.0.0@aar') {
         transitive = true;
     }

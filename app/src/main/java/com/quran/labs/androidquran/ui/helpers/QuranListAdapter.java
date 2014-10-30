@@ -122,7 +122,7 @@ public class QuranListAdapter extends BaseAdapter {
       // If the row is checked (for CAB mode), theme its bg appropriately
       if (parent != null && parent instanceof ListView){
          int background = ((ListView)parent).isItemChecked(position)?
-                 R.drawable.abs__list_activated_holo : 0;
+                 R.drawable.abc_list_selector_holo_dark : 0;
          convertView.setBackgroundResource(background);
       }
 

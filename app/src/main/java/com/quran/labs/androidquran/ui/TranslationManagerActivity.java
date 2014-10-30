@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.Constants;
@@ -24,9 +20,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -39,7 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranslationManagerActivity extends SherlockActivity
+public class TranslationManagerActivity extends ActionBarActivity
         implements DefaultDownloadReceiver.SimpleDownloadListener,
                    TranslationListTask.TranslationsUpdatedListener {
    public static final String TAG = "TranslationManager";
@@ -62,9 +61,9 @@ public class TranslationManagerActivity extends SherlockActivity
 
    @Override
    public void onCreate(Bundle savedInstanceState){
-      setTheme(R.style.Theme_Sherlock);
+      setTheme(R.style.QuranAndroid);
       super.onCreate(savedInstanceState);
-      requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+      //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
       setContentView(R.layout.translation_manager);
       mListView = (ListView)findViewById(R.id.translation_list);

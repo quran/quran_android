@@ -1,11 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -77,11 +71,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -98,7 +97,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
@@ -107,7 +105,7 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAG
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
-public class PagerActivity extends SherlockFragmentActivity implements
+public class PagerActivity extends ActionBarActivity implements
     AudioStatusBar.AudioBarListener,
     BookmarkHandler,
     DefaultDownloadReceiver.DownloadListener,
@@ -204,9 +202,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public void onCreate(Bundle savedInstanceState) {
     ((QuranApplication) getApplication()).refreshLocale(false);
 
-    setTheme(R.style.QuranAndroid);
-    requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setTheme(R.style.QuranAndroid_Transparent);
 
     super.onCreate(savedInstanceState);
     mBookmarksCache = new SparseBooleanArray();
@@ -272,8 +268,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mPrefs = PreferenceManager.getDefaultSharedPreferences(
         getApplicationContext());
 
-    getSupportActionBar().setDisplayShowHomeEnabled(true);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    final ActionBar ab = getSupportActionBar();
+    ab.setDisplayShowHomeEnabled(true);
+    ab.setDisplayHomeAsUpEnabled(true);
 
     final Resources resources = getResources();
     mIsLandscape = resources.getConfiguration().orientation ==
@@ -283,8 +280,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mAyahToolBarTotalHeight = resources
         .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
-    getSupportActionBar().setBackgroundDrawable(
-        new ColorDrawable(background));
+    ab.setBackgroundDrawable(new ColorDrawable(background));
     mAudioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
     mAudioStatusBar.setAudioBarListener(this);
 
@@ -565,9 +561,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
         mIsActionBarHidden = !visible;
         if (visible){
           mAudioStatusBar.updateSelectedItem();
-          getSherlock().getActionBar().show();
+          getSupportActionBar().show();
         } else {
-          getSherlock().getActionBar().hide();
+          getSupportActionBar().hide();
         }
 
         mAudioStatusBar.animate()
@@ -862,7 +858,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    MenuInflater inflater = getSupportMenuInflater();
+    MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.quran_menu, menu);
     return true;
   }
@@ -1026,9 +1022,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
               }
               Fragment f = mPagerAdapter
                   .getFragmentIfExists(pos + count);
-              if (f != null && f instanceof TranslationFragment) {
+              if (f instanceof TranslationFragment) {
                 ((TranslationFragment) f).refresh(item.filename);
-              } else if (f != null && f instanceof TabletFragment) {
+              } else if (f instanceof TabletFragment) {
                 ((TabletFragment) f).refresh(item.filename);
               }
             }
@@ -1117,7 +1113,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
 
     mSpinnerAdapter = new ArrayAdapter<String>(this,
-        R.layout.sherlock_spinner_dropdown_item,
+        R.layout.support_simple_spinner_dropdown_item,
         mTranslationItems) {
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {
@@ -2023,9 +2019,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  private class AyahMenuItemSelectionHandler implements OnMenuItemSelectedListener {
+  private class AyahMenuItemSelectionHandler implements MenuItem.OnMenuItemClickListener {
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
       int sliderPage = -1;
       switch (item.getItemId()) {
         case R.id.cab_bookmark_ayah:

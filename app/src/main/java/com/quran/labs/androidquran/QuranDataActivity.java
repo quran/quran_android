@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -25,6 +24,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +32,7 @@ import android.view.View;
 import java.io.File;
 import java.util.Date;
 
-public class QuranDataActivity extends SherlockActivity implements
+public class QuranDataActivity extends ActionBarActivity implements
         DefaultDownloadReceiver.SimpleDownloadListener {
 
    public static final String TAG =
@@ -54,7 +54,7 @@ public class QuranDataActivity extends SherlockActivity implements
 
    @Override
    public void onCreate(Bundle savedInstanceState) {
-      setTheme(R.style.Theme_Sherlock_NoActionBar);
+      setTheme(R.style.Theme_AppCompat_NoActionBar);
 
       super.onCreate(savedInstanceState);
       setContentView(R.layout.splash_screen);
