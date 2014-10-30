@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/cab_tag_bookmark"
           android:icon="@drawable/ic_tag"
           android:title="@string/tag_bookmark"
-          android:showAsAction="ifRoom" />
+          app:showAsAction="ifRoom" />
     <item android:id="@+id/cab_delete_bookmark"
           android:icon="@drawable/ic_cancel"
           android:title="@string/delete_bookmark"
-          android:showAsAction="ifRoom" />
+          app:showAsAction="ifRoom" />
 </menu>

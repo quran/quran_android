@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -15,6 +14,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,7 @@ import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.SURAS_COUNT;
 
-public class SuraListFragment extends SherlockFragment {
+public class SuraListFragment extends Fragment {
 
   private ListView mListView;
   private QuranListAdapter mAdapter;

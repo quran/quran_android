@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -38,6 +37,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -56,7 +56,7 @@ import java.util.Set;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
-public class QuranPageFragment extends SherlockFragment
+public class QuranPageFragment extends Fragment
     implements AyahTracker, ObservableScrollView.OnScrollListener {
 
   private static final String TAG = "QuranPageFragment";

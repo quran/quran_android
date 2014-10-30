@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.actionbarsherlock.internal.widget.IcsAdapterView;
-import com.actionbarsherlock.internal.widget.IcsSpinner;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
@@ -17,10 +15,12 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class AudioStatusBar extends LinearLayout {
@@ -44,7 +44,7 @@ public class AudioStatusBar extends LinearLayout {
    private boolean mHaveCriticalError = false;
    private SharedPreferences mSharedPreferences;
 
-   private IcsSpinner mSpinner;
+   private Spinner mSpinner;
    private TextView mProgressText;
    private ProgressBar mProgressBar;
    private TextView mRepeatButton;
@@ -166,20 +166,20 @@ public class AudioStatusBar extends LinearLayout {
       addSeparator();
 
       if (mSpinner == null){
-         mSpinner = new IcsSpinner(mContext, null,
+         mSpinner = new Spinner(mContext, null,
                  R.attr.actionDropDownStyle);
          ArrayAdapter<CharSequence> adapter =
                  ArrayAdapter.createFromResource(mContext,
                          R.array.quran_readers_name,
-                         R.layout.sherlock_spinner_item);
+                         android.R.layout.simple_spinner_item);
          adapter.setDropDownViewResource(
-                 R.layout.sherlock_spinner_dropdown_item);
+                 R.layout.support_simple_spinner_dropdown_item);
          mSpinner.setAdapter(adapter);
 
          mSpinner.setOnItemSelectedListener(
-                 new IcsAdapterView.OnItemSelectedListener() {
+                 new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(IcsAdapterView<?> parent,
+            public void onItemSelected(AdapterView<?> parent,
                                        View view, int position, long id) {
                if (position != mCurrentQari){
                   mSharedPreferences.edit().
@@ -190,7 +190,7 @@ public class AudioStatusBar extends LinearLayout {
             }
 
             @Override
-            public void onNothingSelected(IcsAdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent) {
             }
          });
       }
@@ -276,7 +276,7 @@ public class AudioStatusBar extends LinearLayout {
       mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
               R.drawable.ic_repeat, 0, 0, 0);
       mRepeatButton.setBackgroundResource(
-              R.drawable.abs__item_background_holo_dark);
+              R.drawable.abc_item_background_holo_dark);
       mRepeatButton.setTag(R.drawable.ic_repeat);
       mRepeatButton.setOnClickListener(mOnClickListener);
       updateRepeatButtonText();
@@ -293,7 +293,7 @@ public class AudioStatusBar extends LinearLayout {
       button.setOnClickListener(mOnClickListener);
       button.setTag(imageId);
       button.setBackgroundResource(
-              R.drawable.abs__item_background_holo_dark);
+              R.drawable.abc_item_background_holo_dark);
       addView(button, mButtonWidth,
               LayoutParams.MATCH_PARENT);
    }

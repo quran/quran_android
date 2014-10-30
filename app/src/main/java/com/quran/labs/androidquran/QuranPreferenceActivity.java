@@ -1,14 +1,13 @@
 package com.quran.labs.androidquran;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -21,10 +20,12 @@ import android.os.Environment;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class QuranPreferenceActivity extends SherlockPreferenceActivity
+public class QuranPreferenceActivity extends PreferenceActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
   private static final String TAG =
       "com.quran.labs.androidquran.QuranPreferenceActivity";
@@ -51,13 +52,13 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
   protected void onCreate(Bundle savedInstanceState) {
     ((QuranApplication)getApplication()).refreshLocale(false);
 
-    setTheme(R.style.Theme_Sherlock);
+    setTheme(R.style.QuranAndroid);
     super.onCreate(savedInstanceState);
 
-    final ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setTitle(R.string.menu_settings);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+      setupActionBar();
+    } else {
+      setTitle(R.string.menu_settings);
     }
 
     // add preferences
@@ -136,6 +137,15 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
     if (mStorageList == null || mStorageList.size() <= 1) {
       Log.d(TAG, "removing advanced settings from preferences");
       getPreferenceScreen().removePreference(advancedPrefs);
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  private void setupActionBar() {
+    final ActionBar actionBar = getActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(R.string.menu_settings);
     }
   }
 

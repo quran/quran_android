@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="@dimen/abs__action_bar_default_height"
+    android:layout_height="?attr/actionBarSize"
     android:gravity="center_vertical"
     android:layout_gravity="center_vertical|left">
     <TextView android:id="@+id/title"

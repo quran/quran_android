@@ -1,15 +1,14 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
@@ -22,6 +21,7 @@ import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +30,7 @@ import android.widget.ImageView;
 
 import java.util.Set;
 
-public class TranslationFragment extends SherlockFragment
+public class TranslationFragment extends Fragment
     implements AyahTracker {
   private static final String TAG = "TranslationPageFragment";
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
