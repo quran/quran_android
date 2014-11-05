@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TagsFragment;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -29,10 +30,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -40,8 +38,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class QuranActivity extends ActionBarActivity
-        implements ActionBar.TabListener, BookmarkHandler, AddTagDialog.OnTagChangedListener,
+        implements BookmarkHandler, AddTagDialog.OnTagChangedListener,
                    TagBookmarkDialog.OnBookmarkTagsUpdateListener {
+   private static int[] TITLES = new int[]{
+       R.string.quran_sura,
+       R.string.quran_juz2,
+       R.string.menu_bookmarks,
+       R.string.menu_tags };
+   private static int[] ARABIC_TITLES = new int[]{
+       R.string.menu_tags,
+       R.string.menu_bookmarks,
+       R.string.quran_juz2,
+       R.string.quran_sura };
+
    public static final String TAG = "QuranActivity";
    public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
    public static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
@@ -54,16 +63,6 @@ public class QuranActivity extends ActionBarActivity
    private static final int REFRESH_BOOKMARKS = 1;
    private static final int REFRESH_TAGS = 2;
    
-   private int[] mTabs = new int[]{ R.string.quran_sura,
-                                    R.string.quran_juz2,
-                                    R.string.menu_bookmarks,
-                                    R.string.menu_tags };
-   private int[] mArabicTabs = new int[]{ R.string.menu_tags,
-                                          R.string.menu_bookmarks,
-                                          R.string.quran_juz2,
-                                          R.string.quran_sura };
-   
-   private ViewPager mPager = null;
    private AlertDialog mUpgradeDialog = null;
    private PagerAdapter mPagerAdapter = null;
    private BookmarksDBAdapter mBookmarksDBAdapter = null;
@@ -78,27 +77,19 @@ public class QuranActivity extends ActionBarActivity
       super.onCreate(savedInstanceState);
       setContentView(R.layout.quran_index);
 
-      ActionBar actionbar = getSupportActionBar();
-      actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
       mIsArabic = QuranSettings.isArabicNames(this);
-      final int[] tabs = mIsArabic ? mArabicTabs : mTabs;
-      for (int i=0; i<tabs.length; i++){
-        ActionBar.Tab tab = actionbar.newTab();
-        tab.setText(tabs[i]);
-        tab.setTag(i);
-        tab.setTabListener(this);
-        actionbar.addTab(tab);
-      }
 
-      mPager = (ViewPager)findViewById(R.id.index_pager);
-      mPager.setOffscreenPageLimit(3);
+      final ViewPager pager = (ViewPager) findViewById(R.id.index_pager);
+      pager.setOffscreenPageLimit(3);
       mPagerAdapter = new PagerAdapter(getSupportFragmentManager(), mIsArabic);
-      mPager.setAdapter(mPagerAdapter);
-      mPager.setOnPageChangeListener(mOnPageChangeListener);
+      pager.setAdapter(mPagerAdapter);
+
+      final SlidingTabLayout indicator =
+          (SlidingTabLayout) findViewById(R.id.indicator);
+      indicator.setViewPager(pager);
 
       if (mIsArabic) {
-        mPager.setCurrentItem(mTabs.length - 1);
+         pager.setCurrentItem(TITLES.length - 1);
       }
 
       mBookmarksDBAdapter = new BookmarksDBAdapter(this);
@@ -169,44 +160,6 @@ public class QuranActivity extends ActionBarActivity
          }
       }
    };
-
-
-
-   @Override
-   public void onTabSelected(ActionBar.Tab tab, FragmentTransaction transaction){
-      Integer tag = (Integer)tab.getTag();
-      if (mPager != null && tag != mPager.getCurrentItem()) {
-        mPager.setCurrentItem(tag);
-      }
-   }
-   
-   @Override
-   public void onTabReselected(ActionBar.Tab tab, FragmentTransaction transaction){
-   }
-
-   @Override
-   public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction transaction){
-   }
-   
-   OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener(){
-      @Override
-      public void onPageScrollStateChanged(int state) {
-      }
-
-      @Override
-      public void onPageScrolled(int position,
-            float positionOffset, int positionOffsetPixels) {
-      }
-
-      @Override
-      public void onPageSelected(int position) {
-         ActionBar actionbar = getSupportActionBar();
-         ActionBar.Tab tab = actionbar.getTabAt(position);
-         if (actionbar.getSelectedTab() != tab) {
-           actionbar.selectTab(tab);
-         }
-      }
-   };
    
    @Override
    public boolean onCreateOptionsMenu(Menu menu){
@@ -218,34 +171,38 @@ public class QuranActivity extends ActionBarActivity
    
    @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-      if (item.getItemId() == R.id.search){
-         return onSearchRequested();
+      switch (item.getItemId()) {
+         case R.id.search: {
+            return onSearchRequested();
+         }
+         case R.id.settings: {
+            Intent i = new Intent(this, QuranPreferenceActivity.class);
+            startActivity(i);
+            return true;
+         }
+         case R.id.last_page: {
+            int page = QuranSettings.getLastPage(this);
+            jumpTo(page);
+            return true;
+         }
+         case R.id.help: {
+            Intent i = new Intent(this, HelpActivity.class);
+            startActivity(i);
+            return true;
+         }
+         case R.id.about: {
+            Intent i = new Intent(this, AboutUsActivity.class);
+            startActivity(i);
+            return true;
+         }
+         case R.id.jump: {
+            gotoPageDialog();
+            return true;
+         }
+         default: {
+            return super.onOptionsItemSelected(item);
+         }
       }
-      else if (item.getItemId() == R.id.settings){
-         Intent i = new Intent(this, QuranPreferenceActivity.class);
-         startActivity(i);
-         return true;
-      }
-      else if (item.getItemId() == R.id.last_page){
-         int page = QuranSettings.getLastPage(this);
-         jumpTo(page);
-         return true;
-      }
-      else if (item.getItemId() == R.id.help) {
-         Intent i = new Intent(this, HelpActivity.class);
-         startActivity(i);
-         return true;
-      }
-      else if (item.getItemId() == R.id.about) {
-    	  Intent i = new Intent(this, AboutUsActivity.class);
-    	  startActivity(i);
-    	  return true;
-      } else if (item.getItemId() == R.id.jump) {
-    	  gotoPageDialog();
-    	  return true;
-      }
-	   
-      return super.onOptionsItemSelected(item);
 	}
 
    @Override
@@ -400,8 +357,9 @@ public class QuranActivity extends ActionBarActivity
      }
    }
    
-   public static class PagerAdapter extends FragmentPagerAdapter {
+   public class PagerAdapter extends FragmentPagerAdapter {
       private boolean mIsArabic;
+
       public PagerAdapter(FragmentManager fm, boolean isArabic){
          super(fm);
          mIsArabic = isArabic;
@@ -432,6 +390,13 @@ public class QuranActivity extends ActionBarActivity
         }
       }
 
+      @Override
+      public CharSequence getPageTitle(int position) {
+         final int resId = mIsArabic ?
+             ARABIC_TITLES[position] : TITLES[position];
+         return getString(resId);
+      }
+
       /**
        * this is a private method in FragmentPagerAdapter that
        * allows getting the tag that it uses to store the fragment
@@ -441,7 +406,7 @@ public class QuranActivity extends ActionBarActivity
        * @param index the index of the fragment to get
        * @return the tag in which it would be stored under
        */
-      public static String getFragmentTag(int viewId, int index){
+      public String getFragmentTag(int viewId, int index){
          return "android:switcher:" + viewId + ":" + index;
       }
    }
