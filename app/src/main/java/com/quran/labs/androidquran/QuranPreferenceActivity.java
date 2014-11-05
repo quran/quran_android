@@ -6,8 +6,6 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -23,9 +21,13 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -55,11 +57,14 @@ public class QuranPreferenceActivity extends PreferenceActivity
     setTheme(R.style.QuranAndroid);
     super.onCreate(savedInstanceState);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      setupActionBar();
-    } else {
-      setTitle(R.string.menu_settings);
-    }
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    toolbar.setTitle(R.string.menu_settings);
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     // add preferences
     addPreferencesFromResource(R.xml.quran_preferences);
@@ -140,13 +145,16 @@ public class QuranPreferenceActivity extends PreferenceActivity
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void setupActionBar() {
-    final ActionBar actionBar = getActionBar();
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setTitle(R.string.menu_settings);
-    }
+  @Override
+  public void setContentView(int layoutId) {
+    // https://stackoverflow.com/questions/17849193
+    final LayoutInflater inflater = LayoutInflater.from(this);
+    final View parent = inflater.inflate(R.layout.preferences,
+        (ViewGroup) getWindow().getDecorView().getRootView(), false);
+    final FrameLayout contentArea =
+        (FrameLayout) parent.findViewById(R.id.content);
+    LayoutInflater.from(this).inflate(layoutId, contentArea, true);
+    setContentView(parent);
   }
 
   @Override
@@ -155,15 +163,6 @@ public class QuranPreferenceActivity extends PreferenceActivity
       mDialog.dismiss();
     }
     super.onDestroy();
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      finish();
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   private void loadStorageOptions() {
