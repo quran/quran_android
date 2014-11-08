@@ -73,6 +73,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -161,6 +162,7 @@ public class PagerActivity extends ActionBarActivity implements
   private boolean mIsLandscape;
   private Integer mLastPlayingSura;
   private Integer mLastPlayingAyah;
+  private View mToolBarArea;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
 
@@ -202,7 +204,7 @@ public class PagerActivity extends ActionBarActivity implements
   public void onCreate(Bundle savedInstanceState) {
     ((QuranApplication) getApplication()).refreshLocale(false);
 
-    setTheme(R.style.QuranAndroid_Transparent);
+    setTheme(R.style.QuranTransparent);
 
     super.onCreate(savedInstanceState);
     mBookmarksCache = new SparseBooleanArray();
@@ -268,10 +270,6 @@ public class PagerActivity extends ActionBarActivity implements
     mPrefs = PreferenceManager.getDefaultSharedPreferences(
         getApplicationContext());
 
-    final ActionBar ab = getSupportActionBar();
-    ab.setDisplayShowHomeEnabled(true);
-    ab.setDisplayHomeAsUpEnabled(true);
-
     final Resources resources = getResources();
     mIsLandscape = resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
@@ -280,9 +278,20 @@ public class PagerActivity extends ActionBarActivity implements
     mAyahToolBarTotalHeight = resources
         .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
-    ab.setBackgroundDrawable(new ColorDrawable(background));
     mAudioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
     mAudioStatusBar.setAudioBarListener(this);
+
+    mToolBarArea = findViewById(R.id.toolbar_area);
+    final View statusBackground = findViewById(R.id.status_bg);
+    statusBackground.getLayoutParams().height = getStatusBarHeight();
+
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+
+    final ActionBar ab = getSupportActionBar();
+    ab.setDisplayShowHomeEnabled(true);
+    ab.setDisplayHomeAsUpEnabled(true);
+    ab.setBackgroundDrawable(new ColorDrawable(background));
 
     initAyahActionPanel();
 
@@ -455,6 +464,18 @@ public class PagerActivity extends ActionBarActivity implements
     mDownloadReceiver.setListener(this);
   }
 
+  private int getStatusBarHeight() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      final Resources resources = getResources();
+      final int resId = resources.getIdentifier(
+          "status_bar_height", "dimen", "android");
+      if (resId > 0) {
+        return resources.getDimensionPixelSize(resId);
+      }
+    }
+    return 0;
+  }
+
   private void initAyahActionPanel() {
     mSlidingPanel = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
     final ViewGroup slidingLayout =
@@ -561,11 +582,15 @@ public class PagerActivity extends ActionBarActivity implements
         mIsActionBarHidden = !visible;
         if (visible){
           mAudioStatusBar.updateSelectedItem();
-          getSupportActionBar().show();
-        } else {
-          getSupportActionBar().hide();
         }
 
+        // animate toolbar
+        mToolBarArea.animate()
+            .translationY(visible ? 0 : -mToolBarArea.getHeight())
+            .setDuration(250)
+            .start();
+
+        // and statusbar
         mAudioStatusBar.animate()
             .translationY(visible ? 0 : mAudioStatusBar.getHeight())
             .setDuration(250)
@@ -1251,7 +1276,7 @@ public class PagerActivity extends ActionBarActivity implements
             WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().clearFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getSupportActionBar().show();
+        mToolBarArea.setVisibility(View.VISIBLE);
 
         mAudioStatusBar.updateSelectedItem();
         mAudioStatusBar.setVisibility(View.VISIBLE);
@@ -1267,7 +1292,7 @@ public class PagerActivity extends ActionBarActivity implements
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(
             WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getSupportActionBar().hide();
+        mToolBarArea.setVisibility(View.GONE);
 
         mAudioStatusBar.setVisibility(View.GONE);
       }
