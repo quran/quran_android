@@ -16,7 +16,10 @@ package com.quran.labs.androidquran.widgets;
  * limitations under the License.
  */
 
+import com.quran.labs.androidquran.R;
+
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
@@ -76,6 +79,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
   private int mTabViewLayoutId;
   private int mTabViewTextViewId;
+  private int mSelectedTabColor;
+  private int mUnselectedTabColor;
 
   private ViewPager mViewPager;
   private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
@@ -98,10 +103,17 @@ public class SlidingTabLayout extends HorizontalScrollView {
     // Make sure that the Tab Strips fills this View
     setFillViewport(true);
 
-    mTitleOffset = (int) (TITLE_OFFSET_DIPS * getResources().getDisplayMetrics().density);
-    mTabPadding = (int) (TAB_VIEW_PADDING_DIPS * getResources().getDisplayMetrics().density);
+    final Resources resources = getResources();
+    final float density = resources.getDisplayMetrics().density;
+    mTitleOffset = (int) (TITLE_OFFSET_DIPS * density);
+    mTabPadding = (int) (TAB_VIEW_PADDING_DIPS * density);
+
+    mSelectedTabColor = resources.getColor(R.color.color_control_activated);
+    mUnselectedTabColor = resources.getColor(R.color.color_control_normal);
 
     mTabStrip = new SlidingTabStrip(context);
+    mTabStrip.setSelectedIndicatorColors(
+        resources.getColor(R.color.indicator_color));
     addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
   }
 
@@ -157,6 +169,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     if (viewPager != null) {
       viewPager.setOnPageChangeListener(new InternalViewPagerListener());
       populateTabStrip();
+      updateTabsTextColor();
     }
   }
 
@@ -170,6 +183,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
     textView.setTypeface(Typeface.DEFAULT_BOLD);
     textView.setSingleLine();
+    textView.setTextColor(mUnselectedTabColor);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
       // If we're running on Honeycomb or newer, then we can use the Theme's
@@ -319,11 +333,25 @@ public class SlidingTabLayout extends HorizontalScrollView {
         scrollToTab(position, 0);
       }
 
+      updateTabsTextColor();
+
       if (mViewPagerPageChangeListener != null) {
         mViewPagerPageChangeListener.onPageSelected(position);
       }
     }
 
+  }
+
+  private void updateTabsTextColor() {
+    final int selected = mViewPager.getCurrentItem();
+    final int children = mTabStrip.getChildCount();
+    for (int i = 0; i < children; i++) {
+      final View view = mTabStrip.getChildAt(i);
+      if (view instanceof TextView) {
+        ((TextView) view).setTextColor(i == selected ?
+            mSelectedTabColor : mUnselectedTabColor);
+      }
+    }
   }
 
   private class TabClickListener implements View.OnClickListener {

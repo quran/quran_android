@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="QuranAndroid" parent="Theme.AppCompat" />
+    <style name="QuranAndroid" parent="Theme.AppCompat">
+        <item name="colorAccent">@color/accent_color</item>
+    </style>
+
+    <style name="QuranPreferences" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="android:listSeparatorTextViewStyle">@style/PreferenceSeparatorStyle</item>
+    </style>
 
     <style name="QuranTransparent" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionBarOverlay">true</item>
