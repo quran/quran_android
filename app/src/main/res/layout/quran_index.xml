@@ -6,7 +6,8 @@
     <com.quran.labs.androidquran.widgets.SlidingTabLayout
         android:id="@+id/indicator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"/>
     <android.support.v4.view.ViewPager
         android:id="@+id/index_pager"
         android:layout_width="match_parent"

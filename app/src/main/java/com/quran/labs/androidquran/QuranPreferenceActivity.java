@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.util.StorageUtils;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,9 +21,12 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.internal.widget.TintCheckBox;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +58,7 @@ public class QuranPreferenceActivity extends PreferenceActivity
   protected void onCreate(Bundle savedInstanceState) {
     ((QuranApplication)getApplication()).refreshLocale(false);
 
-    setTheme(R.style.QuranAndroid);
+    setTheme(R.style.QuranPreferences);
     super.onCreate(savedInstanceState);
 
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -155,6 +159,15 @@ public class QuranPreferenceActivity extends PreferenceActivity
         (FrameLayout) parent.findViewById(R.id.content);
     LayoutInflater.from(this).inflate(layoutId, contentArea, true);
     setContentView(parent);
+  }
+
+  @Nullable
+  @Override
+  public View onCreateView(String name, Context context, AttributeSet attrs) {
+    if ("CheckBox".equals(name)) {
+      return new TintCheckBox(context, attrs);
+    }
+    return super.onCreateView(name, context, attrs);
   }
 
   @Override

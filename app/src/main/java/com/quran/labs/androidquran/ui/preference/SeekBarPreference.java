@@ -4,10 +4,14 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran.ui.preference;
+
+import com.quran.labs.androidquran.data.Constants;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.preference.DialogPreference;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -15,14 +19,12 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.quran.labs.androidquran.data.Constants;
-
 public class SeekBarPreference extends DialogPreference implements
 		SeekBar.OnSeekBarChangeListener {
 	private static final String androidns = "http://schemas.android.com/apk/res/android";
 
 	private SeekBar mSeekBar;
-	private TextView mSplashText, mValueText;
+	private TextView mValueText;
 	private Context mContext;
 
 	private String mDialogMessage, mSuffix;
@@ -46,10 +48,10 @@ public class SeekBarPreference extends DialogPreference implements
 		layout.setOrientation(LinearLayout.VERTICAL);
 		layout.setPadding(6, 6, 6, 6);
 
-		mSplashText = new TextView(mContext);
+		final TextView splashText = new TextView(mContext);
 		if (mDialogMessage != null)
-			mSplashText.setText(mDialogMessage);
-		layout.addView(mSplashText);
+			splashText.setText(mDialogMessage);
+		layout.addView(splashText);
 
 		mValueText = new TextView(mContext);
 		mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -74,19 +76,31 @@ public class SeekBarPreference extends DialogPreference implements
 	}
 
 	@Override
-	protected void onBindDialogView(View v) {
+	protected void onBindDialogView(@NonNull View v) {
 		super.onBindDialogView(v);
 		mSeekBar.setMax(mMax);
 		mSeekBar.setProgress(mValue);
 	}
 
 	@Override
+	protected void onBindView(@NonNull View view) {
+		super.onBindView(view);
+		if (isEnabled()) {
+			final TextView tv = (TextView) view.findViewById(android.R.id.title);
+			if (tv != null) {
+				tv.setTextColor(Color.WHITE);
+			}
+		}
+	}
+
+	@Override
 	protected void onSetInitialValue(boolean restore, Object defaultValue) {
 		super.onSetInitialValue(restore, defaultValue);
-		if (restore)
+		if (restore) {
 			mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
-		else
+		} else {
 			mValue = (Integer) defaultValue;
+		}
 	}
 
 	public void onProgressChanged(SeekBar seek, int value, boolean fromTouch) {
@@ -95,7 +109,7 @@ public class SeekBarPreference extends DialogPreference implements
 		if (shouldPersist()){
 			persistInt(value);
       }
-		callChangeListener(Integer.valueOf(value));
+		callChangeListener(value);
 	}
 
 	public void onStartTrackingTouch(SeekBar seek) {
