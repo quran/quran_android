@@ -13,3 +13,5 @@
  * Search - the panel doesn't look new. Can we fix this? should see [this
      article](https://chris.banes.me/2014/10/17/appcompat-v21/)
  * cleanup about (remove abs, and ideally, cleanup the strings, code, etc)
+ * QuranActivity, TranslationManagerActivity, etc have config changes. they
+   shouldn't. This may break dialogs.
