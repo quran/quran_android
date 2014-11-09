@@ -30,7 +30,7 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="top"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
     </LinearLayout>
 
     <FrameLayout

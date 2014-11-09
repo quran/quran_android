@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="accent_color">#ffb2dfdb</color>
+    <color name="color_control_activated">@color/accent_color</color>
+    <color name="color_control_normal">#89b2dfdb</color>
 	<color name="page_background">#FFF4CB</color>
 	<color name="header_text_color">#31B6E7</color>
 	<color name="sura_info_color">#FFFFFF</color>
@@ -18,4 +21,5 @@
     <color name="translation_highlight">#ff33b5e5</color>
     <color name="toolbar_background">#ed2b5836</color>
     <color name="toolbar_item_pressed">#552bff36</color>
+    <color name="indicator_color">#ff546e7a</color>
 </resources>
