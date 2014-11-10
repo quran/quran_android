@@ -203,9 +203,6 @@ public class PagerActivity extends ActionBarActivity implements
   @Override
   public void onCreate(Bundle savedInstanceState) {
     ((QuranApplication) getApplication()).refreshLocale(false);
-
-    setTheme(R.style.QuranTransparent);
-
     super.onCreate(savedInstanceState);
     mBookmarksCache = new SparseBooleanArray();
     mBookmarksAdapter = new BookmarksDBAdapter(this);

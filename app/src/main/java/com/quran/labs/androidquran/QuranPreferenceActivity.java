@@ -57,8 +57,6 @@ public class QuranPreferenceActivity extends PreferenceActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     ((QuranApplication)getApplication()).refreshLocale(false);
-
-    setTheme(R.style.QuranPreferences);
     super.onCreate(savedInstanceState);
 
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

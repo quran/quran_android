@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -72,10 +73,11 @@ public class QuranActivity extends ActionBarActivity
    @Override
    public void onCreate(Bundle savedInstanceState){
       ((QuranApplication)getApplication()).refreshLocale(false);
-
-      setTheme(R.style.QuranAndroid);
       super.onCreate(savedInstanceState);
       setContentView(R.layout.quran_index);
+
+      final Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+      setSupportActionBar(tb);
 
       mIsArabic = QuranSettings.isArabicNames(this);
 

@@ -13,7 +13,6 @@ import android.widget.TextView;
 public class AboutUsActivity extends ActionBarActivity {
 
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.QuranAndroid);
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);

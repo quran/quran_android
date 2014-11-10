@@ -11,10 +11,12 @@
 
    <application android:icon="@drawable/icon" android:label="@string/app_name"
                 android:name=".QuranApplication"
-                android:allowBackup="true">
+                android:allowBackup="true"
+	   			android:theme="@style/Quran">
 		<activity android:name=".QuranDataActivity" android:label="@string/app_name"
 			android:configChanges="keyboardHidden|orientation"
-			android:screenOrientation="portrait">
+			android:screenOrientation="portrait"
+			android:theme="@style/QuranToolBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -22,14 +24,16 @@
 		</activity>
 
 		<activity android:name=".ui.QuranActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:theme="@style/QuranToolBar" />
 		<activity android:name=".AboutUsActivity" />
 		<activity android:name=".HelpActivity" />
 		<activity android:name=".ui.PagerActivity"
-		          android:launchMode="singleTop" />
+		          android:launchMode="singleTop"
+				  android:theme="@style/QuranToolBar.Overlay"/>
         <activity android:name=".ui.TranslationManagerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity android:name=".QuranPreferenceActivity"
+			      android:theme="@style/QuranToolBar.Preferences"
                   android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity android:name=".SearchActivity" android:launchMode="singleTop">
 			<intent-filter>
