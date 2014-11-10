@@ -61,7 +61,6 @@ public class TranslationManagerActivity extends ActionBarActivity
 
    @Override
    public void onCreate(Bundle savedInstanceState){
-      setTheme(R.style.QuranAndroid);
       super.onCreate(savedInstanceState);
       //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 

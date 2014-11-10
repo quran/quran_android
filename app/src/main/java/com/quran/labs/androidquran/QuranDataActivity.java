@@ -54,8 +54,6 @@ public class QuranDataActivity extends ActionBarActivity implements
 
    @Override
    public void onCreate(Bundle savedInstanceState) {
-      setTheme(R.style.Theme_AppCompat_NoActionBar);
-
       super.onCreate(savedInstanceState);
       setContentView(R.layout.splash_screen);
 

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.quran.labs.androidquran.ui.helpers.CheckableRelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:orientation="horizontal">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <TextView android:id="@+id/suraNumber"
               android:layout_width="34dp"
-              android:layout_height="fill_parent"
+              android:layout_height="match_parent"
               android:layout_marginLeft="20dp"
               android:layout_marginRight="10dp"
               android:layout_alignParentRight="true"
@@ -68,11 +70,11 @@
 
     <TextView android:id="@id/pageNumber"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:textSize="14sp"
         android:textColor="@color/sura_details_color" />
 
-</com.quran.labs.androidquran.ui.helpers.CheckableRelativeLayout>
+</RelativeLayout>
