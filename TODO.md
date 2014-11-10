@@ -3,8 +3,6 @@
  * `IcsSpinner`, which we used in ActionBarSherlock, is gone. there is one in
   appcompat, but it's private. we need to replace it or figure out how to
   otherwise fix it (otherwise, it'll look terrible pre-ICS).
- * Themes - previously, we were doing `setTheme` in `onCreate` - we should have
-  a set of themes and declare them in the manifest directly.
  * ProgressBars in Activity - appcompat broke these basically, so we have to
   figure out what to do here (either "fix it" by providing a different layout
   which contains the needed progress views, or find a different way to

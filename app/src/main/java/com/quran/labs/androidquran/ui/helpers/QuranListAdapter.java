@@ -57,7 +57,7 @@ public class QuranListAdapter extends BaseAdapter {
       ViewHolder holder;
 
       if (convertView == null) {
-         convertView = mInflater.inflate(mLayout, null);
+         convertView = mInflater.inflate(mLayout, parent, false);
          holder = new ViewHolder();
          holder.text = (TextView)convertView.findViewById(R.id.suraName);
          holder.metadata = (TextView)convertView.findViewById(R.id.suraDetails);
@@ -121,8 +121,8 @@ public class QuranListAdapter extends BaseAdapter {
       
       // If the row is checked (for CAB mode), theme its bg appropriately
       if (parent != null && parent instanceof ListView){
-         int background = ((ListView)parent).isItemChecked(position)?
-                 R.drawable.abc_list_selector_holo_dark : 0;
+         int background = ((ListView) parent).isItemChecked(position)?
+                 R.drawable.abc_list_longpressed_holo : 0;
          convertView.setBackgroundResource(background);
       }
 

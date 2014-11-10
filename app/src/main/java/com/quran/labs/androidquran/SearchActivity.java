@@ -60,7 +60,6 @@ public class SearchActivity extends ActionBarActivity
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    setTheme(R.style.QuranAndroid);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search);
     mMessageView = (TextView) findViewById(R.id.search_area);

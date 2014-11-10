@@ -220,8 +220,7 @@ public abstract class AbsMarkersFragment extends Fragment {
                rows.add(elem);
             }
          }
-         QuranRow[] rowsArr = rows.toArray(new QuranRow[rows.size()]);
-         return rowsArr;
+         return rows.toArray(new QuranRow[rows.size()]);
       }
 
       @Override
