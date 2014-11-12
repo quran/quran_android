@@ -1062,6 +1062,7 @@ public class AudioService extends Service implements OnCompletionListener,
             .setOngoing(true)
             .setContentTitle(mNotificationName)
             .setContentIntent(pi)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(R.drawable.ic_previous, "", previousIntent)
             .addAction(R.drawable.ic_pause, "", pauseIntent)
             .addAction(R.drawable.ic_next, "", nextIntent);
@@ -1075,6 +1076,7 @@ public class AudioService extends Service implements OnCompletionListener,
            .setOngoing(true)
            .setContentTitle(mNotificationName)
            .setContentIntent(pi)
+           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
            .addAction(R.drawable.ic_play,
                getString(R.string.play), resumeIntent)
            .addAction(R.drawable.ic_stop,
