@@ -1646,8 +1646,8 @@ public class PagerActivity extends ActionBarActivity implements
         if (mIsActionBarHidden) {
           toggleActionBar();
         }
-        String notificationTitle =
-            QuranInfo.getNotificationTitle(this, firstAyah, firstAyah);
+        String notificationTitle = QuranInfo.getNotificationTitle(
+            this, firstAyah, firstAyah, request.isGapless());
         Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
             request.getLocalPath(), notificationTitle,
             AUDIO_DOWNLOAD_KEY,
@@ -1668,7 +1668,7 @@ public class PagerActivity extends ActionBarActivity implements
       mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
       String notificationTitle = QuranInfo.getNotificationTitle(this,
-          request.getMinAyah(), request.getMaxAyah());
+          request.getMinAyah(), request.getMaxAyah(), request.isGapless());
       String qariUrl = AudioUtils.getQariUrl(this,
           request.getQariId(), true);
       android.util.Log.d(TAG, "need to start download: " + qariUrl);
