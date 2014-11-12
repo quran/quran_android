@@ -80,17 +80,31 @@ public class QuranInfo {
 
    public static String getNotificationTitle(Context context,
                                              QuranAyah minVerse,
-                                             QuranAyah maxVerse){
+                                             QuranAyah maxVerse,
+			 																			 boolean isGapless){
       int minSura = minVerse.getSura();
       int maxSura = maxVerse.getSura();
-      int maxAyah = maxVerse.getAyah();
+
+		 String notificationTitle =
+				 QuranInfo.getSuraName(context, minSura, true);
+		 if (isGapless) {
+			 // for gapless, don't show the ayah numbers since we're
+			 // downloading the entire sura(s).
+			 if (minSura == maxSura) {
+				 return notificationTitle;
+			 } else {
+				 return notificationTitle + " - " +
+						 QuranInfo.getSuraName(context, maxSura, true);
+			 }
+		 }
+
+
+		 int maxAyah = maxVerse.getAyah();
       if (maxAyah == 0){
          maxSura--;
          maxAyah = QuranInfo.getNumAyahs(maxSura);
       }
 
-      String notificationTitle =
-              QuranInfo.getSuraName(context, minSura, true);
       if (minSura == maxSura){
          if (minVerse.getAyah() == maxAyah){
             notificationTitle += " (" + maxAyah + ")";

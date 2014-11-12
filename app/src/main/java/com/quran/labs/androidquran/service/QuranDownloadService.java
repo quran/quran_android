@@ -27,15 +27,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.StatFs;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.RemoteViews;
-import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -132,13 +126,7 @@ public class QuranDownloadService extends Service {
    private Intent mLastSentIntent = null;
    private Map<String, Boolean> mSuccessfulZippedDownloads = null;
    private Map<String, Intent> mRecentlyFailedDownloads = null;
-      
-   // to handle notification styling issues pre-gingerbread
-   private Integer mNotificationTitleColor = null;
-   private Integer mNotificationTextColor = null;
-   private float mNotificationTitleSize = 14.0f;
-   private float mNotificationTextSize = 12.0f;
-   
+
    public static class ProgressIntent {
       public static final String INTENT_NAME =
             "com.quran.labs.androidquran.download.ProgressUpdate";
@@ -817,7 +805,7 @@ public class QuranDownloadService extends Service {
                (percent * percentPerFile));
       }
 
-      showNotification(details.title, null,
+      showNotification(details.title, getString(R.string.downloading_title),
             DOWNLOADING_NOTIFICATION, true, max, progress, isIndeterminate);
       
       // send broadcast
@@ -842,7 +830,7 @@ public class QuranDownloadService extends Service {
 
       String processingString = getString(R.string.download_processing);
       showNotification(details.title, processingString,
-            DOWNLOADING_NOTIFICATION, true, 0, 0, true);
+            DOWNLOADING_NOTIFICATION, true);
       
       // send broadcast
       Intent progressIntent = new Intent(ProgressIntent.INTENT_NAME);
@@ -867,7 +855,7 @@ public class QuranDownloadService extends Service {
       mNotificationManager.cancel(DOWNLOADING_NOTIFICATION);
       mNotificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
       showNotification(details.title, successString,
-            DOWNLOADING_COMPLETE_NOTIFICATION, false, 0, 0, false);
+            DOWNLOADING_COMPLETE_NOTIFICATION, false);
       broadcastDownloadSuccessful(details);
    }
     
@@ -901,6 +889,9 @@ public class QuranDownloadService extends Service {
             errorId = R.string.download_error_invalid_download_retry;
          }
          break;
+      case ERROR_CANCELLED:
+         errorId = R.string.notification_download_canceled;
+         break;
       case ERROR_GENERAL:
       default:
          errorId = R.string.download_error_general;
@@ -910,7 +901,7 @@ public class QuranDownloadService extends Service {
       String errorString = getString(errorId);    
       mNotificationManager.cancel(DOWNLOADING_NOTIFICATION);
       showNotification(details.title, errorString,
-            DOWNLOADING_ERROR_NOTIFICATION, false, 0, 0, false);
+            DOWNLOADING_ERROR_NOTIFICATION, false);
       
       if (isFatal){
          // write last error in prefs
@@ -932,125 +923,40 @@ public class QuranDownloadService extends Service {
       mBroadcastManager.sendBroadcast(progressIntent);
       mLastSentIntent = progressIntent;
    }
-   
+
+   private void showNotification(String titleString,
+       String statusString, int notificationId, boolean isOnGoing) {
+      showNotification(titleString, statusString, notificationId,
+          isOnGoing, 0, 0, false);
+   }
+
    private void showNotification(String titleString,
          String statusString, int notificationId, boolean isOnGoing,
          int maximum, int progress, boolean isIndeterminate){
-      
-      if (Build.VERSION.SDK_INT < 9){
-         if (mNotificationTitleColor == null){
-            computeNotificationStyles();
+
+      NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+      builder.setSmallIcon(R.drawable.icon)
+          .setAutoCancel(true)
+          .setOngoing(isOnGoing)
+          .setDefaults(Notification.DEFAULT_LIGHTS)
+          .setContentTitle(titleString);
+
+      String status = statusString;
+      if (maximum > 0) {
+         builder.setProgress(maximum, progress, isIndeterminate);
+         if (!isIndeterminate &&
+             Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            status += " (" + progress + "/" + maximum + ")";
          }
       }
-      
-      // we recreate the notification each time to work around
-      // http://code.google.com/p/android/issues/detail?id=13941
-      Notification notification = new Notification(R.drawable.icon,
-            titleString, System.currentTimeMillis());
-      notification.flags |= Notification.FLAG_AUTO_CANCEL;
-      if (isOnGoing){
-         notification.flags |= Notification.FLAG_ONGOING_EVENT;
-      }
-      
-      notification.defaults = Notification.DEFAULT_LIGHTS; 
-      
-      RemoteViews contentView = new RemoteViews(getPackageName(),
-            R.layout.notification_layout);
-      contentView.setImageViewResource(R.id.image, R.drawable.icon);
-      contentView.setTextViewText(R.id.title, titleString);
-      
-      if (statusString != null){
-         contentView.setViewVisibility(R.id.text, View.VISIBLE);
-         contentView.setViewVisibility(R.id.progress_bar_wrapper, View.GONE);
-         contentView.setTextViewText(R.id.text, statusString);
-      }
-      else {
-         contentView.setViewVisibility(R.id.text, View.GONE);
-         contentView.setViewVisibility(R.id.progress_bar_wrapper, View.VISIBLE);
-         contentView.setProgressBar(R.id.progress_bar,
-               maximum, progress, isIndeterminate);
-      }
-      
-      // set the styles for pre-gingerbread phones
-      if (mNotificationTitleColor != null){
-         contentView.setTextColor(R.id.title, mNotificationTitleColor);
-         contentView.setFloat(R.id.title, "setTextSize", mNotificationTitleSize);
-         contentView.setTextColor(R.id.text, mNotificationTextColor);
-         contentView.setFloat(R.id.text, "setTextSize", mNotificationTextSize);
-      }
-      
-      notification.contentView = contentView;
+      builder.setContentText(status);
+
       Intent notificationIntent = new Intent(getApplicationContext(),
-            QuranDataActivity.class);
+          QuranDataActivity.class);
       PendingIntent contentIntent = PendingIntent.getActivity(
-            getApplicationContext(), 0, notificationIntent, 0);
-      notification.contentIntent = contentIntent;
-      notification.defaults = Notification.DEFAULT_LIGHTS;
-      
-      mNotificationManager.notify(notificationId, notification);
-   }
-   
-   // http://stackoverflow.com/a/7320604/314324
-   private void computeNotificationStyles(){
-      Notification notification = new Notification();
-      notification.setLatestEventInfo(this, "title", "text", null);
-      
-      try {
-         LinearLayout group = new LinearLayout(this);
-         ViewGroup event = (ViewGroup)notification
-               .contentView.apply(this, group);
-         populateStyles(event);
-         group.removeAllViews();
-      }
-      catch (Exception e){
-         // default to black since android:attr/textColorPrimary
-         // is white (at least on 2.1) and unreadable anyways.
-         mNotificationTextColor = android.R.color.black;
-         mNotificationTitleColor = android.R.color.black;
-      }
-   }
-   
-   /**
-    * given a notification view group, figures out the text color
-    * and text size of the title and status texts.
-    * @param group a viewgroup of the notification
-    * @return a boolean based on success
-    * 
-    * credits to the answer and comments here:
-    * http://stackoverflow.com/a/7320604/314324
-    */
-   private boolean populateStyles(ViewGroup group){
-      final int count = group.getChildCount();
-      for (int i=0; i<count; ++i){
-         if (group.getChildAt(i) instanceof TextView){
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager wm =
-                  (WindowManager)getSystemService(Context.WINDOW_SERVICE);
-            wm.getDefaultDisplay().getMetrics(metrics);
-            
-            final TextView tv = (TextView)group.getChildAt(i);
-            final String tvText = tv.getText().toString();
-            if ("title".equals(tvText)){
-               mNotificationTitleColor = tv.getTextColors().getDefaultColor();
-               mNotificationTitleSize = tv.getTextSize() / metrics.scaledDensity;
-            }
-            else if ("text".equals(tvText)){
-               mNotificationTextColor = tv.getTextColors().getDefaultColor();
-               mNotificationTextSize = tv.getTextSize() / metrics.scaledDensity;
-            }
-            
-            if (mNotificationTitleColor != null &&
-                  mNotificationTextColor != null){
-               return true;
-            }
-         }
-         else if (group.getChildAt(i) instanceof ViewGroup){
-            if (populateStyles((ViewGroup)group.getChildAt(i))){
-               return true;
-            }
-         }
-      }
-      return false;
+          getApplicationContext(), 0, notificationIntent, 0);
+      builder.setContentIntent(contentIntent);
+      mNotificationManager.notify(notificationId, builder.build());
    }
    
    public static String getFilenameFromUrl(String url){

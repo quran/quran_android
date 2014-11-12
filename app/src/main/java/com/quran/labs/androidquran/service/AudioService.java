@@ -1040,19 +1040,19 @@ public class AudioService extends Service implements OnCompletionListener,
          PendingIntent.FLAG_UPDATE_CURRENT);
 
       final PendingIntent previousIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_PREVIOUS, new Intent(ACTION_REWIND),
+         appContext, REQUEST_CODE_PREVIOUS, getAudioIntent(this, ACTION_REWIND),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent nextIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_SKIP, new Intent(ACTION_SKIP),
+         appContext, REQUEST_CODE_SKIP, getAudioIntent(this, ACTION_SKIP),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent pauseIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_PAUSE, new Intent(ACTION_PAUSE),
+         appContext, REQUEST_CODE_PAUSE, getAudioIntent(this, ACTION_PAUSE),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent resumeIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_RESUME, new Intent(ACTION_PLAYBACK),
+         appContext, REQUEST_CODE_RESUME, getAudioIntent(this, ACTION_PLAYBACK),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent stopIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_STOP, new Intent(ACTION_STOP),
+         appContext, REQUEST_CODE_STOP, getAudioIntent(this, ACTION_STOP),
          PendingIntent.FLAG_UPDATE_CURRENT);
 
       if (mNotificationBuilder == null) {
