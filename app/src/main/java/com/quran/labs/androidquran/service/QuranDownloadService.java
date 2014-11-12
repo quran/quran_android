@@ -938,6 +938,7 @@ public class QuranDownloadService extends Service {
       builder.setSmallIcon(R.drawable.icon)
           .setAutoCancel(true)
           .setOngoing(isOnGoing)
+          .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
           .setDefaults(Notification.DEFAULT_LIGHTS)
           .setContentTitle(titleString);
 
