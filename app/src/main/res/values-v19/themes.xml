@@ -3,5 +3,6 @@
     <style name="QuranToolBar.Overlay">
         <item name="windowActionBarOverlay">true</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@null</item>
     </style>
 </resources>
