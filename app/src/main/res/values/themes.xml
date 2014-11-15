@@ -11,6 +11,7 @@
 
     <style name="QuranToolBar.Overlay">
         <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
     </style>
 
     <style name="QuranToolBar.Preferences">
