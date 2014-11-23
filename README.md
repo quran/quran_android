@@ -97,6 +97,7 @@ Open Source Projects Used
 -------------------------
 * android-support library (support-v4 and appcompat-v7)
 * [AndroidSlidingUpPanel](https://github.com/umano/AndroidSlidingUpPanel)
+* [okhttp](https://github.com/square/okhttp)
 
 Changelog
 ---------

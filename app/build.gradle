@@ -43,6 +43,7 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.0.1@aar') {
         transitive = true;
     }
