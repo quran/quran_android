@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.service.util;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.service.QuranDownloadService;
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,8 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.service.QuranDownloadService;
 
 import java.text.DecimalFormat;
 
@@ -33,10 +34,10 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
    public void onReceive(Context context, Intent intent){
       if (intent == null){ return; }
       int type = intent.getIntExtra(
-              QuranDownloadService.ProgressIntent.DOWNLOAD_TYPE,
+              QuranDownloadNotifier.ProgressIntent.DOWNLOAD_TYPE,
               QuranDownloadService.DOWNLOAD_TYPE_UNDEF);
       String state = intent.getStringExtra(
-              QuranDownloadService.ProgressIntent.STATE);
+          QuranDownloadNotifier.ProgressIntent.STATE);
 
       if (mDownloadType != type || state == null){
          return;
@@ -60,48 +61,48 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
 
          Intent intent = (Intent)msg.obj;
          String state = intent.getStringExtra(
-                 QuranDownloadService.ProgressIntent.STATE);
-         if (QuranDownloadService.STATE_SUCCESS.equals(state)){
+             QuranDownloadNotifier.ProgressIntent.STATE);
+         if (QuranDownloadNotifier.ProgressIntent.STATE_SUCCESS.equals(state)){
             dismissDialog();
             mListener.handleDownloadSuccess();
          }
-         else if (QuranDownloadService.STATE_ERROR.equals(state)){
+         else if (QuranDownloadNotifier.ProgressIntent.STATE_ERROR.equals(state)){
             int msgId = ServiceIntentHelper.
                     getErrorResourceFromDownloadIntent(intent, true);
             dismissDialog();
             mListener.handleDownloadFailure(msgId);
          }
-         else if (QuranDownloadService.STATE_DOWNLOADING.equals(state)){
+         else if (QuranDownloadNotifier.ProgressIntent.STATE_DOWNLOADING.equals(state)){
             int progress = intent.getIntExtra(
-                    QuranDownloadService.ProgressIntent.PROGRESS, -1);
+                QuranDownloadNotifier.ProgressIntent.PROGRESS, -1);
             long downloadedSize = intent.getLongExtra(
-                    QuranDownloadService.ProgressIntent.DOWNLOADED_SIZE, -1);
+                QuranDownloadNotifier.ProgressIntent.DOWNLOADED_SIZE, -1);
             long totalSize = intent.getLongExtra(
-                    QuranDownloadService.ProgressIntent.TOTAL_SIZE, -1);
+                QuranDownloadNotifier.ProgressIntent.TOTAL_SIZE, -1);
             if (mListener instanceof DownloadListener){
                ((DownloadListener)mListener).updateDownloadProgress(progress,
-                    downloadedSize, totalSize);
+                   downloadedSize, totalSize);
             }
             else {
                updateDownloadProgress(progress, downloadedSize, totalSize);
             }
          }
-         else if (QuranDownloadService.STATE_PROCESSING.equals(state)){
+         else if (QuranDownloadNotifier.ProgressIntent.STATE_PROCESSING.equals(state)){
             int progress = intent.getIntExtra(
-                    QuranDownloadService.ProgressIntent.PROGRESS, -1);
+                QuranDownloadNotifier.ProgressIntent.PROGRESS, -1);
             int processedFiles = intent.getIntExtra(
-                    QuranDownloadService.ProgressIntent.PROCESSED_FILES, 0);
+                QuranDownloadNotifier.ProgressIntent.PROCESSED_FILES, 0);
             int totalFiles = intent.getIntExtra(
-                    QuranDownloadService.ProgressIntent.TOTAL_FILES, 0);
+                QuranDownloadNotifier.ProgressIntent.TOTAL_FILES, 0);
             if (mListener instanceof DownloadListener){
                ((DownloadListener)mListener).updateProcessingProgress(progress,
-                    processedFiles, totalFiles);
+                   processedFiles, totalFiles);
             }
             else {
                updateProcessingProgress(progress, processedFiles, totalFiles);
             }
          }
-         else if (QuranDownloadService
+         else if (QuranDownloadNotifier.ProgressIntent
                  .STATE_ERROR_WILL_RETRY.equals(state)){
             int msgId = ServiceIntentHelper.
                     getErrorResourceFromDownloadIntent(intent, true);

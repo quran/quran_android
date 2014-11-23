@@ -3,6 +3,7 @@ package com.quran.labs.androidquran;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -130,7 +131,7 @@ public class QuranDataActivity extends ActionBarActivity implements
       mDownloadReceiver = new DefaultDownloadReceiver(this,
               QuranDownloadService.DOWNLOAD_TYPE_PAGES);
       mDownloadReceiver.setCanCancelDownload(true);
-      String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
+      String action = QuranDownloadNotifier.ProgressIntent.INTENT_NAME;
       LocalBroadcastManager.getInstance(this).registerReceiver(
             mDownloadReceiver,
             new IntentFilter(action));
