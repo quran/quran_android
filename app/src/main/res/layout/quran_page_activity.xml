@@ -19,7 +19,8 @@
     <LinearLayout android:id="@+id/toolbar_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:fitsSystemWindows="@bool/toolbar_fit_windows">
         <View android:id="@+id/status_bg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
