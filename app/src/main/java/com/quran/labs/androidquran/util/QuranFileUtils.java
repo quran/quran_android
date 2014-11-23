@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
@@ -29,11 +30,11 @@ public class QuranFileUtils {
   public static final String IMG_HOST = "http://android.quran.com/data/";
   private static final String QURAN_BASE = "quran_android/";
   private static final String DATABASE_DIRECTORY = "databases";
-  private static final int BUFF_SIZE = 1024;
 
   private static final int DEFAULT_READ_TIMEOUT = 20 * 1000; // 20s
   private static final int DEFAULT_CONNECT_TIMEOUT = 15 * 1000; // 15s
 
+  /*
   public static boolean debugRmDir(String dir, boolean deleteDirectory) {
     File directory = new File(dir);
     if (directory.isDirectory()) {
@@ -57,6 +58,7 @@ public class QuranFileUtils {
         debugLsDir(dir + File.separator + s);
     }
   }
+  */
 
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
@@ -113,10 +115,6 @@ public class QuranFileUtils {
     return state.equals(Environment.MEDIA_MOUNTED);
   }
 
-  public static Response getImageFromSD(Context context, String filename) {
-    return getImageFromSD(context, null, filename);
-  }
-
   public static Response getImageFromSD(Context context, String widthParam,
                                         String filename) {
     String location;
@@ -160,11 +158,9 @@ public class QuranFileUtils {
     File directory = new File(path);
     if (directory.exists() && directory.isDirectory()) {
       return writeNoMediaFile(context);
+    } else {
+      return directory.mkdirs() && writeNoMediaFile(context);
     }
-    else if (directory.mkdirs()) {
-      return writeNoMediaFile(context);
-    }
-    else { return false; }
   }
 
   public static boolean makeQuranDatabaseDirectory(Context context) {
@@ -176,8 +172,7 @@ public class QuranFileUtils {
     if (directory.exists() && directory.isDirectory()) {
       return true;
     }
-    else if (directory.mkdirs()) { return true; }
-    else { return false; }
+    else { return directory.mkdirs(); }
   }
 
   public static Response getImageFromWeb(Context context, String filename) {
@@ -320,7 +315,7 @@ public class QuranFileUtils {
    */
   public static int getAppUsedSpace(Context context) {
     File base = new File(getQuranBaseDirectory(context));
-    ArrayList<File> files = new ArrayList<File>();
+    ArrayList<File> files = new ArrayList<>();
     files.add(base);
     long size = 0;
     while (!files.isEmpty()) {
@@ -328,7 +323,7 @@ public class QuranFileUtils {
       if (f.isDirectory()) {
         File[] subFiles = f.listFiles();
         if (subFiles != null){
-          for (File sf : subFiles) files.add(sf);
+          Collections.addAll(files, subFiles);
         }
       }
       else {
@@ -414,12 +409,7 @@ public class QuranFileUtils {
     if (filename != null) {
       String ayaPositionDb = base + File.separator + filename;
       File f = new File(ayaPositionDb);
-      if (!f.exists()) {
-        return false;
-      }
-      else {
-        return true;
-      }
+      return f.exists();
     }
 
     return false;
@@ -477,11 +467,9 @@ public class QuranFileUtils {
           if (oldFiles != null) {
             for (File f : oldFiles) {
               File newFile = new File(dest, f.getName());
-              if (newFile != null) {
-                boolean result = f.renameTo(newFile);
-                Log.d(TAG, "attempting to copy " + f +
-                    " to " + newFile + ", res: " + result);
-              }
+              boolean result = f.renameTo(newFile);
+              Log.d(TAG, "attempting to copy " + f +
+                  " to " + newFile + ", res: " + result);
             }
           }
         }

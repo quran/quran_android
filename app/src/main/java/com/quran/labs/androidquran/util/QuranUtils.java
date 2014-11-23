@@ -44,17 +44,23 @@ public class QuranUtils {
     	return false;
     }
 
-   public static boolean isOnWifiNetwork(Context context){
-      ConnectivityManager cm =
-              (ConnectivityManager)context.getSystemService(
-                      Context.CONNECTIVITY_SERVICE);
+   public static boolean isOnWifiNetwork(Context context) {
+     ConnectivityManager cm =
+         (ConnectivityManager) context.getSystemService(
+             Context.CONNECTIVITY_SERVICE);
 
-      NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-      if (activeNetwork != null){
-         return activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
-      }
-      else { return false; }
+     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+     return activeNetwork != null &&
+         activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
    }
+
+  public static boolean haveInternet(Context context) {
+    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+        Context.CONNECTIVITY_SERVICE);
+    return cm != null && cm.getActiveNetworkInfo() != null &&
+        cm.getActiveNetworkInfo()
+            .isConnectedOrConnecting();
+  }
 
    public static String getLocalizedNumber(Context context, int number){
       if (QuranSettings.isArabicNames(context)){

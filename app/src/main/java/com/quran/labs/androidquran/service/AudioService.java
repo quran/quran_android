@@ -30,6 +30,7 @@ import com.quran.labs.androidquran.service.util.AudioFocusable;
 import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.MediaButtonHelper;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
@@ -1032,7 +1033,7 @@ public class AudioService extends Service implements OnCompletionListener,
    private void setUpAsForeground() {
       // clear the "downloading complete" notification (if it exists)
       mNotificationManager.cancel(
-          QuranDownloadService.DOWNLOADING_COMPLETE_NOTIFICATION);
+          QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION);
 
       final Context appContext = getApplicationContext();
       final PendingIntent pi = PendingIntent.getActivity(appContext,
