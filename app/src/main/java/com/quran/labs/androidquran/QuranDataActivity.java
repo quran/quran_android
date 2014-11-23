@@ -242,7 +242,7 @@ public class QuranDataActivity extends ActionBarActivity implements
       runListView();
    }
 
-   @Override
+  @Override
    public void handleDownloadFailure(int errId){
       if (mErrorDialog != null && mErrorDialog.isShowing()){
          return;
@@ -409,7 +409,7 @@ public class QuranDataActivity extends ActionBarActivity implements
       // so unless we know what we are doing (via force), don't ask the
       // service to restart the download
       if (mDownloadReceiver != null &&
-              mDownloadReceiver.didReceieveBroadcast() && !force){ return; }
+              mDownloadReceiver.didReceiveBroadcast() && !force){ return; }
       if (mIsPaused){ return; }
 
       QuranScreenInfo qsi = QuranScreenInfo.getInstance();

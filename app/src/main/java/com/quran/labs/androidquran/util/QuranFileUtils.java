@@ -2,6 +2,9 @@ package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,18 +12,18 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
@@ -31,8 +34,15 @@ public class QuranFileUtils {
   private static final String QURAN_BASE = "quran_android/";
   private static final String DATABASE_DIRECTORY = "databases";
 
-  private static final int DEFAULT_READ_TIMEOUT = 20 * 1000; // 20s
-  private static final int DEFAULT_CONNECT_TIMEOUT = 15 * 1000; // 15s
+  private static final int DEFAULT_READ_TIMEOUT = 20; // 20s
+  private static final int DEFAULT_CONNECT_TIMEOUT = 15; // 15s
+  private static OkHttpClient sOkHttpClient;
+
+  static {
+    sOkHttpClient = new OkHttpClient();
+    sOkHttpClient.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS);
+    sOkHttpClient.setReadTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
+  }
 
   /*
   public static boolean debugRmDir(String dir, boolean deleteDirectory) {
@@ -165,22 +175,20 @@ public class QuranFileUtils {
 
   public static boolean makeQuranDatabaseDirectory(Context context) {
     String path = getQuranDatabaseDirectory(context);
-    if (path == null)
+    if (path == null) {
       return false;
+    }
 
     File directory = new File(path);
-    if (directory.exists() && directory.isDirectory()) {
-      return true;
-    }
-    else { return directory.mkdirs(); }
+    return directory.exists() && directory.isDirectory() || directory.mkdirs();
   }
 
   public static Response getImageFromWeb(Context context, String filename) {
     return getImageFromWeb(context, filename, false);
   }
 
-  private static Response getImageFromWeb(Context context,
-      String filename, boolean isRetry) {
+  private static Response getImageFromWeb(
+      Context context, String filename, boolean isRetry) {
     QuranScreenInfo instance = QuranScreenInfo.getInstance();
     if (instance == null) {
       instance = QuranScreenInfo.getOrMakeInstance(context);
@@ -191,87 +199,52 @@ public class QuranFileUtils {
         + filename;
     Log.d(TAG, "want to download: " + urlString);
 
-    InputStream is = null;
-    HttpURLConnection connection = null;
+    final Request request = new Request.Builder()
+        .url(urlString)
+        .build();
+    final Call call = sOkHttpClient.newCall(request);
+
+    InputStream stream = null;
     try {
-      // thanks to Picasso URLConnectionDownloader
-      connection = (HttpURLConnection) (new URL(urlString).openConnection());
-      connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT);
-      connection.setReadTimeout(DEFAULT_READ_TIMEOUT);
-      if (connection.getResponseCode() >= 300 ||
-          connection.getContentLength() == 0) {
-        if (isRetry) {
-          return new Response(Response.ERROR_DOWNLOADING_ERROR);
-        } else {
-          return getImageFromWeb(context, filename, true);
-        }
-      }
-
-      is = connection.getInputStream();
-
-      String path = getQuranDirectory(context);
-      if (path != null) {
-        path += File.separator + filename;
-
-        // can't write to the sdcard, try to decode in memory
-        if (!QuranFileUtils.makeQuranDirectory(context)) {
-          final Bitmap bitmap = decodeBitmapStream(is);
-          if (bitmap != null) {
-            return new Response(bitmap, Response.WARN_SD_CARD_NOT_FOUND);
-          }
-        }
-
-        try {
-          final Bitmap bitmap = decodeBitmapStream(is);
-          if (bitmap != null) {
-            int warning = tryToSaveBitmap(bitmap, path) ? 0 :
+      final com.squareup.okhttp.Response response = call.execute();
+      if (response.isSuccessful()) {
+        stream = response.body().byteStream();
+        final Bitmap bitmap = decodeBitmapStream(stream);
+        if (bitmap != null) {
+          String path = getQuranDirectory(context);
+          int warning = Response.WARN_SD_CARD_NOT_FOUND;
+          if (path != null && QuranFileUtils.makeQuranDirectory(context)) {
+            path += File.separator + filename;
+            warning = tryToSaveBitmap(bitmap, path) ? 0 :
                 Response.WARN_COULD_NOT_SAVE_FILE;
-            return new Response(bitmap, warning);
-          } else if (isRetry) {
-            return new Response(Response.ERROR_DOWNLOADING_ERROR);
-          } else {
-            return getImageFromWeb(context, filename, true);
           }
-        } catch (Exception e) {
-          return isRetry ? new Response(Response.ERROR_DOWNLOADING_ERROR) :
-              getImageFromWeb(context, filename, true);
-        }
-      } else {
-        final Bitmap bitmap = decodeBitmapStream(is);
-        if (bitmap == null) {
-          return new Response(Response.ERROR_DOWNLOADING_ERROR);
-        } else {
-          return new Response(bitmap, Response.WARN_SD_CARD_NOT_FOUND);
+          return new Response(bitmap, warning);
         }
       }
-    } catch (Exception e) {
-      if (isRetry) {
-        return new Response(Response.ERROR_DOWNLOADING_ERROR);
-      } else {
-        return getImageFromWeb(context, filename, true);
-      }
+    } catch (IOException ioe) {
+      Log.e(TAG, "exception downloading file", ioe);
     } finally {
-      if (is != null) {
-        try { is.close(); }
-        catch (Exception e){
-          // no-op
-        }
-      }
-
-      if (connection != null) {
-        try {
-          connection.disconnect();
-        } catch (Exception e) {
-          // no-op
-        }
-      }
+      closeQuietly(stream);
     }
+
+    return isRetry ? new Response(Response.ERROR_DOWNLOADING_ERROR) :
+        getImageFromWeb(context, filename, true);
   }
 
   private static Bitmap decodeBitmapStream(InputStream is) {
     BitmapFactory.Options options = new BitmapFactory.Options();
     options.inPreferredConfig = Bitmap.Config.ALPHA_8;
     return BitmapFactory.decodeStream(is, null, options);
+  }
+
+  public static void closeQuietly(Closeable closeable) {
+    if (closeable != null) {
+      try {
+        closeable.close();
+      } catch (Exception e) {
+        // no op
+      }
+    }
   }
 
   private static boolean tryToSaveBitmap(Bitmap bitmap, String savePath)
