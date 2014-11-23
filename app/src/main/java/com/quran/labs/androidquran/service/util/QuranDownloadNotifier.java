@@ -80,6 +80,12 @@ public class QuranDownloadNotifier {
     mBroadcastManager = LocalBroadcastManager.getInstance(mAppContext);
   }
 
+  public void resetNotifications() {
+    // hide any previous errors, canceled, etc
+    mNotificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
+    mNotificationManager.cancel(DOWNLOADING_COMPLETE_NOTIFICATION);
+  }
+
   public Intent notifyProgress(NotificationDetails details,
       long downloadedSize, long totalSize){
 

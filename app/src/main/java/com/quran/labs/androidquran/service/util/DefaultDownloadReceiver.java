@@ -16,10 +16,10 @@ import java.text.DecimalFormat;
 public class DefaultDownloadReceiver extends BroadcastReceiver {
    private int mDownloadType = -1;
    private SimpleDownloadListener mListener;
-   private ProgressDialog mProgressDialog = null;
+   private ProgressDialog mProgressDialog;
    private Context mContext = null;
-   private boolean mDidReceiveBroadcast = false;
-   private boolean mCanCancelDownload = false;
+   private boolean mDidReceiveBroadcast;
+   private boolean mCanCancelDownload;
 
    public DefaultDownloadReceiver(Context context, int downloadType){
       mContext = context;
@@ -115,18 +115,18 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
       }
    };
 
-   private void dismissDialog(){
-     if (mProgressDialog != null){
-       try {
-         mProgressDialog.dismiss();
-       }
-       catch (Exception e){
-       }
-       mProgressDialog = null;
-     }
+   private void dismissDialog() {
+      if (mProgressDialog != null) {
+         try {
+            mProgressDialog.dismiss();
+         } catch (Exception e) {
+            // no op
+         }
+         mProgressDialog = null;
+      }
    }
 
-   public boolean didReceieveBroadcast(){
+   public boolean didReceiveBroadcast(){
       return mDidReceiveBroadcast;
    }
 
@@ -148,15 +148,14 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
                   cancelDownload();
                }
             });
-            
             mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                    mContext.getString(R.string.cancel),
-                    new DialogInterface.OnClickListener() {
-               @Override
-               public void onClick(DialogInterface dialog, int which) {
-                  cancelDownload();
-               }
-            });
+                mContext.getString(R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                      cancelDownload();
+                   }
+                });
          }
 
          mProgressDialog.setTitle(R.string.downloading_title);
