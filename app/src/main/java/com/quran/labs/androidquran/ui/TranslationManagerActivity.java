@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -264,7 +265,7 @@ public class TranslationManagerActivity extends ActionBarActivity
                  QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
          LocalBroadcastManager.getInstance(this).registerReceiver(
                  mDownloadReceiver, new IntentFilter(
-                 QuranDownloadService.ProgressIntent.INTENT_NAME));
+                 QuranDownloadNotifier.ProgressIntent.INTENT_NAME));
       }
       mDownloadReceiver.setListener(this);
 

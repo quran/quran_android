@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.task.RefreshBookmarkIconTask;
@@ -454,7 +455,7 @@ public class PagerActivity extends ActionBarActivity implements
 
     mDownloadReceiver = new DefaultDownloadReceiver(this,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-    String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
+    String action = QuranDownloadNotifier.ProgressIntent.INTENT_NAME;
     LocalBroadcastManager.getInstance(this).registerReceiver(
         mDownloadReceiver,
         new IntentFilter(action));
