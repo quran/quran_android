@@ -84,13 +84,7 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <receiver android:name="NewAppWidget" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/new_app_widget_info" />
-        </receiver>
+
 
         <service
             android:name=".service.QuranDownloadService"
@@ -110,7 +104,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".NewAppWidget" >
+        <receiver android:name="com.quran.labs.androidquran.NewAppWidget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
