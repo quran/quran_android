@@ -11,22 +11,21 @@
         android:orientation="horizontal"
         android:background="@drawable/abs__list_activated_holo">
 
-        <TextView
-            android:id="@+id/aya"
-            android:text="aya"
-
+        <Button
+            android:id="@+id/quickLastPage"
+            android:background="@drawable/ic_goto_quran"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/sura"
-            android:text="sura"
-
+        <Button
+            android:id="@+id/quickJump"
+            android:background="@drawable/abs__ic_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
 
         <Button
-            android:id="@+id/navigate"
+            android:id="@+id/quickSearch"
+            android:background="@drawable/abs__ic_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

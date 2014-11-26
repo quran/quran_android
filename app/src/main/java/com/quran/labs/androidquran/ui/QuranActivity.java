@@ -1,5 +1,20 @@
 package com.quran.labs.androidquran.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -25,28 +40,16 @@ import com.quran.labs.androidquran.ui.fragment.TagsFragment;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.TextUtils;
-
 public class QuranActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener, BookmarkHandler,
                    AddTagDialog.OnTagChangedListener,
                    TagBookmarkDialog.OnBookmarkTagsUpdateListener {
    public static final String TAG = "QuranActivity";
    public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
-   public static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
+    public static final String EXTRA_QUICK_NAVIGATE_TO_SEARCH = "quickNavigate";
+    public static final String EXTRA_QUICK_JUMP = "quickJump";
+
+    public static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
 
    private static final int SURA_LIST = 0;
    private static final int JUZ2_LIST = 1;
@@ -119,7 +122,13 @@ public class QuranActivity extends SherlockFragmentActivity
                   showTranslationsUpgradeDialog();
                }
             }
-         }
+             if (extras.getBoolean(EXTRA_QUICK_NAVIGATE_TO_SEARCH, false)){
+                 onSearchRequested();
+                 }
+             if (extras.getBoolean(EXTRA_QUICK_JUMP, false)){
+                 gotoPageDialog();
+             }
+             }
       }
    }
 

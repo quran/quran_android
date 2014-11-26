@@ -10,6 +10,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActivity;
 
 
 /**
@@ -59,26 +60,36 @@ public class NewAppWidget extends AppWidgetProvider {
 //        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widgetlayout);
 //        views.setTextViewText(R.id.appwidget_text, widgetText);
 ////        Intent intent = new Intent();
-        Intent intent = new Intent(context, PagerActivity.class);
-//        intent.setClassName("com.quran.labs.androidquran", "com.quran.labs.androidquran.PagerActivity");
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-        intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, 50);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        PendingIntent myPI = PendingIntent.getService(context, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
-//        views.setOnClickPendingIntent(R.id.navigate, myPI);
-//        ComponentName comp = new ComponentName(context.getPackageName(), NewAppWidget.class.getName());
-//        // Instruct the widget manager to update the widget
-//        appWidgetManager.updateAppWidget(appWidgetId, views);
-        String url = "http://www.tutorialspoint.com";
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.setData(Uri.parse(url));
-        PendingIntent pending = PendingIntent.getActivity(context, 0,
-                intent, 0);
+        //        intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, 50);
+//        intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, 3);
+        Intent searchIntent = new Intent(context, QuranActivity.class);
+        searchIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        searchIntent.setData(Uri.parse(searchIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        searchIntent.putExtra(QuranActivity.EXTRA_QUICK_NAVIGATE_TO_SEARCH, true);
+        searchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent jumpIntent = new Intent(context, QuranActivity.class);
+        jumpIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        jumpIntent.setData(Uri.parse(searchIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        jumpIntent.putExtra(QuranActivity.EXTRA_QUICK_JUMP, true);
+        jumpIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent lastPageIntent = new Intent(context, PagerActivity.class);
+        lastPageIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        lastPageIntent.setData(Uri.parse(searchIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        lastPageIntent.putExtra(QuranActivity.EXTRA_QUICK_NAVIGATE_TO_SEARCH, true);
+        lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent searchPending = PendingIntent.getActivity(context, 0,
+                searchIntent, 0);
+        PendingIntent jumpPending = PendingIntent.getActivity(context, 0,
+                jumpIntent, 0);
+        PendingIntent lastPagePending = PendingIntent.getActivity(context, 0,
+                lastPageIntent, 0);
         RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.widgetlayout);
-        views.setOnClickPendingIntent(R.id.navigate, pending);
+        views.setOnClickPendingIntent(R.id.quickSearch, searchPending);
+        views.setOnClickPendingIntent(R.id.quickLastPage, lastPagePending);
+        views.setOnClickPendingIntent(R.id.quickJump, jumpPending);
+
         appWidgetManager.updateAppWidget(appWidgetId,views);
         Toast.makeText(context, "widget added", Toast.LENGTH_SHORT).show();
     }
