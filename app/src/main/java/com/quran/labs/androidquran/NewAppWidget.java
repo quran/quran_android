@@ -6,11 +6,14 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 
 /**
@@ -31,25 +34,19 @@ public class NewAppWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
-//        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
-//        CharSequence widgetText = context.getString(R.string.appwidget_text);
-//        // Construct the RemoteViews object
-//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widgetlayout);
-//        views.setTextViewText(R.id.appwidget_text, widgetText);
-//        Intent intent = new Intent();
-//        intent.setClassName("com.quran.labs.androidquran", "com.quran.labs.androidquran.PagerActivity");
-//        intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, 1);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        PendingIntent myPI = PendingIntent.getService(context, 0, intent, 0);
-//        views.setOnClickPendingIntent(R.id.navigate, myPI);
-//        ComponentName comp = new ComponentName(context.getPackageName(), NewAppWidget.class.getName());
-//        // Instruct the widget manager to update the widget
-//        mgr.updateAppWidget(comp, views);
+        Log.d("test","test");
     }
 
     @Override
     public void onDisabled(Context context) {
+        Log.d("test","test");
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+        super.onReceive(context, intent);
     }
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
@@ -69,13 +66,14 @@ public class NewAppWidget extends AppWidgetProvider {
         searchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Intent jumpIntent = new Intent(context, QuranActivity.class);
         jumpIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        jumpIntent.setData(Uri.parse(searchIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        jumpIntent.setData(Uri.parse(jumpIntent.toUri(Intent.URI_INTENT_SCHEME)));
         jumpIntent.putExtra(QuranActivity.EXTRA_QUICK_JUMP, true);
         jumpIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Intent lastPageIntent = new Intent(context, PagerActivity.class);
         lastPageIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        lastPageIntent.setData(Uri.parse(searchIntent.toUri(Intent.URI_INTENT_SCHEME)));
-        lastPageIntent.putExtra(QuranActivity.EXTRA_QUICK_NAVIGATE_TO_SEARCH, true);
+        lastPageIntent.setData(Uri.parse(lastPageIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        lastPageIntent.putExtra("page", QuranSettings.getLastPage(context));
+
         lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent searchPending = PendingIntent.getActivity(context, 0,
@@ -92,6 +90,11 @@ public class NewAppWidget extends AppWidgetProvider {
 
         appWidgetManager.updateAppWidget(appWidgetId,views);
         Toast.makeText(context, "widget added", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 }
 
