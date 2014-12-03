@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="accent_color">#ffb2dfdb</color>
+    <color name="accent_color">#ff8d6e63</color>
     <color name="color_control_activated">@color/accent_color</color>
-    <color name="color_control_normal">#89b2dfdb</color>
+    <color name="color_control_normal">#898d6e63</color>
 	<color name="page_background">#FFF4CB</color>
-	<color name="header_text_color">#31B6E7</color>
-	<color name="sura_info_color">#FFFFFF</color>
-	<color name="sura_details_color">#D1D1D1</color>
+    <color name="header_background">#ff424242</color>
+	<color name="header_text_color">@color/sura_number_color</color>
+	<color name="sura_info_color">#ffffffff</color>
+    <color name="sura_number_color">#7fffffff</color>
+	<color name="sura_details_color">#b2ffffff</color>
 	<color name="hizb_number_color">#FF000000</color>
     <color name="transparent_actionbar_color">#AA000000</color>
     <color name="panel_background_color">#cc000000</color>
@@ -21,5 +23,5 @@
     <color name="translation_highlight">#ff33b5e5</color>
     <color name="toolbar_background">#ed2b5836</color>
     <color name="toolbar_item_pressed">#552bff36</color>
-    <color name="indicator_color">#ff546e7a</color>
+    <color name="indicator_color">@color/accent_color</color>
 </resources>
