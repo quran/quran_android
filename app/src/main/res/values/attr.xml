@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<resources> 
-	<declare-styleable name="QuranPageCurlView"> 
-		<attr name="enableDebugMode" format="boolean" /> 
-		<attr name="curlSpeed" format="integer" /> 
-		<attr name="updateRate" format="integer" /> 
-		<attr name="initialEdgeOffset" format="integer" /> 
-		<attr name="backgroundColor" format="color" />
-		<attr name="curlMode" format="integer"/> 
-	</declare-styleable>
-	
-	<declare-styleable name="SlidingPanel">
-		<attr name="speed" format="integer" />
-		<attr name="targetHeight" format="dimension" />
-		<attr name="isRTL" format="boolean" />
-	</declare-styleable>
-	
-	<declare-styleable name="numberpicker">
-        <attr format="integer" name="startRange"/>
-        <attr name="endRange" format="integer" />
-		<attr name="defaultValue" format="integer" />
-		<attr name="maxValue" format="integer" />
-    </declare-styleable>
-	
+<resources>
     <declare-styleable name="SlidingUpPanelLayout">
         <attr name="panelHeight" format="dimension" />
         <attr name="shadowHeight" format="dimension" />
@@ -38,4 +16,9 @@
         <attr name="indicatorColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="JuzView">
+        <attr name="android:textColor"/>
+        <attr name="circleColor" format="color" />
+        <attr name="circleInactiveColor" format="color" />
+    </declare-styleable>
 </resources>

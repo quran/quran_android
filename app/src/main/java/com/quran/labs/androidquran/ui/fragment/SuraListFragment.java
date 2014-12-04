@@ -92,11 +92,13 @@ public class SuraListFragment extends Fragment {
 
     Activity activity = getActivity();
     for (int juz = 1; juz <= JUZ2_COUNT; juz++) {
-      elements[pos++] = new QuranRow(QuranInfo.getJuzTitle(activity) + " " +
-          QuranUtils.getLocalizedNumber(activity, juz),
-          null, QuranRow.HEADER, juz,
-          QuranInfo.JUZ_PAGE_START[juz - 1], null
-      );
+      final String headerTitle = QuranInfo.getJuzTitle(activity) + " " +
+          QuranUtils.getLocalizedNumber(activity, juz);
+      final QuranRow.Builder headerBuilder = new QuranRow.Builder()
+          .withType(QuranRow.HEADER)
+          .withText(headerTitle)
+          .withPage(QuranInfo.JUZ_PAGE_START[juz - 1]);
+      elements[pos++] = headerBuilder.build();
       next = (juz == JUZ2_COUNT) ? PAGES_LAST + 1 :
           QuranInfo.JUZ_PAGE_START[juz];
 
@@ -104,9 +106,12 @@ public class SuraListFragment extends Fragment {
           (QuranInfo.SURA_PAGE_START[sura - 1] < next)) {
         String title = QuranInfo.getSuraName(activity, sura,
             activity.getResources().getBoolean(R.bool.show_surat_prefix));
-        elements[pos++] = new QuranRow(title,
-            QuranInfo.getSuraListMetaString(activity, sura),
-            sura, QuranInfo.SURA_PAGE_START[sura - 1], null);
+        final QuranRow.Builder builder = new QuranRow.Builder()
+            .withText(title)
+            .withMetadata(QuranInfo.getSuraListMetaString(activity, sura))
+            .withSura(sura)
+            .withPage(QuranInfo.SURA_PAGE_START[sura - 1]);
+        elements[pos++] = builder.build();
         sura++;
       }
     }

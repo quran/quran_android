@@ -130,22 +130,23 @@ public class BookmarksFragment extends AbsMarkersFragment {
          Log.w(TAG, "Got invalid last saved page as: "+lastPage);
       }
 
-      List<QuranRow> rows = new ArrayList<QuranRow>();
+      List<QuranRow> rows = new ArrayList<>();
       if (showLastPage){
-         rows.add(new QuranRow(
-               getString(R.string.bookmarks_current_page),
-               null, QuranRow.HEADER, 0, 0, null));
-         rows.add(new QuranRow(
-               QuranInfo.getSuraNameString(activity, lastPage),
-               QuranInfo.getPageSubtitle(activity, lastPage),
-               QuranInfo.PAGE_SURA_START[lastPage-1], lastPage,
-               R.drawable.bookmark_currentpage));
+         rows.add(new QuranRow.Builder()
+             .withText(getString(R.string.bookmarks_current_page))
+             .withType(QuranRow.HEADER).build());
+         rows.add(new QuranRow.Builder()
+               .withText(QuranInfo.getSuraNameString(activity, lastPage))
+               .withMetadata(QuranInfo.getPageSubtitle(activity, lastPage))
+               .withSura(QuranInfo.PAGE_SURA_START[lastPage-1])
+               .withPage(lastPage)
+               .withImageResource(R.drawable.bookmark_currentpage).build());
       }
       
-      List<QuranRow> pageBookmarks = new ArrayList<QuranRow>();
-      List<QuranRow> ayahBookmarks = new ArrayList<QuranRow>();
+      List<QuranRow> pageBookmarks = new ArrayList<>();
+      List<QuranRow> ayahBookmarks = new ArrayList<>();
       for (Bookmark bookmark : bookmarks) {
-         QuranRow row = createRow(activity, bookmark);
+         QuranRow row = createRowFromBookmark(activity, bookmark);
          if (bookmark.isPageBookmark())
             pageBookmarks.add(row);
          else
@@ -153,36 +154,18 @@ public class BookmarksFragment extends AbsMarkersFragment {
       }
 
       if (!pageBookmarks.isEmpty()){
-         rows.add(new QuranRow(getString(R.string.menu_bookmarks_page),
-               null, QuranRow.HEADER, 0, 0, null));
+         rows.add(new QuranRow.Builder()
+             .withText(getString(R.string.menu_bookmarks_page))
+             .withType(QuranRow.HEADER).build());
          rows.addAll(pageBookmarks);
       }
+
       if (!ayahBookmarks.isEmpty()){
-         rows.add(new QuranRow(getString(R.string.menu_bookmarks_ayah),
-               null, QuranRow.HEADER, 0, 0, null));
+         rows.add(new QuranRow.Builder()
+             .withText(getString(R.string.menu_bookmarks_ayah))
+             .withType(QuranRow.HEADER).build());
          rows.addAll(ayahBookmarks);
       }
-      
       return rows.toArray(new QuranRow[rows.size()]);
-   }
-   
-   private QuranRow createRow(Activity activity, Bookmark bookmark) {
-      QuranRow row;
-      if (bookmark.isPageBookmark()) {
-         int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
-         row = new QuranRow(
-               QuranInfo.getSuraNameString(activity, bookmark.mPage),
-               QuranInfo.getPageSubtitle(activity, bookmark.mPage),
-               QuranRow.PAGE_BOOKMARK, sura, bookmark.mPage,
-               R.drawable.bookmark_page);
-      } else {
-         row = new QuranRow(
-               QuranInfo.getAyahString(bookmark.mSura, bookmark.mAyah, getActivity()),
-               QuranInfo.getPageSubtitle(activity, bookmark.mPage),
-               QuranRow.AYAH_BOOKMARK, bookmark.mSura, bookmark.mAyah, bookmark.mPage,
-               R.drawable.bookmark_ayah);
-      }
-      row.bookmarkId = bookmark.mId;
-      return row;
    }
 }

@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter.Tag;
@@ -159,60 +158,34 @@ public class TagsFragment extends AbsMarkersFragment {
          List<Bookmark> tagBookmarkList = tagMap.get(tag.mId);
 
          // add the tag header
-         QuranRow bookmarkHeader = new QuranRow(
-                 tag.mName, null, QuranRow.BOOKMARK_HEADER, 0, 0, null);
-         bookmarkHeader.tagId = tag.mId;
-         
-         rows.add(bookmarkHeader);
+         final QuranRow.Builder builder = new QuranRow.Builder()
+             .withType(QuranRow.BOOKMARK_HEADER)
+             .withText(tag.mName)
+             .withTagId(tag.mId);
+         rows.add(builder.build());
 
          // no bookmarks in this tag, so move on
          if (tagBookmarkList == null || tagBookmarkList.isEmpty()){ continue; }
 
          // and now the bookmarks
          for (Bookmark bookmark : tagBookmarkList) {
-            QuranRow row = createRow(activity, tag.mId, bookmark);
+            QuranRow row = createRowFromBookmark(activity, bookmark, tag.mId);
             rows.add(row);
          }
       }
       
       if (unTagged.size() > 0) {
-         QuranRow header = new QuranRow(
-                 activity.getString(R.string.not_tagged), "",
-                 QuranRow.BOOKMARK_HEADER, 0, 0, null);
-         header.tagId = -1;
-         
-         rows.add(header);
+         final QuranRow.Builder header = new QuranRow.Builder()
+             .withType(QuranRow.BOOKMARK_HEADER)
+             .withText(activity.getString(R.string.not_tagged));
+         rows.add(header.build());
 
          for (Bookmark bookmark : unTagged) {
-            QuranRow row = createRow(activity, -1, bookmark);
+            QuranRow row = createRowFromBookmark(activity, bookmark);
             rows.add(row);
          }
       }
       
       return rows.toArray(new QuranRow[rows.size()]);
-   }
-
-   private QuranRow createRow(Activity activity,
-                              long tagId, Bookmark bookmark) {
-      QuranRow row;
-      if (bookmark.mSura == null) {
-         int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
-         row = new QuranRow(
-               QuranInfo.getSuraNameString(activity, bookmark.mPage),
-               QuranInfo.getPageSubtitle(activity, bookmark.mPage),
-               QuranRow.PAGE_BOOKMARK, sura, bookmark.mPage,
-               R.drawable.bookmark_page);
-      } else {
-         row = new QuranRow(
-               QuranInfo.getAyahString(bookmark.mSura,
-                       bookmark.mAyah, getActivity()),
-               QuranInfo.getPageSubtitle(activity, bookmark.mPage),
-               QuranRow.AYAH_BOOKMARK, bookmark.mSura,
-                 bookmark.mAyah, bookmark.mPage,
-               R.drawable.bookmark_ayah);
-      }
-      row.tagId = tagId;
-      row.bookmarkId = bookmark.mId;
-      return row;
    }
 }
