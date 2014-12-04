@@ -16,4 +16,5 @@
     <dimen name="toolbar_pip_width">14dp</dimen>
     <dimen name="toolbar_item_width">42dp</dimen>
     <dimen name="toolbar_total_height">54dp</dimen>
+    <dimen name="juz_overlay_text_size">12sp</dimen>
 </resources>
