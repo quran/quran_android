@@ -50,7 +50,7 @@
     <ImageView
         android:id="@+id/rowIcon"
         android:layout_width="40dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_gravity="center_vertical"
