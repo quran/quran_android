@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
@@ -10,6 +12,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -292,6 +295,39 @@ public abstract class AbsMarkersFragment extends Fragment {
       }
    }
 
+  public QuranRow createRowFromBookmark(Context context,  Bookmark bookmark) {
+    return createRowFromBookmark(context, bookmark, null);
+  }
+
+  public QuranRow createRowFromBookmark(Context context,
+      Bookmark bookmark, Long tagId) {
+    final QuranRow.Builder builder = new QuranRow.Builder();
+
+    if (bookmark.isPageBookmark()) {
+      final int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
+      builder.withText(QuranInfo.getSuraNameString(context, bookmark.mPage))
+          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.mPage))
+          .withType(QuranRow.PAGE_BOOKMARK)
+          .withSura(sura)
+          .withImageResource(R.drawable.bookmark_page);
+    } else {
+      final String title =
+          QuranInfo.getAyahString(bookmark.mSura, bookmark.mAyah, context);
+      builder.withText(title)
+          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.mPage))
+          .withType(QuranRow.AYAH_BOOKMARK)
+          .withSura(bookmark.mSura)
+          .withAyah(bookmark.mAyah)
+          .withImageResource(R.drawable.bookmark_ayah);
+    }
+    builder.withPage(bookmark.mPage)
+        .withBookmarkId(bookmark.mId);
+    if (tagId != null) {
+      builder.withTagId(tagId);
+    }
+    return builder.build();
+  }
+
    public void refreshData(){
       if (loadingTask != null){
          loadingTask.cancel(true);
@@ -320,5 +356,4 @@ public abstract class AbsMarkersFragment extends Fragment {
             mMode.invalidate();
       }
    }
-
 }

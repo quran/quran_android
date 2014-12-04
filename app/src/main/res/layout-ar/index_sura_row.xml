@@ -49,8 +49,10 @@
 
     <ImageView
         android:id="@+id/rowIcon"
-        android:layout_width="56dp"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_gravity="center_vertical"
         android:scaleType="center"
         android:visibility="gone" />

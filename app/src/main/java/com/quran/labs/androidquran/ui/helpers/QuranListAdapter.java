@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.JuzView;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -94,13 +95,16 @@ public class QuranListAdapter extends BaseAdapter {
       holder.text.setVisibility(View.VISIBLE);
       holder.metadata.setText(ArabicStyle.reshape(mContext, info));
 
-      if (item.imageResource == null){
+      if (item.juzType != null) {
+         holder.image.setImageDrawable(
+             new JuzView(mContext, item.juzType, item.juzOverlayText));
+         holder.image.setVisibility(View.VISIBLE);
+         holder.number.setVisibility(View.GONE);
+      } else if (item.imageResource == null) {
          holder.number.setVisibility(View.VISIBLE);
          holder.image.setVisibility(View.GONE);
-      }
-      else {
+      } else {
          holder.image.setImageResource(item.imageResource);
-         //holder.image.setText(item.imageText);
          holder.image.setVisibility(View.VISIBLE);
          holder.number.setVisibility(View.GONE);
       }
@@ -108,7 +112,7 @@ public class QuranListAdapter extends BaseAdapter {
       // If the row is checked (for CAB mode), theme its bg appropriately
       if (parent != null && parent instanceof ListView){
          int background = ((ListView) parent).isItemChecked(position)?
-                 R.drawable.abc_list_longpressed_holo : 0;
+                 R.color.accent_color_dark : 0;
          convertView.setBackgroundResource(background);
       }
 
@@ -145,6 +149,13 @@ public class QuranListAdapter extends BaseAdapter {
          holder.pageNumber.setVisibility(View.VISIBLE);
          holder.pageNumber.setText(
              QuranUtils.getLocalizedNumber(mContext, item.page));
+      }
+
+      // If the row is checked (for CAB mode), theme its bg appropriately
+      if (parent != null && parent instanceof ListView){
+         int background = ((ListView) parent).isItemChecked(pos)?
+             R.color.accent_color_dark : R.drawable.list_header_background;
+         convertView.setBackgroundResource(background);
       }
       return convertView;
    }
