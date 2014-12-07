@@ -285,7 +285,7 @@ public class TranslationView extends ScrollView {
 
          boolean customFont = false;
          if (mShouldReshape){
-            ayahText = ArabicStyle.reshape(mContext, ayahText);
+            ayahText = ArabicStyle.reshape(ayahText);
             if (mUseArabicFont){
                customFont = true;
             }
@@ -309,8 +309,8 @@ public class TranslationView extends ScrollView {
       boolean customFont = false;
       if (mShouldReshape){
          if (ayah.isArabic()){
-            translationText = ArabicStyle.reshape(mContext,
-                    translationText);
+            translationText = ArabicStyle.reshape(
+                translationText);
             customFont = true;
          }
       }
@@ -366,7 +366,7 @@ public class TranslationView extends ScrollView {
       headerView.setTextAppearance(mContext, mHeaderStyle);
       if (mIsArabic){
          if (mShouldReshape){
-            suraName = ArabicStyle.reshape(mContext, suraName);
+            suraName = ArabicStyle.reshape(suraName);
          }
 
          if (mUseArabicFont){

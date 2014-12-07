@@ -4,96 +4,100 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.CheckableLinearLayout;
 import com.quran.labs.androidquran.widgets.JuzView;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-public class QuranListAdapter extends BaseAdapter {
+import java.util.ArrayList;
+import java.util.List;
+
+public class QuranListAdapter extends
+    RecyclerView.Adapter<QuranListAdapter.HeaderHolder> {
 
    private Context mContext;
    private LayoutInflater mInflater;
    private QuranRow[] mElements;
-   private int mLayout;
    private boolean mReshapeArabic;
    private boolean mUseArabicFont;
    private boolean mSelectableHeaders;
+   private SparseBooleanArray mCheckedState;
 
-   public QuranListAdapter(Context context, int layout,
+   public QuranListAdapter(Context context,
        QuranRow[] items, boolean selectableHeaders){
       mInflater = LayoutInflater.from(context);
       mElements = items;
-      mLayout = layout;
       mContext = context;
       mSelectableHeaders = selectableHeaders;
+      mCheckedState = new SparseBooleanArray();
 
       // should we reshape if we have arabic?
       mUseArabicFont = QuranSettings.needArabicFont(context);
       mReshapeArabic = QuranSettings.isReshapeArabic(context);
    }
 
-   public int getCount() {
+   public long getItemId(int position) {
+      return position;
+   }
+
+   @Override
+   public int getItemCount() {
       return mElements.length;
    }
 
-   public Object getItem(int position) {
+   public QuranRow getQuranRow(int position) {
       return mElements[position];
    }
 
-   public long getItemId(int position) {
-      return position;
+   public boolean isItemChecked(int position) {
+      return mCheckedState.get(position);
+   }
+
+   public void setItemChecked(int position, boolean checked) {
+      mCheckedState.put(position, checked);
+      notifyItemChanged(position);
+   }
+
+   public List<QuranRow> getCheckedItems() {
+      final List<QuranRow> result = new ArrayList<>();
+      final int count = mCheckedState.size();
+      for (int i = 0; i < count; i++) {
+         final int key = mCheckedState.keyAt(i);
+         if (mCheckedState.get(key)) {
+            result.add(getQuranRow(key));
+         }
+      }
+      return result;
+   }
+
+   public void uncheckAll() {
+      mCheckedState.clear();
+      notifyDataSetChanged();
    }
 
    public void setElements(QuranRow[] elements){
       mElements = elements;
    }
 
-   public View getView(final int position, View convertView, ViewGroup parent) {
-      if (getItemViewType(position) == 0) {
-         return getHeaderView(position, convertView, parent);
-      }
+   private void bindRow(HeaderHolder vh, int position) {
+      ViewHolder holder = (ViewHolder) vh;
 
-      ViewHolder holder;
-      if (convertView == null) {
-         convertView = mInflater.inflate(mLayout, parent, false);
-         holder = new ViewHolder();
-         holder.text = (TextView) convertView.findViewById(R.id.suraName);
-         holder.metadata = (TextView) convertView.findViewById(R.id.suraDetails);
-         holder.page = (TextView) convertView.findViewById(R.id.pageNumber);
-         holder.number = (TextView) convertView.findViewById(R.id.suraNumber);
-         holder.image = (ImageView) convertView.findViewById(R.id.rowIcon);
-
-         if (mUseArabicFont){
-            Typeface typeface = ArabicStyle.getTypeface(mContext);
-            holder.text.setTypeface(typeface);
-            holder.metadata.setTypeface(typeface);
-         }
-         convertView.setTag(holder);
-      }
-      else { holder = (ViewHolder) convertView.getTag(); }
-
-      QuranRow item = mElements[position];
-      String text = item.text;
-      if (mReshapeArabic){
-         text = ArabicStyle.reshape(mContext, text);
-      }
-
-      holder.page.setText(QuranUtils.getLocalizedNumber(mContext, item.page));
-      holder.text.setText(text);
+      final QuranRow item = mElements[position];
+      bindHeader(vh, position);
       holder.number.setText(
               QuranUtils.getLocalizedNumber(mContext, item.sura));
 
       String info = item.metadata;
       holder.metadata.setVisibility(View.VISIBLE);
-      holder.text.setVisibility(View.VISIBLE);
-      holder.metadata.setText(ArabicStyle.reshape(mContext, info));
+      holder.metadata.setText(ArabicStyle.reshape(info));
 
       if (item.juzType != null) {
          holder.image.setImageDrawable(
@@ -108,41 +112,16 @@ public class QuranListAdapter extends BaseAdapter {
          holder.image.setVisibility(View.VISIBLE);
          holder.number.setVisibility(View.GONE);
       }
-
-      // If the row is checked (for CAB mode), theme its bg appropriately
-      if (parent != null && parent instanceof ListView){
-         int background = ((ListView) parent).isItemChecked(position)?
-                 R.color.accent_color_dark : 0;
-         convertView.setBackgroundResource(background);
-      }
-
-      return convertView;
    }
 
-   private View getHeaderView(int pos, View convertView, ViewGroup parent) {
-      HeaderHolder holder;
-      if (convertView == null) {
-         convertView = mInflater.inflate(
-             R.layout.index_header_row, parent, false);
-         holder = new HeaderHolder();
-         holder.header = (TextView)convertView.findViewById(R.id.title);
-         holder.pageNumber = (TextView)convertView.findViewById(R.id.count);
-
-         if (mUseArabicFont){
-            Typeface typeface = ArabicStyle.getTypeface(mContext);
-            holder.header.setTypeface(typeface);
-         }
-         convertView.setTag(holder);
-      }
-      else { holder = (HeaderHolder) convertView.getTag(); }
-
+   private void bindHeader(HeaderHolder holder, int pos) {
       final QuranRow item = mElements[pos];
       String text = item.text;
       if (mReshapeArabic){
-         text = ArabicStyle.reshape(mContext, text);
+         text = ArabicStyle.reshape(text);
       }
 
-      holder.header.setText(text);
+      holder.title.setText(text);
       if (item.page == 0) {
          holder.pageNumber.setVisibility(View.GONE);
       } else {
@@ -150,19 +129,28 @@ public class QuranListAdapter extends BaseAdapter {
          holder.pageNumber.setText(
              QuranUtils.getLocalizedNumber(mContext, item.page));
       }
-
-      // If the row is checked (for CAB mode), theme its bg appropriately
-      if (parent != null && parent instanceof ListView){
-         int background = ((ListView) parent).isItemChecked(pos)?
-             R.color.accent_color_dark : R.drawable.list_header_background;
-         convertView.setBackgroundResource(background);
-      }
-      return convertView;
+      holder.setChecked(isItemChecked(pos));
    }
 
    @Override
-   public int getViewTypeCount() {
-      return 2;
+   public HeaderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      if (viewType == 0) {
+         final View view = mInflater.inflate(R.layout.index_header_row, parent, false);
+         return new HeaderHolder(view);
+      } else {
+         final View view = mInflater.inflate(R.layout.index_sura_row, parent, false);
+         return new ViewHolder(view);
+      }
+   }
+
+   @Override
+   public void onBindViewHolder(HeaderHolder viewHolder, int position) {
+      final int type = getItemViewType(position);
+      if (type == 0) {
+         bindHeader(viewHolder, position);
+      } else {
+         bindRow(viewHolder, position);
+      }
    }
 
    @Override
@@ -170,24 +158,50 @@ public class QuranListAdapter extends BaseAdapter {
       return mElements[position].isHeader() ? 0 : 1;
    }
 
-   @Override
-  public boolean isEnabled(int position) {
-    final QuranRow selected = mElements[position];
-    return mSelectableHeaders || selected.isBookmark() ||
-        selected.rowType == QuranRow.NONE ||
-        (selected.isBookmarkHeader() && selected.tagId >= 0);
-  }
-
-   class HeaderHolder {
-      TextView header;
-      TextView pageNumber;
+   public boolean isEnabled(int position) {
+      final QuranRow selected = mElements[position];
+      return mSelectableHeaders || selected.isBookmark() ||
+          selected.rowType == QuranRow.NONE ||
+          (selected.isBookmarkHeader() && selected.tagId >= 0);
    }
 
-  class ViewHolder {
-      TextView text;
-      TextView page;
+   class HeaderHolder extends RecyclerView.ViewHolder {
+      TextView title;
+      TextView pageNumber;
+      CheckableLinearLayout view;
+
+      public HeaderHolder(View itemView) {
+         super(itemView);
+         view = (CheckableLinearLayout) itemView;
+         title = (TextView) itemView.findViewById(R.id.title);
+         pageNumber = (TextView) itemView.findViewById(R.id.pageNumber);
+
+         if (mUseArabicFont){
+            Typeface typeface = ArabicStyle.getTypeface(mContext);
+            title.setTypeface(typeface);
+         }
+      }
+
+      public void setChecked(boolean checked) {
+         view.setChecked(checked);
+      }
+   }
+
+  class ViewHolder extends HeaderHolder {
       TextView number;
       TextView metadata;
       ImageView image;
-   }
+
+     public ViewHolder(View itemView) {
+        super(itemView);
+        metadata = (TextView) itemView.findViewById(R.id.metadata);
+        number = (TextView) itemView.findViewById(R.id.suraNumber);
+        image = (ImageView) itemView.findViewById(R.id.rowIcon);
+
+        if (mUseArabicFont){
+           Typeface typeface = ArabicStyle.getTypeface(mContext);
+           metadata.setTypeface(typeface);
+        }
+     }
+  }
 }

@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.ui.util.QuranListTouchListener;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.annotation.TargetApi;
@@ -21,7 +22,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.util.SparseBooleanArray;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,22 +32,17 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbsMarkersFragment extends Fragment {
 
-   private ListView mListView;
    private ActionMode mMode;
-   private QuranListAdapter mAdapter;
    private TextView mEmptyTextView;
-   private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
+  private QuranListAdapter mAdapter;
+  private RecyclerView mRecyclerView;
+  private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
    private SharedPreferences mPrefs = null;
    protected int mCurrentSortCriteria = 0;
 
@@ -77,70 +75,73 @@ public abstract class AbsMarkersFragment extends Fragment {
          ViewGroup container, Bundle savedInstanceState){
       setHasOptionsMenu(true);
       View view = inflater.inflate(R.layout.quran_list, container, false);
-     mListView = (ListView)view.findViewById(R.id.list);
      mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
-     mListView.setEmptyView(mEmptyTextView);
+     //mListView.setEmptyView(mEmptyTextView);
 
-     mAdapter = new QuranListAdapter(getActivity(),
-         R.layout.index_sura_row, new QuranRow[]{}, false);
+     final Context context = getActivity();
+     mAdapter = new QuranListAdapter(context, new QuranRow[]{}, false);
 
-     mListView.setAdapter(mAdapter);
-
-     mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-     mListView.setItemsCanFocus(false);
-
-     mListView.setOnItemClickListener(new OnItemClickListener(){
-       public void onItemClick(AdapterView<?> parent, View v,
-           int position, long id){
-         QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-
-         // If we're in CAB mode don't handle the click
-         if (mMode != null){
-           boolean checked = isValidSelection(elem) && mListView.isItemChecked(position);
-           mListView.setItemChecked(position, checked);
-           mMode.invalidate();
-           return;
-         } else {
-           mListView.setItemChecked(position, false);
-         }
-
-         // We're not in CAB mode so handle the click normally
-         if (!elem.isHeader()) {
-           if (elem.isAyahBookmark()){
-             ((QuranActivity)getActivity()).jumpToAndHighlight(
-                 elem.page, elem.sura, elem.ayah);
-           }
-           else {
-             ((QuranActivity)getActivity()).jumpTo(elem.page);
-           }
-         }
-       }
-     });
-
-     mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-       public boolean onItemLongClick(AdapterView<?> parent, View view,
-           int position, long id) {
-         QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-         if (!isValidSelection(elem)) {
-           return false;
-         } else if (!mListView.isItemChecked(position)) {
-           mListView.setItemChecked(position, true);
-           if (mMode != null)
-             mMode.invalidate();
-           else
-             mMode = ((ActionBarActivity) getActivity())
-                 .startSupportActionMode(new ModeCallback());
-         } else if (mMode != null) {
-           mMode.finish();
-         }
-
-         return true;
-       }
-     });
+     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+     mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+     mRecyclerView.setAdapter(mAdapter);
+     mRecyclerView.addOnItemTouchListener(
+         new MarkersTouchListener(context, mRecyclerView));
 
       return view;
    }
-   
+
+  private class MarkersTouchListener extends QuranListTouchListener {
+
+    public MarkersTouchListener(Context context, RecyclerView recyclerView) {
+      super(context, recyclerView);
+    }
+
+    @Override
+    public void onClick(QuranRow row, int position) {
+      // If we're in CAB mode don't handle the click
+      if (mMode != null){
+        boolean checked = isValidSelection(row) &&
+            mAdapter.isItemChecked(position);
+        mAdapter.setItemChecked(position, checked);
+        mMode.invalidate();
+        return;
+      } else {
+        mAdapter.setItemChecked(position, false);
+      }
+
+      // We're not in CAB mode so handle the click normally
+      if (!row.isHeader()) {
+        if (row.isAyahBookmark()){
+          ((QuranActivity) getActivity()).jumpToAndHighlight(
+              row.page, row.sura, row.ayah);
+        } else {
+          ((QuranActivity) getActivity()).jumpTo(row.page);
+        }
+      }
+    }
+
+    @Override
+    public boolean onLongClick(QuranRow row, int position) {
+      if (isValidSelection(row)) {
+        if (!mAdapter.isItemChecked(position)) {
+          mAdapter.setItemChecked(position, true);
+          if (mMode != null) {
+            mMode.invalidate();
+          } else {
+            mMode = ((ActionBarActivity) getActivity())
+                .startSupportActionMode(new ModeCallback());
+          }
+          return true;
+        } else if (mMode != null) {
+          mMode.finish();
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
    @Override
    public void onPause() {
       super.onPause();
@@ -169,7 +170,7 @@ public abstract class AbsMarkersFragment extends Fragment {
 
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void updateScrollBarPositionHoneycomb() {
-    mListView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
+    mRecyclerView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
   }
 
   @Override
@@ -212,17 +213,7 @@ public abstract class AbsMarkersFragment extends Fragment {
       }
 
       private QuranRow[] getSelectedRows() {
-         List<QuranRow> rows = new ArrayList<QuranRow>();
-         SparseBooleanArray sel = mListView.getCheckedItemPositions();
-         for (int i = 0; i < sel.size(); i++) {
-            if (sel.valueAt(i)) {
-               int position = sel.keyAt(i);
-               if (position < 0 || position >= mAdapter.getCount())
-                  continue;
-               QuranRow elem = (QuranRow)mAdapter.getItem(position);
-               rows.add(elem);
-            }
-         }
+         List<QuranRow> rows = mAdapter.getCheckedItems();
          return rows.toArray(new QuranRow[rows.size()]);
       }
 
@@ -242,8 +233,7 @@ public abstract class AbsMarkersFragment extends Fragment {
 
       @Override
       public void onDestroyActionMode(ActionMode mode) {
-         for (int i = 0; i < mAdapter.getCount(); i++)
-            mListView.setItemChecked(i, false);
+         mAdapter.uncheckAll();
          if (mode == mMode){ mMode = null; }
       }
       
