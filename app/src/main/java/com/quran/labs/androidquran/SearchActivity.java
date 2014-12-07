@@ -384,8 +384,8 @@ public class SearchActivity extends ActionBarActivity
       String text = v.text;
       String suraName = QuranInfo.getSuraName(mContext, v.sura, false);
       if (mShouldReshape) {
-        text = ArabicStyle.reshape(mContext, v.text);
-        suraName = ArabicStyle.reshape(mContext, suraName);
+        text = ArabicStyle.reshape(v.text);
+        suraName = ArabicStyle.reshape(suraName);
       }
       holder.text.setText(Html.fromHtml(text));
 

@@ -73,7 +73,7 @@ public class QuranDisplayHelper {
 
       String result = sb.toString();
       if (QuranSettings.isReshapeArabic(context)){
-         result = ArabicStyle.reshape(context, result);
+         result = ArabicStyle.reshape(result);
       }
       Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
       return System.currentTimeMillis();

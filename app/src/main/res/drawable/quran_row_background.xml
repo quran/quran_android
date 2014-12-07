@@ -3,6 +3,6 @@
     <item android:state_checked="true"
         android:drawable="@color/accent_color_dark" />
     <item android:state_pressed="true"
-          android:drawable="@color/accent_color_dark"/>
-    <item android:drawable="@color/header_background" />
+        android:drawable="@color/ripple_material_dark"/>
+    <item android:drawable="@android:color/transparent" />
 </selector>
