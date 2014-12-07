@@ -2,7 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_checked="true"
         android:drawable="@color/accent_color_dark" />
-    <item android:state_pressed="true"
-          android:drawable="@color/accent_color_dark"/>
-    <item android:drawable="@color/header_background" />
+    <item android:drawable="@drawable/quran_row_ripple" />
 </selector>
