@@ -102,7 +102,7 @@ public abstract class AbsMarkersFragment extends Fragment {
       // If we're in CAB mode don't handle the click
       if (mMode != null){
         boolean checked = isValidSelection(row) &&
-            mAdapter.isItemChecked(position);
+            !mAdapter.isItemChecked(position);
         mAdapter.setItemChecked(position, checked);
         mMode.invalidate();
         return;
