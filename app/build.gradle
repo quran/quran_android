@@ -3,7 +3,7 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "19.1.0"
+    buildToolsVersion "21.1.1"
     lintOptions.checkReleaseBuilds false
 
     defaultConfig {
@@ -28,7 +28,7 @@ android {
       }
 
       release {
-         runProguard true
+         minifyEnabled true
          proguardFile 'proguard.cfg'
          signingConfig signingConfigs.release
       }
