@@ -539,30 +539,22 @@ public class PagerActivity extends ActionBarActivity implements
       return;
     }
 
-    int flags;
-    if (isVisible){
-      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-    } else {
-      flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
-          | View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    if (!isVisible) {
+      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE
+          | View.SYSTEM_UI_FLAG_FULLSCREEN;
     }
     mViewPager.setSystemUiVisibility(flags);
   }
 
   @TargetApi(Build.VERSION_CODES.KITKAT)
   private void setUiVisibilityKitKat(boolean isVisible) {
-    int flags;
-    if (isVisible) {
-      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-    } else {
-      flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
+    int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+    if (!isVisible) {
+      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE
           | View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
           | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
           | View.SYSTEM_UI_FLAG_IMMERSIVE;
     }
@@ -796,6 +788,14 @@ public class PagerActivity extends ActionBarActivity implements
   public void jumpTo(int page) {
     Intent i = new Intent(this, PagerActivity.class);
     i.putExtra("page", page);
+    onNewIntent(i);
+  }
+
+  public void jumpToAndHighlight(int page, int sura, int ayah) {
+    Intent i = new Intent(this, PagerActivity.class);
+    i.putExtra("page", page);
+    i.putExtra(EXTRA_HIGHLIGHT_SURA, sura);
+    i.putExtra(EXTRA_HIGHLIGHT_AYAH, ayah);
     onNewIntent(i);
   }
 
