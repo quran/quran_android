@@ -17,7 +17,7 @@ public class QuranCheckBoxPreference extends CheckBoxPreference {
     super(context, attrs, defStyleAttr);
   }
 
-  @TargetApi(Build.VERSION_CODES.L)
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public QuranCheckBoxPreference(Context context, AttributeSet attrs,
       int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
