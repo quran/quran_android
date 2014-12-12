@@ -9,12 +9,15 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -63,6 +66,21 @@ public class JumpFragment extends DialogFragment {
 
     // Page text
     final EditText input = (EditText) layout.findViewById(R.id.page_number);
+    input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+      @Override
+      public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        boolean handled = false;
+        if (actionId == EditorInfo.IME_ACTION_GO) {
+          Dialog dialog = getDialog();
+          if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+          }
+          goToPage(input.getText().toString());
+          handled = true;
+        }
+        return handled;
+      }
+    });
 
     suraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
@@ -126,7 +144,6 @@ public class JumpFragment extends DialogFragment {
       public void onClick(DialogInterface dialog, int which) {
         try {
           dialog.dismiss();
-          Activity activity = getActivity();
           String text = input.getText().toString();
           if (TextUtils.isEmpty(text)) {
             text = input.getHint().toString();
@@ -134,26 +151,14 @@ public class JumpFragment extends DialogFragment {
             int selectedSura = (int) suraSpinner.getTag();
             int selectedAyah = (int) ayahSpinner.getTag();
 
+            Activity activity = getActivity();
             if (activity instanceof QuranActivity) {
               ((QuranActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
             } else if (activity instanceof PagerActivity) {
               ((PagerActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
             }
           } else {
-            // user has interacted with 'Go to page' field, so we
-            // need to verify if the input number is within
-            // the acceptable range
-            int page = Integer.parseInt(text);
-            if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
-              // maybe show a toast message?
-              return;
-            }
-
-            if (activity instanceof QuranActivity) {
-              ((QuranActivity) activity).jumpTo(page);
-            } else if (activity instanceof PagerActivity) {
-              ((PagerActivity) activity).jumpTo(page);
-            }
+            goToPage(text);
           }
         } catch (Exception e) {
           Log.d(TAG, "Could not jump, something went wrong...", e);
@@ -162,5 +167,29 @@ public class JumpFragment extends DialogFragment {
     });
 
     return builder.create();
+  }
+
+  private void goToPage(String text) {
+    int page = 0;
+    try {
+      page = Integer.parseInt(text);
+    } catch (NumberFormatException nfe) {
+      // this can happen if we are coming from IME_ACTION_GO
+      return;
+    }
+    // user has interacted with 'Go to page' field, so we
+    // need to verify if the input number is within
+    // the acceptable range
+    if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
+      // maybe show a toast message?
+      return;
+    }
+
+    Activity activity = getActivity();
+    if (activity instanceof QuranActivity) {
+      ((QuranActivity) activity).jumpTo(page);
+    } else if (activity instanceof PagerActivity) {
+      ((PagerActivity) activity).jumpTo(page);
+    }
   }
 }
