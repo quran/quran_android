@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class QuranPreference extends Preference {
 
-  @TargetApi(Build.VERSION_CODES.L)
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public QuranPreference(Context context, AttributeSet attrs,
       int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
