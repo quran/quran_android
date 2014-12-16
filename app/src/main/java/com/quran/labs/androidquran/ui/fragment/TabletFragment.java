@@ -49,6 +49,7 @@ import android.widget.ImageView;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
@@ -77,6 +78,9 @@ public class TabletFragment extends Fragment implements AyahTracker {
   private View mMainView;
   private ImageView mLeftBorder, mRightBorder, mLine;
   private View mLeftArea, mRightArea;
+
+  private Future<?> mLeftPageLoadTask;
+  private Future<?> mRightPageLoadTask;
 
   private boolean mJustCreated;
   private Resources mResources;
@@ -277,8 +281,10 @@ public class TabletFragment extends Fragment implements AyahTracker {
     if (drawable != null && response != null) {
       final int page = response.getPageNumber();
       if (page == mPageNumber - 1 && mRightImageView != null) {
+        mRightPageLoadTask = null;
         mRightImageView.setImageDrawable(drawable);
       } else if (page == mPageNumber && mLeftImageView != null) {
+        mLeftPageLoadTask = null;
         mLeftImageView.setImageDrawable(drawable);
       }
     }
@@ -295,8 +301,10 @@ public class TabletFragment extends Fragment implements AyahTracker {
             ((PagerActivity) getActivity()).getQuranPageWorker();
         String widthParam =
             QuranScreenInfo.getInstance().getTabletWidthParam();
-        worker.loadPage(widthParam, mPageNumber - 1, this);
-        worker.loadPage(widthParam, mPageNumber, this);
+        mRightPageLoadTask =
+            worker.loadPage(widthParam, mPageNumber - 1, this);
+        mLeftPageLoadTask =
+            worker.loadPage(widthParam, mPageNumber, this);
       }
 
       new QueryPageCoordinatesTask(context)
@@ -336,6 +344,14 @@ public class TabletFragment extends Fragment implements AyahTracker {
 
   public void cleanup() {
     android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
+    if (mLeftPageLoadTask != null) {
+      mLeftPageLoadTask.cancel(false);
+    }
+
+    if (mRightPageLoadTask != null) {
+      mRightPageLoadTask.cancel(false);
+    }
+
     if (mLeftImageView != null) {
       mLeftImageView.setImageDrawable(null);
       mLeftImageView = null;
