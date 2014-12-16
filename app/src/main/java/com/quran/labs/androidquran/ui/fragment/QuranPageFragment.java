@@ -53,6 +53,7 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
@@ -72,6 +73,7 @@ public class QuranPageFragment extends Fragment
 
   private boolean mOverlayText;
   private boolean mJustCreated;
+  private Future<?> mPageLoadTask;
 
   private View mMainView;
   private View mErrorLayout;
@@ -247,15 +249,15 @@ public class QuranPageFragment extends Fragment
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     Activity activity = getActivity();
-    if (PagerActivity.class.isInstance(activity)) {
-      final PagerActivity pagerActivity = (PagerActivity)activity;
+    if (activity instanceof PagerActivity) {
+      final PagerActivity pagerActivity = (PagerActivity) activity;
 
       mHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
-          downloadImage();
+           downloadImage();
         }
-      }, 250);
+      }, 150);
 
       mHandler.postDelayed(new Runnable() {
         @Override
@@ -279,13 +281,15 @@ public class QuranPageFragment extends Fragment
     final Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
       QuranPageWorker worker = ((PagerActivity) activity).getQuranPageWorker();
-      worker.loadPage(QuranScreenInfo.getInstance().getWidthParam(),
+      mPageLoadTask = worker.loadPage(
+          QuranScreenInfo.getInstance().getWidthParam(),
           mPageNumber, QuranPageFragment.this);
     }
   }
 
   @Override
   public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
+    mPageLoadTask = null;
     if (mImageView == null || mErrorLayout == null) {
       return;
     }
@@ -327,11 +331,14 @@ public class QuranPageFragment extends Fragment
   public void cleanup() {
     android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
     mHandler.removeCallbacksAndMessages(null);
+    if (mPageLoadTask != null) {
+      mPageLoadTask.cancel(false);
+    }
+
     if (mImageView != null) {
       mImageView.setImageDrawable(null);
       mImageView = null;
     }
-
   }
 
   private class HighlightTagsTask extends QueryBookmarkedAyahsTask {
