@@ -318,7 +318,7 @@ public class QuranInfo {
       // 81 - 90
 		true, true, true, true, true, true, true, true, true, true,
       // 91 - 100
-		true, true, true, true, true, true, true, true, false, true,
+		true, true, true, true, true, true, true, false, false, true,
       // 101 - 110
 		true, true, true, true, true, true, true, true, true, false,
       // 111 - 114
