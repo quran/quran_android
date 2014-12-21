@@ -5,18 +5,18 @@ import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.helpers.PageScalingData;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -33,11 +33,9 @@ import java.util.TreeMap;
 
 public class HighlightingImageView extends RecyclingImageView {
 
-  // Max/Min font sizes for text overlay
-  private static final float MAX_FONT_SIZE = 28.0f;
-  private static final float MIN_FONT_SIZE = 16.0f;
-
   private static int sOverlayTextColor = -1;
+  private static float sMaxFontSize = 0;
+  private static float sMinFontSize = 0;
 
   // Sorted map so we use highest priority highlighting when iterating
   private SortedMap<HighlightType, Set<String>> mCurrentHighlights =
@@ -54,24 +52,21 @@ public class HighlightingImageView extends RecyclingImageView {
 
   // Params for drawing text
   private OverlayParams mOverlayParams = null;
-  private Rect mPageBounds = null;
+  private RectF mPageBounds = null;
   private boolean mDidDraw = false;
   private Map<String, List<AyahBounds>> mCoordinatesData;
 
   public HighlightingImageView(Context context) {
-    super(context);
-    init(context);
+    this(context, null);
   }
 
   public HighlightingImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    init(context);
-  }
-
-  private void init(Context context) {
     if (sOverlayTextColor == -1) {
-      sOverlayTextColor = context.getResources()
-          .getColor(R.color.overlay_text_color);
+      final Resources res = context.getResources();
+      sOverlayTextColor = res.getColor(R.color.overlay_text_color);
+      sMinFontSize = res.getDimensionPixelSize(R.dimen.min_overlay_font_size);
+      sMaxFontSize = res.getDimensionPixelSize(R.dimen.max_overlay_font_size);
     }
   }
 
@@ -113,7 +108,7 @@ public class HighlightingImageView extends RecyclingImageView {
   public void highlightAyah(int sura, int ayah, HighlightType type) {
     Set<String> highlights = mCurrentHighlights.get(type);
     if (highlights == null) {
-      highlights = new HashSet<String>();
+      highlights = new HashSet<>();
       mCurrentHighlights.put(type, highlights);
     } else if (!type.isMultipleHighlightsAllowed()) {
       // If multiple highlighting not allowed (e.g. audio)
@@ -146,8 +141,7 @@ public class HighlightingImageView extends RecyclingImageView {
       };
       setColorFilter(new ColorMatrixColorFilter(matrix));
       mColorFilterOn = true;
-    }
-    else if (!mIsNightMode) {
+    } else if (!mIsNightMode) {
       clearColorFilter();
       mColorFilterOn = false;
     }
@@ -186,11 +180,11 @@ public class HighlightingImageView extends RecyclingImageView {
     }
   }
 
-  public void setPageBounds(Rect rect) {
+  public void setPageBounds(RectF rect) {
     mPageBounds = rect;
   }
 
-  private boolean initOverlayParams(PageScalingData scalingData) {
+  private boolean initOverlayParams(Matrix matrix) {
     if (mOverlayParams == null || mPageBounds == null) {
       return false;
     }
@@ -200,14 +194,9 @@ public class HighlightingImageView extends RecyclingImageView {
       return true;
     }
 
-    Drawable page = this.getDrawable();
-    if (page == null) {
-      return false;
-    }
-
     mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG
         | Paint.DEV_KERN_TEXT_FLAG);
-    mOverlayParams.paint.setTextSize(MAX_FONT_SIZE);
+    mOverlayParams.paint.setTextSize(sMaxFontSize);
     int overlayColor = sOverlayTextColor;
     if (mIsNightMode) {
       overlayColor = Color.rgb(mNightModeTextBrightness,
@@ -219,28 +208,27 @@ public class HighlightingImageView extends RecyclingImageView {
     FontMetrics fm = mOverlayParams.paint.getFontMetrics();
     float textHeight = fm.bottom - fm.top;
 
+    final RectF mappedRect = new RectF();
+    matrix.mapRect(mappedRect, mPageBounds);
+
     // Text size scale based on the available 'header' and 'footer' space
     // (i.e. gap between top/bottom of screen and actual start of the
     // 'bitmap')
-    float scale = scalingData.offsetY / textHeight;
+    float scale = mappedRect.top / textHeight;
 
     // If the height of the drawn text might be greater than the available
     // gap... scale down the text size by the calculated scale
     if (scale < 1.0) {
       // If after scaling the text size will be less than the minimum
-      // size... get page bounds from db and find the empty area within
-      // the image and utilize that as well.
-      if (MAX_FONT_SIZE * scale < MIN_FONT_SIZE) {
-        float emptyYTop = scalingData.offsetY +
-            mPageBounds.top * scalingData.heightFactor;
-        float emptyYBottom = scalingData.offsetY
-            + (scalingData.scaledPageHeight -
-            mPageBounds.bottom * scalingData.heightFactor);
-        float emptyY = Math.min(emptyYTop, emptyYBottom);
-        scale = Math.min(emptyY / textHeight, 1.0f);
+      // size... then don't draw.
+      final float targetSize = sMaxFontSize * scale;
+      if (targetSize < sMinFontSize) {
+        mOverlayParams.init = true;
+        mOverlayParams.showOverlay = false;
+        return true;
       }
       // Set the scaled text size, and update the metrics
-      mOverlayParams.paint.setTextSize(MAX_FONT_SIZE * scale);
+      mOverlayParams.paint.setTextSize(targetSize);
       fm = mOverlayParams.paint.getFontMetrics();
     }
 
@@ -252,15 +240,17 @@ public class HighlightingImageView extends RecyclingImageView {
     mOverlayParams.bottomBaseline = getHeight() - fm.bottom;
 
     // Calculate the horizontal margins off the edge of screen
-    mOverlayParams.offsetX = scalingData.offsetX
-        + (getWidth() - mPageBounds.width() * scalingData.widthFactor) / 2.0f;
+    mOverlayParams.offsetX = Math.min(
+        mappedRect.left, getWidth() - mappedRect.right);
 
     mOverlayParams.init = true;
     return true;
   }
 
-  private void overlayText(Canvas canvas, PageScalingData scalingData) {
-    if (mOverlayParams == null || !initOverlayParams(scalingData)) return;
+  private void overlayText(Canvas canvas, Matrix matrix) {
+    if (mOverlayParams == null || !initOverlayParams(matrix)) {
+      return;
+    }
 
     mOverlayParams.paint.setTextAlign(Align.LEFT);
     canvas.drawText(mOverlayParams.suraText,
@@ -291,7 +281,6 @@ public class HighlightingImageView extends RecyclingImageView {
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
-    PageScalingData.onSizeChanged(w, h);
     if (w > 0 && h > 0 &&
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
       cacheHardwareLayer();
@@ -332,16 +321,12 @@ public class HighlightingImageView extends RecyclingImageView {
       return;
     }
 
-    PageScalingData scalingData = PageScalingData.getScalingData();
-    if (scalingData == null) {
-      scalingData = PageScalingData.initialize(d.getIntrinsicWidth(),
-            d.getIntrinsicHeight(), getWidth(), getHeight());
-    }
+    final Matrix matrix = getImageMatrix();
 
     // Draw overlay text
     mDidDraw = false;
     if (mOverlayParams != null && mOverlayParams.showOverlay) {
-      overlayText(canvas, scalingData);
+      overlayText(canvas, matrix);
     }
 
     // Draw each ayah highlight
@@ -354,11 +339,7 @@ public class HighlightingImageView extends RecyclingImageView {
            List<AyahBounds> rangesToDraw = mCoordinatesData.get(ayah);
            if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
              for (AyahBounds b : rangesToDraw) {
-               mScaledRect.set(b.getMinX() * scalingData.widthFactor,
-                   b.getMinY() * scalingData.heightFactor,
-                   b.getMaxX() * scalingData.widthFactor,
-                   b.getMaxY() * scalingData.heightFactor);
-               mScaledRect.offset(scalingData.offsetX, scalingData.offsetY);
+               matrix.mapRect(mScaledRect, b.getBounds());
                canvas.drawRect(mScaledRect, paint);
              }
              mAlreadyHighlighted.add(ayah);

@@ -2,11 +2,12 @@ package com.quran.labs.androidquran.ui.util;
 
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.ui.helpers.PageScalingData;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Matrix;
+import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.ImageView;
@@ -29,7 +30,9 @@ public class ImageAyahUtils {
             int ayah = Integer.parseInt(parts[1]);
             result = new QuranAyah(sura, ayah);
          }
-         catch (Exception e){}
+         catch (Exception e){
+           // no op
+         }
       }
       return result;
    }
@@ -47,8 +50,8 @@ public class ImageAyahUtils {
       int closestLine = -1;
       int closestDelta = -1;
 
-      SparseArray<List<String>> lineAyahs = new SparseArray<List<String>>();
-      Set<String> keys = coords.keySet();
+      final SparseArray<List<String>> lineAyahs = new SparseArray<>();
+      final Set<String> keys = coords.keySet();
       for (String key : keys){
          List<AyahBounds> bounds = coords.get(key);
          if (bounds == null){ continue; }
@@ -58,18 +61,18 @@ public class ImageAyahUtils {
             int line = b.getLine();
             List<String> items = lineAyahs.get(line);
             if (items == null){
-               items = new ArrayList<String>();
+               items = new ArrayList<>();
             }
             items.add(key);
             lineAyahs.put(line, items);
 
-            if (b.getMaxX() >= x && b.getMinX() <= x &&
-                    b.getMaxY() >= y && b.getMinY() <= y){
+            final RectF boundsRect = b.getBounds();
+            if (boundsRect.contains(x, y)) {
                return getAyahFromKey(key);
             }
 
-            int delta = Math.min((int)Math.abs(b.getMaxY() - y),
-                    (int)Math.abs(b.getMinY() - y));
+            int delta = Math.min((int) Math.abs(boundsRect.bottom - y),
+                    (int) Math.abs(boundsRect.top - y));
             if (closestDelta == -1 || delta < closestDelta){
                closestLine = b.getLine();
                closestDelta = delta;
@@ -92,15 +95,16 @@ public class ImageAyahUtils {
                      break;
                   }
 
+                  final RectF boundsRect = b.getBounds();
                   if (b.getLine() == closestLine){
                      // if x is within the x of this ayah, that's our answer
-                     if (b.getMaxX() >= x && b.getMinX() <= x){
+                     if (boundsRect.right >= x && boundsRect.left <= x){
                         return getAyahFromKey(ayah);
                      }
 
                      // otherwise, keep track of the least delta and return it
-                     int delta = Math.min((int)Math.abs(b.getMaxX() - x),
-                             (int)Math.abs(b.getMinX() - x));
+                     int delta = Math.min((int) Math.abs(boundsRect.right - x),
+                             (int) Math.abs(boundsRect.left - x));
                      if (leastDeltaX == -1 || delta < leastDeltaX){
                         closestAyah = ayah;
                         leastDeltaX = delta;
@@ -119,42 +123,45 @@ public class ImageAyahUtils {
    }
 
   public static AyahToolBar.AyahToolBarPosition getToolBarPosition(
-      List<AyahBounds> bounds, int screenWidth, int screenHeight,
-      int toolBarWidth, int toolBarHeight) {
+      @NonNull List<AyahBounds> bounds, @NonNull Matrix matrix,
+      int screenWidth, int screenHeight, int toolBarWidth, int toolBarHeight) {
     boolean isToolBarUnderAyah = false;
     AyahToolBar.AyahToolBarPosition result = null;
-    final PageScalingData data = PageScalingData.getScalingData();
-    final int size = bounds == null ? 0 : bounds.size();
-    if (size > 0 && data != null) {
-      final AyahBounds first = bounds.get(0);
-      AyahBounds chosen = first;
-      float y = (first.getMinY() * data.heightFactor) -
-          toolBarHeight + data.offsetY;
+    final int size = bounds.size();
+
+    RectF chosenRect;
+    if (size > 0) {
+      RectF firstRect = new RectF();
+      AyahBounds chosen = bounds.get(0);
+      matrix.mapRect(firstRect, chosen.getBounds());
+      chosenRect = new RectF(firstRect);
+
+      float y = firstRect.top - toolBarHeight;
       if (y < toolBarHeight) {
         // too close to the top, let's move to the bottom
         chosen = bounds.get(size - 1);
-        y = (data.heightFactor * chosen.getMaxY()) + data.offsetY;
+        matrix.mapRect(chosenRect, chosen.getBounds());
+        y = chosenRect.bottom;
         if (y > (screenHeight - toolBarHeight)) {
-          y = first.getMaxY();
-          chosen = first;
+          y = firstRect.bottom;
+          chosenRect = firstRect;
         }
         isToolBarUnderAyah = true;
       }
 
-      final float midpoint = (data.widthFactor *
-          (chosen.getMaxX() + chosen.getMinX())) / 2;
-      float x = midpoint - (toolBarWidth / 2) + data.offsetX;
+      final float midpoint = chosenRect.centerX();
+      float x = midpoint - (toolBarWidth / 2);
       if (x < 0 || x + toolBarWidth > screenWidth) {
-        x = data.offsetX + (data.widthFactor * chosen.getMinX());
+        x = chosenRect.left;
         if (x + toolBarWidth > screenWidth) {
-          x = screenWidth - data.offsetX - toolBarWidth;
+          x = screenWidth - toolBarWidth;
         }
       }
 
       result = new AyahToolBar.AyahToolBarPosition();
       result.x = x;
       result.y = y;
-      result.pipOffset = midpoint - x + data.offsetX;
+      result.pipOffset = midpoint - x;
       result.pipPosition = isToolBarUnderAyah ?
           AyahToolBar.PipPosition.UP : AyahToolBar.PipPosition.DOWN;
     }
@@ -163,46 +170,37 @@ public class ImageAyahUtils {
 
   private static float[] getPageXY(
       float screenX, float screenY, ImageView imageView) {
-    PageScalingData scalingData = PageScalingData.getScalingData();
-    if (scalingData == null) {
-      final Drawable drawable = imageView.getDrawable();
-      if (drawable == null) {
-        return null;
-      }
-
-      // try to re-initialize scaling data from imageview
-      scalingData = PageScalingData.initialize(
-          drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
-          imageView.getWidth(), imageView.getHeight());
+    if (imageView.getDrawable() == null) {
+      return null;
     }
-    float pageX = screenX / scalingData.widthFactor - scalingData.offsetX;
-    float pageY = screenY / scalingData.heightFactor - scalingData.offsetY;
-    return new float[]{ pageX, pageY };
+
+    float[] results = null;
+    Matrix inverse = new Matrix();
+    if (imageView.getImageMatrix().invert(inverse)) {
+      results = new float[2];
+      inverse.mapPoints(results, new float[]{screenX, screenY});
+    }
+    return results;
   }
 
-  public static AyahBounds getYBoundsForHighlight(
+  public static RectF getYBoundsForHighlight(
       Map<String, List<AyahBounds>> coordinateData, int sura, int ayah) {
     if (coordinateData == null ||
         coordinateData.get(sura + ":" + ayah) == null) {
       return null;
     }
 
-    Integer upperBound = null;
-    Integer lowerBound = null;
-    for (AyahBounds bounds : coordinateData.get(sura + ":" + ayah)) {
-      if (upperBound == null || bounds.getMinY() < upperBound) {
-        upperBound = bounds.getMinY();
-      }
 
-      if (lowerBound == null || bounds.getMaxY() > lowerBound) {
-        lowerBound = bounds.getMaxY();
+    RectF ayahBoundsRect = null;
+    final List<AyahBounds> ayahBounds = coordinateData.get(sura + ":" + ayah);
+    for (AyahBounds bounds : ayahBounds) {
+      if (ayahBoundsRect == null) {
+        ayahBoundsRect = bounds.getBounds();
+      } else {
+        ayahBoundsRect.union(bounds.getBounds());
       }
     }
 
-    AyahBounds yBounds = null;
-    if (upperBound != null) {
-      yBounds = new AyahBounds(0, 0, 0, upperBound, 0, lowerBound);
-    }
-    return yBounds;
+    return ayahBoundsRect;
   }
 }

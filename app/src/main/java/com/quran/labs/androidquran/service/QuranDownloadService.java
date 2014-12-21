@@ -401,9 +401,10 @@ public class QuranDownloadService extends Service implements
       mLastSentIntent = mNotifier.notifyProgress(details, 0, 0);
 
       // extension and filename template don't change
-      String filename = QuranDownloadService.getFilenameFromUrl(urlString);
-      int extLocation = filename.lastIndexOf(".");
-      String extension = filename.substring(extLocation);
+      final String singleFileName =
+          QuranDownloadService.getFilenameFromUrl(urlString);
+      final int extLocation = singleFileName.lastIndexOf(".");
+      final String extension = singleFileName.substring(extLocation);
 
       boolean result;
       for (int i = startSura; i <= endSura; i++){
@@ -417,7 +418,8 @@ public class QuranDownloadService extends Service implements
             String destDir = destination + File.separator;
             String url = String.format(Locale.US,  urlString, i);
             Log.d(TAG, "gapless asking to download " + url + " to " + destDir);
-            result = downloadFileWrapper(url, destDir, null, details);
+            final String filename = QuranDownloadService.getFilenameFromUrl(url);
+            result = downloadFileWrapper(url, destDir, filename, details);
             if (!result){ return false; }
             details.currentFile++;
             continue;
@@ -467,7 +469,9 @@ public class QuranDownloadService extends Service implements
          if (i > 0){
             // want to wait before retrying again
             try { Thread.sleep(WAIT_TIME); }
-            catch (InterruptedException exception){}
+            catch (InterruptedException exception){
+               // no op
+            }
          }
 
          mWifiLock.acquire();

@@ -31,7 +31,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
@@ -398,7 +398,7 @@ public class TabletFragment extends Fragment implements AyahTracker {
     }
 
     @Override
-    protected void onPostExecute(Rect[] rect) {
+    protected void onPostExecute(RectF[] rect) {
       if (rect != null) {
         if (mMode == Mode.ARABIC && rect.length == 2) {
           if (mRightImageView != null && mLeftImageView != null) {
@@ -578,8 +578,8 @@ public class TabletFragment extends Fragment implements AyahTracker {
     if (bounds != null && width > 0) {
       final int screenHeight = QuranScreenInfo.getInstance().getHeight();
       final AyahToolBar.AyahToolBarPosition result =
-          ImageAyahUtils.getToolBarPosition(bounds, width,
-            screenHeight, toolBarWidth, toolBarHeight);
+          ImageAyahUtils.getToolBarPosition(bounds, imageView.getImageMatrix(),
+              width, screenHeight, toolBarWidth, toolBarHeight);
       if (page == mPageNumber - 1) {
         // right page, need to adjust offset
         result.x += width;

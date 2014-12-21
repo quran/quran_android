@@ -17,4 +17,8 @@
     <dimen name="toolbar_item_width">42dp</dimen>
     <dimen name="toolbar_total_height">54dp</dimen>
     <dimen name="juz_overlay_text_size">12sp</dimen>
+
+    <!-- page overlay text -->
+    <dimen name="max_overlay_font_size">12sp</dimen>
+    <dimen name="min_overlay_font_size">6sp</dimen>
 </resources>
