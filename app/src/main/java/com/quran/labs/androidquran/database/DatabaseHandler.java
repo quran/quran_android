@@ -63,7 +63,7 @@ public class DatabaseHandler {
     try {
       mDatabase = SQLiteDatabase.openDatabase(mDatabasePath,
           null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-      return (mDatabase != null);
+      return true;
     } catch (Exception e) {
       return false;
     }
@@ -242,9 +242,7 @@ public class DatabaseHandler {
   }
 
   public void closeDatabase() {
-    if (mDatabase != null) {
-      mDatabase.close();
-      mDatabase = null;
-    }
+    DatabaseUtils.closeDatabase(mDatabase);
+    mDatabase = null;
   }
 }

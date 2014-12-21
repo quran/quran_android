@@ -29,7 +29,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.AsyncTask;
@@ -376,7 +376,7 @@ public class QuranPageFragment extends Fragment
     }
 
     @Override
-    protected void onPostExecute(Rect[] rect) {
+    protected void onPostExecute(RectF[] rect) {
       if (rect != null && rect.length == 1) {
         if (mImageView != null) {
           mImageView.setPageBounds(rect[0]);
@@ -468,11 +468,11 @@ public class QuranPageFragment extends Fragment
     }
     mImageView.highlightAyah(sura, ayah, type);
     if (mScrollView != null && scrollToAyah) {
-      AyahBounds yBounds = ImageAyahUtils.
+      final RectF highlightBounds = ImageAyahUtils.
           getYBoundsForHighlight(mCoordinateData, sura, ayah);
-      if (yBounds != null) {
+      if (highlightBounds != null) {
         int screenHeight = QuranScreenInfo.getInstance().getHeight();
-        int y = yBounds.getMinY() - (int) (0.05 * screenHeight);
+        int y = (int) highlightBounds.top - (int) (0.05 * screenHeight);
         mScrollView.smoothScrollTo(mScrollView.getScrollX(), y);
       }
     }
@@ -488,8 +488,9 @@ public class QuranPageFragment extends Fragment
     if (bounds != null && screenWidth > 0) {
       final int screenHeight = QuranScreenInfo.getInstance().getHeight();
       AyahToolBar.AyahToolBarPosition position =
-          ImageAyahUtils.getToolBarPosition(bounds, screenWidth,
-              screenHeight, toolBarWidth, toolBarHeight);
+          ImageAyahUtils.getToolBarPosition(bounds,
+              mImageView.getImageMatrix(), screenWidth, screenHeight,
+              toolBarWidth, toolBarHeight);
       // If we're in landscape mode (wrapped in SV) update the y-offset
       if (mScrollView != null) {
         position.yScroll = 0 - mScrollView.getScrollY();

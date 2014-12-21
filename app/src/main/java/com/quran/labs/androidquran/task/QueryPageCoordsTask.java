@@ -1,10 +1,11 @@
 package com.quran.labs.androidquran.task;
 
-import android.content.Context;
-import android.graphics.Rect;
-import android.os.AsyncTask;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
+
+import android.content.Context;
+import android.graphics.RectF;
+import android.os.AsyncTask;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +13,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
  * Date: 5/9/13
  * Time: 10:05 PM
  */
-public class QueryPageCoordsTask extends AsyncTask<Integer, Void, Rect[]> {
+public class QueryPageCoordsTask extends AsyncTask<Integer, Void, RectF[]> {
    private AyahInfoDatabaseHandler mAyahInfoDatabaseHandler;
 
    public QueryPageCoordsTask(Context context, String widthParam){
@@ -24,9 +25,9 @@ public class QueryPageCoordsTask extends AsyncTask<Integer, Void, Rect[]> {
    }
 
    @Override
-   protected Rect[] doInBackground(Integer... params){
+   protected RectF[] doInBackground(Integer... params){
       if (params == null || mAyahInfoDatabaseHandler == null){ return null; }
-      Rect[] result = new Rect[params.length];
+      RectF[] result = new RectF[params.length];
       for (int i=0; i<params.length; i++){
          result[i] = mAyahInfoDatabaseHandler.getPageBounds(params[i]);
       }
