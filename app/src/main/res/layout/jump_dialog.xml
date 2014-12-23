@@ -31,15 +31,19 @@
       android:layout_height="wrap_content"
       android:orientation="horizontal">
 
-    <Spinner
+    <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
         android:id="@+id/sura_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
 
-    <Spinner
+    <!-- 'minWidth' is in 'sp' because we actually need that width only
+     to accommodate ayah numbers and avoid horizontal jiggering -->
+    <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
         android:id="@+id/ayah_spinner"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minWidth="64sp"/>
   </LinearLayout>
 </LinearLayout>
