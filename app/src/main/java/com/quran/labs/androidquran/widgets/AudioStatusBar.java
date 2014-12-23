@@ -2,6 +2,10 @@ package com.quran.labs.androidquran.widgets;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.ArabicStyle;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
+import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -15,13 +19,14 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AudioStatusBar extends LinearLayout {
 
@@ -44,7 +49,7 @@ public class AudioStatusBar extends LinearLayout {
    private boolean mHaveCriticalError = false;
    private SharedPreferences mSharedPreferences;
 
-   private Spinner mSpinner;
+   private SpinnerCompat mSpinner;
    private TextView mProgressText;
    private ProgressBar mProgressBar;
    private TextView mRepeatButton;
@@ -166,20 +171,33 @@ public class AudioStatusBar extends LinearLayout {
       addSeparator();
 
       if (mSpinner == null){
-         mSpinner = new Spinner(mContext, null,
+         mSpinner = new SpinnerCompat(mContext, null,
                  R.attr.actionDropDownStyle);
-         ArrayAdapter<CharSequence> adapter =
-                 ArrayAdapter.createFromResource(mContext,
-                         R.array.quran_readers_name,
-                         android.R.layout.simple_spinner_item);
+         final ArrayAdapter<CharSequence> adapter;
+         if (QuranSettings.isReshapeArabic(mContext) &&
+             QuranSettings.isArabicNames(mContext)) {
+            final String[] items = mContext.getResources()
+                .getStringArray(R.array.quran_readers_name);
+            final List<CharSequence> itemList = new ArrayList<>();
+            for (String item : items) {
+               itemList.add(ArabicStyle.reshape(item));
+            }
+            adapter = new ArrayAdapter<>(
+                mContext, R.layout.sherlock_spinner_item, itemList);
+         } else {
+            adapter = ArrayAdapter.createFromResource(mContext,
+                R.array.quran_readers_name,
+                R.layout.sherlock_spinner_item);
+         }
+
          adapter.setDropDownViewResource(
-                 R.layout.support_simple_spinner_dropdown_item);
+             R.layout.sherlock_spinner_dropdown_item);
          mSpinner.setAdapter(adapter);
 
          mSpinner.setOnItemSelectedListener(
-                 new AdapterView.OnItemSelectedListener() {
+                 new AdapterViewCompat.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent,
+            public void onItemSelected(AdapterViewCompat<?> parent,
                                        View view, int position, long id) {
                if (position != mCurrentQari){
                   mSharedPreferences.edit().
@@ -190,13 +208,13 @@ public class AudioStatusBar extends LinearLayout {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterViewCompat<?> parent) {
             }
          });
       }
       mSpinner.setSelection(mCurrentQari);
       addView(mSpinner, LayoutParams.WRAP_CONTENT,
-              LayoutParams.MATCH_PARENT);
+          LayoutParams.MATCH_PARENT);
    }
 
    private void showPromptForDownloadMode(){
