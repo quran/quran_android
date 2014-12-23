@@ -21,4 +21,6 @@
         <attr name="circleColor" format="color" />
         <attr name="circleInactiveColor" format="color" />
     </declare-styleable>
+
+    <attr name="spinnerItemStyle" format="reference" />
 </resources>
