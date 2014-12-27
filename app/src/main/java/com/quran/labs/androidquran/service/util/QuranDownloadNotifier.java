@@ -235,7 +235,7 @@ public class QuranDownloadNotifier {
 
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(mAppContext);
-    builder.setSmallIcon(R.drawable.icon)
+    builder.setSmallIcon(R.drawable.ic_notification)
         .setAutoCancel(true)
         .setOngoing(isOnGoing)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
