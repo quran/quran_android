@@ -1059,7 +1059,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (mNotificationBuilder == null) {
         mNotificationBuilder = new NotificationCompat.Builder(appContext);
         mNotificationBuilder
-            .setSmallIcon(R.drawable.icon)
+            .setSmallIcon(R.drawable.ic_notification)
             .setOngoing(true)
             .setContentTitle(mNotificationName)
             .setContentIntent(pi)
@@ -1073,7 +1073,7 @@ public class AudioService extends Service implements OnCompletionListener,
      if (mPausedNotificationBuilder == null) {
        mPausedNotificationBuilder = new NotificationCompat.Builder(appContext);
        mPausedNotificationBuilder
-           .setSmallIcon(R.drawable.icon)
+           .setSmallIcon(R.drawable.ic_notification)
            .setOngoing(true)
            .setContentTitle(mNotificationName)
            .setContentIntent(pi)
