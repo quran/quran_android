@@ -16,6 +16,7 @@
 		android:layout_toRightOf="@id/left_border"
         android:layout_toLeftOf="@+id/right_border"
         android:layout_alignWithParentIfMissing="true"
+        android:adjustViewBounds="true"
   		android:layout_width="wrap_content"
   		android:layout_height="wrap_content" />
     <LinearLayout android:id="@+id/error_layout"
