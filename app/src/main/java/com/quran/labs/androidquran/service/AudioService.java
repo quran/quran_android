@@ -219,6 +219,7 @@ public class AudioService extends Service implements OnCompletionListener,
    private LocalBroadcastManager mBroadcastManager = null;
 
    private int mGaplessSura = 0;
+   private int mNotificationColor;
    private SparseIntArray mGaplessSuraData = null;
    private AsyncTask<Integer, Void, SparseIntArray> mTimingTask = null;
 
@@ -289,6 +290,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
       final Context appContext = getApplicationContext();
       mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
+      mNotificationColor = appContext.getResources()
+          .getColor(R.color.notification_color);
    }
 
    /**
@@ -1060,6 +1063,7 @@ public class AudioService extends Service implements OnCompletionListener,
         mNotificationBuilder = new NotificationCompat.Builder(appContext);
         mNotificationBuilder
             .setSmallIcon(R.drawable.ic_notification)
+            .setColor(mNotificationColor)
             .setOngoing(true)
             .setContentTitle(mNotificationName)
             .setContentIntent(pi)
@@ -1074,6 +1078,7 @@ public class AudioService extends Service implements OnCompletionListener,
        mPausedNotificationBuilder = new NotificationCompat.Builder(appContext);
        mPausedNotificationBuilder
            .setSmallIcon(R.drawable.ic_notification)
+           .setColor(mNotificationColor)
            .setOngoing(true)
            .setContentTitle(mNotificationName)
            .setContentIntent(pi)

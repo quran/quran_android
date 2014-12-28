@@ -72,12 +72,15 @@ public class QuranDownloadNotifier {
   private Context mAppContext;
   private NotificationManager mNotificationManager;
   private LocalBroadcastManager mBroadcastManager;
+  private int mNotificationColor;
 
   public QuranDownloadNotifier(Context context) {
     mAppContext = context.getApplicationContext();
     mNotificationManager = (NotificationManager) context
         .getSystemService(Context.NOTIFICATION_SERVICE);
     mBroadcastManager = LocalBroadcastManager.getInstance(mAppContext);
+    mNotificationColor = mAppContext.getResources()
+        .getColor(R.color.notification_color);
   }
 
   public void resetNotifications() {
@@ -236,6 +239,7 @@ public class QuranDownloadNotifier {
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(mAppContext);
     builder.setSmallIcon(R.drawable.ic_notification)
+        .setColor(mNotificationColor)
         .setAutoCancel(true)
         .setOngoing(isOnGoing)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
