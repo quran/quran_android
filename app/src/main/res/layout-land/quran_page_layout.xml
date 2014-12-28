@@ -23,6 +23,7 @@
         <com.quran.labs.androidquran.widgets.HighlightingImageView
             android:id="@+id/page_image"
             android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
    </com.quran.labs.androidquran.widgets.ObservableScrollView>
