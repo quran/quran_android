@@ -18,12 +18,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_previous_ayah"/>
+            android:src="@drawable/ic_translation_left"/>
         <ImageButton android:id="@+id/previous_ayah"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_next_ayah"/>
+            android:src="@drawable/ic_translation_right"/>
     </RelativeLayout>
 
     <LinearLayout android:id="@+id/empty_state"

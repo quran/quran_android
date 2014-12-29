@@ -40,10 +40,11 @@ public abstract class AbsMarkersFragment extends Fragment {
 
    private ActionMode mMode;
    private TextView mEmptyTextView;
-  private QuranListAdapter mAdapter;
-  private RecyclerView mRecyclerView;
-  private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
+   private QuranListAdapter mAdapter;
+   private RecyclerView mRecyclerView;
+   private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
    private SharedPreferences mPrefs = null;
+   private int mAyahBookmarkOverlayColor;
    protected int mCurrentSortCriteria = 0;
 
    protected abstract int getContextualMenuId();
@@ -88,6 +89,8 @@ public abstract class AbsMarkersFragment extends Fragment {
      mRecyclerView.addOnItemTouchListener(
          new MarkersTouchListener(context, mRecyclerView));
 
+      mAyahBookmarkOverlayColor = context.getResources()
+          .getColor(R.color.ayah_bookmark_color);
       return view;
    }
 
@@ -299,7 +302,7 @@ public abstract class AbsMarkersFragment extends Fragment {
           .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.mPage))
           .withType(QuranRow.PAGE_BOOKMARK)
           .withSura(sura)
-          .withImageResource(R.drawable.bookmark_page);
+          .withImageResource(R.drawable.ic_favorite);
     } else {
       final String title =
           QuranInfo.getAyahString(bookmark.mSura, bookmark.mAyah, context);
@@ -308,7 +311,8 @@ public abstract class AbsMarkersFragment extends Fragment {
           .withType(QuranRow.AYAH_BOOKMARK)
           .withSura(bookmark.mSura)
           .withAyah(bookmark.mAyah)
-          .withImageResource(R.drawable.bookmark_ayah);
+          .withImageResource(R.drawable.ic_favorite)
+          .withImageOverlayColor(mAyahBookmarkOverlayColor);
     }
     builder.withPage(bookmark.mPage)
         .withBookmarkId(bookmark.mId);
