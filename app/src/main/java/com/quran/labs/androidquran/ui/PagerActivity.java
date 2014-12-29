@@ -280,9 +280,6 @@ public class PagerActivity extends ActionBarActivity implements
     mAudioStatusBar.setAudioBarListener(this);
 
     mToolBarArea = findViewById(R.id.toolbar_area);
-    final View statusBackground = findViewById(R.id.status_bg);
-    statusBackground.getLayoutParams().height = getStatusBarHeight();
-
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -460,18 +457,6 @@ public class PagerActivity extends ActionBarActivity implements
         mDownloadReceiver,
         new IntentFilter(action));
     mDownloadReceiver.setListener(this);
-  }
-
-  private int getStatusBarHeight() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      final Resources resources = getResources();
-      final int resId = resources.getIdentifier(
-          "status_bar_height", "dimen", "android");
-      if (resId > 0) {
-        return resources.getDimensionPixelSize(resId);
-      }
-    }
-    return 0;
   }
 
   private void initAyahActionPanel() {
@@ -903,11 +888,8 @@ public class PagerActivity extends ActionBarActivity implements
         bookmarked = mBookmarksCache.get(page - 1);
       }
 
-      if (bookmarked) {
-        item.setIcon(R.drawable.favorite);
-      } else {
-        item.setIcon(R.drawable.not_favorite);
-      }
+      item.setIcon(bookmarked ? R.drawable.ic_favorite :
+          R.drawable.ic_not_favorite);
     }
 
     MenuItem quran = menu.findItem(R.id.goto_quran);
@@ -922,7 +904,10 @@ public class PagerActivity extends ActionBarActivity implements
 
     MenuItem nightMode = menu.findItem(R.id.night_mode);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    nightMode.setChecked(prefs.getBoolean(Constants.PREF_NIGHT_MODE, false));
+    final boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    nightMode.setChecked(isNightMode);
+    nightMode.setIcon(isNightMode ?
+        R.drawable.ic_night_mode : R.drawable.ic_day_mode);
 
     return true;
   }
@@ -941,9 +926,14 @@ public class PagerActivity extends ActionBarActivity implements
       switchToTranslation();
       return true;
     } else if (itemId == R.id.night_mode) {
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+      SharedPreferences prefs = PreferenceManager
+          .getDefaultSharedPreferences(this);
       SharedPreferences.Editor prefsEditor = prefs.edit();
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, !item.isChecked()).commit();
+      final boolean isNightMode = !item.isChecked();
+      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).commit();
+      item.setIcon(isNightMode ?
+          R.drawable.ic_night_mode : R.drawable.ic_day_mode);
+      item.setChecked(isNightMode);
       refreshQuranPages();
       return true;
     } else if (itemId == R.id.settings) {

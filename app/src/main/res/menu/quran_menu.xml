@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/favorite_item"
-          android:icon="@drawable/favorite"
+          android:icon="@drawable/ic_not_favorite"
           android:title="@string/menu_bookmarks"
           app:showAsAction="ifRoom" />
     <item android:id="@+id/goto_translation"
@@ -19,7 +19,7 @@
           app:showAsAction="ifRoom" />
     <item android:id="@+id/night_mode"
         android:checkable="true"
-        android:icon="@drawable/ic_brightness"
+        android:icon="@drawable/ic_day_mode"
         android:title="@string/prefs_night_mode_title"
         app:showAsAction="ifRoom" />
     <item android:id="@+id/jump"

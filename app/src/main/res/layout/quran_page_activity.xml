@@ -16,15 +16,10 @@
         android:layout_height="@dimen/toolbar_total_height"
         android:visibility="gone"/>
 
-    <LinearLayout android:id="@+id/toolbar_area"
+    <FrameLayout android:id="@+id/toolbar_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:fitsSystemWindows="@bool/toolbar_fit_windows">
-        <View android:id="@+id/status_bg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent_actionbar_color" />
+        android:fitsSystemWindows="true">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -32,7 +27,7 @@
             android:layout_gravity="top"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
-    </LinearLayout>
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

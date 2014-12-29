@@ -3,5 +3,4 @@
     <bool name="is_tablet">false</bool>
     <bool name="use_arabic_reshaper">true</bool>
     <bool name="show_surat_prefix">true</bool>
-    <bool name="toolbar_fit_windows">true</bool>
 </resources>

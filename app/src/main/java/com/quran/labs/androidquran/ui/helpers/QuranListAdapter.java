@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.widgets.CheckableLinearLayout;
 import com.quran.labs.androidquran.widgets.JuzView;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
@@ -109,6 +110,12 @@ public class QuranListAdapter extends
          holder.image.setVisibility(View.GONE);
       } else {
          holder.image.setImageResource(item.imageResource);
+         if (item.imageFilterColor == null) {
+           holder.image.setColorFilter(null);
+         } else {
+           holder.image.setColorFilter(
+               item.imageFilterColor, PorterDuff.Mode.SRC_ATOP);
+         }
          holder.image.setVisibility(View.VISIBLE);
          holder.number.setVisibility(View.GONE);
       }

@@ -15,6 +15,7 @@ public class QuranRow {
    public String metadata;
    public int rowType;
    public Integer imageResource;
+   public Integer imageFilterColor;
    public Integer juzType;
    public String juzOverlayText;
 
@@ -34,6 +35,7 @@ public class QuranRow {
       private long mTagId = -1;
       private long mBookmarkId = -1;
       private String mJuzOverlayText;
+      private Integer mImageFilterColor;
 
       public Builder withType(int type) {
          mRowType = type;
@@ -70,6 +72,11 @@ public class QuranRow {
          return this;
       }
 
+      public Builder withImageOverlayColor(int color) {
+        mImageFilterColor = color;
+        return this;
+      }
+
       public Builder withJuzType(int juzType) {
          mJuzType = juzType;
          return this;
@@ -92,13 +99,13 @@ public class QuranRow {
 
       public QuranRow build() {
          return new QuranRow(mText, mMetadata, mRowType, mSura,
-             mAyah, mPage, mImageResource, mJuzType,
+             mAyah, mPage, mImageResource, mImageFilterColor, mJuzType,
              mJuzOverlayText, mBookmarkId, mTagId);
       }
    }
 
    private QuranRow(String text, String metadata, int rowType,
-        int sura, int ayah, int page, Integer imageResource,
+        int sura, int ayah, int page, Integer imageResource, Integer filterColor,
        Integer juzType, String juzOverlayText, long bookmarkId, long tagId){
       this.text = text;
       this.rowType = rowType;
@@ -107,6 +114,7 @@ public class QuranRow {
       this.page = page;
       this.metadata = metadata;
       this.imageResource = imageResource;
+      this.imageFilterColor = filterColor;
       this.juzType = juzType;
       this.juzOverlayText = juzOverlayText;
       this.tagId = tagId;

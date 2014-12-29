@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/cab_bookmark_ayah"
-          android:icon="@drawable/not_favorite"
+          android:icon="@drawable/ic_not_favorite"
           android:title="@string/bookmark_ayah" />
     <item android:id="@+id/cab_tag_ayah"
           android:icon="@drawable/ic_tag"
