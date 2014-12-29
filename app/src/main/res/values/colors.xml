@@ -26,4 +26,5 @@
     <color name="toolbar_item_pressed">#552bff36</color>
     <color name="indicator_color">@color/accent_color</color>
     <color name="notification_color">#ff112e44</color>
+    <color name="ayah_bookmark_color">#ff81c784</color>
 </resources>

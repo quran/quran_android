@@ -162,7 +162,7 @@ public class AyahToolBar extends ViewGroup implements
   public void setBookmarked(boolean bookmarked) {
     MenuItem bookmarkItem = mMenu.findItem(R.id.cab_bookmark_ayah);
     bookmarkItem.setIcon(bookmarked ?
-        R.drawable.favorite : R.drawable.not_favorite);
+        R.drawable.ic_favorite : R.drawable.ic_not_favorite);
     ImageButton bookmarkButton =
         (ImageButton) findViewById(R.id.cab_bookmark_ayah);
     if (bookmarkButton != null) {

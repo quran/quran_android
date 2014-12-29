@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="QuranToolBar.Preferences"/>
+
+    <style name="QuranToolBar.Overlay">
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:statusBarColor">@color/transparent_actionbar_color</item>
+    </style>
 </resources>
