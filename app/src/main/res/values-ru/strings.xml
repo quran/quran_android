@@ -2,9 +2,9 @@
 <resources>
     <string name="app_name">Коран</string>
     <string name="downloadPrompt_title">Загрузить необходимые файлы?</string>
-    <string name="downloadPrompt">Для оптимальной работы необходимо скачать некоторые
-        	файлы. Если Вы выберите не делать этого сейчас, загрузка каждой страницы
-			будет занимать значительно большее время. Вы хотите загрузить выбранные 
+    <string name="downloadPrompt">Для правильной работы приложения необходимо скачать некоторые
+        	файлы. Если не сделать этого сейчас, загрузка каждой страницы
+			будет занимать значительно большее время. Вы хотите загрузить требуемые 
 			файлы сейчас?
 		</string>
     <string name="downloadTabletPrompt">Недавно мы добавили улучшенные изображения текста Корана для планшетов. 
@@ -45,7 +45,7 @@
 			перевод и арабский текст - из
             &lt;a href="http://tanzil.net">tanzil.net&lt;/a> и
             &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
-            &lt;br/>&lt;br/>&lt;b>Авторы Корана для Андроид:&lt;/b>
+            &lt;br/>&lt;br/>&lt;b>Разработчики Корана для Андроид:&lt;/b>
             &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
             &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
             &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
@@ -55,14 +55,18 @@
             &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
             &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
             &lt;br/>&lt;br/>&lt;b>Переводено:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu - турецкий
-			&lt;br/>khajavi (на github) - Фарси
+			&lt;br/>Mehmed Mahmudoglu, Shuhrat Dehkanov - турецкий
+			&lt;br/>M. Jafar Nanakar - фарси
 			&lt;br/>Rinat (Ринат) - русский
-			&lt;br/>khajavi (на github) - предыдущий Фарси перевод
-	      &lt;br/>Yasser Kadddour - французский
-	      &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - китайский
-         &lt;br/>Goran Gharib Karim - Курдский
-         &lt;br/>Abduqadir Abliz - Уйгурский
+			&lt;br/>khajavi (на github) - предыдущий фарси перевод
+	      		&lt;br/>Yasser Kadddour - французский
+	      		&lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - китайский
+	      		&lt;br/>Armin Šupuk - немецкий
+         		&lt;br/>Goran Gharib Karim - курдский
+         		&lt;br/>Abduqadir Abliz - уйгурский
+         		&lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - индонезийский
+         		&lt;br/>Ahmad Syazwan - малайзийский
+         		&lt;br/>Alexander Salas - испанский
             &lt;br/>&lt;br/>&lt;b>Проекты с открытым исходным кодом:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
             &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
@@ -74,7 +78,7 @@
         &lt;b>Как мне воспроизвести аудио?&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку воспроизведения
         и текст с именем чтеца. Для выбора другого чтеца нажмите на имени текущего чтеца. Нажмите на 
-		кнопку воспроизведения для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
+	кнопку воспроизведения для скачивания и вопроизведения текущей страницы или суры. &lt;br/>
         &lt;br/>&lt;b>Как мне посмотреть перевод?
 		&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса 
@@ -114,8 +118,6 @@
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
         <item quantity="one">Результат для \"%1$s\": </item>
-        <item quantity="few">%2$d Результаты для \"%1$s\": </item>
-        <item quantity="many">%2$d Результаты для \"%1$s\": </item>
         <item quantity="other">%2$d Результаты для \"%1$s\": </item>
     </plurals>
 
@@ -155,11 +157,13 @@
     название суры и номера джуза</string>
     <string name="prefs_display_marker_title">Всплывающие сообщения</string>
     <string name="prefs_display_marker_summary">Показывать всплывающие сообщения по достижении джуза, хизба и т.д.</string>
+    <string name="prefs_highlight_bookmarks_title">Выделять закладки</string>
+    <string name="prefs_highlight_bookmarks_summary">Выделять при чтении аяты из закладок</string>
     <string name="prefs_translation_text_title">Размер текста перевода</string>
     <string name="prefs_translations">Переводы</string>
     <string name="prefs_translations_summary">Загрузка и управление переводами</string>
     <string name="prefs_ayah_before_translation_title">Аят до перевода</string>
-    <string name="prefs_ayah_before_translation_summary">Показывать аят раньше перевода</string>
+    <string name="prefs_ayah_before_translation_summary">Показывать аят на арабском раньше перевода</string>
     <string name="prefs_category_download">Настройки загрузки</string>
     <string name="prefs_streaming_title">Потоковое</string>
     <string name="prefs_streaming_summary">При возможности потоковое аудио (только прерывистое аудио).</string>
@@ -184,6 +188,13 @@
     <string name="prefs_tablet_mode_title">Режим планшета</string>
     <string name="prefs_tablet_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом.</string>
     <string name="prefs_tablet_mode_disabled">В альбомном режиме будет отображена только одна страницы.</string>
+    
+    <string name="kitkat_external_title">Внимание</string>
+    <string name="kitkat_external_message">Из-за ограничений Android, если Вы сейчас разместите исходные данные
+приложения Quran Android на Вашей внешней SD карте, а затем очистите или деинсталлируете приложение, 
+все страницы и аудио приложения Quran Android будут удалены. Все эти данные нужно будет скачать снова. Вы уверены,
+что хотите использовать внешнюю SD карту?</string>
+<!-- Preferences End -->
 
     <!-- translation updates -->
     <string name="update_available">Доступно обновление</string>
@@ -210,14 +221,16 @@
     <string name="index_loading">Загрузка…</string>
 
     <string name="canceling">Отмена&#8230;</string>
+    <string name="juz2_description">джуз %1$s</string>
     <string name="page_description">стр. %1$s, джуз %2$s</string>
     <string name="highlighting_database">Необходимые файлы</string>
     <string name="timing_database">Необходимые файлы</string>
     <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
+    <string name="sdcard_error">SD карта не найдена. Пожалуйста, вставьте карту и попробуйте снова.</string>
     <string name="download_successful">Загрузка завершена</string>   
-    <string name="download_processing">Загрузка &#8230;</string>              
+    <string name="download_processing">Загрузка&#8230;</string>              
     <string name="download_error_general">Загрузка оборвалась</string>             
     <string name="download_error_disk">Для загрузки недостаточно места на диске</string>               
     <string name="download_error_network">Не удалось загрузить из-за ошибки соединения</string>                    
@@ -226,7 +239,7 @@
     <string name="download_error_invalid_download_retry">Поврежденный файл, попытка загрузить заново</string> 
     <string name="download_error_network_retry">Ошибка соединения, попытка возобновить&#8230;</string>
     <string name="notification_download_canceled">Загрузка отменена</string>
-    <string name="download_non_wifi_prompt">Вы не подключены к wi-fi. Все равно продолжить загрузку?</string>
+    <string name="download_non_wifi_prompt">Вы не подключены к Wi-Fi. Все равно продолжить загрузку?</string>
     
     <!-- downloading dialogs -->
     <string name="download_progress">Загружено %1$s / %2$s</string>
@@ -244,17 +257,37 @@
     <string name="get_translations">Скачать перевод</string>
 
     <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+    <string name="email_us">Если Ваш вопрос остался без ответа, Вы можете написать на email quranandroid@gmail.com . Пожалуйста, имейте ввиду, что
+    мы получаем множество писем, поэтому оперативно отвечать на все просто невозможно.</string>
 
     <!-- sura metainfo -->
     <string name="makki">Мекка</string>
     <string name="madani">Медина</string>
     <plurals name="verses">
         <item quantity="one">%s стих</item>
-        <item quantity="few">%s стиха/стихов</item>
-        <item quantity="many">%s стиха/стихов</item>
         <item quantity="other">%s стиха/стихов</item>
     </plurals>
+    
+    <!-- ayah action panel -->
+    <string name="ayah_tags_page">Метки</string>
+    <string name="ayah_translation_page">Перевод</string>
+    <string name="play_from">От</string>
+    <string name="play_to">До</string>
+    <string name="play_options">Опции</string>
+    <string name="play_restrict_range">Воспроизвести только вышестоящие аяты</string>
+    <string name="repeat_verses_range">Воспроизвести группу аятов:</string>
+    <string name="repeat_each_verse">Воспроизвести каждый аят:</string>
+    <string name="play_apply">Применить</string>
+    <string name="play_apply_and_play">Применить и воспроизвести</string>
+    <string name="play">Воспроизвести</string>
+    <string name="stop">Стоп</string>
+    <string-array name="repeatValues">
+	<item>ни разу</item>
+	<item>1 раз</item>
+	<item>2 раза</item>
+	<item>3 раза</item>
+	<item>бесконечно</item>
+    </string-array>
 
     <!-- long press -->
     <string name="bookmark_ayah">Создать закладку этого аята</string>
@@ -265,7 +298,7 @@
     <string name="translation_ayah">Перевод/тафсир аята</string>
     <string name="play_from_here">Воспроизвести отсюда</string>
     <string name="via_string">через @QuranAndroid</string>
-    <string name="search_key">Нажмите клавишу поиска, чтобы найти стих</string>
+    <string name="search_key">Нажмите кнопку поиска, чтобы найти стих</string>
     <string name="copy_ayah">Скопировать аят</string>
     <string name="ayah_copied_popup">Аят скопирован</string>
     <string name="show_more">Показать еще</string>
