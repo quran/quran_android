@@ -106,11 +106,6 @@
         &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu шрифты не работают!&lt;/b>
         &lt;br/>К сожалению, Android версии до 4.0 не поддерживают эти шрифты, и мы ничего не можем сделать,
         чтобы как-то помочь Вам в этом вопросе.
-		&lt;br/>
-        &lt;br/>&lt;b>У меня есть замечания или предложения по программе!&lt;/b>
-        &lt;br/>Пожалуйста, напишите нам e-mail (кнопка внизу экрана). Тем самым Вы способствуете развитию проекта. Возможно,
-        Ваше предложение будет полезно многим братьям и сестрам. Если Вы не знаете английского языка, используйте для написания e-mail
-        Google Translate.        
     </string>
 	<string name="search_hint">Поиск по Корану</string>
 	<string name="quranSearchType">Стихи Корана</string>
@@ -257,15 +252,15 @@
     <string name="get_translations">Скачать перевод</string>
 
     <!-- help -->
-    <string name="email_us">Если Ваш вопрос остался без ответа, Вы можете написать на email quranandroid@gmail.com . Пожалуйста, имейте ввиду, что
+    <string name="email_us">Если Вы не нашли нужного ответа, то можете написать на email quranandroid@gmail.com . Пожалуйста, имейте ввиду, что
     мы получаем множество писем, поэтому оперативно отвечать на все просто невозможно.</string>
 
     <!-- sura metainfo -->
     <string name="makki">Мекка</string>
     <string name="madani">Медина</string>
     <plurals name="verses">
-        <item quantity="one">%s стих</item>
-        <item quantity="other">%s стиха/стихов</item>
+        <item quantity="one">%s аят</item>
+        <item quantity="other">%s аят (-а/-ов)</item>
     </plurals>
     
     <!-- ayah action panel -->
