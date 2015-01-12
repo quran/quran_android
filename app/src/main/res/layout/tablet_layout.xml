@@ -18,12 +18,12 @@
             android:layout_alignParentLeft="true" />
         <com.quran.labs.androidquran.widgets.HighlightingImageView
             android:id="@+id/left_page_image"
-            android:layout_toRightOf="@id/left_border"
+            android:layout_toRightOf="@+id/left_border"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         <com.quran.labs.androidquran.widgets.TranslationView
             android:id="@+id/left_page_translation"
-            android:layout_toRightOf="@id/left_border"
+            android:layout_toRightOf="@+id/left_border"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
@@ -39,7 +39,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1">
-        <ImageView android:id="@id/right_border"
+        <ImageView android:id="@+id/right_border"
             android:background="@drawable/border_right"
             android:contentDescription="@string/border"
             android:layout_width="wrap_content"
@@ -49,12 +49,12 @@
             android:id="@+id/right_page_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toLeftOf="@id/right_border" />
+            android:layout_toLeftOf="@+id/right_border" />
         <com.quran.labs.androidquran.widgets.TranslationView
             android:id="@+id/right_page_translation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toLeftOf="@id/right_border"
+            android:layout_toLeftOf="@+id/right_border"
             android:visibility="gone"
             android:layout_gravity="center_horizontal" />
     </RelativeLayout>
