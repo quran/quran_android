@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -8,25 +7,20 @@ import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.PaintDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import java.util.Set;
 
@@ -41,10 +35,8 @@ public class TranslationFragment extends Fragment
   private int mPageNumber;
   private int mHighlightedAyah;
   private TranslationView mTranslationView;
-  private PaintDrawable mLeftGradient, mRightGradient = null;
 
-  private View mMainView;
-  private ImageView mLeftBorder, mRightBorder;
+  private QuranTranslationPageLayout mMainView;
 
   private Resources mResources;
   private SharedPreferences mPrefs;
@@ -73,32 +65,20 @@ public class TranslationFragment extends Fragment
         }
       }
     }
-    Display display = getActivity().getWindowManager().getDefaultDisplay();
-    int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
-        QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
-    mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
-    mRightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
     setHasOptionsMenu(true);
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater,
                            ViewGroup container, Bundle savedInstanceState) {
-    final View view = inflater.inflate(
-        R.layout.translation_layout, container, false);
-    view.setBackgroundDrawable((mPageNumber % 2 == 0 ?
-        mLeftGradient : mRightGradient));
+    mMainView = new QuranTranslationPageLayout(getActivity());
+    mMainView.setPageController(null, mPageNumber);
 
     mPrefs = PreferenceManager
         .getDefaultSharedPreferences(getActivity());
     mResources = getResources();
 
-
-    mLeftBorder = (ImageView) view.findViewById(R.id.left_border);
-    mRightBorder = (ImageView) view.findViewById(R.id.right_border);
-
-    mTranslationView = (TranslationView) view
-        .findViewById(R.id.translation_text);
+    mTranslationView = mMainView.getTranslationView();
     mTranslationView.setTranslationClickedListener(
         new TranslationView.TranslationClickedListener() {
           @Override
@@ -110,14 +90,13 @@ public class TranslationFragment extends Fragment
           }
         });
 
-    mMainView = view;
     updateView();
     mJustCreated = true;
 
     String database = mPrefs.getString(
         Constants.PREF_ACTIVE_TRANSLATION, null);
     refresh(database);
-    return view;
+    return mMainView;
   }
 
   @Override
@@ -131,39 +110,11 @@ public class TranslationFragment extends Fragment
       return;
     }
 
-    mMainView.setBackgroundDrawable((mPageNumber % 2 == 0 ?
-        mLeftGradient : mRightGradient));
-
-    if (!mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
-      mMainView.setBackgroundColor(mResources.getColor(R.color.page_background));
-    }
-
-    boolean nightMode = mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
-    int nightModeTextBrightness = mPrefs.getInt(
-        Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
-        Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
-    mTranslationView.setNightMode(nightMode, nightModeTextBrightness);
-    if (nightMode) {
-      mMainView.setBackgroundColor(Color.BLACK);
-    }
-
-    int lineImageId = R.drawable.dark_line;
-    int leftBorderImageId = R.drawable.border_left;
-    int rightBorderImageId = R.drawable.border_right;
-    if (mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false)) {
-      leftBorderImageId = R.drawable.night_left_border;
-      rightBorderImageId = R.drawable.night_right_border;
-      lineImageId = R.drawable.light_line;
-    }
-
-    if (mPageNumber % 2 == 0) {
-      mRightBorder.setVisibility(View.GONE);
-      mLeftBorder.setBackgroundResource(leftBorderImageId);
-    } else {
-      mRightBorder.setVisibility(View.VISIBLE);
-      mRightBorder.setBackgroundResource(rightBorderImageId);
-      mLeftBorder.setBackgroundResource(lineImageId);
-    }
+    final boolean nightMode =
+        mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    final boolean useNewBackground =
+        mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
+    mMainView.updateView(nightMode, useNewBackground);
   }
 
   @Override

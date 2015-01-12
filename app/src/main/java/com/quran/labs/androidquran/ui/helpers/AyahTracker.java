@@ -9,7 +9,8 @@ import java.util.Set;
 
 public interface AyahTracker {
   public void highlightAyah(int sura, int ayah, HighlightType type);
-  public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah);
+  public void highlightAyah(int sura, int ayah,
+      HighlightType type, boolean scrollToAyah);
   public void highlightAyat(
       int page, Set<String> ayahKeys, HighlightType type);
   public void unHighlightAyah(int sura, int ayah, HighlightType type);
