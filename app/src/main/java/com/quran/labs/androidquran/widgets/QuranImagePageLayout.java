@@ -33,7 +33,7 @@ public class QuranImagePageLayout extends QuranPageLayout {
   @Override
   public void setPageController(PageController controller, int pageNumber) {
     super.setPageController(controller, pageNumber);
-    final GestureDetector gestureDetector = new GestureDetector(
+    final GestureDetector gestureDetector = new GestureDetector(mContext,
         new PageGestureDetector());
     OnTouchListener gestureListener = new OnTouchListener() {
       @Override
@@ -57,19 +57,19 @@ public class QuranImagePageLayout extends QuranPageLayout {
     @Override
     public boolean onSingleTapUp(MotionEvent event) {
       return mPageController.handleTouchEvent(event,
-          AyahSelectedListener.EventType.SINGLE_TAP);
+          AyahSelectedListener.EventType.SINGLE_TAP, mPageNumber);
     }
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
       return mPageController.handleTouchEvent(event,
-          AyahSelectedListener.EventType.DOUBLE_TAP);
+          AyahSelectedListener.EventType.DOUBLE_TAP, mPageNumber);
     }
 
     @Override
     public void onLongPress(MotionEvent event) {
       mPageController.handleTouchEvent(event,
-          AyahSelectedListener.EventType.LONG_PRESS);
+          AyahSelectedListener.EventType.LONG_PRESS, mPageNumber);
     }
   }
 }

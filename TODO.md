@@ -15,4 +15,3 @@
    to using statusBarColor on lollipop (which breaks the ToolBar animation).
    will need to revisit this and fix it properly.
  * move sura/ayah overlay drawing into the QuranImagePageLayout ViewGroup
- * update TabletFragment to use Quran[Image|Translation]PageLayouts.
