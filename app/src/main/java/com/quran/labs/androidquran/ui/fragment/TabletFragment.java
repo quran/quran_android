@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
@@ -16,30 +15,27 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
+import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
+import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
+import com.quran.labs.androidquran.widgets.TabletView;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.PaintDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.view.Display;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,7 +49,8 @@ import java.util.concurrent.Future;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
-public class TabletFragment extends Fragment implements AyahTracker {
+public class TabletFragment extends Fragment
+    implements AyahTracker, PageController {
 
   private static final String TAG = "TabletFragment";
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
@@ -71,19 +68,15 @@ public class TabletFragment extends Fragment implements AyahTracker {
   private int mLastHighlightedPage;
   private AyahSelectedListener mAyahSelectedListener;
   private List<Map<String, List<AyahBounds>>> mCoordinateData;
-  private PaintDrawable mLeftGradient, mRightGradient = null;
   private TranslationView mLeftTranslation, mRightTranslation = null;
   private HighlightingImageView mLeftImageView, mRightImageView = null;
 
-  private View mMainView;
-  private ImageView mLeftBorder, mRightBorder, mLine;
-  private View mLeftArea, mRightArea;
+  private TabletView mMainView;
 
   private Future<?> mLeftPageLoadTask;
   private Future<?> mRightPageLoadTask;
 
   private boolean mJustCreated;
-  private Resources mResources;
   private SharedPreferences mPrefs;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
@@ -100,76 +93,32 @@ public class TabletFragment extends Fragment implements AyahTracker {
     super.onCreate(savedInstanceState);
     mPageNumber = getArguments() != null ?
         getArguments().getInt(FIRST_PAGE_EXTRA) : -1;
-    Display display = getActivity().getWindowManager().getDefaultDisplay();
-    int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
-        QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
-    mLeftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
-    mRightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
     setHasOptionsMenu(true);
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater,
                            ViewGroup container, Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.tablet_layout,
-        container, false);
-
-    mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    mResources = getResources();
-
-    mLeftArea = view.findViewById(R.id.left_page_area);
-    mRightArea = view.findViewById(R.id.right_page_area);
-
-    mLeftBorder = (ImageView) view.findViewById(R.id.left_border);
-    mRightBorder = (ImageView) view.findViewById(R.id.right_border);
-    mLine = (ImageView) view.findViewById(R.id.line);
-
-    mLeftImageView = (HighlightingImageView) view
-        .findViewById(R.id.left_page_image);
-    mRightImageView = (HighlightingImageView) view
-        .findViewById(R.id.right_page_image);
-    mLeftTranslation = (TranslationView) view
-        .findViewById(R.id.left_page_translation);
-    mRightTranslation = (TranslationView) view
-        .findViewById(R.id.right_page_translation);
+    final Context context = getActivity();
+    mMainView = new TabletView(context);
+    mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     mMode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
     if (mMode == Mode.ARABIC) {
-      mLeftTranslation.setVisibility(View.GONE);
-      mRightTranslation.setVisibility(View.GONE);
-
-      mLeftImageView.setVisibility(View.VISIBLE);
-      mRightImageView.setVisibility(View.VISIBLE);
-
-      final GestureDetector rightGestureDetector = new GestureDetector(
-          getActivity(), new PageGestureDetector(mPageNumber - 1));
-      View.OnTouchListener gestureListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-          return rightGestureDetector.onTouchEvent(event);
-        }
-      };
-      mRightImageView.setOnTouchListener(gestureListener);
-      mRightImageView.setClickable(true);
-      mRightImageView.setLongClickable(true);
-
-      final GestureDetector leftGestureDetector = new GestureDetector(
-          getActivity(), new PageGestureDetector(mPageNumber));
-      View.OnTouchListener leftGestureListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-          return leftGestureDetector.onTouchEvent(event);
-        }
-      };
-      mLeftImageView.setOnTouchListener(leftGestureListener);
-      mLeftImageView.setClickable(true);
-      mLeftImageView.setLongClickable(true);
+      mMainView.init(TabletView.QURAN_PAGE, TabletView.QURAN_PAGE);
+      mLeftImageView =
+          ((QuranImagePageLayout) mMainView.getLeftPage()).getImageView();
+      mRightImageView =
+          ((QuranImagePageLayout) mMainView.getRightPage()).getImageView();
+      mMainView.setPageController(this, mPageNumber, mPageNumber - 1);
     } else if (mMode == Mode.TRANSLATION) {
-      mLeftImageView.setVisibility(View.GONE);
-      mRightImageView.setVisibility(View.GONE);
-
-      mLeftTranslation.setVisibility(View.VISIBLE);
-      mRightTranslation.setVisibility(View.VISIBLE);
+      mMainView.init(TabletView.TRANSLATION_PAGE, TabletView.TRANSLATION_PAGE);
+      mLeftTranslation =
+          ((QuranTranslationPageLayout) mMainView.getLeftPage())
+              .getTranslationView();
+      mRightTranslation =
+          ((QuranTranslationPageLayout) mMainView.getRightPage())
+              .getTranslationView();
 
       mLeftTranslation.setTranslationClickedListener(
           new TranslationView.TranslationClickedListener() {
@@ -185,15 +134,15 @@ public class TabletFragment extends Fragment implements AyahTracker {
               ((PagerActivity) getActivity()).toggleActionBar();
             }
           });
+      mMainView.setPageController(null, mPageNumber, mPageNumber - 1);
     }
 
-    mMainView = view;
     updateView();
     mJustCreated = true;
 
     mLastHighlightedPage = 0;
     mOverlayText = mPrefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
-    return view;
+    return mMainView;
   }
 
   @Override
@@ -210,56 +159,16 @@ public class TabletFragment extends Fragment implements AyahTracker {
   }
 
   public void updateView() {
-    int leftBorderImageId = R.drawable.border_left;
-    int rightBorderImageId = R.drawable.border_right;
-    int lineImageId = R.drawable.dark_line;
-
-    Context context = getActivity();
-    if (context == null || mResources == null ||
-        mMainView == null || !isAdded()) {
+    final Context context = getActivity();
+    if (context == null || !isAdded()) {
       return;
     }
 
-    if (!mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
-      int color = mResources.getColor(R.color.page_background);
-      mLeftArea.setBackgroundColor(color);
-      mRightArea.setBackgroundColor(color);
-    } else {
-      mLeftArea.setBackgroundDrawable(mLeftGradient);
-      mRightArea.setBackgroundDrawable(mRightGradient);
-    }
-
-    boolean nightMode = false;
-    int nightModeTextBrightness =
-        Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
-    if (mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false)) {
-      leftBorderImageId = R.drawable.night_left_border;
-      rightBorderImageId = R.drawable.night_right_border;
-      lineImageId = R.drawable.light_line;
-      mLeftArea.setBackgroundColor(Color.BLACK);
-      mRightArea.setBackgroundColor(Color.BLACK);
-      nightMode = true;
-      nightModeTextBrightness =
-          QuranSettings.getNightModeTextBrightness(context);
-    }
-
-    mLeftBorder.setBackgroundResource(leftBorderImageId);
-    mRightBorder.setBackgroundResource(rightBorderImageId);
-    mLine.setImageResource(lineImageId);
-
-
-    if (mMode == Mode.ARABIC) {
-      mLeftImageView.setNightMode(nightMode, nightModeTextBrightness);
-      mRightImageView.setNightMode(nightMode, nightModeTextBrightness);
-    } else if (mMode == Mode.TRANSLATION) {
-      mLeftTranslation.setNightMode(nightMode, nightModeTextBrightness);
-      mRightTranslation.setNightMode(nightMode, nightModeTextBrightness);
-    }
-
-    if (!mPrefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true)) {
-      mRightImageView.unHighlight(HighlightType.BOOKMARK);
-      mLeftImageView.unHighlight(HighlightType.BOOKMARK);
-    }
+    final boolean useNewBackground =
+        mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
+    final boolean isNightMode =
+        mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    mMainView.updateView(isNightMode, useNewBackground);
   }
 
   @Override
@@ -420,12 +329,14 @@ public class TabletFragment extends Fragment implements AyahTracker {
       super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
     }
 
-    public GetAyahCoordsTask(Context context, MotionEvent event, EventType eventType, int page) {
+    public GetAyahCoordsTask(Context context, MotionEvent event,
+        EventType eventType, int page) {
       super(context, event, eventType,
           QuranScreenInfo.getInstance().getTabletWidthParam(), page);
     }
 
-    public GetAyahCoordsTask(Context context, int sura, int ayah, HighlightType type) {
+    public GetAyahCoordsTask(Context context, int sura,
+        int ayah, HighlightType type) {
       super(context,
           QuranScreenInfo.getInstance().getTabletWidthParam(),
           sura, ayah, type);
@@ -454,67 +365,26 @@ public class TabletFragment extends Fragment implements AyahTracker {
     }
   }
 
-  private class PageGestureDetector extends GestureDetector.SimpleOnGestureListener {
-    private int mDetectedPage;
-
-    public PageGestureDetector(int page) {
-      mDetectedPage = page;
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-      return true;
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-      return handleEvent(event, EventType.SINGLE_TAP);
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent event) {
-      unHighlightAyahs(HighlightType.SELECTION);
-      return handleEvent(event, EventType.DOUBLE_TAP);
-    }
-
-    @Override
-    public void onLongPress(MotionEvent event) {
-      handleEvent(event, EventType.LONG_PRESS);
-    }
-
-    private boolean checkCoordinateData(MotionEvent event, EventType eventType) {
-      // Check files downloaded
-      if (!QuranFileUtils.haveAyaPositionFile(getActivity()) ||
-          !QuranFileUtils.hasArabicSearchDatabase(getActivity())) {
-        Activity activity = getActivity();
-        if (activity != null) {
-          PagerActivity pagerActivity = (PagerActivity) activity;
-          pagerActivity.showGetRequiredFilesDialog();
-          return false;
-        }
-      }
-      // Check we fetched the data
-      if (mCoordinateData == null) {
-        new GetAyahCoordsTask(getActivity(), event, eventType,
-            mDetectedPage).execute(mPageNumber - 1, mPageNumber);
+  private boolean checkCoordinateData(MotionEvent event,
+      EventType eventType, int page) {
+    // Check files downloaded
+    if (!QuranFileUtils.haveAyaPositionFile(getActivity()) ||
+        !QuranFileUtils.hasArabicSearchDatabase(getActivity())) {
+      Activity activity = getActivity();
+      if (activity != null) {
+        PagerActivity pagerActivity = (PagerActivity) activity;
+        pagerActivity.showGetRequiredFilesDialog();
         return false;
       }
-      // All good
-      return true;
     }
-
-    private boolean handleEvent(MotionEvent event, EventType eventType) {
-      if (mAyahSelectedListener == null) return false;
-      if (mAyahSelectedListener.isListeningForAyahSelection(eventType)) {
-        if (checkCoordinateData(event, eventType)) {
-          handlePress(event, eventType, mDetectedPage);
-        }
-        return true;
-      } else {
-        return mAyahSelectedListener.onClick(eventType);
-      }
+    // Check we fetched the data
+    if (mCoordinateData == null) {
+      new GetAyahCoordsTask(getActivity(), event, eventType, page)
+          .execute(mPageNumber - 1, mPageNumber);
+      return false;
     }
-
+    // All good
+    return true;
   }
 
   @Override
@@ -653,7 +523,7 @@ public class TabletFragment extends Fragment implements AyahTracker {
     QuranAyah result = getAyahFromCoordinates(
         page, event.getX(), event.getY());
     if (result != null && mAyahSelectedListener != null) {
-      HighlightingImageView hv = null;
+      /*HighlightingImageView hv = null;
       if (mMode == Mode.ARABIC) {
         // TODO use getHighlightingImageView?
         if (page == mPageNumber - 1) {
@@ -663,7 +533,7 @@ public class TabletFragment extends Fragment implements AyahTracker {
           hv = mLeftImageView;
           // TODO unhighlight the other page?
         }
-      }
+      }*/
       SuraAyah suraAyah = new SuraAyah(result.getSura(), result.getAyah());
       mAyahSelectedListener.onAyahSelected(eventType, suraAyah, this);
     }
@@ -693,5 +563,33 @@ public class TabletFragment extends Fragment implements AyahTracker {
     }
 
     return ImageAyahUtils.getAyahFromCoordinates(coords, imageView, xc, yc);
+  }
+
+  @Override
+  public boolean handleTouchEvent(MotionEvent event,
+      EventType eventType, int page) {
+    if (eventType == EventType.DOUBLE_TAP) {
+      unHighlightAyahs(HighlightType.SELECTION);
+    }
+    if (mAyahSelectedListener == null) return false;
+    if (mAyahSelectedListener.isListeningForAyahSelection(eventType)) {
+      if (checkCoordinateData(event, eventType, page)) {
+        handlePress(event, eventType, page);
+      }
+      return true;
+    } else {
+      return mAyahSelectedListener.onClick(eventType);
+    }
+  }
+
+  @Override
+  public void handleRetryClicked() {
+    // currently no-op - we don't show retry button in tablet right now,
+    // though we should since it's now easy.
+  }
+
+  @Override
+  public void onScrollChanged(int x, int y, int oldx, int oldy) {
+    // no-op - no image ScrollView in this mode.
   }
 }

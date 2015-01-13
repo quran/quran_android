@@ -30,8 +30,8 @@ public abstract class QuranPageLayout extends FrameLayout
 
   protected Context mContext;
   protected PageController mPageController;
+  protected int mPageNumber;
 
-  private int mPageNumber;
   private boolean mIsNightMode;
   private ObservableScrollView mScrollView;
   private ImageView mLeftBorder;
