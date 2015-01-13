@@ -14,4 +14,13 @@
    kitkat due to some issues with the ToolBar in landscape mode and resorted
    to using statusBarColor on lollipop (which breaks the ToolBar animation).
    will need to revisit this and fix it properly.
- * move sura/ayah overlay drawing into the QuranImagePageLayout ViewGroup
+
+
+QuranPageLayout is functionally equivalent to the previous layouts, with the
+following exceptions:
+1. portrait images were wrap/wrap, now they are match/match
+2. translations were match/wrap, now they are match/match
+
+Should consider which of those values is more "correct," while noting that
+changing portrait images to wrap/wrap would require an adjustment in terms
+of where the overlay page text is drawn.

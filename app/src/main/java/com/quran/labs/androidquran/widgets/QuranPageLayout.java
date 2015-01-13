@@ -38,6 +38,7 @@ public abstract class QuranPageLayout extends FrameLayout
   private ImageView mRightBorder;
   private View mErrorLayout;
   private TextView mErrorText;
+  private View mInnerView;
 
   public QuranPageLayout(Context context) {
     super(context);
@@ -45,16 +46,17 @@ public abstract class QuranPageLayout extends FrameLayout
     final boolean isLandscape =
         context.getResources().getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
-    final View innerView = generateContentView(context);
+    mInnerView = generateContentView(context);
     if (isLandscape && shouldWrapWithScrollView()) {
       mScrollView = new ObservableScrollView(context);
+      mScrollView.setFillViewport(true);
       addView(mScrollView,
-          LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-      mScrollView.addView(innerView, LayoutParams.MATCH_PARENT,
-          LayoutParams.MATCH_PARENT);
+          LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+      mScrollView.addView(mInnerView, LayoutParams.MATCH_PARENT,
+          LayoutParams.WRAP_CONTENT);
       mScrollView.setOnScrollListener(this);
     } else {
-      addView(innerView, LayoutParams.MATCH_PARENT,
+      addView(mInnerView, LayoutParams.MATCH_PARENT,
           LayoutParams.MATCH_PARENT);
     }
 
@@ -143,7 +145,22 @@ public abstract class QuranPageLayout extends FrameLayout
     if (mErrorText != null) {
       updateErrorTextColor();
     }
-    requestLayout();
+
+    // set a margin on the page itself so that it can never overlap the
+    // left or right borders.
+    final View innerView = mScrollView == null ? mInnerView : mScrollView;
+    final LayoutParams params =
+        (FrameLayout.LayoutParams) innerView.getLayoutParams();
+    if (mRightBorder != null) {
+      params.rightMargin = mRightBorder.getBackground().getIntrinsicWidth();
+    }
+
+    if (mLeftBorder != null) {
+      params.leftMargin = mLeftBorder.getBackground().getIntrinsicWidth();
+    }
+
+    // this calls requestLayout
+    innerView.setLayoutParams(params);
   }
 
   public void showError(@StringRes int errorRes) {
