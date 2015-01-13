@@ -18,6 +18,7 @@ public class QuranImagePageLayout extends QuranPageLayout {
   @Override
   protected View generateContentView(Context context) {
     mImageView = new HighlightingImageView(context);
+    mImageView.setAdjustViewBounds(true);
     return mImageView;
   }
 
