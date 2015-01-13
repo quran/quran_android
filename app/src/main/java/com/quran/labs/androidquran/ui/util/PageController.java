@@ -6,7 +6,7 @@ import android.view.MotionEvent;
 
 public interface PageController {
   public boolean handleTouchEvent(MotionEvent event,
-      AyahSelectedListener.EventType eventType);
+      AyahSelectedListener.EventType eventType, int page);
   public void handleRetryClicked();
   public void onScrollChanged(int x, int y, int oldx, int oldy);
 }

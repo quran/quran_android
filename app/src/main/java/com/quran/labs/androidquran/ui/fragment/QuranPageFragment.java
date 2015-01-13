@@ -451,7 +451,8 @@ public class QuranPageFragment extends Fragment
   }
 
   @Override
-  public boolean handleTouchEvent(MotionEvent event, EventType eventType) {
+  public boolean handleTouchEvent(MotionEvent event,
+      EventType eventType, int page) {
     if (eventType == EventType.DOUBLE_TAP) {
       unHighlightAyahs(HighlightType.SELECTION);
     }
