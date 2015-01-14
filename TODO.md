@@ -10,11 +10,6 @@
  * cleanup about (remove abs, and ideally, cleanup the strings, code, etc)
  * QuranActivity, TranslationManagerActivity, etc have config changes. they
    shouldn't. This may break dialogs.
- * fix transparent toolbar in kitkat and l - temporarily turned it off for
-   kitkat due to some issues with the ToolBar in landscape mode and resorted
-   to using statusBarColor on lollipop (which breaks the ToolBar animation).
-   will need to revisit this and fix it properly.
-
 
 QuranPageLayout is functionally equivalent to the previous layouts, with the
 following exceptions:

@@ -84,6 +84,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -185,7 +186,7 @@ public class PagerActivity extends ActionBarActivity implements
     private final WeakReference<PagerActivity> mActivity;
 
     public PagerHandler(PagerActivity activity) {
-      mActivity = new WeakReference<PagerActivity>(activity);
+      mActivity = new WeakReference<>(activity);
     }
 
     @Override
@@ -280,6 +281,11 @@ public class PagerActivity extends ActionBarActivity implements
     mAudioStatusBar.setAudioBarListener(this);
 
     mToolBarArea = findViewById(R.id.toolbar_area);
+
+    // this is the colored view behind the status bar on kitkat and above
+    final View statusBarBackground = findViewById(R.id.status_bg);
+    statusBarBackground.getLayoutParams().height = getStatusBarHeight();
+
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -457,6 +463,19 @@ public class PagerActivity extends ActionBarActivity implements
         mDownloadReceiver,
         new IntentFilter(action));
     mDownloadReceiver.setListener(this);
+  }
+
+  private int getStatusBarHeight() {
+    // thanks to https://github.com/jgilfelt/SystemBarTint for this
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      final Resources resources = getResources();
+      final int resId = resources.getIdentifier(
+          "status_bar_height", "dimen", "android");
+      if (resId > 0) {
+        return resources.getDimensionPixelSize(resId);
+      }
+    }
+    return 0;
   }
 
   private void initAyahActionPanel() {
