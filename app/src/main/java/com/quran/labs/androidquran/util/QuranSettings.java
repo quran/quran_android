@@ -110,6 +110,7 @@ public class QuranSettings {
   public static int getLastPage(Context context){
     SharedPreferences prefs =
         PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+
     return prefs.getInt(Constants.PREF_LAST_PAGE, Constants.NO_PAGE_SAVED);
   }
 

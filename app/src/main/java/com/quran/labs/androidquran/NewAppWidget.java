@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -73,15 +72,20 @@ public class NewAppWidget extends AppWidgetProvider {
         Intent lastPageIntent = new Intent(context, PagerActivity.class);
         lastPageIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         lastPageIntent.setData(Uri.parse(lastPageIntent.toUri(Intent.URI_INTENT_SCHEME)));
-        lastPageIntent.putExtra(Constants.PREF_LAST_PAGE, QuranSettings.getLastPage(context.getApplicationContext()));
+        lastPageIntent.putExtra("page", QuranSettings.getLastPage(context.getApplicationContext()));
+        int page=QuranSettings.getLastPage(context.getApplicationContext());
+        lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
 
         PendingIntent searchPending = PendingIntent.getActivity(context, 0,
                 searchIntent, 0);
         PendingIntent jumpPending = PendingIntent.getActivity(context, 0,
                 jumpIntent, 0);
-        PendingIntent lastPagePending = PendingIntent.getActivity(context.getApplicationContext(), 0,
-                lastPageIntent, 0);
+        PendingIntent lastPagePending = PendingIntent.getActivity(context.getApplicationContext(), (int) System.currentTimeMillis(), lastPageIntent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+
         RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.widgetlayout);
         views.setOnClickPendingIntent(R.id.quickSearch, searchPending);
