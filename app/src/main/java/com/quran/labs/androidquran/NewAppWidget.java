@@ -72,9 +72,9 @@ public class NewAppWidget extends AppWidgetProvider {
         Intent lastPageIntent = new Intent(context, PagerActivity.class);
         lastPageIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         lastPageIntent.setData(Uri.parse(lastPageIntent.toUri(Intent.URI_INTENT_SCHEME)));
-        lastPageIntent.putExtra("page", QuranSettings.getLastPage(context.getApplicationContext()));
-        int page=QuranSettings.getLastPage(context.getApplicationContext());
-        lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        lastPageIntent.putExtra("page", QuranSettings.getLastPage(context));
+        int page=QuranSettings.getLastPage(context);
+//        lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 

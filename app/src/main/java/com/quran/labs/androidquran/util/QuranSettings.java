@@ -116,10 +116,10 @@ public class QuranSettings {
 
    public static void setLastPage(Context context, int page){
       SharedPreferences prefs =
-              PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+              PreferenceManager.getDefaultSharedPreferences(context);
       prefs.edit().putInt(Constants.PREF_LAST_PAGE, page).commit();
 
-       NewAppWidget.updateWidgetLastPage(context.getApplicationContext());
+       NewAppWidget.updateWidgetLastPage(context);
    }
 
    public static String getAppCustomLocation(Context context) {
