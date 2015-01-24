@@ -353,7 +353,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       public void onPageSelected(int position) {
         Log.d(TAG, "onPageSelected(): " + position);
         int page = QuranInfo.getPageFromPos(position, mDualPages);
-        QuranSettings.setLastPage(PagerActivity.this, page);
+        QuranSettings.setLastPage(PagerActivity.this.getApplicationContext(), page);
         if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)) {
           mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
               PagerActivity.this, page, mLastPopupTime);
@@ -402,7 +402,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mViewPager.setCurrentItem(page);
     }
 
-    QuranSettings.setLastPage(this, PAGES_LAST - page);
+    QuranSettings.setLastPage(this.getApplicationContext(), PAGES_LAST - page);
     setLoading(false);
 
     // just got created, need to reconnect to service
