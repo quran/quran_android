@@ -51,14 +51,6 @@ public class NewAppWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
             int appWidgetId) {
-
-//        CharSequence widgetText = context.getString(R.string.appwidget_text);
-//        // Construct the RemoteViews object
-//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widgetlayout);
-//        views.setTextViewText(R.id.appwidget_text, widgetText);
-////        Intent intent = new Intent();
-        //        intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, 50);
-//        intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, 3);
         Intent searchIntent = new Intent(context, QuranActivity.class);
         searchIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         searchIntent.setData(Uri.parse(searchIntent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -74,47 +66,26 @@ public class NewAppWidget extends AppWidgetProvider {
         lastPageIntent.setData(Uri.parse(lastPageIntent.toUri(Intent.URI_INTENT_SCHEME)));
         lastPageIntent.putExtra("page", QuranSettings.getLastPage(context));
         int page=QuranSettings.getLastPage(context);
-//        lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
 
         PendingIntent searchPending = PendingIntent.getActivity(context, 0,
                 searchIntent, 0);
-        PendingIntent jumpPending = PendingIntent.getActivity(context, 0,
+        PendingIntent jumpPending = PendingIntent.getActivity(context, 1,
                 jumpIntent, 0);
-        PendingIntent lastPagePending = PendingIntent.getActivity(context.getApplicationContext(), (int) System.currentTimeMillis(), lastPageIntent,
+        PendingIntent lastPagePending = PendingIntent.getActivity(context.getApplicationContext(), (int) System.currentTimeMillis(),
+                lastPageIntent,
                 PendingIntent.FLAG_ONE_SHOT);
-
 
         RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.widgetlayout);
         views.setOnClickPendingIntent(R.id.quickSearch, searchPending);
         views.setOnClickPendingIntent(R.id.quickLastPage, lastPagePending);
         views.setOnClickPendingIntent(R.id.quickJump, jumpPending);
-
         appWidgetManager.updateAppWidget(appWidgetId,views);
-//        Toast.makeText(context, "widget added", Toast.LENGTH_SHORT).show();
     }
 public static void updateWidgetLastPage(Context context)
 {
-
     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-//    RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widgetlayout);
-//    ComponentName thisWidget = new ComponentName(context, NewAppWidget.class);
-////       remoteViews.setTextViewText(R.id.jump, "myText" + System.currentTimeMillis());
-//    Intent lastPageIntent = new Intent(context, PagerActivity.class);
-//
-//
-//    lastPageIntent.putExtra("page", QuranSettings.getLastPage(context));
-//
-//    lastPageIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//    PendingIntent lastPagePending = PendingIntent.getActivity(context, 0,
-//            lastPageIntent, 0);
-//    remoteViews.setOnClickPendingIntent(R.id.quickLastPage, lastPagePending);
-//    appWidgetManager.updateAppWidget(thisWidget, remoteViews);
-//    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(thisWidget), R.id.quickLastPage);
-//       AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
     int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, NewAppWidget.class));
     if (appWidgetIds.length > 0) {
         new NewAppWidget().onUpdate(context, appWidgetManager, appWidgetIds);

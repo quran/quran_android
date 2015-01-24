@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
 
-    <LinearLayout
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+    android:layout_gravity="center"
         android:background="@drawable/abs__list_activated_holo">
 
         <Button
@@ -18,16 +16,16 @@
             android:layout_height="wrap_content" />
         <Button
             android:id="@+id/quickJump"
-            android:background="@drawable/abs__ic_search"
+            android:background="@drawable/ic_sort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
 
         <Button
             android:id="@+id/quickSearch"
-            android:background="@drawable/abs__ic_search"
+            android:background="@drawable/ic_ab_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-</FrameLayout>
+
