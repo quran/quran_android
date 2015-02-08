@@ -8,7 +8,6 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
-import com.quran.labs.androidquran.ui.util.QuranListTouchListener;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.annotation.TargetApi;
@@ -80,25 +79,21 @@ public abstract class AbsMarkersFragment extends Fragment {
      //mListView.setEmptyView(mEmptyTextView);
 
      final Context context = getActivity();
-     mAdapter = new QuranListAdapter(context, new QuranRow[]{}, false);
 
      mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
      mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
      mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+     mAdapter = new QuranListAdapter(context, mRecyclerView, new QuranRow[]{}, false);
      mRecyclerView.setAdapter(mAdapter);
-     mRecyclerView.addOnItemTouchListener(
-         new MarkersTouchListener(context, mRecyclerView));
+     mAdapter.setQuranTouchListener(new MarkersTouchListener());
 
       mAyahBookmarkOverlayColor = context.getResources()
           .getColor(R.color.ayah_bookmark_color);
       return view;
    }
 
-  private class MarkersTouchListener extends QuranListTouchListener {
-
-    public MarkersTouchListener(Context context, RecyclerView recyclerView) {
-      super(context, recyclerView);
-    }
+  private class MarkersTouchListener implements QuranListAdapter.QuranTouchListener {
 
     @Override
     public void onClick(QuranRow row, int position) {
