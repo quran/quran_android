@@ -6,7 +6,6 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
-import com.quran.labs.androidquran.ui.util.QuranListTouchListener;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
@@ -41,15 +40,14 @@ public class SuraListFragment extends Fragment {
     final View view = inflater.inflate(R.layout.quran_list, container, false);
 
     final Context context = getActivity();
-    final QuranListAdapter adapter =
-        new QuranListAdapter(context, getSuraList(), true);
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+    final QuranListAdapter adapter =
+        new QuranListAdapter(context, mRecyclerView, getSuraList(), true);
     mRecyclerView.setAdapter(adapter);
-    mRecyclerView.addOnItemTouchListener(
-        new QuranListTouchListener(context, mRecyclerView));
     return view;
   }
 
