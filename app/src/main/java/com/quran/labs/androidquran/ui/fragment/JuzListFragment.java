@@ -5,7 +5,6 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
-import com.quran.labs.androidquran.ui.util.QuranListTouchListener;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.JuzView;
@@ -43,15 +42,14 @@ public class JuzListFragment extends Fragment {
     View view = inflater.inflate(R.layout.quran_list, container, false);
 
     final Context context = getActivity();
-    final QuranListAdapter adapter =
-        new QuranListAdapter(context, getJuz2List(), true);
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+    final QuranListAdapter adapter =
+        new QuranListAdapter(context, mRecyclerView, getJuz2List(), true);
     mRecyclerView.setAdapter(adapter);
-    mRecyclerView.addOnItemTouchListener(
-        new QuranListTouchListener(context, mRecyclerView));
     return view;
   }
 

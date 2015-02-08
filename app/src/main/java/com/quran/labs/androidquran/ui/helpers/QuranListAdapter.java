@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -22,7 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuranListAdapter extends
-    RecyclerView.Adapter<QuranListAdapter.HeaderHolder> {
+    RecyclerView.Adapter<QuranListAdapter.HeaderHolder>
+    implements View.OnClickListener, View.OnLongClickListener {
 
    private Context mContext;
    private LayoutInflater mInflater;
@@ -30,11 +32,14 @@ public class QuranListAdapter extends
    private boolean mReshapeArabic;
    private boolean mUseArabicFont;
    private boolean mSelectableHeaders;
+   private RecyclerView mRecyclerView;
    private SparseBooleanArray mCheckedState;
+   private QuranTouchListener mTouchListener;
 
-   public QuranListAdapter(Context context,
+   public QuranListAdapter(Context context, RecyclerView recyclerView,
        QuranRow[] items, boolean selectableHeaders){
       mInflater = LayoutInflater.from(context);
+      mRecyclerView = recyclerView;
       mElements = items;
       mContext = context;
       mSelectableHeaders = selectableHeaders;
@@ -137,6 +142,9 @@ public class QuranListAdapter extends
              QuranUtils.getLocalizedNumber(mContext, item.page));
       }
       holder.setChecked(isItemChecked(pos));
+
+      final boolean enabled = isEnabled(pos);
+      holder.view.setEnabled(enabled);
    }
 
    @Override
@@ -172,7 +180,35 @@ public class QuranListAdapter extends
           (selected.isBookmarkHeader() && selected.tagId >= 0);
    }
 
-   class HeaderHolder extends RecyclerView.ViewHolder {
+  public void setQuranTouchListener(QuranTouchListener listener) {
+    mTouchListener = listener;
+  }
+
+  @Override
+  public void onClick(View v) {
+    final int position = mRecyclerView.getChildPosition(v);
+    if (position != RecyclerView.NO_POSITION) {
+      final QuranRow element = mElements[position];
+      if (mTouchListener == null) {
+        ((QuranActivity) mContext).jumpTo(element.page);
+      } else {
+        mTouchListener.onClick(element, position);
+      }
+    }
+  }
+
+  @Override
+  public boolean onLongClick(View v) {
+    if (mTouchListener != null) {
+      final int position = mRecyclerView.getChildPosition(v);
+      if (position != RecyclerView.NO_POSITION) {
+        return mTouchListener.onLongClick(mElements[position], position);
+      }
+    }
+    return false;
+  }
+
+  class HeaderHolder extends RecyclerView.ViewHolder {
       TextView title;
       TextView pageNumber;
       CheckableLinearLayout view;
@@ -187,6 +223,8 @@ public class QuranListAdapter extends
             Typeface typeface = ArabicStyle.getTypeface(mContext);
             title.setTypeface(typeface);
          }
+         itemView.setOnClickListener(QuranListAdapter.this);
+         itemView.setOnLongClickListener(QuranListAdapter.this);
       }
 
       public void setChecked(boolean checked) {
@@ -210,5 +248,10 @@ public class QuranListAdapter extends
            metadata.setTypeface(typeface);
         }
      }
+  }
+
+  public interface QuranTouchListener {
+    public void onClick(QuranRow row, int position);
+    public boolean onLongClick(QuranRow row, int position);
   }
 }
