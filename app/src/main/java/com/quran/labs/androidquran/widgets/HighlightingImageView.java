@@ -285,6 +285,10 @@ public class HighlightingImageView extends RecyclingImageView {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
       cacheHardwareLayer();
     }
+
+    if (mOverlayParams != null) {
+      mOverlayParams.init = false;
+    }
   }
 
   /* there was always a stutter when flipping pages, even when one would
