@@ -36,7 +36,6 @@ public class Constants {
            "landscapeOrientation";
    public static final String PREF_TRANSLATION_TEXT_SIZE = "translationTextSize";
    public static final String PREF_ACTIVE_TRANSLATION = "activeTranslation";
-   public static final String PREF_RESHAPE_ARABIC = "reshapeArabic";
    public static final String PREF_NIGHT_MODE = "nightMode";
    public static final String PREF_NIGHT_MODE_TEXT_BRIGHTNESS = "nightModeTextBrightness";
    public static final String PREF_DEFAULT_QARI = "defaultQari";
@@ -60,5 +59,5 @@ public class Constants {
    public static final String PREF_TABLET_ENABLED = "useTabletMode";
    public static final String PREF_UPGRADE_TO_242 = "upgradeTo242";
    public static final String PREF_UPGRADE_TO_243 = "upgradeTo243";
-   public static final String PREF_MAX_BITMAP_HEIGHT = "maxBitmapHeight";
+   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
 }

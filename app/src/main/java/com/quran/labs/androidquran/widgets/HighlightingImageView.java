@@ -7,7 +7,6 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -19,7 +18,6 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -281,38 +279,9 @@ public class HighlightingImageView extends RecyclingImageView {
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
-    if (w > 0 && h > 0 &&
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-      cacheHardwareLayer();
-    }
-
     if (mOverlayParams != null) {
       mOverlayParams.init = false;
     }
-  }
-
-  /* there was always a stutter when flipping pages, even when one would
-   * expect that the next page should be cached (ie the image is in memory
-   * and set as the background). this is especially noticeable when reading
-   * normally - after some time, you attempt to go to the next page, and
-   * there's somewhat of a jump.
-   *
-   * after much investigation, it seems this all comes down to the cost of
-   * rendering the image (mostly because the images tend to be massive).
-   *
-   * this solution is based on:
-   * http://stackoverflow.com/questions/12272094/
-   *
-   * essentially, we switch to the hardware layer, build the layer, and switch
-   * back to NONE to cache the layer. as a result, flipping to the immediate
-   * next or previous page (when the image is loaded but hasn't been viewed
-   * before) should be much faster.
-   */
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-  private void cacheHardwareLayer() {
-    setLayerType(LAYER_TYPE_HARDWARE, null);
-    buildLayer();
-    setLayerType(LAYER_TYPE_NONE, null);
   }
 
   @Override

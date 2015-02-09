@@ -87,6 +87,22 @@ public class QuranFileUtils {
     }
   }
 
+  public static String getPotentialFallbackDirectory(Context context) {
+    final String state = Environment.getExternalStorageState();
+    if (state.equals(Environment.MEDIA_MOUNTED)) {
+      if (haveAllImages(context, "_1920")) {
+        return "1920";
+      } else if (haveAllImages(context, "_1280")) {
+        return "1280";
+      } else if (haveAllImages(context, "_1024")) {
+        return "1024";
+      } else {
+        return "";
+      }
+    }
+    return null;
+  }
+
   public static boolean haveAllImages(Context context, String widthParam) {
     String quranDirectory = getQuranDirectory(context, widthParam);
     if (quranDirectory == null) {
