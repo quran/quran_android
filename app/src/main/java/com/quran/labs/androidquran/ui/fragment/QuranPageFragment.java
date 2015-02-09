@@ -150,12 +150,7 @@ public class QuranPageFragment extends Fragment
     if (activity instanceof PagerActivity) {
       final PagerActivity pagerActivity = (PagerActivity) activity;
 
-      mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-           downloadImage();
-        }
-      }, 150);
+      downloadImage();
 
       mHandler.postDelayed(new Runnable() {
         @Override

@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.util;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -101,6 +100,7 @@ public class QuranUtils {
       return false;
    }
 
+  /*
   public static String getDebugInfo(Context context){
     StringBuilder builder = new StringBuilder();
     QuranScreenInfo info = QuranScreenInfo.getInstance();
@@ -110,8 +110,6 @@ public class QuranUtils {
         builder.append(", tablet width: ").append(info.getWidthParam());
       }
       builder.append("\n");
-      builder.append("max bitmap height: ")
-          .append(info.getBitmapMaxHeight()).append("\n");
 
       if (QuranFileUtils.haveAllImages(
           context, info.getWidthParam())){
@@ -132,4 +130,5 @@ public class QuranUtils {
     builder.append("memory class: ").append(memClass).append("\n\n");
     return builder.toString();
   }
+  */
 }

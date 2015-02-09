@@ -1,22 +1,23 @@
 package com.quran.labs.androidquran.util;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
+
 public class QuranScreenInfo {
-  private static final String TAG =
-      "com.quran.labs.androidquran.util.QuranScreenInfo";
+  private static final String TAG = "QuranScreenInfo";
 	private static QuranScreenInfo sInstance = null;
 	
 	private int mHeight;
 	private int mMaxWidth;
-  private int mMaxBitmapHeight = -1;
+  private String mOverrideParam;
 
 	private QuranScreenInfo(int width, int height){
 		mHeight = height;
@@ -40,17 +41,15 @@ public class QuranScreenInfo {
           .getSystemService(Context.WINDOW_SERVICE);
       Display d = w.getDefaultDisplay();
       QuranScreenInfo qsi = new QuranScreenInfo(d.getWidth(), d.getHeight());
-      if ("1920".equals(qsi.getWidthParamNoUnderScore())){
-        SharedPreferences prefs = PreferenceManager
+      final SharedPreferences prefs = PreferenceManager
             .getDefaultSharedPreferences(context.getApplicationContext());
-        int height = prefs.getInt(Constants.PREF_MAX_BITMAP_HEIGHT, -1);
-        if (height > -1){
-          qsi.setBitmapMaxHeight(height);
-          Log.d(TAG, "max height in prefs is set to " + height);
-        }
-      }
+      qsi.setOverrideParam(prefs.getString(Constants.PREF_DEFAULT_IMAGES_DIR, ""));
       return qsi;
    }
+
+  public void setOverrideParam(String overrideParam) {
+    mOverrideParam = overrideParam;
+  }
 
 	public int getHeight(){ return mHeight; }
 
@@ -58,17 +57,15 @@ public class QuranScreenInfo {
 		return "_" + getWidthParamNoUnderScore();
 	}
 
-  public void setBitmapMaxHeight(int height){
-    mMaxBitmapHeight = height;
-  }
-
-  public int getBitmapMaxHeight(){
-    return mMaxBitmapHeight;
-  }
-
   public String getTabletWidthParam(){
-      int width = mMaxWidth / 2;
-      return "_" + getBestTabletLandscapeSizeMatch(width);
+      if ("_1260".equals(getWidthParam())) {
+        // for tablet, if the width is more than 1280, use 1260
+        // images for both dimens (only applies to new installs)
+        return "_1260";
+      } else {
+        int width = mMaxWidth / 2;
+        return "_" + getBestTabletLandscapeSizeMatch(width);
+      }
    }
 
    public String getWidthParamNoUnderScore(){
@@ -82,10 +79,10 @@ public class QuranScreenInfo {
 		else if (width <= 800){ return "800"; }
 		else if (width <= 1280){ return "1024"; }
     else {
-      if (mMaxBitmapHeight == -1 || mMaxBitmapHeight >= 3106){
-        return "1920";
+      if (!TextUtils.isEmpty(mOverrideParam)) {
+        return mOverrideParam;
       }
-      else { return "1024"; }
+      return "1260";
     }
 	}
 
@@ -95,10 +92,7 @@ public class QuranScreenInfo {
    }
 
    public boolean isTablet(Context context){
-      if (context != null && mMaxWidth > 800){
-         return context.getResources()
-                 .getBoolean(R.bool.is_tablet);
-      }
-      return false;
+     return context != null && mMaxWidth > 800 && context.getResources()
+         .getBoolean(R.bool.is_tablet);
    }
 }
