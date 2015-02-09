@@ -8,27 +8,21 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.widgets.QuranMaxImageView;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import java.io.File;
 import java.util.Date;
@@ -36,10 +30,8 @@ import java.util.Date;
 public class QuranDataActivity extends ActionBarActivity implements
         DefaultDownloadReceiver.SimpleDownloadListener {
 
-   public static final String TAG =
-           "com.quran.labs.androidquran.QuranDataActivity";
+   public static final String TAG = "QuranDataActivity";
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
-   private static final int MSG_REFRESH_MAX_HEIGHT = 1;
 
    private boolean mIsPaused = false;
    private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
@@ -50,28 +42,10 @@ public class QuranDataActivity extends ActionBarActivity implements
    private boolean mNeedPortraitImages = false;
    private boolean mNeedLandscapeImages = false;
    private String mPatchUrl;
-   private int mRefreshHeightTries;
-   private QuranMaxImageView mSplashView;
 
    @Override
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      setContentView(R.layout.splash_screen);
-
-      mSplashView = (QuranMaxImageView)findViewById(R.id.splashview);
-      if (Build.VERSION.SDK_INT >= 14){
-        setSplashViewHardwareAcceleratedICS();
-      }
-
-      if (mSplashView != null){
-         try {
-            mSplashView.setImageResource(R.drawable.splash);
-         }
-         catch (OutOfMemoryError error){
-            mSplashView.setBackgroundColor(Color.BLACK);
-         }
-      }
-
       /*
         // remove files for debugging purposes
         QuranUtils.debugRmDir(QuranUtils.getQuranBaseDirectory(), false);
@@ -116,13 +90,6 @@ public class QuranDataActivity extends ActionBarActivity implements
       }
    }
 
-  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-  private void setSplashViewHardwareAcceleratedICS() {
-    // actually requires 11+, but the other call we need
-    // for getting max bitmap height requires 14+
-    mSplashView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-  }
-   
    @Override
    protected void onResume(){
       super.onResume();
@@ -137,23 +104,6 @@ public class QuranDataActivity extends ActionBarActivity implements
             new IntentFilter(action));
       mDownloadReceiver.setListener(this);
 
-      if (mSharedPreferences.getInt(
-          Constants.PREF_MAX_BITMAP_HEIGHT, -1) == -1){
-        if (Build.VERSION.SDK_INT >= 14){
-          int height = mSplashView.getMaxBitmapHeight();
-          if (height == -1){
-            Log.d(TAG, "retrying to get max height in 500...");
-            mHandler.sendEmptyMessageDelayed(MSG_REFRESH_MAX_HEIGHT, 500);
-            return;
-          }
-
-          Log.d(TAG, "got max height height of " + height);
-          mSharedPreferences.edit().putInt(
-              Constants.PREF_MAX_BITMAP_HEIGHT, height).commit();
-          QuranScreenInfo.getInstance().setBitmapMaxHeight(height);
-        }
-      }
-
       // check whether or not we need to download
       mCheckPagesTask = new CheckPagesAsyncTask(this);
       mCheckPagesTask.execute();
@@ -161,21 +111,6 @@ public class QuranDataActivity extends ActionBarActivity implements
    
    @Override
    protected void onPause() {
-      // one more attempt to get the max height if we
-      // haven't gotten it already...
-      if (mSharedPreferences.getInt(
-          Constants.PREF_MAX_BITMAP_HEIGHT, -1) == -1){
-        if (Build.VERSION.SDK_INT >= 14){
-          int height = mSplashView.getMaxBitmapHeight();
-          if (height > 0){
-            Log.d(TAG, "got max height height of " + height);
-            mSharedPreferences.edit().putInt(
-              Constants.PREF_MAX_BITMAP_HEIGHT, height).commit();
-            QuranScreenInfo.getInstance().setBitmapMaxHeight(height);
-          }
-        }
-      }
-
       mIsPaused = true;
       if (mDownloadReceiver != null) {
         mDownloadReceiver.setListener(null);
@@ -196,44 +131,6 @@ public class QuranDataActivity extends ActionBarActivity implements
       
       super.onPause();
    }
-
-   private Handler mHandler = new Handler(){
-     @Override
-     public void handleMessage(Message msg) {
-       if (msg.what == MSG_REFRESH_MAX_HEIGHT){
-         if (mSplashView == null || isFinishing() || mIsPaused){
-           return;
-         }
-
-         int height = mSplashView.getMaxBitmapHeight();
-         if (height > -1){
-           android.util.Log.d(TAG, "in handler, got max height: " + height);
-           mSharedPreferences.edit().putInt(
-               Constants.PREF_MAX_BITMAP_HEIGHT, height).commit();
-           QuranScreenInfo.getInstance().setBitmapMaxHeight(height);
-           // check whether or not we need to download
-           if (!mIsPaused) {
-             mCheckPagesTask = new CheckPagesAsyncTask(QuranDataActivity.this);
-             mCheckPagesTask.execute();
-           }
-           return;
-         }
-
-         mRefreshHeightTries++;
-         if (mRefreshHeightTries == 5){
-           android.util.Log.d(TAG, "giving up on getting the max height...");
-           if (!mIsPaused) {
-             mCheckPagesTask = new CheckPagesAsyncTask(QuranDataActivity.this);
-             mCheckPagesTask.execute();
-           }
-         }
-         else {
-           android.util.Log.d(TAG, "trying to get the max height in a sec...");
-           mHandler.sendEmptyMessageDelayed(MSG_REFRESH_MAX_HEIGHT, 1000);
-         }
-       }
-     }
-   };
 
    @Override
    public void handleDownloadSuccess(){
@@ -293,23 +190,60 @@ public class QuranDataActivity extends ActionBarActivity implements
    
    class CheckPagesAsyncTask extends AsyncTask<Void, Void, Boolean> {
       private final Context mAppContext;
+      private String mPatchParam;
       public CheckPagesAsyncTask(Context context) {
         mAppContext = context.getApplicationContext();
       }
 
       @Override
       protected Boolean doInBackground(Void... params) {
-         // intentionally not sleeping because waiting
-         // for the splash screen is not cool.
          QuranFileUtils.migrateAudio(mAppContext);
 
-         if (QuranScreenInfo.getInstance().isTablet(mAppContext)){
-            boolean haveLandscape = QuranFileUtils.haveAllImages(mAppContext,
-                    QuranScreenInfo.getInstance().getTabletWidthParam());
-            boolean havePortrait = QuranFileUtils.haveAllImages(mAppContext,
-                    QuranScreenInfo.getInstance().getWidthParam());
+         final QuranScreenInfo qsi = QuranScreenInfo.getInstance();
+         if (!mSharedPreferences.contains(Constants.PREF_DEFAULT_IMAGES_DIR)) {
+           /* previously, we would send any screen widths greater than 1280
+            * to get 1920 images. this was problematic for various reasons,
+            * including:
+            * a. a texture limit for the maximum size of a bitmap that could
+            *    be loaded, which the 1920x3106 images exceeded on devices
+            *    with the minimum 2048 height capacity.
+            * b. slow to switch pages due to the massive size of the gl
+            *    texture loaded by android.
+            *
+            * consequently, in this new version, we make anything above 1024
+            * fallback to a 1260 bucket (height of 2038). this works around
+            * both problems (much faster page flipping now too) with a very
+            * minor loss in quality.
+            *
+            * this code checks and sees, if the user already has a complete
+            * folder of images - 1920, then 1280, then 1024 - and in any of
+            * those cases, sets that in the pref so we load those instead of
+            * the new 1260 images.
+            */
+           final String fallback =
+               QuranFileUtils.getPotentialFallbackDirectory(mAppContext);
+           if (fallback != null) {
+             mSharedPreferences.edit()
+                 .putString(Constants.PREF_DEFAULT_IMAGES_DIR, fallback)
+                 .commit();
+             qsi.setOverrideParam(fallback);
+           }
+         }
+
+         final String width = qsi.getWidthParam();
+         if (qsi.isTablet(mAppContext)){
+            final String tabletWidth = qsi.getTabletWidthParam();
+            boolean haveLandscape = QuranFileUtils.haveAllImages(mAppContext, tabletWidth);
+            boolean havePortrait = QuranFileUtils.haveAllImages(mAppContext, width);
             mNeedPortraitImages = !havePortrait;
             mNeedLandscapeImages = !haveLandscape;
+            if (haveLandscape && havePortrait) {
+               // if we have the images, see if we need a patch set or not
+               if (!QuranFileUtils.isVersion(mAppContext, width, 3) ||
+                  !QuranFileUtils.isVersion(mAppContext, tabletWidth, 3)) {
+                 mPatchParam = width + tabletWidth;
+              }
+            }
             return haveLandscape && havePortrait;
          }
          else {
@@ -317,17 +251,20 @@ public class QuranDataActivity extends ActionBarActivity implements
                         QuranScreenInfo.getInstance().getWidthParam());
             mNeedPortraitImages = !haveAll;
             mNeedLandscapeImages = false;
+            if (haveAll && !QuranFileUtils.isVersion(mAppContext, width, 3)) {
+              mPatchParam = width;
+            }
             return haveAll;
          }
       }
       
       @Override
-      protected void onPostExecute(Boolean result) {
+      protected void onPostExecute(@NonNull Boolean result) {
          mCheckPagesTask = null;
          mPatchUrl = null;
          if (mIsPaused){ return; }
                   
-         if (result == null || !result){
+         if (!result){
             String lastErrorItem = mSharedPreferences.getString(
                         QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, "");
             if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)){
@@ -346,29 +283,10 @@ public class QuranDataActivity extends ActionBarActivity implements
             }
          }
          else {
-            // force a check for the images version 3, if it's not
-            // there, download the patch.
-            QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-            String widthParam = qsi.getWidthParam();
-            if (qsi.isTablet(QuranDataActivity.this)){
-               String tabletWidth = qsi.getTabletWidthParam();
-               if ((!QuranFileUtils.isVersion(QuranDataActivity.this,
-                       widthParam, 3)) ||
-                   (!QuranFileUtils.isVersion(QuranDataActivity.this,
-                       tabletWidth, 3))){
-                  widthParam += tabletWidth;
-                  // get patch for both landscape/portrait tablet images
-                  mPatchUrl = QuranFileUtils.getPatchFileUrl(widthParam, 3);
-                  promptForDownload();
-                  return;
-               }
-            }
-            else if (!QuranFileUtils.isVersion(QuranDataActivity.this,
-                    widthParam, 3)){
-               // explicitly check whether we need to fix the images
-               mPatchUrl = QuranFileUtils.getPatchFileUrl(widthParam, 3);
-               promptForDownload();
-               return;
+            if (!TextUtils.isEmpty(mPatchParam)) {
+              mPatchUrl = QuranFileUtils.getPatchFileUrl(mPatchParam, 3);
+              promptForDownload();
+              return;
             }
 
             long time = mSharedPreferences.getLong(
