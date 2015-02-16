@@ -749,7 +749,9 @@ public abstract class AdapterViewCompat<T extends Adapter> extends ViewGroup {
             // Force one here to make sure that the state of the list matches
             // the state of the adapter.
             if (mDataChanged) {
-                this.onLayout(false, getLeft(), getTop(), getRight(), getBottom());
+                // this was this.onLayout(false, ...) - changed because seems
+                // like the intention here was really to call layout()
+                this.layout(getLeft(), getTop(), getRight(), getBottom());
             }
         } else {
             if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);

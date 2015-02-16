@@ -251,8 +251,8 @@ public class AudioStatusBar extends LinearLayout {
       LinearLayout ll = new LinearLayout(mContext);
       ll.setOrientation(LinearLayout.VERTICAL);
 
-      mProgressBar = (ProgressBar)LayoutInflater.from(mContext)
-         .inflate(R.layout.download_progress_bar, null);
+      mProgressBar = (ProgressBar) LayoutInflater.from(mContext)
+         .inflate(R.layout.download_progress_bar, this, false);
       mProgressBar.setIndeterminate(true);
       mProgressBar.setVisibility(View.VISIBLE);
 

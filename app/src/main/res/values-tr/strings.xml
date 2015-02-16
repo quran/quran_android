@@ -131,7 +131,6 @@
     <string name="quran_sura">Sureler</string>
     <string name="quran_ayah">Âyet</string>
     <string name="notification_download_canceled">İndirme iptal edildi</string>
-    <string name="unbookmark_ayah">Bu âyet için sayfa işaretini kaldır</string>
     <string name="via_string">Kur\'an-ı Kerîm</string>
     <string name="update_available">Güncelleme var</string>
     <string name="translation_updates_available">Meâller için güncelleme mevcut. Meâl indirme sayfasını ziyaret etmek istermisiniz?</string>
@@ -146,7 +145,6 @@
     <string name="tag_dlg_title">Etiket</string>
     <string name="sura_ayah_notification_str">Sure %1$s, âyet %2$d</string>
     <string name="tag_name">İsim</string>
-    <string name="show_more">Daha fazla göster</string>
     <string name="share_ayah_text">Âyet meâlini paylaş</string>
     <string name="share_ayah">Âyet kısayolu paylaş</string>
     <string name="search_key">Kur\'anda arama yapmak için arama tuşuna bas</string>
@@ -216,7 +214,6 @@
     <string name="delete_tag">Etiketi kaldır</string>
     <string name="delete_bookmark">Sayfa işaretini kaldır</string>
     <string name="copy_ayah">Âyet kopyala</string>
-    <string name="border">kenar</string>
     <string name="canceling">İptal ediliyor</string>
     <string name="bookmarks_list_empty">Sayfa işareti yok</string>
     <string name="bookmarks_current_page">Mevcut sayfa</string>

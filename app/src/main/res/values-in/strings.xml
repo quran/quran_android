@@ -158,9 +158,6 @@
     <string name="translation_dialog_yes">Ya</string>
     <string name="translation_dialog_later">Nanti</string>
 
-    <!-- used for screen readers -->
-    <string name="border">border</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -226,7 +223,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Bookmark ayat ini</string>
-    <string name="unbookmark_ayah">Hapus bookmark pada ayat ini</string>
     <string name="tag_ayah">Beri label ayat ini</string>
     <string name="share_ayah">Bagikan tautan (URL) ayat</string>
     <string name="share_ayah_text">Bagikan teks ayat</string>
@@ -236,7 +232,6 @@
     <string name="search_key">Tekan tombol pencarian untuk mencari ayat</string>
     <string name="copy_ayah">Salin ayat</string>
     <string name="ayah_copied_popup">Ayat telah tersalin</string>
-    <string name="show_more">Tampilkan Lebih</string>
     
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Hapus Bookmark</string>

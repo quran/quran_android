@@ -190,9 +190,6 @@
     <string name="translation_dialog_yes">Ha</string>
     <string name="translation_dialog_later">Keyinroq</string>
 
-    <!-- used for screen readers -->
-    <string name="border">chegara</string>
-
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -259,8 +256,6 @@
     </plurals>
 
     <!-- ayah action panel -->
-    <string name="ayah_tags_page">Teglar</string>
-    <string name="ayah_translation_page">Tarjima</string>
     <string name="play_from">Boshi</string>
     <string name="play_to">Oxiri</string>
     <string name="play_options">Moslamalar</string>
@@ -282,7 +277,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Oyatni xatcho\'plash</string>
-    <string name="unbookmark_ayah">Oyatni xatcho\'pdan o\'chirish</string>
     <string name="tag_ayah">Oyatni teglash</string>
     <string name="share_ayah">Oyat bog\'ichini bo\'lishish</string>
     <string name="share_ayah_text">Oyat matnini bo\'lishish</string>
@@ -292,7 +286,6 @@
     <string name="search_key">Sura topish uchun izlash tugmasiga bosing</string>
     <string name="copy_ayah">Oyatni ko\'chirish</string>
     <string name="ayah_copied_popup">Oyat xotiraga ko\'chirildi</string>
-    <string name="show_more">Yana</string>
 
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Xatcho\'pni o\'chirish</string>

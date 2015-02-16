@@ -139,9 +139,6 @@
     <string name="translation_dialog_yes">ھەئە</string>
     <string name="translation_dialog_later">كېيىن</string>
 
-    <!-- used for screen readers -->
-    <string name="border">گىرۋەك</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -202,7 +199,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">بۇ ئايەتنى خەتكۈچلە</string>
-    <string name="unbookmark_ayah">بۇ ئايەتنىڭ خەتكۈچىنى چىقىرىۋەت</string>
     <string name="tag_ayah">بۇ ئايەتكە بەلگە قوش</string>
     <string name="share_ayah">ئايەت ئۇلانمىسىنى ھەمبەھىرلە</string>
     <string name="share_ayah_text">ئايەت تېكىستتىنى ھەمبەھىرلە</string>
@@ -212,8 +208,7 @@
     <string name="search_key">ئىزدە كۇنۇپكىسى بېسىلسا سۈرە ئىزدەيدۇ</string>
     <string name="copy_ayah">ئايەت كۆچۈر</string>
     <string name="ayah_copied_popup">ئايەت كۆچۈرۈلدى</string>
-    <string name="show_more">تېخىمۇ كۆپ كۆرسەت</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">خەتكۈچ ئۆچۈر</string>
     <string name="tag_bookmark">خەتكۈچكە بەلگە قوش</string>

@@ -18,6 +18,7 @@ package com.quran.labs.androidquran.widgets;
 
 import com.quran.labs.androidquran.R;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
@@ -35,6 +36,8 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -196,13 +199,18 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
       // If we're running on ICS or newer, enable all-caps to match the Action Bar tab style
-      textView.setAllCaps(true);
+      setCapsTextIcs(textView);
     }
 
     int padding = mTabPadding;
     textView.setPadding(padding, padding, padding, padding);
 
     return textView;
+  }
+
+  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+  private void setCapsTextIcs(TextView textView) {
+    textView.setAllCaps(true);
   }
 
   private void populateTabStrip() {
@@ -221,7 +229,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     for (int i = 0; i < tabs; i++) {
       String str = adapter.getPageTitle(i).toString();
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
-        str = str.toUpperCase();
+        str = str.toUpperCase(Locale.getDefault());
       }
 
       int width = (int) paint.measureText(str);
