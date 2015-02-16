@@ -366,7 +366,7 @@ public class SearchActivity extends ActionBarActivity
       ViewHolder holder;
 
       if (convertView == null) {
-        convertView = mInflater.inflate(R.layout.search_result, null);
+        convertView = mInflater.inflate(R.layout.search_result, parent, false);
         holder = new ViewHolder();
         holder.text = (TextView) convertView.findViewById(R.id.verseText);
         holder.metadata = (TextView) convertView

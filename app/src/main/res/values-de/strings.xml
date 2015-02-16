@@ -204,9 +204,6 @@
     <string name="translation_dialog_yes">Ja</string>
     <string name="translation_dialog_later">Später</string>
 
-    <!-- used for screen readers -->
-    <string name="border">Rahmen</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -275,7 +272,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Lesezeichen für diesen Vers hinzufügen</string>
-    <string name="unbookmark_ayah">Lesezeichen für diesen Vers entfernen</string>
     <string name="tag_ayah">Ein Schlagwort zum Vers hinzufügen</string>
     <string name="share_ayah">Vers Link teilen</string>
     <string name="share_ayah_text">Versinhalt teilen</string>
@@ -285,8 +281,7 @@
     <string name="search_key">Drücken Sie die Suchtaste zum Nachschlagen eines Verses</string>
     <string name="copy_ayah">Kopiere Vers</string>
     <string name="ayah_copied_popup">Vers kopiert</string>
-    <string name="show_more">Zeige mehr</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Lesezeichen löschen</string>
     <string name="tag_bookmark">Ein Schlagwort zum Lesezeichen hinzufügen</string>

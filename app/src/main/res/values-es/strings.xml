@@ -7,9 +7,9 @@
   <string name="downloadImportantPrompt">Hay disponible una pequeña actualización, pero importante\npara las imágenes del Corán que tienes en tu dispositivo móvil. ¿Quieres descargar \nesta actualización ahora?</string>
   <string name="downloadPrompt_ok">Si</string>
   <string name="downloadPrompt_no">No</string>
-  <string name="downloading_title">Descargando...</string>
+  <string name="downloading_title">Descargando…</string>
   <string name="downloading_message">Por favor, espera a la descarga de los archivos. (La aplicación se reiniciará)</string>
-  <string name="extracting_title">Procesando...</string>
+  <string name="extracting_title">Procesando…</string>
   <string name="menu_about">Acerca de Nosotros</string>
   <string name="menu_settings">Ajustes</string>
   <string name="menu_jump_last_page">Última página</string>
@@ -114,8 +114,6 @@
   <string name="translation_updates_available">Una actualización está disponible para alguna de sus traducciones. ¿Quiere ir a la pantalla de traducciones ahora?</string>
   <string name="translation_dialog_yes">Si</string>
   <string name="translation_dialog_later">Después</string>
-  <!--used for screen readers-->
-  <string name="border">Borde</string>
   <!--End Number picker Strings-->
   <string name="quran_rob3">¼</string>
   <string name="quran_nos">½</string>
@@ -128,8 +126,8 @@
   <string name="quran_sura_title">Capítulo %1$s</string>
   <string name="sura_ayah_notification_str">Capítulo %1$s, Versículo %2$d</string>
   <string name="bookmarks_current_page">Página corriente</string>
-  <string name="index_loading">Cargando...</string>
-  <string name="canceling">Cancelando...</string>
+  <string name="index_loading">Cargando…</string>
+  <string name="canceling">Cancelando…</string>
   <string name="juz2_description">Yuz %1$s</string>
   <string name="page_description">página %1$s, Yuz %2$s</string>
   <string name="highlighting_database">Archivos requeridos</string>
@@ -138,14 +136,14 @@
   <!--download statuses and errors-->
   <string name="sdcard_error">No se pudo encontrar tarjetas SD. Por favor, inserte la tarjeta SD y vuelva a intentarlo.</string>
   <string name="download_successful">Descarga completada</string>
-  <string name="download_processing">Procesando la descarga...</string>
+  <string name="download_processing">Procesando la descarga…</string>
   <string name="download_error_general">No se pudo descargar</string>
   <string name="download_error_disk">No hay suficiente espacio en disco para descargar</string>
   <string name="download_error_network">No se pudo descargar debido a un error de red</string>
   <string name="download_error_perms">No se pudo descargar debido a un error de permisos</string>
   <string name="download_error_invalid_download">El archivo descargado se corrompió</string>
   <string name="download_error_invalid_download_retry">Archivos dañados, tratando de volver a descargar</string>
-  <string name="download_error_network_retry">Error de la red, intentando reanudar...</string>
+  <string name="download_error_network_retry">Error de la red, intentando reanudar…</string>
   <string name="notification_download_canceled">Descarga cancelada</string>
   <string name="download_non_wifi_prompt">No estás conectado a una red WiFi. ¿Descargar los datos de todos modos?</string>
   <!--downloading dialogs-->
@@ -171,8 +169,6 @@
     <item quantity="other">%s versículos</item>
   </plurals>
   <!--ayah action panel-->
-  <string name="ayah_tags_page">Etiquetas</string>
-  <string name="ayah_translation_page">Traducción</string>
   <string name="play_from">Desde</string>
   <string name="play_to">Para</string>
   <string name="play_options">Opciones</string>
@@ -186,7 +182,6 @@
 
   <!--long press-->
   <string name="bookmark_ayah">Agregar este versículo a Favoritos</string>
-  <string name="unbookmark_ayah">Eliminar este versículo de los favoritos</string>
   <string name="tag_ayah">Etiquetar esta versículo</string>
   <string name="share_ayah">Compartir enlace del versículo</string>
   <string name="share_ayah_text">Compartir texto del versículo</string>
@@ -196,7 +191,6 @@
   <string name="search_key">Pulse la tecla de búsqueda para buscar un versículo</string>
   <string name="copy_ayah">Copiar versículo</string>
   <string name="ayah_copied_popup">Versículo copiado</string>
-  <string name="show_more">Ver más</string>
   <!--bookmarks & tags contextual action bar-->
   <string name="delete_bookmark">Borrar Favorito</string>
   <string name="tag_bookmark">Etiquetar Favorito</string>

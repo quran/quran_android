@@ -259,7 +259,7 @@ public class TagBookmarkDialog extends DialogFragment {
                           ViewGroup parent) {
          ViewHolder holder;
          if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.tag_row, null);
+            convertView = mInflater.inflate(R.layout.tag_row, parent, false);
             holder = new ViewHolder();
             holder.checkBox = (CheckBox)convertView
                     .findViewById(R.id.tag_checkbox);
