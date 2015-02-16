@@ -63,6 +63,7 @@ import android.util.SparseIntArray;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 
 /**
  * Service that handles media playback. This is the Service through which we
@@ -225,17 +226,27 @@ public class AudioService extends Service implements OnCompletionListener,
 
    public static final int MSG_START_AUDIO = 1;
    public static final int MSG_UPDATE_AUDIO_POS = 2;
-   private Handler mHandler = new Handler(){
-      @Override
-      public void handleMessage(Message msg){
-         if (msg == null){ return; }
-         if (msg.what == MSG_START_AUDIO){
-            configAndStartMediaPlayer();
-         } else if (msg.what == MSG_UPDATE_AUDIO_POS){
-            updateAudioPlayPosition();
-         }
-      }
-   };
+
+   private static class ServiceHandler extends Handler {
+     private WeakReference<AudioService> mServiceRef;
+
+     public ServiceHandler(AudioService service) {
+       mServiceRef = new WeakReference<>(service);
+     }
+
+     @Override
+     public void handleMessage(Message msg) {
+       final AudioService service = mServiceRef.get();
+        if (service == null || msg == null){ return; }
+        if (msg.what == MSG_START_AUDIO){
+           service.configAndStartMediaPlayer();
+        } else if (msg.what == MSG_UPDATE_AUDIO_POS){
+           service.updateAudioPlayPosition();
+        }
+     }
+   }
+
+   private Handler mHandler;
 
    /**
     * Makes sure the media player exists and has been reset. This will create
@@ -269,6 +280,7 @@ public class AudioService extends Service implements OnCompletionListener,
    @Override
    public void onCreate() {
       Log.i(TAG, "debug: Creating service");
+      mHandler = new ServiceHandler(this);
 
       mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
             .createWifiLock(WifiManager.WIFI_MODE_FULL, "audiolock");

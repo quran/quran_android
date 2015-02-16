@@ -89,6 +89,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/play_apply"
-            android:layout_gravity="right"/>
+            android:layout_gravity="end"/>
     </LinearLayout>
 </ScrollView>

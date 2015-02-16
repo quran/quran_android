@@ -197,9 +197,6 @@
     <string name="translation_dialog_yes">Yes</string>
     <string name="translation_dialog_later">Later</string>
 
-    <!-- used for screen readers -->
-    <string name="border">border</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -265,8 +262,6 @@
     </plurals>
 
     <!-- ayah action panel -->
-    <string name="ayah_tags_page">Tags</string>
-    <string name="ayah_translation_page">Translation</string>
     <string name="play_from">From</string>
     <string name="play_to">To</string>
     <string name="play_options">Options</string>
@@ -288,7 +283,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Bookmark this Ayah</string>
-    <string name="unbookmark_ayah">Remove bookmark for this Ayah</string>
     <string name="tag_ayah">Tag this Ayah</string>
     <string name="share_ayah">Share Ayah Link</string>
     <string name="share_ayah_text">Share Ayah Text</string>
@@ -298,8 +292,7 @@
     <string name="search_key">Press the search key to look up a verse</string>
     <string name="copy_ayah">Copy Ayah</string>
     <string name="ayah_copied_popup">Ayah Copied</string>
-    <string name="show_more">Show More</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Delete Bookmark</string>
     <string name="tag_bookmark">Tag Bookmark</string>

@@ -178,9 +178,6 @@
   <string name="translation_dialog_later">Plus tard
 </string>
 
-  <!-- used for screen readers -->
-  <string name="border">bordure</string>
-      
   <!-- End Number picker Strings -->
   <string name="quran_rob3">¼</string>
   <string name="quran_nos">½</string>
@@ -265,7 +262,6 @@
 
   <!-- long press -->
   <string name="bookmark_ayah">Ajouter l\'Aya aux favoris</string>
-  <string name="unbookmark_ayah">Supprimer l\'Aya des favoris</string>
   <string name="tag_ayah">Étiqueter cette Aya</string>
   <string name="share_ayah">Partager cette Aya</string>
   <string name="share_ayah_text">Partager le texte de l\'Aya</string>
@@ -275,8 +271,7 @@
   <string name="search_key">Appuyez sur la touche de recherche pour rechercher une Aya</string>
   <string name="copy_ayah">Copier l\'Aya</string>
   <string name="ayah_copied_popup">Aya copiée</string>
-  <string name="show_more">Afficher plus</string>
-  
+
   <!-- bookmarks & tags contextual action bar -->
   <string name="delete_bookmark">Supprimer le favori</string>
   <string name="tag_bookmark">Étiqueter le favori</string>

@@ -10,7 +10,6 @@
 	<color name="sura_info_color">#ffffffff</color>
     <color name="sura_number_color">#7fffffff</color>
 	<color name="sura_details_color">#b2ffffff</color>
-	<color name="hizb_number_color">#FF000000</color>
     <color name="transparent_actionbar_color">#AA000000</color>
     <color name="panel_background_color">#cc000000</color>
     <color name="icon_page_indicator_color">#FFFFFF</color>

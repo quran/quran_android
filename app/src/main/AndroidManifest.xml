@@ -12,6 +12,7 @@
    <application android:icon="@drawable/icon" android:label="@string/app_name"
                 android:name=".QuranApplication"
                 android:allowBackup="true"
+                android:supportsRtl="true"
 	   			android:theme="@style/Quran">
 		<activity android:name=".QuranDataActivity" android:label="@string/app_name"
 			android:configChanges="keyboardHidden|orientation"

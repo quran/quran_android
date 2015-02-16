@@ -135,9 +135,6 @@
     <string name="translation_dialog_yes">Yes</string>
     <string name="translation_dialog_later">Later</string>
 
-    <!-- used for screen readers -->
-    <string name="border">مرز</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -197,7 +194,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">نشانه گذاري آيه</string>
-    <string name="unbookmark_ayah">خذف نشانک از اين آيه</string>
     <string name="tag_ayah">Tag this Ayah</string>
     <string name="share_ayah">اشتراک گذاري آيه</string>
     <string name="translation_ayah">ترجمه آيه</string>
@@ -206,7 +202,6 @@
     <string name="search_key">کليد جستجو را کليک نماييد</string>
     <string name="copy_ayah">کپي کردن آيه</string>
     <string name="ayah_copied_popup">آيه کپي شد</string>
-    <string name="show_more">بيشتر</string>
 
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">حذف نشانک</string>

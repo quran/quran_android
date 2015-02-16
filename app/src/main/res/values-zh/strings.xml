@@ -148,9 +148,6 @@
     <string name="translation_dialog_yes">好的</string>
     <string name="translation_dialog_later">稍后再说</string>
 
-    <!-- used for screen readers -->
-    <string name="border">边框</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -212,7 +209,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">收藏此节</string>
-    <string name="unbookmark_ayah">取消收藏此节</string>
     <string name="tag_ayah">为此节加上标签</string>
     <string name="share_ayah">分享此节</string>
     <string name="translation_ayah">翻译此节</string>
@@ -221,8 +217,7 @@
     <string name="search_key">按住搜索键来查找某节</string>
     <string name="copy_ayah">复制此节</string>
     <string name="ayah_copied_popup">复制成功</string>
-    <string name="show_more">更多…</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">取消收藏</string>
     <string name="tag_bookmark">为收藏加标签</string>

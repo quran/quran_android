@@ -36,6 +36,7 @@ package com.quran.labs.androidquran.widgets;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -977,12 +978,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
       } else {
         int mainViewOffset = getCurrentParallaxOffset();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-          mMainView.setTranslationY(mainViewOffset);
+          moveMainView(mainViewOffset);
         } /* else {
           AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
         } */
       }
     }
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  private void moveMainView(int mainViewOffset) {
+    mMainView.setTranslationY(mainViewOffset);
   }
 
   @Override
