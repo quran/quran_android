@@ -11,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 7
+        minSdkVersion 14
         targetSdkVersion 21
         versionCode 259
         versionName "2.5.9"
