@@ -18,8 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ImageAyahUtils {
-   private static final String TAG =
-           "com.quran.labs.androidquran.ui.util.ImageAyahUtils";
+   private static final String TAG = ImageAyahUtils.class.getSimpleName();
 
    private static QuranAyah getAyahFromKey(String key){
       String[] parts = key.split(":");
