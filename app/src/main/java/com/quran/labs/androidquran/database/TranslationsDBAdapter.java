@@ -17,8 +17,7 @@ import static com.quran.labs.androidquran.database.TranslationsDBHelper.Translat
 
 public class TranslationsDBAdapter {
 
-   private static final String TAG =
-           "com.quran.labs.androidquran.database.TranslationsDBAdapter";
+   private static final String TAG = TranslationsDBAdapter.class.getSimpleName();
 
    private SQLiteDatabase mDb;
    private Context mContext;
