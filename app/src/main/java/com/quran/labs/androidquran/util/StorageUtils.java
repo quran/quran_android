@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class StorageUtils {
 
-  private static final String TAG = "com.quran.labs.androidquran.util.StorageUtils";
+  private static final String TAG = StorageUtils.class.getSimpleName();
 
   /**
    * @return A List of all storage locations available

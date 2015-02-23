@@ -41,8 +41,7 @@ import java.util.List;
 
 public class QuranPreferenceActivity extends PreferenceActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
-  private static final String TAG =
-      "com.quran.labs.androidquran.QuranPreferenceActivity";
+  private static final String TAG = QuranPreferenceActivity.class.getSimpleName();
 
   private ListPreference mListStorageOptions;
   private MoveFilesAsyncTask mMoveFilesTask;
