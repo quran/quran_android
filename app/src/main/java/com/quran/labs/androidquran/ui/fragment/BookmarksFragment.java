@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookmarksFragment extends AbsMarkersFragment {
-   private static final String TAG =
-         "com.quran.labs.androidquran.ui.fragment.BookmarksFragment";
-   
+   private static final String TAG = BookmarksFragment.class.getSimpleName();
+
    private static final int[] VALID_SORT_OPTIONS = {R.id.sort_location, R.id.sort_date};
 
    public static BookmarksFragment newInstance(){
