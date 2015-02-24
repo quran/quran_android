@@ -197,9 +197,6 @@
     <string name="translation_dialog_yes">Да</string>
     <string name="translation_dialog_later">Позже</string>
 
-    <!-- used for screen readers -->
-    <string name="border">граница</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -286,7 +283,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Создать закладку этого аята</string>
-    <string name="unbookmark_ayah">Удалить закладку для этого аята</string>
     <string name="tag_ayah">Создать метку для этого аята</string>
     <string name="share_ayah">Поделиться аятом</string>
     <string name="share_ayah_text">Поделиться текстом аята</string>
@@ -296,7 +292,6 @@
     <string name="search_key">Нажмите кнопку поиска, чтобы найти стих</string>
     <string name="copy_ayah">Скопировать аят</string>
     <string name="ayah_copied_popup">Аят скопирован</string>
-    <string name="show_more">Показать еще</string>
 
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Удалить закладку</string>

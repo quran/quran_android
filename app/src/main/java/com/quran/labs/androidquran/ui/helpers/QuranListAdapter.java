@@ -1,148 +1,257 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.CheckableLinearLayout;
+import com.quran.labs.androidquran.widgets.JuzView;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class QuranListAdapter extends BaseAdapter {
+import java.util.ArrayList;
+import java.util.List;
+
+public class QuranListAdapter extends
+    RecyclerView.Adapter<QuranListAdapter.HeaderHolder>
+    implements View.OnClickListener, View.OnLongClickListener {
 
    private Context mContext;
    private LayoutInflater mInflater;
    private QuranRow[] mElements;
-   private int mLayout;
    private boolean mReshapeArabic;
    private boolean mUseArabicFont;
    private boolean mSelectableHeaders;
+   private RecyclerView mRecyclerView;
+   private SparseBooleanArray mCheckedState;
+   private QuranTouchListener mTouchListener;
 
-   public QuranListAdapter(Context context, int layout,
+   public QuranListAdapter(Context context, RecyclerView recyclerView,
        QuranRow[] items, boolean selectableHeaders){
       mInflater = LayoutInflater.from(context);
+      mRecyclerView = recyclerView;
       mElements = items;
-      mLayout = layout;
       mContext = context;
       mSelectableHeaders = selectableHeaders;
+      mCheckedState = new SparseBooleanArray();
 
       // should we reshape if we have arabic?
       mUseArabicFont = QuranSettings.needArabicFont(context);
       mReshapeArabic = QuranSettings.isReshapeArabic(context);
    }
 
-   public int getCount() {
+   public long getItemId(int position) {
+      return position;
+   }
+
+   @Override
+   public int getItemCount() {
       return mElements.length;
    }
 
-   public Object getItem(int position) {
+   public QuranRow getQuranRow(int position) {
       return mElements[position];
    }
 
-   public long getItemId(int position) {
-      return position;
+   public boolean isItemChecked(int position) {
+      return mCheckedState.get(position);
+   }
+
+   public void setItemChecked(int position, boolean checked) {
+      mCheckedState.put(position, checked);
+      notifyItemChanged(position);
+   }
+
+   public List<QuranRow> getCheckedItems() {
+      final List<QuranRow> result = new ArrayList<>();
+      final int count = mCheckedState.size();
+      for (int i = 0; i < count; i++) {
+         final int key = mCheckedState.keyAt(i);
+         if (mCheckedState.get(key)) {
+            result.add(getQuranRow(key));
+         }
+      }
+      return result;
+   }
+
+   public void uncheckAll() {
+      mCheckedState.clear();
+      notifyDataSetChanged();
    }
 
    public void setElements(QuranRow[] elements){
       mElements = elements;
    }
 
-   public View getView(final int position, View convertView, ViewGroup parent) {
-      ViewHolder holder;
+   private void bindRow(HeaderHolder vh, int position) {
+      ViewHolder holder = (ViewHolder) vh;
 
-      if (convertView == null) {
-         convertView = mInflater.inflate(mLayout, null);
-         holder = new ViewHolder();
-         holder.text = (TextView)convertView.findViewById(R.id.suraName);
-         holder.metadata = (TextView)convertView.findViewById(R.id.suraDetails);
-         holder.page = (TextView)convertView.findViewById(R.id.pageNumber);
-         holder.number = (TextView)convertView.findViewById(R.id.suraNumber);
-         holder.header = (TextView)convertView.findViewById(R.id.headerName);
-         holder.image = (TextView)convertView.findViewById(R.id.rowIcon);
-
-         if (mUseArabicFont){
-            Typeface typeface = ArabicStyle.getTypeface(mContext);
-            holder.text.setTypeface(typeface);
-            holder.metadata.setTypeface(typeface);
-            holder.header.setTypeface(typeface);
-         }
-         convertView.setTag(holder);
-      }
-      else { holder = (ViewHolder) convertView.getTag(); }
-
-      QuranRow item = mElements[position];
-      String text = item.text;
-      if (mReshapeArabic){
-         text = ArabicStyle.reshape(mContext, text);
-      }
-
-      holder.page.setText(QuranUtils.getLocalizedNumber(mContext, item.page));
-      holder.text.setText(text);
-      holder.header.setText(text);
+      final QuranRow item = mElements[position];
+      bindHeader(vh, position);
       holder.number.setText(
               QuranUtils.getLocalizedNumber(mContext, item.sura));
 
-      int color = R.color.sura_details_color;
-      if (mElements[position].isHeader()){
-         holder.text.setVisibility(View.GONE);
-         holder.header.setVisibility(View.VISIBLE);
-         holder.metadata.setVisibility(View.GONE);
+      String info = item.metadata;
+      holder.metadata.setVisibility(View.VISIBLE);
+      holder.metadata.setText(ArabicStyle.reshape(info));
+
+      if (item.juzType != null) {
+         holder.image.setImageDrawable(
+             new JuzView(mContext, item.juzType, item.juzOverlayText));
+         holder.image.setVisibility(View.VISIBLE);
          holder.number.setVisibility(View.GONE);
+      } else if (item.imageResource == null) {
+         holder.number.setVisibility(View.VISIBLE);
          holder.image.setVisibility(View.GONE);
-         color = R.color.header_text_color;
-      }
-      else {
-         String info = item.metadata;
-         holder.metadata.setVisibility(View.VISIBLE);
-         holder.text.setVisibility(View.VISIBLE);
-         holder.header.setVisibility(View.GONE);
-         holder.metadata.setText(ArabicStyle.reshape(mContext, info));
-
-         if (item.imageResource == null){
-            holder.number.setVisibility(View.VISIBLE);
-            holder.image.setVisibility(View.GONE);
+      } else {
+         holder.image.setImageResource(item.imageResource);
+         if (item.imageFilterColor == null) {
+           holder.image.setColorFilter(null);
+         } else {
+           holder.image.setColorFilter(
+               item.imageFilterColor, PorterDuff.Mode.SRC_ATOP);
          }
-         else {
-            holder.image.setBackgroundResource(item.imageResource);
-            holder.image.setText(item.imageText);
-            holder.image.setVisibility(View.VISIBLE);
-            holder.number.setVisibility(View.GONE);
-         }
+         holder.image.setVisibility(View.VISIBLE);
+         holder.number.setVisibility(View.GONE);
       }
-      holder.page.setTextColor(mContext.getResources().getColor(color));
-      int pageVisibility = item.page == 0? View.GONE : View.VISIBLE;
-      holder.page.setVisibility(pageVisibility);
-      
-      // If the row is checked (for CAB mode), theme its bg appropriately
-      if (parent != null && parent instanceof ListView){
-         int background = ((ListView)parent).isItemChecked(position)?
-                 R.drawable.abs__list_activated_holo : 0;
-         convertView.setBackgroundResource(background);
-      }
-
-      return convertView;
    }
 
-  @Override
-  public boolean isEnabled(int position) {
-    final QuranRow selected = mElements[position];
-    return mSelectableHeaders || selected.isBookmark() ||
-        selected.rowType == QuranRow.NONE ||
-        (selected.isBookmarkHeader() && selected.tagId >= 0);
+   private void bindHeader(HeaderHolder holder, int pos) {
+      final QuranRow item = mElements[pos];
+      String text = item.text;
+      if (mReshapeArabic){
+         text = ArabicStyle.reshape(text);
+      }
+
+      holder.title.setText(text);
+      if (item.page == 0) {
+         holder.pageNumber.setVisibility(View.GONE);
+      } else {
+         holder.pageNumber.setVisibility(View.VISIBLE);
+         holder.pageNumber.setText(
+             QuranUtils.getLocalizedNumber(mContext, item.page));
+      }
+      holder.setChecked(isItemChecked(pos));
+
+      final boolean enabled = isEnabled(pos);
+      holder.view.setEnabled(enabled);
+   }
+
+   @Override
+   public HeaderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      if (viewType == 0) {
+         final View view = mInflater.inflate(R.layout.index_header_row, parent, false);
+         return new HeaderHolder(view);
+      } else {
+         final View view = mInflater.inflate(R.layout.index_sura_row, parent, false);
+         return new ViewHolder(view);
+      }
+   }
+
+   @Override
+   public void onBindViewHolder(HeaderHolder viewHolder, int position) {
+      final int type = getItemViewType(position);
+      if (type == 0) {
+         bindHeader(viewHolder, position);
+      } else {
+         bindRow(viewHolder, position);
+      }
+   }
+
+   @Override
+   public int getItemViewType(int position) {
+      return mElements[position].isHeader() ? 0 : 1;
+   }
+
+   public boolean isEnabled(int position) {
+      final QuranRow selected = mElements[position];
+      return mSelectableHeaders || selected.isBookmark() ||
+          selected.rowType == QuranRow.NONE ||
+          (selected.isBookmarkHeader() && selected.tagId >= 0);
+   }
+
+  public void setQuranTouchListener(QuranTouchListener listener) {
+    mTouchListener = listener;
   }
 
-  class ViewHolder {
-      TextView text;
-      TextView page;
+  @Override
+  public void onClick(View v) {
+    final int position = mRecyclerView.getChildPosition(v);
+    if (position != RecyclerView.NO_POSITION) {
+      final QuranRow element = mElements[position];
+      if (mTouchListener == null) {
+        ((QuranActivity) mContext).jumpTo(element.page);
+      } else {
+        mTouchListener.onClick(element, position);
+      }
+    }
+  }
+
+  @Override
+  public boolean onLongClick(View v) {
+    if (mTouchListener != null) {
+      final int position = mRecyclerView.getChildPosition(v);
+      if (position != RecyclerView.NO_POSITION) {
+        return mTouchListener.onLongClick(mElements[position], position);
+      }
+    }
+    return false;
+  }
+
+  class HeaderHolder extends RecyclerView.ViewHolder {
+      TextView title;
+      TextView pageNumber;
+      CheckableLinearLayout view;
+
+      public HeaderHolder(View itemView) {
+         super(itemView);
+         view = (CheckableLinearLayout) itemView;
+         title = (TextView) itemView.findViewById(R.id.title);
+         pageNumber = (TextView) itemView.findViewById(R.id.pageNumber);
+
+         if (mUseArabicFont){
+            Typeface typeface = ArabicStyle.getTypeface(mContext);
+            title.setTypeface(typeface);
+         }
+         itemView.setOnClickListener(QuranListAdapter.this);
+         itemView.setOnLongClickListener(QuranListAdapter.this);
+      }
+
+      public void setChecked(boolean checked) {
+         view.setChecked(checked);
+      }
+   }
+
+  class ViewHolder extends HeaderHolder {
       TextView number;
       TextView metadata;
-      TextView header;
-      TextView image;
-   }
+      ImageView image;
+
+     public ViewHolder(View itemView) {
+        super(itemView);
+        metadata = (TextView) itemView.findViewById(R.id.metadata);
+        number = (TextView) itemView.findViewById(R.id.suraNumber);
+        image = (ImageView) itemView.findViewById(R.id.rowIcon);
+
+        if (mUseArabicFont){
+           Typeface typeface = ArabicStyle.getTypeface(mContext);
+           metadata.setTypeface(typeface);
+        }
+     }
+  }
+
+  public interface QuranTouchListener {
+    public void onClick(QuranRow row, int position);
+    public boolean onLongClick(QuranRow row, int position);
+  }
 }

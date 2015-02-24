@@ -1,11 +1,13 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.labs.androidquran.database.DatabaseUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Rect;
-import com.quran.labs.androidquran.util.QuranFileUtils;
+import android.graphics.RectF;
 
 import java.io.File;
 
@@ -32,7 +34,7 @@ public class AyahInfoDatabaseHandler {
 	}
 	
 	public boolean validDatabase(){
-		return (database == null)? false : database.isOpen();
+		return database != null && database.isOpen();
 	}
 
    public Cursor getVersesBoundsForPage(int page){
@@ -45,34 +47,28 @@ public class AyahInfoDatabaseHandler {
               COL_SURA + "," + COL_AYAH + "," + COL_POSITION);
    }
 	
-	public Rect getPageBounds(int page) {
+	public RectF getPageBounds(int page) {
 		if (!validDatabase()){ return null; }
 
       Cursor c = null;
       try {
          String[] colNames = new String[] {
-               "MIN("+MIN_X+")", "MIN("+MIN_Y+")",
-               "MAX("+MAX_X+")", "MAX("+MAX_Y+")"};
+               "MIN(" + MIN_X + ")", "MIN(" + MIN_Y + ")",
+               "MAX(" + MAX_X + ")", "MAX(" + MAX_Y + ")"};
          c = database.query(GLYPHS_TABLE,
                  colNames, COL_PAGE + "=" + page, null, null, null, null);
          if (!c.moveToFirst()){ return null; }
-         Rect r = new Rect(c.getInt(0), c.getInt(1), c.getInt(2), c.getInt(3));
-         return r;
+         return new RectF(c.getInt(0), c.getInt(1), c.getInt(2), c.getInt(3));
       }
       catch (Exception e){
          return null;
-      }
-      finally {
-         if (c != null){
-            try { c.close(); } catch (Exception e){ }
-         }
+      } finally {
+        DatabaseUtils.closeCursor(c);
       }
    }
 	
 	public void closeDatabase() {
-		if (database != null){
-			try { database.close(); }
-         catch (Exception e){}
-      }
+    DatabaseUtils.closeDatabase(database);
+    database = null;
 	}
 }

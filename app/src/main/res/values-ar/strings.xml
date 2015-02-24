@@ -201,8 +201,6 @@
     </plurals>
 
     <!-- ayah action panel -->
-    <string name="ayah_tags_page">تصنيفات</string>
-    <string name="ayah_translation_page">ترجمة</string>
     <string name="play_from">من</string>
     <string name="play_to">إلى</string>
     <string name="play_options">اختيارات</string>
@@ -222,7 +220,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
-    <string name="unbookmark_ayah">حذف الآية من المرجعيات</string>
     <string name="tag_ayah">تصنيف الآية</string>
     <string name="share_ayah">شارك رابط الآية</string>
     <string name="share_ayah_text">شارك نص الآية</string>
@@ -232,8 +229,7 @@
     <string name="search_key">للبحث عن آية</string>
     <string name="copy_ayah">نسخ الآية</string>
     <string name="ayah_copied_popup">تم نسخ الآية</string>
-    <string name="show_more">المزيد</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">حذف المرجعية</string>
     <string name="tag_bookmark">تصنيف المرجعية</string>

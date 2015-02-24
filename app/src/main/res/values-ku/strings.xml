@@ -162,9 +162,6 @@
     <string name="translation_dialog_yes">بەڵێ</string>
     <string name="translation_dialog_later">دواتر</string>
 
-    <!-- used for screen readers -->
-    <string name="border">لێوار</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -228,7 +225,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">نیشانەکردنی ئەم ئایەتە</string>
-    <string name="unbookmark_ayah">لابردنی نیشانەکراو لەم ئایەتەوە</string>
     <string name="tag_ayah">بڕگەکردنی ئەم ئایەتە</string>
     <string name="share_ayah">ناردنی ئایەت</string>
     <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
@@ -238,8 +234,7 @@
     <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
     <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>
     <string name="ayah_copied_popup">ئایەت لەبەریگیراوە</string>
-    <string name="show_more">پیشاندانی زیاتر</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">سڕینەوەی نیشانەکراوە</string>
     <string name="tag_bookmark">بڕگە نیشانەکرا</string>

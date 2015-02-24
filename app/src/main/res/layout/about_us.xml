@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/txtDevelopedBy"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:linksClickable="true"
         android:paddingBottom="4dp"
         android:paddingLeft="10sp"
+        android:paddingRight="10sp"
         android:text="@string/developedBy"
         android:textColor="#FFFFFF"
         android:textSize="12sp" />
 
     <TextView
         android:id="@+id/txtCopyRights"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/txtDevelopedBy"
         android:linksClickable="true"
         android:paddingLeft="10sp"
+        android:paddingRight="10sp"
         android:text="@string/copyRights"
         android:textColor="#FFFFFF"
         android:textSize="14sp" />
@@ -37,15 +39,15 @@
         android:visibility="visible" />
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@id/btnQuestions"
         android:visibility="visible">
 
         <TextView
             android:id="@+id/txtAbout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:lineSpacingExtra="4dip"
             android:padding="10sp"
             android:scrollbarAlwaysDrawVerticalTrack="true"

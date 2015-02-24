@@ -3,9 +3,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="@dimen/abs__action_bar_default_height"
+    android:layout_height="?attr/actionBarSize"
     android:gravity="center_vertical"
-    android:layout_gravity="center_vertical|left">
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:layout_gravity="center_vertical|start">
     <TextView android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,7 +19,7 @@
     <TextView android:id="@+id/subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|left"
+        android:gravity="center_vertical"
         android:singleLine="true"
         android:ellipsize="end" />
 </LinearLayout>

@@ -1,8 +1,5 @@
 package com.quran.labs.androidquran;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -11,6 +8,7 @@ import com.quran.labs.androidquran.util.StorageUtils;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,10 +19,19 @@ import android.os.Environment;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.internal.widget.TintCheckBox;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,10 +39,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class QuranPreferenceActivity extends SherlockPreferenceActivity
+public class QuranPreferenceActivity extends PreferenceActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
-  private static final String TAG =
-      "com.quran.labs.androidquran.QuranPreferenceActivity";
+  private static final String TAG = QuranPreferenceActivity.class.getSimpleName();
 
   private ListPreference mListStorageOptions;
   private MoveFilesAsyncTask mMoveFilesTask;
@@ -50,15 +56,16 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     ((QuranApplication)getApplication()).refreshLocale(false);
-
-    setTheme(R.style.Theme_Sherlock);
     super.onCreate(savedInstanceState);
 
-    final ActionBar actionBar = getSupportActionBar();
-    if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(true);
-      actionBar.setTitle(R.string.menu_settings);
-    }
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    toolbar.setTitle(R.string.menu_settings);
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     // add preferences
     addPreferencesFromResource(R.xml.quran_preferences);
@@ -140,20 +147,32 @@ public class QuranPreferenceActivity extends SherlockPreferenceActivity
   }
 
   @Override
+  public void setContentView(int layoutId) {
+    // https://stackoverflow.com/questions/17849193
+    final LayoutInflater inflater = LayoutInflater.from(this);
+    final View parent = inflater.inflate(R.layout.preferences,
+        (ViewGroup) getWindow().getDecorView().getRootView(), false);
+    final FrameLayout contentArea =
+        (FrameLayout) parent.findViewById(R.id.content);
+    LayoutInflater.from(this).inflate(layoutId, contentArea, true);
+    setContentView(parent);
+  }
+
+  @Nullable
+  @Override
+  public View onCreateView(String name, Context context, AttributeSet attrs) {
+    if ("CheckBox".equals(name)) {
+      return new TintCheckBox(context, attrs);
+    }
+    return super.onCreateView(name, context, attrs);
+  }
+
+  @Override
   protected void onDestroy() {
     if (mDialog != null) {
       mDialog.dismiss();
     }
     super.onDestroy();
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      finish();
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   private void loadStorageOptions() {

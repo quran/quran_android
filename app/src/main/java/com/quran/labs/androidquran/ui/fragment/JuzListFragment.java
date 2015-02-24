@@ -1,34 +1,36 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.JuzView;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 
-public class JuzListFragment extends SherlockFragment {
+public class JuzListFragment extends Fragment {
+  private static int[] sEntryTypes = {
+      JuzView.TYPE_JUZ, JuzView.TYPE_QUARTER,
+      JuzView.TYPE_HALF, JuzView.TYPE_THREE_QUARTERS };
 
-  private ListView mListView;
-  private QuranListAdapter mAdapter;
-  private Boolean mLastArabicSelection;
+  private RecyclerView mRecyclerView;
 
   public static JuzListFragment newInstance() {
     return new JuzListFragment();
@@ -39,21 +41,15 @@ public class JuzListFragment extends SherlockFragment {
       ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.quran_list, container, false);
 
-    mListView = (ListView) view.findViewById(R.id.list);
-    mAdapter = new QuranListAdapter(getActivity(),
-        R.layout.index_sura_row, getJuz2List(), true);
-    mListView.setAdapter(mAdapter);
+    final Context context = getActivity();
+    mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+    mRecyclerView.setHasFixedSize(true);
+    mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-    mListView.setOnItemClickListener(new OnItemClickListener() {
-      public void onItemClick(AdapterView<?> parent, View v,
-          int position, long id) {
-        QuranRow elem = (QuranRow) mAdapter.getItem((int) id);
-        if (elem.page > 0) {
-          ((QuranActivity) getActivity()).jumpTo(elem.page);
-        }
-      }
-    });
-    mLastArabicSelection = QuranSettings.isArabicNames(getActivity().getApplicationContext());
+    final QuranListAdapter adapter =
+        new QuranListAdapter(context, mRecyclerView, getJuz2List(), true);
+    mRecyclerView.setAdapter(adapter);
     return view;
   }
 
@@ -65,7 +61,7 @@ public class JuzListFragment extends SherlockFragment {
     if (lastPage != Constants.NO_PAGE_SAVED) {
       int juz = QuranInfo.getJuzFromPage(lastPage);
       int position = (juz - 1) * 9;
-      mListView.setSelectionFromTop(position, 20);
+      mRecyclerView.scrollToPosition(position);
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
@@ -78,13 +74,11 @@ public class JuzListFragment extends SherlockFragment {
 
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void updateScrollBarPositionHoneycomb() {
-    mListView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
+    mRecyclerView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
   }
 
   private QuranRow[] getJuz2List() {
     Activity activity = getActivity();
-    int[] images = {R.drawable.hizb_full, R.drawable.hizb_quarter,
-        R.drawable.hizb_half, R.drawable.hizb_threequarters};
     Resources res = getResources();
     String[] quarters = res.getStringArray(R.array.quarter_prefix_array);
     QuranRow[] elements = new QuranRow[JUZ2_COUNT * (8 + 1)];
@@ -96,21 +90,29 @@ public class JuzListFragment extends SherlockFragment {
 
       if (i % 8 == 0) {
         int juz = 1 + (i / 8);
-        elements[ctr++] = new QuranRow(QuranInfo.getJuzTitle(activity) +
-            " " + QuranUtils.getLocalizedNumber(activity, juz), null,
-            QuranRow.HEADER, juz,
-            QuranInfo.JUZ_PAGE_START[juz - 1], null
-        );
+        final String juzTitle = QuranInfo.getJuzTitle(activity) +
+            " " + QuranUtils.getLocalizedNumber(activity, juz);
+        final QuranRow.Builder builder = new QuranRow.Builder()
+            .withType(QuranRow.HEADER)
+            .withText(juzTitle)
+            .withPage(QuranInfo.JUZ_PAGE_START[juz - 1]);
+        elements[ctr++] = builder.build();
       }
-      String verseString = getString(R.string.quran_ayah) + " " + pos[1];
-      elements[ctr++] = new QuranRow(quarters[i],
-          QuranInfo.getSuraName(activity, pos[0], true) +
-              ", " + verseString, 0, page, images[i % 4]
-      );
+
+      final String verseString = getString(R.string.quran_ayah) + " " + pos[1];
+      final String metadata =
+          QuranInfo.getSuraName(activity, pos[0], true) +  ", " + verseString;
+      final QuranRow.Builder builder = new QuranRow.Builder()
+          .withText(quarters[i])
+          .withMetadata(metadata)
+          .withPage(page)
+          .withJuzType(sEntryTypes[i % 4]);
       if (i % 4 == 0) {
-        elements[ctr - 1].imageText = QuranUtils.getLocalizedNumber(
-            activity, 1 + (i / 4));
+        final String overlayText =
+            QuranUtils.getLocalizedNumber(activity, 1 + (i / 4));
+        builder.withJuzOverlayText(overlayText);
       }
+      elements[ctr++] = builder.build();
     }
 
     return elements;

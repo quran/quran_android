@@ -23,12 +23,10 @@ public class ArabicStyle {
         retChars[n] += 0x0660 - '0';
       }
     }
-    StringBuilder ret = new StringBuilder();
-    ret.append(retChars);
-    return ret.toString();
+    return String.valueOf(retChars);
   }
 
-  public static String reshape(Context context, String text) {
+  public static String reshape(String text) {
     ArabicReshaper rs = new ArabicReshaper();
     return rs.reshape(text);
   }
