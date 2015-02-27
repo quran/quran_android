@@ -2,15 +2,12 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.CheckableLinearLayout;
 import com.quran.labs.androidquran.widgets.JuzView;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -29,8 +26,6 @@ public class QuranListAdapter extends
    private Context mContext;
    private LayoutInflater mInflater;
    private QuranRow[] mElements;
-   private boolean mReshapeArabic;
-   private boolean mUseArabicFont;
    private boolean mSelectableHeaders;
    private RecyclerView mRecyclerView;
    private SparseBooleanArray mCheckedState;
@@ -44,10 +39,6 @@ public class QuranListAdapter extends
       mContext = context;
       mSelectableHeaders = selectableHeaders;
       mCheckedState = new SparseBooleanArray();
-
-      // should we reshape if we have arabic?
-      mUseArabicFont = QuranSettings.needArabicFont(context);
-      mReshapeArabic = QuranSettings.isReshapeArabic(context);
    }
 
    public long getItemId(int position) {
@@ -101,9 +92,8 @@ public class QuranListAdapter extends
       holder.number.setText(
               QuranUtils.getLocalizedNumber(mContext, item.sura));
 
-      String info = item.metadata;
       holder.metadata.setVisibility(View.VISIBLE);
-      holder.metadata.setText(ArabicStyle.reshape(info));
+      holder.metadata.setText(item.metadata);
 
       if (item.juzType != null) {
          holder.image.setImageDrawable(
@@ -128,12 +118,7 @@ public class QuranListAdapter extends
 
    private void bindHeader(HeaderHolder holder, int pos) {
       final QuranRow item = mElements[pos];
-      String text = item.text;
-      if (mReshapeArabic){
-         text = ArabicStyle.reshape(text);
-      }
-
-      holder.title.setText(text);
+      holder.title.setText(item.text);
       if (item.page == 0) {
          holder.pageNumber.setVisibility(View.GONE);
       } else {
@@ -219,10 +204,6 @@ public class QuranListAdapter extends
          title = (TextView) itemView.findViewById(R.id.title);
          pageNumber = (TextView) itemView.findViewById(R.id.pageNumber);
 
-         if (mUseArabicFont){
-            Typeface typeface = ArabicStyle.getTypeface(mContext);
-            title.setTypeface(typeface);
-         }
          itemView.setOnClickListener(QuranListAdapter.this);
          itemView.setOnLongClickListener(QuranListAdapter.this);
       }
@@ -242,11 +223,6 @@ public class QuranListAdapter extends
         metadata = (TextView) itemView.findViewById(R.id.metadata);
         number = (TextView) itemView.findViewById(R.id.suraNumber);
         image = (ImageView) itemView.findViewById(R.id.rowIcon);
-
-        if (mUseArabicFont){
-           Typeface typeface = ArabicStyle.getTypeface(mContext);
-           metadata.setTypeface(typeface);
-        }
      }
   }
 

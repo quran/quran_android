@@ -158,7 +158,7 @@ public abstract class AbsMarkersFragment extends Fragment {
     super.onResume();
     final Activity activity = getActivity();
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
-        QuranSettings.isArabicNames(activity)) {
+        QuranSettings.getInstance(activity).isArabicNames()) {
       updateScrollBarPositionHoneycomb();
     }
 

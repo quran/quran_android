@@ -77,7 +77,6 @@ public class TabletFragment extends Fragment
   private Future<?> mRightPageLoadTask;
 
   private boolean mJustCreated;
-  private SharedPreferences mPrefs;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
     final TabletFragment f = new TabletFragment();
@@ -101,7 +100,6 @@ public class TabletFragment extends Fragment
                            ViewGroup container, Bundle savedInstanceState) {
     final Context context = getActivity();
     mMainView = new TabletView(context);
-    mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     mMode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
     if (mMode == Mode.ARABIC) {
@@ -141,7 +139,7 @@ public class TabletFragment extends Fragment
     mJustCreated = true;
 
     mLastHighlightedPage = 0;
-    mOverlayText = mPrefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
+    mOverlayText = QuranSettings.getInstance(context).shouldOverlayPageInfo();
     return mMainView;
   }
 
@@ -164,10 +162,9 @@ public class TabletFragment extends Fragment
       return;
     }
 
-    final boolean useNewBackground =
-        mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
-    final boolean isNightMode =
-        mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    final QuranSettings settings = QuranSettings.getInstance(context);
+    final boolean useNewBackground = settings.useNewBackground();
+    final boolean isNightMode = settings.isNightMode();
     mMainView.updateView(isNightMode, useNewBackground);
   }
 
@@ -219,7 +216,7 @@ public class TabletFragment extends Fragment
       new QueryPageCoordinatesTask(context)
           .execute(mPageNumber - 1, mPageNumber);
 
-      if (QuranSettings.shouldHighlightBookmarks(context)) {
+      if (QuranSettings.getInstance(context).shouldHighlightBookmarks()) {
         new HighlightTagsTask(context)
             .execute(mPageNumber - 1, mPageNumber);
       }

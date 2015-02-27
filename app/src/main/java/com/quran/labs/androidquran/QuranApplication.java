@@ -11,9 +11,6 @@ import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 
-/**
- * Created by ahmedre on 8/3/13.
- */
 public class QuranApplication extends Application {
 
   @Override
@@ -24,7 +21,7 @@ public class QuranApplication extends Application {
   }
 
   public void refreshLocale(boolean force) {
-    String language = QuranSettings.isArabicNames(this) ? "ar" : null;
+    String language = QuranSettings.getInstance(this).isArabicNames() ? "ar" : null;
 
     Locale locale = null;
     if ("ar".equals(language)) {

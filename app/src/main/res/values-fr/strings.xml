@@ -112,9 +112,6 @@
   <string name="prefs_category_display_settings">Parametres d\'affichage</string>
   <string name="prefs_use_arabic_title">Mode arabe</string>
   <string name="prefs_use_arabic_summary_on">L\'application sera traduite en arabe (redémarrage de l\'application nécessaire).</string>
-  <string name="prefs_use_arabic_reshaper_title">Activer Arabic Reshaper</string>
-  <string name="prefs_use_arabic_reshaper_summary_on">Si l\'arabe s\'affiche à l\'envers, désactivez cette option.</string>
-  <string name="prefs_use_arabic_reshaper_summary_off">Si le texte arabe est espacé, activez cette option.</string>
   <string name="prefs_new_background_title">Nouvel arrière-plan</string>
   <string name="prefs_lock_orientation_title">Verrouiller l\'orientation de l\'écran</string>
   <string name="prefs_lock_orientation_summary_on">L\'affichage du coran ne s\'adaptera pas au changement d\'orientation de l\'écran.</string>
@@ -146,7 +143,6 @@
   <string name="available_translations">Disponible en téléchargement</string>
   <string name="remove_button">Supprimer</string>
   <string name="dialog_ok">Ok</string>
-  <string name="prefs_advanced_settings_title">Paramètres avancés</string>  
   <string name="prefs_app_location_summary">Sélectionnez sur quelle sdcard sauvegarder les fichiers</string>
   <string name="prefs_app_location_title">Location de l\'application</string>
   <string name="prefs_app_size">La taille de l\'application est</string>

@@ -4,7 +4,6 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
@@ -26,13 +25,11 @@ import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -64,7 +61,6 @@ public class QuranPageFragment extends Fragment
 
   private HighlightingImageView mImageView;
   private QuranImagePageLayout mQuranPageLayout;
-  private SharedPreferences mPrefs;
   private Handler mHandler = new Handler();
 
   public static QuranPageFragment newInstance(int page) {
@@ -99,7 +95,6 @@ public class QuranPageFragment extends Fragment
     mQuranPageLayout = new QuranImagePageLayout(context);
     mQuranPageLayout.setPageController(this, mPageNumber);
     mImageView = mQuranPageLayout.getImageView();
-    mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     if (mCoordinatesData != null) {
       mImageView.setCoordinateData(mCoordinatesData);
@@ -117,14 +112,12 @@ public class QuranPageFragment extends Fragment
       return;
     }
 
-    final boolean useNewBackground =
-        mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
-    final boolean isNightMode =
-        mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
-    mOverlayText =
-        mPrefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
+    final QuranSettings settings = QuranSettings.getInstance(context);
+    final boolean useNewBackground = settings.useNewBackground();
+    final boolean isNightMode = settings.isNightMode();
+    mOverlayText = settings.shouldOverlayPageInfo();
     mQuranPageLayout.updateView(isNightMode, useNewBackground);
-    if (!mPrefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true)) {
+    if (!settings.highlightBookmarks()) {
       mImageView.unHighlight(HighlightType.BOOKMARK);
     }
   }
@@ -159,7 +152,7 @@ public class QuranPageFragment extends Fragment
         }
       }, 1000);
 
-      if (QuranSettings.shouldHighlightBookmarks(pagerActivity)) {
+      if (QuranSettings.getInstance(activity).shouldHighlightBookmarks()) {
         mHandler.postDelayed(new Runnable() {
           @Override
           public void run() {

@@ -84,9 +84,6 @@
     <string name="prefs_category_display_settings">كۆرۈنۈش تەڭشەكلىرى</string>
     <string name="prefs_use_arabic_title">ئەرەبچە ھالەت</string>
     <string name="prefs_use_arabic_summary_on">ئەپ ئەرەبچە ئارايۈزنى ئىشلىتىدۇ (قايتا قوزغىتىش زۆرۈر)</string>
-    <string name="prefs_use_arabic_reshaper_title">ئەرەبچە شەكىل تۈزىتىشنى ئىشلەت</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">ئەگەر ئەرەبچە تېكىست تەتۈر يۆنىلىشتە بولسا، بۇ تاللانمىنى تاللىماڭ.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">ئەگەر ئەرەبچە تېكىست ئۇلانمىغان بولسا، بۇ تاللانما تاللانسا ئۇنى تۈزىتىدۇ.</string>
     <string name="prefs_new_background_title">يېڭى تەگلىك</string>
     <string name="prefs_lock_orientation_title">قۇلۇپ ئېكران يۆنىلىشى</string>
     <string name="prefs_lock_orientation_summary_on">قۇرئان بەتلىرىنىڭ ئېكران ئايلاندۇرۇش يۆنىلىشى</string>
@@ -116,7 +113,6 @@
     <string name="available_translations">چۈشۈرگىلى بولىدۇ</string>
     <string name="remove_button">چىقىرىۋەت</string>
     <string name="dialog_ok">جەزملە</string>
-    <string name="prefs_advanced_settings_title">ئالىي تەڭشەكلەر</string>
     <string name="prefs_app_location_title">ئەپ ئورنى</string>
     <string name="prefs_app_location_summary">ھۆججەتلەرنى قايسى sd كارتىغا ساقلايدىغانلىقىڭىزنى تاللاڭ</string>
     <string name="prefs_sdcard_internal">ئىچىدىكى ساقلىغۇچ</string>

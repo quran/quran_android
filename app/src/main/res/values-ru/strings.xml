@@ -136,9 +136,6 @@
     <string name="prefs_category_display_settings">Настройки экрана</string>
     <string name="prefs_use_arabic_title">Режим арабского</string>
     <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык (требуется перезагрузка)</string>
-    <string name="prefs_use_arabic_reshaper_title">Арабский формирователь</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Если Вы видите арабский текст в обратном направлении, отключите эту опцию.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Если Вы видите несоединенный арабский текст, для исправления этого включите данную опцию.</string>
     <string name="prefs_new_background_title">Новый фон</string>
     <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
     <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
@@ -169,7 +166,6 @@
     <string name="available_translations">Доступные для загрузки</string>
     <string name="remove_button">Удалить</string>
     <string name="dialog_ok">OK</string>
-    <string name="prefs_advanced_settings_title">Расширенные настройки</string>
     <string name="prefs_app_location_title">Расположение приложения</string>
     <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
     <string name="prefs_sdcard_internal">Внутренняя память</string>

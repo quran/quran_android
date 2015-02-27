@@ -9,9 +9,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
-import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.app.SearchManager;
@@ -208,8 +206,7 @@ public class SearchActivity extends ActionBarActivity
       }
 
       ListView listView = (ListView) findViewById(R.id.results_list);
-      EfficientResultAdapter adapter = new EfficientResultAdapter(this,
-          res, mIsArabicSearch);
+      EfficientResultAdapter adapter = new EfficientResultAdapter(this, res);
       listView.setAdapter(adapter);
       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
@@ -330,24 +327,12 @@ public class SearchActivity extends ActionBarActivity
     private LayoutInflater mInflater;
     private List<SearchElement> mElements;
     private Context mContext;
-    private boolean mIsArabicSearch;
-    private boolean mShouldReshape;
-    private boolean mUseArabicFont;
 
     public EfficientResultAdapter(Context context,
-                                  List<SearchElement> metadata,
-                                  boolean isArabicSearch) {
+                                  List<SearchElement> metadata) {
       mInflater = LayoutInflater.from(context);
       mElements = metadata;
       mContext = context;
-      mIsArabicSearch = isArabicSearch;
-      if (mIsArabicSearch) {
-        mShouldReshape = QuranSettings.isReshapeArabic(context);
-        mUseArabicFont = QuranSettings.needArabicFont(context);
-      } else {
-        mShouldReshape = false;
-        mUseArabicFont = false;
-      }
     }
 
     public int getCount() {
@@ -371,10 +356,6 @@ public class SearchActivity extends ActionBarActivity
         holder.text = (TextView) convertView.findViewById(R.id.verseText);
         holder.metadata = (TextView) convertView
             .findViewById(R.id.verseLocation);
-        if (mUseArabicFont) {
-          holder.text.setTypeface(ArabicStyle.getTypeface(mContext));
-          holder.metadata.setTypeface(ArabicStyle.getTypeface(mContext));
-        }
         convertView.setTag(holder);
       } else {
         holder = (ViewHolder) convertView.getTag();
@@ -383,10 +364,6 @@ public class SearchActivity extends ActionBarActivity
       SearchElement v = mElements.get(position);
       String text = v.text;
       String suraName = QuranInfo.getSuraName(mContext, v.sura, false);
-      if (mShouldReshape) {
-        text = ArabicStyle.reshape(v.text);
-        suraName = ArabicStyle.reshape(suraName);
-      }
       holder.text.setText(Html.fromHtml(text));
 
       holder.metadata.setText(mInflater.getContext()

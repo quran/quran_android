@@ -127,9 +127,6 @@
     <string name="prefs_category_display_settings">Ko\'rinish</string>
     <string name="prefs_use_arabic_title">Arabcha rejim</string>
     <string name="prefs_use_arabic_summary_on">Programma arab tilida ishlaydi (qayta ishga tushirish kerak)</string>
-    <string name="prefs_use_arabic_reshaper_title">\"Arabic Reshaper\"dan foydalanish</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Agar arabcha matnlar teskari ko\'rinishida bo\'lsa ushbu tanlovni bekor qiling</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Agar arabcha matnlar uzuq bo\'lsa ushbu tanlovni tanlang</string>
     <string name="prefs_new_background_title">Yangi fon</string>
     <string name="prefs_lock_orientation_title">Ekran oriyentatsiyasini qulflash</string>
     <string name="prefs_lock_orientation_summary_on">Qur\'on sahifalari doim belgilangan oriyentatsiyada bo\'ladi</string>
@@ -161,7 +158,6 @@
     <string name="available_translations">Saqlab olish mumkin</string>
     <string name="remove_button">O\'chirish</string>
     <string name="dialog_ok">OK</string>
-    <string name="prefs_advanced_settings_title">Ilg\'or moslamalar</string>
     <string name="prefs_app_location_title">Ma\'lumotlar jildi</string>
     <string name="prefs_app_location_summary">Qur\'on fayllari saqlanadigan joy</string>
     <string name="prefs_sdcard_internal">Ichki xotira</string>

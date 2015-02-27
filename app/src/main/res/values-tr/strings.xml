@@ -155,9 +155,6 @@
     <string name="prefs_volume_key_navigation_summary">Sayfalar arasında ses düğmelerini kullanarak dolaş</string>
     <string name="prefs_volume_key_navigation_title">Ses düğmesi ile dolaşma</string>
     <string name="process_progress"> %1$d / %2$d dosya işleniyor</string>
-    <string name="prefs_use_arabic_reshaper_title">Arapça şekillendirici kullan</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Eğer arapça metinler ters tarafa ise bunu kaldırın</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Eğer arapça metinler ayrık ise bunu seçin</string>
     <string name="prefs_translations_summary">Meâli indir ve ayarla</string>
     <string name="prefs_translations">Meâller</string>
     <string name="prefs_tablet_mode_title">Tablet modu</string>
@@ -186,7 +183,6 @@
     <string name="prefs_app_size">Uygulama büyüklüğü:</string>
     <string name="prefs_app_location_title">Uygulama konumu</string>
     <string name="prefs_app_location_summary">Lütfen hangi SD karta kopyalanacağını seçin</string>
-    <string name="prefs_advanced_settings_title">İleri ayarlar</string>
     <string name="play_from_here">Buradan çalmaya başla</string>
     <string name="page_description">sayfa  %1$s, cüz %2$s</string>
     <string name="download_progress">%1$s / %2$s indirildi</string>
