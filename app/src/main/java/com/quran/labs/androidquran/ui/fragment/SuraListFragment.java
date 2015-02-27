@@ -56,7 +56,8 @@ public class SuraListFragment extends Fragment {
     final Activity activity = getActivity();
     ((QuranApplication) activity.getApplication()).refreshLocale(false);
 
-    int lastPage = QuranSettings.getLastPage(activity);
+    QuranSettings settings = QuranSettings.getInstance(activity);
+    int lastPage = settings.getLastPage();
     if (lastPage != Constants.NO_PAGE_SAVED &&
         lastPage >= Constants.PAGES_FIRST &&
         lastPage <= Constants.PAGES_LAST) {
@@ -67,7 +68,7 @@ public class SuraListFragment extends Fragment {
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
-        QuranSettings.isArabicNames(activity)) {
+        settings.isArabicNames()) {
       updateScrollBarPositionHoneycomb();
     }
 

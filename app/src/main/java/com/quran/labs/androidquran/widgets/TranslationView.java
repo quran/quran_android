@@ -3,8 +3,6 @@ package com.quran.labs.androidquran.widgets;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.util.ArabicTypefaceSpan;
-import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -43,8 +41,6 @@ public class TranslationView extends ScrollView {
    private int mHeaderStyle;
    private int mFooterSpacerHeight;
    private boolean mIsArabic;
-   private boolean mUseArabicFont;
-   private boolean mShouldReshape;
    private int mLastHighlightedAyah;
    private boolean mIsNightMode;
    private int mNightModeTextColor;
@@ -105,15 +101,13 @@ public class TranslationView extends ScrollView {
    }
 
    private void initResources(){
-      mFontSize = QuranSettings.getTranslationTextSize(mContext);
+      QuranSettings settings = QuranSettings.getInstance(mContext);
+      mFontSize = settings.getTranslationTextSize();
 
-      mIsArabic = QuranSettings.isArabicNames(mContext);
-      mShouldReshape = QuranSettings.isReshapeArabic(mContext);
-      mUseArabicFont = QuranSettings.needArabicFont(mContext);
-
-      mIsNightMode = QuranSettings.isNightMode(mContext);
+      mIsArabic = settings.isArabicNames();
+      mIsNightMode = settings.isNightMode();
       if (mIsNightMode) {
-         int brightness = QuranSettings.getNightModeTextBrightness(mContext);
+         int brightness = settings.getNightModeTextBrightness();
          mNightModeTextColor = Color.rgb(brightness, brightness, brightness);
       }
       mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
@@ -283,21 +277,8 @@ public class TranslationView extends ScrollView {
          // Ayah Text
          ayahView.setLineSpacing(1.4f, 1.4f);
 
-         boolean customFont = false;
-         if (mShouldReshape){
-            ayahText = ArabicStyle.reshape(ayahText);
-            if (mUseArabicFont){
-               customFont = true;
-            }
-         }
          SpannableString arabicText = new SpannableString(ayahText);
-
-         CharacterStyle spanType;
-         if (customFont){
-            spanType = new ArabicTypefaceSpan(mContext, true);
-         }
-         else { spanType = new StyleSpan(Typeface.BOLD); }
-
+         CharacterStyle spanType = new StyleSpan(Typeface.BOLD);
          arabicText.setSpan(spanType, 0, ayahText.length(),
                  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
          ayahView.setText(arabicText);
@@ -306,22 +287,8 @@ public class TranslationView extends ScrollView {
 
       // translation
       String translationText = ayah.getTranslation();
-      boolean customFont = false;
-      if (mShouldReshape){
-         if (ayah.isArabic()){
-            translationText = ArabicStyle.reshape(
-                translationText);
-            customFont = true;
-         }
-      }
-
 
       SpannableString translation = new SpannableString(translationText);
-      if (customFont){
-         ArabicTypefaceSpan span = new ArabicTypefaceSpan(mContext, false);
-         translation.setSpan(span, 0, translation.length(),
-                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-      }
       ayahView.append(translation);
 
       params = new LinearLayout.LayoutParams(
@@ -364,15 +331,6 @@ public class TranslationView extends ScrollView {
       params.topMargin = mTopBottomMargin / 2;
       params.bottomMargin = mTopBottomMargin / 2;
       headerView.setTextAppearance(mContext, mHeaderStyle);
-      if (mIsArabic){
-         if (mShouldReshape){
-            suraName = ArabicStyle.reshape(suraName);
-         }
-
-         if (mUseArabicFont){
-            headerView.setTypeface(ArabicStyle.getTypeface(mContext));
-         }
-      }
       headerView.setText(suraName);
       mLinearLayout.addView(headerView, params);
 

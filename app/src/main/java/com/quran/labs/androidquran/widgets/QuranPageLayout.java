@@ -100,7 +100,7 @@ public abstract class QuranPageLayout extends FrameLayout
     final int rightBorderImageId = nightMode ?
         R.drawable.night_right_border : R.drawable.border_right;
     final int nightModeTextBrightness = nightMode ?
-        QuranSettings.getNightModeTextBrightness(mContext) :
+        QuranSettings.getInstance(mContext).getNightModeTextBrightness() :
         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
 
     if (mLeftBorder == null) {

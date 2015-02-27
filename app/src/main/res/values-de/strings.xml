@@ -149,9 +149,6 @@
     <string name="prefs_category_display_settings">Bildschirmoptionen</string>
     <string name="prefs_use_arabic_title">Arabischer Modus</string>
     <string name="prefs_use_arabic_summary_on">Das Programm wird ins Arabische umgestellt, dafür ist ein Neustart erforderlich.</string>
-    <string name="prefs_use_arabic_reshaper_title">Benutze den Arabisch-Umformer</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Wenn die Arabische-Schrift rückwärts angezeigt wird, deaktivieren Sie diese Funktion.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Wenn die Arabische-Schrift nicht gebunden wird, aktivieren Sie diese Funktion um den Fehler zu beheben.</string>
     <string name="prefs_new_background_title">Neuen Hintergrund verwenden</string>
     <string name="prefs_lock_orientation_title">Bildschirmausrichtung sperren</string>
     <string name="prefs_lock_orientation_summary_on">Die Quranseiten werden immer in einer bestimmten Bildschirmausrichtung angezeigt.</string>
@@ -181,7 +178,6 @@
     <string name="available_translations">Zum Download verfügbar</string>
     <string name="remove_button">Entfernen</string>
     <string name="dialog_ok">Ok</string>
-    <string name="prefs_advanced_settings_title">Erweiterte Einstellungen</string>
     <string name="prefs_app_location_title">Speicherort</string>
     <string name="prefs_app_location_summary">Wählen Sie den Speicherort der Dateien aus.</string>
     <string name="prefs_sdcard_internal">Interner Speicher</string>

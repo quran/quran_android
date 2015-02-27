@@ -57,9 +57,6 @@
   <string name="prefs_category_display_settings">Configuración de pantalla</string>
   <string name="prefs_use_arabic_title">Modo Árabe</string>
   <string name="prefs_use_arabic_summary_on">La aplicación se mostrará en Árabe (requiere reiniciar)</string>
-  <string name="prefs_use_arabic_reshaper_title">Usar Reformador Árabe</string>
-  <string name="prefs_use_arabic_reshaper_summary_on">Si su texto árabe se muestra al revés, desactive esta opción.</string>
-  <string name="prefs_use_arabic_reshaper_summary_off">Si las letras en árabe no están unidas, marque esta opción para arreglarlo.</string>
   <string name="prefs_new_background_title">Nuevo fondo</string>
   <string name="prefs_lock_orientation_title">Bloquear orientación de la pantalla</string>
   <string name="prefs_lock_orientation_summary_on">La Página del Corán estará en modo de orientación fija</string>
@@ -91,7 +88,6 @@
   <string name="available_translations">Disponible para descargar</string>
   <string name="remove_button">Eliminar</string>
   <string name="dialog_ok">OK</string>
-  <string name="prefs_advanced_settings_title">Ajustes avanzados</string>
   <string name="prefs_app_location_title">Directorio de Datos del Corán</string>
   <string name="prefs_app_location_summary">Elegir ubicación para almacenar los archivos del Corán.</string>
   <string name="prefs_sdcard_internal">Almacenamiento interno</string>

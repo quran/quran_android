@@ -109,6 +109,7 @@ public class QuranActivity extends ActionBarActivity
   }
 
   private Handler mHandler;
+  private QuranSettings mSettings;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +121,8 @@ public class QuranActivity extends ActionBarActivity
     final Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(tb);
 
-    mIsArabic = QuranSettings.isArabicNames(this);
+    mSettings = QuranSettings.getInstance(this);
+    mIsArabic = mSettings.isArabicNames();
 
     final ViewPager pager = (ViewPager) findViewById(R.id.index_pager);
     pager.setOffscreenPageLimit(3);
@@ -158,7 +160,7 @@ public class QuranActivity extends ActionBarActivity
   @Override
   public void onResume() {
     super.onResume();
-    final boolean isArabic = QuranSettings.isArabicNames(this);
+    final boolean isArabic = mSettings.isArabicNames();
     if (isArabic != mIsArabic) {
       final Intent i = getIntent();
       finish();
@@ -200,7 +202,7 @@ public class QuranActivity extends ActionBarActivity
         return true;
       }
       case R.id.last_page: {
-        int page = QuranSettings.getLastPage(this);
+        int page = mSettings.getLastPage();
         jumpTo(page);
         return true;
       }

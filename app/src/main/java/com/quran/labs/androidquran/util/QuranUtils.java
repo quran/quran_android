@@ -9,7 +9,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.text.DecimalFormat;
@@ -62,12 +61,7 @@ public class QuranUtils {
   }
 
    public static String getLocalizedNumber(Context context, int number){
-      if (QuranSettings.isArabicNames(context)){
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-          // TODO: fix this to take a number directly
-          return ArabicStyle.legacyGetArabicNumbers("" + number);
-        }
-
+      if (QuranSettings.getInstance(context).isArabicNames()){
          if (mNumberFormatter == null || !mIsArabicFormatter){
             mIsArabicFormatter = true;
             mNumberFormatter =

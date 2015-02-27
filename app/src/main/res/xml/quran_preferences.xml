@@ -16,14 +16,6 @@
             android:title="@string/prefs_use_arabic_title"/>
 
         <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
-                android:title="@string/prefs_use_arabic_reshaper_title"
-                android:persistent="true"
-                android:defaultValue="@bool/use_arabic_reshaper"
-                android:summaryOn="@string/prefs_use_arabic_reshaper_summary_on"
-                android:summaryOff="@string/prefs_use_arabic_reshaper_summary_off"
-                android:key="@string/prefs_use_arabic_reshaper" />
-
-        <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
             android:title="@string/prefs_new_background_title"
             android:persistent="true"
             android:defaultValue="true"
@@ -134,6 +126,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:key="@string/prefs_download_category_key"
         android:title="@string/prefs_category_download" >
 
         <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
@@ -151,13 +144,11 @@
             android:key="@string/prefs_download_amount"
             android:summary="@string/prefs_download_amount_summary"
             android:title="@string/prefs_download_amount_title" />
-    </PreferenceCategory>
 
-    <PreferenceScreen android:key="@string/prefs_advanced_settings"
-                android:title="@string/prefs_advanced_settings_title">
         <com.quran.labs.androidquran.ui.preference.QuranListPreference
             android:key="@string/prefs_app_location"
             android:summary="@string/prefs_app_location_summary"
             android:title="@string/prefs_app_location_title" />
-    </PreferenceScreen>
+    </PreferenceCategory>
+
 </PreferenceScreen>

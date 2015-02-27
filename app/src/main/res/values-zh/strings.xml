@@ -109,9 +109,6 @@
     <string name="prefs_category_display_settings">显示设置</string>
     <string name="prefs_use_arabic_title">阿拉伯语模式</string>
     <string name="prefs_use_arabic_summary_on">应用程序将采用阿拉伯语界面（需要重启程序）</string>
-    <string name="prefs_use_arabic_reshaper_title">使用阿拉伯语Reshaper</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">如果你的阿拉伯语文本是反向的，请取消选择这个选项。</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">如果你的阿拉伯语文本not joined，请选择这个选项以修正此问题。</string>
     <string name="prefs_new_background_title">新的壁纸</string>
     <string name="prefs_lock_orientation_title">屏幕旋转方向</string>
     <string name="prefs_lock_orientation_summary_on">古兰经页面的屏幕旋转方向</string>

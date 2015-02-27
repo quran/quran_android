@@ -2,8 +2,6 @@ package com.quran.labs.androidquran.widgets;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.ArabicStyle;
-import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
 import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
@@ -24,9 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AudioStatusBar extends LinearLayout {
 
@@ -177,22 +172,10 @@ public class AudioStatusBar extends LinearLayout {
          mSpinner = new SpinnerCompat(mContext, null,
                  R.attr.actionDropDownStyle);
          mSpinner.setDropDownVerticalOffset(mSpinnerPadding);
-         final ArrayAdapter<CharSequence> adapter;
-         if (QuranSettings.isReshapeArabic(mContext) &&
-             QuranSettings.isArabicNames(mContext)) {
-            final String[] items = mContext.getResources()
-                .getStringArray(R.array.quran_readers_name);
-            final List<CharSequence> itemList = new ArrayList<>();
-            for (String item : items) {
-               itemList.add(ArabicStyle.reshape(item));
-            }
-            adapter = new ArrayAdapter<>(
-                mContext, R.layout.sherlock_spinner_item, itemList);
-         } else {
-            adapter = ArrayAdapter.createFromResource(mContext,
+         final ArrayAdapter<CharSequence> adapter =
+             ArrayAdapter.createFromResource(mContext,
                 R.array.quran_readers_name,
                 R.layout.sherlock_spinner_item);
-         }
 
          adapter.setDropDownViewResource(
              R.layout.sherlock_spinner_dropdown_item);

@@ -104,9 +104,6 @@
 	<string name="prefs_category_display_settings">Tetapan Paparan</string>
 	<string name="prefs_use_arabic_title">Mod Aplikasi Arab</string>
 	<string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab (perlu mula semula program untuk menggunakan)</string>
-	<string name="prefs_use_arabic_reshaper_title">Gunakan Reshaper Arab</string>
-	<string name="prefs_use_arabic_reshaper_summary_on">Jika teks Arab anda terbalik, jangan nyahtanda pilihan ini.</string>
-	<string name="prefs_use_arabic_reshaper_summary_off">Jika teks Arab anda terputus, tanda pilihan ini untuk memperbaikinya.</string>
 	<string name="prefs_new_background_title">Latar beakang baru</string>
 	<string name="prefs_lock_orientation_title">Kunci orientasi layar</string>
 	<string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mod orientasi tetap</string>
@@ -136,7 +133,6 @@
 	<string name="available_translations">Boleh untuk dimuat turun</string>
 	<string name="remove_button">Hapus</string>
 	<string name="dialog_ok">OK</string>
-	<string name="prefs_advanced_settings_title">Tetapan lebih lanjut</string>
 	<string name="prefs_app_location_title">Lokasi aplikasi</string>
 	<string name="prefs_app_location_summary">Pilih lokasi untuk menyimpan fail</string>
 	<string name="prefs_sdcard_internal">Simpanan Dalaman</string>

@@ -279,7 +279,7 @@ public class QuranFileUtils {
   }
 
   public static String getQuranBaseDirectory(Context context) {
-    String basePath = QuranSettings.getAppCustomLocation(context);
+    String basePath = QuranSettings.getInstance(context).getAppCustomLocation();
 
     if (!isSDCardMounted()) {
       if (basePath == null || basePath.equals(
@@ -477,7 +477,7 @@ public class QuranFileUtils {
   }
 
   public static boolean moveAppFiles(Context context, String newLocation) {
-    if (QuranSettings.getAppCustomLocation(context).equals(newLocation))
+    if (QuranSettings.getInstance(context).getAppCustomLocation().equals(newLocation))
       return true;
     File currentDirectory = new File(getQuranBaseDirectory(context));
     File newDirectory = new File(newLocation, QURAN_BASE);

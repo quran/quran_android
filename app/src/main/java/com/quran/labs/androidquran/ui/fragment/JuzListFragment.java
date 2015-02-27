@@ -57,7 +57,8 @@ public class JuzListFragment extends Fragment {
   public void onResume() {
     final Activity activity = getActivity();
 
-    int lastPage = QuranSettings.getLastPage(activity);
+    QuranSettings settings = QuranSettings.getInstance(activity);
+    int lastPage = settings.getLastPage();
     if (lastPage != Constants.NO_PAGE_SAVED) {
       int juz = QuranInfo.getJuzFromPage(lastPage);
       int position = (juz - 1) * 9;
@@ -65,7 +66,7 @@ public class JuzListFragment extends Fragment {
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
-        QuranSettings.isArabicNames(activity)) {
+        settings.isArabicNames()) {
       updateScrollBarPositionHoneycomb();
     }
 

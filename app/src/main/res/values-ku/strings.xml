@@ -111,9 +111,6 @@
     <string name="prefs_category_display_settings">ڕێکخستنی پیشاندان</string>
     <string name="prefs_use_arabic_title">شێوازی عەرەبی</string>
     <string name="prefs_use_arabic_summary_on">زمانی بەرنامەکە ئەبێت بە عەرەبی (دووبارە ئیشپێکردنەوە پێویستە).</string>
-    <string name="prefs_use_arabic_reshaper_title">بەکارهێنانی ڕاستکردنەوەی عەرەبی</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">ئەگەر نوسینی عەرەبی پاش و پێش دەکەوێ، ئەم هەڵبژرادنە بەکاربهێنە.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">ئەگەر نوسینە عەرەبیەکان نانوسێن پێکەوە، ئەم هەڵبژاردنە بەکاربهێنە بۆ چارەسەرکردنی.</string>
     <string name="prefs_new_background_title">پشت شاشەی نوێ</string>
     <string name="prefs_lock_orientation_title">قفڵکردنی گۆڕینی ئاڕاستەی شاشە</string>
     <string name="prefs_lock_orientation_summary_on">پەڕەکانی قورئان تەنها بەیەک ئاڕاستە پیشان ئەدرێن</string>
@@ -143,7 +140,6 @@
     <string name="available_translations">ئامادەیە بۆ داگرتن</string>
     <string name="remove_button">لابردن</string>
     <string name="dialog_ok">باشە</string> 
-    <string name="prefs_advanced_settings_title">ڕێکخستنی پەرەسەندوو</string>
     <string name="prefs_app_location_title">شوێنی بەرنامە</string>
     <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
     <string name="prefs_sdcard_internal">یادگەی ناوەکی</string>

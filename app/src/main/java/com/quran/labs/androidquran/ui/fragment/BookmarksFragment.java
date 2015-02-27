@@ -121,7 +121,7 @@ public class BookmarksFragment extends AbsMarkersFragment {
          break;
       }
 
-      int lastPage = QuranSettings.getLastPage(activity);
+      int lastPage = QuranSettings.getInstance(activity).getLastPage();
       boolean showLastPage = lastPage != Constants.NO_PAGE_SAVED;
       if (showLastPage && (lastPage > Constants.PAGES_LAST ||
               lastPage < Constants.PAGES_FIRST)) {
