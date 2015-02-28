@@ -12,6 +12,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:paddingRight="12dp"
             android:paddingLeft="12dp">
             <LinearLayout
@@ -23,12 +24,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginBottom="4dp"
                     android:text="@string/play_to"
                     android:textAppearance="@style/PanelLabel"/>
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginBottom="4dp"
                     android:text="@string/play_from"
                     android:textAppearance="@style/PanelLabel"/>
             </LinearLayout>
@@ -42,53 +45,49 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:orientation="horizontal">
                     <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                         android:id="@+id/end_ayah_spinner"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layoutDirection="rtl" />
                     <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                         android:id="@+id/end_sura_spinner"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layoutDirection="rtl" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:orientation="horizontal">
                     <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                         android:id="@+id/start_ayah_spinner"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layoutDirection="rtl" />
                     <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                         android:id="@+id/start_sura_spinner"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layoutDirection="rtl" />
                 </LinearLayout>
             </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/play_options"
-                android:textAppearance="@style/PanelLabel"/>
-            <CheckBox android:id="@+id/restrict_to_range"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:button="@null"
-                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-                android:text="@string/play_restrict_range" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
-                android:layout_gravity="right">
+                android:layout_gravity="end">
                 <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                     android:id="@+id/repeat_range_spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -96,15 +95,18 @@
                     android:text="@string/repeat_verses_range"
                     android:textAppearance="@style/PanelLabel"/>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
-                android:layout_gravity="right">
+                android:layout_gravity="end">
                 <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                     android:id="@+id/repeat_verse_spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,6 +114,13 @@
                     android:text="@string/repeat_each_verse"
                     android:textAppearance="@style/PanelLabel"/>
             </LinearLayout>
+
+            <CheckBox android:id="@+id/restrict_to_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layoutDirection="rtl"
+                android:layout_gravity="end"
+                android:text="@string/play_restrict_range" />
         </LinearLayout>
     </ScrollView>
 
@@ -119,7 +128,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="12dp"
-        android:layout_gravity="left|bottom">
+        android:paddingRight="12dp"
+        android:layout_gravity="start|bottom">
         <Button android:id="@+id/apply"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

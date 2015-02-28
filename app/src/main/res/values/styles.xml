@@ -10,14 +10,10 @@
 
     <style name="ToolBarArea" />
 
-    <style name="NotificationText">
-      <item name="android:textColor">?android:attr/textColorPrimary</item>
-    </style>
-    
-    <style name="NotificationTitle">
-      <item name="android:textColor">?android:attr/textColorPrimary</item>
-      <item name="android:textStyle">bold</item>
-    </style>
+    <style name="NotificationText"
+        parent="android:TextAppearance.StatusBar.EventContent" />
+    <style name="NotificationTitle"
+        parent="android:TextAppearance.StatusBar.EventContent.Title" />
 
     <style name="translation_sura_title">
         <item name="android:textColor">@color/translation_hdr_color</item>
@@ -53,7 +49,7 @@
     </style>
 
     <style name="PanelLabel">
-        <item name="android:textColor">@color/translation_highlight</item>
+        <item name="android:textColor">@color/panel_label</item>
         <item name="android:textSize">16sp</item>
     </style>
 

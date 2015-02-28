@@ -27,7 +27,7 @@
             android:id="@+id/sliding_pager_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:indicatorColor="@color/icon_page_indicator_color"
+            app:indicatorColor="@color/indicator_color"
             app:indicatorHeight="@dimen/icon_page_indicator_height" />
     </LinearLayout>
     <android.support.v4.view.ViewPager
