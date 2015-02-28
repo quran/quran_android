@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
   private AsyncTask mCurrentTask;
   private TranslationItem mTranslationItem;
   private View mTranslationControls;
+  private TextView mTranslator;
 
   @Override
   public View onCreateView(LayoutInflater inflater,
@@ -37,6 +39,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
     final View view = inflater.inflate(
         R.layout.translation_panel, container, false);
 
+    mTranslator = (TextView) view.findViewById(R.id.translator);
     mTranslationView =
         (TranslationView) view.findViewById(R.id.translation_view);
     mTranslationView.setIsInAyahActionMode(true);
@@ -134,7 +137,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
             who = mTranslationItem.name;
           }
         }
-        mTranslationView.setTranslatorName(who);
+        mTranslator.setText(who);
         mTranslationView.setAyahs(result);
       } else {
         mEmptyState.setVisibility(View.VISIBLE);

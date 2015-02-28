@@ -40,12 +40,10 @@ public class TranslationView extends ScrollView {
    private int mHeaderColor;
    private int mHeaderStyle;
    private int mFooterSpacerHeight;
-   private boolean mIsArabic;
    private int mLastHighlightedAyah;
    private boolean mIsNightMode;
    private int mNightModeTextColor;
    private boolean mIsInAyahActionMode;
-   private String mTranslatorName;
 
    private List<QuranAyah> mAyat;
 
@@ -104,7 +102,6 @@ public class TranslationView extends ScrollView {
       QuranSettings settings = QuranSettings.getInstance(mContext);
       mFontSize = settings.getTranslationTextSize();
 
-      mIsArabic = settings.isArabicNames();
       mIsNightMode = settings.isNightMode();
       if (mIsNightMode) {
          int brightness = settings.getNightModeTextBrightness();
@@ -139,19 +136,11 @@ public class TranslationView extends ScrollView {
      }
    }
 
-   public void setTranslatorName(String name) {
-     mTranslatorName = name;
-   }
-
    public void setAyahs(List<QuranAyah> ayat){
       mLastHighlightedAyah = -1;
 
       mLinearLayout.removeAllViews();
       mAyat = ayat;
-
-      if (mTranslatorName != null) {
-        addTranslationNameHeader(mTranslatorName);
-      }
 
       int currentSura = 0;
       for (QuranAyah ayah : ayat){
@@ -225,24 +214,6 @@ public class TranslationView extends ScrollView {
          LayoutParams.MATCH_PARENT, mFooterSpacerHeight);
      final View view = new View(mContext);
      mLinearLayout.addView(view, params);
-   }
-
-   private void addTranslationNameHeader(String translationName) {
-     final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-         LayoutParams.MATCH_PARENT,
-         LayoutParams.WRAP_CONTENT);
-     params.setMargins(mLeftRightMargin, mTopBottomMargin,
-         mLeftRightMargin, mTopBottomMargin);
-
-     final TextView translationHeader = new TextView(mContext);
-     translationHeader.setTextAppearance(mContext, mTextStyle);
-     if (mIsInAyahActionMode) { translationHeader.setTextColor(Color.WHITE); }
-     else if (mIsNightMode) { translationHeader.setTextColor(mNightModeTextColor); }
-
-     translationHeader.setTextSize(mFontSize);
-     translationHeader.setText(translationName);
-     translationHeader.setTypeface(null, Typeface.BOLD);
-     mLinearLayout.addView(translationHeader, params);
    }
 
    private void addTextForAyah(QuranAyah ayah){
