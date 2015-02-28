@@ -12,7 +12,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -22,12 +23,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginBottom="4dp"
                     android:text="@string/play_from"
                     android:textAppearance="@style/PanelLabel"/>
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginBottom="4dp"
                     android:text="@string/play_to"
                     android:textAppearance="@style/PanelLabel"/>
             </LinearLayout>
@@ -66,18 +69,11 @@
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
             </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/play_options"
-                android:textAppearance="@style/PanelLabel"/>
-            <CheckBox android:id="@+id/restrict_to_range"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/play_restrict_range" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
@@ -90,9 +86,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:orientation="horizontal">
                 <TextView
                     android:layout_width="wrap_content"
@@ -105,8 +103,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
+
+            <CheckBox android:id="@+id/restrict_to_range"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/play_restrict_range" />
         </LinearLayout>
     </ScrollView>
+
     <Button android:id="@+id/apply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

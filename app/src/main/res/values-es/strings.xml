@@ -171,7 +171,6 @@
   <!--ayah action panel-->
   <string name="play_from">Desde</string>
   <string name="play_to">Para</string>
-  <string name="play_options">Opciones</string>
   <string name="play_restrict_range">Sólo reproducir los versículos anteriores</string>
   <string name="repeat_verses_range">Repetir el conjunto de versículos:</string>
   <string name="repeat_each_verse">Repetir cada versículo:</string>

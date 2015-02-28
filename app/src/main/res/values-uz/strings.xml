@@ -258,7 +258,6 @@
     <!-- ayah action panel -->
     <string name="play_from">Boshi</string>
     <string name="play_to">Oxiri</string>
-    <string name="play_options">Moslamalar</string>
     <string name="play_restrict_range">Yuqorida oyatlarnigina eshitish</string>
     <string name="repeat_verses_range">Bir necha oyatlarni takrorlash:</string>
     <string name="repeat_each_verse">Har bir oyatni takrorlash:</string>

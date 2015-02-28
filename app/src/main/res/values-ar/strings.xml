@@ -203,7 +203,6 @@
     <!-- ayah action panel -->
     <string name="play_from">من</string>
     <string name="play_to">إلى</string>
-    <string name="play_options">اختيارات</string>
     <string name="play_restrict_range"> شغل ما تم اختياره من الايات فقط</string>
     <string name="repeat_verses_range">تكرار مجموعة الآيات:</string>
     <string name="repeat_each_verse">تكرار كل اية :</string>

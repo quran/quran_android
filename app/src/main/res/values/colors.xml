@@ -11,8 +11,7 @@
     <color name="sura_number_color">#7fffffff</color>
 	<color name="sura_details_color">#b2ffffff</color>
     <color name="transparent_actionbar_color">#AA000000</color>
-    <color name="panel_background_color">#cc000000</color>
-    <color name="icon_page_indicator_color">#FFFFFF</color>
+    <color name="panel_background_color">#ff424242</color>
     <color name="translation_hdr_color">#ff649ab8</color>
     <color name="translation_sura_header">#ff649ab8</color>
     <color name="overlay_text_color">#ff888888</color>
@@ -24,6 +23,7 @@
     <color name="toolbar_background">#ed2b5836</color>
     <color name="toolbar_item_pressed">#552bff36</color>
     <color name="indicator_color">@color/accent_color</color>
+    <color name="panel_label">@color/accent_color</color>
     <color name="notification_color">#ff112e44</color>
     <color name="ayah_bookmark_color">#ff81c784</color>
 </resources>

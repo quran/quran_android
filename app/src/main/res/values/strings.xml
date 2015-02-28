@@ -264,7 +264,6 @@
     <!-- ayah action panel -->
     <string name="play_from">From</string>
     <string name="play_to">To</string>
-    <string name="play_options">Options</string>
     <string name="play_restrict_range">Only play the above verses</string>
     <string name="repeat_verses_range">Repeat set of verses:</string>
     <string name="repeat_each_verse">Repeat each verse:</string>
