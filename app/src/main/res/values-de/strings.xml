@@ -181,8 +181,7 @@
     <string name="prefs_app_location_title">Speicherort</string>
     <string name="prefs_app_location_summary">Wählen Sie den Speicherort der Dateien aus.</string>
     <string name="prefs_sdcard_internal">Interner Speicher</string>
-    <string name="prefs_sdcard_external">Externe SD-Karte</string>
-    <string name="prefs_sdcard_auto">Automatisch</string>
+    <string name="prefs_sdcard_external">Externe SD-Karte %1$d</string>
     <string name="prefs_app_size">Der vom Programm verwendete Speicherplatz ist</string>
     <string name="prefs_calculating_app_size">Die Größe des Programms wird berechnet</string>
     <string name="prefs_copying_app_files">Programmdateien werden kopiert</string>

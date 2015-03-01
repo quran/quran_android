@@ -109,8 +109,7 @@
     <string name="prefs_app_location_title">مكان التطبيق</string>
     <string name="prefs_app_location_summary">اختر الذاكرة التي سيتم تخزين الملفات عليها</string>
     <string name="prefs_sdcard_internal">الذاكرة الداخلية</string>
-    <string name="prefs_sdcard_external">الذاكرة الخارجية</string>
-    <string name="prefs_sdcard_auto">تلقائي</string>
+    <string name="prefs_sdcard_external">الذاكرة الخارجية %1$d</string>
     <string name="prefs_app_size">مساحة التطبيق</string>
     <string name="prefs_calculating_app_size">جاري حساب مساحة التطبيق</string>
     <string name="prefs_copying_app_files">جاري نسخ ملفات التطبيق</string>

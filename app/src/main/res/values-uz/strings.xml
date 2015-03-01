@@ -161,8 +161,7 @@
     <string name="prefs_app_location_title">Ma\'lumotlar jildi</string>
     <string name="prefs_app_location_summary">Qur\'on fayllari saqlanadigan joy</string>
     <string name="prefs_sdcard_internal">Ichki xotira</string>
-    <string name="prefs_sdcard_external">Tashqi xotira (SD karta)</string>
-    <string name="prefs_sdcard_auto">Avto</string>
+    <string name="prefs_sdcard_external">Tashqi xotira (SD karta %1$d)</string>
     <string name="prefs_app_size">Mavjud fayllar hajmi:</string>
     <string name="prefs_calculating_app_size">Programma hajmi hisoblanmoqda&#8230;</string>
     <string name="prefs_copying_app_files">Programma fayllari ko\'chirilmoqda&#8230;</string>
