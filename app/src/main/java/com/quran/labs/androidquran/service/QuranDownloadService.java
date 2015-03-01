@@ -153,8 +153,7 @@ public class QuranDownloadService extends Service implements
       mOkHttpClient = new OkHttpClient();
    }
    
-   @Override
-   public void onStart(Intent intent, int startId){
+   private void handleOnStartCommand(Intent intent, int startId){
       if (intent != null){
          if (ACTION_CANCEL_DOWNLOADS.equals(intent.getAction())){
             mServiceHandler.removeCallbacksAndMessages(null);
@@ -236,7 +235,7 @@ public class QuranDownloadService extends Service implements
    
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
-      onStart(intent, startId);
+      handleOnStartCommand(intent, startId);
       return START_NOT_STICKY;
    }
    
@@ -269,7 +268,7 @@ public class QuranDownloadService extends Service implements
       Log.d(TAG, "done checking translations - " +
               (needsUpgrade? "" : "no ") + "upgrade needed");
       mSharedPreferences.edit().putBoolean(
-              Constants.PREF_HAVE_UPDATED_TRANSLATIONS, needsUpgrade).commit();
+              Constants.PREF_HAVE_UPDATED_TRANSLATIONS, needsUpgrade).apply();
    }
    
    private void onHandleIntent(Intent intent){
@@ -630,7 +629,7 @@ public class QuranDownloadService extends Service implements
          mSharedPreferences.edit()
              .putString(PREF_LAST_DOWNLOAD_ITEM, details.key)
              .putInt(PREF_LAST_DOWNLOAD_ERROR, errorCode)
-             .commit();
+             .apply();
       }
       return errorCode;
    }

@@ -145,6 +145,15 @@
             android:summary="@string/prefs_download_amount_summary"
             android:title="@string/prefs_download_amount_title" />
 
+        <com.quran.labs.androidquran.ui.preference.QuranPreference
+            android:title="@string/prefs_audio_manager"
+            android:summary="@string/prefs_audio_manager_summary">
+
+            <intent android:action="android.intent.action.MAIN"
+                    android:targetPackage="com.quran.labs.androidquran"
+                    android:targetClass="com.quran.labs.androidquran.ui.AudioManagerActivity" />
+        </com.quran.labs.androidquran.ui.preference.QuranPreference>
+
         <com.quran.labs.androidquran.ui.preference.QuranListPreference
             android:key="@string/prefs_app_location"
             android:summary="@string/prefs_app_location_summary"
