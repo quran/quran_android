@@ -78,7 +78,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
               mInternalSdcardLocation);
         } else if (mountPoints[i] != null) {
           s = new StorageUtils.Storage(
-              getString(R.string.prefs_sdcard_external),
+              getString(R.string.prefs_sdcard_external) + " " + i,
               mountPoints[i].getAbsolutePath());
         } else {
           s = null;
