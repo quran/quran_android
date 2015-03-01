@@ -1,13 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.QuranPreferenceActivity;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.StorageUtils;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,12 +13,18 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.File;
+import com.quran.labs.androidquran.QuranPreferenceActivity;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.StorageUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,34 +65,11 @@ public class QuranSettingsFragment extends PreferenceFragment implements
         getString(R.string.prefs_app_location));
     mListStoragePref.setEnabled(false);
 
-    final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
-    if (mountPoints.length > 1) {
+    try {
+      mStorageList = StorageUtils.getAllStorageLocations(context.getApplicationContext());
+    } catch (Exception e) {
+      Log.d(TAG, "Exception while trying to get storage locations", e);
       mStorageList = new ArrayList<>();
-      for (int i = 0; i < mountPoints.length; i++) {
-        final StorageUtils.Storage s;
-        if (i == 0) {
-          s = new StorageUtils.Storage(
-              getString(R.string.prefs_sdcard_internal),
-              mInternalSdcardLocation);
-        } else if (mountPoints[i] != null) {
-          s = new StorageUtils.Storage(
-              getString(R.string.prefs_sdcard_external),
-              mountPoints[i].getAbsolutePath());
-        } else {
-          s = null;
-        }
-
-        if (s != null) {
-          mStorageList.add(s);
-        }
-      }
-    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-      try {
-        mStorageList = StorageUtils
-            .getAllStorageLocations(context.getApplicationContext());
-      } catch (Exception e) {
-        mStorageList = new ArrayList<>();
-      }
     }
 
     // Hide app location pref if there is no storage option

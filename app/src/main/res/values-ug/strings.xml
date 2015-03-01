@@ -116,8 +116,7 @@
     <string name="prefs_app_location_title">ئەپ ئورنى</string>
     <string name="prefs_app_location_summary">ھۆججەتلەرنى قايسى sd كارتىغا ساقلايدىغانلىقىڭىزنى تاللاڭ</string>
     <string name="prefs_sdcard_internal">ئىچىدىكى ساقلىغۇچ</string>
-    <string name="prefs_sdcard_external">سىرتقى SD كارتا</string>
-    <string name="prefs_sdcard_auto">ئاپتوماتىك</string>
+    <string name="prefs_sdcard_external">سىرتقى SD كارتا %1$d</string>
     <string name="prefs_app_size">ئەپ چوڭلۇقى</string>
     <string name="prefs_calculating_app_size">ئەپ چوڭلۇقىنى ھېسابلاۋاتىدۇ</string>
     <string name="prefs_copying_app_files">ئەپ ھۆججەتلىرىنى كۆچۈرۈۋاتىدۇ</string>
