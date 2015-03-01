@@ -124,7 +124,7 @@
     <string name="translation_settings">Translation Settings</string>
     <string name="no_arabic_search_available">You have not downloaded the Arabic search pack.  Please download it and try your search again.</string>
     <string name="get_arabic_search_db">Get Arabic Search Database</string>
-        
+
     <!-- Quran Preference Activity -->
     <string name="prefs_category_navigation">Navigation</string>
     <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
@@ -168,7 +168,7 @@
     <string name="prefs_app_location_title">Quran Data Directory</string>
     <string name="prefs_app_location_summary">Choose where to store Quran files.</string>
     <string name="prefs_sdcard_internal">Internal Storage</string>
-    <string name="prefs_sdcard_external">External SD Card</string>
+    <string name="prefs_sdcard_external">External SD Card %1$d</string>
     <string name="prefs_sdcard_auto">Auto</string>
     <string name="prefs_app_size">Current data size is</string>
     <string name="prefs_calculating_app_size">Calculating App Size</string>
