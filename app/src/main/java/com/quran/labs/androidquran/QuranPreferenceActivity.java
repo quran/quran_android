@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran;
 
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
+import com.quran.labs.androidquran.util.AudioManagerUtils;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ public class QuranPreferenceActivity extends ActionBarActivity {
       }
     });
 
+    AudioManagerUtils.clearCache();
     getFragmentManager().beginTransaction()
         .replace(R.id.content, new QuranSettingsFragment())
         .commit();

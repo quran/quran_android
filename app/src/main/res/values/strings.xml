@@ -161,6 +161,8 @@
     <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
     <string name="prefs_download_amount_title">Download Amount</string>
     <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
+    <string name="prefs_audio_manager">Audio Manager</string>
+    <string name="prefs_audio_manager_summary">Manage and download quranic audio.</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
     <string name="remove_button">Remove</string>
@@ -303,4 +305,7 @@
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">No Bookmarks</string>
     <string name="tags_list_empty">No Tags</string>
+
+    <!-- audio manager -->
+    <string name="audio_manager">Audio Manager</string>
 </resources>

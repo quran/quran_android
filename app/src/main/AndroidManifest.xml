@@ -50,6 +50,8 @@
                <data android:scheme="quran"/>
            </intent-filter>
         </activity>
+        <activity android:name=".ui.AudioManagerActivity"
+            android:theme="@style/Quran"/>
 
 		<!-- declare the default searchable Activity for the whole app -->
 		<meta-data android:name="android.app.default_searchable"
