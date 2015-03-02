@@ -136,8 +136,7 @@
 	<string name="prefs_app_location_title">Lokasi aplikasi</string>
 	<string name="prefs_app_location_summary">Pilih lokasi untuk menyimpan fail</string>
 	<string name="prefs_sdcard_internal">Simpanan Dalaman</string>
-	<string name="prefs_sdcard_external">SD Card Luar</string>
-	<string name="prefs_sdcard_auto">Auto</string>
+	<string name="prefs_sdcard_external">SD Card Luar %1$d</string>
 	<string name="prefs_app_size">Saiz aplikasi</string>
 	<string name="prefs_calculating_app_size">Mengira saiz aplikasi</string>
 	<string name="prefs_copying_app_files">Menyalin fail aplikasi</string>

@@ -152,8 +152,7 @@
   <string name="prefs_megabytes">Mo</string>
   <string name="prefs_no_enough_space_to_move_files">Espace insuffisant pour déplacer les fichiers de l\'application</string>
   <string name="prefs_sdcard_internal">Stockage interne</string>
-  <string name="prefs_sdcard_external">Carte SD externe</string>
-  <string name="prefs_sdcard_auto">Auto</string>
+  <string name="prefs_sdcard_external">Carte SD externe %1$d</string>
   <string name="prefs_tablet_mode_title">Mode tablette</string>
   <string name="prefs_tablet_mode_enabled">En orientation paysage, deux pages s\'afficheront côte à côte.</string>
   <string name="prefs_tablet_mode_disabled">En orientation paysage, seulement une page s\'affichera.</string>

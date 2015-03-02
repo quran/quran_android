@@ -135,8 +135,7 @@
     <string name="prefs_app_location_title">Lokasi aplikasi</string>
     <string name="prefs_app_location_summary">Pilih penyimpanan file</string>
     <string name="prefs_sdcard_internal">Penyimpanan Internal</string>
-    <string name="prefs_sdcard_external">SD Card Eksternal</string>
-    <string name="prefs_sdcard_auto">Auto</string>
+    <string name="prefs_sdcard_external">SD Card Eksternal %1$d</string>
     <string name="prefs_app_size">Ukuran aplikasi</string>
     <string name="prefs_calculating_app_size">Menghitung ukuran aplikasi</string>
     <string name="prefs_copying_app_files">Menyalin file aplikasi</string>

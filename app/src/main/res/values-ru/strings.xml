@@ -169,8 +169,7 @@
     <string name="prefs_app_location_title">Расположение приложения</string>
     <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
     <string name="prefs_sdcard_internal">Внутренняя память</string>
-    <string name="prefs_sdcard_external">Внешняя SD карта</string>
-    <string name="prefs_sdcard_auto">Автоматически</string>
+    <string name="prefs_sdcard_external">Внешняя SD карта %1$d</string>
     <string name="prefs_app_size">Размер приложения</string>
     <string name="prefs_calculating_app_size">Расчет размера приложения</string>
     <string name="prefs_copying_app_files">Копирование файлов приложения</string>

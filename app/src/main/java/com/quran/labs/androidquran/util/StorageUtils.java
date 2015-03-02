@@ -37,8 +37,8 @@ public class StorageUtils {
 
     final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
     if (mountPoints != null && mountPoints.length > 1) {
-      for (int i = 0; i < mountPoints.length; i++) {
-        mounts.add(mountPoints[i].getAbsolutePath());
+      for (File mountPoint : mountPoints) {
+        mounts.add(mountPoint.getAbsolutePath());
       }
     } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
       mounts = readMountsFile();
@@ -48,9 +48,8 @@ public class StorageUtils {
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
         Collection<String> vold = readVoldsFile();
 
-        List<String> toRemove = new ArrayList<String>();
-        for (Iterator<String> iter = mounts.iterator(); iter.hasNext(); ) {
-          String mount = iter.next();
+        List<String> toRemove = new ArrayList<>();
+        for (String mount : mounts) {
           if (!vold.contains(mount)) {
             toRemove.add(mount);
           }
@@ -71,7 +70,7 @@ public class StorageUtils {
 
   private static List<Storage> buildMountsList(Context context,
                                                Collection<String> mounts) {
-    List<Storage> list = new ArrayList<Storage>(mounts.size());
+    List<Storage> list = new ArrayList<>(mounts.size());
 
     int externalSdcardsCount = 0;
     if (mounts.size() > 0) {
@@ -108,7 +107,7 @@ public class StorageUtils {
   private static Collection<String> readMountsFile() {
     String sdcardPath = Environment
         .getExternalStorageDirectory().getAbsolutePath();
-    List<String> mounts = new ArrayList<String>();
+    List<String> mounts = new ArrayList<>();
     mounts.add(sdcardPath);
 
     Log.d(TAG, "reading mounts file begin");
@@ -146,7 +145,7 @@ public class StorageUtils {
    * reads volume manager daemon file for auto-mounted storage
    * read more about it here: http://vold.sourceforge.net/
    *
-   * @return
+   * @return Mount points from `vold.fstab` configuration file
    */
   private static Set<String> readVoldsFile() {
     Set<String> volds = new HashSet<>();
@@ -192,7 +191,6 @@ public class StorageUtils {
     private String label;
     private String mountPoint;
     private int freeSpace;
-//    private int totalSpace;
 
     public Storage(String label, String mountPoint) {
       this.label = label;
@@ -202,19 +200,14 @@ public class StorageUtils {
 
     private void computeSpace() {
       StatFs stat = new StatFs(mountPoint);
-//      long totalBytes;
       long bytesAvailable;
       if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
-//        totalBytes = stat.getBlockCountLong() * stat.getBlockSizeLong();
         bytesAvailable = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
       } else {
-        //noinspection deprecation
-//        totalBytes = (long) stat.getBlockCount() * (long) stat.getBlockSize();
         //noinspection deprecation
         bytesAvailable = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
       }
       // Convert total bytes to megabytes
-//      totalSpace = Math.round(totalBytes / (1024 * 1024));
       freeSpace = Math.round(bytesAvailable / (1024 * 1024));
     }
 
@@ -232,12 +225,5 @@ public class StorageUtils {
     public int getFreeSpace() {
       return freeSpace;
     }
-
-//    /**
-//     * @return total size in Megabytes
-//     */
-//    public int getTotalSpace() {
-//      return totalSpace;
-//    }
   }
 }

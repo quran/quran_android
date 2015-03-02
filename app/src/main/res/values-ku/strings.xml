@@ -144,7 +144,6 @@
     <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
     <string name="prefs_sdcard_internal">یادگەی ناوەکی</string>
     <string name="prefs_sdcard_external">یادگەی دەرەکی SD</string>
-    <string name="prefs_sdcard_auto">خۆکار</string>
     <string name="prefs_app_size">قەبارەی بەرنامە</string>
     <string name="prefs_copying_app_files">لەبەرگرتنەوەی فایلەکانی بەرنامە</string>
     <string name="prefs_err_moving_app_files">گواستنەوەی فایلەکانی بەرنامە سەرکەوتو نەبوو</string>
