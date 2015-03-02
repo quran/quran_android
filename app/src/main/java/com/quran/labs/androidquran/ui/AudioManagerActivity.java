@@ -6,13 +6,16 @@ import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.SheikhInfo;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,7 +35,9 @@ public class AudioManagerActivity extends ActionBarActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    getSupportActionBar().setTitle(R.string.audio_manager);
+    final ActionBar ab = getSupportActionBar();
+    ab.setTitle(R.string.audio_manager);
+    ab.setDisplayHomeAsUpEnabled(true);
 
     setContentView(R.layout.audio_manager);
 
@@ -70,6 +75,27 @@ public class AudioManagerActivity extends ActionBarActivity {
         }
       };
 
+  private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+    }
+  };
+
+  private View.OnClickListener mOnImageClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+    }
+  };
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
   private class ShuyookhAdapter extends RecyclerView.Adapter<SheikhViewHolder> {
     private final LayoutInflater mInflater;
     private final String[] mShuyookhNames;
@@ -99,9 +125,10 @@ public class AudioManagerActivity extends ActionBarActivity {
       holder.name.setText(mShuyookhNames[position]);
 
       SheikhInfo info = mDownloadInfoMap.get(mShuyookhPaths[position]);
-      holder.quantity.setText("Downloaded " +
-          info.downloadedSuras.size() + " suras and " +
-          info.partialSuras.size() + " partials.");
+      int fullyDownloaded = info.downloadedSuras.size();
+      holder.quantity.setText(
+          getResources().getQuantityString(R.plurals.files_downloaded,
+            fullyDownloaded, fullyDownloaded));
     }
 
     @Override
@@ -110,14 +137,19 @@ public class AudioManagerActivity extends ActionBarActivity {
     }
   }
 
-  private static class SheikhViewHolder extends RecyclerView.ViewHolder {
+  private class SheikhViewHolder extends RecyclerView.ViewHolder {
     public final TextView name;
     public final TextView quantity;
+    public final ImageView image;
 
     public SheikhViewHolder(View itemView) {
       super(itemView);
       name = (TextView) itemView.findViewById(R.id.name);
       quantity = (TextView) itemView.findViewById(R.id.quantity);
+
+      image = (ImageView) itemView.findViewById(R.id.image);
+      image.setOnClickListener(mOnImageClickListener);
+      itemView.setOnClickListener(mOnClickListener);
     }
   }
 }

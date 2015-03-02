@@ -7,7 +7,7 @@
 	<color name="page_background">#FFF4CB</color>
     <color name="header_background">#ff424242</color>
 	<color name="header_text_color">@color/sura_number_color</color>
-	<color name="sura_info_color">#ffffffff</color>
+    <color name="title_color">#ffffffff</color>
     <color name="sura_number_color">#7fffffff</color>
 	<color name="sura_details_color">#b2ffffff</color>
     <color name="transparent_actionbar_color">#AA000000</color>
@@ -26,4 +26,5 @@
     <color name="panel_label">@color/accent_color</color>
     <color name="notification_color">#ff112e44</color>
     <color name="ayah_bookmark_color">#ff81c784</color>
+    <color name="download_button_background">#ff556f79</color>
 </resources>
