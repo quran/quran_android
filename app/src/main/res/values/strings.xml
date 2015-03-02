@@ -111,6 +111,11 @@
 	<string name="search_hint">Search the Quran</string>
 	<string name="quranSearchType">Verses of the Quran</string>
 
+    <plurals name="files_downloaded">
+        <item quantity="one">1 sura downloaded</item>
+        <item quantity="other">%1$d suras downloaded</item>
+    </plurals>
+
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
         <item quantity="one">One result for \"%1$s\": </item>

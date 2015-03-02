@@ -41,11 +41,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="start"
-            android:lines="1"
-            android:maxLines="1"
             android:scrollHorizontally="true"
-            android:textColor="@color/sura_info_color"
-            android:textSize="16sp"
+            android:textAppearance="@style/TitleText"
             tools:text="Al-Baqara"/>
 
         <TextView
