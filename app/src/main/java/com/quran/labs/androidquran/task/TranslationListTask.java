@@ -44,7 +44,7 @@ public class TranslationListTask extends
 
    public TranslationListTask(Context context,
                               TranslationsUpdatedListener listener){
-      mContext = context;
+      mContext = context.getApplicationContext();
       mListener = listener;
    }
 
@@ -122,7 +122,7 @@ public class TranslationListTask extends
               new TranslationsDBAdapter(context);
       cachedItems = adapter.getTranslationsHash();
       if (cachedItems == null){
-         cachedItems = new SparseArray<TranslationItem>();
+         cachedItems = new SparseArray<>();
       }
 
       List<TranslationItem> items = new ArrayList<TranslationItem>();

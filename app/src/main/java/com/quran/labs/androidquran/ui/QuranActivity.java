@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
+import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.ui.fragment.AbsMarkersFragment;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
@@ -18,11 +19,13 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TagsFragment;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.UpgradeTranslationListener;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,11 +37,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 
 public class QuranActivity extends ActionBarActivity
     implements BookmarkHandler, AddTagDialog.OnTagChangedListener,
@@ -66,6 +71,8 @@ public class QuranActivity extends ActionBarActivity
 
   private static final int REFRESH_BOOKMARKS = 1;
   private static final int REFRESH_TAGS = 2;
+
+  private static boolean sUpdatedTranslations;
 
   private AlertDialog mUpgradeDialog = null;
   private PagerAdapter mPagerAdapter = null;
@@ -155,6 +162,8 @@ public class QuranActivity extends ActionBarActivity
         }
       }
     }
+
+    updateTranslationsListAsNeeded();
   }
 
   @Override
@@ -231,6 +240,23 @@ public class QuranActivity extends ActionBarActivity
     outState.putBoolean(SI_SHOWED_UPGRADE_DIALOG,
         mShowedTranslationUpgradeDialog);
     super.onSaveInstanceState(outState);
+  }
+
+  private void updateTranslationsListAsNeeded() {
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    if (prefs.getBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false)) {
+      showTranslationsUpgradeDialog();
+    } else if (!sUpdatedTranslations) {
+      long time = prefs.getLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
+      Date now = new Date();
+      Log.d(TAG, "checking whether we should update translations..");
+      if (now.getTime() - time > Constants.TRANSLATION_REFRESH_TIME) {
+        Log.d(TAG, "updating translations list...");
+        sUpdatedTranslations = true;
+        new TranslationListTask(
+            this, new UpgradeTranslationListener(this)).execute();
+      }
+    }
   }
 
   private void showTranslationsUpgradeDialog() {

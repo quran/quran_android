@@ -22,10 +22,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
-import java.util.Date;
 
 public class QuranDataActivity extends ActionBarActivity implements
         DefaultDownloadReceiver.SimpleDownloadListener {
@@ -225,7 +223,7 @@ public class QuranDataActivity extends ActionBarActivity implements
            if (fallback != null) {
              mSharedPreferences.edit()
                  .putString(Constants.PREF_DEFAULT_IMAGES_DIR, fallback)
-                 .commit();
+                 .apply();
              qsi.setOverrideParam(fallback);
            }
          }
@@ -287,19 +285,6 @@ public class QuranDataActivity extends ActionBarActivity implements
               mPatchUrl = QuranFileUtils.getPatchFileUrl(mPatchParam, 3);
               promptForDownload();
               return;
-            }
-
-            long time = mSharedPreferences.getLong(
-                    Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
-            Date now = new Date();
-            Log.d(TAG, "checking whether we should update translations..");
-            if (now.getTime() - time > Constants.TRANSLATION_REFRESH_TIME){
-               Log.d(TAG, "updating translations list...");
-               Intent intent = new Intent(QuranDataActivity.this,
-                       QuranDownloadService.class);
-               intent.setAction(
-                       QuranDownloadService.ACTION_CHECK_TRANSLATIONS);
-               startService(intent);
             }
             runListView();
          }
@@ -399,7 +384,7 @@ public class QuranDataActivity extends ActionBarActivity implements
             mPromptForDownloadDialog = null;
             mSharedPreferences.edit().putBoolean(
                     Constants.PREF_SHOULD_FETCH_PAGES, true)
-                    .commit();
+                    .apply();
             downloadQuranImages(true);
          }
       });

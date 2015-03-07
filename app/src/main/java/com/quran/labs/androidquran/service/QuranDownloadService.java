@@ -1,13 +1,10 @@
 package com.quran.labs.androidquran.service;
 
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
-import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ZipUtils;
@@ -38,7 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -59,9 +55,7 @@ public class QuranDownloadService extends Service implements
          "com.quran.labs.androidquran.CANCEL_DOWNLOADS";
    public static final String ACTION_RECONNECT =
          "com.quran.labs.androidquran.RECONNECT";
-   public static final String ACTION_CHECK_TRANSLATIONS =
-         "com.quran.labs.androidquran.CHECK_TRANSLATIONS";
-   
+
    // extras
    public static final String EXTRA_URL = "url";
    public static final String EXTRA_DESTINATION = "destination";
@@ -85,8 +79,7 @@ public class QuranDownloadService extends Service implements
 
    // continuation of handler message types
    public static final int NO_OP = 9;
-   public static final int TRANSLATIONS_UPDATE = 10;
-   
+
    // error prefs
    public static final String PREF_LAST_DOWNLOAD_ERROR = "lastDownloadError";
    public static final String PREF_LAST_DOWNLOAD_ITEM = "lastDownloadItem";
@@ -121,9 +114,7 @@ public class QuranDownloadService extends Service implements
       
       @Override
       public void handleMessage(Message msg){
-         if (msg.what == TRANSLATIONS_UPDATE){
-            updateTranslations();
-         } else if (msg.obj != null){
+         if (msg.obj != null){
             onHandleIntent((Intent)msg.obj);
          }
          stopSelf(msg.arg1);
@@ -179,9 +170,6 @@ public class QuranDownloadService extends Service implements
                mBroadcastManager.sendBroadcast(progressIntent);
             }
             sendNoOpMessage(startId);
-         }
-         else if (ACTION_CHECK_TRANSLATIONS.equals(intent.getAction())){
-            mServiceHandler.sendEmptyMessage(TRANSLATIONS_UPDATE);
          }
          else {
             // if we are currently downloading, resend the last broadcast
@@ -250,27 +238,6 @@ public class QuranDownloadService extends Service implements
       return null;
    }
 
-   private void updateTranslations(){
-      List<TranslationItem> items =
-              TranslationListTask.downloadTranslations(this, false, TAG);
-      if (items == null){ return; }
-
-      boolean needsUpgrade = false;
-      for (TranslationItem item : items){
-         if (item.exists && item.localVersion != null &&
-                 item.latestVersion > 0 &&
-                 item.latestVersion > item.localVersion){
-            needsUpgrade = true;
-            break;
-         }
-      }
-
-      Log.d(TAG, "done checking translations - " +
-              (needsUpgrade? "" : "no ") + "upgrade needed");
-      mSharedPreferences.edit().putBoolean(
-              Constants.PREF_HAVE_UPDATED_TRANSLATIONS, needsUpgrade).apply();
-   }
-   
    private void onHandleIntent(Intent intent){
       if (ACTION_DOWNLOAD_URL.equals(intent.getAction())){
          String url = intent.getStringExtra(EXTRA_URL);
