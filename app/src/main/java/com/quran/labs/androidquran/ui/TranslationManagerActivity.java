@@ -323,7 +323,7 @@ public class TranslationManagerActivity extends ActionBarActivity
                                    Constants.PREF_ACTIVE_TRANSLATION, "");
                            if (current.compareTo(selectedItem.filename) == 0){
                               mSharedPreferences.edit().remove(
-                                   Constants.PREF_ACTIVE_TRANSLATION).commit();
+                                   Constants.PREF_ACTIVE_TRANSLATION).apply();
                            }
                            generateListItems();
                         }
