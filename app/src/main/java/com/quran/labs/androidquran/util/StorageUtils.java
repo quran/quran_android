@@ -74,13 +74,13 @@ public class StorageUtils {
 
     int externalSdcardsCount = 0;
     if (mounts.size() > 0) {
-      String firstItem = mounts.iterator().next();
-
       // Follow Android SDCards naming conventions
       if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
-        list.add(new Storage(context.getString(R.string.prefs_sdcard_internal), firstItem));
+        list.add(new Storage(context.getString(R.string.prefs_sdcard_internal),
+            Environment.getExternalStorageDirectory().getAbsolutePath()));
       } else {
         externalSdcardsCount = 1;
+        String firstItem = mounts.iterator().next();
         list.add(new Storage(context.getString(R.string.prefs_sdcard_external, externalSdcardsCount), firstItem));
       }
 
