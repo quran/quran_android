@@ -11,12 +11,8 @@ import com.quran.labs.androidquran.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 
 /**
@@ -33,7 +29,7 @@ public class StorageUtils {
    * @return A List of all storage locations available
    */
   public static List<Storage> getAllStorageLocations(Context context) {
-    Collection<String> mounts = new ArrayList<>();
+    List<String> mounts = new ArrayList<>();
 
     final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
     if (mountPoints != null && mountPoints.length > 1) {
@@ -46,7 +42,7 @@ public class StorageUtils {
       // As per http://source.android.com/devices/tech/storage/config.html
       // device-specific vold.fstab file is removed after Android 4.2.2
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        Collection<String> vold = readVoldsFile();
+        List<String> vold = readVoldsFile();
 
         List<String> toRemove = new ArrayList<>();
         for (String mount : mounts) {
@@ -63,39 +59,31 @@ public class StorageUtils {
       }
     }
 
-
     Log.d(TAG, "mounts list is: " + mounts);
     return buildMountsList(context, mounts);
   }
 
-  private static List<Storage> buildMountsList(Context context,
-                                               Collection<String> mounts) {
+  private static List<Storage> buildMountsList(Context context, List<String> mounts) {
     List<Storage> list = new ArrayList<>(mounts.size());
 
     int externalSdcardsCount = 0;
     if (mounts.size() > 0) {
-      // Follow Android SDCards naming conventions
+      // Follow Android SD Cards naming conventions
       if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
         list.add(new Storage(context.getString(R.string.prefs_sdcard_internal),
             Environment.getExternalStorageDirectory().getAbsolutePath()));
       } else {
         externalSdcardsCount = 1;
-        String firstItem = mounts.iterator().next();
-        list.add(new Storage(context.getString(R.string.prefs_sdcard_external, externalSdcardsCount), firstItem));
+        list.add(new Storage(context.getString(R.string.prefs_sdcard_external,
+            externalSdcardsCount), mounts.get(0)));
       }
 
-      // All other mounts rather than the first mount point
-      // are considered as External SD Card
+      // All other mounts rather than the first mount point are considered as External SD Card
       if (mounts.size() > 1) {
-        Iterator<String> iter = mounts.iterator();
-
-        // skip the first one and incremented the counter accordingly
-        iter.next();
         externalSdcardsCount++;
-
-        while (iter.hasNext()) {
-          String mount = iter.next();
-          list.add(new Storage(context.getString(R.string.prefs_sdcard_external, externalSdcardsCount++), mount));
+        for (int i = 1/*skip the first item*/; i < mounts.size(); i++) {
+          list.add(new Storage(context.getString(R.string.prefs_sdcard_external,
+              externalSdcardsCount++), mounts.get(i)));
         }
       }
     }
@@ -104,9 +92,8 @@ public class StorageUtils {
     return list;
   }
 
-  private static Collection<String> readMountsFile() {
-    String sdcardPath = Environment
-        .getExternalStorageDirectory().getAbsolutePath();
+  private static List<String> readMountsFile() {
+    String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
     List<String> mounts = new ArrayList<>();
     mounts.add(sdcardPath);
 
@@ -145,10 +132,10 @@ public class StorageUtils {
    * reads volume manager daemon file for auto-mounted storage
    * read more about it here: http://vold.sourceforge.net/
    *
-   * @return Mount points from `vold.fstab` configuration file
+   * @return List of mount points from `vold.fstab` configuration file
    */
-  private static Set<String> readVoldsFile() {
-    Set<String> volds = new HashSet<>();
+  private static List<String> readVoldsFile() {
+    List<String> volds = new ArrayList<>();
     volds.add(Environment.getExternalStorageDirectory().getAbsolutePath());
 
     Log.d(TAG, "reading volds file");
