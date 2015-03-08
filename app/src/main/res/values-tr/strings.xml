@@ -164,7 +164,7 @@
     <string name="prefs_streaming_summary">Online olarak ses akışı sağla (ayrık olmayan ses dosyaları için)</string>
     <string name="prefs_sdcard_internal">Dahili hafıza</string>
     <string name="prefs_sdcard_external">Harici SD kartı %1$d</string>
-    <string name="prefs_overlay_page_info_title">Sayfa bilgisini göster (beta)</string>
+    <string name="prefs_overlay_page_info_title">Sayfa bilgisini göster </string>
     <string name="prefs_overlay_page_info_summary">Cüz numarası, sure ismi ve sayfa numarası üstünde göster</string>
     <string name="prefs_night_mode_text_brightness_title">Metin parlaklığı</string>
     <string name="prefs_night_mode_text_brightness_summary">Gece modu açıkken metin parlaklığı</string>

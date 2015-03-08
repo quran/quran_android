@@ -17,7 +17,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class AudioManagerUtils {
-  private static boolean isGapless(@NonNull String pathName) {
+  public static boolean isGapless(@NonNull String pathName) {
     return Character.isLetter(pathName.charAt(0)) &&
         !"ydussary".equals(pathName);
   }
@@ -32,6 +32,10 @@ public class AudioManagerUtils {
 
   public static void clearCache() {
     sCache.clear();
+  }
+
+  public static void clearCacheKeyForSheikh(String path) {
+    sCache.remove(path);
   }
 
   public static Observable<List<SheikhInfo>> shuyookhDownloadObservable(
