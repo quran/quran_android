@@ -59,11 +59,13 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
               QuranDownloadNotifier.ProgressIntent.DOWNLOADED_SIZE, -1);
           long totalSize = intent.getLongExtra(
               QuranDownloadNotifier.ProgressIntent.TOTAL_SIZE, -1);
+          int sura = intent.getIntExtra(QuranDownloadNotifier.ProgressIntent.SURA, -1);
+          int ayah = intent.getIntExtra(QuranDownloadNotifier.ProgressIntent.AYAH, -1);
           if (rcvr.mListener instanceof DownloadListener) {
             ((DownloadListener) rcvr.mListener).updateDownloadProgress(progress,
                 downloadedSize, totalSize);
           } else {
-            rcvr.updateDownloadProgress(progress, downloadedSize, totalSize);
+            rcvr.updateDownloadProgress(progress, downloadedSize, totalSize, sura, ayah);
           }
           break;
         }
@@ -194,7 +196,7 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
   }
 
   private void updateDownloadProgress(int progress,
-      long downloadedSize, long totalSize) {
+      long downloadedSize, long totalSize, int currentSura, int currentAyah) {
     if (mProgressDialog == null) {
       makeAndShowProgressDialog();
     }
@@ -218,9 +220,19 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
       String downloaded = df.format((1.0 * downloadedSize / mb)) + " MB";
       String total = df.format((1.0 * totalSize / mb)) + " MB";
 
-      String message = String.format(
-          mContext.getString(R.string.download_progress),
-          downloaded, total);
+      String message;
+      if (currentSura < 1) {
+        message = String.format(
+            mContext.getString(R.string.download_progress),
+            downloaded, total);
+      } else if (currentAyah <= 0) {
+        message = String.format(
+            mContext.getString(R.string.download_sura_progress),
+            downloaded, total, currentSura);
+      } else {
+        message = String.format(mContext.getString(R.string.download_sura_ayah_progress),
+            currentSura, currentAyah);
+      }
       mProgressDialog.setMessage(message);
     }
   }
