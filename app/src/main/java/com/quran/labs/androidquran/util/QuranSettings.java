@@ -55,11 +55,6 @@ public class QuranSettings {
               Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
    }
 
-   public static boolean shouldOverlayPageInfo(Context context){
-      return getBooleanPreference(context,
-            Constants.PREF_OVERLAY_PAGE_INFO, true);
-   }
-
    public static boolean shouldDisplayMarkerPopup(Context context){
       return getBooleanPreference(context,
               Constants.PREF_DISPLAY_MARKER_POPUP, true);

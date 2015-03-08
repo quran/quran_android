@@ -3,27 +3,28 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.util.TranslationUtils;
+import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.widgets.TranslationView;
+import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
+import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.List;
 
 public class AyahTranslationFragment extends AyahActionFragment {
-  private static final String TAG = "AyahTranslationFragment";
 
   private ProgressBar mProgressBar;
   private TranslationView mTranslationView;
@@ -31,7 +32,9 @@ public class AyahTranslationFragment extends AyahActionFragment {
   private AsyncTask mCurrentTask;
   private TranslationItem mTranslationItem;
   private View mTranslationControls;
-  private TextView mTranslator;
+  private SpinnerCompat mTranslator;
+  private TranslationsSpinnerAdapter mTranslationAdapter;
+  private List<TranslationItem> mTranslations;
 
   @Override
   public View onCreateView(LayoutInflater inflater,
@@ -39,7 +42,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
     final View view = inflater.inflate(
         R.layout.translation_panel, container, false);
 
-    mTranslator = (TextView) view.findViewById(R.id.translator);
+    mTranslator = (SpinnerCompat) view.findViewById(R.id.translator);
     mTranslationView =
         (TranslationView) view.findViewById(R.id.translation_view);
     mTranslationView.setIsInAyahActionMode(true);
@@ -88,13 +91,39 @@ public class AyahTranslationFragment extends AyahActionFragment {
 
     final Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
-      mTranslationItem = TranslationUtils.getDefaultTranslationItem(
-          activity, ((PagerActivity) activity).getTranslations());
-      if (mTranslationItem == null) {
+      PagerActivity pagerActivity = (PagerActivity) activity;
+      if (mTranslations == null) {
+        mTranslations = pagerActivity.getTranslations();
+      }
+
+      if (mTranslations == null || mTranslations.size() == 0) {
         mProgressBar.setVisibility(View.GONE);
         mEmptyState.setVisibility(View.VISIBLE);
         mTranslationControls.setVisibility(View.GONE);
         return;
+      }
+
+      if (mTranslationAdapter == null) {
+        mTranslationAdapter = new TranslationsSpinnerAdapter(activity,
+            R.layout.support_simple_spinner_dropdown_item,
+            pagerActivity.getTranslationNames(), mTranslations);
+        mTranslator.setAdapter(mTranslationAdapter);
+        mTranslator.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterViewCompat<?> parent, View view, int position,
+              long id) {
+            TranslationItem item = mTranslationAdapter.getTranslationItem(position);
+            if (!item.filename.equals(mTranslationItem.filename)) {
+              PreferenceManager.getDefaultSharedPreferences(activity).edit()
+                  .putString(Constants.PREF_ACTIVE_TRANSLATION, item.filename).commit();
+              refreshView();
+            }
+          }
+
+          @Override
+          public void onNothingSelected(AdapterViewCompat<?> parent) {
+          }
+        });
       }
 
       if (mStart.equals(mEnd)) {
@@ -108,6 +137,10 @@ public class AyahTranslationFragment extends AyahActionFragment {
       if (mCurrentTask != null) {
         mCurrentTask.cancel(true);
       }
+
+      int pos = mTranslationAdapter.getPositionForActiveTranslation();
+      mTranslationItem = mTranslationAdapter.getTranslationItem(pos);
+      mTranslator.setSelection(pos);
       mCurrentTask = new ShowTafsirTask(activity, bounds,
           mTranslationItem.filename).execute();
     }
@@ -130,14 +163,6 @@ public class AyahTranslationFragment extends AyahActionFragment {
       mProgressBar.setVisibility(View.GONE);
       if (result != null) {
         mEmptyState.setVisibility(View.GONE);
-        String who = null;
-        if (mTranslationItem != null) {
-          who = mTranslationItem.translator;
-          if (TextUtils.isEmpty(who)) {
-            who = mTranslationItem.name;
-          }
-        }
-        mTranslator.setText(who);
         mTranslationView.setAyahs(result);
       } else {
         mEmptyState.setVisibility(View.VISIBLE);

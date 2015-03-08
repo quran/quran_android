@@ -39,6 +39,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter;
+import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -87,9 +88,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -154,7 +152,7 @@ public class PagerActivity extends ActionBarActivity implements
   private List<TranslationItem> mTranslations;
   private String[] mTranslationItems;
   private TranslationReaderTask mTranslationReaderTask;
-  private SpinnerAdapter mSpinnerAdapter;
+  private TranslationsSpinnerAdapter mSpinnerAdapter;
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
@@ -1070,6 +1068,10 @@ public class PagerActivity extends ActionBarActivity implements
     return mTranslations;
   }
 
+  public String[] getTranslationNames() {
+    return mTranslationItems;
+  }
+
   public void toggleBookmark(Integer sura, Integer ayah, int page) {
     new ToggleBookmarkTask().execute(sura, ayah, page);
   }
@@ -1116,18 +1118,9 @@ public class PagerActivity extends ActionBarActivity implements
     mSpinnerAdapter = null;
   }
 
-  private static class SpinnerHolder {
-    TextView title;
-    TextView subtitle;
-  }
-
   private void refreshActionBarSpinner() {
     if (mSpinnerAdapter != null) {
-      if (mSpinnerAdapter instanceof ArrayAdapter) {
-        ((ArrayAdapter) mSpinnerAdapter).notifyDataSetChanged();
-      } else {
-        updateActionBarSpinner();
-      }
+      mSpinnerAdapter.notifyDataSetChanged();
     } else {
       updateActionBarSpinner();
     }
@@ -1144,48 +1137,23 @@ public class PagerActivity extends ActionBarActivity implements
       return;
     }
 
-    mSpinnerAdapter = new ArrayAdapter<String>(this,
+    mSpinnerAdapter = new TranslationsSpinnerAdapter(this,
         R.layout.support_simple_spinner_dropdown_item,
-        mTranslationItems) {
+        mTranslationItems, mTranslations) {
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {
-        SpinnerHolder holder;
-        if (convertView == null) {
-          holder = new SpinnerHolder();
-          convertView = getLayoutInflater().inflate(
-              R.layout.translation_ab_spinner_selected,
-              parent, false);
-          holder.title = (TextView) convertView.findViewById(R.id.title);
-          holder.subtitle = (TextView) convertView.findViewById(
-              R.id.subtitle);
-          convertView.setTag(holder);
-        }
-        holder = (SpinnerHolder) convertView.getTag();
-
-        holder.title.setText(mTranslationItems[position]);
+        convertView = super.getView(position, convertView, parent);
+        SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
         int page = getCurrentPage();
-        String subtitle = QuranInfo.getPageSubtitle(
-            PagerActivity.this, page);
+        String subtitle = QuranInfo.getPageSubtitle(PagerActivity.this, page);
         holder.subtitle.setText(subtitle);
+        holder.subtitle.setVisibility(View.VISIBLE);
         return convertView;
       }
     };
 
     // figure out which translation should be selected
-    int selected = 0;
-    String activeTranslation = TranslationUtils
-        .getDefaultTranslation(this, mTranslations);
-    if (activeTranslation != null) {
-      int index = 0;
-      for (TranslationItem item : mTranslations) {
-        if (item.filename.equals(activeTranslation)) {
-          selected = index;
-          break;
-        } else {
-          index++;
-        }
-      }
-    }
+    int selected = mSpinnerAdapter.getPositionForActiveTranslation();
 
     getSupportActionBar().setNavigationMode(
         ActionBar.NAVIGATION_MODE_LIST);
