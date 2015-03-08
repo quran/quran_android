@@ -419,8 +419,12 @@ public class QuranDownloadService extends Service implements
             String url = String.format(Locale.US,  urlString, i);
             Log.d(TAG, "gapless asking to download " + url + " to " + destDir);
             final String filename = QuranDownloadService.getFilenameFromUrl(url);
-            result = downloadFileWrapper(url, destDir, filename, details);
-            if (!result){ return false; }
+            if (!new File(destDir, filename).exists()) {
+              result = downloadFileWrapper(url, destDir, filename, details);
+              if (!result) {
+                return false;
+              }
+            }
             details.currentFile++;
             continue;
          }
@@ -432,8 +436,12 @@ public class QuranDownloadService extends Service implements
          for (int j = firstAyah; j <= lastAyah; j++){
             String url = String.format(Locale.US, urlString, i, j);
             String destFile = j + extension;
-            result = downloadFileWrapper(url, destDir, destFile, details);
-            if (!result){ return false; }
+            if (!new File(destDir, destFile).exists()) {
+              result = downloadFileWrapper(url, destDir, destFile, details);
+              if (!result) {
+                return false;
+              }
+            }
 
             details.currentFile++;
          }
