@@ -160,7 +160,7 @@
     <string name="prefs_night_mode_summary">Es werden ein dunkler Hintergrund und eine helle Schrift benutzt.</string>
     <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
     <string name="prefs_night_mode_text_brightness_summary">Die Helligkeit des Textes im Nachtmodus.</string>
-    <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen (Beta)</string>
+    <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen</string>
     <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sura und die Juz\' Nummer während dem Lesen ein.</string>
 	<string name="prefs_display_marker_title">Meilenstein-Fenster anzeigen</string>
 	<string name="prefs_display_marker_summary">Ein Fenster anzeigen beim Erreichen eines neuen Juz\', einer neuen Hizb, etc.</string>

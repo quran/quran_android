@@ -92,7 +92,6 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -1562,15 +1561,7 @@ public class PagerActivity extends ActionBarActivity implements
     }
     String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, qari);
 
-    String fileUrl;
-    if (TextUtils.isEmpty(dbFile)) {
-      fileUrl = baseUri + File.separator + "%d" + File.separator +
-          "%d" + AudioUtils.AUDIO_EXTENSION;
-    } else {
-      fileUrl = baseUri + File.separator + "%03d" +
-          AudioUtils.AUDIO_EXTENSION;
-    }
-
+    String fileUrl = AudioUtils.getQariUrl(this, qari, true);
     DownloadAudioRequest request =
         new DownloadAudioRequest(fileUrl, ayah, qari, baseUri);
     request.setGaplessDatabaseFilePath(dbFile);
@@ -1647,8 +1638,7 @@ public class PagerActivity extends ActionBarActivity implements
         }
 
         QuranAyah firstAyah = new QuranAyah(1, 1);
-        String qariUrl = AudioUtils.getQariUrl(this,
-            request.getQariId(), true);
+        String qariUrl = request.getBaseUrl();
         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
         if (mIsActionBarHidden) {
@@ -1677,8 +1667,7 @@ public class PagerActivity extends ActionBarActivity implements
 
       String notificationTitle = QuranInfo.getNotificationTitle(this,
           request.getMinAyah(), request.getMaxAyah(), request.isGapless());
-      String qariUrl = AudioUtils.getQariUrl(this,
-          request.getQariId(), true);
+      String qariUrl = request.getBaseUrl();
       android.util.Log.d(TAG, "need to start download: " + qariUrl);
 
       // start service

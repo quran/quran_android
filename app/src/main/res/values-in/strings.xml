@@ -114,7 +114,7 @@
     <string name="prefs_night_mode_summary">Menggunakan background gelap dan teks terang</string>
     <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>
     <string name="prefs_night_mode_text_brightness_summary">Kecerahan teks ketika modus malam aktif</string>
-    <string name="prefs_overlay_page_info_title">Tampilkan info halaman (beta)</string>
+    <string name="prefs_overlay_page_info_title">Tampilkan info halaman</string>
     <string name="prefs_overlay_page_info_summary">Nomor halaman, nama surat dan nomor juz\' akan ditampilkan</string>
     <string name="prefs_display_marker_title">Tampilkan popup penanda</string>
     <string name="prefs_display_marker_summary">Tampilan popup saat mencapai pergantian juz\', hizb, dll</string>

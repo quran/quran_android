@@ -150,7 +150,7 @@
     <string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
     <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
     <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
-    <string name="prefs_overlay_page_info_title">Show page info (beta)</string>
+    <string name="prefs_overlay_page_info_title">Show page info</string>
     <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
     <string name="prefs_display_marker_title">Display marker popups</string>
     <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
@@ -166,7 +166,7 @@
     <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
     <string name="prefs_download_amount_title">Download Amount</string>
     <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
-    <string name="prefs_audio_manager">Audio Manager</string>
+    <string name="prefs_audio_manager">Audio Manager (pre-alpha)</string>
     <string name="prefs_audio_manager_summary">Manage and download quranic audio.</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>

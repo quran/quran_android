@@ -138,7 +138,7 @@
     <string name="prefs_night_mode_summary">Qora fon va porloq shriftlardan foydalaniladi</string>
     <string name="prefs_night_mode_text_brightness_title">Matn porloqliligi</string>
     <string name="prefs_night_mode_text_brightness_summary">Tunggi rejim ishga tushirilgan paytdagi matn porloqliligi</string>
-    <string name="prefs_overlay_page_info_title">Sahifa ma\'lumotlari (beta)</string>
+    <string name="prefs_overlay_page_info_title">Sahifa ma\'lumotlari</string>
     <string name="prefs_overlay_page_info_summary">Sura nomi, sahifa va pora raqamlarini ko\'rsatish</string>
     <string name="prefs_display_marker_title">Display marker popups</string>
     <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>

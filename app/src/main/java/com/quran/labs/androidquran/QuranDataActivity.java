@@ -84,7 +84,7 @@ public class QuranDataActivity extends ActionBarActivity implements
                  .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
                          Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS)
                  .remove(Constants.PREF_UPGRADE_TO_242)
-                 .putBoolean(Constants.PREF_UPGRADE_TO_243, true).commit();
+                 .putBoolean(Constants.PREF_UPGRADE_TO_243, true).apply();
       }
    }
 
