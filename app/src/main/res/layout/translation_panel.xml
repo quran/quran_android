@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <TextView android:id="@+id/translator"
+        <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+            android:id="@+id/translator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/translation_top_bottom_margin"
