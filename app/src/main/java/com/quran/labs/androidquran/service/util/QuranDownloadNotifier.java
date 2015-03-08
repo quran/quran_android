@@ -39,6 +39,8 @@ public class QuranDownloadNotifier {
     public static final String PROCESSED_FILES = "processedFiles";
     public static final String TOTAL_FILES = "totalFiles";
     public static final String ERROR_CODE = "errorCode";
+    public static final String SURA = "sura";
+    public static final String AYAH = "ayah";
 
     // states for the intent maybe one of these values
     public static final String STATE_DOWNLOADING = "downloading";
@@ -54,6 +56,8 @@ public class QuranDownloadNotifier {
     public int type;
     public int currentFile;
     public int totalFiles;
+    public int sura;
+    public int ayah;
     public boolean sendIndeterminate;
 
     public NotificationDetails(String title, String key, int type){
@@ -109,6 +113,9 @@ public class QuranDownloadNotifier {
       double percentPerFile = 100 / details.totalFiles;
       progress = (int)((percentPerFile * (details.currentFile - 1)) +
           (percent * percentPerFile));
+      if (details.sura > 0 && details.ayah > 0) {
+        progress = (int) (((float) details.currentFile / (float) details.totalFiles) * 100.0f);
+      }
     }
 
     showNotification(details.title,
@@ -122,6 +129,11 @@ public class QuranDownloadNotifier {
     progressIntent.putExtra(ProgressIntent.DOWNLOAD_TYPE, details.type);
     progressIntent.putExtra(ProgressIntent.STATE,
         ProgressIntent.STATE_DOWNLOADING);
+    if (details.sura > 0) {
+      progressIntent.putExtra(ProgressIntent.SURA, details.sura);
+      progressIntent.putExtra(ProgressIntent.AYAH, details.ayah);
+    }
+
     if (!isIndeterminate){
       progressIntent.putExtra(ProgressIntent.DOWNLOADED_SIZE,
           downloadedSize);

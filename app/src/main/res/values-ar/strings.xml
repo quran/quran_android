@@ -54,6 +54,15 @@
     <string name="search_hint">بحث في القران</string>
     <string name="quranSearchType">آيات القران</string>
 
+    <plurals name="files_downloaded">
+        <item quantity="zero">لم يتم تحميل سور بعد‎</item>
+        <item quantity="one">تم تحميل سورة واحده</item>
+        <item quantity="two">تم تحميل سورتان</item>
+        <item quantity="few">تم تحميل %1$d سور</item>
+        <item quantity="many">تم تحميل %1$d سورة</item>
+        <item quantity="other">تم تحميل %1$d سورة</item>
+    </plurals>
+
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
         <item quantity="zero">لا توجد نتائج في البحث عن \"%1$s\"</item>
@@ -106,6 +115,8 @@
     <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)، هذا الخيار متاح للتلاوات الغير متصلة فقط</string>
     <string name="prefs_download_amount_title">كم التحميل</string>
     <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
+    <string name="prefs_audio_manager">إدارة الصوتيات (تجريبي)</string>
+    <string name="prefs_audio_manager_summary">تحميل وإدارة الملفات الصوتية</string>
     <string name="prefs_app_location_title">مكان التطبيق</string>
     <string name="prefs_app_location_summary">اختر الذاكرة التي سيتم تخزين الملفات عليها</string>
     <string name="prefs_sdcard_internal">الذاكرة الداخلية</string>
@@ -168,6 +179,8 @@
     
     <!-- downloading dialogs -->
     <string name="download_progress">تم تحميل %1$s / %2$s</string>
+    <string name="download_sura_progress">جاري التحميل من سورة %3$d - %1$s / %2$s</string>
+    <string name="download_sura_ayah_progress">جاري تحميل السورة %1$d الأية %2$d</string>
     <string name="process_progress">جاري اﻹعداد %1$d / %2$d</string>
     <string name="download_retry">اعد المحاولة</string>
     <string name="download_cancel">إلغاء</string>
@@ -242,4 +255,7 @@
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">لا توجد أي مرجعيات</string>
     <string name="tags_list_empty">لا توجد أي تصنيفات</string>
+
+    <!-- audio manager -->
+    <string name="audio_manager">إدارة الصوتيات</string>
 </resources>

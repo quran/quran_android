@@ -379,16 +379,21 @@ public class QuranDownloadService extends Service implements
          int firstAyah = 1;
          if (i == startSura){ firstAyah = startAyah; }
 
+         details.sura = i;
          if (isGapless){
-            if (i == endSura && endAyah == 0){ continue; }
-            String destDir = destination + File.separator;
-            String url = String.format(Locale.US,  urlString, i);
-            Log.d(TAG, "gapless asking to download " + url + " to " + destDir);
-            final String filename = QuranDownloadService.getFilenameFromUrl(url);
-            result = downloadFileWrapper(url, destDir, filename, details);
-            if (!result){ return false; }
-            details.currentFile++;
-            continue;
+           if (i == endSura && endAyah == 0){ continue; }
+           String destDir = destination + File.separator;
+           String url = String.format(Locale.US,  urlString, i);
+           Log.d(TAG, "gapless asking to download " + url + " to " + destDir);
+           final String filename = QuranDownloadService.getFilenameFromUrl(url);
+           if (!new File(destDir, filename).exists()) {
+             result = downloadFileWrapper(url, destDir, filename, details);
+             if (!result) {
+               return false;
+             }
+           }
+           details.currentFile++;
+           continue;
          }
 
          // same destination directory for ayahs within the same sura
@@ -396,12 +401,17 @@ public class QuranDownloadService extends Service implements
          new File(destDir).mkdirs();
 
          for (int j = firstAyah; j <= lastAyah; j++){
-            String url = String.format(Locale.US, urlString, i, j);
-            String destFile = j + extension;
-            result = downloadFileWrapper(url, destDir, destFile, details);
-            if (!result){ return false; }
+           details.ayah = j;
+           String url = String.format(Locale.US, urlString, i, j);
+           String destFile = j + extension;
+           if (!new File(destDir, destFile).exists()) {
+             result = downloadFileWrapper(url, destDir, destFile, details);
+             if (!result) {
+               return false;
+             }
+           }
 
-            details.currentFile++;
+           details.currentFile++;
          }
       }
 
@@ -572,7 +582,7 @@ public class QuranDownloadService extends Service implements
          QuranFileUtils.closeQuietly(source);
       }
 
-      return (call != null && call.isCanceled()) ?
+      return (call.isCanceled()) ?
           QuranDownloadNotifier.ERROR_CANCELLED :
           notifyError(QuranDownloadNotifier.ERROR_NETWORK,
               false, notificationInfo);

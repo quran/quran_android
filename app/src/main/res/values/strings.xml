@@ -166,7 +166,7 @@
     <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
     <string name="prefs_download_amount_title">Download Amount</string>
     <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
-    <string name="prefs_audio_manager">Audio Manager (pre-alpha)</string>
+    <string name="prefs_audio_manager">Audio Manager (experimental)</string>
     <string name="prefs_audio_manager_summary">Manage and download quranic audio.</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
@@ -237,6 +237,8 @@
     
     <!-- downloading dialogs -->
     <string name="download_progress">Downloaded %1$s / %2$s</string>
+    <string name="download_sura_progress">Downloaded %1$s / %2$s of sura %3$d</string>
+    <string name="download_sura_ayah_progress">Downloading sura %1$d ayah %2$d</string>
     <string name="process_progress">Processing file %1$d / %2$d</string>
     <string name="download_retry">Retry</string>
     <string name="download_cancel">Cancel</string>
