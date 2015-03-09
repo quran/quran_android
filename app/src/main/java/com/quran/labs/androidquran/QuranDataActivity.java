@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,12 +21,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 
 import java.io.File;
 
-public class QuranDataActivity extends ActionBarActivity implements
+public class QuranDataActivity extends Activity implements
         DefaultDownloadReceiver.SimpleDownloadListener {
 
    public static final String TAG = "QuranDataActivity";
@@ -133,7 +133,7 @@ public class QuranDataActivity extends ActionBarActivity implements
    @Override
    public void handleDownloadSuccess(){
       mSharedPreferences.edit()
-         .remove(Constants.PREF_SHOULD_FETCH_PAGES).commit();
+         .remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
       runListView();
    }
 
@@ -170,7 +170,7 @@ public class QuranDataActivity extends ActionBarActivity implements
             removeErrorPreferences();
             mSharedPreferences.edit().putBoolean(
                     Constants.PREF_SHOULD_FETCH_PAGES, false)
-                    .commit();
+                    .apply();
             runListView();
          }
       });
@@ -183,7 +183,7 @@ public class QuranDataActivity extends ActionBarActivity implements
       mSharedPreferences.edit()
       .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
       .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
-      .commit();
+      .apply();
    }
    
    class CheckPagesAsyncTask extends AsyncTask<Void, Void, Boolean> {
