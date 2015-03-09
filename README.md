@@ -21,6 +21,10 @@ graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
 Arabic support for non-Arabic phones by [Rehab Mohamed](http://twitter.com/hams_rrr), based on Arabic Reshaper project by [Ahmed Essam](http://twitter.com/Neo_4583).
 
+sdk support
+------------------------
+this version of the code supports Gingerbread and Honeycomb (2.3 - 3.2) devices.
+
 Code Style
 ------------------------
 - tab size: 2
@@ -62,36 +66,21 @@ App localization
 
 Terms of use
 ------------
-you are free to use parts of the Quran Android code in your application
-with some conditions:
+you are free to use parts of the Quran Android code in your application with some conditions:
 
-* your app must be respectful of the book of Allah.  adding advertisements
-above and below each page of Quran is unacceptable, for example (yes,
-someone actually did that).
+* your app must be respectful of the book of Allah.  adding advertisements above and below each page of Quran is unacceptable, for example (yes, someone actually did that).
 
-* your app must provide some significant value over our app - otherwise,
-why not just contribute a patch instead?
+* your app must provide some significant value over our app - otherwise, why not just contribute a patch instead?
 
 * your app cannot make money from ads or from sales.  there are many reasons
 for this:
     - we made this app for the benefit of people and not to make a profit
-    - the app costs us money (for serving the pages, translations, etc), not to
-mention the time to develop it and to support it.
-    - not all of the data that we use is okay to be sold.  the images, along with
-some of the translations are on a license that allows their use and distribution
-for free for non-profit uses, but does not allow users to make money from them.
+    - the app costs us money (for serving the pages, translations, etc), not to mention the time to develop it and to support it.
+    - not all of the data that we use is okay to be sold.  the images, along with some of the translations are on a license that allows their use and distribution for free for non-profit uses, but does not allow users to make money from them.
 
-* if you write an application using any of the Quran data (the images, the
-translations, etc), you must provide a link to the respective data source
-page ([tanzil.net](http://tanzil.net) for the translations and the
-[quran images project](http://github.com/quran/quran.com-images) for the images)
-both within your application (in an about page) and in your application
-description in the market or app store.
+* if you write an application using any of the Quran data (the images, the translations, etc), you must provide a link to the respective data source page ([tanzil.net](http://tanzil.net) for the translations and the [quran images project](http://github.com/quran/quran.com-images) for the images) both within your application (in an about page) and in your application description in the market or app store.
 
-* if you use part of (or all of) the quran android code or graphics, you
-must provide a link back to the [quran android
-project](http://github.com/ahmedre/quran_android) in your application
-description and your application itself in an about section.
+* if you use part of (or all of) the quran android code or graphics, you must provide a link back to the [quran android project](http://github.com/ahmedre/quran_android) in your application description and your application itself in an about section.
 
 Open Source Projects Used
 -------------------------
@@ -101,7 +90,9 @@ Open Source Projects Used
 
 Changelog
 ---------
-**development**
+**version 2.6.0 (released 3/8/2015)**
+- material design!
+- switch translations from the panel.
 - compile targeting sdk 21
 - replace ActionBarSherlock with support-appcompat-v7
 - improve share and copy ayah texts 
@@ -109,6 +100,9 @@ Changelog
 - fix gapless repeat releated bugs #426
 - fix translation highlighting color in night mode #423
 - translation updates for Uzbek
+- lots of bugfixes.
+
+*NOTE* - version 2.6 marks the end of line for 2.3/3.x devices. This branch will be used mainly for bugfixes on those devices. Moving forward, all new features will be 4.x+ to make development easier and the code cleaner.
 
 **version 2.5.8 (released 7/5/2014)**
 - fixing tablet bugs causing the page not to show up
