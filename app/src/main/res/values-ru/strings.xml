@@ -256,11 +256,8 @@
     </plurals>
     
     <!-- ayah action panel -->
-    <string name="ayah_tags_page">Метки</string>
-    <string name="ayah_translation_page">Перевод</string>
     <string name="play_from">От</string>
     <string name="play_to">До</string>
-    <string name="play_options">Опции</string>
     <string name="play_restrict_range">Воспроизвести только вышестоящие аяты</string>
     <string name="repeat_verses_range">Воспроизвести группу аятов:</string>
     <string name="repeat_each_verse">Воспроизвести каждый аят:</string>
