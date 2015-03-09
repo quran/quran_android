@@ -44,11 +44,11 @@ public class StorageUtils {
       // As per http://source.android.com/devices/tech/storage/config.html
       // device-specific vold.fstab file is removed after Android 4.2.2
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        List<String> vold = new ArrayList<>(readVoldsFile());
+        Set<String> volds = readVoldsFile();
 
         List<String> toRemove = new ArrayList<>();
         for (String mount : mounts) {
-          if (!vold.contains(mount)) {
+          if (!volds.contains(mount)) {
             toRemove.add(mount);
           }
         }
