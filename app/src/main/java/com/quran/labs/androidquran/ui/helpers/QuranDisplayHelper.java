@@ -3,9 +3,7 @@ package com.quran.labs.androidquran.ui.helpers;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.annotation.TargetApi;
@@ -72,9 +70,6 @@ public class QuranDisplayHelper {
       }
 
       String result = sb.toString();
-      if (QuranSettings.isReshapeArabic(context)){
-         result = ArabicStyle.reshape(context, result);
-      }
       Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
       return System.currentTimeMillis();
    }

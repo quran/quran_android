@@ -30,6 +30,7 @@ import com.quran.labs.androidquran.service.util.AudioFocusable;
 import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.MediaButtonHelper;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
@@ -62,6 +63,7 @@ import android.util.SparseIntArray;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 
 /**
  * Service that handles media playback. This is the Service through which we
@@ -218,22 +220,33 @@ public class AudioService extends Service implements OnCompletionListener,
    private LocalBroadcastManager mBroadcastManager = null;
 
    private int mGaplessSura = 0;
+   private int mNotificationColor;
    private SparseIntArray mGaplessSuraData = null;
    private AsyncTask<Integer, Void, SparseIntArray> mTimingTask = null;
 
    public static final int MSG_START_AUDIO = 1;
    public static final int MSG_UPDATE_AUDIO_POS = 2;
-   private Handler mHandler = new Handler(){
-      @Override
-      public void handleMessage(Message msg){
-         if (msg == null){ return; }
-         if (msg.what == MSG_START_AUDIO){
-            configAndStartMediaPlayer();
-         } else if (msg.what == MSG_UPDATE_AUDIO_POS){
-            updateAudioPlayPosition();
-         }
-      }
-   };
+
+   private static class ServiceHandler extends Handler {
+     private WeakReference<AudioService> mServiceRef;
+
+     public ServiceHandler(AudioService service) {
+       mServiceRef = new WeakReference<>(service);
+     }
+
+     @Override
+     public void handleMessage(Message msg) {
+       final AudioService service = mServiceRef.get();
+        if (service == null || msg == null){ return; }
+        if (msg.what == MSG_START_AUDIO){
+           service.configAndStartMediaPlayer();
+        } else if (msg.what == MSG_UPDATE_AUDIO_POS){
+           service.updateAudioPlayPosition();
+        }
+     }
+   }
+
+   private Handler mHandler;
 
    /**
     * Makes sure the media player exists and has been reset. This will create
@@ -267,6 +280,7 @@ public class AudioService extends Service implements OnCompletionListener,
    @Override
    public void onCreate() {
       Log.i(TAG, "debug: Creating service");
+      mHandler = new ServiceHandler(this);
 
       mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
             .createWifiLock(WifiManager.WIFI_MODE_FULL, "audiolock");
@@ -288,6 +302,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
       final Context appContext = getApplicationContext();
       mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
+      mNotificationColor = appContext.getResources()
+          .getColor(R.color.notification_color);
    }
 
    /**
@@ -1032,7 +1048,7 @@ public class AudioService extends Service implements OnCompletionListener,
    private void setUpAsForeground() {
       // clear the "downloading complete" notification (if it exists)
       mNotificationManager.cancel(
-          QuranDownloadService.DOWNLOADING_COMPLETE_NOTIFICATION);
+          QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION);
 
       final Context appContext = getApplicationContext();
       final PendingIntent pi = PendingIntent.getActivity(appContext,
@@ -1040,28 +1056,30 @@ public class AudioService extends Service implements OnCompletionListener,
          PendingIntent.FLAG_UPDATE_CURRENT);
 
       final PendingIntent previousIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_PREVIOUS, new Intent(ACTION_REWIND),
+         appContext, REQUEST_CODE_PREVIOUS, getAudioIntent(this, ACTION_REWIND),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent nextIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_SKIP, new Intent(ACTION_SKIP),
+         appContext, REQUEST_CODE_SKIP, getAudioIntent(this, ACTION_SKIP),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent pauseIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_PAUSE, new Intent(ACTION_PAUSE),
+         appContext, REQUEST_CODE_PAUSE, getAudioIntent(this, ACTION_PAUSE),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent resumeIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_RESUME, new Intent(ACTION_PLAYBACK),
+         appContext, REQUEST_CODE_RESUME, getAudioIntent(this, ACTION_PLAYBACK),
          PendingIntent.FLAG_UPDATE_CURRENT);
      final PendingIntent stopIntent = PendingIntent.getService(
-         appContext, REQUEST_CODE_STOP, new Intent(ACTION_STOP),
+         appContext, REQUEST_CODE_STOP, getAudioIntent(this, ACTION_STOP),
          PendingIntent.FLAG_UPDATE_CURRENT);
 
       if (mNotificationBuilder == null) {
         mNotificationBuilder = new NotificationCompat.Builder(appContext);
         mNotificationBuilder
-            .setSmallIcon(R.drawable.icon)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(mNotificationColor)
             .setOngoing(true)
             .setContentTitle(mNotificationName)
             .setContentIntent(pi)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(R.drawable.ic_previous, "", previousIntent)
             .addAction(R.drawable.ic_pause, "", pauseIntent)
             .addAction(R.drawable.ic_next, "", nextIntent);
@@ -1071,10 +1089,12 @@ public class AudioService extends Service implements OnCompletionListener,
      if (mPausedNotificationBuilder == null) {
        mPausedNotificationBuilder = new NotificationCompat.Builder(appContext);
        mPausedNotificationBuilder
-           .setSmallIcon(R.drawable.icon)
+           .setSmallIcon(R.drawable.ic_notification)
+           .setColor(mNotificationColor)
            .setOngoing(true)
            .setContentTitle(mNotificationName)
            .setContentIntent(pi)
+           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
            .addAction(R.drawable.ic_play,
                getString(R.string.play), resumeIntent)
            .addAction(R.drawable.ic_stop,
@@ -1125,6 +1145,11 @@ public class AudioService extends Service implements OnCompletionListener,
       }
    }
 
+   public static Intent getAudioIntent(Context context, String action) {
+     final Intent intent = new Intent(context, AudioService.class);
+     intent.setAction(action);
+     return intent;
+   }
 
    @Override
    public void onDestroy() {

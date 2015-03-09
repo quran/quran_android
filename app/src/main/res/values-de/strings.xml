@@ -149,9 +149,6 @@
     <string name="prefs_category_display_settings">Bildschirmoptionen</string>
     <string name="prefs_use_arabic_title">Arabischer Modus</string>
     <string name="prefs_use_arabic_summary_on">Das Programm wird ins Arabische umgestellt, dafür ist ein Neustart erforderlich.</string>
-    <string name="prefs_use_arabic_reshaper_title">Benutze den Arabisch-Umformer</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Wenn die Arabische-Schrift rückwärts angezeigt wird, deaktivieren Sie diese Funktion.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Wenn die Arabische-Schrift nicht gebunden wird, aktivieren Sie diese Funktion um den Fehler zu beheben.</string>
     <string name="prefs_new_background_title">Neuen Hintergrund verwenden</string>
     <string name="prefs_lock_orientation_title">Bildschirmausrichtung sperren</string>
     <string name="prefs_lock_orientation_summary_on">Die Quranseiten werden immer in einer bestimmten Bildschirmausrichtung angezeigt.</string>
@@ -163,7 +160,7 @@
     <string name="prefs_night_mode_summary">Es werden ein dunkler Hintergrund und eine helle Schrift benutzt.</string>
     <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
     <string name="prefs_night_mode_text_brightness_summary">Die Helligkeit des Textes im Nachtmodus.</string>
-    <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen (Beta)</string>
+    <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen</string>
     <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sura und die Juz\' Nummer während dem Lesen ein.</string>
 	<string name="prefs_display_marker_title">Meilenstein-Fenster anzeigen</string>
 	<string name="prefs_display_marker_summary">Ein Fenster anzeigen beim Erreichen eines neuen Juz\', einer neuen Hizb, etc.</string>
@@ -181,12 +178,10 @@
     <string name="available_translations">Zum Download verfügbar</string>
     <string name="remove_button">Entfernen</string>
     <string name="dialog_ok">Ok</string>
-    <string name="prefs_advanced_settings_title">Erweiterte Einstellungen</string>
     <string name="prefs_app_location_title">Speicherort</string>
     <string name="prefs_app_location_summary">Wählen Sie den Speicherort der Dateien aus.</string>
     <string name="prefs_sdcard_internal">Interner Speicher</string>
-    <string name="prefs_sdcard_external">Externe SD-Karte</string>
-    <string name="prefs_sdcard_auto">Automatisch</string>
+    <string name="prefs_sdcard_external">Externe SD-Karte %1$d</string>
     <string name="prefs_app_size">Der vom Programm verwendete Speicherplatz ist</string>
     <string name="prefs_calculating_app_size">Die Größe des Programms wird berechnet</string>
     <string name="prefs_copying_app_files">Programmdateien werden kopiert</string>
@@ -204,9 +199,6 @@
     <string name="translation_dialog_yes">Ja</string>
     <string name="translation_dialog_later">Später</string>
 
-    <!-- used for screen readers -->
-    <string name="border">Rahmen</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -275,7 +267,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Lesezeichen für diesen Vers hinzufügen</string>
-    <string name="unbookmark_ayah">Lesezeichen für diesen Vers entfernen</string>
     <string name="tag_ayah">Ein Schlagwort zum Vers hinzufügen</string>
     <string name="share_ayah">Vers Link teilen</string>
     <string name="share_ayah_text">Versinhalt teilen</string>
@@ -285,8 +276,7 @@
     <string name="search_key">Drücken Sie die Suchtaste zum Nachschlagen eines Verses</string>
     <string name="copy_ayah">Kopiere Vers</string>
     <string name="ayah_copied_popup">Vers kopiert</string>
-    <string name="show_more">Zeige mehr</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Lesezeichen löschen</string>
     <string name="tag_bookmark">Ein Schlagwort zum Lesezeichen hinzufügen</string>

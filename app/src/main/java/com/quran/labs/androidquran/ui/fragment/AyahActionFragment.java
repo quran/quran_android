@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
-public abstract class AyahActionFragment extends SherlockFragment {
+public abstract class AyahActionFragment extends Fragment {
 
   protected SuraAyah mStart;
   protected SuraAyah mEnd;

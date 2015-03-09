@@ -1,17 +1,15 @@
 package com.quran.labs.androidquran;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
-import com.quran.labs.androidquran.util.ArabicStyle;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.app.SearchManager;
@@ -27,6 +25,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -43,7 +42,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends SherlockFragmentActivity
+public class SearchActivity extends ActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -60,7 +59,6 @@ public class SearchActivity extends SherlockFragmentActivity
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    setTheme(R.style.Theme_Sherlock);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search);
     mMessageView = (TextView) findViewById(R.id.search_area);
@@ -100,7 +98,7 @@ public class SearchActivity extends SherlockFragmentActivity
           QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
       LocalBroadcastManager.getInstance(this).registerReceiver(
           mDownloadReceiver, new IntentFilter(
-          QuranDownloadService.ProgressIntent.INTENT_NAME));
+              QuranDownloadNotifier.ProgressIntent.INTENT_NAME));
     }
     mDownloadReceiver.setListener(this);
 
@@ -208,8 +206,7 @@ public class SearchActivity extends SherlockFragmentActivity
       }
 
       ListView listView = (ListView) findViewById(R.id.results_list);
-      EfficientResultAdapter adapter = new EfficientResultAdapter(this,
-          res, mIsArabicSearch);
+      EfficientResultAdapter adapter = new EfficientResultAdapter(this, res);
       listView.setAdapter(adapter);
       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
@@ -330,24 +327,12 @@ public class SearchActivity extends SherlockFragmentActivity
     private LayoutInflater mInflater;
     private List<SearchElement> mElements;
     private Context mContext;
-    private boolean mIsArabicSearch;
-    private boolean mShouldReshape;
-    private boolean mUseArabicFont;
 
     public EfficientResultAdapter(Context context,
-                                  List<SearchElement> metadata,
-                                  boolean isArabicSearch) {
+                                  List<SearchElement> metadata) {
       mInflater = LayoutInflater.from(context);
       mElements = metadata;
       mContext = context;
-      mIsArabicSearch = isArabicSearch;
-      if (mIsArabicSearch) {
-        mShouldReshape = QuranSettings.isReshapeArabic(context);
-        mUseArabicFont = QuranSettings.needArabicFont(context);
-      } else {
-        mShouldReshape = false;
-        mUseArabicFont = false;
-      }
     }
 
     public int getCount() {
@@ -366,15 +351,11 @@ public class SearchActivity extends SherlockFragmentActivity
       ViewHolder holder;
 
       if (convertView == null) {
-        convertView = mInflater.inflate(R.layout.search_result, null);
+        convertView = mInflater.inflate(R.layout.search_result, parent, false);
         holder = new ViewHolder();
         holder.text = (TextView) convertView.findViewById(R.id.verseText);
         holder.metadata = (TextView) convertView
             .findViewById(R.id.verseLocation);
-        if (mUseArabicFont) {
-          holder.text.setTypeface(ArabicStyle.getTypeface(mContext));
-          holder.metadata.setTypeface(ArabicStyle.getTypeface(mContext));
-        }
         convertView.setTag(holder);
       } else {
         holder = (ViewHolder) convertView.getTag();
@@ -383,10 +364,6 @@ public class SearchActivity extends SherlockFragmentActivity
       SearchElement v = mElements.get(position);
       String text = v.text;
       String suraName = QuranInfo.getSuraName(mContext, v.sura, false);
-      if (mShouldReshape) {
-        text = ArabicStyle.reshape(mContext, v.text);
-        suraName = ArabicStyle.reshape(mContext, suraName);
-      }
       holder.text.setText(Html.fromHtml(text));
 
       holder.metadata.setText(mInflater.getContext()

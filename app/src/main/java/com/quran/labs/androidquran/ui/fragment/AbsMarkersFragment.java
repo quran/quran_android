@@ -1,13 +1,9 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.SubMenu;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter.Bookmark;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
@@ -16,32 +12,38 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.SparseBooleanArray;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbsMarkersFragment extends SherlockFragment {
+public abstract class AbsMarkersFragment extends Fragment {
 
-   private ListView mListView;
    private ActionMode mMode;
-   private QuranListAdapter mAdapter;
    private TextView mEmptyTextView;
+   private QuranListAdapter mAdapter;
+   private RecyclerView mRecyclerView;
    private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
    private SharedPreferences mPrefs = null;
+   private int mAyahBookmarkOverlayColor;
    protected int mCurrentSortCriteria = 0;
 
    protected abstract int getContextualMenuId();
@@ -73,70 +75,71 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
          ViewGroup container, Bundle savedInstanceState){
       setHasOptionsMenu(true);
       View view = inflater.inflate(R.layout.quran_list, container, false);
-     mListView = (ListView)view.findViewById(R.id.list);
      mEmptyTextView = (TextView)view.findViewById(R.id.empty_list);
-     mListView.setEmptyView(mEmptyTextView);
+     //mListView.setEmptyView(mEmptyTextView);
 
-     mAdapter = new QuranListAdapter(getActivity(),
-         R.layout.index_sura_row, new QuranRow[]{}, false);
+     final Context context = getActivity();
 
-     mListView.setAdapter(mAdapter);
+     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+     mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-     mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-     mListView.setItemsCanFocus(false);
+     mAdapter = new QuranListAdapter(context, mRecyclerView, new QuranRow[]{}, false);
+     mRecyclerView.setAdapter(mAdapter);
+     mAdapter.setQuranTouchListener(new MarkersTouchListener());
 
-     mListView.setOnItemClickListener(new OnItemClickListener(){
-       public void onItemClick(AdapterView<?> parent, View v,
-           int position, long id){
-         QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-
-         // If we're in CAB mode don't handle the click
-         if (mMode != null){
-           boolean checked = isValidSelection(elem) && mListView.isItemChecked(position);
-           mListView.setItemChecked(position, checked);
-           mMode.invalidate();
-           return;
-         } else {
-           mListView.setItemChecked(position, false);
-         }
-
-         // We're not in CAB mode so handle the click normally
-         if (!elem.isHeader()) {
-           if (elem.isAyahBookmark()){
-             ((QuranActivity)getActivity()).jumpToAndHighlight(
-                 elem.page, elem.sura, elem.ayah);
-           }
-           else {
-             ((QuranActivity)getActivity()).jumpTo(elem.page);
-           }
-         }
-       }
-     });
-
-     mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-       public boolean onItemLongClick(AdapterView<?> parent, View view,
-           int position, long id) {
-         QuranRow elem = (QuranRow)mAdapter.getItem((int)id);
-         if (!isValidSelection(elem)) {
-           return false;
-         } else if (!mListView.isItemChecked(position)) {
-           mListView.setItemChecked(position, true);
-           if (mMode != null)
-             mMode.invalidate();
-           else
-             mMode = getSherlockActivity().startActionMode(
-                 new ModeCallback());
-         } else if (mMode != null) {
-           mMode.finish();
-         }
-
-         return true;
-       }
-     });
-
+      mAyahBookmarkOverlayColor = context.getResources()
+          .getColor(R.color.ayah_bookmark_color);
       return view;
    }
-   
+
+  private class MarkersTouchListener implements QuranListAdapter.QuranTouchListener {
+
+    @Override
+    public void onClick(QuranRow row, int position) {
+      // If we're in CAB mode don't handle the click
+      if (mMode != null){
+        boolean checked = isValidSelection(row) &&
+            !mAdapter.isItemChecked(position);
+        mAdapter.setItemChecked(position, checked);
+        mMode.invalidate();
+        return;
+      } else {
+        mAdapter.setItemChecked(position, false);
+      }
+
+      // We're not in CAB mode so handle the click normally
+      if (!row.isHeader()) {
+        if (row.isAyahBookmark()){
+          ((QuranActivity) getActivity()).jumpToAndHighlight(
+              row.page, row.sura, row.ayah);
+        } else {
+          ((QuranActivity) getActivity()).jumpTo(row.page);
+        }
+      }
+    }
+
+    @Override
+    public boolean onLongClick(QuranRow row, int position) {
+      if (isValidSelection(row)) {
+        if (!mAdapter.isItemChecked(position)) {
+          mAdapter.setItemChecked(position, true);
+          if (mMode != null) {
+            mMode.invalidate();
+          } else {
+            mMode = ((ActionBarActivity) getActivity())
+                .startSupportActionMode(new ModeCallback());
+          }
+          return true;
+        } else if (mMode != null) {
+          mMode.finish();
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
    @Override
    public void onPause() {
       super.onPause();
@@ -155,7 +158,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
     super.onResume();
     final Activity activity = getActivity();
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
-        QuranSettings.isArabicNames(activity)) {
+        QuranSettings.getInstance(activity).isArabicNames()) {
       updateScrollBarPositionHoneycomb();
     }
 
@@ -165,7 +168,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
 
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void updateScrollBarPositionHoneycomb() {
-    mListView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
+    mRecyclerView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
   }
 
   @Override
@@ -202,25 +205,14 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
 
       @Override
       public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-         MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
+         MenuInflater inflater = getActivity().getMenuInflater();
          inflater.inflate(getContextualMenuId(), menu);
          return true;
       }
 
       private QuranRow[] getSelectedRows() {
-         List<QuranRow> rows = new ArrayList<QuranRow>();
-         SparseBooleanArray sel = mListView.getCheckedItemPositions();
-         for (int i = 0; i < sel.size(); i++) {
-            if (sel.valueAt(i)) {
-               int position = sel.keyAt(i);
-               if (position < 0 || position >= mAdapter.getCount())
-                  continue;
-               QuranRow elem = (QuranRow)mAdapter.getItem(position);
-               rows.add(elem);
-            }
-         }
-         QuranRow[] rowsArr = rows.toArray(new QuranRow[rows.size()]);
-         return rowsArr;
+         List<QuranRow> rows = mAdapter.getCheckedItems();
+         return rows.toArray(new QuranRow[rows.size()]);
       }
 
       @Override
@@ -239,8 +231,7 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
 
       @Override
       public void onDestroyActionMode(ActionMode mode) {
-         for (int i = 0; i < mAdapter.getCount(); i++)
-            mListView.setItemChecked(i, false);
+         mAdapter.uncheckAll();
          if (mode == mMode){ mMode = null; }
       }
       
@@ -292,6 +283,40 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
       }
    }
 
+  public QuranRow createRowFromBookmark(Context context,  Bookmark bookmark) {
+    return createRowFromBookmark(context, bookmark, null);
+  }
+
+  public QuranRow createRowFromBookmark(Context context,
+      Bookmark bookmark, Long tagId) {
+    final QuranRow.Builder builder = new QuranRow.Builder();
+
+    if (bookmark.isPageBookmark()) {
+      final int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
+      builder.withText(QuranInfo.getSuraNameString(context, bookmark.mPage))
+          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.mPage))
+          .withType(QuranRow.PAGE_BOOKMARK)
+          .withSura(sura)
+          .withImageResource(R.drawable.ic_favorite);
+    } else {
+      final String title =
+          QuranInfo.getAyahString(bookmark.mSura, bookmark.mAyah, context);
+      builder.withText(title)
+          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.mPage))
+          .withType(QuranRow.AYAH_BOOKMARK)
+          .withSura(bookmark.mSura)
+          .withAyah(bookmark.mAyah)
+          .withImageResource(R.drawable.ic_favorite)
+          .withImageOverlayColor(mAyahBookmarkOverlayColor);
+    }
+    builder.withPage(bookmark.mPage)
+        .withBookmarkId(bookmark.mId);
+    if (tagId != null) {
+      builder.withTagId(tagId);
+    }
+    return builder.build();
+  }
+
    public void refreshData(){
       if (loadingTask != null){
          loadingTask.cancel(true);
@@ -320,5 +345,4 @@ public abstract class AbsMarkersFragment extends SherlockFragment {
             mMode.invalidate();
       }
    }
-
 }

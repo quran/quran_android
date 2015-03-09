@@ -27,8 +27,7 @@ import android.util.Log;
 import java.util.List;
 
 public class QuranDataProvider extends ContentProvider {
-  private static final String TAG =
-      "com.quran.labs.androidquran.data.QuranDataProvider";
+  private static final String TAG = QuranDataProvider.class.getSimpleName();
 
 	public static String AUTHORITY =
 		"com.quran.labs.androidquran.data.QuranDataProvider";

@@ -84,9 +84,6 @@
     <string name="prefs_category_display_settings">كۆرۈنۈش تەڭشەكلىرى</string>
     <string name="prefs_use_arabic_title">ئەرەبچە ھالەت</string>
     <string name="prefs_use_arabic_summary_on">ئەپ ئەرەبچە ئارايۈزنى ئىشلىتىدۇ (قايتا قوزغىتىش زۆرۈر)</string>
-    <string name="prefs_use_arabic_reshaper_title">ئەرەبچە شەكىل تۈزىتىشنى ئىشلەت</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">ئەگەر ئەرەبچە تېكىست تەتۈر يۆنىلىشتە بولسا، بۇ تاللانمىنى تاللىماڭ.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">ئەگەر ئەرەبچە تېكىست ئۇلانمىغان بولسا، بۇ تاللانما تاللانسا ئۇنى تۈزىتىدۇ.</string>
     <string name="prefs_new_background_title">يېڭى تەگلىك</string>
     <string name="prefs_lock_orientation_title">قۇلۇپ ئېكران يۆنىلىشى</string>
     <string name="prefs_lock_orientation_summary_on">قۇرئان بەتلىرىنىڭ ئېكران ئايلاندۇرۇش يۆنىلىشى</string>
@@ -98,7 +95,7 @@
     <string name="prefs_night_mode_summary">قارا تەگلىك يورۇق خەت نۇسخىسى ئىشلىتىلىدۇ</string>
     <string name="prefs_night_mode_text_brightness_title">تېكىست يورۇقلۇقى</string>
     <string name="prefs_night_mode_text_brightness_summary">كېچە ھالىتى قوزغىتىلغان ۋاقىتتىكى تېكىستنىڭ يورۇقلۇقى</string>
-    <string name="prefs_overlay_page_info_title">بەت ئۇچۇرىنى كۆرسەت (سىناق)</string>
+    <string name="prefs_overlay_page_info_title">بەت ئۇچۇرىنى كۆرسەت</string>
     <string name="prefs_overlay_page_info_summary">قىرائەت قىلىۋاتقاندا بەت سانى، سۈرە ئىسمى ۋە پارە سانىنى كۆرسىتىدۇ</string>
     <string name="prefs_display_marker_title">بەلگە قاڭقىش كۆزنىكىنى كۆرسەت</string>
     <string name="prefs_display_marker_summary">يېتىپ كەلگەن پارە، ھىزب قاتارلىقلارنى قاڭقىش كۆزنىكىدە كۆرسىتىدۇ.</string>
@@ -116,12 +113,10 @@
     <string name="available_translations">چۈشۈرگىلى بولىدۇ</string>
     <string name="remove_button">چىقىرىۋەت</string>
     <string name="dialog_ok">جەزملە</string>
-    <string name="prefs_advanced_settings_title">ئالىي تەڭشەكلەر</string>
     <string name="prefs_app_location_title">ئەپ ئورنى</string>
     <string name="prefs_app_location_summary">ھۆججەتلەرنى قايسى sd كارتىغا ساقلايدىغانلىقىڭىزنى تاللاڭ</string>
     <string name="prefs_sdcard_internal">ئىچىدىكى ساقلىغۇچ</string>
-    <string name="prefs_sdcard_external">سىرتقى SD كارتا</string>
-    <string name="prefs_sdcard_auto">ئاپتوماتىك</string>
+    <string name="prefs_sdcard_external">سىرتقى SD كارتا %1$d</string>
     <string name="prefs_app_size">ئەپ چوڭلۇقى</string>
     <string name="prefs_calculating_app_size">ئەپ چوڭلۇقىنى ھېسابلاۋاتىدۇ</string>
     <string name="prefs_copying_app_files">ئەپ ھۆججەتلىرىنى كۆچۈرۈۋاتىدۇ</string>
@@ -139,9 +134,6 @@
     <string name="translation_dialog_yes">ھەئە</string>
     <string name="translation_dialog_later">كېيىن</string>
 
-    <!-- used for screen readers -->
-    <string name="border">گىرۋەك</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -202,7 +194,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">بۇ ئايەتنى خەتكۈچلە</string>
-    <string name="unbookmark_ayah">بۇ ئايەتنىڭ خەتكۈچىنى چىقىرىۋەت</string>
     <string name="tag_ayah">بۇ ئايەتكە بەلگە قوش</string>
     <string name="share_ayah">ئايەت ئۇلانمىسىنى ھەمبەھىرلە</string>
     <string name="share_ayah_text">ئايەت تېكىستتىنى ھەمبەھىرلە</string>
@@ -212,8 +203,7 @@
     <string name="search_key">ئىزدە كۇنۇپكىسى بېسىلسا سۈرە ئىزدەيدۇ</string>
     <string name="copy_ayah">ئايەت كۆچۈر</string>
     <string name="ayah_copied_popup">ئايەت كۆچۈرۈلدى</string>
-    <string name="show_more">تېخىمۇ كۆپ كۆرسەت</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">خەتكۈچ ئۆچۈر</string>
     <string name="tag_bookmark">خەتكۈچكە بەلگە قوش</string>
