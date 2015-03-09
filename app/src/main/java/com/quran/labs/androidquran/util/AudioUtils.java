@@ -264,7 +264,7 @@ public class AudioUtils {
 
          if (isGapless){
             if (i == endSura && endAyah == 0){ continue; }
-            String p = request.getBaseUrl();
+            String p = request.getLocalPath();
             String fileName = String.format(Locale.US, p, i);
             Log.d(TAG, "gapless, checking if we have " + fileName);
             f = new File(fileName);
