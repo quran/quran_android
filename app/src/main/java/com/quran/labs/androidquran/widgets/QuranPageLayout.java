@@ -8,12 +8,14 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.support.annotation.StringRes;
 import android.support.v4.view.GravityCompat;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,25 +41,30 @@ public abstract class QuranPageLayout extends FrameLayout
   private View mErrorLayout;
   private TextView mErrorText;
   private View mInnerView;
+  private int mViewPadding;
 
   public QuranPageLayout(Context context) {
     super(context);
     mContext = context;
+    Resources resources = context.getResources();
     final boolean isLandscape =
-        context.getResources().getConfiguration().orientation ==
+        resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
     mInnerView = generateContentView(context);
+    mViewPadding = resources.getDimensionPixelSize(R.dimen.page_margin);
+
+    FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+        LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    lp.gravity = Gravity.CENTER;
     if (isLandscape && shouldWrapWithScrollView()) {
       mScrollView = new ObservableScrollView(context);
       mScrollView.setFillViewport(true);
-      addView(mScrollView,
-          LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+      addView(mScrollView, lp);
       mScrollView.addView(mInnerView, LayoutParams.MATCH_PARENT,
           LayoutParams.WRAP_CONTENT);
       mScrollView.setOnScrollListener(this);
     } else {
-      addView(mInnerView, LayoutParams.MATCH_PARENT,
-          LayoutParams.MATCH_PARENT);
+      addView(mInnerView, lp);
     }
 
     if (sAreGradientsLandscape != isLandscape) {
@@ -151,13 +158,8 @@ public abstract class QuranPageLayout extends FrameLayout
     final View innerView = mScrollView == null ? mInnerView : mScrollView;
     final LayoutParams params =
         (FrameLayout.LayoutParams) innerView.getLayoutParams();
-    if (mRightBorder != null) {
-      params.rightMargin = mRightBorder.getBackground().getIntrinsicWidth();
-    }
-
-    if (mLeftBorder != null) {
-      params.leftMargin = mLeftBorder.getBackground().getIntrinsicWidth();
-    }
+    params.leftMargin = mViewPadding;
+    params.rightMargin = mViewPadding;
 
     // this calls requestLayout
     innerView.setLayoutParams(params);
