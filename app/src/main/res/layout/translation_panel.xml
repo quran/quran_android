@@ -5,10 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.quran.labs.androidquran.widgets.TranslationView
-        android:id="@+id/translation_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+            android:id="@+id/translator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/translation_top_bottom_margin"
+            android:layout_marginLeft="@dimen/translation_left_right_margin"
+            android:layout_marginRight="@dimen/translation_left_right_margin"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/accent_color"/>
+        <com.quran.labs.androidquran.widgets.TranslationView
+            android:id="@+id/translation_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 
     <RelativeLayout android:id="@+id/controls"
         android:layout_width="match_parent"
@@ -18,12 +33,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_previous_ayah"/>
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_translation_left"/>
         <ImageButton android:id="@+id/previous_ayah"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_next_ayah"/>
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_translation_right"/>
     </RelativeLayout>
 
     <LinearLayout android:id="@+id/empty_state"

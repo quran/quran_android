@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.quran.labs.androidquran.widgets.QuranMaxImageView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/splashview"
-    android:layout_width="500dp"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:scaleType="centerCrop" />

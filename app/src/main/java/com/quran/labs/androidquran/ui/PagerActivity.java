@@ -1,11 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -24,6 +18,7 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.task.RefreshBookmarkIconTask;
@@ -44,6 +39,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter;
+import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -72,25 +68,28 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -98,7 +97,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.actionbarsherlock.ActionBarSherlock.OnMenuItemSelectedListener;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
@@ -107,7 +105,7 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAG
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
-public class PagerActivity extends SherlockFragmentActivity implements
+public class PagerActivity extends ActionBarActivity implements
     AudioStatusBar.AudioBarListener,
     BookmarkHandler,
     DefaultDownloadReceiver.DownloadListener,
@@ -133,7 +131,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private static final long DEFAULT_HIDE_AFTER_TIME = 2000;
 
   private QuranPageWorker mWorker = null;
-  private SharedPreferences mPrefs = null;
+  private QuranSettings mSettings = null;
   private long mLastPopupTime = 0;
   private boolean mIsActionBarHidden = true;
   private AudioStatusBar mAudioStatusBar = null;
@@ -153,7 +151,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private List<TranslationItem> mTranslations;
   private String[] mTranslationItems;
   private TranslationReaderTask mTranslationReaderTask;
-  private SpinnerAdapter mSpinnerAdapter;
+  private TranslationsSpinnerAdapter mSpinnerAdapter;
   private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
@@ -163,6 +161,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   private boolean mIsLandscape;
   private Integer mLastPlayingSura;
   private Integer mLastPlayingAyah;
+  private View mToolBarArea;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
 
@@ -184,7 +183,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     private final WeakReference<PagerActivity> mActivity;
 
     public PagerHandler(PagerActivity activity) {
-      mActivity = new WeakReference<PagerActivity>(activity);
+      mActivity = new WeakReference<>(activity);
     }
 
     @Override
@@ -203,11 +202,6 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public void onCreate(Bundle savedInstanceState) {
     ((QuranApplication) getApplication()).refreshLocale(false);
-
-    setTheme(R.style.QuranAndroid);
-    requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
     super.onCreate(savedInstanceState);
     mBookmarksCache = new SparseBooleanArray();
     mBookmarksAdapter = new BookmarksDBAdapter(this);
@@ -269,11 +263,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
           .getSerializable(LAST_AUDIO_REQUEST);
     }
 
-    mPrefs = PreferenceManager.getDefaultSharedPreferences(
-        getApplicationContext());
-
-    getSupportActionBar().setDisplayShowHomeEnabled(true);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    mSettings = QuranSettings.getInstance(this);
 
     final Resources resources = getResources();
     mIsLandscape = resources.getConfiguration().orientation ==
@@ -283,10 +273,22 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mAyahToolBarTotalHeight = resources
         .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
-    getSupportActionBar().setBackgroundDrawable(
-        new ColorDrawable(background));
     mAudioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
     mAudioStatusBar.setAudioBarListener(this);
+
+    mToolBarArea = findViewById(R.id.toolbar_area);
+
+    // this is the colored view behind the status bar on kitkat and above
+    final View statusBarBackground = findViewById(R.id.status_bg);
+    statusBarBackground.getLayoutParams().height = getStatusBarHeight();
+
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+
+    final ActionBar ab = getSupportActionBar();
+    ab.setDisplayShowHomeEnabled(true);
+    ab.setDisplayHomeAsUpEnabled(true);
+    ab.setBackgroundDrawable(new ColorDrawable(background));
 
     initAyahActionPanel();
 
@@ -353,8 +355,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
       public void onPageSelected(int position) {
         Log.d(TAG, "onPageSelected(): " + position);
         int page = QuranInfo.getPageFromPos(position, mDualPages);
-        QuranSettings.setLastPage(PagerActivity.this, page);
-        if (QuranSettings.shouldDisplayMarkerPopup(PagerActivity.this)) {
+        mSettings.setLastPage(page);
+        if (mSettings.shouldDisplayMarkerPopup()) {
           mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
               PagerActivity.this, page, mLastPopupTime);
           if (mDualPages) {
@@ -402,16 +404,16 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mViewPager.setCurrentItem(page);
     }
 
-    QuranSettings.setLastPage(this, PAGES_LAST - page);
+    mSettings.setLastPage(PAGES_LAST - page);
     setLoading(false);
 
     // just got created, need to reconnect to service
     mShouldReconnect = true;
 
     // enforce orientation lock
-    if (QuranSettings.isLockOrientation(this)) {
+    if (mSettings.isLockOrientation()) {
       int current = getResources().getConfiguration().orientation;
-      if (QuranSettings.isLandscapeOrientation(this)) {
+      if (mSettings.isLandscapeOrientation()) {
         if (current == Configuration.ORIENTATION_PORTRAIT) {
           setRequestedOrientation(
               ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -452,11 +454,24 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     mDownloadReceiver = new DefaultDownloadReceiver(this,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-    String action = QuranDownloadService.ProgressIntent.INTENT_NAME;
+    String action = QuranDownloadNotifier.ProgressIntent.INTENT_NAME;
     LocalBroadcastManager.getInstance(this).registerReceiver(
         mDownloadReceiver,
         new IntentFilter(action));
     mDownloadReceiver.setListener(this);
+  }
+
+  private int getStatusBarHeight() {
+    // thanks to https://github.com/jgilfelt/SystemBarTint for this
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      final Resources resources = getResources();
+      final int resId = resources.getIdentifier(
+          "status_bar_height", "dimen", "android");
+      if (resId > 0) {
+        return resources.getDimensionPixelSize(resId);
+      }
+    }
+    return 0;
   }
 
   private void initAyahActionPanel() {
@@ -524,30 +539,22 @@ public class PagerActivity extends SherlockFragmentActivity implements
       return;
     }
 
-    int flags;
-    if (isVisible){
-      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-    } else {
-      flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
-          | View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    if (!isVisible) {
+      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE
+          | View.SYSTEM_UI_FLAG_FULLSCREEN;
     }
     mViewPager.setSystemUiVisibility(flags);
   }
 
   @TargetApi(Build.VERSION_CODES.KITKAT)
   private void setUiVisibilityKitKat(boolean isVisible) {
-    int flags;
-    if (isVisible) {
-      flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-    } else {
-      flags = View.SYSTEM_UI_FLAG_LOW_PROFILE
+    int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+    if (!isVisible) {
+      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE
           | View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
           | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
           | View.SYSTEM_UI_FLAG_IMMERSIVE;
     }
@@ -565,11 +572,15 @@ public class PagerActivity extends SherlockFragmentActivity implements
         mIsActionBarHidden = !visible;
         if (visible){
           mAudioStatusBar.updateSelectedItem();
-          getSherlock().getActionBar().show();
-        } else {
-          getSherlock().getActionBar().hide();
         }
 
+        // animate toolbar
+        mToolBarArea.animate()
+            .translationY(visible ? 0 : -mToolBarArea.getHeight())
+            .setDuration(250)
+            .start();
+
+        // and statusbar
         mAudioStatusBar.animate()
             .translationY(visible ? 0 : mAudioStatusBar.getHeight())
             .setDuration(250)
@@ -600,7 +611,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   }
 
   @Override
-  public boolean onKeyUp(int keyCode, KeyEvent event) {
+  public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
     return ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
         keyCode == KeyEvent.KEYCODE_VOLUME_UP) &&
         mAudioStatusBar.getCurrentMode() !=
@@ -621,7 +632,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     super.onResume();
     if (mShouldReconnect) {
-      startService(new Intent(AudioService.ACTION_CONNECT));
+      startService(AudioService.getAudioIntent(
+          this, AudioService.ACTION_CONNECT));
       mShouldReconnect = false;
     }
 
@@ -779,6 +791,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
     onNewIntent(i);
   }
 
+  public void jumpToAndHighlight(int page, int sura, int ayah) {
+    Intent i = new Intent(this, PagerActivity.class);
+    i.putExtra("page", page);
+    i.putExtra(EXTRA_HIGHLIGHT_SURA, sura);
+    i.putExtra(EXTRA_HIGHLIGHT_AYAH, ayah);
+    onNewIntent(i);
+  }
+
   @Override
   public void onPause() {
     if (mPromptDialog != null) {
@@ -861,7 +881,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    MenuInflater inflater = getSupportMenuInflater();
+    MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.quran_menu, menu);
     return true;
   }
@@ -883,11 +903,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
         bookmarked = mBookmarksCache.get(page - 1);
       }
 
-      if (bookmarked) {
-        item.setIcon(R.drawable.favorite);
-      } else {
-        item.setIcon(R.drawable.not_favorite);
-      }
+      item.setIcon(bookmarked ? R.drawable.ic_favorite :
+          R.drawable.ic_not_favorite);
     }
 
     MenuItem quran = menu.findItem(R.id.goto_quran);
@@ -902,7 +919,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
     MenuItem nightMode = menu.findItem(R.id.night_mode);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    nightMode.setChecked(prefs.getBoolean(Constants.PREF_NIGHT_MODE, false));
+    final boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    nightMode.setChecked(isNightMode);
+    nightMode.setIcon(isNightMode ?
+        R.drawable.ic_night_mode : R.drawable.ic_day_mode);
 
     return true;
   }
@@ -921,9 +941,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
       switchToTranslation();
       return true;
     } else if (itemId == R.id.night_mode) {
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+      SharedPreferences prefs = PreferenceManager
+          .getDefaultSharedPreferences(this);
       SharedPreferences.Editor prefsEditor = prefs.edit();
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, !item.isChecked()).commit();
+      final boolean isNightMode = !item.isChecked();
+      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).commit();
+      item.setIcon(isNightMode ?
+          R.drawable.ic_night_mode : R.drawable.ic_day_mode);
+      item.setChecked(isNightMode);
       refreshQuranPages();
       return true;
     } else if (itemId == R.id.settings) {
@@ -1015,8 +1040,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
           if (mTranslations != null &&
               mTranslations.size() > itemPosition) {
             TranslationItem item = mTranslations.get(itemPosition);
-            mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION,
-                item.filename).commit();
+            mSettings.setActiveTranslation(item.filename);
 
             int pos = mViewPager.getCurrentItem() - 1;
             for (int count = 0; count < 3; count++) {
@@ -1025,9 +1049,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
               }
               Fragment f = mPagerAdapter
                   .getFragmentIfExists(pos + count);
-              if (f != null && f instanceof TranslationFragment) {
+              if (f instanceof TranslationFragment) {
                 ((TranslationFragment) f).refresh(item.filename);
-              } else if (f != null && f instanceof TabletFragment) {
+              } else if (f instanceof TabletFragment) {
                 ((TabletFragment) f).refresh(item.filename);
               }
             }
@@ -1039,6 +1063,10 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   public List<TranslationItem> getTranslations() {
     return mTranslations;
+  }
+
+  public String[] getTranslationNames() {
+    return mTranslationItems;
   }
 
   public void toggleBookmark(Integer sura, Integer ayah, int page) {
@@ -1087,18 +1115,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
     mSpinnerAdapter = null;
   }
 
-  private static class SpinnerHolder {
-    TextView title;
-    TextView subtitle;
-  }
-
   private void refreshActionBarSpinner() {
     if (mSpinnerAdapter != null) {
-      if (mSpinnerAdapter instanceof ArrayAdapter) {
-        ((ArrayAdapter) mSpinnerAdapter).notifyDataSetChanged();
-      } else {
-        updateActionBarSpinner();
-      }
+      mSpinnerAdapter.notifyDataSetChanged();
     } else {
       updateActionBarSpinner();
     }
@@ -1115,48 +1134,23 @@ public class PagerActivity extends SherlockFragmentActivity implements
       return;
     }
 
-    mSpinnerAdapter = new ArrayAdapter<String>(this,
-        R.layout.sherlock_spinner_dropdown_item,
-        mTranslationItems) {
+    mSpinnerAdapter = new TranslationsSpinnerAdapter(this,
+        R.layout.support_simple_spinner_dropdown_item,
+        mTranslationItems, mTranslations) {
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {
-        SpinnerHolder holder;
-        if (convertView == null) {
-          holder = new SpinnerHolder();
-          convertView = getLayoutInflater().inflate(
-              R.layout.translation_ab_spinner_selected,
-              parent, false);
-          holder.title = (TextView) convertView.findViewById(R.id.title);
-          holder.subtitle = (TextView) convertView.findViewById(
-              R.id.subtitle);
-          convertView.setTag(holder);
-        }
-        holder = (SpinnerHolder) convertView.getTag();
-
-        holder.title.setText(mTranslationItems[position]);
+        convertView = super.getView(position, convertView, parent);
+        SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
         int page = getCurrentPage();
-        String subtitle = QuranInfo.getPageSubtitle(
-            PagerActivity.this, page);
+        String subtitle = QuranInfo.getPageSubtitle(PagerActivity.this, page);
         holder.subtitle.setText(subtitle);
+        holder.subtitle.setVisibility(View.VISIBLE);
         return convertView;
       }
     };
 
     // figure out which translation should be selected
-    int selected = 0;
-    String activeTranslation = TranslationUtils
-        .getDefaultTranslation(this, mTranslations);
-    if (activeTranslation != null) {
-      int index = 0;
-      for (TranslationItem item : mTranslations) {
-        if (item.filename.equals(activeTranslation)) {
-          selected = index;
-          break;
-        } else {
-          index++;
-        }
-      }
-    }
+    int selected = mSpinnerAdapter.getPositionForActiveTranslation();
 
     getSupportActionBar().setNavigationMode(
         ActionBar.NAVIGATION_MODE_LIST);
@@ -1254,7 +1248,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().clearFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getSupportActionBar().show();
+        mToolBarArea.setVisibility(View.VISIBLE);
 
         mAudioStatusBar.updateSelectedItem();
         mAudioStatusBar.setVisibility(View.VISIBLE);
@@ -1270,7 +1264,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(
             WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getSupportActionBar().hide();
+        mToolBarArea.setVisibility(View.GONE);
 
         mAudioStatusBar.setVisibility(View.GONE);
       }
@@ -1357,7 +1351,11 @@ public class PagerActivity extends SherlockFragmentActivity implements
       int i = 0;
       String[] items = new String[mTranslations.size()];
       for (TranslationItem item : mTranslations) {
-        items[i++] = item.name;
+        if (TextUtils.isEmpty(item.translator)) {
+          items[i++] = item.name;
+        } else {
+          items[i++] = item.translator;
+        }
       }
       mTranslationItems = items;
       mTranslationReaderTask = null;
@@ -1473,7 +1471,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
     int currentQari = mAudioStatusBar.getCurrentQari();
 
-    if (QuranSettings.shouldStream(this)) {
+    if (mSettings.shouldStream()) {
       playStreaming(start, end, page, currentQari,
           verseRepeat, rangeRepeat, enforceRange);
     } else {
@@ -1502,7 +1500,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       // this won't be enforced unless the user sets a range
       // repeat, but we set it to a sane default anyway.
       ending = AudioUtils.getLastAyahToPlay(ayah, page,
-          QuranSettings.getPreferredDownloadAmount(this), mDualPages);
+          mSettings.getPreferredDownloadAmount(), mDualPages);
     }
     AudioRequest request = new AudioRequest(qariUrl, ayah);
     request.setPlayBounds(ayah, ending);
@@ -1523,7 +1521,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       endAyah = ending;
     } else {
       endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
-          QuranSettings.getPreferredDownloadAmount(this), mDualPages);
+          mSettings.getPreferredDownloadAmount(), mDualPages);
     }
     String baseUri = AudioUtils.getLocalQariUrl(this, qari);
     if (endAyah == null || baseUri == null) {
@@ -1531,15 +1529,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
     String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, qari);
 
-    String fileUrl;
-    if (TextUtils.isEmpty(dbFile)) {
-      fileUrl = baseUri + File.separator + "%d" + File.separator +
-          "%d" + AudioUtils.AUDIO_EXTENSION;
-    } else {
-      fileUrl = baseUri + File.separator + "%03d" +
-          AudioUtils.AUDIO_EXTENSION;
-    }
-
+    String fileUrl = AudioUtils.getQariUrl(this, qari, true);
     DownloadAudioRequest request =
         new DownloadAudioRequest(fileUrl, ayah, qari, baseUri);
     request.setGaplessDatabaseFilePath(dbFile);
@@ -1616,15 +1606,14 @@ public class PagerActivity extends SherlockFragmentActivity implements
         }
 
         QuranAyah firstAyah = new QuranAyah(1, 1);
-        String qariUrl = AudioUtils.getQariUrl(this,
-            request.getQariId(), true);
+        String qariUrl = request.getBaseUrl();
         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
         if (mIsActionBarHidden) {
           toggleActionBar();
         }
-        String notificationTitle =
-            QuranInfo.getNotificationTitle(this, firstAyah, firstAyah);
+        String notificationTitle = QuranInfo.getNotificationTitle(
+            this, firstAyah, firstAyah, request.isGapless());
         Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
             request.getLocalPath(), notificationTitle,
             AUDIO_DOWNLOAD_KEY,
@@ -1645,9 +1634,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
       String notificationTitle = QuranInfo.getNotificationTitle(this,
-          request.getMinAyah(), request.getMaxAyah());
-      String qariUrl = AudioUtils.getQariUrl(this,
-          request.getQariId(), true);
+          request.getMinAyah(), request.getMaxAyah(), request.isGapless());
+      String qariUrl = request.getBaseUrl();
       android.util.Log.d(TAG, "need to start download: " + qariUrl);
 
       // start service
@@ -1666,7 +1654,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   private void play(AudioRequest request) {
     mNeedsPermissionToDownloadOver3g = true;
-    Intent i = new Intent(AudioService.ACTION_PLAYBACK);
+    Intent i = new Intent(this, AudioService.class);
+    i.setAction(AudioService.ACTION_PLAYBACK);
     if (request != null) {
       i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
       mLastAudioRequest = request;
@@ -1688,18 +1677,21 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onPausePressed() {
-    startService(new Intent(AudioService.ACTION_PAUSE));
+    startService(AudioService.getAudioIntent(
+        this, AudioService.ACTION_PAUSE));
     mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
   }
 
   @Override
   public void onNextPressed() {
-    startService(new Intent(AudioService.ACTION_SKIP));
+    startService(AudioService.getAudioIntent(this,
+        AudioService.ACTION_SKIP));
   }
 
   @Override
   public void onPreviousPressed() {
-    startService(new Intent(AudioService.ACTION_REWIND));
+    startService(AudioService.getAudioIntent(this,
+        AudioService.ACTION_REWIND));
   }
 
   @Override
@@ -1720,7 +1712,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
   public boolean updatePlayOptions(int rangeRepeat,
       int verseRepeat, boolean enforceRange) {
     if (mLastAudioRequest != null) {
-      Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
+      Intent i = new Intent(this, AudioService.class);
+      i.setAction(AudioService.ACTION_UPDATE_REPEAT);
       i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, verseRepeat);
       i.putExtra(AudioService.EXTRA_RANGE_REPEAT_COUNT, rangeRepeat);
       i.putExtra(AudioService.EXTRA_RANGE_RESTRICT, enforceRange);
@@ -1739,7 +1732,8 @@ public class PagerActivity extends SherlockFragmentActivity implements
   @Override
   public void setRepeatCount(int repeatCount) {
     if (mLastAudioRequest != null) {
-      Intent i = new Intent(AudioService.ACTION_UPDATE_REPEAT);
+      Intent i = new Intent(this, AudioService.class);
+      i.setAction(AudioService.ACTION_UPDATE_REPEAT);
       i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, repeatCount);
       startService(i);
       mLastAudioRequest.setVerseRepeatCount(repeatCount);
@@ -1748,7 +1742,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
 
   @Override
   public void onStopPressed() {
-    startService(new Intent(AudioService.ACTION_STOP));
+    startService(AudioService.getAudioIntent(this, AudioService.ACTION_STOP));
     mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
     unHighlightAyahs(HighlightType.AUDIO);
     mLastAudioRequest = null;
@@ -2012,9 +2006,9 @@ public class PagerActivity extends SherlockFragmentActivity implements
     }
   }
 
-  private class AyahMenuItemSelectionHandler implements OnMenuItemSelectedListener {
+  private class AyahMenuItemSelectionHandler implements MenuItem.OnMenuItemClickListener {
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
       int sliderPage = -1;
       switch (item.getItemId()) {
         case R.id.cab_bookmark_ayah:
@@ -2077,7 +2071,7 @@ public class PagerActivity extends SherlockFragmentActivity implements
       mAyahToolBar.setBookmarked(bookmarked);
     }
     // Refresh highlight
-    if (refreshHighlight && QuranSettings.shouldHighlightBookmarks(this)) {
+    if (refreshHighlight && mSettings.shouldHighlightBookmarks()) {
       if (bookmarked) {
         highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
       } else {

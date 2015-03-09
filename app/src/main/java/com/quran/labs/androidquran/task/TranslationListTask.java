@@ -1,11 +1,5 @@
 package com.quran.labs.androidquran.task;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.SparseArray;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.DatabaseHandler;
@@ -17,7 +11,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.*;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.SparseArray;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,7 +44,7 @@ public class TranslationListTask extends
 
    public TranslationListTask(Context context,
                               TranslationsUpdatedListener listener){
-      mContext = context;
+      mContext = context.getApplicationContext();
       mListener = listener;
    }
 
@@ -68,14 +74,17 @@ public class TranslationListTask extends
    private static String loadCachedResponse(Context context) {
       String response = null;
       try {
-         FileReader fr = new FileReader(getCachedResponseFilePath(context));
-         BufferedReader br = new BufferedReader(fr);
-         response = "";
-         String line = "";
-         while ((line = br.readLine()) != null) {
-            response += line + "\n";
+         final File cachedFile = getCachedResponseFilePath(context);
+         if (cachedFile.exists()) {
+            FileReader fr = new FileReader(cachedFile);
+            BufferedReader br = new BufferedReader(fr);
+            response = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+               response += line + "\n";
+            }
+            br.close();
          }
-         br.close();
       } catch (Exception e) {
          Log.e(TAG, "failed reading cached response", e);
       }
@@ -113,7 +122,7 @@ public class TranslationListTask extends
               new TranslationsDBAdapter(context);
       cachedItems = adapter.getTranslationsHash();
       if (cachedItems == null){
-         cachedItems = new SparseArray<TranslationItem>();
+         cachedItems = new SparseArray<>();
       }
 
       List<TranslationItem> items = new ArrayList<TranslationItem>();

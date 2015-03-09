@@ -43,8 +43,7 @@ public class AudioIntentReceiver extends BroadcastReceiver {
             //        Toast.LENGTH_SHORT).show();
 
             // send an intent to MusicService to tell it to pause the audio
-            context.startService(new Intent(AudioService.ACTION_PAUSE));
-
+            startAudioService(context, AudioService.ACTION_PAUSE);
         } else if (intent.getAction().equals(Intent.ACTION_MEDIA_BUTTON)) {
             KeyEvent keyEvent = (KeyEvent) intent.getExtras().get(
                     Intent.EXTRA_KEY_EVENT);
@@ -56,26 +55,29 @@ public class AudioIntentReceiver extends BroadcastReceiver {
             switch (keyEvent.getKeyCode()) {
                 case KeyEvent.KEYCODE_HEADSETHOOK:
                 case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                    context.startService(
-                            new Intent(AudioService.ACTION_PLAYBACK));
+                    startAudioService(context, AudioService.ACTION_PLAYBACK);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PLAY:
-                    context.startService(new Intent(AudioService.ACTION_PLAY));
+                    startAudioService(context, AudioService.ACTION_PLAY);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                    context.startService(
-                            new Intent(AudioService.ACTION_PAUSE));
+                    startAudioService(context, AudioService.ACTION_PAUSE);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_STOP:
-                    context.startService(new Intent(AudioService.ACTION_STOP));
+                    startAudioService(context, AudioService.ACTION_STOP);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    context.startService(new Intent(AudioService.ACTION_SKIP));
+                    startAudioService(context, AudioService.ACTION_SKIP);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    context.startService(new Intent(AudioService.ACTION_REWIND));
+                    startAudioService(context, AudioService.ACTION_REWIND);
                     break;
             }
         }
+    }
+
+    private void startAudioService(Context context, String action) {
+        final Intent intent = AudioService.getAudioIntent(context, action);
+        context.startService(intent);
     }
 }

@@ -111,6 +111,11 @@
 	<string name="search_hint">Search the Quran</string>
 	<string name="quranSearchType">Verses of the Quran</string>
 
+    <plurals name="files_downloaded">
+        <item quantity="one">1 sura downloaded</item>
+        <item quantity="other">%1$d suras downloaded</item>
+    </plurals>
+
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
         <item quantity="one">One result for \"%1$s\": </item>
@@ -124,7 +129,7 @@
     <string name="translation_settings">Translation Settings</string>
     <string name="no_arabic_search_available">You have not downloaded the Arabic search pack.  Please download it and try your search again.</string>
     <string name="get_arabic_search_db">Get Arabic Search Database</string>
-        
+
     <!-- Quran Preference Activity -->
     <string name="prefs_category_navigation">Navigation</string>
     <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
@@ -134,9 +139,6 @@
     <string name="prefs_category_display_settings">Display Settings</string>
     <string name="prefs_use_arabic_title">Arabic Mode</string>
     <string name="prefs_use_arabic_summary_on">Application will be localized to Arabic (restart required)</string>
-    <string name="prefs_use_arabic_reshaper_title">Use Arabic Reshaper</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">If your Arabic text is backwards, uncheck this option.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">If your Arabic text is not joined, check this option to fix it.</string>
     <string name="prefs_new_background_title">New background</string>
     <string name="prefs_lock_orientation_title">Lock screen orientation</string>
     <string name="prefs_lock_orientation_summary_on">Quran page will be in fixed orientation mode</string>
@@ -148,7 +150,7 @@
     <string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
     <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
     <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
-    <string name="prefs_overlay_page_info_title">Show page info (beta)</string>
+    <string name="prefs_overlay_page_info_title">Show page info</string>
     <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
     <string name="prefs_display_marker_title">Display marker popups</string>
     <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
@@ -164,16 +166,16 @@
     <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
     <string name="prefs_download_amount_title">Download Amount</string>
     <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
+    <string name="prefs_audio_manager">Audio Manager (experimental)</string>
+    <string name="prefs_audio_manager_summary">Manage and download quranic audio.</string>
     <string name="downloaded_translations">Downloaded</string>
     <string name="available_translations">Available for Download</string>
     <string name="remove_button">Remove</string>
     <string name="dialog_ok">OK</string>
-    <string name="prefs_advanced_settings_title">Advanced Settings</string>
     <string name="prefs_app_location_title">Quran Data Directory</string>
     <string name="prefs_app_location_summary">Choose where to store Quran files.</string>
     <string name="prefs_sdcard_internal">Internal Storage</string>
-    <string name="prefs_sdcard_external">External SD Card</string>
-    <string name="prefs_sdcard_auto">Auto</string>
+    <string name="prefs_sdcard_external">External SD Card %1$d</string>
     <string name="prefs_app_size">Current data size is</string>
     <string name="prefs_calculating_app_size">Calculating App Size</string>
     <string name="prefs_copying_app_files">Copying App files</string>
@@ -197,9 +199,6 @@
     <string name="translation_dialog_yes">Yes</string>
     <string name="translation_dialog_later">Later</string>
 
-    <!-- used for screen readers -->
-    <string name="border">border</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -238,6 +237,8 @@
     
     <!-- downloading dialogs -->
     <string name="download_progress">Downloaded %1$s / %2$s</string>
+    <string name="download_sura_progress">Downloaded %1$s / %2$s of sura %3$d</string>
+    <string name="download_sura_ayah_progress">Downloading sura %1$d ayah %2$d</string>
     <string name="process_progress">Processing file %1$d / %2$d</string>
     <string name="download_retry">Retry</string>
     <string name="download_cancel">Cancel</string>
@@ -265,11 +266,8 @@
     </plurals>
 
     <!-- ayah action panel -->
-    <string name="ayah_tags_page">Tags</string>
-    <string name="ayah_translation_page">Translation</string>
     <string name="play_from">From</string>
     <string name="play_to">To</string>
-    <string name="play_options">Options</string>
     <string name="play_restrict_range">Only play the above verses</string>
     <string name="repeat_verses_range">Repeat set of verses:</string>
     <string name="repeat_each_verse">Repeat each verse:</string>
@@ -288,7 +286,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Bookmark this Ayah</string>
-    <string name="unbookmark_ayah">Remove bookmark for this Ayah</string>
     <string name="tag_ayah">Tag this Ayah</string>
     <string name="share_ayah">Share Ayah Link</string>
     <string name="share_ayah_text">Share Ayah Text</string>
@@ -298,8 +295,7 @@
     <string name="search_key">Press the search key to look up a verse</string>
     <string name="copy_ayah">Copy Ayah</string>
     <string name="ayah_copied_popup">Ayah Copied</string>
-    <string name="show_more">Show More</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Delete Bookmark</string>
     <string name="tag_bookmark">Tag Bookmark</string>
@@ -315,4 +311,7 @@
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">No Bookmarks</string>
     <string name="tags_list_empty">No Tags</string>
+
+    <!-- audio manager -->
+    <string name="audio_manager">Audio Manager</string>
 </resources>

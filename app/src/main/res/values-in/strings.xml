@@ -103,9 +103,6 @@
     <string name="prefs_category_display_settings">Pengaturan Tampilan</string>
     <string name="prefs_use_arabic_title">Mode Aplikasi Arab</string>
     <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab (diperlukan restart program untuk menerapkan)</string>
-    <string name="prefs_use_arabic_reshaper_title">Gunakan Reshaper Arab</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Jika teks Arab anda terbalik, jangan centang opsi ini.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Jika teks Arab anda terputus, centang opsi ini untuk memperbaikinya.</string>
     <string name="prefs_new_background_title">Background Baru</string>
     <string name="prefs_lock_orientation_title">Lock orientasi layar</string>
     <string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mode orientasi tetap</string>
@@ -117,7 +114,7 @@
     <string name="prefs_night_mode_summary">Menggunakan background gelap dan teks terang</string>
     <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>
     <string name="prefs_night_mode_text_brightness_summary">Kecerahan teks ketika modus malam aktif</string>
-    <string name="prefs_overlay_page_info_title">Tampilkan info halaman (beta)</string>
+    <string name="prefs_overlay_page_info_title">Tampilkan info halaman</string>
     <string name="prefs_overlay_page_info_summary">Nomor halaman, nama surat dan nomor juz\' akan ditampilkan</string>
     <string name="prefs_display_marker_title">Tampilkan popup penanda</string>
     <string name="prefs_display_marker_summary">Tampilan popup saat mencapai pergantian juz\', hizb, dll</string>
@@ -135,12 +132,10 @@
     <string name="available_translations">Tersedia untuk didownload</string>
     <string name="remove_button">Hapus</string>
     <string name="dialog_ok">OK</string>
-    <string name="prefs_advanced_settings_title">Setting lebih lanjut</string>
     <string name="prefs_app_location_title">Lokasi aplikasi</string>
     <string name="prefs_app_location_summary">Pilih penyimpanan file</string>
     <string name="prefs_sdcard_internal">Penyimpanan Internal</string>
-    <string name="prefs_sdcard_external">SD Card Eksternal</string>
-    <string name="prefs_sdcard_auto">Auto</string>
+    <string name="prefs_sdcard_external">SD Card Eksternal %1$d</string>
     <string name="prefs_app_size">Ukuran aplikasi</string>
     <string name="prefs_calculating_app_size">Menghitung ukuran aplikasi</string>
     <string name="prefs_copying_app_files">Menyalin file aplikasi</string>
@@ -158,9 +153,6 @@
     <string name="translation_dialog_yes">Ya</string>
     <string name="translation_dialog_later">Nanti</string>
 
-    <!-- used for screen readers -->
-    <string name="border">border</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -226,7 +218,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">Bookmark ayat ini</string>
-    <string name="unbookmark_ayah">Hapus bookmark pada ayat ini</string>
     <string name="tag_ayah">Beri label ayat ini</string>
     <string name="share_ayah">Bagikan tautan (URL) ayat</string>
     <string name="share_ayah_text">Bagikan teks ayat</string>
@@ -236,7 +227,6 @@
     <string name="search_key">Tekan tombol pencarian untuk mencari ayat</string>
     <string name="copy_ayah">Salin ayat</string>
     <string name="ayah_copied_popup">Ayat telah tersalin</string>
-    <string name="show_more">Tampilkan Lebih</string>
     
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Hapus Bookmark</string>
