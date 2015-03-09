@@ -11,8 +11,10 @@ import com.quran.labs.androidquran.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 
 /**
@@ -42,7 +44,7 @@ public class StorageUtils {
       // As per http://source.android.com/devices/tech/storage/config.html
       // device-specific vold.fstab file is removed after Android 4.2.2
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        List<String> vold = readVoldsFile();
+        List<String> vold = new ArrayList<>(readVoldsFile());
 
         List<String> toRemove = new ArrayList<>();
         for (String mount : mounts) {
@@ -129,13 +131,14 @@ public class StorageUtils {
   }
 
   /**
-   * reads volume manager daemon file for auto-mounted storage
-   * read more about it here: http://vold.sourceforge.net/
+   * Reads volume manager daemon file for auto-mounted storage.
+   * Read more about it <a href="http://vold.sourceforge.net/">here</a>.
    *
-   * @return List of mount points from `vold.fstab` configuration file
+   * Set usage, to safely avoid duplicates, is intentional.
+   * @return Set of mount points from `vold.fstab` configuration file
    */
-  private static List<String> readVoldsFile() {
-    List<String> volds = new ArrayList<>();
+  private static Set<String> readVoldsFile() {
+    Set<String> volds = new HashSet<>();
     volds.add(Environment.getExternalStorageDirectory().getAbsolutePath());
 
     Log.d(TAG, "reading volds file");
