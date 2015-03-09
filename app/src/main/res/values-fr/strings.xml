@@ -234,11 +234,8 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="ayah_tags_page">Étiquettes</string>
-  <string name="ayah_translation_page">Traduction</string>
   <string name="play_from">Depuis</string>
   <string name="play_to">À</string>
-  <string name="play_options">Options</string>
   <string name="play_restrict_range">Écouter uniquement les Ayāt sélectionnés</string>
   <string name="repeat_verses_range">Répéter les Ayāt sélectionnés :</string>
   <string name="repeat_each_verse">Répéter chaque Aya :</string>
