@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 259
-        versionName "2.5.9"
+        versionCode 2600
+        versionName "2.6.0"
     }
 
     signingConfigs {
@@ -33,7 +33,7 @@ android {
 
       release {
          minifyEnabled true
-         proguardFile 'proguard.cfg'
+         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
          signingConfig signingConfigs.release
       }
     }
