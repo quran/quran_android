@@ -82,6 +82,10 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.1 (released 3/10/2015)**
+- fix audio not playing without connection
+- fix some crashes and add some crash logging
+
 **version 2.6.0 (released 3/8/2015)**
 - material design!
 - experimental audio manager with download all functionality.

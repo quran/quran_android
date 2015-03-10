@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 2600
-        versionName "2.6.0"
+        versionCode 2610
+        versionName "2.6.1"
     }
 
     signingConfigs {
