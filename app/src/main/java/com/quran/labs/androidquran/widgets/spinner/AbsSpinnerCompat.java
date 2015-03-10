@@ -344,6 +344,7 @@ abstract class AbsSpinnerCompat extends AdapterViewCompat<SpinnerAdapter> {
     static class SavedState extends BaseSavedState {
         long selectedId;
         int position;
+        boolean showDropdown;
 
         /**
          * Constructor called from {@link AbsSpinnerCompat#onSaveInstanceState()}
@@ -359,6 +360,7 @@ abstract class AbsSpinnerCompat extends AdapterViewCompat<SpinnerAdapter> {
             super(in);
             selectedId = in.readLong();
             position = in.readInt();
+            showDropdown = in.readByte() != 0;
         }
 
         @Override
@@ -366,6 +368,7 @@ abstract class AbsSpinnerCompat extends AdapterViewCompat<SpinnerAdapter> {
             super.writeToParcel(out, flags);
             out.writeLong(selectedId);
             out.writeInt(position);
+            out.writeByte((byte) (showDropdown ? 1 : 0));
         }
 
         @Override
@@ -388,6 +391,8 @@ abstract class AbsSpinnerCompat extends AdapterViewCompat<SpinnerAdapter> {
         };
     }
 
+    protected abstract boolean isPopupShowing();
+
     @Override
     public Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
@@ -398,6 +403,7 @@ abstract class AbsSpinnerCompat extends AdapterViewCompat<SpinnerAdapter> {
         } else {
             ss.position = INVALID_POSITION;
         }
+        ss.showDropdown = isPopupShowing();
         return ss;
     }
 
