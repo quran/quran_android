@@ -23,7 +23,6 @@ import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
@@ -683,19 +682,15 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
     }
 
     @Override
-    public Parcelable onSaveInstanceState() {
-        final SavedState ss = new SavedState(super.onSaveInstanceState());
-        ss.showDropdown = mPopup != null && mPopup.isShowing();
-        return ss;
+    protected boolean isPopupShowing() {
+        return mPopup != null && mPopup.isShowing();
     }
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
-        SavedState ss = (SavedState) state;
+        super.onRestoreInstanceState(state);
 
-        super.onRestoreInstanceState(ss.getSuperState());
-
-        if (ss.showDropdown) {
+        if (((AbsSpinnerCompat.SavedState) state).showDropdown) {
             ViewTreeObserver vto = getViewTreeObserver();
             if (vto != null) {
                 final ViewTreeObserver.OnGlobalLayoutListener listener
@@ -714,37 +709,6 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
                 vto.addOnGlobalLayoutListener(listener);
             }
         }
-    }
-
-    static class SavedState extends AbsSpinnerCompat.SavedState {
-
-        boolean showDropdown;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        private SavedState(Parcel in) {
-            super(in);
-            showDropdown = in.readByte() != 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeByte((byte) (showDropdown ? 1 : 0));
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
-
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
     }
 
     /**

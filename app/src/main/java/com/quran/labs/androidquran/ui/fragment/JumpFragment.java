@@ -1,5 +1,14 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
+import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,15 +27,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 public class JumpFragment extends DialogFragment {
   public static final String TAG = "JumpFragment";
@@ -94,7 +94,7 @@ public class JumpFragment extends DialogFragment {
     suraSpinner.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
       @Override
       public void onItemSelected(AdapterViewCompat<?> parent, View view, int position, long rowId) {
-        Context context = view.getContext();
+        Context context = getActivity();
         if (suraSpinner.getTag() == null) {
           // this is the initialization
           for (int i = 1; i <= QuranInfo.SURA_NUM_AYAHS[0]/*al-Fatiha*/; i++) {
