@@ -946,6 +946,7 @@ public class AudioService extends Service implements OnCompletionListener,
          //
          // Until the media player is prepared, we *cannot* call start() on it!
          Log.d(TAG, "preparingAsync()...");
+         Crashlytics.log("prepareAsync: " + overrideResource + ", " + url);
          mPlayer.prepareAsync();
          
          // If we are streaming from the internet, we want to hold a Wifi lock,

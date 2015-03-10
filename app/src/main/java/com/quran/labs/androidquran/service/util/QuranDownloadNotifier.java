@@ -8,7 +8,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -256,17 +255,12 @@ public class QuranDownloadNotifier {
         .setOngoing(isOnGoing)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setDefaults(Notification.DEFAULT_LIGHTS)
-        .setContentTitle(titleString);
+        .setContentTitle(titleString)
+        .setContentText(statusString);
 
-    String status = statusString;
-    if (maximum > 0) {
+    if (maximum > 0 && maximum >= progress) {
       builder.setProgress(maximum, progress, isIndeterminate);
-      if (!isIndeterminate &&
-          Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-        status += " (" + progress + "/" + maximum + ")";
-      }
     }
-    builder.setContentText(status);
 
     Intent notificationIntent = new Intent(mAppContext,
         QuranDataActivity.class);
