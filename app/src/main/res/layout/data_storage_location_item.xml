@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:paddingLeft="16dp"
+              android:paddingRight="16dp"
+              android:minHeight="?android:attr/listPreferredItemHeight">
+
+  <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="4.00"
+      android:orientation="vertical"
+      android:layout_gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/storage_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorAlertDialogListItem"
+        android:text="Label"/>
+
+    <TextView
+        android:id="@+id/available_free_space"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?android:attr/textColorAlertDialogListItem"
+        android:text="12345 MB"/>
+
+  </LinearLayout>
+
+  <CheckedTextView
+      android:id="@+id/checked_text_view"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1.00"
+      android:checkMark="?android:attr/listChoiceIndicatorSingle"
+      android:textColor="?android:attr/textColorAlertDialogListItem"
+      android:layout_gravity="center_vertical"/>
+
+</LinearLayout>

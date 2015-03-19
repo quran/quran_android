@@ -150,7 +150,7 @@
   <string name="prefs_calculating_app_size">Calcul de la taille de l\'application</string>
   <string name="prefs_copying_app_files">Copie des fichier de l\'application</string>
   <string name="prefs_err_moving_app_files">Echec du déplacement des fichiers de l\'application</string>
-  <string name="prefs_megabytes">Mo</string>
+  <string name="prefs_megabytes">%1$d Mo</string>
   <string name="prefs_no_enough_space_to_move_files">Espace insuffisant pour déplacer les fichiers de l\'application</string>
   <string name="prefs_sdcard_internal">Stockage interne</string>
   <string name="prefs_sdcard_external">Carte SD externe %1$d</string>

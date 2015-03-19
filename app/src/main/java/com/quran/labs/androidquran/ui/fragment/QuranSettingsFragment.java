@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.ui.preference.DataListPreference;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -33,7 +33,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     SharedPreferences.OnSharedPreferenceChangeListener {
   private static final String TAG = QuranSettingsFragment.class.getSimpleName();
 
-  private ListPreference mListStoragePref;
+  private DataListPreference mListStoragePref;
   private MoveFilesAsyncTask mMoveFilesTask;
   private List<StorageUtils.Storage> mStorageList;
   private LoadStorageOptionsTask mLoadStorageOptionsTask;
@@ -61,8 +61,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     mInternalSdcardLocation =
         Environment.getExternalStorageDirectory().getAbsolutePath();
 
-    mListStoragePref = (ListPreference) findPreference(
-        getString(R.string.prefs_app_location));
+    mListStoragePref = (DataListPreference) findPreference(getString(R.string.prefs_app_location));
     mListStoragePref.setEnabled(false);
 
     try {
@@ -100,40 +99,21 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
   private void loadStorageOptions(Context context) {
     try {
-      CharSequence[] values = new CharSequence[mStorageList.size()];
-      CharSequence[] displayNames = new CharSequence[mStorageList.size()];
-      int i = 0;
+      mListStoragePref.setLabelsAndSummaries(context, mAppSize, mStorageList);
       final HashMap<String, Integer> storageEmptySpaceMap =
           new HashMap<>(mStorageList.size());
       for (StorageUtils.Storage storage : mStorageList) {
-        values[i] = storage.getMountPoint();
-        displayNames[i] = storage.getLabel() + " " +
-            storage.getFreeSpace()
-            + " " + getString(R.string.prefs_megabytes);
-        i++;
         storageEmptySpaceMap.put(storage.getMountPoint(),
             storage.getFreeSpace());
       }
-
-      String msg = getString(R.string.prefs_app_location_summary) + "\n"
-          + getString(R.string.prefs_app_size) + " " + mAppSize
-          + " " + getString(R.string.prefs_megabytes);
-      mListStoragePref.setSummary(msg);
-      mListStoragePref.setEntries(displayNames);
-      mListStoragePref.setEntryValues(values);
-
-      final QuranSettings settings = QuranSettings.getInstance(context);
-      String current = settings.getAppCustomLocation();
-      if (TextUtils.isEmpty(current)) {
-        current = values[0].toString();
-      }
-      mListStoragePref.setValue(current);
 
       mListStoragePref
           .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
               final Context context = getActivity();
+              final QuranSettings settings = QuranSettings.getInstance(context);
+
               if (TextUtils.isEmpty(settings.getAppCustomLocation()) &&
                   Environment.getExternalStorageDirectory().equals(newValue)) {
                 // do nothing since we're moving from empty settings to
@@ -217,7 +197,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-      String key) {
+                                        String key) {
     if (key.equals(Constants.PREF_USE_ARABIC_NAMES)) {
       final Context context = getActivity();
       if (context instanceof QuranPreferenceActivity) {
