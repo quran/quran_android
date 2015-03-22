@@ -167,7 +167,6 @@
     <string name="prefs_copying_app_files">Programma fayllari ko\'chirilmoqda&#8230;</string>
     <string name="prefs_err_moving_app_files">Fayllarni ko\'chirib o\'tkazishda xatolik yuz berdi</string>
     <string name="prefs_no_enough_space_to_move_files">Fayllarni ko\'chirib o\'tkazish uchun yetarli joy mavjud emas</string>
-    <string name="prefs_megabytes">MB</string>
     <string name="prefs_tablet_mode_title">Planshet rejimi</string>
     <string name="prefs_tablet_mode_enabled">Yotiq holatda ikki bet yonma-yon ko\'rinadi</string>
     <string name="prefs_tablet_mode_disabled">Yotiq holatda ham faqat bitta bet ko\'rinadi</string>

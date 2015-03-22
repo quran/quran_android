@@ -148,7 +148,7 @@
     <string name="prefs_copying_app_files">لەبەرگرتنەوەی فایلەکانی بەرنامە</string>
     <string name="prefs_err_moving_app_files">گواستنەوەی فایلەکانی بەرنامە سەرکەوتو نەبوو</string>
     <string name="prefs_no_enough_space_to_move_files">شوێنی بەتاڵ کەمە بۆ گواستنەوەی فایلەکانی بەرنامە</string>
-    <string name="prefs_megabytes">مێگابایت</string>
+    <string name="prefs_megabytes">مێگابایت  %1$d</string>
     <!-- Preferences End -->
 
     <!-- translation updates -->

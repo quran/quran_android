@@ -187,7 +187,6 @@
     <string name="prefs_copying_app_files">Programmdateien werden kopiert</string>
     <string name="prefs_err_moving_app_files">Die Programmdateien konnten nicht verschoben werden.</string>
     <string name="prefs_no_enough_space_to_move_files">Sie haben nicht genug Speicherplatz um die Dateien zu verschieben.</string>
-    <string name="prefs_megabytes">MB</string>
     <string name="prefs_tablet_mode_title">Tablet-Modus</string>
     <string name="prefs_tablet_mode_enabled">Im Querformat werden zwei Seiten nebeneinander dargestellt.</string>
     <string name="prefs_tablet_mode_disabled">Im Querformat wird nur eine Seite dargestellt.</string>
