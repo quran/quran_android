@@ -493,10 +493,12 @@ public class QuranDownloadService extends Service implements
       final int result = downloadUrl(url, path, filename, notificationInfo);
       if (result == DOWNLOAD_SUCCESS) {
          if (filename.endsWith("zip")){
+            /*
             if (notificationInfo.totalFiles == 1){
                mLastSentIntent = mNotifier.notifyDownloadProcessing(
                    notificationInfo, 0, 0);
             }
+            */
 
             final File actualFile = new File(path, filename);
             if (!ZipUtils.unzipFile(actualFile.getAbsolutePath(),
