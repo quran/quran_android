@@ -198,6 +198,23 @@ public class DatabaseHandler {
       query = "%" + query + "%";
     }
 
+    int pos = 0;
+    int found = 0;
+    boolean done = false;
+    while (!done) {
+      int quote = query.indexOf("\"", pos);
+      if (quote > -1) {
+        found++;
+        pos = quote + 1;
+      } else {
+        done = true;
+      }
+    }
+
+    if (found % 2 != 0) {
+      query = query.replaceAll("\"", "");
+    }
+
     if (useFullTextIndex && withSnippets) {
       whatTextToSelect = "snippet(" + table + ", '" +
           mMatchString + "', '" + MATCH_END +

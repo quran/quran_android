@@ -1,15 +1,15 @@
 package com.quran.labs.androidquran;
 
+import com.quran.labs.androidquran.ui.QuranActionBarActivity;
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.util.AudioManagerUtils;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-public class QuranPreferenceActivity extends ActionBarActivity {
+public class QuranPreferenceActivity extends QuranActionBarActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

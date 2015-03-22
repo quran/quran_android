@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActionBarActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -25,7 +26,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -42,7 +42,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends ActionBarActivity
+public class SearchActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {
 

@@ -314,8 +314,15 @@ public class AudioService extends Service implements OnCompletionListener,
     */
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
-      String action = intent.getAction();
+      if (intent == null) {
+        // handle a crash that occurs where intent comes in as null
+        if (mState == State.Stopped) {
+          stopSelf();
+        }
+        return START_NOT_STICKY;
+      }
 
+      String action = intent.getAction();
       if (ACTION_CONNECT.equals(action)){
          if (mState == State.Stopped){
             processStopRequest(true);

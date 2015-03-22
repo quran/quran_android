@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranslationManagerActivity extends ActionBarActivity
+public class TranslationManagerActivity extends QuranActionBarActivity
         implements DefaultDownloadReceiver.SimpleDownloadListener,
                    TranslationListTask.TranslationsUpdatedListener {
    public static final String TAG = "TranslationManager";

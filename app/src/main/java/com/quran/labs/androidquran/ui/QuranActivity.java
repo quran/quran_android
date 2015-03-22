@@ -34,7 +34,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -45,7 +44,7 @@ import android.view.MenuItem;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 
-public class QuranActivity extends ActionBarActivity
+public class QuranActivity extends QuranActionBarActivity
     implements BookmarkHandler, AddTagDialog.OnTagChangedListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener {
 
