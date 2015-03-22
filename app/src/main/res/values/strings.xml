@@ -181,7 +181,7 @@
     <string name="prefs_copying_app_files">Copying App files</string>
     <string name="prefs_err_moving_app_files">Failed to move app files</string>
     <string name="prefs_no_enough_space_to_move_files">Insufficient space to move app files</string>
-    <string name="prefs_megabytes">MB</string>
+    <string name="prefs_megabytes">%1$d MB</string>
     <string name="prefs_tablet_mode_title">Tablet Mode</string>
     <string name="prefs_tablet_mode_enabled">In landscape, two pages will appear side by side.</string>
     <string name="prefs_tablet_mode_disabled">In landscape, only one page will appear.</string>

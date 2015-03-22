@@ -154,10 +154,11 @@
                     android:targetClass="com.quran.labs.androidquran.ui.AudioManagerActivity" />
         </com.quran.labs.androidquran.ui.preference.QuranPreference>
 
-        <com.quran.labs.androidquran.ui.preference.QuranListPreference
+        <com.quran.labs.androidquran.ui.preference.DataListPreference
             android:key="@string/prefs_app_location"
             android:summary="@string/prefs_app_location_summary"
             android:title="@string/prefs_app_location_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>
+

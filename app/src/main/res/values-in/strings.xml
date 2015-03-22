@@ -141,7 +141,6 @@
     <string name="prefs_copying_app_files">Menyalin file aplikasi</string>
     <string name="prefs_err_moving_app_files">Gagal memindahkan file aplikasi</string>
     <string name="prefs_no_enough_space_to_move_files">Ruang yang tersedia tidak cukup untuk memindahkan file aplikasi</string>
-    <string name="prefs_megabytes">MB</string>
     <string name="prefs_tablet_mode_title">Mode Tablet</string>
     <string name="prefs_tablet_mode_enabled">Dalam mode landscape, dua halaman akan muncul berdampingan.</string>
     <string name="prefs_tablet_mode_disabled">Dalam mode landscape, hanya menampilkan satu halaman.</string>
