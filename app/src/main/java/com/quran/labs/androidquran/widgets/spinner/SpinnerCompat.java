@@ -652,8 +652,10 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
 
         // Make sure the number of items we'll measure is capped. If it's a huge data set
         // with wildly varying sizes, oh well.
-        int start = Math.max(0, getSelectedItemPosition());
-        final int end = Math.min(adapter.getCount(), start + MAX_ITEMS_MEASURED);
+
+        int start = Math.max(adapter.getCount()-15,0);
+        final int end = adapter.getCount();
+
         final int count = end - start;
         start = Math.max(0, start - (MAX_ITEMS_MEASURED - count));
         for (int i = start; i < end; i++) {
@@ -672,6 +674,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
             width = Math.max(width, itemView.getMeasuredWidth());
         }
 
+        width*=1.1;
         // Add background padding to measured width
         if (background != null) {
             background.getPadding(mTempRect);
