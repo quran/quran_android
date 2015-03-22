@@ -603,6 +603,10 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
 
             if (!mPopup.isShowing()) {
                 mPopup.show();
+                // added for Quran Android to set the list to the selected item
+                if (mPopup instanceof DropdownPopup) {
+                    ((DropdownPopup) mPopup).setSelection(getSelectedItemPosition());
+                }
             }
         }
 
