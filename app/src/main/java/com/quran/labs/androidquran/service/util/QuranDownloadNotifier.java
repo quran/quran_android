@@ -80,7 +80,7 @@ public class QuranDownloadNotifier {
 
   public QuranDownloadNotifier(Context context) {
     mAppContext = context.getApplicationContext();
-    mNotificationManager = (NotificationManager) context
+    mNotificationManager = (NotificationManager) mAppContext
         .getSystemService(Context.NOTIFICATION_SERVICE);
     mBroadcastManager = LocalBroadcastManager.getInstance(mAppContext);
     mNotificationColor = mAppContext.getResources()
@@ -266,8 +266,7 @@ public class QuranDownloadNotifier {
       builder.setProgress(maximum, progress, isIndeterminate);
     }
 
-    Intent notificationIntent = new Intent(mAppContext,
-        QuranDataActivity.class);
+    Intent notificationIntent = new Intent(mAppContext, QuranDataActivity.class);
     PendingIntent contentIntent = PendingIntent.getActivity(
         mAppContext, 0, notificationIntent, 0);
     builder.setContentIntent(contentIntent);
