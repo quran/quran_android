@@ -1,8 +1,9 @@
 package com.quran.labs.androidquran;
 
+import com.quran.labs.androidquran.ui.QuranActionBarActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
@@ -10,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class AboutUsActivity extends ActionBarActivity {
+public class AboutUsActivity extends QuranActionBarActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

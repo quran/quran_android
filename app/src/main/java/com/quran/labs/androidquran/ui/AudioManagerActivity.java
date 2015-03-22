@@ -35,7 +35,7 @@ import rx.Subscription;
 import rx.android.app.AppObservable;
 import rx.functions.Action1;
 
-public class AudioManagerActivity extends ActionBarActivity
+public class AudioManagerActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener {
   private static final String AUDIO_DOWNLOAD_KEY = "AudioManager.DownloadKey";
 

@@ -75,7 +75,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -106,7 +105,7 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAG
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
-public class PagerActivity extends ActionBarActivity implements
+public class PagerActivity extends QuranActionBarActivity implements
     AudioStatusBar.AudioBarListener,
     BookmarkHandler,
     DefaultDownloadReceiver.DownloadListener,
