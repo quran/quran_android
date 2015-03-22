@@ -70,6 +70,6 @@ public class ZipUtils {
   }
 
   public interface ZipListener<T> {
-    public void onProcessingProgress(T obj, int processed, int total);
+    void onProcessingProgress(T obj, int processed, int total);
   }
 }

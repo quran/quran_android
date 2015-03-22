@@ -24,6 +24,7 @@ public class QuranDownloadNotifier {
   private static final int DOWNLOADING_NOTIFICATION = 1;
   public static final int DOWNLOADING_COMPLETE_NOTIFICATION = 2;
   private static final int DOWNLOADING_ERROR_NOTIFICATION = 3;
+  private static final int DOWNLOADING_PROCESSING_NOTIFICATION = 4;
 
   public static class ProgressIntent {
     public static final String INTENT_NAME =
@@ -90,6 +91,7 @@ public class QuranDownloadNotifier {
     // hide any previous errors, canceled, etc
     mNotificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
     mNotificationManager.cancel(DOWNLOADING_COMPLETE_NOTIFICATION);
+    mNotificationManager.cancel(DOWNLOADING_PROCESSING_NOTIFICATION);
   }
 
   public Intent notifyProgress(NotificationDetails details,
@@ -147,8 +149,9 @@ public class QuranDownloadNotifier {
       NotificationDetails details, int done, int total){
     String processingString =
         mAppContext.getString(R.string.download_processing);
+    mNotificationManager.cancel(DOWNLOADING_NOTIFICATION);
     showNotification(details.title, processingString,
-        DOWNLOADING_NOTIFICATION, true);
+        DOWNLOADING_PROCESSING_NOTIFICATION, true);
 
     // send broadcast
     Intent progressIntent = new Intent(ProgressIntent.INTENT_NAME);
@@ -172,6 +175,7 @@ public class QuranDownloadNotifier {
   public Intent notifyDownloadSuccessful(NotificationDetails details){
     String successString = mAppContext.getString(R.string.download_successful);
     mNotificationManager.cancel(DOWNLOADING_NOTIFICATION);
+    mNotificationManager.cancel(DOWNLOADING_PROCESSING_NOTIFICATION);
     mNotificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
     showNotification(details.title, successString,
         DOWNLOADING_COMPLETE_NOTIFICATION, false);
