@@ -652,10 +652,17 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
 
         // Make sure the number of items we'll measure is capped. If it's a huge data set
         // with wildly varying sizes, oh well.
-        int start = Math.max(0, getSelectedItemPosition());
-        final int end = Math.min(adapter.getCount(), start + MAX_ITEMS_MEASURED);
-        final int count = end - start;
-        start = Math.max(0, start - (MAX_ITEMS_MEASURED - count));
+
+        // SpinnerCompat's original code looked like this:
+        // int start = Math.max(0, getSelectedItemPosition());
+        // final int end = Math.min(adapter.getCount(), start + MAX_ITEMS_MEASURED);
+        // final int count = end - start;
+        // start = Math.max(0, start - (MAX_ITEMS_MEASURED - count));
+        // for Quran Android, we changed it to always take the last 15 items (or all
+        // items if the total count is less than 15).
+
+        final int end = adapter.getCount();
+        int start = Math.max(end - MAX_ITEMS_MEASURED, 0);
         for (int i = start; i < end; i++) {
             final int positionType = adapter.getItemViewType(i);
             if (positionType != itemType) {
@@ -672,6 +679,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
             width = Math.max(width, itemView.getMeasuredWidth());
         }
 
+        width *= 1.1; // we add some extra space for Quran Android
         // Add background padding to measured width
         if (background != null) {
             background.getPadding(mTempRect);
