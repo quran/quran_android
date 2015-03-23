@@ -448,6 +448,7 @@ public class QuranDownloadService extends Service implements
             catch (InterruptedException exception){
                // no op
             }
+            mNotifier.resetNotifications();
          }
 
          mWifiLock.acquire();
