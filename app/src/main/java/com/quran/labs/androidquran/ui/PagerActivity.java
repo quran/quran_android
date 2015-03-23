@@ -53,6 +53,7 @@ import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -72,9 +73,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -883,6 +886,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     super.onCreateOptionsMenu(menu);
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.quran_menu, menu);
+    final MenuItem item = menu.findItem(R.id.search);
+    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+    final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     return true;
   }
 
@@ -945,7 +952,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           .getDefaultSharedPreferences(this);
       SharedPreferences.Editor prefsEditor = prefs.edit();
       final boolean isNightMode = !item.isChecked();
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).commit();
+      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).apply();
       item.setIcon(isNightMode ?
           R.drawable.ic_night_mode : R.drawable.ic_day_mode);
       item.setChecked(isNightMode);
@@ -959,8 +966,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent i = new Intent(this, HelpActivity.class);
       startActivity(i);
       return true;
-    } else if (itemId == R.id.search) {
-      return onSearchRequested();
     } else if (itemId == android.R.id.home) {
       finish();
       return true;

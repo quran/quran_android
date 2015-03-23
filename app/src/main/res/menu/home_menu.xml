@@ -30,7 +30,8 @@
     <item android:id="@+id/search"
           android:icon="@drawable/ic_ab_search"
           android:title="@string/menu_search"
-          app:showAsAction="ifRoom" />
+          app:actionViewClass="android.support.v7.widget.SearchView"
+          app:showAsAction="ifRoom|collapseActionView" />
     <item android:id="@+id/jump"
           android:title="@string/menu_jump"
           app:showAsAction="never" />

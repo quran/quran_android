@@ -120,7 +120,7 @@ public class QuranDataProvider extends ContentProvider {
         return db;
       }
       // our active database no longer exists, remove the pref
-      mPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).commit();
+      mPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).apply();
     }
 
     try {
