@@ -23,6 +23,8 @@ import com.quran.labs.androidquran.util.UpgradeTranslationListener;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,7 +35,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -195,15 +199,16 @@ public class QuranActivity extends QuranActionBarActivity
     super.onCreateOptionsMenu(menu);
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.home_menu, menu);
+    final MenuItem item = menu.findItem(R.id.search);
+    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+    final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.search: {
-        return onSearchRequested();
-      }
       case R.id.settings: {
         Intent i = new Intent(this, QuranPreferenceActivity.class);
         startActivity(i);
