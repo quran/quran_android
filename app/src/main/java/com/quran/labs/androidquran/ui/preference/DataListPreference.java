@@ -4,9 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
-import android.preference.ListPreference;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -24,7 +22,18 @@ import com.quran.labs.androidquran.util.StorageUtils;
 
 import java.util.List;
 
-public class DataListPreference extends ListPreference {
+/**
+ * Here we show storage title and free space amount (currently, in MB) in summary.
+ * However, `ListPreference` does not provide summary text out of the box, and thus
+ * we use a custom layout with two `TextView`s, for a title and a summary,
+ * and a `CheckedTextView` for a radio-button.
+ * We remove the `CheckedTextView`'s title during runtime and use one of the
+ * `TextView`s instead to represent the title.
+ *
+ * Also, we extend from `QuranListPreference` in order not to duplicate code for
+ * setting dialog title color.
+ */
+public class DataListPreference extends QuranListPreference {
   private CharSequence[] mFreeSpaceAmounts;
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -81,15 +90,10 @@ public class DataListPreference extends ListPreference {
     super.onPrepareDialogBuilder(builder);
   }
 
-  @Override
-  protected void onBindView(@NonNull View view) {
-    super.onBindView(view);
-    if (isEnabled()) {
-      final TextView title = (TextView) view.findViewById(android.R.id.title);
-      if (title != null) {
-        title.setTextColor(Color.WHITE);
-      }
-    }
+  static class ViewHolder {
+    public TextView titleTextView;
+    public TextView summaryTextView;
+    public CheckedTextView checkedTextView;
   }
 
   public class StorageArrayAdapter extends ArrayAdapter<CharSequence> {
@@ -105,20 +109,24 @@ public class DataListPreference extends ListPreference {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+      ViewHolder holder;
       if (convertView == null) {
         LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
         convertView = inflater.inflate(R.layout.data_storage_location_item, parent, false);
+
+        holder = new ViewHolder();
+        holder.titleTextView = (TextView) convertView.findViewById(R.id.storage_label);
+        holder.summaryTextView = (TextView) convertView.findViewById(R.id.available_free_space);
+        holder.checkedTextView = (CheckedTextView) convertView.findViewById(R.id.checked_text_view);
+        convertView.setTag(holder);
       }
 
-      TextView label = (TextView) convertView.findViewById(R.id.storage_label);
-      label.setText(getItem(position));
-      TextView freeSpace = (TextView) convertView.findViewById(R.id.available_free_space);
-      freeSpace.setText(mFreeSpaces[position]);
-
-      CheckedTextView checkedTextView = (CheckedTextView) convertView.findViewById(R.id.checked_text_view);
-      checkedTextView.setText(null); // we have a 'custom' label
+      holder = (ViewHolder) convertView.getTag();
+      holder.titleTextView.setText(getItem(position));
+      holder.summaryTextView.setText(mFreeSpaces[position]);
+      holder.checkedTextView.setText(null); // we have a 'custom' label
       if (position == mSelectedIndex) {
-        checkedTextView.setChecked(true);
+        holder.checkedTextView.setChecked(true);
       }
 
       return convertView;
