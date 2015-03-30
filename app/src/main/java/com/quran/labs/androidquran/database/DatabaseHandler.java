@@ -10,13 +10,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DatabaseHandler {
-
-  private SQLiteDatabase mDatabase = null;
-  private String mDatabasePath = null;
-
   public static String COL_SURA = "sura";
   public static String COL_AYAH = "ayah";
   public static String COL_TEXT = "text";
@@ -27,13 +25,27 @@ public class DatabaseHandler {
   public static String COL_PROPERTY = "property";
   public static String COL_VALUE = "value";
 
-  private int mSchemaVersion = 1;
-  private String mMatchString;
-
   private static final String MATCH_END = "</font>";
   private static final String ELLIPSES = "<b>...</b>";
 
-  public DatabaseHandler(Context context, String databaseName)
+  private static Map<String, DatabaseHandler> sDatabaseMap = new HashMap<>();
+
+  private int mSchemaVersion = 1;
+  private String mMatchString;
+  private SQLiteDatabase mDatabase = null;
+  private String mDatabasePath = null;
+
+  public static synchronized DatabaseHandler getDatabaseHandler(
+      Context context, String databaseName) {
+    DatabaseHandler handler = sDatabaseMap.get(databaseName);
+    if (handler == null) {
+      handler = new DatabaseHandler(context.getApplicationContext(), databaseName);
+      sDatabaseMap.put(databaseName, handler);
+    }
+    return handler;
+  }
+
+  private DatabaseHandler(Context context, String databaseName)
       throws SQLException {
     String base = QuranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
@@ -256,10 +268,5 @@ public class DatabaseHandler {
         return null;
       }
     }
-  }
-
-  public void closeDatabase() {
-    DatabaseUtils.closeDatabase(mDatabase);
-    mDatabase = null;
   }
 }

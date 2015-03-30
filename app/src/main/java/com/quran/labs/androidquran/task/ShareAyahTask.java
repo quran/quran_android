@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 import android.annotation.TargetApi;
@@ -36,21 +37,24 @@ public class ShareAyahTask extends PagerActivityTask<Void, Void, List<QuranAyah>
   protected List<QuranAyah> doInBackground(Void... params) {
     if (start == null || end == null) return null;
     List<QuranAyah> verses = new ArrayList<QuranAyah>();
+
+    Cursor cursor = null;
     try {
       DatabaseHandler ayahHandler =
-          new DatabaseHandler(getActivity(),
+          DatabaseHandler.getDatabaseHandler(getActivity(),
               QuranDataProvider.QURAN_ARABIC_DATABASE);
-      Cursor cursor = ayahHandler.getVerses(start.sura, start.ayah,
+      cursor = ayahHandler.getVerses(start.sura, start.ayah,
           end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
       while (cursor.moveToNext()) {
         QuranAyah verse = new QuranAyah(cursor.getInt(0), cursor.getInt(1));
         verse.setText(cursor.getString(2));
         verses.add(verse);
       }
-      cursor.close();
-      ayahHandler.closeDatabase();
     }
     catch (Exception e){
+      // no op
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
     }
 
     return verses;

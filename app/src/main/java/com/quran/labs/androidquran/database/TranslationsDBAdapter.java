@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.database;
 
+import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,8 +10,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.SparseArray;
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class TranslationsDBAdapter {
 
       SparseArray<TranslationItem> result = null;
       if (items != null){
-         result = new SparseArray<TranslationItem>();
+         result = new SparseArray<>();
          for (TranslationItem item : items){
             result.put(item.id, item);
          }
@@ -75,7 +76,7 @@ public class TranslationsDBAdapter {
               null, null, null, null, null,
               TranslationsTable.ID + " ASC");
       if (cursor != null){
-         items = new ArrayList<TranslationItem>();
+         items = new ArrayList<>();
          while (cursor.moveToNext()){
             int id = cursor.getInt(0);
             String name = cursor.getString(1);

@@ -74,7 +74,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
       try {
          DatabaseHandler translationHandler =
-                 new DatabaseHandler(mContext, databaseName);
+             DatabaseHandler.getDatabaseHandler(mContext, databaseName);
          Cursor translationCursor =
                  translationHandler.getVerses(bounds[0], bounds[1],
                          bounds[2], bounds[3],
@@ -85,7 +85,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
          if (loadArabicAyahText()){
             try {
-               ayahHandler = new DatabaseHandler(mContext,
+               ayahHandler = DatabaseHandler.getDatabaseHandler(mContext,
                        QuranDataProvider.QURAN_ARABIC_DATABASE);
                ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
                        bounds[2], bounds[3],
@@ -123,10 +123,6 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
             if (ayahCursor != null){
                ayahCursor.close();
             }
-         }
-         translationHandler.closeDatabase();
-         if (ayahHandler != null){
-            ayahHandler.closeDatabase();
          }
       }
       catch (Exception e){
