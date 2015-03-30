@@ -218,7 +218,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     // initialize ayah info database
     String filename = QuranFileUtils.getAyaPositionFileName();
     try {
-      mAyahInfoAdapter = new AyahInfoDatabaseHandler(this, filename);
+      mAyahInfoAdapter = AyahInfoDatabaseHandler.getDatabaseHandler(this, filename);
     } catch (Exception e) {
       // no ayah info database available
     }
@@ -229,7 +229,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         filename = QuranFileUtils.getAyaPositionFileName(
             qsi.getTabletWidthParam());
         mTabletAyahInfoAdapter =
-            new AyahInfoDatabaseHandler(this, filename);
+            AyahInfoDatabaseHandler.getDatabaseHandler(this, filename);
       } catch (Exception e) {
         // no ayah info database available for tablet
       }
@@ -820,13 +820,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     mBookmarksAdapter.close();
-    if (mAyahInfoAdapter != null) {
-      mAyahInfoAdapter.closeDatabase();
-    }
-
-    if (mTabletAyahInfoAdapter != null) {
-      mTabletAyahInfoAdapter.closeDatabase();
-    }
 
     // remove broadcast receivers
     LocalBroadcastManager.getInstance(this)

@@ -176,11 +176,11 @@ public class TranslationListTask extends
                else if (version > -1) {
                   needsUpdate = true;
                   try {
-                     DatabaseHandler mHandler = new DatabaseHandler(context, filename);
+                     DatabaseHandler mHandler =
+                         DatabaseHandler.getDatabaseHandler(context, filename);
                      if (mHandler.validDatabase()){
                         item.localVersion = mHandler.getTextVersion();
                      }
-                     mHandler.closeDatabase();
                   }
                   catch (Exception e){
                      Log.d(tag, "exception opening database: " + name, e);

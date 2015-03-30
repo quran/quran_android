@@ -1,12 +1,14 @@
 package com.quran.labs.androidquran.database;
 
+import com.crashlytics.android.Crashlytics;
+
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SuraTimingDatabaseHandler {
   private SQLiteDatabase mDatabase = null;
@@ -18,28 +20,17 @@ public class SuraTimingDatabaseHandler {
     public static final String COL_TIME = "time";
   }
 
-  private static SuraTimingDatabaseHandler sDatabase;
-  private static String sDatabasePath;
   private static final Object sDatabaseLock = new Object();
+  private static Map<String, SuraTimingDatabaseHandler> sSuraDatabaseMap = new HashMap<>();
 
   public static SuraTimingDatabaseHandler getDatabaseHandler(String path) {
     synchronized (sDatabaseLock) {
-      if (path.equals(sDatabasePath)) {
-        return sDatabase;
+      SuraTimingDatabaseHandler handler = sSuraDatabaseMap.get(path);
+      if (handler == null) {
+        handler = new SuraTimingDatabaseHandler(path);
+        sSuraDatabaseMap.put(path, handler);
       }
-
-      if (sDatabase != null) {
-        /* dangerous in theory, but since we cancel the async task on
-         * stop, we should really not get in the case where we are closing
-         * the old database from underneath the old thread */
-        sDatabase.closeDatabase();
-        sDatabasePath = null;
-        sDatabase = null;
-      }
-
-      sDatabase = new SuraTimingDatabaseHandler(path);
-      sDatabasePath = path;
-      return sDatabase;
+      return handler;
     }
   }
 
@@ -70,17 +61,6 @@ public class SuraTimingDatabaseHandler {
           null, null, null, TimingsTable.COL_AYAH + " ASC");
     } catch (Exception e) {
       return null;
-    }
-  }
-
-  private void closeDatabase() {
-    if (mDatabase != null) {
-      try {
-        mDatabase.close();
-        mDatabase = null;
-      } catch (Exception e) {
-        // no op
-      }
     }
   }
 }

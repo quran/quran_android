@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.RectF;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AyahInfoDatabaseHandler {
 
@@ -24,8 +26,20 @@ public class AyahInfoDatabaseHandler {
 	public static String MAX_X = "max_x";
 	public static String MAX_Y = "max_y";
 	public static String GLYPHS_TABLE = "glyphs";
+
+  private static Map<String, AyahInfoDatabaseHandler> sHandlerMap = new HashMap<>();
+
+  public static synchronized AyahInfoDatabaseHandler getDatabaseHandler(
+      Context context, String databaseName) {
+    AyahInfoDatabaseHandler handler = sHandlerMap.get(databaseName);
+    if (handler == null) {
+      handler = new AyahInfoDatabaseHandler(context.getApplicationContext(), databaseName);
+      sHandlerMap.put(databaseName, handler);
+    }
+    return handler;
+  }
 	
-	public AyahInfoDatabaseHandler(Context context, String databaseName) throws SQLException {
+	private AyahInfoDatabaseHandler(Context context, String databaseName) throws SQLException {
 		String base = QuranFileUtils.getQuranDatabaseDirectory(context);
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
@@ -66,9 +80,4 @@ public class AyahInfoDatabaseHandler {
         DatabaseUtils.closeCursor(c);
       }
    }
-	
-	public void closeDatabase() {
-    DatabaseUtils.closeDatabase(database);
-    database = null;
-	}
 }
