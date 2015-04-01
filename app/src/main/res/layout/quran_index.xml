@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         style="@style/ToolBarArea"/>
-    <android.support.v4.view.ViewPager
+    <com.quran.labs.androidquran.widgets.QuranViewPager
         android:id="@+id/index_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

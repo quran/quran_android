@@ -581,6 +581,8 @@ public class QuranDownloadService extends Service implements
          }
       } catch (IOException exception) {
          Log.e(TAG, "Failed to download file", exception);
+      } catch (SecurityException se) {
+         Log.e(TAG, "Security exception while downloading file", se);
       } finally {
          QuranFileUtils.closeQuietly(source);
       }
