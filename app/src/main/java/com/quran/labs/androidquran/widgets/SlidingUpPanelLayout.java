@@ -25,9 +25,8 @@
  * - DragHelperCallback.onViewReleased(): if yvel == 0 (i.e. drag, not fling),
  *   don't snap to top/bottom (to allow expanding to arbitrary positions)
  * - fixed the spelling of parallax
- * - comment out the line causing us to need NineOldAndroids, since our value
- *   for parallax is currently always 0. throw an exception during dev if this
- *   changes so that we know to fix it.
+ * - removed lines needing NineOldAndroids, since we are now 14+
+ * - fix production exception in onInterceptTouchEvent
  *
  */
 
@@ -783,9 +782,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
       }
     }
 
-    final boolean interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
-
-    return interceptForDrag || interceptTap;
+    // fixing production exception
+    try {
+      final boolean interceptForDrag = mDragHelper.shouldInterceptTouchEvent(ev);
+      return interceptForDrag || interceptTap;
+    } catch (ArrayIndexOutOfBoundsException ae) {
+      return interceptTap;
+    }
   }
 
   @Override
