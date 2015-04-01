@@ -82,6 +82,15 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.2 (released 4/1/2015)**
+- spinner is now wide throughout
+- spinner automatically jumps to the selected value
+- use material style search
+- swap next and previous buttons in notification
+- added Turkish sura names, shortened Russian translation of sura names
+- improvements to custom storage location preference screen
+- a plethora of bugfixes
+
 **version 2.6.1 (released 3/10/2015)**
 - fix audio not playing without connection
 - fix some crashes and add some crash logging
