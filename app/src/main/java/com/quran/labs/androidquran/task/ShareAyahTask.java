@@ -100,12 +100,12 @@ public class ShareAyahTask extends PagerActivityTask<Void, Void, List<QuranAyah>
     sb.append(")\n");
     // append [ before sura label
     sb.append("[");
-    sb.append(QuranInfo.getSuraName(activity, firstAayah.getSura(), true));
+    sb.append(QuranInfo.getSuraName(activity, firstAayah.getSura(), true, false));
     sb.append(" ");
     if (size > 1) {
       sb.append(firstAayah.getAyah()).append(" - ");
       if (firstAayah.getSura() != lastAayah.getSura()) {
-        sb.append(QuranInfo.getSuraName(activity, lastAayah.getSura(), true));
+        sb.append(QuranInfo.getSuraName(activity, lastAayah.getSura(), true, false));
         sb.append(" ");
       }
     }

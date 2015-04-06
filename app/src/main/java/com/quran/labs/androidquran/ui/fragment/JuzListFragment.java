@@ -102,7 +102,7 @@ public class JuzListFragment extends Fragment {
 
       final String verseString = getString(R.string.quran_ayah) + " " + pos[1];
       final String metadata =
-          QuranInfo.getSuraName(activity, pos[0], true) +  ", " + verseString;
+          QuranInfo.getSuraName(activity, pos[0], true, false) +  ", " + verseString;
       final QuranRow.Builder builder = new QuranRow.Builder()
           .withText(quarters[i])
           .withMetadata(metadata)
