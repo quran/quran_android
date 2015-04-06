@@ -22,12 +22,14 @@ graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
 Code Style
 ------------------------
-- tab size: 2
-- indent : 2
-- continuous indent: 4
+General [Android code style guidelines](https://source.android.com/source/code-style.html) apply, with the exception of following indent sizes:
+- tab size: 2 space
+- indent: 2 space
+- continuous indent: 4 space
 
-you can set these under code style and code style java in android studio or  intellij.
+You can set these under Code Style in Android Studio or IntelliJ IDEA.
 
+Alternatively, you may copy [`quran_android-code_style.xml`](https://github.com/quran/quran_android/blob/master/quran_android-code_style.xml) to Android Studio/IntelliJ IDEA codestyles folder. For Android Studio, that folder is located at `~/.AndroidStudioPreview1.2/config/codestyles` (the root folder name may differ depending on the host machine and Android Studio version, but the rest of the path should be same). After copying the `quran_android-code_style.xml`, go to Code Style preferences screen and choose `quran_android-code_style` from Code Style Schemes.
 
 Setup
 ------------------------
