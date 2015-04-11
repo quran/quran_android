@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.quran.labs.androidquran.widgets.FitSystemRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,29 +24,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/transparent_actionbar_color" />
-        <FrameLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
-        </FrameLayout>
+            android:layout_height="?attr/actionBarSize"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
     </FrameLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:fitsSystemWindows="true">
-        <com.quran.labs.androidquran.widgets.AudioStatusBar
-                      android:id="@+id/audio_area"
-                      android:layout_width="match_parent"
-                      android:layout_height="@dimen/audiobar_height"
-                      android:visibility="gone"
-                      android:background="@color/transparent_actionbar_color" />
-    </FrameLayout>
-</RelativeLayout>
+    <com.quran.labs.androidquran.widgets.AudioStatusBar
+                  android:id="@+id/audio_area"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/audiobar_height"
+                  android:layout_alignParentBottom="true"
+                  android:visibility="gone"
+                  android:background="@color/transparent_actionbar_color" />
+</com.quran.labs.androidquran.widgets.FitSystemRelativeLayout>

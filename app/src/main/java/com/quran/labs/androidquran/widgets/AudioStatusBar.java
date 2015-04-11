@@ -54,15 +54,15 @@ public class AudioStatusBar extends LinearLayout {
    private int[] mRepeatValues = { 0, 1, 2, 3, -1 };
 
    public interface AudioBarListener {
-      public void onPlayPressed();
-      public void onPausePressed();
-      public void onNextPressed();
-      public void onPreviousPressed();
-      public void onStopPressed();
-      public void onCancelPressed(boolean stopDownload);
-      public void setRepeatCount(int repeatCount);
-      public void onAcceptPressed();
-      public void onAudioSettingsPressed();
+      void onPlayPressed();
+      void onPausePressed();
+      void onNextPressed();
+      void onPreviousPressed();
+      void onStopPressed();
+      void onCancelPressed(boolean stopDownload);
+      void setRepeatCount(int repeatCount);
+      void onAcceptPressed();
+      void onAudioSettingsPressed();
    }
 
    public AudioStatusBar(Context context) {
