@@ -1,13 +1,15 @@
 package com.quran.labs.androidquran.service.util;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.QuranUtils;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -101,7 +103,8 @@ public class QuranDownloadNotifier {
     int progress = 0;
 
     // send indeterminate if total size is 0 or less or the notification
-    // details says to always send indeterminate
+    // details says to always send indeterminate (never happens right now,
+    // so only when the total size is 0 or less).
     boolean isIndeterminate = details.sendIndeterminate;
     if (!isIndeterminate && totalSize <= 0){
       isIndeterminate = true;
@@ -258,11 +261,42 @@ public class QuranDownloadNotifier {
         .setAutoCancel(true)
         .setOngoing(isOnGoing)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .setDefaults(Notification.DEFAULT_LIGHTS)
         .setContentTitle(titleString)
         .setContentText(statusString);
 
-    if (maximum > 0 && maximum >= progress) {
+    boolean wantProgress = maximum > 0 && maximum >= progress;
+
+    /**
+     * currently running into many system crashes due to the notifications.
+     * this mostly happens on Kitkat (seldom on any other version). This is
+     * an attempt to work around the problem with two "experiments" - one is
+     * to remove progress altogether (if we are on a oneplus) and never show
+     * the progress bar. the second is to never show indeterminate progress,
+     * and instead show it as 0% (for all other devices).
+     *
+     * current thinking is that the oneplus solution is the "safe solution"
+     * that should work. if we find that the second solution works, we can
+     * use that for Kitkat (instead of the less ideal first solution).
+     *
+     * note that the crash seems to happen whenever there is a progress bar.
+     * unfortunately, could not repro this on a oneplus, nor on 4.4 emulators.
+     */
+    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+      Crashlytics.log(Build.MANUFACTURER + " - max: " + maximum + ", progress: " + progress);
+      if ("ONEPLUS".equalsIgnoreCase(Build.MANUFACTURER)) {
+        if (wantProgress && !isIndeterminate) {
+          builder.setContentText(statusString + " " +
+              QuranUtils.getLocalizedNumber(mAppContext, progress) + "%");
+        }
+        wantProgress = false;
+      } else if (wantProgress && isIndeterminate) {
+        progress = 0;
+        maximum = 100;
+        isIndeterminate = false;
+      }
+    }
+
+    if (wantProgress) {
       builder.setProgress(maximum, progress, isIndeterminate);
     }
 
