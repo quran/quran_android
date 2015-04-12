@@ -165,6 +165,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private Integer mLastPlayingSura;
   private Integer mLastPlayingAyah;
   private View mToolBarArea;
+  private ViewGroup.MarginLayoutParams mAudioBarParams;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
 
@@ -278,6 +279,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     setContentView(R.layout.quran_page_activity_slider);
     mAudioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
     mAudioStatusBar.setAudioBarListener(this);
+    mAudioBarParams = (ViewGroup.MarginLayoutParams) mAudioStatusBar.getLayoutParams();
 
     mToolBarArea = findViewById(R.id.toolbar_area);
 
@@ -583,9 +585,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             .setDuration(250)
             .start();
 
-        final ViewGroup.MarginLayoutParams audioBarParams =
-            (ViewGroup.MarginLayoutParams) mAudioStatusBar.getLayoutParams();
-        final int margins = audioBarParams.bottomMargin + audioBarParams.topMargin;
+        final int margins = mAudioBarParams.bottomMargin + mAudioBarParams.topMargin;
 
         // and statusbar
         mAudioStatusBar.animate()
@@ -1010,6 +1010,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     int page = getCurrentPage();
     invalidateOptionsMenu();
     updateActionBarTitle(page);
+
+    if (mHighlightedSura > 0 && mHighlightedAyah > 0) {
+      highlightAyah(mHighlightedSura, mHighlightedAyah, false, HighlightType.SELECTION);
+    }
   }
 
   public void switchToTranslation() {
@@ -1025,6 +1029,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       mShowingTranslation = true;
       invalidateOptionsMenu();
       updateActionBarSpinner();
+
+      if (mHighlightedSura > 0 && mHighlightedAyah > 0) {
+        highlightAyah(mHighlightedSura, mHighlightedAyah, false, HighlightType.SELECTION);
+      }
     }
   }
 
