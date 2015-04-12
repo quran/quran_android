@@ -49,8 +49,7 @@ public class TranslationUtils {
 
       if (changed && result != null){
          prefs.edit().putString(
-             Constants.PREF_ACTIVE_TRANSLATION, result.filename)
-                 .commit();
+             Constants.PREF_ACTIVE_TRANSLATION, result.filename).apply();
       }
 
       return result;

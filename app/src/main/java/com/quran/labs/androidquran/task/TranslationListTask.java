@@ -208,8 +208,7 @@ public class TranslationListTask extends
             Date today = new Date();
             long now = today.getTime();
             PreferenceManager.getDefaultSharedPreferences(context)
-                    .edit().putLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS,
-                    now).commit();
+                    .edit().putLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, now).apply();
          }
 
          if (updates.size() > 0){

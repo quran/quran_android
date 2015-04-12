@@ -225,8 +225,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
         if (!needsUpgrade) {
           mSharedPreferences.edit()
-              .putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
-                  needsUpgrade).commit();
+              .putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false).apply();
         }
       }
 

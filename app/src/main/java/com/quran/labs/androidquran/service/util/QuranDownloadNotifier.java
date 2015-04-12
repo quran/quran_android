@@ -304,6 +304,11 @@ public class QuranDownloadNotifier {
     PendingIntent contentIntent = PendingIntent.getActivity(
         mAppContext, 0, notificationIntent, 0);
     builder.setContentIntent(contentIntent);
-    mNotificationManager.notify(notificationId, builder.build());
+
+    try {
+      mNotificationManager.notify(notificationId, builder.build());
+    } catch (SecurityException se) {
+      Crashlytics.logException(se);
+    }
   }
 }
