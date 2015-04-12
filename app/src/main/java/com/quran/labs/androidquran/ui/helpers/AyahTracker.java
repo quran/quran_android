@@ -8,15 +8,15 @@ import android.graphics.drawable.BitmapDrawable;
 import java.util.Set;
 
 public interface AyahTracker {
-  public void highlightAyah(int sura, int ayah, HighlightType type);
-  public void highlightAyah(int sura, int ayah,
+  void highlightAyah(int sura, int ayah, HighlightType type);
+  void highlightAyah(int sura, int ayah,
       HighlightType type, boolean scrollToAyah);
-  public void highlightAyat(
+  void highlightAyat(
       int page, Set<String> ayahKeys, HighlightType type);
-  public void unHighlightAyah(int sura, int ayah, HighlightType type);
-  public void unHighlightAyahs(HighlightType type);
-  public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
+  void unHighlightAyah(int sura, int ayah, HighlightType type);
+  void unHighlightAyahs(HighlightType type);
+  AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
       int toolBarWidth, int toolBarHeight);
-  public void updateView();
-  public void onLoadImageResponse(BitmapDrawable drawable, Response response);
+  void updateView();
+  void onLoadImageResponse(BitmapDrawable drawable, Response response);
 }
