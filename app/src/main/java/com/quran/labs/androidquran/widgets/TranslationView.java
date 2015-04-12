@@ -6,25 +6,22 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-import android.annotation.TargetApi;
-import android.app.Service;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.text.ClipboardManager;
+import android.support.annotation.StyleRes;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -34,8 +31,8 @@ public class TranslationView extends ScrollView {
    private int mDividerColor;
    private int mLeftRightMargin;
    private int mTopBottomMargin;
-   private int mTextStyle;
-   private int mHighlightedStyle;
+   @StyleRes private int mTextStyle;
+   @StyleRes private int mHighlightedStyle;
    private int mFontSize;
    private int mHeaderColor;
    private int mHeaderStyle;
@@ -46,18 +43,18 @@ public class TranslationView extends ScrollView {
    private boolean mIsInAyahActionMode;
 
    private List<QuranAyah> mAyat;
+   private SparseArray<TextView> mAyahMap;
+   private SparseArray<TextView> mAyahHeaderMap;
 
    private LinearLayout mLinearLayout;
    private TranslationClickedListener mTranslationClickedListener;
 
    public TranslationView(Context context){
-      super(context);
-      init(context);
+      this(context, null);
    }
 
    public TranslationView(Context context, AttributeSet attrs){
-      super(context, attrs);
-      init(context);
+      this(context, attrs, 0);
    }
 
    public TranslationView(Context context, AttributeSet attrs, int defStyle){
@@ -71,6 +68,9 @@ public class TranslationView extends ScrollView {
 
    public void init(Context context){
       mContext = context;
+      mAyahMap = new SparseArray<>();
+      mAyahHeaderMap = new SparseArray<>();
+
       setFillViewport(true);
       mLinearLayout = new LinearLayout(context);
       mLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -140,6 +140,8 @@ public class TranslationView extends ScrollView {
       mLastHighlightedAyah = -1;
 
       mLinearLayout.removeAllViews();
+      mAyahMap.clear();
+      mAyahHeaderMap.clear();
       mAyat = ayat;
 
       int currentSura = 0;
@@ -156,11 +158,15 @@ public class TranslationView extends ScrollView {
 
    public void unhighlightAyat(){
       if (mLastHighlightedAyah > 0){
-         TextView text = (TextView)mLinearLayout
-                 .findViewById(mLastHighlightedAyah);
+         TextView text = mAyahMap.get(mLastHighlightedAyah);
          if (text != null){
-            text.setTextAppearance(getContext(), mTextStyle);
+            text.setTextAppearance(mContext, mTextStyle);
             text.setTextSize(mFontSize);
+         }
+
+         text = mAyahHeaderMap.get(mLastHighlightedAyah);
+         if (text != null) {
+            styleAyahHeader(text, mTextStyle);
          }
       }
       mLastHighlightedAyah = -1;
@@ -168,16 +174,19 @@ public class TranslationView extends ScrollView {
 
    public void highlightAyah(int ayahId){
       if (mLastHighlightedAyah > 0){
-         TextView text = (TextView)mLinearLayout.
-                 findViewById(mLastHighlightedAyah);
-         text.setTextAppearance(getContext(), mTextStyle);
+         unhighlightAyat();
       }
 
-      TextView text = (TextView)mLinearLayout.findViewById(ayahId);
+      TextView text = mAyahMap.get(ayahId);
       if (text != null){
-         text.setTextAppearance(getContext(), mHighlightedStyle);
+         text.setTextAppearance(mContext, mHighlightedStyle);
          text.setTextSize(mFontSize);
          mLastHighlightedAyah = ayahId;
+
+         TextView header = mAyahHeaderMap.get(ayahId);
+         if (header != null) {
+            styleAyahHeader(header, mHighlightedStyle);
+         }
 
          int screenHeight = QuranScreenInfo.getInstance().getHeight();
          int y = text.getTop() - (int)(0.25 * screenHeight);
@@ -195,20 +204,6 @@ public class TranslationView extends ScrollView {
       }
    };
 
-   private OnLongClickListener mOnCopyAyahListener = new OnLongClickListener(){
-      @Override
-      public boolean onLongClick(View v) {
-         if (v instanceof TextView){
-            ClipboardManager mgr = (ClipboardManager)mContext.
-                    getSystemService(Service.CLIPBOARD_SERVICE);
-            mgr.setText(((TextView)v).getText());
-            Toast.makeText(mContext, R.string.ayah_copied_popup,
-                    Toast.LENGTH_SHORT).show();
-         }
-         return true;
-      }
-   };
-
    private void addFooterSpacer() {
      final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
          LayoutParams.MATCH_PARENT, mFooterSpacerHeight);
@@ -223,19 +218,16 @@ public class TranslationView extends ScrollView {
       params.setMargins(mLeftRightMargin, mTopBottomMargin,
               mLeftRightMargin, mTopBottomMargin);
 
+      final int ayahId = QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah());
       TextView ayahHeader = new TextView(mContext);
-      ayahHeader.setTextAppearance(mContext, mTextStyle);
-      if (mIsInAyahActionMode) ayahHeader.setTextColor(Color.WHITE);
-      else if (mIsNightMode) ayahHeader.setTextColor(mNightModeTextColor);
-      ayahHeader.setTextSize(mFontSize);
+      styleAyahHeader(ayahHeader, mTextStyle);
       ayahHeader.setText(ayah.getSura() + ":" + ayah.getAyah());
-      ayahHeader.setTypeface(null, Typeface.BOLD);
       mLinearLayout.addView(ayahHeader, params);
+      mAyahHeaderMap.put(ayahId, ayahHeader);
 
       TextView ayahView = new TextView(mContext);
-      ayahView.setId(
-              QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah()));
       ayahView.setOnClickListener(mOnAyahClickListener);
+      mAyahMap.put(ayahId, ayahView);
 
       ayahView.setTextAppearance(mContext, mTextStyle);
       if (mIsInAyahActionMode) ayahView.setTextColor(Color.WHITE);
@@ -267,19 +259,19 @@ public class TranslationView extends ScrollView {
               LayoutParams.WRAP_CONTENT);
       params.setMargins(mLeftRightMargin, mTopBottomMargin,
               mLeftRightMargin, mTopBottomMargin);
-
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
-         setTextSelectableHoneycomb(ayahView);
-      }
-      else {
-         ayahView.setOnLongClickListener(mOnCopyAyahListener);
-      }
-
+      setTextSelectable(ayahView);
       mLinearLayout.addView(ayahView, params);
    }
 
-   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-   private void setTextSelectableHoneycomb(TextView ayahView) {
+   private void styleAyahHeader(TextView headerView, @StyleRes int style) {
+      headerView.setTextAppearance(mContext, style);
+      if (mIsInAyahActionMode) headerView.setTextColor(Color.WHITE);
+      else if (mIsNightMode) headerView.setTextColor(mNightModeTextColor);
+      headerView.setTextSize(mFontSize);
+      headerView.setTypeface(null, Typeface.BOLD);
+   }
+
+   private void setTextSelectable(TextView ayahView) {
      ayahView.setTextIsSelectable(true);
    }
 
@@ -316,6 +308,6 @@ public class TranslationView extends ScrollView {
    }
 
    public interface TranslationClickedListener {
-      public void onTranslationClicked();
+      void onTranslationClicked();
    }
 }

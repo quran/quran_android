@@ -5,8 +5,8 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import android.view.MotionEvent;
 
 public interface PageController {
-  public boolean handleTouchEvent(MotionEvent event,
+  boolean handleTouchEvent(MotionEvent event,
       AyahSelectedListener.EventType eventType, int page);
-  public void handleRetryClicked();
-  public void onScrollChanged(int x, int y, int oldx, int oldy);
+  void handleRetryClicked();
+  void onScrollChanged(int x, int y, int oldx, int oldy);
 }
