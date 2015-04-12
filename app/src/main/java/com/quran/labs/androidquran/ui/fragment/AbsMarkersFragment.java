@@ -193,7 +193,7 @@ public abstract class AbsMarkersFragment extends Fragment {
       for (int validId : getValidSortOptions()) {
          if (id == validId) {
             mCurrentSortCriteria = id;
-            mPrefs.edit().putInt(getSortPref(), id).commit();
+            mPrefs.edit().putInt(getSortPref(), id).apply();
             refreshData();
             return true;
          }

@@ -203,6 +203,7 @@ public class QuranActivity extends QuranActionBarActivity
     final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setQueryHint(getString(R.string.search_hint));
     return true;
   }
 
@@ -290,8 +291,7 @@ public class QuranActivity extends QuranActionBarActivity
             PreferenceManager.getDefaultSharedPreferences(
                 getApplicationContext()).edit()
                 .putBoolean(
-                    Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
-                    false).commit();
+                    Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false).apply();
           }
         });
 

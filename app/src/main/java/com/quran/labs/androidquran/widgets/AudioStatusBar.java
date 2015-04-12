@@ -196,7 +196,7 @@ public class AudioStatusBar extends LinearLayout {
                if (position != mCurrentQari){
                   mSharedPreferences.edit().
                           putInt(Constants.PREF_DEFAULT_QARI,
-                                  position).commit();
+                                  position).apply();
                   mCurrentQari = position;
                }
             }
