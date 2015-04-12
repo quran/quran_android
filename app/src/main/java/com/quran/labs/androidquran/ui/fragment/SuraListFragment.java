@@ -101,7 +101,8 @@ public class SuraListFragment extends Fragment {
       while ((sura <= SURAS_COUNT) &&
           (QuranInfo.SURA_PAGE_START[sura - 1] < next)) {
         String title = QuranInfo.getSuraName(activity, sura,
-            activity.getResources().getBoolean(R.bool.show_surat_prefix));
+            activity.getResources().getBoolean(R.bool.show_surat_prefix),
+            activity.getResources().getBoolean(R.bool.show_sura_names_translation));
         final QuranRow.Builder builder = new QuranRow.Builder()
             .withText(title)
             .withMetadata(QuranInfo.getSuraListMetaString(activity, sura))

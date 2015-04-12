@@ -363,7 +363,7 @@ public class SearchActivity extends QuranActionBarActivity
 
       SearchElement v = mElements.get(position);
       String text = v.text;
-      String suraName = QuranInfo.getSuraName(mContext, v.sura, false);
+      String suraName = QuranInfo.getSuraName(mContext, v.sura, false, false);
       holder.text.setText(Html.fromHtml(text));
 
       holder.metadata.setText(mInflater.getContext()

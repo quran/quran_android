@@ -285,14 +285,14 @@ public class TranslationView extends ScrollView {
 
    private void addSuraHeader(int currentSura){
       View view = new View(mContext);
-      
+
       view.setBackgroundColor(mHeaderColor);
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
               LayoutParams.MATCH_PARENT, 2);
       params.topMargin = mTopBottomMargin;
       mLinearLayout.addView(view, params);
 
-      String suraName = QuranInfo.getSuraName(mContext, currentSura, true);
+      String suraName = QuranInfo.getSuraName(mContext, currentSura, true, false);
 
       TextView headerView = new TextView(mContext);
       params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,

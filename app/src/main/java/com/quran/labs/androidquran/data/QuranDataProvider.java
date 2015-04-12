@@ -195,7 +195,7 @@ public class QuranDataProvider extends ContentProvider {
           String text = suggestions.getString(2);
           String foundText = context
               .getString(R.string.found_in_sura) +
-              " " + QuranInfo.getSuraName(context, sura, false) +
+              " " + QuranInfo.getSuraName(context, sura, false, false) +
               ", " + context.getString(R.string.quran_ayah) +
               " " + ayah;
 
