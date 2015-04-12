@@ -18,6 +18,8 @@ package com.quran.labs.androidquran.ui.helpers;
  * Modified for Quran
  * Modifications List (for ease of merging with upstream later on):
  * - added getFragmentIfExists() to return a fragment without recreating it
+ * - catch IllegalStateException in destroyItem
+ * - catch IllegalStateException in finishUpdate
  */
 
 import android.os.Bundle;

@@ -130,11 +130,11 @@ public class TagsFragment extends AbsMarkersFragment {
       }
       List<Bookmark> bookmarks = adapter.getBookmarks(true);
 
-      List<QuranRow> rows = new ArrayList<QuranRow>();
+      List<QuranRow> rows = new ArrayList<>();
       
-      List<Bookmark> unTagged = new ArrayList<Bookmark>();
+      List<Bookmark> unTagged = new ArrayList<>();
       LongSparseArray<List<Bookmark>> tagMap =
-          new LongSparseArray<List<Bookmark>>();
+          new LongSparseArray<>();
       
       for (Bookmark bookmark : bookmarks){
          List<Tag> bookmarkTags = bookmark.mTags;
@@ -144,7 +144,7 @@ public class TagsFragment extends AbsMarkersFragment {
             for (Tag tag : bookmarkTags) {
                List <Bookmark> tagBookmarkList = tagMap.get(tag.mId);
                if (tagBookmarkList == null) {
-                  List<Bookmark> newList = new ArrayList<Bookmark>();
+                  List<Bookmark> newList = new ArrayList<>();
                   newList.add(bookmark);
                   tagMap.put(tag.mId, newList);
                } else {

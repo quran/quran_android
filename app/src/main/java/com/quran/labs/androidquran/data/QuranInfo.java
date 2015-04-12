@@ -624,9 +624,9 @@ public class QuranInfo {
     return position;
   }
 
-	public static String getAyahString(int sura, int ayah, Context cx){
-		return getSuraName(cx, sura, true) + " - "
-				+ getAyahTitle(cx) + " " + ayah;
+	public static String getAyahString(int sura, int ayah, Context context){
+		return getSuraName(context, sura, true) + " - " + getAyahTitle(context)
+				+ " " + QuranUtils.getLocalizedNumber(context, ayah);
 	}
 
 	public static String getSuraNameString(Context context, int page){

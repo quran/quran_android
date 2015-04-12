@@ -15,6 +15,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,6 +35,7 @@ public class JumpFragment extends DialogFragment {
   public JumpFragment() {
   }
 
+  @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     Activity activity = getActivity();
@@ -47,7 +49,7 @@ public class JumpFragment extends DialogFragment {
     final SpinnerCompat suraSpinner = (SpinnerCompat) layout.findViewById(R.id.sura_spinner);
     String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
-    for (int i = 1; i < suras.length; i++) {
+    for (int i = 0; i < suras.length; i++) {
       sb.append(QuranUtils.getLocalizedNumber(activity, (i + 1)));
       sb.append(". ");
       sb.append(suras[i]);
@@ -80,10 +82,7 @@ public class JumpFragment extends DialogFragment {
       public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         boolean handled = false;
         if (actionId == EditorInfo.IME_ACTION_GO) {
-          Dialog dialog = getDialog();
-          if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-          }
+          dismiss();
           goToPage(input.getText().toString());
           handled = true;
         }
@@ -152,7 +151,7 @@ public class JumpFragment extends DialogFragment {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         try {
-          dialog.dismiss();
+          dismiss();
           String text = input.getText().toString();
           if (TextUtils.isEmpty(text)) {
             text = input.getHint().toString();
