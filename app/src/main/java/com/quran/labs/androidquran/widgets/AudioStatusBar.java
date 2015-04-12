@@ -42,6 +42,7 @@ public class AudioStatusBar extends LinearLayout {
 
    private int mCurrentQari;
    private int mCurrentRepeat = 0;
+   private boolean mHasErrorText;
    private boolean mHaveCriticalError = false;
    private SharedPreferences mSharedPreferences;
 
@@ -139,6 +140,11 @@ public class AudioStatusBar extends LinearLayout {
    }
 
    public void setProgress(int progress){
+      if (mHasErrorText) {
+         mProgressText.setText(R.string.downloading_title);
+         mHasErrorText = false;
+      }
+
       if (mProgressBar != null){
          if (progress >= 0){
             mProgressBar.setIndeterminate(false);
@@ -151,6 +157,7 @@ public class AudioStatusBar extends LinearLayout {
 
    public void setProgressText(String progressText, boolean isCriticalError){
       if (mProgressText != null){
+         mHasErrorText = true;
          mProgressText.setText(progressText);
          if (isCriticalError && mProgressBar != null){
             mProgressBar.setVisibility(View.GONE);
