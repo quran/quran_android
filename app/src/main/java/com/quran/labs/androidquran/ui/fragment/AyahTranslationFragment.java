@@ -105,7 +105,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
 
       if (mTranslationAdapter == null) {
         mTranslationAdapter = new TranslationsSpinnerAdapter(activity,
-            R.layout.support_simple_spinner_dropdown_item,
+            R.layout.sherlock_spinner_dropdown_item,
             pagerActivity.getTranslationNames(), mTranslations);
         mTranslator.setAdapter(mTranslationAdapter);
         mTranslator.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {

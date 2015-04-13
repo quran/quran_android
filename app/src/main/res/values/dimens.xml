@@ -6,7 +6,6 @@
     <dimen name="audiobar_separator_padding">8dp</dimen>
     <dimen name="audiobar_text_font_size">10sp</dimen>
     <dimen name="audiobar_text_full_font_size">12sp</dimen>
-    <dimen name="audiobar_spinner_padding">16dp</dimen>
     <dimen name="sliding_panel_min_height">0dp</dimen>
     <dimen name="icon_page_indicator_height">3dp</dimen>
     <dimen name="translation_left_right_margin">20dp</dimen>
@@ -23,4 +22,5 @@
     <!-- page overlay text -->
     <dimen name="max_overlay_font_size">10sp</dimen>
     <dimen name="min_overlay_font_size">6sp</dimen>
+    <dimen name="spinner_vertical_offset">-100dp</dimen>
 </resources>

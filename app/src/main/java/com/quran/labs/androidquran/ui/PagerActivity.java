@@ -567,28 +567,28 @@ public class PagerActivity extends ActionBarActivity implements
   private void setUiVisibilityListener(){
     mViewPager.setOnSystemUiVisibilityChangeListener(
         new View.OnSystemUiVisibilityChangeListener() {
-      @Override
-      public void onSystemUiVisibilityChange(int flags) {
-        boolean visible =
-            (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
-        mIsActionBarHidden = !visible;
-        if (visible){
-          mAudioStatusBar.updateSelectedItem();
-        }
+          @Override
+          public void onSystemUiVisibilityChange(int flags) {
+            boolean visible =
+                (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
+            mIsActionBarHidden = !visible;
+            if (visible) {
+              mAudioStatusBar.updateSelectedItem();
+            }
 
-        // animate toolbar
-        mToolBarArea.animate()
-            .translationY(visible ? 0 : -mToolBarArea.getHeight())
-            .setDuration(250)
-            .start();
+            // animate toolbar
+            mToolBarArea.animate()
+                .translationY(visible ? 0 : -mToolBarArea.getHeight())
+                .setDuration(250)
+                .start();
 
-        // and statusbar
-        mAudioStatusBar.animate()
-            .translationY(visible ? 0 : mAudioStatusBar.getHeight())
-            .setDuration(250)
-            .start();
-      }
-    });
+            // and statusbar
+            mAudioStatusBar.animate()
+                .translationY(visible ? 0 : mAudioStatusBar.getHeight())
+                .setDuration(250)
+                .start();
+          }
+        });
   }
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -911,21 +911,24 @@ public class PagerActivity extends ActionBarActivity implements
 
     MenuItem quran = menu.findItem(R.id.goto_quran);
     MenuItem translation = menu.findItem(R.id.goto_translation);
-    if (!mShowingTranslation) {
-      quran.setVisible(false);
-      translation.setVisible(true);
-    } else {
-      quran.setVisible(true);
-      translation.setVisible(false);
+    if (quran != null && translation != null) {
+      if (!mShowingTranslation) {
+        quran.setVisible(false);
+        translation.setVisible(true);
+      } else {
+        quran.setVisible(true);
+        translation.setVisible(false);
+      }
     }
 
     MenuItem nightMode = menu.findItem(R.id.night_mode);
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    final boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
-    nightMode.setChecked(isNightMode);
-    nightMode.setIcon(isNightMode ?
-        R.drawable.ic_night_mode : R.drawable.ic_day_mode);
-
+    if (nightMode != null) {
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+      final boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+      nightMode.setChecked(isNightMode);
+      nightMode.setIcon(isNightMode ?
+          R.drawable.ic_night_mode : R.drawable.ic_day_mode);
+    }
     return true;
   }
 
@@ -1138,7 +1141,7 @@ public class PagerActivity extends ActionBarActivity implements
     }
 
     mSpinnerAdapter = new TranslationsSpinnerAdapter(this,
-        R.layout.support_simple_spinner_dropdown_item,
+        R.layout.sherlock_spinner_dropdown_item,
         mTranslationItems, mTranslations) {
       @Override
       public View getView(int position, View convertView, ViewGroup parent) {

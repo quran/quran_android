@@ -43,7 +43,6 @@ public class AudioStatusBar extends LinearLayout {
    private int mSeparatorSpacing;
    private int mTextFontSize;
    private int mTextFullFontSize;
-   private int mSpinnerPadding;
 
    private int mCurrentQari;
    private int mCurrentRepeat = 0;
@@ -99,8 +98,6 @@ public class AudioStatusBar extends LinearLayout {
               R.dimen.audiobar_text_font_size);
       mTextFullFontSize = resources.getDimensionPixelSize(
               R.dimen.audiobar_text_full_font_size);
-      mSpinnerPadding = resources
-          .getDimensionPixelSize(R.dimen.audiobar_spinner_padding);
       setOrientation(LinearLayout.HORIZONTAL);
 
       mSharedPreferences = PreferenceManager
@@ -176,7 +173,6 @@ public class AudioStatusBar extends LinearLayout {
       if (mSpinner == null){
          mSpinner = new SpinnerCompat(mContext, null,
                  R.attr.actionDropDownStyle);
-         mSpinner.setDropDownVerticalOffset(mSpinnerPadding);
          final ArrayAdapter<CharSequence> adapter;
          if (QuranSettings.isReshapeArabic(mContext) &&
              QuranSettings.isArabicNames(mContext)) {

@@ -47,22 +47,26 @@ public class JumpFragment extends DialogFragment {
     final SpinnerCompat suraSpinner = (SpinnerCompat) layout.findViewById(R.id.sura_spinner);
     String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
-    for (int i = 1; i < suras.length; i++) {
+    for (int i = 0; i < suras.length; i++) {
       sb.append(QuranUtils.getLocalizedNumber(activity, (i + 1)));
       sb.append(". ");
       sb.append(suras[i]);
       suras[i] = sb.toString();
       sb.setLength(0);
     }
+
+    final int spinnerOffset = activity.getResources().getDimensionPixelOffset(
+        R.dimen.spinner_vertical_offset);
     ArrayAdapter<CharSequence> adapter =
-        new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item, suras);
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        new ArrayAdapter<CharSequence>(activity, R.layout.sherlock_spinner_item, suras);
+    adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
     suraSpinner.setAdapter(adapter);
+    suraSpinner.setDropDownVerticalOffset(spinnerOffset);
 
     // Ayah Spinner
     final SpinnerCompat ayahSpinner = (SpinnerCompat) layout.findViewById(R.id.ayah_spinner);
     final ArrayAdapter<CharSequence> ayahAdapter =
-        new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item) {
+        new ArrayAdapter<CharSequence>(activity, R.layout.sherlock_spinner_item) {
           @Override
           public View getDropDownView(int position, View convertView, ViewGroup parent) {
             TextView v = (TextView) super.getDropDownView(position, convertView, parent);
@@ -70,8 +74,9 @@ public class JumpFragment extends DialogFragment {
             return v;
           }
         };
-    ayahAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    ayahAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
     ayahSpinner.setAdapter(ayahAdapter);
+    ayahSpinner.setDropDownVerticalOffset(spinnerOffset);
 
     // Page text
     final EditText input = (EditText) layout.findViewById(R.id.page_number);
