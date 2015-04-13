@@ -84,6 +84,13 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.3 (released 4/12/2015)**
+- fix a bug where audio bar was hidden on tablet in landscape
+- persist highlight of ayah between translation and pages
+- highlight the verse number along with a verse
+- additional attempts to working around notification and LG crashes
+- minor bugfixes and improvements
+
 **version 2.6.2 (released 4/1/2015)**
 - spinner is now wide throughout
 - spinner automatically jumps to the selected value
