@@ -84,6 +84,10 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.4p1 (released 4/13/2015)**
+- revert support-v4 and appcompat-v7 to v21.0.3 due to contextual action
+bar bug. see https://code.google.com/p/android/issues/detail?id=165243
+
 **version 2.6.4 (released 4/13/2015)**
 - minor fixes for crashes
 - since it seems that the notification crashes happen at random, and only
