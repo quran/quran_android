@@ -788,6 +788,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
       return interceptForDrag || interceptTap;
     } catch (ArrayIndexOutOfBoundsException ae) {
       return interceptTap;
+    } catch (NullPointerException npe) {
+      return interceptTap;
     }
   }
 
