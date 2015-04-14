@@ -84,6 +84,13 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.4 (released 4/13/2015)**
+- minor fixes for crashes
+- since it seems that the notification crashes happen at random, and only
+after lots of notification traffic, this patch attempts to cut down on
+the notification traffic by remembering the last progress and maximum
+values and only posting the notification if they changed.
+
 **version 2.6.3 (released 4/12/2015)**
 - fix a bug where audio bar was hidden on tablet in landscape
 - persist highlight of ayah between translation and pages
