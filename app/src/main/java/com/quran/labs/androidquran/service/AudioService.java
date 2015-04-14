@@ -317,6 +317,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (intent == null) {
         // handle a crash that occurs where intent comes in as null
         if (mState == State.Stopped) {
+          mHandler.removeCallbacksAndMessages(null);
           stopSelf();
         }
         return START_NOT_STICKY;
@@ -709,6 +710,7 @@ public class AudioService extends Service implements OnCompletionListener,
          giveUpAudioFocus();
 
          // service is no longer necessary. Will be started again if needed.
+         mHandler.removeCallbacksAndMessages(null);
          stopSelf();
 
          // stop async task if it's running

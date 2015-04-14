@@ -202,8 +202,8 @@ public class QuranActivity extends QuranActionBarActivity
     final MenuItem item = menu.findItem(R.id.search);
     final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     searchView.setQueryHint(getString(R.string.search_hint));
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     return true;
   }
 
