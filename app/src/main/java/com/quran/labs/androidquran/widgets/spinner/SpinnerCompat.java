@@ -16,8 +16,6 @@
 
 package com.quran.labs.androidquran.widgets.spinner;
 
-import com.quran.labs.androidquran.widgets.FixedListPopupWindow;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -181,8 +179,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
             }
 
             case MODE_DROPDOWN: {
-                final DropdownPopup popup = new DropdownPopup(
-                    context.getApplicationContext(), attrs, defStyle);
+                final DropdownPopup popup = new DropdownPopup(context, attrs, defStyle);
 
                 mDropDownWidth = a.getLayoutDimension(R.styleable.Spinner_android_dropDownWidth,
                         ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -953,7 +950,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
         }
     }
 
-    private class DropdownPopup extends FixedListPopupWindow implements SpinnerPopup {
+    private class DropdownPopup extends ListPopupWindow implements SpinnerPopup {
 
         private CharSequence mHintText;
 

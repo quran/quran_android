@@ -55,13 +55,10 @@ public class JumpFragment extends DialogFragment {
       sb.setLength(0);
     }
 
-    final int spinnerOffset = activity.getResources().getDimensionPixelOffset(
-        R.dimen.spinner_vertical_offset);
     ArrayAdapter<CharSequence> adapter =
         new ArrayAdapter<CharSequence>(activity, R.layout.sherlock_spinner_item, suras);
-    adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+    adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item_dark_bg);
     suraSpinner.setAdapter(adapter);
-    suraSpinner.setDropDownVerticalOffset(spinnerOffset);
 
     // Ayah Spinner
     final SpinnerCompat ayahSpinner = (SpinnerCompat) layout.findViewById(R.id.ayah_spinner);
@@ -74,9 +71,8 @@ public class JumpFragment extends DialogFragment {
             return v;
           }
         };
-    ayahAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+    ayahAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item_dark_bg);
     ayahSpinner.setAdapter(ayahAdapter);
-    ayahSpinner.setDropDownVerticalOffset(spinnerOffset);
 
     // Page text
     final EditText input = (EditText) layout.findViewById(R.id.page_number);

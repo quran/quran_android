@@ -22,5 +22,4 @@
     <!-- page overlay text -->
     <dimen name="max_overlay_font_size">10sp</dimen>
     <dimen name="min_overlay_font_size">6sp</dimen>
-    <dimen name="spinner_vertical_offset">-100dp</dimen>
 </resources>
