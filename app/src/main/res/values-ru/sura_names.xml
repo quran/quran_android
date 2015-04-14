@@ -3,45 +3,45 @@
   <string-array name="sura_names">
     <item>Аль-Фатиха</item>
     <item>Аль-Бакара</item>
-    <item>Аль Имран</item>
-    <item>Ан-Ниса</item>
-    <item>Аль-Маида</item>
-    <item>Аль-Анам</item>
-    <item>Аль-Араф</item>
+    <item>Аль \'Имран</item>
+    <item>Ан-Ниса\'</item>
+    <item>Аль-Ма\'ида</item>
+    <item>Аль-Ан\'ам</item>
+    <item>Аль-А\'раф</item>
     <item>Аль-Анфаль</item>
     <item>Ат-Тауба</item>
     <item>Йунус</item>
     <item>Худ</item>
     <item>Йусуф</item>
-    <item>Ар-Раад</item>
+    <item>Ар-Ра\'д</item>
     <item>Ибрахим</item>
     <item>Аль-Хиджр</item>
     <item>Ан-Нахль</item>
-    <item>Аль-Исра</item>
+    <item>Аль-Исра\'</item>
     <item>Аль-Кахф</item>
-    <item>Марьям</item>
+    <item>Марйам</item>
     <item>Та Ха</item>
-    <item>Аль-Анбийа</item>
+    <item>Аль-Анбийа\'</item>
     <item>Аль-Хаджж</item>
-    <item>Аль-Муминун</item>
+    <item>Аль-Му\'МИНУН</item>
     <item>Ан-Нур</item>
     <item>Аль-Фуркан</item>
-    <item>Аш-Шуара</item>
+    <item>Аш-Шу\'ара\'</item>
     <item>Ан-Намль</item>
     <item>Аль-Касас</item>
-    <item>Аль-Анкабут</item>
+    <item>Аль-\'Нкабут</item>
     <item>Ар-Рум</item>
     <item>Лукман</item>
     <item>Ас-Саджда</item>
     <item>Аль-Ахзаб</item>
-    <item>Саба</item>
+    <item>Саба\'</item>
     <item>Фатыр</item>
     <item>Йа Син</item>
     <item>Ас-Саффат</item>
     <item>Сад</item>
     <item>Аз-Зумар</item>
-    <item>Гафир</item>
-    <item>Фуссылат</item>
+    <item>Гафер</item>
+    <item>Фуссилат</item>
     <item>Аш-Шура</item>
     <item>Аз-Зухруф</item>
     <item>Ад-Духан</item>
@@ -56,13 +56,13 @@
     <item>Ан-Наджм</item>
     <item>Аль-Камар</item>
     <item>Ар-Рахман</item>
-    <item>Аль-Вакиа</item>
+    <item>Аль-Ваки\'а</item>
     <item>Аль-Хадид</item>
-    <item>Аль-Муджадила</item>
+    <item>Аль-Муджадала</item>
     <item>Аль-Хашр</item>
     <item>Аль-Мумтахана</item>
     <item>Ас-Сафф</item>
-    <item>Аль-Джумуа</item>
+    <item>Аль-Джуму\'а</item>
     <item>Аль-Мунафикун</item>
     <item>Ат-Тагабун</item>
     <item>Ат-Талак</item>
@@ -70,50 +70,169 @@
     <item>Аль-Мульк</item>
     <item>Аль-Калам</item>
     <item>Аль-Хакка</item>
-    <item>Аль-Мааридж</item>
+    <item>Аль-Ма\'аридж</item>
     <item>Нух</item>
     <item>Аль-Джинн</item>
     <item>Аль-Муззаммиль</item>
-    <item>Аль-Муддассир</item>
+    <item>Аль-Мудассир</item>
     <item>Аль-Кийама</item>
     <item>Аль-Инсан</item>
-    <item>Аль-Мурсалат</item>
-    <item>Ан-Наба</item>
-    <item>Ан-Назиат</item>
-    <item>Абаса</item>
+    <item>Аль-Мурсалят</item>
+    <item>Ан-Наба\'</item>
+    <item>Ан-Нази\'ат</item>
+    <item>\'Абаса</item>
     <item>Ат-Таквир</item>
     <item>Аль-Инфитар</item>
     <item>Аль-Мутаффифин</item>
     <item>Аль-Иншикак</item>
     <item>Аль-Бурудж</item>
     <item>Ат-Тарик</item>
-    <item>Аль-Аля</item>
+    <item>Аль-А\'ла</item>
     <item>Аль-Гашийа</item>
     <item>Аль-Фаджр</item>
     <item>Аль-Балад</item>
     <item>Аш-Шамс</item>
-    <item>Аль-Лейл</item>
+    <item>Аль-Лайл</item>
     <item>Ад-Духа</item>
-    <item>Аль-Инширах</item>
+    <item>Аш-Шарх</item>
     <item>Ат-Тин</item>
     <item>Аль-Алак</item>
     <item>Аль-Кадр</item>
-    <item>Аль-Беййина</item>
+    <item>Аль-Баййина</item>
     <item>Аз-Залзала</item>
     <item>Аль-Адийат</item>
-    <item>Аль-Кариа</item>
+    <item>Аль-Кари\'а</item>
     <item>Ат-Такасур</item>
-    <item>Аль-Аср</item>
+    <item>Аль-\'Аср</item>
     <item>Аль-Хумаза</item>
     <item>Аль-Филь</item>
-    <item>Курейш</item>
-    <item>Аль-Маун</item>
+    <item>Курайш</item>
+    <item>Аль-Ма\'ун</item>
     <item>Аль-Каусар</item>
     <item>Аль-Кафирун</item>
     <item>Ан-Наср</item>
     <item>Аль-Масад</item>
     <item>Аль-Ихлас</item>
-    <item>Аль-Фаляк</item>
+    <item>Аль-Фалак</item>
     <item>Ан-Нас</item>
+  </string-array>
+
+  <!-- If sura name has no translation, please add empty double quotes to the
+       respective item body to keep Android Studio happy -->
+  <string-array name="sura_names_translation">
+    <item>Открывающая Книгу</item>
+    <item>Корова</item>
+    <item>Семейство Имрана</item>
+    <item>Женщины</item>
+    <item>Трапеза</item>
+    <item>Скот</item>
+    <item>Преграды</item>
+    <item>Добыча</item>
+    <item>Покаяние</item>
+    <item>""</item>
+    <item>""</item>
+    <item>""</item>
+    <item>Гром</item>
+    <item>""</item>
+    <item>""</item>
+    <item>Пчёлы</item>
+    <item>Ночной перенос</item>
+    <item>Пещера</item>
+    <item>""</item>
+    <item>""</item>
+    <item>Пророки</item>
+    <item>Паломничество</item>
+    <item>Верующие</item>
+    <item>Свет</item>
+    <item>Различение</item>
+    <item>Поэты</item>
+    <item>Муравьи</item>
+    <item>Повествование</item>
+    <item>Паук</item>
+    <item>Румы</item>
+    <item>""</item>
+    <item>Поклон</item>
+    <item>Сонмы</item>
+    <item>""</item>
+    <item>Творец</item>
+    <item>""</item>
+    <item>Выстроившиеся в ряды</item>
+    <item>""</item>
+    <item>Толпы</item>
+    <item>Прощающий</item>
+    <item>Разъяснены</item>
+    <item>Совет</item>
+    <item>Украшения</item>
+    <item>Дым</item>
+    <item>Коленопреклонённые</item>
+    <item>""</item>
+    <item>""</item>
+    <item>Победа</item>
+    <item>Покои</item>
+    <item>""</item>
+    <item>Рассеивающие</item>
+    <item>Гора</item>
+    <item>Звезда</item>
+    <item>Месяц</item>
+    <item>Милостивый</item>
+    <item>Воскресение</item>
+    <item>Железо</item>
+    <item>Препирательство</item>
+    <item>Собрание</item>
+    <item>Испытуемая</item>
+    <item>Ряды</item>
+    <item>День пятничной молитвы</item>
+    <item>Лицемеры</item>
+    <item>Раскрытие самообмана</item>
+    <item>Развод</item>
+    <item>Запрещение</item>
+    <item>Власть</item>
+    <item>Тростниковое перо</item>
+    <item>Судный день</item>
+    <item>Ступени</item>
+    <item>""</item>
+    <item>Джинны</item>
+    <item>Завернувшийся</item>
+    <item>Закутавшийся</item>
+    <item>Воскресение</item>
+    <item>Человек</item>
+    <item>Посылаемые</item>
+    <item>Весть</item>
+    <item>Вырывающие</item>
+    <item>Нахмурился</item>
+    <item>Погружение во мрак</item>
+    <item>Раскалывание</item>
+    <item>Обвешивающие</item>
+    <item>Раскалывание</item>
+    <item>Созвездия зодиака</item>
+    <item>Звезда, восходящая ночью</item>
+    <item>Высочайший</item>
+    <item>Покрывающее</item>
+    <item>Заря</item>
+    <item>Город</item>
+    <item>Солнце</item>
+    <item>Ночь</item>
+    <item>Утро</item>
+    <item>Раскрытие</item>
+    <item>Смоковница</item>
+    <item>Сгусток</item>
+    <item>Предопределение</item>
+    <item>Ясное ЗНАМЕНИЕ</item>
+    <item>Землетрясение</item>
+    <item>Скачущие</item>
+    <item>Сокрушающая беда</item>
+    <item>Приумножение</item>
+    <item>Время</item>
+    <item>Хулитель</item>
+    <item>Слон</item>
+    <item>""</item>
+    <item>Милостыня</item>
+    <item>Обильный</item>
+    <item>Неверные</item>
+    <item>Помощь</item>
+    <item>Пальмовые волокна</item>
+    <item>Искренность</item>
+    <item>Рассвет</item>
+    <item>Люди</item>
   </string-array>
 </resources>
