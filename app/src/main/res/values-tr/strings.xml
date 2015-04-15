@@ -131,7 +131,6 @@
     <string name="quran_sura">Sureler</string>
     <string name="quran_ayah">Âyet</string>
     <string name="notification_download_canceled">İndirme iptal edildi</string>
-    <string name="unbookmark_ayah">Bu âyet için sayfa işaretini kaldır</string>
     <string name="via_string">Kur\'an-ı Kerîm</string>
     <string name="update_available">Güncelleme var</string>
     <string name="translation_updates_available">Meâller için güncelleme mevcut. Meâl indirme sayfasını ziyaret etmek istermisiniz?</string>
@@ -146,7 +145,6 @@
     <string name="tag_dlg_title">Etiket</string>
     <string name="sura_ayah_notification_str">Sure %1$s, âyet %2$d</string>
     <string name="tag_name">İsim</string>
-    <string name="show_more">Daha fazla göster</string>
     <string name="share_ayah_text">Âyet meâlini paylaş</string>
     <string name="share_ayah">Âyet kısayolu paylaş</string>
     <string name="search_key">Kur\'anda arama yapmak için arama tuşuna bas</string>
@@ -157,9 +155,6 @@
     <string name="prefs_volume_key_navigation_summary">Sayfalar arasında ses düğmelerini kullanarak dolaş</string>
     <string name="prefs_volume_key_navigation_title">Ses düğmesi ile dolaşma</string>
     <string name="process_progress"> %1$d / %2$d dosya işleniyor</string>
-    <string name="prefs_use_arabic_reshaper_title">Arapça şekillendirici kullan</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Eğer arapça metinler ters tarafa ise bunu kaldırın</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Eğer arapça metinler ayrık ise bunu seçin</string>
     <string name="prefs_translations_summary">Meâli indir ve ayarla</string>
     <string name="prefs_translations">Meâller</string>
     <string name="prefs_tablet_mode_title">Tablet modu</string>
@@ -168,14 +163,12 @@
     <string name="prefs_streaming_title">Akıcı</string>
     <string name="prefs_streaming_summary">Online olarak ses akışı sağla (ayrık olmayan ses dosyaları için)</string>
     <string name="prefs_sdcard_internal">Dahili hafıza</string>
-    <string name="prefs_sdcard_external">Harici SD kartı</string>
-    <string name="prefs_sdcard_auto">Otomatik</string>
-    <string name="prefs_overlay_page_info_title">Sayfa bilgisini göster (beta)</string>
+    <string name="prefs_sdcard_external">Harici SD kartı %1$d</string>
+    <string name="prefs_overlay_page_info_title">Sayfa bilgisini göster </string>
     <string name="prefs_overlay_page_info_summary">Cüz numarası, sure ismi ve sayfa numarası üstünde göster</string>
     <string name="prefs_night_mode_text_brightness_title">Metin parlaklığı</string>
     <string name="prefs_night_mode_text_brightness_summary">Gece modu açıkken metin parlaklığı</string>
     <string name="prefs_new_background_title">Yeni arkaplan</string>
-    <string name="prefs_megabytes">MB</string>
     <string name="prefs_download_amount_title">İndirme miktarı</string>
     <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
     <string name="prefs_err_moving_app_files">Uygulama dosyalarını taşınamadı</string>
@@ -188,7 +181,6 @@
     <string name="prefs_app_size">Uygulama büyüklüğü:</string>
     <string name="prefs_app_location_title">Uygulama konumu</string>
     <string name="prefs_app_location_summary">Lütfen hangi SD karta kopyalanacağını seçin</string>
-    <string name="prefs_advanced_settings_title">İleri ayarlar</string>
     <string name="play_from_here">Buradan çalmaya başla</string>
     <string name="page_description">sayfa  %1$s, cüz %2$s</string>
     <string name="download_progress">%1$s / %2$s indirildi</string>
@@ -216,7 +208,6 @@
     <string name="delete_tag">Etiketi kaldır</string>
     <string name="delete_bookmark">Sayfa işaretini kaldır</string>
     <string name="copy_ayah">Âyet kopyala</string>
-    <string name="border">kenar</string>
     <string name="canceling">İptal ediliyor</string>
     <string name="bookmarks_list_empty">Sayfa işareti yok</string>
     <string name="bookmarks_current_page">Mevcut sayfa</string>

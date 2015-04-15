@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
@@ -15,6 +14,8 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TagBookmarkDialog extends SherlockDialogFragment {
+public class TagBookmarkDialog extends DialogFragment {
    public static final String TAG = "TagBookmarkDialog";
 
    private boolean mMadeChanges = false;
@@ -178,6 +179,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
       return listview;
    }
 
+   @NonNull
    @Override
    public Dialog onCreateDialog(Bundle savedInstanceState) {
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -259,7 +261,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
                           ViewGroup parent) {
          ViewHolder holder;
          if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.tag_row, null);
+            convertView = mInflater.inflate(R.layout.tag_row, parent, false);
             holder = new ViewHolder();
             holder.checkBox = (CheckBox)convertView
                     .findViewById(R.id.tag_checkbox);
@@ -410,7 +412,7 @@ public class TagBookmarkDialog extends SherlockDialogFragment {
          }
 
          if (mShouldDismiss) {
-           dismiss();
+           dismissAllowingStateLoss();
          }
       }
    }

@@ -1,15 +1,12 @@
 package com.quran.labs.androidquran.ui;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -24,9 +21,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -39,7 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranslationManagerActivity extends SherlockActivity
+public class TranslationManagerActivity extends QuranActionBarActivity
         implements DefaultDownloadReceiver.SimpleDownloadListener,
                    TranslationListTask.TranslationsUpdatedListener {
    public static final String TAG = "TranslationManager";
@@ -62,9 +61,8 @@ public class TranslationManagerActivity extends SherlockActivity
 
    @Override
    public void onCreate(Bundle savedInstanceState){
-      setTheme(R.style.Theme_Sherlock);
       super.onCreate(savedInstanceState);
-      requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+      //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
       setContentView(R.layout.translation_manager);
       mListView = (ListView)findViewById(R.id.translation_list);
@@ -227,8 +225,7 @@ public class TranslationManagerActivity extends SherlockActivity
 
         if (!needsUpgrade) {
           mSharedPreferences.edit()
-              .putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
-                  needsUpgrade).commit();
+              .putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false).apply();
         }
       }
 
@@ -266,7 +263,7 @@ public class TranslationManagerActivity extends SherlockActivity
                  QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
          LocalBroadcastManager.getInstance(this).registerReceiver(
                  mDownloadReceiver, new IntentFilter(
-                 QuranDownloadService.ProgressIntent.INTENT_NAME));
+                 QuranDownloadNotifier.ProgressIntent.INTENT_NAME));
       }
       mDownloadReceiver.setListener(this);
 
@@ -324,7 +321,7 @@ public class TranslationManagerActivity extends SherlockActivity
                                    Constants.PREF_ACTIVE_TRANSLATION, "");
                            if (current.compareTo(selectedItem.filename) == 0){
                               mSharedPreferences.edit().remove(
-                                   Constants.PREF_ACTIVE_TRANSLATION).commit();
+                                   Constants.PREF_ACTIVE_TRANSLATION).apply();
                            }
                            generateListItems();
                         }
@@ -395,7 +392,7 @@ public class TranslationManagerActivity extends SherlockActivity
             holder = new ViewHolder();
             if (getItemViewType(position) == TYPE_ITEM){
                convertView = mInflater.inflate(
-                       R.layout.translation_row, null);
+                       R.layout.translation_row, parent, false);
                holder.translationTitle = (TextView)convertView
                        .findViewById(R.id.translation_title);
                holder.translationInfo = (TextView)convertView
@@ -406,7 +403,7 @@ public class TranslationManagerActivity extends SherlockActivity
                        .findViewById(R.id.right_image);
             }
             else {
-               convertView = mInflater.inflate(R.layout.translation_sep, null);
+               convertView = mInflater.inflate(R.layout.translation_sep, parent, false);
                holder.separatorText = (TextView)convertView
                        .findViewById(R.id.separator_txt);
             }

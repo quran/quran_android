@@ -13,6 +13,7 @@ public class Response {
   private int mWarningCode;
   private int mErrorCode;
   private int mPageNumber;
+  private String mWidthParam;
 
   public static Response lightResponse(Response r) {
     final Response resp;
@@ -59,6 +60,15 @@ public class Response {
 
   public int getPageNumber() {
     return mPageNumber;
+  }
+
+  public void setPageData(int pageNumber, String widthParam) {
+    mPageNumber = pageNumber;
+    mWidthParam = widthParam;
+  }
+
+  public String getWidthParam() {
+    return mWidthParam;
   }
 
   public Bitmap getBitmap() {

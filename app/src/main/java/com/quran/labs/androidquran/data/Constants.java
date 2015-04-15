@@ -1,11 +1,6 @@
 package com.quran.labs.androidquran.data;
 
-import com.quran.labs.androidquran.BuildConfig;
-
 public class Constants {
-   public static final boolean CRASH_REPORTING_ENABLED =
-       BuildConfig.LOG_CRASHES;
-
    // Numerics
    public static final int DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255;
    public static final int DEFAULT_TEXT_SIZE = 15;
@@ -34,14 +29,12 @@ public class Constants {
 
    // Settings Key
    public static final String PREF_USE_ARABIC_NAMES = "useArabicNames";
-   public static final String PREF_USE_ARABIC_RESHAPER = "useArabicReshaper";
    public static final String PREF_LAST_PAGE = "lastPage";
    public static final String PREF_LOCK_ORIENTATION = "lockOrientation";
    public static final String PREF_LANDSCAPE_ORIENTATION =
            "landscapeOrientation";
    public static final String PREF_TRANSLATION_TEXT_SIZE = "translationTextSize";
    public static final String PREF_ACTIVE_TRANSLATION = "activeTranslation";
-   public static final String PREF_RESHAPE_ARABIC = "reshapeArabic";
    public static final String PREF_NIGHT_MODE = "nightMode";
    public static final String PREF_NIGHT_MODE_TEXT_BRIGHTNESS = "nightModeTextBrightness";
    public static final String PREF_DEFAULT_QARI = "defaultQari";
@@ -62,8 +55,9 @@ public class Constants {
    public static final String PREF_SORT_BOOKMARKS = "sortBookmarks";
    public static final String PREF_SORT_TAGS = "sortTags";
    public static final String PREF_DISPLAY_CATEGORY = "displayCategoryKey";
+   public static final String PREF_DOWNLOAD_CATEGORY = "downloadCategoryKey";
    public static final String PREF_TABLET_ENABLED = "useTabletMode";
    public static final String PREF_UPGRADE_TO_242 = "upgradeTo242";
    public static final String PREF_UPGRADE_TO_243 = "upgradeTo243";
-   public static final String PREF_MAX_BITMAP_HEIGHT = "maxBitmapHeight";
+   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
 }

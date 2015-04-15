@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.actionbarsherlock.internal.widget.IcsAdapterView;
-import com.actionbarsherlock.internal.widget.IcsSpinner;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
+import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -38,13 +38,15 @@ public class AudioStatusBar extends LinearLayout {
    private int mSeparatorSpacing;
    private int mTextFontSize;
    private int mTextFullFontSize;
+   private int mSpinnerPadding;
 
    private int mCurrentQari;
    private int mCurrentRepeat = 0;
+   private boolean mHasErrorText;
    private boolean mHaveCriticalError = false;
    private SharedPreferences mSharedPreferences;
 
-   private IcsSpinner mSpinner;
+   private SpinnerCompat mSpinner;
    private TextView mProgressText;
    private ProgressBar mProgressBar;
    private TextView mRepeatButton;
@@ -53,15 +55,15 @@ public class AudioStatusBar extends LinearLayout {
    private int[] mRepeatValues = { 0, 1, 2, 3, -1 };
 
    public interface AudioBarListener {
-      public void onPlayPressed();
-      public void onPausePressed();
-      public void onNextPressed();
-      public void onPreviousPressed();
-      public void onStopPressed();
-      public void onCancelPressed(boolean stopDownload);
-      public void setRepeatCount(int repeatCount);
-      public void onAcceptPressed();
-      public void onAudioSettingsPressed();
+      void onPlayPressed();
+      void onPausePressed();
+      void onNextPressed();
+      void onPreviousPressed();
+      void onStopPressed();
+      void onCancelPressed(boolean stopDownload);
+      void setRepeatCount(int repeatCount);
+      void onAcceptPressed();
+      void onAudioSettingsPressed();
    }
 
    public AudioStatusBar(Context context) {
@@ -93,6 +95,8 @@ public class AudioStatusBar extends LinearLayout {
               R.dimen.audiobar_text_font_size);
       mTextFullFontSize = resources.getDimensionPixelSize(
               R.dimen.audiobar_text_full_font_size);
+      mSpinnerPadding = resources
+          .getDimensionPixelSize(R.dimen.audiobar_spinner_padding);
       setOrientation(LinearLayout.HORIZONTAL);
 
       mSharedPreferences = PreferenceManager
@@ -136,6 +140,11 @@ public class AudioStatusBar extends LinearLayout {
    }
 
    public void setProgress(int progress){
+      if (mHasErrorText) {
+         mProgressText.setText(R.string.downloading_title);
+         mHasErrorText = false;
+      }
+
       if (mProgressBar != null){
          if (progress >= 0){
             mProgressBar.setIndeterminate(false);
@@ -148,6 +157,7 @@ public class AudioStatusBar extends LinearLayout {
 
    public void setProgressText(String progressText, boolean isCriticalError){
       if (mProgressText != null){
+         mHasErrorText = true;
          mProgressText.setText(progressText);
          if (isCriticalError && mProgressBar != null){
             mProgressBar.setVisibility(View.GONE);
@@ -166,37 +176,39 @@ public class AudioStatusBar extends LinearLayout {
       addSeparator();
 
       if (mSpinner == null){
-         mSpinner = new IcsSpinner(mContext, null,
+         mSpinner = new SpinnerCompat(mContext, null,
                  R.attr.actionDropDownStyle);
-         ArrayAdapter<CharSequence> adapter =
-                 ArrayAdapter.createFromResource(mContext,
-                         R.array.quran_readers_name,
-                         R.layout.sherlock_spinner_item);
+         mSpinner.setDropDownVerticalOffset(mSpinnerPadding);
+         final ArrayAdapter<CharSequence> adapter =
+             ArrayAdapter.createFromResource(mContext,
+                R.array.quran_readers_name,
+                R.layout.sherlock_spinner_item);
+
          adapter.setDropDownViewResource(
-                 R.layout.sherlock_spinner_dropdown_item);
+             R.layout.sherlock_spinner_dropdown_item);
          mSpinner.setAdapter(adapter);
 
          mSpinner.setOnItemSelectedListener(
-                 new IcsAdapterView.OnItemSelectedListener() {
+                 new AdapterViewCompat.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(IcsAdapterView<?> parent,
+            public void onItemSelected(AdapterViewCompat<?> parent,
                                        View view, int position, long id) {
                if (position != mCurrentQari){
                   mSharedPreferences.edit().
                           putInt(Constants.PREF_DEFAULT_QARI,
-                                  position).commit();
+                                  position).apply();
                   mCurrentQari = position;
                }
             }
 
             @Override
-            public void onNothingSelected(IcsAdapterView<?> parent) {
+            public void onNothingSelected(AdapterViewCompat<?> parent) {
             }
          });
       }
       mSpinner.setSelection(mCurrentQari);
       addView(mSpinner, LayoutParams.WRAP_CONTENT,
-              LayoutParams.MATCH_PARENT);
+          LayoutParams.MATCH_PARENT);
    }
 
    private void showPromptForDownloadMode(){
@@ -229,8 +241,8 @@ public class AudioStatusBar extends LinearLayout {
       LinearLayout ll = new LinearLayout(mContext);
       ll.setOrientation(LinearLayout.VERTICAL);
 
-      mProgressBar = (ProgressBar)LayoutInflater.from(mContext)
-         .inflate(R.layout.download_progress_bar, null);
+      mProgressBar = (ProgressBar) LayoutInflater.from(mContext)
+         .inflate(R.layout.download_progress_bar, this, false);
       mProgressBar.setIndeterminate(true);
       mProgressBar.setVisibility(View.VISIBLE);
 
@@ -276,7 +288,7 @@ public class AudioStatusBar extends LinearLayout {
       mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
               R.drawable.ic_repeat, 0, 0, 0);
       mRepeatButton.setBackgroundResource(
-              R.drawable.abs__item_background_holo_dark);
+              R.drawable.abc_item_background_holo_dark);
       mRepeatButton.setTag(R.drawable.ic_repeat);
       mRepeatButton.setOnClickListener(mOnClickListener);
       updateRepeatButtonText();
@@ -293,7 +305,7 @@ public class AudioStatusBar extends LinearLayout {
       button.setOnClickListener(mOnClickListener);
       button.setTag(imageId);
       button.setBackgroundResource(
-              R.drawable.abs__item_background_holo_dark);
+              R.drawable.abc_item_background_holo_dark);
       addView(button, mButtonWidth,
               LayoutParams.MATCH_PARENT);
    }

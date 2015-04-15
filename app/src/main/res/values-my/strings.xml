@@ -104,9 +104,6 @@
 	<string name="prefs_category_display_settings">Tetapan Paparan</string>
 	<string name="prefs_use_arabic_title">Mod Aplikasi Arab</string>
 	<string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab (perlu mula semula program untuk menggunakan)</string>
-	<string name="prefs_use_arabic_reshaper_title">Gunakan Reshaper Arab</string>
-	<string name="prefs_use_arabic_reshaper_summary_on">Jika teks Arab anda terbalik, jangan nyahtanda pilihan ini.</string>
-	<string name="prefs_use_arabic_reshaper_summary_off">Jika teks Arab anda terputus, tanda pilihan ini untuk memperbaikinya.</string>
 	<string name="prefs_new_background_title">Latar beakang baru</string>
 	<string name="prefs_lock_orientation_title">Kunci orientasi layar</string>
 	<string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mod orientasi tetap</string>
@@ -118,7 +115,7 @@
 	<string name="prefs_night_mode_summary">Menggunakan latar belakang gelap dan teks terang</string>
 	<string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>
 	<string name="prefs_night_mode_text_brightness_summary">Kecerahan teks ketika mod malam aktif</string>
-	<string name="prefs_overlay_page_info_title">Papar maklumat halaman (beta)</string>
+	<string name="prefs_overlay_page_info_title">Papar maklumat halaman</string>
 	<string name="prefs_overlay_page_info_summary">Nombor halaman, nama surah dan nomor juz\' akan dipaparkan</string>
 	<string name="prefs_display_marker_title">Paparkan popup penanda</string>
 	<string name="prefs_display_marker_summary">Paparkan popup ketika mencapai pergantian juz\', hizb, dll</string>
@@ -136,18 +133,15 @@
 	<string name="available_translations">Boleh untuk dimuat turun</string>
 	<string name="remove_button">Hapus</string>
 	<string name="dialog_ok">OK</string>
-	<string name="prefs_advanced_settings_title">Tetapan lebih lanjut</string>
 	<string name="prefs_app_location_title">Lokasi aplikasi</string>
 	<string name="prefs_app_location_summary">Pilih lokasi untuk menyimpan fail</string>
 	<string name="prefs_sdcard_internal">Simpanan Dalaman</string>
-	<string name="prefs_sdcard_external">SD Card Luar</string>
-	<string name="prefs_sdcard_auto">Auto</string>
+	<string name="prefs_sdcard_external">SD Card Luar %1$d</string>
 	<string name="prefs_app_size">Saiz aplikasi</string>
 	<string name="prefs_calculating_app_size">Mengira saiz aplikasi</string>
 	<string name="prefs_copying_app_files">Menyalin fail aplikasi</string>
 	<string name="prefs_err_moving_app_files">Gagal memindahkan fail aplikasi</string>
 	<string name="prefs_no_enough_space_to_move_files">Tidak cukup ruang untuk memindahkan fail aplikasi</string>
-	<string name="prefs_megabytes">MB</string>
 	<string name="prefs_tablet_mode_title">Mod Tablet</string>
 	<string name="prefs_tablet_mode_enabled">Dalam mod landscape, dua halaman akan muncul bersebelahan.</string>
 	<string name="prefs_tablet_mode_disabled">Dalam mod landscape, hanya paparkan satu halaman.</string>
@@ -159,9 +153,6 @@
 	<string name="translation_dialog_yes">Ya</string>
 	<string name="translation_dialog_later">Nanti</string>
 
-	<!-- used for screen readers -->
-	<string name="border">border</string>
-	
 	<!-- End Number picker Strings -->
 	<string name="quran_rob3">¼</string>
 	<string name="quran_nos">½</string>
@@ -224,7 +215,6 @@
 
 	<!-- long press -->
 	<string name="bookmark_ayah">Penanda ayat ini</string>
-	<string name="unbookmark_ayah">Hapus penanda pada ayat ini</string>
 	<string name="tag_ayah">Beri label ayat ini</string>
 	<string name="share_ayah">Kongsikan pautan (URL) ayat</string>
 	<string name="share_ayah_text">Kongsikan teks ayat</string>
@@ -234,8 +224,7 @@
 	<string name="search_key">Tekan butang carian untuk mencari ayat</string>
 	<string name="copy_ayah">Salin ayat</string>
 	<string name="ayah_copied_popup">Ayat telah disalin</string>
-	<string name="show_more">Paparan Lanjut</string>
-	
+
 	<!-- bookmarks & tags contextual action bar -->
 	<string name="delete_bookmark">Hapus Penanda</string>
 	<string name="tag_bookmark">Beri Label pada Penanda</string>

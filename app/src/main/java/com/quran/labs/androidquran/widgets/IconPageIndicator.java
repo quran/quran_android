@@ -26,6 +26,8 @@
 
 package com.quran.labs.androidquran.widgets;
 
+import com.quran.labs.androidquran.R;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -39,8 +41,6 @@ import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
-import com.quran.labs.androidquran.R;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -63,6 +63,7 @@ public class IconPageIndicator extends HorizontalScrollView implements
   private Runnable mIconSelector;
   private int mSelectedIndex;
 
+  private float mSelectionOffset;
   private int mIndicatorColor;
   private int mIndicatorHeight;
   private final Paint mIndicatorPaint = new Paint();
@@ -127,24 +128,27 @@ public class IconPageIndicator extends HorizontalScrollView implements
   }
 
   @Override
-  public void onPageScrollStateChanged(int arg0) {
+  public void onPageScrollStateChanged(int state) {
     if (mListener != null) {
-      mListener.onPageScrollStateChanged(arg0);
+      mListener.onPageScrollStateChanged(state);
     }
   }
 
   @Override
-  public void onPageScrolled(int arg0, float arg1, int arg2) {
+  public void onPageScrolled(int position, float offset, int offsetPixels) {
+    mSelectionOffset = offset;
+    mSelectedIndex = position;
+    invalidate();
     if (mListener != null) {
-      mListener.onPageScrolled(arg0, arg1, arg2);
+      mListener.onPageScrolled(position, offset, offsetPixels);
     }
   }
 
   @Override
-  public void onPageSelected(int arg0) {
-    setCurrentItem(arg0);
+  public void onPageSelected(int position) {
+    setCurrentItem(position);
     if (mListener != null) {
-      mListener.onPageSelected(arg0);
+      mListener.onPageSelected(position);
     }
   }
 
@@ -168,18 +172,22 @@ public class IconPageIndicator extends HorizontalScrollView implements
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
     int count = mIconsLayout.getChildCount();
-    for (int i = 0; i < count; i++) {
-      ImageView v = (ImageView) mIconsLayout.getChildAt(i);
-      if (v.isSelected()) {
-        final int bottom = v.getHeight();
-        final int top = bottom - mIndicatorHeight;
-        final int left = v.getLeft();
-        final int right = v.getRight();
+    ImageView v = (ImageView) mIconsLayout.getChildAt(mSelectedIndex);
+    final int bottom = v.getHeight();
+    final int top = bottom - mIndicatorHeight;
+    int left = v.getLeft();
+    int right = v.getRight();
 
-        mIndicatorPaint.setColor(mIndicatorColor);
-        canvas.drawRect(left, top, right, bottom, mIndicatorPaint);
-      }
+    if (mSelectedIndex + 1 < count) {
+      View nextIcon = mIconsLayout.getChildAt(mSelectedIndex + 1);
+      left = (int) (mSelectionOffset * nextIcon.getLeft() +
+          (1.0f - mSelectionOffset) * left);
+      right = (int) (mSelectionOffset * nextIcon.getRight() +
+          (1.0f - mSelectionOffset) * right);
     }
+
+    mIndicatorPaint.setColor(mIndicatorColor);
+    canvas.drawRect(left, top, right, bottom, mIndicatorPaint);
   }
 
   public void notifyDataSetChanged() {

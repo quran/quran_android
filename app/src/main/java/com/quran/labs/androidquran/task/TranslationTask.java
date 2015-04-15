@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.task;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
-import android.util.Log;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -11,6 +7,11 @@ import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.TranslationView;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
       mDatabaseName = databaseName;
       mAyahBounds = QuranInfo.getPageBounds(pageNumber);
       mHighlightedAyah = highlightedAyah;
-      mTranslationView = new WeakReference<TranslationView>(view);
+      mTranslationView = new WeakReference<>(view);
 
       if (context instanceof PagerActivity){
          ((PagerActivity)context).setLoadingIfPage(pageNumber);
@@ -56,7 +57,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
    }
 
    protected boolean loadArabicAyahText() {
-     return QuranSettings.wantArabicInTranslationView(mContext);
+     return QuranSettings.getInstance(mContext).wantArabicInTranslationView();
    }
 
    @Override
@@ -69,11 +70,11 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
       // is this an arabic translation/tafseer or not
       boolean isArabic = mDatabaseName.contains(".ar.") ||
               mDatabaseName.equals("quran.muyassar.db");
-      List<QuranAyah> verses = new ArrayList<QuranAyah>();
+      List<QuranAyah> verses = new ArrayList<>();
 
       try {
          DatabaseHandler translationHandler =
-                 new DatabaseHandler(mContext, databaseName);
+             DatabaseHandler.getDatabaseHandler(mContext, databaseName);
          Cursor translationCursor =
                  translationHandler.getVerses(bounds[0], bounds[1],
                          bounds[2], bounds[3],
@@ -84,7 +85,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
          if (loadArabicAyahText()){
             try {
-               ayahHandler = new DatabaseHandler(mContext,
+               ayahHandler = DatabaseHandler.getDatabaseHandler(mContext,
                        QuranDataProvider.QURAN_ARABIC_DATABASE);
                ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
                        bounds[2], bounds[3],
@@ -122,10 +123,6 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
             if (ayahCursor != null){
                ayahCursor.close();
             }
-         }
-         translationHandler.closeDatabase();
-         if (ayahHandler != null){
-            ayahHandler.closeDatabase();
          }
       }
       catch (Exception e){

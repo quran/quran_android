@@ -1,19 +1,17 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.R;
-
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.quran.labs.androidquran.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -27,93 +25,67 @@ import java.util.Set;
  */
 public class StorageUtils {
 
-  private static final String TAG = "com.quran.labs.androidquran.util.StorageUtils";
+  private static final String TAG = StorageUtils.class.getSimpleName();
 
   /**
    * @return A List of all storage locations available
    */
   public static List<Storage> getAllStorageLocations(Context context) {
-    Collection<String> mounts = readMountsFile();
+    List<String> mounts = new ArrayList<>();
 
-    // As per http://source.android.com/devices/tech/storage/config.html
-    // device-specific vold.fstab file is removed after Android 4.2.2
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        Collection<String> vold = readVoldsFile();
+    final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
+    if (mountPoints != null && mountPoints.length > 1) {
+      for (File mountPoint : mountPoints) {
+        mounts.add(mountPoint.getAbsolutePath());
+      }
+    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+      mounts = readMountsFile();
 
-        List<String> toRemove = new ArrayList<String>();
-        for (Iterator<String> iter = mounts.iterator(); iter.hasNext(); ){
-            String mount = iter.next();
-            if (!vold.contains(mount)){
-                toRemove.add(mount);
-            }
+      // As per http://source.android.com/devices/tech/storage/config.html
+      // device-specific vold.fstab file is removed after Android 4.2.2
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        Set<String> volds = readVoldsFile();
+
+        List<String> toRemove = new ArrayList<>();
+        for (String mount : mounts) {
+          if (!volds.contains(mount)) {
+            toRemove.add(mount);
+          }
         }
 
-        for (String s : toRemove){
-            mounts.remove(s);
+        for (String s : toRemove) {
+          mounts.remove(s);
         }
-    } else {
-        Log.d(TAG, "Android version: " + Build.VERSION.CODENAME + " skip reading vold.fstab file");
+      } else {
+        Log.d(TAG, "Android version: " + Build.VERSION.SDK_INT + ", skip reading vold.fstab file");
+      }
     }
 
     Log.d(TAG, "mounts list is: " + mounts);
     return buildMountsList(context, mounts);
   }
 
-  private static List<Storage> buildMountsList(Context context,
-                                               Collection<String> mounts){
-    List<Storage> list = new ArrayList<Storage>(mounts.size());
+  private static List<Storage> buildMountsList(Context context, List<String> mounts) {
+    List<Storage> list = new ArrayList<>(mounts.size());
 
     int externalSdcardsCount = 0;
     if (mounts.size() > 0) {
-      String firstItem = mounts.iterator().next();
-
-      // Follow Android SDCards naming conventions
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-        list.add(new Storage(
-            context.getString(R.string.prefs_sdcard_auto),
-            firstItem));
-      }
-      else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-        if (isExternalStorageRemovableGingerbread()) {
-          list.add(new Storage(context.getString(
-              R.string.prefs_sdcard_external) +
-              " 1", firstItem));
-          externalSdcardsCount = 1;
-        }
-        else {
-          list.add(new Storage(context.getString(
-              R.string.prefs_sdcard_internal), firstItem));
-        }
-      }
-      else {
-        if (!isExternalStorageRemovableGingerbread() ||
-            isExternalStorageEmulatedHoneycomb()) {
-          list.add(new Storage(context.getString(
-              R.string.prefs_sdcard_internal), firstItem));
-        }
-        else {
-          list.add(new Storage(context.getString(
-              R.string.prefs_sdcard_external) +
-              " 1", firstItem));
-          externalSdcardsCount = 1;
-        }
+      // Follow Android SD Cards naming conventions
+      if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
+        list.add(new Storage(context.getString(R.string.prefs_sdcard_internal),
+            Environment.getExternalStorageDirectory().getAbsolutePath()));
+      } else {
+        externalSdcardsCount = 1;
+        list.add(new Storage(context.getString(R.string.prefs_sdcard_external,
+            externalSdcardsCount), mounts.get(0)));
       }
 
-      // All other mounts rather than the first mount point
-      // are considered as External SD Card
+      // All other mounts rather than the first mount point are considered as External SD Card
       if (mounts.size() > 1) {
-        Iterator<String> iter = mounts.iterator();
-
-        // skip the first one
-        iter.next();
-
-        int i = 1;
-        while (iter.hasNext()){
-          String mount = iter.next();
-          list.add(new Storage(context.getString(
-              R.string.prefs_sdcard_external)
-              + " " + (i++ + externalSdcardsCount),
-              mount));
+        externalSdcardsCount++;
+        for (int i = 1/*skip the first item*/; i < mounts.size(); i++) {
+          list.add(new Storage(context.getString(R.string.prefs_sdcard_external,
+              externalSdcardsCount++), mounts.get(i)));
         }
       }
     }
@@ -122,20 +94,9 @@ public class StorageUtils {
     return list;
   }
 
-  @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-  private static boolean isExternalStorageRemovableGingerbread() {
-    return Environment.isExternalStorageRemovable();
-  }
-
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private static boolean isExternalStorageEmulatedHoneycomb() {
-    return Environment.isExternalStorageEmulated();
-  }
-
-  private static Collection<String> readMountsFile() {
-    String sdcardPath = Environment
-        .getExternalStorageDirectory().getAbsolutePath();
-    List<String> mounts = new ArrayList<String>();
+  private static List<String> readMountsFile() {
+    String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+    List<String> mounts = new ArrayList<>();
     mounts.add(sdcardPath);
 
     Log.d(TAG, "reading mounts file begin");
@@ -151,7 +112,7 @@ public class StorageUtils {
             String[] lineElements = line.split(" ");
             String element = lineElements[1];
             Log.d(TAG, "mount element is: " + element);
-            if (!sdcardPath.equals(element)){
+            if (!sdcardPath.equals(element)) {
               mounts.add(element);
             }
           } else {
@@ -170,13 +131,14 @@ public class StorageUtils {
   }
 
   /**
-   * reads volume manager daemon file for auto-mounted storage
-   * read more about it here: http://vold.sourceforge.net/
+   * Reads volume manager daemon file for auto-mounted storage.
+   * Read more about it <a href="http://vold.sourceforge.net/">here</a>.
    *
-   * @return
+   * Set usage, to safely avoid duplicates, is intentional.
+   * @return Set of mount points from `vold.fstab` configuration file
    */
   private static Set<String> readVoldsFile() {
-    Set<String> volds = new HashSet<String>();
+    Set<String> volds = new HashSet<>();
     volds.add(Environment.getExternalStorageDirectory().getAbsolutePath());
 
     Log.d(TAG, "reading volds file");
@@ -194,8 +156,7 @@ public class StorageUtils {
             Log.d(TAG, "volds element is: " + element);
 
             if (element.contains(":")) {
-              element = element.substring(
-                  0, element.indexOf(":"));
+              element = element.substring(0, element.indexOf(":"));
               Log.d(TAG, "volds element is: " + element);
             }
 
@@ -205,14 +166,12 @@ public class StorageUtils {
             Log.d(TAG, "skipping volds line: " + line);
           }
         }
-      }
-      else {
+      } else {
         Log.d(TAG, "volds file doesn't exit");
       }
       Log.d(TAG, "reading volds file end.. list is: " + volds);
-    }
-    catch (Exception e) {
-      Log.e(TAG, "Error reading vold file", e);
+    } catch (Exception e) {
+      Log.e(TAG, "Error reading volds file", e);
     }
 
     return volds;
@@ -222,7 +181,6 @@ public class StorageUtils {
     private String label;
     private String mountPoint;
     private int freeSpace;
-    private int totalSpace;
 
     public Storage(String label, String mountPoint) {
       this.label = label;
@@ -232,12 +190,14 @@ public class StorageUtils {
 
     private void computeSpace() {
       StatFs stat = new StatFs(mountPoint);
-      long totalBytes = (long) stat.getBlockCount() *
-          (long) stat.getBlockSize();
-      long bytesAvailable = (long) stat.getAvailableBlocks() *
-          (long) stat.getBlockSize();
+      long bytesAvailable;
+      if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        bytesAvailable = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
+      } else {
+        //noinspection deprecation
+        bytesAvailable = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+      }
       // Convert total bytes to megabytes
-      totalSpace = Math.round(totalBytes / (1024 * 1024));
       freeSpace = Math.round(bytesAvailable / (1024 * 1024));
     }
 
@@ -254,13 +214,6 @@ public class StorageUtils {
      */
     public int getFreeSpace() {
       return freeSpace;
-    }
-
-    /**
-     * @return total size in Megabytes
-     */
-    public int getTotalSpace() {
-      return totalSpace;
     }
   }
 }

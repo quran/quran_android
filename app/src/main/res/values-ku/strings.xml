@@ -111,9 +111,6 @@
     <string name="prefs_category_display_settings">ڕێکخستنی پیشاندان</string>
     <string name="prefs_use_arabic_title">شێوازی عەرەبی</string>
     <string name="prefs_use_arabic_summary_on">زمانی بەرنامەکە ئەبێت بە عەرەبی (دووبارە ئیشپێکردنەوە پێویستە).</string>
-    <string name="prefs_use_arabic_reshaper_title">بەکارهێنانی ڕاستکردنەوەی عەرەبی</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">ئەگەر نوسینی عەرەبی پاش و پێش دەکەوێ، ئەم هەڵبژرادنە بەکاربهێنە.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">ئەگەر نوسینە عەرەبیەکان نانوسێن پێکەوە، ئەم هەڵبژاردنە بەکاربهێنە بۆ چارەسەرکردنی.</string>
     <string name="prefs_new_background_title">پشت شاشەی نوێ</string>
     <string name="prefs_lock_orientation_title">قفڵکردنی گۆڕینی ئاڕاستەی شاشە</string>
     <string name="prefs_lock_orientation_summary_on">پەڕەکانی قورئان تەنها بەیەک ئاڕاستە پیشان ئەدرێن</string>
@@ -125,7 +122,7 @@
     <string name="prefs_night_mode_summary">پشت شاشەی ڕەش و نوسینی سپی </string>
     <string name="prefs_night_mode_text_brightness_title">ڕووناکی نوسین</string>
     <string name="prefs_night_mode_text_brightness_summary">ڕووناکی نوسین کاتێک شیوازی شەو چالاککرا</string>
-    <string name="prefs_overlay_page_info_title">پیشاندانی زانیاری پەڕە (تاقیکاری)</string>
+    <string name="prefs_overlay_page_info_title">پیشاندانی زانیاری پەڕە </string>
     <string name="prefs_overlay_page_info_summary">پیشاندانی ژمارەی پەڕە، ناوی سورەت، وە ژمارەی جوزئـ لەکاتی خوێندنەوەدا</string>
     <string name="prefs_display_marker_title">ئاگادارکردنەوە لە بەشەکان</string>
     <string name="prefs_display_marker_summary">پیشاندانی ئاگادارکردنەوە لەکاتی گەیشتن بە چارەکی بەش یان جوزئـ، هتد.</string>
@@ -143,17 +140,15 @@
     <string name="available_translations">ئامادەیە بۆ داگرتن</string>
     <string name="remove_button">لابردن</string>
     <string name="dialog_ok">باشە</string> 
-    <string name="prefs_advanced_settings_title">ڕێکخستنی پەرەسەندوو</string>
     <string name="prefs_app_location_title">شوێنی بەرنامە</string>
     <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
     <string name="prefs_sdcard_internal">یادگەی ناوەکی</string>
     <string name="prefs_sdcard_external">یادگەی دەرەکی SD</string>
-    <string name="prefs_sdcard_auto">خۆکار</string>
     <string name="prefs_app_size">قەبارەی بەرنامە</string>
     <string name="prefs_copying_app_files">لەبەرگرتنەوەی فایلەکانی بەرنامە</string>
     <string name="prefs_err_moving_app_files">گواستنەوەی فایلەکانی بەرنامە سەرکەوتو نەبوو</string>
     <string name="prefs_no_enough_space_to_move_files">شوێنی بەتاڵ کەمە بۆ گواستنەوەی فایلەکانی بەرنامە</string>
-    <string name="prefs_megabytes">مێگابایت</string>
+    <string name="prefs_megabytes">مێگابایت  %1$d</string>
     <!-- Preferences End -->
 
     <!-- translation updates -->
@@ -162,9 +157,6 @@
     <string name="translation_dialog_yes">بەڵێ</string>
     <string name="translation_dialog_later">دواتر</string>
 
-    <!-- used for screen readers -->
-    <string name="border">لێوار</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -228,7 +220,6 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">نیشانەکردنی ئەم ئایەتە</string>
-    <string name="unbookmark_ayah">لابردنی نیشانەکراو لەم ئایەتەوە</string>
     <string name="tag_ayah">بڕگەکردنی ئەم ئایەتە</string>
     <string name="share_ayah">ناردنی ئایەت</string>
     <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
@@ -238,8 +229,7 @@
     <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
     <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>
     <string name="ayah_copied_popup">ئایەت لەبەریگیراوە</string>
-    <string name="show_more">پیشاندانی زیاتر</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">سڕینەوەی نیشانەکراوە</string>
     <string name="tag_bookmark">بڕگە نیشانەکرا</string>

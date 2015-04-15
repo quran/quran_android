@@ -60,6 +60,7 @@
          		&lt;br/>Abduqadir Abliz - Uyghur
          		&lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonésien
          		&lt;br/>Ahmad Syazwan - Malaisien
+			&lt;br/>Alexander Salas - Espagnol
             &lt;br/>&lt;br/>&lt;b>Projets Open Source:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
             &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
@@ -112,9 +113,6 @@
   <string name="prefs_category_display_settings">Parametres d\'affichage</string>
   <string name="prefs_use_arabic_title">Mode arabe</string>
   <string name="prefs_use_arabic_summary_on">L\'application sera traduite en arabe (redémarrage de l\'application nécessaire).</string>
-  <string name="prefs_use_arabic_reshaper_title">Activer Arabic Reshaper</string>
-  <string name="prefs_use_arabic_reshaper_summary_on">Si l\'arabe s\'affiche à l\'envers, désactivez cette option.</string>
-  <string name="prefs_use_arabic_reshaper_summary_off">Si le texte arabe est espacé, activez cette option.</string>
   <string name="prefs_new_background_title">Nouvel arrière-plan</string>
   <string name="prefs_lock_orientation_title">Verrouiller l\'orientation de l\'écran</string>
   <string name="prefs_lock_orientation_summary_on">L\'affichage du coran ne s\'adaptera pas au changement d\'orientation de l\'écran.</string>
@@ -126,7 +124,7 @@
   <string name="prefs_night_mode_summary">Un fond sombre et des polices lumineuses seront utilisés.</string>
   <string name="prefs_night_mode_text_brightness_title">Luminosité du texte</string>
   <string name="prefs_night_mode_text_brightness_summary">Luminosité du texte lorsque le mode nuit est actif</string>
-  <string name="prefs_overlay_page_info_title">Afficher des infos (beta)</string>
+  <string name="prefs_overlay_page_info_title">Afficher des infos </string>
   <string name="prefs_overlay_page_info_summary">Affiche le numéro de page, le nom de la sourate et le numéro du juz\' lors la lecture.</string>
   <string name="prefs_display_marker_title">Montrer un popup de repère</string>
   <string name="prefs_display_marker_summary">Affiche un popup quand on atteint un juz\', un hizb, etc.</string>
@@ -146,21 +144,26 @@
   <string name="available_translations">Disponible en téléchargement</string>
   <string name="remove_button">Supprimer</string>
   <string name="dialog_ok">Ok</string>
-  <string name="prefs_advanced_settings_title">Paramètres avancés</string>  
   <string name="prefs_app_location_summary">Sélectionnez sur quelle sdcard sauvegarder les fichiers</string>
   <string name="prefs_app_location_title">Location de l\'application</string>
   <string name="prefs_app_size">La taille de l\'application est</string>
   <string name="prefs_calculating_app_size">Calcul de la taille de l\'application</string>
   <string name="prefs_copying_app_files">Copie des fichier de l\'application</string>
   <string name="prefs_err_moving_app_files">Echec du déplacement des fichiers de l\'application</string>
-  <string name="prefs_megabytes">Mo</string>
+  <string name="prefs_megabytes">%1$d Mo</string>
   <string name="prefs_no_enough_space_to_move_files">Espace insuffisant pour déplacer les fichiers de l\'application</string>
   <string name="prefs_sdcard_internal">Stockage interne</string>
-  <string name="prefs_sdcard_external">Carte SD externe</string>
-  <string name="prefs_sdcard_auto">Auto</string>
+  <string name="prefs_sdcard_external">Carte SD externe %1$d</string>
   <string name="prefs_tablet_mode_title">Mode tablette</string>
   <string name="prefs_tablet_mode_enabled">En orientation paysage, deux pages s\'afficheront côte à côte.</string>
   <string name="prefs_tablet_mode_disabled">En orientation paysage, seulement une page s\'affichera.</string>
+
+    <string name="kitkat_external_title">Attention</string>
+    <string name="kitkat_external_message">Dû à certaines restrictions d\'Android, si vous choisissez
+        de stocker les données de l\'application sur votre carte SD et que par la suite vous désinstallez
+        ou supprimez les données de Quran Android, toutes les pages et les audios de Quran Android
+        seront supprimés et vous serez contraints de les télécharger de nouveau. Êtes-vous certains de
+        vouloir utiliser la carte SD externe ?</string>
   <!-- Preferences End -->
 
   <!-- translation updates -->
@@ -170,9 +173,6 @@
   <string name="translation_dialog_later">Plus tard
 </string>
 
-  <!-- used for screen readers -->
-  <string name="border">bordure</string>
-      
   <!-- End Number picker Strings -->
   <string name="quran_rob3">¼</string>
   <string name="quran_nos">½</string>
@@ -194,6 +194,7 @@
   <string name="infinity">∞</string>
   
   <!-- download statuses and errors -->
+  <string name="sdcard_error">Impossible de trouver la carte SD. Insérez-là et réessayez de nouveau.</string>
   <string name="download_successful">Téléchargement réussi</string>
   <string name="download_processing">Traitement du téléchargement…</string>
   <string name="download_error_general">Echec du téléchargement</string>
@@ -231,21 +232,38 @@
     <item quantity="one">%s Aya</item>
     <item quantity="other">%s Ayāt</item>
   </plurals>
-  
+
+  <!-- ayah action panel -->
+  <string name="play_from">Depuis</string>
+  <string name="play_to">À</string>
+  <string name="play_restrict_range">Écouter uniquement les Ayāt sélectionnés</string>
+  <string name="repeat_verses_range">Répéter les Ayāt sélectionnés :</string>
+  <string name="repeat_each_verse">Répéter chaque Aya :</string>
+  <string name="play_apply">Appliquer</string>
+  <string name="play_apply_and_play">Appliquer et Écouter</string>
+  <string name="play">Écouter</string>
+  <string name="stop">Stopper</string>
+
+  <string-array name="repeatValues">
+      <item>jamais</item>
+      <item>1 fois</item>
+      <item>2 fois</item>
+      <item>3 fois</item>
+      <item>indéfiniment</item>
+  </string-array>
+
   <!-- long press -->
   <string name="bookmark_ayah">Ajouter l\'Aya aux favoris</string>
-  <string name="unbookmark_ayah">Supprimer l\'Aya des favoris</string>
   <string name="tag_ayah">Étiqueter cette Aya</string>
   <string name="share_ayah">Partager cette Aya</string>
   <string name="share_ayah_text">Partager le texte de l\'Aya</string>
   <string name="translation_ayah">Traduction/exégèse de l\'Aya</string>
-  <string name="play_from_here">Jouer à partir d\'ici</string>
+  <string name="play_from_here">Écouter à partir d\'ici</string>
   <string name="via_string">via @QuranAndroid</string>
   <string name="search_key">Appuyez sur la touche de recherche pour rechercher une Aya</string>
   <string name="copy_ayah">Copier l\'Aya</string>
   <string name="ayah_copied_popup">Aya copiée</string>
-  <string name="show_more">Afficher plus</string>
-  
+
   <!-- bookmarks & tags contextual action bar -->
   <string name="delete_bookmark">Supprimer le favori</string>
   <string name="tag_bookmark">Étiqueter le favori</string>

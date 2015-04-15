@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.quran.labs.androidquran.R;
 
 import android.app.Activity;
@@ -8,11 +7,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-public class AddTagDialog extends SherlockDialogFragment {
+public class AddTagDialog extends DialogFragment {
    public static final String TAG = "AddTagDialog";
 
    private static final String EXTRA_ID = "id";
@@ -30,6 +31,7 @@ public class AddTagDialog extends SherlockDialogFragment {
    public AddTagDialog(){
    }
 
+   @NonNull
    @Override
    public Dialog onCreateDialog(Bundle savedInstanceState) {
       final Bundle args = getArguments();
@@ -76,7 +78,7 @@ public class AddTagDialog extends SherlockDialogFragment {
                        }
                     }
 
-                    dialog.dismiss();
+                    dismiss();
                  }
               });
 
@@ -84,7 +86,7 @@ public class AddTagDialog extends SherlockDialogFragment {
    }
 
    public interface OnTagChangedListener {
-      public void onTagAdded(String name);
-      public void onTagUpdated(long id, String name);
+      void onTagAdded(String name);
+      void onTagUpdated(long id, String name);
    }
 }

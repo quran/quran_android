@@ -10,13 +10,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DatabaseHandler {
-
-  private SQLiteDatabase mDatabase = null;
-  private String mDatabasePath = null;
-
   public static String COL_SURA = "sura";
   public static String COL_AYAH = "ayah";
   public static String COL_TEXT = "text";
@@ -27,13 +25,27 @@ public class DatabaseHandler {
   public static String COL_PROPERTY = "property";
   public static String COL_VALUE = "value";
 
-  private int mSchemaVersion = 1;
-  private String mMatchString;
-
   private static final String MATCH_END = "</font>";
   private static final String ELLIPSES = "<b>...</b>";
 
-  public DatabaseHandler(Context context, String databaseName)
+  private static Map<String, DatabaseHandler> sDatabaseMap = new HashMap<>();
+
+  private int mSchemaVersion = 1;
+  private String mMatchString;
+  private SQLiteDatabase mDatabase = null;
+  private String mDatabasePath = null;
+
+  public static synchronized DatabaseHandler getDatabaseHandler(
+      Context context, String databaseName) {
+    DatabaseHandler handler = sDatabaseMap.get(databaseName);
+    if (handler == null) {
+      handler = new DatabaseHandler(context.getApplicationContext(), databaseName);
+      sDatabaseMap.put(databaseName, handler);
+    }
+    return handler;
+  }
+
+  private DatabaseHandler(Context context, String databaseName)
       throws SQLException {
     String base = QuranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
@@ -63,7 +75,7 @@ public class DatabaseHandler {
     try {
       mDatabase = SQLiteDatabase.openDatabase(mDatabasePath,
           null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-      return (mDatabase != null);
+      return true;
     } catch (Exception e) {
       return false;
     }
@@ -198,6 +210,23 @@ public class DatabaseHandler {
       query = "%" + query + "%";
     }
 
+    int pos = 0;
+    int found = 0;
+    boolean done = false;
+    while (!done) {
+      int quote = query.indexOf("\"", pos);
+      if (quote > -1) {
+        found++;
+        pos = quote + 1;
+      } else {
+        done = true;
+      }
+    }
+
+    if (found % 2 != 0) {
+      query = query.replaceAll("\"", "");
+    }
+
     if (useFullTextIndex && withSnippets) {
       whatTextToSelect = "snippet(" + table + ", '" +
           mMatchString + "', '" + MATCH_END +
@@ -238,13 +267,6 @@ public class DatabaseHandler {
         Crashlytics.logException(e);
         return null;
       }
-    }
-  }
-
-  public void closeDatabase() {
-    if (mDatabase != null) {
-      mDatabase.close();
-      mDatabase = null;
     }
   }
 }

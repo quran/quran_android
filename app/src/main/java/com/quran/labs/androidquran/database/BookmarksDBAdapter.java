@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookmarksDBAdapter {
-   private static final String TAG =
-           "com.quran.labs.androidquran.database.BookmarksDBAdapter";
+   private static final String TAG = BookmarksDBAdapter.class.getSimpleName();
 
    public static final int SORT_DATE_ADDED = 0;
    public static final int SORT_LOCATION = 1;
