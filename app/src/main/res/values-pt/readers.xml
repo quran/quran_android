@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="quran_readers_name">
+        <item>Menshawi Morattal (sem intervalo)</item>
+        <item>Hosary (sem intervalo)</item>
+        <item>Abdurrahman As-Sodais (sem intervalo)</item>
+        <item>Nasser Al Qatami (sem intervalo)</item>
+        <item>Abd Al-Baset</item>
+        <item>Abd Al-Baset Mojawwad</item>
+        <item>Abdullah Basfar</item>
+        <item>Abdorrahmaan As-Sudais</item>
+        <item>Abu Bakr Ash-Shatri</item>
+        <item>Meshary Al-Afasy</item>
+        <item>Saad Al-Ghamedi</item>
+        <item>Ibrahim Walk (Trad. Inglês)</item>
+        <item>Hani Ar-Rifai</item>
+        <item>Hosary Mojawwad</item>
+        <item>Ali Al-Hodhaify</item>
+        <item>Maher Al Moaiqly</item>
+        <item>Menshawy Mojawwad</item>
+        <item>Mohammad al Tablaway</item>
+        <item>Mohammad Ayyoub</item>
+        <item>Mohammad Jibreel</item>
+        <item>Saood Ash-Shoraym</item>
+        <item>Yasser Ad-Dossary</item>
+    </string-array>
+</resources>
