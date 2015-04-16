@@ -6,6 +6,7 @@
     android:layout_height="48dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
+    android:layoutDirection="ltr"
     android:background="@drawable/list_header_background">
 
     <TextView
