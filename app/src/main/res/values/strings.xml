@@ -82,9 +82,9 @@
         a play button and some text with the name of a qari.  Click the name of the qari to
         choose a different qari.  Click play to download and play the current page or sura.
         &lt;br/>
-        &lt;br/>&lt;b>How do I view the translation?&lt;/b>
+        &lt;br/>&lt;b>How do I view translation?&lt;/b>
         &lt;br/>Open any Quran page.  Tap on the screen once.  In the top, you will notice a
-        globe icon (or, if you don\'t see it, you may see an icon with three square dots) - click
+        globe icon (or, if you don\'t see it, click an icon with three square dots) - click
         this and choose translation to view the translation.
         &lt;br/>
         If you do not have any translations downloaded, it will take
@@ -93,19 +93,19 @@
         &lt;br/>
         &lt;br/>&lt;b>How do I bookmark a page?&lt;/b>
         &lt;br/>Open any Quran page.  Tap on the screen once.  In the top right, you will see a
-        star icon.  Tap the star icon to bookmark it (the color will turn solid white).  Tap the star icon
+        bookmark icon.  Tap the bookmark icon to bookmark the page (the color will turn solid white).  Tap the bookmark icon
         again to remove the bookmark.
         &lt;br/>
         &lt;br/>&lt;b>How do I make the text larger?&lt;/b>
         &lt;br/>For the Arabic pages, hold your phone in landscape.  This makes the text larger.
-        For translations, go to settings and choose translation size.
+        For translations, go to settings and set translation text size.
         &lt;br/>
         &lt;br/>&lt;b>How do I share an ayah?&lt;/b>
         &lt;br/>While on any Arabic page, press and hold on any ayah to get a menu where you can
-        choose to bookmark it, tag it, share or copy the ayah to the clipboard, see the translation,
+        choose to bookmark, tag, share or copy that ayah to the clipboard, see the translation,
         or listen to its recitation.&lt;br/>
         &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu fonts don\'t work!&lt;/b>
-        &lt;br/>Unfortunately, Android versions before 4.0 do not support these fonts, and there is
+        &lt;br/>Unfortunately, Android versions prior to 4.0 do not support these fonts, and there is
         little we can do to help with this.
     </string>
 	<string name="search_hint">Search the Quran</string>
@@ -254,7 +254,7 @@
 
     <!-- help -->
     <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.
-        Please note that we get lots of email, so we may not be able to reply to all emails we receive.
+        Please note that we receive lots of emails, so we may not be able to reply to all of them.
     </string>
 
     <!-- sura metainfo -->
