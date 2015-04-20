@@ -19,9 +19,7 @@ import android.widget.Toast;
 
 public class AyahToolBar extends ViewGroup implements
     View.OnClickListener, View.OnLongClickListener {
-  public static enum PipPosition { UP, DOWN };
-  private static boolean sHoneycombPlus =
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+  public enum PipPosition { UP, DOWN }
 
   private Context mContext;
   private Menu mMenu;
@@ -34,17 +32,14 @@ public class AyahToolBar extends ViewGroup implements
   private LinearLayout mMenuLayout;
   private AyahToolBarPip mToolBarPip;
   private PipPosition mPipPosition;
-  private AyahToolBarPosition mLastAyahToolBarPosition;
   private MenuItem.OnMenuItemClickListener mItemSelectedListener;
 
   public AyahToolBar(Context context) {
-    super(context);
-    init(context);
+    this(context, null);
   }
 
   public AyahToolBar(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    init(context);
+    this(context, attrs, 0);
   }
 
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -102,10 +97,6 @@ public class AyahToolBar extends ViewGroup implements
       mToolBarPip.layout(pipLeft, menuHeight - 1,
           pipLeft + pipWidth, menuHeight + pipHeight);
       mMenuLayout.layout(0, 0, menuWidth, menuHeight);
-    }
-
-    if (!sHoneycombPlus) {
-      setPositionEclairMr1();
     }
   }
 
@@ -175,36 +166,18 @@ public class AyahToolBar extends ViewGroup implements
         mPipOffset != position.pipOffset;
     ensurePipPosition(position.pipPosition);
     mPipOffset = position.pipOffset;
-    mLastAyahToolBarPosition = position;
     float x = position.x + position.xScroll;
     float y = position.y + position.yScroll;
-    if (sHoneycombPlus) {
-      setPositionHoneycomb(x, y);
-    } else if (!needsLayout) {
-      // if we need layout, layout will adjust the position anyway
-      setPositionEclairMr1();
-    }
+    setPosition(x, y);
 
     if (needsLayout) {
       requestLayout();
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void setPositionHoneycomb(float x, float y) {
+  private void setPosition(float x, float y) {
     setTranslationX(x);
     setTranslationY(y);
-  }
-
-  private void setPositionEclairMr1() {
-    if (mLastAyahToolBarPosition != null) {
-      float x = mLastAyahToolBarPosition.x + mLastAyahToolBarPosition.xScroll;
-      float y = mLastAyahToolBarPosition.y + mLastAyahToolBarPosition.yScroll;
-      final int deltaY = (int) (y - getTop());
-      final int deltaX = (int) (x - getLeft());
-      offsetTopAndBottom(deltaY);
-      offsetLeftAndRight(deltaX);
-    }
   }
 
   private void ensurePipPosition(PipPosition position) {

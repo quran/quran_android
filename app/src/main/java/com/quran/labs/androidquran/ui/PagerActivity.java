@@ -74,6 +74,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
@@ -288,6 +289,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     statusBarBackground.getLayoutParams().height = getStatusBarHeight();
 
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    if (mSettings.isArabicNames() || QuranUtils.isRtl()) {
+      ViewCompat.setLayoutDirection(toolbar, ViewCompat.LAYOUT_DIRECTION_RTL);
+    }
     setSupportActionBar(toolbar);
 
     final ActionBar ab = getSupportActionBar();
