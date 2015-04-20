@@ -7,19 +7,19 @@
     <string name="downloadPrompt_ok">بله</string>
     <string name="downloadPrompt_no">خير</string>
     <string name="downloading_title">بارگيري</string>
-    <string name="downloading_message">لطفا براي بارگيري فايلها صبر نماييد. (Resume supported)</string>
+    <string name="downloading_message">لطفا براي بارگيري فايلها صبر نماييد. (از ادامه پشتیبانی می‌شود)</string>
     <string name="extracting_title">پردازش</string>
     <string name="menu_about">درباره ما</string>
     <string name="menu_settings">تنظيمات</string>
     <string name="menu_jump_last_page">آخرين صفحه</string>
-    <string name="menu_tags">Tags</string>
+    <string name="menu_tags">برچسب ها</string>
     <string name="menu_bookmarks">نشانکها</string>
     <string name="menu_bookmarks_page">صفحه نشانکها</string>
     <string name="menu_bookmarks_ayah">نشانکهاي آيه</string>
-    <string name="menu_sort">Sort</string>
-    <string name="menu_sort_date">Date Added</string>
-    <string name="menu_sort_location">Location in Quran</string>
-    <string name="menu_sort_alphabetical">Alphabetical</string>
+    <string name="menu_sort">مرتب سازی</string>
+    <string name="menu_sort_date">تاریخ اضافه شدن</string>
+    <string name="menu_sort_location">محل در قرآن</string>
+    <string name="menu_sort_alphabetical">حروف الفبا</string>
     <string name="menu_translation">مشاهده ترجمه</string>
     <string name="menu_back_to_page">مشاهده قرآن</string>
     <string name="menu_help">راهنما</string>
@@ -110,8 +110,8 @@
     <string name="prefs_landscape_orientation_summary_off">استفاده در جهت افقي</string>
     <string name="prefs_night_mode_title">نمايش شبانه</string>
     <string name="prefs_night_mode_summary">تاريک نمودن صفحه و روشن نمودن متن</string>
-    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
-    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
+    <string name="prefs_night_mode_text_brightness_title">روشنایی متن</string>
+    <string name="prefs_night_mode_text_brightness_summary">روشنایی متن در هنگام شب فعال می‌شود.</string>
     <string name="prefs_display_marker_title">نمايش پيغام</string>
     <string name="prefs_display_marker_summary">نمايش پيغام ها فعال گردد</string>
     <string name="prefs_translation_text_title">اندازه قلم ترجمه</string>
@@ -130,10 +130,10 @@
     <string name="dialog_ok">بله</string>
 
     <!-- translation updates -->
-    <string name="update_available">Update Available</string>
-    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
-    <string name="translation_dialog_yes">Yes</string>
-    <string name="translation_dialog_later">Later</string>
+    <string name="update_available">به روز رسانی موجود است</string>
+    <string name="translation_updates_available">برای برخی از ترجمه ها، به روز رسانی موجود است. صفحه ترجمه ها را مشاهده می‌کنید؟</string>
+    <string name="translation_dialog_yes">بله</string>
+    <string name="translation_dialog_later">بعدا</string>
 
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
@@ -182,7 +182,7 @@
     <string name="search_data">جستجو</string>
 
     <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+    <string name="email_us">اگر جواب سوال شما در بالا پیدا نشد، می‌توانید برای پشتیبانی با رایانامه quranandroid@gmail.com تماس حاصل نمایید. لطفا توجه داشته باشید که نامه های زیادی دریافت می‌شود، پاسخ به نامه شما ممکن است کمی طول بکشد.</string>
 
     <!-- sura metainfo -->
     <string name="makki">مکي</string>
@@ -194,28 +194,28 @@
 
     <!-- long press -->
     <string name="bookmark_ayah">نشانه گذاري آيه</string>
-    <string name="tag_ayah">Tag this Ayah</string>
+    <string name="tag_ayah">برچسب گذاری آیه</string>
     <string name="share_ayah">اشتراک گذاري آيه</string>
     <string name="translation_ayah">ترجمه آيه</string>
     <string name="play_from_here">شروع از اينجا</string>
-    <string name="via_string">via @QuranAndroid</string>
+    <string name="via_string">توسط @QuranAndroid</string>
     <string name="search_key">کليد جستجو را کليک نماييد</string>
     <string name="copy_ayah">کپي کردن آيه</string>
     <string name="ayah_copied_popup">آيه کپي شد</string>
 
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">حذف نشانک</string>
-    <string name="tag_bookmark">Tag Bookmark</string>
-    <string name="delete_tag">Delete Tag</string>
-    <string name="edit_tag">Edit Tag</string>
-    <string name="new_tag">New Tag</string>
-    <string name="not_tagged">Not Tagged</string>
+    <string name="tag_bookmark">نشانک برچسب</string>
+    <string name="delete_tag">حذف برچسب</string>
+    <string name="edit_tag">تغییر برچسب</string>
+    <string name="new_tag">برچسب جدید</string>
+    <string name="not_tagged">بدون برچسب</string>
 
     <!-- tag dialog -->
-    <string name="tag_dlg_title">Tag</string>
+    <string name="tag_dlg_title">برچسب</string>
     <string name="tag_name">نام</string>
     
     <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">بدون نشانه</string>
-    <string name="tags_list_empty">No Tags</string>
+    <string name="bookmarks_list_empty">لیست نشانه خالی است</string>
+    <string name="tags_list_empty">لیست برچسب خالی است.</string>
 </resources>
