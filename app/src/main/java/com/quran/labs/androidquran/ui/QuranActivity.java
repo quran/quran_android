@@ -19,6 +19,7 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TagsFragment;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.UpgradeTranslationListener;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
@@ -28,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,6 +46,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -81,7 +84,8 @@ public class QuranActivity extends QuranActionBarActivity
   private PagerAdapter mPagerAdapter = null;
   private BookmarksDBAdapter mBookmarksDBAdapter = null;
   private boolean mShowedTranslationUpgradeDialog = false;
-  private boolean mIsArabic;
+  private boolean mIsRtl;
+  private View mRoot;
 
   private static class QuranHandler extends Handler {
 
@@ -128,22 +132,27 @@ public class QuranActivity extends QuranActionBarActivity
     setContentView(R.layout.quran_index);
     mHandler = new QuranHandler(this);
 
+    mRoot = findViewById(R.id.root);
+
+    mSettings = QuranSettings.getInstance(this);
+    mIsRtl = isRtl();
+    if (mIsRtl && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      mRoot.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+    }
+
     final Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(tb);
 
-    mSettings = QuranSettings.getInstance(this);
-    mIsArabic = mSettings.isArabicNames();
-
     final ViewPager pager = (ViewPager) findViewById(R.id.index_pager);
     pager.setOffscreenPageLimit(3);
-    mPagerAdapter = new PagerAdapter(getSupportFragmentManager(), mIsArabic);
+    mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
     pager.setAdapter(mPagerAdapter);
 
     final SlidingTabLayout indicator =
         (SlidingTabLayout) findViewById(R.id.indicator);
     indicator.setViewPager(pager);
 
-    if (mIsArabic) {
+    if (mIsRtl) {
       pager.setCurrentItem(TITLES.length - 1);
     }
 
@@ -172,8 +181,8 @@ public class QuranActivity extends QuranActionBarActivity
   @Override
   public void onResume() {
     super.onResume();
-    final boolean isArabic = mSettings.isArabicNames();
-    if (isArabic != mIsArabic) {
+    final boolean isRtl = isRtl();
+    if (isRtl != mIsRtl) {
       final Intent i = getIntent();
       finish();
       startActivity(i);
@@ -187,6 +196,10 @@ public class QuranActivity extends QuranActionBarActivity
   protected void onDestroy() {
     mBookmarksDBAdapter.close();
     super.onDestroy();
+  }
+
+  private boolean isRtl() {
+    return mSettings.isArabicNames() || QuranUtils.isRtl();
   }
 
   @Override
@@ -402,7 +415,7 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   public int getPosition(int position) {
-    if (mIsArabic) {
+    if (mIsRtl) {
       return Math.abs(position - 3);
     } else {
       return position;
@@ -411,11 +424,8 @@ public class QuranActivity extends QuranActionBarActivity
 
   public class PagerAdapter extends FragmentPagerAdapter {
 
-    private boolean mIsArabic;
-
-    public PagerAdapter(FragmentManager fm, boolean isArabic) {
+    public PagerAdapter(FragmentManager fm) {
       super(fm);
-      mIsArabic = isArabic;
     }
 
     @Override
@@ -426,7 +436,7 @@ public class QuranActivity extends QuranActionBarActivity
     @Override
     public Fragment getItem(int position) {
       int pos = position;
-      if (mIsArabic) {
+      if (mIsRtl) {
         pos = Math.abs(position - 3);
       }
 
@@ -445,7 +455,7 @@ public class QuranActivity extends QuranActionBarActivity
 
     @Override
     public CharSequence getPageTitle(int position) {
-      final int resId = mIsArabic ?
+      final int resId = mIsRtl ?
           ARABIC_TITLES[position] : TITLES[position];
       return getString(resId);
     }

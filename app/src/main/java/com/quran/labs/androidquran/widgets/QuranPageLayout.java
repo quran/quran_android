@@ -14,6 +14,7 @@ import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.support.annotation.StringRes;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -46,6 +47,7 @@ public abstract class QuranPageLayout extends FrameLayout
   public QuranPageLayout(Context context) {
     super(context);
     mContext = context;
+    ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR);
     Resources resources = context.getResources();
     final boolean isLandscape =
         resources.getConfiguration().orientation ==

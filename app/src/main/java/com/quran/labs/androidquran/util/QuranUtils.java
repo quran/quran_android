@@ -10,6 +10,8 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.support.v4.text.TextUtilsCompat;
+import android.support.v4.view.ViewCompat;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -41,6 +43,11 @@ public class QuranUtils {
     	}
     	return false;
     }
+
+  public static boolean isRtl() {
+      return TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault())
+              == ViewCompat.LAYOUT_DIRECTION_RTL;
+  }
 
    public static boolean isOnWifiNetwork(Context context) {
      ConnectivityManager cm =
