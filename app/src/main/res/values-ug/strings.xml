@@ -83,7 +83,7 @@
     <string name="prefs_category_translation">تەرجىمە مايىللىقى</string>
     <string name="prefs_category_display_settings">كۆرۈنۈش تەڭشەكلىرى</string>
     <string name="prefs_use_arabic_title">ئەرەبچە ھالەت</string>
-    <string name="prefs_use_arabic_summary_on">ئەپ ئەرەبچە ئارايۈزنى ئىشلىتىدۇ (قايتا قوزغىتىش زۆرۈر)</string>
+    <string name="prefs_use_arabic_summary_on">ئەپ ئەرەبچە ئارايۈزنى ئىشلىتىدۇ</string>
     <string name="prefs_new_background_title">يېڭى تەگلىك</string>
     <string name="prefs_lock_orientation_title">قۇلۇپ ئېكران يۆنىلىشى</string>
     <string name="prefs_lock_orientation_summary_on">قۇرئان بەتلىرىنىڭ ئېكران ئايلاندۇرۇش يۆنىلىشى</string>

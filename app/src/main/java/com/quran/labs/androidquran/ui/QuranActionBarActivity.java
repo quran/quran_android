@@ -2,10 +2,10 @@ package com.quran.labs.androidquran.ui;
 
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
-public abstract class QuranActionBarActivity extends ActionBarActivity {
+public abstract class QuranActionBarActivity extends AppCompatActivity {
 
   /**
    * work around an LG bug on 4.1.2.

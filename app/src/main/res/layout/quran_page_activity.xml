@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true"
     android:layoutDirection="ltr">
-    
+
     <com.quran.labs.androidquran.widgets.QuranViewPager
       android:layout_width="match_parent"
       android:layout_height="match_parent"
@@ -20,16 +20,16 @@
 
     <FrameLayout android:id="@+id/toolbar_area"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/transparent_actionbar_color">
         <View android:id="@+id/status_bg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent_actionbar_color" />
+            android:layout_height="wrap_content" />
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
     </FrameLayout>
 

@@ -102,7 +102,7 @@
     <string name="prefs_category_translation">Preferensi Terjemahan</string>
     <string name="prefs_category_display_settings">Pengaturan Tampilan</string>
     <string name="prefs_use_arabic_title">Mode Aplikasi Arab</string>
-    <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab (diperlukan restart program untuk menerapkan)</string>
+    <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab</string>
     <string name="prefs_new_background_title">Background Baru</string>
     <string name="prefs_lock_orientation_title">Lock orientasi layar</string>
     <string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mode orientasi tetap</string>
