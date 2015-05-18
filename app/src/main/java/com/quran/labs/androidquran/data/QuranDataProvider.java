@@ -4,6 +4,7 @@ import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -76,14 +77,15 @@ public class QuranDataProvider extends ContentProvider {
       String[] selectionArgs, String sortOrder) {
     Crashlytics.log("uri: " + uri.toString());
     switch (sURIMatcher.match(uri)) {
-      case SEARCH_SUGGEST:
+      case SEARCH_SUGGEST: {
         if (selectionArgs == null) {
           throw new IllegalArgumentException(
               "selectionArgs must be provided for the Uri: " + uri);
         }
 
         return getSuggestions(selectionArgs[0]);
-      case SEARCH_VERSES:
+      }
+      case SEARCH_VERSES: {
         if (selectionArgs == null) {
           throw new IllegalArgumentException(
               "selectionArgs must be provided for the Uri: " + uri);
@@ -94,10 +96,13 @@ public class QuranDataProvider extends ContentProvider {
         } else {
           return search(selectionArgs[0], selectionArgs[1], true);
         }
-      case GET_VERSE:
+      }
+      case GET_VERSE: {
         return getVerse(uri);
-      default:
+      }
+      default: {
         throw new IllegalArgumentException("Unknown Uri: " + uri);
+      }
     }
   }
 
@@ -174,10 +179,10 @@ public class QuranDataProvider extends ContentProvider {
       items[numItems - 1] = active;
     }
 
-    String[] cols = new String[]{BaseColumns._ID,
+    String[] cols = new String[] { BaseColumns._ID,
         SearchManager.SUGGEST_COLUMN_TEXT_1,
         SearchManager.SUGGEST_COLUMN_TEXT_2,
-        SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID};
+        SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID };
     MatrixCursor mc = new MatrixCursor(cols);
 
     Context context = getContext();
@@ -186,34 +191,34 @@ public class QuranDataProvider extends ContentProvider {
       if (gotResults) {
         continue;
       }
-      Cursor suggestions = search(query, item, false);
 
-      if (suggestions.moveToFirst()) {
-        do {
-          int sura = suggestions.getInt(0);
-          int ayah = suggestions.getInt(1);
-          String text = suggestions.getString(2);
-          String foundText = context
-              .getString(R.string.found_in_sura) +
-              " " + QuranInfo.getSuraName(context, sura, false) +
-              ", " + context.getString(R.string.quran_ayah) +
-              " " + ayah;
+      Cursor suggestions = null;
+      try {
+        suggestions = search(query, item, false);
+        if (suggestions != null && suggestions.moveToFirst()) {
+          do {
+            int sura = suggestions.getInt(1);
+            int ayah = suggestions.getInt(2);
+            String text = suggestions.getString(3);
+            String foundText = context
+                .getString(R.string.found_in_sura) +
+                " " + QuranInfo.getSuraName(context, sura, false) +
+                ", " + context.getString(R.string.quran_ayah) +
+                " " + ayah;
 
-          gotResults = true;
-          MatrixCursor.RowBuilder row = mc.newRow();
-          int id = 0;
-          for (int j = 1; j < sura; j++) {
-            id += QuranInfo.getNumAyahs(j);
-          }
-          id += ayah;
+            gotResults = true;
+            MatrixCursor.RowBuilder row = mc.newRow();
+            int id = suggestions.getInt(0);
 
-          row.add(id);
-          row.add(text);
-          row.add(foundText);
-          row.add(id);
-        } while (suggestions.moveToNext());
+            row.add(id);
+            row.add(text);
+            row.add(foundText);
+            row.add(id);
+          } while (suggestions.moveToNext());
+        }
+      } finally {
+        DatabaseUtils.closeCursor(suggestions);
       }
-      suggestions.close();
     }
 
     return mc;
@@ -250,14 +255,18 @@ public class QuranDataProvider extends ContentProvider {
   @Override
   public String getType(Uri uri) {
     switch (sURIMatcher.match(uri)) {
-      case SEARCH_VERSES:
+      case SEARCH_VERSES: {
         return VERSES_MIME_TYPE;
-      case GET_VERSE:
+      }
+      case GET_VERSE: {
         return AYAH_MIME_TYPE;
-      case SEARCH_SUGGEST:
+      }
+      case SEARCH_SUGGEST: {
         return SearchManager.SUGGEST_MIME_TYPE;
-      default:
+      }
+      default: {
         throw new IllegalArgumentException("Unknown URL " + uri);
+      }
     }
   }
 

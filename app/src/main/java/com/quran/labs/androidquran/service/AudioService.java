@@ -24,6 +24,7 @@ import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.service.util.AudioFocusHelper;
 import com.quran.labs.androidquran.service.util.AudioFocusable;
@@ -420,21 +421,26 @@ public class AudioService extends Service implements OnCompletionListener,
          SuraTimingDatabaseHandler db =
                  SuraTimingDatabaseHandler.getDatabaseHandler(mDatabasePath);
          SparseIntArray map = null;
-         Cursor cursor = db.getAyahTimings(sura);
-         Log.d(TAG, "got cursor of data");
 
-         if (cursor != null && cursor.moveToFirst()){
+        Cursor cursor = null;
+        try {
+          cursor = db.getAyahTimings(sura);
+          Log.d(TAG, "got cursor of data");
+
+          if (cursor != null && cursor.moveToFirst()) {
             map = new SparseIntArray();
             do {
-               int ayah = cursor.getInt(1);
-               int time = cursor.getInt(2);
-               //Log.d(TAG, "adding: " + ayah + " @ " + time);
-               map.put(ayah, time);
+              int ayah = cursor.getInt(1);
+              int time = cursor.getInt(2);
+              // Log.d(TAG, "adding: " + ayah + " @ " + time);
+              map.put(ayah, time);
             }
             while (cursor.moveToNext());
-         }
-         if (cursor != null){ cursor.close(); }
-         return map;
+          }
+        } finally {
+          DatabaseUtils.closeCursor(cursor);
+        }
+        return map;
       }
 
       @Override
