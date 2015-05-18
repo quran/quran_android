@@ -20,18 +20,15 @@ public class SuraTimingDatabaseHandler {
     public static final String COL_TIME = "time";
   }
 
-  private static final Object sDatabaseLock = new Object();
   private static Map<String, SuraTimingDatabaseHandler> sSuraDatabaseMap = new HashMap<>();
 
-  public static SuraTimingDatabaseHandler getDatabaseHandler(String path) {
-    synchronized (sDatabaseLock) {
-      SuraTimingDatabaseHandler handler = sSuraDatabaseMap.get(path);
-      if (handler == null) {
-        handler = new SuraTimingDatabaseHandler(path);
-        sSuraDatabaseMap.put(path, handler);
-      }
-      return handler;
+  public synchronized static SuraTimingDatabaseHandler getDatabaseHandler(String path) {
+    SuraTimingDatabaseHandler handler = sSuraDatabaseMap.get(path);
+    if (handler == null) {
+      handler = new SuraTimingDatabaseHandler(path);
+      sSuraDatabaseMap.put(path, handler);
     }
+    return handler;
   }
 
   private SuraTimingDatabaseHandler(String path) throws SQLException {
@@ -48,11 +45,11 @@ public class SuraTimingDatabaseHandler {
   }
 
   public boolean validDatabase() {
-    return (mDatabase != null) && mDatabase.isOpen();
+    return mDatabase != null && mDatabase.isOpen();
   }
 
   public Cursor getAyahTimings(int sura) {
-    if (!validDatabase()) return null;
+    if (!validDatabase()) { return null; }
     try {
       return mDatabase.query(TimingsTable.TABLE_NAME,
           new String[]{TimingsTable.COL_SURA,

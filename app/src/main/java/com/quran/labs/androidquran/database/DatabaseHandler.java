@@ -8,6 +8,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.util.HashMap;
@@ -85,50 +87,33 @@ public class DatabaseHandler {
     return getVerses(sura, minAyah, maxAyah, VERSE_TABLE);
   }
 
-  public int getSchemaVersion() {
-    int version = 1;
+  private int getProperty(@NonNull String column) {
+    int value = 1;
     if (!validDatabase()) {
-      return version;
+      return value;
     }
 
-    Cursor result = null;
+    Cursor cursor = null;
     try {
-      result = mDatabase.query(PROPERTIES_TABLE, new String[]{COL_VALUE},
-          COL_PROPERTY + "= ?", new String[]{"schema_version"},
-          null, null, null);
-      if ((result != null) && (result.moveToFirst()))
-        version = result.getInt(0);
-      if (result != null)
-        result.close();
-      return version;
+      cursor = mDatabase.query(PROPERTIES_TABLE, new String[]{ COL_VALUE },
+          COL_PROPERTY + "= ?", new String[]{ column }, null, null, null);
+      if (cursor != null && cursor.moveToFirst()) {
+        value = cursor.getInt(0);
+      }
+      return value;
     } catch (SQLException se) {
-      if (result != null)
-        result.close();
-      return version;
+      return value;
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
     }
   }
 
-  public int getTextVersion() {
-    int version = 1;
-    if (!validDatabase()) {
-      return version;
-    }
+  public int getSchemaVersion() {
+    return getProperty("schema_version");
+  }
 
-    Cursor result = null;
-    try {
-      result = mDatabase.query(PROPERTIES_TABLE, new String[]{COL_VALUE},
-          COL_PROPERTY + "= ?", new String[]{"text_version"},
-          null, null, null);
-      if ((result != null) && (result.moveToFirst()))
-        version = result.getInt(0);
-      if (result != null)
-        result.close();
-      return version;
-    } catch (SQLException se) {
-      if (result != null)
-        result.close();
-      return version;
-    }
+  public int getTextVersion() {
+    return getProperty("text_version");
   }
 
   public Cursor getVerses(int sura, int minAyah, int maxAyah, String table) {
@@ -137,10 +122,8 @@ public class DatabaseHandler {
 
   public Cursor getVerses(int minSura, int minAyah, int maxSura,
                           int maxAyah, String table) {
-    if (!validDatabase()) {
-      if (!reopenDatabase()) {
+    if (!validDatabase() && !reopenDatabase()) {
         return null;
-      }
     }
 
     StringBuilder whereQuery = new StringBuilder();
@@ -178,7 +161,7 @@ public class DatabaseHandler {
     whereQuery.append(")");
 
     return mDatabase.query(table,
-        new String[]{COL_SURA, COL_AYAH, COL_TEXT},
+        new String[] { "rowid as _id", COL_SURA, COL_AYAH, COL_TEXT },
         whereQuery.toString(), null, null, null,
         COL_SURA + "," + COL_AYAH);
   }
@@ -192,10 +175,8 @@ public class DatabaseHandler {
   }
 
   public Cursor search(String q, String table, boolean withSnippets) {
-    if (!validDatabase()) {
-      if (!reopenDatabase()) {
+    if (!validDatabase() && !reopenDatabase()) {
         return null;
-      }
     }
 
     String query = q;
@@ -233,40 +214,16 @@ public class DatabaseHandler {
           "', '" + ELLIPSES + "', -1, 64)";
     }
 
-    String qtext = "select " + COL_SURA + ", " + COL_AYAH +
+    String qtext = "select rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH +
         ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
         operator + " ? " + " limit 150";
     Crashlytics.log("search query: " + qtext + ", query: " + query);
 
     try {
-      /* this check for getCount below is intentional.
-       * due to the fact that many devices ship with an older sqlite
-       * that doesn't support the snippet call. however, this doesn't
-       * fail until you actually try to read any data (ie rawQuery
-       * succeeds, but trying to do anything with the cursor throws
-       * an exception).
-       *
-       * since we intentionally try and fall back to not using snippet,
-       * we want this exception to be thrown here so we can handle it
-       * gracefully if we can. consequently, we add the (awkward) check
-       * for c.getCount, which, on 2.x, will cause a crash when our
-       * query contains a snippet() call, thus allowing us to fallback
-       * without killing the app.
-       */
-      final Cursor c = mDatabase.rawQuery(qtext, new String[]{query});
-      if (c != null && c.getCount() >= 0) {
-        return c;
-      } else {
-        return null;
-      }
+      return mDatabase.rawQuery(qtext, new String[]{ query });
     } catch (Exception e){
-      if (withSnippets && useFullTextIndex){
-        Crashlytics.log("error querying, trying again without snippets...");
-        return search(q, table, false);
-      } else {
-        Crashlytics.logException(e);
-        return null;
-      }
+      Crashlytics.logException(e);
+      return null;
     }
   }
 }

@@ -34,20 +34,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SearchActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {
 
-  public static final String SEARCH_INFO_DOWNLOAD_KEY =
-      "SEARCH_INFO_DOWNLOAD_KEY";
+  public static final String SEARCH_INFO_DOWNLOAD_KEY = "SEARCH_INFO_DOWNLOAD_KEY";
   private static final String EXTRA_QUERY = "EXTRA_QUERY";
 
   private TextView mMessageView, mWarningView;
@@ -55,6 +51,7 @@ public class SearchActivity extends QuranActionBarActivity
   private boolean mDownloadArabicSearchDb = false;
   private boolean mIsArabicSearch = false;
   private String mQuery;
+  private ResultAdapter mAdapter;
   private DefaultDownloadReceiver mDownloadReceiver = null;
 
   @Override
@@ -193,38 +190,31 @@ public class SearchActivity extends QuranActionBarActivity
           R.plurals.search_results, count, mQuery, count);
       mMessageView.setText(countString);
 
-      List<SearchElement> res = new ArrayList<SearchElement>();
-      if (cursor.moveToFirst()) {
-        do {
-          int sura = cursor.getInt(0);
-          int ayah = cursor.getInt(1);
-          String text = cursor.getString(2);
-          SearchElement elem = new SearchElement(sura, ayah, text);
-          res.add(elem);
-        }
-        while (cursor.moveToNext());
-      }
-
       ListView listView = (ListView) findViewById(R.id.results_list);
-      EfficientResultAdapter adapter = new EfficientResultAdapter(this, res);
-      listView.setAdapter(adapter);
-      listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view,
-                                int position, long id) {
-          ListView p = (ListView) parent;
-          SearchElement res = (SearchElement) p.getAdapter()
-              .getItem(position);
-          jumpToResult(res.sura, res.ayah);
-        }
-      });
+      if (mAdapter == null) {
+        mAdapter = new ResultAdapter(this, cursor);
+        listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+          @Override
+          public void onItemClick(AdapterView<?> parent, View view,
+              int position, long id) {
+            ListView p = (ListView) parent;
+            SearchElement res = (SearchElement) p.getAdapter()
+                .getItem(position);
+            jumpToResult(res.sura, res.ayah);
+          }
+        });
+      } else {
+        mAdapter.changeCursor(cursor);
+      }
     }
   }
 
   @Override
   public void onLoaderReset(Loader<Cursor> loader) {
-    ListView listView = (ListView) findViewById(R.id.results_list);
-    listView.setAdapter(null);
+    if (mAdapter != null) {
+      mAdapter.changeCursor(null);
+    }
   }
 
   private void handleIntent(Intent intent) {
@@ -266,6 +256,7 @@ public class SearchActivity extends QuranActionBarActivity
         id = intentData.getLastPathSegment() != null ?
             Integer.valueOf(intentData.getLastPathSegment()) : null;
       } catch (NumberFormatException e) {
+        // no op
       }
 
       if (id != null) {
@@ -323,55 +314,36 @@ public class SearchActivity extends QuranActionBarActivity
     }
   }
 
-  private static class EfficientResultAdapter extends BaseAdapter {
+  private static class ResultAdapter extends CursorAdapter {
     private LayoutInflater mInflater;
-    private List<SearchElement> mElements;
     private Context mContext;
 
-    public EfficientResultAdapter(Context context,
-                                  List<SearchElement> metadata) {
+    public ResultAdapter(Context context, Cursor cursor) {
+      super(context, cursor, 0);
       mInflater = LayoutInflater.from(context);
-      mElements = metadata;
       mContext = context;
     }
 
-    public int getCount() {
-      return mElements.size();
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+      final View view = mInflater.inflate(R.layout.search_result, parent, false);
+      ViewHolder holder = new ViewHolder();
+      holder.text = (TextView) view.findViewById(R.id.verseText);
+      holder.metadata = (TextView) view.findViewById(R.id.verseLocation);
+      view.setTag(holder);
+      return view;
     }
 
-    public Object getItem(int position) {
-      return mElements.get(position);
-    }
-
-    public long getItemId(int position) {
-      return position;
-    }
-
-    public View getView(int position, View convertView, ViewGroup parent) {
-      ViewHolder holder;
-
-      if (convertView == null) {
-        convertView = mInflater.inflate(R.layout.search_result, parent, false);
-        holder = new ViewHolder();
-        holder.text = (TextView) convertView.findViewById(R.id.verseText);
-        holder.metadata = (TextView) convertView
-            .findViewById(R.id.verseLocation);
-        convertView.setTag(holder);
-      } else {
-        holder = (ViewHolder) convertView.getTag();
-      }
-
-      SearchElement v = mElements.get(position);
-      String text = v.text;
-      String suraName = QuranInfo.getSuraName(mContext, v.sura, false);
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
+      final ViewHolder holder = (ViewHolder) view.getTag();
+      int sura = cursor.getInt(1);
+      int ayah = cursor.getInt(2);
+      String text = cursor.getString(3);
+      String suraName = QuranInfo.getSuraName(mContext, sura, false);
       holder.text.setText(Html.fromHtml(text));
-
-      holder.metadata.setText(mInflater.getContext()
-          .getString(R.string.found_in_sura) + " " +
-          suraName +
-          ", " + mInflater.getContext()
-          .getString(R.string.quran_ayah) + " " + v.ayah);
-      return convertView;
+      holder.metadata.setText(mContext.getString(R.string.found_in_sura) + " " + suraName
+          + ", " + mContext.getString(R.string.quran_ayah) + " " + ayah);
     }
 
     static class ViewHolder {
