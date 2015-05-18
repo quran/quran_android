@@ -28,7 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:indicatorColor="@color/indicator_color"
-            app:indicatorHeight="@dimen/icon_page_indicator_height" />
+            app:indicatorHeight="@dimen/icon_page_indicator_height"
+            android:layoutDirection="ltr"/>
     </LinearLayout>
     <com.quran.labs.androidquran.widgets.QuranViewPager
         android:id="@+id/sliding_layout_pager"

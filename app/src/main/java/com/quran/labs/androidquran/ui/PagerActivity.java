@@ -33,7 +33,6 @@ import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
-import com.quran.labs.androidquran.ui.helpers.FragmentStatePagerAdapter;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
@@ -63,7 +62,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -177,7 +175,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private static final float PANEL_MAX_HEIGHT = 0.6f;
   private SlidingUpPanelLayout mSlidingPanel;
   private ViewPager mSlidingPager;
-  private FragmentStatePagerAdapter mSlidingPagerAdapter;
+  private SlidingPagerAdapter mSlidingPagerAdapter;
   private boolean mIsInAyahMode;
   private SuraAyah mStart;
   private SuraAyah mEnd;
@@ -273,8 +271,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     final Resources resources = getResources();
     mIsLandscape = resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
-    int background = resources.getColor(
-        R.color.transparent_actionbar_color);
     mAyahToolBarTotalHeight = resources
         .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
@@ -290,14 +286,16 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     if (mSettings.isArabicNames() || QuranUtils.isRtl()) {
+      // remove when we remove LTR from quran_page_activity's root
       ViewCompat.setLayoutDirection(toolbar, ViewCompat.LAYOUT_DIRECTION_RTL);
     }
     setSupportActionBar(toolbar);
 
     final ActionBar ab = getSupportActionBar();
-    ab.setDisplayShowHomeEnabled(true);
-    ab.setDisplayHomeAsUpEnabled(true);
-    ab.setBackgroundDrawable(new ColorDrawable(background));
+    if (ab != null) {
+      ab.setDisplayShowHomeEnabled(true);
+      ab.setDisplayHomeAsUpEnabled(true);
+    }
 
     initAyahActionPanel();
 
@@ -504,8 +502,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     });
 
     // Create and set fragment pager adapter
-    mSlidingPagerAdapter = new SlidingPagerAdapter(
-        getSupportFragmentManager());
+    mSlidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
+            (mSettings.isArabicNames() || QuranUtils.isRtl()));
     mSlidingPager.setAdapter(mSlidingPagerAdapter);
 
     // Attach the view pager to the action bar
@@ -1984,10 +1983,11 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void refreshPages() {
     for (int page : PAGES) {
-      if (page == TAG_PAGE) {
+      final int mappedTagPage = mSlidingPagerAdapter.getPagePosition(TAG_PAGE);
+      if (page == mappedTagPage) {
         TagBookmarkDialog tagsFrag =
             (TagBookmarkDialog) mSlidingPagerAdapter
-                .getFragmentIfExists(TAG_PAGE);
+                .getFragmentIfExists(mappedTagPage);
         if (tagsFrag != null) {
           tagsFrag.updateAyah(mStart);
         }
@@ -2042,13 +2042,13 @@ public class PagerActivity extends QuranActionBarActivity implements
           toggleBookmark(mStart.sura, mStart.ayah, mStart.getPage());
           break;
         case R.id.cab_tag_ayah:
-          sliderPage = TAG_PAGE;
+          sliderPage = mSlidingPagerAdapter.getPagePosition(TAG_PAGE);
           break;
         case R.id.cab_translate_ayah:
-          sliderPage = TRANSLATION_PAGE;
+          sliderPage = mSlidingPagerAdapter.getPagePosition(TRANSLATION_PAGE);
           break;
         case R.id.cab_play_from_here:
-          sliderPage = AUDIO_PAGE;
+          sliderPage = mSlidingPagerAdapter.getPagePosition(AUDIO_PAGE);
           break;
         case R.id.cab_share_ayah_link:
           new ShareQuranAppTask(PagerActivity.this, mStart, mEnd).execute();

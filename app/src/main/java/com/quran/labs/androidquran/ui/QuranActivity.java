@@ -29,7 +29,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,6 +38,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -46,7 +46,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -85,7 +84,6 @@ public class QuranActivity extends QuranActionBarActivity
   private BookmarksDBAdapter mBookmarksDBAdapter = null;
   private boolean mShowedTranslationUpgradeDialog = false;
   private boolean mIsRtl;
-  private View mRoot;
 
   private static class QuranHandler extends Handler {
 
@@ -132,16 +130,16 @@ public class QuranActivity extends QuranActionBarActivity
     setContentView(R.layout.quran_index);
     mHandler = new QuranHandler(this);
 
-    mRoot = findViewById(R.id.root);
-
     mSettings = QuranSettings.getInstance(this);
     mIsRtl = isRtl();
-    if (mIsRtl && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      mRoot.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-    }
 
     final Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(tb);
+
+    final ActionBar ab = getSupportActionBar();
+    if (ab != null) {
+      ab.setTitle(R.string.app_name);
+    }
 
     final ViewPager pager = (ViewPager) findViewById(R.id.index_pager);
     pager.setOffscreenPageLimit(3);

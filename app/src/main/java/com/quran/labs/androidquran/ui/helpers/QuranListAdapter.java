@@ -227,7 +227,7 @@ public class QuranListAdapter extends
   }
 
   public interface QuranTouchListener {
-    public void onClick(QuranRow row, int position);
-    public boolean onLongClick(QuranRow row, int position);
+    void onClick(QuranRow row, int position);
+    boolean onLongClick(QuranRow row, int position);
   }
 }

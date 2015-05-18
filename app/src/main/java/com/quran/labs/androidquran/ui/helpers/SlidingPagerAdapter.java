@@ -22,8 +22,11 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
       R.drawable.ic_tag, R.drawable.ic_translation, R.drawable.ic_play
   };
 
-  public SlidingPagerAdapter(FragmentManager fm) {
+  private boolean mIsRtl;
+
+  public SlidingPagerAdapter(FragmentManager fm, boolean isRtl) {
     super(fm);
+    mIsRtl = isRtl;
   }
 
   @Override
@@ -31,9 +34,14 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
     return PAGES.length;
   }
 
+  public int getPagePosition(int page) {
+    return mIsRtl ? (PAGES.length - 1) - page : page;
+  }
+
   @Override
   public Fragment getItem(int position) {
-    switch (position) {
+    final int pos = getPagePosition(position);
+    switch (pos) {
       case TAG_PAGE:
         return new TagBookmarkDialog();
       case TRANSLATION_PAGE:
@@ -46,7 +54,7 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
 
   @Override
   public int getIconResId(int index) {
-    return PAGE_ICONS[index];
+    return PAGE_ICONS[getPagePosition(index)];
   }
 
 }

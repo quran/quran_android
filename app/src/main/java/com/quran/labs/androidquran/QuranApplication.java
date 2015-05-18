@@ -7,6 +7,7 @@ import com.squareup.leakcanary.LeakCanary;
 import android.app.Application;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 
 import java.util.Locale;
 
@@ -34,11 +35,13 @@ public class QuranApplication extends Application {
     }
 
     if (locale != null) {
-      Locale.setDefault(locale);
-      Configuration config = getResources().getConfiguration();
+      final Resources resources = getResources();
+      Configuration config = resources.getConfiguration();
       config.locale = locale;
-      getResources().updateConfiguration(config,
-          getResources().getDisplayMetrics());
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        config.setLayoutDirection(config.locale);
+      }
+      resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
   }
 }

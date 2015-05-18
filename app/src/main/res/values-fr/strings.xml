@@ -112,7 +112,7 @@
   <string name="prefs_category_translation">Préférences de traduction</string>
   <string name="prefs_category_display_settings">Parametres d\'affichage</string>
   <string name="prefs_use_arabic_title">Mode arabe</string>
-  <string name="prefs_use_arabic_summary_on">L\'application sera traduite en arabe (redémarrage de l\'application nécessaire).</string>
+  <string name="prefs_use_arabic_summary_on">L\'application sera traduite en arabe</string>
   <string name="prefs_new_background_title">Nouvel arrière-plan</string>
   <string name="prefs_lock_orientation_title">Verrouiller l\'orientation de l\'écran</string>
   <string name="prefs_lock_orientation_summary_on">L\'affichage du coran ne s\'adaptera pas au changement d\'orientation de l\'écran.</string>

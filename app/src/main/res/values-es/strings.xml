@@ -56,7 +56,7 @@
   <string name="prefs_category_translation">Preferencias de traducción</string>
   <string name="prefs_category_display_settings">Configuración de pantalla</string>
   <string name="prefs_use_arabic_title">Modo Árabe</string>
-  <string name="prefs_use_arabic_summary_on">La aplicación se mostrará en Árabe (requiere reiniciar)</string>
+  <string name="prefs_use_arabic_summary_on">La aplicación se mostrará en Árabe </string>
   <string name="prefs_new_background_title">Nuevo fondo</string>
   <string name="prefs_lock_orientation_title">Bloquear orientación de la pantalla</string>
   <string name="prefs_lock_orientation_summary_on">La Página del Corán estará en modo de orientación fija</string>
