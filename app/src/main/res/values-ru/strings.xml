@@ -110,11 +110,13 @@
 	<string name="search_hint">Поиск по Корану</string>
 	<string name="quranSearchType">Стихи Корана</string>
 
-    <!-- Shown above search results when we receive a search request. -->
-    <plurals name="search_results">
-        <item quantity="one">Результат для \"%1$s\": </item>
-        <item quantity="other">%2$d Результаты для \"%1$s\": </item>
-    </plurals>
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">%2$d результат для \"%1$s\": </item>
+    <item quantity="few">%2$d результата для \"%1$s\": </item>
+    <item quantity="many">%2$d результатов для \"%1$s\": </item>
+    <item quantity="other">%2$d результатов для \"%1$s\": </item>
+  </plurals>
 
     <!-- Search messages -->
     <string name="found_in_sura">Найдено в суре</string>
@@ -250,10 +252,12 @@
     <!-- sura metainfo -->
     <string name="makki">Мекка</string>
     <string name="madani">Медина</string>
-    <plurals name="verses">
-        <item quantity="one">%s аят</item>
-        <item quantity="other">%s аят (-а/-ов)</item>
-    </plurals>
+  <plurals name="verses">
+    <item quantity="one">%s аят</item>
+    <item quantity="few">%s аятa</item>
+    <item quantity="many">%s аятов</item>
+    <item quantity="other">%s аятов</item>
+  </plurals>
     
     <!-- ayah action panel -->
     <string name="play_from">От</string>
