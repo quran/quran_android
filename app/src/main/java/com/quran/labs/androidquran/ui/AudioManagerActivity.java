@@ -15,7 +15,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,8 +50,10 @@ public class AudioManagerActivity extends QuranActionBarActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     final ActionBar ab = getSupportActionBar();
-    ab.setTitle(R.string.audio_manager);
-    ab.setDisplayHomeAsUpEnabled(true);
+    if (ab != null) {
+      ab.setTitle(R.string.audio_manager);
+      ab.setDisplayHomeAsUpEnabled(true);
+    }
 
     setContentView(R.layout.audio_manager);
 

@@ -52,8 +52,8 @@ public class SuraTimingDatabaseHandler {
     if (!validDatabase()) { return null; }
     try {
       return mDatabase.query(TimingsTable.TABLE_NAME,
-          new String[]{TimingsTable.COL_SURA,
-              TimingsTable.COL_AYAH, TimingsTable.COL_TIME},
+          new String[]{ TimingsTable.COL_SURA,
+              TimingsTable.COL_AYAH, TimingsTable.COL_TIME },
           TimingsTable.COL_SURA + "=" + sura,
           null, null, null, TimingsTable.COL_AYAH + " ASC");
     } catch (Exception e) {
