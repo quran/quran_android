@@ -637,6 +637,10 @@ public class AudioService extends Service implements OnCompletionListener,
            pauseNotification();
            notifyAudioStatus(AudioUpdateIntent.PAUSED);
          }
+      } else if (mState == State.Stopped) {
+        // if we get a pause while we're already stopped, it means we likely woke up because
+        // of AudioIntentReceiver, so just stop in this case.
+        stopSelf();
       }
    }
 
