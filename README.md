@@ -80,10 +80,16 @@ Open Source Projects Used
 -------------------------
 * android-support library (support-v4 and appcompat-v7)
 * [AndroidSlidingUpPanel](https://github.com/umano/AndroidSlidingUpPanel)
-* [okhttp](https://github.com/square/okhttp)
+* [OkHttp](https://github.com/square/okhttp)
+* [RxJava](https://github.com/ReactiveX/RxJava)
+* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 
 Changelog
 ---------
+**development**
+- improvements for rtl layouts in rtl languages on apis 17+
+- lots of bugfixes and improvements
+
 **version 2.6.4p1 (released 4/13/2015)**
 - revert support-v4 and appcompat-v7 to v21.0.3 due to contextual action
 bar bug. see https://code.google.com/p/android/issues/detail?id=165243
