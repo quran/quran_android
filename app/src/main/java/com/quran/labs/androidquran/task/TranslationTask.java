@@ -80,7 +80,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
                          bounds[2], bounds[3],
                          DatabaseHandler.VERSE_TABLE);
 
-         DatabaseHandler ayahHandler = null;
+         DatabaseHandler ayahHandler;
          Cursor ayahCursor = null;
 
          if (loadArabicAyahText()){
@@ -104,13 +104,13 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
             if (translationCursor.moveToFirst()) {
                do {
-                  int sura = translationCursor.getInt(0);
-                  int ayah = translationCursor.getInt(1);
-                  String translation = translationCursor.getString(2);
+                  int sura = translationCursor.getInt(1);
+                  int ayah = translationCursor.getInt(2);
+                  String translation = translationCursor.getString(3);
                   QuranAyah verse = new QuranAyah(sura, ayah);
                   verse.setTranslation(translation);
                   if (validAyahCursor){
-                     String text = ayahCursor.getString(2);
+                     String text = ayahCursor.getString(3);
                      verse.setText(text);
                   }
                   verse.setArabic(isArabic);

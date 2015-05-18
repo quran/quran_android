@@ -22,6 +22,7 @@ package com.quran.labs.androidquran.ui.helpers;
  * - catch IllegalStateException in finishUpdate
  */
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -71,7 +72,7 @@ import java.util.ArrayList;
  *      complete}
  */
 public abstract class FragmentStatePagerAdapter extends PagerAdapter {
-   private static final String TAG = "FragmentStatePagerAdapter";
+   private static final String TAG = "QuranPagerAdapter";
    private static final boolean DEBUG = false;
 
    private final FragmentManager mFragmentManager;
@@ -110,6 +111,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
       return null;
    }
 
+   @SuppressLint("CommitTransaction")
    @Override
    public Object instantiateItem(ViewGroup container, int position) {
       // If we already have this item instantiated, there is nothing
@@ -146,6 +148,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
       return fragment;
    }
 
+   @SuppressLint("CommitTransaction")
    @Override
    public void destroyItem(ViewGroup container, int position, Object object) {
       Fragment fragment = (Fragment)object;
@@ -220,7 +223,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
       }
       for (int i=0; i<mFragments.size(); i++) {
          Fragment f = mFragments.get(i);
-         if (f != null) {
+         if (f != null && f.isAdded()) {
             if (state == null) {
                state = new Bundle();
             }

@@ -9,14 +9,12 @@ import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -46,8 +44,8 @@ public class ShareAyahTask extends PagerActivityTask<Void, Void, List<QuranAyah>
       cursor = ayahHandler.getVerses(start.sura, start.ayah,
           end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
       while (cursor.moveToNext()) {
-        QuranAyah verse = new QuranAyah(cursor.getInt(0), cursor.getInt(1));
-        verse.setText(cursor.getString(2));
+        QuranAyah verse = new QuranAyah(cursor.getInt(1), cursor.getInt(2));
+        verse.setText(cursor.getString(3));
         verses.add(verse);
       }
     }
@@ -116,13 +114,9 @@ public class ShareAyahTask extends PagerActivityTask<Void, Void, List<QuranAyah>
     sb.append(activity.getString(R.string.via_string));
     String text = sb.toString();
     if (copy) {
-      if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-        clipTextApi11(activity, text);
-      } else {
-        android.text.ClipboardManager cm = (android.text.ClipboardManager)
-            activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        cm.setText(text);
-      }
+      ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+      ClipData clip = ClipData.newPlainText(activity.getString(R.string.app_name), text);
+      cm.setPrimaryClip(clip);
       Toast.makeText(activity, activity.getString(R.string.ayah_copied_popup),
           Toast.LENGTH_SHORT).show();
     } else {
@@ -131,12 +125,5 @@ public class ShareAyahTask extends PagerActivityTask<Void, Void, List<QuranAyah>
       intent.putExtra(Intent.EXTRA_TEXT, text);
       activity.startActivity(Intent.createChooser(intent, activity.getString(R.string.share_ayah)));
     }
-  }
-
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void clipTextApi11(Activity activity, String text) {
-    ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-    ClipData clip = ClipData.newPlainText(activity.getString(R.string.app_name), text);
-    cm.setPrimaryClip(clip);
   }
 }
