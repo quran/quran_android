@@ -33,6 +33,9 @@ public class QuranFileUtils {
   private static final String TAG = "QuranFileUtils";
 
   public static final String IMG_HOST = "http://android.quran.com/data/";
+  private static final String IMG_ZIP_BASE_URL = IMG_HOST + "zips/";
+  private static final String PATCH_ZIP_BASE_URL = IMG_HOST + "patches/v";
+
   private static final String QURAN_BASE = "quran_android/";
   private static final String DATABASE_DIRECTORY = "databases";
 
@@ -365,13 +368,13 @@ public class QuranFileUtils {
   }
 
   public static String getZipFileUrl(String widthParam) {
-    String url = IMG_HOST;
+    String url = IMG_ZIP_BASE_URL;
     url += "images" + widthParam + ".zip";
     return url;
   }
 
   public static String getPatchFileUrl(String widthParam, int toVersion) {
-    return IMG_HOST + "patches/v" + toVersion + "/patch" +
+    return PATCH_ZIP_BASE_URL + toVersion + "/patch" +
         widthParam + "_v" + toVersion + ".zip";
   }
 
@@ -452,9 +455,18 @@ public class QuranFileUtils {
         QuranDataProvider.QURAN_ARABIC_DATABASE;
   }
 
-  public static void migrateAudio(Context context) {
-    String oldAudioDirectory = AudioUtils.getOldAudioRootDirectory(context);
-    String destinationAudioDirectory = AudioUtils.getAudioRootDirectory(context);
+  public static void migrateAudio(@NonNull final Context appContext) {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        migrateAudioHelper(appContext);
+      }
+    }).start();
+  }
+
+  private static void migrateAudioHelper(@NonNull Context appContext) {
+    String oldAudioDirectory = AudioUtils.getOldAudioRootDirectory(appContext);
+    String destinationAudioDirectory = AudioUtils.getAudioRootDirectory(appContext);
     if (oldAudioDirectory != null && destinationAudioDirectory != null) {
       File old = new File(oldAudioDirectory);
       if (old.exists()) {
@@ -463,7 +475,7 @@ public class QuranFileUtils {
         if (!dest.exists()) {
           // just in case the user manually deleted /sdcard/quran_android
           // and left the audio as is (unlikely, but just in case).
-          String parentDir = QuranFileUtils.getQuranBaseDirectory(context);
+          String parentDir = QuranFileUtils.getQuranBaseDirectory(appContext);
           new File(parentDir).mkdir();
 
           Log.d(TAG, "new audio path doesn't exist, renaming...");
