@@ -35,6 +35,7 @@ public class QuranFileUtils {
   public static final String IMG_HOST = "http://android.quran.com/data/";
   private static final String IMG_ZIP_BASE_URL = IMG_HOST + "zips/";
   private static final String PATCH_ZIP_BASE_URL = IMG_HOST + "patches/v";
+  private static final String AYAHINFO_BASE_URL = IMG_HOST + "databases/ayahinfo/";
 
   private static final String QURAN_BASE = "quran_android/";
   private static final String DATABASE_DIRECTORY = "databases";
@@ -399,9 +400,7 @@ public class QuranFileUtils {
   }
 
   public static String getAyaPositionFileUrl(String widthParam) {
-    String url = IMG_HOST + "width" + widthParam;
-    url += "/ayahinfo" + widthParam + ".zip";
-    return url;
+    return AYAHINFO_BASE_URL + "ayahinfo" + widthParam + ".zip";
   }
 
   public static String getGaplessDatabaseRootUrl() {
