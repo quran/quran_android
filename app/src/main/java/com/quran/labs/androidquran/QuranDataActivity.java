@@ -54,16 +54,24 @@ public class QuranDataActivity extends Activity implements
     mSharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(getApplicationContext());
 
-    // one time upgrade to v2.4.3
-    if (!mSharedPreferences.contains(Constants.PREF_UPGRADE_TO_243)) {
+    /**
+     * this is used for doing upgrades between versions (i.e. it replaces
+     * the use of upgrade to variables as present previously).
+     */
+    final int version = mSharedPreferences.getInt(Constants.PREF_VERSION, 0);
+    if (version == 0) {
+      /**
+       * when updating from "no version" (i.e. version 0), remove any pending page
+       * downloads because the download url has now changed in order to ensure that
+       * people get the latest set of pages.
+       */
       QuranFileUtils.clearPendingPageDownloads(this);
+      QuranFileUtils.migrateAudio(getApplicationContext());
+    }
 
-      // update night mode preference and mark that we upgraded to 2.4.2ts
-      mSharedPreferences.edit()
-          .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
-              Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS)
-          .remove(Constants.PREF_UPGRADE_TO_242)
-          .putBoolean(Constants.PREF_UPGRADE_TO_243, true).apply();
+    if (version != BuildConfig.VERSION_CODE) {
+      // make sure that the version code now says that we're up to date.
+      mSharedPreferences.edit().putInt(Constants.PREF_VERSION, BuildConfig.VERSION_CODE).apply();
     }
   }
 
@@ -176,8 +184,6 @@ public class QuranDataActivity extends Activity implements
 
     @Override
     protected Boolean doInBackground(Void... params) {
-      QuranFileUtils.migrateAudio(mAppContext);
-
       final QuranScreenInfo qsi = QuranScreenInfo.getInstance();
       if (!mSharedPreferences.contains(Constants.PREF_DEFAULT_IMAGES_DIR)) {
            /* previously, we would send any screen widths greater than 1280
