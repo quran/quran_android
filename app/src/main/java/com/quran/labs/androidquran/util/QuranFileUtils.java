@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.Closeable;
@@ -115,9 +116,6 @@ public class QuranFileUtils {
       File dir = new File(quranDirectory + File.separator);
       if (dir.isDirectory()) {
         String[] fileList = dir.list();
-        if (fileList == null) {
-          return false;
-        }
         int files = fileList.length;
         if (files >= PAGES_LAST) {
           // ideally, we should loop for each page and ensure
@@ -298,6 +296,26 @@ public class QuranFileUtils {
     return null;
   }
 
+  public static void clearPendingPageDownloads(@NonNull Context context) {
+    String baseDir = QuranFileUtils.getQuranBaseDirectory(context);
+    if (baseDir != null) {
+      baseDir = baseDir + File.separator;
+      try {
+        final File f = new File(baseDir);
+        if (f.exists() && f.isDirectory()) {
+          final String[] files = f.list();
+          for (String file : files) {
+            if (file.endsWith(".part")) {
+              new File(baseDir + file).delete();
+            }
+          }
+        }
+      } catch (Exception e) {
+        // no op
+      }
+    }
+  }
+
   /**
    * Returns the app used space in megabytes
    */
@@ -353,7 +371,7 @@ public class QuranFileUtils {
   }
 
   public static String getPatchFileUrl(String widthParam, int toVersion) {
-    return IMG_HOST + "patches/patch" +
+    return IMG_HOST + "patches/v" + toVersion + "/patch" +
         widthParam + "_v" + toVersion + ".zip";
   }
 
