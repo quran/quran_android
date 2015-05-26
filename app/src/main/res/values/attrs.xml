@@ -16,10 +16,8 @@
         <attr name="indicatorColor" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="JuzView">
-        <attr name="android:textColor"/>
-        <attr name="circleColor" format="color" />
-        <attr name="circleInactiveColor" format="color" />
+    <declare-styleable name="AudioStatusBar">
+        <attr name="android:itemBackground" />
     </declare-styleable>
 
     <attr name="spinnerItemStyle" format="reference" />
