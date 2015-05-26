@@ -226,7 +226,11 @@ public class QuranDataActivity extends Activity implements
           // if we have the images, see if we need a patch set or not
           if (!QuranFileUtils.isVersion(mAppContext, width, LATEST_IMAGE_VERSION) ||
               !QuranFileUtils.isVersion(mAppContext, tabletWidth, LATEST_IMAGE_VERSION)) {
-            mPatchParam = width + tabletWidth;
+            if (!width.equals(tabletWidth)) {
+              mPatchParam = width + tabletWidth;
+            } else {
+              mPatchParam = width;
+            }
           }
         }
         return haveLandscape && havePortrait;
