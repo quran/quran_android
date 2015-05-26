@@ -7,13 +7,14 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
 import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -46,6 +47,7 @@ public class AudioStatusBar extends LinearLayout {
 
   private int mCurrentQari;
   private int mCurrentRepeat = 0;
+  @DrawableRes private int mItemBackground;
   private boolean mIsRtl;
   private boolean mHasErrorText;
   private boolean mHaveCriticalError = false;
@@ -60,43 +62,28 @@ public class AudioStatusBar extends LinearLayout {
   private int[] mRepeatValues = {0, 1, 2, 3, -1};
 
   public interface AudioBarListener {
-
     void onPlayPressed();
-
     void onPausePressed();
-
     void onNextPressed();
-
     void onPreviousPressed();
-
     void onStopPressed();
-
     void onCancelPressed(boolean stopDownload);
-
     void setRepeatCount(int repeatCount);
-
     void onAcceptPressed();
-
     void onAudioSettingsPressed();
   }
 
   public AudioStatusBar(Context context) {
-    super(context);
-    init(context);
+    this(context, null);
   }
 
   public AudioStatusBar(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    init(context);
+    this(context, attrs, 0);
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public AudioStatusBar(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    init(context);
-  }
 
-  private void init(Context context) {
     mContext = context;
     Resources resources = getResources();
     mButtonWidth = resources.getDimensionPixelSize(
@@ -120,6 +107,15 @@ public class AudioStatusBar extends LinearLayout {
         .getDefaultSharedPreferences(context.getApplicationContext());
     mCurrentQari = mSharedPreferences.getInt(
         Constants.PREF_DEFAULT_QARI, 0);
+
+    mItemBackground = R.drawable.abc_item_background_holo_dark;
+    if (attrs != null) {
+      TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.AudioStatusBar);
+      mItemBackground = ta.getResourceId(R.styleable.AudioStatusBar_android_itemBackground,
+          mItemBackground);
+      ta.recycle();
+    }
+
     showStoppedMode();
   }
 
@@ -350,8 +346,7 @@ public class AudioStatusBar extends LinearLayout {
     mRepeatButton = new TextView(mContext);
     mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
         R.drawable.ic_repeat, 0, 0, 0);
-    mRepeatButton.setBackgroundResource(
-        R.drawable.abc_item_background_holo_dark);
+    mRepeatButton.setBackgroundResource(mItemBackground);
     mRepeatButton.setTag(R.drawable.ic_repeat);
     mRepeatButton.setOnClickListener(mOnClickListener);
     updateRepeatButtonText();
@@ -367,7 +362,7 @@ public class AudioStatusBar extends LinearLayout {
     button.setScaleType(ImageView.ScaleType.CENTER);
     button.setOnClickListener(mOnClickListener);
     button.setTag(imageId);
-    button.setBackgroundResource(R.drawable.abc_item_background_holo_dark);
+    button.setBackgroundResource(mItemBackground);
     final LayoutParams params = new LayoutParams(
         withWeight ? 0 : mButtonWidth, LayoutParams.MATCH_PARENT);
     if (withWeight) {

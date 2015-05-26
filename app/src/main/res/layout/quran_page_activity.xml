@@ -39,5 +39,6 @@
                   android:layout_height="@dimen/audiobar_height"
                   android:layout_alignParentBottom="true"
                   android:visibility="gone"
+                  android:itemBackground="?attr/selectableItemBackgroundBorderless"
                   android:background="@color/transparent_actionbar_color" />
 </com.quran.labs.androidquran.widgets.FitSystemRelativeLayout>
