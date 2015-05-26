@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.widgets;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
@@ -15,6 +16,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -49,6 +51,7 @@ public class AudioStatusBar extends LinearLayout {
   private int mCurrentRepeat = 0;
   @DrawableRes private int mItemBackground;
   private boolean mIsRtl;
+  private boolean mIsTablet;
   private boolean mHasErrorText;
   private boolean mHaveCriticalError = false;
   private SharedPreferences mSharedPreferences;
@@ -56,7 +59,7 @@ public class AudioStatusBar extends LinearLayout {
   private SpinnerCompat mSpinner;
   private TextView mProgressText;
   private ProgressBar mProgressBar;
-  private TextView mRepeatButton;
+  private RepeatButton mRepeatButton;
   private AudioBarListener mAudioBarListener;
 
   private int[] mRepeatValues = {0, 1, 2, 3, -1};
@@ -103,6 +106,7 @@ public class AudioStatusBar extends LinearLayout {
     // only flip the layout when the language is rtl and we're on api 17+
     mIsRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
         (QuranSettings.getInstance(mContext).isArabicNames() || QuranUtils.isRtl());
+    mIsTablet = QuranScreenInfo.getOrMakeInstance(mContext).isTablet(mContext);
     mSharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(context.getApplicationContext());
     mCurrentQari = mSharedPreferences.getInt(
@@ -327,7 +331,7 @@ public class AudioStatusBar extends LinearLayout {
   private void showPlayingMode(boolean isPaused) {
     removeAllViews();
 
-    final boolean withWeight = false;
+    final boolean withWeight = !mIsTablet;
 
     int button;
     if (isPaused) {
@@ -343,21 +347,18 @@ public class AudioStatusBar extends LinearLayout {
     addButton(button, withWeight);
     addButton(R.drawable.ic_next, withWeight);
 
-    mRepeatButton = new TextView(mContext);
-    mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
-        R.drawable.ic_repeat, 0, 0, 0);
-    mRepeatButton.setBackgroundResource(mItemBackground);
-    mRepeatButton.setTag(R.drawable.ic_repeat);
-    mRepeatButton.setOnClickListener(mOnClickListener);
+    mRepeatButton = new RepeatButton(mContext);
+    addButton(mRepeatButton, R.drawable.ic_repeat, withWeight);
     updateRepeatButtonText();
-    addView(mRepeatButton, LayoutParams.WRAP_CONTENT,
-        LayoutParams.MATCH_PARENT);
 
-    addButton(R.drawable.ic_action_settings, false);
+    addButton(R.drawable.ic_action_settings, withWeight);
   }
 
   private void addButton(int imageId, boolean withWeight) {
-    ImageView button = new ImageView(mContext);
+    addButton(new ImageView(mContext), imageId, withWeight);
+  }
+
+  private void addButton(@NonNull ImageView button, int imageId, boolean withWeight) {
     button.setImageResource(imageId);
     button.setScaleType(ImageView.ScaleType.CENTER);
     button.setOnClickListener(mOnClickListener);
