@@ -588,11 +588,13 @@ public class PagerActivity extends QuranActionBarActivity implements
                 .setDuration(250)
                 .start();
 
-            final int margins = mAudioBarParams.bottomMargin + mAudioBarParams.topMargin;
+            /* the bottom margin on the audio bar is not part of its height, and so we have to
+             * take it into account when animating the audio bar off the screen. */
+            final int bottomMargin = mAudioBarParams.bottomMargin;
 
-            // and statusbar
+            // and audio bar
             mAudioStatusBar.animate()
-                .translationY(visible ? 0 : mAudioStatusBar.getHeight() + margins)
+                .translationY(visible ? 0 : mAudioStatusBar.getHeight() + bottomMargin)
                 .setDuration(250)
                 .start();
           }
