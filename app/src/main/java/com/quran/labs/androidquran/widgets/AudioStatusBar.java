@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.widgets;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
 import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
@@ -12,11 +14,13 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +46,7 @@ public class AudioStatusBar extends LinearLayout {
 
   private int mCurrentQari;
   private int mCurrentRepeat = 0;
+  private boolean mIsRtl;
   private boolean mHasErrorText;
   private boolean mHaveCriticalError = false;
   private SharedPreferences mSharedPreferences;
@@ -108,6 +113,9 @@ public class AudioStatusBar extends LinearLayout {
         .getDimensionPixelSize(R.dimen.audiobar_spinner_padding);
     setOrientation(LinearLayout.HORIZONTAL);
 
+    // only flip the layout when the language is rtl and we're on api 17+
+    mIsRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
+        (QuranSettings.getInstance(mContext).isArabicNames() || QuranUtils.isRtl());
     mSharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(context.getApplicationContext());
     mCurrentQari = mSharedPreferences.getInt(
@@ -184,9 +192,18 @@ public class AudioStatusBar extends LinearLayout {
     mCurrentMode = STOPPED_MODE;
     removeAllViews();
 
-    addButton(R.drawable.ic_play);
-    addSeparator();
+    if (mIsRtl) {
+      addSpinner();
+      addSeparator();
+      addButton(R.drawable.ic_play, false);
+    } else {
+      addButton(R.drawable.ic_play, false);
+      addSeparator();
+      addSpinner();
+    }
+  }
 
+  private void addSpinner() {
     if (mSpinner == null) {
       mSpinner = new SpinnerCompat(mContext, null,
           R.attr.actionDropDownStyle);
@@ -219,17 +236,36 @@ public class AudioStatusBar extends LinearLayout {
           });
     }
     mSpinner.setSelection(mCurrentQari);
-    addView(mSpinner, LayoutParams.WRAP_CONTENT,
-        LayoutParams.MATCH_PARENT);
+    final LayoutParams params = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+    params.weight = 1;
+    if (mIsRtl) {
+      ViewCompat.setLayoutDirection(mSpinner, ViewCompat.LAYOUT_DIRECTION_RTL);
+      params.leftMargin = mSpinnerPadding;
+    } else {
+      params.rightMargin = mSpinnerPadding;
+    }
+    addView(mSpinner, params);
   }
 
   private void showPromptForDownloadMode() {
     mCurrentMode = PROMPT_DOWNLOAD_MODE;
 
     removeAllViews();
-    addButton(R.drawable.ic_cancel);
-    addSeparator();
 
+    if (mIsRtl) {
+      addButton(R.drawable.ic_cancel, false);
+      addDownloadOver3gPrompt();
+      addSeparator();
+      addButton(R.drawable.ic_accept, false);
+    } else {
+      addButton(R.drawable.ic_accept, false);
+      addSeparator();
+      addDownloadOver3gPrompt();
+      addButton(R.drawable.ic_cancel, false);
+    }
+  }
+
+  private void addDownloadOver3gPrompt() {
     TextView mPromptText = new TextView(mContext);
     mPromptText.setTextColor(Color.WHITE);
     mPromptText.setGravity(Gravity.CENTER_VERTICAL);
@@ -240,16 +276,25 @@ public class AudioStatusBar extends LinearLayout {
         LayoutParams.MATCH_PARENT);
     params.weight = 1;
     addView(mPromptText, params);
-    addButton(R.drawable.ic_accept);
   }
 
   private void showDownloadingMode() {
     mCurrentMode = DOWNLOADING_MODE;
 
     removeAllViews();
-    addButton(R.drawable.ic_cancel);
-    addSeparator();
 
+    if (mIsRtl) {
+      addDownloadProgress();
+      addSeparator();
+      addButton(R.drawable.ic_cancel, false);
+    } else {
+      addButton(R.drawable.ic_cancel, false);
+      addSeparator();
+      addDownloadProgress();
+    }
+  }
+
+  private void addDownloadProgress() {
     LinearLayout ll = new LinearLayout(mContext);
     ll.setOrientation(LinearLayout.VERTICAL);
 
@@ -272,14 +317,21 @@ public class AudioStatusBar extends LinearLayout {
         LayoutParams.MATCH_PARENT);
 
     LinearLayout.LayoutParams lp =
-        new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-            LayoutParams.MATCH_PARENT);
+        new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT);
+    lp.weight = 1;
     lp.setMargins(mSeparatorSpacing, 0, mSeparatorSpacing, 0);
+    if (mIsRtl) {
+      lp.leftMargin = mSpinnerPadding;
+    } else {
+      lp.rightMargin = mSpinnerPadding;
+    }
     addView(ll, lp);
   }
 
   private void showPlayingMode(boolean isPaused) {
     removeAllViews();
+
+    final boolean withWeight = false;
 
     int button;
     if (isPaused) {
@@ -290,10 +342,10 @@ public class AudioStatusBar extends LinearLayout {
       mCurrentMode = PLAYING_MODE;
     }
 
-    addButton(R.drawable.ic_stop);
-    addButton(R.drawable.ic_previous);
-    addButton(button);
-    addButton(R.drawable.ic_next);
+    addButton(R.drawable.ic_stop, withWeight);
+    addButton(R.drawable.ic_previous, withWeight);
+    addButton(button, withWeight);
+    addButton(R.drawable.ic_next, withWeight);
 
     mRepeatButton = new TextView(mContext);
     mRepeatButton.setCompoundDrawablesWithIntrinsicBounds(
@@ -306,19 +358,22 @@ public class AudioStatusBar extends LinearLayout {
     addView(mRepeatButton, LayoutParams.WRAP_CONTENT,
         LayoutParams.MATCH_PARENT);
 
-    addButton(R.drawable.ic_action_settings);
+    addButton(R.drawable.ic_action_settings, false);
   }
 
-  private void addButton(int imageId) {
+  private void addButton(int imageId, boolean withWeight) {
     ImageView button = new ImageView(mContext);
     button.setImageResource(imageId);
     button.setScaleType(ImageView.ScaleType.CENTER);
     button.setOnClickListener(mOnClickListener);
     button.setTag(imageId);
-    button.setBackgroundResource(
-        R.drawable.abc_item_background_holo_dark);
-    addView(button, mButtonWidth,
-        LayoutParams.MATCH_PARENT);
+    button.setBackgroundResource(R.drawable.abc_item_background_holo_dark);
+    final LayoutParams params = new LayoutParams(
+        withWeight ? 0 : mButtonWidth, LayoutParams.MATCH_PARENT);
+    if (withWeight) {
+      params.weight = 1;
+    }
+    addView(button, params);
   }
 
   private void addSeparator() {
@@ -327,7 +382,10 @@ public class AudioStatusBar extends LinearLayout {
     separator.setPadding(0, mSeparatorSpacing, 0, mSeparatorSpacing);
     LinearLayout.LayoutParams paddingParams =
         new LayoutParams(mSeparatorWidth, LayoutParams.MATCH_PARENT);
-    paddingParams.setMargins(0, 0, mSeparatorSpacing, 0);
+
+    final int right = mIsRtl ? 0 : mSeparatorSpacing;
+    final int left = mIsRtl ? mSeparatorSpacing : 0;
+    paddingParams.setMargins(left, 0, right, 0);
     addView(separator, paddingParams);
   }
 
