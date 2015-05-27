@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.text.TextUtilsCompat;
 import android.support.v4.view.ViewCompat;
 
@@ -103,6 +104,25 @@ public class QuranUtils {
         return prefs.getBoolean(Constants.PREF_TABLET_ENABLED,
             resources.getBoolean(R.bool.use_tablet_interface_by_default));
       }
+    }
+    return false;
+  }
+
+  /**
+   * Is this a tablet that has the "dual pages" option set?
+   * @param context the context
+   * @param qsi the QuranScreenInfo instance
+   * @return whether or not this is a tablet with the "dual pages" option set, irrespective of
+   * the current orientation of the device.
+   */
+  public static boolean isDualPagesInLandscape(
+      @NonNull Context context, @NonNull QuranScreenInfo qsi) {
+    if (qsi.isTablet(context)) {
+      final SharedPreferences prefs =
+          PreferenceManager.getDefaultSharedPreferences(context);
+      final Resources resources = context.getResources();
+      return prefs.getBoolean(Constants.PREF_TABLET_ENABLED,
+          resources.getBoolean(R.bool.use_tablet_interface_by_default));
     }
     return false;
   }
