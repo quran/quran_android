@@ -18,46 +18,53 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class QuranUtils {
-   private static boolean mIsArabicFormatter = false;
-   private static NumberFormat mNumberFormatter;
-    
-    public static boolean doesStringContainArabic(String s){
-    	if (s == null) return false;
-    	
-    	int length = s.length();
-    	for (int i=0; i<length; i++){
-    		int current = (int)s.charAt(i);
-    		// Skip space
-    		if (current == 32)
-    			continue;
-        	// non-reshaped arabic
-        	if ((current >= 1570) && (current <= 1610))
-        		return true;
-        	// re-shaped arabic
-        	else if ((current >= 65133) && (current <= 65276))
-        		return true;
-        	// if the value is 42, it deserves another chance :p
-        	// (in reality, 42 is a * which is useful in searching sqlite)
-        	else if (current != 42)
-        		return false;
-    	}
-    	return false;
+
+  private static boolean mIsArabicFormatter = false;
+  private static NumberFormat mNumberFormatter;
+
+  public static boolean doesStringContainArabic(String s) {
+    if (s == null) {
+      return false;
     }
 
-  public static boolean isRtl() {
-      return TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault())
-              == ViewCompat.LAYOUT_DIRECTION_RTL;
+    int length = s.length();
+    for (int i = 0; i < length; i++) {
+      int current = (int) s.charAt(i);
+      // Skip space
+      if (current == 32) {
+        continue;
+      }
+      // non-reshaped arabic
+      if ((current >= 1570) && (current <= 1610)) {
+        return true;
+      }
+      // re-shaped arabic
+      else if ((current >= 65133) && (current <= 65276)) {
+        return true;
+      }
+      // if the value is 42, it deserves another chance :p
+      // (in reality, 42 is a * which is useful in searching sqlite)
+      else if (current != 42) {
+        return false;
+      }
+    }
+    return false;
   }
 
-   public static boolean isOnWifiNetwork(Context context) {
-     ConnectivityManager cm =
-         (ConnectivityManager) context.getSystemService(
-             Context.CONNECTIVITY_SERVICE);
+  public static boolean isRtl() {
+    return TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault())
+        == ViewCompat.LAYOUT_DIRECTION_RTL;
+  }
 
-     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-     return activeNetwork != null &&
-         activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
-   }
+  public static boolean isOnWifiNetwork(Context context) {
+    ConnectivityManager cm =
+        (ConnectivityManager) context.getSystemService(
+            Context.CONNECTIVITY_SERVICE);
+
+    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+    return activeNetwork != null &&
+        activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+  }
 
   public static boolean haveInternet(Context context) {
     ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
@@ -67,39 +74,38 @@ public class QuranUtils {
             .isConnectedOrConnecting();
   }
 
-   public static String getLocalizedNumber(Context context, int number){
-      if (QuranSettings.getInstance(context).isArabicNames()){
-         if (mNumberFormatter == null || !mIsArabicFormatter){
-            mIsArabicFormatter = true;
-            mNumberFormatter =
-                    DecimalFormat.getIntegerInstance(new Locale("ar"));
-         }
+  public static String getLocalizedNumber(Context context, int number) {
+    if (QuranSettings.getInstance(context).isArabicNames()) {
+      if (mNumberFormatter == null || !mIsArabicFormatter) {
+        mIsArabicFormatter = true;
+        mNumberFormatter =
+            DecimalFormat.getIntegerInstance(new Locale("ar"));
       }
-      else {
-         if (mNumberFormatter == null || mIsArabicFormatter){
-            mIsArabicFormatter = false;
-            mNumberFormatter =
-                    DecimalFormat.getIntegerInstance();
-         }
+    } else {
+      if (mNumberFormatter == null || mIsArabicFormatter) {
+        mIsArabicFormatter = false;
+        mNumberFormatter =
+            DecimalFormat.getIntegerInstance();
       }
+    }
 
-      return mNumberFormatter.format(number);
-   }
+    return mNumberFormatter.format(number);
+  }
 
-   public static boolean isDualPages(Context context, QuranScreenInfo qsi){
-      if (context != null && qsi != null){
-        final Resources resources = context.getResources();
-        if (qsi.isTablet(context) &&
-            resources.getConfiguration().orientation ==
-                Configuration.ORIENTATION_LANDSCAPE){
-            final SharedPreferences prefs =
-                    PreferenceManager.getDefaultSharedPreferences(context);
-            return prefs.getBoolean(Constants.PREF_TABLET_ENABLED,
-                 resources.getBoolean(R.bool.use_tablet_interface_by_default));
-        }
+  public static boolean isDualPages(Context context, QuranScreenInfo qsi) {
+    if (context != null && qsi != null) {
+      final Resources resources = context.getResources();
+      if (qsi.isTablet(context) &&
+          resources.getConfiguration().orientation ==
+              Configuration.ORIENTATION_LANDSCAPE) {
+        final SharedPreferences prefs =
+            PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(Constants.PREF_TABLET_ENABLED,
+            resources.getBoolean(R.bool.use_tablet_interface_by_default));
       }
-      return false;
-   }
+    }
+    return false;
+  }
 
   /*
   public static String getDebugInfo(Context context){
