@@ -184,7 +184,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private final PagerHandler mHandler = new PagerHandler(this);
 
   private static class PagerHandler extends Handler {
-    private boolean mDidRemoveBackground;
     private final WeakReference<PagerActivity> mActivity;
 
     public PagerHandler(PagerActivity activity) {
@@ -198,10 +197,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         if (msg.what == MSG_HIDE_ACTIONBAR) {
           activity.toggleActionBarVisibility(false);
         } else if (msg.what == MSG_REMOVE_WINDOW_BACKGROUND) {
-          if (!mDidRemoveBackground) {
-            activity.getWindow().setBackgroundDrawable(null);
-          }
-          mDidRemoveBackground = true;
+          activity.getWindow().setBackgroundDrawable(null);
         } else {
           super.handleMessage(msg);
         }
@@ -219,14 +215,14 @@ public class PagerActivity extends QuranActionBarActivity implements
     boolean refresh = false;
     QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
     mDualPages = QuranUtils.isDualPages(this, qsi);
-    if (!QuranUtils.isDualPagesInLandscape(this, qsi)) {
-      // on phone, or when we aren't changing the adapter page count / fragment types, remove the
-      // window background right away to avoid overdraw.
-      getWindow().setBackgroundDrawable(null);
-    } else {
+    if (QuranUtils.isDualPagesInLandscape(this, qsi)) {
       // on tablet, delay removing the window background so that the user sees a gray background
       // during the transition time (while the ViewPager settles on the right page, etc).
       mHandler.sendEmptyMessageDelayed(MSG_REMOVE_WINDOW_BACKGROUND, 750);
+    } else {
+      // on phone, or when we aren't changing the adapter page count / fragment types, remove the
+      // window background right away to avoid overdraw.
+      getWindow().setBackgroundDrawable(null);
     }
 
     // initialize ayah info database
