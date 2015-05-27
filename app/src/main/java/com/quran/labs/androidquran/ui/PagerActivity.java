@@ -167,6 +167,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private ViewGroup.MarginLayoutParams mAudioBarParams;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
+  public static final int MSG_REMOVE_WINDOW_BACKGROUND = 2;
 
   private Set<AsyncTask> mCurrentTasks = new HashSet<AsyncTask>();
 
@@ -183,6 +184,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private final PagerHandler mHandler = new PagerHandler(this);
 
   private static class PagerHandler extends Handler {
+    private boolean mDidRemoveBackground;
     private final WeakReference<PagerActivity> mActivity;
 
     public PagerHandler(PagerActivity activity) {
@@ -195,6 +197,11 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (activity != null) {
         if (msg.what == MSG_HIDE_ACTIONBAR) {
           activity.toggleActionBarVisibility(false);
+        } else if (msg.what == MSG_REMOVE_WINDOW_BACKGROUND) {
+          if (!mDidRemoveBackground) {
+            activity.getWindow().setBackgroundDrawable(null);
+          }
+          mDidRemoveBackground = true;
         } else {
           super.handleMessage(msg);
         }
@@ -210,10 +217,17 @@ public class PagerActivity extends QuranActionBarActivity implements
     mBookmarksAdapter = new BookmarksDBAdapter(this);
 
     boolean refresh = false;
-    // make sure to remake QuranScreenInfo if it doesn't exist, as it
-    // is needed to get images, to get the highlighting db, etc.
     QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
     mDualPages = QuranUtils.isDualPages(this, qsi);
+    if (!QuranUtils.isDualPagesInLandscape(this, qsi)) {
+      // on phone, or when we aren't changing the adapter page count / fragment types, remove the
+      // window background right away to avoid overdraw.
+      getWindow().setBackgroundDrawable(null);
+    } else {
+      // on tablet, delay removing the window background so that the user sees a gray background
+      // during the transition time (while the ViewPager settles on the right page, etc).
+      mHandler.sendEmptyMessageDelayed(MSG_REMOVE_WINDOW_BACKGROUND, 750);
+    }
 
     // initialize ayah info database
     String filename = QuranFileUtils.getAyaPositionFileName();
@@ -850,6 +864,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     }
 
+    mHandler.removeCallbacksAndMessages(null);
     super.onDestroy();
   }
 
