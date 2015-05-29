@@ -16,7 +16,7 @@ public class QuranPreferenceActivity extends QuranActionBarActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    ((QuranApplication) getApplication()).refreshLocale(false);
+    ((QuranApplication) getApplication()).refreshLocale(this, false);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.preferences);
 
@@ -49,7 +49,7 @@ public class QuranPreferenceActivity extends QuranActionBarActivity {
   }
 
   public void restartActivity() {
-    ((QuranApplication) getApplication()).refreshLocale(true);
+    ((QuranApplication) getApplication()).refreshLocale(this, true);
     Intent intent = getIntent();
     finish();
     startActivity(intent);

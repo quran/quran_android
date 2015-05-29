@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -54,8 +53,6 @@ public class SuraListFragment extends Fragment {
   @Override
   public void onResume() {
     final Activity activity = getActivity();
-    ((QuranApplication) activity.getApplication()).refreshLocale(false);
-
     QuranSettings settings = QuranSettings.getInstance(activity);
     int lastPage = settings.getLastPage();
     if (lastPage != Constants.NO_PAGE_SAVED &&
