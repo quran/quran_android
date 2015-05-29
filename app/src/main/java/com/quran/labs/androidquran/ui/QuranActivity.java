@@ -125,7 +125,7 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    ((QuranApplication) getApplication()).refreshLocale(false);
+    ((QuranApplication) getApplication()).refreshLocale(this, false);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.quran_index);
     mHandler = new QuranHandler(this);
