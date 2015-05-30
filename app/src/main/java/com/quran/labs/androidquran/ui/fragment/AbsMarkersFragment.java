@@ -19,7 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -127,7 +127,7 @@ public abstract class AbsMarkersFragment extends Fragment {
           if (mMode != null) {
             mMode.invalidate();
           } else {
-            mMode = ((ActionBarActivity) getActivity())
+            mMode = ((AppCompatActivity) getActivity())
                 .startSupportActionMode(new ModeCallback());
           }
           return true;
