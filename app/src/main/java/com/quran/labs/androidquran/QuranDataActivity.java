@@ -33,6 +33,8 @@ public class QuranDataActivity extends ActionBarActivity implements
    public static final String TAG = "QuranDataActivity";
    public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
 
+   private static final int LATEST_IMAGE_VERSION = 4;
+
    private boolean mIsPaused = false;
    private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
    private AlertDialog mErrorDialog = null;
@@ -52,42 +54,28 @@ public class QuranDataActivity extends ActionBarActivity implements
         QuranUtils.debugLsDir(QuranUtils.getQuranBaseDirectory());
        */
 
-      initializeQuranScreen();
+      QuranScreenInfo.getOrMakeInstance(this);
       mSharedPreferences = PreferenceManager
             .getDefaultSharedPreferences(getApplicationContext());
 
-      // one time upgrade to v2.4.3
-      if (!mSharedPreferences.contains(Constants.PREF_UPGRADE_TO_243)){
-         String baseDir = QuranFileUtils.getQuranBaseDirectory(this);
-         if (baseDir != null){
-            baseDir = baseDir + File.separator;
-            try {
-               File f = new File(baseDir);
-               if (f.exists() && f.isDirectory()){
-                  String[] files = f.list();
-                  if (files != null){
-                     for (String file : files){
-                        if (file.endsWith(".part")){
-                           try {
-                              new File(baseDir + file).delete();
-                           }
-                           catch (Exception e){}
-                        }
-                     }
-                  }
-               }
-            }
-            catch (Exception e){
-            }
-         }
+     /**
+      * this is used for doing upgrades between versions (i.e. it replaces
+      * the use of upgrade to variables as present previously).
+      */
+     final int version = mSharedPreferences.getInt(Constants.PREF_VERSION, 0);
+     if (version == 0) {
+       /**
+        * when updating from "no version" (i.e. version 0), remove any pending page
+        * downloads because the download url has now changed in order to ensure that
+        * people get the latest set of pages.
+        */
+       QuranFileUtils.clearPendingPageDownloads(this);
+     }
 
-         // update night mode preference and mark that we upgraded to 2.4.2ts
-         mSharedPreferences.edit()
-                 .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
-                         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS)
-                 .remove(Constants.PREF_UPGRADE_TO_242)
-                 .putBoolean(Constants.PREF_UPGRADE_TO_243, true).commit();
-      }
+     if (version != BuildConfig.VERSION_CODE) {
+       // make sure that the version code now says that we're up to date.
+       mSharedPreferences.edit().putInt(Constants.PREF_VERSION, BuildConfig.VERSION_CODE).apply();
+     }
    }
 
    @Override
@@ -239,8 +227,8 @@ public class QuranDataActivity extends ActionBarActivity implements
             mNeedLandscapeImages = !haveLandscape;
             if (haveLandscape && havePortrait) {
                // if we have the images, see if we need a patch set or not
-               if (!QuranFileUtils.isVersion(mAppContext, width, 3) ||
-                  !QuranFileUtils.isVersion(mAppContext, tabletWidth, 3)) {
+               if (!QuranFileUtils.isVersion(mAppContext, width, LATEST_IMAGE_VERSION) ||
+                  !QuranFileUtils.isVersion(mAppContext, tabletWidth, LATEST_IMAGE_VERSION)) {
                  mPatchParam = width + tabletWidth;
               }
             }
@@ -251,7 +239,7 @@ public class QuranDataActivity extends ActionBarActivity implements
                         QuranScreenInfo.getInstance().getWidthParam());
             mNeedPortraitImages = !haveAll;
             mNeedLandscapeImages = false;
-            if (haveAll && !QuranFileUtils.isVersion(mAppContext, width, 3)) {
+            if (haveAll && !QuranFileUtils.isVersion(mAppContext, width, LATEST_IMAGE_VERSION)) {
               mPatchParam = width;
             }
             return haveAll;
@@ -284,7 +272,7 @@ public class QuranDataActivity extends ActionBarActivity implements
          }
          else {
             if (!TextUtils.isEmpty(mPatchParam)) {
-              mPatchUrl = QuranFileUtils.getPatchFileUrl(mPatchParam, 3);
+              mPatchUrl = QuranFileUtils.getPatchFileUrl(mPatchParam, LATEST_IMAGE_VERSION);
               promptForDownload();
               return;
             }
@@ -416,10 +404,6 @@ public class QuranDataActivity extends ActionBarActivity implements
       mPromptForDownloadDialog = dialog.create();
       mPromptForDownloadDialog.setTitle(R.string.downloadPrompt_title);
       mPromptForDownloadDialog.show();
-   }
-
-   protected void initializeQuranScreen() {
-      QuranScreenInfo.getOrMakeInstance(this);
    }
 
    protected void runListView(boolean showTranslations){

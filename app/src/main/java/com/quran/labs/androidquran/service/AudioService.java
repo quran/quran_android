@@ -623,6 +623,10 @@ public class AudioService extends Service implements OnCompletionListener,
            pauseNotification();
            notifyAudioStatus(AudioUpdateIntent.PAUSED);
          }
+      } else if (mState == State.Stopped) {
+        // if we get a pause while we're already stopped, it means we likely woke up because
+        // of AudioIntentReceiver, so just stop in this case.
+        stopSelf();
       }
    }
 
@@ -942,7 +946,7 @@ public class AudioService extends Service implements OnCompletionListener,
          // starts preparing the media player in the background. When it's
          // done, it will call our OnPreparedListener (that is, the
          // onPrepared() method on this class, since we set the listener
-         // to 'this').
+        // to 'this').
          //
          // Until the media player is prepared, we *cannot* call start() on it!
          Log.d(TAG, "preparingAsync()...");

@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.Closeable;
@@ -31,6 +32,10 @@ public class QuranFileUtils {
   private static final String TAG = "QuranFileUtils";
 
   public static final String IMG_HOST = "http://android.quran.com/data/";
+  private static final String IMG_ZIP_BASE_URL = IMG_HOST + "zips/";
+  private static final String PATCH_ZIP_BASE_URL = IMG_HOST + "patches/v";
+  private static final String AYAHINFO_BASE_URL = IMG_HOST + "databases/ayahinfo/";
+
   private static final String QURAN_BASE = "quran_android/";
   private static final String DATABASE_DIRECTORY = "databases";
 
@@ -297,6 +302,26 @@ public class QuranFileUtils {
     return null;
   }
 
+  public static void clearPendingPageDownloads(@NonNull Context context) {
+    String baseDir = QuranFileUtils.getQuranBaseDirectory(context);
+    if (baseDir != null) {
+      baseDir = baseDir + File.separator;
+      try {
+        final File f = new File(baseDir);
+        if (f.exists() && f.isDirectory()) {
+          final String[] files = f.list();
+          for (String file : files) {
+            if (file.endsWith(".part")) {
+              new File(baseDir + file).delete();
+            }
+          }
+        }
+      } catch (Exception e) {
+        // no op
+      }
+    }
+  }
+
   /**
    * Returns the app used space in megabytes
    *
@@ -349,13 +374,13 @@ public class QuranFileUtils {
   }
 
   public static String getZipFileUrl(String widthParam) {
-    String url = IMG_HOST;
+    String url = IMG_ZIP_BASE_URL;
     url += "images" + widthParam + ".zip";
     return url;
   }
 
   public static String getPatchFileUrl(String widthParam, int toVersion) {
-    return IMG_HOST + "patches/patch" +
+    return PATCH_ZIP_BASE_URL + toVersion + "/patch" +
         widthParam + "_v" + toVersion + ".zip";
   }
 
@@ -378,9 +403,7 @@ public class QuranFileUtils {
   }
 
   public static String getAyaPositionFileUrl(String widthParam) {
-    String url = IMG_HOST + "width" + widthParam;
-    url += "/ayahinfo" + widthParam + ".zip";
-    return url;
+    return AYAHINFO_BASE_URL + "ayahinfo" + widthParam + ".zip";
   }
 
   public static String getGaplessDatabaseRootUrl() {

@@ -57,7 +57,6 @@ public class Constants {
    public static final String PREF_SORT_TAGS = "sortTags";
    public static final String PREF_DISPLAY_CATEGORY = "displayCategoryKey";
    public static final String PREF_TABLET_ENABLED = "useTabletMode";
-   public static final String PREF_UPGRADE_TO_242 = "upgradeTo242";
-   public static final String PREF_UPGRADE_TO_243 = "upgradeTo243";
+   public static final String PREF_VERSION = "version";
    public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
 }
