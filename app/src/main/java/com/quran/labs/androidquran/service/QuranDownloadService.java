@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.service;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
@@ -550,14 +551,13 @@ public class QuranDownloadService extends Service implements
       call = mOkHttpClient.newCall(request);
       final Response response = call.execute();
       if (response.isSuccessful()) {
-        final BufferedSink sink =
-            Okio.buffer(Okio.appendingSink(partialFile));
+        Crashlytics.log("successful response: " + response.code() + " - " + downloadedAmount);
+        final BufferedSink sink = Okio.buffer(Okio.appendingSink(partialFile));
         final ResponseBody body = response.body();
         source = body.source();
         final long size = body.contentLength() + downloadedAmount;
 
-        if (!isSpaceAvailable(size +
-            (isZip ? downloadedAmount + size : 0))) {
+        if (!isSpaceAvailable(size + (isZip ? downloadedAmount + size : 0))) {
           return QuranDownloadNotifier.ERROR_DISK_SPACE;
         } else if (actualFile.exists()) {
           if (actualFile.length() == (size + downloadedAmount)) {
@@ -571,7 +571,22 @@ public class QuranDownloadService extends Service implements
         long read;
         int loops = 0;
         long totalRead = downloadedAmount;
-        while (!mIsDownloadCanceled &&
+
+        /* Temporarily log information to try to understand the root cause for the okio exception.
+         * The exception would happen as a result of an empty buffer, which one would not expect
+         * here since we would have just gotten a (successful) result back from the web server.
+         *
+         * TODO - insha'Allah remove in the next version.
+         */
+        if (!mIsDownloadCanceled && source.exhausted()) {
+          Crashlytics.log("rc: " + response.code() +
+              " -- downloaded: " + downloadedAmount + " -- fn: " + filename);
+          Crashlytics.log("hdrs=" + response.headers().toString());
+          final Exception exception = new IllegalStateException("http source exhausted");
+          Crashlytics.logException(exception);
+        }
+
+        while (!mIsDownloadCanceled && !source.exhausted() &&
             ((read = source.read(sink.buffer(), BUFFER_SIZE)) > 0)) {
           totalRead += read;
           if (loops++ % 5 == 0) {

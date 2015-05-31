@@ -6,8 +6,10 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DefaultDatabaseErrorHandler;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 
@@ -35,7 +37,6 @@ public class DatabaseHandler {
   private int mSchemaVersion = 1;
   private String mMatchString;
   private SQLiteDatabase mDatabase = null;
-  private String mDatabasePath = null;
 
   public static synchronized DatabaseHandler getDatabaseHandler(
       Context context, String databaseName) {
@@ -55,7 +56,9 @@ public class DatabaseHandler {
     Crashlytics.log("opening database file: " + path);
     try {
       mDatabase = SQLiteDatabase.openDatabase(path, null,
-        SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+        SQLiteDatabase.NO_LOCALIZED_COLLATORS, new DefaultDatabaseErrorHandler());
+    } catch (SQLiteDatabaseCorruptException sce) {
+      Crashlytics.log("corrupt database: " + databaseName);
     } catch (SQLException se){
       Crashlytics.log("database file " + path +
           (new File(path).exists()? " exists" : " doesn't exist"));
@@ -63,24 +66,13 @@ public class DatabaseHandler {
     }
 
     mSchemaVersion = getSchemaVersion();
-    mDatabasePath = path;
     mMatchString = "<font color=\"" +
         context.getResources().getColor(R.color.translation_highlight) +
         "\">";
   }
 
   public boolean validDatabase() {
-    return (mDatabase != null) && mDatabase.isOpen();
-  }
-
-  public boolean reopenDatabase() {
-    try {
-      mDatabase = SQLiteDatabase.openDatabase(mDatabasePath,
-          null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
+    return mDatabase != null && mDatabase.isOpen();
   }
 
   public Cursor getVerses(int sura, int minAyah, int maxAyah) {
@@ -122,7 +114,7 @@ public class DatabaseHandler {
 
   public Cursor getVerses(int minSura, int minAyah, int maxSura,
                           int maxAyah, String table) {
-    if (!validDatabase() && !reopenDatabase()) {
+    if (!validDatabase()) {
         return null;
     }
 
@@ -175,7 +167,7 @@ public class DatabaseHandler {
   }
 
   public Cursor search(String q, String table, boolean withSnippets) {
-    if (!validDatabase() && !reopenDatabase()) {
+    if (!validDatabase()) {
         return null;
     }
 

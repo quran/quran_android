@@ -283,6 +283,7 @@ public class AudioService extends Service implements OnCompletionListener,
       mPlayer.setOnErrorListener(this);
       mPlayer.setOnSeekCompleteListener(this);
     } else {
+      Crashlytics.log("resetting mPlayer...");
       mPlayer.reset();
     }
   }
@@ -373,6 +374,7 @@ public class AudioService extends Service implements OnCompletionListener,
         if (mState == State.Stopped ||
             !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {
           mAudioRequest = (AudioRequest) playInfo;
+          Crashlytics.log("audio request has changed...");
         }
       }
 
@@ -381,6 +383,7 @@ public class AudioService extends Service implements OnCompletionListener,
           mPlayer.stop();
         }
         mState = State.Stopped;
+        Crashlytics.log("stop if playing...");
       }
 
       processTogglePlaybackRequest();
@@ -1211,9 +1214,11 @@ public class AudioService extends Service implements OnCompletionListener,
   @Override
   public void onDestroy() {
     // Service is being killed, so make sure we release our resources
+    mHandler.removeCallbacksAndMessages(null);
     mState = State.Stopped;
     relaxResources(true, true);
     giveUpAudioFocus();
+    super.onDestroy();
   }
 
   @Override

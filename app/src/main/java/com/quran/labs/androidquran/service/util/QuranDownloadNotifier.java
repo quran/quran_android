@@ -8,7 +8,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -278,9 +277,6 @@ public class QuranDownloadNotifier {
     }
     mLastProgress = progress;
     mLastMaximum = maximum;
-
-    Crashlytics.log(Build.MANUFACTURER + " - max: " + maximum + ", progress: " + progress +
-      ", isIndeterminate: " + isIndeterminate);
 
     if (wantProgress) {
       builder.setProgress(maximum, progress, isIndeterminate);

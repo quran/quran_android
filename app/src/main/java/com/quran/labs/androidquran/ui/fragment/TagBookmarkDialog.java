@@ -308,7 +308,7 @@ public class TagBookmarkDialog extends DialogFragment {
 
          String newTagString = activity.getString(R.string.new_tag);
 
-         ArrayList<Tag> newTags = new ArrayList<Tag>();
+         ArrayList<Tag> newTags = new ArrayList<>();
          newTags.addAll(adapter.getTags());
          newTags.add(new Tag(-1, newTagString));
          if (mBookmarkIds == null) {
@@ -418,8 +418,8 @@ public class TagBookmarkDialog extends DialogFragment {
    }
 
    public interface OnBookmarkTagsUpdateListener {
-      public void onBookmarkTagsUpdated();
-      public void onAddTagSelected();
+      void onBookmarkTagsUpdated();
+      void onAddTagSelected();
    }
    
 }
