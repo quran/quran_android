@@ -45,9 +45,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'io.reactivex:rxjava:1.0.9'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
