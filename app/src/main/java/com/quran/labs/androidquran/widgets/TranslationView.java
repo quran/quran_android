@@ -303,7 +303,7 @@ public class TranslationView extends ScrollView {
       params.setMargins(mLeftRightMargin, mTopBottomMargin,
               mLeftRightMargin, mTopBottomMargin);
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
          // due to a bug in appcompat-v7, long press crashes in Honeycomb.
          // using this as a workaround in the meanwhile.
          setTextSelectableHoneycomb(ayahView);
