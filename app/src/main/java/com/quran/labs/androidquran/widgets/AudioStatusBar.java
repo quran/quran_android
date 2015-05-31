@@ -382,10 +382,10 @@ public class AudioStatusBar extends LinearLayout {
                   mAudioBarListener.onPausePressed();
                   break;
                case R.drawable.ic_next:
-                  mAudioBarListener.onPreviousPressed();
+                  mAudioBarListener.onNextPressed();
                   break;
                case R.drawable.ic_previous:
-                  mAudioBarListener.onNextPressed();
+                  mAudioBarListener.onPreviousPressed();
                   break;
                case R.drawable.ic_repeat:
                   incrementRepeat();
