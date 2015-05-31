@@ -199,9 +199,8 @@ public class SearchActivity extends QuranActionBarActivity
           public void onItemClick(AdapterView<?> parent, View view,
               int position, long id) {
             ListView p = (ListView) parent;
-            SearchElement res = (SearchElement) p.getAdapter()
-                .getItem(position);
-            jumpToResult(res.sura, res.ayah);
+            final Cursor currentCursor = (Cursor) p.getAdapter().getItem(position);
+            jumpToResult(currentCursor.getInt(1), currentCursor.getInt(2));
           }
         });
       } else {
@@ -300,18 +299,6 @@ public class SearchActivity extends QuranActionBarActivity
     Bundle args = new Bundle();
     args.putString(EXTRA_QUERY, query);
     getSupportLoaderManager().restartLoader(0, args, this);
-  }
-
-  private class SearchElement {
-    public int sura;
-    public int ayah;
-    public String text;
-
-    public SearchElement(int sura, int ayah, String text) {
-      this.sura = sura;
-      this.ayah = ayah;
-      this.text = text;
-    }
   }
 
   private static class ResultAdapter extends CursorAdapter {
