@@ -3,14 +3,15 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.R;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 public class AddTagDialog extends DialogFragment {
@@ -84,7 +85,13 @@ public class AddTagDialog extends DialogFragment {
       return builder.create();
    }
 
-   public interface OnTagChangedListener {
+  @Override
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+  }
+
+  public interface OnTagChangedListener {
       void onTagAdded(String name);
       void onTagUpdated(long id, String name);
    }
