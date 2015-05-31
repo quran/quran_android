@@ -84,6 +84,7 @@ public class QuranActivity extends QuranActionBarActivity
   private BookmarksDBAdapter mBookmarksDBAdapter = null;
   private boolean mShowedTranslationUpgradeDialog = false;
   private boolean mIsRtl;
+  private boolean mIsPaused;
 
   private static class QuranHandler extends Handler {
 
@@ -188,6 +189,13 @@ public class QuranActivity extends QuranActionBarActivity
       startService(AudioService.getAudioIntent(
           this, AudioService.ACTION_STOP));
     }
+    mIsPaused = false;
+  }
+
+  @Override
+  protected void onPause() {
+    mIsPaused = true;
+    super.onPause();
   }
 
   @Override
@@ -329,22 +337,28 @@ public class QuranActivity extends QuranActionBarActivity
     startActivity(i);
   }
 
-  public void gotoPageDialog() {
-    FragmentManager fm = getSupportFragmentManager();
-    JumpFragment jumpDialog = new JumpFragment();
-    jumpDialog.show(fm, JumpFragment.TAG);
+  private void gotoPageDialog() {
+    if (!mIsPaused) {
+      FragmentManager fm = getSupportFragmentManager();
+      JumpFragment jumpDialog = new JumpFragment();
+      jumpDialog.show(fm, JumpFragment.TAG);
+    }
   }
 
   public void addTag() {
-    FragmentManager fm = getSupportFragmentManager();
-    AddTagDialog addTagDialog = new AddTagDialog();
-    addTagDialog.show(fm, AddTagDialog.TAG);
+    if (!mIsPaused) {
+      FragmentManager fm = getSupportFragmentManager();
+      AddTagDialog addTagDialog = new AddTagDialog();
+      addTagDialog.show(fm, AddTagDialog.TAG);
+    }
   }
 
   public void editTag(long id, String name) {
-    FragmentManager fm = getSupportFragmentManager();
-    AddTagDialog addTagDialog = AddTagDialog.newInstance(id, name);
-    addTagDialog.show(fm, AddTagDialog.TAG);
+    if (!mIsPaused) {
+      FragmentManager fm = getSupportFragmentManager();
+      AddTagDialog addTagDialog = AddTagDialog.newInstance(id, name);
+      addTagDialog.show(fm, AddTagDialog.TAG);
+    }
   }
 
   public void tagBookmarks(long[] ids) {
@@ -352,15 +366,20 @@ public class QuranActivity extends QuranActionBarActivity
       tagBookmark(ids[0]);
       return;
     }
-    FragmentManager fm = getSupportFragmentManager();
-    TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(ids);
-    tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
+
+    if (!mIsPaused) {
+      FragmentManager fm = getSupportFragmentManager();
+      TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(ids);
+      tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
+    }
   }
 
-  public void tagBookmark(long id) {
-    FragmentManager fm = getSupportFragmentManager();
-    TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(id);
-    tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
+  private void tagBookmark(long id) {
+    if (!mIsPaused) {
+      FragmentManager fm = getSupportFragmentManager();
+      TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(id);
+      tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
+    }
   }
 
   public void onBookmarkDeleted() {

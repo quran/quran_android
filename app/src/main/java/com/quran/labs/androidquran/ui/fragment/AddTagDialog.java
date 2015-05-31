@@ -65,10 +65,9 @@ public class AddTagDialog extends DialogFragment {
                  @Override
                  public void onClick(DialogInterface dialog, int which) {
                     Activity activity = getActivity();
-                    if (activity != null &&
-                        activity instanceof OnTagChangedListener){
+                    if (activity instanceof OnTagChangedListener){
                        OnTagChangedListener listener =
-                               (OnTagChangedListener)activity;
+                               (OnTagChangedListener) activity;
                        String name = nameText.getText().toString();
                        if (id > 0){
                           listener.onTagUpdated(id, name);

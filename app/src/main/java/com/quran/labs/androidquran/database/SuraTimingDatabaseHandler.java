@@ -3,8 +3,10 @@ package com.quran.labs.androidquran.database;
 import com.crashlytics.android.Crashlytics;
 
 import android.database.Cursor;
+import android.database.DefaultDatabaseErrorHandler;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
 
 import java.io.File;
 import java.util.HashMap;
@@ -35,7 +37,10 @@ public class SuraTimingDatabaseHandler {
     Crashlytics.log("opening gapless data file, " + path);
     try {
       mDatabase = SQLiteDatabase.openDatabase(path, null,
-          SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+          SQLiteDatabase.NO_LOCALIZED_COLLATORS, new DefaultDatabaseErrorHandler());
+    } catch (SQLiteDatabaseCorruptException sce) {
+      Crashlytics.log("database corrupted: " + path);
+      mDatabase = null;
     } catch (SQLException se) {
       Crashlytics.log("database at " + path +
           (new File(path).exists() ? " exists" : " doesn't exist"));
@@ -44,7 +49,7 @@ public class SuraTimingDatabaseHandler {
     }
   }
 
-  public boolean validDatabase() {
+  private boolean validDatabase() {
     return mDatabase != null && mDatabase.isOpen();
   }
 

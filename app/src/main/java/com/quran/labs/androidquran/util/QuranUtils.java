@@ -70,9 +70,8 @@ public class QuranUtils {
   public static boolean haveInternet(Context context) {
     ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
         Context.CONNECTIVITY_SERVICE);
-    return cm != null && cm.getActiveNetworkInfo() != null &&
-        cm.getActiveNetworkInfo()
-            .isConnectedOrConnecting();
+    final NetworkInfo networkInfo = cm == null ? null : cm.getActiveNetworkInfo();
+    return networkInfo != null && networkInfo.isConnectedOrConnecting();
   }
 
   public static String getLocalizedNumber(Context context, int number) {
