@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.util;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
 import android.util.Log;
@@ -19,9 +20,9 @@ public class ZipUtils {
   public static <T> boolean unzipFile(String zipFile,
       String destDirectory, T item, ZipListener<T> listener){
     try {
-      Log.d(TAG, "Unzipping file: " + zipFile + "to: " + destDirectory);
-
       File file = new File(zipFile);
+      Crashlytics.log("unzipping " + zipFile + ", size: " + file.length());
+
       ZipFile zip = new ZipFile(file, ZipFile.OPEN_READ);
       int numberOfFiles = zip.size();
       Enumeration<? extends ZipEntry> entries = zip.entries();
