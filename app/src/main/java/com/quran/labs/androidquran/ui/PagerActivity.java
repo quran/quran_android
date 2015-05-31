@@ -1122,7 +1122,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (mIsInAyahMode) {
       if (TextUtils.isEmpty(name))
         return;
-      TagBookmarkDialog f = (TagBookmarkDialog) mSlidingPagerAdapter.getFragmentIfExists(TAG_PAGE);
+      TagBookmarkDialog f = (TagBookmarkDialog) mSlidingPagerAdapter.getFragmentIfExists(
+          mSlidingPagerAdapter.getPagePosition(TAG_PAGE));
       if (f != null) {
         f.handleTagAdded(name);
       }
