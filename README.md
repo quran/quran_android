@@ -86,8 +86,12 @@ Open Source Projects Used
 
 Changelog
 ---------
-**development**
+**version 2.6.5 (released 5/31/2015)**
 - improvements for rtl layouts in rtl languages on apis 17+
+- update image version to fix #529 and fix pages 1 and 2
+- many ui improvements (audio bar, tablet, ripples on l+, etc)
+- fix arabic setting on android M
+- material style dialogs
 - lots of bugfixes and improvements
 
 **version 2.6.4p1 (released 4/13/2015)**
