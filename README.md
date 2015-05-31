@@ -86,6 +86,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.5p1 (released 5/31/2015)**
+- fix a crash when tapping a search result
+
 **version 2.6.5 (released 5/31/2015)**
 - improvements for rtl layouts in rtl languages on apis 17+
 - update image version to fix #529 and fix pages 1 and 2
