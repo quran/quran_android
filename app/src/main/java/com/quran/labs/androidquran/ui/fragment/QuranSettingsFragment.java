@@ -1,6 +1,14 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import android.app.AlertDialog;
+import com.quran.labs.androidquran.QuranPreferenceActivity;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.ui.preference.DataListPreference;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.StorageUtils;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,18 +20,10 @@ import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.quran.labs.androidquran.QuranPreferenceActivity;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.ui.preference.DataListPreference;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.StorageUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

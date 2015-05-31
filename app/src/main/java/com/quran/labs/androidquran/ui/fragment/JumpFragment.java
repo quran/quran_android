@@ -10,13 +10,13 @@ import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
 import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -147,7 +148,7 @@ public class JumpFragment extends DialogFragment {
     });
 
     builder.setView(layout);
-    builder.setNeutralButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         try {
@@ -175,6 +176,12 @@ public class JumpFragment extends DialogFragment {
     });
 
     return builder.create();
+  }
+
+  @Override
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
   }
 
   private void goToPage(String text) {

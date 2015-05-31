@@ -51,7 +51,6 @@ import com.quran.labs.androidquran.widgets.IconPageIndicator;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -76,6 +75,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
