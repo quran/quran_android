@@ -581,6 +581,9 @@ public class QuranDownloadService extends Service implements
         if (!mIsDownloadCanceled && source.exhausted()) {
           Crashlytics.log("rc: " + response.code() +
               " -- downloaded: " + downloadedAmount + " -- fn: " + filename);
+          if (partialFile.exists()) {
+            Crashlytics.log("length of partial file: " + partialFile.length());
+          }
           Crashlytics.log("hdrs=" + response.headers().toString());
           final Exception exception = new IllegalStateException("http source exhausted");
           Crashlytics.logException(exception);
