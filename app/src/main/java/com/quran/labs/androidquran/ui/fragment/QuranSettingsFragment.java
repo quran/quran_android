@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.ui.AudioManagerActivity;
+import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.preference.DataListPreference;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -12,6 +14,7 @@ import com.quran.labs.androidquran.util.StorageUtils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -57,6 +60,26 @@ public class QuranSettingsFragment extends PreferenceFragment implements
               Constants.PREF_DISPLAY_CATEGORY);
       category.removePreference(tabletModePreference);
     }
+
+    // handle translation manager click
+    final Preference translationPref = findPreference(Constants.PREF_TRANSLATION_MANAGER);
+    translationPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        startActivity(new Intent(getActivity(), TranslationManagerActivity.class));
+        return true;
+      }
+    });
+
+    // handle audio manager click
+    final Preference audioManagerPref = findPreference(Constants.PREF_AUDIO_MANAGER);
+    audioManagerPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        startActivity(new Intent(getActivity(), AudioManagerActivity.class));
+        return true;
+      }
+    });
 
     mInternalSdcardLocation =
         Environment.getExternalStorageDirectory().getAbsolutePath();
