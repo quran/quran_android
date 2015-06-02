@@ -60,4 +60,6 @@ public class Constants {
   public static final String PREF_TABLET_ENABLED = "useTabletMode";
   public static final String PREF_VERSION = "version";
   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
+  public static final String PREF_TRANSLATION_MANAGER = "translationManagerKey";
+  public static final String PREF_AUDIO_MANAGER = "audioManagerKey";
 }
