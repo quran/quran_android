@@ -1613,7 +1613,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
       startService(intent);
-    } else if (AudioUtils.shouldDownloadGaplessDatabase(this, request)) {
+    } else if (AudioUtils.shouldDownloadGaplessDatabase(request)) {
       Log.d(TAG, "need to download gapless database...");
       if (needsPermission) {
         mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
@@ -1633,7 +1633,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
       startService(intent);
     } else if (AudioUtils.haveAllFiles(request)) {
-      if (!AudioUtils.shouldDownloadBasmallah(this, request)) {
+      if (!AudioUtils.shouldDownloadBasmallah(request)) {
         android.util.Log.d(TAG, "have all files, playing!");
         play(request);
         mLastAudioDownloadRequest = null;

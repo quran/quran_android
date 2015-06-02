@@ -17,12 +17,11 @@ import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
 public class AudioUtils {
 
-  private static final String TAG = "AudioUtils";
-  public static final String DB_EXTENSION = ".db";
   public static final String AUDIO_EXTENSION = ".mp3";
-  public static final String ZIP_EXTENSION = ".zip";
-  private static final String AUDIO_DIRECTORY = "audio";
 
+  private static final String TAG = "AudioUtils";
+  private static final String DB_EXTENSION = ".db";
+  private static final String ZIP_EXTENSION = ".zip";
 
   public final static class LookAheadAmount {
     public static final int PAGE = 1;
@@ -66,7 +65,7 @@ public class AudioUtils {
           .getStringArray(R.array.quran_readers_path);
     }
 
-    String rootDirectory = getAudioRootDirectory(context);
+    String rootDirectory = QuranFileUtils.getQuranAudioDirectory(context);
     return rootDirectory == null ? null :
         rootDirectory + mQariFilePaths[position];
   }
@@ -102,8 +101,7 @@ public class AudioUtils {
     return overall;
   }
 
-  public static boolean shouldDownloadGaplessDatabase(
-      Context context, DownloadAudioRequest request) {
+  public static boolean shouldDownloadGaplessDatabase(DownloadAudioRequest request) {
     if (!request.isGapless()) {
       return false;
     }
@@ -116,8 +114,7 @@ public class AudioUtils {
     return !f.exists();
   }
 
-  public static String getGaplessDatabaseUrl(
-      Context context, DownloadAudioRequest request) {
+  public static String getGaplessDatabaseUrl(Context context, DownloadAudioRequest request) {
     if (!request.isGapless()) {
       return null;
     }
@@ -137,8 +134,7 @@ public class AudioUtils {
   }
 
   public static QuranAyah getLastAyahToPlay(QuranAyah startAyah,
-      int page, int mode,
-      boolean isDualPages) {
+      int page, int mode, boolean isDualPages) {
     if (isDualPages && mode == LookAheadAmount.PAGE && (page % 2 == 1)) {
       // if we download page by page and we are currently in tablet mode
       // and playing from the right page, get the left page as well.
@@ -201,8 +197,7 @@ public class AudioUtils {
     return new QuranAyah(pageLastSura, pageLastAyah);
   }
 
-  public static boolean shouldDownloadBasmallah(Context context,
-      DownloadAudioRequest request) {
+  public static boolean shouldDownloadBasmallah(DownloadAudioRequest request) {
     if (request.isGapless()) {
       return false;
     }
@@ -320,11 +315,6 @@ public class AudioUtils {
     }
 
     return true;
-  }
-
-  public static String getAudioRootDirectory(Context context) {
-    String s = QuranFileUtils.getQuranBaseDirectory(context);
-    return (s == null) ? null : s + AUDIO_DIRECTORY + File.separator;
   }
 
   public static String getOldAudioRootDirectory(Context context) {

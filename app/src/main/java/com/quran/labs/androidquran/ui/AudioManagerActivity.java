@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.util.AudioManagerUtils;
 import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.SheikhInfo;
 
 import android.content.Intent;
@@ -69,7 +70,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
     mProgressBar = (ProgressBar) findViewById(R.id.progress);
 
-    mBasePath = AudioUtils.getAudioRootDirectory(this);
+    mBasePath = QuranFileUtils.getQuranAudioDirectory(this);
     getShuyookhData();
   }
 

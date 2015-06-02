@@ -32,13 +32,17 @@ public class QuranFileUtils {
 
   private static final String TAG = "QuranFileUtils";
 
-  public static final String IMG_HOST = "http://android.quran.com/data/";
-  private static final String IMG_ZIP_BASE_URL = IMG_HOST + "zips/";
-  private static final String PATCH_ZIP_BASE_URL = IMG_HOST + "patches/v";
-  private static final String AYAHINFO_BASE_URL = IMG_HOST + "databases/ayahinfo/";
+  // server urls
+  private static final String BASE_HOST = "http://android.quran.com/data/";
+  private static final String IMG_ZIP_BASE_URL = BASE_HOST + "zips/";
+  private static final String PATCH_ZIP_BASE_URL = BASE_HOST + "patches/v";
+  private static final String DATABASE_BASE_URL = BASE_HOST + "databases/";
+  private static final String AYAHINFO_BASE_URL = BASE_HOST + "databases/ayahinfo/";
 
+  // local paths
   private static final String QURAN_BASE = "quran_android/";
   private static final String DATABASE_DIRECTORY = "databases";
+  private static final String AUDIO_DIRECTORY = "audio";
 
   private static final int DEFAULT_READ_TIMEOUT = 20; // 20s
   private static final int DEFAULT_CONNECT_TIMEOUT = 15; // 15s
@@ -213,7 +217,7 @@ public class QuranFileUtils {
       instance = QuranScreenInfo.getOrMakeInstance(context);
     }
 
-    String urlString = IMG_HOST + "width"
+    String urlString = BASE_HOST + "width"
         + instance.getWidthParam() + "/"
         + filename;
     Log.d(TAG, "want to download: " + urlString);
@@ -347,6 +351,11 @@ public class QuranFileUtils {
     return (base == null) ? null : base + DATABASE_DIRECTORY;
   }
 
+  public static String getQuranAudioDirectory(Context context){
+    String s = QuranFileUtils.getQuranBaseDirectory(context);
+    return (s == null)? null : s + AUDIO_DIRECTORY + File.separator;
+  }
+
   public static String getQuranDirectory(Context context) {
     QuranScreenInfo qsi = QuranScreenInfo.getInstance();
     if (qsi == null) {
@@ -408,7 +417,7 @@ public class QuranFileUtils {
     if (qsi == null) {
       return null;
     }
-    return IMG_HOST + "databases/audio/";
+    return BASE_HOST + "databases/audio/";
   }
 
   public static boolean haveAyaPositionFile(Context context) {
@@ -450,8 +459,7 @@ public class QuranFileUtils {
   }
 
   public static String getArabicSearchDatabaseUrl() {
-    return IMG_HOST + DATABASE_DIRECTORY + "/" +
-        QuranDataProvider.QURAN_ARABIC_DATABASE;
+    return DATABASE_BASE_URL + QuranDataProvider.QURAN_ARABIC_DATABASE;
   }
 
   public static void migrateAudio(@NonNull final Context appContext) {
@@ -465,7 +473,7 @@ public class QuranFileUtils {
 
   private static void migrateAudioHelper(@NonNull Context appContext) {
     String oldAudioDirectory = AudioUtils.getOldAudioRootDirectory(appContext);
-    String destinationAudioDirectory = AudioUtils.getAudioRootDirectory(appContext);
+    String destinationAudioDirectory = QuranFileUtils.getQuranAudioDirectory(appContext);
     if (oldAudioDirectory != null && destinationAudioDirectory != null) {
       File old = new File(oldAudioDirectory);
       if (old.exists()) {
