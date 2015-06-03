@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.data;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.database.DatabaseHandler;
@@ -31,10 +32,8 @@ public class QuranDataProvider extends ContentProvider {
 
   private static final String TAG = QuranDataProvider.class.getSimpleName();
 
-  public static String AUTHORITY =
-      "com.quran.labs.androidquran.data.QuranDataProvider";
-  public static final Uri
-      SEARCH_URI = Uri.parse("content://" + AUTHORITY + "/quran/search");
+  public static String AUTHORITY = BuildConfig.APPLICATION_ID + ".data.QuranDataProvider";
+  public static final Uri SEARCH_URI = Uri.parse("content://" + AUTHORITY + "/quran/search");
 
   public static final String VERSES_MIME_TYPE =
       ContentResolver.CURSOR_DIR_BASE_TYPE +

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
+import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -33,18 +34,18 @@ public class QuranFileUtils {
   private static final String TAG = "QuranFileUtils";
 
   // server urls
-  private static final String BASE_HOST = "http://android.quran.com/data/";
-  private static final String IMG_ZIP_BASE_URL = BASE_HOST + "zips/";
-  private static final String PATCH_ZIP_BASE_URL = BASE_HOST + "patches/v";
-  private static final String DATABASE_BASE_URL = BASE_HOST + "databases/";
-  private static final String AYAHINFO_BASE_URL = BASE_HOST + "databases/ayahinfo/";
+  private static final String IMG_BASE_URL = QuranFileConstants.IMG_BASE_URL;
+  private static final String IMG_ZIP_BASE_URL = QuranFileConstants.IMG_ZIP_BASE_URL;
+  private static final String PATCH_ZIP_BASE_URL = QuranFileConstants.PATCH_ZIP_BASE_URL;
+  private static final String DATABASE_BASE_URL = QuranFileConstants.DATABASE_BASE_URL;
+  private static final String AYAHINFO_BASE_URL = QuranFileConstants.AYAHINFO_BASE_URL;
 
   // local paths
-  private static final String QURAN_BASE = "quran_android/";
-  private static final String DATABASE_DIRECTORY = "databases";
-  private static final String AUDIO_DIRECTORY = "audio";
-  private static final String AYAHINFO_DIRECTORY = "";
-  private static final String IMAGES_DIRECTORY = "";
+  private static final String QURAN_BASE = QuranFileConstants.QURAN_BASE;
+  private static final String DATABASE_DIRECTORY = QuranFileConstants.DATABASE_DIRECTORY;
+  private static final String AUDIO_DIRECTORY = QuranFileConstants.AUDIO_DIRECTORY;
+  private static final String AYAHINFO_DIRECTORY = QuranFileConstants.AYAHINFO_DIRECTORY;
+  private static final String IMAGES_DIRECTORY = QuranFileConstants.IMAGES_DIRECTORY;
 
   private static final int DEFAULT_READ_TIMEOUT = 20; // 20s
   private static final int DEFAULT_CONNECT_TIMEOUT = 15; // 15s
@@ -84,12 +85,18 @@ public class QuranFileUtils {
 
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
-  public static boolean isVersion(Context context,
-      String widthParam, int version) {
+  public static boolean isVersion(Context context, String widthParam, int version) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
     if (quranDirectory == null) {
       return false;
     }
+
+    // version 1 or below are true as long as you have images
+    if (version <= 1) {
+      return true;
+    }
+
+    // check the version code
     try {
       File vFile = new File(quranDirectory +
           File.separator + ".v" + version);
@@ -234,7 +241,7 @@ public class QuranFileUtils {
       instance = QuranScreenInfo.getOrMakeInstance(context);
     }
 
-    String urlString = BASE_HOST + "width"
+    String urlString = IMG_BASE_URL + "width"
         + instance.getWidthParam() + "/"
         + filename;
     Log.d(TAG, "want to download: " + urlString);
@@ -369,17 +376,18 @@ public class QuranFileUtils {
   }
 
   public static String getQuranAyahDatabaseDirectory(Context context) {
-    String base = getQuranDatabaseDirectory(context);
-    if (AYAHINFO_DIRECTORY.isEmpty()) {
-      return base;
-    } else {
-      return base == null ? null : base + DATABASE_DIRECTORY + "/" + AYAHINFO_DIRECTORY;
-    }
+    String base = getQuranBaseDirectory(context);
+    return base == null ? null : base + "/" + AYAHINFO_DIRECTORY;
   }
 
   public static String getQuranAudioDirectory(Context context){
     String s = QuranFileUtils.getQuranBaseDirectory(context);
     return (s == null)? null : s + AUDIO_DIRECTORY + File.separator;
+  }
+
+  public static String getQuranImagesBaseDirectory(Context context) {
+    String s = QuranFileUtils.getQuranBaseDirectory(context);
+    return s == null ? null : s + IMAGES_DIRECTORY;
   }
 
   public static String getQuranImagesDirectory(Context context) {
@@ -444,7 +452,7 @@ public class QuranFileUtils {
     if (qsi == null) {
       return null;
     }
-    return BASE_HOST + "databases/audio/";
+    return DATABASE_BASE_URL + "audio/";
   }
 
   public static boolean haveAyaPositionFile(Context context) {
@@ -482,7 +490,26 @@ public class QuranFileUtils {
   }
 
   public static boolean hasArabicSearchDatabase(Context context) {
-    return hasTranslation(context, QuranDataProvider.QURAN_ARABIC_DATABASE);
+    if (hasTranslation(context, QuranDataProvider.QURAN_ARABIC_DATABASE)) {
+      return true;
+    } else if (!DATABASE_DIRECTORY.equals(AYAHINFO_DIRECTORY)){
+      // non-hafs flavors copy their ayahinfo and arabic search database in a subdirectory,
+      // so we copy back the arabic database into the translations directory where it can
+      // be shared across all flavors of quran android
+      final File ayahInfoFile = new File(getQuranAyahDatabaseDirectory(context),
+          QuranDataProvider.QURAN_ARABIC_DATABASE);
+      if (ayahInfoFile.exists()) {
+        final File translationsFile = new File(getQuranDatabaseDirectory(context),
+            QuranDataProvider.QURAN_ARABIC_DATABASE);
+        try {
+          copyFile(ayahInfoFile, translationsFile);
+          return true;
+        } catch (IOException ioe) {
+          translationsFile.delete();
+        }
+      }
+    }
+    return false;
   }
 
   public static String getArabicSearchDatabaseUrl() {

@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
@@ -53,6 +54,7 @@ import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -729,7 +731,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         url = QuranFileUtils.getAyaPositionFileUrl(
             qsi.getTabletWidthParam());
       }
-      String destination = QuranFileUtils.getQuranDatabaseDirectory(this);
+      String destination = QuranFileUtils.getQuranAyahDatabaseDirectory(this);
       // start the download
       String notificationTitle = getString(R.string.highlighting_database);
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
@@ -903,7 +905,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setQueryHint(getString(R.string.search_hint));
-    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(
+        new ComponentName(this, SearchActivity.class)));
     return true;
   }
 

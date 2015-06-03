@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran;
 
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
@@ -29,7 +30,7 @@ public class QuranDataActivity extends Activity implements
   public static final String TAG = "QuranDataActivity";
   public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
 
-  private static final int LATEST_IMAGE_VERSION = 4;
+  private static final int LATEST_IMAGE_VERSION = QuranFileConstants.IMAGES_VERSION;
 
   private boolean mIsPaused = false;
   private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
@@ -335,8 +336,7 @@ public class QuranDataActivity extends Activity implements
       url = mPatchUrl;
     }
 
-    String destination = QuranFileUtils.getQuranBaseDirectory(
-        QuranDataActivity.this);
+    String destination = QuranFileUtils.getQuranImagesBaseDirectory(QuranDataActivity.this);
 
     // start service
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
