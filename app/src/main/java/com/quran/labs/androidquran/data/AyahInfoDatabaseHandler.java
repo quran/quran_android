@@ -40,7 +40,7 @@ public class AyahInfoDatabaseHandler {
   }
 	
 	private AyahInfoDatabaseHandler(Context context, String databaseName) throws SQLException {
-		String base = QuranFileUtils.getQuranDatabaseDirectory(context);
+		String base = QuranFileUtils.getQuranAyahDatabaseDirectory(context);
 		if (base == null) return;
 		String path = base + File.separator + databaseName;
 		database = SQLiteDatabase.openDatabase(path, null,

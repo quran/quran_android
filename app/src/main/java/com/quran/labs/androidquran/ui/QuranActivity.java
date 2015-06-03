@@ -5,6 +5,7 @@ import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
@@ -24,6 +25,7 @@ import com.quran.labs.androidquran.util.UpgradeTranslationListener;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -222,7 +224,8 @@ public class QuranActivity extends QuranActionBarActivity
     final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setQueryHint(getString(R.string.search_hint));
-    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(
+        new ComponentName(this, SearchActivity.class)));
     return true;
   }
 

@@ -26,6 +26,18 @@ android {
         }
     }
 
+    productFlavors {
+        madani {
+            applicationId "com.quran.labs.androidquran"
+            resValue "string", "authority", applicationId + '.data.QuranDataProvider'
+        }
+
+        qaloon {
+            applicationId "com.quran.labs.androidquran.qaloon"
+            resValue "string", "authority", applicationId + '.data.QuranDataProvider'
+        }
+    }
+
     buildTypes {
       debug {
          ext.enableCrashlytics = false

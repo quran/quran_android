@@ -58,7 +58,7 @@
 		<!-- provides search suggestions for verses. -->
 		<provider android:name=".data.QuranDataProvider"
             android:exported="false"
-			android:authorities="com.quran.labs.androidquran.data.QuranDataProvider" />
+			android:authorities="@string/authority" />
       
 		<receiver android:name=".service.util.AudioIntentReceiver">
             <intent-filter>
