@@ -3,7 +3,8 @@ quran for android
 
 this is a simple (madani based) quran app for android.
 
-* images from [quran images project](http://github.com/quran/quran.com-images) on github.
+* madani images from [quran images project](http://github.com/quran/quran.com-images) on github.
+* qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).
 * translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
 * audio from [Every Ayah](http://everyayah.com/).
 
