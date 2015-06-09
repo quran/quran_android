@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Коран</string>
     <string name="downloadPrompt_title">Загрузить необходимые файлы?</string>
     <string name="downloadPrompt">Для правильной работы приложения необходимо скачать некоторые
         	файлы. Если не сделать этого сейчас, загрузка каждой страницы
