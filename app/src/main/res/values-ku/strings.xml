@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">قورئان</string>
     <string name="downloadPrompt_title">داگرتنی فایلە پێویستەکان؟</string>
     <string name="downloadPrompt">بۆ کارکردنی بەرنامە، پێویستە ھەندێ فایل دابگریت. ئەگەر ئێستا ئەم فرمانە ئەنجام نەدەیت، ھەر پەڕەیەک کاتێکی زیاتری ئەوێت بۆ کردنەوە. ئەتەوێ ئێستا فایلە پێویستەکان دابگریت؟
 		</string>

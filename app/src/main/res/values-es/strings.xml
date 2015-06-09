@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-  <string name="app_name">El Corán</string>
   <string name="downloadPrompt_title">¿Desea descargar otros archivos necesarios por la aplicación?</string>
   <string name="downloadPrompt">Corán para Android  necesitamos descargar unos archivos para que funcione correctamente. Si no haces esto, la aplicación puede no funcionar confiablemente y requerirá una conexión a internet para leer.\n¿Te gustaría descargar los archivos necesarios ahora?\n\t\t</string>
   <string name="downloadTabletPrompt">Hemos añadido recientemente imágenes mejoradas para tabletas. ¿Quieres descargar estas imágenes ahora?</string>

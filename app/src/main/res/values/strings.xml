@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Quran</string>
     <string name="downloadPrompt_title">Download Required Files?</string>
     <string name="downloadPrompt">In order for Quran Android to work properly,
         we need to download some files. If you do not do this now, the app

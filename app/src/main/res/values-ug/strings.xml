@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">قۇرئان</string>
     <string name="downloadPrompt_title">لازىملىق ھۆججەتلەرنى چۈشۈرەمدۇ؟</string>
     <string name="downloadPrompt">ئەڭ ياخشى ئۈنۈمگە ئېرىشىش ئۈچۈن، بەزى ھۆججەتلەرنى چۈشۈرۈش زۆرۈر. ئەگەر ھازىر بۇنداق قىلىشنى تاللىمىسىڭىز، ھەر بىر بەتنى يۈكلەشكە تېخىمۇ ئۇزۇن ۋاقىت كېتىدۇ. لازىملىق ھۆججەتلەرنى ھازىرلا چۈشۈرەمسىز؟</string>
     <string name="downloadTabletPrompt">بىز يېقىندا تاختا كومپيۇتېر ئۈچۈن ياخشىلانغان سۈرەتلەرنى قوشتۇق. ئۇ سۈرەتلەرنى ھازىر چۈشۈرەمسىز؟</string>
