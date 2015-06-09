@@ -275,7 +275,6 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
   private class LoadStorageOptionsTask extends AsyncTask<Void, Void, Void> {
 
-    private ProgressDialog dialog;
     private Context appContext;
 
     public LoadStorageOptionsTask(Context context) {
@@ -284,10 +283,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
     @Override
     protected void onPreExecute() {
-      dialog = new ProgressDialog(getActivity());
-      dialog.setMessage(getString(R.string.prefs_calculating_app_size));
-      dialog.setCancelable(false);
-      dialog.show();
+      mListStoragePref.setSummary(R.string.prefs_calculating_app_size);
     }
 
     @Override
@@ -301,8 +297,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       if (!mIsPaused) {
         loadStorageOptions(appContext);
         mLoadStorageOptionsTask = null;
-        dialog.dismiss();
-        dialog = null;
+        mListStoragePref.setSummary(R.string.prefs_app_location_summary);
       }
     }
   }
