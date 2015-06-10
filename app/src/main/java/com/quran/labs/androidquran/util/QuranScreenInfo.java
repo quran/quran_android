@@ -2,10 +2,13 @@ package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranConstants;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -18,12 +21,16 @@ public class QuranScreenInfo {
 
   private int mHeight;
   private int mMaxWidth;
-  private String mOverrideParam;
+  private PageProvider mPageProvider;
 
-  private QuranScreenInfo(int width, int height) {
-    mHeight = height;
-    mMaxWidth = (width > height) ? width : height;
-    Log.d(TAG, "initializing with " + height + " and " + width);
+  private QuranScreenInfo(@NonNull Display display) {
+    final Point point = new Point();
+    display.getSize(point);
+
+    mHeight = point.y;
+    mMaxWidth = (point.x > point.y) ? point.x : point.y;
+    mPageProvider = QuranConstants.getPageProvider(display);
+    Log.d(TAG, "initializing with " + point.y + " and " + point.x);
   }
 
   public static QuranScreenInfo getInstance() {
@@ -38,10 +45,10 @@ public class QuranScreenInfo {
   }
 
   private static QuranScreenInfo initialize(Context context) {
-    WindowManager w = (WindowManager) context
+    final WindowManager w = (WindowManager) context
         .getSystemService(Context.WINDOW_SERVICE);
-    Display d = w.getDefaultDisplay();
-    QuranScreenInfo qsi = new QuranScreenInfo(d.getWidth(), d.getHeight());
+    final Display display = w.getDefaultDisplay();
+    QuranScreenInfo qsi = new QuranScreenInfo(display);
     final SharedPreferences prefs = PreferenceManager
         .getDefaultSharedPreferences(context.getApplicationContext());
     qsi.setOverrideParam(prefs.getString(Constants.PREF_DEFAULT_IMAGES_DIR, ""));
@@ -49,7 +56,7 @@ public class QuranScreenInfo {
   }
 
   public void setOverrideParam(String overrideParam) {
-    mOverrideParam = overrideParam;
+    mPageProvider.setOverrideParameter(overrideParam);
   }
 
   public int getHeight() {
@@ -57,52 +64,77 @@ public class QuranScreenInfo {
   }
 
   public String getWidthParam() {
-    return "_" + getWidthParamNoUnderScore();
+    return "_" + mPageProvider.getWidthParameter();
   }
 
   public String getTabletWidthParam() {
-    if ("_1260".equals(getWidthParam())) {
-      // for tablet, if the width is more than 1280, use 1260
-      // images for both dimens (only applies to new installs)
-      return "_1260";
-    } else {
-      int width = mMaxWidth / 2;
-      return "_" + getBestTabletLandscapeSizeMatch(width);
-    }
-  }
-
-  public String getWidthParamNoUnderScore() {
-    // the default image size is based on the width
-    return getWidthParamNoUnderScore(mMaxWidth);
-  }
-
-  private String getWidthParamNoUnderScore(int width) {
-    if (width <= 320) {
-      return "320";
-    } else if (width <= 480) {
-      return "480";
-    } else if (width <= 800) {
-      return "800";
-    } else if (width <= 1280) {
-      return "1024";
-    } else {
-      if (!TextUtils.isEmpty(mOverrideParam)) {
-        return mOverrideParam;
-      }
-      return "1260";
-    }
-  }
-
-  private String getBestTabletLandscapeSizeMatch(int width) {
-    if (width <= 640) {
-      return "512";
-    } else {
-      return "1024";
-    }
+    return mPageProvider.getTabletWidthParameter();
   }
 
   public boolean isTablet(Context context) {
     return context != null && mMaxWidth > 800 && context.getResources()
         .getBoolean(R.bool.is_tablet);
+  }
+
+  public static class DefaultPageProvider implements PageProvider {
+
+    private final int mMaxWidth;
+    private String mOverrideParam;
+
+    public DefaultPageProvider(@NonNull Display display) {
+      final Point point = new Point();
+      display.getSize(point);
+
+      mMaxWidth = (point.x > point.y) ? point.x : point.y;
+    }
+
+    @Override
+    public String getWidthParameter() {
+      if (mMaxWidth <= 320) {
+        return "320";
+      } else if (mMaxWidth <= 480) {
+        return "480";
+      } else if (mMaxWidth <= 800) {
+        return "800";
+      } else if (mMaxWidth <= 1280) {
+        return "1024";
+      } else {
+        if (!TextUtils.isEmpty(mOverrideParam)) {
+          return mOverrideParam;
+        }
+        return "1260";
+      }
+    }
+
+    @Override
+    public String getTabletWidthParameter() {
+      if ("_1260".equals(getWidthParameter())) {
+        // for tablet, if the width is more than 1280, use 1260
+        // images for both dimens (only applies to new installs)
+        return "_1260";
+      } else {
+        int width = mMaxWidth / 2;
+        return "_" + getBestTabletLandscapeSizeMatch(width);
+      }
+    }
+
+    @Override
+    public void setOverrideParameter(String parameter) {
+      mOverrideParam = parameter;
+    }
+
+    private String getBestTabletLandscapeSizeMatch(int width) {
+      if (width <= 640) {
+        return "512";
+      } else {
+        return "1024";
+      }
+    }
+  }
+
+  public interface PageProvider {
+    String getWidthParameter();
+    String getTabletWidthParameter();
+    void setOverrideParameter(String parameter);
   }
 }
