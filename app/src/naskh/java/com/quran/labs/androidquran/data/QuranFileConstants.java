@@ -1,8 +1,6 @@
 package com.quran.labs.androidquran.data;
 
 public class QuranFileConstants {
-  public static final int NUMBER_OF_PAGES = 612;
-
   // server urls
   public static final String BASE_HOST = "http://android.quran.com/data/";
   public static final String IMG_BASE_URL = BASE_HOST + "naskh/";
