@@ -499,9 +499,10 @@ public class QuranFileUtils {
       final File ayahInfoFile = new File(getQuranAyahDatabaseDirectory(context),
           QuranDataProvider.QURAN_ARABIC_DATABASE);
       if (ayahInfoFile.exists()) {
-        final File translationsFile = new File(getQuranDatabaseDirectory(context),
-            QuranDataProvider.QURAN_ARABIC_DATABASE);
+        final File base = new File(getQuranDatabaseDirectory(context));
+        final File translationsFile = new File(base, QuranDataProvider.QURAN_ARABIC_DATABASE);
         try {
+          base.mkdir();
           copyFile(ayahInfoFile, translationsFile);
           return true;
         } catch (IOException ioe) {
