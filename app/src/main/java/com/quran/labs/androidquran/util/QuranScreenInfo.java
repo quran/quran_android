@@ -68,7 +68,7 @@ public class QuranScreenInfo {
   }
 
   public String getTabletWidthParam() {
-    return mPageProvider.getTabletWidthParameter();
+    return "_" + mPageProvider.getTabletWidthParameter();
   }
 
   public boolean isTablet(Context context) {
@@ -108,13 +108,13 @@ public class QuranScreenInfo {
 
     @Override
     public String getTabletWidthParameter() {
-      if ("_1260".equals(getWidthParameter())) {
+      if ("1260".equals(getWidthParameter())) {
         // for tablet, if the width is more than 1280, use 1260
         // images for both dimens (only applies to new installs)
-        return "_1260";
+        return "1260";
       } else {
         int width = mMaxWidth / 2;
-        return "_" + getBestTabletLandscapeSizeMatch(width);
+        return getBestTabletLandscapeSizeMatch(width);
       }
     }
 
