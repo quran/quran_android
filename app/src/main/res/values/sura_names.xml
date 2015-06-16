@@ -3,12 +3,12 @@
   <string-array name="sura_names">
     <item>Al-Fatihah</item>
     <item>Al-Baqarah</item>
-    <item>Aal \'Imran</item>
+    <item>Aal-E-Imran</item>
     <item>An-Nisa\'</item>
     <item>Al-Ma\'idah</item>
     <item>Al-An\'am</item>
     <item>Al-A\'raf</item>
-    <item>Al-\'Anfal</item>
+    <item>Al-Anfal</item>
     <item>At-Tawbah</item>
     <item>Yunus</item>
     <item>Hud</item>
@@ -17,11 +17,11 @@
     <item>Ibrahim</item>
     <item>Al-Hijr</item>
     <item>An-Nahl</item>
-    <item>Al-\'Isra</item>
+    <item>Al-Isra\'</item>
     <item>Al-Kahf</item>
     <item>Maryam</item>
     <item>Ta-Ha</item>
-    <item>Al-\'Anbiya</item>
+    <item>Al-Anbiya\'</item>
     <item>Al-Hajj</item>
     <item>Al-Mu\'minun</item>
     <item>An-Nur</item>
@@ -33,7 +33,7 @@
     <item>Ar-Rum</item>
     <item>Luqman</item>
     <item>As-Sajdah</item>
-    <item>Al-\'Ahzab</item>
+    <item>Al-Ahzab</item>
     <item>Saba\'</item>
     <item>Fatir</item>
     <item>Ya-Seen</item>
@@ -42,11 +42,11 @@
     <item>Az-Zumar</item>
     <item>Ghafir</item>
     <item>Fussilat</item>
-    <item>Ash-Shuraa</item>
+    <item>Ash-Shura</item>
     <item>Az-Zukhruf</item>
     <item>Ad-Dukhan</item>
     <item>Al-Jathiya</item>
-    <item>Al-\'Ahqaf</item>
+    <item>Al-Ahqaf</item>
     <item>Muhammad</item>
     <item>Al-Fath</item>
     <item>Al-Hujurat</item>
@@ -76,15 +76,15 @@
     <item>Al-Muzzammil</item>
     <item>Al-Muddaththir</item>
     <item>Al-Qiyamah</item>
-    <item>Al-\'Insan</item>
+    <item>Al-Insan</item>
     <item>Al-Mursalat</item>
     <item>An-Naba\'</item>
     <item>An-Nazi\'at</item>
     <item>\'Abasa</item>
     <item>At-Takwir</item>
-    <item>Al-\'Infitar</item>
+    <item>Al-Infitar</item>
     <item>Al-Mutaffifin</item>
-    <item>Al-\'Inshiqaq</item>
+    <item>Al-Inshiqaq</item>
     <item>Al-Buruj</item>
     <item>At-Tariq</item>
     <item>Al-A\'la</item>
@@ -96,14 +96,14 @@
     <item>Ad-Dhuhaa</item>
     <item>Al-Sharh</item>
     <item>At-Tin</item>
-    <item>Al-\'Alaq</item>
+    <item>Al-Alaq</item>
     <item>Al-Qadr</item>
     <item>Al-Bayyinah</item>
     <item>Az-Zalzalah</item>
-    <item>Al-\'Adiyat</item>
+    <item>Al-Adiyat</item>
     <item>Al-Qari\'ah</item>
     <item>At-Takathur</item>
-    <item>Al-\'Asr</item>
+    <item>Al-Asr</item>
     <item>Al-Humazah</item>
     <item>Al-Fil</item>
     <item>Quraysh</item>
@@ -112,7 +112,7 @@
     <item>Al-Kafirun</item>
     <item>An-Nasr</item>
     <item>Al-Masad</item>
-    <item>Al-\'Ikhlas</item>
+    <item>Al-Ikhlas</item>
     <item>Al-Falaq</item>
     <item>An-Nas</item>
   </string-array>
