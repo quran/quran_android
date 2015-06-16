@@ -3,25 +3,25 @@
   <string-array name="sura_names">
     <item>Al-Fatihah</item>
     <item>Al-Baqarah</item>
-    <item>Aal \'Imran</item>
+    <item>Aal-\'Imran</item>
     <item>An-Nisa\'</item>
-    <item>Al-Ma\'idah</item>
+    <item>Al-Ma\'idah\'</item>
     <item>Al-An\'am</item>
     <item>Al-A\'raf</item>
-    <item>Al-\'Anfal</item>
-    <item>At-Tawbah</item>
+    <item>Al-Anfal</item>
+    <item>At-Taubah</item>
     <item>Yunus</item>
     <item>Hud</item>
     <item>Yusuf</item>
-    <item>Ar-Ra\'d</item>
-    <item>Ibrahim</item>
-    <item>Al-Hijr</item>
-    <item>An-Nahl</item>
-    <item>Al-\'Isra</item>
+    <item>Ar-Ra\'d</item> 
+    <item>Ibrahim</item> 
+    <item>Al-Hijr</item> 
+    <item>An-Nahl</item> 
+    <item>Al-Isra\'</item>
     <item>Al-Kahf</item>
     <item>Maryam</item>
     <item>Ta-Ha</item>
-    <item>Al-\'Anbiya</item>
+    <item>Al-Anbiya\'</item>
     <item>Al-Hajj</item>
     <item>Al-Mu\'minun</item>
     <item>An-Nur</item>
@@ -33,88 +33,88 @@
     <item>Ar-Rum</item>
     <item>Luqman</item>
     <item>As-Sajdah</item>
-    <item>Al-\'Ahzab</item>
+    <item>Al-Ahzab</item>
     <item>Saba\'</item>
     <item>Fatir</item>
-    <item>Ya-Seen</item>
-    <item>As-Saaffat</item>
-    <item>Sad</item>
+    <item>Ya-Sin</item>
+    <item>As-Saffaat</item>
+    <item>Saad</item>
     <item>Az-Zumar</item>
     <item>Ghafir</item>
     <item>Fussilat</item>
-    <item>Ash-Shuraa</item>
+    <item>Ash-Shura</item>
     <item>Az-Zukhruf</item>
     <item>Ad-Dukhan</item>
-    <item>Al-Jathiya</item>
-    <item>Al-\'Ahqaf</item>
+    <item>Al-Jathiyah</item>
+    <item>Al-Ahqaf</item>
     <item>Muhammad</item>
     <item>Al-Fath</item>
-    <item>Al-Hujurat</item>
+    <item>Al-Hujuraat</item>
     <item>Qaf</item>
     <item>Adh-Dhariyat</item>
     <item>At-Tur</item>
     <item>An-Najm</item>
-    <item>Al-Qamar</item>
+    <item>Qamar</item>
     <item>Ar-Rahman</item>
     <item>Al-Waqi\'ah</item>
-    <item>Al-Hadid</item>
-    <item>Al-Mujadila</item>
+    <item>Al-Hadi</item>
+    <item>Al-Mujadilah</item>
     <item>Al-Hashr</item>
-    <item>Al-Mumtahana</item>
-    <item>As-Saf</item>
+    <item>Al-Mumtahinah</item>
+    <item>As-Saff</item>
     <item>Al-Jumu\'ah</item>
     <item>Al-Munafiqun</item>
     <item>At-Taghabun</item>
-    <item>At-Talaq</item>
+    <item>At-Talaaq</item>
     <item>At-Tahrim</item>
     <item>Al-Mulk</item>
     <item>Al-Qalam</item>
-    <item>Al-Haqqah</item>
+    <item>Al-Haqqa</item>
     <item>Al-Ma\'arij</item>
     <item>Nuh</item>
     <item>Al-Jinn</item>
     <item>Al-Muzzammil</item>
-    <item>Al-Muddaththir</item>
+    <item>Al-Muddathir</item>
     <item>Al-Qiyamah</item>
-    <item>Al-\'Insan</item>
-    <item>Al-Mursalat</item>
+    <item>Al-Insan</item>
+    <item>Al-Mursalaat</item>
     <item>An-Naba\'</item>
-    <item>An-Nazi\'at</item>
-    <item>\'Abasa</item>
+    <item>An-Nazi\'aat</item>
+    <item>Abasa</item>
     <item>At-Takwir</item>
-    <item>Al-\'Infitar</item>
+    <item>Al-Infitaar</item>
     <item>Al-Mutaffifin</item>
-    <item>Al-\'Inshiqaq</item>
-    <item>Al-Buruj</item>
+    <item>Al-Inshiqaq</item>
+    <item>Al-Burooj</item>
     <item>At-Tariq</item>
     <item>Al-A\'la</item>
-    <item>Al-Ghashiyah</item>
+    <item>Al-Ghaashiyah</item>
     <item>Al-Fajr</item>
     <item>Al-Balad</item>
     <item>Ash-Shams</item>
-    <item>Al-Layl</item>
-    <item>Ad-Dhuhaa</item>
-    <item>Al-Sharh</item>
+    <item>Al-Lail</item>
+    <item>Ad-Duha</item>
+    <item>Ash-Sharh</item>
     <item>At-Tin</item>
-    <item>Al-\'Alaq</item>
+    <item>Al-Alaq</item>
     <item>Al-Qadr</item>
-    <item>Al-Bayyinah</item>
+    <item>Al-Baiyyinah</item>
     <item>Az-Zalzalah</item>
-    <item>Al-\'Adiyat</item>
+    <item>Al-Aadiyaat</item>
     <item>Al-Qari\'ah</item>
-    <item>At-Takathur</item>
-    <item>Al-\'Asr</item>
+    <item>At-Takaathur</item>
+    <item>Al-Asr</item>
     <item>Al-Humazah</item>
-    <item>Al-Fil</item>
-    <item>Quraysh</item>
-    <item>Al-Ma\'un</item>
-    <item>Al-Kawthar</item>
-    <item>Al-Kafirun</item>
+    <item>Al-Feel</item>
+    <item>Quraish</item>
+    <item>Al-Maa\'oon</item>
+    <item>Al-Kauthar</item>
+    <item>Al-Kaafiroon</item>
     <item>An-Nasr</item>
     <item>Al-Masad</item>
-    <item>Al-\'Ikhlas</item>
+    <item>Al-Ikhlaas</item>
     <item>Al-Falaq</item>
-    <item>An-Nas</item>
+    <item>An-Naas</item>
   </string-array>
 
   <!-- If sura name has no translation, please add empty double quotes to the
