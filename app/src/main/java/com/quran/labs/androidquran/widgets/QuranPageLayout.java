@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.widgets;
 
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
@@ -160,8 +161,20 @@ public abstract class QuranPageLayout extends FrameLayout
     final View innerView = mScrollView == null ? mInnerView : mScrollView;
     final LayoutParams params =
         (FrameLayout.LayoutParams) innerView.getLayoutParams();
-    params.leftMargin = mViewPadding;
-    params.rightMargin = mViewPadding;
+
+    // TODO: should fix this in the near future insha'Allah
+    if ("naskh".equals(BuildConfig.FLAVOR)) {
+      if (mPageNumber % 2 == 0) {
+        params.leftMargin = mViewPadding + 5;
+        params.rightMargin = mViewPadding - 3;
+      } else {
+        params.leftMargin = mViewPadding - 3;
+        params.rightMargin = mViewPadding + 5;
+      }
+    } else {
+      params.leftMargin = mViewPadding;
+      params.rightMargin = mViewPadding;
+    }
 
     // this calls requestLayout
     innerView.setLayoutParams(params);
