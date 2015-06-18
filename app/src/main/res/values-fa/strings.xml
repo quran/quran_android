@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">قرآن</string>
     <string name="downloadPrompt_title">فايلهاي مورد نياز بارگذاري شود؟</string>
     <string name="downloadPrompt">براي عملکرد بهينه، برخي از فايل ها را بايد دريافت کنيد، ممکن است اين کار مقداري به طول بيانجامد، آيا براي اين کار آماده هستيد؟
 </string>
