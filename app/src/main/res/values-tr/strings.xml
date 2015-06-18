@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Kur\'an</string>
     <string name="downloadPrompt_title">Gerekli dosyalari yükleyeyim mi?</string>
     <string name="downloadPrompt" tools:ignore="Typos">Daha iyi performans için bazı dosyalar SD karta kopyalanmalı.
 		Eğer şimdi bu işlemi gerçekleştirmezseniz sayfaların ayrı ayrı indirilmesi daha uzun sürebilir.

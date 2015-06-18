@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+   <string name="app_name">Quran</string>
 	<string name="downloadPrompt_title">Muat turun fail yang diperlukan?</string>
 	<string name="downloadPrompt">Untuk prestasi yang optimal, beberapa fail perlu dimuat turun. Jika anda memilih untuk tidak melakukannya sekarang, setiap halaman yang dibuka nanti akan mengambil lebih masa. Apakah anda ingin memuat turun fail yang diperlukan sekarang?</string>
 	<string name="downloadTabletPrompt">Kami baru saja meningkatkan kualiti halaman untuk tablet. Apakah anda ingin memuat turun sekarang?</string>

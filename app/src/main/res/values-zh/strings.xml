@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">古兰经</string>
     <string name="downloadPrompt_title">下载所需的文件吗？</string>
     <string name="downloadPrompt">为了更好的使用体验，需要下载一些文件。如果目前选择不下载，每个页面载入时会花较长的时间。确认开始下载这些文件吗？
 		</string>

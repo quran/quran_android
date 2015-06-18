@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Quran</string>
     <string name="downloadPrompt_title">Download File yang Diperlukan?</string>
     <string name="downloadPrompt">Untuk performa yang optimal, beberapa file perlu didownload. Jika anda memilih untuk tidak mendownload sekarang, setiap halaman yang dibuka nanti akan membutuhkan waktu lebih lama. Apakah anda ingin mendownload file yang dibutuhkan sekarang?</string>
     <string name="downloadTabletPrompt">Kami baru saja memutakhirkan halaman untuk tablet. Apakah anda ingin mendownloadnya sekarang?</string>

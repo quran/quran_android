@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Quran</string>
     <string name="downloadPrompt_title">Möchten Sie die benötigten Dateien herunterladen?</string>
     <string name="downloadPrompt">Für die optimale Leistung müssen einige Dateien 
 			heruntergeladen werden.  Wenn Sie sich dagegen entscheiden, wird das 
