@@ -18,7 +18,8 @@
     <dimen name="toolbar_item_width">42dp</dimen>
     <dimen name="toolbar_total_height">54dp</dimen>
     <dimen name="juz_overlay_text_size">12sp</dimen>
-    <dimen name="page_margin">8dp</dimen>
+    <dimen name="page_margin_small">7dp</dimen>
+    <dimen name="page_margin_large">11dp</dimen>
 
     <!-- repeat -->
     <dimen name="repeat_superscript_text_size">10sp</dimen>

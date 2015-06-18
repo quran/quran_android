@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
@@ -43,7 +42,8 @@ public abstract class QuranPageLayout extends FrameLayout
   private View mErrorLayout;
   private TextView mErrorText;
   private View mInnerView;
-  private int mViewPadding;
+  private int mViewPaddingSmall;
+  private int mViewPaddingLarge;
 
   public QuranPageLayout(Context context) {
     super(context);
@@ -54,7 +54,8 @@ public abstract class QuranPageLayout extends FrameLayout
         resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
     mInnerView = generateContentView(context);
-    mViewPadding = resources.getDimensionPixelSize(R.dimen.page_margin);
+    mViewPaddingSmall = resources.getDimensionPixelSize(R.dimen.page_margin_small);
+    mViewPaddingLarge = resources.getDimensionPixelSize(R.dimen.page_margin_large);
 
     FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -162,18 +163,12 @@ public abstract class QuranPageLayout extends FrameLayout
     final LayoutParams params =
         (FrameLayout.LayoutParams) innerView.getLayoutParams();
 
-    // TODO: should fix this in the near future insha'Allah
-    if ("naskh".equals(BuildConfig.FLAVOR)) {
-      if (mPageNumber % 2 == 0) {
-        params.leftMargin = mViewPadding + 5;
-        params.rightMargin = mViewPadding - 3;
-      } else {
-        params.leftMargin = mViewPadding - 3;
-        params.rightMargin = mViewPadding + 5;
-      }
+    if (mPageNumber % 2 == 0) {
+      params.leftMargin = mViewPaddingLarge;
+      params.rightMargin = mViewPaddingSmall;
     } else {
-      params.leftMargin = mViewPadding;
-      params.rightMargin = mViewPadding;
+      params.leftMargin = mViewPaddingSmall;
+      params.rightMargin = mViewPaddingLarge;
     }
 
     // this calls requestLayout
