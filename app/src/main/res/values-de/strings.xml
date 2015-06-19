@@ -41,14 +41,15 @@
     <string name="cancel">Abbrechen</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright Alle Muslime</string>
-    <string name="aboutUs">Quran Android ist ein freies, quelloffenes Quran
-			Programm für Android.  Die benutzten Bilder stammen vom
+    <string name="credits">Die benutzten Bilder stammen vom
 			&lt;a href="http://quran.com">quran.com&lt;/a>
 			Projekt, die Audio Dateien von
 			&lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
 			die benutzen Texte in den Übersetzungen und dem Arabischen kommen von
 			&lt;a href="http://tanzil.net">tanzil.net&lt;/a> und
-			&lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.
+			&lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.</string>
+    <string name="aboutUs">Quran Android ist ein freies, quelloffenes Quran
+			Programm für Android.  %1$s
 			&lt;br/>&lt;br/>&lt;b>Quran für Android Mitwirkende:&lt;/b>
 			&lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
 			&lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)

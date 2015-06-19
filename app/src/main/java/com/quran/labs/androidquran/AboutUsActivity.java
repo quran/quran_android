@@ -22,7 +22,8 @@ public class AboutUsActivity extends QuranActionBarActivity {
         setContentView(R.layout.about_us);
         TextView txtAbout = (TextView) findViewById(R.id.txtAbout);
         txtAbout.setVerticalScrollBarEnabled(true);
-        txtAbout.setText(Html.fromHtml(getString(R.string.aboutUs)));
+        txtAbout.setText(Html.fromHtml(
+            String.format(getString(R.string.aboutUs), getString(R.string.credits))));
         txtAbout.setMovementMethod(LinkMovementMethod.getInstance());
 
         Button button = (Button)findViewById(R.id.btnQuestions);

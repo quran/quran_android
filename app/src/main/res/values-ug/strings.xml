@@ -31,13 +31,16 @@
     <string name="cancel">ۋاز كەچ</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">نەشر ھوقۇقى بارلىق مۇسۇلمانلارغا تەۋە</string>
-    <string name="aboutUs">قۇرئان ئاندىرويىد ھەقسىز، ئوچۇق مەنبەلىك ئاندىرويىد ئۈچۈن يېزىلغان قۇرئان ئەپى. ئىشلىتىلگەن سۈرەتلەرنى
-            &lt;a href="http://quran.com"&gt;quran.com&lt;/a&gt;
+    <string name="credits">ئىشلىتىلگەن سۈرەتلەرنى
+        &lt;a href="http://quran.com"&gt;quran.com&lt;/a&gt;
 			قۇرۇلۇشىدىن، ئاۋازنى
             &lt;a href="http://everyayah.com"&gt;everyayah.com&lt;/a&gt;,
 			دىن،  ئىشلىتىلگەن سانلىق مەلۇماتلاردىن تەرجىمە ۋە ئەرەبچە
             &lt;a href="http://tanzil.net"&gt;tanzil.net&lt;/a&gt; ۋە
             &lt;a href="http://quran.ksu.edu.sa"&gt;quran.ksu.edu.sa&lt;/a&gt;تىن كەلگەن
+    </string>
+    <string name="aboutUs">قۇرئان ئاندىرويىد ھەقسىز، ئوچۇق مەنبەلىك ئاندىرويىد ئۈچۈن يېزىلغان قۇرئان ئەپى.
+            %1$s
             &lt;br/&gt;&lt;br/&gt;&lt;b&gt;قۇرئان ئاندىرويىد تۆھپىكارلار:&lt;/b&gt;
             &lt;br/&gt;Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre"&gt;@ahmedre&lt;/a&gt;)
             &lt;br/&gt;Hussein Maher (&lt;a href="http://twitter.com/husseinmaher"&gt;@husseinmaher&lt;/a&gt;)

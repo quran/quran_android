@@ -30,14 +30,15 @@
     <string name="cancel">پاشگەزبونەوە</string>
     <string name="developedBy">وەرگێڕانی (گۆران غەریب) لە دۆعای خێر بێبەشمان مەکەن.</string>
     <string name="copyRights">مافی بڵاوکردنەوەی ھەموو مسوڵمانێکە</string>
-    <string name="aboutUs">بەرنامەی قورئان ئەندرۆید، بەرنامەیەکی سەرچاوە کراوەیە بۆ ئەندرۆید
-			  وێنەکان بەکاردێن لە ڕێی ماڵپەڕی
+    <string name="credits"> وێنەکان بەکاردێن لە ڕێی ماڵپەڕی
             &lt;a href="http://quran.com">quran.com&lt;/a>
 			وە دەنگەکان بەکاردێن لە ڕێی ماڵپەری
             &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
 			وە هەروەها داتاکان و وەرگێڕانەکان بەکاردێن لە ڕێی ماڵپەڕی
             &lt;a href="http://tanzil.net">tanzil.net&lt;/a> و
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a></string>
+    <string name="aboutUs">بەرنامەی قورئان ئەندرۆید، بەرنامەیەکی سەرچاوە کراوەیە بۆ ئەندرۆید
+            %1$s
             &lt;br/>&lt;br/>&lt;b>داڕێژەرەکانی بەرنامەی قورئان:&lt;/b>
             &lt;br/>ئەحمەد ئەلحلو (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
             &lt;br/>حسێن ماهیر (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)

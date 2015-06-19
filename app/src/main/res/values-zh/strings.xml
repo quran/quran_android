@@ -30,14 +30,15 @@
     <string name="cancel">取消</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright All Muslims</string>
-    <string name="aboutUs">古兰经安卓是一个免费，开源的用于安卓系统的古兰经软件，
-			其用到的图片来自于
+    <string name="credits">其用到的图片来自于
             &lt;a href="http://quran.com">quran.com&lt;/a>
 			项目，音频来自于
             &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
 			原文和译文数据来自于
             &lt;a href="http://tanzil.net">tanzil.net&lt;/a> 和
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
+            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a></string>
+    <string name="aboutUs">古兰经安卓是一个免费，开源的用于安卓系统的古兰经软件，
+			%1$s
             &lt;br/>&lt;br/>&lt;b>古兰经安卓 贡献者:&lt;/b>
             &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
             &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)

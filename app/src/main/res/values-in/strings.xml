@@ -31,7 +31,11 @@
     <string name="cancel">Batal</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">Copyright All Muslims</string>
-    <string name="aboutUs">Quran Android adalah aplikasi gratis untuk Android, yang dibangun secara open source. Materi gambar yang digunakan bersumber dari &lt;a href="http://quran.com">quran.com&lt;/a>, audio tilawah dari &lt;a href="http://everyayah.com">everyayah.com&lt;/a>. Data teks Arab dan terjemahan dari &lt;a href="http://tanzil.net">tanzil.net&lt;/a> dan &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>&lt;br/>
+    <string name="credits">Materi gambar yang digunakan bersumber dari &lt;a href="http://quran.com">quran.com&lt;/a>,
+        audio tilawah dari &lt;a href="http://everyayah.com">everyayah.com&lt;/a>. Data teks Arab dan terjemahan dari
+        &lt;a href="http://tanzil.net">tanzil.net&lt;/a> dan
+        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>&lt;br/></string>
+    <string name="aboutUs">Quran Android adalah aplikasi gratis untuk Android, yang dibangun secara open source. %1$s
 			&lt;br/>&lt;b>Kontributor Quran Android:&lt;/b>
             &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
             &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)

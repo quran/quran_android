@@ -34,11 +34,12 @@
     <string name="cancel">Bekor qilish</string>
     <string name="developedBy">Solih duoda bizni ham unutmang.</string>
     <string name="copyRights">&#169; Ummati Muhammadiya</string>
-    <string name="aboutUs">Quran Android (programmaning rasmiy nomi) ochiq kodli bepul programmadir.
-        Rasmlar &lt;a href="http://quran.com">quran.com&lt;/a> proyektidan,
+    <string name="credits">Rasmlar &lt;a href="http://quran.com">quran.com&lt;/a> proyektidan,
         audio fayllar &lt;a href="http://everyayah.com">everyayah.com&lt;/a> saytidan,
         tarjima va Qur\'onning arabcha matni &lt;a href="http://tanzil.net">tanzil.net&lt;/a> hamda
-        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a> saytlaridan olingan.
+        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a> saytlaridan olingan.</string>
+    <string name="aboutUs">Quran Android (programmaning rasmiy nomi) ochiq kodli bepul programmadir.
+        %1$s
         &lt;br/>&lt;br/>&lt;b>Ishtirokchilar:&lt;/b>
         &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
         &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
