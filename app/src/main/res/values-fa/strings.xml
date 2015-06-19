@@ -30,13 +30,16 @@
     <string name="cancel">لغو</string>
     <string name="developedBy">التماس دعا، محمدجعفر نعناکار</string>
     <string name="copyRights">حق تکثير براي همه مسلمانان محفوظ است</string>
-    <string name="aboutUs">برنامه قرآن آندرويد برنامه اي متن باز است که فايل هاي عکس آن از سايت
-            &lt;a href="http://quran.com">quran.com&lt;/a>
-و صوت آن از پروژه سايت 
+    <string name="credits"> است که فايل هاي عکس آن از سايت
+        &lt;a href="http://quran.com">quran.com&lt;/a>
+و صوت آن از پروژه سايت
             &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
-و ترجمه هاي آن از سايت 
+و ترجمه هاي آن از سايت
             &lt;a href="http://tanzil.net">tanzil.net&lt;/a>دريافت شده است.
             &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>
+    </string>
+    <string name="aboutUs">برنامه قرآن آندرويد برنامه اي متن باز
+        %1$s
             &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
             &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
             &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)

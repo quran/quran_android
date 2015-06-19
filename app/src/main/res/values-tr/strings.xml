@@ -24,11 +24,12 @@
     <string name="cancel">İptal</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
     <string name="copyRights">&#169; Ümmet</string>
-    <string name="aboutUs">Kur\'an-ı Kerîm uygulaması ücretsiz ve açık kaynaklı üretimdir.
-        Resimler &lt;a href="http://quran.com">quran.com&lt;/a> projesinden,
+    <string name="credits">Resimler &lt;a href="http://quran.com">quran.com&lt;/a> projesinden,
         sesler &lt;a href="http://everyayah.com">everyayah.com&lt;/a> sitesinden,
         meâl ve Arapça metinler &lt;a href="http://tanzil.net">tanzil.net&lt;/a> ve
-        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a> sitelerinden alınmıştır.
+        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a> sitelerinden alınmıştır.</string>
+    <string name="aboutUs">Kur\'an-ı Kerîm uygulaması ücretsiz ve açık kaynaklı üretimdir.
+        %1$s
         &lt;br/>&lt;br/>&lt;b>Katkıda bulunanlar:&lt;/b>
         &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
         &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)

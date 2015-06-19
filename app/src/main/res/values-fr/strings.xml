@@ -32,13 +32,14 @@
   <string name="cancel">Annuler</string>
   <string name="developedBy">La tansawna men saleh el doaa.</string>
   <string name="copyRights">Copyright à tout les musulmans</string>
-  <string name="aboutUs">Quran Android est une application pour le Noble Coran gratuite et open source pour Android.  Les images utilisées sont du projet 
+  <string name="credits"> Les images utilisées sont du projet
             &lt;a href=\"http://quran.com\">quran.com&lt;/a>
 			, les audios de
             &lt;a href=\"http://everyayah.com\">everyayah.com&lt;/a>,
 			les données utilisées pour les traductions et l\'arabe viennent de
             &lt;a href=\"http://tanzil.net\">tanzil.net&lt;/a> et
-            &lt;a href=\"http://quran.ksu.edu.sa\">quran.ksu.edu.sa&lt;/a>
+            &lt;a href=\"http://quran.ksu.edu.sa\">quran.ksu.edu.sa&lt;/a></string>
+  <string name="aboutUs">Quran Android est une application pour le Noble Coran gratuite et open source pour Android. %1$s
             &lt;br/>&lt;br/>&lt;b>Contributeurs Quran Android :&lt;/b>
             &lt;br/>Ahmed El-Helw (&lt;a href=\"http://twitter.com/ahmedre\">@ahmedre&lt;/a>)
             &lt;br/>Hussein Maher (&lt;a href=\"http://twitter.com/husseinmaher\">@husseinmaher&lt;/a>)
