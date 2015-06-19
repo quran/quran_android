@@ -35,11 +35,15 @@ android {
         qaloon {
             applicationId "com.quran.labs.androidquran.qaloon"
             resValue "string", "authority", applicationId + '.data.QuranDataProvider'
+            versionCode 1000
+            versionName "1.0.0"
         }
 
         naskh {
             applicationId "com.quran.labs.androidquran.naskh"
             resValue "string", "authority", applicationId + '.data.QuranDataProvider'
+            versionCode 1000
+            versionName "1.0.0"
         }
     }
 
