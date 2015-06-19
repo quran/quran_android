@@ -5,6 +5,7 @@ this is a simple (madani based) quran app for android.
 
 * madani images from [quran images project](http://github.com/quran/quran.com-images) on github.
 * qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).
+* naskh images used with permission of SHL Info Systems
 * translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
 * audio from [Every Ayah](http://everyayah.com/).
 
@@ -18,6 +19,9 @@ contributors:
 * [Wael Nafee](http://twitter.com/wnafee)
 * [Ahmed Fouad](http://twitter.com/fo2ad)
 * [Mahmoud Hossam](http://github.com/mahmoudhossam)
+
+* Asim Mohiuddin - images and work on the Naskh version
+* @g360230 - images and work on the Qaloon version
 
 graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
