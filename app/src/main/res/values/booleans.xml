@@ -3,4 +3,5 @@
   <bool name="is_tablet">false</bool>
   <bool name="show_surat_prefix">true</bool>
   <bool name="show_sura_names_translation">false</bool>
+  <bool name="immersive_in_portrait">false</bool>
 </resources>

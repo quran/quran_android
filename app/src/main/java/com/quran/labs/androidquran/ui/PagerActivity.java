@@ -165,6 +165,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private AudioRequest mLastAudioRequest;
   private boolean mDualPages = false;
   private boolean mIsLandscape;
+  private boolean mImmersiveInPortrait;
   private Integer mLastPlayingSura;
   private Integer mLastPlayingAyah;
   private View mToolBarArea;
@@ -286,6 +287,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     mSettings = QuranSettings.getInstance(this);
 
     final Resources resources = getResources();
+    mImmersiveInPortrait = resources.getBoolean(R.bool.immersive_in_portrait);
     mIsLandscape = resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
     mAyahToolBarTotalHeight = resources
@@ -573,7 +575,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibility(boolean isVisible){
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mIsLandscape){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
+        (mIsLandscape || mImmersiveInPortrait)){
       setUiVisibilityKitKat(isVisible);
       return;
     }
