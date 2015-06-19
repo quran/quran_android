@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Quran</string>
-    <string name="credits">The Quran images for the Naskh app were specifically taken from SHL Info Systems.
+    <string name="credits">The Quran images for the Naskh app were taken (with permission) from SHL Info Systems.
         The data used in the translations and Arabic comes from
         &lt;a href="http://tanzil.net">tanzil.net&lt;/a> and
         &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.
