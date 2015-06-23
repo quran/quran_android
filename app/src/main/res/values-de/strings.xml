@@ -40,7 +40,7 @@
     <string name="gotoPage">Gehe zur Seite</string>
     <string name="cancel">Abbrechen</string>
     <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">Copyright Alle Muslime</string>
+    <string name="copyRights">&#169; Alle Muslime</string>
     <string name="credits">Die benutzten Bilder stammen vom
 			&lt;a href="http://quran.com">quran.com&lt;/a>
 			Projekt, die Audio Dateien von
@@ -70,6 +70,8 @@
 			&lt;br/>Goran Gharib Karim - Kurdisch
 			&lt;br/>Abduqadir Abliz - Uigurisch
 			&lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesisch
+			&lt;br/>Ahmad Syazwan - Malaysisch
+			&lt;br/>Alexander Salas - Spanisch
 			&lt;br/>&lt;br/>&lt;b>Quelloffene Projekte:&lt;/b>
             &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
             &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
@@ -84,8 +86,8 @@
 		Am unteren Bildschirmrand werden ein Abspiel-Knopf in der Form eines Pfeiles und der Name 
 		des Rezitators erscheinen.  Berühren Sie den Namen des Rezitators um zwischen den Rezitatoren 
 		zu wechseln.
-		Drücken Sie den Abspiel-Knopf um die ausgewählte Seite oder Sura herunterzuladen, falls Sie 
-		das bereits getan haben, wird die Seite oder Sura sofort wiedergegeben, ansonsten müssen Sie 
+		Drücken Sie den Abspiel-Knopf um die ausgewählte Seite oder Sure herunterzuladen, falls Sie 
+		das bereits getan haben, wird die Seite oder Sure sofort wiedergegeben, ansonsten müssen Sie 
 		sich gedulden bis die Dateien heruntergeladen wurden, danach wird auch sofort die Wiedergabe gestartet.
 		&lt;br/>
 		&lt;br/>&lt;b>Wie kann ich eine Übersetzung öffnen?&lt;/b>
@@ -125,6 +127,11 @@
 	<string name="search_hint">Durchsuche den Quran</string>
 	<string name="quranSearchType">Quranverse</string>
 
+    <plurals name="files_downloaded">
+        <item quantity="one">1 Sure heruntergeladen</item>
+        <item quantity="other">%1$d Suren heruntergeladen</item>
+    </plurals>
+
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
         <item quantity="one">Resultat für \"%1$s\": </item>
@@ -132,7 +139,7 @@
     </plurals>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Gefunden in Sura</string>
+    <string name="found_in_Sure">Gefunden in Sure</string>
     <string name="no_results">Es wurden keine Resultate für \"%s\" gefunden.</string>
 	<string name="no_active_translation">Sie haben keine Übersetzung ausgewählt.  Bitte wählen Sie 
 	zuerst eine Übersetzung aus und suchen Sie danach erneut.</string>
@@ -162,7 +169,7 @@
     <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
     <string name="prefs_night_mode_text_brightness_summary">Die Helligkeit des Textes im Nachtmodus.</string>
     <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen</string>
-    <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sura und die Juz\' Nummer während dem Lesen ein.</string>
+    <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sure und die Juz\' Nummer während dem Lesen ein.</string>
 	<string name="prefs_display_marker_title">Meilenstein-Fenster anzeigen</string>
 	<string name="prefs_display_marker_summary">Ein Fenster anzeigen beim Erreichen eines neuen Juz\', einer neuen Hizb, etc.</string>
     <string name="prefs_translation_text_title">Schrittgröße der Übersetzungen</string>
@@ -175,6 +182,8 @@
     <string name="prefs_streaming_summary">Wenn möglich, Audio streamen (nicht unterbrechungsfreie Wiedergabe).</string>
     <string name="prefs_download_amount_title">Downloadgröße</string>
     <string name="prefs_download_amount_summary">Bevorzugte Downloadgröße für nicht unterbrechungsfreie Wiedergabe.</string>
+	<string name="prefs_audio_manager">Audioverwaltung (experimentell)</string>
+    <string name="prefs_audio_manager_summary">Verwalten Sie Ihre Audiodateien.</string>
     <string name="downloaded_translations">Heruntergeladen</string>
     <string name="available_translations">Zum Download verfügbar</string>
     <string name="remove_button">Entfernen</string>
@@ -188,9 +197,13 @@
     <string name="prefs_copying_app_files">Programmdateien werden kopiert</string>
     <string name="prefs_err_moving_app_files">Die Programmdateien konnten nicht verschoben werden.</string>
     <string name="prefs_no_enough_space_to_move_files">Sie haben nicht genug Speicherplatz um die Dateien zu verschieben.</string>
+    <string name="prefs_megabytes">%1$d MB</string>
     <string name="prefs_tablet_mode_title">Tablet-Modus</string>
     <string name="prefs_tablet_mode_enabled">Im Querformat werden zwei Seiten nebeneinander dargestellt.</string>
     <string name="prefs_tablet_mode_disabled">Im Querformat wird nur eine Seite dargestellt.</string>
+
+    <string name="kitkat_external_title">Achtung</string>
+    <string name="kitkat_external_message">Aufgrund von Systemeinschränkungen durch Android, werden im Falle der Speicherung der Daten auf einer externen SD-Karte, diese Daten nach einer Deinstallation oder einer Löschung der Applikationsdaten dauerhaft gelöscht und es ist ein erneutes Herunterladen erforderlich. Sind Sie sicher, dass Sie die externe SD-Karte benutzen wollen?</string>
     <!-- Preferences End -->
 
     <!-- translation updates -->
@@ -206,13 +219,13 @@
     <string name="quran_hizb">Hizb</string>
     <string name="quran_juz2">Juz\'</string>
     <string name="quran_page">Seite</string>
-    <string name="quran_sura">Sura</string>
+    <string name="quran_Sure">Sure</string>
     <string name="quran_ayah">Vers</string>
-    <string name="quran_sura_title">Sura %1$s</string>
-    <string name="sura_ayah_notification_str">Sura %1$s, Vers %2$d</string>
+    <string name="quran_Sure_title">Sure %1$s</string>
+    <string name="Sure_ayah_notification_str">Sure %1$s, Vers %2$d</string>
 
     <string name="bookmarks_current_page">Aktuelle Seite</string>
-    <string name="index_loading">Lade…</string>
+    <string name="index_loading">Lade&#8230;</string>
 
     <string name="canceling">Abbrechen&#8230;</string>
     <string name="juz2_description">Juz\' %1$s</string>
@@ -222,11 +235,13 @@
     <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
+    <string name="sdcard_error">Die SD-Karte konnte nicht gefunden werden. Bitte setzen Sie die Karte erneut ein und versuchen Sie es nochmals.</string>
     <string name="download_successful">Download erfolgreich</string>   
 	<string name="download_processing">Download wird durchgeführt&#8230;</string>              
     <string name="download_error_general">Download fehlgeschlagen</string>             
     <string name="download_error_disk">Sie verfügen nicht über genug Speicherplatz um die Dateien herunterzuladen.</string>               
 	<string name="download_error_network">Die Datei konnte wegen eines Netzwerk-Fehlers nicht heruntergeladen werden.</string>
+	
 	<string name="download_error_perms">Die Datei konnte mangels Berechtigungen nicht heruntergeladen werden.</string>
 	<string name="download_error_invalid_download">Die heruntergeladene Datei war fehlerhaft.</string>
 	<string name="download_error_invalid_download_retry">Fehlerhafte Datei, es wird versucht die Datei erneut herunterzuladen.</string>
@@ -236,10 +251,12 @@
     
     <!-- downloading dialogs -->
     <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
+    <string name="download_sura_progress">Heruntergeladen %1$s / %2$s von Sure %3$d</string>
+    <string name="download_sura_ayah_progress">Herunterladen von Sure %1$d Vers %2$d</string>
     <string name="process_progress">Datei wird verarbeitet %1$d / %2$d</string>
     <string name="download_retry">Nochmals versuchen</string>
     <string name="download_cancel">Abbrechen</string>
-    <string name="download_extra_data">Wir müssen ein paar kleine Dateien herunterladen, um von der 
+    <string name="download_extra_data">Wir müssen einige kleine Dateien herunterladen, um von der 
 	Teilen- und Übersetzungs-Funktion Gebrauch machen zu können.  Möchten Sie die Dateien jetzt herunterladen?</string>
 
     <!-- translation database stuff -->
@@ -264,6 +281,25 @@
         <item quantity="one">%s Vers</item>
         <item quantity="other">%s Verse</item>
     </plurals>
+
+    <!-- ayah action panel -->
+    <string name="play_from">Von</string>
+    <string name="play_to">Bis</string>
+    <string name="play_restrict_range">Nur die oben genannten Verse abspielen</string>
+    <string name="repeat_verses_range">Wiederhole den Satz von Versen:</string>
+    <string name="repeat_each_verse">Wiederhole jeden Vers:</string>
+    <string name="play_apply">Anwenden</string>
+    <string name="play_apply_and_play">Anwenden und Abspielen</string>
+    <string name="play">Abspielen</string>
+    <string name="stop">Stoppen</string>
+
+    <string-array name="repeatValues">
+        <item>nie</item>
+        <item>einmal</item>
+        <item>zweimal</item>
+        <item>dreimal</item>
+        <item>unendlich</item>
+    </string-array>
 
     <!-- long press -->
     <string name="bookmark_ayah">Lesezeichen für diesen Vers hinzufügen</string>
@@ -292,4 +328,7 @@
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Keine Lesezeichen</string>
     <string name="tags_list_empty">Keine Schlagwörter</string>
+
+    <!-- audio manager -->
+    <string name="audio_manager">Audioverwaltung</string>
 </resources>
