@@ -352,7 +352,12 @@ public class QuranFileUtils {
    * Returns the app used space in megabytes
    */
   public static int getAppUsedSpace(Context context) {
-    File base = new File(getQuranBaseDirectory(context));
+    final String baseDirectory = getQuranBaseDirectory(context);
+    if (baseDirectory == null) {
+      return -1;
+    }
+
+    File base = new File(baseDirectory);
     ArrayList<File> files = new ArrayList<>();
     files.add(base);
     long size = 0;

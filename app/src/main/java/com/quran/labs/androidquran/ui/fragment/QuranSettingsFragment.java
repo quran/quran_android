@@ -122,6 +122,12 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
   private void loadStorageOptions(Context context) {
     try {
+      if (mAppSize == -1) {
+        // sdcard is not mounted...
+        hideStorageListPref();
+        return;
+      }
+
       mListStoragePref.setLabelsAndSummaries(context, mAppSize, mStorageList);
       final HashMap<String, Integer> storageEmptySpaceMap =
           new HashMap<>(mStorageList.size());
