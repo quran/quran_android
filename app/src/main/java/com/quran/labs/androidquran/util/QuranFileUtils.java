@@ -133,7 +133,7 @@ public class QuranFileUtils {
       File dir = new File(quranDirectory + File.separator);
       if (dir.isDirectory()) {
         String[] fileList = dir.list();
-        int files = fileList.length;
+        int files = fileList == null ? 0 : fileList.length;
         if (files >= PAGES_LAST) {
           // ideally, we should loop for each page and ensure
           // all pages are there, but this will do for now.
