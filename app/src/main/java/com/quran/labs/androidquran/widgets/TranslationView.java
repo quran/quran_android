@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.widgets;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -14,8 +15,6 @@ import android.support.annotation.StyleRes;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.CharacterStyle;
-import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
@@ -245,8 +244,8 @@ public class TranslationView extends ScrollView {
       ayahView.setLineSpacing(1.4f, 1.4f);
 
       SpannableString arabicText = new SpannableString(ayahText);
-      CharacterStyle spanType = new StyleSpan(Typeface.BOLD);
-      arabicText.setSpan(spanType, 0, ayahText.length(),
+      UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
+      arabicText.setSpan(uthmaniSpan, 0, ayahText.length(),
           Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
       ayahView.setText(arabicText);
       ayahView.append("\n\n");
