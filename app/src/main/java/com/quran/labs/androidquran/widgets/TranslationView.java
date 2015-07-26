@@ -25,6 +25,7 @@ import android.widget.TextView;
 import java.util.List;
 
 public class TranslationView extends ScrollView {
+  private static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
 
   private Context mContext;
   private int mDividerColor;
@@ -144,10 +145,17 @@ public class TranslationView extends ScrollView {
     mAyat = ayat;
 
     int currentSura = 0;
-    for (QuranAyah ayah : ayat) {
-      if (!mIsInAyahActionMode && ayah.getSura() != currentSura) {
-        addSuraHeader(ayah.getSura());
-        currentSura = ayah.getSura();
+    for (int i = 0, ayatSize = ayat.size(); i < ayatSize; i++) {
+      QuranAyah ayah = ayat.get(i);
+
+      final int sura = ayah.getSura();
+      if (!mIsInAyahActionMode && sura != currentSura) {
+        addSuraHeader(sura);
+        if (ayah.getAyah() == 1 && (sura != 1 && sura != 9)) {
+          // explicitly add basmallah
+          addBasmallah();
+        }
+        currentSura = sura;
       }
       addTextForAyah(ayah);
     }
@@ -218,10 +226,12 @@ public class TranslationView extends ScrollView {
     params.setMargins(mLeftRightMargin, mTopBottomMargin,
         mLeftRightMargin, mTopBottomMargin);
 
-    final int ayahId = QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah());
+    final int suraNumber = ayah.getSura();
+    final int ayahNumber = ayah.getAyah();
+    final int ayahId = QuranInfo.getAyahId(suraNumber, ayahNumber);
     TextView ayahHeader = new TextView(mContext);
     styleAyahHeader(ayahHeader, mTextStyle);
-    ayahHeader.setText(ayah.getSura() + ":" + ayah.getAyah());
+    ayahHeader.setText(suraNumber + ":" + ayahNumber);
     mLinearLayout.addView(ayahHeader, params);
     mAyahHeaderMap.put(ayahId, ayahHeader);
 
@@ -240,6 +250,20 @@ public class TranslationView extends ScrollView {
     // arabic
     String ayahText = ayah.getText();
     if (!TextUtils.isEmpty(ayahText)) {
+
+      // since the basmallah is hardcoded in the db, we remove it from the
+      // first verse (except for sura fatiha and sura tawbah).
+      if (ayahNumber == 1 && (suraNumber != 1 && suraNumber != 9)) {
+
+        // this code is here as a safety check (even though, in theory, it should always be true).
+        // this is in case one day, we update the database and remove the basmallah from being
+        // attached to each first ayah - in those cases, even old code with the new database
+        // should do the right thing.
+        if (ayahText.startsWith(AR_BASMALLAH)) {
+          ayahText = ayahText.substring(AR_BASMALLAH.length() + 1);
+        }
+      }
+
       // Ayah Text
       ayahView.setLineSpacing(1.4f, 1.4f);
 
@@ -306,6 +330,30 @@ public class TranslationView extends ScrollView {
     view = new View(mContext);
     view.setBackgroundColor(mDividerColor);
     mLinearLayout.addView(view, LayoutParams.MATCH_PARENT, 2);
+  }
+
+  private void addBasmallah() {
+    TextView tv = new TextView(mContext);
+    tv.setTextAppearance(mContext, mTextStyle);
+    if (mIsNightMode) {
+      tv.setTextColor(mNightModeTextColor);
+    }
+    tv.setTextSize(mFontSize);
+
+    SpannableString str = new SpannableString(AR_BASMALLAH);
+    UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
+    str.setSpan(uthmaniSpan, 0, str.length(),
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    tv.setText(str);
+
+    LinearLayout.LayoutParams params =
+        new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    params.leftMargin = mLeftRightMargin;
+    params.rightMargin = mLeftRightMargin;
+    params.topMargin = mTopBottomMargin / 2;
+    params.bottomMargin = mTopBottomMargin / 2;
+
+    mLinearLayout.addView(tv, params);
   }
 
   public void setTranslationClickedListener(
