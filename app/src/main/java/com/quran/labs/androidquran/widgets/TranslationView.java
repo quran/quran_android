@@ -27,287 +27,295 @@ import java.util.List;
 
 public class TranslationView extends ScrollView {
 
-   private Context mContext;
-   private int mDividerColor;
-   private int mLeftRightMargin;
-   private int mTopBottomMargin;
-   @StyleRes private int mTextStyle;
-   @StyleRes private int mHighlightedStyle;
-   private int mFontSize;
-   private int mHeaderColor;
-   private int mHeaderStyle;
-   private int mFooterSpacerHeight;
-   private int mLastHighlightedAyah;
-   private boolean mIsNightMode;
-   private int mNightModeTextColor;
-   private boolean mIsInAyahActionMode;
+  private Context mContext;
+  private int mDividerColor;
+  private int mLeftRightMargin;
+  private int mTopBottomMargin;
+  @StyleRes private int mTextStyle;
+  @StyleRes private int mHighlightedStyle;
+  private int mFontSize;
+  private int mHeaderColor;
+  private int mHeaderStyle;
+  private int mFooterSpacerHeight;
+  private int mLastHighlightedAyah;
+  private boolean mIsNightMode;
+  private int mNightModeTextColor;
+  private boolean mIsInAyahActionMode;
 
-   private List<QuranAyah> mAyat;
-   private SparseArray<TextView> mAyahMap;
-   private SparseArray<TextView> mAyahHeaderMap;
+  private List<QuranAyah> mAyat;
+  private SparseArray<TextView> mAyahMap;
+  private SparseArray<TextView> mAyahHeaderMap;
 
-   private LinearLayout mLinearLayout;
-   private TranslationClickedListener mTranslationClickedListener;
+  private LinearLayout mLinearLayout;
+  private TranslationClickedListener mTranslationClickedListener;
 
-   public TranslationView(Context context){
-      this(context, null);
-   }
+  public TranslationView(Context context) {
+    this(context, null);
+  }
 
-   public TranslationView(Context context, AttributeSet attrs){
-      this(context, attrs, 0);
-   }
+  public TranslationView(Context context, AttributeSet attrs) {
+    this(context, attrs, 0);
+  }
 
-   public TranslationView(Context context, AttributeSet attrs, int defStyle){
-      super(context, attrs, defStyle);
-      init(context);
-   }
+  public TranslationView(Context context, AttributeSet attrs, int defStyle) {
+    super(context, attrs, defStyle);
+    init(context);
+  }
 
-   public void setIsInAyahActionMode(boolean isInAyahActionMode) {
-      mIsInAyahActionMode = isInAyahActionMode;
-   }
+  public void setIsInAyahActionMode(boolean isInAyahActionMode) {
+    mIsInAyahActionMode = isInAyahActionMode;
+  }
 
-   public void init(Context context){
-      mContext = context;
-      mAyahMap = new SparseArray<>();
-      mAyahHeaderMap = new SparseArray<>();
+  public void init(Context context) {
+    mContext = context;
+    mAyahMap = new SparseArray<>();
+    mAyahHeaderMap = new SparseArray<>();
 
-      setFillViewport(true);
-      mLinearLayout = new LinearLayout(context);
-      mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-      addView(mLinearLayout, ScrollView.LayoutParams.MATCH_PARENT,
-              ScrollView.LayoutParams.WRAP_CONTENT);
-      mLinearLayout.setOnClickListener(new OnClickListener() {
-         @Override
-         public void onClick(View v) {
-            if (mTranslationClickedListener != null){
-               mTranslationClickedListener.onTranslationClicked();
-            }
-         }
-      });
-
-      Resources resources = getResources();
-      mDividerColor = resources.getColor(R.color.translation_hdr_color);
-      mLeftRightMargin = resources.getDimensionPixelSize(
-          R.dimen.translation_left_right_margin);
-      mTopBottomMargin = resources.getDimensionPixelSize(
-          R.dimen.translation_top_bottom_margin);
-      mFooterSpacerHeight = resources.getDimensionPixelSize(
-          R.dimen.translation_footer_spacer);
-      mHeaderColor = resources.getColor(R.color.translation_sura_header);
-      mHeaderStyle = R.style.translation_sura_title;
-      initResources();
-   }
-
-   private void initResources(){
-      QuranSettings settings = QuranSettings.getInstance(mContext);
-      mFontSize = settings.getTranslationTextSize();
-
-      mIsNightMode = settings.isNightMode();
-      if (mIsNightMode) {
-         int brightness = settings.getNightModeTextBrightness();
-         mNightModeTextColor = Color.rgb(brightness, brightness, brightness);
-      }
-      mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
-              R.style.TranslationText;
-      mHighlightedStyle = mIsNightMode?
-              R.style.TranslationText_NightMode_Highlighted :
-              R.style.TranslationText_Highlighted;
-   }
-
-   public void refresh(){
-      initResources();
-      if (mAyat != null){
-        setAyahs(mAyat);
-      }
-   }
-
-   public void setNightMode(boolean isNightMode, int textBrightness) {
-     mIsNightMode = isNightMode;
-     if (isNightMode) {
-       mNightModeTextColor = Color.rgb(textBrightness, textBrightness, textBrightness);
-     }
-     mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
-         R.style.TranslationText;
-     mHighlightedStyle = mIsNightMode?
-         R.style.TranslationText_NightMode_Highlighted :
-         R.style.TranslationText_Highlighted;
-     if (mAyat != null){
-       setAyahs(mAyat);
-     }
-   }
-
-   public void setAyahs(List<QuranAyah> ayat){
-      mLastHighlightedAyah = -1;
-
-      mLinearLayout.removeAllViews();
-      mAyahMap.clear();
-      mAyahHeaderMap.clear();
-      mAyat = ayat;
-
-      int currentSura = 0;
-      for (QuranAyah ayah : ayat){
-         if (!mIsInAyahActionMode && ayah.getSura() != currentSura){
-            addSuraHeader(ayah.getSura());
-            currentSura = ayah.getSura();
-         }
-         addTextForAyah(ayah);
-      }
-
-      addFooterSpacer();
-   }
-
-   public void unhighlightAyat(){
-      if (mLastHighlightedAyah > 0){
-         TextView text = mAyahMap.get(mLastHighlightedAyah);
-         if (text != null){
-            text.setTextAppearance(mContext, mTextStyle);
-            text.setTextSize(mFontSize);
-         }
-
-         text = mAyahHeaderMap.get(mLastHighlightedAyah);
-         if (text != null) {
-            styleAyahHeader(text, mTextStyle);
-         }
-      }
-      mLastHighlightedAyah = -1;
-   }
-
-   public void highlightAyah(int ayahId){
-      if (mLastHighlightedAyah > 0){
-         unhighlightAyat();
-      }
-
-      TextView text = mAyahMap.get(ayahId);
-      if (text != null){
-         text.setTextAppearance(mContext, mHighlightedStyle);
-         text.setTextSize(mFontSize);
-         mLastHighlightedAyah = ayahId;
-
-         TextView header = mAyahHeaderMap.get(ayahId);
-         if (header != null) {
-            styleAyahHeader(header, mHighlightedStyle);
-         }
-
-         int screenHeight = QuranScreenInfo.getInstance().getHeight();
-         int y = text.getTop() - (int)(0.25 * screenHeight);
-         smoothScrollTo(getScrollX(), y);
-      }
-      else { mLastHighlightedAyah = -1; }
-   }
-
-   private OnClickListener mOnAyahClickListener = new OnClickListener() {
+    setFillViewport(true);
+    mLinearLayout = new LinearLayout(context);
+    mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+    addView(mLinearLayout, ScrollView.LayoutParams.MATCH_PARENT,
+        ScrollView.LayoutParams.WRAP_CONTENT);
+    mLinearLayout.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-         if (mTranslationClickedListener != null){
-            mTranslationClickedListener.onTranslationClicked();
-         }
+        if (mTranslationClickedListener != null) {
+          mTranslationClickedListener.onTranslationClicked();
+        }
       }
-   };
+    });
 
-   private void addFooterSpacer() {
-     final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-         LayoutParams.MATCH_PARENT, mFooterSpacerHeight);
-     final View view = new View(mContext);
-     mLinearLayout.addView(view, params);
-   }
+    Resources resources = getResources();
+    mDividerColor = resources.getColor(R.color.translation_hdr_color);
+    mLeftRightMargin = resources.getDimensionPixelSize(
+        R.dimen.translation_left_right_margin);
+    mTopBottomMargin = resources.getDimensionPixelSize(
+        R.dimen.translation_top_bottom_margin);
+    mFooterSpacerHeight = resources.getDimensionPixelSize(
+        R.dimen.translation_footer_spacer);
+    mHeaderColor = resources.getColor(R.color.translation_sura_header);
+    mHeaderStyle = R.style.translation_sura_title;
+    initResources();
+  }
 
-   private void addTextForAyah(QuranAyah ayah){
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-              LayoutParams.MATCH_PARENT,
-              LayoutParams.WRAP_CONTENT);
-      params.setMargins(mLeftRightMargin, mTopBottomMargin,
-              mLeftRightMargin, mTopBottomMargin);
+  private void initResources() {
+    QuranSettings settings = QuranSettings.getInstance(mContext);
+    mFontSize = settings.getTranslationTextSize();
 
-      final int ayahId = QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah());
-      TextView ayahHeader = new TextView(mContext);
-      styleAyahHeader(ayahHeader, mTextStyle);
-      ayahHeader.setText(ayah.getSura() + ":" + ayah.getAyah());
-      mLinearLayout.addView(ayahHeader, params);
-      mAyahHeaderMap.put(ayahId, ayahHeader);
+    mIsNightMode = settings.isNightMode();
+    if (mIsNightMode) {
+      int brightness = settings.getNightModeTextBrightness();
+      mNightModeTextColor = Color.rgb(brightness, brightness, brightness);
+    }
+    mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
+        R.style.TranslationText;
+    mHighlightedStyle = mIsNightMode ?
+        R.style.TranslationText_NightMode_Highlighted :
+        R.style.TranslationText_Highlighted;
+  }
 
-      TextView ayahView = new TextView(mContext);
-      ayahView.setOnClickListener(mOnAyahClickListener);
-      mAyahMap.put(ayahId, ayahView);
+  public void refresh() {
+    initResources();
+    if (mAyat != null) {
+      setAyahs(mAyat);
+    }
+  }
 
-      ayahView.setTextAppearance(mContext, mTextStyle);
-      if (mIsInAyahActionMode) ayahView.setTextColor(Color.WHITE);
-      else if (mIsNightMode) ayahView.setTextColor(mNightModeTextColor);
-      ayahView.setTextSize(mFontSize);
+  public void setNightMode(boolean isNightMode, int textBrightness) {
+    mIsNightMode = isNightMode;
+    if (isNightMode) {
+      mNightModeTextColor = Color.rgb(textBrightness, textBrightness, textBrightness);
+    }
+    mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
+        R.style.TranslationText;
+    mHighlightedStyle = mIsNightMode ?
+        R.style.TranslationText_NightMode_Highlighted :
+        R.style.TranslationText_Highlighted;
+    if (mAyat != null) {
+      setAyahs(mAyat);
+    }
+  }
 
-      // arabic
-      String ayahText = ayah.getText();
-      if (!TextUtils.isEmpty(ayahText)){
-         // Ayah Text
-         ayahView.setLineSpacing(1.4f, 1.4f);
+  public void setAyahs(List<QuranAyah> ayat) {
+    mLastHighlightedAyah = -1;
 
-         SpannableString arabicText = new SpannableString(ayahText);
-         CharacterStyle spanType = new StyleSpan(Typeface.BOLD);
-         arabicText.setSpan(spanType, 0, ayahText.length(),
-                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-         ayahView.setText(arabicText);
-         ayahView.append("\n\n");
+    mLinearLayout.removeAllViews();
+    mAyahMap.clear();
+    mAyahHeaderMap.clear();
+    mAyat = ayat;
+
+    int currentSura = 0;
+    for (QuranAyah ayah : ayat) {
+      if (!mIsInAyahActionMode && ayah.getSura() != currentSura) {
+        addSuraHeader(ayah.getSura());
+        currentSura = ayah.getSura();
+      }
+      addTextForAyah(ayah);
+    }
+
+    addFooterSpacer();
+  }
+
+  public void unhighlightAyat() {
+    if (mLastHighlightedAyah > 0) {
+      TextView text = mAyahMap.get(mLastHighlightedAyah);
+      if (text != null) {
+        text.setTextAppearance(mContext, mTextStyle);
+        text.setTextSize(mFontSize);
       }
 
-      // translation
-      String translationText = ayah.getTranslation();
+      text = mAyahHeaderMap.get(mLastHighlightedAyah);
+      if (text != null) {
+        styleAyahHeader(text, mTextStyle);
+      }
+    }
+    mLastHighlightedAyah = -1;
+  }
 
-      SpannableString translation = new SpannableString(translationText);
-      ayahView.append(translation);
+  public void highlightAyah(int ayahId) {
+    if (mLastHighlightedAyah > 0) {
+      unhighlightAyat();
+    }
 
-      params = new LinearLayout.LayoutParams(
-              LayoutParams.MATCH_PARENT,
-              LayoutParams.WRAP_CONTENT);
-      params.setMargins(mLeftRightMargin, mTopBottomMargin,
-              mLeftRightMargin, mTopBottomMargin);
-      setTextSelectable(ayahView);
-      mLinearLayout.addView(ayahView, params);
-   }
+    TextView text = mAyahMap.get(ayahId);
+    if (text != null) {
+      text.setTextAppearance(mContext, mHighlightedStyle);
+      text.setTextSize(mFontSize);
+      mLastHighlightedAyah = ayahId;
 
-   private void styleAyahHeader(TextView headerView, @StyleRes int style) {
-      headerView.setTextAppearance(mContext, style);
-      if (mIsInAyahActionMode) headerView.setTextColor(Color.WHITE);
-      else if (mIsNightMode) headerView.setTextColor(mNightModeTextColor);
-      headerView.setTextSize(mFontSize);
-      headerView.setTypeface(null, Typeface.BOLD);
-   }
+      TextView header = mAyahHeaderMap.get(ayahId);
+      if (header != null) {
+        styleAyahHeader(header, mHighlightedStyle);
+      }
 
-   private void setTextSelectable(TextView ayahView) {
-     ayahView.setTextIsSelectable(true);
-   }
+      int screenHeight = QuranScreenInfo.getInstance().getHeight();
+      int y = text.getTop() - (int) (0.25 * screenHeight);
+      smoothScrollTo(getScrollX(), y);
+    } else {
+      mLastHighlightedAyah = -1;
+    }
+  }
 
-   private void addSuraHeader(int currentSura){
-      View view = new View(mContext);
-      
-      view.setBackgroundColor(mHeaderColor);
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-              LayoutParams.MATCH_PARENT, 2);
-      params.topMargin = mTopBottomMargin;
-      mLinearLayout.addView(view, params);
+  private OnClickListener mOnAyahClickListener = new OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      if (mTranslationClickedListener != null) {
+        mTranslationClickedListener.onTranslationClicked();
+      }
+    }
+  };
 
-      String suraName = QuranInfo.getSuraName(mContext, currentSura, true);
+  private void addFooterSpacer() {
+    final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        LayoutParams.MATCH_PARENT, mFooterSpacerHeight);
+    final View view = new View(mContext);
+    mLinearLayout.addView(view, params);
+  }
 
-      TextView headerView = new TextView(mContext);
-      params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-              LayoutParams.WRAP_CONTENT);
-      params.leftMargin = mLeftRightMargin;
-      params.rightMargin = mLeftRightMargin;
-      params.topMargin = mTopBottomMargin / 2;
-      params.bottomMargin = mTopBottomMargin / 2;
-      headerView.setTextAppearance(mContext, mHeaderStyle);
-      headerView.setText(suraName);
-      mLinearLayout.addView(headerView, params);
+  private void addTextForAyah(QuranAyah ayah) {
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        LayoutParams.MATCH_PARENT,
+        LayoutParams.WRAP_CONTENT);
+    params.setMargins(mLeftRightMargin, mTopBottomMargin,
+        mLeftRightMargin, mTopBottomMargin);
 
-      view = new View(mContext);
-      view.setBackgroundColor(mDividerColor);
-      mLinearLayout.addView(view, LayoutParams.MATCH_PARENT, 2);
-   }
+    final int ayahId = QuranInfo.getAyahId(ayah.getSura(), ayah.getAyah());
+    TextView ayahHeader = new TextView(mContext);
+    styleAyahHeader(ayahHeader, mTextStyle);
+    ayahHeader.setText(ayah.getSura() + ":" + ayah.getAyah());
+    mLinearLayout.addView(ayahHeader, params);
+    mAyahHeaderMap.put(ayahId, ayahHeader);
 
-   public void setTranslationClickedListener(
-           TranslationClickedListener listener){
-      mTranslationClickedListener = listener;
-   }
+    TextView ayahView = new TextView(mContext);
+    ayahView.setOnClickListener(mOnAyahClickListener);
+    mAyahMap.put(ayahId, ayahView);
 
-   public interface TranslationClickedListener {
-      void onTranslationClicked();
-   }
+    ayahView.setTextAppearance(mContext, mTextStyle);
+    if (mIsInAyahActionMode) {
+      ayahView.setTextColor(Color.WHITE);
+    } else if (mIsNightMode) {
+      ayahView.setTextColor(mNightModeTextColor);
+    }
+    ayahView.setTextSize(mFontSize);
+
+    // arabic
+    String ayahText = ayah.getText();
+    if (!TextUtils.isEmpty(ayahText)) {
+      // Ayah Text
+      ayahView.setLineSpacing(1.4f, 1.4f);
+
+      SpannableString arabicText = new SpannableString(ayahText);
+      CharacterStyle spanType = new StyleSpan(Typeface.BOLD);
+      arabicText.setSpan(spanType, 0, ayahText.length(),
+          Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+      ayahView.setText(arabicText);
+      ayahView.append("\n\n");
+    }
+
+    // translation
+    String translationText = ayah.getTranslation();
+
+    SpannableString translation = new SpannableString(translationText);
+    ayahView.append(translation);
+
+    params = new LinearLayout.LayoutParams(
+        LayoutParams.MATCH_PARENT,
+        LayoutParams.WRAP_CONTENT);
+    params.setMargins(mLeftRightMargin, mTopBottomMargin,
+        mLeftRightMargin, mTopBottomMargin);
+    setTextSelectable(ayahView);
+    mLinearLayout.addView(ayahView, params);
+  }
+
+  private void styleAyahHeader(TextView headerView, @StyleRes int style) {
+    headerView.setTextAppearance(mContext, style);
+    if (mIsInAyahActionMode) {
+      headerView.setTextColor(Color.WHITE);
+    } else if (mIsNightMode) {
+      headerView.setTextColor(mNightModeTextColor);
+    }
+    headerView.setTextSize(mFontSize);
+    headerView.setTypeface(null, Typeface.BOLD);
+  }
+
+  private void setTextSelectable(TextView ayahView) {
+    ayahView.setTextIsSelectable(true);
+  }
+
+  private void addSuraHeader(int currentSura) {
+    View view = new View(mContext);
+
+    view.setBackgroundColor(mHeaderColor);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        LayoutParams.MATCH_PARENT, 2);
+    params.topMargin = mTopBottomMargin;
+    mLinearLayout.addView(view, params);
+
+    String suraName = QuranInfo.getSuraName(mContext, currentSura, true);
+
+    TextView headerView = new TextView(mContext);
+    params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+        LayoutParams.WRAP_CONTENT);
+    params.leftMargin = mLeftRightMargin;
+    params.rightMargin = mLeftRightMargin;
+    params.topMargin = mTopBottomMargin / 2;
+    params.bottomMargin = mTopBottomMargin / 2;
+    headerView.setTextAppearance(mContext, mHeaderStyle);
+    headerView.setText(suraName);
+    mLinearLayout.addView(headerView, params);
+
+    view = new View(mContext);
+    view.setBackgroundColor(mDividerColor);
+    mLinearLayout.addView(view, LayoutParams.MATCH_PARENT, 2);
+  }
+
+  public void setTranslationClickedListener(
+      TranslationClickedListener listener) {
+    mTranslationClickedListener = listener;
+  }
+
+  public interface TranslationClickedListener {
+
+    void onTranslationClicked();
+  }
 }
