@@ -5,14 +5,14 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-import java.io.Serializable;
 import java.util.Locale;
 
-public class AudioRequest implements Serializable {
+public abstract class AudioRequest implements Parcelable {
 
-  private static final long serialVersionUID = 1L;
   private static final String TAG = "AudioRequest";
 
   private String mBaseUrl = null;
@@ -41,6 +41,8 @@ public class AudioRequest implements Serializable {
   // repeat information
   private RepeatInfo mRepeatInfo;
 
+  public abstract boolean haveSuraAyah(int sura, int ayah);
+
   public AudioRequest(String baseUrl, QuranAyah verse) {
     mBaseUrl = baseUrl;
     final int startSura = verse.getSura();
@@ -58,6 +60,22 @@ public class AudioRequest implements Serializable {
     mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
 
     mRangeRepeatInfo = new RepeatInfo(0);
+  }
+
+  protected AudioRequest(Parcel in) {
+    this.mBaseUrl = in.readString();
+    this.mGaplessDatabasePath = in.readString();
+    this.mAyahsInThisSura = in.readInt();
+    this.mMinSura = in.readInt();
+    this.mMinAyah = in.readInt();
+    this.mMaxSura = in.readInt();
+    this.mMaxAyah = in.readInt();
+    this.mCurrentSura = in.readInt();
+    this.mCurrentAyah = in.readInt();
+    this.mRangeRepeatInfo = in.readParcelable(RepeatInfo.class.getClassLoader());
+    this.mEnforceBounds = in.readByte() != 0;
+    this.mJustPlayedBasmallah = in.readByte() != 0;
+    this.mRepeatInfo = in.readParcelable(RepeatInfo.class.getClassLoader());
   }
 
   public boolean needsIsti3athaAudio() {
@@ -201,11 +219,6 @@ public class AudioRequest implements Serializable {
     return String.format(Locale.US, mBaseUrl, sura, ayah);
   }
 
-  public boolean haveSuraAyah(int sura, int ayah) {
-    // for streaming, we (theoretically) always "have" the sura and ayah
-    return true;
-  }
-
   public String getTitle(Context context) {
     return QuranInfo.getSuraAyahString(context,
         mCurrentSura, mCurrentAyah);
@@ -273,4 +286,27 @@ public class AudioRequest implements Serializable {
       mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
     }
   }
+
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(this.mBaseUrl);
+    dest.writeString(this.mGaplessDatabasePath);
+    dest.writeInt(this.mAyahsInThisSura);
+    dest.writeInt(this.mMinSura);
+    dest.writeInt(this.mMinAyah);
+    dest.writeInt(this.mMaxSura);
+    dest.writeInt(this.mMaxAyah);
+    dest.writeInt(this.mCurrentSura);
+    dest.writeInt(this.mCurrentAyah);
+    dest.writeParcelable(this.mRangeRepeatInfo, 0);
+    dest.writeByte(mEnforceBounds ? (byte) 1 : (byte) 0);
+    dest.writeByte(mJustPlayedBasmallah ? (byte) 1 : (byte) 0);
+    dest.writeParcelable(this.mRepeatInfo, 0);
+  }
+
 }

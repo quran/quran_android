@@ -63,7 +63,6 @@ import android.util.SparseIntArray;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 
 /**
@@ -369,11 +368,11 @@ public class AudioService extends Service implements OnCompletionListener,
         mBroadcastManager.sendBroadcast(updateIntent);
       }
     } else if (ACTION_PLAYBACK.equals(action)) {
-      Serializable playInfo = intent.getSerializableExtra(EXTRA_PLAY_INFO);
-      if (playInfo != null && playInfo instanceof AudioRequest) {
+      AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
+      if (playInfo != null) {
         if (mState == State.Stopped ||
             !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {
-          mAudioRequest = (AudioRequest) playInfo;
+          mAudioRequest = playInfo;
           Crashlytics.log("audio request has changed...");
         }
       }
