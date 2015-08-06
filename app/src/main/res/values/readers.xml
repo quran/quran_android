@@ -25,6 +25,31 @@
         <item>Yasser Ad-Dussary</item>
     </string-array>
 
+    <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item> <!-- abdul basit -->
+        <item>0</item> <!-- abdul basit mujawwad -->
+        <item>0</item> <!-- abdullah basfar -->
+        <item>1</item> <!-- abdurrahman as sudais -->
+        <item>0</item> <!-- abu bakr al shatiri -->
+        <item>0</item> <!-- mishaari al3afasy -->
+        <item>0</item> <!-- sa3d alghamdi -->
+        <item>0</item> <!-- ibrahim walk -->
+        <item>0</item> <!-- hani ar-rifa3i -->
+        <item>0</item> <!-- husary mujawwad -->
+        <item>0</item> <!-- huthayfi -->
+        <item>0</item> <!-- maher al mu3ayqli -->
+        <item>0</item> <!-- minshawi mujawwad -->
+        <item>0</item> <!-- mohammad al tablaway -->
+        <item>0</item> <!-- muhammad ayyoub -->
+        <item>0</item> <!-- muhammad jibreel -->
+        <item>0</item> <!-- sa3ood al shuraim -->
+        <item>0</item> <!-- yasser ad dussary -->
+    </integer-array>
+
     <string-array translatable="false" name="quran_readers_path">
         <item>minshawi_murattal</item>
         <item>husary</item>

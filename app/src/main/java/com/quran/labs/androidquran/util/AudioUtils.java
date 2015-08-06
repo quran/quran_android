@@ -53,9 +53,13 @@ public class AudioUtils {
     final String[] paths = resources.getStringArray(R.array.quran_readers_path);
     final String[] urls = resources.getStringArray(R.array.quran_readers_urls);
     final String[] databases = resources.getStringArray(R.array.quran_readers_db_name);
+    final int[] hasGaplessEquivalent =
+        resources.getIntArray(R.array.quran_readers_have_gapless_equivalents);
     List<QariItem> items = new ArrayList<>(shuyookh.length);
     for (int i=0; i < shuyookh.length; i++) {
-      items.add(new QariItem(shuyookh[i], urls[i], paths[i], databases[i]));
+      if (hasGaplessEquivalent[i] == 0 || haveAnyFiles(context, paths[i])) {
+        items.add(new QariItem(i, shuyookh[i], urls[i], paths[i], databases[i]));
+      }
     }
     return items;
   }
