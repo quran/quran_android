@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.Closeable;
@@ -309,6 +310,7 @@ public class QuranFileUtils {
     }
   }
 
+  @Nullable
   public static String getQuranBaseDirectory(Context context) {
     String basePath = QuranSettings.getInstance(context).getAppCustomLocation();
 
@@ -385,6 +387,7 @@ public class QuranFileUtils {
     return base == null ? null : base + "/" + AYAHINFO_DIRECTORY;
   }
 
+  @Nullable
   public static String getQuranAudioDirectory(Context context){
     String s = QuranFileUtils.getQuranBaseDirectory(context);
     return (s == null)? null : s + AUDIO_DIRECTORY + File.separator;
