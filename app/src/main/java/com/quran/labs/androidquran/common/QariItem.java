@@ -7,13 +7,15 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 public class QariItem implements Parcelable {
+  private final int mId;
   @NonNull private final String mName;
   @NonNull private final String mUrl;
   @NonNull private final String mPath;
   @Nullable private final String mDatabaseName;
 
-  public QariItem(@NonNull String name, @NonNull String url,
+  public QariItem(int id, @NonNull String name, @NonNull String url,
       @NonNull String path, @Nullable String databaseName) {
+    mId = id;
     mName = name;
     mUrl = url;
     mPath = path;
@@ -21,10 +23,15 @@ public class QariItem implements Parcelable {
   }
 
   protected QariItem(Parcel in) {
+    this.mId = in.readInt();
     this.mName = in.readString();
     this.mUrl = in.readString();
     this.mPath = in.readString();
     this.mDatabaseName = in.readString();
+  }
+
+  public int getId() {
+    return mId;
   }
 
   public boolean isGapless() {
@@ -58,6 +65,7 @@ public class QariItem implements Parcelable {
 
   @Override
   public void writeToParcel(Parcel dest, int flags) {
+    dest.writeInt(this.mId);
     dest.writeString(this.mName);
     dest.writeString(this.mUrl);
     dest.writeString(this.mPath);

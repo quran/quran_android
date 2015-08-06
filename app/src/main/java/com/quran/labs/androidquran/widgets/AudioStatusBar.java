@@ -125,6 +125,22 @@ public class AudioStatusBar extends LinearLayout {
       ta.recycle();
     }
 
+    List<QariItem> qariList = AudioUtils.getQariList(mContext);
+    final int qaris = qariList.size();
+    if (mCurrentQari >= qaris || qariList.get(mCurrentQari).getId() != mCurrentQari) {
+      // figure out the updated position for the index
+      int updatedIndex = 0;
+      for (int i = 0; i < qaris; i++) {
+        if (qariList.get(i).getId() == mCurrentQari) {
+          updatedIndex = i;
+          break;
+        }
+      }
+      mCurrentQari = updatedIndex;
+    }
+
+    mAdapter = new QariAdapter(mContext, qariList,
+        R.layout.sherlock_spinner_item, R.layout.sherlock_spinner_dropdown_item);
     showStoppedMode();
   }
 
@@ -268,9 +284,6 @@ public class AudioStatusBar extends LinearLayout {
       mSpinner = new SpinnerCompat(mContext, null,
           R.attr.actionDropDownStyle);
       mSpinner.setDropDownVerticalOffset(mSpinnerPadding);
-
-      mAdapter = new QariAdapter(mContext, AudioUtils.getQariList(mContext),
-          R.layout.sherlock_spinner_item, R.layout.sherlock_spinner_dropdown_item);
       mSpinner.setAdapter(mAdapter);
 
       mSpinner.setOnItemSelectedListener(
@@ -281,7 +294,7 @@ public class AudioStatusBar extends LinearLayout {
               if (position != mCurrentQari) {
                 mSharedPreferences.edit().
                     putInt(Constants.PREF_DEFAULT_QARI,
-                        position).apply();
+                        mAdapter.getItem(position).getId()).apply();
                 mCurrentQari = position;
               }
             }
