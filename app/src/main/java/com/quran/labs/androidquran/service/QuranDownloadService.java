@@ -34,7 +34,6 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -273,8 +272,8 @@ public class QuranDownloadService extends Service implements
       mNotifier.resetNotifications();
 
       // get the start/end ayah info if it's a ranged download
-      Serializable startAyah = intent.getSerializableExtra(EXTRA_START_VERSE);
-      Serializable endAyah = intent.getSerializableExtra(EXTRA_END_VERSE);
+      QuranAyah startAyah = intent.getParcelableExtra(EXTRA_START_VERSE);
+      QuranAyah endAyah = intent.getParcelableExtra(EXTRA_END_VERSE);
       boolean isGapless = intent.getBooleanExtra(EXTRA_IS_GAPLESS, false);
 
       String outputFile = intent.getStringExtra(EXTRA_OUTPUT_FILE_NAME);
@@ -290,14 +289,7 @@ public class QuranDownloadService extends Service implements
 
       boolean result;
       if (startAyah != null && endAyah != null) {
-        if (startAyah instanceof QuranAyah &&
-            endAyah instanceof QuranAyah) {
-          result = downloadRange(url, destination,
-              (QuranAyah) startAyah,
-              (QuranAyah) endAyah, isGapless, details);
-        } else {
-          return;
-        }
+        result = downloadRange(url, destination, startAyah, endAyah, isGapless, details);
       } else {
         result = download(url, destination, outputFile, details);
       }

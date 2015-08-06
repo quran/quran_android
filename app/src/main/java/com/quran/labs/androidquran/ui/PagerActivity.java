@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
+import com.quran.labs.androidquran.service.util.StreamingAudioRequest;
 import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.task.RefreshBookmarkIconTask;
 import com.quran.labs.androidquran.task.ShareAyahTask;
@@ -96,7 +97,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -258,11 +258,11 @@ public class PagerActivity extends QuranActionBarActivity implements
     mIsActionBarHidden = true;
     if (savedInstanceState != null) {
       android.util.Log.d(TAG, "non-null saved instance state!");
-      Serializable lastAudioRequest =
-          savedInstanceState.getSerializable(LAST_AUDIO_DL_REQUEST);
-      if (lastAudioRequest instanceof DownloadAudioRequest) {
+      DownloadAudioRequest lastAudioRequest =
+          savedInstanceState.getParcelable(LAST_AUDIO_DL_REQUEST);
+      if (lastAudioRequest != null) {
         android.util.Log.d(TAG, "restoring request from saved instance!");
-        mLastAudioDownloadRequest = (DownloadAudioRequest) lastAudioRequest;
+        mLastAudioDownloadRequest = lastAudioRequest;
       }
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
       if (page != -1) {
@@ -280,8 +280,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       mStart = savedInstanceState.getParcelable(LAST_START_POINT);
       mEnd = savedInstanceState.getParcelable(LAST_ENDING_POINT);
-      mLastAudioRequest = (AudioRequest) savedInstanceState
-          .getSerializable(LAST_AUDIO_REQUEST);
+      mLastAudioRequest = savedInstanceState.getParcelable(LAST_AUDIO_REQUEST);
     }
 
     mSettings = QuranSettings.getInstance(this);
@@ -899,12 +898,11 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void onSaveInstanceState(Bundle state) {
     if (mLastAudioDownloadRequest != null) {
-      state.putSerializable(LAST_AUDIO_DL_REQUEST,
+      state.putParcelable(LAST_AUDIO_DL_REQUEST,
           mLastAudioDownloadRequest);
     }
-    int lastPage = QuranInfo.getPageFromPos(
-        mViewPager.getCurrentItem(), mDualPages);
-    state.putSerializable(LAST_READ_PAGE, lastPage);
+    int lastPage = QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
+    state.putInt(LAST_READ_PAGE, lastPage);
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
     state.putBoolean(LAST_ACTIONBAR_STATE, mIsActionBarHidden);
     state.putBoolean(LAST_WAS_DUAL_PAGES, mDualPages);
@@ -913,7 +911,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       state.putParcelable(LAST_ENDING_POINT, mEnd);
     }
     if (mLastAudioRequest != null) {
-      state.putSerializable(LAST_AUDIO_REQUEST, mLastAudioRequest);
+      state.putParcelable(LAST_AUDIO_REQUEST, mLastAudioRequest);
     }
     super.onSaveInstanceState(state);
   }
@@ -1228,10 +1226,9 @@ public class PagerActivity extends QuranActionBarActivity implements
             AudioService.AudioUpdateIntent.AYAH, -1);
         int repeatCount = intent.getIntExtra(
             AudioService.AudioUpdateIntent.REPEAT_COUNT, -200);
-        Serializable request = intent.getSerializableExtra(
-            AudioService.AudioUpdateIntent.REQUEST);
-        if (request instanceof AudioRequest) {
-          mLastAudioRequest = (AudioRequest) request;
+        AudioRequest request = intent.getParcelableExtra(AudioService.AudioUpdateIntent.REQUEST);
+        if (request != null) {
+          mLastAudioRequest = request;
         }
         if (state == AudioService.AudioUpdateIntent.PLAYING) {
           mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
@@ -1247,8 +1244,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           unHighlightAyahs(HighlightType.AUDIO);
           mLastAudioRequest = null;
 
-          Serializable qi = intent.getSerializableExtra(
-              AudioService.EXTRA_PLAY_INFO);
+          AudioRequest qi = intent.getParcelableExtra(AudioService.EXTRA_PLAY_INFO);
           if (qi != null) {
             // this means we stopped due to missing audio
           }
@@ -1560,7 +1556,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       ending = AudioUtils.getLastAyahToPlay(ayah, page,
           mSettings.getPreferredDownloadAmount(), mDualPages);
     }
-    AudioRequest request = new AudioRequest(qariUrl, ayah);
+    AudioRequest request = new StreamingAudioRequest(qariUrl, ayah);
     request.setPlayBounds(ayah, ending);
     request.setEnforceBounds(enforceRange);
     request.setRangeRepeatCount(rangeRepeat);
