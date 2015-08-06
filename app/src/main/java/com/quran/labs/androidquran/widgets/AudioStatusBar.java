@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.widgets;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -16,6 +18,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
@@ -24,11 +27,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class AudioStatusBar extends LinearLayout {
 
@@ -46,6 +51,7 @@ public class AudioStatusBar extends LinearLayout {
   private int mTextFontSize;
   private int mTextFullFontSize;
   private int mSpinnerPadding;
+  private QariAdapter mAdapter;
 
   private int mCurrentQari;
   private int mCurrentRepeat = 0;
@@ -109,8 +115,7 @@ public class AudioStatusBar extends LinearLayout {
     mIsTablet = QuranScreenInfo.getOrMakeInstance(mContext).isTablet(mContext);
     mSharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(context.getApplicationContext());
-    mCurrentQari = mSharedPreferences.getInt(
-        Constants.PREF_DEFAULT_QARI, 0);
+    mCurrentQari = mSharedPreferences.getInt(Constants.PREF_DEFAULT_QARI, 0);
 
     mItemBackground = R.drawable.abc_item_background_holo_dark;
     if (attrs != null) {
@@ -145,11 +150,10 @@ public class AudioStatusBar extends LinearLayout {
     }
   }
 
-  public int getCurrentQari() {
-    if (mSpinner != null) {
-      return mSpinner.getSelectedItemPosition();
-    }
-    return mCurrentQari;
+  @NonNull
+  public QariItem getAudioInfo() {
+    final int position = mSpinner != null ? mSpinner.getSelectedItemPosition() : mCurrentQari;
+    return mAdapter.getItem(position);
   }
 
   public void updateSelectedItem() {
@@ -203,19 +207,71 @@ public class AudioStatusBar extends LinearLayout {
     }
   }
 
+  private static class QariAdapter extends BaseAdapter {
+    @NonNull LayoutInflater mInflater;
+    @NonNull private final List<QariItem> mItems;
+    @LayoutRes private final int mLayoutViewId;
+    @LayoutRes private final int mDropDownViewId;
+
+    public QariAdapter(@NonNull Context context,
+        @NonNull List<QariItem> items,
+        @LayoutRes int layoutViewId,
+        @LayoutRes int dropDownViewId) {
+      mItems = items;
+      mLayoutViewId = layoutViewId;
+      mDropDownViewId = dropDownViewId;
+      mInflater = LayoutInflater.from(context);
+    }
+
+    @Override
+    public int getCount() {
+      return mItems.size();
+    }
+
+    @Override
+    public QariItem getItem(int position) {
+      return mItems.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+      return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      return getViewInternal(position, convertView, parent, mLayoutViewId);
+    }
+
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+      return getViewInternal(position, convertView, parent, mDropDownViewId);
+    }
+
+    private View getViewInternal(int position, View convertView,
+        ViewGroup parent, @LayoutRes int resource) {
+      TextView textView;
+      if (convertView == null) {
+        textView = (TextView) mInflater.inflate(resource, parent, false);
+      } else {
+        textView = (TextView) convertView;
+      }
+
+      QariItem item = getItem(position);
+      textView.setText(item.getName());
+      return textView;
+    }
+  }
+
   private void addSpinner() {
     if (mSpinner == null) {
       mSpinner = new SpinnerCompat(mContext, null,
           R.attr.actionDropDownStyle);
       mSpinner.setDropDownVerticalOffset(mSpinnerPadding);
-      final ArrayAdapter<CharSequence> adapter =
-          ArrayAdapter.createFromResource(mContext,
-              R.array.quran_readers_name,
-              R.layout.sherlock_spinner_item);
 
-      adapter.setDropDownViewResource(
-          R.layout.sherlock_spinner_dropdown_item);
-      mSpinner.setAdapter(adapter);
+      mAdapter = new QariAdapter(mContext, AudioUtils.getQariList(mContext),
+          R.layout.sherlock_spinner_item, R.layout.sherlock_spinner_dropdown_item);
+      mSpinner.setAdapter(mAdapter);
 
       mSpinner.setOnItemSelectedListener(
           new AdapterViewCompat.OnItemSelectedListener() {

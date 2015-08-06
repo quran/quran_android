@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
@@ -1523,26 +1524,27 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (force) {
       mShouldOverridePlaying = true;
     }
-    int currentQari = mAudioStatusBar.getCurrentQari();
 
-    if (mSettings.shouldStream()) {
-      playStreaming(start, end, page, currentQari,
-          verseRepeat, rangeRepeat, enforceRange);
-    } else {
-      downloadAndPlayAudio(start, end, page, currentQari,
-          verseRepeat, rangeRepeat, enforceRange);
+    QariItem item = mAudioStatusBar.getAudioInfo();
+    if (item != null) {
+      if (mSettings.shouldStream()) {
+        playStreaming(start, end, page, item,
+            verseRepeat, rangeRepeat, enforceRange);
+      } else {
+        downloadAndPlayAudio(start, end, page, item,
+            verseRepeat, rangeRepeat, enforceRange);
+      }
     }
   }
 
   private void playStreaming(QuranAyah ayah, QuranAyah end,
-                            int page, int qari, int verseRepeat,
+                            int page, QariItem item, int verseRepeat,
                             int rangeRepeat, boolean enforceRange) {
-    String qariUrl = AudioUtils.getQariUrl(this, qari, true);
-    String dbFile = AudioUtils.getQariDatabasePathIfGapless(
-        this, qari);
+    String qariUrl = AudioUtils.getQariUrl(item, true);
+    String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, item);
     if (!TextUtils.isEmpty(dbFile)) {
       // gapless audio is "download only"
-      downloadAndPlayAudio(ayah, end, page, qari,
+      downloadAndPlayAudio(ayah, end, page, item,
           verseRepeat, rangeRepeat, enforceRange);
       return;
     }
@@ -1568,7 +1570,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void downloadAndPlayAudio(QuranAyah ayah, QuranAyah ending,
-                                    int page, int qari, int verseRepeat,
+                                    int page, @NonNull QariItem item, int verseRepeat,
                                     int rangeRepeat, boolean enforceBounds) {
     final QuranAyah endAyah;
     if (ending != null) {
@@ -1577,11 +1579,11 @@ public class PagerActivity extends QuranActionBarActivity implements
       endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
           mSettings.getPreferredDownloadAmount(), mDualPages);
     }
-    String baseUri = AudioUtils.getLocalQariUrl(this, qari);
+    String baseUri = AudioUtils.getLocalQariUrl(this, item);
     if (endAyah == null || baseUri == null) {
       return;
     }
-    String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, qari);
+    String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, item);
 
     String fileUrl;
     if (TextUtils.isEmpty(dbFile)) {
@@ -1593,7 +1595,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     DownloadAudioRequest request =
-        new DownloadAudioRequest(fileUrl, ayah, qari, baseUri);
+        new DownloadAudioRequest(fileUrl, ayah, item, baseUri);
     request.setGaplessDatabaseFilePath(dbFile);
     request.setPlayBounds(ayah, endAyah);
     request.setEnforceBounds(enforceBounds);
@@ -1647,7 +1649,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         toggleActionBar();
       }
       mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      String url = AudioUtils.getGaplessDatabaseUrl(this, request);
+      String url = AudioUtils.getGaplessDatabaseUrl(request);
       String destination = request.getLocalPath();
       // start the download
       String notificationTitle = getString(R.string.timing_database);
@@ -1668,8 +1670,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
 
         QuranAyah firstAyah = new QuranAyah(1, 1);
-        String qariUrl = AudioUtils.getQariUrl(this,
-            request.getQariId(), true);
+        String qariUrl = AudioUtils.getQariUrl(request.getQariItem(), true);
         mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
         if (mIsActionBarHidden) {
@@ -1698,8 +1699,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       String notificationTitle = QuranInfo.getNotificationTitle(this,
           request.getMinAyah(), request.getMaxAyah(), request.isGapless());
-      String qariUrl = AudioUtils.getQariUrl(this,
-          request.getQariId(), true);
+      String qariUrl = AudioUtils.getQariUrl(request.getQariItem(), true);
       android.util.Log.d(TAG, "need to start download: " + qariUrl);
 
       // start service

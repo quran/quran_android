@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -9,7 +10,7 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.util.AudioManagerUtils;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.SheikhInfo;
+import com.quran.labs.androidquran.util.QariDownloadInfo;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -45,7 +46,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
   private RecyclerView mRecyclerView;
   private DefaultDownloadReceiver mReceiver;
   private String mBasePath;
-  private String[] mShuyookhPaths;
+  private List<QariItem> mQariItems;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +64,8 @@ public class AudioManagerActivity extends QuranActionBarActivity
     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-    String[] names = getResources().getStringArray(R.array.quran_readers_name);
-    mShuyookhPaths = getResources().getStringArray(R.array.quran_readers_path);
-    mAdapter = new ShuyookhAdapter(names, mShuyookhPaths);
+    mQariItems = AudioUtils.getQariList(this);
+    mAdapter = new ShuyookhAdapter(mQariItems);
     mRecyclerView.setAdapter(mAdapter);
 
     mProgressBar = (ProgressBar) findViewById(R.id.progress);
@@ -79,7 +79,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
       mSubscription.unsubscribe();
     }
     mSubscription = AppObservable.bindActivity(this,
-        AudioManagerUtils.shuyookhDownloadObservable(mBasePath, mShuyookhPaths))
+        AudioManagerUtils.shuyookhDownloadObservable(mBasePath, mQariItems))
         .subscribe(mOnDownloadInfo);
   }
 
@@ -107,10 +107,10 @@ public class AudioManagerActivity extends QuranActionBarActivity
     super.onDestroy();
   }
 
-  private Action1<List<SheikhInfo>> mOnDownloadInfo =
-      new Action1<List<SheikhInfo>>() {
+  private Action1<List<QariDownloadInfo>> mOnDownloadInfo =
+      new Action1<List<QariDownloadInfo>>() {
         @Override
-        public void call(List<SheikhInfo> downloadInfo) {
+        public void call(List<QariDownloadInfo> downloadInfo) {
           mProgressBar.setVisibility(View.GONE);
           mAdapter.setDownloadInfo(downloadInfo);
           mAdapter.notifyDataSetChanged();
@@ -122,28 +122,28 @@ public class AudioManagerActivity extends QuranActionBarActivity
     public void onClick(View v) {
       int position = mRecyclerView.getChildPosition(v);
       if (position != RecyclerView.NO_POSITION) {
-        SheikhInfo info = mAdapter.getSheikhInfoForPosition(position);
+        QariDownloadInfo info = mAdapter.getSheikhInfoForPosition(position);
         if (info.downloadedSuras.size() != 114) {
-          download(info, position);
+          download(mQariItems.get(position));
         }
       }
     }
   };
 
-  private void download(SheikhInfo sheikhInfo, int position) {
-    String baseUri = mBasePath + sheikhInfo.path;
-    boolean isGapless = AudioManagerUtils.isGapless(sheikhInfo.path);
+  private void download(QariItem qariItem) {
+    String baseUri = mBasePath + qariItem.getPath();
+    boolean isGapless = qariItem.isGapless();
 
-    String sheikhName = mAdapter.getSheikhNameForPosition(position);
+    String sheikhName = qariItem.getName();
     Intent intent = ServiceIntentHelper.getDownloadIntent(this,
-        AudioUtils.getQariUrl(this, position, true),
+        AudioUtils.getQariUrl(qariItem, true),
         baseUri, sheikhName, AUDIO_DOWNLOAD_KEY, QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
     intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, new QuranAyah(1, 1));
     intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, new QuranAyah(114, 6));
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless);
     startService(intent);
 
-    AudioManagerUtils.clearCacheKeyForSheikh(sheikhInfo.path);
+    AudioManagerUtils.clearCacheKeyForSheikh(qariItem);
   }
 
   @Override
@@ -167,20 +167,18 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
   private class ShuyookhAdapter extends RecyclerView.Adapter<SheikhViewHolder> {
     private final LayoutInflater mInflater;
-    private final String[] mShuyookhNames;
-    private final String[] mShuyookhPaths;
-    private final Map<String, SheikhInfo> mDownloadInfoMap;
+    private final List<QariItem> mQariItems;
+    private final Map<QariItem, QariDownloadInfo> mDownloadInfoMap;
 
-    public ShuyookhAdapter(String[] shuyookhNames, String[] shuyookhPaths) {
-      mShuyookhNames = shuyookhNames;
-      mShuyookhPaths = shuyookhPaths;
+    public ShuyookhAdapter(List<QariItem> items) {
+      mQariItems = items;
       mDownloadInfoMap = new HashMap<>();
       mInflater = LayoutInflater.from(AudioManagerActivity.this);
     }
 
-    public void setDownloadInfo(List<SheikhInfo> downloadInfo) {
-      for (SheikhInfo info : downloadInfo) {
-        mDownloadInfoMap.put(info.path, info);
+    public void setDownloadInfo(List<QariDownloadInfo> downloadInfo) {
+      for (QariDownloadInfo info : downloadInfo) {
+        mDownloadInfoMap.put(info.mQariItem, info);
       }
     }
 
@@ -191,26 +189,22 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
     @Override
     public void onBindViewHolder(SheikhViewHolder holder, int position) {
-      holder.name.setText(mShuyookhNames[position]);
+      holder.name.setText(mQariItems.get(position).getName());
 
-      SheikhInfo info = getSheikhInfoForPosition(position);
+      QariDownloadInfo info = getSheikhInfoForPosition(position);
       int fullyDownloaded = info.downloadedSuras.size();
       holder.quantity.setText(
           getResources().getQuantityString(R.plurals.files_downloaded,
             fullyDownloaded, fullyDownloaded));
     }
 
-    public SheikhInfo getSheikhInfoForPosition(int position) {
-      return mDownloadInfoMap.get(mShuyookhPaths[position]);
-    }
-
-    public String getSheikhNameForPosition(int position) {
-      return mShuyookhNames[position];
+    public QariDownloadInfo getSheikhInfoForPosition(int position) {
+      return mDownloadInfoMap.get(mQariItems.get(position));
     }
 
     @Override
     public int getItemCount() {
-      return mDownloadInfoMap.size() == 0 ? 0 : mShuyookhNames.length;
+      return mDownloadInfoMap.size() == 0 ? 0 : mQariItems.size();
     }
   }
 

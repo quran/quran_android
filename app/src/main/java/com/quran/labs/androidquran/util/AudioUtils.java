@@ -1,16 +1,21 @@
 package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
@@ -33,24 +38,32 @@ public class AudioUtils {
     public static final int MAX = 3;
   }
 
-  private static String[] mQariBaseUrls = null;
-  private static String[] mQariFilePaths = null;
-  private static String[] mQariDatabaseFiles = null;
-
-  public static String getQariUrl(Context context, int position,
-      boolean addPlaceHolders) {
-    if (mQariBaseUrls == null) {
-      mQariBaseUrls = context.getResources()
-          .getStringArray(R.array.quran_readers_urls);
+  /**
+   * Get a list of QariItem representing the qaris to show
+   *
+   * This method takes into account qaris that exist both in gapped and gapless, and, in those
+   * cases, hides the gapped version if it contains no files.
+   *
+   * @param context the current context
+   * @return a list of QariItem representing the qaris to show.
+   */
+  public static List<QariItem> getQariList(@NonNull Context context) {
+    final Resources resources = context.getResources();
+    final String[] shuyookh = resources.getStringArray(R.array.quran_readers_name);
+    final String[] paths = resources.getStringArray(R.array.quran_readers_path);
+    final String[] urls = resources.getStringArray(R.array.quran_readers_urls);
+    final String[] databases = resources.getStringArray(R.array.quran_readers_db_name);
+    List<QariItem> items = new ArrayList<>(shuyookh.length);
+    for (int i=0; i < shuyookh.length; i++) {
+      items.add(new QariItem(shuyookh[i], urls[i], paths[i], databases[i]));
     }
+    return items;
+  }
 
-    if (position >= mQariBaseUrls.length || 0 > position) {
-      return null;
-    }
-    String url = mQariBaseUrls[position];
+  public static String getQariUrl(@NonNull QariItem item, boolean addPlaceHolders) {
+    String url = item.getUrl();
     if (addPlaceHolders) {
-      if (isQariGapless(context, position)) {
-        Log.d(TAG, "qari is gapless...");
+      if (item.isGapless()) {
         url += "%03d" + AudioUtils.AUDIO_EXTENSION;
       } else {
         url += "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
@@ -59,46 +72,21 @@ public class AudioUtils {
     return url;
   }
 
-  public static String getLocalQariUrl(Context context, int position) {
-    if (mQariFilePaths == null) {
-      mQariFilePaths = context.getResources()
-          .getStringArray(R.array.quran_readers_path);
-    }
-
+  public static String getLocalQariUrl(@NonNull Context context, @NonNull QariItem item) {
     String rootDirectory = QuranFileUtils.getQuranAudioDirectory(context);
-    return rootDirectory == null ? null :
-        rootDirectory + mQariFilePaths[position];
+    return rootDirectory == null ? null : rootDirectory + item.getPath();
   }
 
-  public static boolean isQariGapless(Context context, int position) {
-    return getQariDatabasePathIfGapless(context, position) != null;
-  }
-
-  public static String getQariDatabasePathIfGapless(Context context,
-      int position) {
-    if (mQariDatabaseFiles == null) {
-      mQariDatabaseFiles = context.getResources()
-          .getStringArray(R.array.quran_readers_db_name);
+  public static String getQariDatabasePathIfGapless(
+      @NonNull Context context, @NonNull QariItem item) {
+    String databaseName = item.getDatabaseName();
+    if (databaseName != null) {
+      String path = getLocalQariUrl(context, item);
+      if (path != null) {
+        databaseName = path + File.separator + databaseName + DB_EXTENSION;
+      }
     }
-
-    if (position > mQariDatabaseFiles.length) {
-      return null;
-    }
-
-    String dbname = mQariDatabaseFiles[position];
-    Log.d(TAG, "got dbname of: " + dbname + " for qari");
-    if (TextUtils.isEmpty(dbname)) {
-      return null;
-    }
-
-    String path = getLocalQariUrl(context, position);
-    if (path == null) {
-      return null;
-    }
-    String overall = path + File.separator +
-        dbname + DB_EXTENSION;
-    Log.d(TAG, "overall path: " + overall);
-    return overall;
+    return databaseName;
   }
 
   public static boolean shouldDownloadGaplessDatabase(DownloadAudioRequest request) {
@@ -114,22 +102,13 @@ public class AudioUtils {
     return !f.exists();
   }
 
-  public static String getGaplessDatabaseUrl(Context context, DownloadAudioRequest request) {
+  public static String getGaplessDatabaseUrl(DownloadAudioRequest request) {
     if (!request.isGapless()) {
       return null;
     }
-    int qariId = request.getQariId();
 
-    if (mQariDatabaseFiles == null) {
-      mQariDatabaseFiles = context.getResources()
-          .getStringArray(R.array.quran_readers_db_name);
-    }
-
-    if (qariId > mQariDatabaseFiles.length) {
-      return null;
-    }
-
-    String dbname = mQariDatabaseFiles[qariId] + ZIP_EXTENSION;
+    QariItem item = request.getQariItem();
+    String dbname = item.getDatabaseName() + ZIP_EXTENSION;
     return QuranFileUtils.getGaplessDatabaseRootUrl() + "/" + dbname;
   }
 
@@ -257,6 +236,12 @@ public class AudioUtils {
     }
 
     return false;
+  }
+
+  public static boolean haveAnyFiles(Context context, String path) {
+    final String basePath = QuranFileUtils.getQuranAudioDirectory(context);
+    final File file = new File(basePath, path);
+    return file.isDirectory() && file.list().length > 0;
   }
 
   public static boolean haveAllFiles(DownloadAudioRequest request) {
