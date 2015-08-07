@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-     <string-array name="quran_readers_name">
-        <item>Minshawi Murattal (lückenlos)</item>
-        <item>Husary (lückenlos)</item>
-        <item>Abdurrahman As-Sudais (lückenlos)</item>
-        <item>Nasser Al Qatami (lückenlos)</item>
-        <item>Abd Al-Basit</item>
-        <item>Abd Al-Basit Mujawwad</item>
-        <item>Abdullah Basfar</item>
-        <item>Abdurrahmaan As-Sudais</item>
-        <item>Abu Bakr Ash-Shatri</item>
-        <item>Mishary Al-Afasy</item>
-        <item>Saad Al-Ghamdi</item>
-        <item>Ibrahim Walk (Englische Übersetzung)</item>
-        <item>Hani Ar-Rifai</item>
-        <item>Husary Mujawwad</item>
-        <item>Ali Al-Hudhaify</item>
-        <item>Maher Al Muaiqly</item>
-        <item>Minshawy Mujawwad</item>
-        <item>Mohammad al Tablaway</item>
-        <item>Muhammad Ayyoub</item>
-        <item>Muhammad Jibreel</item>
-        <item>Saood Ash-Shuraym</item>
-        <item>Yasser Ad-Dussary</item>
-    </string-array>
+   <string name="qari_minshawi_murattal_gapless">Minshawi Murattal (lückenlos)</string>
+   <string name="qari_husary_gapless">Husary (lückenlos)</string>
+   <string name="qari_sudais_gapless">Abdurrahman As-Sudais (lückenlos)</string>
+   <string name="qari_qatami_gapless">Nasser Al Qatami (lückenlos)</string>
+   <string name="qari_abdulbaset">Abd Al-Basit</string>
+   <string name="qari_abdulbaset_mujawwad">Abd Al-Basit Mujawwad</string>
+   <string name="qari_basfar">Abdullah Basfar</string>
+   <string name="qari_suadis">Abdurrahmaan As-Sudais</string>
+   <string name="qari_shatri">Abu Bakr Ash-Shatri</string>
+   <string name="qari_afasy">Mishary Al-Afasy</string>
+   <string name="qari_saad_al_ghamdi">Saad Al-Ghamdi</string>
+   <string name="qari_walk">Ibrahim Walk (Englische Übersetzung)</string>
+   <string name="qari_hani_rifai">Hani Ar-Rifai</string>
+   <string name="qari_husary_mujawwad">Husary Mujawwad</string>
+   <string name="qari_hudhayfi">Ali Al-Hudhaify</string>
+   <string name="qari_muaiqly">Maher Al Muaiqly</string>
+   <string name="qari_minshawi_mujawwad">Minshawy Mujawwad</string>
+   <string name="qari_tablawy">Mohammad al Tablaway</string>
+   <string name="qari_ayyoub">Muhammad Ayyoub</string>
+   <string name="qari_jibreel">Muhammad Jibreel</string>
+   <string name="qari_shuraym">Saood Ash-Shuraym</string>
+   <string name="qari_dussary">Yasser Ad-Dussary</string>
 </resources>
