@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-     <string-array name="quran_readers_name">
+    <string-array name="quran_readers_name">
         <item>@string/qari_minshawi_murattal_gapless</item>
         <item>@string/qari_husary_gapless</item>
         <item>@string/qari_sudais_gapless</item>
@@ -23,6 +23,12 @@
         <item>@string/qari_jibreel</item>
         <item>@string/qari_shuraym</item>
         <item>@string/qari_dussary</item>
+        <item>@string/qari_abdulbaset_gapless</item>
+        <item>@string/qari_abdulbaset_mujawwad_gapless</item>
+        <item>@string/qari_aziz_alili_gapless</item>
+        <item>@string/qari_salah_budair_gapless</item>
+        <item>@string/qari_shuraym_gapless</item>
+        <item>@string/qari_yasser_dussary_gapless</item>
     </string-array>
 
     <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
@@ -30,8 +36,8 @@
         <item>0</item>
         <item>0</item>
         <item>0</item>
-        <item>0</item> <!-- abdul basit -->
-        <item>0</item> <!-- abdul basit mujawwad -->
+        <item>1</item> <!-- abdul basit -->
+        <item>1</item> <!-- abdul basit mujawwad -->
         <item>0</item> <!-- abdullah basfar -->
         <item>1</item> <!-- abdurrahman as sudais -->
         <item>0</item> <!-- abu bakr al shatiri -->
@@ -46,8 +52,14 @@
         <item>0</item> <!-- mohammad al tablaway -->
         <item>0</item> <!-- muhammad ayyoub -->
         <item>0</item> <!-- muhammad jibreel -->
-        <item>0</item> <!-- sa3ood al shuraim -->
-        <item>0</item> <!-- yasser ad dussary -->
+        <item>1</item> <!-- sa3ood al shuraim -->
+        <item>1</item> <!-- yasser ad dussary -->
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
     </integer-array>
 
     <string-array translatable="false" name="quran_readers_path">
@@ -73,6 +85,12 @@
         <item>16</item> <!-- muhammad jibreel -->
         <item>17</item> <!-- sa3ood al shuraim -->
         <item>ydussary</item> <!-- yasser ad dussary -->
+        <item>abdulbaset_murattal</item>
+        <item>abdulbaset_mujawwad</item>
+        <item>aziz_alili</item>
+        <item>salah_budair</item>
+        <item>shuraym</item>
+        <item>yasser_dussary</item>
     </string-array>
 
     <string-array translatable="false" name="quran_readers_db_name">
@@ -98,6 +116,12 @@
         <item></item> <!-- muhammad jibreel -->
         <item></item> <!-- sa3ood al shuraim -->
         <item></item> <!-- yasser ad dussary -->
+        <item>abdul_basit_murattal</item>
+        <item>abdul_basit_mujawwad</item>
+        <item>aziz_alili</item>
+        <item>salah_budair</item>
+        <item>shuraym</item>
+        <item>yasser_dussary</item>
     </string-array>
 
     <string-array translatable="false" name="quran_readers_urls">
@@ -123,6 +147,12 @@
         <item>http://mirrors.quranicaudio.com/everyayah/Muhammad_Jibreel_128kbps/</item>
         <item>http://mirrors.quranicaudio.com/everyayah/Saood_ash-Shuraym_128kbps/</item>
         <item>http://mirrors.quranicaudio.com/everyayah/Yasser_Ad-Dussary_128kbps/</item>
+        <item>http://download.quranicaudio.com/quran/abdul_basit_murattal/</item>
+        <item>http://download.quranicaudio.com/quran/abdulbaset_mujawwad/</item>
+        <item>http://download.quranicaudio.com/quran/aziz_alili/</item>
+        <item>http://download.quranicaudio.com/quran/salahbudair/</item>
+        <item>http://download.quranicaudio.com/quran/sa3ood_al-shuraym/</item>
+        <item>http://download.quranicaudio.com/quran/yasser_ad-dussary/</item>
     </string-array>
 
     <!-- actual qari names -->
@@ -148,4 +178,10 @@
     <string name="qari_jibreel">Muhammad Jibreel</string>
     <string name="qari_shuraym">Saood Ash-Shuraym</string>
     <string name="qari_dussary">Yasser Ad-Dussary</string>
+    <string name="qari_abdulbaset_gapless">Abd Al-Basit (gapless)</string>
+    <string name="qari_abdulbaset_mujawwad_gapless">Abd Al-Basit Mujawwad (gapless)</string>
+    <string name="qari_aziz_alili_gapless">Aziz Alili (gapless)</string>
+    <string name="qari_salah_budair_gapless">Salah Budair (gapless)</string>
+    <string name="qari_shuraym_gapless">Saood Ash-Shuraym (gapless)</string>
+    <string name="qari_yasser_dussary_gapless">Yasser Ad-Dussary (gapless)</string>
 </resources>
