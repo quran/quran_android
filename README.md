@@ -19,8 +19,7 @@ contributors:
 * [Wael Nafee](http://twitter.com/wnafee)
 * [Ahmed Fouad](http://twitter.com/fo2ad)
 * [Mahmoud Hossam](http://github.com/mahmoudhossam)
-
-* Asim Mohiuddin - images and work on the Naskh version
+* Asim Mohiuddin - images, gapless audio, and work on the Naskh version
 * @g360230 - images and work on the Qaloon version
 
 graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
@@ -63,24 +62,6 @@ App localization
 * Malaysian by [Ahmad Syazwan](https://github.com/asyazwan)
 * Spanish by [Alexander Salas](https://github.com/alexsalas)
 
-
-Terms of use
-------------
-you are free to use parts of the Quran Android code in your application with some conditions:
-
-* your app must be respectful of the book of Allah. adding advertisements above and below each page of Quran is unacceptable, for example (yes, someone actually did that).
-
-* your app must provide some significant value over our app - otherwise, why not just contribute a patch instead?
-
-* your app cannot make money from ads or from sales.  there are many reasons for this:
-    - we made this app for the benefit of people and not to make a profit
-    - the app costs us money (for serving the pages, translations, etc), not to mention the time to develop it and to support it.
-    - not all of the data that we use is okay to be sold.  the images, along with some of the translations are on a license that allows their use and distribution for free for non-profit uses, but does not allow users to make money from them.
-
-* if you write an application using any of the Quran data (the images, the translations, etc), you must provide a link to the respective data source page ([tanzil.net](http://tanzil.net) for the translations and the [quran images project](http://github.com/quran/quran.com-images) for the images) both within your application (in an about page) and in your application description in the market or app store.
-
-* if you use part of (or all of) the quran android code or graphics, you must provide a link back to the [quran android project](http://github.com/ahmedre/quran_android) in your application description and your application itself in an about section.
-
 Open Source Projects Used
 -------------------------
 * android-support library (support-v4 and appcompat-v7)
@@ -91,6 +72,11 @@ Open Source Projects Used
 
 Changelog
 ---------
+**development**
+- add 6 new gapless qaris
+- fix "calculating app size" quran/quran_android#536
+- minor bugfixes and improvements
+
 **version 2.6.5p1 (released 5/31/2015)**
 - fix a crash when tapping a search result
 
