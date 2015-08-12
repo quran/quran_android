@@ -29,6 +29,9 @@
         <item>@string/qari_salah_budair_gapless</item>
         <item>@string/qari_shuraym_gapless</item>
         <item>@string/qari_yasser_dussary_gapless</item>
+        <item>@string/qari_mohammad_altablawi_gapless</item>
+        <item>@string/qari_sahl_yaseen_gapless</item>
+        <item>@string/qari_shatri_gapless</item>
     </string-array>
 
     <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
@@ -40,7 +43,7 @@
         <item>1</item> <!-- abdul basit mujawwad -->
         <item>0</item> <!-- abdullah basfar -->
         <item>1</item> <!-- abdurrahman as sudais -->
-        <item>0</item> <!-- abu bakr al shatiri -->
+        <item>1</item> <!-- abu bakr al shatiri -->
         <item>0</item> <!-- mishaari al3afasy -->
         <item>0</item> <!-- sa3d alghamdi -->
         <item>0</item> <!-- ibrahim walk -->
@@ -49,11 +52,14 @@
         <item>0</item> <!-- huthayfi -->
         <item>0</item> <!-- maher al mu3ayqli -->
         <item>0</item> <!-- minshawi mujawwad -->
-        <item>0</item> <!-- mohammad al tablaway -->
+        <item>1</item> <!-- mohammad al tablaway -->
         <item>0</item> <!-- muhammad ayyoub -->
         <item>0</item> <!-- muhammad jibreel -->
         <item>1</item> <!-- sa3ood al shuraim -->
         <item>1</item> <!-- yasser ad dussary -->
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
         <item>0</item>
         <item>0</item>
         <item>0</item>
@@ -91,6 +97,9 @@
         <item>salah_budair</item>
         <item>shuraym</item>
         <item>yasser_dussary</item>
+        <item>mohammad_altablawi</item>
+        <item>sahl_yaseen</item>
+        <item>shatri</item>
     </string-array>
 
     <string-array translatable="false" name="quran_readers_db_name">
@@ -122,6 +131,9 @@
         <item>salah_budair</item>
         <item>shuraym</item>
         <item>yasser_dussary</item>
+        <item>mohammad_altablawi</item>
+        <item>sahl_yaseen</item>
+        <item>shatri</item>
     </string-array>
 
     <string-array translatable="false" name="quran_readers_urls">
@@ -153,6 +165,9 @@
         <item>http://download.quranicaudio.com/quran/salahbudair/</item>
         <item>http://download.quranicaudio.com/quran/sa3ood_al-shuraym/</item>
         <item>http://download.quranicaudio.com/quran/yasser_ad-dussary/</item>
+        <item>http://download.quranicaudio.com/quran/mohammad_altablawi/</item>
+        <item>http://download.quranicaudio.com/quran/sahl_yaaseen/</item>
+        <item>http://download.quranicaudio.com/quran/abu_bakr_ash-shaatree/</item>
     </string-array>
 
     <!-- actual qari names -->
@@ -184,4 +199,7 @@
     <string name="qari_salah_budair_gapless">Salah Budair (gapless)</string>
     <string name="qari_shuraym_gapless">Saood Ash-Shuraym (gapless)</string>
     <string name="qari_yasser_dussary_gapless">Yasser Ad-Dussary (gapless)</string>
+    <string name="qari_mohammad_altablawi_gapless">Mohammad al Tablawy (gapless)</string>
+    <string name="qari_sahl_yaseen_gapless">Sahl Yaseen (gapless)</string>
+    <string name="qari_shatri_gapless">Abu Bakr Ash-Shatri (gapless)</string>
 </resources>
