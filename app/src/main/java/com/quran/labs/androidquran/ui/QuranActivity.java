@@ -41,6 +41,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -87,6 +88,8 @@ public class QuranActivity extends QuranActionBarActivity
   private boolean mShowedTranslationUpgradeDialog = false;
   private boolean mIsRtl;
   private boolean mIsPaused;
+  private MenuItem mSearchItem;
+  private ActionMode mSupportActionMode;
 
   private static class QuranHandler extends Handler {
 
@@ -220,8 +223,8 @@ public class QuranActivity extends QuranActionBarActivity
     super.onCreateOptionsMenu(menu);
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.home_menu, menu);
-    final MenuItem item = menu.findItem(R.id.search);
-    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+    mSearchItem = menu.findItem(R.id.search);
+    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setQueryHint(getString(R.string.search_hint));
     searchView.setSearchableInfo(searchManager.getSearchableInfo(
@@ -259,6 +262,29 @@ public class QuranActivity extends QuranActionBarActivity
       default: {
         return super.onOptionsItemSelected(item);
       }
+    }
+  }
+
+  @Override
+  public void onSupportActionModeFinished(ActionMode mode) {
+    mSupportActionMode = null;
+    super.onSupportActionModeFinished(mode);
+  }
+
+  @Override
+  public void onSupportActionModeStarted(ActionMode mode) {
+    mSupportActionMode = mode;
+    super.onSupportActionModeStarted(mode);
+  }
+
+  @Override
+  public void onBackPressed() {
+    if (mSupportActionMode != null) {
+      mSupportActionMode.finish();
+    } else if (mSearchItem != null && mSearchItem.isActionViewExpanded()) {
+      mSearchItem.collapseActionView();
+    } else {
+      super.onBackPressed();
     }
   }
 
