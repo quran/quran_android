@@ -352,8 +352,12 @@ public class QuranPageFragment extends Fragment
           getYBoundsForHighlight(mCoordinatesData, sura, ayah);
       if (highlightBounds != null) {
         int screenHeight = QuranScreenInfo.getInstance().getHeight();
-        int y = (int) highlightBounds.top - (int) (0.05 * screenHeight);
-        mQuranPageLayout.smoothScrollLayoutTo(y);
+
+        int currentScrollY = mQuranPageLayout.getCurrentScrollY();
+        if (currentScrollY < highlightBounds.top || currentScrollY > highlightBounds.bottom) {
+          int y = (int) highlightBounds.top - (int) (0.05 * screenHeight);
+          mQuranPageLayout.smoothScrollLayoutTo(y);
+        }
       }
     }
     mImageView.invalidate();
