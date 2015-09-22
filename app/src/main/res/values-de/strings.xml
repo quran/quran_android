@@ -139,7 +139,7 @@
     </plurals>
 
     <!-- Search messages -->
-    <string name="found_in_Sure">Gefunden in Sure</string>
+    <string name="found_in_sura">Gefunden in Sure</string>
     <string name="no_results">Es wurden keine Resultate für \"%s\" gefunden.</string>
 	<string name="no_active_translation">Sie haben keine Übersetzung ausgewählt.  Bitte wählen Sie 
 	zuerst eine Übersetzung aus und suchen Sie danach erneut.</string>
@@ -219,10 +219,10 @@
     <string name="quran_hizb">Hizb</string>
     <string name="quran_juz2">Juz\'</string>
     <string name="quran_page">Seite</string>
-    <string name="quran_Sure">Sure</string>
+    <string name="quran_sura">Sure</string>
     <string name="quran_ayah">Vers</string>
-    <string name="quran_Sure_title">Sure %1$s</string>
-    <string name="Sure_ayah_notification_str">Sure %1$s, Vers %2$d</string>
+    <string name="quran_sura_title">Sure %1$s</string>
+    <string name="sura_ayah_notification_str">Sure %1$s, Vers %2$d</string>
 
     <string name="bookmarks_current_page">Aktuelle Seite</string>
     <string name="index_loading">Lade&#8230;</string>
