@@ -22,4 +22,17 @@
     <string name="qari_jibreel">محمد جبريل</string>
     <string name="qari_shuraym">سعود الشريم</string>
     <string name="qari_dussary">ياسر الدوسري</string>
+    <string name="qari_abdulbaset_gapless">عبد الباسط (متصل(</string>
+    <string name="qari_abdulbaset_mujawwad_gapless">عبد الباسط مجود (متصل)</string>
+    <string name="qari_aziz_alili_gapless">عزيز عليلي (متصل)</string>
+    <string name="qari_salah_budair_gapless">صلاح بدير (متصل)</string>
+    <string name="qari_shuraym_gapless">سعود الشريم (متصل)</string>
+    <string name="qari_yasser_dussary_gapless">ياسر الدسري (متصل)</string>
+    <string name="qari_mohammad_altablawi_gapless">محمد الطبلاوي ( متصل)</string>
+    <string name="qari_sahl_yaseen_gapless">سهل ياسين (متصل)</string>
+    <string name="qari_shatri_gapless">أبو بكر الشاطري (متصل)</string>
+    <string name="qari_abdullah_matroud_gapless">عبد الله مطرود (متصل)</string>
+    <string name="qari_ahmad_nauina_gapless">أحمد نعينع (متصل)</string>
+    <string name="qari_akram_al_alaqmi">اكرم العلقمي (متصل) </string>
+    <string name="qari_ali_hajjaj_alsouasi_gapless">علي حجاج السويسي (متصل)</string>
 </resources>
