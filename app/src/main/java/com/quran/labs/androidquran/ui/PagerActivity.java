@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -38,7 +37,6 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.helpers.NoAudioSlidingPagerAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
@@ -187,9 +185,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private SuraAyah mStart;
   private SuraAyah mEnd;
 
-  // TODO: hide once qaloon gets audio
-  private boolean mHideAudioBar;
-
   private final PagerHandler mHandler = new PagerHandler(this);
 
   private static class PagerHandler extends Handler {
@@ -296,12 +291,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     mAudioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
     mAudioStatusBar.setAudioBarListener(this);
     mAudioBarParams = (ViewGroup.MarginLayoutParams) mAudioStatusBar.getLayoutParams();
-
-    // TODO: remove once qaloon gets audio
-    if ("qaloon".equals(BuildConfig.FLAVOR)) {
-      mAudioStatusBar.setVisibility(View.GONE);
-      mHideAudioBar = true;
-    }
 
     mToolBarArea = findViewById(R.id.toolbar_area);
 
@@ -426,9 +415,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
       setUiVisibilityListener();
-      if (!mHideAudioBar) {
-        mAudioStatusBar.setVisibility(View.VISIBLE);
-      }
+      mAudioStatusBar.setVisibility(View.VISIBLE);
     }
     toggleActionBarVisibility(true);
 
@@ -529,15 +516,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     });
 
     // Create and set fragment pager adapter
-    if (mHideAudioBar) {
-      mSlidingPagerAdapter = new NoAudioSlidingPagerAdapter(getSupportFragmentManager(),
-          Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-              (mSettings.isArabicNames() || QuranUtils.isRtl()));
-    } else {
-      mSlidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
-          Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-              (mSettings.isArabicNames() || QuranUtils.isRtl()));
-    }
+    mSlidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
+            (mSettings.isArabicNames() || QuranUtils.isRtl()));
     mSlidingPager.setAdapter(mSlidingPagerAdapter);
 
     // Attach the view pager to the action bar
@@ -1304,9 +1285,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         mToolBarArea.setVisibility(View.VISIBLE);
 
         mAudioStatusBar.updateSelectedItem();
-        if (!mHideAudioBar) {
-          mAudioStatusBar.setVisibility(View.VISIBLE);
-        }
+        mAudioStatusBar.setVisibility(View.VISIBLE);
       }
 
       mIsActionBarHidden = false;

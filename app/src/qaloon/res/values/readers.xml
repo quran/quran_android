@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="quran_readers_name">
+        <item>@string/qari_ahmad_khidr_attarabolsi_gapless</item>
+    </string-array>
+
+    <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
+        <item>0</item>
+    </integer-array>
+
+    <string-array translatable="false" name="quran_readers_path">
+        <item>attarabolsi</item>
+    </string-array>
+
+    <string-array translatable="false" name="quran_readers_db_name">
+        <item>attarabolsi</item>
+    </string-array>
+
+    <string-array translatable="false" name="quran_readers_urls">
+        <item>http://mirrors.quranicaudio.com/tvquran/ahmad_khidr_attarabolsi_qaloon/</item>
+    </string-array>
+
+    <!-- actual qari names -->
+    <string name="qari_ahmad_khidr_attarabolsi_gapless">Ahmad Khidr Attarabolsi (gapless)</string>
+</resources>
