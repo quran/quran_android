@@ -17,5 +17,5 @@ public class QuranFileConstants {
   public static final String IMAGES_DIRECTORY = "qaloon";
 
   // images version
-  public static final int IMAGES_VERSION = 1;
+  public static final int IMAGES_VERSION = 2;
 }
