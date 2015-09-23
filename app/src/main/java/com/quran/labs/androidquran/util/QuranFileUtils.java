@@ -40,6 +40,7 @@ public class QuranFileUtils {
   private static final String PATCH_ZIP_BASE_URL = QuranFileConstants.PATCH_ZIP_BASE_URL;
   private static final String DATABASE_BASE_URL = QuranFileConstants.DATABASE_BASE_URL;
   private static final String AYAHINFO_BASE_URL = QuranFileConstants.AYAHINFO_BASE_URL;
+  private static final String AUDIO_DB_BASE_URL = QuranFileConstants.AUDIO_DB_BASE_URL;
 
   // local paths
   private static final String QURAN_BASE = QuranFileConstants.QURAN_BASE;
@@ -460,7 +461,7 @@ public class QuranFileUtils {
     if (qsi == null) {
       return null;
     }
-    return DATABASE_BASE_URL + "audio/";
+    return AUDIO_DB_BASE_URL;
   }
 
   public static boolean haveAyaPositionFile(Context context) {

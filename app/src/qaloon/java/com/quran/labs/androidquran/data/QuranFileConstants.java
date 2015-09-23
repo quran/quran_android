@@ -8,6 +8,7 @@ public class QuranFileConstants {
   public static final String PATCH_ZIP_BASE_URL = IMG_BASE_URL + "patches/v";
   public static final String DATABASE_BASE_URL = BASE_HOST + "databases/";
   public static final String AYAHINFO_BASE_URL = IMG_BASE_URL + "databases/ayahinfo/";
+  public static final String AUDIO_DB_BASE_URL = IMG_BASE_URL + "databases/audio/";
 
   // local paths
   public static final String QURAN_BASE = "quran_android/";
