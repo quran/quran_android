@@ -12,7 +12,7 @@ public class QuranFileConstants {
   // local paths
   public static final String QURAN_BASE = "quran_android/";
   public static final String DATABASE_DIRECTORY = "databases";
-  public static final String AUDIO_DIRECTORY = "audio";
+  public static final String AUDIO_DIRECTORY = "qaloon/audio";
   public static final String AYAHINFO_DIRECTORY = "qaloon/" + DATABASE_DIRECTORY;
   public static final String IMAGES_DIRECTORY = "qaloon";
 
