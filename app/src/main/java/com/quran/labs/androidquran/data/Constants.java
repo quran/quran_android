@@ -28,7 +28,8 @@ public class Constants {
   public static final String QURAN_APP_BASE = "http://quranapp.com/";
   public static final String QURAN_APP_ENDPOINT = "http://quranapp.com/note";
 
-  // Settings Key
+  // Settings Key (some of these have corresponding values in preference_keys.xml)
+  public static final String PREF_APP_LOCATION = "appLocation";
   public static final String PREF_USE_ARABIC_NAMES = "useArabicNames";
   public static final String PREF_LAST_PAGE = "lastPage";
   public static final String PREF_LOCK_ORIENTATION = "lockOrientation";

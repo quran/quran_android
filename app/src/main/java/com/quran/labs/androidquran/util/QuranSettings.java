@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.support.annotation.NonNull;
 
 public class QuranSettings {
    private static QuranSettings sInstance;
-   private String mAppLocationPref;
    private SharedPreferences mPrefs;
 
    public static synchronized QuranSettings getInstance(@NonNull Context context) {
@@ -24,7 +22,6 @@ public class QuranSettings {
 
    private QuranSettings(@NonNull Context appContext) {
      mPrefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-     mAppLocationPref = appContext.getString(R.string.prefs_app_location);
    }
 
    public boolean isArabicNames(){
@@ -104,12 +101,12 @@ public class QuranSettings {
    }
 
    public String getAppCustomLocation() {
-      return mPrefs.getString(mAppLocationPref,
+      return mPrefs.getString(Constants.PREF_APP_LOCATION,
             Environment.getExternalStorageDirectory().getAbsolutePath());
    }
 
    public void setAppCustomLocation(String newLocation) {
-       mPrefs.edit().putString(mAppLocationPref, newLocation).apply();
+       mPrefs.edit().putString(Constants.PREF_APP_LOCATION, newLocation).apply();
    }
 
    public void setActiveTranslation(String translation) {
