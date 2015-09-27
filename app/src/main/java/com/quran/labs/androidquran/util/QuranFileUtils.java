@@ -59,32 +59,6 @@ public class QuranFileUtils {
     sOkHttpClient.setReadTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
   }
 
-  /*
-  public static boolean debugRmDir(String dir, boolean deleteDirectory) {
-    File directory = new File(dir);
-    if (directory.isDirectory()) {
-      String[] children = directory.list();
-      for (String s : children) {
-        if (!debugRmDir(dir + File.separator + s, true))
-          return false;
-      }
-    }
-
-    return !deleteDirectory || directory.delete();
-  }
-
-  public static void debugLsDir(String dir) {
-    File directory = new File(dir);
-    Log.d(TAG, directory.getAbsolutePath());
-
-    if (directory.isDirectory()) {
-      String[] children = directory.list();
-      for (String s : children)
-        debugLsDir(dir + File.separator + s);
-    }
-  }
-  */
-
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
   public static boolean isVersion(Context context, String widthParam, int version) {

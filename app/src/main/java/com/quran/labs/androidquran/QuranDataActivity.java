@@ -45,12 +45,6 @@ public class QuranDataActivity extends Activity implements
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-      /*
-        // remove files for debugging purposes
-        QuranUtils.debugRmDir(QuranUtils.getQuranBaseDirectory(), false);
-        QuranUtils.debugLsDir(QuranUtils.getQuranBaseDirectory());
-       */
-
     QuranScreenInfo.getOrMakeInstance(this);
     mSharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(getApplicationContext());
