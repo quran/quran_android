@@ -526,57 +526,6 @@ public class QuranFileUtils {
     return DATABASE_BASE_URL + QuranDataProvider.QURAN_ARABIC_DATABASE;
   }
 
-  public static void migrateAudio(@NonNull final Context appContext) {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        migrateAudioHelper(appContext);
-      }
-    }).start();
-  }
-
-  private static void migrateAudioHelper(@NonNull Context appContext) {
-    String oldAudioDirectory = AudioUtils.getOldAudioRootDirectory(appContext);
-    String destinationAudioDirectory = QuranFileUtils.getQuranAudioDirectory(appContext);
-    if (oldAudioDirectory != null && destinationAudioDirectory != null) {
-      File old = new File(oldAudioDirectory);
-      if (old.exists()) {
-        Log.d(TAG, "old audio path exists");
-        File dest = new File(destinationAudioDirectory);
-        if (!dest.exists()) {
-          // just in case the user manually deleted /sdcard/quran_android
-          // and left the audio as is (unlikely, but just in case).
-          String parentDir = QuranFileUtils.getQuranBaseDirectory(appContext);
-          new File(parentDir).mkdir();
-
-          Log.d(TAG, "new audio path doesn't exist, renaming...");
-          boolean result = old.renameTo(dest);
-          Log.d(TAG, "result of renaming: " + result);
-        } else {
-          Log.d(TAG, "destination already exists..");
-          File[] oldFiles = old.listFiles();
-          if (oldFiles != null) {
-            for (File f : oldFiles) {
-              File newFile = new File(dest, f.getName());
-              boolean result = f.renameTo(newFile);
-              Log.d(TAG, "attempting to copy " + f +
-                  " to " + newFile + ", res: " + result);
-            }
-          }
-        }
-      }
-
-      try {
-        // make the .nomedia file if it doesn't already exist
-        File noMediaFile = new File(destinationAudioDirectory, ".nomedia");
-        if (!noMediaFile.exists()) {
-          noMediaFile.createNewFile();
-        }
-      } catch (IOException ioe) {
-      }
-    }
-  }
-
   public static boolean moveAppFiles(Context context, String newLocation) {
     if (QuranSettings.getInstance(context).getAppCustomLocation().equals(newLocation)) {
       return true;

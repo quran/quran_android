@@ -305,16 +305,4 @@ public class AudioUtils {
 
     return true;
   }
-
-  public static String getOldAudioRootDirectory(Context context) {
-    String sep = File.separator;
-
-    File f = context.getExternalFilesDir(null);
-    String path = sep + "audio" + sep;
-
-    if (f == null) {
-      return null;
-    }
-    return f.getAbsolutePath() + path;
-  }
 }
