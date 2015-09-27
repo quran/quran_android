@@ -166,10 +166,12 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
                 R.styleable.Spinner, defStyle, 0);
 
         // Need to reset this for tinting purposes
-        setBackgroundDrawable(a.getDrawable(R.styleable.Spinner_android_background));
+        // used to be read from R.styleable.Spinner_android_background
+        setBackgroundResource(R.drawable.abc_spinner_mtrl_am_alpha);
 
         if (mode == MODE_THEME) {
-            mode = a.getInt(R.styleable.Spinner_spinnerMode, MODE_DIALOG);
+            // used to be read from R.styleable.Spinner_spinnerMode
+            mode = MODE_DROPDOWN;
         }
 
         switch (mode) {
@@ -206,12 +208,10 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
             }
         }
 
-        mGravity = a.getInt(R.styleable.Spinner_android_gravity, Gravity.CENTER);
-
-        mPopup.setPromptText(a.getString(R.styleable.Spinner_prompt));
-
-        mDisableChildrenWhenDisabled = a.getBoolean(
-                R.styleable.Spinner_disableChildrenWhenDisabled, false);
+        // used to be read from R.styleable.Spinner_android_gravity
+        mGravity = Gravity.START | Gravity.CENTER_VERTICAL;
+        // used to be read from R.styleable.Spinner_disableChildrenWhenDisabled
+        mDisableChildrenWhenDisabled = true;
 
         a.recycle();
 
