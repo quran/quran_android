@@ -67,7 +67,6 @@ public class QuranDataActivity extends Activity implements
        * people get the latest set of pages.
        */
       QuranFileUtils.clearPendingPageDownloads(this);
-      QuranFileUtils.migrateAudio(getApplicationContext());
     }
 
     if (version != BuildConfig.VERSION_CODE) {
