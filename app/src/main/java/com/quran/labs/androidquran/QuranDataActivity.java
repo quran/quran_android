@@ -65,8 +65,14 @@ public class QuranDataActivity extends Activity implements
        * when updating from "no version" (i.e. version 0), remove any pending page
        * downloads because the download url has now changed in order to ensure that
        * people get the latest set of pages.
+       *
+       * the path check provides a way to differentiate between "upgrading from a version
+       * before PREF_VERSION was introduced" and a new install.
        */
-      QuranFileUtils.clearPendingPageDownloads(this);
+      final String path = mSharedPreferences.getString(Constants.PREF_APP_LOCATION, null);
+      if (path != null) {
+        QuranFileUtils.clearPendingPageDownloads(this);
+      }
     }
 
     if (version != BuildConfig.VERSION_CODE) {
