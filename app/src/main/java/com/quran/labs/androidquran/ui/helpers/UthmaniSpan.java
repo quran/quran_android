@@ -11,7 +11,7 @@ public class UthmaniSpan extends MetricAffectingSpan {
   private Typeface mTypeface;
 
   public UthmaniSpan(Context context) {
-    mTypeface = TypefaceManager.getHafsTypeface(context);
+    mTypeface = TypefaceManager.getUthmaniTypeface(context);
   }
 
   @Override
