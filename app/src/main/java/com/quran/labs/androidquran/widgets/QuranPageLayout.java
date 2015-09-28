@@ -185,7 +185,10 @@ public abstract class QuranPageLayout extends FrameLayout
 
   private void inflateErrorLayout() {
     final LayoutInflater inflater = LayoutInflater.from(mContext);
-    mErrorLayout = inflater.inflate(R.layout.page_load_error, this, true);
+    mErrorLayout = inflater.inflate(R.layout.page_load_error, this, false);
+    LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    lp.gravity = Gravity.CENTER;
+    addView(mErrorLayout, lp);
     mErrorText = (TextView) mErrorLayout.findViewById(R.id.reason_text);
     final Button button =
         (Button) mErrorLayout.findViewById(R.id.retry_button);

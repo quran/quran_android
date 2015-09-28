@@ -9,63 +9,75 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
+import java.io.File;
+
 public class QuranDataActivity extends Activity implements
-    DefaultDownloadReceiver.SimpleDownloadListener {
+    DefaultDownloadReceiver.SimpleDownloadListener,
+    ActivityCompat.OnRequestPermissionsResultCallback {
 
   public static final String TAG = "QuranDataActivity";
   public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
 
   private static final int LATEST_IMAGE_VERSION = QuranFileConstants.IMAGES_VERSION;
+  private static final int REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1;
 
   private boolean mIsPaused = false;
   private AsyncTask<Void, Void, Boolean> mCheckPagesTask;
+  private QuranSettings mQuranSettings;
   private AlertDialog mErrorDialog = null;
   private AlertDialog mPromptForDownloadDialog = null;
+  private AlertDialog mPermissionsDialog;
   private SharedPreferences mSharedPreferences = null;
   private DefaultDownloadReceiver mDownloadReceiver = null;
   private boolean mNeedPortraitImages = false;
   private boolean mNeedLandscapeImages = false;
+  private boolean mTaskIsRunning;
   private String mPatchUrl;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     QuranScreenInfo.getOrMakeInstance(this);
+    mQuranSettings = QuranSettings.getInstance(this);
     mSharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(getApplicationContext());
 
-    /**
-     * this is used for doing upgrades between versions (i.e. it replaces
-     * the use of upgrade to variables as present previously).
-     */
-    final int version = mSharedPreferences.getInt(Constants.PREF_VERSION, 0);
-    if (version == 0) {
-      /**
-       * when updating from "no version" (i.e. version 0), remove any pending page
-       * downloads because the download url has now changed in order to ensure that
-       * people get the latest set of pages
-       */
-      QuranFileUtils.clearPendingPageDownloads(this);
-    }
-
-    if (version != BuildConfig.VERSION_CODE) {
-      // make sure that the version code now says that we're up to date.
-      mSharedPreferences.edit().putInt(Constants.PREF_VERSION, BuildConfig.VERSION_CODE).apply();
+    // by the end of this block, the app location should be set
+    boolean isAppLocationSet = mQuranSettings.isAppLocationSet();
+    if (!isAppLocationSet) {
+      // pre-M, and on M when we detect that the app has launched before, we set the app location
+      // to whatever it would have been pre-M (i.e. this is most likely not a brand new user). we
+      // fallback to assuming it's a new user and setting the app location accordingly.
+      final String location;
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || !isFirstLaunch()) {
+        location = mQuranSettings.getPreMAppCustomLocation();
+      } else {
+        location = mQuranSettings.getAppCustomLocation();
+      }
+      mQuranSettings.setAppCustomLocation(location);
     }
   }
 
@@ -82,10 +94,7 @@ public class QuranDataActivity extends Activity implements
         mDownloadReceiver,
         new IntentFilter(action));
     mDownloadReceiver.setListener(this);
-
-    // check whether or not we need to download
-    mCheckPagesTask = new CheckPagesAsyncTask(this);
-    mCheckPagesTask.execute();
+    checkPermissions();
   }
 
   @Override
@@ -109,6 +118,172 @@ public class QuranDataActivity extends Activity implements
     }
 
     super.onPause();
+  }
+
+  private boolean isFirstLaunch() {
+    return !getDatabasePath("bookmarks.db").exists();
+  }
+
+  private void checkPermissions() {
+    final String path = mQuranSettings.getAppCustomLocation();
+    final File fallbackFile = getExternalFilesDir(null);
+
+    boolean usesExternalFileDir = path != null && path.contains("com.quran");
+    if (path == null || usesExternalFileDir && fallbackFile == null) {
+      // suggests that we're on m+ and getExternalFilesDir returned null at some point
+      runListView();
+      return;
+    }
+
+    // explicit check for M is due to the fact that we need to restart the process when we are
+    // granted the permission (so we don't want to have to do this pre-M).
+    boolean needsPermission = !usesExternalFileDir || !path.equals(fallbackFile.getAbsolutePath());
+    if (needsPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+        ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+          PackageManager.PERMISSION_GRANTED) {
+      // request permission
+      if (!mQuranSettings.didPresentSdcardPermissionsRationale() ||
+          ActivityCompat.shouldShowRequestPermissionRationale(this,
+              Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        //show permission rationale dialog
+        mQuranSettings.setSdcardPermissionsRationalePresented();
+        mPermissionsDialog = new AlertDialog.Builder(this)
+            .setMessage(R.string.storage_permission_rationale)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                mPermissionsDialog = null;
+
+                // request permissions
+                requestExternalSdcardPermission();
+              }
+            })
+            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                // dismiss the dialog
+                dialog.dismiss();
+                mPermissionsDialog = null;
+
+                // fall back if we can
+                if (fallbackFile != null) {
+                  mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
+                  updateAndCheckPages();
+                } else {
+                  // set to null so we can try again next launch
+                  mQuranSettings.setAppCustomLocation(null);
+                  runListView();
+                }
+              }
+            })
+            .create();
+        mPermissionsDialog.show();
+      } else {
+        // fall back if we can
+        if (fallbackFile != null) {
+          mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
+          updateAndCheckPages();
+        } else {
+          // set to null so we can try again next launch
+          mQuranSettings.setAppCustomLocation(null);
+          runListView();
+        }
+      }
+    } else {
+      updateAndCheckPages();
+    }
+  }
+
+  private void updateAndCheckPages() {
+    if (mTaskIsRunning) {
+      return;
+    }
+
+    mTaskIsRunning = true;
+    /**
+     * this is used for doing upgrades between versions (i.e. it replaces
+     * the use of upgrade to variables as present previously).
+     */
+    final int version = mSharedPreferences.getInt(Constants.PREF_VERSION, 0);
+    if (version == 0) {
+      /**
+       * when updating from "no version" (i.e. version 0), remove any pending page
+       * downloads because the download url has now changed in order to ensure that
+       * people get the latest set of pages.
+       */
+      QuranFileUtils.clearPendingPageDownloads(this);
+    }
+
+    if (version != BuildConfig.VERSION_CODE) {
+      // make sure that the version code now says that we're up to date.
+      mSharedPreferences.edit().putInt(Constants.PREF_VERSION, BuildConfig.VERSION_CODE).apply();
+    }
+
+    // check whether or not we need to download
+    mCheckPagesTask = new CheckPagesAsyncTask(this);
+    mCheckPagesTask.execute();
+  }
+
+  private void requestExternalSdcardPermission() {
+    ActivityCompat.requestPermissions(this,
+        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE },
+        REQUEST_WRITE_TO_SDCARD_PERMISSIONS);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
+    if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSIONS) {
+      if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        /**
+         * not sure what to expect, hence doing this - on the n6 dev preview 3, everything works
+         * without an issue, but on the emulator, a manual restart is needed. this code attempts
+         * to figure out what the right thing to do is in this case.
+         *
+         * http://stackoverflow.com/questions/32471888/
+         */
+        if (canWriteSdcardAfterPermissions()) {
+          updateAndCheckPages();
+        } else {
+          PendingIntent pi = PendingIntent.getActivity(this, 0, getIntent(),
+              PendingIntent.FLAG_CANCEL_CURRENT);
+          AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+          am.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, pi);
+
+          // no choice really...
+          System.exit(1);
+        }
+      } else {
+        final File fallbackFile = getExternalFilesDir(null);
+        if (fallbackFile != null) {
+          mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
+          updateAndCheckPages();
+        } else {
+          // set to null so we can try again next launch
+          mQuranSettings.setAppCustomLocation(null);
+          runListView();
+        }
+      }
+    }
+  }
+
+  private boolean canWriteSdcardAfterPermissions() {
+    String location = QuranFileUtils.getQuranBaseDirectory(this);
+    if (location != null) {
+      try {
+        if (new File(location).exists() || QuranFileUtils.makeQuranDirectory(this)) {
+          File f = new File(location, "" + System.currentTimeMillis());
+          if (f.createNewFile()) {
+            f.delete();
+            return true;
+          }
+        }
+      } catch (Exception e) {
+        // no op
+      }
+    }
+    return false;
   }
 
   @Override
@@ -171,6 +346,7 @@ public class QuranDataActivity extends Activity implements
 
     private final Context mAppContext;
     private String mPatchParam;
+    private boolean mStorageNotAvailable;
 
     public CheckPagesAsyncTask(Context context) {
       mAppContext = context.getApplicationContext();
@@ -178,6 +354,12 @@ public class QuranDataActivity extends Activity implements
 
     @Override
     protected Boolean doInBackground(Void... params) {
+      final String baseDir = QuranFileUtils.getQuranBaseDirectory(mAppContext);
+      if (baseDir == null) {
+        mStorageNotAvailable = true;
+        return false;
+      }
+
       final QuranScreenInfo qsi = QuranScreenInfo.getInstance();
       if (!mSharedPreferences.contains(Constants.PREF_DEFAULT_IMAGES_DIR)) {
            /* previously, we would send any screen widths greater than 1280
@@ -244,11 +426,19 @@ public class QuranDataActivity extends Activity implements
     protected void onPostExecute(@NonNull Boolean result) {
       mCheckPagesTask = null;
       mPatchUrl = null;
+      mTaskIsRunning = false;
+
       if (mIsPaused) {
         return;
       }
 
       if (!result) {
+        if (mStorageNotAvailable) {
+          // no storage mounted, nothing we can do...
+          runListView();
+          return;
+        }
+        
         String lastErrorItem = mSharedPreferences.getString(
             QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, "");
         if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)) {
