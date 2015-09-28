@@ -270,19 +270,24 @@ public class QuranFileUtils {
     }
   }
 
-  private static boolean tryToSaveBitmap(Bitmap bitmap, String savePath)
-      throws IOException {
-    FileOutputStream output = new FileOutputStream(savePath);
+  private static boolean tryToSaveBitmap(Bitmap bitmap, String savePath) {
+    FileOutputStream output = null;
     try {
+      output = new FileOutputStream(savePath);
       return bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+    } catch (IOException ioe) {
+      // do nothing
     } finally {
       try {
-        output.flush();
-        output.close();
+        if (output != null) {
+          output.flush();
+          output.close();
+        }
       } catch (Exception e) {
         // ignore...
       }
     }
+    return false;
   }
 
   @Nullable
@@ -290,8 +295,11 @@ public class QuranFileUtils {
     String basePath = QuranSettings.getInstance(context).getAppCustomLocation();
 
     if (!isSDCardMounted()) {
+      // if our best guess suggests that we won't have access to the data due to the sdcard not
+      // being mounted, then set the base path to null for now.
       if (basePath == null || basePath.equals(
-          Environment.getExternalStorageDirectory().getAbsolutePath())) {
+          Environment.getExternalStorageDirectory().getAbsolutePath()) ||
+          (basePath.contains("com.quran") && context.getExternalFilesDir(null) == null)) {
         basePath = null;
       }
     }

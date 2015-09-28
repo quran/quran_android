@@ -4,15 +4,19 @@ import com.quran.labs.androidquran.data.Constants;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+
+import java.io.File;
 
 
 public class QuranSettings {
 
   private static QuranSettings sInstance;
   private SharedPreferences mPrefs;
+  private Context mAppContext;
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (sInstance == null) {
@@ -23,6 +27,7 @@ public class QuranSettings {
 
   private QuranSettings(@NonNull Context appContext) {
     mPrefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+    mAppContext = appContext;
   }
 
   public boolean isArabicNames() {
@@ -103,13 +108,45 @@ public class QuranSettings {
     mPrefs.edit().putInt(Constants.PREF_LAST_PAGE, page).apply();
   }
 
+  public boolean didPresentSdcardPermissionsRationale() {
+    return mPrefs.getBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_RATIONALE, false);
+  }
+
+  public void setSdcardPermissionsRationalePresented() {
+    mPrefs.edit().putBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_RATIONALE, true).apply();
+  }
+
   public String getAppCustomLocation() {
-    return mPrefs.getString(Constants.PREF_APP_LOCATION,
-        Environment.getExternalStorageDirectory().getAbsolutePath());
+    String location = mPrefs.getString(Constants.PREF_APP_LOCATION, null);
+    if (location == null) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        // on M, default to /sdcard/Android/data/com.quran.labs.androidquran
+        File externalFilesDir = mAppContext.getExternalFilesDir(null);
+        if (externalFilesDir != null) {
+          location = externalFilesDir.getAbsolutePath();
+        } else {
+          // suggests that data is on a storage device that isn't mounted
+          location = null;
+        }
+      } else {
+        // pre-M, this just gives points to /sdcard
+        location = Environment.getExternalStorageDirectory().getAbsolutePath();
+      }
+    }
+    return location;
   }
 
   public void setAppCustomLocation(String newLocation) {
     mPrefs.edit().putString(Constants.PREF_APP_LOCATION, newLocation).apply();
+  }
+
+  public String getPreMAppCustomLocation() {
+    return mPrefs.getString(Constants.PREF_APP_LOCATION,
+        Environment.getExternalStorageDirectory().getAbsolutePath());
+  }
+
+  public boolean isAppLocationSet() {
+    return mPrefs.getString(Constants.PREF_APP_LOCATION, null) != null;
   }
 
   public void setActiveTranslation(String translation) {

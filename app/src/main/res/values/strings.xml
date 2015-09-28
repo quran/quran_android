@@ -125,6 +125,11 @@
         <item quantity="other">%2$d results for \"%1$s\": </item>
     </plurals>
 
+    <!-- m permissions stuff -->
+    <string name="storage_permission_rationale">It looks like you may have run Quran before. In
+        order to use your existing Quran data, Quran needs your permission to access external
+        storage. Grant Quran permission?</string>
+
     <!-- Search messages -->
     <string name="found_in_sura">Found in Sura</string>
     <string name="no_results">No results found for \"%s\"</string>
