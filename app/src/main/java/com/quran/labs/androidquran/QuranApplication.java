@@ -21,7 +21,10 @@ public class QuranApplication extends Application {
   public void onCreate() {
     super.onCreate();
     Fabric.with(this, new Crashlytics());
-    LeakCanary.install(this);
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      LeakCanary.install(this);
+    }
   }
 
   public void refreshLocale(@NonNull Context context, boolean force) {
