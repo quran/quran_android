@@ -14,8 +14,6 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -233,23 +231,17 @@ public class QuranDataActivity extends Activity implements
     if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSIONS) {
       if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         /**
-         * not sure what to expect, hence doing this - on the n6 dev preview 3, everything works
-         * without an issue, but on the emulator, a manual restart is needed. this code attempts
-         * to figure out what the right thing to do is in this case.
+         * taking a risk here. on nexus 6, the permission is granted automatically. on the emulator,
+         * a restart is required. on reddit, someone with a nexus 9 said they also didn't need to
+         * restart for the permission to take effect.
          *
+         * going to assume that it just works to avoid meh code (a check to see if i can actually
+         * write, and a PendingIntent plus System.exit to restart the app otherwise).
+         *
+         * also see:
          * http://stackoverflow.com/questions/32471888/
          */
-        if (canWriteSdcardAfterPermissions()) {
-          updateAndCheckPages();
-        } else {
-          PendingIntent pi = PendingIntent.getActivity(this, 0, getIntent(),
-              PendingIntent.FLAG_CANCEL_CURRENT);
-          AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-          am.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, pi);
-
-          // no choice really...
-          System.exit(1);
-        }
+        updateAndCheckPages();
       } else {
         final File fallbackFile = getExternalFilesDir(null);
         if (fallbackFile != null) {
@@ -262,24 +254,6 @@ public class QuranDataActivity extends Activity implements
         }
       }
     }
-  }
-
-  private boolean canWriteSdcardAfterPermissions() {
-    String location = QuranFileUtils.getQuranBaseDirectory(this);
-    if (location != null) {
-      try {
-        if (new File(location).exists() || QuranFileUtils.makeQuranDirectory(this)) {
-          File f = new File(location, "" + System.currentTimeMillis());
-          if (f.createNewFile()) {
-            f.delete();
-            return true;
-          }
-        }
-      } catch (Exception e) {
-        // no op
-      }
-    }
-    return false;
   }
 
   @Override
