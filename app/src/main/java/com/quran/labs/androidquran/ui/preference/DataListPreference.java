@@ -1,5 +1,9 @@
 package com.quran.labs.androidquran.ui.preference;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.StorageUtils;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,10 +20,6 @@ import android.widget.CheckedTextView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.StorageUtils;
-
 import java.util.List;
 
 /**
@@ -34,7 +34,7 @@ import java.util.List;
  * setting dialog title color.
  */
 public class DataListPreference extends QuranListPreference {
-  private CharSequence[] mFreeSpaceAmounts;
+  private CharSequence[] mDescriptions;
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public DataListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -63,13 +63,14 @@ public class DataListPreference extends QuranListPreference {
 
     CharSequence[] values = new CharSequence[storageList.size()];
     CharSequence[] displayNames = new CharSequence[storageList.size()];
-    mFreeSpaceAmounts = new CharSequence[storageList.size()];
+    mDescriptions = new CharSequence[storageList.size()];
     StorageUtils.Storage storage;
     for (int i = 0; i < storageList.size(); i++) {
       storage = storageList.get(i);
       values[i] = storage.getMountPoint();
       displayNames[i] = storage.getLabel();
-      mFreeSpaceAmounts[i] = context.getString(R.string.prefs_megabytes, storage.getFreeSpace());
+      mDescriptions[i] = storage.getMountPoint() + " " +
+          context.getString(R.string.prefs_megabytes, storage.getFreeSpace());
     }
     setEntries(displayNames);
     setEntryValues(values);
@@ -85,7 +86,7 @@ public class DataListPreference extends QuranListPreference {
   protected void onPrepareDialogBuilder(@NonNull AlertDialog.Builder builder) {
     int selectedIndex = findIndexOfValue(getValue());
     ListAdapter adapter = new StorageArrayAdapter(getContext(), R.layout.data_storage_location_item,
-        getEntries(), selectedIndex, mFreeSpaceAmounts);
+        getEntries(), selectedIndex, mDescriptions);
     builder.setAdapter(adapter, this);
     super.onPrepareDialogBuilder(builder);
   }

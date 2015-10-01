@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.ui.AudioManagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.preference.DataListPreference;
@@ -11,6 +12,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -129,11 +131,10 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       }
 
       mListStoragePref.setLabelsAndSummaries(context, mAppSize, mStorageList);
-      final HashMap<String, Integer> storageEmptySpaceMap =
+      final HashMap<String, StorageUtils.Storage> storageMap =
           new HashMap<>(mStorageList.size());
       for (StorageUtils.Storage storage : mStorageList) {
-        storageEmptySpaceMap.put(storage.getMountPoint(),
-            storage.getFreeSpace());
+        storageMap.put(storage.getMountPoint(), storage);
       }
 
       mListStoragePref
@@ -152,15 +153,19 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
               // this is called right before the preference is saved
               String newLocation = (String) newValue;
+              StorageUtils.Storage destStorage = storageMap.get(newLocation);
               String current = settings.getAppCustomLocation();
-              if (mAppSize < storageEmptySpaceMap.get(newLocation)) {
+              if (mAppSize < destStorage.getFreeSpace()) {
                 if (current == null || !current.equals(newLocation)) {
-                  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ||
-                      newLocation.equals(mInternalSdcardLocation)) {
-                    moveFiles(newLocation);
-                  } else {
-                    showKitKatConfirmation(newLocation);
+                  if (destStorage.doesRequirePermission()) {
+                    if (!PermissionUtil.haveWriteExternalStoragePermission(context)) {
+                      requestExternalStoragePermission(newLocation);
+                      return false;
+                    }
+
+                    // we have the permission, so fall through and handle the move
                   }
+                  handleMove(newLocation);
                 }
               } else {
                 Toast.makeText(context,
@@ -176,6 +181,22 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     } catch (Exception e) {
       Log.e(TAG, "error loading storage options", e);
       hideStorageListPref();
+    }
+  }
+
+  private void requestExternalStoragePermission(String newLocation) {
+    Activity activity = getActivity();
+    if (activity instanceof QuranPreferenceActivity) {
+      ((QuranPreferenceActivity) activity).requestWriteExternalSdcardPermission(newLocation);
+    }
+  }
+
+  private void handleMove(String newLocation) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ||
+        newLocation.equals(mInternalSdcardLocation)) {
+      moveFiles(newLocation);
+    } else {
+      showKitKatConfirmation(newLocation);
     }
   }
 
@@ -203,7 +224,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     mDialog.show();
   }
 
-  private void moveFiles(String newLocation) {
+  public void moveFiles(String newLocation) {
     mMoveFilesTask = new MoveFilesAsyncTask(getActivity(), newLocation);
     mMoveFilesTask.execute();
   }

@@ -1,13 +1,13 @@
 package com.quran.labs.androidquran.util;
 
+import com.quran.labs.androidquran.R;
+
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-
-import com.quran.labs.androidquran.R;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,40 +31,98 @@ public class StorageUtils {
    * @return A List of all storage locations available
    */
   public static List<Storage> getAllStorageLocations(Context context) {
-    List<String> mounts = new ArrayList<>();
 
-    final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
-    if (mountPoints != null && mountPoints.length > 1) {
-      for (File mountPoint : mountPoints) {
-        mounts.add(mountPoint.getAbsolutePath());
-      }
-    } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-      mounts = readMountsFile();
-
-      // As per http://source.android.com/devices/tech/storage/config.html
-      // device-specific vold.fstab file is removed after Android 4.2.2
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        Set<String> volds = readVoldsFile();
-
-        List<String> toRemove = new ArrayList<>();
-        for (String mount : mounts) {
-          if (!volds.contains(mount)) {
-            toRemove.add(mount);
-          }
+    /**
+     * This first condition is the code moving forward, since the else case is a bunch
+     * of unsupported hacks.
+     *
+     * For Kitkat and above, we rely on Environment.getExternalFilesDirs to give us a list
+     * of application writable directories (none of which require WRITE_EXTERNAL_STORAGE on
+     * Kitkat and above).
+     *
+     * Previously, we only would show anything if there were at least 2 entries. For M,
+     * some changes were made, such that on M, we even show this if there is only one
+     * entry.
+     *
+     * Irrespective of whether we require 1 entry (M) or 2 (Kitkat and L), we add an
+     * additional entry explicitly for the sdcard itself, (the one requiring
+     * WRITE_EXTERNAL_STORAGE to write).
+     *
+     * Thus, on Kitkat, the user may either:
+     * a. not see any item (if there's only one entry returned by getExternalFilesDirs, we won't
+     * show any options since it's the same sdcard and we have the permission and the user can't
+     * revoke it pre-Kitkat), or
+     * b. see 3+ items - /sdcard, and then at least 2 external fiels directories.
+     *
+     * on M, the user will always see at least 2 items (the external files dir and the actual
+     * external storage directory), and potentially more (depending on how many items are returned
+     * by getExternalFilesDirs).
+     */
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      List<Storage> result = new ArrayList<>();
+      int limit = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 1 : 2;
+      final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
+      if (mountPoints != null && mountPoints.length >= limit) {
+        int typeId;
+        if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
+          typeId = R.string.prefs_sdcard_internal;
+        } else {
+          typeId = R.string.prefs_sdcard_external;
         }
 
-        for (String s : toRemove) {
-          mounts.remove(s);
+        int number = 1;
+        result.add(new Storage(context.getString(typeId, number),
+            Environment.getExternalStorageDirectory().getAbsolutePath(),
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
+        for (File mountPoint : mountPoints) {
+          result.add(new Storage(context.getString(typeId, number++),
+              mountPoint.getAbsolutePath()));
+          typeId = R.string.prefs_sdcard_external;
         }
-      } else {
-        Log.d(TAG, "Android version: " + Build.VERSION.SDK_INT + ", skip reading vold.fstab file");
       }
+      return result;
+    } else {
+      return getLegacyStorageLocations(context);
+    }
+  }
+
+  /**
+   * Attempt to return a list of storage locations pre-Kitkat.
+   * @param context the context
+   * @return the list of storage locations
+   */
+  private static List<Storage> getLegacyStorageLocations(Context context) {
+    List<String> mounts = readMountsFile();
+
+    // As per http://source.android.com/devices/tech/storage/config.html
+    // device-specific vold.fstab file is removed after Android 4.2.2
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      Set<String> volds = readVoldsFile();
+
+      List<String> toRemove = new ArrayList<>();
+      for (String mount : mounts) {
+        if (!volds.contains(mount)) {
+          toRemove.add(mount);
+        }
+      }
+
+      for (String s : toRemove) {
+        mounts.remove(s);
+      }
+    } else {
+      Log.d(TAG, "Android version: " + Build.VERSION.SDK_INT + ", skip reading vold.fstab file");
     }
 
     Log.d(TAG, "mounts list is: " + mounts);
     return buildMountsList(context, mounts);
   }
 
+  /**
+   * Converts a list of mount strings to a list of Storage items
+   * @param context the context
+   * @param mounts a list of mount points as strings
+   * @return a list of Storage items that can be rendered by the ui
+   */
   private static List<Storage> buildMountsList(Context context, List<String> mounts) {
     List<Storage> list = new ArrayList<>(mounts.size());
 
@@ -94,6 +152,10 @@ public class StorageUtils {
     return list;
   }
 
+  /**
+   * Read /proc/mounts. This is a set of hacks for versions below Kitkat.
+   * @return list of mounts based on the mounts file.
+   */
   private static List<String> readMountsFile() {
     String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
     List<String> mounts = new ArrayList<>();
@@ -178,13 +240,20 @@ public class StorageUtils {
   }
 
   public static class Storage {
-    private String label;
-    private String mountPoint;
+    private final String label;
+    private final String mountPoint;
+    private final boolean requiresPermission;
+
     private int freeSpace;
 
     public Storage(String label, String mountPoint) {
+      this(label, mountPoint, false);
+    }
+
+    public Storage(String label, String mountPoint, boolean requiresPermission) {
       this.label = label;
       this.mountPoint = mountPoint;
+      this.requiresPermission = requiresPermission;
       computeSpace();
     }
 
@@ -214,6 +283,10 @@ public class StorageUtils {
      */
     public int getFreeSpace() {
       return freeSpace;
+    }
+
+    public boolean doesRequirePermission() {
+      return requiresPermission;
     }
   }
 }

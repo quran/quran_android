@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
@@ -27,7 +28,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -138,13 +138,9 @@ public class QuranDataActivity extends Activity implements
     // explicit check for M is due to the fact that we need to restart the process when we are
     // granted the permission (so we don't want to have to do this pre-M).
     boolean needsPermission = !usesExternalFileDir || !path.equals(fallbackFile.getAbsolutePath());
-    if (needsPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-        ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-          PackageManager.PERMISSION_GRANTED) {
+    if (needsPermission && !PermissionUtil.haveWriteExternalStoragePermission(this)) {
       // request permission
-      if (!mQuranSettings.didPresentSdcardPermissionsRationale() ||
-          ActivityCompat.shouldShowRequestPermissionRationale(this,
-              Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+      if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
         //show permission rationale dialog
         mQuranSettings.setSdcardPermissionsRationalePresented();
         mPermissionsDialog = new AlertDialog.Builder(this)
