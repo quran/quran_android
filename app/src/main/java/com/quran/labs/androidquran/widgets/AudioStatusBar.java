@@ -126,6 +126,8 @@ public class AudioStatusBar extends LinearLayout {
     }
 
     List<QariItem> qariList = AudioUtils.getQariList(mContext);
+
+    // TODO: optimize - PREF_DEFAULT_QARI is the qari id, should introduce a helper pref for pos
     final int qaris = qariList.size();
     if (mCurrentQari >= qaris || qariList.get(mCurrentQari).getId() != mCurrentQari) {
       // figure out the updated position for the index
