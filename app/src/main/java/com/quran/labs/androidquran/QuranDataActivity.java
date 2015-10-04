@@ -21,7 +21,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -63,19 +62,10 @@ public class QuranDataActivity extends Activity implements
     mSharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(getApplicationContext());
 
-    // by the end of this block, the app location should be set
+    // set the app location if it's not already set
     boolean isAppLocationSet = mQuranSettings.isAppLocationSet();
     if (!isAppLocationSet) {
-      // pre-M, and on M when we detect that the app has launched before, we set the app location
-      // to whatever it would have been pre-M (i.e. this is most likely not a brand new user). we
-      // fallback to assuming it's a new user and setting the app location accordingly.
-      final String location;
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || !isFirstLaunch()) {
-        location = mQuranSettings.getPreMAppCustomLocation();
-      } else {
-        location = mQuranSettings.getAppCustomLocation();
-      }
-      mQuranSettings.setAppCustomLocation(location);
+      mQuranSettings.setAppCustomLocation(mQuranSettings.getAppCustomLocation());
     }
   }
 
@@ -118,10 +108,6 @@ public class QuranDataActivity extends Activity implements
     super.onPause();
   }
 
-  private boolean isFirstLaunch() {
-    return !getDatabasePath("bookmarks.db").exists();
-  }
-
   private void checkPermissions() {
     final String path = mQuranSettings.getAppCustomLocation();
     final File fallbackFile = getExternalFilesDir(null);
@@ -133,8 +119,6 @@ public class QuranDataActivity extends Activity implements
       return;
     }
 
-    // explicit check for M is due to the fact that we need to restart the process when we are
-    // granted the permission (so we don't want to have to do this pre-M).
     boolean needsPermission = !usesExternalFileDir || !path.equals(fallbackFile.getAbsolutePath());
     if (needsPermission && !PermissionUtil.haveWriteExternalStoragePermission(this)) {
       // request permission
