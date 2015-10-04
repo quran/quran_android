@@ -15,6 +15,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,6 +63,17 @@ public class AudioUtils {
         items.add(new QariItem(i, shuyookh[i], urls[i], paths[i], databases[i]));
       }
     }
+    Collections.sort(items, new Comparator<QariItem>() {
+      @Override
+      public int compare(QariItem lhs, QariItem rhs) {
+        boolean lhsGapless = lhs.isGapless();
+        boolean rhsGapless = rhs.isGapless();
+        if (lhsGapless != rhsGapless) {
+          return lhsGapless ? -1 : 1;
+        }
+        return lhs.getName().compareTo(rhs.getName());
+      }
+    });
     return items;
   }
 
