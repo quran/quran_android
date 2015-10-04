@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -123,6 +125,7 @@ public class QuranDataActivity extends Activity implements
     if (needsPermission && !PermissionUtil.haveWriteExternalStoragePermission(this)) {
       // request permission
       if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
+        Answers.getInstance().logCustom(new CustomEvent("storagePermissionRationaleShown"));
         //show permission rationale dialog
         mQuranSettings.setSdcardPermissionsRationalePresented();
         mPermissionsDialog = new AlertDialog.Builder(this)
@@ -133,6 +136,8 @@ public class QuranDataActivity extends Activity implements
                 dialog.dismiss();
                 mPermissionsDialog = null;
 
+                Answers.getInstance().logCustom(
+                    new CustomEvent("storagePermissionRationaleAccepted"));
                 // request permissions
                 requestExternalSdcardPermission();
               }
@@ -144,6 +149,8 @@ public class QuranDataActivity extends Activity implements
                 dialog.dismiss();
                 mPermissionsDialog = null;
 
+                Answers.getInstance().logCustom(
+                    new CustomEvent("storagePermissionRationaleDenied"));
                 // fall back if we can
                 if (fallbackFile != null) {
                   mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
@@ -158,6 +165,7 @@ public class QuranDataActivity extends Activity implements
             .create();
         mPermissionsDialog.show();
       } else {
+        Answers.getInstance().logCustom(new CustomEvent("storagePermissionFallback"));
         // fall back if we can
         if (fallbackFile != null) {
           mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
@@ -225,8 +233,10 @@ public class QuranDataActivity extends Activity implements
          * also see:
          * http://stackoverflow.com/questions/32471888/
          */
+        Answers.getInstance().logCustom(new CustomEvent("storagePermissionGranted"));
         updateAndCheckPages();
       } else {
+        Answers.getInstance().logCustom(new CustomEvent("storagePermissionDenied"));
         final File fallbackFile = getExternalFilesDir(null);
         if (fallbackFile != null) {
           mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
