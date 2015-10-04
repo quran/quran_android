@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.util;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
@@ -108,6 +110,7 @@ public class QuranFileUtils {
     if (state.equals(Environment.MEDIA_MOUNTED)) {
       File dir = new File(quranDirectory + File.separator);
       if (dir.isDirectory()) {
+        Answers.getInstance().logCustom(new CustomEvent("nullDirectoryListing"));
         String[] fileList = dir.list();
         if (fileList == null) {
           for (int i = 1; i <= PAGES_LAST; i++) {

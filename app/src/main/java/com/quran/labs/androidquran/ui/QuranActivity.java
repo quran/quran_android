@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.ui;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.AboutUsActivity;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
@@ -262,6 +264,7 @@ public class QuranActivity extends QuranActionBarActivity
         return true;
       }
       case R.id.other_apps: {
+        Answers.getInstance().logCustom(new CustomEvent("menuOtherApps"));
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("market://search?q=pub:quran.com"));
         if (getPackageManager().resolveActivity(intent,
