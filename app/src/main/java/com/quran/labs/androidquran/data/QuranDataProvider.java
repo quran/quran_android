@@ -41,7 +41,7 @@ public class QuranDataProvider extends ContentProvider {
   public static final String AYAH_MIME_TYPE =
       ContentResolver.CURSOR_ITEM_BASE_TYPE +
           "/vnd.com.quran.labs.androidquran";
-  public static final String QURAN_ARABIC_DATABASE = "quran.ar.db";
+  public static final String QURAN_ARABIC_DATABASE = QuranFileConstants.ARABIC_DATABASE;
 
   // UriMatcher stuff
   private static final int SEARCH_VERSES = 0;
