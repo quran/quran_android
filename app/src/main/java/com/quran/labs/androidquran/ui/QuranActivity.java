@@ -30,6 +30,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -257,6 +259,16 @@ public class QuranActivity extends QuranActionBarActivity
       }
       case R.id.jump: {
         gotoPageDialog();
+        return true;
+      }
+      case R.id.other_apps: {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("market://search?q=pub:quran.com"));
+        if (getPackageManager().resolveActivity(intent,
+            PackageManager.MATCH_DEFAULT_ONLY) == null) {
+          intent.setData(Uri.parse("http://play.google.com/store/search?q=pub:quran.com"));
+        }
+        startActivity(intent);
         return true;
       }
       default: {
