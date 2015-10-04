@@ -45,4 +45,7 @@
     <item android:id="@+id/about" 
           android:title="@string/menu_about"
           app:showAsAction="never"/>
+    <item android:id="@+id/other_apps"
+          android:title="@string/menu_other_apps"
+          app:showAsAction="never"/>
 </menu>
