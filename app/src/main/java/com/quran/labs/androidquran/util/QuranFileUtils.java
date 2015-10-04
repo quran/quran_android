@@ -109,12 +109,18 @@ public class QuranFileUtils {
       File dir = new File(quranDirectory + File.separator);
       if (dir.isDirectory()) {
         String[] fileList = dir.list();
-        int files = fileList == null ? 0 : fileList.length;
-        if (files >= PAGES_LAST) {
+        if (fileList == null) {
+          for (int i = 1; i <= PAGES_LAST; i++) {
+            if (!new File(dir, getPageFileName(i)).exists()) {
+              return false;
+            }
+          }
+        } else if (fileList.length < PAGES_LAST) {
           // ideally, we should loop for each page and ensure
           // all pages are there, but this will do for now.
-          return true;
+          return false;
         }
+        return true;
       } else {
         QuranFileUtils.makeQuranDirectory(context);
         if (!IMAGES_DIRECTORY.isEmpty()) {
