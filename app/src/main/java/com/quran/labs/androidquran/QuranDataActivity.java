@@ -30,6 +30,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -228,12 +229,18 @@ public class QuranDataActivity extends Activity implements
          * restart for the permission to take effect.
          *
          * going to assume that it just works to avoid meh code (a check to see if i can actually
-         * write, and a PendingIntent plus System.exit to restart the app otherwise).
+         * write, and a PendingIntent plus System.exit to restart the app otherwise). logging to
+         * know if we should actually have that code or not.
          *
          * also see:
          * http://stackoverflow.com/questions/32471888/
          */
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionGranted"));
+        if (!canWriteSdcardAfterPermissions()) {
+          Answers.getInstance().logCustom(new CustomEvent("storagePermissionNeedsRestart"));
+          Toast.makeText(this,
+              R.string.storage_permission_please_restart, Toast.LENGTH_LONG).show();
+        }
         updateAndCheckPages();
       } else {
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionDenied"));
@@ -248,6 +255,24 @@ public class QuranDataActivity extends Activity implements
         }
       }
     }
+  }
+
+  private boolean canWriteSdcardAfterPermissions() {
+    String location = QuranFileUtils.getQuranBaseDirectory(this);
+    if (location != null) {
+      try {
+        if (new File(location).exists() || QuranFileUtils.makeQuranDirectory(this)) {
+          File f = new File(location, "" + System.currentTimeMillis());
+          if (f.createNewFile()) {
+            f.delete();
+            return true;
+          }
+        }
+      } catch (Exception e) {
+        // no op
+      }
+    }
+    return false;
   }
 
   @Override

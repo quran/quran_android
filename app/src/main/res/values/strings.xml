@@ -132,6 +132,7 @@
         external storage. Quran will work without this permission, but if you clear data or
         uninstall the app, all downloaded pages, audio, and data will be removed. Grant
         Quran permission?</string>
+    <string name="storage_permission_please_restart">Please restart the app for this to take effect.</string>
 
     <!-- Search messages -->
     <string name="found_in_sura">Found in Sura</string>
