@@ -73,9 +73,18 @@ Open Source Projects Used
 Changelog
 ---------
 **development**
-- add 6 new gapless qaris
+- android M support
+- use different font for arabic text
+- add 12 new gapless qaris
+- separate basmallah from first ayah in translation
+- fix buggy audio autoscrolling in landscape quran/quran_android#545
 - fix "calculating app size" quran/quran_android#536
-- minor bugfixes and improvements
+- many bugfixes and improvements
+
+_flavor specific_
+- qaloon: patch to fix page 304.
+- qaloon: add a qari, sheikh Ahmad Khidr Attarabolsi
+- naskh: use different database and font for arabic text
 
 **version 2.6.5p1 (released 5/31/2015)**
 - fix a crash when tapping a search result
