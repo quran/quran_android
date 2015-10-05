@@ -72,7 +72,7 @@ Open Source Projects Used
 
 Changelog
 ---------
-**development**
+**version 2.6.6 (released 10/4/2015)**
 - android M support
 - use different font for arabic text
 - add 12 new gapless qaris
