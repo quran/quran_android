@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 2651
-        versionName "2.6.5-p1"
+        versionCode 2660
+        versionName "2.6.6"
     }
 
     signingConfigs {
@@ -35,15 +35,15 @@ android {
         qaloon {
             applicationId "com.quran.labs.androidquran.qaloon"
             resValue "string", "authority", applicationId + '.data.QuranDataProvider'
-            versionCode 1000
-            versionName "1.0.0"
+            versionCode 1010
+            versionName "1.0.1"
         }
 
         naskh {
             applicationId "com.quran.labs.androidquran.naskh"
             resValue "string", "authority", applicationId + '.data.QuranDataProvider'
-            versionCode 1000
-            versionName "1.0.0"
+            versionCode 1001
+            versionName "1.0.1"
         }
     }
 
