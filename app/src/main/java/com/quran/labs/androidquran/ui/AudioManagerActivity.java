@@ -9,8 +9,8 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.util.AudioManagerUtils;
 import com.quran.labs.androidquran.util.AudioUtils;
-import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QariDownloadInfo;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import rx.Subscription;
-import rx.android.app.AppObservable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 public class AudioManagerActivity extends QuranActionBarActivity
@@ -78,8 +78,8 @@ public class AudioManagerActivity extends QuranActionBarActivity
     if (mSubscription != null) {
       mSubscription.unsubscribe();
     }
-    mSubscription = AppObservable.bindActivity(this,
-        AudioManagerUtils.shuyookhDownloadObservable(mBasePath, mQariItems))
+    mSubscription = AudioManagerUtils.shuyookhDownloadObservable(mBasePath, mQariItems)
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe(mOnDownloadInfo);
   }
 
