@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.data;
 
 import com.quran.labs.androidquran.ui.util.TypefaceManager;
 
+import android.os.Build;
+
 public class QuranFileConstants {
   // server urls
   public static final String BASE_HOST = "http://android.quran.com/data/";
@@ -21,7 +23,9 @@ public class QuranFileConstants {
   public static final String IMAGES_DIRECTORY = "naskh";
 
   // arabic database
-  public static final String ARABIC_DATABASE = "quran.ar_naskh.db";
+  public static final String ARABIC_DATABASE =
+      Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1 ?
+          "quran.ar_naskh.db" : "quran.ar.db";
 
   // images version
   public static final int IMAGES_VERSION = 1;

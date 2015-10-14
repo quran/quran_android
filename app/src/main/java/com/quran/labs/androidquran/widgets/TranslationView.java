@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.annotation.StyleRes;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -26,6 +27,8 @@ import java.util.List;
 
 public class TranslationView extends ScrollView {
   private static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+  private static final boolean USE_UTHMANI_SPAN =
+      Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
 
   private Context mContext;
   private int mDividerColor;
@@ -268,9 +271,11 @@ public class TranslationView extends ScrollView {
       ayahView.setLineSpacing(1.4f, 1.4f);
 
       SpannableString arabicText = new SpannableString(ayahText);
-      UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
-      arabicText.setSpan(uthmaniSpan, 0, ayahText.length(),
-          Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+      if (USE_UTHMANI_SPAN) {
+        UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
+        arabicText.setSpan(uthmaniSpan, 0, ayahText.length(),
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+      }
       ayahView.setText(arabicText);
       ayahView.append("\n\n");
     }
@@ -341,9 +346,13 @@ public class TranslationView extends ScrollView {
     tv.setTextSize(mFontSize);
 
     SpannableString str = new SpannableString(AR_BASMALLAH);
-    UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
-    str.setSpan(uthmaniSpan, 0, str.length(),
-        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+    if (USE_UTHMANI_SPAN) {
+      UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
+      str.setSpan(uthmaniSpan, 0, str.length(),
+          Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
     tv.setText(str);
 
     LinearLayout.LayoutParams params =
