@@ -110,7 +110,6 @@ public class QuranFileUtils {
     if (state.equals(Environment.MEDIA_MOUNTED)) {
       File dir = new File(quranDirectory + File.separator);
       if (dir.isDirectory()) {
-        Answers.getInstance().logCustom(new CustomEvent("nullDirectoryListing"));
         String[] fileList = dir.list();
         if (fileList == null) {
           for (int i = 1; i <= PAGES_LAST; i++) {
@@ -118,6 +117,7 @@ public class QuranFileUtils {
               return false;
             }
           }
+          Answers.getInstance().logCustom(new CustomEvent("successfulNullDirectoryListing"));
         } else if (fileList.length < PAGES_LAST) {
           // ideally, we should loop for each page and ensure
           // all pages are there, but this will do for now.

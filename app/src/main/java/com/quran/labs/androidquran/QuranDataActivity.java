@@ -166,7 +166,6 @@ public class QuranDataActivity extends Activity implements
             .create();
         mPermissionsDialog.show();
       } else {
-        Answers.getInstance().logCustom(new CustomEvent("storagePermissionFallback"));
         // fall back if we can
         if (fallbackFile != null) {
           mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
