@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
@@ -353,8 +354,16 @@ public class QuranPageFragment extends Fragment
       if (highlightBounds != null) {
         int screenHeight = QuranScreenInfo.getInstance().getHeight();
 
+        Matrix matrix = mImageView.getImageMatrix();
+        matrix.mapRect(highlightBounds);
+
         int currentScrollY = mQuranPageLayout.getCurrentScrollY();
-        if (currentScrollY < highlightBounds.top || currentScrollY > highlightBounds.bottom) {
+        final boolean topOnScreen = highlightBounds.top > currentScrollY &&
+            highlightBounds.top < currentScrollY + screenHeight;
+        final boolean bottomOnScreen = highlightBounds.bottom > currentScrollY &&
+            highlightBounds.bottom < currentScrollY + screenHeight;
+
+        if (!topOnScreen || !bottomOnScreen) {
           int y = (int) highlightBounds.top - (int) (0.05 * screenHeight);
           mQuranPageLayout.smoothScrollLayoutTo(y);
         }
