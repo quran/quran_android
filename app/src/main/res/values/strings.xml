@@ -282,15 +282,14 @@
     <string name="play_from">From</string>
     <string name="play_to">To</string>
     <string name="play_restrict_range">Only play the above verses</string>
-    <string name="repeat_verses_range">Repeat set of verses:</string>
-    <string name="repeat_each_verse">Repeat each verse:</string>
+    <string name="play_verses_range">Play set of verses:</string>
+    <string name="play_each_verse">Play each verse:</string>
     <string name="play_apply">Apply</string>
     <string name="play_apply_and_play">Apply and Play</string>
     <string name="play">Play</string>
     <string name="stop">Stop</string>
 
     <string-array name="repeatValues">
-        <item>never</item>
         <item>1 time</item>
         <item>2 times</item>
         <item>3 times</item>

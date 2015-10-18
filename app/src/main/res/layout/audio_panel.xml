@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/repeat_verses_range"
+                android:text="@string/play_verses_range"
                 android:textAppearance="@style/PanelLabel"/>
             <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                 android:id="@+id/repeat_range_spinner"
@@ -77,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/repeat_each_verse"
+                android:text="@string/play_each_verse"
                 android:textAppearance="@style/PanelLabel"/>
             <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
                 android:id="@+id/repeat_verse_spinner"

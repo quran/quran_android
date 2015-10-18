@@ -238,8 +238,6 @@
   <string name="play_from">Depuis</string>
   <string name="play_to">À</string>
   <string name="play_restrict_range">Écouter uniquement les Ayāt sélectionnés</string>
-  <string name="repeat_verses_range">Répéter les Ayāt sélectionnés :</string>
-  <string name="repeat_each_verse">Répéter chaque Aya :</string>
   <string name="play_apply">Appliquer</string>
   <string name="play_apply_and_play">Appliquer et Écouter</string>
   <string name="play">Écouter</string>

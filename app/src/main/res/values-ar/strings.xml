@@ -216,8 +216,8 @@
     <string name="play_from">من</string>
     <string name="play_to">إلى</string>
     <string name="play_restrict_range"> شغل ما تم اختياره من الايات فقط</string>
-    <string name="repeat_verses_range">تكرار مجموعة الآيات:</string>
-    <string name="repeat_each_verse">تكرار كل اية :</string>
+    <string name="play_verses_range">تشغيل مجموعة الآيات:</string>
+    <string name="play_each_verse">تشغيل كل اية :</string>
     <string name="play_apply">تطبيق</string>
     <string name="play_apply_and_play">تطبيق وتشغيل</string>
 

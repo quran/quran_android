@@ -264,8 +264,6 @@
     <string name="play_from">От</string>
     <string name="play_to">До</string>
     <string name="play_restrict_range">Воспроизвести только вышестоящие аяты</string>
-    <string name="repeat_verses_range">Воспроизвести группу аятов:</string>
-    <string name="repeat_each_verse">Воспроизвести каждый аят:</string>
     <string name="play_apply">Применить</string>
     <string name="play_apply_and_play">Применить и воспроизвести</string>
     <string name="play">Воспроизвести</string>

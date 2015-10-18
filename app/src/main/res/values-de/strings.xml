@@ -286,8 +286,6 @@
     <string name="play_from">Von</string>
     <string name="play_to">Bis</string>
     <string name="play_restrict_range">Nur die oben genannten Verse abspielen</string>
-    <string name="repeat_verses_range">Wiederhole den Satz von Versen:</string>
-    <string name="repeat_each_verse">Wiederhole jeden Vers:</string>
     <string name="play_apply">Anwenden</string>
     <string name="play_apply_and_play">Anwenden und Abspielen</string>
     <string name="play">Abspielen</string>

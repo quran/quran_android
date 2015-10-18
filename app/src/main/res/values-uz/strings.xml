@@ -254,8 +254,6 @@
     <string name="play_from">Boshi</string>
     <string name="play_to">Oxiri</string>
     <string name="play_restrict_range">Yuqorida oyatlarnigina eshitish</string>
-    <string name="repeat_verses_range">Bir necha oyatlarni takrorlash:</string>
-    <string name="repeat_each_verse">Har bir oyatni takrorlash:</string>
     <string name="play_apply">Joriy qilish</string>
     <string name="play_apply_and_play">Joriy qilish va chalish</string>
     <string name="play">Chalish</string>
