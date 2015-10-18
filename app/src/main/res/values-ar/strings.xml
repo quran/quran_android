@@ -10,6 +10,7 @@
     <string name="downloading_message">يرجى الإنتظار حتى نهاية التحميل</string>
     <string name="extracting_title">تجهيز&#8230;</string>
     <string name="menu_about">عنا</string>
+    <string name="menu_other_apps">تطبيقات اخرى‎</string>
     <string name="menu_settings">الإعدادات</string>
     <string name="menu_jump_last_page">الصفحة الأخيرة</string>
     <string name="menu_tags">التصنيفات</string>
