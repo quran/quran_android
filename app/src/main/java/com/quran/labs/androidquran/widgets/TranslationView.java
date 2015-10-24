@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
+import com.quran.labs.androidquran.ui.helpers.VerseLineHeightSpan;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -270,7 +271,8 @@ public class TranslationView extends ScrollView {
       }
 
       // Ayah Text
-      ayahView.setLineSpacing(1.4f, 1.4f);
+      ayahView.setLineSpacing(VerseLineHeightSpan.TRANSLATION_LINE_HEIGHT_ADDITION,
+          VerseLineHeightSpan.TRANSLATION_LINE_HEIGHT_MULTIPLY);
 
       SpannableString arabicText = new SpannableString(ayahText);
       if (USE_UTHMANI_SPAN) {
@@ -279,6 +281,8 @@ public class TranslationView extends ScrollView {
         arabicText.setSpan(uthmaniSpan, 0, length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         arabicText.setSpan(new RelativeSizeSpan(ARABIC_RELATIVE_SIZE),
+            0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        arabicText.setSpan(new VerseLineHeightSpan(),
             0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
       }
       ayahView.setText(arabicText);
