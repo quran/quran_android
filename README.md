@@ -72,6 +72,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.7-p1 (released 10/24/2015)**
+- fix audio manager launch crash due to rx proguard issue.
+
 **version 2.6.7 (released 10/24/2015)**
 - only use uthmani font on apis 18 and above.
 - better handling for landscape audio highlighting.
