@@ -72,6 +72,17 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.7 (released 10/24/2015)**
+- only use uthmani font on apis 18 and above.
+- better handling for landscape audio highlighting.
+- improve "repeat verses" wording
+- increase Quran text size in translation view
+- decrease line spacing for Quran text in translation view
+- upgrade libraries.
+
+_flavor_specific_
+- naskh: highlighting fix
+
 **version 2.6.6 (released 10/4/2015)**
 - android M support
 - use different font for arabic text
