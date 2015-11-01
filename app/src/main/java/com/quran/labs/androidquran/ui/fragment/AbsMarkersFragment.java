@@ -232,7 +232,9 @@ public abstract class AbsMarkersFragment extends Fragment {
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
       QuranActivity activity = (QuranActivity) getActivity();
       QuranRow[] selected = getSelectedRows();
-      mMode.finish();
+      if (mMode != null) {
+        mMode.finish();
+      }
       return actionItemClicked(mode, item.getItemId(), activity, selected);
     }
 
@@ -271,8 +273,7 @@ public abstract class AbsMarkersFragment extends Fragment {
 
       // TODO Confirm dialog
       boolean bookmarkDeleted = false;
-      for (int i = 0; i < params.length; i++) {
-        QuranRow elem = params[i];
+      for (QuranRow elem : params) {
         if (elem.isBookmarkHeader() && elem.tagId >= 0) {
           adapter.removeTag(elem.tagId);
         } else if (elem.isBookmark() && elem.bookmarkId >= 0) {
