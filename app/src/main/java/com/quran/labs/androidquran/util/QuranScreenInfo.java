@@ -18,6 +18,7 @@ public class QuranScreenInfo {
 
   private static final String TAG = "QuranScreenInfo";
   private static QuranScreenInfo sInstance = null;
+  private static int sOrientation;
 
   private int mHeight;
   private int mMaxWidth;
@@ -38,8 +39,10 @@ public class QuranScreenInfo {
   }
 
   public static QuranScreenInfo getOrMakeInstance(Context context) {
-    if (sInstance == null) {
+    if (sInstance == null ||
+        sOrientation != context.getResources().getConfiguration().orientation) {
       sInstance = initialize(context);
+      sOrientation = context.getResources().getConfiguration().orientation;
     }
     return sInstance;
   }

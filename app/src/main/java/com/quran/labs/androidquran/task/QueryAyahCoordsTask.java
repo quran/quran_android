@@ -76,8 +76,7 @@ public class QueryAyahCoordsTask extends
                return null;
             }
 
-            Map<String, List<AyahBounds>> map =
-                new HashMap<String, List<AyahBounds>>();
+            Map<String, List<AyahBounds>> map = new HashMap<>();
             do {
                int sura = cursor.getInt(2);
                int ayah = cursor.getInt(3);
