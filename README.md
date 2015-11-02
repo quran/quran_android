@@ -13,16 +13,20 @@ patches, comments, etc are welcome.
 
 contributors:
 
-* [Hussein Maher](http://twitter.com/husseinmaher)
-* [Ahmed Farra](http://github.com/afarra)
+* [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio 
+    and work on the Naskh version
+* [g360230](https://github.com/g360230) - images and work on the Qaloon
+    version
+* [Somaia Gabr](http://twitter.com/somaiagabr) - ui and graphics.
 * [Shuhrat Dehkanov](http://github.com/ozbek)
+* [Ahmed Farra](http://github.com/afarra)
+* [Hussein Maher](http://twitter.com/husseinmaher)
 * [Wael Nafee](http://twitter.com/wnafee)
 * [Ahmed Fouad](http://twitter.com/fo2ad)
 * [Mahmoud Hossam](http://github.com/mahmoudhossam)
-* Asim Mohiuddin - images, gapless audio, and work on the Naskh version
-* @g360230 - images and work on the Qaloon version
+* [Rehab Mohamed](http://twitter.com/hams_rrr)
+* [Ahmed Essam](http://twitter.com/neo_4583)
 
-graphics by [Somaia Gabr](http://twitter.com/somaiagabr).
 
 Code Style
 ------------------------
@@ -48,19 +52,21 @@ and that's it!
 App localization
 ------------------------
 
-* Farsi for version 2.0 by M. Jafar Nakar
+* Farsi for version 2.0 by [M. Jafar Nakar](https://github.com/mjnanakar).
 * Farsi for version 1.6 by [khajavi](http://github.com/khajavi).
 * Turkish by Mehmed Mahmudoglu. 
-* Turkish updates by [Shuhrat Dehkanov](http://github.com/ozbek)
-* Russian by Rinat (Ринат Валеев).
-* Kurdish by Goran Gharib Karim.
+* Turkish updates by [Shuhrat Dehkanov](http://github.com/ozbek).
+* Russian by Rinat [Ринат Валеев](https://github.com/Valey).
+* Kurdish by [Goran Gharib Karim](https://github.com/GorranKurd).
 * French by Yasser [yasserkad](http://github.com/yasserkad).
 * German by [Armin Supuk](http://github.com/ArminSupuk).
-* Chinese by Bo Li
-* Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran)
-* Indonesian by [Saiful Khaliq](http://twitter.com/saifious)
-* Malaysian by [Ahmad Syazwan](https://github.com/asyazwan)
-* Spanish by [Alexander Salas](https://github.com/alexsalas)
+* Chinese by [Bo Li](http://twitter.com/liboat).
+* Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran).
+* Indonesian by [Saiful Khaliq](http://twitter.com/saifious).
+* Malaysian by [Ahmad Syazwan](https://github.com/asyazwan).
+* Spanish by [Alexander Salas](https://github.com/alexsalas).
+
+and many others, may Allah reward everyone!
 
 Open Source Projects Used
 -------------------------
@@ -72,6 +78,10 @@ Open Source Projects Used
 
 Changelog
 ---------
+**development**
+- fix audio scrolling issue
+- fix tashkeel being cut off on fonts
+
 **version 2.6.7-p1 (released 10/24/2015)**
 - fix audio manager launch crash due to rx proguard issue.
 
