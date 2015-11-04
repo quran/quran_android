@@ -53,19 +53,19 @@
         &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
         &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
         &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-        &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
+        &lt;br/>&lt;a href="https://github.com/afarra">Ahmed Farra&lt;/a>
         &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
         &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-        &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-        &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
+        &lt;br/>&lt;a href="http://somaiagabr.com">Somaia Gabr&lt;/a>
+        &lt;br/>&lt;a href="https://github.com/mahmoudhossam">Mahmoud Hossam&lt;/a>
         &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
         &lt;br/>Asim Mohiuddin - images and work on the Naskh version
         &lt;br/>g360230 - images and work on the Qaloon version
-        &lt;br/>&lt;br/>&lt;b>Translators:&lt;/b>
-        &lt;br/>Mehmed Mahmudoglu, Shuhrat Dehkanov - Turkish
+        &lt;br/>&lt;br/>&lt;b>UI Translators:&lt;/b>
+        &lt;br/>Mehmed Mahmudoglu- Turkish
         &lt;br/>M. Jafar Nanakar - Farsi
+        &lt;br/>&lt;a href="https://github.com/khajavi">Milad Khajavi&lt;/a> - previous Farsi translation
         &lt;br/>Rinat (Ринат) - Russian
-        &lt;br/>khajavi (on github) - previous Farsi translation
         &lt;br/>Yasser Kadddour - Français
         &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
         &lt;br/>Armin Šupuk - German
@@ -74,9 +74,13 @@
         &lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesian
         &lt;br/>Ahmad Syazwan - Malaysian
         &lt;br/>Alexander Salas - Spanish
+        &lt;br/>&lt;a href="https://github.com/ozbek">Shuhrat Dehkanov&lt;/a> - Uzbek
         &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
-        &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-        &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">github&lt;/a>)
+        &lt;br/>android-support library (support-v4 and appcompat-v7)
+        &lt;br/>&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>
+        &lt;br/>&lt;a href="https://github.com/square/okhttp">OkHttp&lt;/a>
+        &lt;br/>&lt;a href="https://github.com/ReactiveX/RxJava">RxJava&lt;/a>
+        &lt;br/>&lt;a href="https://github.com/ReactiveX/RxAndroid">RxAndroid&lt;/a>
         &lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
         &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
         &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
