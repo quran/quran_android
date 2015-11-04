@@ -244,7 +244,6 @@
   <string name="stop">Stopper</string>
 
   <string-array name="repeatValues">
-      <item>jamais</item>
       <item>1 fois</item>
       <item>2 fois</item>
       <item>3 fois</item>

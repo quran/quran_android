@@ -292,7 +292,6 @@
     <string name="stop">Stoppen</string>
 
     <string-array name="repeatValues">
-        <item>nie</item>
         <item>einmal</item>
         <item>zweimal</item>
         <item>dreimal</item>
