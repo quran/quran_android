@@ -269,7 +269,6 @@
     <string name="play">Воспроизвести</string>
     <string name="stop">Стоп</string>
     <string-array name="repeatValues">
-	<item>ни разу</item>
 	<item>1 раз</item>
 	<item>2 раза</item>
 	<item>3 раза</item>

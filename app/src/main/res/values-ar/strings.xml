@@ -222,7 +222,6 @@
     <string name="play_apply_and_play">تطبيق وتشغيل</string>
 
     <string-array name="repeatValues">
-        <item>ابدا</item>
         <item>مرة واحدة</item>
         <item>مرتان</item>
         <item>ثلاث مرات</item>
