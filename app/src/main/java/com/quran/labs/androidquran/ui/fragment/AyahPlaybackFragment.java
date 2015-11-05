@@ -21,7 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 public class AyahPlaybackFragment extends AyahActionFragment {
-  private static final int REPEAT_MAX = 2;
+  private static final int REPEAT_MAX = 3;
   private static final int ITEM_LAYOUT = R.layout.sherlock_spinner_item;
   private static final int ITEM_DROPDOWN_LAYOUT =
       R.layout.sherlock_spinner_dropdown_item;
@@ -214,7 +214,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private ArrayAdapter<CharSequence> initializeAyahSpinner(
       Context context, SpinnerCompat spinner) {
     final ArrayAdapter<CharSequence> ayahAdapter =
-        new ArrayAdapter<CharSequence>(context, ITEM_LAYOUT);
+        new ArrayAdapter<>(context, ITEM_LAYOUT);
     ayahAdapter.setDropDownViewResource(ITEM_DROPDOWN_LAYOUT);
     spinner.setAdapter(ayahAdapter);
     return ayahAdapter;
@@ -256,7 +256,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   }
 
   private int positionToRepeat(int position) {
-    if (position > REPEAT_MAX) {
+    if (position >= REPEAT_MAX) {
       return -1;
     } else {
       return position;
