@@ -28,40 +28,8 @@
     <string name="menu_jump">چوون بۆ</string>
     <string name="gotoPage">چوون بۆ پەڕەی</string>
     <string name="cancel">پاشگەزبونەوە</string>
-    <string name="developedBy">وەرگێڕانی (گۆران غەریب) لە دۆعای خێر بێبەشمان مەکەن.</string>
-    <string name="copyRights">مافی بڵاوکردنەوەی ھەموو مسوڵمانێکە</string>
-    <string name="credits"> وێنەکان بەکاردێن لە ڕێی ماڵپەڕی
-            &lt;a href="http://quran.com">quran.com&lt;/a>
-			وە دەنگەکان بەکاردێن لە ڕێی ماڵپەری
-            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
-			وە هەروەها داتاکان و وەرگێڕانەکان بەکاردێن لە ڕێی ماڵپەڕی
-            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> و
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a></string>
-    <string name="aboutUs">بەرنامەی قورئان ئەندرۆید، بەرنامەیەکی سەرچاوە کراوەیە بۆ ئەندرۆید
-            %1$s
-            &lt;br/>&lt;br/>&lt;b>داڕێژەرەکانی بەرنامەی قورئان:&lt;/b>
-            &lt;br/>ئەحمەد ئەلحلو (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-            &lt;br/>حسێن ماهیر (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-            &lt;br/>ئەحمەد فەڕا (&lt;a href="https://github.com/afarra">github&lt;/a>)
-            &lt;br/>وائیل نەفی (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-            &lt;br/>ئەحمەد فوئاد (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>سومەییە جابر (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-            &lt;br/>مەحمود حوسام (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-            &lt;br/>ڕیحاب محەمەد (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>وەرگێڕەکان:&lt;/b>
-			&lt;br/>محەمەد مەحمود ئۆغلۆ - تورکی
-         &lt;br/>محەمەد جەعفەر نەعناکار - فارسی
-         &lt;br/>ڕینات (Ринат Валеев) - ڕووسی
-         &lt;br/>خەجەوی (لە گێت هوب) - وەرگێڕانی پێشووی فارسی
-	      &lt;br/>یاسر خەدوور - فەڕەنسی
-         &lt;br/>بۆ لی (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>)
-         &lt;br/>گۆران غەریب کەریم - کوردی
-            &lt;br/>&lt;br/>&lt;b>پڕۆژەی سەرچاوە کراوە:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>سوپاسی تایبەتی بۆ:&lt;/b>
-            &lt;br/>ئەحمەد عیسام (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-            &lt;br/>باتوول ئاپس (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+
+    <!-- help -->
     <string name="help_title">ئەو پرسیارانەی کە زۆر کراون</string>
     <string name="help">
         &lt;b>چۆن دەنگ چالاک بکەم؟&lt;/b>

@@ -38,52 +38,46 @@
     <string name="menu_jump">Jump</string>
     <string name="gotoPage">Go to page</string>
     <string name="cancel">Cancel</string>
-    <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">&#169; All Muslims</string>
-    <string name="credits">The images used are from the
-        &lt;a href="http://quran.com">quran.com&lt;/a>
-        project, the audio comes from
-        &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
-        the data used in the translations and Arabic comes from
-        &lt;a href="http://tanzil.net">tanzil.net&lt;/a> and
-        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>. Mufti Taqi translation comes
-        from &lt;a href="http://www.noorehidayat.org">noorhidayat&lt;/a>.</string>
-    <string name="aboutUs">Quran Android is a free, open source Quran
-        application for Android.  %1$s
-        &lt;br/>&lt;br/>&lt;b>Quran for Android Contributors:&lt;/b>
-        &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-        &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-        &lt;br/>&lt;a href="https://github.com/afarra">Ahmed Farra&lt;/a>
-        &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-        &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-        &lt;br/>&lt;a href="http://somaiagabr.com">Somaia Gabr&lt;/a>
-        &lt;br/>&lt;a href="https://github.com/mahmoudhossam">Mahmoud Hossam&lt;/a>
-        &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-        &lt;br/>Asim Mohiuddin - images and work on the Naskh version
-        &lt;br/>g360230 - images and work on the Qaloon version
-        &lt;br/>&lt;br/>&lt;b>UI Translators:&lt;/b>
-        &lt;br/>Mehmed Mahmudoglu- Turkish
-        &lt;br/>M. Jafar Nanakar - Farsi
-        &lt;br/>&lt;a href="https://github.com/khajavi">Milad Khajavi&lt;/a> - previous Farsi translation
-        &lt;br/>Rinat (Ринат) - Russian
-        &lt;br/>Yasser Kadddour - Français
-        &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
-        &lt;br/>Armin Šupuk - German
-        &lt;br/>Goran Gharib Karim - Kurdish
-        &lt;br/>Abduqadir Abliz - Uyghur
-        &lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesian
-        &lt;br/>Ahmad Syazwan - Malaysian
-        &lt;br/>Alexander Salas - Spanish
-        &lt;br/>&lt;a href="https://github.com/ozbek">Shuhrat Dehkanov&lt;/a> - Uzbek
-        &lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
-        &lt;br/>android-support library (support-v4 and appcompat-v7)
-        &lt;br/>&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>
-        &lt;br/>&lt;a href="https://github.com/square/okhttp">OkHttp&lt;/a>
-        &lt;br/>&lt;a href="https://github.com/ReactiveX/RxJava">RxJava&lt;/a>
-        &lt;br/>&lt;a href="https://github.com/ReactiveX/RxAndroid">RxAndroid&lt;/a>
-        &lt;br/>&lt;br/>&lt;b>Special Thanks:&lt;/b>
-        &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-        &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+
+    <!-- about -->
+    <string name="about">About</string>
+    <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>
+    <string name="about_data_sources">Data Sources</string>
+    <string name="about_images">Images</string>
+    <string name="about_madani_images">The Quran images are based on the fonts from the King Fahd Quran Printing Complex.</string>
+    <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
+    <string name="about_naskh_images">The Quran images for the Naskh app were taken (with permission) from SHL Info Systems.</string>
+    <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com/</string>
+    <string name="about_qaloon_images">Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).</string>
+    <string name="about_quranicaudio">QuranicAudio</string>
+    <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations.</string>
+    <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
+    <string name="about_everyayah">EveryAyah</string>
+    <string name="about_everyayah_summary">Timing files and non-gapless recitations.</string>
+    <string name="about_everyayah_url" translatable="false">http://everyayah.com</string>
+    <string name="about_quran_ksu">Electronic Mushaf Project</string>
+    <string name="about_quran_ksu_summary">The King Saud University Electronic Mushaf Project was the app\'s source of Arabic Tafaseer and translations for various languages.</string>
+    <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa/</string>
+    <string name="about_tanzil">Tanzil</string>
+    <string name="about_tanzil_summary">Translations for many languages.</string>
+    <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
+    <string name="about_noorhidayat">Noorhidayat</string>
+    <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
+    <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
+    <string name="about_open_source">Open Source Projects</string>
+    <string name="about_okhttp">OkHttp</string>
+    <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
+    <string name="about_rxjava">RxJava</string>
+    <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
+    <string name="about_rxandroid">RxAndroid</string>
+    <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
+    <string name="about_sliding_panel">AndroidSlidingUpPanel</string>
+    <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
+    <string name="about_contributors">Contributors</string>
+    <string name="about_contributors_summary">A list of people who contributed to the development of Quran for Android</string>
+    <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
+
+    <!-- help -->
     <string name="help_title">Frequently Asked Questions</string>
     <string name="help">
         &lt;b>How do I play audio?&lt;/b>

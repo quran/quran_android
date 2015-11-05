@@ -24,7 +24,7 @@
 
 		<activity android:name=".ui.QuranActivity"
             android:theme="@style/QuranToolBar" />
-		<activity android:name=".AboutUsActivity" />
+		<activity android:name=".AboutUsActivity" android:theme="@style/QuranToolBar"/>
 		<activity android:name=".HelpActivity" />
 		<activity android:name=".ui.PagerActivity"
 		          android:launchMode="singleTop"

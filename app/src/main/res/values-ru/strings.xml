@@ -35,45 +35,8 @@
     <string name="menu_jump">Перейти</string>
     <string name="gotoPage">Перейти на страницу</string>
     <string name="cancel">Отмена</string>
-    <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">Авторское право принадлежит мусульманской умме</string>
-    <string name="credits">Используемые изображения были заимствованы из проекта
-            &lt;a href="http://quran.com">quran.com&lt;/a>,
-			 аудио -
-            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
-			перевод и арабский текст - из
-            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> и
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a></string>
-    <string name="aboutUs">Коран Андроид (Quran Android) - бесплатное Коран-приложение для Android
-    		с открытым исходным кодом. %1$s
-            &lt;br/>&lt;br/>&lt;b>Разработчики Корана для Андроид:&lt;/b>
-            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>Переводено:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu, Shuhrat Dehkanov - турецкий
-			&lt;br/>M. Jafar Nanakar - фарси
-			&lt;br/>Rinat (Ринат) - русский
-			&lt;br/>khajavi (на github) - предыдущий фарси перевод
-	      		&lt;br/>Yasser Kadddour - французский
-	      		&lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - китайский
-	      		&lt;br/>Armin Šupuk - немецкий
-         		&lt;br/>Goran Gharib Karim - курдский
-         		&lt;br/>Abduqadir Abliz - уйгурский
-         		&lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - индонезийский
-         		&lt;br/>Ahmad Syazwan - малайзийский
-         		&lt;br/>Alexander Salas - испанский
-            &lt;br/>&lt;br/>&lt;b>Проекты с открытым исходным кодом:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
-			&lt;br/>&lt;br/>&lt;b>Особая благодарность:&lt;/b>
-            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+
+    <!-- help -->
     <string name="help_title">Часто задаваемые вопросы (FAQ)</string>
     <string name="help">
         &lt;b>Как мне воспроизвести аудио?&lt;/b>

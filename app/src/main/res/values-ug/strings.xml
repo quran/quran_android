@@ -29,42 +29,8 @@
     <string name="menu_jump">يۆتكەل</string>
     <string name="gotoPage">بەتكە يۆتكەل</string>
     <string name="cancel">ۋاز كەچ</string>
-    <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">نەشر ھوقۇقى بارلىق مۇسۇلمانلارغا تەۋە</string>
-    <string name="credits">ئىشلىتىلگەن سۈرەتلەرنى
-        &lt;a href="http://quran.com"&gt;quran.com&lt;/a&gt;
-			قۇرۇلۇشىدىن، ئاۋازنى
-            &lt;a href="http://everyayah.com"&gt;everyayah.com&lt;/a&gt;,
-			دىن،  ئىشلىتىلگەن سانلىق مەلۇماتلاردىن تەرجىمە ۋە ئەرەبچە
-            &lt;a href="http://tanzil.net"&gt;tanzil.net&lt;/a&gt; ۋە
-            &lt;a href="http://quran.ksu.edu.sa"&gt;quran.ksu.edu.sa&lt;/a&gt;تىن كەلگەن
-    </string>
-    <string name="aboutUs">قۇرئان ئاندىرويىد ھەقسىز، ئوچۇق مەنبەلىك ئاندىرويىد ئۈچۈن يېزىلغان قۇرئان ئەپى.
-            %1$s
-            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;قۇرئان ئاندىرويىد تۆھپىكارلار:&lt;/b&gt;
-            &lt;br/&gt;Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre"&gt;@ahmedre&lt;/a&gt;)
-            &lt;br/&gt;Hussein Maher (&lt;a href="http://twitter.com/husseinmaher"&gt;@husseinmaher&lt;/a&gt;)
-            &lt;br/&gt;Ahmed Farra (&lt;a href="https://github.com/afarra"&gt;github&lt;/a&gt;)
-            &lt;br/&gt;Wael Nafee (&lt;a href="http://twitter.com/wnafee"&gt;@wnafee&lt;/a&gt;)
-            &lt;br/&gt;Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad"&gt;@fo2ad&lt;/a&gt;)
-            &lt;br/&gt;Somaia Gabr (&lt;a href="http://somaiagabr.com"&gt;web&lt;/a&gt;)
-            &lt;br/&gt;Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam"&gt;github&lt;/a&gt;)
-            &lt;br/&gt;Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr"&gt;@hams_rrr&lt;/a&gt;)
-            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;تەرجىمانلار:&lt;/b&gt;
-			&lt;br/&gt;Mehmed Mahmudoglu - تۈركچە
-         &lt;br/&gt;M. Jafar Nanakar - پارىسچە
-         &lt;br/&gt;Rinat (Ринат) - رۇسچە
-         &lt;br/&gt;khajavi (on github) - ئىلگىرىكى پارسچە تەرجىمە
-	      &lt;br/&gt;Yasser Kadddour - فىرانسۇزچە
-         &lt;br/&gt;Bo Li (&lt;a href="http://twitter.com/liboat"&gt;@liboat&lt;/a&gt;) - خەنچە
-         &lt;br/&gt;Goran Gharib Karim - كۇردچە
-         &lt;br/&gt;Abduqadir Abliz - ئۇيغۇرچە
-            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;ئوچۇق مەنبەلىك قۇرۇلۇشلار:&lt;/b&gt;
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
-            &lt;br/&gt;&lt;br/&gt;&lt;b&gt;Special Thanks:&lt;/b&gt;
-            &lt;br/&gt;Ahmed Essam (&lt;a href="http://twitter.com/neo_4583"&gt;@neo_4583&lt;/a&gt;)
-            &lt;br/&gt;Batoul Apps (&lt;a href="http://twitter.com/batoulapps"&gt;@batoulapps&lt;/a&gt;)</string>
+
+    <!-- help -->
     <string name="help_title">كۆپ سورىلىدىغان سوئاللار</string>
     <string name="help">&lt;b&gt;قىرائەت ئاۋازىنى قانداق چالىدۇ؟&lt;/b&gt; &lt;br/&gt; خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران ئاستىدا قىرائەت توپچىسى ۋە قىرائەت قىلغۇچىنىڭ ئىسمى كۆرۈنىدۇ. قىرائەت قىلغۇچىنىڭ ئىسمىنى چېكىپ قىرائەت قىلغۇچىلارنى تاللىغىلى بولىدۇ، چېلىش توپچىسىنى چېكىلسە نۆۋەتتىكى بەت ياكى نۆۋەتتىكى سۈرەنىڭ قىرائەت ئاۋازىنى چۈشۈرگەندىن كېيىن ئاۋازنى چېلىشنى باشلايدۇ . &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تەرجىمىنى قانداق كۆرۈمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدىكى يەر شارى سىنبەلگە (ياكى ئۈچ يۇمۇلاق چېكىتتىن شەكىللەنگەن سىنبەلگە) نى چەككەندىن كېيىن تەرجىمە بېتىنى كۆرگىلى بولىدۇ. &lt;br/&gt; ئەگەر سىز تېخى ھېچقانداق تەرجىمە نەشرىنى چۈشۈرمىگەن بولسىڭىز، بۇ چاغدا تەرجىمە تېكىستىنى چۈشۈرۈش ۋە باشقۇرۇش بېتىگە كىرىدۇ، لازىملىق تەرجىمىنى تاللاپ چۈشۈرگەندىن كېيىن قايتىدۇ، يەر شارى سىنبەلگە قايتا چېكىلسە تەرجىمە تېكىست بېتىگە كىرىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بەتكە خەتكۈچنى قانداق قوشىمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدا بەش يۇلتۇز سىنبەلگىسى كۆرۈنىدۇ، ئۇنى چەككەندىن كېيىن نۆۋەتتىكى بەتنى خەتكۈچكە قوشقىلى بولىدۇ، شۇنىڭ بىلەن بىللە كاۋاك بەش يۇلتۇز ئۇيۇل بەش يۇلتۇزغا ئۆزگىرىدۇ. سىنبەلگە قايتا چېكىلسە خەتكۈچ بىكار قىلىنىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تېكىستنى قانداق چوڭايتىمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، توغرىسىغا ئېكرانغا ئالماشقاندا خەت چوڭىيىدۇ. تەرجىمە تېكىست بېتىدە تەڭشەكلەردىن خەت چوڭلۇقىنى تاللىغىلى بولىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بىر ئايەتنى قانداق ھەمبەھىرلەيمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، مەلۇم بىر ئايەت ئۇزۇن چېكىلسە تىل مۇھىت تىزىملىكى قاڭقىپ چىقىدۇ، ئۇنىڭدا خەتكۈچ، ھەمبەھىر، تەرجىمىنى كۆرۈش، چاپلاش تاختىسىغا كۆچۈرۈش قاتارلىق ئىقتىدارلار بار. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;مالايالام/تامىل/بىنگال/ئوردۇچە خەت نۇسخىسى ئىشلىمەيدۇ!&lt;/b&gt; &lt;br/&gt;ناھايىتى ئەپسۇس، ئاندىرويىد 4.0 دىن ئىلگىرىكى نەشرىلىرىدە بۇ خەت نۇسخىلىرىنى قوللىماىدۇ، ھازىرچە ياخشىراق ھەل قىلىش چارىسى يوق.</string>
 	<string name="search_hint">قۇرئاندىن ئىزدە</string>

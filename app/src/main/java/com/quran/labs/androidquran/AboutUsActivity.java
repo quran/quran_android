@@ -1,47 +1,45 @@
 package com.quran.labs.androidquran;
 
 import com.quran.labs.androidquran.ui.QuranActionBarActivity;
+import com.quran.labs.androidquran.ui.fragment.AboutFragment;
 
-import android.content.Intent;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 public class AboutUsActivity extends QuranActionBarActivity {
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    setContentView(R.layout.about_us);
 
-        setContentView(R.layout.about_us);
-        TextView txtAbout = (TextView) findViewById(R.id.txtAbout);
-        txtAbout.setVerticalScrollBarEnabled(true);
-        txtAbout.setText(Html.fromHtml(
-            String.format(getString(R.string.aboutUs), getString(R.string.credits))));
-        txtAbout.setMovementMethod(LinkMovementMethod.getInstance());
-
-        Button button = (Button)findViewById(R.id.btnQuestions);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent faqIntent = new Intent(view.getContext(), HelpActivity.class);
-                startActivity(faqIntent);
-            }
-        });
+    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    toolbar.setTitle(R.string.menu_about);
+    setSupportActionBar(toolbar);
+    final ActionBar ab = getSupportActionBar();
+    if (ab != null) {
+      ab.setDisplayHomeAsUpEnabled(true);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return false;
-   }
+    final FragmentManager fm = getFragmentManager();
+    final Fragment fragment = fm.findFragmentById(R.id.content);
+    if (fragment == null) {
+      fm.beginTransaction()
+          .replace(R.id.content, new AboutFragment())
+          .commit();
+    }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+      return true;
+    }
+    return false;
+  }
 }
