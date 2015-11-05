@@ -65,6 +65,7 @@ App localization
 * Indonesian by [Saiful Khaliq](http://twitter.com/saifious).
 * Malaysian by [Ahmad Syazwan](https://github.com/asyazwan).
 * Spanish by [Alexander Salas](https://github.com/alexsalas).
+* Uzbek by [Shuhrat Dehkanov](https://github.com/ozbek").
 
 and many others, may Allah reward everyone!
 
@@ -93,7 +94,7 @@ Changelog
 - decrease line spacing for Quran text in translation view
 - upgrade libraries.
 
-_flavor_specific_
+_flavor specific_
 - naskh: highlighting fix
 
 **version 2.6.6 (released 10/4/2015)**

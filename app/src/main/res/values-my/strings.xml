@@ -28,38 +28,9 @@
 	<string name="menu_get_translations">Dapatkan Terjemahan</string>
 	<string name="menu_jump">Capaian cepat</string>
 	<string name="gotoPage">Ke halaman</string>
-	<string name="cancel">Batal</string>
-	<string name="developedBy">La tansawna men saleh el doaa.</string>
-	<string name="copyRights">Copyright All Muslims</string>
-	<string name="credits">Gambar yang digunakan bersumber dari &lt;a href="http://quran.com">quran.com&lt;/a>, audio tilawah dari &lt;a href="http://everyayah.com">everyayah.com&lt;/a>. Data terjemahan yang digunakan dari &lt;a href="http://tanzil.net">tanzil.net&lt;/a> dan &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>&lt;br/></string>
-	<string name="aboutUs">Quran Android adalah aplikasi percuma untuk Android, yang dibangun secara open source.
-			%1$s
-			&lt;br/>&lt;b>Penyumbang Quran Android:&lt;/b>
-			&lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-			&lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-			&lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-			&lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-			&lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-			&lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-			&lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-			&lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-			&lt;br/>&lt;br/>&lt;b>Penerjemah Aplikasi:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu - Turkish
-			&lt;br/>M. Jafar Nanakar - Farsi
-			&lt;br/>Rinat (Ринат) - Russian
-			&lt;br/>khajavi (on github) - previous Farsi translation
-			&lt;br/>Yasser Kadddour - Français
-			&lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Chinese
-			&lt;br/>Goran Gharib Karim - Kurdish
-			&lt;br/>Abduqadir Abliz - Uyghur
-			&lt;br/>&lt;b>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Indonesian / Bahasa Indonesia&lt;/b>
-			&lt;br/>Ahmad Syazwan - Bahasa Malaysia
-			&lt;br/>&lt;br/>&lt;b>Open Source Projects:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
-        	&lt;br/>&lt;br/>&lt;b>Terima Kasih Khusus:&lt;/b>
-			&lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-			&lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+   <string name="cancel">Batal</string>
+
+   <!-- help -->
 	<string name="help_title">Soalan yang sering ditanya (FAQ)</string>
 	<string name="help">
 &lt;b>Bagaimana cara memainkan audio tilawah?&lt;/b>

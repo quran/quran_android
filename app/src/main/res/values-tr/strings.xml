@@ -22,42 +22,8 @@
     <string name="menu_help">Yardım</string>
     <string name="menu_search">Ara</string>
     <string name="cancel">İptal</string>
-    <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">&#169; Ümmet</string>
-    <string name="credits">Resimler &lt;a href="http://quran.com">quran.com&lt;/a> projesinden,
-        sesler &lt;a href="http://everyayah.com">everyayah.com&lt;/a> sitesinden,
-        meâl ve Arapça metinler &lt;a href="http://tanzil.net">tanzil.net&lt;/a> ve
-        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a> sitelerinden alınmıştır.</string>
-    <string name="aboutUs">Kur\'an-ı Kerîm uygulaması ücretsiz ve açık kaynaklı üretimdir.
-        %1$s
-        &lt;br/>&lt;br/>&lt;b>Katkıda bulunanlar:&lt;/b>
-        &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-        &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-        &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-        &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-        &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-        &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-        &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-        &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-        &lt;br/>&lt;br/>&lt;b>Çevirmenler:&lt;/b>
-        &lt;br/>Mehmed Mahmudoglu - Türkçe
-        &lt;br/>M. Jafar Nanakar - Farça
-        &lt;br/>Rinat (Ринат) - Rusça
-        &lt;br/>khajavi (&lt;a href="https://github.com/khajavi/">github&lt;/a>) - sabık Farça tercüme
-        &lt;br/>Yasser Kadddour - Fransızca
-        &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - Çince
-        &lt;br/>Armin Šupuk - Almanca
-        &lt;br/>Goran Gharib Karim - Kürtçe
-        &lt;br/>Abduqadir Abliz - Uygurca
-        &lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - Endonezce
-        &lt;br/>Ahmad Syazwan - Malayca
-        &lt;br/>&lt;br/>&lt;b>Açık kaynaklı projeler:&lt;/b>
-        &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-        &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">github&lt;/a>)
-        &lt;br/>&lt;br/>&lt;b>Özel teşekkürler:&lt;/b>
-        &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-        &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)
-    </string>
+
+    <!-- help -->
     <string name="help_title">Sıkça sorulan sorular</string>
     <string name="help">
         &lt;b>Ses nasıl çalışılır?&lt;/b>

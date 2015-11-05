@@ -28,38 +28,8 @@
     <string name="menu_jump">跳转</string>
     <string name="gotoPage">跳转到页数</string>
     <string name="cancel">取消</string>
-    <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">Copyright All Muslims</string>
-    <string name="credits">其用到的图片来自于
-            &lt;a href="http://quran.com">quran.com&lt;/a>
-			项目，音频来自于
-            &lt;a href="http://everyayah.com">everyayah.com&lt;/a>,
-			原文和译文数据来自于
-            &lt;a href="http://tanzil.net">tanzil.net&lt;/a> 和
-            &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a></string>
-    <string name="aboutUs">古兰经安卓是一个免费，开源的用于安卓系统的古兰经软件，
-			%1$s
-            &lt;br/>&lt;br/>&lt;b>古兰经安卓 贡献者:&lt;/b>
-            &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-            &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-            &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-            &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-            &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-            &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-            &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-            &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>软件本地化翻译者:&lt;/b>
-			&lt;br/>Mehmed Mahmudoglu - Turkish
-         &lt;br/>M. Jafar Nanakar - Farsi
-         &lt;br/>Rinat (Ринат Валеев) - Russian
-         &lt;br/>khajavi (on github) - previous Farsi translation
-         &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>开源项目:&lt;/b>
-            &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-            &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">AndroidSlidingUpPanel&lt;/a>)
-            &lt;br/>&lt;br/>&lt;b>特别鸣谢:&lt;/b>
-            &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-            &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
+
+    <!-- help -->
     <string name="help_title">常见问题</string>
     <string name="help">
         &lt;b>怎样播放音频？&lt;/b>
