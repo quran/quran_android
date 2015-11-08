@@ -18,8 +18,4 @@
     <style name="QuranToolBar.Overlay">
         <item name="windowActionBarOverlay">true</item>
     </style>
-
-    <style name="QuranToolBar.Preferences">
-        <item name="android:listSeparatorTextViewStyle">@style/PreferenceSeparatorStyle</item>
-    </style>
 </resources>

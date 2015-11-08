@@ -32,7 +32,7 @@
         <activity android:name=".ui.TranslationManagerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity android:name=".QuranPreferenceActivity"
-			      android:theme="@style/QuranToolBar.Preferences"
+			      android:theme="@style/QuranToolBar"
                   android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity android:name=".SearchActivity" android:launchMode="singleTop">
 			<intent-filter>
