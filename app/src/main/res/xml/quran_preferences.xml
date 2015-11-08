@@ -117,7 +117,6 @@
             android:key="@string/prefs_translation_text_size"
             android:max="40"
             android:persistent="true"
-            android:summary="@string/prefs_translation_text_title"
             android:title="@string/prefs_translation_text_title" />
     </PreferenceCategory>
 
