@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <com.quran.labs.androidquran.ui.preference.QuranHeaderPreference
+        android:title="@string/app_name"
+        android:summary="@string/about_description" />
+
     <PreferenceCategory
         android:key="aboutDataSources"
         android:title="@string/about_data_sources" >
