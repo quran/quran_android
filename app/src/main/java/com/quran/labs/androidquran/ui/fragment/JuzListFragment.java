@@ -91,7 +91,7 @@ public class JuzListFragment extends Fragment {
 
       if (i % 8 == 0) {
         int juz = 1 + (i / 8);
-        final String juzTitle = QuranInfo.getJuzTitle(activity) +
+        final String juzTitle = activity.getString(R.string.quran_juz2) +
             " " + QuranUtils.getLocalizedNumber(activity, juz);
         final QuranRow.Builder builder = new QuranRow.Builder()
             .withType(QuranRow.HEADER)
