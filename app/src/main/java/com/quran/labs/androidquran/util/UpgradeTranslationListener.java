@@ -1,11 +1,9 @@
 package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.task.TranslationListTask;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -36,7 +34,6 @@ public class UpgradeTranslationListener implements TranslationListTask.Translati
 
     Log.d(TAG, "done checking translations - " +
         (needsUpgrade ? "" : "no ") + "upgrade needed");
-    PreferenceManager.getDefaultSharedPreferences(mAppContext).edit().putBoolean(
-        Constants.PREF_HAVE_UPDATED_TRANSLATIONS, needsUpgrade).apply();
+    QuranSettings.getInstance(mAppContext).setHaveUpdatedTranslations(needsUpgrade);
   }
 }

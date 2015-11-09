@@ -2,7 +2,6 @@ package com.quran.labs.androidquran;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -20,11 +19,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -50,7 +47,6 @@ public class QuranDataActivity extends Activity implements
   private AlertDialog mErrorDialog = null;
   private AlertDialog mPromptForDownloadDialog = null;
   private AlertDialog mPermissionsDialog;
-  private SharedPreferences mSharedPreferences = null;
   private DefaultDownloadReceiver mDownloadReceiver = null;
   private boolean mNeedPortraitImages = false;
   private boolean mNeedLandscapeImages = false;
@@ -62,8 +58,6 @@ public class QuranDataActivity extends Activity implements
     super.onCreate(savedInstanceState);
     QuranScreenInfo.getOrMakeInstance(this);
     mQuranSettings = QuranSettings.getInstance(this);
-    mSharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(getApplicationContext());
 
     // set the app location if it's not already set
     boolean isAppLocationSet = mQuranSettings.isAppLocationSet();
@@ -191,7 +185,7 @@ public class QuranDataActivity extends Activity implements
      * this is used for doing upgrades between versions (i.e. it replaces
      * the use of upgrade to variables as present previously).
      */
-    final int version = mSharedPreferences.getInt(Constants.PREF_VERSION, 0);
+    final int version = mQuranSettings.getVersion();
     if (version == 0) {
       /**
        * when updating from "no version" (i.e. version 0), remove any pending page
@@ -203,7 +197,7 @@ public class QuranDataActivity extends Activity implements
 
     if (version != BuildConfig.VERSION_CODE) {
       // make sure that the version code now says that we're up to date.
-      mSharedPreferences.edit().putInt(Constants.PREF_VERSION, BuildConfig.VERSION_CODE).apply();
+      mQuranSettings.setVersion(BuildConfig.VERSION_CODE);
     }
 
     // check whether or not we need to download
@@ -276,8 +270,7 @@ public class QuranDataActivity extends Activity implements
 
   @Override
   public void handleDownloadSuccess() {
-    mSharedPreferences.edit()
-        .remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
+    mQuranSettings.removeShouldFetchPages();
     runListView();
   }
 
@@ -312,9 +305,7 @@ public class QuranDataActivity extends Activity implements
             dialog.dismiss();
             mErrorDialog = null;
             removeErrorPreferences();
-            mSharedPreferences.edit().putBoolean(
-                Constants.PREF_SHOULD_FETCH_PAGES, false)
-                .apply();
+            mQuranSettings.setShouldFetchPages(false);
             runListView();
           }
         });
@@ -324,10 +315,7 @@ public class QuranDataActivity extends Activity implements
   }
 
   private void removeErrorPreferences() {
-    mSharedPreferences.edit()
-        .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
-        .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
-        .apply();
+    mQuranSettings.clearLastDownloadError();
   }
 
   class CheckPagesAsyncTask extends AsyncTask<Void, Void, Boolean> {
@@ -349,7 +337,7 @@ public class QuranDataActivity extends Activity implements
       }
 
       final QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-      if (!mSharedPreferences.contains(Constants.PREF_DEFAULT_IMAGES_DIR)) {
+      if (!mQuranSettings.haveDefaultImagesDirectory()) {
            /* previously, we would send any screen widths greater than 1280
             * to get 1920 images. this was problematic for various reasons,
             * including:
@@ -372,9 +360,7 @@ public class QuranDataActivity extends Activity implements
         final String fallback =
             QuranFileUtils.getPotentialFallbackDirectory(mAppContext);
         if (fallback != null) {
-          mSharedPreferences.edit()
-              .putString(Constants.PREF_DEFAULT_IMAGES_DIR, fallback)
-              .apply();
+          mQuranSettings.setDefaultImagesDirectory(fallback);
           qsi.setOverrideParam(fallback);
         }
       }
@@ -427,16 +413,13 @@ public class QuranDataActivity extends Activity implements
           return;
         }
         
-        String lastErrorItem = mSharedPreferences.getString(
-            QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, "");
+        String lastErrorItem = mQuranSettings.getLastDownloadItemWithError();
         if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)) {
-          int lastError = mSharedPreferences.getInt(
-              QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0);
+          int lastError = mQuranSettings.getLastDownloadErrorCode();
           int errorId = ServiceIntentHelper
               .getErrorResourceFromErrorCode(lastError, false);
           showFatalErrorDialog(errorId);
-        } else if (mSharedPreferences.getBoolean(
-            Constants.PREF_SHOULD_FETCH_PAGES, false)) {
+        } else if (mQuranSettings.shouldFetchPages()) {
           downloadQuranImages(false);
         } else {
           promptForDownload();
@@ -543,9 +526,7 @@ public class QuranDataActivity extends Activity implements
           public void onClick(DialogInterface dialog, int id) {
             dialog.dismiss();
             mPromptForDownloadDialog = null;
-            mSharedPreferences.edit().putBoolean(
-                Constants.PREF_SHOULD_FETCH_PAGES, true)
-                .apply();
+            mQuranSettings.setShouldFetchPages(true);
             downloadQuranImages(true);
           }
         });
@@ -574,8 +555,6 @@ public class QuranDataActivity extends Activity implements
   }
 
   protected void runListView() {
-    boolean value = (mSharedPreferences.getBoolean(
-        Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false));
-    runListView(value);
+    runListView(mQuranSettings.haveUpdatedTranslations());
   }
 }

@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.service.QuranDownloadService;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -128,5 +129,57 @@ public class QuranSettings {
 
   public void setActiveTranslation(String translation) {
     mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION, translation).apply();
+  }
+
+  public int getVersion() {
+    return mPrefs.getInt(Constants.PREF_VERSION, 0);
+  }
+
+  public void setVersion(int version) {
+    mPrefs.edit().putInt(Constants.PREF_VERSION, version).apply();
+  }
+
+  public boolean shouldFetchPages() {
+    return mPrefs.getBoolean(Constants.PREF_SHOULD_FETCH_PAGES, false);
+  }
+
+  public void setShouldFetchPages(boolean shouldFetchPages) {
+    mPrefs.edit().putBoolean(Constants.PREF_SHOULD_FETCH_PAGES, shouldFetchPages).apply();
+  }
+
+  public void removeShouldFetchPages() {
+    mPrefs.edit().remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
+  }
+
+  public boolean haveUpdatedTranslations() {
+    return mPrefs.getBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false);
+  }
+
+  public void setHaveUpdatedTranslations(boolean haveUpdatedTranslations) {
+    mPrefs.edit().putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
+        haveUpdatedTranslations).apply();
+  }
+
+  public String getLastDownloadItemWithError() {
+    return mPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, "");
+  }
+
+  public int getLastDownloadErrorCode() {
+    return mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0);
+  }
+
+  public void clearLastDownloadError() {
+    mPrefs.edit()
+        .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
+        .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
+        .apply();
+  }
+
+  public boolean haveDefaultImagesDirectory() {
+    return mPrefs.contains(Constants.PREF_DEFAULT_IMAGES_DIR);
+  }
+
+  public void setDefaultImagesDirectory(String directory) {
+    mPrefs.edit().putString(Constants.PREF_DEFAULT_IMAGES_DIR, directory).apply();
   }
 }
