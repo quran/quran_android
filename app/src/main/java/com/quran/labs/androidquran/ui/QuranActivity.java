@@ -312,7 +312,7 @@ public class QuranActivity extends QuranActionBarActivity
 
   private void updateTranslationsListAsNeeded() {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    if (prefs.getBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false)) {
+    if (mSettings.haveUpdatedTranslations()) {
       showTranslationsUpgradeDialog();
     } else if (!sUpdatedTranslations) {
       long time = prefs.getLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
@@ -351,10 +351,7 @@ public class QuranActivity extends QuranActionBarActivity
 
             // pretend we don't have updated translations.  we'll
             // check again after 10 days.
-            PreferenceManager.getDefaultSharedPreferences(
-                getApplicationContext()).edit()
-                .putBoolean(
-                    Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false).apply();
+            mSettings.setHaveUpdatedTranslations(false);
           }
         });
 
