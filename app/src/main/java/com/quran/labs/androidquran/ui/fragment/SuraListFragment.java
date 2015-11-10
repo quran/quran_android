@@ -87,7 +87,7 @@ public class SuraListFragment extends Fragment {
     boolean wantPrefix = activity.getResources().getBoolean(R.bool.show_surat_prefix);
     boolean wantTranslation = activity.getResources().getBoolean(R.bool.show_sura_names_translation);
     for (int juz = 1; juz <= JUZ2_COUNT; juz++) {
-      final String headerTitle = QuranInfo.getJuzTitle(activity) + " " +
+      final String headerTitle = activity.getString(R.string.quran_juz2) + " " +
           QuranUtils.getLocalizedNumber(activity, juz);
       final QuranRow.Builder headerBuilder = new QuranRow.Builder()
           .withType(QuranRow.HEADER)

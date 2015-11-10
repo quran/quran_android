@@ -23,14 +23,6 @@ public class BaseQuranInfo {
   public static boolean[] SURA_IS_MAKKI = QuranData.SURA_IS_MAKKI;
   public static int[][] QUARTERS = QuranData.QUARTERS;
 
-  public static String getAyahTitle(Context cx) {
-    return cx.getString(R.string.quran_ayah);
-  }
-
-  public static String getJuzTitle(Context cx) {
-    return cx.getString(R.string.quran_juz2);
-  }
-
   /**
    * Get localized sura name from resources
    *
@@ -116,8 +108,7 @@ public class BaseQuranInfo {
 
   public static String getSuraAyahString(Context context, int sura, int ayah) {
     String suraName = getSuraName(context, sura, false, false);
-    String format = context.getString(R.string.sura_ayah_notification_str);
-    return String.format(format, suraName, ayah);
+    return context.getString(R.string.sura_ayah_notification_str, suraName, ayah);
   }
 
   public static String getNotificationTitle(Context context,
@@ -286,7 +277,7 @@ public class BaseQuranInfo {
   }
 
   public static String getAyahString(int sura, int ayah, Context context) {
-    return getSuraName(context, sura, true) + " - " + getAyahTitle(context)
+    return getSuraName(context, sura, true) + " - " + context.getString(R.string.quran_ayah)
         + " " + QuranUtils.getLocalizedNumber(context, ayah);
   }
 
