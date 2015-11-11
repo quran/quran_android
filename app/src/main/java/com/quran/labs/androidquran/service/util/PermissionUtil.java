@@ -19,7 +19,7 @@ public class PermissionUtil {
   }
 
   public static boolean canRequestWriteExternalStoragePermission(Activity activity) {
-    return !QuranSettings.getInstance(activity).didPresentSdcardPermissionsRationale() ||
+    return !QuranSettings.getInstance(activity).didPresentSdcardPermissionsDialog() ||
         ActivityCompat.shouldShowRequestPermissionRationale(activity,
             Manifest.permission.WRITE_EXTERNAL_STORAGE);
   }

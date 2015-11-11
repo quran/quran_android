@@ -81,9 +81,7 @@ public class QuranPreferenceActivity extends QuranActionBarActivity {
 
   public void requestWriteExternalSdcardPermission(String newLocation) {
     if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
-      // even though we aren't going to show rationale here (since it's context sensitive), record
-      // that we did.
-      QuranSettings.getInstance(this).setSdcardPermissionsRationalePresented();
+      QuranSettings.getInstance(this).setSdcardPermissionsDialogPresented();
 
       mLocationToWrite = newLocation;
       ActivityCompat.requestPermissions(this,

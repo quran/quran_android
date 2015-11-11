@@ -63,6 +63,6 @@ public class Constants {
   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
   public static final String PREF_TRANSLATION_MANAGER = "translationManagerKey";
   public static final String PREF_AUDIO_MANAGER = "audioManagerKey";
-  public static final String PREF_DID_PRESENT_PERMISSIONS_RATIONALE =
-      "didPresentPermissionsRationale";
+  public static final String PREF_DID_PRESENT_PERMISSIONS_DIALOG =
+      "didPresentStoragePermissionDialog";
 }
