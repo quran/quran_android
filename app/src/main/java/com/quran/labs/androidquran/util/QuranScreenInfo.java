@@ -1,13 +1,10 @@
 package com.quran.labs.androidquran.util;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranConstants;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -52,9 +49,7 @@ public class QuranScreenInfo {
         .getSystemService(Context.WINDOW_SERVICE);
     final Display display = w.getDefaultDisplay();
     QuranScreenInfo qsi = new QuranScreenInfo(display);
-    final SharedPreferences prefs = PreferenceManager
-        .getDefaultSharedPreferences(context.getApplicationContext());
-    qsi.setOverrideParam(prefs.getString(Constants.PREF_DEFAULT_IMAGES_DIR, ""));
+    qsi.setOverrideParam(QuranSettings.getInstance(context).getDefaultImagesDirectory());
     return qsi;
   }
 

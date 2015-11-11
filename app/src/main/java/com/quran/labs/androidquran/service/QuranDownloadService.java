@@ -7,6 +7,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ZipUtils;
 import com.squareup.okhttp.Call;
@@ -18,7 +19,6 @@ import com.squareup.okhttp.ResponseBody;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Environment;
@@ -28,7 +28,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.StatFs;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -100,7 +99,7 @@ public class QuranDownloadService extends Service implements
   // written from ui thread and read by download thread
   private volatile boolean mIsDownloadCanceled;
   private LocalBroadcastManager mBroadcastManager;
-  private SharedPreferences mSharedPreferences;
+  private QuranSettings mQuranSettings;
   private WifiLock mWifiLock;
 
   private Intent mLastSentIntent = null;
@@ -137,8 +136,7 @@ public class QuranDownloadService extends Service implements
     mIsDownloadCanceled = false;
     mSuccessfulZippedDownloads = new HashMap<>();
     mRecentlyFailedDownloads = new HashMap<>();
-    mSharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(getApplicationContext());
+    mQuranSettings = QuranSettings.getInstance(this);
 
     mBroadcastManager = LocalBroadcastManager.getInstance(
         getApplicationContext());
@@ -160,7 +158,9 @@ public class QuranDownloadService extends Service implements
                 DOWNLOAD_TYPE_UNDEF);
 
         if (type == lastType) {
-          mBroadcastManager.sendBroadcast(currentLast);
+          if (currentLast != null) {
+            mBroadcastManager.sendBroadcast(currentLast);
+          }
         } else if (mServiceHandler.hasMessages(type)) {
           Intent progressIntent = new Intent(ProgressIntent.INTENT_NAME);
           progressIntent.putExtra(ProgressIntent.DOWNLOAD_TYPE, type);
@@ -634,10 +634,7 @@ public class QuranDownloadService extends Service implements
 
     if (isFatal) {
       // write last error in prefs
-      mSharedPreferences.edit()
-          .putString(PREF_LAST_DOWNLOAD_ITEM, details.key)
-          .putInt(PREF_LAST_DOWNLOAD_ERROR, errorCode)
-          .apply();
+      mQuranSettings.setLastDownloadError(details.key, errorCode);
     }
     return errorCode;
   }
