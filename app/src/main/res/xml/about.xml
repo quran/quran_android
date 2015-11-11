@@ -99,7 +99,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/about" >
+        android:title="@string/about_others" >
         <com.quran.labs.androidquran.ui.preference.QuranPreference
             android:title="@string/about_contributors"
             android:summary="@string/about_contributors_summary">
