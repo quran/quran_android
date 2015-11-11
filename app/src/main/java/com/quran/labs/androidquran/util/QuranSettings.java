@@ -104,12 +104,12 @@ public class QuranSettings {
     mPrefs.edit().putInt(Constants.PREF_LAST_PAGE, page).apply();
   }
 
-  public boolean didPresentSdcardPermissionsRationale() {
-    return mPrefs.getBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_RATIONALE, false);
+  public boolean didPresentSdcardPermissionsDialog() {
+    return mPrefs.getBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, false);
   }
 
-  public void setSdcardPermissionsRationalePresented() {
-    mPrefs.edit().putBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_RATIONALE, true).apply();
+  public void setSdcardPermissionsDialogPresented() {
+    mPrefs.edit().putBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, true).apply();
   }
 
   public String getAppCustomLocation() {

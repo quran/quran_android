@@ -122,7 +122,6 @@ public class QuranDataActivity extends Activity implements
       if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionRationaleShown"));
         //show permission rationale dialog
-        mQuranSettings.setSdcardPermissionsRationalePresented();
         mPermissionsDialog = new AlertDialog.Builder(this)
             .setMessage(R.string.storage_permission_rationale)
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -209,6 +208,7 @@ public class QuranDataActivity extends Activity implements
     ActivityCompat.requestPermissions(this,
         new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE },
         REQUEST_WRITE_TO_SDCARD_PERMISSIONS);
+    mQuranSettings.setSdcardPermissionsDialogPresented();
   }
 
   @Override
