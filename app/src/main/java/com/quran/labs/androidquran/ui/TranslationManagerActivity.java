@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -10,15 +9,14 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -55,7 +53,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private TranslationsAdapter mAdapter;
   private TranslationItem mDownloadingItem;
   private String mDatabaseDirectory;
-  private SharedPreferences mSharedPreferences = null;
+  private QuranSettings mQuranSettings;
 
   private DefaultDownloadReceiver mDownloadReceiver = null;
   private TranslationListTask mTask = null;
@@ -78,15 +76,15 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
     });
 
-    setSupportProgressBarIndeterminateVisibility(true);
     mDatabaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);
 
     final ActionBar actionBar = getSupportActionBar();
-    actionBar.setDisplayHomeAsUpEnabled(true);
-    actionBar.setTitle(R.string.prefs_translations);
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setTitle(R.string.prefs_translations);
+    }
 
-    mSharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(getApplicationContext());
+    mQuranSettings = QuranSettings.getInstance(this);
     mTask = new TranslationListTask(this, this);
     mTask.execute();
   }
@@ -184,7 +182,6 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   @Override
   public void translationsUpdated(List<TranslationItem> items) {
     mAllItems = items;
-    setSupportProgressBarIndeterminateVisibility(false);
 
     if (mAllItems == null) {
       mMessageArea.setText(R.string.error_getting_translation_list);
@@ -230,8 +227,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
 
       if (!needsUpgrade) {
-        mSharedPreferences.edit()
-            .putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false).apply();
+        mQuranSettings.setHaveUpdatedTranslations(false);
       }
     }
 
@@ -334,11 +330,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
                 selectedItem.localVersion = null;
                 selectedItem.exists = false;
                 writeDatabaseUpdate(selectedItem);
-                String current = mSharedPreferences.getString(
-                    Constants.PREF_ACTIVE_TRANSLATION, "");
+                String current = mQuranSettings.getActiveTranslation();
                 if (current.compareTo(selectedItem.filename) == 0) {
-                  mSharedPreferences.edit().remove(
-                      Constants.PREF_ACTIVE_TRANSLATION).apply();
+                  mQuranSettings.removeActiveTranslation();
                 }
                 generateListItems();
               }

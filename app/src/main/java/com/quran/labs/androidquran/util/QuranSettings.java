@@ -14,7 +14,6 @@ public class QuranSettings {
 
   private static QuranSettings sInstance;
   private SharedPreferences mPrefs;
-  private Context mAppContext;
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (sInstance == null) {
@@ -25,7 +24,6 @@ public class QuranSettings {
 
   private QuranSettings(@NonNull Context appContext) {
     mPrefs = PreferenceManager.getDefaultSharedPreferences(appContext);
-    mAppContext = appContext;
   }
 
   public boolean isArabicNames() {
@@ -127,8 +125,16 @@ public class QuranSettings {
     return mPrefs.getString(Constants.PREF_APP_LOCATION, null) != null;
   }
 
+  public String getActiveTranslation() {
+    return mPrefs.getString(Constants.PREF_ACTIVE_TRANSLATION, "");
+  }
+
   public void setActiveTranslation(String translation) {
     mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION, translation).apply();
+  }
+
+  public void removeActiveTranslation() {
+    mPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).apply();
   }
 
   public int getVersion() {
@@ -168,6 +174,13 @@ public class QuranSettings {
     return mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0);
   }
 
+  public void setLastDownloadError(String lastDownloadItem, int lastDownloadError) {
+    mPrefs.edit()
+        .putString(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, lastDownloadItem)
+        .putInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, lastDownloadError)
+        .apply();
+  }
+
   public void clearLastDownloadError() {
     mPrefs.edit()
         .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
@@ -181,5 +194,9 @@ public class QuranSettings {
 
   public void setDefaultImagesDirectory(String directory) {
     mPrefs.edit().putString(Constants.PREF_DEFAULT_IMAGES_DIR, directory).apply();
+  }
+
+  public String getDefaultImagesDirectory() {
+    return mPrefs.getString(Constants.PREF_DEFAULT_IMAGES_DIR, "");
   }
 }
