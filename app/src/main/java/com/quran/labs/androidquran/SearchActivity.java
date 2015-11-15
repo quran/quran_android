@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran;
 
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -11,6 +10,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActionBarActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.app.SearchManager;
@@ -145,11 +145,7 @@ public class SearchActivity extends QuranActionBarActivity
     }
 
     if (cursor == null) {
-      SharedPreferences prefs =
-          PreferenceManager.getDefaultSharedPreferences(
-              getApplicationContext());
-      String active = prefs.getString(
-          Constants.PREF_ACTIVE_TRANSLATION, "");
+      String active = QuranSettings.getInstance(getApplicationContext()).getActiveTranslation();
       if (TextUtils.isEmpty(active)) {
         int resource = R.string.no_active_translation;
         int buttonResource = R.string.translation_settings;

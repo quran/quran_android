@@ -70,6 +70,7 @@ public class TabletFragment extends Fragment
   private List<Map<String, List<AyahBounds>>> mCoordinateData;
   private TranslationView mLeftTranslation, mRightTranslation = null;
   private HighlightingImageView mLeftImageView, mRightImageView = null;
+  private QuranSettings mQuranSettings;
 
   private TabletView mMainView;
 
@@ -139,7 +140,8 @@ public class TabletFragment extends Fragment
     mJustCreated = true;
 
     mLastHighlightedPage = 0;
-    mOverlayText = QuranSettings.getInstance(context).shouldOverlayPageInfo();
+    mQuranSettings = QuranSettings.getInstance(context);
+    mOverlayText = mQuranSettings.shouldOverlayPageInfo();
     return mMainView;
   }
 
@@ -222,10 +224,7 @@ public class TabletFragment extends Fragment
       }
     } else if (mMode == Mode.TRANSLATION) {
       if (context != null) {
-        SharedPreferences prefs =
-            PreferenceManager.getDefaultSharedPreferences(context);
-        String database = prefs.getString(
-            Constants.PREF_ACTIVE_TRANSLATION, null);
+        String database = mQuranSettings.getActiveTranslation();
         if (database != null) {
           new TranslationTask(context, mPageNumber - 1, 0,
               database, mRightTranslation).execute();

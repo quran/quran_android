@@ -31,13 +31,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -55,7 +53,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
 
 public class QuranActivity extends QuranActionBarActivity
     implements BookmarkHandler, AddTagDialog.OnTagChangedListener,
@@ -311,14 +308,12 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   private void updateTranslationsListAsNeeded() {
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if (mSettings.haveUpdatedTranslations()) {
       showTranslationsUpgradeDialog();
     } else if (!sUpdatedTranslations) {
-      long time = prefs.getLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
-      Date now = new Date();
+      long time = mSettings.getLastUpdatedTranslationDate();
       Log.d(TAG, "checking whether we should update translations..");
-      if (now.getTime() - time > Constants.TRANSLATION_REFRESH_TIME) {
+      if (System.currentTimeMillis() - time > Constants.TRANSLATION_REFRESH_TIME) {
         Log.d(TAG, "updating translations list...");
         sUpdatedTranslations = true;
         new TranslationListTask(

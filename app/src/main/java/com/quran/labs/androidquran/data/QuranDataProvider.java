@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.TranslationUtils;
 
@@ -23,6 +24,7 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -49,7 +51,7 @@ public class QuranDataProvider extends ContentProvider {
   private static final int SEARCH_SUGGEST = 2;
   private static final UriMatcher sURIMatcher = buildUriMatcher();
 
-  private SharedPreferences mPrefs = null;
+  private QuranSettings mQuranSettings;
 
   private static UriMatcher buildUriMatcher() {
     UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -67,12 +69,12 @@ public class QuranDataProvider extends ContentProvider {
 
   @Override
   public boolean onCreate() {
-    mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    mQuranSettings = QuranSettings.getInstance(getContext());
     return true;
   }
 
   @Override
-  public Cursor query(Uri uri, String[] projection, String selection,
+  public Cursor query(@NonNull Uri uri, String[] projection, String selection,
       String[] selectionArgs, String sortOrder) {
     Crashlytics.log("uri: " + uri.toString());
     switch (sURIMatcher.match(uri)) {
@@ -122,14 +124,13 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   private String getActiveTranslation() {
-    String db = mPrefs.getString(
-        Constants.PREF_ACTIVE_TRANSLATION, "");
+    String db = mQuranSettings.getActiveTranslation();
     if (!TextUtils.isEmpty(db)) {
       if (QuranFileUtils.hasTranslation(getContext(), db)) {
         return db;
       }
       // our active database no longer exists, remove the pref
-      mPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).apply();
+      mQuranSettings.removeActiveTranslation();
     }
 
     try {

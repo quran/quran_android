@@ -5,6 +5,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,7 +14,6 @@ import org.json.JSONTokener;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -27,7 +27,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class TranslationListTask extends
@@ -96,10 +95,8 @@ public class TranslationListTask extends
                                                             String tag){
       boolean shouldUseCache = false;
       if (useCache){
-         long when = PreferenceManager.getDefaultSharedPreferences(context).
-                 getLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, 0);
-         Date now = new Date();
-         if (now.getTime() - when < Constants.MIN_TRANSLATION_REFRESH_TIME){
+         long when = QuranSettings.getInstance(context).getLastUpdatedTranslationDate();
+         if (System.currentTimeMillis() - when < Constants.MIN_TRANSLATION_REFRESH_TIME){
             shouldUseCache = true;
          }
       }
@@ -205,10 +202,8 @@ public class TranslationListTask extends
          }
 
          if (refreshed){
-            Date today = new Date();
-            long now = today.getTime();
-            PreferenceManager.getDefaultSharedPreferences(context)
-                    .edit().putLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, now).apply();
+            QuranSettings.getInstance(context)
+                .setLastUpdatedTranslationDate(System.currentTimeMillis());
          }
 
          if (updates.size() > 0){
@@ -230,7 +225,7 @@ public class TranslationListTask extends
    }
 
    private static String downloadUrl(String urlString){
-      InputStream stream = null;
+      InputStream stream;
       try {
          URL url = new URL(urlString);
          HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -245,13 +240,15 @@ public class TranslationListTask extends
          BufferedReader reader =
                  new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 
-         String line = "";
+         String line;
          while ((line = reader.readLine()) != null){
             result += line;
          }
 
          try { reader.close(); }
-         catch (Exception e){ }
+         catch (Exception e){
+            // no op
+         }
 
          return result;
       }
@@ -263,6 +260,6 @@ public class TranslationListTask extends
    }
 
    public interface TranslationsUpdatedListener {
-      public void translationsUpdated(List<TranslationItem> items);
+      void translationsUpdated(List<TranslationItem> items);
    }
 }
