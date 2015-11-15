@@ -79,9 +79,13 @@ Open Source Projects Used
 
 Changelog
 ---------
-**development**
+**version 2.6.7-p2 (released 11/14/2015)**
 - fix audio scrolling issue
 - fix tashkeel being cut off on fonts
+- new about screen
+- improvements to preferences
+- repeat bug fixes
+- permissions related bug fixes
 
 **version 2.6.7-p1 (released 10/24/2015)**
 - fix audio manager launch crash due to rx proguard issue.
