@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.util;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -127,8 +128,8 @@ public class QuranSettings {
 
         if (mPrefs.contains(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)) {
           setLastDownloadError(
-              mPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, null),
-              mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, 0));
+              mPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, null),
+              mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0));
         }
 
         if (mPrefs.contains(Constants.PREF_ACTIVE_TRANSLATION)) {
@@ -242,8 +243,8 @@ public class QuranSettings {
 
   public void setLastDownloadError(String lastDownloadItem, int lastDownloadError) {
     mPerInstallationPrefs.edit()
-        .putString(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, lastDownloadItem)
-        .putInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, lastDownloadError)
+        .putInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, lastDownloadError)
+        .putString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, lastDownloadItem)
         .apply();
   }
 
