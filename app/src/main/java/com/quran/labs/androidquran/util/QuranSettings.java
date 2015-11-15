@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.util;
 
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
@@ -11,9 +12,11 @@ import android.support.annotation.NonNull;
 
 
 public class QuranSettings {
+  private static final String PREFS_FILE = "com.quran.labs.androidquran.per_installation";
 
   private static QuranSettings sInstance;
   private SharedPreferences mPrefs;
+  private SharedPreferences mPerInstallationPrefs;
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (sInstance == null) {
@@ -24,6 +27,7 @@ public class QuranSettings {
 
   private QuranSettings(@NonNull Context appContext) {
     mPrefs = PreferenceManager.getDefaultSharedPreferences(appContext);
+    mPerInstallationPrefs = appContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
   }
 
   public boolean isArabicNames() {
@@ -82,6 +86,7 @@ public class QuranSettings {
     try {
       val = Integer.parseInt(str);
     } catch (Exception e) {
+      // no op
     }
 
     if (val > AudioUtils.LookAheadAmount.MAX ||
@@ -104,99 +109,160 @@ public class QuranSettings {
     mPrefs.edit().putInt(Constants.PREF_LAST_PAGE, page).apply();
   }
 
+  // probably should eventually move this to Application.onCreate..
+  public void upgradePreferences() {
+    int version = getVersion();
+    if (version != BuildConfig.VERSION_CODE) {
+      if (version == 0) {
+        version = mPrefs.getInt(Constants.PREF_VERSION, 0);
+      }
+
+      if (version != 0 && version < 2672) {
+        // migrate preferences
+        setAppCustomLocation(mPrefs.getString(Constants.PREF_APP_LOCATION, null));
+
+        if (mPrefs.contains(Constants.PREF_SHOULD_FETCH_PAGES)) {
+          setShouldFetchPages(mPrefs.getBoolean(Constants.PREF_SHOULD_FETCH_PAGES, false));
+        }
+
+        if (mPrefs.contains(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)) {
+          setLastDownloadError(
+              mPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, null),
+              mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, 0));
+        }
+
+        if (mPrefs.contains(Constants.PREF_ACTIVE_TRANSLATION)) {
+          setActiveTranslation(mPrefs.getString(Constants.PREF_ACTIVE_TRANSLATION, null));
+        }
+
+        mPrefs.edit()
+            .remove(Constants.PREF_VERSION)
+            .remove(Constants.PREF_APP_LOCATION)
+            .remove(Constants.PREF_SHOULD_FETCH_PAGES)
+            .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
+            .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
+            .remove(Constants.PREF_ACTIVE_TRANSLATION)
+            // these aren't migrated since they can be derived pretty easily
+            .remove("didPresentPermissionsRationale") // was renamed, removing old one
+            .remove(Constants.PREF_DEFAULT_IMAGES_DIR)
+            .remove(Constants.PREF_HAVE_UPDATED_TRANSLATIONS)
+            .remove(Constants.PREF_LAST_UPDATED_TRANSLATIONS)
+            .apply();
+      }
+
+      // no matter which version we're upgrading from, make sure the app location is set
+      if (!isAppLocationSet()) {
+        setAppCustomLocation(getAppCustomLocation());
+      }
+
+      // make sure that the version code now says that we're up to date.
+      setVersion(BuildConfig.VERSION_CODE);
+    }
+  }
+
   public boolean didPresentSdcardPermissionsDialog() {
-    return mPrefs.getBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, false);
+    return mPerInstallationPrefs.getBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, false);
   }
 
   public void setSdcardPermissionsDialogPresented() {
-    mPrefs.edit().putBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, true).apply();
+    mPerInstallationPrefs.edit()
+        .putBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, true).apply();
   }
 
   public String getAppCustomLocation() {
-    return mPrefs.getString(Constants.PREF_APP_LOCATION,
+    return mPerInstallationPrefs.getString(Constants.PREF_APP_LOCATION,
         Environment.getExternalStorageDirectory().getAbsolutePath());
   }
 
   public void setAppCustomLocation(String newLocation) {
-    mPrefs.edit().putString(Constants.PREF_APP_LOCATION, newLocation).apply();
+    mPerInstallationPrefs.edit().putString(Constants.PREF_APP_LOCATION, newLocation).apply();
   }
 
   public boolean isAppLocationSet() {
-    return mPrefs.getString(Constants.PREF_APP_LOCATION, null) != null;
+    return mPerInstallationPrefs.getString(Constants.PREF_APP_LOCATION, null) != null;
   }
 
   public String getActiveTranslation() {
-    return mPrefs.getString(Constants.PREF_ACTIVE_TRANSLATION, "");
+    return mPerInstallationPrefs.getString(Constants.PREF_ACTIVE_TRANSLATION, "");
   }
 
   public void setActiveTranslation(String translation) {
-    mPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION, translation).apply();
+    mPerInstallationPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION, translation).apply();
   }
 
   public void removeActiveTranslation() {
-    mPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).apply();
+    mPerInstallationPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).apply();
   }
 
   public int getVersion() {
-    return mPrefs.getInt(Constants.PREF_VERSION, 0);
+    return mPerInstallationPrefs.getInt(Constants.PREF_VERSION, 0);
   }
 
   public void setVersion(int version) {
-    mPrefs.edit().putInt(Constants.PREF_VERSION, version).apply();
+    mPerInstallationPrefs.edit().putInt(Constants.PREF_VERSION, version).apply();
   }
 
   public boolean shouldFetchPages() {
-    return mPrefs.getBoolean(Constants.PREF_SHOULD_FETCH_PAGES, false);
+    return mPerInstallationPrefs.getBoolean(Constants.PREF_SHOULD_FETCH_PAGES, false);
   }
 
   public void setShouldFetchPages(boolean shouldFetchPages) {
-    mPrefs.edit().putBoolean(Constants.PREF_SHOULD_FETCH_PAGES, shouldFetchPages).apply();
+    mPerInstallationPrefs.edit().putBoolean(Constants.PREF_SHOULD_FETCH_PAGES, shouldFetchPages).apply();
   }
 
   public void removeShouldFetchPages() {
-    mPrefs.edit().remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
+    mPerInstallationPrefs.edit().remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
   }
 
   public boolean haveUpdatedTranslations() {
-    return mPrefs.getBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false);
+    return mPerInstallationPrefs.getBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false);
   }
 
   public void setHaveUpdatedTranslations(boolean haveUpdatedTranslations) {
-    mPrefs.edit().putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
+    mPerInstallationPrefs.edit().putBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS,
         haveUpdatedTranslations).apply();
   }
 
+  public long getLastUpdatedTranslationDate() {
+    return mPerInstallationPrefs.getLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS,
+        System.currentTimeMillis());
+  }
+
+  public void setLastUpdatedTranslationDate(long date) {
+    mPerInstallationPrefs.edit().putLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS, date).apply();
+  }
+
   public String getLastDownloadItemWithError() {
-    return mPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, "");
+    return mPerInstallationPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, "");
   }
 
   public int getLastDownloadErrorCode() {
-    return mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0);
+    return mPerInstallationPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0);
   }
 
   public void setLastDownloadError(String lastDownloadItem, int lastDownloadError) {
-    mPrefs.edit()
+    mPerInstallationPrefs.edit()
         .putString(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, lastDownloadItem)
         .putInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, lastDownloadError)
         .apply();
   }
 
   public void clearLastDownloadError() {
-    mPrefs.edit()
+    mPerInstallationPrefs.edit()
         .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
         .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
         .apply();
   }
 
   public boolean haveDefaultImagesDirectory() {
-    return mPrefs.contains(Constants.PREF_DEFAULT_IMAGES_DIR);
+    return mPerInstallationPrefs.contains(Constants.PREF_DEFAULT_IMAGES_DIR);
   }
 
   public void setDefaultImagesDirectory(String directory) {
-    mPrefs.edit().putString(Constants.PREF_DEFAULT_IMAGES_DIR, directory).apply();
+    mPerInstallationPrefs.edit().putString(Constants.PREF_DEFAULT_IMAGES_DIR, directory).apply();
   }
 
   public String getDefaultImagesDirectory() {
-    return mPrefs.getString(Constants.PREF_DEFAULT_IMAGES_DIR, "");
+    return mPerInstallationPrefs.getString(Constants.PREF_DEFAULT_IMAGES_DIR, "");
   }
 }

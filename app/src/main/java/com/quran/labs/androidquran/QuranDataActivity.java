@@ -58,12 +58,7 @@ public class QuranDataActivity extends Activity implements
     super.onCreate(savedInstanceState);
     QuranScreenInfo.getOrMakeInstance(this);
     mQuranSettings = QuranSettings.getInstance(this);
-
-    // set the app location if it's not already set
-    boolean isAppLocationSet = mQuranSettings.isAppLocationSet();
-    if (!isAppLocationSet) {
-      mQuranSettings.setAppCustomLocation(mQuranSettings.getAppCustomLocation());
-    }
+    mQuranSettings.upgradePreferences();
   }
 
   @Override
@@ -148,7 +143,7 @@ public class QuranDataActivity extends Activity implements
                 // fall back if we can
                 if (fallbackFile != null) {
                   mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
-                  updateAndCheckPages();
+                  checkPages();
                 } else {
                   // set to null so we can try again next launch
                   mQuranSettings.setAppCustomLocation(null);
@@ -162,7 +157,7 @@ public class QuranDataActivity extends Activity implements
         // fall back if we can
         if (fallbackFile != null) {
           mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
-          updateAndCheckPages();
+          checkPages();
         } else {
           // set to null so we can try again next launch
           mQuranSettings.setAppCustomLocation(null);
@@ -170,34 +165,16 @@ public class QuranDataActivity extends Activity implements
         }
       }
     } else {
-      updateAndCheckPages();
+      checkPages();
     }
   }
 
-  private void updateAndCheckPages() {
+  private void checkPages() {
     if (mTaskIsRunning) {
       return;
     }
 
     mTaskIsRunning = true;
-    /**
-     * this is used for doing upgrades between versions (i.e. it replaces
-     * the use of upgrade to variables as present previously).
-     */
-    final int version = mQuranSettings.getVersion();
-    if (version == 0) {
-      /**
-       * when updating from "no version" (i.e. version 0), remove any pending page
-       * downloads because the download url has now changed in order to ensure that
-       * people get the latest set of pages.
-       */
-      QuranFileUtils.clearPendingPageDownloads(this);
-    }
-
-    if (version != BuildConfig.VERSION_CODE) {
-      // make sure that the version code now says that we're up to date.
-      mQuranSettings.setVersion(BuildConfig.VERSION_CODE);
-    }
 
     // check whether or not we need to download
     mCheckPagesTask = new CheckPagesAsyncTask(this);
@@ -234,13 +211,13 @@ public class QuranDataActivity extends Activity implements
           Toast.makeText(this,
               R.string.storage_permission_please_restart, Toast.LENGTH_LONG).show();
         }
-        updateAndCheckPages();
+        checkPages();
       } else {
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionDenied"));
         final File fallbackFile = getExternalFilesDir(null);
         if (fallbackFile != null) {
           mQuranSettings.setAppCustomLocation(fallbackFile.getAbsolutePath());
-          updateAndCheckPages();
+          checkPages();
         } else {
           // set to null so we can try again next launch
           mQuranSettings.setAppCustomLocation(null);

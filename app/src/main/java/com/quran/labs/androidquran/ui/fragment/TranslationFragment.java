@@ -7,16 +7,17 @@ import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +40,7 @@ public class TranslationFragment extends Fragment
   private QuranTranslationPageLayout mMainView;
 
   private Resources mResources;
-  private SharedPreferences mPrefs;
+  private QuranSettings mQuranSettings;
   private boolean mJustCreated;
 
   public static TranslationFragment newInstance(int page) {
@@ -71,11 +72,10 @@ public class TranslationFragment extends Fragment
   @Override
   public View onCreateView(LayoutInflater inflater,
                            ViewGroup container, Bundle savedInstanceState) {
-    mMainView = new QuranTranslationPageLayout(getActivity());
+    Context context = getActivity();
+    mMainView = new QuranTranslationPageLayout(context);
     mMainView.setPageController(null, mPageNumber);
-
-    mPrefs = PreferenceManager
-        .getDefaultSharedPreferences(getActivity());
+    mQuranSettings = QuranSettings.getInstance(context);
     mResources = getResources();
 
     mTranslationView = mMainView.getTranslationView();
@@ -93,8 +93,7 @@ public class TranslationFragment extends Fragment
     updateView();
     mJustCreated = true;
 
-    String database = mPrefs.getString(
-        Constants.PREF_ACTIVE_TRANSLATION, null);
+    String database = mQuranSettings.getActiveTranslation();
     refresh(database);
     return mMainView;
   }
@@ -110,10 +109,8 @@ public class TranslationFragment extends Fragment
       return;
     }
 
-    final boolean nightMode =
-        mPrefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
-    final boolean useNewBackground =
-        mPrefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
+    final boolean nightMode = mQuranSettings.isNightMode();
+    final boolean useNewBackground = mQuranSettings.useNewBackground();
     mMainView.updateView(nightMode, useNewBackground);
   }
 

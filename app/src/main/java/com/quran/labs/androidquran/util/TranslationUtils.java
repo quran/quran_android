@@ -20,10 +20,8 @@ public class TranslationUtils {
   public static TranslationItem getDefaultTranslationItem(Context context,
       List<TranslationItem> items){
       if (items == null || items.size() == 0){ return null; }
-      SharedPreferences prefs =
-              PreferenceManager.getDefaultSharedPreferences(context);
-      final String db =
-          prefs.getString(Constants.PREF_ACTIVE_TRANSLATION, null);
+      QuranSettings settings = QuranSettings.getInstance(context.getApplicationContext());
+      final String db = settings.getActiveTranslation();
 
       TranslationItem result = null;
       boolean changed = false;
@@ -48,8 +46,7 @@ public class TranslationUtils {
       }
 
       if (changed && result != null){
-         prefs.edit().putString(
-             Constants.PREF_ACTIVE_TRANSLATION, result.filename).apply();
+        settings.setActiveTranslation(result.filename);
       }
 
       return result;

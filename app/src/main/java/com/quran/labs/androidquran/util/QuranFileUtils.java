@@ -13,7 +13,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -320,26 +319,6 @@ public class QuranFileUtils {
       return basePath + QURAN_BASE;
     }
     return null;
-  }
-
-  public static void clearPendingPageDownloads(@NonNull Context context) {
-    String baseDir = QuranFileUtils.getQuranBaseDirectory(context);
-    if (baseDir != null) {
-      baseDir = baseDir + File.separator;
-      try {
-        final File f = new File(baseDir);
-        if (f.exists() && f.isDirectory()) {
-          final String[] files = f.list();
-          for (String file : files) {
-            if (file.endsWith(".part")) {
-              new File(baseDir + file).delete();
-            }
-          }
-        }
-      } catch (Exception e) {
-        // no op
-      }
-    }
   }
 
   /**
