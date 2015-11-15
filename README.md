@@ -79,6 +79,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.7-p3 (released 11/15/2015)**
+- fix launch crash when upgrading prefs
+
 **version 2.6.7-p2 (released 11/14/2015)**
 - fix audio scrolling issue
 - fix tashkeel being cut off on fonts
