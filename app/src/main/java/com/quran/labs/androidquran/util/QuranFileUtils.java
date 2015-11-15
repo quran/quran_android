@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.util;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
@@ -116,7 +114,6 @@ public class QuranFileUtils {
               return false;
             }
           }
-          Answers.getInstance().logCustom(new CustomEvent("successfulNullDirectoryListing"));
         } else if (fileList.length < PAGES_LAST) {
           // ideally, we should loop for each page and ensure
           // all pages are there, but this will do for now.
