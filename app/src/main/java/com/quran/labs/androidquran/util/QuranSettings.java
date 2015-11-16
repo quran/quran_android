@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.util;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -118,37 +117,50 @@ public class QuranSettings {
         version = mPrefs.getInt(Constants.PREF_VERSION, 0);
       }
 
-      if (version != 0 && version < 2672) {
-        // migrate preferences
-        setAppCustomLocation(mPrefs.getString(Constants.PREF_APP_LOCATION, null));
+      if (version != 0) {
+        if (version < 2672) {
+          // migrate preferences
+          setAppCustomLocation(mPrefs.getString(Constants.PREF_APP_LOCATION, null));
 
-        if (mPrefs.contains(Constants.PREF_SHOULD_FETCH_PAGES)) {
-          setShouldFetchPages(mPrefs.getBoolean(Constants.PREF_SHOULD_FETCH_PAGES, false));
+          if (mPrefs.contains(Constants.PREF_SHOULD_FETCH_PAGES)) {
+            setShouldFetchPages(mPrefs.getBoolean(Constants.PREF_SHOULD_FETCH_PAGES, false));
+          }
+
+          if (mPrefs.contains(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)) {
+            setLastDownloadError(
+                mPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, null),
+                mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0));
+          }
+
+          if (mPrefs.contains(Constants.PREF_ACTIVE_TRANSLATION)) {
+            setActiveTranslation(mPrefs.getString(Constants.PREF_ACTIVE_TRANSLATION, null));
+          }
+
+          mPrefs.edit()
+              .remove(Constants.PREF_VERSION)
+              .remove(Constants.PREF_APP_LOCATION)
+              .remove(Constants.PREF_SHOULD_FETCH_PAGES)
+              .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
+              .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
+              .remove(Constants.PREF_ACTIVE_TRANSLATION)
+                  // these aren't migrated since they can be derived pretty easily
+              .remove("didPresentPermissionsRationale") // was renamed, removing old one
+              .remove(Constants.PREF_DEFAULT_IMAGES_DIR)
+              .remove(Constants.PREF_HAVE_UPDATED_TRANSLATIONS)
+              .remove(Constants.PREF_LAST_UPDATED_TRANSLATIONS)
+              .apply();
+        } else if (version < 2674) {
+          // explicitly an else - if we migrated via the above, we're okay. otherwise, we are in
+          // a bad state due to not crashing in 2.6.7-p2 (thus getting its incorrect behavior),
+          // and thus crashing on 2.6.7-p3 and above (where the bug was fixed). this works around
+          // this issue.
+          try {
+            getLastDownloadItemWithError();
+            getLastDownloadErrorCode();
+          } catch (Exception e) {
+            clearLastDownloadError();
+          }
         }
-
-        if (mPrefs.contains(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)) {
-          setLastDownloadError(
-              mPrefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, null),
-              mPrefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0));
-        }
-
-        if (mPrefs.contains(Constants.PREF_ACTIVE_TRANSLATION)) {
-          setActiveTranslation(mPrefs.getString(Constants.PREF_ACTIVE_TRANSLATION, null));
-        }
-
-        mPrefs.edit()
-            .remove(Constants.PREF_VERSION)
-            .remove(Constants.PREF_APP_LOCATION)
-            .remove(Constants.PREF_SHOULD_FETCH_PAGES)
-            .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
-            .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
-            .remove(Constants.PREF_ACTIVE_TRANSLATION)
-            // these aren't migrated since they can be derived pretty easily
-            .remove("didPresentPermissionsRationale") // was renamed, removing old one
-            .remove(Constants.PREF_DEFAULT_IMAGES_DIR)
-            .remove(Constants.PREF_HAVE_UPDATED_TRANSLATIONS)
-            .remove(Constants.PREF_LAST_UPDATED_TRANSLATIONS)
-            .apply();
       }
 
       // no matter which version we're upgrading from, make sure the app location is set
