@@ -79,6 +79,11 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.6.7-p4 (released 11/15/2015)**
+- fix launch crash when upgrading prefs for people stuck between the bug
+  introduced in p2 (not crashing with it and instead running the wrong
+  behavior), and the fix in p3.
+    
 **version 2.6.7-p3 (released 11/15/2015)**
 - fix launch crash when upgrading prefs
 
