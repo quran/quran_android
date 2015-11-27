@@ -7,7 +7,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
-import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuBuilder;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
