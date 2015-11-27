@@ -6,7 +6,7 @@
         we need to download some files. If you do not do this now, the app
         may not work reliably and will require an Internet connection for reading.
         Would you like to download the required files now?
-	</string>
+    </string>
     <string name="downloadTabletPrompt">We recently added improved images for
         tablets. Would you like to download these images now?</string>
     <string name="downloadImportantPrompt">There is a small yet important update
@@ -40,7 +40,6 @@
     <string name="cancel">Cancel</string>
 
     <!-- about -->
-    <string name="about">About</string>
     <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>
     <string name="about_data_sources">Data Sources</string>
     <string name="about_images">Images</string>
@@ -73,6 +72,7 @@
     <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
     <string name="about_sliding_panel">AndroidSlidingUpPanel</string>
     <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
+    <string name="about_others">Others</string>
     <string name="about_contributors">Contributors</string>
     <string name="about_contributors_summary">A list of people who contributed to the development of Quran for Android</string>
     <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
@@ -111,8 +111,8 @@
         &lt;br/>Unfortunately, Android versions prior to 4.0 do not support these fonts, and there is
         little we can do to help with this.
     </string>
-	<string name="search_hint">Search the Quran</string>
-	<string name="quranSearchType">Verses of the Quran</string>
+    <string name="search_hint">Search the Quran</string>
+    <string name="quranSearchType">Verses of the Quran</string>
 
     <plurals name="files_downloaded">
         <item quantity="one">1 sura downloaded</item>
