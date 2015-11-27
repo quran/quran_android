@@ -7,8 +7,6 @@ import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,10 +25,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
@@ -62,7 +62,7 @@ public class AudioStatusBar extends LinearLayout {
   private boolean mHaveCriticalError = false;
   private SharedPreferences mSharedPreferences;
 
-  private SpinnerCompat mSpinner;
+  private Spinner mSpinner;
   private TextView mProgressText;
   private ProgressBar mProgressBar;
   private RepeatButton mRepeatButton;
@@ -283,15 +283,13 @@ public class AudioStatusBar extends LinearLayout {
 
   private void addSpinner() {
     if (mSpinner == null) {
-      mSpinner = new SpinnerCompat(mContext, null,
-          R.attr.actionDropDownStyle);
-      mSpinner.setDropDownVerticalOffset(mSpinnerPadding);
+      mSpinner = new Spinner(mContext, Spinner.MODE_DROPDOWN);
       mSpinner.setAdapter(mAdapter);
 
       mSpinner.setOnItemSelectedListener(
-          new AdapterViewCompat.OnItemSelectedListener() {
+          new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterViewCompat<?> parent,
+            public void onItemSelected(AdapterView<?> parent,
                 View view, int position, long id) {
               if (position != mCurrentQari) {
                 mSharedPreferences.edit().
@@ -302,7 +300,7 @@ public class AudioStatusBar extends LinearLayout {
             }
 
             @Override
-            public void onNothingSelected(AdapterViewCompat<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent) {
             }
           });
     }
