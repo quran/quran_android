@@ -2,7 +2,6 @@ package com.quran.labs.androidquran;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.squareup.leakcanary.LeakCanary;
 
 import android.app.Application;
 import android.content.Context;
@@ -21,10 +20,6 @@ public class QuranApplication extends Application {
   public void onCreate() {
     super.onCreate();
     Fabric.with(this, new Crashlytics());
-
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      LeakCanary.install(this);
-    }
   }
 
   public void refreshLocale(@NonNull Context context, boolean force) {
