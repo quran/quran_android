@@ -48,12 +48,12 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:orientation="horizontal">
-                    <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+                    <Spinner
                         android:id="@+id/end_ayah_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layoutDirection="rtl" />
-                    <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+                    <Spinner
                         android:id="@+id/end_sura_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -65,12 +65,12 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:orientation="horizontal">
-                    <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+                    <Spinner
                         android:id="@+id/start_ayah_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layoutDirection="rtl" />
-                    <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+                    <Spinner
                         android:id="@+id/start_sura_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
                 android:layout_gravity="end">
-                <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+                <Spinner
                     android:id="@+id/repeat_range_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
                 android:layout_gravity="end">
-                <com.quran.labs.androidquran.widgets.spinner.SpinnerCompat
+                <Spinner
                     android:id="@+id/repeat_verse_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

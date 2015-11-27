@@ -8,8 +8,6 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.TranslationView;
-import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,8 +16,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
   private AsyncTask mCurrentTask;
   private TranslationItem mTranslationItem;
   private View mTranslationControls;
-  private SpinnerCompat mTranslator;
+  private Spinner mTranslator;
   private TranslationsSpinnerAdapter mTranslationAdapter;
   private List<TranslationItem> mTranslations;
 
@@ -41,7 +41,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
     final View view = inflater.inflate(
         R.layout.translation_panel, container, false);
 
-    mTranslator = (SpinnerCompat) view.findViewById(R.id.translator);
+    mTranslator = (Spinner) view.findViewById(R.id.translator);
     mTranslationView =
         (TranslationView) view.findViewById(R.id.translation_view);
     mTranslationView.setIsInAyahActionMode(true);
@@ -107,9 +107,9 @@ public class AyahTranslationFragment extends AyahActionFragment {
             R.layout.support_simple_spinner_dropdown_item,
             pagerActivity.getTranslationNames(), mTranslations);
         mTranslator.setAdapter(mTranslationAdapter);
-        mTranslator.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
+        mTranslator.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
           @Override
-          public void onItemSelected(AdapterViewCompat<?> parent, View view, int position,
+          public void onItemSelected(AdapterView<?> parent, View view, int position,
               long id) {
             TranslationItem item = mTranslationAdapter.getTranslationItem(position);
             if (!item.filename.equals(mTranslationItem.filename)) {
@@ -119,7 +119,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
           }
 
           @Override
-          public void onNothingSelected(AdapterViewCompat<?> parent) {
+          public void onNothingSelected(AdapterView<?> parent) {
           }
         });
       }

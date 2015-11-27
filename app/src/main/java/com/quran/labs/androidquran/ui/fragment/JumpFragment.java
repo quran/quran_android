@@ -6,8 +6,6 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -26,8 +24,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class JumpFragment extends DialogFragment {
@@ -47,7 +47,7 @@ public class JumpFragment extends DialogFragment {
     builder.setTitle(activity.getString(R.string.menu_jump));
 
     // Sura Spinner
-    final SpinnerCompat suraSpinner = (SpinnerCompat) layout.findViewById(R.id.sura_spinner);
+    final Spinner suraSpinner = (Spinner) layout.findViewById(R.id.sura_spinner);
     String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < suras.length; i++) {
@@ -63,7 +63,7 @@ public class JumpFragment extends DialogFragment {
     suraSpinner.setAdapter(adapter);
 
     // Ayah Spinner
-    final SpinnerCompat ayahSpinner = (SpinnerCompat) layout.findViewById(R.id.ayah_spinner);
+    final Spinner ayahSpinner = (Spinner) layout.findViewById(R.id.ayah_spinner);
     final ArrayAdapter<CharSequence> ayahAdapter =
         new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item) {
           @Override
@@ -91,9 +91,9 @@ public class JumpFragment extends DialogFragment {
       }
     });
 
-    suraSpinner.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
+    suraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
-      public void onItemSelected(AdapterViewCompat<?> parent, View view, int position, long rowId) {
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
         Context context = getActivity();
         if (suraSpinner.getTag() == null) {
           // this is the initialization
@@ -121,13 +121,13 @@ public class JumpFragment extends DialogFragment {
       }
 
       @Override
-      public void onNothingSelected(AdapterViewCompat<?> arg0) {
+      public void onNothingSelected(AdapterView<?> arg0) {
       }
     });
 
-    ayahSpinner.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
+    ayahSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
-      public void onItemSelected(AdapterViewCompat<?> parent, View view, int position, long rowId) {
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
         if (ayahSpinner.getTag() == null) {
           // this is the initialization
           ayahSpinner.setTag(0);
@@ -143,7 +143,7 @@ public class JumpFragment extends DialogFragment {
       }
 
       @Override
-      public void onNothingSelected(AdapterViewCompat<?> arg0) {
+      public void onNothingSelected(AdapterView<?> arg0) {
       }
     });
 
