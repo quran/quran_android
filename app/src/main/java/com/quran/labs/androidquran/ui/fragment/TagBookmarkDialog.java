@@ -43,7 +43,6 @@ public class TagBookmarkDialog extends DialogFragment {
   private Integer mAyah;
   private int mPage = -1;
   private List<Tag> mTags;
-  private List<Long> mBookmarkTags;
   private TagsAdapter mAdapter;
 
   private AsyncTask mCurrentTask;
@@ -301,6 +300,7 @@ public class TagBookmarkDialog extends DialogFragment {
   }
 
   class RefreshTagsTask extends AsyncTask<Void, Void, ArrayList<Tag>> {
+    private List<Long> mBookmarkTags;
 
     @Override
     protected ArrayList<Tag> doInBackground(Void... params) {
@@ -319,14 +319,16 @@ public class TagBookmarkDialog extends DialogFragment {
       ArrayList<Tag> newTags = new ArrayList<>();
       newTags.addAll(adapter.getTags());
       newTags.add(new Tag(-1, newTagString));
+
+      mBookmarkTags = new ArrayList<>();
       if (mBookmarkIds == null) {
         if (mBookmarkId < 0 && mPage > 0) {
           mBookmarkId = adapter.getBookmarkId(mSura, mAyah, mPage);
         }
-        mBookmarkTags = mBookmarkId < 0 ? null :
-            adapter.getBookmarkTagIds(mBookmarkId);
-      } else {
-        mBookmarkTags = null;
+
+        if (mBookmarkId > 0) {
+          mBookmarkTags = adapter.getBookmarkTagIds(mBookmarkId);
+        }
       }
       return newTags;
     }
@@ -335,7 +337,7 @@ public class TagBookmarkDialog extends DialogFragment {
     protected void onPostExecute(ArrayList<Tag> result) {
       if (result != null) {
         for (Tag tag : result) {
-          if (mBookmarkTags != null && mBookmarkTags.contains(tag.mId)) {
+          if (mBookmarkTags.contains(tag.mId)) {
             tag.setChecked(true);
           }
         }
