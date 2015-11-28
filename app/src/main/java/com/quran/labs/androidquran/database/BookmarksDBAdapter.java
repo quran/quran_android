@@ -116,19 +116,22 @@ public class BookmarksDBAdapter {
   }
 
   public List<Long> getBookmarkTagIds(long bookmarkId) {
-    List<Long> bookmarkTags = null;
-    Cursor cursor = mDb.query(BookmarkTagTable.TABLE_NAME,
-        new String[]{BookmarkTagTable.TAG_ID},
-        BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
-        null, null, null, BookmarkTagTable.TAG_ID + " ASC");
-    if (cursor != null) {
-      bookmarkTags = new ArrayList<Long>();
-      while (cursor.moveToNext()) {
-        bookmarkTags.add(cursor.getLong(0));
+    List<Long> bookmarkTags = new ArrayList<>();
+    Cursor cursor = null;
+    try {
+      cursor = mDb.query(BookmarkTagTable.TABLE_NAME,
+          new String[]{BookmarkTagTable.TAG_ID},
+          BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
+          null, null, null, BookmarkTagTable.TAG_ID + " ASC");
+      if (cursor != null) {
+        while (cursor.moveToNext()) {
+          bookmarkTags.add(cursor.getLong(0));
+        }
       }
-      cursor.close();
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
     }
-    return bookmarkTags.size() > 0 ? bookmarkTags : null;
+    return bookmarkTags;
   }
 
   public List<Tag> getBookmarkTags(long bookmarkId) {
