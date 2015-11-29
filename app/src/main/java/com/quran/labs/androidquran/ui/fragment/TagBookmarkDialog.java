@@ -161,10 +161,10 @@ public class TagBookmarkDialog extends DialogFragment {
     listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Tag tag = (Tag) mAdapter.getItem(position);
-        if (tag.mId >= 0) {
+        if (tag.id >= 0) {
           tag.toggle();
           setMadeChanges();
-        } else if (tag.mId == -1) {
+        } else if (tag.id == -1) {
           Context context = getActivity();
           if (context != null &&
               context instanceof OnBookmarkTagsUpdateListener) {
@@ -255,7 +255,7 @@ public class TagBookmarkDialog extends DialogFragment {
 
     @Override
     public long getItemId(int position) {
-      return mTags.get(position).mId;
+      return mTags.get(position).id;
     }
 
     @Override
@@ -281,7 +281,7 @@ public class TagBookmarkDialog extends DialogFragment {
       final Tag tag = (Tag) getItem(position);
       holder = (ViewHolder) convertView.getTag();
       holder.tagName.setText(tag.toString());
-      if (tag.mId == -1) {
+      if (tag.id == -1) {
         holder.addImage.setVisibility(View.VISIBLE);
         holder.checkBox.setVisibility(View.GONE);
       } else {
@@ -337,7 +337,7 @@ public class TagBookmarkDialog extends DialogFragment {
     protected void onPostExecute(ArrayList<Tag> result) {
       if (result != null) {
         for (Tag tag : result) {
-          if (mBookmarkTags.contains(tag.mId)) {
+          if (mBookmarkTags.contains(tag.id)) {
             tag.setChecked(true);
           }
         }
@@ -407,8 +407,7 @@ public class TagBookmarkDialog extends DialogFragment {
 
       if (mBookmarkIds == null) {
         if (mBookmarkId < 0) {
-          mBookmarkId = adapter.addBookmarkIfNotExists(mSura,
-              mAyah, mPage);
+          mBookmarkId = adapter.addBookmarkIfNotExists(mSura, mAyah, mPage);
         }
         adapter.tagBookmark(mBookmarkId, mTags);
       } else {

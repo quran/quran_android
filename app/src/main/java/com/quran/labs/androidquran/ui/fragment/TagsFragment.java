@@ -136,17 +136,17 @@ public class TagsFragment extends AbsMarkersFragment {
       LongSparseArray<List<Bookmark>> tagMap = new LongSparseArray<>();
       
       for (Bookmark bookmark : bookmarks){
-         List<Tag> bookmarkTags = bookmark.mTags;
+         List<Tag> bookmarkTags = bookmark.tags;
          if (bookmarkTags.size() == 0) {
             unTagged.add(bookmark);
          } else {
             for (int i = 0, bookmarkTagsSize = bookmarkTags.size(); i < bookmarkTagsSize; i++) {
                Tag tag = bookmarkTags.get(i);
-               List<Bookmark> tagBookmarkList = tagMap.get(tag.mId);
+               List<Bookmark> tagBookmarkList = tagMap.get(tag.id);
                if (tagBookmarkList == null) {
                   List<Bookmark> newList = new ArrayList<>();
                   newList.add(bookmark);
-                  tagMap.put(tag.mId, newList);
+                  tagMap.put(tag.id, newList);
                } else {
                   tagBookmarkList.add(bookmark);
                }
@@ -156,13 +156,13 @@ public class TagsFragment extends AbsMarkersFragment {
 
       for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
          Tag tag = tags.get(i);
-         List<Bookmark> tagBookmarkList = tagMap.get(tag.mId);
+         List<Bookmark> tagBookmarkList = tagMap.get(tag.id);
 
          // add the tag header
          final QuranRow.Builder builder = new QuranRow.Builder()
              .withType(QuranRow.BOOKMARK_HEADER)
-             .withText(tag.mName)
-             .withTagId(tag.mId);
+             .withText(tag.name)
+             .withTagId(tag.id);
          rows.add(builder.build());
 
          // no bookmarks in this tag, so move on
@@ -172,7 +172,7 @@ public class TagsFragment extends AbsMarkersFragment {
 
          // and now the bookmarks
          for (Bookmark bookmark : tagBookmarkList) {
-            QuranRow row = createRowFromBookmark(activity, bookmark, tag.mId);
+            QuranRow row = createRowFromBookmark(activity, bookmark, tag.id);
             rows.add(row);
          }
       }

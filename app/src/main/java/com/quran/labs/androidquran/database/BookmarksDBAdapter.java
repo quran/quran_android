@@ -80,7 +80,7 @@ public class BookmarksDBAdapter {
 
         Bookmark bookmark = new Bookmark(id, sura, ayah, page, time);
         if (loadTags) {
-          bookmark.mTags = getBookmarkTags(id);
+          bookmark.tags = getBookmarkTags(id);
         }
         bookmarks.add(bookmark);
       }
@@ -242,13 +242,13 @@ public class BookmarksDBAdapter {
     try {
       for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
         Tag t = tags.get(i);
-        if (t.mId < 0 || !t.isChecked()) {
+        if (t.id < 0 || !t.isChecked()) {
           continue;
         }
         for (long bookmarkId : bookmarkIds) {
           ContentValues values = new ContentValues();
           values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
-          values.put(BookmarkTagTable.TAG_ID, t.mId);
+          values.put(BookmarkTagTable.TAG_ID, t.id);
           mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
         }
       }
@@ -265,18 +265,18 @@ public class BookmarksDBAdapter {
     try {
       for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
         Tag t = tags.get(i);
-        if (t.mId < 0) {
+        if (t.id < 0) {
           continue;
         }
         if (t.isChecked()) {
           ContentValues values = new ContentValues();
           values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
-          values.put(BookmarkTagTable.TAG_ID, t.mId);
+          values.put(BookmarkTagTable.TAG_ID, t.id);
           mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
         } else {
           mDb.delete(BookmarkTagTable.TABLE_NAME,
               BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId +
-                  " AND " + BookmarkTagTable.TAG_ID + "=" + t.mId, null);
+                  " AND " + BookmarkTagTable.TAG_ID + "=" + t.id, null);
         }
       }
     } catch (Exception e) {

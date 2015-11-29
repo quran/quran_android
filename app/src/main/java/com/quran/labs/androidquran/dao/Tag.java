@@ -6,13 +6,13 @@ import android.widget.Checkable;
 
 public class Tag implements Checkable, Parcelable {
 
-  public long mId;
-  public String mName;
-  public boolean mChecked = false;
+  public long id;
+  public String name;
+  private boolean isChecked = false;
 
   public Tag(long id, String name) {
-    mId = id;
-    mName = name;
+    this.id = id;
+    this.name = name;
   }
 
   public Tag(Parcel parcel) {
@@ -21,22 +21,22 @@ public class Tag implements Checkable, Parcelable {
 
   @Override
   public String toString() {
-    return mName == null ? super.toString() : mName;
+    return name == null ? super.toString() : name;
   }
 
   @Override
   public boolean isChecked() {
-    return mChecked;
+    return isChecked;
   }
 
   @Override
   public void setChecked(boolean checked) {
-    mChecked = checked;
+    isChecked = checked;
   }
 
   @Override
   public void toggle() {
-    mChecked = !mChecked;
+    isChecked = !isChecked;
   }
 
   @Override
@@ -46,15 +46,15 @@ public class Tag implements Checkable, Parcelable {
 
   @Override
   public void writeToParcel(Parcel dest, int flags) {
-    dest.writeLong(mId);
-    dest.writeString(mName);
-    dest.writeByte((byte) (mChecked ? 1 : 0));
+    dest.writeLong(id);
+    dest.writeString(name);
+    dest.writeByte((byte) (isChecked ? 1 : 0));
   }
 
   public void readFromParcel(Parcel parcel) {
-    mId = parcel.readLong();
-    mName = parcel.readString();
-    mChecked = parcel.readByte() == 1;
+    id = parcel.readLong();
+    name = parcel.readString();
+    isChecked = parcel.readByte() == 1;
   }
 
   public static final Creator<Tag> CREATOR =

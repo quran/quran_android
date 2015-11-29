@@ -244,8 +244,8 @@ public class QuranPageFragment extends Fragment
     protected void onPostExecute(List<Bookmark> result) {
       if (result != null && !result.isEmpty() && isAdded()) {
         for (Bookmark taggedAyah : result) {
-          mImageView.highlightAyah(taggedAyah.mSura,
-              taggedAyah.mAyah, HighlightType.BOOKMARK);
+          mImageView.highlightAyah(taggedAyah.sura,
+              taggedAyah.ayah, HighlightType.BOOKMARK);
         }
         if (mCoordinatesData == null) {
           if (mCurrentTask != null &&
