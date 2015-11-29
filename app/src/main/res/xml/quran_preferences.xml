@@ -144,6 +144,16 @@
             android:key="@string/prefs_audio_manager_key"
             android:title="@string/prefs_audio_manager"
             android:summary="@string/prefs_audio_manager_summary"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="@string/prefs_advanced_category_key"
+        android:title="@string/prefs_category_advanced" >
+
+        <com.quran.labs.androidquran.ui.preference.QuranPreference
+            android:key="@string/prefs_export"
+            android:title="@string/prefs_export_title"
+            android:summary="@string/prefs_export_summary"/>
 
         <com.quran.labs.androidquran.ui.preference.DataListPreference
             android:key="@string/prefs_app_location"
