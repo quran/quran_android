@@ -9,7 +9,7 @@ public class Bookmark {
   public Integer ayah;
   public int page;
   public long timestamp;
-  public List<Tag> tags;
+  public List<Long> tags;
 
   public Bookmark(long id, Integer sura, Integer ayah,
       int page, long timestamp) {

@@ -80,7 +80,7 @@ public class BookmarksDBAdapter {
 
         Bookmark bookmark = new Bookmark(id, sura, ayah, page, time);
         if (loadTags) {
-          bookmark.tags = getBookmarkTags(id);
+          bookmark.tags = getBookmarkTagIds(id);
         }
         bookmarks.add(bookmark);
       }
@@ -101,28 +101,6 @@ public class BookmarksDBAdapter {
       if (cursor != null) {
         while (cursor.moveToNext()) {
           bookmarkTags.add(cursor.getLong(0));
-        }
-      }
-    } finally {
-      DatabaseUtils.closeCursor(cursor);
-    }
-    return bookmarkTags;
-  }
-
-  @NonNull
-  public List<Tag> getBookmarkTags(long bookmarkId) {
-    List<Tag> bookmarkTags = new ArrayList<>();
-    Cursor cursor = null;
-    try {
-      cursor = mDb.query(BookmarkTagTable.TABLE_NAME,
-          new String[]{BookmarkTagTable.TAG_ID},
-          BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
-          null, null, null, BookmarkTagTable.TAG_ID + " ASC");
-      // TODO Use join to get tag name as well
-      if (cursor != null) {
-        while (cursor.moveToNext()) {
-          long id = cursor.getLong(0);
-          bookmarkTags.add(new Tag(id, null));
         }
       }
     } finally {
