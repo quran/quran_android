@@ -276,12 +276,12 @@ public class TabletFragment extends Fragment
       if (result != null && !result.isEmpty() && mMode == Mode.ARABIC &&
           mRightImageView != null && mLeftImageView != null) {
         for (Bookmark taggedAyah : result) {
-          if (taggedAyah.mPage == mPageNumber - 1) {
+          if (taggedAyah.page == mPageNumber - 1) {
             mRightImageView.highlightAyah(
-                taggedAyah.mSura, taggedAyah.mAyah, HighlightType.BOOKMARK);
-          } else if (taggedAyah.mPage == mPageNumber) {
+                taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+          } else if (taggedAyah.page == mPageNumber) {
             mLeftImageView.highlightAyah(
-                taggedAyah.mSura, taggedAyah.mAyah, HighlightType.BOOKMARK);
+                taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
           }
         }
         if (mCoordinateData == null) {

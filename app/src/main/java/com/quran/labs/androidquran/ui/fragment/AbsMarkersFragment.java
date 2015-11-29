@@ -310,25 +310,25 @@ public abstract class AbsMarkersFragment extends Fragment {
     final QuranRow.Builder builder = new QuranRow.Builder();
 
     if (bookmark.isPageBookmark()) {
-      final int sura = QuranInfo.getSuraNumberFromPage(bookmark.mPage);
-      builder.withText(QuranInfo.getSuraNameString(context, bookmark.mPage))
-          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.mPage))
+      final int sura = QuranInfo.getSuraNumberFromPage(bookmark.page);
+      builder.withText(QuranInfo.getSuraNameString(context, bookmark.page))
+          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.page))
           .withType(QuranRow.PAGE_BOOKMARK)
           .withSura(sura)
           .withImageResource(R.drawable.ic_favorite);
     } else {
       final String title =
-          QuranInfo.getAyahString(bookmark.mSura, bookmark.mAyah, context);
+          QuranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
       builder.withText(title)
-          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.mPage))
+          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.page))
           .withType(QuranRow.AYAH_BOOKMARK)
-          .withSura(bookmark.mSura)
-          .withAyah(bookmark.mAyah)
+          .withSura(bookmark.sura)
+          .withAyah(bookmark.ayah)
           .withImageResource(R.drawable.ic_favorite)
           .withImageOverlayColor(mAyahBookmarkOverlayColor);
     }
-    builder.withPage(bookmark.mPage)
-        .withBookmarkId(bookmark.mId);
+    builder.withPage(bookmark.page)
+        .withBookmarkId(bookmark.id);
     if (tagId != null) {
       builder.withTagId(tagId);
     }

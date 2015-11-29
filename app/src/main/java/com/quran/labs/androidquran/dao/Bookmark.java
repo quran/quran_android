@@ -4,23 +4,23 @@ import java.util.List;
 
 public class Bookmark {
 
-  public long mId;
-  public Integer mSura;
-  public Integer mAyah;
-  public int mPage;
-  public long mTimestamp;
-  public List<Tag> mTags;
+  public long id;
+  public Integer sura;
+  public Integer ayah;
+  public int page;
+  public long timestamp;
+  public List<Tag> tags;
 
   public Bookmark(long id, Integer sura, Integer ayah,
       int page, long timestamp) {
-    mId = id;
-    mSura = sura;
-    mAyah = ayah;
-    mPage = page;
-    mTimestamp = timestamp;
+    this.id = id;
+    this.sura = sura;
+    this.ayah = ayah;
+    this.page = page;
+    this.timestamp = timestamp;
   }
 
   public boolean isPageBookmark() {
-    return mSura == null && mAyah == null;
+    return sura == null && ayah == null;
   }
 }
