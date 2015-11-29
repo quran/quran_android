@@ -26,4 +26,6 @@
     <string translatable="false" name="prefs_download_category_key">downloadCategoryKey</string>
     <string translatable="false" name="prefs_translation_manager_key">translationManagerKey</string>
     <string translatable="false" name="prefs_audio_manager_key">audioManagerKey</string>
+    <string translatable="false" name="prefs_advanced_category_key">advancedCategoryKey</string>
+    <string translatable="false" name="prefs_export">exportKey</string>
 </resources>

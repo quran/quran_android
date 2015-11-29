@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.model.BookmarkImportExportModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.ui.AudioManagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
@@ -34,6 +35,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 public class QuranSettingsFragment extends PreferenceFragment implements
     SharedPreferences.OnSharedPreferenceChangeListener {
   private static final String TAG = QuranSettingsFragment.class.getSimpleName();
@@ -46,6 +51,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
   private boolean mIsPaused;
   private String mInternalSdcardLocation;
   private AlertDialog mDialog;
+  private Subscription mExportSubscription = null;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -58,8 +64,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       Preference tabletModePreference =
           findPreference(Constants.PREF_TABLET_ENABLED);
       PreferenceCategory category =
-          (PreferenceCategory) findPreference(
-              Constants.PREF_DISPLAY_CATEGORY);
+          (PreferenceCategory) findPreference(Constants.PREF_DISPLAY_CATEGORY);
       category.removePreference(tabletModePreference);
     }
 
@@ -79,6 +84,27 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       @Override
       public boolean onPreferenceClick(Preference preference) {
         startActivity(new Intent(getActivity(), AudioManagerActivity.class));
+        return true;
+      }
+    });
+
+    final Preference exportPref = findPreference(Constants.PREF_EXPORT);
+    exportPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        BookmarkImportExportModel model = new BookmarkImportExportModel(getActivity());
+        if (mExportSubscription == null) {
+          mExportSubscription = model.exportBookmarksObservable()
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(new Action1<Boolean>() {
+                @Override
+                public void call(Boolean aBoolean) {
+                  String text = aBoolean ? "success" : "failure";
+                  Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+                  mExportSubscription = null;
+                }
+              });
+        }
         return true;
       }
     });
@@ -109,6 +135,10 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
   @Override
   public void onDestroy() {
+    if (mExportSubscription != null) {
+      mExportSubscription.unsubscribe();
+    }
+
     if (mDialog != null) {
       mDialog.dismiss();
     }
@@ -117,8 +147,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
   private void hideStorageListPref() {
     PreferenceCategory category =
-        (PreferenceCategory) findPreference(
-            Constants.PREF_DOWNLOAD_CATEGORY);
+        (PreferenceCategory) findPreference(Constants.PREF_ADVANCED_CATEGORY);
     category.removePreference(mListStoragePref);
   }
 
