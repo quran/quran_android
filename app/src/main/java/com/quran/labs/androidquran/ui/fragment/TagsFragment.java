@@ -136,17 +136,17 @@ public class TagsFragment extends AbsMarkersFragment {
       LongSparseArray<List<Bookmark>> tagMap = new LongSparseArray<>();
       
       for (Bookmark bookmark : bookmarks){
-         List<Tag> bookmarkTags = bookmark.tags;
-         if (bookmarkTags.size() == 0) {
+         List<Long> bookmarkTagIds = bookmark.tags;
+         if (bookmarkTagIds.size() == 0) {
             unTagged.add(bookmark);
          } else {
-            for (int i = 0, bookmarkTagsSize = bookmarkTags.size(); i < bookmarkTagsSize; i++) {
-               Tag tag = bookmarkTags.get(i);
-               List<Bookmark> tagBookmarkList = tagMap.get(tag.id);
+            for (int i = 0, bookmarkTagsSize = bookmarkTagIds.size(); i < bookmarkTagsSize; i++) {
+               long tagId = bookmarkTagIds.get(i);
+               List<Bookmark> tagBookmarkList = tagMap.get(tagId);
                if (tagBookmarkList == null) {
                   List<Bookmark> newList = new ArrayList<>();
                   newList.add(bookmark);
-                  tagMap.put(tag.id, newList);
+                  tagMap.put(tagId, newList);
                } else {
                   tagBookmarkList.add(bookmark);
                }
