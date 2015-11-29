@@ -843,8 +843,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       clearUiVisibilityListener();
     }
 
-    mBookmarksAdapter.close();
-
     // remove broadcast receivers
     LocalBroadcastManager.getInstance(this)
         .unregisterReceiver(mAudioReceiver);

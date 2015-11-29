@@ -9,7 +9,6 @@ import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -26,28 +25,10 @@ public class BookmarksDBAdapter {
   public static final int SORT_ALPHABETICAL = 2;
 
   private SQLiteDatabase mDb;
-  private BookmarksDBHelper mDbHelper;
 
   public BookmarksDBAdapter(Context context) {
-    mDbHelper = BookmarksDBHelper.getInstance(context);
-  }
-
-  public void open() throws SQLException {
-    if (mDb == null) {
-      mDb = mDbHelper.getWritableDatabase();
-    }
-  }
-
-  public void close() {
-    // disabling for now - since we have a singleton helper,
-    // we should be okay...
-
-      /*
-      if (mDb != null){
-		   try { mDbHelper.close(); } catch (Exception e){ }
-         mDb = null;
-      }
-      */
+    BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context);
+    mDb = dbHelper.getWritableDatabase();
   }
 
   public List<Bookmark> getBookmarkedAyahsOnPage(int page) {
@@ -63,13 +44,6 @@ public class BookmarksDBAdapter {
   }
 
   public List<Bookmark> getBookmarks(boolean loadTags, int sortOrder, Integer pageFilter) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return null;
-      }
-    }
-
     String orderBy;
     switch (sortOrder) {
       case SORT_LOCATION:
@@ -115,6 +89,7 @@ public class BookmarksDBAdapter {
     return bookmarks;
   }
 
+  @NonNull
   public List<Long> getBookmarkTagIds(long bookmarkId) {
     List<Long> bookmarkTags = new ArrayList<>();
     Cursor cursor = null;
@@ -161,13 +136,6 @@ public class BookmarksDBAdapter {
   }
 
   public long getBookmarkId(Integer sura, Integer ayah, int page) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return -1;
-      }
-    }
-
     Cursor cursor = null;
     try {
       cursor = mDb.query(BookmarksTable.TABLE_NAME,
@@ -187,12 +155,6 @@ public class BookmarksDBAdapter {
   }
 
   public long addBookmarkIfNotExists(Integer sura, Integer ayah, int page) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return -1;
-      }
-    }
     long bookmarkId = getBookmarkId(sura, ayah, page);
     if (bookmarkId < 0) {
       bookmarkId = addBookmark(sura, ayah, page);
@@ -201,13 +163,6 @@ public class BookmarksDBAdapter {
   }
 
   public long addBookmark(Integer sura, Integer ayah, int page) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return -1;
-      }
-    }
-
     ContentValues values = new ContentValues();
     values.put(BookmarksTable.SURA, sura);
     values.put(BookmarksTable.AYAH, ayah);
@@ -216,29 +171,18 @@ public class BookmarksDBAdapter {
   }
 
   public boolean removeBookmark(long bookmarkId) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return false;
-      }
-    }
     clearBookmarkTags(bookmarkId);
     return mDb.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null) == 1;
   }
 
+  @NonNull
   public List<Tag> getTags() {
     return getTags(SORT_ALPHABETICAL);
   }
 
+  @NonNull
   public List<Tag> getTags(int sortOrder) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return null;
-      }
-    }
-
     String orderBy;
     switch (sortOrder) {
       case SORT_DATE_ADDED:
@@ -269,26 +213,12 @@ public class BookmarksDBAdapter {
   }
 
   public long addTag(String name) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return -1;
-      }
-    }
-
     ContentValues values = new ContentValues();
     values.put(TagsTable.NAME, name);
     return mDb.insert(TagsTable.TABLE_NAME, null, values);
   }
 
   public boolean updateTag(long id, String newName) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return false;
-      }
-    }
-
     ContentValues values = new ContentValues();
     values.put(TagsTable.ID, id);
     values.put(TagsTable.NAME, newName);
@@ -297,13 +227,6 @@ public class BookmarksDBAdapter {
   }
 
   public boolean removeTag(long tagId) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return false;
-      }
-    }
-
     boolean removed = mDb.delete(TagsTable.TABLE_NAME,
         TagsTable.ID + "=" + tagId, null) == 1;
     if (removed) {
@@ -315,16 +238,10 @@ public class BookmarksDBAdapter {
   }
 
   public void tagBookmarks(long[] bookmarkIds, List<Tag> tags) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return;
-      }
-    }
-
     mDb.beginTransaction();
     try {
-      for (Tag t : tags) {
+      for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
+        Tag t = tags.get(i);
         if (t.mId < 0 || !t.isChecked()) {
           continue;
         }
@@ -344,13 +261,6 @@ public class BookmarksDBAdapter {
   }
 
   public void tagBookmark(long bookmarkId, List<Tag> tags) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return;
-      }
-    }
-
     mDb.beginTransaction();
     try {
       for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
@@ -378,25 +288,12 @@ public class BookmarksDBAdapter {
   }
 
   public void untagBookmark(long bookmarkId, long tagId) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return;
-      }
-    }
     mDb.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId + " AND "
             + BookmarkTagTable.TAG_ID + "=" + tagId, null);
   }
 
   public int clearBookmarkTags(long bookmarkId) {
-    if (mDb == null) {
-      open();
-      if (mDb == null) {
-        return -1;
-      }
-    }
-
     return mDb.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
   }
