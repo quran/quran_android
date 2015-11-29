@@ -4,8 +4,8 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
+import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
 import com.quran.labs.androidquran.task.QueryBookmarkedAyahsTask;
 import com.quran.labs.androidquran.task.QueryPageCoordsTask;
@@ -241,9 +241,9 @@ public class QuranPageFragment extends Fragment
     }
 
     @Override
-    protected void onPostExecute(List<BookmarksDBAdapter.Bookmark> result) {
+    protected void onPostExecute(List<Bookmark> result) {
       if (result != null && !result.isEmpty() && isAdded()) {
-        for (BookmarksDBAdapter.Bookmark taggedAyah : result) {
+        for (Bookmark taggedAyah : result) {
           mImageView.highlightAyah(taggedAyah.mSura,
               taggedAyah.mAyah, HighlightType.BOOKMARK);
         }
