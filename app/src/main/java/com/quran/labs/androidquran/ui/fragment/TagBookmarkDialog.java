@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 
 import android.app.Activity;
@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class TagBookmarkDialog extends DialogFragment {
@@ -43,6 +44,7 @@ public class TagBookmarkDialog extends DialogFragment {
   private Integer mAyah;
   private int mPage = -1;
   private List<Tag> mTags;
+  private HashSet<Long> mCheckedTags = new HashSet<>();
   private TagsAdapter mAdapter;
 
   private AsyncTask mCurrentTask;
@@ -54,6 +56,7 @@ public class TagBookmarkDialog extends DialogFragment {
   private static final String EXTRA_SURA = "sura";
   private static final String EXTRA_AYAH = "ayah";
   private static final String TAG_LIST = "taglist";
+  private static final String CHECKED_TAG_LIST = "checked_tag_list";
 
   public static TagBookmarkDialog newInstance(long bookmarkId) {
     final Bundle args = new Bundle();
@@ -111,8 +114,8 @@ public class TagBookmarkDialog extends DialogFragment {
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putBoolean(MADE_CHANGES, mMadeChanges);
-    outState.putParcelableArrayList(TAG_LIST,
-        (ArrayList<? extends Parcelable>) mTags);
+    outState.putParcelableArrayList(TAG_LIST, (ArrayList<? extends Parcelable>) mTags);
+    outState.putSerializable(CHECKED_TAG_LIST, mCheckedTags);
     super.onSaveInstanceState(outState);
   }
 
@@ -143,10 +146,23 @@ public class TagBookmarkDialog extends DialogFragment {
     if (savedInstanceState != null) {
       mMadeChanges = savedInstanceState.getBoolean(MADE_CHANGES);
       mTags = savedInstanceState.getParcelableArrayList(TAG_LIST);
+      //noinspection unchecked
+      HashSet<Long> set = (HashSet<Long>) savedInstanceState.getSerializable(CHECKED_TAG_LIST);
+      if (set != null) {
+        mCheckedTags = set;
+      }
     }
 
     if (mTags == null) {
       new RefreshTagsTask().execute();
+    }
+  }
+
+  private void toggleTag(long id) {
+    if (mCheckedTags.contains(id)) {
+      mCheckedTags.remove(id);
+    } else {
+      mCheckedTags.add(id);
     }
   }
 
@@ -162,7 +178,7 @@ public class TagBookmarkDialog extends DialogFragment {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Tag tag = (Tag) mAdapter.getItem(position);
         if (tag.id >= 0) {
-          tag.toggle();
+          toggleTag(tag.id);
           setMadeChanges();
         } else if (tag.id == -1) {
           Context context = getActivity();
@@ -172,12 +188,10 @@ public class TagBookmarkDialog extends DialogFragment {
           }
         }
 
-        if (view.getTag() != null) {
-          Object viewTag = view.getTag();
-          if (viewTag instanceof ViewHolder) {
-            ViewHolder holder = (ViewHolder) viewTag;
-            holder.checkBox.setChecked(tag.isChecked());
-          }
+        Object viewTag = view.getTag();
+        if (viewTag instanceof ViewHolder) {
+          ViewHolder holder = (ViewHolder) viewTag;
+          holder.checkBox.setChecked(mCheckedTags.contains(tag.id));
         }
       }
     });
@@ -264,8 +278,7 @@ public class TagBookmarkDialog extends DialogFragment {
     }
 
     @Override
-    public View getView(int position, View convertView,
-        ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
       ViewHolder holder;
       if (convertView == null) {
         convertView = mInflater.inflate(R.layout.tag_row, parent, false);
@@ -287,10 +300,10 @@ public class TagBookmarkDialog extends DialogFragment {
       } else {
         holder.addImage.setVisibility(View.GONE);
         holder.checkBox.setVisibility(View.VISIBLE);
-        holder.checkBox.setChecked(tag.isChecked());
+        holder.checkBox.setChecked(mCheckedTags.contains(tag.id));
         holder.checkBox.setOnClickListener(new OnClickListener() {
           public void onClick(View v) {
-            tag.toggle();
+            toggleTag(tag.id);
             setMadeChanges();
           }
         });
@@ -338,7 +351,7 @@ public class TagBookmarkDialog extends DialogFragment {
       if (result != null) {
         for (Tag tag : result) {
           if (mBookmarkTags.contains(tag.id)) {
-            tag.setChecked(true);
+            mCheckedTags.add(tag.id);
           }
         }
         mMadeChanges = false;
@@ -351,7 +364,6 @@ public class TagBookmarkDialog extends DialogFragment {
   }
 
   class ViewHolder {
-
     CheckBox checkBox;
     TextView tagName;
     ImageView addImage;
@@ -377,7 +389,7 @@ public class TagBookmarkDialog extends DialogFragment {
     @Override
     protected void onPostExecute(Tag result) {
       if (result != null && mTags != null && mAdapter != null) {
-        result.setChecked(true);
+        mCheckedTags.add(result.id);
         mTags.add(mTags.size() - 1, result);
         mAdapter.notifyDataSetChanged();
         setMadeChanges();
@@ -397,7 +409,7 @@ public class TagBookmarkDialog extends DialogFragment {
     protected Void doInBackground(Void... params) {
       BookmarksDBAdapter adapter = null;
       Activity activity = getActivity();
-      if (activity != null && activity instanceof BookmarkHandler) {
+      if (activity instanceof BookmarkHandler) {
         adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
       }
 
@@ -409,9 +421,9 @@ public class TagBookmarkDialog extends DialogFragment {
         if (mBookmarkId < 0) {
           mBookmarkId = adapter.addBookmarkIfNotExists(mSura, mAyah, mPage);
         }
-        adapter.tagBookmark(mBookmarkId, mTags);
+        adapter.tagBookmark(mBookmarkId, mCheckedTags);
       } else {
-        adapter.tagBookmarks(mBookmarkIds, mTags);
+        adapter.tagBookmarks(mBookmarkIds, mCheckedTags);
       }
       return null;
     }
@@ -421,7 +433,7 @@ public class TagBookmarkDialog extends DialogFragment {
       mCurrentTask = null;
       mMadeChanges = false;
       final Activity activity = getActivity();
-      if (activity != null && activity instanceof OnBookmarkTagsUpdateListener) {
+      if (activity instanceof OnBookmarkTagsUpdateListener) {
         ((OnBookmarkTagsUpdateListener) activity).onBookmarkTagsUpdated();
       }
 

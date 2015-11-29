@@ -15,6 +15,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class BookmarksDBAdapter {
 
@@ -215,54 +216,45 @@ public class BookmarksDBAdapter {
     return removed;
   }
 
-  public void tagBookmarks(long[] bookmarkIds, List<Tag> tags) {
+  public void tagBookmarks(long[] bookmarkIds, Set<Long> tagIds) {
     mDb.beginTransaction();
     try {
-      for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
-        Tag t = tags.get(i);
-        if (t.id < 0 || !t.isChecked()) {
-          continue;
-        }
+      for (Long tagId : tagIds) {
         for (long bookmarkId : bookmarkIds) {
           ContentValues values = new ContentValues();
           values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
-          values.put(BookmarkTagTable.TAG_ID, t.id);
+          values.put(BookmarkTagTable.TAG_ID, tagId);
           mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
         }
       }
+      mDb.setTransactionSuccessful();
     } catch (Exception e) {
       Log.d(TAG, "exception in tagBookmark", e);
+    } finally {
+      mDb.endTransaction();
     }
-
-    mDb.setTransactionSuccessful();
-    mDb.endTransaction();
   }
 
-  public void tagBookmark(long bookmarkId, List<Tag> tags) {
+  public void tagBookmark(long bookmarkId, Set<Long> tagIds) {
     mDb.beginTransaction();
     try {
-      for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
-        Tag t = tags.get(i);
-        if (t.id < 0) {
-          continue;
-        }
-        if (t.isChecked()) {
-          ContentValues values = new ContentValues();
-          values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
-          values.put(BookmarkTagTable.TAG_ID, t.id);
-          mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
-        } else {
-          mDb.delete(BookmarkTagTable.TABLE_NAME,
-              BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId +
-                  " AND " + BookmarkTagTable.TAG_ID + "=" + t.id, null);
-        }
+      // delete all tags for this bookmark, then re-add the relevant ones - since we're in a
+      // transaction, we should be okay.
+      mDb.delete(BookmarkTagTable.TABLE_NAME,
+          BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
+
+      for (Long tagId : tagIds) {
+        ContentValues values = new ContentValues();
+        values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
+        values.put(BookmarkTagTable.TAG_ID, tagId);
+        mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
       }
+      mDb.setTransactionSuccessful();
     } catch (Exception e) {
       Log.d(TAG, "exception in tagBookmark", e);
+    } finally {
+      mDb.endTransaction();
     }
-
-    mDb.setTransactionSuccessful();
-    mDb.endTransaction();
   }
 
   public void untagBookmark(long bookmarkId, long tagId) {
