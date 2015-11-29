@@ -204,12 +204,6 @@ public class QuranActivity extends QuranActionBarActivity
     super.onPause();
   }
 
-  @Override
-  protected void onDestroy() {
-    mBookmarksDBAdapter.close();
-    super.onDestroy();
-  }
-
   private boolean isRtl() {
     return mSettings.isArabicNames() || QuranUtils.isRtl();
   }
