@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.database;
 
+import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
@@ -9,10 +11,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Checkable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +90,7 @@ public class BookmarksDBAdapter {
     Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
         null, query, null, null, null, orderBy);
     if (cursor != null) {
-      bookmarks = new ArrayList<Bookmark>();
+      bookmarks = new ArrayList<>();
       while (cursor.moveToNext()) {
         long id = cursor.getLong(0);
         Integer sura = cursor.getInt(1);
@@ -414,92 +413,4 @@ public class BookmarksDBAdapter {
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
   }
 
-  public static class Tag implements Checkable, Parcelable {
-
-    public long mId;
-    public String mName;
-    public boolean mChecked = false;
-
-    public Tag(long id, String name) {
-      mId = id;
-      mName = name;
-    }
-
-    public Tag(Parcel parcel) {
-      readFromParcel(parcel);
-    }
-
-    @Override
-    public String toString() {
-      return mName == null ? super.toString() : mName;
-    }
-
-    @Override
-    public boolean isChecked() {
-      return mChecked;
-    }
-
-    @Override
-    public void setChecked(boolean checked) {
-      mChecked = checked;
-    }
-
-    @Override
-    public void toggle() {
-      mChecked = !mChecked;
-    }
-
-    @Override
-    public int describeContents() {
-      return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-      dest.writeLong(mId);
-      dest.writeString(mName);
-      dest.writeByte((byte) (mChecked ? 1 : 0));
-    }
-
-    public void readFromParcel(Parcel parcel) {
-      mId = parcel.readLong();
-      mName = parcel.readString();
-      mChecked = parcel.readByte() == 1;
-    }
-
-    public static final Parcelable.Creator<Tag> CREATOR =
-        new Parcelable.Creator<Tag>() {
-          public Tag createFromParcel(Parcel in) {
-            return new Tag(in);
-          }
-
-          public Tag[] newArray(int size) {
-            return new Tag[size];
-          }
-        };
-  }
-
-  public static class Bookmark {
-
-    public long mId;
-    public Integer mSura;
-    public Integer mAyah;
-    public int mPage;
-    public long mTimestamp;
-    public List<Tag> mTags;
-
-    public Bookmark(long id, Integer sura, Integer ayah,
-        int page, long timestamp) {
-      mId = id;
-      mSura = sura;
-      mAyah = ayah;
-      mPage = page;
-      mTimestamp = timestamp;
-    }
-
-    public boolean isPageBookmark() {
-      return mSura == null && mAyah == null;
-    }
-
-  }
 }

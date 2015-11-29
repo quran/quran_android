@@ -3,10 +3,9 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
 import com.quran.labs.androidquran.task.QueryBookmarkedAyahsTask;
 import com.quran.labs.androidquran.task.QueryPageCoordsTask;
@@ -30,11 +29,9 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -275,10 +272,10 @@ public class TabletFragment extends Fragment
     }
 
     @Override
-    protected void onPostExecute(List<BookmarksDBAdapter.Bookmark> result) {
+    protected void onPostExecute(List<Bookmark> result) {
       if (result != null && !result.isEmpty() && mMode == Mode.ARABIC &&
           mRightImageView != null && mLeftImageView != null) {
-        for (BookmarksDBAdapter.Bookmark taggedAyah : result) {
+        for (Bookmark taggedAyah : result) {
           if (taggedAyah.mPage == mPageNumber - 1) {
             mRightImageView.highlightAyah(
                 taggedAyah.mSura, taggedAyah.mAyah, HighlightType.BOOKMARK);

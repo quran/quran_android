@@ -2,14 +2,14 @@ package com.quran.labs.androidquran.task;
 
 import android.content.Context;
 
+import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.task.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class QueryBookmarkedAyahsTask extends AsyncTask<Integer, Void, List<BookmarksDBAdapter.Bookmark>> {
+public class QueryBookmarkedAyahsTask extends AsyncTask<Integer, Void, List<Bookmark>> {
   private BookmarksDBAdapter mBookmarksAdapter;
 
   public QueryBookmarkedAyahsTask(Context context) {
@@ -19,14 +19,14 @@ public class QueryBookmarkedAyahsTask extends AsyncTask<Integer, Void, List<Book
   }
 
   @Override
-  protected List<BookmarksDBAdapter.Bookmark> doInBackground(Integer... params) {
+  protected List<Bookmark> doInBackground(Integer... params) {
     if (params == null || mBookmarksAdapter == null) {
       return null;
     }
 
-    List<BookmarksDBAdapter.Bookmark> result = new ArrayList<BookmarksDBAdapter.Bookmark>();
+    List<Bookmark> result = new ArrayList<Bookmark>();
     for (Integer page : params) {
-      List<BookmarksDBAdapter.Bookmark> taggedAyahs = mBookmarksAdapter.getBookmarkedAyahsOnPage(page);
+      List<Bookmark> taggedAyahs = mBookmarksAdapter.getBookmarkedAyahsOnPage(page);
       result.addAll(taggedAyahs);
     }
 
