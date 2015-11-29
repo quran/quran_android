@@ -11,6 +11,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -133,34 +134,26 @@ public class BookmarksDBAdapter {
     return bookmarkTags;
   }
 
+  @NonNull
   public List<Tag> getBookmarkTags(long bookmarkId) {
-    List<Tag> bookmarkTags = null;
-    Cursor cursor = mDb.query(BookmarkTagTable.TABLE_NAME,
-        new String[]{BookmarkTagTable.TAG_ID},
-        BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
-        null, null, null, BookmarkTagTable.TAG_ID + " ASC");
-    // TODO Use join to get tag name as well
-    if (cursor != null) {
-      bookmarkTags = new ArrayList<Tag>();
-      while (cursor.moveToNext()) {
-        long id = cursor.getLong(0);
-        bookmarkTags.add(new Tag(id, null));
+    List<Tag> bookmarkTags = new ArrayList<>();
+    Cursor cursor = null;
+    try {
+      cursor = mDb.query(BookmarkTagTable.TABLE_NAME,
+          new String[]{BookmarkTagTable.TAG_ID},
+          BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
+          null, null, null, BookmarkTagTable.TAG_ID + " ASC");
+      // TODO Use join to get tag name as well
+      if (cursor != null) {
+        while (cursor.moveToNext()) {
+          long id = cursor.getLong(0);
+          bookmarkTags.add(new Tag(id, null));
+        }
       }
-      cursor.close();
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
     }
-    return bookmarkTags.size() > 0 ? bookmarkTags : null;
-  }
-
-  /** @return final bookmarked state after calling this method */
-  public boolean togglePageBookmark(int page) {
-    long bookmarkId = getBookmarkId(null, null, page);
-    if (bookmarkId < 0) {
-      addBookmark(page);
-      return true;
-    } else {
-      removeBookmark(bookmarkId);
-      return false;
-    }
+    return bookmarkTags;
   }
 
   public boolean isPageBookmarked(int page) {
@@ -188,18 +181,9 @@ public class BookmarksDBAdapter {
     } catch (Exception e) {
       // swallow the error for now
     } finally {
-      if (cursor != null) {
-        try {
-          cursor.close();
-        } catch (Exception e) {
-        }
-      }
+      DatabaseUtils.closeCursor(cursor);
     }
     return -1;
-  }
-
-  public long addBookmark(int page) {
-    return addBookmark(null, null, page);
   }
 
   public long addBookmarkIfNotExists(Integer sura, Integer ayah, int page) {
@@ -255,7 +239,7 @@ public class BookmarksDBAdapter {
       }
     }
 
-    String orderBy = null;
+    String orderBy;
     switch (sortOrder) {
       case SORT_DATE_ADDED:
         orderBy = TagsTable.ADDED_DATE + " DESC";
@@ -265,18 +249,21 @@ public class BookmarksDBAdapter {
         orderBy = TagsTable.NAME + " ASC";
         break;
     }
-    List<Tag> tags = null;
-    Cursor cursor = mDb.query(TagsTable.TABLE_NAME,
-        null, null, null, null, null, orderBy);
-    if (cursor != null) {
-      tags = new ArrayList<Tag>();
-      while (cursor.moveToNext()) {
-        long id = cursor.getLong(0);
-        String name = cursor.getString(1);
-        Tag tag = new Tag(id, name);
-        tags.add(tag);
+    List<Tag> tags = new ArrayList<>();
+    Cursor cursor = null;
+    try {
+      cursor = mDb.query(TagsTable.TABLE_NAME,
+          null, null, null, null, null, orderBy);
+      if (cursor != null) {
+        while (cursor.moveToNext()) {
+          long id = cursor.getLong(0);
+          String name = cursor.getString(1);
+          Tag tag = new Tag(id, name);
+          tags.add(tag);
+        }
       }
-      cursor.close();
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
     }
     return tags;
   }
@@ -341,9 +328,9 @@ public class BookmarksDBAdapter {
         if (t.mId < 0 || !t.isChecked()) {
           continue;
         }
-        for (int i = 0; i < bookmarkIds.length; i++) {
+        for (long bookmarkId : bookmarkIds) {
           ContentValues values = new ContentValues();
-          values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkIds[i]);
+          values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
           values.put(BookmarkTagTable.TAG_ID, t.mId);
           mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
         }
@@ -366,7 +353,8 @@ public class BookmarksDBAdapter {
 
     mDb.beginTransaction();
     try {
-      for (Tag t : tags) {
+      for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
+        Tag t = tags.get(i);
         if (t.mId < 0) {
           continue;
         }

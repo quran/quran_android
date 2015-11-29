@@ -133,16 +133,16 @@ public class TagsFragment extends AbsMarkersFragment {
       List<QuranRow> rows = new ArrayList<>();
       
       List<Bookmark> unTagged = new ArrayList<>();
-      LongSparseArray<List<Bookmark>> tagMap =
-          new LongSparseArray<>();
+      LongSparseArray<List<Bookmark>> tagMap = new LongSparseArray<>();
       
       for (Bookmark bookmark : bookmarks){
          List<Tag> bookmarkTags = bookmark.mTags;
-         if (bookmarkTags == null) {
+         if (bookmarkTags.size() == 0) {
             unTagged.add(bookmark);
          } else {
-            for (Tag tag : bookmarkTags) {
-               List <Bookmark> tagBookmarkList = tagMap.get(tag.mId);
+            for (int i = 0, bookmarkTagsSize = bookmarkTags.size(); i < bookmarkTagsSize; i++) {
+               Tag tag = bookmarkTags.get(i);
+               List<Bookmark> tagBookmarkList = tagMap.get(tag.mId);
                if (tagBookmarkList == null) {
                   List<Bookmark> newList = new ArrayList<>();
                   newList.add(bookmark);
@@ -153,8 +153,9 @@ public class TagsFragment extends AbsMarkersFragment {
             }
          }
       }
-      
-      for (Tag tag : tags) {
+
+      for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
+         Tag tag = tags.get(i);
          List<Bookmark> tagBookmarkList = tagMap.get(tag.mId);
 
          // add the tag header
@@ -165,7 +166,9 @@ public class TagsFragment extends AbsMarkersFragment {
          rows.add(builder.build());
 
          // no bookmarks in this tag, so move on
-         if (tagBookmarkList == null || tagBookmarkList.isEmpty()){ continue; }
+         if (tagBookmarkList == null || tagBookmarkList.isEmpty()) {
+            continue;
+         }
 
          // and now the bookmarks
          for (Bookmark bookmark : tagBookmarkList) {
