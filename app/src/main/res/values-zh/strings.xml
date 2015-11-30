@@ -124,7 +124,7 @@
     <string name="quran_juz2">卷</string>
     <string name="quran_page">页</string>
     <string name="quran_sura">章</string>
-    <string name="quran_ayah">节</string>
+    <string name="quran_ayah">节 %1$d</string>
     <string name="sura_ayah_notification_str">第%1$s章，第%2$d节</string>
 
     <string name="bookmarks_current_page">当前页</string>

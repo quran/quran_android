@@ -204,7 +204,7 @@
     <string name="quran_juz2">Juz</string>
     <string name="quran_page">Sahifa</string>
     <string name="quran_sura">Sura</string>
-    <string name="quran_ayah">Oyat</string>
+    <string name="quran_ayah">%1$d-oyat</string>
     <string name="quran_sura_title">%1$s surasi</string>
     <string name="sura_ayah_notification_str">%1$s surasi, %2$d-oyat</string>
 
