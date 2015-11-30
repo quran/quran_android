@@ -277,8 +277,8 @@ public class BaseQuranInfo {
   }
 
   public static String getAyahString(int sura, int ayah, Context context) {
-    return getSuraName(context, sura, true) + " - " + context.getString(R.string.quran_ayah)
-        + " " + QuranUtils.getLocalizedNumber(context, ayah);
+    return getSuraName(context, sura, true) + " - " + context.getString(R.string.quran_ayah,
+        Integer.valueOf(QuranUtils.getLocalizedNumber(context, ayah)));
   }
 
   public static String getSuraNameString(Context context, int page) {
