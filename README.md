@@ -76,6 +76,7 @@ Open Source Projects Used
 * [OkHttp](https://github.com/square/okhttp)
 * [RxJava](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
+* [moshi](https://github.com/square/moshi)
 
 Changelog
 ---------
