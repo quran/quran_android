@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -96,11 +97,17 @@ public class QuranSettingsFragment extends PreferenceFragment implements
         if (mExportSubscription == null) {
           mExportSubscription = model.exportBookmarksObservable()
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Action1<Boolean>() {
+              .subscribe(new Action1<Uri>() {
                 @Override
-                public void call(Boolean aBoolean) {
-                  String text = aBoolean ? "success" : "failure";
-                  Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
+                public void call(Uri uri) {
+                  if (uri != null) {
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("application/json");
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                    context.startActivity(Intent.createChooser(shareIntent,
+                        context.getString(R.string.prefs_export_title)));
+                  }
                   mExportSubscription = null;
                 }
               });
