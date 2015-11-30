@@ -70,6 +70,8 @@
     <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
     <string name="about_rxandroid">RxAndroid</string>
     <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
+    <string name="about_moshi">Moshi</string>
+    <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
     <string name="about_sliding_panel">AndroidSlidingUpPanel</string>
     <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
     <string name="about_others">Others</string>
