@@ -10,4 +10,12 @@ public class BookmarkData {
     this.tags = tags;
     this.bookmarks = bookmarks;
   }
+
+  public List<Tag> getTags() {
+    return this.tags;
+  }
+
+  public List<Bookmark> getBookmarks() {
+    return this.bookmarks;
+  }
 }

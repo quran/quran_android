@@ -201,6 +201,13 @@
     <string name="prefs_export_title">Export</string>
     <string name="prefs_export_summary">Export a copy of bookmarks and tags.</string>
 
+    <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
+    <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
+    <string name="import_data">Import Data</string>
+    <string name="import_data_and_override">If you import this file, it will replace all your \
+        bookmarks with %1$d bookmark(s) and %2$d tag(s). Import?</string>
+    <string name="import_successful">Import Successful</string>
+
     <string name="kitkat_external_title">Warning</string>
     <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran

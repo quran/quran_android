@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.database;
 
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
@@ -63,8 +64,17 @@ public class BookmarksDBAdapter {
           " AND " + BookmarksTable.SURA + " IS NOT NULL" +
           " AND " + BookmarksTable.AYAH + " IS NOT NULL";
     }
+
+    final String[] columns = new String[] {
+        BookmarksTable.ID,
+        BookmarksTable.SURA,
+        BookmarksTable.AYAH,
+        BookmarksTable.PAGE,
+        "strftime('%s', " + BookmarksTable.ADDED_DATE + ")"
+    };
+
     Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
-        null, query, null, null, null, orderBy);
+        columns, query, null, null, null, orderBy);
     if (cursor != null) {
       bookmarks = new ArrayList<>();
       while (cursor.moveToNext()) {
@@ -268,4 +278,53 @@ public class BookmarksDBAdapter {
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
   }
 
+  public boolean importBookmarks(BookmarkData data) {
+    boolean result = true;
+    mDb.beginTransaction();
+    try {
+      mDb.delete(BookmarksTable.TABLE_NAME, null, null);
+      mDb.delete(BookmarkTagTable.TABLE_NAME, null, null);
+      mDb.delete(TagsTable.TABLE_NAME, null, null);
+
+      ContentValues values = new ContentValues();
+
+      List<Tag> tags = data.getTags();
+      for (int i = 0, tagCount = tags.size(); i < tagCount; i++) {
+        Tag tag = tags.get(i);
+        values.clear();
+        values.put(TagsTable.NAME, tag.name);
+        values.put(TagsTable.ID, tag.id);
+        mDb.insert(TagsTable.TABLE_NAME, null, values);
+      }
+
+      List<Bookmark> bookmarks = data.getBookmarks();
+      for (int i = 0, bookmarkCount = bookmarks.size(); i < bookmarkCount; i++) {
+        Bookmark bookmark = bookmarks.get(i);
+
+        values.clear();
+        values.put(BookmarksTable.ID, bookmark.id);
+        values.put(BookmarksTable.SURA, bookmark.sura);
+        values.put(BookmarksTable.AYAH, bookmark.ayah);
+        values.put(BookmarksTable.PAGE, bookmark.page);
+        values.put(BookmarksTable.ADDED_DATE, bookmark.timestamp);
+        mDb.insert(BookmarksTable.TABLE_NAME, null, values);
+
+        List<Long> tagIds = bookmark.tags;
+        for (int t = 0; t < tagIds.size(); t++) {
+          values.clear();
+          values.put(BookmarkTagTable.BOOKMARK_ID, bookmark.id);
+          values.put(BookmarkTagTable.TAG_ID, tagIds.get(t));
+          mDb.insert(BookmarkTagTable.TABLE_NAME, null, values);
+        }
+      }
+
+      mDb.setTransactionSuccessful();
+    } catch (Exception e) {
+      result = false;
+    } finally {
+      mDb.endTransaction();
+    }
+
+    return result;
+  }
 }
