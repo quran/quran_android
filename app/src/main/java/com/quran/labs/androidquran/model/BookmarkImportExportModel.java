@@ -13,11 +13,14 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import okio.BufferedSink;
+import okio.BufferedSource;
 import okio.Okio;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
 public class BookmarkImportExportModel {
+  private static final String FILE_NAME = "quran_android.backup";
+
   private final BookmarkJsonModel jsonModel;
   private final BookmarksDBAdapter databaseAdapter;
   private final File externalFilesDir;
@@ -46,7 +49,7 @@ public class BookmarkImportExportModel {
     Uri result = null;
     try {
       if (externalFilesDir.exists() || externalFilesDir.mkdir()) {
-        File file = new File(externalFilesDir, "backup.json");
+        File file = new File(externalFilesDir, FILE_NAME);
         BufferedSink sink = Okio.buffer(Okio.sink(file));
         jsonModel.toJson(sink, data);
         sink.close();
@@ -58,5 +61,19 @@ public class BookmarkImportExportModel {
       // probably log at some point
     }
     return result;
+  }
+
+  public Observable<BookmarkData> readBookmarks(final BufferedSource source) {
+    return Observable.fromCallable(new Callable<BookmarkData>() {
+      @Override
+      public BookmarkData call() throws Exception {
+        try {
+          return jsonModel.fromJson(source);
+        } catch (IOException ioe) {
+          // log this in the future
+        }
+        return null;
+      }
+    }).subscribeOn(Schedulers.io());
   }
 }

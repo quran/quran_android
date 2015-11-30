@@ -11,8 +11,7 @@ public class Bookmark {
   public long timestamp;
   public List<Long> tags;
 
-  public Bookmark(long id, Integer sura, Integer ayah,
-      int page, long timestamp) {
+  public Bookmark(long id, Integer sura, Integer ayah, int page, long timestamp) {
     this.id = id;
     this.sura = sura;
     this.ayah = ayah;
