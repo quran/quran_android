@@ -166,7 +166,7 @@
     <string name="quran_juz2">Джуз</string>
     <string name="quran_page">Страница</string>
     <string name="quran_sura">Сура</string>
-    <string name="quran_ayah">Аят</string>
+    <string name="quran_ayah">Аят %1$d</string>
     <string name="quran_sura_title">Сура %1$s</string>
     <string name="sura_ayah_notification_str">Сура %1$s, Аят %2$d</string>
 

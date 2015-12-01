@@ -110,7 +110,7 @@
     <string name="quran_juz2">پارە</string>
     <string name="quran_page">بەت</string>
     <string name="quran_sura">سۈرە</string>
-    <string name="quran_ayah">ئايەت</string>
+    <string name="quran_ayah">%1$d ئايەت</string>
     <string name="quran_sura_title">%1$s - سۈرە</string>
     <string name="sura_ayah_notification_str">%1$s -سۈرە، %2$d - ئايەت</string>
 
