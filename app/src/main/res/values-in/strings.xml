@@ -5,7 +5,7 @@
     <string name="downloadPrompt">Untuk performa yang optimal, beberapa file perlu didownload. Jika anda memilih untuk tidak mendownload sekarang, setiap halaman yang dibuka nanti akan membutuhkan waktu lebih lama. Apakah anda ingin mendownload file yang dibutuhkan sekarang?</string>
     <string name="downloadTabletPrompt">Kami baru saja memutakhirkan halaman untuk tablet. Apakah anda ingin mendownloadnya sekarang?</string>
     <string name="downloadImportantPrompt">Ada sedikit update penting untuk mengoptimalkan Quran di perangkat anda. Apakah Anda ingin mendownloadnya sekarang?</string>
-	<string name="downloadPrompt_ok">Ya</string>
+    <string name="downloadPrompt_ok">Ya</string>
     <string name="downloadPrompt_no">Tidak</string>
     <string name="downloading_title">Sedang Mendownload&#8230;</string>
     <string name="downloading_message">Silakan tunggu. Sedang mendownload file. (Resumable)</string>
