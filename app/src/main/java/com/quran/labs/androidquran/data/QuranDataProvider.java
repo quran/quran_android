@@ -203,8 +203,7 @@ public class QuranDataProvider extends ContentProvider {
             String foundText = context
                 .getString(R.string.found_in_sura) +
                 " " + QuranInfo.getSuraName(context, sura, false) +
-                ", " + context.getString(R.string.quran_ayah) +
-                " " + ayah;
+                ", " + context.getString(R.string.quran_ayah, ayah);
 
             gotResults = true;
             MatrixCursor.RowBuilder row = mc.newRow();

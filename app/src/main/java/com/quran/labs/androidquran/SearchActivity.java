@@ -326,7 +326,7 @@ public class SearchActivity extends QuranActionBarActivity
       String suraName = QuranInfo.getSuraName(mContext, sura, false);
       holder.text.setText(Html.fromHtml(text));
       holder.metadata.setText(mContext.getString(R.string.found_in_sura) + " " + suraName
-          + ", " + mContext.getString(R.string.quran_ayah) + " " + ayah);
+          + ", " + mContext.getString(R.string.quran_ayah, ayah));
     }
 
     static class ViewHolder {

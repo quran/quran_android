@@ -134,7 +134,7 @@
     <string name="quran_juz2">جوزئـ\'</string>
     <string name="quran_page">پەڕەی</string>
     <string name="quran_sura">سورەتی</string>
-    <string name="quran_ayah">ئایەت</string>
+    <string name="quran_ayah">%1$d ئایەت</string>
     <string name="quran_sura_title">سورەت %1$s</string>
     <string name="sura_ayah_notification_str">سورەتی %1$s, ئایەتی %2$d</string>
 

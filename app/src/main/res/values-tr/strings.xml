@@ -96,7 +96,7 @@
     <string name="quran_juz2">Cüz</string>
     <string name="quran_page">Sayfa</string>
     <string name="quran_sura">Sureler</string>
-    <string name="quran_ayah">Âyet</string>
+    <string name="quran_ayah">%1$d.âyet</string>
     <string name="notification_download_canceled">İndirme iptal edildi</string>
     <string name="via_string">Kur\'an-ı Kerîm</string>
     <string name="update_available">Güncelleme var</string>
