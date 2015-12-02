@@ -36,9 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 public class QuranSettingsFragment extends PreferenceFragment implements
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -97,18 +97,28 @@ public class QuranSettingsFragment extends PreferenceFragment implements
         if (mExportSubscription == null) {
           mExportSubscription = model.exportBookmarksObservable()
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Action1<Uri>() {
+              .subscribe(new Subscriber<Uri>() {
                 @Override
-                public void call(Uri uri) {
-                  if (uri != null) {
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("application/json");
-                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                    context.startActivity(Intent.createChooser(shareIntent,
-                        context.getString(R.string.prefs_export_title)));
-                  }
+                public void onCompleted() {
                   mExportSubscription = null;
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                  mExportSubscription = null;
+                  if (isAdded()) {
+                    Toast.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
+                  }
+                }
+
+                @Override
+                public void onNext(Uri uri) {
+                  Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                  shareIntent.setType("application/json");
+                  shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                  shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                  context.startActivity(Intent.createChooser(shareIntent,
+                      context.getString(R.string.prefs_export_title)));
                 }
               });
         }

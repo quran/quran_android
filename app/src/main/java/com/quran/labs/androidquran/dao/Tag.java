@@ -13,6 +13,25 @@ public class Tag implements Parcelable {
     this.name = name;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    } else if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    Tag tag = (Tag) o;
+    return id == tag.id && name.equals(tag.name);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = (int) (id ^ (id >>> 32));
+    result = 31 * result + name.hashCode();
+    return result;
+  }
+
   public Tag(Parcel parcel) {
     readFromParcel(parcel);
   }
