@@ -98,8 +98,8 @@
     <string name="quranSearchType">Suralar</string>
 
     <plurals name="files_downloaded">
-        <item quantity="one">Bitta sura saqlandi</item>
-        <item quantity="other">%1$d ta sura saqlandi</item>
+        <item quantity="one">Bitta sura saqlangan</item>
+        <item quantity="other">%1$d ta sura saqlangan</item>
     </plurals>
 
     <!-- Shown above search results when we receive a search request. -->
@@ -182,6 +182,17 @@
     <string name="prefs_tablet_mode_title">Planshet rejimi</string>
     <string name="prefs_tablet_mode_enabled">Yotiq holatda ikki bet yonma-yon koʻrinadi</string>
     <string name="prefs_tablet_mode_disabled">Yotiq holatda ham faqat bitta bet koʻrinadi</string>
+    <string name="prefs_category_advanced">Ilgʻor</string>
+    <string name="prefs_export_title">Eksport</string>
+    <string name="prefs_export_summary">Xatchoʻp va teglarni eksport qilish</string>
+
+    <string name="import_data_permissions_error">Ruxsat xatoliklari tufayli zaxira faylini oʻqib boʻlmadi.</string>
+    <string name="import_data_error">Yaroqsiz zaxira fayl (yoxud zaxira faylni oʻqib boʻlmadi).</string>
+    <string name="import_data">Import</string>
+    <string name="import_data_and_override">Ushbu import barcha xatchoʻplarni %1$d ta xatchoʻp(lar) va %2$d ta teg(lar) bilan almashtiradi.
+        Import qilinsinmi?</string>
+    <string name="import_successful">Muvaffaqiyatli import qilindi</string>
+    <string name="export_data_error">Eksport qilishda xatolik yuz berdi.</string>
 
     <string name="kitkat_external_title">Ogohlantirish</string>
     <string name="kitkat_external_message">Ilovani tashqi xotiraga (SD kartaga) koʻchirib oʻtkazgach, agar u oʻchirib tashlab-qayta oʻrnatilsa
@@ -234,8 +245,8 @@
 
     <!-- downloading dialogs -->
     <string name="download_progress">%1$s/%2$s saqlandi</string>
-    <string name="download_sura_progress">%3$d-suraning %1$s / %2$s saqlanmoqda</string>
-    <string name="download_sura_ayah_progress">%1$d-sura %2$d-oyat saqlanmoqda</string>
+    <string name="download_sura_progress">%3$d-suraning %1$s (jami %2$s) saqlanmoqda&#8230;</string>
+    <string name="download_sura_ayah_progress">%1$d-sura %2$d-oyat saqlanmoqda&#8230;</string>
     <string name="process_progress">%1$d/%2$d ishlandi</string>
     <string name="download_retry">Qayta harakat qilish</string>
     <string name="download_cancel">Bekor qilish</string>
