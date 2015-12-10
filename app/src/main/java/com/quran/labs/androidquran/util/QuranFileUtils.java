@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
 public class QuranFileUtils {
@@ -225,7 +227,7 @@ public class QuranFileUtils {
     String urlString = IMG_BASE_URL + "width"
         + instance.getWidthParam() + "/"
         + filename;
-    Log.d(TAG, "want to download: " + urlString);
+    Timber.d("want to download: " + urlString);
 
     final Request request = new Request.Builder()
         .url(urlString)
@@ -250,7 +252,7 @@ public class QuranFileUtils {
         }
       }
     } catch (IOException ioe) {
-      Log.e(TAG, "exception downloading file", ioe);
+      Timber.e("exception downloading file",ioe);
     } finally {
       closeQuietly(stream);
     }
@@ -508,7 +510,7 @@ public class QuranFileUtils {
         deleteFileOrDirectory(currentDirectory);
         return true;
       } catch (IOException e) {
-        Log.e(TAG, "error moving app files", e);
+        Timber.e("error moving app files",e);
       }
     }
     return false;

@@ -30,6 +30,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import timber.log.Timber;
+
 public class JumpFragment extends DialogFragment {
   public static final String TAG = "JumpFragment";
 
@@ -170,7 +172,7 @@ public class JumpFragment extends DialogFragment {
             goToPage(text);
           }
         } catch (Exception e) {
-          Log.d(TAG, "Could not jump, something went wrong...", e);
+          Timber.d("Could not jump, something went wrong...",e);
         }
       }
     });

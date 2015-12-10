@@ -44,6 +44,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import timber.log.Timber;
+
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
@@ -245,7 +247,7 @@ public class TabletFragment extends Fragment
   }
 
   public void cleanup() {
-    android.util.Log.d(TAG, "cleaning up page " + mPageNumber);
+    Timber.d("cleaning up page " + mPageNumber);
     if (mLeftPageLoadTask != null) {
       mLeftPageLoadTask.cancel(false);
     }

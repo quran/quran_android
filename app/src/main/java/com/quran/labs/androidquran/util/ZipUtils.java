@@ -13,6 +13,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import timber.log.Timber;
+
 public class ZipUtils {
   public static final int BUFFER_SIZE = QuranDownloadService.BUFFER_SIZE;
   public static final String TAG = "ZipUtils";
@@ -65,7 +67,7 @@ public class ZipUtils {
       return true;
     }
     catch (IOException ioe) {
-      Log.e(TAG, "Error unzipping file: ", ioe);
+      Timber.e("Error unzipping file: ",ioe);
       return false;
     }
   }

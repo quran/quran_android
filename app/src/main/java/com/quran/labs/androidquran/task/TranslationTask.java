@@ -17,6 +17,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ahmedre
@@ -126,7 +128,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
          }
       }
       catch (Exception e){
-         Log.d(TAG, "unable to open " + databaseName + " - " + e);
+         Timber.d("unable to open " + databaseName + " - " + e);
       }
 
       return verses;

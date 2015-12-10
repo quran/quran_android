@@ -30,6 +30,8 @@ import android.util.Log;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class QuranDataProvider extends ContentProvider {
 
   private static final String TAG = QuranDataProvider.class.getSimpleName();
@@ -224,7 +226,7 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   private Cursor search(String query, String language, boolean wantSnippets) {
-    Log.d(TAG, "q: " + query + ", l: " + language);
+    Timber.d("q: " + query + ", l: " + language);
     if (language == null) {
       return null;
     }
@@ -244,7 +246,7 @@ public class QuranDataProvider extends ContentProvider {
 
     List<String> parts = uri.getPathSegments();
     for (String s : parts) {
-      Log.d(TAG, "uri part: " + s);
+      Timber.d("uri part: " + s);
     }
 
     final DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(getContext(), lang);

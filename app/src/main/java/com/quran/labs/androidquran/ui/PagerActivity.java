@@ -102,6 +102,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
@@ -253,11 +255,11 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     mIsActionBarHidden = true;
     if (savedInstanceState != null) {
-      android.util.Log.d(TAG, "non-null saved instance state!");
+      Timber.d("non-null saved instance state!");
       DownloadAudioRequest lastAudioRequest =
           savedInstanceState.getParcelable(LAST_AUDIO_DL_REQUEST);
       if (lastAudioRequest != null) {
-        android.util.Log.d(TAG, "restoring request from saved instance!");
+        Timber.d("restoring request from saved instance!");
         mLastAudioDownloadRequest = lastAudioRequest;
       }
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
@@ -374,7 +376,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       @Override
       public void onPageSelected(int position) {
-        Log.d(TAG, "onPageSelected(): " + position);
+        Timber.d("onPageSelected(): " + position);
         int page = QuranInfo.getPageFromPos(position, mDualPages);
         mSettings.setLastPage(page);
         if (mSettings.shouldDisplayMarkerPopup()) {
@@ -838,7 +840,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   protected void onDestroy() {
-    android.util.Log.d(TAG, "onDestroy()");
+    Timber.d("onDestroy()");
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
       clearUiVisibilityListener();
     }
@@ -1069,7 +1071,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         @Override
         public boolean onNavigationItemSelected(int itemPosition,
                                                 long itemId) {
-          Log.d(TAG, "item chosen: " + itemPosition);
+          Timber.d("item chosen: " + itemPosition);
           if (mTranslations != null &&
               mTranslations.size() > itemPosition) {
             TranslationItem item = mTranslations.get(itemPosition);
@@ -1319,7 +1321,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void highlightAyah(int sura, int ayah,
       boolean force, HighlightType type) {
-    Log.d(TAG, "highlightAyah() - " + sura + ":" + ayah);
+    Timber.d("highlightAyah() - " + sura + ":" + ayah);
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST ||
         PAGES_LAST < page) {
@@ -1369,7 +1371,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         items = adapter.getTranslations();
         adapter.close();
       } catch (Exception e) {
-        Log.d(TAG, "error getting translations list", e);
+        Timber.d("error getting translations list",e);
       }
       return null;
     }
@@ -1591,12 +1593,12 @@ public class PagerActivity extends QuranActionBarActivity implements
     boolean needsPermission = mNeedsPermissionToDownloadOver3g;
     if (needsPermission) {
       if (QuranUtils.isOnWifiNetwork(this)) {
-        Log.d(TAG, "on wifi, don't need permission for download...");
+        Timber.d("on wifi, don't need permission for download...");
         needsPermission = false;
       }
     }
 
-    Log.d(TAG, "seeing if we can play audio request...");
+    Timber.d("seeing if we can play audio request...");
     if (!QuranFileUtils.haveAyaPositionFile(this)) {
       if (needsPermission) {
         mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
@@ -1616,7 +1618,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
       startService(intent);
     } else if (AudioUtils.shouldDownloadGaplessDatabase(request)) {
-      Log.d(TAG, "need to download gapless database...");
+      Timber.d("need to download gapless database...");
       if (needsPermission) {
         mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
         return;
@@ -1636,11 +1638,11 @@ public class PagerActivity extends QuranActionBarActivity implements
       startService(intent);
     } else if (AudioUtils.haveAllFiles(request)) {
       if (!AudioUtils.shouldDownloadBasmallah(request)) {
-        android.util.Log.d(TAG, "have all files, playing!");
+        Timber.d("have all files, playing!");
         play(request);
         mLastAudioDownloadRequest = null;
       } else {
-        android.util.Log.d(TAG, "should download basmalla...");
+        Timber.d("should download basmalla...");
         if (needsPermission) {
           mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
           return;
@@ -1677,7 +1679,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       String notificationTitle = QuranInfo.getNotificationTitle(this,
           request.getMinAyah(), request.getMaxAyah(), request.isGapless());
       String qariUrl = AudioUtils.getQariUrl(request.getQariItem(), true);
-      android.util.Log.d(TAG, "need to start download: " + qariUrl);
+      Timber.d("need to start download: " + qariUrl);
 
       // start service
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,

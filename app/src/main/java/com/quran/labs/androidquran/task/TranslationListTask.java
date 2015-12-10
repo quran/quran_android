@@ -29,6 +29,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class TranslationListTask extends
         AsyncTask<Void, Void, List<TranslationItem>> {
 
@@ -66,7 +68,7 @@ public class TranslationListTask extends
          pw.write(response);
          pw.close();
       } catch (Exception e) {
-         Log.e(TAG, "failed to cache response", e);
+         Timber.e("failed to cache response",e);
       }
    }
 
@@ -85,7 +87,7 @@ public class TranslationListTask extends
             br.close();
          }
       } catch (Exception e) {
-         Log.e(TAG, "failed reading cached response", e);
+         Timber.e("failed reading cached response",e);
       }
       return response;
    }
@@ -180,7 +182,7 @@ public class TranslationListTask extends
                      }
                   }
                   catch (Exception e){
-                     Log.d(tag, "exception opening database: " + name, e);
+                     Timber.d("exception opening database: " + name,e);
                   }
                }
                else { needsUpdate = true; }
@@ -194,7 +196,7 @@ public class TranslationListTask extends
             }
 
             if (item.exists){
-               Log.d(tag, "found: " + name + " with " +
+               Timber.d("found: " + name + " with " +
                        item.localVersion + " vs server's " +
                        item.latestVersion);
             }
@@ -212,7 +214,7 @@ public class TranslationListTask extends
          adapter.close();
       }
       catch (JSONException je){
-         Log.d(tag, "error parsing json: " + je);
+         Timber.d("error parsing json: " + je);
       }
 
       return items;
@@ -253,7 +255,7 @@ public class TranslationListTask extends
          return result;
       }
       catch (Exception e){
-         Log.d(TAG, "error downloading translation data: " + e);
+         Timber.d("error downloading translation data: " + e);
       }
 
       return null;

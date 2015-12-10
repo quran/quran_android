@@ -54,6 +54,8 @@ import android.view.MenuItem;
 
 import java.lang.ref.WeakReference;
 
+import timber.log.Timber;
+
 public class QuranActivity extends QuranActionBarActivity
     implements BookmarkHandler, AddTagDialog.OnTagChangedListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener {
@@ -306,9 +308,9 @@ public class QuranActivity extends QuranActionBarActivity
       showTranslationsUpgradeDialog();
     } else if (!sUpdatedTranslations) {
       long time = mSettings.getLastUpdatedTranslationDate();
-      Log.d(TAG, "checking whether we should update translations..");
+      Timber.d("checking whether we should update translations..");
       if (System.currentTimeMillis() - time > Constants.TRANSLATION_REFRESH_TIME) {
-        Log.d(TAG, "updating translations list...");
+        Timber.d("updating translations list...");
         sUpdatedTranslations = true;
         new TranslationListTask(
             this, new UpgradeTranslationListener(this)).execute();

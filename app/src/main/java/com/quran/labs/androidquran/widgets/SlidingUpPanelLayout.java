@@ -59,6 +59,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
+import timber.log.Timber;
+
 public class SlidingUpPanelLayout extends ViewGroup {
 
   private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
@@ -592,7 +594,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     final int childCount = getChildCount();
 
     if (childCount > 2) {
-      Log.e(TAG, "onMeasure: More than two child views are not supported.");
+      Timber.e("onMeasure: More than two child views are not supported.");
     } else if (getChildAt(1).getVisibility() == GONE) {
       panelHeight = 0;
     }

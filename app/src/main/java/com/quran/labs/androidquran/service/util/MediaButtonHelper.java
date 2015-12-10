@@ -12,6 +12,8 @@ import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import timber.log.Timber;
+
 /**
  * Class that assists with handling new media button APIs available in API level 8.
  */
@@ -60,7 +62,7 @@ public class MediaButtonHelper {
         throw new RuntimeException(e);
       }
     } catch (IllegalAccessException e) {
-      Log.e(TAG, "IllegalAccessException invoking registerMediaButtonEventReceiver.");
+      Timber.e("IllegalAccessException invoking registerMediaButtonEventReceiver.");
       e.printStackTrace();
     }
   }
@@ -85,7 +87,7 @@ public class MediaButtonHelper {
         throw new RuntimeException(e);
       }
     } catch (IllegalAccessException e) {
-      Log.e(TAG, "IllegalAccessException invoking unregisterMediaButtonEventReceiver.");
+      Timber.e("IllegalAccessException invoking unregisterMediaButtonEventReceiver.");
       e.printStackTrace();
     }
   }

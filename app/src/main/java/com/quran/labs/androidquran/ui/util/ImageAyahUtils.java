@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import timber.log.Timber;
+
 public class ImageAyahUtils {
    private static final String TAG = ImageAyahUtils.class.getSimpleName();
 
@@ -84,7 +86,7 @@ public class ImageAyahUtils {
          String closestAyah = null;
          List<String> ayat = lineAyahs.get(closestLine);
          if (ayat != null){
-            Log.d(TAG, "no exact match, " + ayat.size() + " candidates.");
+            Timber.d("no exact match, " + ayat.size() + " candidates.");
             for (String ayah : ayat){
                List<AyahBounds> bounds = coords.get(ayah);
                if (bounds == null){ continue; }
@@ -114,7 +116,7 @@ public class ImageAyahUtils {
          }
 
          if (closestAyah != null){
-            Log.d(TAG, "fell back to closest ayah of " + closestAyah);
+            Timber.d("fell back to closest ayah of " + closestAyah);
             return getAyahFromKey(closestAyah);
          }
       }

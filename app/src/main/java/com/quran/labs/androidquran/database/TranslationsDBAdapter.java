@@ -14,6 +14,8 @@ import android.util.SparseArray;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static com.quran.labs.androidquran.database.TranslationsDBHelper.TranslationsTable;
 
 public class TranslationsDBAdapter {
@@ -127,7 +129,7 @@ public class TranslationsDBAdapter {
       }
       catch (Exception e){
          result = false;
-         Log.d(TAG, "error writing translation updates", e);
+         Timber.d("error writing translation updates",e);
       }
       mDb.endTransaction();
 
