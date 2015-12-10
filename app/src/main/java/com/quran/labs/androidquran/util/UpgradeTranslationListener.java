@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class UpgradeTranslationListener implements TranslationListTask.TranslationsUpdatedListener {
   private static final String TAG = UpgradeTranslationListener.class.getSimpleName();
 
@@ -32,7 +34,7 @@ public class UpgradeTranslationListener implements TranslationListTask.Translati
       }
     }
 
-    Log.d(TAG, "done checking translations - " +
+    Timber.d("done checking translations - " +
         (needsUpgrade ? "" : "no ") + "upgrade needed");
     QuranSettings.getInstance(mAppContext).setHaveUpdatedTranslations(needsUpgrade);
   }

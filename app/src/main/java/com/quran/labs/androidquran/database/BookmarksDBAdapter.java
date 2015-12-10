@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 public class BookmarksDBAdapter {
 
   private static final String TAG = BookmarksDBAdapter.class.getSimpleName();
@@ -239,7 +241,7 @@ public class BookmarksDBAdapter {
       }
       mDb.setTransactionSuccessful();
     } catch (Exception e) {
-      Log.d(TAG, "exception in tagBookmark", e);
+      Timber.d("exception in tagBookmark",e);
     } finally {
       mDb.endTransaction();
     }
@@ -261,7 +263,7 @@ public class BookmarksDBAdapter {
       }
       mDb.setTransactionSuccessful();
     } catch (Exception e) {
-      Log.d(TAG, "exception in tagBookmark", e);
+      Timber.d("exception in tagBookmark",e);
     } finally {
       mDb.endTransaction();
     }

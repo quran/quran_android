@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.quran.labs.androidquran.BuildConfig;
 
+import timber.log.Timber;
+
 /**
  * taken from android documentation bitmap-fun example
  * http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
@@ -69,7 +71,7 @@ public class RecyclingBitmapDrawable extends BitmapDrawable {
         if (mCacheRefCount <= 0 && mDisplayRefCount <= 0 && mHasBeenDisplayed
                 && hasValidBitmap()) {
             if (BuildConfig.DEBUG) {
-                Log.d(LOG_TAG, "No longer being used or cached so recycling. "
+                Timber.d("No longer being used or cached so recycling. "
                         + toString());
             }
 

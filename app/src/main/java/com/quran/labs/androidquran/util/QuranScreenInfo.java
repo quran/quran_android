@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import timber.log.Timber;
+
 public class QuranScreenInfo {
 
   private static final String TAG = "QuranScreenInfo";
@@ -28,7 +30,7 @@ public class QuranScreenInfo {
     mHeight = point.y;
     mMaxWidth = (point.x > point.y) ? point.x : point.y;
     mPageProvider = QuranConstants.getPageProvider(display);
-    Log.d(TAG, "initializing with " + point.y + " and " + point.x);
+    Timber.d("initializing with " + point.y + " and " + point.x);
   }
 
   public static QuranScreenInfo getInstance() {

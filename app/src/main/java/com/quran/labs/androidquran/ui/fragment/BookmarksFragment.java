@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class BookmarksFragment extends AbsMarkersFragment {
    private static final String TAG = BookmarksFragment.class.getSimpleName();
 
@@ -126,7 +128,7 @@ public class BookmarksFragment extends AbsMarkersFragment {
       if (showLastPage && (lastPage > Constants.PAGES_LAST ||
               lastPage < Constants.PAGES_FIRST)) {
          showLastPage = false;
-         Log.w(TAG, "Got invalid last saved page as: "+lastPage);
+         Timber.w("Got invalid last saved page as: "+lastPage);
       }
 
       List<QuranRow> rows = new ArrayList<>();

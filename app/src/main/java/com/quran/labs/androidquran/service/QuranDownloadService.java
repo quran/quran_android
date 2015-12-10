@@ -40,6 +40,7 @@ import java.util.Map;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
+import timber.log.Timber;
 
 public class QuranDownloadService extends Service implements
     ZipUtils.ZipListener<NotificationDetails> {
@@ -178,7 +179,7 @@ public class QuranDownloadService extends Service implements
             currentLast.getStringExtra(ProgressIntent.DOWNLOAD_KEY);
         if (download != null && currentDownload != null &&
             download.equals(currentDownload)) {
-          android.util.Log.d(TAG, "resending last broadcast...");
+          Timber.d("resending last broadcast...");
           mBroadcastManager.sendBroadcast(currentLast);
 
           String state = currentLast.getStringExtra(ProgressIntent.STATE);
@@ -188,7 +189,7 @@ public class QuranDownloadService extends Service implements
             // of a race condition in which we miss the error pref and
             // miss the success/failure notification and this re-play
             sendNoOpMessage(startId);
-            android.util.Log.d(TAG, "leaving...");
+            Timber.d("leaving...");
             return;
           }
         }
@@ -307,7 +308,7 @@ public class QuranDownloadService extends Service implements
       NotificationDetails details) {
     // make the directory if it doesn't exist
     new File(destination).mkdirs();
-    android.util.Log.d(TAG, "making directory: " + destination);
+    Timber.d("making directory: " + destination);
 
     details.setFileStatus(1, 1);
 
@@ -355,7 +356,7 @@ public class QuranDownloadService extends Service implements
       }
     }
 
-    Log.d(TAG, "downloadRange for " + totalAyahs + " between " +
+    Timber.d("downloadRange for " + totalAyahs + " between " +
         startSura + ":" + startAyah + " to " + endSura + ":" +
         endAyah + ", gaplessFlag: " + isGapless);
 
@@ -386,7 +387,7 @@ public class QuranDownloadService extends Service implements
         }
         String destDir = destination + File.separator;
         String url = String.format(Locale.US, urlString, i);
-        Log.d(TAG, "gapless asking to download " + url + " to " + destDir);
+        Timber.d("gapless asking to download " + url + " to " + destDir);
         final String filename = QuranDownloadService.getFilenameFromUrl(url);
         if (!new File(destDir, filename).exists()) {
           result = downloadFileWrapper(url, destDir, filename, details);
@@ -423,7 +424,7 @@ public class QuranDownloadService extends Service implements
       new File(destDir).mkdirs();
       File basmallah = new File(destDir, "1" + extension);
       if (!basmallah.exists()) {
-        Log.d(TAG, "basmallah doesn't exist, downloading...");
+        Timber.d("basmallah doesn't exist, downloading...");
         String url = String.format(Locale.US, urlString, 1, 1);
         String destFile = 1 + extension;
         result = downloadFileWrapper(url, destDir, destFile, details);
@@ -606,9 +607,9 @@ public class QuranDownloadService extends Service implements
         return downloadUrl(url, path, filename, notificationInfo);
       }
     } catch (IOException exception) {
-      Log.e(TAG, "Failed to download file", exception);
+      Timber.e("Failed to download file",exception);
     } catch (SecurityException se) {
-      Log.e(TAG, "Security exception while downloading file", se);
+      Timber.e("Security exception while downloading file",se);
     } finally {
       QuranFileUtils.closeQuietly(source);
     }

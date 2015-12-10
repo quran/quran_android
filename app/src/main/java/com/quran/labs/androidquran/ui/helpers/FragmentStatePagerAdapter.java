@@ -35,6 +35,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 /**
  * Implementation of {@link android.support.v4.view.PagerAdapter} that
  * uses a {@link Fragment} to manage each page. This class also handles
@@ -130,7 +132,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
       }
 
       Fragment fragment = getItem(position);
-      if (DEBUG) Log.v(TAG, "Adding item #" + position + ": f=" + fragment);
+      if (DEBUG) Timber.v("Adding item #" + position + ": f=" + fragment);
       if (mSavedState.size() > position) {
          Fragment.SavedState fss = mSavedState.get(position);
          if (fss != null) {
@@ -156,7 +158,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
       if (mCurTransaction == null) {
          mCurTransaction = mFragmentManager.beginTransaction();
       }
-      if (DEBUG) Log.v(TAG, "Removing item #" + position + ": f=" + object
+      if (DEBUG) Timber.v("Removing item #" + position + ": f=" + object
               + " v=" + ((Fragment)object).getView());
       while (mSavedState.size() <= position) {
          mSavedState.add(null);
@@ -259,7 +261,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
                   f.setMenuVisibility(false);
                   mFragments.set(index, f);
                } else {
-                  Log.w(TAG, "Bad fragment at key " + key);
+                  Timber.w("Bad fragment at key " + key);
                }
             }
          }

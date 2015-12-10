@@ -20,6 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
 public class AudioUtils {
@@ -204,7 +206,7 @@ public class AudioUtils {
         String filename = 1 + File.separator + 1 + AUDIO_EXTENSION;
         f = new File(baseDirectory + File.separator + filename);
         if (f.exists()) {
-          android.util.Log.d(TAG, "already have basmalla...");
+          Timber.d("already have basmalla...");
           return false;
         }
       } else {
@@ -231,7 +233,7 @@ public class AudioUtils {
     int endSura = maxAyah.getSura();
     int endAyah = maxAyah.getAyah();
 
-    android.util.Log.d(TAG, "seeing if need basmalla...");
+    Timber.d("seeing if need basmalla...");
 
     for (int i = startSura; i <= endSura; i++) {
       int lastAyah = QuranInfo.getNumAyahs(i);
@@ -245,7 +247,7 @@ public class AudioUtils {
 
       for (int j = firstAyah; j < lastAyah; j++) {
         if (j == 1 && i != 1 && i != 9) {
-          android.util.Log.d(TAG, "need basmalla for " + i + ":" + j);
+          Timber.d("need basmalla for " + i + ":" + j);
 
           return true;
         }
@@ -298,7 +300,7 @@ public class AudioUtils {
         }
         String p = request.getBaseUrl();
         String fileName = String.format(Locale.US, p, i);
-        Log.d(TAG, "gapless, checking if we have " + fileName);
+        Timber.d("gapless, checking if we have " + fileName);
         f = new File(fileName);
         if (!f.exists()) {
           return false;
@@ -306,7 +308,7 @@ public class AudioUtils {
         continue;
       }
 
-      Log.d(TAG, "not gapless, checking each ayah...");
+      Timber.d("not gapless, checking each ayah...");
       for (int j = firstAyah; j <= lastAyah; j++) {
         String filename = i + File.separator + j + AUDIO_EXTENSION;
         f = new File(baseDirectory + File.separator + filename);

@@ -58,12 +58,13 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.util.SparseIntArray;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+
+import timber.log.Timber;
 
 /**
  * Service that handles media playback. This is the Service through which we
@@ -289,7 +290,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
   @Override
   public void onCreate() {
-    Log.i(TAG, "debug: Creating service");
+    Timber.i("debug: Creating service");
     mHandler = new ServiceHandler(this);
 
     mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
@@ -299,7 +300,7 @@ public class AudioService extends Service implements OnCompletionListener,
     mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
     // create the Audio Focus Helper, if the Audio Focus feature is available
-    if (android.os.Build.VERSION.SDK_INT >= 8) {
+    if (Build.VERSION.SDK_INT >= 8) {
       mAudioFocusHelper = new AudioFocusHelper(
           getApplicationContext(), this);
     }
@@ -443,7 +444,7 @@ public class AudioService extends Service implements OnCompletionListener,
       Cursor cursor = null;
       try {
         cursor = db.getAyahTimings(sura);
-        Log.d(TAG, "got cursor of data");
+        Timber.d("got cursor of data");
 
         if (cursor != null && cursor.moveToFirst()) {
           map = new SparseIntArray();
@@ -488,7 +489,7 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void updateAudioPlayPosition() {
-    Log.d(TAG, "updateAudioPlayPosition");
+    Timber.d("updateAudioPlayPosition");
 
     if (mAudioRequest == null) {
       return;
@@ -505,7 +506,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
       int pos = mPlayer.getCurrentPosition();
       Integer ayahTime = mGaplessSuraData.get(ayah);
-      Log.d(TAG, "updateAudioPlayPosition: " + sura + ":" + ayah +
+      Timber.d("updateAudioPlayPosition: " + sura + ":" + ayah +
           ", currently at " + pos + " vs expected at " + ayahTime);
 
       if (ayahTime > pos) {
@@ -532,7 +533,7 @@ public class AudioService extends Service implements OnCompletionListener,
         }
       }
 
-      Log.d(TAG, "updateAudioPlayPosition: " + sura + ":" + ayah +
+      Timber.d("updateAudioPlayPosition: " + sura + ":" + ayah +
           ", decided ayah should be: " + updatedAyah);
 
       if (updatedAyah != ayah) {
@@ -597,7 +598,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (maxAyahs >= (updatedAyah + 1)) {
         Integer t = mGaplessSuraData.get(updatedAyah + 1);
         t = t - mPlayer.getCurrentPosition();
-        Log.d(TAG, "updateAudioPlayPosition postingDelayed after: " + t);
+        Timber.d("updateAudioPlayPosition postingDelayed after: " + t);
 
         if (t < 100) {
           t = 100;
@@ -835,7 +836,7 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void configAndStartMediaPlayer(boolean canSeek) {
-    Log.d(TAG, "configAndStartMediaPlayer()");
+    Timber.d("configAndStartMediaPlayer()");
     if (mAudioFocus == AudioFocus.NoFocusNoDuck) {
       // If we don't have audio focus and can't duck, we have to pause,
       // even if mState is State.Playing. But we stay in the Playing state
@@ -864,17 +865,17 @@ public class AudioService extends Service implements OnCompletionListener,
       return;
     }
 
-    Log.d(TAG, "checking if playing...");
+    Timber.d("checking if playing...");
     if (!mPlayer.isPlaying()) {
       if (canSeek && mAudioRequest.isGapless()) {
         int timing = getSeekPosition(false);
         if (timing != -1) {
-          Log.d(TAG, "got timing: " + timing +
+          Timber.d("got timing: " + timing +
               ", seeking and updating later...");
           mPlayer.seekTo(timing);
           return;
         } else {
-          Log.d(TAG, "no timing data yet, will try again...");
+          Timber.d("no timing data yet, will try again...");
           // try to play again after 200 ms
           mHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200);
           return;
@@ -947,7 +948,7 @@ public class AudioService extends Service implements OnCompletionListener,
         // otherwise, ayah of 1 will automatically play the file's basmala
       }
 
-      Log.d(TAG, "okay, we are preparing to play - streaming is: " +
+      Timber.d("okay, we are preparing to play - streaming is: " +
           isStreaming);
       createMediaPlayerIfNeeded();
       mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -1000,7 +1001,7 @@ public class AudioService extends Service implements OnCompletionListener,
       // to 'this').
       //
       // Until the media player is prepared, we *cannot* call start() on it!
-      Log.d(TAG, "preparingAsync()...");
+      Timber.d("preparingAsync()...");
       Crashlytics.log("prepareAsync: " + overrideResource + ", " + url);
       mPlayer.prepareAsync();
 
@@ -1014,7 +1015,7 @@ public class AudioService extends Service implements OnCompletionListener,
         mWifiLock.release();
       }
     } catch (IOException ex) {
-      Log.e(TAG, "IOException playing file: " + ex.getMessage());
+      Timber.e("IOException playing file: " + ex.getMessage());
       ex.printStackTrace();
     }
   }
@@ -1022,7 +1023,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
   @Override
   public void onSeekComplete(MediaPlayer mediaPlayer) {
-    Log.d(TAG, "seek complete! " +
+    Timber.d("seek complete! " +
         mediaPlayer.getCurrentPosition() +
         " vs " + mPlayer.getCurrentPosition());
     mPlayer.start();
@@ -1052,7 +1053,7 @@ public class AudioService extends Service implements OnCompletionListener,
   /** Called when media player is done preparing. */
   @Override
   public void onPrepared(MediaPlayer player) {
-    Log.d(TAG, "okay, prepared!");
+    Timber.d("okay, prepared!");
 
     // The media player is done preparing. That means we can start playing!
     mState = State.Playing;
@@ -1172,7 +1173,7 @@ public class AudioService extends Service implements OnCompletionListener,
   public boolean onError(MediaPlayer mp, int what, int extra) {
     //Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
     //      Toast.LENGTH_SHORT).show();
-    Log.e(TAG, "Error: what=" + String.valueOf(what) +
+    Timber.e("Error: what=" + String.valueOf(what) +
         ", extra=" + String.valueOf(extra));
 
     mState = State.Stopped;

@@ -18,6 +18,8 @@ import android.os.Build;
 import android.view.Display;
 import android.widget.Toast;
 
+import timber.log.Timber;
+
 public class QuranDisplayHelper {
    private static final String TAG = "QuranDisplayHelper";
    
@@ -31,7 +33,7 @@ public class QuranDisplayHelper {
         // let's only try if an sdcard is found... otherwise, let's tell
         // the user to mount their sdcard and try again.
         if (response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND) {
-          android.util.Log.d(TAG, "failed to get " + page +
+          Timber.d("failed to get " + page +
               " with name " + filename + " from sd...");
           response = QuranFileUtils.getImageFromWeb(context, filename);
         }

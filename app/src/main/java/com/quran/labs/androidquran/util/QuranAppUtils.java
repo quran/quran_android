@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import timber.log.Timber;
+
 public class QuranAppUtils {
    private static final String TAG = "QuranAppUtils";
 
@@ -42,10 +44,10 @@ public class QuranAppUtils {
          }
       }
       catch (Exception e){
-         Log.d(TAG, "error getting QuranApp url", e);
+         Timber.d("error getting QuranApp url",e);
       }
 
-      Log.d(TAG, "got back " + url + " and fallback " + fallbackUrl);
+      Timber.d("got back " + url + " and fallback " + fallbackUrl);
       return TextUtils.isEmpty(url)? fallbackUrl : url;
    }
 

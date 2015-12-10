@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import timber.log.Timber;
+
 class BookmarksDBHelper extends SQLiteOpenHelper {
 
    private static final String TAG = "BookmarksDBHelper";
@@ -90,11 +92,11 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	   if (newVersion <= oldVersion) {
-	      Log.w(TAG, "Can't downgrade from version " +
+	      Timber.w("Can't downgrade from version " +
                  oldVersion + " to version " + newVersion);
 	      return;
 	   }
-      Log.i(TAG, "Upgrading database from version " +
+      Timber.i("Upgrading database from version " +
               oldVersion + " to version " + newVersion);
 	   if (oldVersion < 2) {
 	      upgradeToVer2(db);
@@ -122,7 +124,7 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
          db.execSQL("INSERT INTO bookmarks(page) " +
                  "SELECT _id from page_bookmarks where bookmarked = 1");
       } catch (Exception e) {
-         Log.e(TAG, "Failed to copy old bookmarks", e);
+         Timber.e("Failed to copy old bookmarks",e);
       }
    }
 }

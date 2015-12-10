@@ -39,6 +39,7 @@ import java.util.List;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import timber.log.Timber;
 
 public class QuranSettingsFragment extends PreferenceFragment implements
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -135,14 +136,14 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     try {
       mStorageList = StorageUtils.getAllStorageLocations(context.getApplicationContext());
     } catch (Exception e) {
-      Log.d(TAG, "Exception while trying to get storage locations", e);
+      Timber.d("Exception while trying to get storage locations",e);
       mStorageList = new ArrayList<>();
     }
 
     // Hide app location pref if there is no storage option
     // except for the normal Environment.getExternalStorageDirectory
     if (mStorageList == null || mStorageList.size() <= 1) {
-      Log.d(TAG, "removing advanced settings from preferences");
+      Timber.d("removing advanced settings from preferences");
       hideStorageListPref();
     } else {
       mLoadStorageOptionsTask = new LoadStorageOptionsTask(context);
@@ -225,7 +226,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
           });
       mListStoragePref.setEnabled(true);
     } catch (Exception e) {
-      Log.e(TAG, "error loading storage options", e);
+      Timber.e("error loading storage options",e);
       hideStorageListPref();
     }
   }

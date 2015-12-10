@@ -22,6 +22,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import timber.log.Timber;
+
 /**
  * *************************************
  * taken from android documentation bitmap-fun example
@@ -312,9 +314,9 @@ public abstract class AsyncTask<Params, Progress, Result> {
             try {
                postResultIfNotInvoked(get());
             } catch (InterruptedException e) {
-               android.util.Log.w(LOG_TAG, e);
+               Timber.w("An interrupted exception occurred.", e);
             } catch (ExecutionException e) {
-               throw new RuntimeException("An error occured while executing doInBackground()",
+               throw new RuntimeException("An error occurred while executing doInBackground()",
                        e.getCause());
             } catch (CancellationException e) {
                postResultIfNotInvoked(null);

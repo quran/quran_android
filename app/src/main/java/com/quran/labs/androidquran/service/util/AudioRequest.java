@@ -11,6 +11,8 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public abstract class AudioRequest implements Parcelable {
 
   private static final String TAG = "AudioRequest";
@@ -132,7 +134,7 @@ public abstract class AudioRequest implements Parcelable {
   }
 
   public QuranAyah setCurrentAyah(int sura, int ayah) {
-    Log.d(TAG, "got setCurrentAyah of: " + sura + ":" + ayah);
+    Timber.d("got setCurrentAyah of: " + sura + ":" + ayah);
     if (mRepeatInfo.shouldRepeat()) {
       mRepeatInfo.incrementRepeat();
     } else {
@@ -194,7 +196,7 @@ public abstract class AudioRequest implements Parcelable {
 
     if (isGapless()) {
       String url = String.format(Locale.US, mBaseUrl, mCurrentSura);
-      Log.d(TAG, "isGapless, url: " + url);
+      Timber.d("isGapless, url: " + url);
       return url;
     }
 

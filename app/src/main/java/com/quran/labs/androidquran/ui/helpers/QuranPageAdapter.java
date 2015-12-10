@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.ViewGroup;
 
+import timber.log.Timber;
+
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 
@@ -67,7 +69,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 	@Override
 	public Fragment getItem(int position){
     int page = QuranInfo.getPageFromPos(position, mIsDualPages);
-	   android.util.Log.d(TAG, "getting page: " + page);
+	   Timber.d("getting page: " + page);
       if (mIsDualPages){
          return TabletFragment.newInstance(page,
                 mIsShowingTranslation? TabletFragment.Mode.TRANSLATION :

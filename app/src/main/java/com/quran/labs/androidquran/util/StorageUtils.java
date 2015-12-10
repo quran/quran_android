@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import timber.log.Timber;
+
 
 /**
  * Based on:
@@ -110,10 +112,10 @@ public class StorageUtils {
         mounts.remove(s);
       }
     } else {
-      Log.d(TAG, "Android version: " + Build.VERSION.SDK_INT + ", skip reading vold.fstab file");
+      Timber.d("Android version: " + Build.VERSION.SDK_INT + ", skip reading vold.fstab file");
     }
 
-    Log.d(TAG, "mounts list is: " + mounts);
+    Timber.d("mounts list is: " + mounts);
     return buildMountsList(context, mounts);
   }
 
@@ -148,7 +150,7 @@ public class StorageUtils {
       }
     }
 
-    Log.d(TAG, "final storage list is: " + list);
+    Timber.d("final storage list is: " + list);
     return list;
   }
 
@@ -161,33 +163,33 @@ public class StorageUtils {
     List<String> mounts = new ArrayList<>();
     mounts.add(sdcardPath);
 
-    Log.d(TAG, "reading mounts file begin");
+    Timber.d("reading mounts file begin");
     try {
       File mountFile = new File("/proc/mounts");
       if (mountFile.exists()) {
-        Log.d(TAG, "mounts file exists");
+        Timber.d("mounts file exists");
         Scanner scanner = new Scanner(mountFile);
         while (scanner.hasNext()) {
           String line = scanner.nextLine();
-          Log.d(TAG, "line: " + line);
+          Timber.d("line: " + line);
           if (line.startsWith("/dev/block/vold/")) {
             String[] lineElements = line.split(" ");
             String element = lineElements[1];
-            Log.d(TAG, "mount element is: " + element);
+            Timber.d("mount element is: " + element);
             if (!sdcardPath.equals(element)) {
               mounts.add(element);
             }
           } else {
-            Log.d(TAG, "skipping mount line: " + line);
+            Timber.d("skipping mount line: " + line);
           }
         }
       } else {
-        Log.d(TAG, "mounts file doesn't exist");
+        Timber.d("mounts file doesn't exist");
       }
 
-      Log.d(TAG, "reading mounts file end.. list is: " + mounts);
+      Timber.d("reading mounts file end.. list is: " + mounts);
     } catch (Exception e) {
-      Log.e(TAG, "Error reading mounts file", e);
+      Timber.e("Error reading mounts file",e);
     }
     return mounts;
   }
@@ -203,37 +205,37 @@ public class StorageUtils {
     Set<String> volds = new HashSet<>();
     volds.add(Environment.getExternalStorageDirectory().getAbsolutePath());
 
-    Log.d(TAG, "reading volds file");
+    Timber.d("reading volds file");
     try {
       File voldFile = new File("/system/etc/vold.fstab");
       if (voldFile.exists()) {
-        Log.d(TAG, "reading volds file begin");
+        Timber.d("reading volds file begin");
         Scanner scanner = new Scanner(voldFile);
         while (scanner.hasNext()) {
           String line = scanner.nextLine();
-          Log.d(TAG, "line: " + line);
+          Timber.d("line: " + line);
           if (line.startsWith("dev_mount")) {
             String[] lineElements = line.split(" ");
             String element = lineElements[2];
-            Log.d(TAG, "volds element is: " + element);
+            Timber.d("volds element is: " + element);
 
             if (element.contains(":")) {
               element = element.substring(0, element.indexOf(":"));
-              Log.d(TAG, "volds element is: " + element);
+              Timber.d("volds element is: " + element);
             }
 
-            Log.d(TAG, "adding volds element to list: " + element);
+            Timber.d("adding volds element to list: " + element);
             volds.add(element);
           } else {
-            Log.d(TAG, "skipping volds line: " + line);
+            Timber.d("skipping volds line: " + line);
           }
         }
       } else {
-        Log.d(TAG, "volds file doesn't exit");
+        Timber.d("volds file doesn't exit");
       }
-      Log.d(TAG, "reading volds file end.. list is: " + volds);
+      Timber.d("reading volds file end.. list is: " + volds);
     } catch (Exception e) {
-      Log.e(TAG, "Error reading volds file", e);
+      Timber.e("Error reading volds file",e);
     }
 
     return volds;

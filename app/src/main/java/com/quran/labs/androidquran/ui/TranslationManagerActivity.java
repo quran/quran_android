@@ -36,6 +36,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class TranslationManagerActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     TranslationListTask.TranslationsUpdatedListener {
@@ -130,7 +132,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
             f.delete();
           }
         } catch (Exception e) {
-          Log.d(TAG, "error removing old database file", e);
+          Timber.d("error removing old database file",e);
         }
       }
       mDownloadingItem.exists = true;
@@ -156,7 +158,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           f.delete();
         }
       } catch (Exception e) {
-        Log.d(TAG, "error restoring translation after failed download", e);
+        Timber.d("error restoring translation after failed download",e);
       }
     }
     mDownloadingItem = null;
@@ -279,7 +281,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       return;
     }
     String destination = mDatabaseDirectory;
-    Log.d(TAG, "downloading " + url + " to " + destination);
+    Timber.d("downloading " + url + " to " + destination);
 
     if (selectedItem.exists) {
       try {
@@ -293,7 +295,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           f.renameTo(newPath);
         }
       } catch (Exception e) {
-        Log.d(TAG, "error backing database file up", e);
+        Timber.d("error backing database file up",e);
       }
     }
 
