@@ -64,15 +64,15 @@
     <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
     <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
     <string name="about_open_source">Open Source Projects</string>
-    <string name="about_okhttp">OkHttp</string>
+    <string name="about_okhttp" translatable="false">OkHttp</string>
     <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
-    <string name="about_rxjava">RxJava</string>
+    <string name="about_rxjava" translatable="false">RxJava</string>
     <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
-    <string name="about_rxandroid">RxAndroid</string>
+    <string name="about_rxandroid" translatable="false">RxAndroid</string>
     <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
-    <string name="about_moshi">Moshi</string>
+    <string name="about_moshi" translatable="false">Moshi</string>
     <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
-    <string name="about_sliding_panel">AndroidSlidingUpPanel</string>
+    <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
     <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
     <string name="about_others">Others</string>
     <string name="about_contributors">Contributors</string>
