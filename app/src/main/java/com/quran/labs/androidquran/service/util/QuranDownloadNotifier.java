@@ -118,7 +118,7 @@ public class QuranDownloadNotifier {
       // calculate percentage based on files downloaded, files left,
       // and percentage of this file that is left
       double percent = (1.0 * downloadedSize) / (1.0 * totalSize);
-      double percentPerFile = 100 / details.totalFiles;
+      double percentPerFile = 100.0f / details.totalFiles;
       progress = (int)((percentPerFile * (details.currentFile - 1)) +
           (percent * percentPerFile));
       if (details.sura > 0 && details.ayah > 0) {
