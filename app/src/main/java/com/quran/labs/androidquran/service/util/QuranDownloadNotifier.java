@@ -59,6 +59,7 @@ public class QuranDownloadNotifier {
     public int sura;
     public int ayah;
     public boolean sendIndeterminate;
+    public boolean isGapless;
 
     public NotificationDetails(String title, String key, int type){
       this.key = key;
@@ -70,6 +71,10 @@ public class QuranDownloadNotifier {
     public void setFileStatus(int current, int total){
       totalFiles = total;
       currentFile = current;
+    }
+
+    public void setIsGapless(boolean isGapless) {
+      this.isGapless = isGapless;
     }
   }
 
@@ -118,9 +123,14 @@ public class QuranDownloadNotifier {
       // calculate percentage based on files downloaded, files left,
       // and percentage of this file that is left
       double percent = (1.0 * downloadedSize) / (1.0 * totalSize);
-      double percentPerFile = 100.0f / details.totalFiles;
-      progress = (int)((percentPerFile * (details.currentFile - 1)) +
-          (percent * percentPerFile));
+      if (details.isGapless) {
+        progress = (int)(percent * 100);
+      } else {
+        double percentPerFile = 100.0f / details.totalFiles;
+        progress = (int)((percentPerFile * (details.currentFile - 1)) +
+                (percent * percentPerFile));
+      }
+
       if (details.sura > 0 && details.ayah > 0) {
         progress = (int) (((float) details.currentFile / (float) details.totalFiles) * 100.0f);
       }
