@@ -34,8 +34,6 @@ import timber.log.Timber;
 
 public class QuranDataProvider extends ContentProvider {
 
-  private static final String TAG = QuranDataProvider.class.getSimpleName();
-
   public static String AUTHORITY = BuildConfig.APPLICATION_ID + ".data.QuranDataProvider";
   public static final Uri SEARCH_URI = Uri.parse("content://" + AUTHORITY + "/quran/search");
 

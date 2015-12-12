@@ -1,11 +1,10 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import com.quran.labs.androidquran.BuildConfig;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
-
-import com.quran.labs.androidquran.BuildConfig;
 
 import timber.log.Timber;
 
@@ -14,7 +13,6 @@ import timber.log.Timber;
  * http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
  */
 public class RecyclingBitmapDrawable extends BitmapDrawable {
-    static final String LOG_TAG = "CountingBitmapDrawable";
 
     private int mCacheRefCount = 0;
     private int mDisplayRefCount = 0;

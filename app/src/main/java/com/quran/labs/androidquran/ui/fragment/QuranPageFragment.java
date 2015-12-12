@@ -48,8 +48,6 @@ import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventT
 
 public class QuranPageFragment extends Fragment
     implements AyahTracker, PageController {
-
-  private static final String TAG = "QuranPageFragment";
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private int mPageNumber;

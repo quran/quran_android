@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -14,7 +13,6 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -27,7 +25,6 @@ import java.util.Set;
 
 public class TranslationFragment extends Fragment
     implements AyahTracker {
-  private static final String TAG = "TranslationPageFragment";
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";

@@ -15,7 +15,6 @@ import org.json.JSONTokener;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import java.io.BufferedReader;
@@ -38,7 +37,6 @@ public class TranslationListTask extends
            "http://android.quran.com/data/translations.php?v=2";
    private static final String CACHED_RESPONSE_FILE_NAME =
            "cached-translation-list";
-   private static final String TAG = "TranslationListTask";
 
    private Context mContext;
    private TranslationsUpdatedListener mListener;
@@ -51,7 +49,7 @@ public class TranslationListTask extends
 
    @Override
    public List<TranslationItem> doInBackground(Void... params) {
-      return downloadTranslations(mContext, true, TAG);
+      return downloadTranslations(mContext, true);
    }
 
    @Override
@@ -93,8 +91,7 @@ public class TranslationListTask extends
    }
 
    public static List<TranslationItem> downloadTranslations(Context context,
-                                                            boolean useCache,
-                                                            String tag){
+                                                            boolean useCache){
       boolean shouldUseCache = false;
       if (useCache){
          long when = QuranSettings.getInstance(context).getLastUpdatedTranslationDate();

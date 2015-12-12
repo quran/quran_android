@@ -50,8 +50,6 @@ import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventT
 
 public class TabletFragment extends Fragment
     implements AyahTracker, PageController {
-
-  private static final String TAG = "TabletFragment";
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
 

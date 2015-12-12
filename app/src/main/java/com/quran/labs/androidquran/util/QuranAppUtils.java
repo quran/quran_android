@@ -16,7 +16,6 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class QuranAppUtils {
-   private static final String TAG = "QuranAppUtils";
 
    public static String getQuranAppUrl(String key, int sura,
                                        Integer startAyah,

@@ -21,7 +21,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,6 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     TranslationListTask.TranslationsUpdatedListener {
 
-  public static final String TAG = "TranslationManager";
   public static final String TRANSLATION_DOWNLOAD_KEY =
       "TRANSLATION_DOWNLOAD_KEY";
   private static final String UPGRADING_EXTENSION = ".old";

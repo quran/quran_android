@@ -5,14 +5,12 @@ import com.quran.labs.androidquran.task.TranslationListTask;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.List;
 
 import timber.log.Timber;
 
 public class UpgradeTranslationListener implements TranslationListTask.TranslationsUpdatedListener {
-  private static final String TAG = UpgradeTranslationListener.class.getSimpleName();
 
   @NonNull private final Context mAppContext;
 
