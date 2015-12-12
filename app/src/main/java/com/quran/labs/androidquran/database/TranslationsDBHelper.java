@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class TranslationsDBHelper extends SQLiteOpenHelper {
 
-   private static final String TAG = "TranslationsDBHelper";
-
    private static final String DB_NAME = "translations.db";
    private static final int DB_VERSION = 1;
 

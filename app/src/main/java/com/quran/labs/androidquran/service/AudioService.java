@@ -76,9 +76,6 @@ public class AudioService extends Service implements OnCompletionListener,
     OnPreparedListener, OnErrorListener, AudioFocusable,
     MediaPlayer.OnSeekCompleteListener {
 
-  // The tag we put on debug messages
-  final static String TAG = "AudioService";
-
   // These are the Intent actions that we are prepared to handle. Notice that
   // the fact these constants exist in our class is a mere convenience: what
   // really defines the actions our service can handle are the <action> tags
@@ -451,7 +448,7 @@ public class AudioService extends Service implements OnCompletionListener,
           do {
             int ayah = cursor.getInt(1);
             int time = cursor.getInt(2);
-            // Log.d(TAG, "adding: " + ayah + " @ " + time);
+            // Timber.d("adding: " + ayah + " @ " + time);
             map.put(ayah, time);
           }
           while (cursor.moveToNext());

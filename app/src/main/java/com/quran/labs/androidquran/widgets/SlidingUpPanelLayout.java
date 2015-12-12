@@ -63,8 +63,6 @@ import timber.log.Timber;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
-  private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
-
   /**
    * Default peeking out panel height
    */
@@ -1277,7 +1275,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
   }
 
-  public static class LayoutParams extends ViewGroup.MarginLayoutParams {
+  public static class LayoutParams extends MarginLayoutParams {
     private static final int[] ATTRS = new int[] {
         android.R.attr.layout_weight
     };
@@ -1303,7 +1301,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
       super(width, height);
     }
 
-    public LayoutParams(android.view.ViewGroup.LayoutParams source) {
+    public LayoutParams(ViewGroup.LayoutParams source) {
       super(source);
     }
 
@@ -1346,8 +1344,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
       out.writeString(mSlideState.toString());
     }
 
-    public static final Parcelable.Creator<SavedState> CREATOR =
-        new Parcelable.Creator<SavedState>() {
+    public static final Creator<SavedState> CREATOR =
+        new Creator<SavedState>() {
           @Override
           public SavedState createFromParcel(Parcel in) {
             return new SavedState(in);

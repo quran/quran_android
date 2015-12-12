@@ -43,7 +43,6 @@ import timber.log.Timber;
 
 public class QuranSettingsFragment extends PreferenceFragment implements
     SharedPreferences.OnSharedPreferenceChangeListener {
-  private static final String TAG = QuranSettingsFragment.class.getSimpleName();
 
   private DataListPreference mListStoragePref;
   private MoveFilesAsyncTask mMoveFilesTask;

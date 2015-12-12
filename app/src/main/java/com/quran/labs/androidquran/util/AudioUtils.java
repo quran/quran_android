@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class AudioUtils {
 
   public static final String AUDIO_EXTENSION = ".mp3";
 
-  private static final String TAG = "AudioUtils";
   private static final String DB_EXTENSION = ".db";
   private static final String ZIP_EXTENSION = ".zip";
 

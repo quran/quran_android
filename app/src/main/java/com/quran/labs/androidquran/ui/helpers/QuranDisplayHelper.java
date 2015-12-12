@@ -21,8 +21,7 @@ import android.widget.Toast;
 import timber.log.Timber;
 
 public class QuranDisplayHelper {
-   private static final String TAG = "QuranDisplayHelper";
-   
+
    public static Response getQuranPage(Context context,
                                      String widthParam, int page){
       Response response;

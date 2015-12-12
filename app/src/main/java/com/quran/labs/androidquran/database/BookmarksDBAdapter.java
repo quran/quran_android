@@ -12,7 +12,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ import java.util.Set;
 import timber.log.Timber;
 
 public class BookmarksDBAdapter {
-
-  private static final String TAG = BookmarksDBAdapter.class.getSimpleName();
 
   public static final int SORT_DATE_ADDED = 0;
   public static final int SORT_LOCATION = 1;

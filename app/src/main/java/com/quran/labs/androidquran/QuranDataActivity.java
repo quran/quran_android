@@ -35,7 +35,6 @@ public class QuranDataActivity extends Activity implements
     DefaultDownloadReceiver.SimpleDownloadListener,
     ActivityCompat.OnRequestPermissionsResultCallback {
 
-  public static final String TAG = "QuranDataActivity";
   public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
 
   private static final int LATEST_IMAGE_VERSION = QuranFileConstants.IMAGES_VERSION;

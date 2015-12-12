@@ -16,7 +16,6 @@ import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
-   private static final String TAG = "QuranPageAdapter";
 
    private boolean mIsShowingTranslation = false;
    private boolean mIsDualPages = false;

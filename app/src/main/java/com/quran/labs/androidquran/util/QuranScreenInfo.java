@@ -14,8 +14,6 @@ import android.view.WindowManager;
 import timber.log.Timber;
 
 public class QuranScreenInfo {
-
-  private static final String TAG = "QuranScreenInfo";
   private static QuranScreenInfo sInstance = null;
   private static int sOrientation;
 

@@ -7,7 +7,6 @@ package com.quran.labs.androidquran.service.util;
 
 import android.content.ComponentName;
 import android.media.AudioManager;
-import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,9 +17,6 @@ import timber.log.Timber;
  * Class that assists with handling new media button APIs available in API level 8.
  */
 public class MediaButtonHelper {
-
-  // Backwards compatibility code (methods available as of API Level 8)
-  private static final String TAG = "MediaButtonHelper";
 
   static {
     initializeStaticCompatMethods();

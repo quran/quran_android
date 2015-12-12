@@ -3,8 +3,6 @@ package com.quran.labs.androidquran.util;
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
-import android.util.Log;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,7 +15,6 @@ import timber.log.Timber;
 
 public class ZipUtils {
   public static final int BUFFER_SIZE = QuranDownloadService.BUFFER_SIZE;
-  public static final String TAG = "ZipUtils";
 
   public static <T> boolean unzipFile(String zipFile,
       String destDirectory, T item, ZipListener<T> listener){

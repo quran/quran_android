@@ -187,7 +187,6 @@ import timber.log.Timber;
  * {@link #THREAD_POOL_EXECUTOR}.</p>
  */
 public abstract class AsyncTask<Params, Progress, Result> {
-   private static final String LOG_TAG = "AsyncTask";
 
    private static final int CORE_POOL_SIZE = 5;
    private static final int MAXIMUM_POOL_SIZE = 128;

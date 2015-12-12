@@ -119,7 +119,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
     AddTagDialog.OnTagChangedListener,
     AyahSelectedListener {
-  private static final String TAG = "PagerActivity";
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
   private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
   private static final String LAST_READ_PAGE = "LAST_READ_PAGE";

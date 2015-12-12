@@ -8,7 +8,6 @@ import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.SparseArray;
 import android.widget.ImageView;
 
@@ -20,7 +19,6 @@ import java.util.Set;
 import timber.log.Timber;
 
 public class ImageAyahUtils {
-   private static final String TAG = ImageAyahUtils.class.getSimpleName();
 
    private static QuranAyah getAyahFromKey(String key){
       String[] parts = key.split(":");

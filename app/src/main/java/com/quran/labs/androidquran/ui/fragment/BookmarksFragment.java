@@ -22,7 +22,6 @@ import java.util.List;
 import timber.log.Timber;
 
 public class BookmarksFragment extends AbsMarkersFragment {
-   private static final String TAG = BookmarksFragment.class.getSimpleName();
 
    private static final int[] VALID_SORT_OPTIONS = {R.id.sort_location, R.id.sort_date};
 

@@ -15,8 +15,6 @@ import timber.log.Timber;
 
 public abstract class AudioRequest implements Parcelable {
 
-  private static final String TAG = "AudioRequest";
-
   private String mBaseUrl = null;
   private String mGaplessDatabasePath = null;
 

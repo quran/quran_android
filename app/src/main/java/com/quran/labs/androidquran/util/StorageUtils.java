@@ -27,8 +27,6 @@ import timber.log.Timber;
  */
 public class StorageUtils {
 
-  private static final String TAG = StorageUtils.class.getSimpleName();
-
   /**
    * @return A List of all storage locations available
    */

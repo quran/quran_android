@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.Closeable;
 import java.io.File;
@@ -32,8 +31,6 @@ import timber.log.Timber;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
 public class QuranFileUtils {
-
-  private static final String TAG = "QuranFileUtils";
 
   // server urls
   private static final String IMG_BASE_URL = QuranFileConstants.IMG_BASE_URL;
