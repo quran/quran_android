@@ -325,6 +325,7 @@ public class QuranDownloadService extends Service implements
       QuranAyah startVerse,
       QuranAyah endVerse, boolean isGapless,
       NotificationDetails details) {
+    details.setIsGapless(isGapless);
     new File(destination).mkdirs();
 
     int totalAyahs = 0;
