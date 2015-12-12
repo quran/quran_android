@@ -29,7 +29,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.StatFs;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -517,6 +516,8 @@ public class QuranDownloadService extends Service implements
           return !actualFile.delete() ?
               QuranDownloadNotifier.ERROR_PERMISSIONS :
               QuranDownloadNotifier.ERROR_INVALID_DOWNLOAD;
+        } else {
+          actualFile.delete();
         }
       }
     }
