@@ -1,15 +1,16 @@
 package com.quran.labs.androidquran.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Bookmark {
 
-  public long id;
-  public Integer sura;
-  public Integer ayah;
-  public int page;
-  public long timestamp;
-  public List<Long> tags;
+  public final long id;
+  public final Integer sura;
+  public final Integer ayah;
+  public final int page;
+  public final long timestamp;
+  public final List<Long> tags;
 
   public Bookmark(long id, Integer sura, Integer ayah, int page, long timestamp) {
     this.id = id;
@@ -17,6 +18,16 @@ public class Bookmark {
     this.ayah = ayah;
     this.page = page;
     this.timestamp = timestamp;
+    this.tags = Collections.unmodifiableList(Collections.<Long>emptyList());
+  }
+
+  public Bookmark(long id, Integer sura, Integer ayah, int page, long timestamp, List<Long> tags) {
+    this.id = id;
+    this.sura = sura;
+    this.ayah = ayah;
+    this.page = page;
+    this.timestamp = timestamp;
+    this.tags = Collections.unmodifiableList(tags);
   }
 
   public boolean isPageBookmark() {

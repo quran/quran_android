@@ -5,12 +5,17 @@ import android.os.Parcelable;
 
 public class Tag implements Parcelable {
 
-  public long id;
-  public String name;
+  public final long id;
+  public final String name;
 
   public Tag(long id, String name) {
     this.id = id;
     this.name = name;
+  }
+
+  public Tag(Parcel parcel) {
+    id = parcel.readLong();
+    name = parcel.readString();
   }
 
   @Override
@@ -32,10 +37,6 @@ public class Tag implements Parcelable {
     return result;
   }
 
-  public Tag(Parcel parcel) {
-    readFromParcel(parcel);
-  }
-
   @Override
   public String toString() {
     return name == null ? super.toString() : name;
@@ -50,11 +51,6 @@ public class Tag implements Parcelable {
   public void writeToParcel(Parcel dest, int flags) {
     dest.writeLong(id);
     dest.writeString(name);
-  }
-
-  public void readFromParcel(Parcel parcel) {
-    id = parcel.readLong();
-    name = parcel.readString();
   }
 
   public static final Creator<Tag> CREATOR =

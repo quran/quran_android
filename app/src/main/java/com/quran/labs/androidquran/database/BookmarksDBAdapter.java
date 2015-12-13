@@ -88,9 +88,11 @@ public class BookmarksDBAdapter {
           ayah = null;
         }
 
-        Bookmark bookmark = new Bookmark(id, sura, ayah, page, time);
+        Bookmark bookmark;
         if (loadTags) {
-          bookmark.tags = getBookmarkTagIds(id);
+          bookmark = new Bookmark(id, sura, ayah, page, time, getBookmarkTagIds(id));
+        } else {
+          bookmark = new Bookmark(id, sura, ayah, page, time);
         }
         bookmarks.add(bookmark);
       }
