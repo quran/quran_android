@@ -146,7 +146,6 @@
     <string name="page_description">Halaman %1$s, Juz\' %2$s</string>
     <string name="highlighting_database">Fail yang Diperlukan</string>
     <string name="timing_database">Fail yang Diperlukan</string>
-    <string name="infinity">&#8734;</string>
 
     <!-- download statuses and errors -->
     <string name="download_successful">Muat Turun Berjaya</string>

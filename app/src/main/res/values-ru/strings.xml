@@ -178,7 +178,6 @@
     <string name="page_description">стр. %1$s, джуз %2$s</string>
     <string name="highlighting_database">Необходимые файлы</string>
     <string name="timing_database">Необходимые файлы</string>
-    <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
     <string name="sdcard_error">SD карта не найдена. Пожалуйста, вставьте карту и попробуйте снова.</string>

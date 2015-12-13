@@ -194,7 +194,6 @@
     <string name="page_description">Seite %1$s, Juz\' %2$s</string>
     <string name="highlighting_database">Benötigte Dateien</string>
     <string name="timing_database">Benötigte Dateien</string>
-    <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
     <string name="sdcard_error">Die SD-Karte konnte nicht gefunden werden. Bitte setzen Sie die Karte erneut ein und versuchen Sie es nochmals.</string>
