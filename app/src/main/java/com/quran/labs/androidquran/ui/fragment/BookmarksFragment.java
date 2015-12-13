@@ -12,7 +12,6 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.app.Activity;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -127,7 +126,7 @@ public class BookmarksFragment extends AbsMarkersFragment {
       if (showLastPage && (lastPage > Constants.PAGES_LAST ||
               lastPage < Constants.PAGES_FIRST)) {
          showLastPage = false;
-         Timber.w("Got invalid last saved page as: "+lastPage);
+         Timber.w("Got invalid last saved page as %d", lastPage);
       }
 
       List<QuranRow> rows = new ArrayList<>();
