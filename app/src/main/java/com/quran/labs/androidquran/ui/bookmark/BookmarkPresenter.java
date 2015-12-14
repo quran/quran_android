@@ -71,6 +71,26 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
     return mGroupByTags;
   }
 
+  public boolean[] getContextualOperationsForItems(List<QuranRow> rows) {
+    boolean[] result = new boolean[3];
+
+    int headers = 0;
+    int bookmarks = 0;
+    for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {
+      QuranRow row = rows.get(i);
+      if (row.isBookmarkHeader()) {
+        headers++;
+      } else if (row.isBookmark()) {
+        bookmarks++;
+      }
+    }
+
+    result[0] = headers == 1 && bookmarks == 0;
+    result[1] = (headers + bookmarks) > 0;
+    result[2] = headers == 0 && bookmarks > 0;
+    return result;
+  }
+
   public void requestData() {
     getBookmarks(mSortOrder, mGroupByTags);
   }
