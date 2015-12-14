@@ -1,8 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
@@ -43,7 +41,6 @@ public abstract class AbsMarkersFragment extends Fragment {
   private RecyclerView mRecyclerView;
   private AsyncTask<Void, Void, QuranRow[]> loadingTask = null;
   private SharedPreferences mPrefs = null;
-  private int mAyahBookmarkOverlayColor;
   protected int mCurrentSortCriteria = 0;
 
   protected abstract int getContextualMenuId();
@@ -75,8 +72,6 @@ public abstract class AbsMarkersFragment extends Fragment {
     mCurrentSortCriteria = mPrefs.getInt(getSortPref(), 0);
   }
 
-  ;
-
   @Override
   public View onCreateView(LayoutInflater inflater,
       ViewGroup container, Bundle savedInstanceState) {
@@ -95,8 +90,6 @@ public abstract class AbsMarkersFragment extends Fragment {
     mRecyclerView.setAdapter(mAdapter);
     mAdapter.setQuranTouchListener(new MarkersTouchListener());
 
-    mAyahBookmarkOverlayColor = context.getResources()
-        .getColor(R.color.ayah_bookmark_color);
     return view;
   }
 
@@ -299,40 +292,6 @@ public abstract class AbsMarkersFragment extends Fragment {
         activity.onBookmarkDeleted();
       }
     }
-  }
-
-  public QuranRow createRowFromBookmark(Context context, Bookmark bookmark) {
-    return createRowFromBookmark(context, bookmark, null);
-  }
-
-  public QuranRow createRowFromBookmark(Context context,
-      Bookmark bookmark, Long tagId) {
-    final QuranRow.Builder builder = new QuranRow.Builder();
-
-    if (bookmark.isPageBookmark()) {
-      final int sura = QuranInfo.getSuraNumberFromPage(bookmark.page);
-      builder.withText(QuranInfo.getSuraNameString(context, bookmark.page))
-          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.page))
-          .withType(QuranRow.PAGE_BOOKMARK)
-          .withSura(sura)
-          .withImageResource(R.drawable.ic_favorite);
-    } else {
-      final String title =
-          QuranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
-      builder.withText(title)
-          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.page))
-          .withType(QuranRow.AYAH_BOOKMARK)
-          .withSura(bookmark.sura)
-          .withAyah(bookmark.ayah)
-          .withImageResource(R.drawable.ic_favorite)
-          .withImageOverlayColor(mAyahBookmarkOverlayColor);
-    }
-    builder.withPage(bookmark.page)
-        .withBookmarkId(bookmark.id);
-    if (tagId != null) {
-      builder.withTagId(tagId);
-    }
-    return builder.build();
   }
 
   public void refreshData() {

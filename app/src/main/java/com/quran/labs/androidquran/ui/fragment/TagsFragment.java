@@ -159,11 +159,7 @@ public class TagsFragment extends AbsMarkersFragment {
          List<Bookmark> tagBookmarkList = tagMap.get(tag.id);
 
          // add the tag header
-         final QuranRow.Builder builder = new QuranRow.Builder()
-             .withType(QuranRow.BOOKMARK_HEADER)
-             .withText(tag.name)
-             .withTagId(tag.id);
-         rows.add(builder.build());
+         rows.add(QuranRow.fromTag(tag));
 
          // no bookmarks in this tag, so move on
          if (tagBookmarkList == null || tagBookmarkList.isEmpty()) {
@@ -172,19 +168,16 @@ public class TagsFragment extends AbsMarkersFragment {
 
          // and now the bookmarks
          for (Bookmark bookmark : tagBookmarkList) {
-            QuranRow row = createRowFromBookmark(activity, bookmark, tag.id);
+            QuranRow row = QuranRow.fromBookmark(activity, bookmark, tag.id);
             rows.add(row);
          }
       }
       
       if (unTagged.size() > 0) {
-         final QuranRow.Builder header = new QuranRow.Builder()
-             .withType(QuranRow.BOOKMARK_HEADER)
-             .withText(activity.getString(R.string.not_tagged));
-         rows.add(header.build());
+         rows.add(QuranRow.fromNotTaggedHeader(activity));
 
          for (Bookmark bookmark : unTagged) {
-            QuranRow row = createRowFromBookmark(activity, bookmark);
+            QuranRow row = QuranRow.fromBookmark(activity, bookmark);
             rows.add(row);
          }
       }

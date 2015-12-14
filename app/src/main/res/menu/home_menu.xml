@@ -21,6 +21,12 @@
                     android:visible="false"
                     android:enabled="false"
                     app:showAsAction="withText" />
+              <item android:id="@+id/group_by_tags"
+                  android:checkable="true"
+                  android:title="@string/menu_sort_group_by_tags"
+                  android:visible="false"
+                  android:enabled="false"
+                  app:showAsAction="withText" />
           </menu>
     </item>
     <item android:id="@+id/last_page"
