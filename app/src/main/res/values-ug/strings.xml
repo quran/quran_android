@@ -122,7 +122,6 @@
     <string name="page_description">%2$s -پارە، %1$s -بەت</string>
     <string name="highlighting_database">زۆرۈر ھۆججەتلەر</string>
     <string name="timing_database">زۆرۈر ھۆججەتلەر</string>
-    <string name="infinity">∞</string>
     
     <!-- download statuses and errors -->
     <string name="download_successful">چۈشۈرۈش مۇۋەپپەقىيەتلىك</string>   

@@ -156,7 +156,6 @@
   <string name="page_description">page %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Fichiers requis</string>
   <string name="timing_database">Fichiers requis</string>
-  <string name="infinity">∞</string>
   
   <!-- download statuses and errors -->
   <string name="sdcard_error">Impossible de trouver la carte SD. Insérez-là et réessayez de nouveau.</string>

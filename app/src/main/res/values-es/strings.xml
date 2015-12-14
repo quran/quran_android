@@ -125,7 +125,6 @@
   <string name="page_description">página %1$s, Yuz %2$s</string>
   <string name="highlighting_database">Archivos requeridos</string>
   <string name="timing_database">Archivos requeridos</string>
-  <string name="infinity">∞</string>
   <!--download statuses and errors-->
   <string name="sdcard_error">No se pudo encontrar tarjetas SD. Por favor, inserte la tarjeta SD y vuelva a intentarlo.</string>
   <string name="download_successful">Descarga completada</string>

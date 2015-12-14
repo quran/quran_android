@@ -244,7 +244,7 @@
     <string name="page_description">page %1$s, Juz\' %2$s</string>
     <string name="highlighting_database">Required Files</string>
     <string name="timing_database">Required Files</string>
-    <string name="infinity">&#8734;</string>
+    <string name="infinity" translatable="false">&#8734;</string>
     
     <!-- download statuses and errors -->
     <string name="sdcard_error">Could not find SD card. Please mount it and try again.</string>

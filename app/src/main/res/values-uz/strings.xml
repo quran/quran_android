@@ -227,7 +227,6 @@
     <string name="page_description">%1$s-bet, %2$s-juz</string>
     <string name="highlighting_database">Kerakli fayllar</string>
     <string name="timing_database">Kerakli fayllar</string>
-    <!--string name="infinity">&#8734;</string-->
 
     <!-- download statuses and errors -->
     <string name="sdcard_error">SD karta topilmadi.Iltimos, kartani montaj qiling va qayta harakat qilib koʻring.</string>
