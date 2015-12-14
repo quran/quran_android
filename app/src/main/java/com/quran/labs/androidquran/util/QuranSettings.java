@@ -109,6 +109,22 @@ public class QuranSettings {
     mPrefs.edit().putInt(Constants.PREF_LAST_PAGE, page).apply();
   }
 
+  public int getBookmarksSortOrder() {
+    return mPrefs.getInt(Constants.PREF_SORT_BOOKMARKS, 0);
+  }
+
+  public void setBookmarksSortOrder(int sortOrder) {
+    mPrefs.edit().putInt(Constants.PREF_SORT_BOOKMARKS, sortOrder).apply();
+  }
+
+  public boolean getBookmarksGroupedByTags() {
+    return mPrefs.getBoolean(Constants.PREF_GROUP_BOOKMARKS_BY_TAG, true);
+  }
+
+  public void setBookmarksGroupedByTags(boolean groupedByTags) {
+    mPrefs.edit().putBoolean(Constants.PREF_GROUP_BOOKMARKS_BY_TAG, groupedByTags).apply();
+  }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences() {
     int version = getVersion();

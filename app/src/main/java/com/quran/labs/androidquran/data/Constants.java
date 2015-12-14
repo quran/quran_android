@@ -55,6 +55,7 @@ public class Constants {
   public static final String PREF_USE_NEW_BACKGROUND = "useNewBackground";
   public static final String PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation";
   public static final String PREF_SORT_BOOKMARKS = "sortBookmarks";
+  public static final String PREF_GROUP_BOOKMARKS_BY_TAG = "groupBookmarksByTag";
   public static final String PREF_SORT_TAGS = "sortTags";
   public static final String PREF_DISPLAY_CATEGORY = "displayCategoryKey";
   public static final String PREF_ADVANCED_CATEGORY = "advancedCategoryKey";

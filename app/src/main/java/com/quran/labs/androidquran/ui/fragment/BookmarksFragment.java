@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
@@ -131,21 +130,14 @@ public class BookmarksFragment extends AbsMarkersFragment {
 
       List<QuranRow> rows = new ArrayList<>();
       if (showLastPage){
-         rows.add(new QuranRow.Builder()
-             .withText(getString(R.string.bookmarks_current_page))
-             .withType(QuranRow.HEADER).build());
-         rows.add(new QuranRow.Builder()
-               .withText(QuranInfo.getSuraNameString(activity, lastPage))
-               .withMetadata(QuranInfo.getPageSubtitle(activity, lastPage))
-               .withSura(QuranInfo.PAGE_SURA_START[lastPage-1])
-               .withPage(lastPage)
-               .withImageResource(R.drawable.bookmark_currentpage).build());
+         rows.add(QuranRow.fromCurrentPageHeader(activity));
+         rows.add(QuranRow.fromCurrentPage(activity, lastPage));
       }
       
       List<QuranRow> pageBookmarks = new ArrayList<>();
       List<QuranRow> ayahBookmarks = new ArrayList<>();
       for (Bookmark bookmark : bookmarks) {
-         QuranRow row = createRowFromBookmark(activity, bookmark);
+         QuranRow row = QuranRow.fromBookmark(activity, bookmark);
          if (bookmark.isPageBookmark())
             pageBookmarks.add(row);
          else
@@ -153,16 +145,12 @@ public class BookmarksFragment extends AbsMarkersFragment {
       }
 
       if (!pageBookmarks.isEmpty()){
-         rows.add(new QuranRow.Builder()
-             .withText(getString(R.string.menu_bookmarks_page))
-             .withType(QuranRow.HEADER).build());
+         rows.add(QuranRow.fromPageBookmarksHeader(activity));
          rows.addAll(pageBookmarks);
       }
 
       if (!ayahBookmarks.isEmpty()){
-         rows.add(new QuranRow.Builder()
-             .withText(getString(R.string.menu_bookmarks_ayah))
-             .withType(QuranRow.HEADER).build());
+         rows.add(QuranRow.fromAyahBookmarksHeader(activity));
          rows.addAll(ayahBookmarks);
       }
       return rows.toArray(new QuranRow[rows.size()]);
