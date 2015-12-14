@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
+import com.quran.labs.androidquran.ui.fragment.NewBookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TagsFragment;
@@ -47,7 +48,6 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -106,14 +106,15 @@ public class QuranActivity extends QuranActionBarActivity
     public void handleMessage(Message msg) {
       final QuranActivity activity = mActivityRef.get();
       if (activity != null) {
+        String bookmarksTag = activity.mPagerAdapter.getFragmentTag(
+            R.id.index_pager, activity.getPosition(BOOKMARKS_LIST));
         if (msg.what == REFRESH_BOOKMARKS) {
-          final int pos = activity.getPosition(BOOKMARKS_LIST);
-          String bookmarksTag = activity.mPagerAdapter.getFragmentTag(
-              R.id.index_pager, pos);
           FragmentManager fm = activity.getSupportFragmentManager();
           Fragment f = fm.findFragmentByTag(bookmarksTag);
-          if (f != null && f instanceof AbsMarkersFragment) {
+          if (f instanceof AbsMarkersFragment) {
             ((AbsMarkersFragment) f).refreshData();
+          } else if (f instanceof NewBookmarksFragment) {
+            ((NewBookmarksFragment) f).refreshData();
           }
         } else if (msg.what == REFRESH_TAGS) {
           final int pos = activity.getPosition(TAGS_LIST);
@@ -121,8 +122,13 @@ public class QuranActivity extends QuranActionBarActivity
               R.id.index_pager, pos);
           FragmentManager fm = activity.getSupportFragmentManager();
           Fragment f = fm.findFragmentByTag(tagsTag);
-          if (f != null && f instanceof AbsMarkersFragment) {
+          if (f instanceof AbsMarkersFragment) {
             ((AbsMarkersFragment) f).refreshData();
+          }
+
+          f = fm.findFragmentByTag(bookmarksTag);
+          if (f instanceof NewBookmarksFragment) {
+            ((NewBookmarksFragment) f).refreshData();
           }
         }
       }

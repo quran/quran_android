@@ -2,10 +2,14 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.bookmark.BookmarkPresenter;
+import com.quran.labs.androidquran.ui.bookmark.BookmarkUtil;
+import com.quran.labs.androidquran.ui.bookmark.BookmarksContextualModePresenter;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,11 +27,12 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public class NewBookmarksFragment extends Fragment {
+public class NewBookmarksFragment extends Fragment implements QuranListAdapter.QuranTouchListener {
 
   private QuranListAdapter mBookmarksAdapter;
   private BookmarkPresenter mBookmarkPresenter;
   private MenuItem mGroupByTagsItem;
+  private BookmarksContextualModePresenter mBookmarksContextualModePresenter;
 
   public static NewBookmarksFragment newInstance(){
     return new NewBookmarksFragment();
@@ -37,6 +42,7 @@ public class NewBookmarksFragment extends Fragment {
   public void onAttach(Context context) {
     super.onAttach(context);
     mBookmarkPresenter = BookmarkPresenter.getInstance(context);
+    mBookmarksContextualModePresenter = BookmarksContextualModePresenter.getInstance();
     setHasOptionsMenu(true);
   }
 
@@ -53,6 +59,7 @@ public class NewBookmarksFragment extends Fragment {
     recyclerView.setItemAnimator(new DefaultItemAnimator());
 
     mBookmarksAdapter = new QuranListAdapter(context, recyclerView, new QuranRow[0], true);
+    mBookmarksAdapter.setQuranTouchListener(this);
     recyclerView.setAdapter(mBookmarksAdapter);
     return view;
   }
@@ -61,11 +68,13 @@ public class NewBookmarksFragment extends Fragment {
   public void onStart() {
     super.onStart();
     mBookmarkPresenter.bind(this);
+    mBookmarksContextualModePresenter.bind(this);
   }
 
   @Override
   public void onStop() {
     mBookmarkPresenter.unbind();
+    mBookmarksContextualModePresenter.unbind();
     super.onStop();
   }
 
@@ -114,5 +123,78 @@ public class NewBookmarksFragment extends Fragment {
     // TODO: why u no notifyDataSetChanged yourself?
     mBookmarksAdapter.setElements(items.toArray(new QuranRow[items.size()]));
     mBookmarksAdapter.notifyDataSetChanged();
+  }
+
+  public void refreshData() {
+    mBookmarkPresenter.requestData();
+  }
+
+  @Override
+  public void onClick(QuranRow row, int position) {
+    if (mBookmarksContextualModePresenter.isInActionMode()) {
+      boolean checked = isValidSelection(row) &&
+          !mBookmarksAdapter.isItemChecked(position);
+      mBookmarksAdapter.setItemChecked(position, checked);
+      mBookmarksContextualModePresenter.invalidateActionMode(false);
+    } else {
+      mBookmarksAdapter.setItemChecked(position, false);
+      BookmarkUtil.handleRowClicked(getActivity(), row);
+    }
+  }
+
+  @Override
+  public boolean onLongClick(QuranRow row, int position) {
+    if (isValidSelection(row)) {
+      mBookmarksAdapter.setItemChecked(position, !mBookmarksAdapter.isItemChecked(position));
+      if (mBookmarksContextualModePresenter.isInActionMode() &&
+          mBookmarksAdapter.getCheckedItems().size() == 0) {
+        mBookmarksContextualModePresenter.finishActionMode();
+      } else {
+        mBookmarksContextualModePresenter.invalidateActionMode(true);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private boolean isValidSelection(QuranRow selected) {
+    return selected.isBookmark() || (selected.isBookmarkHeader() && selected.tagId >= 0);
+  }
+
+  public void prepareContextualMenu(Menu menu) {
+    boolean[] menuVisibility =
+        mBookmarkPresenter.getContextualOperationsForItems(mBookmarksAdapter.getCheckedItems());
+    menu.findItem(R.id.cab_edit_tag).setVisible(menuVisibility[0]);
+    menu.findItem(R.id.cab_delete_tag).setVisible(menuVisibility[1]);
+    menu.findItem(R.id.cab_tag_bookmark).setVisible(menuVisibility[2]);
+  }
+
+  public boolean onContextualActionClicked(int itemId) {
+    Activity currentActivity = getActivity();
+    if (currentActivity instanceof QuranActivity) {
+      QuranActivity activity = (QuranActivity) currentActivity;
+      switch (itemId) {
+        case R.id.cab_delete_tag: {
+          return true;
+        }
+        case R.id.cab_new_tag: {
+          activity.addTag();
+          return true;
+        }
+        case R.id.cab_edit_tag: {
+          BookmarkUtil.handleTagEdit(activity, mBookmarksAdapter.getCheckedItems());
+          return true;
+        }
+        case R.id.cab_tag_bookmark: {
+          BookmarkUtil.handleTagBookmarks(activity, mBookmarksAdapter.getCheckedItems());
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public void onCloseContextualActionMenu() {
+    mBookmarksAdapter.uncheckAll();
   }
 }
