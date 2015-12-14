@@ -127,7 +127,6 @@
     <string name="page_description">صفحه %1$s, جزء %2$s</string>
     <string name="highlighting_database">فايل هاي مورد نياز</string>
     <string name="timing_database">فايل هاي مورد نياز</string>
-    <string name="infinity">همیشه</string>
     
     <!-- download statuses and errors -->
     <string name="download_successful">با موفقيت بارگذاري انجام شد</string>

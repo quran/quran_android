@@ -146,7 +146,6 @@
     <string name="page_description">پەڕەی %1$s, جوزئی %2$s</string>
     <string name="highlighting_database">فایلە پێویستەکان</string>
     <string name="timing_database">فایلە پێویستەکان</string>
-    <string name="infinity">نا کۆتایی</string>
     
     <!-- download statuses and errors -->
     <string name="download_successful">داگرتن سەرکەوتو بوو</string>   

@@ -161,7 +161,6 @@
     <string name="page_description">صفحة %1$s, جزء %2$s</string>
     <string name="highlighting_database">جاري تحميل الملفات المطلوبة</string>
     <string name="timing_database">جاري تحميل الملفات المطلوبة</string>
-    <string name="infinity">∞</string>
     
     <!-- download statuses and errors -->
     <string name="download_successful">تم التحميل</string>   

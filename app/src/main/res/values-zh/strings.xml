@@ -135,7 +135,6 @@
     <string name="page_description">第%2$s卷，第%1$s页</string>
     <string name="highlighting_database">所需文件</string>
     <string name="timing_database">所需文件</string>
-    <string name="infinity">&#8734;</string>
     
     <!-- download statuses and errors -->
     <string name="download_successful">下载成功</string>   
