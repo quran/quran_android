@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.ui.bookmark;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.presenter.Presenter;
-import com.quran.labs.androidquran.ui.fragment.NewBookmarksFragment;
+import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -10,13 +10,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class BookmarksContextualModePresenter implements Presenter<NewBookmarksFragment> {
+public class BookmarksContextualModePresenter implements Presenter<BookmarksFragment> {
 
   private static BookmarksContextualModePresenter sInstance =
       new BookmarksContextualModePresenter();
 
   private ActionMode mMode;
-  private NewBookmarksFragment mFragment;
+  private BookmarksFragment mFragment;
   private AppCompatActivity mActivity;
 
   public static BookmarksContextualModePresenter getInstance() {
@@ -84,7 +84,7 @@ public class BookmarksContextualModePresenter implements Presenter<NewBookmarksF
   }
 
   @Override
-  public void bind(NewBookmarksFragment fragment) {
+  public void bind(BookmarksFragment fragment) {
     mFragment = fragment;
     mActivity = (AppCompatActivity) fragment.getActivity();
   }
