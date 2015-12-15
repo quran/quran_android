@@ -26,7 +26,6 @@
     <string name="menu_sort">Сортировать</string>
     <string name="menu_sort_date">По дате добавления</string>
     <string name="menu_sort_location">По расположению в Коране</string>
-    <string name="menu_sort_alphabetical">По алфавиту</string>
     <string name="menu_translation">Показать перевод</string>
     <string name="menu_back_to_page">Показать Коран</string>
     <string name="menu_help">Помощь</string>

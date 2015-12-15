@@ -30,7 +30,6 @@
     <string name="menu_sort">Sortieren</string>
     <string name="menu_sort_date">Hinzufügedatum</string>
     <string name="menu_sort_location">Position im Quran</string>
-    <string name="menu_sort_alphabetical">Alphabetisch</string>
     <string name="menu_translation">Übersetzung anzeigen</string>
     <string name="menu_back_to_page">Quran anzeigen</string>
     <string name="menu_help">Hilfe</string>

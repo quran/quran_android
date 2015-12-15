@@ -22,7 +22,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -89,15 +88,6 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
       sortItem.setEnabled(true);
       mGroupByTagsItem = menu.findItem(R.id.group_by_tags);
       mGroupByTagsItem.setChecked(mBookmarkPresenter.isGroupedByTags());
-
-      // TODO: remove this after removing {Bookmarks,Tags}Fragment and enabling in home_menu
-      SubMenu subMenu = sortItem.getSubMenu();
-      int[] validOptions = { R.id.sort_location, R.id.sort_date, R.id.group_by_tags };
-      for (int validOption : validOptions) {
-        MenuItem subMenuItem = subMenu.findItem(validOption);
-        subMenuItem.setVisible(true);
-        subMenuItem.setEnabled(true);
-      }
     }
   }
 
@@ -175,7 +165,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     boolean[] menuVisibility =
         mBookmarkPresenter.getContextualOperationsForItems(mBookmarksAdapter.getCheckedItems());
     menu.findItem(R.id.cab_edit_tag).setVisible(menuVisibility[0]);
-    menu.findItem(R.id.cab_delete_tag).setVisible(menuVisibility[1]);
+    menu.findItem(R.id.cab_delete).setVisible(menuVisibility[1]);
     menu.findItem(R.id.cab_tag_bookmark).setVisible(menuVisibility[2]);
   }
 
@@ -184,7 +174,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     if (currentActivity instanceof QuranActivity) {
       QuranActivity activity = (QuranActivity) currentActivity;
       switch (itemId) {
-        case R.id.cab_delete_tag: {
+        case R.id.cab_delete: {
           List<QuranRow> selected = mBookmarksAdapter.getCheckedItems();
           onNewData(mBookmarkPresenter.predictQuranListAfterDeletion(selected));
           mBookmarkPresenter.deleteAfterSomeTime(selected);

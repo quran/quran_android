@@ -21,7 +21,6 @@
   <string name="menu_sort">Trier</string>
   <string name="menu_sort_date">Par date d\'ajout</string>
   <string name="menu_sort_location">Selon l\'ordre dans le coran</string>
-  <string name="menu_sort_alphabetical">Alphabétiquement</string>
   <string name="menu_translation">Afficher la traduction</string>
   <string name="menu_back_to_page">Afficher le coran</string>
   <string name="menu_help">Aide</string>

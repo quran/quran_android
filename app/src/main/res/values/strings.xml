@@ -29,7 +29,6 @@
     <string name="menu_sort">Sort</string>
     <string name="menu_sort_date">Date Added</string>
     <string name="menu_sort_location">Location in Quran</string>
-    <string name="menu_sort_alphabetical">Alphabetical</string>
     <string name="menu_sort_group_by_tags">Group by Tags</string>
     <string name="menu_translation">Show Translation</string>
     <string name="menu_back_to_page">Show Quran</string>

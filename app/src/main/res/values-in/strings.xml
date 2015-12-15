@@ -20,7 +20,7 @@
     <string name="menu_sort">Urutkan Berdasar</string>
     <string name="menu_sort_date">Tanggal Ditambahkan</string>
     <string name="menu_sort_location">Lokasi dalam Quran</string>
-    <string name="menu_sort_alphabetical">Abjad</string>
+    
     <string name="menu_translation">Tampilkan Terjemahan</string>
     <string name="menu_back_to_page">Tampilkan Quran Mode Mushaf</string>
     <string name="menu_help">Bantuan</string>
