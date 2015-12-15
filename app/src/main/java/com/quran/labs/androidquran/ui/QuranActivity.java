@@ -12,15 +12,12 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.task.TranslationListTask;
-import com.quran.labs.androidquran.ui.fragment.AbsMarkersFragment;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
-import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
-import com.quran.labs.androidquran.ui.fragment.NewBookmarksFragment;
+import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-import com.quran.labs.androidquran.ui.fragment.TagsFragment;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -63,25 +60,20 @@ public class QuranActivity extends QuranActionBarActivity
   private static int[] TITLES = new int[]{
       R.string.quran_sura,
       R.string.quran_juz2,
-      R.string.menu_bookmarks,
-      R.string.menu_tags};
+      R.string.menu_bookmarks };
   private static int[] ARABIC_TITLES = new int[]{
-      R.string.menu_tags,
       R.string.menu_bookmarks,
       R.string.quran_juz2,
-      R.string.quran_sura};
+      R.string.quran_sura };
 
-  public static final String TAG = "QuranActivity";
   public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
   public static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
 
   private static final int SURA_LIST = 0;
   private static final int JUZ2_LIST = 1;
   private static final int BOOKMARKS_LIST = 2;
-  private static final int TAGS_LIST = 3;
 
   private static final int REFRESH_BOOKMARKS = 1;
-  private static final int REFRESH_TAGS = 2;
 
   private static boolean sUpdatedTranslations;
 
@@ -111,24 +103,8 @@ public class QuranActivity extends QuranActionBarActivity
         if (msg.what == REFRESH_BOOKMARKS) {
           FragmentManager fm = activity.getSupportFragmentManager();
           Fragment f = fm.findFragmentByTag(bookmarksTag);
-          if (f instanceof AbsMarkersFragment) {
-            ((AbsMarkersFragment) f).refreshData();
-          } else if (f instanceof NewBookmarksFragment) {
-            ((NewBookmarksFragment) f).refreshData();
-          }
-        } else if (msg.what == REFRESH_TAGS) {
-          final int pos = activity.getPosition(TAGS_LIST);
-          String tagsTag = activity.mPagerAdapter.getFragmentTag(
-              R.id.index_pager, pos);
-          FragmentManager fm = activity.getSupportFragmentManager();
-          Fragment f = fm.findFragmentByTag(tagsTag);
-          if (f instanceof AbsMarkersFragment) {
-            ((AbsMarkersFragment) f).refreshData();
-          }
-
-          f = fm.findFragmentByTag(bookmarksTag);
-          if (f instanceof NewBookmarksFragment) {
-            ((NewBookmarksFragment) f).refreshData();
+          if (f instanceof BookmarksFragment) {
+            ((BookmarksFragment) f).refreshData();
           }
         }
       }
@@ -421,13 +397,12 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   public void onBookmarkDeleted() {
-    mHandler.sendEmptyMessage(REFRESH_TAGS);
+    mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
   }
 
   @Override
   public void onBookmarkTagsUpdated() {
     mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-    mHandler.sendEmptyMessage(REFRESH_TAGS);
   }
 
   @Override
@@ -439,13 +414,13 @@ public class QuranActivity extends QuranActionBarActivity
     Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
     if (f != null && f instanceof TagBookmarkDialog) {
       ((TagBookmarkDialog) f).handleTagAdded(name);
-      mHandler.sendEmptyMessage(REFRESH_TAGS);
+      mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
     } else {
       new Thread(new Runnable() {
         @Override
         public void run() {
           mBookmarksDBAdapter.addTag(name);
-          mHandler.sendEmptyMessage(REFRESH_TAGS);
+          mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
         }
       }).start();
     }
@@ -457,7 +432,7 @@ public class QuranActivity extends QuranActionBarActivity
       @Override
       public void run() {
         mBookmarksDBAdapter.updateTag(id, name);
-        mHandler.sendEmptyMessage(REFRESH_TAGS);
+        mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
       }
     }).start();
   }
@@ -485,14 +460,14 @@ public class QuranActivity extends QuranActionBarActivity
 
     @Override
     public int getCount() {
-      return 4;
+      return 3;
     }
 
     @Override
     public Fragment getItem(int position) {
       int pos = position;
       if (mIsRtl) {
-        pos = Math.abs(position - 3);
+        pos = Math.abs(position - 2);
       }
 
       switch (pos) {
@@ -501,10 +476,8 @@ public class QuranActivity extends QuranActionBarActivity
         case QuranActivity.JUZ2_LIST:
           return JuzListFragment.newInstance();
         case QuranActivity.BOOKMARKS_LIST:
-          return BookmarksFragment.newInstance();
-        case QuranActivity.TAGS_LIST:
         default:
-          return TagsFragment.newInstance();
+          return BookmarksFragment.newInstance();
       }
     }
 

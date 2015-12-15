@@ -6,7 +6,7 @@ import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.presenter.Presenter;
-import com.quran.labs.androidquran.ui.fragment.NewBookmarksFragment;
+import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -29,8 +29,8 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
-  public static final int DURATION = 5 * 1000; // 5 seconds
+public class BookmarkPresenter implements Presenter<BookmarksFragment> {
+  public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;
 
   private static BookmarkPresenter sInstance;
@@ -42,7 +42,7 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
   private int mSortOrder;
   private boolean mGroupByTags;
   private ResultHolder mCachedData;
-  private NewBookmarksFragment mFragment;
+  private BookmarksFragment mFragment;
 
   private Subscription mPendingRemoval;
   private List<QuranRow> mItemsToRemove;
@@ -105,9 +105,11 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
   public void requestData(boolean canCache) {
     if (canCache && mCachedData != null) {
       if (mFragment != null) {
+        Timber.d("sending cached bookmark data");
         mFragment.onNewData(mCachedData.rows);
       }
     } else {
+      Timber.d("requesting bookmark data from the database");
       getBookmarks(mSortOrder, mGroupByTags);
     }
   }
@@ -138,7 +140,7 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
     }
 
     mItemsToRemove = remove;
-    mPendingRemoval = Observable.timer(DURATION, TimeUnit.MILLISECONDS)
+    mPendingRemoval = Observable.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
         .flatMap(new Func1<Long, Observable<ResultHolder>>() {
           @Override
           public Observable<ResultHolder> call(Long aLong) {
@@ -354,9 +356,19 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
   }
 
   @Override
-  public void bind(NewBookmarksFragment fragment) {
+  public void bind(BookmarksFragment fragment) {
     mFragment = fragment;
-    requestData(true);
+
+    /* TODO: this should ideally be true in order for us to use the cached data if we have it.
+     * disabled this for correctness, since a person using the app could easily go to a page,
+     * mark a bookmark (or unmark one), and return, only to find the previous cached content.
+     *
+     * This will be fixed when BookmarkPresenter moves its bookmark specific logic into a separate
+     * BookmarkModel class of sorts, which should also handle adding/tagging/etc. with that in
+     * place, requestData(true) will be safe here, since if the data is stale, we'll get from the
+     * database anyway.
+     */
+    requestData(false);
   }
 
   @Override
