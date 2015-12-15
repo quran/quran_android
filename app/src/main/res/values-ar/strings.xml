@@ -20,7 +20,6 @@
     <string name="menu_sort">تغير الترتيب</string>
     <string name="menu_sort_date">تاريخ الإضافة</string>
     <string name="menu_sort_location">موقعها في القرآن</string>
-    <string name="menu_sort_alphabetical">أبجدي</string>
     <string name="menu_translation">التفسير/الترجمة</string>
     <string name="menu_back_to_page">إلى التلاوة</string>
     <string name="menu_help">مساعدة</string>

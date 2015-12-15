@@ -9,7 +9,7 @@
           android:icon="@drawable/ic_edit"
           android:title="@string/edit_tag"
           app:showAsAction="ifRoom" />
-    <item android:id="@+id/cab_delete_tag"
+    <item android:id="@+id/cab_delete"
           android:icon="@drawable/ic_cancel"
           android:title="@string/delete_tag"
           app:showAsAction="ifRoom" />

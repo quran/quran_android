@@ -52,7 +52,7 @@ public class BookmarksContextualModePresenter implements Presenter<BookmarksFrag
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
       MenuInflater inflater = mActivity.getMenuInflater();
-      inflater.inflate(R.menu.tag_menu, menu);
+      inflater.inflate(R.menu.bookmark_contextual_menu, menu);
       return true;
     }
 
