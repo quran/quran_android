@@ -27,4 +27,5 @@
     <color name="notification_color">#ff112e44</color>
     <color name="ayah_bookmark_color">#ff81c784</color>
     <color name="download_button_background">#ff556f79</color>
+    <color name="snackbar_background_color">@color/download_button_background</color>
 </resources>

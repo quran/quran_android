@@ -327,6 +327,8 @@
     <string name="edit_tag">Edit Tag</string>
     <string name="new_tag">New Tag</string>
     <string name="not_tagged">Not Tagged</string>
+    <string name="bookmark_tag_deleted">Deleted %1$d items.</string>
+    <string name="undo">Undo</string>
     
     <!-- tag dialog -->
     <string name="tag_dlg_title">Tag</string>

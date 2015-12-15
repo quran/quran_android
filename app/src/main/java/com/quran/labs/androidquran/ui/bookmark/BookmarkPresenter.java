@@ -19,8 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -28,6 +30,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
+  public static final int DURATION = 5 * 1000; // 5 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;
 
   private static BookmarkPresenter sInstance;
@@ -38,7 +41,11 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
 
   private int mSortOrder;
   private boolean mGroupByTags;
+  private ResultHolder mCachedData;
   private NewBookmarksFragment mFragment;
+
+  private Subscription mPendingRemoval;
+  private List<QuranRow> mItemsToRemove;
 
   public synchronized static BookmarkPresenter getInstance(Context context) {
     if (sInstance == null) {
@@ -92,11 +99,103 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
   }
 
   public void requestData() {
-    getBookmarks(mSortOrder, mGroupByTags);
+    requestData(false);
   }
 
-  private void getBookmarks(final int sortOrder, final boolean groupByTags) {
-    Observable
+  public void requestData(boolean canCache) {
+    if (canCache && mCachedData != null) {
+      if (mFragment != null) {
+        mFragment.onNewData(mCachedData.rows);
+      }
+    } else {
+      getBookmarks(mSortOrder, mGroupByTags);
+    }
+  }
+
+  public List<QuranRow> predictQuranListAfterDeletion(List<QuranRow> remove) {
+    if (mCachedData != null) {
+      List<QuranRow> placeholder = new ArrayList<>(mCachedData.rows.size() - remove.size());
+      List<QuranRow> rows = mCachedData.rows;
+      for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {
+        QuranRow row = rows.get(i);
+        if (!remove.contains(row)) {
+          placeholder.add(row);
+        }
+      }
+      return placeholder;
+    }
+    return null;
+  }
+
+  public void deleteAfterSomeTime(List<QuranRow> remove) {
+    if (mPendingRemoval != null) {
+      // handle a new delete request when one is already happening by adding those items to delete
+      // now and un-subscribing from the old request.
+      if (mItemsToRemove != null) {
+        remove.addAll(mItemsToRemove);
+      }
+      cancelDeletion();
+    }
+
+    mItemsToRemove = remove;
+    mPendingRemoval = Observable.timer(DURATION, TimeUnit.MILLISECONDS)
+        .flatMap(new Func1<Long, Observable<ResultHolder>>() {
+          @Override
+          public Observable<ResultHolder> call(Long aLong) {
+            return removeItemsObservable();
+          }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<ResultHolder>() {
+          @Override
+          public void call(ResultHolder result) {
+            mPendingRemoval = null;
+            mCachedData = result;
+            if (mFragment != null) {
+              mFragment.onNewData(result.rows);
+            }
+          }
+        });
+  }
+
+  public void cancelDeletion() {
+    if (mPendingRemoval != null) {
+      mPendingRemoval.unsubscribe();
+      mPendingRemoval = null;
+      mItemsToRemove = null;
+    }
+  }
+
+  private Observable<ResultHolder> removeItemsObservable() {
+    return Observable.from(mItemsToRemove)
+        .flatMap(new Func1<QuranRow, Observable<Boolean>>() {
+          @Override
+          public Observable<Boolean> call(QuranRow quranRow) {
+            if (quranRow.isBookmarkHeader() && quranRow.tagId >= 0) {
+              mBookmarksDBAdapter.removeTag(quranRow.tagId);
+            } else if (quranRow.isBookmark() && quranRow.bookmarkId >= 0) {
+              if (quranRow.tagId >= 0) {
+                mBookmarksDBAdapter.untagBookmark(quranRow.bookmarkId, quranRow.tagId);
+              } else {
+                mBookmarksDBAdapter.removeBookmark(quranRow.bookmarkId);
+              }
+            }
+            return Observable.just(true);
+          }
+        })
+        .toList()
+        .flatMap(new Func1<List<Boolean>, Observable<ResultHolder>>() {
+          @Override
+          public Observable<ResultHolder> call(List<Boolean> booleen) {
+            return getBookmarkObservable(mSortOrder, mGroupByTags);
+          }
+        });
+  }
+
+  private Observable<ResultHolder> getBookmarkObservable(
+      final int sortOrder, final boolean groupByTags) {
+    return Observable
         .fromCallable(new Callable<BookmarkData>() {
           @Override
           public BookmarkData call() throws Exception {
@@ -111,12 +210,17 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
             return new ResultHolder(rows, tagMap);
           }
         })
-        .subscribeOn(Schedulers.io())
+        .subscribeOn(Schedulers.io());
+  }
+
+  private void getBookmarks(final int sortOrder, final boolean groupByTags) {
+    getBookmarkObservable(sortOrder, groupByTags)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<ResultHolder>() {
           @Override
           public void call(ResultHolder result) {
             // notify the ui if we're attached
+            mCachedData = result;
             if (mFragment != null) {
               mFragment.onNewData(result.rows);
             }
@@ -252,7 +356,7 @@ public class BookmarkPresenter implements Presenter<NewBookmarksFragment> {
   @Override
   public void bind(NewBookmarksFragment fragment) {
     mFragment = fragment;
-    requestData();
+    requestData(true);
   }
 
   @Override

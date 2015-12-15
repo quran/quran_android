@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +33,7 @@ public class NewBookmarksFragment extends Fragment implements QuranListAdapter.Q
   private QuranListAdapter mBookmarksAdapter;
   private BookmarkPresenter mBookmarkPresenter;
   private MenuItem mGroupByTagsItem;
+  private RecyclerView mRecyclerView;
   private BookmarksContextualModePresenter mBookmarksContextualModePresenter;
 
   public static NewBookmarksFragment newInstance(){
@@ -54,13 +56,13 @@ public class NewBookmarksFragment extends Fragment implements QuranListAdapter.Q
 
     final Context context = getActivity();
 
-    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-    recyclerView.setItemAnimator(new DefaultItemAnimator());
+    mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+    mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-    mBookmarksAdapter = new QuranListAdapter(context, recyclerView, new QuranRow[0], true);
+    mBookmarksAdapter = new QuranListAdapter(context, mRecyclerView, new QuranRow[0], true);
     mBookmarksAdapter.setQuranTouchListener(this);
-    recyclerView.setAdapter(mBookmarksAdapter);
+    mRecyclerView.setAdapter(mBookmarksAdapter);
     return view;
   }
 
@@ -161,6 +163,14 @@ public class NewBookmarksFragment extends Fragment implements QuranListAdapter.Q
     return selected.isBookmark() || (selected.isBookmarkHeader() && selected.tagId >= 0);
   }
 
+  private View.OnClickListener mOnUndoClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      mBookmarkPresenter.cancelDeletion();
+      mBookmarkPresenter.requestData(true);
+    }
+  };
+
   public void prepareContextualMenu(Menu menu) {
     boolean[] menuVisibility =
         mBookmarkPresenter.getContextualOperationsForItems(mBookmarksAdapter.getCheckedItems());
@@ -175,6 +185,13 @@ public class NewBookmarksFragment extends Fragment implements QuranListAdapter.Q
       QuranActivity activity = (QuranActivity) currentActivity;
       switch (itemId) {
         case R.id.cab_delete_tag: {
+          List<QuranRow> selected = mBookmarksAdapter.getCheckedItems();
+          onNewData(mBookmarkPresenter.predictQuranListAfterDeletion(selected));
+          mBookmarkPresenter.deleteAfterSomeTime(selected);
+          Snackbar snackbar = Snackbar.make(mRecyclerView, getString(R.string.bookmark_tag_deleted, selected.size()),
+              BookmarkPresenter.DURATION).setAction(R.string.undo, mOnUndoClickListener);
+          snackbar.getView().setBackgroundColor(getResources().getColor(R.color.snackbar_background_color));
+          snackbar.show();
           return true;
         }
         case R.id.cab_new_tag: {
