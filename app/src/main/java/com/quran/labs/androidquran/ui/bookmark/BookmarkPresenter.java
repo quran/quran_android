@@ -169,6 +169,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
   }
 
+  // TODO: fix this - use a dedicated method in mBookmarksDbAdapter that does removals in a tx
   private Observable<ResultHolder> removeItemsObservable() {
     return Observable.from(mItemsToRemove)
         .flatMap(new Func1<QuranRow, Observable<Boolean>>() {
@@ -231,7 +232,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   private BookmarkData fetchBookmarkData(int sortOrder) {
-    List<Bookmark> bookmarks = mBookmarksDBAdapter.getBookmarks(true, sortOrder);
+    List<Bookmark> bookmarks = mBookmarksDBAdapter.getBookmarks(sortOrder);
     List<Tag> tags = mBookmarksDBAdapter.getTags();
     return new BookmarkData(tags, bookmarks);
   }

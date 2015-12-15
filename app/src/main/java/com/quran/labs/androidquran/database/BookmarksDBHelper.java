@@ -37,7 +37,20 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
     public static final String TAG_ID = "tag_id";
     public static final String ADDED_DATE = "added_date";
   }
-  
+
+  public static final String QUERY_BOOKMARKS =
+      "SELECT " + BookmarksTable.TABLE_NAME + "." + BookmarksTable.ID + ", " +
+          BookmarksTable.TABLE_NAME + "." + BookmarksTable.SURA + ", " +
+          BookmarksTable.TABLE_NAME + "." + BookmarksTable.AYAH + "," +
+          BookmarksTable.TABLE_NAME + "." + BookmarksTable.PAGE + ", " +
+          "strftime('%s', " + BookmarksTable.TABLE_NAME + "." + BookmarksTable.ADDED_DATE + ")" +
+          ", " +
+          BookmarkTagTable.TABLE_NAME + "." + BookmarkTagTable.TAG_ID +
+          " FROM " +
+          BookmarksTable.TABLE_NAME + " LEFT JOIN " + BookmarkTagTable.TABLE_NAME +
+          " ON " + BookmarksTable.TABLE_NAME + "." + BookmarksTable.ID + " = " +
+          BookmarkTagTable.TABLE_NAME + "." + BookmarkTagTable.BOOKMARK_ID;
+
   private static final String CREATE_BOOKMARKS_TABLE =
       " create table if not exists " + BookmarksTable.TABLE_NAME + " (" +
           BookmarksTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
