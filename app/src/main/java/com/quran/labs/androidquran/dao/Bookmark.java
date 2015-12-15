@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,5 +33,9 @@ public class Bookmark {
 
   public boolean isPageBookmark() {
     return sura == null && ayah == null;
+  }
+
+  public Bookmark withTags(List<Long> tagIds) {
+    return new Bookmark(id, sura, ayah, page, timestamp, new ArrayList<>(tagIds));
   }
 }

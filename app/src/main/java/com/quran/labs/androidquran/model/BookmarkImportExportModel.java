@@ -65,7 +65,7 @@ public class BookmarkImportExportModel {
 
   private Uri exportBookmarks() throws IOException {
     BookmarkData data = new BookmarkData(databaseAdapter.getTags(),
-        databaseAdapter.getBookmarks(true, BookmarksDBAdapter.SORT_DATE_ADDED));
+        databaseAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED));
 
     Uri result = null;
     File externalFilesDir = new File(appContext.getExternalFilesDir(null), "backups");

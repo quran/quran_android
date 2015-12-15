@@ -33,18 +33,14 @@ public class BookmarksDBAdapter {
   }
 
   public List<Bookmark> getBookmarkedAyahsOnPage(int page) {
-    return getBookmarks(true, SORT_LOCATION, page);
+    return getBookmarks(SORT_LOCATION, page);
   }
 
-  public List<Bookmark> getBookmarks(boolean loadTags) {
-    return getBookmarks(loadTags, SORT_DATE_ADDED);
+  public List<Bookmark> getBookmarks(int sortOrder) {
+    return getBookmarks(sortOrder, null);
   }
 
-  public List<Bookmark> getBookmarks(boolean loadTags, int sortOrder) {
-    return getBookmarks(loadTags, sortOrder, null);
-  }
-
-  public List<Bookmark> getBookmarks(boolean loadTags, int sortOrder, Integer pageFilter) {
+  public List<Bookmark> getBookmarks(int sortOrder, Integer pageFilter) {
     String orderBy;
     switch (sortOrder) {
       case SORT_LOCATION:
@@ -56,45 +52,54 @@ public class BookmarksDBAdapter {
         orderBy = BookmarksTable.ADDED_DATE + " DESC";
         break;
     }
+
     List<Bookmark> bookmarks = null;
-    String query = null;
+    StringBuilder queryBuilder = new StringBuilder(BookmarksDBHelper.QUERY_BOOKMARKS);
     if (pageFilter != null) {
-      query = BookmarksTable.PAGE + "=" + pageFilter +
-          " AND " + BookmarksTable.SURA + " IS NOT NULL" +
-          " AND " + BookmarksTable.AYAH + " IS NOT NULL";
+      queryBuilder.append(" WHERE ")
+          .append(BookmarksTable.PAGE)
+          .append(" = ").append(pageFilter).append(" AND ")
+          .append(BookmarksTable.SURA).append(" IS NOT NULL").append(" AND ")
+          .append(BookmarksTable.AYAH).append(" IS NOT NULL");
     }
+    queryBuilder.append(" ORDER BY ").append(orderBy);
 
-    final String[] columns = new String[] {
-        BookmarksTable.ID,
-        BookmarksTable.SURA,
-        BookmarksTable.AYAH,
-        BookmarksTable.PAGE,
-        "strftime('%s', " + BookmarksTable.ADDED_DATE + ")"
-    };
+    Cursor cursor = mDb.rawQuery(queryBuilder.toString(), null);
 
-    Cursor cursor = mDb.query(BookmarksTable.TABLE_NAME,
-        columns, query, null, null, null, orderBy);
     if (cursor != null) {
       bookmarks = new ArrayList<>();
+      long lastId = -1;
+      Bookmark lastBookmark = null;
+      List<Long> tagIds = new ArrayList<>();
       while (cursor.moveToNext()) {
         long id = cursor.getLong(0);
         Integer sura = cursor.getInt(1);
         Integer ayah = cursor.getInt(2);
         int page = cursor.getInt(3);
         long time = cursor.getLong(4);
+        long tagId = cursor.getLong(5);
 
         if (sura == 0 || ayah == 0) {
           sura = null;
           ayah = null;
         }
 
-        Bookmark bookmark;
-        if (loadTags) {
-          bookmark = new Bookmark(id, sura, ayah, page, time, getBookmarkTagIds(id));
-        } else {
-          bookmark = new Bookmark(id, sura, ayah, page, time);
+        if (lastId != id) {
+          if (lastBookmark != null) {
+            bookmarks.add(lastBookmark.withTags(tagIds));
+          }
+          tagIds.clear();
+          lastBookmark = new Bookmark(id, sura, ayah, page, time);
+          lastId = id;
         }
-        bookmarks.add(bookmark);
+
+        if (tagId > 0) {
+          tagIds.add(tagId);
+        }
+      }
+
+      if (lastBookmark != null) {
+        bookmarks.add(lastBookmark.withTags(tagIds));
       }
       cursor.close();
     }
