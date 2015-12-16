@@ -109,7 +109,7 @@
         &lt;br/>While on any Arabic page, press and hold on any ayah to get a menu where you can
         choose to bookmark, tag, share or copy that ayah to the clipboard, see the translation,
         or listen to its recitation.&lt;br/>
-        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu fonts don\'t work!&lt;/b>
+        &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu fonts don\'t work!&lt;/b>
         &lt;br/>Unfortunately, Android versions prior to 4.0 do not support these fonts, and there is
         little we can do to help with this.
     </string>
@@ -326,7 +326,10 @@
     <string name="edit_tag">Edit Tag</string>
     <string name="new_tag">New Tag</string>
     <string name="not_tagged">Not Tagged</string>
-    <string name="bookmark_tag_deleted">Deleted %1$d items.</string>
+    <plurals name="bookmark_tag_deleted">
+        <item quantity="one">Deleted one item</item>
+        <item quantity="other">Deleted %d items</item>
+    </plurals>
     <string name="undo">Undo</string>
     
     <!-- tag dialog -->
