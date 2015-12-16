@@ -43,24 +43,24 @@
     <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>
     <string name="about_data_sources">Data Sources</string>
     <string name="about_images">Images</string>
-    <string name="about_madani_images">The Quran images are based on the fonts from the King Fahd Quran Printing Complex.</string>
+    <string name="about_madani_images">The Quran images are based on the fonts from the King Fahd Quran Printing Complex</string>
     <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
-    <string name="about_naskh_images">The Quran images for the Naskh app were taken (with permission) from SHL Info Systems.</string>
-    <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com/</string>
-    <string name="about_qaloon_images">Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).</string>
-    <string name="about_quranicaudio">QuranicAudio</string>
-    <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations.</string>
+    <string name="about_naskh_images">The Quran images for the Naskh app were taken (with permission) from SHL Info Systems</string>
+    <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
+    <string name="about_qaloon_images">Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia)</string>
+    <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
+    <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
     <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
-    <string name="about_everyayah">EveryAyah</string>
-    <string name="about_everyayah_summary">Timing files and non-gapless recitations.</string>
+    <string name="about_everyayah" translatable="false">EveryAyah</string>
+    <string name="about_everyayah_summary">Timing files and non-gapless recitations</string>
     <string name="about_everyayah_url" translatable="false">http://everyayah.com</string>
-    <string name="about_quran_ksu">Electronic Mushaf Project</string>
-    <string name="about_quran_ksu_summary">The King Saud University Electronic Mushaf Project was the app\'s source of Arabic Tafaseer and translations for various languages.</string>
-    <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa/</string>
-    <string name="about_tanzil">Tanzil</string>
-    <string name="about_tanzil_summary">Translations for many languages.</string>
+    <string name="about_quran_ksu" translatable="false">Electronic Moshaf Project</string>
+    <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
+    <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
+    <string name="about_tanzil" translatable="false">Tanzil</string>
+    <string name="about_tanzil_summary">Translations for many languages</string>
     <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
-    <string name="about_noorhidayat">Noorhidayat</string>
+    <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
     <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
     <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
     <string name="about_open_source">Open Source Projects</string>
