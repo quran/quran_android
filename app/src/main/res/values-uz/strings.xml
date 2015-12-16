@@ -37,27 +37,18 @@
     <string name="about_description">\"Quran for Android\" - bu bepul Qurʼon ilovasidir. Iltimos, ilovani ishlab chiqarishda ishtirok etganlarni duolaringizda unutmang.</string>
     <string name="about_data_sources">Maʼlumotlar manbalari</string>
     <string name="about_images">Rasmlar</string>
-    <string name="about_madani_images">Qurʼon sahifalari rasmlari Podshoh Fahd Qurʼon Bosma Kompleksi shriftlari asosida yaratilgan.</string>
-    <string name="about_naskh_images">\"Quran - Naskh\" ilovasi uchun rasmlar \"SHL Info Systems\" ruhsati bilan olindi.</string>
-    <string name="about_qaloon_images">\"Quran - Qaloon\" ilovasi uchun rasmlar \"Nous Memes Editions Et Diffusion (Tunisia)\" ruhsati bilan olindi.</string>
-    <!--string name="about_quranicaudio">QuranicAudio</string-->
-    <string name="about_quranicaudio_summary">\"Gapless\" mp3 Qurʼon tilovatlari.</string>
-    <!--string name="about_everyayah">EveryAyah</string-->
-    <string name="about_everyayah_summary">Vaqt bazasi hamda \"non-gapless\" Qurʼon tilovatlari.</string>
-    <string name="about_quran_ksu">Elektron Musʼhaf proyekti</string>
-    <string name="about_quran_ksu_summary">Arabcha tafsir hamda baʼzi tarjimalar Podshoh Saud Universiteti qoshidagi Elektron Musʼhaf proyektidan olindi.</string>
-    <!--string name="about_tanzil">Tanzil</string-->
-    <string name="about_tanzil_summary">Koʻplab Qurʼon maʼnolari tarjimalari.</string>
-    <!--string name="about_noorhidayat">Noorhidayat</string-->
-    <string name="about_noorhidayat_summary">\"Noorehira\" shrifti hamda Mufti Taqi Usmoniy tarjimasi.</string>
+    <string name="about_madani_images">Qurʼon sahifalari rasmlari Podshoh Fahd Qurʼon Bosma Kompleksi shriftlari asosida yaratildi</string>
+    <string name="about_naskh_images">\"Quran - Naskh\" ilovasi uchun rasmlar \"SHL Info Systems\" ruhsati bilan olindi</string>
+    <string name="about_qaloon_images">\"Quran - Qaloon\" ilovasi uchun rasmlar \"Nous Memes Editions Et Diffusion (Tunisia)\" ruhsati bilan olindi</string>
+    <string name="about_quranicaudio_summary">\"Gapless\" mp3 Qurʼon tilovatlari</string>
+    <string name="about_everyayah_summary">Vaqt bazasi hamda \"non-gapless\" Qurʼon tilovatlari</string>
+    <string name="about_quran_ksu_summary">Arabcha tafsir hamda baʼzi tarjimalar Podshoh Saud Universiteti qoshidagi Elektron Musʼhaf proyektidan olindi</string>
+    <string name="about_tanzil_summary">Koʻplab tillardagi Qurʼon maʼnolari tarjimalari</string>
+    <string name="about_noorhidayat_summary">\"Noorehira\" shrifti hamda Mufti Taqi Usmoniy tarjimasi</string>
     <string name="about_open_source">Ochiq kodli proyektlar</string>
-    <!--string name="about_okhttp">OkHttp</string-->
-    <!--string name="about_rxjava">RxJava</string-->
-    <!--string name="about_rxandroid">RxAndroid</string-->
-    <!--string name="about_sliding_panel">AndroidSlidingUpPanel</string-->
     <string name="about_others">Boshqalar</string>
     <string name="about_contributors">Ishtirokchilar</string>
-    <string name="about_contributors_summary">Ushbu \"Quran for Android\" ilovasini ishlab chiqarishda ishtirok etganlar roʻyxati.</string>
+    <string name="about_contributors_summary">Ushbu \"Quran for Android\" ilovasini ishlab chiqarishda ishtirok etganlar roʻyxati</string>
 
     <!-- help -->
     <string name="help_title">Koʻp soʻralgan savollar</string>
