@@ -54,7 +54,7 @@
     <string name="about_everyayah" translatable="false">EveryAyah</string>
     <string name="about_everyayah_summary">Timing files and non-gapless recitations</string>
     <string name="about_everyayah_url" translatable="false">http://everyayah.com</string>
-    <string name="about_quran_ksu" translatable="false">Electronic Moshaf Project</string>
+    <string name="about_quran_ksu">Electronic Moshaf Project</string>
     <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
     <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
     <string name="about_tanzil" translatable="false">Tanzil</string>
