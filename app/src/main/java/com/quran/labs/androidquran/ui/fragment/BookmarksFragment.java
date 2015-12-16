@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -175,15 +176,16 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
       QuranActivity activity = (QuranActivity) currentActivity;
       switch (itemId) {
         case R.id.cab_delete: {
-          List<QuranRow> selected = mBookmarksAdapter.getCheckedItems();
+          final List<QuranRow> selected = mBookmarksAdapter.getCheckedItems();
+          final int size = selected.size();
+          final Resources res = getResources();
           onNewData(mBookmarkPresenter.predictQuranListAfterDeletion(selected));
           mBookmarkPresenter.deleteAfterSomeTime(selected);
           Snackbar snackbar = Snackbar.make(mRecyclerView,
-              getString(R.string.bookmark_tag_deleted, selected.size()),
-              BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS)
-              .setAction(R.string.undo, mOnUndoClickListener);
-          snackbar.getView().setBackgroundColor(
-              getResources().getColor(R.color.snackbar_background_color));
+              res.getQuantityString(R.plurals.bookmark_tag_deleted, size, size),
+              BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS);
+          snackbar.setAction(R.string.undo, mOnUndoClickListener);
+          snackbar.getView().setBackgroundColor(res.getColor(R.color.snackbar_background_color));
           snackbar.show();
           return true;
         }
