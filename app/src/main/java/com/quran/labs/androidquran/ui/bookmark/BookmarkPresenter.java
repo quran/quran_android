@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.content.Context;
@@ -286,19 +287,19 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     Map<Long, List<Bookmark>> tagsMapping = generateTagsMapping(tags, bookmarks);
     for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
       Tag tag = tags.get(i);
-      rows.add(QuranRow.fromTag(tag));
+      rows.add(QuranRowFactory.fromTag(tag));
       List<Bookmark> tagBookmarks = tagsMapping.get(tag.id);
       for (int j = 0, tagBookmarksSize = tagBookmarks.size(); j < tagBookmarksSize; j++) {
-        rows.add(QuranRow.fromBookmark(mAppContext, tagBookmarks.get(j), tag.id));
+        rows.add(QuranRowFactory.fromBookmark(mAppContext, tagBookmarks.get(j), tag.id));
       }
     }
 
     // add untagged bookmarks
     List<Bookmark> untagged = tagsMapping.get(BOOKMARKS_WITHOUT_TAGS_ID);
     if (untagged.size() > 0) {
-      rows.add(QuranRow.fromNotTaggedHeader(mAppContext));
+      rows.add(QuranRowFactory.fromNotTaggedHeader(mAppContext));
       for (int i = 0, untaggedSize = untagged.size(); i < untaggedSize; i++) {
-        rows.add(QuranRow.fromBookmark(mAppContext, untagged.get(i)));
+        rows.add(QuranRowFactory.fromBookmark(mAppContext, untagged.get(i)));
       }
     }
     return rows;
@@ -312,7 +313,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
       if (bookmark.isPageBookmark()) {
-        rows.add(QuranRow.fromBookmark(mAppContext, bookmark));
+        rows.add(QuranRowFactory.fromBookmark(mAppContext, bookmark));
       } else {
         ayahBookmarks.add(bookmark);
       }
@@ -320,14 +321,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
     // add page bookmarks header if needed
     if (rows.size() > 0) {
-      rows.add(0, QuranRow.fromPageBookmarksHeader(mAppContext));
+      rows.add(0, QuranRowFactory.fromPageBookmarksHeader(mAppContext));
     }
 
     // add ayah bookmarks if any
     if (ayahBookmarks.size() > 0) {
-      rows.add(QuranRow.fromAyahBookmarksHeader(mAppContext));
+      rows.add(QuranRowFactory.fromAyahBookmarksHeader(mAppContext));
       for (int i = 0, ayahBookmarksSize = ayahBookmarks.size(); i < ayahBookmarksSize; i++) {
-        rows.add(QuranRow.fromBookmark(mAppContext, ayahBookmarks.get(i)));
+        rows.add(QuranRowFactory.fromBookmark(mAppContext, ayahBookmarks.get(i)));
       }
     }
 
@@ -354,8 +355,8 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
 
     if (showLastPage) {
-      rows.add(0, QuranRow.fromCurrentPageHeader(mAppContext));
-      rows.add(1, QuranRow.fromCurrentPage(mAppContext, lastPage));
+      rows.add(0, QuranRowFactory.fromCurrentPageHeader(mAppContext));
+      rows.add(1, QuranRowFactory.fromCurrentPage(mAppContext, lastPage));
     }
 
     return rows;
