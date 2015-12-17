@@ -24,6 +24,7 @@
     <string name="menu_sort">Tartib</string>
     <string name="menu_sort_date">Sana</string>
     <string name="menu_sort_location">Qurʼondagi yeri</string>
+    <string name="menu_sort_group_by_tags">Teglarga boʻlish</string>
     <string name="menu_translation">Tarjimalar</string>
     <string name="menu_back_to_page">Qurʼon</string>
     <string name="menu_help">Yordam</string>
@@ -81,7 +82,7 @@
         Yangi ochilgan menyu orqali oyatni xatchoʻplarga qoʻshishingiz, teglashingiz, boʻlishingiz,
         tarjimasini koʻrishingiz hamda qiroatini tinglashingiz mumkin.
         &lt;br/>
-        &lt;br/>&lt;b>Malayalm/Tamil/Bangla/Urdu shriflari ishlamayabdi!&lt;/b>
+        &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu shriflari ishlamayabdi!&lt;/b>
         &lt;br/>Afsuski, Android 4.0 dan avvalgi versiyalarda ushbu shriftlar umuman ishlamaydi va
         bu boradi biz biror yordam qila olmaymiz.
     </string>
@@ -169,7 +170,7 @@
     <string name="prefs_copying_app_files">Ilova fayllari koʻchirilmoqda&#8230;</string>
     <string name="prefs_err_moving_app_files">Fayllarni koʻchirib oʻtkazishda xatolik yuz berdi</string>
     <string name="prefs_no_enough_space_to_move_files">Fayllarni koʻchirib oʻtkazish uchun yetarli joy mavjud emas</string>
-    <!--string name="prefs_megabytes">%1$d MB</string-->
+    <string name="prefs_megabytes">%1$d Mb</string>
     <string name="prefs_tablet_mode_title">Planshet rejimi</string>
     <string name="prefs_tablet_mode_enabled">Yotiq holatda ikki bet yonma-yon koʻrinadi</string>
     <string name="prefs_tablet_mode_disabled">Yotiq holatda ham faqat bitta bet koʻrinadi</string>
@@ -199,9 +200,9 @@
     <string name="translation_dialog_later">Keyinroq</string>
 
     <!-- End Number picker Strings -->
-    <!--string name="quran_rob3">¼</string-->
-    <!--string name="quran_nos">½</string-->
-    <!--string name="quran_talt_arb3">¾</string-->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
     <string name="quran_hizb">Hizb</string>
     <string name="quran_juz2">Juz</string>
     <string name="quran_page">Sahifa</string>
@@ -235,7 +236,7 @@
 
     <!-- downloading dialogs -->
     <string name="download_progress">%1$s/%2$s saqlandi</string>
-    <string name="download_sura_progress">%3$d-suraning %1$s (jami %2$s) saqlanmoqda&#8230;</string>
+    <string name="download_sura_progress">%3$d-suraning %1$s (jami: %2$s) saqlanmoqda&#8230;</string>
     <string name="download_sura_ayah_progress">%1$d-sura %2$d-oyat saqlanmoqda&#8230;</string>
     <string name="process_progress">%1$d/%2$d ishlandi</string>
     <string name="download_retry">Qayta harakat qilish</string>
@@ -301,6 +302,11 @@
     <string name="edit_tag">Tegni tahrir qilish</string>
     <string name="new_tag">Yangi teg</string>
     <string name="not_tagged">Teglanmagan</string>
+    <plurals name="bookmark_tag_deleted">
+        <item quantity="one">Bitta element oʻchirildi</item>
+        <item quantity="other">%d ta element oʻchirildi</item>
+    </plurals>
+    <string name="undo">@string/cancel</string>
 
     <!-- tag dialog -->
     <string name="tag_dlg_title">Teg</string>
