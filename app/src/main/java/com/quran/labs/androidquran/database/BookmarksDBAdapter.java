@@ -12,6 +12,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +150,43 @@ public class BookmarksDBAdapter {
     return -1;
   }
 
+  public void bulkDelete(List<Long> tagIds, List<Long> bookmarkIds, List<Pair<Long, Long>> untag) {
+    mDb.beginTransaction();
+    try {
+      // cache and re-use for tags and bookmarks
+      String[] param = new String[1];
+
+      // remove tags
+      for (int i = 0, tagIdsSize = tagIds.size(); i < tagIdsSize; i++) {
+        long tagId = tagIds.get(i);
+        param[0] = String.valueOf(tagId);
+        mDb.delete(TagsTable.TABLE_NAME, TagsTable.ID + " = ?", param);
+        mDb.delete(BookmarkTagTable.TABLE_NAME, BookmarkTagTable.TAG_ID + " = ?", param);
+      }
+
+      // remove bookmarks
+      for (int i = 0, bookmarkIdsSize = bookmarkIds.size(); i < bookmarkIdsSize; i++) {
+        long bookmarkId = bookmarkIds.get(i);
+        param[0] = String.valueOf(bookmarkId);
+        mDb.delete(BookmarksTable.TABLE_NAME, BookmarksTable.ID + " = ?", param);
+        mDb.delete(BookmarkTagTable.TABLE_NAME, BookmarkTagTable.BOOKMARK_ID + " = ?", param);
+      }
+
+      // untag whatever is being untagged
+      String[] params = new String[2];
+      for (int i = 0, untagSize = untag.size(); i < untagSize; i++) {
+        Pair<Long, Long> item = untag.get(i);
+        params[0] = String.valueOf(item.first);
+        params[1] = String.valueOf(item.second);
+        mDb.delete(BookmarkTagTable.TABLE_NAME,
+            BookmarkTagTable.BOOKMARK_ID + " = ? AND " + BookmarkTagTable.TAG_ID + " = ?", params);
+      }
+      mDb.setTransactionSuccessful();
+    } finally {
+      mDb.endTransaction();
+    }
+  }
+
   public long addBookmarkIfNotExists(Integer sura, Integer ayah, int page) {
     long bookmarkId = getBookmarkId(sura, ayah, page);
     if (bookmarkId < 0) {
@@ -166,7 +204,8 @@ public class BookmarksDBAdapter {
   }
 
   public boolean removeBookmark(long bookmarkId) {
-    clearBookmarkTags(bookmarkId);
+    mDb.delete(BookmarkTagTable.TABLE_NAME,
+        BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
     return mDb.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null) == 1;
   }
@@ -221,17 +260,6 @@ public class BookmarksDBAdapter {
         TagsTable.ID + "=" + id, null);
   }
 
-  public boolean removeTag(long tagId) {
-    boolean removed = mDb.delete(TagsTable.TABLE_NAME,
-        TagsTable.ID + "=" + tagId, null) == 1;
-    if (removed) {
-      mDb.delete(BookmarkTagTable.TABLE_NAME,
-          BookmarkTagTable.TAG_ID + "=" + tagId, null);
-    }
-
-    return removed;
-  }
-
   public void tagBookmarks(long[] bookmarkIds, Set<Long> tagIds) {
     mDb.beginTransaction();
     try {
@@ -271,17 +299,6 @@ public class BookmarksDBAdapter {
     } finally {
       mDb.endTransaction();
     }
-  }
-
-  public void untagBookmark(long bookmarkId, long tagId) {
-    mDb.delete(BookmarkTagTable.TABLE_NAME,
-        BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId + " AND "
-            + BookmarkTagTable.TAG_ID + "=" + tagId, null);
-  }
-
-  public int clearBookmarkTags(long bookmarkId) {
-    return mDb.delete(BookmarkTagTable.TABLE_NAME,
-        BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
   }
 
   public boolean importBookmarks(BookmarkData data) {

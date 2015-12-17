@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.content.Context;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -169,31 +170,35 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
   }
 
-  // TODO: fix this - use a dedicated method in mBookmarksDbAdapter that does removals in a tx
   private Observable<ResultHolder> removeItemsObservable() {
-    return Observable.from(mItemsToRemove)
-        .flatMap(new Func1<QuranRow, Observable<Boolean>>() {
-          @Override
-          public Observable<Boolean> call(QuranRow quranRow) {
-            if (quranRow.isBookmarkHeader() && quranRow.tagId >= 0) {
-              mBookmarksDBAdapter.removeTag(quranRow.tagId);
-            } else if (quranRow.isBookmark() && quranRow.bookmarkId >= 0) {
-              if (quranRow.tagId >= 0) {
-                mBookmarksDBAdapter.untagBookmark(quranRow.bookmarkId, quranRow.tagId);
-              } else {
-                mBookmarksDBAdapter.removeBookmark(quranRow.bookmarkId);
-              }
+    final List<QuranRow> itemsToRemoveRef = new ArrayList<>(mItemsToRemove);
+    return Observable.fromCallable(new Callable<Void>() {
+      @Override
+      public Void call() throws Exception {
+        List<Long> tagsToDelete = new ArrayList<>();
+        List<Long> bookmarksToDelete = new ArrayList<>();
+        List<Pair<Long, Long>> untag = new ArrayList<>();
+        for (int i = 0, size = itemsToRemoveRef.size(); i < size; i++) {
+          QuranRow row = itemsToRemoveRef.get(i);
+          if (row.isBookmarkHeader() && row.tagId > 0) {
+            tagsToDelete.add(row.tagId);
+          } else if (row.isBookmark() && row.bookmarkId > 0) {
+            if (row.tagId > 0) {
+              untag.add(new Pair<>(row.bookmarkId, row.tagId));
+            } else {
+              bookmarksToDelete.add(row.bookmarkId);
             }
-            return Observable.just(true);
           }
-        })
-        .toList()
-        .flatMap(new Func1<List<Boolean>, Observable<ResultHolder>>() {
-          @Override
-          public Observable<ResultHolder> call(List<Boolean> booleen) {
-            return getBookmarkObservable(mSortOrder, mGroupByTags);
-          }
-        });
+        }
+        mBookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag);
+        return null;
+      }
+    }).flatMap(new Func1<Void, Observable<ResultHolder>>() {
+      @Override
+      public Observable<ResultHolder> call(Void aVoid) {
+        return getBookmarkObservable(mSortOrder, mGroupByTags);
+      }
+    });
   }
 
   private Observable<ResultHolder> getBookmarkObservable(
