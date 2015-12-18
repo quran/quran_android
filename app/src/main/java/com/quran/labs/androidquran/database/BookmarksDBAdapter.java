@@ -50,8 +50,7 @@ public class BookmarksDBAdapter {
         break;
       case SORT_DATE_ADDED:
       default:
-        orderBy = BookmarksTable.ADDED_DATE + " DESC";
-        break;
+        orderBy = BookmarksTable.TABLE_NAME + "." + BookmarksTable.ADDED_DATE + " DESC";
     }
 
     List<Bookmark> bookmarks = null;
