@@ -69,7 +69,7 @@
     <string name="translation_settings">ڕێکخستنەکانی وەرگێڕان</string>
     <string name="no_arabic_search_available">داتاکانی گەڕان بە عەرەبی دانەگیراوە. تکایە دایبگرە و دووبارە هەوڵێ گەڕان بدەرەوە.</string>
     <string name="get_arabic_search_db">داگرتنی داتابەیسی گەڕانی عەرەبی</string>
-        
+
     <!-- Quran Preference Activity -->
     <string name="prefs_category_navigation">گەڕان</string>
     <string name="prefs_volume_key_navigation_title">فرمانی دوگمەی دەنگ</string>
@@ -107,7 +107,7 @@
     <string name="downloaded_translations">داگیرا</string>
     <string name="available_translations">ئامادەیە بۆ داگرتن</string>
     <string name="remove_button">لابردن</string>
-    <string name="dialog_ok">باشە</string> 
+    <string name="dialog_ok">باشە</string>
     <string name="prefs_app_location_title">شوێنی بەرنامە</string>
     <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
     <string name="prefs_sdcard_internal">یادگەی ناوەکی</string>
@@ -116,7 +116,7 @@
     <string name="prefs_copying_app_files">لەبەرگرتنەوەی فایلەکانی بەرنامە</string>
     <string name="prefs_err_moving_app_files">گواستنەوەی فایلەکانی بەرنامە سەرکەوتو نەبوو</string>
     <string name="prefs_no_enough_space_to_move_files">شوێنی بەتاڵ کەمە بۆ گواستنەوەی فایلەکانی بەرنامە</string>
-    <string name="prefs_megabytes">مێگابایت  %1$d</string>
+    <string name="prefs_megabytes_int">مێگابایت  %1$d</string>
     <!-- Preferences End -->
 
     <!-- translation updates -->
@@ -145,20 +145,20 @@
     <string name="page_description">پەڕەی %1$s, جوزئی %2$s</string>
     <string name="highlighting_database">فایلە پێویستەکان</string>
     <string name="timing_database">فایلە پێویستەکان</string>
-    
+
     <!-- download statuses and errors -->
-    <string name="download_successful">داگرتن سەرکەوتو بوو</string>   
-    <string name="download_processing">داگرتن لە ئەنجامداندایە&#8230;</string>              
-    <string name="download_error_general">داگرتن سەرکەوتو نەبوو</string>             
-    <string name="download_error_disk">شوێنی بەتاڵی پێویست نیە بۆ داگرتن</string>               
-    <string name="download_error_network">ناتوانرێت دابگیرێت بەهۆی هەڵە لە تۆڕدا</string>                    
-    <string name="download_error_perms">ناتوانرێت دابگیرێت بەهۆی هەڵە لە ڕێگەپێداندا</string>                  
+    <string name="download_successful">داگرتن سەرکەوتو بوو</string>
+    <string name="download_processing">داگرتن لە ئەنجامداندایە&#8230;</string>
+    <string name="download_error_general">داگرتن سەرکەوتو نەبوو</string>
+    <string name="download_error_disk">شوێنی بەتاڵی پێویست نیە بۆ داگرتن</string>
+    <string name="download_error_network">ناتوانرێت دابگیرێت بەهۆی هەڵە لە تۆڕدا</string>
+    <string name="download_error_perms">ناتوانرێت دابگیرێت بەهۆی هەڵە لە ڕێگەپێداندا</string>
     <string name="download_error_invalid_download">فایلی داگیراو تێکچووە</string>
-    <string name="download_error_invalid_download_retry">فایل تێکچووە، هەوڵدان بۆ داگرتنەوە.</string> 
+    <string name="download_error_invalid_download_retry">فایل تێکچووە، هەوڵدان بۆ داگرتنەوە.</string>
     <string name="download_error_network_retry">هەڵە هەیە لە تۆڕدا، هەوڵدان بۆ بەردەوامبون&#8230;</string>
     <string name="notification_download_canceled">داگرتن هەڵوەشێنرایەوە</string>
     <string name="download_non_wifi_prompt">تۆ لەسەر تۆڕی بێتەل نیت WiFi. داگرتن بەهەرحاڵ؟</string>
-    
+
     <!-- downloading dialogs -->
     <string name="download_progress">داگیرا %1$s / %2$s</string>
     <string name="process_progress">ئەنجامدان %1$d / %2$d</string>
@@ -204,11 +204,11 @@
     <string name="edit_tag">دەستکاریکردنی بڕگە</string>
     <string name="new_tag">بڕگەی نوێ</string>
     <string name="not_tagged">بڕگە نەکراوە</string>
-    
+
     <!-- tag dialog -->
     <string name="tag_dlg_title">بڕگە</string>
     <string name="tag_name">ناو</string>
-    
+
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">ھیچ نیشانەکراوێک نیە</string>
     <string name="tags_list_empty">بێ بڕگە</string>

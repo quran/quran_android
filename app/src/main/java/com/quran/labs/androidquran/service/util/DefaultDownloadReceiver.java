@@ -24,7 +24,7 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
   private boolean mCanCancelDownload;
 
   private static class DownloadReceiverHandler extends Handler {
-    private WeakReference<DefaultDownloadReceiver> mReceiverRef;
+    private final WeakReference<DefaultDownloadReceiver> mReceiverRef;
 
     public DownloadReceiverHandler(DefaultDownloadReceiver receiver) {
       mReceiverRef = new WeakReference<>(receiver);
@@ -32,8 +32,8 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
 
     @Override
     public void handleMessage(Message msg) {
-      final DefaultDownloadReceiver rcvr = mReceiverRef.get();
-      if (rcvr == null || rcvr.mListener == null) {
+      final DefaultDownloadReceiver receiver = mReceiverRef.get();
+      if (receiver == null || receiver.mListener == null) {
         return;
       }
 
@@ -42,14 +42,14 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
           QuranDownloadNotifier.ProgressIntent.STATE);
       switch (state) {
         case QuranDownloadNotifier.ProgressIntent.STATE_SUCCESS:
-          rcvr.dismissDialog();
-          rcvr.mListener.handleDownloadSuccess();
+          receiver.dismissDialog();
+          receiver.mListener.handleDownloadSuccess();
           break;
         case QuranDownloadNotifier.ProgressIntent.STATE_ERROR: {
           int msgId = ServiceIntentHelper.
               getErrorResourceFromDownloadIntent(intent, true);
-          rcvr.dismissDialog();
-          rcvr.mListener.handleDownloadFailure(msgId);
+          receiver.dismissDialog();
+          receiver.mListener.handleDownloadFailure(msgId);
           break;
         }
         case QuranDownloadNotifier.ProgressIntent.STATE_DOWNLOADING: {
@@ -61,11 +61,11 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
               QuranDownloadNotifier.ProgressIntent.TOTAL_SIZE, -1);
           int sura = intent.getIntExtra(QuranDownloadNotifier.ProgressIntent.SURA, -1);
           int ayah = intent.getIntExtra(QuranDownloadNotifier.ProgressIntent.AYAH, -1);
-          if (rcvr.mListener instanceof DownloadListener) {
-            ((DownloadListener) rcvr.mListener).updateDownloadProgress(progress,
+          if (receiver.mListener instanceof DownloadListener) {
+            ((DownloadListener) receiver.mListener).updateDownloadProgress(progress,
                 downloadedSize, totalSize);
           } else {
-            rcvr.updateDownloadProgress(progress, downloadedSize, totalSize, sura, ayah);
+            receiver.updateDownloadProgress(progress, downloadedSize, totalSize, sura, ayah);
           }
           break;
         }
@@ -76,11 +76,11 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
               QuranDownloadNotifier.ProgressIntent.PROCESSED_FILES, 0);
           int totalFiles = intent.getIntExtra(
               QuranDownloadNotifier.ProgressIntent.TOTAL_FILES, 0);
-          if (rcvr.mListener instanceof DownloadListener) {
-            ((DownloadListener) rcvr.mListener).updateProcessingProgress(progress,
+          if (receiver.mListener instanceof DownloadListener) {
+            ((DownloadListener) receiver.mListener).updateProcessingProgress(progress,
                 processedFiles, totalFiles);
           } else {
-            rcvr.updateProcessingProgress(progress, processedFiles, totalFiles);
+            receiver.updateProcessingProgress(progress, processedFiles, totalFiles);
           }
           break;
         }
@@ -88,11 +88,11 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
             .STATE_ERROR_WILL_RETRY: {
           int msgId = ServiceIntentHelper.
               getErrorResourceFromDownloadIntent(intent, true);
-          if (rcvr.mListener instanceof DownloadListener) {
-            ((DownloadListener) rcvr.mListener)
+          if (receiver.mListener instanceof DownloadListener) {
+            ((DownloadListener) receiver.mListener)
                 .handleDownloadTemporaryError(msgId);
           } else {
-            rcvr.handleNonFatalError(msgId);
+            receiver.handleNonFatalError(msgId);
           }
           break;
         }
@@ -100,7 +100,7 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
     }
   }
 
-  private Handler mHandler;
+  private final Handler mHandler;
 
   public DefaultDownloadReceiver(Context context, int downloadType) {
     mContext = context;
@@ -217,8 +217,10 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
 
       DecimalFormat df = new DecimalFormat("###.00");
       int mb = 1024 * 1024;
-      String downloaded = df.format((1.0 * downloadedSize / mb)) + " MB";
-      String total = df.format((1.0 * totalSize / mb)) + " MB";
+      String downloaded = mContext.getString(R.string.prefs_megabytes_str,
+          df.format((1.0 * downloadedSize / mb)));
+      String total = mContext.getString(R.string.prefs_megabytes_str,
+          df.format((1.0 * totalSize / mb)));
 
       String message;
       if (currentSura < 1) {
@@ -290,19 +292,19 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
 
   public interface SimpleDownloadListener {
 
-    public void handleDownloadSuccess();
+    void handleDownloadSuccess();
 
-    public void handleDownloadFailure(int errId);
+    void handleDownloadFailure(int errId);
   }
 
   public interface DownloadListener extends SimpleDownloadListener {
 
-    public void updateDownloadProgress(int progress,
+    void updateDownloadProgress(int progress,
         long downloadedSize, long totalSize);
 
-    public void updateProcessingProgress(int progress,
+    void updateProcessingProgress(int progress,
         int processFiles, int totalFiles);
 
-    public void handleDownloadTemporaryError(int errorId);
+    void handleDownloadTemporaryError(int errorId);
   }
 }
