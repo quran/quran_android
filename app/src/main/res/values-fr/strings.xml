@@ -59,7 +59,7 @@
         &lt;br/>Malheureusement, Android avant la version 4.0 ne prend pas en charge ces polices, et nous ne pouvons pas faire grand chose pour y remédier.   </string>
   <string name="search_hint">Rechercher dans le coran</string>
   <string name="quranSearchType">Ayāt du Coran</string>
-  
+
   <!-- Search messages -->
   <string name="found_in_sura">Trouvée dans la sourate</string>
   <string name="no_results">Aucun resultats pour \"%s\"</string>
@@ -67,7 +67,7 @@
   <string name="translation_settings">Paramètres de traduction</string>
   <string name="no_arabic_search_available">Vous n\'avez pas téléchargé le pack de recherche arabe.  S\'il vous plaît veuillez le télécharger et recommencez votre recherche.</string>
   <string name="get_arabic_search_db">Télécharger la base de données de recherche arabe</string>
-  
+
   <!-- Quran Preference Activity -->
   <string name="prefs_category_navigation">Navigation</string>
   <string name="prefs_volume_key_navigation_title">Navigation avec les touches de son</string>
@@ -114,7 +114,7 @@
   <string name="prefs_calculating_app_size">Calcul de la taille de l\'application</string>
   <string name="prefs_copying_app_files">Copie des fichier de l\'application</string>
   <string name="prefs_err_moving_app_files">Echec du déplacement des fichiers de l\'application</string>
-  <string name="prefs_megabytes">%1$d Mo</string>
+  <string name="prefs_megabytes_int">%1$d Mo</string>
   <string name="prefs_no_enough_space_to_move_files">Espace insuffisant pour déplacer les fichiers de l\'application</string>
   <string name="prefs_sdcard_internal">Stockage interne</string>
   <string name="prefs_sdcard_external">Carte SD externe %1$d</string>
@@ -155,7 +155,7 @@
   <string name="page_description">page %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Fichiers requis</string>
   <string name="timing_database">Fichiers requis</string>
-  
+
   <!-- download statuses and errors -->
   <string name="sdcard_error">Impossible de trouver la carte SD. Insérez-là et réessayez de nouveau.</string>
   <string name="download_successful">Téléchargement réussi</string>
@@ -169,14 +169,14 @@
   <string name="download_error_network_retry">Erreur réseau, tentative de reprise…</string>
   <string name="notification_download_canceled">Téléchargement annulé</string>
   <string name="download_non_wifi_prompt">Vous n\'êtes pas en wifi.  Télécharger les données malgré tout ?</string>
-  
+
   <!-- downloading dialogs -->
   <string name="download_progress">Téléchargé %1$s / %2$s</string>
   <string name="process_progress">Traitement du fichier %1$d / %2$d</string>
   <string name="download_retry">Réessayer</string>
   <string name="download_cancel">Annuler</string>
   <string name="download_extra_data">Nous avons besoin de télécharger un ou deux petits fichiers pour le support du partage et de la traduction.  Télécharger maintenant ?</string>
-  
+
   <!-- translation database stuff -->
   <string name="remove_dlg_title">Supprimer la traduction ?</string>
   <string name="remove_dlg_msg">Êtes-vous sûr de vouloir supprimer les %1$s ?</string>
@@ -231,20 +231,20 @@
   <string name="edit_tag">Modifier l\'étiquette</string>
   <string name="new_tag">Nouvelle étiquette</string>
   <string name="not_tagged">Aucune étiquette</string>
-  
+
   <!-- tag dialog -->
   <string name="tag_dlg_title">Étiquette</string>
   <string name="tag_name">Nom</string>
-  
+
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Aucun favori</string>
   <string name="tags_list_empty">Aucune étiquette</string>
-  
+
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">résultat pour \"%1$s\": </item>
     <item quantity="other">%2$d résultats pour \"%1$s\": </item>
   </plurals>
-  
-  
+
+
 </resources>
