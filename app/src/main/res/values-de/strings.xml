@@ -108,7 +108,7 @@
     <string name="no_arabic_search_available">Sie haben das arabische Such-Paket noch nicht 
 	heruntergeladen.  Bitte laden Sie dieses herunter und versuchen Sie es danach erneut.</string>
 	<string name="get_arabic_search_db">Lade die arabische Such-Datenbank herunter</string>
-        
+
     <!-- Quran Preference Activity -->
     <string name="prefs_category_navigation">Navigation</string>
     <string name="prefs_volume_key_navigation_title">Navigation mittels Lautstärketasten</string>
@@ -158,7 +158,7 @@
     <string name="prefs_copying_app_files">Programmdateien werden kopiert</string>
     <string name="prefs_err_moving_app_files">Die Programmdateien konnten nicht verschoben werden.</string>
     <string name="prefs_no_enough_space_to_move_files">Sie haben nicht genug Speicherplatz um die Dateien zu verschieben.</string>
-    <string name="prefs_megabytes">%1$d MB</string>
+    <string name="prefs_megabytes_int">%1$d MB</string>
     <string name="prefs_tablet_mode_title">Tablet-Modus</string>
     <string name="prefs_tablet_mode_enabled">Im Querformat werden zwei Seiten nebeneinander dargestellt.</string>
     <string name="prefs_tablet_mode_disabled">Im Querformat wird nur eine Seite dargestellt.</string>
@@ -193,22 +193,22 @@
     <string name="page_description">Seite %1$s, Juz\' %2$s</string>
     <string name="highlighting_database">Benötigte Dateien</string>
     <string name="timing_database">Benötigte Dateien</string>
-    
+
     <!-- download statuses and errors -->
     <string name="sdcard_error">Die SD-Karte konnte nicht gefunden werden. Bitte setzen Sie die Karte erneut ein und versuchen Sie es nochmals.</string>
-    <string name="download_successful">Download erfolgreich</string>   
-	<string name="download_processing">Download wird durchgeführt&#8230;</string>              
-    <string name="download_error_general">Download fehlgeschlagen</string>             
-    <string name="download_error_disk">Sie verfügen nicht über genug Speicherplatz um die Dateien herunterzuladen.</string>               
+    <string name="download_successful">Download erfolgreich</string>
+	<string name="download_processing">Download wird durchgeführt&#8230;</string>
+    <string name="download_error_general">Download fehlgeschlagen</string>
+    <string name="download_error_disk">Sie verfügen nicht über genug Speicherplatz um die Dateien herunterzuladen.</string>
 	<string name="download_error_network">Die Datei konnte wegen eines Netzwerk-Fehlers nicht heruntergeladen werden.</string>
-	
+
 	<string name="download_error_perms">Die Datei konnte mangels Berechtigungen nicht heruntergeladen werden.</string>
 	<string name="download_error_invalid_download">Die heruntergeladene Datei war fehlerhaft.</string>
 	<string name="download_error_invalid_download_retry">Fehlerhafte Datei, es wird versucht die Datei erneut herunterzuladen.</string>
     <string name="download_error_network_retry">Netzwerk-Fehler, es wird versucht eine Verbindung aufzubauen&#8230;</string>
     <string name="notification_download_canceled">Download abgebrochen</string>
     <string name="download_non_wifi_prompt">Sie sind nicht mit einem W-LAN verbunden.  Möchten Sie die Dateien trotzdem herunterladen?</string>
-    
+
     <!-- downloading dialogs -->
     <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
     <string name="download_sura_progress">Heruntergeladen %1$s / %2$s von Sure %3$d</string>
@@ -277,11 +277,11 @@
     <string name="edit_tag">Schlagwort bearbeiten</string>
     <string name="new_tag">Neues Schlagwort</string>
     <string name="not_tagged">Noch kein Schlagwort hinzugefügt</string>
-    
+
     <!-- tag dialog -->
     <string name="tag_dlg_title">Schlagwort</string>
     <string name="tag_name">Name</string>
-    
+
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Keine Lesezeichen</string>
     <string name="tags_list_empty">Keine Schlagwörter</string>

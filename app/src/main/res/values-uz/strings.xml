@@ -170,7 +170,8 @@
     <string name="prefs_copying_app_files">Ilova fayllari koʻchirilmoqda&#8230;</string>
     <string name="prefs_err_moving_app_files">Fayllarni koʻchirib oʻtkazishda xatolik yuz berdi</string>
     <string name="prefs_no_enough_space_to_move_files">Fayllarni koʻchirib oʻtkazish uchun yetarli joy mavjud emas</string>
-    <string name="prefs_megabytes">%1$d Mb</string>
+    <string name="prefs_megabytes_int">%1$d Mb</string>
+    <string name="prefs_megabytes_str">%s Mb</string>
     <string name="prefs_tablet_mode_title">Planshet rejimi</string>
     <string name="prefs_tablet_mode_enabled">Yotiq holatda ikki bet yonma-yon koʻrinadi</string>
     <string name="prefs_tablet_mode_disabled">Yotiq holatda ham faqat bitta bet koʻrinadi</string>
