@@ -58,7 +58,7 @@ public class DataListPreference extends QuranListPreference {
                                     List<StorageUtils.Storage> storageList) {
     String summary = context.getString(R.string.prefs_app_location_summary) + "\n"
         + context.getString(R.string.prefs_app_size) + " " +
-        context.getString(R.string.prefs_megabytes, appSize);
+        context.getString(R.string.prefs_megabytes_int, appSize);
     setSummary(summary);
 
     CharSequence[] values = new CharSequence[storageList.size()];
@@ -70,7 +70,7 @@ public class DataListPreference extends QuranListPreference {
       values[i] = storage.getMountPoint();
       displayNames[i] = storage.getLabel();
       mDescriptions[i] = storage.getMountPoint() + " " +
-          context.getString(R.string.prefs_megabytes, storage.getFreeSpace());
+          context.getString(R.string.prefs_megabytes_int, storage.getFreeSpace());
     }
     setEntries(displayNames);
     setEntryValues(values);
