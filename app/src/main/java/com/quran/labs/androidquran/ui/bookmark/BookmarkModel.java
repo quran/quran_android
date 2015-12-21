@@ -10,6 +10,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -45,6 +46,13 @@ public class BookmarkModel {
     mAppContext = context.getApplicationContext();
     mQuranSettings = QuranSettings.getInstance(context);
     mBookmarksDBAdapter = new BookmarksDBAdapter(context);
+  }
+
+  @VisibleForTesting
+  BookmarkModel(Context appContext, QuranSettings settings, BookmarksDBAdapter adapter) {
+    mAppContext = appContext;
+    mQuranSettings = settings;
+    mBookmarksDBAdapter = adapter;
   }
 
   public Observable<BookmarkResult> getBookmarkObservable(

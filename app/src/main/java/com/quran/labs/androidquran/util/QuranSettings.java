@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 
 public class QuranSettings {
@@ -23,6 +24,11 @@ public class QuranSettings {
       sInstance = new QuranSettings(context.getApplicationContext());
     }
     return sInstance;
+  }
+
+  @VisibleForTesting
+  public static void setInstance(QuranSettings settings) {
+    sInstance = settings;
   }
 
   private QuranSettings(@NonNull Context appContext) {
