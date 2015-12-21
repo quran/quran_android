@@ -49,6 +49,10 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
   }
 
+  public int getSortOrder() {
+    return mSortOrder;
+  }
+
   public void setSortOrder(int sortOrder) {
     mSortOrder = sortOrder;
     mQuranSettings.setBookmarksSortOrder(mSortOrder);
