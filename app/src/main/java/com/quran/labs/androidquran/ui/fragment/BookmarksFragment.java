@@ -32,7 +32,6 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
   private QuranListAdapter mBookmarksAdapter;
   private BookmarkPresenter mBookmarkPresenter;
-  private MenuItem mGroupByTagsItem;
   private RecyclerView mRecyclerView;
   private BookmarksContextualModePresenter mBookmarksContextualModePresenter;
 
@@ -88,16 +87,15 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
       sortItem.setVisible(true);
       sortItem.setEnabled(true);
 
-      if (BookmarksDBAdapter.SORT_DATE_ADDED == mBookmarkPresenter.getSortOrder()) {
-        MenuItem sortDate = menu.findItem(R.id.sort_date);
-        sortDate.setChecked(true);
-      } else {
-        MenuItem sortLocation = menu.findItem(R.id.sort_location);
-        sortLocation.setChecked(true);
-      }
+      boolean isSortByDate =
+          BookmarksDBAdapter.SORT_DATE_ADDED == mBookmarkPresenter.getSortOrder();
+      MenuItem sortByDate = menu.findItem(R.id.sort_date);
+      sortByDate.setVisible(!isSortByDate);
+      MenuItem sortByLocation = menu.findItem(R.id.sort_location);
+      sortByLocation.setVisible(isSortByDate);
 
-      mGroupByTagsItem = menu.findItem(R.id.group_by_tags);
-      mGroupByTagsItem.setChecked(mBookmarkPresenter.isGroupedByTags());
+      MenuItem groupByTags = menu.findItem(R.id.group_by_tags);
+      groupByTags.setChecked(mBookmarkPresenter.isGroupedByTags());
     }
   }
 
@@ -107,19 +105,17 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     switch (itemId) {
       case R.id.sort_date:
         mBookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_DATE_ADDED);
-        item.setChecked(true);
         break;
       case R.id.sort_location: {
         mBookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_LOCATION);
-        item.setChecked(true);
         break;
       }
       case R.id.group_by_tags: {
         mBookmarkPresenter.toggleGroupByTags();
-        mGroupByTagsItem.setChecked(mBookmarkPresenter.isGroupedByTags());
         break;
       }
     }
+    getActivity().invalidateOptionsMenu();
     return super.onOptionsItemSelected(item);
   }
 
