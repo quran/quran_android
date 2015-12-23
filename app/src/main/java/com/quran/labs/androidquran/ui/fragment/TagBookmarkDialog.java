@@ -34,9 +34,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
 public class TagBookmarkDialog extends DialogFragment {
@@ -55,8 +57,6 @@ public class TagBookmarkDialog extends DialogFragment {
 
   private BookmarkModel mBookmarkModel;
   private CompositeSubscription mCompositeSubscription;
-
-  private AsyncTask mCurrentTask;
 
   private static final String MADE_CHANGES = "madeChanges";
   private static final String EXTRA_BOOKMARK_ID = "bookmarkid";
@@ -116,11 +116,60 @@ public class TagBookmarkDialog extends DialogFragment {
     mMadeChanges = true;
     // If not in dialog mode, save the changes now, otherwise, on OK
     if (!getShowsDialog()) {
-      if (mCurrentTask != null) {
-        mCurrentTask.cancel(true);
-      }
-      mCurrentTask = new UpdateBookmarkTagsTask(false).execute();
+      updateBookmarkTags(false);
     }
+  }
+
+  /**
+   * Get an Observable with the list of bookmark ids that will be tagged.
+   * @return the list of bookmark ids to tag
+   */
+  private Observable<long[]> getBookmarkIdsObservable() {
+    Observable<long[]> observable;
+    if (mBookmarkIds != null) {
+      // if we already have a list, we just use that
+      observable = Observable.just(mBookmarkIds);
+    } else if (mBookmarkId > 0) {
+      // if we have a bookmark id, use that
+      observable = Observable.just(new long[]{ mBookmarkId });
+    } else {
+      // if we don't have a bookmark id, we'll add the bookmark and use its id
+      observable = mBookmarkModel.safeAddBookmark(mSura, mAyah, mPage)
+          .map(new Func1<Long, long[]>() {
+            @Override
+            public long[] call(Long bookmarkId) {
+              return new long[]{ bookmarkId };
+            }
+          });
+    }
+    return observable;
+  }
+
+  private void updateBookmarkTags(final boolean shouldDismiss) {
+    Subscription subscription = getBookmarkIdsObservable()
+        .flatMap(new Func1<long[], Observable<Boolean>>() {
+          @Override
+          public Observable<Boolean> call(long[] bookmarkIds) {
+            return mBookmarkModel.updateBookmarkTags(
+                bookmarkIds, mCheckedTags, mBookmarkIds == null);
+          }
+        })
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Boolean>() {
+          @Override
+          public void call(Boolean aBoolean) {
+            mMadeChanges = false;
+            final Activity activity = getActivity();
+            if (activity instanceof OnBookmarkTagsUpdateListener) {
+              ((OnBookmarkTagsUpdateListener) activity).onBookmarkTagsUpdated();
+            }
+
+            if (shouldDismiss) {
+              dismissAllowingStateLoss();
+            }
+          }
+        });
+    mCompositeSubscription.add(subscription);
   }
 
   @Override
@@ -254,7 +303,7 @@ public class TagBookmarkDialog extends DialogFragment {
         @Override
         public void onClick(View v) {
           if (mMadeChanges) {
-            mCurrentTask = new UpdateBookmarkTagsTask(true).execute();
+            updateBookmarkTags(true);
           } else {
             dismiss();
           }
@@ -392,52 +441,6 @@ public class TagBookmarkDialog extends DialogFragment {
     CheckBox checkBox;
     TextView tagName;
     ImageView addImage;
-  }
-
-  class UpdateBookmarkTagsTask extends AsyncTask<Void, Void, Void> {
-
-    final boolean mShouldDismiss;
-
-    public UpdateBookmarkTagsTask(boolean shouldDismiss) {
-      mShouldDismiss = shouldDismiss;
-    }
-
-    @Override
-    protected Void doInBackground(Void... params) {
-      BookmarksDBAdapter adapter = null;
-      Activity activity = getActivity();
-      if (activity instanceof BookmarkHandler) {
-        adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
-      }
-
-      if (adapter == null) {
-        return null;
-      }
-
-      if (mBookmarkIds == null) {
-        if (mBookmarkId < 0) {
-          mBookmarkId = adapter.addBookmarkIfNotExists(mSura, mAyah, mPage);
-        }
-        adapter.tagBookmark(mBookmarkId, mCheckedTags);
-      } else {
-        adapter.tagBookmarks(mBookmarkIds, mCheckedTags);
-      }
-      return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-      mCurrentTask = null;
-      mMadeChanges = false;
-      final Activity activity = getActivity();
-      if (activity instanceof OnBookmarkTagsUpdateListener) {
-        ((OnBookmarkTagsUpdateListener) activity).onBookmarkTagsUpdated();
-      }
-
-      if (mShouldDismiss) {
-        dismissAllowingStateLoss();
-      }
-    }
   }
 
   public interface OnBookmarkTagsUpdateListener {

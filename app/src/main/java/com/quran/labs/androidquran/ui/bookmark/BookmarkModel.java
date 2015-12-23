@@ -119,6 +119,25 @@ public class BookmarkModel {
     }).subscribeOn(Schedulers.io());
   }
 
+  public Observable<Boolean> updateBookmarkTags(final long[] bookmarkIds,
+      final Set<Long> tagIds, final boolean deleteNonTagged) {
+    return Observable.fromCallable(new Callable<Boolean>() {
+      @Override
+      public Boolean call() throws Exception {
+        return mBookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
+  public Observable<Long> safeAddBookmark(final Integer sura, final Integer ayah, final int page) {
+    return Observable.fromCallable(new Callable<Long>() {
+      @Override
+      public Long call() throws Exception {
+        return mBookmarksDBAdapter.addBookmarkIfNotExists(sura, ayah, page);
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
   private List<QuranRow> getRowsSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {
     List<QuranRow> rows = new ArrayList<>();
     // sort by tags, alphabetical

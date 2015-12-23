@@ -259,9 +259,26 @@ public class BookmarksDBAdapter {
         TagsTable.ID + "=" + id, null);
   }
 
-  public void tagBookmarks(long[] bookmarkIds, Set<Long> tagIds) {
+  /**
+   * Tag a list of bookmarks with a list of tags.
+   * @param bookmarkIds the list of bookmark ids to tag.
+   * @param tagIds the tags to tag those bookmarks with.
+   * @param deleteNonTagged whether or not we should delete all tags not in tagIds from those
+   *                        bookmarks or not.
+   * @return a boolean denoting success
+   */
+  public boolean tagBookmarks(long[] bookmarkIds, Set<Long> tagIds, boolean deleteNonTagged) {
     mDb.beginTransaction();
     try {
+      // if we're literally replacing the tags such that only tagIds are tagged, then we need to
+      // remove all tags from the various bookmarks first.
+      if (deleteNonTagged) {
+        for (long bookmarkId : bookmarkIds) {
+          mDb.delete(BookmarkTagTable.TABLE_NAME,
+              BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
+        }
+      }
+
       for (Long tagId : tagIds) {
         for (long bookmarkId : bookmarkIds) {
           ContentValues values = new ContentValues();
@@ -271,30 +288,10 @@ public class BookmarksDBAdapter {
         }
       }
       mDb.setTransactionSuccessful();
+      return true;
     } catch (Exception e) {
       Timber.d("exception in tagBookmark",e);
-    } finally {
-      mDb.endTransaction();
-    }
-  }
-
-  public void tagBookmark(long bookmarkId, Set<Long> tagIds) {
-    mDb.beginTransaction();
-    try {
-      // delete all tags for this bookmark, then re-add the relevant ones - since we're in a
-      // transaction, we should be okay.
-      mDb.delete(BookmarkTagTable.TABLE_NAME,
-          BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
-
-      for (Long tagId : tagIds) {
-        ContentValues values = new ContentValues();
-        values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
-        values.put(BookmarkTagTable.TAG_ID, tagId);
-        mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
-      }
-      mDb.setTransactionSuccessful();
-    } catch (Exception e) {
-      Timber.d("exception in tagBookmark",e);
+      return false;
     } finally {
       mDb.endTransaction();
     }
