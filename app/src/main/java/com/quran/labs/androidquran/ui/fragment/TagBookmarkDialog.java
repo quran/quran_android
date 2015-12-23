@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 
 import android.app.Activity;
@@ -33,6 +34,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
+
 public class TagBookmarkDialog extends DialogFragment {
 
   public static final String TAG = "TagBookmarkDialog";
@@ -46,6 +52,9 @@ public class TagBookmarkDialog extends DialogFragment {
   private List<Tag> mTags;
   private HashSet<Long> mCheckedTags = new HashSet<>();
   private TagsAdapter mAdapter;
+
+  private BookmarkModel mBookmarkModel;
+  private CompositeSubscription mCompositeSubscription;
 
   private AsyncTask mCurrentTask;
 
@@ -74,17 +83,20 @@ public class TagBookmarkDialog extends DialogFragment {
     return dialog;
   }
 
-  public static TagBookmarkDialog newInstance(int sura, int ayah, int page) {
-    final Bundle args = new Bundle();
-    args.putInt(EXTRA_SURA, sura);
-    args.putInt(EXTRA_AYAH, ayah);
-    args.putInt(EXTRA_PAGE, page);
-    final TagBookmarkDialog dialog = new TagBookmarkDialog();
-    dialog.setArguments(args);
-    return dialog;
+  public TagBookmarkDialog() {
   }
 
-  public TagBookmarkDialog() {
+  @Override
+  public void onAttach(Activity activity) {
+    mCompositeSubscription = new CompositeSubscription();
+    mBookmarkModel = BookmarkModel.getInstance(activity);
+    super.onAttach(activity);
+  }
+
+  @Override
+  public void onDetach() {
+    mCompositeSubscription.clear();
+    super.onDetach();
   }
 
   public void updateAyah(SuraAyah suraAyah) {
@@ -119,8 +131,21 @@ public class TagBookmarkDialog extends DialogFragment {
     super.onSaveInstanceState(outState);
   }
 
-  public void handleTagAdded(String name) {
-    new AddTagTask().execute(name);
+  public void handleTagAdded(final String name) {
+    Subscription subscription = mBookmarkModel.addTagObservable(name)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Long>() {
+          @Override
+          public void call(Long result) {
+            if (mTags != null && mAdapter != null) {
+              mCheckedTags.add(result);
+              mTags.add(mTags.size() - 1, new Tag(result, name));
+              mAdapter.notifyDataSetChanged();
+              setMadeChanges();
+            }
+          }
+        });
+    mCompositeSubscription.add(subscription);
   }
 
   @Override
@@ -367,34 +392,6 @@ public class TagBookmarkDialog extends DialogFragment {
     CheckBox checkBox;
     TextView tagName;
     ImageView addImage;
-  }
-
-  class AddTagTask extends AsyncTask<String, Void, Tag> {
-
-    @Override
-    protected Tag doInBackground(String... params) {
-      BookmarksDBAdapter adapter = null;
-      Activity activity = getActivity();
-      if (activity != null && activity instanceof BookmarkHandler) {
-        adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
-      }
-
-      if (adapter == null) {
-        return null;
-      }
-      long id = adapter.addTag(params[0]);
-      return new Tag(id, params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(Tag result) {
-      if (result != null && mTags != null && mAdapter != null) {
-        mCheckedTags.add(result.id);
-        mTags.add(mTags.size() - 1, result);
-        mAdapter.notifyDataSetChanged();
-        setMadeChanges();
-      }
-    }
   }
 
   class UpdateBookmarkTagsTask extends AsyncTask<Void, Void, Void> {
