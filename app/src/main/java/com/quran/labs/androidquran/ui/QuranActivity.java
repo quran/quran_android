@@ -8,15 +8,16 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
+import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
-import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
@@ -439,14 +440,17 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   @Override
-  public void onTagUpdated(final long id, final String name) {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        mBookmarksDBAdapter.updateTag(id, name);
-        mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-      }
-    }).start();
+  public void onTagUpdated(Tag tag) {
+    Subscription subscription = BookmarkModel.getInstance(this)
+        .updateTag(tag)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Boolean>() {
+          @Override
+          public void call(Boolean aBoolean) {
+            mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
+          }
+        });
+    mCompositeSubscription.add(subscription);
   }
 
   @Override
