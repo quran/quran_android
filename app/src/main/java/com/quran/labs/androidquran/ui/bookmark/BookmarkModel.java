@@ -98,7 +98,16 @@ public class BookmarkModel {
         mBookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag);
         return null;
       }
-    });
+    }).subscribeOn(Schedulers.io());
+  }
+
+  public Observable<Long> addTagObservable(final String title) {
+    return Observable.fromCallable(new Callable<Long>() {
+      @Override
+      public Long call() throws Exception {
+        return mBookmarksDBAdapter.addTag(title);
+      }
+    }).subscribeOn(Schedulers.io());
   }
 
   private List<QuranRow> getRowsSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {

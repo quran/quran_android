@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.task.TranslationListTask;
+import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
@@ -51,6 +52,10 @@ import android.view.MenuItem;
 
 import java.lang.ref.WeakReference;
 
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public class QuranActivity extends QuranActionBarActivity
@@ -85,6 +90,7 @@ public class QuranActivity extends QuranActionBarActivity
   private boolean mIsPaused;
   private MenuItem mSearchItem;
   private ActionMode mSupportActionMode;
+  private CompositeSubscription mCompositeSubscription;
 
   private static class QuranHandler extends Handler {
 
@@ -120,6 +126,7 @@ public class QuranActivity extends QuranActionBarActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.quran_index);
     mHandler = new QuranHandler(this);
+    mCompositeSubscription = new CompositeSubscription();
 
     mSettings = QuranSettings.getInstance(this);
     mIsRtl = isRtl();
@@ -186,6 +193,12 @@ public class QuranActivity extends QuranActionBarActivity
   protected void onPause() {
     mIsPaused = true;
     super.onPause();
+  }
+
+  @Override
+  protected void onDestroy() {
+    mCompositeSubscription.unsubscribe();
+    super.onDestroy();
   }
 
   private boolean isRtl() {
@@ -396,10 +409,6 @@ public class QuranActivity extends QuranActionBarActivity
     }
   }
 
-  public void onBookmarkDeleted() {
-    mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-  }
-
   @Override
   public void onBookmarkTagsUpdated() {
     mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
@@ -416,13 +425,16 @@ public class QuranActivity extends QuranActionBarActivity
       ((TagBookmarkDialog) f).handleTagAdded(name);
       mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
     } else {
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
-          mBookmarksDBAdapter.addTag(name);
-          mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-        }
-      }).start();
+      Subscription subscription = BookmarkModel.getInstance(this)
+          .addTagObservable(name)
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+              mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
+            }
+          });
+      mCompositeSubscription.add(subscription);
     }
   }
 
