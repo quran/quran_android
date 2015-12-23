@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.Tag;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -71,7 +72,7 @@ public class AddTagDialog extends DialogFragment {
                                (OnTagChangedListener) activity;
                        String name = nameText.getText().toString();
                        if (id > 0){
-                          listener.onTagUpdated(id, name);
+                          listener.onTagUpdated(new Tag(id, name));
                        }
                        else {
                           listener.onTagAdded(name);
@@ -93,6 +94,6 @@ public class AddTagDialog extends DialogFragment {
 
   public interface OnTagChangedListener {
       void onTagAdded(String name);
-      void onTagUpdated(long id, String name);
+      void onTagUpdated(Tag tag);
    }
 }

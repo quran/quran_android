@@ -22,6 +22,10 @@ import rx.observers.TestSubscriber;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class BookmarkModelTest {
@@ -179,5 +183,22 @@ public class BookmarkModelTest {
     testSubscriber.assertNoErrors();
     testSubscriber.assertValueCount(1);
     return testSubscriber.getOnNextEvents().get(0);
+  }
+
+  @Test
+  public void testUpdateTag() {
+    when(bookmarksAdapter.updateTag(anyLong(), anyString())).thenReturn(true);
+
+    Tag tag = TAG_LIST.get(0);
+    TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
+    model.updateTag(tag)
+        .subscribe(testSubscriber);
+    testSubscriber.awaitTerminalEvent();
+    testSubscriber.assertCompleted();
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertValueCount(1);
+    testSubscriber.assertValue(true);
+
+    verify(bookmarksAdapter, times(1)).updateTag(tag.id, tag.name);
   }
 }

@@ -110,6 +110,15 @@ public class BookmarkModel {
     }).subscribeOn(Schedulers.io());
   }
 
+  public Observable<Boolean> updateTag(final Tag tag) {
+    return Observable.fromCallable(new Callable<Boolean>() {
+      @Override
+      public Boolean call() throws Exception {
+        return mBookmarksDBAdapter.updateTag(tag.id, tag.name);
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
   private List<QuranRow> getRowsSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {
     List<QuranRow> rows = new ArrayList<>();
     // sort by tags, alphabetical

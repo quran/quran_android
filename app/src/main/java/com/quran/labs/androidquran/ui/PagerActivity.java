@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -83,7 +84,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
@@ -1135,7 +1135,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   @Override
-  public void onTagUpdated(long id, String name) {
+  public void onTagUpdated(Tag tag) {
     // should not be called in this flow
   }
 
