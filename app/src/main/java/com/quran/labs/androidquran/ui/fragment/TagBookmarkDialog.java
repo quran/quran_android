@@ -3,15 +3,12 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -39,6 +36,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.subscriptions.CompositeSubscription;
 
 public class TagBookmarkDialog extends DialogFragment {
@@ -54,6 +52,7 @@ public class TagBookmarkDialog extends DialogFragment {
   private List<Tag> mTags;
   private HashSet<Long> mCheckedTags = new HashSet<>();
   private TagsAdapter mAdapter;
+  private String mNewTagString;
 
   private BookmarkModel mBookmarkModel;
   private CompositeSubscription mCompositeSubscription;
@@ -90,6 +89,7 @@ public class TagBookmarkDialog extends DialogFragment {
   public void onAttach(Activity activity) {
     mCompositeSubscription = new CompositeSubscription();
     mBookmarkModel = BookmarkModel.getInstance(activity);
+    mNewTagString = activity.getString(R.string.new_tag);
     super.onAttach(activity);
   }
 
@@ -109,7 +109,7 @@ public class TagBookmarkDialog extends DialogFragment {
     mSura = sura;
     mAyah = ayah;
     mPage = page;
-    new RefreshTagsTask().execute();
+    refresh();
   }
 
   public void setMadeChanges() {
@@ -228,7 +228,7 @@ public class TagBookmarkDialog extends DialogFragment {
     }
 
     if (mTags == null) {
-      new RefreshTagsTask().execute();
+      refresh();
     }
   }
 
@@ -386,55 +386,59 @@ public class TagBookmarkDialog extends DialogFragment {
     }
   }
 
-  class RefreshTagsTask extends AsyncTask<Void, Void, ArrayList<Tag>> {
-    private List<Long> mBookmarkTags;
+  void refresh() {
+    Subscription subscription =
+        Observable.zip(mBookmarkModel.getTagsObservable(), getBookmarkTagIdsObservable(),
+            new Func2<List<Tag>, List<Long>, RefreshInfo>() {
+              @Override
+              public RefreshInfo call(List<Tag> tags, List<Long> bookmarkTagIds) {
+                return new RefreshInfo(tags, bookmarkTagIds);
+              }
+            })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1<RefreshInfo>() {
+              @Override
+              public void call(RefreshInfo refreshInfo) {
+                List<Tag> tags = refreshInfo.tags;
+                tags.add(new Tag(-1, mNewTagString));
 
-    @Override
-    protected ArrayList<Tag> doInBackground(Void... params) {
-      BookmarksDBAdapter adapter = null;
-      Activity activity = getActivity();
-      if (activity != null && activity instanceof BookmarkHandler) {
-        adapter = ((BookmarkHandler) activity).getBookmarksAdapter();
-      }
+                List<Long> bookmarkTags = refreshInfo.bookmarkTagIds;
+                if (!bookmarkTags.isEmpty()) {
+                  for (Tag tag : tags) {
+                    if (bookmarkTags.contains(tag.id)) {
+                      mCheckedTags.add(tag.id);
+                    }
+                  }
+                }
+                mMadeChanges = false;
+                mTags = tags;
+                if (mAdapter != null) {
+                  mAdapter.notifyDataSetChanged();
+                }
+              }
+            });
+    mCompositeSubscription.add(subscription);
+  }
 
-      if (adapter == null) {
-        return null;
-      }
+  static class RefreshInfo {
+    List<Tag> tags;
+    List<Long> bookmarkTagIds;
 
-      String newTagString = activity.getString(R.string.new_tag);
-
-      ArrayList<Tag> newTags = new ArrayList<>();
-      newTags.addAll(adapter.getTags());
-      newTags.add(new Tag(-1, newTagString));
-
-      mBookmarkTags = new ArrayList<>();
-      if (mBookmarkIds == null) {
-        if (mBookmarkId < 0 && mPage > 0) {
-          mBookmarkId = adapter.getBookmarkId(mSura, mAyah, mPage);
-        }
-
-        if (mBookmarkId > 0) {
-          mBookmarkTags = adapter.getBookmarkTagIds(mBookmarkId);
-        }
-      }
-      return newTags;
+    public RefreshInfo(List<Tag> tags, List<Long> bookmarkTagIds) {
+      this.tags = tags;
+      this.bookmarkTagIds = bookmarkTagIds;
     }
+  }
 
-    @Override
-    protected void onPostExecute(ArrayList<Tag> result) {
-      if (result != null) {
-        for (Tag tag : result) {
-          if (mBookmarkTags.contains(tag.id)) {
-            mCheckedTags.add(tag.id);
-          }
-        }
-        mMadeChanges = false;
-        mTags = result;
-        if (mAdapter != null) {
-          mAdapter.notifyDataSetChanged();
-        }
-      }
+  private Observable<List<Long>> getBookmarkTagIdsObservable() {
+    Observable<Long> bookmarkId;
+    if (mBookmarkIds == null && mBookmarkId < 0 && mPage > 0) {
+      bookmarkId = mBookmarkModel.getBookmarkId(mSura, mAyah, mPage);
+    } else {
+      bookmarkId = Observable.just(mBookmarkIds == null ? mBookmarkId : 0);
     }
+    return mBookmarkModel.getBookmarkTagIds(bookmarkId)
+        .defaultIfEmpty(new ArrayList<Long>());
   }
 
   class ViewHolder {

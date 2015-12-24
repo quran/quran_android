@@ -138,6 +138,38 @@ public class BookmarkModel {
     }).subscribeOn(Schedulers.io());
   }
 
+  public Observable<List<Tag>> getTagsObservable() {
+    return Observable.fromCallable(new Callable<List<Tag>>() {
+      @Override
+      public List<Tag> call() throws Exception {
+        return mBookmarksDBAdapter.getTags();
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
+  public Observable<List<Long>> getBookmarkTagIds(Observable<Long> bookmarkId) {
+    return bookmarkId.filter(new Func1<Long, Boolean>() {
+      @Override
+      public Boolean call(Long bookmarkId) {
+        return bookmarkId > 0;
+      }
+    }).map(new Func1<Long, List<Long>>() {
+      @Override
+      public List<Long> call(Long bookmarkId) {
+        return mBookmarksDBAdapter.getBookmarkTagIds(bookmarkId);
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
+  public Observable<Long> getBookmarkId(final Integer sura, final Integer ayah, final int page) {
+    return Observable.fromCallable(new Callable<Long>() {
+      @Override
+      public Long call() throws Exception {
+        return mBookmarksDBAdapter.getBookmarkId(sura, ayah, page);
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
   private List<QuranRow> getRowsSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {
     List<QuranRow> rows = new ArrayList<>();
     // sort by tags, alphabetical
