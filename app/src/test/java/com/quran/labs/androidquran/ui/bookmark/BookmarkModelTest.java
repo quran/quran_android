@@ -176,7 +176,7 @@ public class BookmarkModelTest {
 
   private BookmarkResult getBookmarkResultByDateAndValidate(boolean groupByTags) {
     TestSubscriber<BookmarkResult> testSubscriber = new TestSubscriber<>();
-    model.getBookmarkObservable(BookmarksDBAdapter.SORT_DATE_ADDED, groupByTags)
+    model.getBookmarksListObservable(BookmarksDBAdapter.SORT_DATE_ADDED, groupByTags)
         .subscribe(testSubscriber);
     testSubscriber.awaitTerminalEvent();
     testSubscriber.assertCompleted();
