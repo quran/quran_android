@@ -157,7 +157,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .flatMap(new Func1<Void, Observable<BookmarkResult>>() {
           @Override
           public Observable<BookmarkResult> call(Void aVoid) {
-            return mBookmarkModel.getBookmarkObservable(mSortOrder, mGroupByTags);
+            return mBookmarkModel.getBookmarksListObservable(mSortOrder, mGroupByTags);
           }
         });
   }
@@ -171,7 +171,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   private void getBookmarks(final int sortOrder, final boolean groupByTags) {
-    mBookmarkModel.getBookmarkObservable(sortOrder, groupByTags)
+    mBookmarkModel.getBookmarksListObservable(sortOrder, groupByTags)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<BookmarkResult>() {
           @Override

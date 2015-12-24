@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 
 import rx.Observable;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -55,15 +56,16 @@ public class BookmarkModel {
     mBookmarksDBAdapter = adapter;
   }
 
-  public Observable<BookmarkResult> getBookmarkObservable(
+  public Observable<BookmarkResult> getBookmarksListObservable(
       final int sortOrder, final boolean groupByTags) {
     return Observable
-        .fromCallable(new Callable<BookmarkData>() {
-          @Override
-          public BookmarkData call() throws Exception {
-            return fetchBookmarkData(sortOrder);
-          }
-        })
+        .zip(getTagsObservable(), getBookmarksObservable(sortOrder),
+            new Func2<List<Tag>, List<Bookmark>, BookmarkData>() {
+              @Override
+              public BookmarkData call(List<Tag> tags, List<Bookmark> bookmarks) {
+                return new BookmarkData(tags, bookmarks);
+              }
+            })
         .map(new Func1<BookmarkData, BookmarkResult>() {
           @Override
           public BookmarkResult call(BookmarkData bookmarkData) {
@@ -145,6 +147,15 @@ public class BookmarkModel {
         return mBookmarksDBAdapter.getTags();
       }
     }).subscribeOn(Schedulers.io());
+  }
+
+  private Observable<List<Bookmark>> getBookmarksObservable(final int sortOrder) {
+    return Observable.fromCallable(new Callable<List<Bookmark>>() {
+      @Override
+      public List<Bookmark> call() throws Exception {
+        return mBookmarksDBAdapter.getBookmarks(sortOrder);
+      }
+    });
   }
 
   public Observable<List<Long>> getBookmarkTagIds(Observable<Long> bookmarkId) {
