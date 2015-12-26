@@ -33,14 +33,17 @@ public class BookmarksDBAdapter {
     mDb = dbHelper.getWritableDatabase();
   }
 
+  @NonNull
   public List<Bookmark> getBookmarkedAyahsOnPage(int page) {
     return getBookmarks(SORT_LOCATION, page);
   }
 
+  @NonNull
   public List<Bookmark> getBookmarks(int sortOrder) {
     return getBookmarks(sortOrder, null);
   }
 
+  @NonNull
   public List<Bookmark> getBookmarks(int sortOrder, Integer pageFilter) {
     String orderBy;
     switch (sortOrder) {
@@ -64,44 +67,48 @@ public class BookmarksDBAdapter {
     }
     queryBuilder.append(" ORDER BY ").append(orderBy);
 
-    Cursor cursor = mDb.rawQuery(queryBuilder.toString(), null);
+    Cursor cursor = null;
+    try {
+      cursor = mDb.rawQuery(queryBuilder.toString(), null);
+      if (cursor != null) {
+        long lastId = -1;
+        Bookmark lastBookmark = null;
+        List<Long> tagIds = new ArrayList<>();
+        while (cursor.moveToNext()) {
+          long id = cursor.getLong(0);
+          Integer sura = cursor.getInt(1);
+          Integer ayah = cursor.getInt(2);
+          int page = cursor.getInt(3);
+          long time = cursor.getLong(4);
+          long tagId = cursor.getLong(5);
 
-    if (cursor != null) {
-      long lastId = -1;
-      Bookmark lastBookmark = null;
-      List<Long> tagIds = new ArrayList<>();
-      while (cursor.moveToNext()) {
-        long id = cursor.getLong(0);
-        Integer sura = cursor.getInt(1);
-        Integer ayah = cursor.getInt(2);
-        int page = cursor.getInt(3);
-        long time = cursor.getLong(4);
-        long tagId = cursor.getLong(5);
-
-        if (sura == 0 || ayah == 0) {
-          sura = null;
-          ayah = null;
-        }
-
-        if (lastId != id) {
-          if (lastBookmark != null) {
-            bookmarks.add(lastBookmark.withTags(tagIds));
+          if (sura == 0 || ayah == 0) {
+            sura = null;
+            ayah = null;
           }
-          tagIds.clear();
-          lastBookmark = new Bookmark(id, sura, ayah, page, time);
-          lastId = id;
+
+          if (lastId != id) {
+            if (lastBookmark != null) {
+              bookmarks.add(lastBookmark.withTags(tagIds));
+            }
+            tagIds.clear();
+            lastBookmark = new Bookmark(id, sura, ayah, page, time);
+            lastId = id;
+          }
+
+          if (tagId > 0) {
+            tagIds.add(tagId);
+          }
         }
 
-        if (tagId > 0) {
-          tagIds.add(tagId);
+        if (lastBookmark != null) {
+          bookmarks.add(lastBookmark.withTags(tagIds));
         }
       }
-
-      if (lastBookmark != null) {
-        bookmarks.add(lastBookmark.withTags(tagIds));
-      }
-      cursor.close();
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
     }
+
     return bookmarks;
   }
 
@@ -289,7 +296,7 @@ public class BookmarksDBAdapter {
       mDb.setTransactionSuccessful();
       return true;
     } catch (Exception e) {
-      Timber.d("exception in tagBookmark",e);
+      Timber.d(e, "exception in tagBookmark");
       return false;
     } finally {
       mDb.endTransaction();
