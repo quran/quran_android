@@ -403,11 +403,11 @@ public class TagBookmarkDialog extends DialogFragment {
                 tags.add(new Tag(-1, mNewTagString));
 
                 List<Long> bookmarkTags = refreshInfo.bookmarkTagIds;
-                if (!bookmarkTags.isEmpty()) {
-                  for (Tag tag : tags) {
-                    if (bookmarkTags.contains(tag.id)) {
-                      mCheckedTags.add(tag.id);
-                    }
+                mCheckedTags.clear();
+                for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
+                  Tag tag = tags.get(i);
+                  if (bookmarkTags.contains(tag.id)) {
+                    mCheckedTags.add(tag.id);
                   }
                 }
                 mMadeChanges = false;
