@@ -201,4 +201,24 @@ public class BookmarkModelTest {
 
     verify(bookmarksAdapter, times(1)).updateTag(tag.id, tag.name);
   }
+
+  @Test
+  public void testBookmarkedAyahsOnPage() {
+    when(bookmarksAdapter.getBookmarkedAyahsOnPage(anyInt())).thenReturn(AYAH_BOOKMARKS_LIST);
+
+    Integer[][] inputs = new Integer[][] { new Integer[] { 42 }, new Integer[] { 42, 43 } };
+
+    int total = 0;
+    for (Integer[] input : inputs) {
+      TestSubscriber<List<Bookmark>> testSubscriber = new TestSubscriber<>();
+      model.getBookmarkedAyahsOnPageObservable(input)
+          .subscribe(testSubscriber);
+      testSubscriber.awaitTerminalEvent();
+      testSubscriber.assertCompleted();
+      testSubscriber.assertNoErrors();
+      testSubscriber.assertValueCount(input.length);
+      verify(bookmarksAdapter, times(input.length + total)).getBookmarkedAyahsOnPage(anyInt());
+      total += input.length;
+    }
+  }
 }

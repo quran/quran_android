@@ -7,10 +7,10 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
-import com.quran.labs.androidquran.task.QueryBookmarkedAyahsTask;
 import com.quran.labs.androidquran.task.QueryPageCoordsTask;
 import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -44,6 +44,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
@@ -68,6 +72,8 @@ public class TabletFragment extends Fragment
   private TranslationView mLeftTranslation, mRightTranslation = null;
   private HighlightingImageView mLeftImageView, mRightImageView = null;
   private QuranSettings mQuranSettings;
+  private BookmarkModel mBookmarkModel;
+  private CompositeSubscription mCompositeSubscription;
 
   private TabletView mMainView;
 
@@ -132,6 +138,7 @@ public class TabletFragment extends Fragment
           });
       mMainView.setPageController(null, mPageNumber, mPageNumber - 1);
     }
+    mBookmarkModel = BookmarkModel.getInstance(context);
 
     updateView();
     mJustCreated = true;
@@ -168,17 +175,19 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
-    if (activity instanceof AyahSelectedListener) {
-      mAyahSelectedListener = (AyahSelectedListener) activity;
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    if (context instanceof AyahSelectedListener) {
+      mAyahSelectedListener = (AyahSelectedListener) context;
     }
+    mCompositeSubscription = new CompositeSubscription();
   }
 
   @Override
   public void onDetach() {
     super.onDetach();
     mAyahSelectedListener = null;
+    mCompositeSubscription.unsubscribe();
   }
 
   @Override
@@ -216,8 +225,7 @@ public class TabletFragment extends Fragment
           .execute(mPageNumber - 1, mPageNumber);
 
       if (QuranSettings.getInstance(context).shouldHighlightBookmarks()) {
-        new HighlightTagsTask(context)
-            .execute(mPageNumber - 1, mPageNumber);
+        highlightTagsTask();
       }
     } else if (mMode == Mode.TRANSLATION) {
       if (context != null) {
@@ -265,33 +273,42 @@ public class TabletFragment extends Fragment
     }
   }
 
-  private class HighlightTagsTask extends QueryBookmarkedAyahsTask {
-
-    public HighlightTagsTask(Context context) {
-      super(context);
-    }
-
-    @Override
-    protected void onPostExecute(List<Bookmark> result) {
-      if (result != null && !result.isEmpty() && mMode == Mode.ARABIC &&
-          mRightImageView != null && mLeftImageView != null) {
-        for (Bookmark taggedAyah : result) {
-          if (taggedAyah.page == mPageNumber - 1) {
-            mRightImageView.highlightAyah(
-                taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
-          } else if (taggedAyah.page == mPageNumber) {
-            mLeftImageView.highlightAyah(
-                taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+  private void highlightTagsTask() {
+    Subscription s =
+        mBookmarkModel.getBookmarkedAyahsOnPageObservable(mPageNumber - 1, mPageNumber)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<List<Bookmark>>() {
+          @Override
+          public void onCompleted() {
+            if (mCoordinateData == null) {
+              new GetAyahCoordsTask(getActivity()).execute(mPageNumber - 1, mPageNumber);
+            } else {
+              mRightImageView.invalidate();
+              mLeftImageView.invalidate();
+            }
           }
-        }
-        if (mCoordinateData == null) {
-          new GetAyahCoordsTask(getActivity()).execute(mPageNumber - 1, mPageNumber);
-        } else {
-          mRightImageView.invalidate();
-          mLeftImageView.invalidate();
-        }
-      }
-    }
+
+          @Override
+          public void onError(Throwable e) {
+          }
+
+          @Override
+          public void onNext(List<Bookmark> bookmarks) {
+            if (mMode == Mode.ARABIC && mRightImageView != null && mLeftImageView != null) {
+              for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
+                Bookmark taggedAyah = bookmarks.get(i);
+                if (taggedAyah.page == mPageNumber - 1) {
+                  mRightImageView.highlightAyah(
+                      taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+                } else if (taggedAyah.page == mPageNumber) {
+                  mLeftImageView.highlightAyah(
+                      taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+                }
+              }
+            }
+          }
+        });
+    mCompositeSubscription.add(s);
   }
 
   private class QueryPageCoordinatesTask extends QueryPageCoordsTask {

@@ -53,7 +53,7 @@ public class BookmarksDBAdapter {
         orderBy = BookmarksTable.TABLE_NAME + "." + BookmarksTable.ADDED_DATE + " DESC";
     }
 
-    List<Bookmark> bookmarks = null;
+    List<Bookmark> bookmarks = new ArrayList<>();
     StringBuilder queryBuilder = new StringBuilder(BookmarksDBHelper.QUERY_BOOKMARKS);
     if (pageFilter != null) {
       queryBuilder.append(" WHERE ")
@@ -67,7 +67,6 @@ public class BookmarksDBAdapter {
     Cursor cursor = mDb.rawQuery(queryBuilder.toString(), null);
 
     if (cursor != null) {
-      bookmarks = new ArrayList<>();
       long lastId = -1;
       Bookmark lastBookmark = null;
       List<Long> tagIds = new ArrayList<>();

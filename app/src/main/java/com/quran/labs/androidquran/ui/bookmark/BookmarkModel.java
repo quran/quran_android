@@ -181,6 +181,23 @@ public class BookmarkModel {
     }).subscribeOn(Schedulers.io());
   }
 
+  public Observable<List<Bookmark>> getBookmarkedAyahsOnPageObservable(Integer... pages) {
+    return Observable.from(pages)
+        .map(new Func1<Integer, List<Bookmark>>() {
+          @Override
+          public List<Bookmark> call(Integer page) {
+            return mBookmarksDBAdapter.getBookmarkedAyahsOnPage(page);
+          }
+        })
+        .filter(new Func1<List<Bookmark>, Boolean>() {
+          @Override
+          public Boolean call(List<Bookmark> bookmarks) {
+            return !bookmarks.isEmpty();
+          }
+        })
+        .subscribeOn(Schedulers.io());
+  }
+
   private List<QuranRow> getRowsSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {
     List<QuranRow> rows = new ArrayList<>();
     // sort by tags, alphabetical
