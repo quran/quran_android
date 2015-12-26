@@ -36,7 +36,6 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
@@ -118,7 +117,6 @@ import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPositio
 
 public class PagerActivity extends QuranActionBarActivity implements
     AudioStatusBar.AudioBarListener,
-    BookmarkHandler,
     DefaultDownloadReceiver.DownloadListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
     AddTagDialog.OnTagChangedListener,
@@ -682,11 +680,6 @@ public class PagerActivity extends QuranActionBarActivity implements
             }
           }, 750);
     }
-  }
-
-  @Override
-  public BookmarksDBAdapter getBookmarksAdapter() {
-    return mBookmarksAdapter;
   }
 
   public AyahInfoDatabaseHandler getAyahInfoDatabase(String widthParam) {

@@ -10,7 +10,6 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
@@ -20,7 +19,6 @@ import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-import com.quran.labs.androidquran.ui.helpers.BookmarkHandler;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.UpgradeTranslationListener;
@@ -60,7 +58,7 @@ import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public class QuranActivity extends QuranActionBarActivity
-    implements BookmarkHandler, AddTagDialog.OnTagChangedListener,
+    implements AddTagDialog.OnTagChangedListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener {
 
   private static int[] TITLES = new int[]{
@@ -85,7 +83,6 @@ public class QuranActivity extends QuranActionBarActivity
 
   private AlertDialog mUpgradeDialog = null;
   private PagerAdapter mPagerAdapter = null;
-  private BookmarksDBAdapter mBookmarksDBAdapter = null;
   private boolean mShowedTranslationUpgradeDialog = false;
   private boolean mIsRtl;
   private boolean mIsPaused;
@@ -152,9 +149,7 @@ public class QuranActivity extends QuranActionBarActivity
     if (mIsRtl) {
       pager.setCurrentItem(TITLES.length - 1);
     }
-
-    mBookmarksDBAdapter = new BookmarksDBAdapter(this);
-
+    
     if (savedInstanceState != null) {
       mShowedTranslationUpgradeDialog = savedInstanceState.getBoolean(
           SI_SHOWED_UPGRADE_DIALOG, false);
@@ -204,11 +199,6 @@ public class QuranActivity extends QuranActionBarActivity
 
   private boolean isRtl() {
     return mSettings.isArabicNames() || QuranUtils.isRtl();
-  }
-
-  @Override
-  public BookmarksDBAdapter getBookmarksAdapter() {
-    return mBookmarksDBAdapter;
   }
 
   @Override
