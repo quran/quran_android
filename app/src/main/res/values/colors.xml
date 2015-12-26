@@ -6,7 +6,8 @@
     <color name="color_control_normal">#89b2dfdb</color>
 	<color name="page_background">#FFF4CB</color>
     <color name="header_background">#ff424242</color>
-	<color name="header_text_color">@color/sura_number_color</color>
+    <color name="ripple_dark">#33ffffff</color>
+    <color name="header_text_color">@color/sura_number_color</color>
     <color name="title_color">#ffffffff</color>
     <color name="sura_number_color">#7fffffff</color>
 	<color name="sura_details_color">#b2ffffff</color>

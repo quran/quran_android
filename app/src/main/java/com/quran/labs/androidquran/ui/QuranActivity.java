@@ -149,7 +149,7 @@ public class QuranActivity extends QuranActionBarActivity
     if (mIsRtl) {
       pager.setCurrentItem(TITLES.length - 1);
     }
-    
+
     if (savedInstanceState != null) {
       mShowedTranslationUpgradeDialog = savedInstanceState.getBoolean(
           SI_SHOWED_UPGRADE_DIALOG, false);
