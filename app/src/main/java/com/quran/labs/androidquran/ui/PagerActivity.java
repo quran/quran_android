@@ -25,9 +25,9 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.service.util.StreamingAudioRequest;
 import com.quran.labs.androidquran.task.AsyncTask;
-import com.quran.labs.androidquran.task.RefreshBookmarkIconTask;
 import com.quran.labs.androidquran.task.ShareAyahTask;
 import com.quran.labs.androidquran.task.ShareQuranAppTask;
+import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
@@ -102,6 +102,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
@@ -185,6 +189,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private boolean mIsInAyahMode;
   private SuraAyah mStart;
   private SuraAyah mEnd;
+
+  private BookmarkModel mBookmarkModel;
+  private CompositeSubscription mCompositeSubscription;
 
   private final PagerHandler mHandler = new PagerHandler(this);
 
@@ -281,6 +288,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     mSettings = QuranSettings.getInstance(this);
+    mBookmarkModel = BookmarkModel.getInstance(this);
+    mCompositeSubscription = new CompositeSubscription();
 
     final Resources resources = getResources();
     mImmersiveInPortrait = resources.getBoolean(R.bool.immersive_in_portrait);
@@ -864,6 +873,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     }
 
+    mCompositeSubscription.unsubscribe();
     mHandler.removeCallbacksAndMessages(null);
     super.onDestroy();
   }
@@ -1117,7 +1127,16 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void onBookmarkTagsUpdated() {
     if (mIsInAyahMode) {
-      new RefreshBookmarkIconTask(this, mStart, true).execute();
+      Subscription subscription =
+          mBookmarkModel.getIsBookmarkedObservable(mStart.sura, mStart.ayah, mStart.getPage())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean isBookmarked) {
+              updateAyahBookmark(mStart, isBookmarked, true);
+            }
+          });
+      mCompositeSubscription.add(subscription);
     }
   }
 
@@ -1977,8 +1996,18 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  private void updateToolbarPosition(SuraAyah start, AyahTracker tracker) {
-    new RefreshBookmarkIconTask(this, start, false).execute();
+  private void updateToolbarPosition(final SuraAyah start, AyahTracker tracker) {
+    Subscription subscription = BookmarkModel.getInstance(this)
+        .getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Boolean>() {
+          @Override
+          public void call(Boolean isBookmarked) {
+            updateAyahBookmark(start, isBookmarked, false);
+          }
+        });
+    mCompositeSubscription.add(subscription);
+
     mAyahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
             mAyahToolBar.getToolBarWidth(), mAyahToolBarTotalHeight);
     mAyahToolBar.updatePosition(mAyahToolBarPos);
