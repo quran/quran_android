@@ -4,7 +4,6 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.bookmark.BookmarkPresenter;
-import com.quran.labs.androidquran.ui.bookmark.BookmarkUtil;
 import com.quran.labs.androidquran.ui.bookmark.BookmarksContextualModePresenter;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
@@ -138,7 +137,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
       mBookmarksContextualModePresenter.invalidateActionMode(false);
     } else {
       mBookmarksAdapter.setItemChecked(position, false);
-      BookmarkUtil.handleRowClicked(getActivity(), row);
+      handleRowClicked(getActivity(), row);
     }
   }
 
@@ -188,6 +187,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
           final Resources res = getResources();
           onNewData(mBookmarkPresenter.predictQuranListAfterDeletion(selected));
           mBookmarkPresenter.deleteAfterSomeTime(selected);
+          //noinspection ResourceType
           Snackbar snackbar = Snackbar.make(mRecyclerView,
               res.getQuantityString(R.plurals.bookmark_tag_deleted, size, size),
               BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS);
@@ -201,11 +201,11 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
           return true;
         }
         case R.id.cab_edit_tag: {
-          BookmarkUtil.handleTagEdit(activity, mBookmarksAdapter.getCheckedItems());
+          handleTagEdit(activity, mBookmarksAdapter.getCheckedItems());
           return true;
         }
         case R.id.cab_tag_bookmark: {
-          BookmarkUtil.handleTagBookmarks(activity, mBookmarksAdapter.getCheckedItems());
+          handleTagBookmarks(activity, mBookmarksAdapter.getCheckedItems());
           return true;
         }
       }
@@ -215,5 +215,31 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
   public void onCloseContextualActionMenu() {
     mBookmarksAdapter.uncheckAll();
+  }
+
+  public void handleRowClicked(Activity activity, QuranRow row) {
+    if (!row.isHeader() && activity instanceof QuranActivity) {
+      QuranActivity quranActivity = (QuranActivity) activity;
+      if (row.isAyahBookmark()) {
+        quranActivity.jumpToAndHighlight(row.page, row.sura, row.ayah);
+      } else {
+        quranActivity.jumpTo(row.page);
+      }
+    }
+  }
+
+  public void handleTagEdit(QuranActivity activity, List<QuranRow> selected) {
+    if (selected.size() == 1) {
+      QuranRow row = selected.get(0);
+      activity.editTag(row.tagId, row.text);
+    }
+  }
+
+  public void handleTagBookmarks(QuranActivity activity, List<QuranRow> selected) {
+    long[] ids = new long[selected.size()];
+    for (int i = 0, selectedItems = selected.size(); i < selectedItems; i++) {
+      ids[i] = selected.get(i).bookmarkId;
+    }
+    activity.tagBookmarks(ids);
   }
 }
