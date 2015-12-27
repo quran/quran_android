@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.bookmark;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.model.BookmarkModel;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import org.junit.Before;

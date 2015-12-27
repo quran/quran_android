@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.ui.bookmark;
+package com.quran.labs.androidquran.model;
 
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
@@ -36,7 +36,7 @@ public class BookmarkModel {
   }
 
   @VisibleForTesting
-  BookmarkModel(BookmarksDBAdapter adapter) {
+  public BookmarkModel(BookmarksDBAdapter adapter) {
     mBookmarksDBAdapter = adapter;
   }
 

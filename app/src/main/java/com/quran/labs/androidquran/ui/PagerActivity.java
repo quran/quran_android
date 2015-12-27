@@ -26,7 +26,7 @@ import com.quran.labs.androidquran.service.util.StreamingAudioRequest;
 import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.task.ShareAyahTask;
 import com.quran.labs.androidquran.task.ShareQuranAppTask;
-import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;

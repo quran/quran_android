@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.BookmarkModel;
 
 import android.app.Activity;
 import android.app.Dialog;
