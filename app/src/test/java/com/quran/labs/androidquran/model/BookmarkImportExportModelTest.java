@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.model;
 
 import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +23,9 @@ public class BookmarkImportExportModelTest {
   @Before
   public void setUp() {
     Context context = mock(Context.class);
-    BookmarksDBAdapter databaseAdapter = mock(BookmarksDBAdapter.class);
+    BookmarkModel model = mock(BookmarkModel.class);
     bookmarkImportExportModel = new BookmarkImportExportModel(
-        context, new BookmarkJsonModel(), databaseAdapter);
+        context, new BookmarkJsonModel(), model);
   }
 
   @Test
