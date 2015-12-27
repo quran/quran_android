@@ -74,6 +74,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
@@ -101,6 +102,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -382,8 +384,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       @Override
       public void onPageSelected(int position) {
-        Timber.d("onPageSelected(): " + position);
-        int page = QuranInfo.getPageFromPos(position, mDualPages);
+        Timber.d("onPageSelected(): %d", position);
+        final int page = QuranInfo.getPageFromPos(position, mDualPages);
         mSettings.setLastPage(page);
         if (mSettings.shouldDisplayMarkerPopup()) {
           mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
@@ -403,11 +405,11 @@ public class PagerActivity extends QuranActionBarActivity implements
         if (mBookmarksCache.indexOfKey(page) < 0) {
           if (mDualPages) {
             if (mBookmarksCache.indexOfKey(page - 1) < 0) {
-              new IsPageBookmarkedTask().execute(page - 1, page);
+              checkIfPageIsBookmarked(page - 1, page);
             }
           } else {
             // we don't have the key
-            new IsPageBookmarkedTask().execute(page);
+            checkIfPageIsBookmarked(page);
           }
         }
 
@@ -1452,35 +1454,25 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  class IsPageBookmarkedTask extends AsyncTask<Integer, Void, SparseBooleanArray> {
+  private void checkIfPageIsBookmarked(Integer... pages) {
+    Subscription subscription = mBookmarkModel.getIsBookmarkedObservable(pages)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<Pair<Integer, Boolean>>() {
+          @Override
+          public void onCompleted() {
+            invalidateOptionsMenu();
+          }
 
-    @Override
-    protected SparseBooleanArray doInBackground(Integer... params) {
-      if (params == null) {
-        return null;
-      }
+          @Override
+          public void onError(Throwable e) {
+          }
 
-      SparseBooleanArray result = new SparseBooleanArray();
-      for (Integer page : params) {
-        boolean bookmarked = mBookmarksAdapter.isPageBookmarked(page);
-        result.put(page, bookmarked);
-      }
-
-      return result;
-    }
-
-    @Override
-    protected void onPostExecute(SparseBooleanArray result) {
-      if (result != null) {
-        int size = result.size();
-        for (int i = 0; i < size; i++) {
-          int page = result.keyAt(i);
-          boolean bookmarked = result.get(page);
-          mBookmarksCache.put(page, bookmarked);
-        }
-        invalidateOptionsMenu();
-      }
-    }
+          @Override
+          public void onNext(Pair<Integer, Boolean> result) {
+            mBookmarksCache.put(result.first, result.second);
+          }
+        });
+    mCompositeSubscription.add(subscription);
   }
 
   @Override

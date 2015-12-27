@@ -11,7 +11,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -196,6 +196,16 @@ public class BookmarkModel {
           }
         })
         .subscribeOn(Schedulers.io());
+  }
+
+  public Observable<Pair<Integer, Boolean>> getIsBookmarkedObservable(Integer... pages) {
+    return Observable.from(pages)
+        .map(new Func1<Integer, Pair<Integer, Boolean>>() {
+          @Override
+          public Pair<Integer, Boolean> call(Integer page) {
+            return new Pair<>(page, mBookmarksDBAdapter.getBookmarkId(null, null, page) > 0);
+          }
+        }).subscribeOn(Schedulers.io());
   }
 
   public Observable<Boolean> getIsBookmarkedObservable(

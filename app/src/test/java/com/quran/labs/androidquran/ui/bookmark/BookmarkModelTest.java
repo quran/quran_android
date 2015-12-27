@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -219,6 +220,31 @@ public class BookmarkModelTest {
       testSubscriber.assertValueCount(input.length);
       verify(bookmarksAdapter, times(input.length + total)).getBookmarkedAyahsOnPage(anyInt());
       total += input.length;
+    }
+  }
+
+  @Test
+  public void testIsPageBookmarked() {
+    when(bookmarksAdapter.getBookmarkId(null, null, 42)).thenReturn(1L);
+    when(bookmarksAdapter.getBookmarkId(null, null, 43)).thenReturn(-1L);
+
+    TestSubscriber<Pair<Integer, Boolean>> testSubscriber = new TestSubscriber<>();
+    model.getIsBookmarkedObservable(42, 43)
+        .subscribe(testSubscriber);
+    testSubscriber.awaitTerminalEvent();
+    testSubscriber.assertCompleted();
+    testSubscriber.assertNoErrors();
+    testSubscriber.assertValueCount(2);
+
+    List<Pair<Integer, Boolean>> results = testSubscriber.getOnNextEvents();
+    for (int i = 0; i < results.size(); i++) {
+      Pair<Integer, Boolean> result = results.get(i);
+      assertThat(result.first).isAnyOf(42, 43);
+      if (result.first == 42) {
+        assertThat(result.second).isTrue();
+      } else if (result.first == 43) {
+        assertThat(result.second).isFalse();
+      }
     }
   }
 }
