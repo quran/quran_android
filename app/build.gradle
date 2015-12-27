@@ -66,6 +66,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+
+    testOptions.unitTests.all {
+      testLogging {
+         events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+         outputs.upToDateWhen { false }
+         showStandardStreams = true
+      }
+    }
 }
 
 ext {
