@@ -9,7 +9,7 @@ import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
 import com.quran.labs.androidquran.task.QueryPageCoordsTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.BookmarkModel;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;

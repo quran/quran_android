@@ -12,7 +12,7 @@ import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.task.TranslationListTask;
-import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
