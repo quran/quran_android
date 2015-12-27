@@ -14,7 +14,6 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -162,7 +161,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private String[] mTranslationItems;
   private TranslationReaderTask mTranslationReaderTask;
   private TranslationsSpinnerAdapter mSpinnerAdapter;
-  private BookmarksDBAdapter mBookmarksAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
   private AyahToolBarPosition mAyahToolBarPos;
@@ -222,7 +220,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     ((QuranApplication) getApplication()).refreshLocale(this, false);
     super.onCreate(savedInstanceState);
     mBookmarksCache = new SparseBooleanArray();
-    mBookmarksAdapter = new BookmarksDBAdapter(this);
 
     boolean refresh = false;
     QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
