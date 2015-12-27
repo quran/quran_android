@@ -286,6 +286,17 @@ public class PagerActivity extends QuranActionBarActivity implements
     mBookmarkModel = BookmarkModel.getInstance(this);
     mCompositeSubscription = new CompositeSubscription();
 
+    // subscribe to changes in bookmarks
+    mCompositeSubscription.add(
+        mBookmarkModel.bookmarksObservable()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1<Void>() {
+              @Override
+              public void call(Void aVoid) {
+                onBookmarksChanged();
+              }
+            }));
+
     final Resources resources = getResources();
     mImmersiveInPortrait = resources.getBoolean(R.bool.immersive_in_portrait);
     mIsLandscape = resources.getConfiguration().orientation ==
@@ -1110,8 +1121,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     dialog.show(fm, AddTagDialog.TAG);
   }
 
-  @Override
-  public void onBookmarkTagsUpdated() {
+  private void onBookmarksChanged() {
     if (mIsInAyahMode) {
       Subscription subscription =
           mBookmarkModel.getIsBookmarkedObservable(mStart.sura, mStart.ayah, mStart.getPage())
@@ -1129,11 +1139,13 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void updateActionBarTitle(int page) {
     String sura = QuranInfo.getSuraNameFromPage(this, page, true);
     ActionBar actionBar = getSupportActionBar();
-    actionBar.setDisplayShowTitleEnabled(true);
-    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-    actionBar.setTitle(sura);
-    String desc = QuranInfo.getPageSubtitle(this, page);
-    actionBar.setSubtitle(desc);
+    if (actionBar != null) {
+      actionBar.setDisplayShowTitleEnabled(true);
+      actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+      actionBar.setTitle(sura);
+      String desc = QuranInfo.getPageSubtitle(this, page);
+      actionBar.setSubtitle(desc);
+    }
     mSpinnerAdapter = null;
   }
 

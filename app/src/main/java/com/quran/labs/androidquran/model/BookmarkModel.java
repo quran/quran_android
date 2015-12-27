@@ -26,6 +26,7 @@ public class BookmarkModel {
   private static BookmarkModel sInstance;
   private final BookmarksDBAdapter mBookmarksDBAdapter;
   private final Subject<Tag, Tag> mTagPublishSubject;
+  private final Subject<Void, Void> mBookmarksPublishSubject;
 
   public static synchronized BookmarkModel getInstance(Context context) {
     if (sInstance == null) {
@@ -37,16 +38,22 @@ public class BookmarkModel {
   private BookmarkModel(Context context) {
     mBookmarksDBAdapter = new BookmarksDBAdapter(context);
     mTagPublishSubject = PublishSubject.<Tag>create().toSerialized();
+    mBookmarksPublishSubject = PublishSubject.<Void>create().toSerialized();
   }
 
   @VisibleForTesting
   public BookmarkModel(BookmarksDBAdapter adapter) {
     mBookmarksDBAdapter = adapter;
     mTagPublishSubject = PublishSubject.<Tag>create().toSerialized();
+    mBookmarksPublishSubject = PublishSubject.<Void>create().toSerialized();
   }
 
   public Observable<Tag> tagsObservable() {
     return mTagPublishSubject.asObservable();
+  }
+
+  public Observable<Void> bookmarksObservable() {
+    return mBookmarksPublishSubject.asObservable();
   }
 
   public Observable<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
@@ -116,7 +123,11 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        return mBookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
+        Boolean result = mBookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
+        if (result) {
+          mBookmarksPublishSubject.onNext(null);
+        }
+        return result;
       }
     }).subscribeOn(Schedulers.io());
   }
@@ -125,7 +136,9 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Long>() {
       @Override
       public Long call() throws Exception {
-        return mBookmarksDBAdapter.addBookmarkIfNotExists(sura, ayah, page);
+        long result = mBookmarksDBAdapter.addBookmarkIfNotExists(sura, ayah, page);
+        mBookmarksPublishSubject.onNext(null);
+        return result;
       }
     }).subscribeOn(Schedulers.io());
   }
@@ -215,13 +228,16 @@ public class BookmarkModel {
         .map(new Func1<Long, Boolean>() {
           @Override
           public Boolean call(Long bookmarkId) {
+            boolean result;
             if (bookmarkId > 0) {
               mBookmarksDBAdapter.removeBookmark(bookmarkId);
-              return false;
+              result = false;
             } else {
               mBookmarksDBAdapter.addBookmark(sura, ayah, page);
-              return true;
+              result = true;
             }
+            mBookmarksPublishSubject.onNext(null);
+            return result;
           }
         }).subscribeOn(Schedulers.io());
   }

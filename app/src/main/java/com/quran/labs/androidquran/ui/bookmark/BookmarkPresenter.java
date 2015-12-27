@@ -78,11 +78,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   private void subscribeToChanges() {
-    mBookmarkModel.tagsObservable()
+    Observable.merge(mBookmarkModel.tagsObservable(), mBookmarkModel.bookmarksObservable())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Tag>() {
+        .subscribe(new Action1<Object>() {
           @Override
-          public void call(Tag tag) {
+          public void call(Object o) {
             requestData(false);
           }
         });
