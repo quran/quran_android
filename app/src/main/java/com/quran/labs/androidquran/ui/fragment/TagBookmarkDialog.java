@@ -87,10 +87,20 @@ public class TagBookmarkDialog extends DialogFragment {
 
   @Override
   public void onAttach(Activity activity) {
+    super.onAttach(activity);
     mCompositeSubscription = new CompositeSubscription();
     mBookmarkModel = BookmarkModel.getInstance(activity);
     mNewTagString = activity.getString(R.string.new_tag);
-    super.onAttach(activity);
+
+    Subscription subscription = mBookmarkModel.tagsObservable()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Tag>() {
+          @Override
+          public void call(Tag tag) {
+            onTagChanged(tag);
+          }
+        });
+    mCompositeSubscription.add(subscription);
   }
 
   @Override
@@ -180,21 +190,13 @@ public class TagBookmarkDialog extends DialogFragment {
     super.onSaveInstanceState(outState);
   }
 
-  public void handleTagAdded(final String name) {
-    Subscription subscription = mBookmarkModel.addTagObservable(name)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Long>() {
-          @Override
-          public void call(Long result) {
-            if (mTags != null && mAdapter != null) {
-              mCheckedTags.add(result);
-              mTags.add(mTags.size() - 1, new Tag(result, name));
-              mAdapter.notifyDataSetChanged();
-              setMadeChanges();
-            }
-          }
-        });
-    mCompositeSubscription.add(subscription);
+  private void onTagChanged(Tag tag) {
+    if (mTags != null && mAdapter != null) {
+      mCheckedTags.add(tag.id);
+      mTags.add(mTags.size() - 1, tag);
+      mAdapter.notifyDataSetChanged();
+      setMadeChanges();
+    }
   }
 
   @Override

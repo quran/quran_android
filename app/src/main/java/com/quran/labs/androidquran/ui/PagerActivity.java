@@ -8,13 +8,13 @@ import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
+import com.quran.labs.androidquran.model.BookmarkModel;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
@@ -26,7 +26,6 @@ import com.quran.labs.androidquran.service.util.StreamingAudioRequest;
 import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.task.ShareAyahTask;
 import com.quran.labs.androidquran.task.ShareQuranAppTask;
-import com.quran.labs.androidquran.model.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
@@ -120,7 +119,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     AudioStatusBar.AudioBarListener,
     DefaultDownloadReceiver.DownloadListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
-    AddTagDialog.OnTagChangedListener,
     AyahSelectedListener {
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
   private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
@@ -1126,24 +1124,6 @@ public class PagerActivity extends QuranActionBarActivity implements
           });
       mCompositeSubscription.add(subscription);
     }
-  }
-
-  @Override
-  public void onTagAdded(final String name) {
-    if (mIsInAyahMode) {
-      if (TextUtils.isEmpty(name))
-        return;
-      TagBookmarkDialog f = (TagBookmarkDialog) mSlidingPagerAdapter.getFragmentIfExists(
-          mSlidingPagerAdapter.getPagePosition(TAG_PAGE));
-      if (f != null) {
-        f.handleTagAdded(name);
-      }
-    }
-  }
-
-  @Override
-  public void onTagUpdated(Tag tag) {
-    // should not be called in this flow
   }
 
   private void updateActionBarTitle(int page) {

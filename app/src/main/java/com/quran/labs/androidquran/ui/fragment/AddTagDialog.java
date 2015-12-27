@@ -2,9 +2,10 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,8 @@ public class AddTagDialog extends DialogFragment {
   private static final String EXTRA_ID = "id";
   private static final String EXTRA_NAME = "name";
 
+  private AddTagDialogPresenter mAddTagDialogPresenter;
+
   public static AddTagDialog newInstance(long id, String name) {
     final Bundle args = new Bundle();
     args.putLong(EXTRA_ID, id);
@@ -32,6 +35,24 @@ public class AddTagDialog extends DialogFragment {
   }
 
   public AddTagDialog() {
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    mAddTagDialogPresenter = new AddTagDialogPresenter(context);
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    mAddTagDialogPresenter.bind(this);
+  }
+
+  @Override
+  public void onStop() {
+    mAddTagDialogPresenter.unbind();
+    super.onStop();
   }
 
   @NonNull
@@ -67,16 +88,11 @@ public class AddTagDialog extends DialogFragment {
         new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
-            Activity activity = getActivity();
-            if (activity instanceof OnTagChangedListener) {
-              OnTagChangedListener listener =
-                  (OnTagChangedListener) activity;
-              String name = nameText.getText().toString();
-              if (id > 0) {
-                listener.onTagUpdated(new Tag(id, name));
-              } else {
-                listener.onTagAdded(name);
-              }
+            String name = nameText.getText().toString();
+            if (id > 0) {
+              mAddTagDialogPresenter.updateTag(new Tag(id, name));
+            } else {
+              mAddTagDialogPresenter.addTag(name);
             }
 
             dismiss();

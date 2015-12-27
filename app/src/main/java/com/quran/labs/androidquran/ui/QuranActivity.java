@@ -8,11 +8,9 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.task.TranslationListTask;
-import com.quran.labs.androidquran.model.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
@@ -44,22 +42,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.lang.ref.WeakReference;
 
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public class QuranActivity extends QuranActionBarActivity
-    implements AddTagDialog.OnTagChangedListener,
-    TagBookmarkDialog.OnBookmarkTagsUpdateListener {
+    implements TagBookmarkDialog.OnBookmarkTagsUpdateListener {
 
   private static int[] TITLES = new int[]{
       R.string.quran_sura,
@@ -403,44 +396,6 @@ public class QuranActivity extends QuranActionBarActivity
   @Override
   public void onBookmarkTagsUpdated() {
     mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-  }
-
-  @Override
-  public void onTagAdded(final String name) {
-    if (TextUtils.isEmpty(name)) {
-      return;
-    }
-    FragmentManager fm = getSupportFragmentManager();
-    Fragment f = fm.findFragmentByTag(TagBookmarkDialog.TAG);
-    if (f != null && f instanceof TagBookmarkDialog) {
-      ((TagBookmarkDialog) f).handleTagAdded(name);
-      mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-    } else {
-      Subscription subscription = BookmarkModel.getInstance(this)
-          .addTagObservable(name)
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new Action1<Long>() {
-            @Override
-            public void call(Long aLong) {
-              mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-            }
-          });
-      mCompositeSubscription.add(subscription);
-    }
-  }
-
-  @Override
-  public void onTagUpdated(Tag tag) {
-    Subscription subscription = BookmarkModel.getInstance(this)
-        .updateTag(tag)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Boolean>() {
-          @Override
-          public void call(Boolean aBoolean) {
-            mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-          }
-        });
-    mCompositeSubscription.add(subscription);
   }
 
   @Override
