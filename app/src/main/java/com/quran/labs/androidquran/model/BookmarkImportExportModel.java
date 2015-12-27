@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.model;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.ui.bookmark.BookmarkModel;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import okio.BufferedSource;
 import okio.Okio;
 import rx.Observable;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class BookmarkImportExportModel {
@@ -23,18 +25,18 @@ public class BookmarkImportExportModel {
 
   private final Context appContext;
   private final BookmarkJsonModel jsonModel;
-  private final BookmarksDBAdapter databaseAdapter;
+  private final BookmarkModel bookmarkModel;
 
   public BookmarkImportExportModel(Context context) {
     this(context.getApplicationContext(),
-        new BookmarkJsonModel(), new BookmarksDBAdapter(context));
+        new BookmarkJsonModel(), BookmarkModel.getInstance(context));
   }
 
   public BookmarkImportExportModel(Context appContext,
-      BookmarkJsonModel model, BookmarksDBAdapter databaseAdapter) {
+      BookmarkJsonModel model, BookmarkModel bookmarkModel) {
     this.appContext = appContext;
     this.jsonModel = model;
-    this.databaseAdapter = databaseAdapter;
+    this.bookmarkModel = bookmarkModel;
   }
 
   public Observable<BookmarkData> readBookmarks(final BufferedSource source) {
@@ -51,22 +53,20 @@ public class BookmarkImportExportModel {
   }
 
   public Observable<Uri> exportBookmarksObservable() {
-    return Observable.defer(new Func0<Observable<Uri>>() {
-      @Override
-      public Observable<Uri> call() {
-        try {
-          return Observable.just(exportBookmarks());
-        } catch (IOException ioe) {
-          return Observable.error(ioe);
-        }
-      }
-    }).subscribeOn(Schedulers.io());
+    return bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED)
+        .flatMap(new Func1<BookmarkData, Observable<Uri>>() {
+          @Override
+          public Observable<Uri> call(BookmarkData bookmarkData) {
+            try {
+              return Observable.just(exportBookmarks(bookmarkData));
+            } catch (IOException ioe) {
+              return Observable.error(ioe);
+            }
+          }
+        }).subscribeOn(Schedulers.io());
   }
 
-  private Uri exportBookmarks() throws IOException {
-    BookmarkData data = new BookmarkData(databaseAdapter.getTags(),
-        databaseAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED));
-
+  private Uri exportBookmarks(BookmarkData data) throws IOException {
     Uri result = null;
     File externalFilesDir = new File(appContext.getExternalFilesDir(null), "backups");
     if (externalFilesDir.exists() || externalFilesDir.mkdir()) {
