@@ -1108,10 +1108,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     return mTranslationItems;
   }
 
-  public void toggleBookmark(Integer sura, Integer ayah, int page) {
-    new ToggleBookmarkTask().execute(sura, ayah, page);
-  }
-
   @Override
   public void onAddTagSelected() {
     FragmentManager fm = getSupportFragmentManager();
@@ -1413,45 +1409,24 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  class ToggleBookmarkTask extends AsyncTask<Integer, Void, Boolean> {
-    private Integer mSura;
-    private Integer mAyah;
-    private int mPage;
-    private boolean mPageOnly;
-
-    @Override
-    protected Boolean doInBackground(Integer... params) {
-      mSura = params[0];
-      mAyah = params[1];
-      mPage = params[2];
-      mPageOnly = (mSura == null || mAyah == null);
-
-      boolean result = false;
-      long bookmarkId = mBookmarksAdapter.getBookmarkId(mSura, mAyah, mPage);
-      if (bookmarkId >= 0) {
-        // if (mBookmarksAdapter.isTagged(bookmarkId)) {
-        // TODO show warning dialog that all tags will be removed
-        // }
-        mBookmarksAdapter.removeBookmark(bookmarkId);
-      } else {
-        mBookmarksAdapter.addBookmark(mSura, mAyah, mPage);
-        result = true;
-      }
-      return result;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean result) {
-      if (result != null) {
-        if (mPageOnly) {
-          mBookmarksCache.put(mPage, result);
-          invalidateOptionsMenu();
-        } else {
-          SuraAyah suraAyah = new SuraAyah(mSura, mAyah);
-          updateAyahBookmark(suraAyah, result, true);
-        }
-      }
-    }
+  private void toggleBookmark(final Integer sura, final Integer ayah, final int page) {
+    Subscription subscription = mBookmarkModel.toggleBookmarkObservable(sura, ayah, page)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Boolean>() {
+          @Override
+          public void call(Boolean isBookmarked) {
+            if (sura == null || ayah == null) {
+              // page bookmark
+              mBookmarksCache.put(page, isBookmarked);
+              invalidateOptionsMenu();
+            } else {
+              // ayah bookmark
+              SuraAyah suraAyah = new SuraAyah(sura, ayah);
+              updateAyahBookmark(suraAyah, isBookmarked, true);
+            }
+          }
+        });
+    mCompositeSubscription.add(subscription);
   }
 
   private void checkIfPageIsBookmarked(Integer... pages) {
