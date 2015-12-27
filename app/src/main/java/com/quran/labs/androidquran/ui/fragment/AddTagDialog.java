@@ -16,75 +16,75 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 public class AddTagDialog extends DialogFragment {
-   public static final String TAG = "AddTagDialog";
 
-   private static final String EXTRA_ID = "id";
-   private static final String EXTRA_NAME = "name";
+  public static final String TAG = "AddTagDialog";
 
-   public static AddTagDialog newInstance(long id, String name) {
-     final Bundle args = new Bundle();
-     args.putLong(EXTRA_ID, id);
-     args.putString(EXTRA_NAME, name);
-     final AddTagDialog dialog = new AddTagDialog();
-     dialog.setArguments(args);
-     return dialog;
-   }
+  private static final String EXTRA_ID = "id";
+  private static final String EXTRA_NAME = "name";
 
-   public AddTagDialog(){
-   }
+  public static AddTagDialog newInstance(long id, String name) {
+    final Bundle args = new Bundle();
+    args.putLong(EXTRA_ID, id);
+    args.putString(EXTRA_NAME, name);
+    final AddTagDialog dialog = new AddTagDialog();
+    dialog.setArguments(args);
+    return dialog;
+  }
 
-   @NonNull
-   @Override
-   public Dialog onCreateDialog(Bundle savedInstanceState) {
-      final Bundle args = getArguments();
+  public AddTagDialog() {
+  }
 
-      final long id;
-      final String name;
-      if (args != null) {
-        id = args.getLong(EXTRA_ID, -1);
-        name = args.getString(EXTRA_NAME);
-      } else {
-        id = -1;
-        name = null;
-      }
+  @NonNull
+  @Override
+  public Dialog onCreateDialog(Bundle savedInstanceState) {
+    final Bundle args = getArguments();
 
-      LayoutInflater inflater = getActivity().getLayoutInflater();
-      View layout = inflater.inflate(R.layout.tag_dialog, null);
+    final long id;
+    final String name;
+    if (args != null) {
+      id = args.getLong(EXTRA_ID, -1);
+      name = args.getString(EXTRA_NAME);
+    } else {
+      id = -1;
+      name = null;
+    }
 
-      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-      builder.setTitle(getString(R.string.tag_dlg_title));
+    LayoutInflater inflater = getActivity().getLayoutInflater();
+    View layout = inflater.inflate(R.layout.tag_dialog, null);
 
-      final EditText nameText =
-              (EditText)layout.findViewById(R.id.tag_name);
+    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    builder.setTitle(getString(R.string.tag_dlg_title));
 
-      if (id > -1) {
-         nameText.setText(name == null? "" : name);
-      }
+    final EditText nameText =
+        (EditText) layout.findViewById(R.id.tag_name);
 
-      builder.setView(layout);
-      builder.setPositiveButton(getString(R.string.dialog_ok),
-              new DialogInterface.OnClickListener() {
-                 @Override
-                 public void onClick(DialogInterface dialog, int which) {
-                    Activity activity = getActivity();
-                    if (activity instanceof OnTagChangedListener){
-                       OnTagChangedListener listener =
-                               (OnTagChangedListener) activity;
-                       String name = nameText.getText().toString();
-                       if (id > 0){
-                          listener.onTagUpdated(new Tag(id, name));
-                       }
-                       else {
-                          listener.onTagAdded(name);
-                       }
-                    }
+    if (id > -1) {
+      nameText.setText(name == null ? "" : name);
+    }
 
-                    dismiss();
-                 }
-              });
+    builder.setView(layout);
+    builder.setPositiveButton(getString(R.string.dialog_ok),
+        new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            Activity activity = getActivity();
+            if (activity instanceof OnTagChangedListener) {
+              OnTagChangedListener listener =
+                  (OnTagChangedListener) activity;
+              String name = nameText.getText().toString();
+              if (id > 0) {
+                listener.onTagUpdated(new Tag(id, name));
+              } else {
+                listener.onTagAdded(name);
+              }
+            }
 
-      return builder.create();
-   }
+            dismiss();
+          }
+        });
+
+    return builder.create();
+  }
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
@@ -93,7 +93,9 @@ public class AddTagDialog extends DialogFragment {
   }
 
   public interface OnTagChangedListener {
-      void onTagAdded(String name);
-      void onTagUpdated(Tag tag);
-   }
+
+    void onTagAdded(String name);
+
+    void onTagUpdated(Tag tag);
+  }
 }
