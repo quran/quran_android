@@ -83,7 +83,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .subscribe(new Action1<Object>() {
           @Override
           public void call(Object o) {
-            requestData(false);
+            if (mFragment != null) {
+              requestData(false);
+            } else {
+              mCachedData = null;
+            }
           }
         });
   }
@@ -362,17 +366,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @Override
   public void bind(BookmarksFragment fragment) {
     mFragment = fragment;
-
-    /* TODO: this should ideally be true in order for us to use the cached data if we have it.
-     * disabled this for correctness, since a person using the app could easily go to a page,
-     * mark a bookmark (or unmark one), and return, only to find the previous cached content.
-     *
-     * This will be fixed when BookmarkPresenter moves its bookmark specific logic into a separate
-     * BookmarkModel class of sorts, which should also handle adding/tagging/etc. with that in
-     * place, requestData(true) will be safe here, since if the data is stale, we'll get from the
-     * database anyway.
-     */
-    requestData(false);
+    requestData(true);
   }
 
   @Override
