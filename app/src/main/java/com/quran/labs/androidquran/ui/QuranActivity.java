@@ -30,8 +30,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -45,8 +43,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-import java.lang.ref.WeakReference;
 
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
@@ -70,45 +66,15 @@ public class QuranActivity extends QuranActionBarActivity
   private static final int JUZ2_LIST = 1;
   private static final int BOOKMARKS_LIST = 2;
 
-  private static final int REFRESH_BOOKMARKS = 1;
-
   private static boolean sUpdatedTranslations;
 
   private AlertDialog mUpgradeDialog = null;
-  private PagerAdapter mPagerAdapter = null;
   private boolean mShowedTranslationUpgradeDialog = false;
   private boolean mIsRtl;
   private boolean mIsPaused;
   private MenuItem mSearchItem;
   private ActionMode mSupportActionMode;
   private CompositeSubscription mCompositeSubscription;
-
-  private static class QuranHandler extends Handler {
-
-    private WeakReference<QuranActivity> mActivityRef;
-
-    public QuranHandler(QuranActivity activity) {
-      mActivityRef = new WeakReference<>(activity);
-    }
-
-    @Override
-    public void handleMessage(Message msg) {
-      final QuranActivity activity = mActivityRef.get();
-      if (activity != null) {
-        String bookmarksTag = activity.mPagerAdapter.getFragmentTag(
-            R.id.index_pager, activity.getPosition(BOOKMARKS_LIST));
-        if (msg.what == REFRESH_BOOKMARKS) {
-          FragmentManager fm = activity.getSupportFragmentManager();
-          Fragment f = fm.findFragmentByTag(bookmarksTag);
-          if (f instanceof BookmarksFragment) {
-            ((BookmarksFragment) f).refreshData();
-          }
-        }
-      }
-    }
-  }
-
-  private Handler mHandler;
   private QuranSettings mSettings;
 
   @Override
@@ -116,7 +82,6 @@ public class QuranActivity extends QuranActionBarActivity
     ((QuranApplication) getApplication()).refreshLocale(this, false);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.quran_index);
-    mHandler = new QuranHandler(this);
     mCompositeSubscription = new CompositeSubscription();
 
     mSettings = QuranSettings.getInstance(this);
@@ -132,8 +97,8 @@ public class QuranActivity extends QuranActionBarActivity
 
     final ViewPager pager = (ViewPager) findViewById(R.id.index_pager);
     pager.setOffscreenPageLimit(3);
-    mPagerAdapter = new PagerAdapter(getSupportFragmentManager());
-    pager.setAdapter(mPagerAdapter);
+    PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+    pager.setAdapter(pagerAdapter);
 
     final SlidingTabLayout indicator =
         (SlidingTabLayout) findViewById(R.id.indicator);
@@ -394,11 +359,6 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   @Override
-  public void onBookmarkTagsUpdated() {
-    mHandler.sendEmptyMessage(REFRESH_BOOKMARKS);
-  }
-
-  @Override
   public void onAddTagSelected() {
     FragmentManager fm = getSupportFragmentManager();
     AddTagDialog dialog = new AddTagDialog();
@@ -447,20 +407,6 @@ public class QuranActivity extends QuranActionBarActivity
       final int resId = mIsRtl ?
           ARABIC_TITLES[position] : TITLES[position];
       return getString(resId);
-    }
-
-    /**
-     * this is a private method in FragmentPagerAdapter that
-     * allows getting the tag that it uses to store the fragment
-     * in (for use by getFragmentByTag).  in the future, this could
-     * change and cause us issues...
-     *
-     * @param viewId the view id of the viewpager
-     * @param index  the index of the fragment to get
-     * @return the tag in which it would be stored under
-     */
-    public String getFragmentTag(int viewId, int index) {
-      return "android:switcher:" + viewId + ":" + index;
     }
   }
 }

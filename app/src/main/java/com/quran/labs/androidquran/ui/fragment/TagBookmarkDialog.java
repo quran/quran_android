@@ -169,11 +169,6 @@ public class TagBookmarkDialog extends DialogFragment {
           @Override
           public void call(Boolean aBoolean) {
             mMadeChanges = false;
-            final Activity activity = getActivity();
-            if (activity instanceof OnBookmarkTagsUpdateListener) {
-              ((OnBookmarkTagsUpdateListener) activity).onBookmarkTagsUpdated();
-            }
-
             if (shouldDismiss) {
               dismissAllowingStateLoss();
             }
@@ -450,9 +445,6 @@ public class TagBookmarkDialog extends DialogFragment {
   }
 
   public interface OnBookmarkTagsUpdateListener {
-
-    void onBookmarkTagsUpdated();
-
     void onAddTagSelected();
   }
 
