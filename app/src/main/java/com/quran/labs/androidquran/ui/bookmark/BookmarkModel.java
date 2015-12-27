@@ -210,17 +210,30 @@ public class BookmarkModel {
 
   public Observable<Boolean> getIsBookmarkedObservable(
       final Integer sura, final Integer ayah, final int page) {
-    return Observable.fromCallable(new Callable<Long>() {
-      @Override
-      public Long call() throws Exception {
-        return mBookmarksDBAdapter.getBookmarkId(sura, ayah, page);
-      }
-    }).map(new Func1<Long, Boolean>() {
-      @Override
-      public Boolean call(Long bookmarkId) {
-        return bookmarkId > 0;
-      }
-    }).subscribeOn(Schedulers.io());
+    return getBookmarkId(sura, ayah, page)
+        .map(new Func1<Long, Boolean>() {
+          @Override
+          public Boolean call(Long bookmarkId) {
+            return bookmarkId > 0;
+          }
+        }).subscribeOn(Schedulers.io());
+  }
+
+  public Observable<Boolean> toggleBookmarkObservable(
+      final Integer sura, final Integer ayah, final int page) {
+    return getBookmarkId(sura, ayah, page)
+        .map(new Func1<Long, Boolean>() {
+          @Override
+          public Boolean call(Long bookmarkId) {
+            if (bookmarkId > 0) {
+              mBookmarksDBAdapter.removeBookmark(bookmarkId);
+              return false;
+            } else {
+              mBookmarksDBAdapter.addBookmark(sura, ayah, page);
+              return true;
+            }
+          }
+        }).subscribeOn(Schedulers.io());
   }
 
   private List<QuranRow> getRowsSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {
