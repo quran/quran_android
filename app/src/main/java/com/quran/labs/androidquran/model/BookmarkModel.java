@@ -19,10 +19,13 @@ import rx.Observable;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
 public class BookmarkModel {
   private static BookmarkModel sInstance;
   private final BookmarksDBAdapter mBookmarksDBAdapter;
+  private final Subject<Tag, Tag> mTagPublishSubject;
 
   public static synchronized BookmarkModel getInstance(Context context) {
     if (sInstance == null) {
@@ -33,11 +36,17 @@ public class BookmarkModel {
 
   private BookmarkModel(Context context) {
     mBookmarksDBAdapter = new BookmarksDBAdapter(context);
+    mTagPublishSubject = PublishSubject.<Tag>create().toSerialized();
   }
 
   @VisibleForTesting
   public BookmarkModel(BookmarksDBAdapter adapter) {
     mBookmarksDBAdapter = adapter;
+    mTagPublishSubject = PublishSubject.<Tag>create().toSerialized();
+  }
+
+  public Observable<Tag> tagsObservable() {
+    return mTagPublishSubject.asObservable();
   }
 
   public Observable<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
@@ -82,7 +91,9 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Long>() {
       @Override
       public Long call() throws Exception {
-        return mBookmarksDBAdapter.addTag(title);
+        Long result = mBookmarksDBAdapter.addTag(title);
+        mTagPublishSubject.onNext(new Tag(result, title));
+        return result;
       }
     }).subscribeOn(Schedulers.io());
   }
@@ -91,7 +102,11 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        return mBookmarksDBAdapter.updateTag(tag.id, tag.name);
+        Boolean result = mBookmarksDBAdapter.updateTag(tag.id, tag.name);
+        if (result) {
+          mTagPublishSubject.onNext(new Tag(tag.id, tag.name));
+        }
+        return result;
       }
     }).subscribeOn(Schedulers.io());
   }

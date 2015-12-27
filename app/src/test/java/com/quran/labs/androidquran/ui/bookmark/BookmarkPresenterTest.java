@@ -90,7 +90,7 @@ public class BookmarkPresenterTest {
     when(appContext.getApplicationContext()).thenReturn(appContext);
 
     BookmarkModel model = new BookmarkModel(bookmarksAdapter);
-    presenter = new BookmarkPresenter(appContext, settings, model);
+    presenter = new BookmarkPresenter(appContext, settings, model, false);
   }
 
   @Test

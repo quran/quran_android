@@ -61,15 +61,31 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     mBookmarkModel = BookmarkModel.getInstance(context);
     mSortOrder = mQuranSettings.getBookmarksSortOrder();
     mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
+    subscribeToChanges();
   }
 
   @VisibleForTesting
-  BookmarkPresenter(Context context, QuranSettings settings, BookmarkModel bookmarkModel) {
+  BookmarkPresenter(Context context, QuranSettings settings,
+      BookmarkModel bookmarkModel, boolean subscribeToChanges) {
     mAppContext = context.getApplicationContext();
     mQuranSettings = settings;
     mBookmarkModel = bookmarkModel;
     mSortOrder = mQuranSettings.getBookmarksSortOrder();
     mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
+    if (subscribeToChanges) {
+      subscribeToChanges();
+    }
+  }
+
+  private void subscribeToChanges() {
+    mBookmarkModel.tagsObservable()
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<Tag>() {
+          @Override
+          public void call(Tag tag) {
+            requestData(false);
+          }
+        });
   }
 
   public int getSortOrder() {
