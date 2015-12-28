@@ -13,6 +13,10 @@ public class Bookmark {
   public final long timestamp;
   public final List<Long> tags;
 
+  public Bookmark(long id, Integer sura, Integer ayah, int page) {
+    this(id, sura, ayah, page, System.currentTimeMillis());
+  }
+
   public Bookmark(long id, Integer sura, Integer ayah, int page, long timestamp) {
     this.id = id;
     this.sura = sura;
