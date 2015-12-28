@@ -119,13 +119,8 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   }
 
   public void onNewData(List<QuranRow> items) {
-    // TODO: why u no notifyDataSetChanged yourself?
     mBookmarksAdapter.setElements(items.toArray(new QuranRow[items.size()]));
     mBookmarksAdapter.notifyDataSetChanged();
-  }
-
-  public void refreshData() {
-    mBookmarkPresenter.requestData();
   }
 
   @Override
