@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.ui.bookmark.BookmarkPresenter;
+import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
 import com.quran.labs.androidquran.ui.bookmark.BookmarksContextualModePresenter;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
