@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.presenter;
 
-import com.quran.labs.androidquran.model.BookmarkImportExportModel;
+import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 
 import org.junit.Before;
 import org.junit.Test;

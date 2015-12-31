@@ -1,8 +1,9 @@
-package com.quran.labs.androidquran.model;
+package com.quran.labs.androidquran.model.bookmark;
 
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.model.bookmark.BookmarkJsonModel;
 
 import org.junit.Before;
 import org.junit.Test;

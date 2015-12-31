@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.presenter;
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.model.BookmarkImportExportModel;
+import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.util.QuranSettings;
 
