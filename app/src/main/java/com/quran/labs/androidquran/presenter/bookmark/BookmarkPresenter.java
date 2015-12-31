@@ -5,6 +5,7 @@ import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.BookmarkModel;
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
@@ -45,6 +46,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private boolean mGroupByTags;
   private BookmarkResult mCachedData;
   private BookmarksFragment mFragment;
+  private ArabicDatabaseUtils mArabicDatabaseUtils;
 
   private Subscription mPendingRemoval;
   private List<QuranRow> mItemsToRemove;
@@ -62,6 +64,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     mBookmarkModel = BookmarkModel.getInstance(context);
     mSortOrder = mQuranSettings.getBookmarksSortOrder();
     mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
+    mArabicDatabaseUtils = ArabicDatabaseUtils.getInstance(context);
     subscribeToChanges();
   }
 
@@ -214,10 +217,25 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
   }
 
+  private Observable<BookmarkData> getBookmarksWithAyatObservable(int sortOrder) {
+    return mBookmarkModel.getBookmarkDataObservable(sortOrder)
+        .map(new Func1<BookmarkData, BookmarkData>() {
+          @Override
+          public BookmarkData call(BookmarkData bookmarkData) {
+            try {
+              return new BookmarkData(bookmarkData.getTags(),
+                  mArabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()));
+            } catch (Exception e) {
+              return bookmarkData;
+            }
+          }
+        });
+  }
+
   @VisibleForTesting
   Observable<BookmarkResult> getBookmarksListObservable(
       int sortOrder, final boolean groupByTags) {
-    return mBookmarkModel.getBookmarkDataObservable(sortOrder)
+    return getBookmarksWithAyatObservable(sortOrder)
         .map(new Func1<BookmarkData, BookmarkResult>() {
           @Override
           public BookmarkResult call(BookmarkData bookmarkData) {

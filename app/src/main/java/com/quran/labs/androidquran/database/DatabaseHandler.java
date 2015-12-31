@@ -15,7 +15,10 @@ import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 
 public class DatabaseHandler {
@@ -160,6 +163,21 @@ public class DatabaseHandler {
 
   public Cursor getVerse(int sura, int ayah) {
     return getVerses(sura, ayah, ayah);
+  }
+
+  public Cursor getVersesByIds(List<Integer> ids) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0, idsSize = ids.size(); i < idsSize; i++) {
+      if (i > 0) {
+        builder.append(",");
+      }
+      builder.append(ids.get(i));
+    }
+
+    Timber.d("querying verses by ids for tags...");
+    final String sql = "SELECT rowid as _id, " + COL_SURA + ", " + COL_AYAH + ", " + COL_TEXT +
+        " FROM " + ARABIC_TEXT_TABLE + " WHERE rowid in(" + builder.toString() + ")";
+    return mDatabase.rawQuery(sql, null);
   }
 
   public Cursor search(String query, boolean withSnippets) {
