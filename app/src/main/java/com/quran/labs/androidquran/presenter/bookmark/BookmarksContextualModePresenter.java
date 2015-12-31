@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.ui.bookmark;
+package com.quran.labs.androidquran.presenter.bookmark;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.presenter.Presenter;

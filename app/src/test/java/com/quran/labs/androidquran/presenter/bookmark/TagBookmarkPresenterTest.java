@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
 import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.model.BookmarkModel;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 
 import org.junit.Before;

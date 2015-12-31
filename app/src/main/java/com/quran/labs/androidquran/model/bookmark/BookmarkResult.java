@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.ui.bookmark;
+package com.quran.labs.androidquran.model.bookmark;
 
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
