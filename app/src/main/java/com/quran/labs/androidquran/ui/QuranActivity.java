@@ -364,14 +364,6 @@ public class QuranActivity extends QuranActionBarActivity
     dialog.show(fm, AddTagDialog.TAG);
   }
 
-  public int getPosition(int position) {
-    if (mIsRtl) {
-      return Math.abs(position - 3);
-    } else {
-      return position;
-    }
-  }
-
   public class PagerAdapter extends FragmentPagerAdapter {
 
     public PagerAdapter(FragmentManager fm) {
@@ -398,6 +390,20 @@ public class QuranActivity extends QuranActionBarActivity
         case QuranActivity.BOOKMARKS_LIST:
         default:
           return BookmarksFragment.newInstance();
+      }
+    }
+
+    @Override
+    public long getItemId(int position) {
+      int pos = mIsRtl ? Math.abs(position - 2) : position;
+      switch (pos) {
+        case QuranActivity.SURA_LIST:
+          return SURA_LIST;
+        case QuranActivity.JUZ2_LIST:
+          return JUZ2_LIST;
+        case QuranActivity.BOOKMARKS_LIST:
+        default:
+          return BOOKMARKS_LIST;
       }
     }
 
