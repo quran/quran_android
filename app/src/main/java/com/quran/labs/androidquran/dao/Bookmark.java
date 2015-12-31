@@ -18,12 +18,7 @@ public class Bookmark {
   }
 
   public Bookmark(long id, Integer sura, Integer ayah, int page, long timestamp) {
-    this.id = id;
-    this.sura = sura;
-    this.ayah = ayah;
-    this.page = page;
-    this.timestamp = timestamp;
-    this.tags = Collections.unmodifiableList(Collections.<Long>emptyList());
+    this(id, sura, ayah, page, timestamp, Collections.<Long>emptyList());
   }
 
   public Bookmark(long id, Integer sura, Integer ayah, int page, long timestamp, List<Long> tags) {
@@ -41,5 +36,13 @@ public class Bookmark {
 
   public Bookmark withTags(List<Long> tagIds) {
     return new Bookmark(id, sura, ayah, page, timestamp, new ArrayList<>(tagIds));
+  }
+
+  public String getAyahText() {
+    return null;
+  }
+
+  public Bookmark withAyahText(String ayahText) {
+    return new BookmarkWithAyahText(this, ayahText);
   }
 }

@@ -52,10 +52,20 @@ public class QuranRowFactory {
           .withSura(sura)
           .withImageResource(R.drawable.ic_favorite);
     } else {
-      final String title =
-          QuranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
+      String ayahText = bookmark.getAyahText();
+
+      final String title;
+      final String metadata;
+      if (ayahText == null) {
+        title = QuranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
+        metadata = QuranInfo.getPageSubtitle(context, bookmark.page);
+      } else {
+        title = ayahText;
+        metadata = QuranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
+      }
+
       builder.withText(title)
-          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.page))
+          .withMetadata(metadata)
           .withType(QuranRow.AYAH_BOOKMARK)
           .withSura(bookmark.sura)
           .withAyah(bookmark.ayah)

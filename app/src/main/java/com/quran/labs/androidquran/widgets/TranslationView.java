@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.widgets;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
 import com.quran.labs.androidquran.ui.helpers.VerseLineHeightSpan;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -28,7 +29,6 @@ import android.widget.TextView;
 import java.util.List;
 
 public class TranslationView extends ScrollView {
-  private static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
   private static final boolean USE_UTHMANI_SPAN =
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
   private static final float ARABIC_RELATIVE_SIZE = 1.4f;
@@ -256,19 +256,7 @@ public class TranslationView extends ScrollView {
     // arabic
     String ayahText = ayah.getText();
     if (!TextUtils.isEmpty(ayahText)) {
-
-      // since the basmallah is hardcoded in the db, we remove it from the
-      // first verse (except for sura fatiha and sura tawbah).
-      if (ayahNumber == 1 && (suraNumber != 1 && suraNumber != 9)) {
-
-        // this code is here as a safety check (even though, in theory, it should always be true).
-        // this is in case one day, we update the database and remove the basmallah from being
-        // attached to each first ayah - in those cases, even old code with the new database
-        // should do the right thing.
-        if (ayahText.startsWith(AR_BASMALLAH)) {
-          ayahText = ayahText.substring(AR_BASMALLAH.length() + 1);
-        }
-      }
+      ayahText = ArabicDatabaseUtils.getAyahWithoutBasmallah(suraNumber, ayahNumber, ayahText);
 
       // Ayah Text
       ayahView.setLineSpacing(VerseLineHeightSpan.TRANSLATION_LINE_HEIGHT_ADDITION,
@@ -354,7 +342,7 @@ public class TranslationView extends ScrollView {
     }
     tv.setTextSize(mFontSize);
 
-    SpannableString str = new SpannableString(AR_BASMALLAH);
+    SpannableString str = new SpannableString(ArabicDatabaseUtils.AR_BASMALLAH);
 
     if (USE_UTHMANI_SPAN) {
       UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
