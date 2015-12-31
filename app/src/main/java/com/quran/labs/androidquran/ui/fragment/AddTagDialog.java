@@ -51,7 +51,7 @@ public class AddTagDialog extends DialogFragment {
 
   @Override
   public void onStop() {
-    mAddTagDialogPresenter.unbind();
+    mAddTagDialogPresenter.unbind(this);
     super.onStop();
   }
 

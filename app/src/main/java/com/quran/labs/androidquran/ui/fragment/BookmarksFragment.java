@@ -73,8 +73,8 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
   @Override
   public void onStop() {
-    mBookmarkPresenter.unbind();
-    mBookmarksContextualModePresenter.unbind();
+    mBookmarkPresenter.unbind(this);
+    mBookmarksContextualModePresenter.unbind(this);
     super.onStop();
   }
 

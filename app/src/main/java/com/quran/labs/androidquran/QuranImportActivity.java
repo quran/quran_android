@@ -25,7 +25,7 @@ public class QuranImportActivity extends AppCompatActivity implements
 
   @Override
   protected void onPause() {
-    mPresenter.unbind();
+    mPresenter.unbind(this);
     super.onPause();
   }
 
@@ -37,7 +37,7 @@ public class QuranImportActivity extends AppCompatActivity implements
 
   @Override
   protected void onDestroy() {
-    mPresenter.unbind();
+    mPresenter.unbind(this);
     if (mDialog != null) {
       mDialog.dismiss();
     }

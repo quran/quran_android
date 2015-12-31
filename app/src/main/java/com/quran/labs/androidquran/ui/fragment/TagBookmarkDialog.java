@@ -152,7 +152,7 @@ public class TagBookmarkDialog extends DialogFragment {
 
   @Override
   public void onStop() {
-    mTagBookmarkPresenter.unbind();
+    mTagBookmarkPresenter.unbind(this);
     super.onStop();
   }
 

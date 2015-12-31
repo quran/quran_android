@@ -25,10 +25,10 @@ public class AddTagDialogPresenter implements Presenter<AddTagDialog> {
   }
 
   @Override
-  public void bind(AddTagDialog what) {
+  public void bind(AddTagDialog dialog) {
   }
 
   @Override
-  public void unbind() {
+  public void unbind(AddTagDialog dialog) {
   }
 }

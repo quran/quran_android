@@ -110,7 +110,7 @@ public class TagBookmarkPresenterTest {
     presenter.bind(bookmarkDialog);
     assertThat(presenter.toggleTag(-1)).isFalse();
     verify(bookmarkDialog, times(1)).showAddTagDialog();
-    presenter.unbind();
+    presenter.unbind(bookmarkDialog);
   }
 
   @Test
