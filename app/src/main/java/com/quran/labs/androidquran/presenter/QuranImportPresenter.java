@@ -246,7 +246,9 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   }
 
   @Override
-  public void unbind() {
-    mCurrentActivity = null;
+  public void unbind(QuranImportActivity activity) {
+    if (activity == mCurrentActivity) {
+      mCurrentActivity = null;
+    }
   }
 }

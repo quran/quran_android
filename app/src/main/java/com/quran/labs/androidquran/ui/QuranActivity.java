@@ -137,8 +137,7 @@ public class QuranActivity extends QuranActionBarActivity
       finish();
       startActivity(i);
     } else {
-      startService(AudioService.getAudioIntent(
-          this, AudioService.ACTION_STOP));
+      startService(AudioService.getAudioIntent(this, AudioService.ACTION_STOP));
     }
     mIsPaused = false;
   }

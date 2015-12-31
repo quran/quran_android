@@ -398,7 +398,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   @Override
-  public void unbind() {
-    mFragment = null;
+  public void unbind(BookmarksFragment fragment) {
+    if (fragment == mFragment) {
+      mFragment = null;
+    }
   }
 }

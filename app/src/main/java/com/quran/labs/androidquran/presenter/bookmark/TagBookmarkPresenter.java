@@ -210,7 +210,9 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   }
 
   @Override
-  public void unbind() {
-    mDialog = null;
+  public void unbind(TagBookmarkDialog dialog) {
+    if (dialog == mDialog) {
+      mDialog = null;
+    }
   }
 }
