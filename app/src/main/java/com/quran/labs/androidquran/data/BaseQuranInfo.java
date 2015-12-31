@@ -281,6 +281,12 @@ public class BaseQuranInfo {
         Integer.valueOf(QuranUtils.getLocalizedNumber(context, ayah)));
   }
 
+  public static String getAyahMetadata(int sura, int ayah, int page, Context context) {
+    int juz = getJuzFromPage(page);
+    return context.getString(R.string.quran_ayah_details, getSuraName(context, sura, true),
+        QuranUtils.getLocalizedNumber(context, ayah), QuranUtils.getLocalizedNumber(context, juz));
+  }
+
   public static String getSuraNameString(Context context, int page) {
     return context.getString(R.string.quran_sura_title, getSuraNameFromPage(context, page));
   }

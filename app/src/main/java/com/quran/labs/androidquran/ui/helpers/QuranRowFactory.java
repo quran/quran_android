@@ -61,7 +61,7 @@ public class QuranRowFactory {
         metadata = QuranInfo.getPageSubtitle(context, bookmark.page);
       } else {
         title = ayahText;
-        metadata = QuranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
+        metadata = QuranInfo.getAyahMetadata(bookmark.sura, bookmark.ayah, bookmark.page, context);
       }
 
       builder.withText(title)

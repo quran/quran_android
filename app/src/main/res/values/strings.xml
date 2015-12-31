@@ -233,6 +233,7 @@
     <string name="quran_page">Page</string>
     <string name="quran_sura">Surahs</string>
     <string name="quran_ayah">Ayah %1$d</string>
+    <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
     <string name="quran_sura_title">Surat %1$s</string>
     <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
 
