@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
@@ -48,6 +49,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private BookmarksFragment mFragment;
   private ArabicDatabaseUtils mArabicDatabaseUtils;
 
+  private boolean mIsRtl;
   private Subscription mPendingRemoval;
   private List<QuranRow> mItemsToRemove;
 
@@ -385,7 +387,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @Override
   public void bind(BookmarksFragment fragment) {
     mFragment = fragment;
-    requestData(true);
+    boolean isRtl = mQuranSettings.isArabicNames() || QuranUtils.isRtl();
+    if (isRtl == mIsRtl) {
+      requestData(true);
+    } else {
+      // don't use the cache if rtl changed
+      mIsRtl = isRtl;
+      requestData(false);
+    }
   }
 
   @Override
