@@ -78,6 +78,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
     mBookmarkIds = bookmarkIds;
     mPotentialAyahBookmark = potentialAyahBookmark;
     mSaveImmediate = mPotentialAyahBookmark != null;
+    mCheckedTags.clear();
     refresh();
   }
 
@@ -207,6 +208,10 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   @Override
   public void bind(TagBookmarkDialog dialog) {
     mDialog = dialog;
+    if (mTags != null) {
+      // replay the last set of tags and checked tags that we had.
+      mDialog.setData(mTags, mCheckedTags);
+    }
   }
 
   @Override
