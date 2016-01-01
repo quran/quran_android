@@ -80,6 +80,11 @@ Open Source Projects Used
 
 Changelog
 ---------
+**current**
+- import / export bookmarks
+- merged tags and bookmarks into one screen
+- lots of improvements and bugfixes
+
 **version 2.6.7-p4 (released 11/15/2015)**
 - fix launch crash when upgrading prefs for people stuck between the bug
   introduced in p2 (not crashing with it and instead running the wrong
