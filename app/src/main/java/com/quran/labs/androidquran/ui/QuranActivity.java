@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.UpgradeTranslationListener;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
+import android.app.Application;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -79,7 +80,12 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    ((QuranApplication) getApplication()).refreshLocale(this, false);
+    Application application = getApplication();
+    if (application instanceof QuranApplication) {
+      // instant reload often triggers a crash here, stating that
+      // application is not a QuranApplication
+      ((QuranApplication) application).refreshLocale(this, false);
+    }
     super.onCreate(savedInstanceState);
     setContentView(R.layout.quran_index);
     mCompositeSubscription = new CompositeSubscription();
