@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter;
@@ -118,8 +119,10 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     return super.onOptionsItemSelected(item);
   }
 
-  public void onNewData(List<QuranRow> items) {
-    mBookmarksAdapter.setElements(items.toArray(new QuranRow[items.size()]));
+  public void onNewData(BookmarkResult items) {
+    mBookmarksAdapter.setShowTags(mBookmarkPresenter.shouldShowInlineTags());
+    mBookmarksAdapter.setElements(
+        items.rows.toArray(new QuranRow[items.rows.size()]), items.tagMap);
     mBookmarksAdapter.notifyDataSetChanged();
   }
 

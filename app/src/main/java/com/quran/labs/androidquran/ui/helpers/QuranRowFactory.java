@@ -49,6 +49,7 @@ public class QuranRowFactory {
       builder.withText(QuranInfo.getSuraNameString(context, bookmark.page))
           .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.page))
           .withType(QuranRow.PAGE_BOOKMARK)
+          .withBookmark(bookmark)
           .withSura(sura)
           .withImageResource(R.drawable.ic_favorite);
     } else {
@@ -67,13 +68,11 @@ public class QuranRowFactory {
       builder.withText(title)
           .withMetadata(metadata)
           .withType(QuranRow.AYAH_BOOKMARK)
-          .withSura(bookmark.sura)
-          .withAyah(bookmark.ayah)
+          .withBookmark(bookmark)
           .withImageResource(R.drawable.ic_favorite)
           .withImageOverlayColor(ContextCompat.getColor(context, R.color.ayah_bookmark_color));
     }
-    builder.withPage(bookmark.page)
-        .withBookmarkId(bookmark.id);
+
     if (tagId != null) {
       builder.withTagId(tagId);
     }

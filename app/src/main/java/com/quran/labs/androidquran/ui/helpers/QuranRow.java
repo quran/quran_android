@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import com.quran.labs.androidquran.dao.Bookmark;
+
 public class QuranRow {
 
   // Row Types
@@ -23,6 +25,7 @@ public class QuranRow {
   // For Bookmarks
   public long tagId;
   public long bookmarkId;
+  public Bookmark bookmark;
 
   public static class Builder {
 
@@ -38,6 +41,7 @@ public class QuranRow {
     private long mBookmarkId = -1;
     private String mJuzOverlayText;
     private Integer mImageFilterColor;
+    private Bookmark mBookmark;
 
     public Builder withType(int type) {
       mRowType = type;
@@ -54,13 +58,19 @@ public class QuranRow {
       return this;
     }
 
-    public Builder withSura(int sura) {
-      mSura = sura;
+    public Builder withBookmark(Bookmark bookmark) {
+      if (!bookmark.isPageBookmark()) {
+        mSura = bookmark.sura;
+        mAyah = bookmark.ayah;
+      }
+      mPage = bookmark.page;
+      mBookmark = bookmark;
+      mBookmarkId = bookmark.id;
       return this;
     }
 
-    public Builder withAyah(int ayah) {
-      mAyah = ayah;
+    public Builder withSura(int sura) {
+      mSura = sura;
       return this;
     }
 
@@ -89,11 +99,6 @@ public class QuranRow {
       return this;
     }
 
-    public Builder withBookmarkId(long id) {
-      mBookmarkId = id;
-      return this;
-    }
-
     public Builder withTagId(long id) {
       mTagId = id;
       return this;
@@ -102,13 +107,13 @@ public class QuranRow {
     public QuranRow build() {
       return new QuranRow(mText, mMetadata, mRowType, mSura,
           mAyah, mPage, mImageResource, mImageFilterColor, mJuzType,
-          mJuzOverlayText, mBookmarkId, mTagId);
+          mJuzOverlayText, mBookmarkId, mTagId, mBookmark);
     }
   }
 
   private QuranRow(String text, String metadata, int rowType,
       int sura, int ayah, int page, Integer imageResource, Integer filterColor,
-      Integer juzType, String juzOverlayText, long bookmarkId, long tagId) {
+      Integer juzType, String juzOverlayText, long bookmarkId, long tagId, Bookmark bookmark) {
     this.text = text;
     this.rowType = rowType;
     this.sura = sura;
@@ -121,6 +126,7 @@ public class QuranRow {
     this.juzOverlayText = juzOverlayText;
     this.tagId = tagId;
     this.bookmarkId = bookmarkId;
+    this.bookmark = bookmark;
   }
 
   public boolean isHeader() {
