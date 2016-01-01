@@ -1,7 +1,10 @@
 package com.quran.labs.androidquran.widgets;
 
+import com.quran.labs.androidquran.R;
+
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.Checkable;
@@ -24,6 +27,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
   };
 
   private boolean mIsChecked;
+  private int mMinHeight;
 
   public CheckableLinearLayout(Context context) {
     super(context);
@@ -31,18 +35,28 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
 
   public CheckableLinearLayout(Context context, AttributeSet attrs) {
     super(context, attrs);
+    init(context, attrs);
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public CheckableLinearLayout(Context context,
       AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
+    init(context, attrs);
   }
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public CheckableLinearLayout(Context context,
       AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
+    init(context, attrs);
+  }
+
+  private void init(Context context, AttributeSet attrs) {
+    if (attrs != null) {
+      TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CheckableLinearLayout);
+      mMinHeight = ta.getDimensionPixelSize(R.styleable.CheckableLinearLayout_minHeight, 0);
+      ta.recycle();
+    }
   }
 
   @Override
@@ -69,5 +83,13 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
   public void toggle() {
     mIsChecked = !mIsChecked;
     refreshDrawableState();
+  }
+
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    if (mMinHeight > 0 && getMeasuredHeight() < mMinHeight) {
+      setMeasuredDimension(getMeasuredWidth(), mMinHeight);
+    }
   }
 }
