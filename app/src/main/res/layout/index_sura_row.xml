@@ -53,6 +53,13 @@
             android:textColor="@color/sura_details_color"
             android:textSize="14sp"
             tools:text="Makki - 286 Verses"/>
+
+        <com.quran.labs.androidquran.widgets.TagsViewGroup
+            android:id="@+id/tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:gravity="start"/>
     </LinearLayout>
 
     <TextView

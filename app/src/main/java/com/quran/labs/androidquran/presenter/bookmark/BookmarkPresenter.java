@@ -114,6 +114,10 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     requestData();
   }
 
+  public boolean shouldShowInlineTags() {
+    return !mGroupByTags;
+  }
+
   public boolean isGroupedByTags() {
     return mGroupByTags;
   }
@@ -146,7 +150,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     if (canCache && mCachedData != null) {
       if (mFragment != null) {
         Timber.d("sending cached bookmark data");
-        mFragment.onNewData(mCachedData.rows);
+        mFragment.onNewData(mCachedData);
       }
     } else {
       Timber.d("requesting bookmark data from the database");
@@ -154,17 +158,36 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
   }
 
-  public List<QuranRow> predictQuranListAfterDeletion(List<QuranRow> remove) {
+  public BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
     if (mCachedData != null) {
       List<QuranRow> placeholder = new ArrayList<>(mCachedData.rows.size() - remove.size());
       List<QuranRow> rows = mCachedData.rows;
+      List<Long> removedTags = new ArrayList<>();
       for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {
         QuranRow row = rows.get(i);
         if (!remove.contains(row)) {
           placeholder.add(row);
         }
       }
-      return placeholder;
+
+      for (int i = 0, removedSize = remove.size(); i < removedSize; i++) {
+        QuranRow row = remove.get(i);
+        if (row.isHeader() && row.tagId > 0){
+          removedTags.add(row.tagId);
+        }
+      }
+
+      Map<Long, Tag> tagMap;
+      if (removedTags.isEmpty()) {
+        tagMap = mCachedData.tagMap;
+      } else {
+        tagMap = new HashMap<>(mCachedData.tagMap);
+        for (int i = 0, removedTagsSize = removedTags.size(); i < removedTagsSize; i++) {
+          Long tagId = removedTags.get(i);
+          tagMap.remove(tagId);
+        }
+      }
+      return new BookmarkResult(placeholder, tagMap);
     }
     return null;
   }
@@ -195,7 +218,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
             mPendingRemoval = null;
             mCachedData = result;
             if (mFragment != null) {
-              mFragment.onNewData(result.rows);
+              mFragment.onNewData(result);
             }
           }
         });
@@ -258,7 +281,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
             // notify the ui if we're attached
             mCachedData = result;
             if (mFragment != null) {
-              mFragment.onNewData(result.rows);
+              if (mPendingRemoval != null && mItemsToRemove != null) {
+                mFragment.onNewData(predictQuranListAfterDeletion(mItemsToRemove));
+              } else {
+                mFragment.onNewData(result);
+              }
             }
           }
         });

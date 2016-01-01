@@ -1,10 +1,13 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.CheckableLinearLayout;
 import com.quran.labs.androidquran.widgets.JuzView;
+import com.quran.labs.androidquran.widgets.TagsViewGroup;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class QuranListAdapter extends
     RecyclerView.Adapter<QuranListAdapter.HeaderHolder>
@@ -30,6 +34,8 @@ public class QuranListAdapter extends
   private RecyclerView mRecyclerView;
   private SparseBooleanArray mCheckedState;
   private QuranTouchListener mTouchListener;
+  private Map<Long, Tag> mTagMap;
+  private boolean mShowTags;
 
   public QuranListAdapter(Context context, RecyclerView recyclerView,
       QuranRow[] items, boolean selectableHeaders) {
@@ -80,8 +86,13 @@ public class QuranListAdapter extends
     notifyDataSetChanged();
   }
 
-  public void setElements(QuranRow[] elements) {
+  public void setElements(QuranRow[] elements, Map<Long, Tag> tagMap) {
     mElements = elements;
+    mTagMap = tagMap;
+  }
+
+  public void setShowTags(boolean showTags) {
+    mShowTags = showTags;
   }
 
   private void bindRow(HeaderHolder vh, int position) {
@@ -94,6 +105,7 @@ public class QuranListAdapter extends
 
     holder.metadata.setVisibility(View.VISIBLE);
     holder.metadata.setText(item.metadata);
+    holder.tags.setVisibility(View.GONE);
 
     if (item.juzType != null) {
       holder.image.setImageDrawable(
@@ -113,6 +125,25 @@ public class QuranListAdapter extends
       }
       holder.image.setVisibility(View.VISIBLE);
       holder.number.setVisibility(View.GONE);
+
+      List<Tag> tags = new ArrayList<>();
+      Bookmark bookmark = item.bookmark;
+      if (bookmark != null && !bookmark.tags.isEmpty() && mShowTags) {
+        for (int i = 0, bookmarkTags = bookmark.tags.size(); i < bookmarkTags; i++) {
+          Long tagId = bookmark.tags.get(i);
+          Tag tag = mTagMap.get(tagId);
+          if (tag != null) {
+            tags.add(tag);
+          }
+        }
+      }
+
+      if (tags.isEmpty()) {
+        holder.tags.setVisibility(View.GONE);
+      } else {
+        holder.tags.setTags(tags);
+        holder.tags.setVisibility(View.VISIBLE);
+      }
     }
   }
 
@@ -219,12 +250,14 @@ public class QuranListAdapter extends
     TextView number;
     TextView metadata;
     ImageView image;
+    TagsViewGroup tags;
 
     public ViewHolder(View itemView) {
       super(itemView);
       metadata = (TextView) itemView.findViewById(R.id.metadata);
       number = (TextView) itemView.findViewById(R.id.suraNumber);
       image = (ImageView) itemView.findViewById(R.id.rowIcon);
+      tags = (TagsViewGroup) itemView.findViewById(R.id.tags);
     }
   }
 
