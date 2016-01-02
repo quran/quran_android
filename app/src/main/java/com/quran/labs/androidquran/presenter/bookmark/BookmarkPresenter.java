@@ -66,7 +66,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     mBookmarkModel = BookmarkModel.getInstance(context);
     mSortOrder = mQuranSettings.getBookmarksSortOrder();
     mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
-    mArabicDatabaseUtils = ArabicDatabaseUtils.getInstance(context);
+    try {
+      mArabicDatabaseUtils = ArabicDatabaseUtils.getInstance(context);
+    } catch (Exception e) {
+      mArabicDatabaseUtils = null;
+    }
     subscribeToChanges();
   }
 
