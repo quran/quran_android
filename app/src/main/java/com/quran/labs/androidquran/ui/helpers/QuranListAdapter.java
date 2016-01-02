@@ -5,7 +5,6 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.CheckableLinearLayout;
 import com.quran.labs.androidquran.widgets.JuzView;
 import com.quran.labs.androidquran.widgets.TagsViewGroup;
 
@@ -228,11 +227,11 @@ public class QuranListAdapter extends
 
     TextView title;
     TextView pageNumber;
-    CheckableLinearLayout view;
+    View view;
 
     public HeaderHolder(View itemView) {
       super(itemView);
-      view = (CheckableLinearLayout) itemView;
+      view = itemView;
       title = (TextView) itemView.findViewById(R.id.title);
       pageNumber = (TextView) itemView.findViewById(R.id.pageNumber);
 
@@ -241,7 +240,7 @@ public class QuranListAdapter extends
     }
 
     public void setChecked(boolean checked) {
-      view.setChecked(checked);
+      view.setActivated(checked);
     }
   }
 

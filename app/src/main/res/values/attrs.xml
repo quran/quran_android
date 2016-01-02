@@ -20,9 +20,5 @@
         <attr name="android:itemBackground" />
     </declare-styleable>
 
-    <declare-styleable name="CheckableLinearLayout">
-        <attr name="minHeight" format="dimension" />
-    </declare-styleable>
-
     <attr name="spinnerItemStyle" format="reference" />
 </resources>
