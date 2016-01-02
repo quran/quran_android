@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.quran.labs.androidquran.widgets.CheckableLinearLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:minHeight="72dp"
+    android:minHeight="72dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:background="@drawable/quran_row_background"
@@ -76,4 +75,4 @@
         android:textColor="@color/sura_details_color"
         android:textSize="14sp"
         tools:text="1"/>
-</com.quran.labs.androidquran.widgets.CheckableLinearLayout>
+</LinearLayout>
