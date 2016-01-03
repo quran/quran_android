@@ -38,13 +38,6 @@
         </com.quran.labs.androidquran.ui.preference.QuranPreference>
 
         <com.quran.labs.androidquran.ui.preference.QuranPreference
-            android:title="@string/about_everyayah"
-            android:summary="@string/about_everyayah_summary">
-            <intent android:action="android.intent.action.VIEW"
-                android:data="@string/about_everyayah_url" />
-        </com.quran.labs.androidquran.ui.preference.QuranPreference>
-
-        <com.quran.labs.androidquran.ui.preference.QuranPreference
             android:title="@string/about_quran_ksu"
             android:summary="@string/about_quran_ksu_summary">
             <intent android:action="android.intent.action.VIEW"
