@@ -1,13 +1,15 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import com.f2prateek.rx.preferences.Preference;
+import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.Presenter;
-import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
@@ -15,6 +17,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
@@ -88,7 +91,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   private void subscribeToChanges() {
-    Observable.merge(mBookmarkModel.tagsObservable(), mBookmarkModel.bookmarksObservable())
+    RxSharedPreferences prefs = RxSharedPreferences.create(
+        PreferenceManager.getDefaultSharedPreferences(mAppContext));
+    Preference<Integer> lastPage = prefs.getInteger(Constants.PREF_LAST_PAGE);
+    Observable.merge(mBookmarkModel.tagsObservable(),
+        mBookmarkModel.bookmarksObservable(), lastPage.asObservable())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Object>() {
           @Override

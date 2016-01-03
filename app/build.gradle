@@ -87,6 +87,7 @@ dependencies {
     compile "com.android.support:design:${supportLibVersion}"
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'com.f2prateek.rx.preferences:rx-preferences:1.0.1'
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.moshi:moshi:1.0.0'
     compile 'com.jakewharton.timber:timber:4.1.0'
