@@ -51,6 +51,13 @@ android {
     }
 
     buildTypes {
+      beta {
+         minifyEnabled true
+         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
+         signingConfig signingConfigs.release
+         versionNameSuffix "-beta"
+      }
+
       debug {
          ext.enableCrashlytics = false
       }
