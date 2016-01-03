@@ -7,7 +7,6 @@ this is a simple (madani based) quran app for android.
 * qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).
 * naskh images used with permission of SHL Info Systems
 * translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
-* audio from [Every Ayah](http://everyayah.com/).
 
 patches, comments, etc are welcome.
 
