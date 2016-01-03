@@ -218,4 +218,4 @@ values and only posting the notification if they changed.
 - right to left layout for arabic (thanks @aessam)
 - many bugfixes and improvements
 
-You can see our complete set of releases [here] (https://github.com/ahmedre/quran_android/releases)
+You can see our complete set of releases [here] (https://github.com/quran/quran_android/releases)
