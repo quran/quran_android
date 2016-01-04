@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -31,6 +32,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
   private boolean mIsPaused;
   private String mInternalSdcardLocation;
   private AlertDialog mDialog;
+  private Context mAppContext;
   private Subscription mExportSubscription = null;
 
   @Override
@@ -59,6 +62,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     addPreferencesFromResource(R.xml.quran_preferences);
 
     final Context context = getActivity();
+    mAppContext = context.getApplicationContext();
     // remove the tablet mode preference if it doesn't exist
     if (!QuranScreenInfo.getOrMakeInstance(context).isTablet(context)) {
       Preference tabletModePreference =
@@ -116,8 +120,19 @@ public class QuranSettingsFragment extends PreferenceFragment implements
                   shareIntent.setType("application/json");
                   shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                   shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                  context.startActivity(Intent.createChooser(shareIntent,
-                      context.getString(R.string.prefs_export_title)));
+                  List<ResolveInfo> intents = mAppContext.getPackageManager()
+                      .queryIntentActivities(shareIntent, 0);
+                  if (intents.size() > 1) {
+                    // if only one, then that is likely Quran for Android itself, so don't show
+                    // the chooser since it doesn't really make sense.
+                    context.startActivity(Intent.createChooser(shareIntent,
+                        context.getString(R.string.prefs_export_title)));
+                  } else {
+                    File exportedPath = new File(mAppContext.getExternalFilesDir(null), "backups");
+                    String exported = mAppContext.getString(
+                        R.string.exported_data, exportedPath.toString());
+                    Toast.makeText(mAppContext, exported, Toast.LENGTH_LONG).show();
+                  }
                 }
               });
         }
