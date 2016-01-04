@@ -208,6 +208,7 @@
         bookmarks with %1$d bookmark(s) and %2$d tag(s). Import?</string>
     <string name="import_successful">Import Successful</string>
     <string name="export_data_error">Error exporting data.</string>
+    <string name="exported_data">Data exported to %1$s.</string>
 
     <string name="kitkat_external_title">Warning</string>
     <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
