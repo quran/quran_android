@@ -56,6 +56,9 @@ android {
          proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
          signingConfig signingConfigs.release
          versionNameSuffix "-beta"
+         if (project.hasProperty('disableCrashlytics')) {
+            ext.enableCrashlytics = false
+         }
       }
 
       debug {
@@ -66,6 +69,9 @@ android {
          minifyEnabled true
          proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
          signingConfig signingConfigs.release
+         if (project.hasProperty('disableCrashlytics')) {
+            ext.enableCrashlytics = false
+         }
       }
     }
 
