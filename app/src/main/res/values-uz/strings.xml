@@ -184,7 +184,8 @@
     <string name="import_data_and_override">Ushbu import barcha xatchoʻplarni %1$d ta xatchoʻp(lar) va %2$d ta teg(lar) bilan almashtiradi.
         Import qilinsinmi?</string>
     <string name="import_successful">Muvaffaqiyatli import qilindi</string>
-    <string name="export_data_error">Eksport qilishda xatolik yuz berdi.</string>
+    <string name="export_data_error">Eksport qilishda xatolik yuz berdi</string>
+    <string name="exported_data">Maʼlumotlar \"%1$s\"ga eksport qilindi</string>
 
     <string name="kitkat_external_title">Ogohlantirish</string>
     <string name="kitkat_external_message">Ilovani tashqi xotiraga (SD kartaga) koʻchirib oʻtkazgach, agar u oʻchirib tashlab-qayta oʻrnatilsa
@@ -208,8 +209,9 @@
     <string name="quran_page">Sahifa</string>
     <string name="quran_sura">Sura</string>
     <string name="quran_ayah">%1$d-oyat</string>
+    <string name="quran_ayah_details">%1$s %2$s-oyat, %3$s-juz</string>
     <string name="quran_sura_title">%1$s surasi</string>
-    <string name="sura_ayah_notification_str">%1$s surasi, %2$d-oyat</string>
+    <string name="sura_ayah_notification_str">%1$s surasi %2$d-oyat</string>
 
     <string name="bookmarks_current_page">Joriy sahifa</string>
     <string name="index_loading">Yuklanmoqda&#8230;</string>
