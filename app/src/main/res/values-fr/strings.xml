@@ -122,7 +122,7 @@
   <string name="prefs_tablet_mode_enabled">En orientation paysage, deux pages s\'afficheront côte à côte.</string>
   <string name="prefs_tablet_mode_disabled">En orientation paysage, seulement une page s\'affichera.</string>
 
-    <string name="kitkat_external_title">Attention</string>
+    <string name="warning">Attention</string>
     <string name="kitkat_external_message">Dû à certaines restrictions d\'Android, si vous choisissez
         de stocker les données de l\'application sur votre carte SD et que par la suite vous désinstallez
         ou supprimez les données de Quran Android, toutes les pages et les audios de Quran Android

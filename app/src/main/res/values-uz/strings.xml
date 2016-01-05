@@ -187,7 +187,7 @@
     <string name="export_data_error">Eksport qilishda xatolik yuz berdi</string>
     <string name="exported_data">Maʼlumotlar \"%1$s\"ga eksport qilindi</string>
 
-    <string name="kitkat_external_title">Ogohlantirish</string>
+    <string name="warning">Ogohlantirish</string>
     <string name="kitkat_external_message">Ilovani tashqi xotiraga (SD kartaga) koʻchirib oʻtkazgach, agar u oʻchirib tashlab-qayta oʻrnatilsa
         yoki maʼlumotlari tozalansa barcha Qurʼon rasmlari va audio fayllar ham oʻchib ketadi va ushbu kerakli maʼlumotlarni yana qayta saqlab
         olishga toʻgʻri keladi. Baribir tashqi xotiradan foydalanmoqchimisiz?</string>

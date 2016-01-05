@@ -263,7 +263,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
   private void showKitKatConfirmation(final String newLocation) {
     final Context context = getActivity();
     final AlertDialog.Builder b = new AlertDialog.Builder(context)
-        .setTitle(R.string.kitkat_external_title)
+        .setTitle(R.string.warning)
         .setMessage(R.string.kitkat_external_message)
         .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
           @Override

@@ -163,7 +163,7 @@
     <string name="prefs_tablet_mode_enabled">Im Querformat werden zwei Seiten nebeneinander dargestellt.</string>
     <string name="prefs_tablet_mode_disabled">Im Querformat wird nur eine Seite dargestellt.</string>
 
-    <string name="kitkat_external_title">Achtung</string>
+    <string name="warning">Achtung</string>
     <string name="kitkat_external_message">Aufgrund von Systemeinschränkungen durch Android, werden im Falle der Speicherung der Daten auf einer externen SD-Karte, diese Daten nach einer Deinstallation oder einer Löschung der Applikationsdaten dauerhaft gelöscht und es ist ein erneutes Herunterladen erforderlich. Sind Sie sicher, dass Sie die externe SD-Karte benutzen wollen?</string>
     <!-- Preferences End -->
 
