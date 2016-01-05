@@ -257,7 +257,7 @@
     <string name="audio_manager">إدارة الصوتيات</string>
     <string name="prefs_use_arabic_summary_on">سيتم تحويل التطبيق إلى اللغة العربية</string>
     <string name="prefs_use_arabic_title">الوضع العربي</string>
-<string name="play">تشغيل</string>
+    <string name="play">تشغيل</string>
     <string name="stop">إيقاف</string>
 
     <string name="downloadTabletPrompt">تم تحسين الصور الخاصه بالتابلت. هل تود تحميلها الان؟</string>
@@ -276,10 +276,14 @@
     <string name="import_successful">تم الاستيراد بنجاح</string>
     <string name="export_data_error">خطأ في استيراد البيانات.</string>
     <string name="kitkat_external_title">تحذير</string>
+
     <plurals name="bookmark_tag_deleted">
-	<item quantity="one"/>
-	<item quantity="other">تم حذف عنصر واحد</item>
-</plurals>
+        <item quantity="zero">لم يتم حذف عناصر</item>
+	    <item quantity="one">تم حذف عنصر واحد</item>
+        <item quantity="two">تم حذف عنصران</item>
+	    <item quantity="few">تم حذف %d عناصر</item>
+        <item quantity="many">تم حذف %d عنصر</item>
+    </plurals>
     <string name="undo">تراجع</string>
 
     </resources>
