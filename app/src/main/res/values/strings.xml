@@ -210,7 +210,7 @@
     <string name="export_data_error">Error exporting data.</string>
     <string name="exported_data">Data exported to %1$s.</string>
 
-    <string name="kitkat_external_title">Warning</string>
+    <string name="warning">Warning</string>
     <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran
         Android pages and audio will be deleted and you will have to download them again. Are you

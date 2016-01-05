@@ -212,7 +212,7 @@
     <string name="import_successful">Данные успешно импортированы</string>
     <string name="export_data_error">Ошибка экспорта данных</string>
 
-    <string name="kitkat_external_title">Внимание</string>
+    <string name="warning">Внимание</string>
     <string name="kitkat_external_message">Из-за ограничений Android, если Вы сейчас разместите исходные данные
         приложения Quran for Android на Вашей внешней SD карте, а затем очистите или деинсталлируете приложение,
         все страницы и аудио приложения Quran for Android будут удалены. Все эти данные нужно будет скачать снова. Вы уверены,
