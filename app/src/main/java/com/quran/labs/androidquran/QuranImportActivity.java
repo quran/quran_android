@@ -66,6 +66,12 @@ public class QuranImportActivity extends AppCompatActivity implements
           public void onClick(DialogInterface dialog, int which) {
             finish();
           }
+        })
+        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+          @Override
+          public void onCancel(DialogInterface dialog) {
+            finish();
+          }
         });
     mDialog = builder.show();
   }
