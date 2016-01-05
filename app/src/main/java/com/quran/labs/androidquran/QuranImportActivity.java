@@ -19,6 +19,7 @@ public class QuranImportActivity extends AppCompatActivity implements
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
+    ((QuranApplication) getApplication()).refreshLocale(this, false);
     super.onCreate(savedInstanceState);
     mPresenter = QuranImportPresenter.getInstance(this);
   }
