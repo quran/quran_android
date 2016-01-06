@@ -211,6 +211,7 @@
         с %1$d закладки и %2$d метки. Импортировать?</string>
     <string name="import_successful">Данные успешно импортированы</string>
     <string name="export_data_error">Ошибка экспорта данных</string>
+    <string name="exported_data">Данные экспортированы в %1$s</string>
 
     <string name="warning">Внимание</string>
     <string name="kitkat_external_message">Из-за ограничений Android, если Вы сейчас разместите исходные данные
@@ -235,8 +236,9 @@
     <string name="quran_page">Страница</string>
     <string name="quran_sura">Сура</string>
     <string name="quran_ayah">Аят %1$d</string>
+    <string name="quran_ayah_details">%1$s - аят %2$s, джуз %3$s</string>
     <string name="quran_sura_title">Сура %1$s</string>
-    <string name="sura_ayah_notification_str">Сура %1$s, Аят %2$d</string>
+    <string name="sura_ayah_notification_str">Сура %1$s, аят %2$d</string>
 
     <string name="bookmarks_current_page">Текущая страница</string>
     <string name="index_loading">Загрузка…</string>
