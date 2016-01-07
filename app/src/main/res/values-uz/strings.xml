@@ -275,8 +275,11 @@
     <string name="play_each_verse">Har bir oyatni:</string>
     <string name="play_apply">Joriy qilish</string>
     <string name="play_apply_and_play">Joriy qilish va chalish</string>
+    <string name="previous">Avvalgi</string>
     <string name="play">Chalish</string>
+    <string name="pause">Pauza</string>
     <string name="stop">Toʻxtatish</string>
+    <string name="next">Keyingi</string>
 
     <string-array name="repeatValues">
         <item>1 marta</item>

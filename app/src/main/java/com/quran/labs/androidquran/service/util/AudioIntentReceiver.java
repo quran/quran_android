@@ -21,6 +21,7 @@
 package com.quran.labs.androidquran.service.util;
 
 import com.quran.labs.androidquran.service.AudioService;
+import com.quran.labs.androidquran.util.AudioUtils;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -78,7 +79,7 @@ public class AudioIntentReceiver extends BroadcastReceiver {
   }
 
   private void startAudioService(Context context, String action) {
-    final Intent intent = AudioService.getAudioIntent(context, action);
+    final Intent intent = AudioUtils.getAudioIntent(context, action);
     context.startService(intent);
   }
 }

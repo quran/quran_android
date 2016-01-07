@@ -302,8 +302,12 @@
     <string name="play_each_verse">Вос-ти каждый аят:</string>
     <string name="play_apply">Применить</string>
     <string name="play_apply_and_play">Применить и воспроизвести</string>
+    <string name="previous">Предыдущий</string>
     <string name="play">Воспроизвести</string>
+    <string name="pause">Пауза</string>
     <string name="stop">Приостановить</string>
+    <string name="next">Следующий</string>
+
     <string-array name="repeatValues">
         <item>1 раз</item>
         <item>2 раза</item>
