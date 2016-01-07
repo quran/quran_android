@@ -675,7 +675,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     super.onResume();
     if (mShouldReconnect) {
-      startService(AudioService.getAudioIntent(
+      startService(AudioUtils.getAudioIntent(
           this, AudioService.ACTION_CONNECT));
       mShouldReconnect = false;
     }
@@ -1687,20 +1687,20 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onPausePressed() {
-    startService(AudioService.getAudioIntent(
+    startService(AudioUtils.getAudioIntent(
         this, AudioService.ACTION_PAUSE));
     mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
   }
 
   @Override
   public void onNextPressed() {
-    startService(AudioService.getAudioIntent(this,
+    startService(AudioUtils.getAudioIntent(this,
         AudioService.ACTION_SKIP));
   }
 
   @Override
   public void onPreviousPressed() {
-    startService(AudioService.getAudioIntent(this,
+    startService(AudioUtils.getAudioIntent(this,
         AudioService.ACTION_REWIND));
   }
 
@@ -1752,7 +1752,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onStopPressed() {
-    startService(AudioService.getAudioIntent(this, AudioService.ACTION_STOP));
+    startService(AudioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
     mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
     unHighlightAyahs(HighlightType.AUDIO);
     mLastAudioRequest = null;

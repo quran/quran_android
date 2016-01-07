@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
+import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.UpgradeTranslationListener;
@@ -143,7 +144,7 @@ public class QuranActivity extends QuranActionBarActivity
       finish();
       startActivity(i);
     } else {
-      startService(AudioService.getAudioIntent(this, AudioService.ACTION_STOP));
+      startService(AudioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
     }
     mIsPaused = false;
   }
