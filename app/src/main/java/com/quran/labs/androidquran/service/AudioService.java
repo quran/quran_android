@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.service.util.MediaButtonHelper;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.util.AudioUtils;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -43,6 +44,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -56,8 +59,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v7.app.NotificationCompat;
 import android.util.SparseIntArray;
 
 import java.io.File;
@@ -73,29 +77,20 @@ import timber.log.Timber;
  * the service to perform specific operations: Play, Pause, Rewind, Skip, etc.
  */
 public class AudioService extends Service implements OnCompletionListener,
-    OnPreparedListener, OnErrorListener, AudioFocusable,
-    MediaPlayer.OnSeekCompleteListener {
+    OnPreparedListener, OnErrorListener, AudioFocusable, MediaPlayer.OnSeekCompleteListener {
 
   // These are the Intent actions that we are prepared to handle. Notice that
   // the fact these constants exist in our class is a mere convenience: what
   // really defines the actions our service can handle are the <action> tags
   // in the <intent-filters> tag for our service in AndroidManifest.xml.
-  public static final String ACTION_PLAYBACK =
-      "com.quran.labs.androidquran.action.PLAYBACK";
-  public static final String ACTION_PLAY =
-      "com.quran.labs.androidquran.action.PLAY";
-  public static final String ACTION_PAUSE =
-      "com.quran.labs.androidquran.action.PAUSE";
-  public static final String ACTION_STOP =
-      "com.quran.labs.androidquran.action.STOP";
-  public static final String ACTION_SKIP =
-      "com.quran.labs.androidquran.action.SKIP";
-  public static final String ACTION_REWIND =
-      "com.quran.labs.androidquran.action.REWIND";
-  public static final String ACTION_CONNECT =
-      "com.quran.labs.androidquran.action.CONNECT";
-  public static final String ACTION_UPDATE_REPEAT =
-      "com.quran.labs.androidquran.action.UPDATE_REPEAT";
+  public static final String ACTION_PLAYBACK = "com.quran.labs.androidquran.action.PLAYBACK";
+  public static final String ACTION_PLAY = "com.quran.labs.androidquran.action.PLAY";
+  public static final String ACTION_PAUSE = "com.quran.labs.androidquran.action.PAUSE";
+  public static final String ACTION_STOP = "com.quran.labs.androidquran.action.STOP";
+  public static final String ACTION_SKIP = "com.quran.labs.androidquran.action.SKIP";
+  public static final String ACTION_REWIND = "com.quran.labs.androidquran.action.REWIND";
+  public static final String ACTION_CONNECT = "com.quran.labs.androidquran.action.CONNECT";
+  public static final String ACTION_UPDATE_REPEAT = "com.quran.labs.androidquran.action.UPDATE_REPEAT";
 
   // pending notification request codes
   private static final int REQUEST_CODE_MAIN = 0;
@@ -107,8 +102,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
   public static class AudioUpdateIntent {
 
-    public static final String INTENT_NAME =
-        "com.quran.labs.androidquran.audio.AudioUpdate";
+    public static final String INTENT_NAME = "com.quran.labs.androidquran.audio.AudioUpdate";
     public static final String STATUS = "status";
     public static final String SURA = "sura";
     public static final String AYAH = "ayah";
@@ -139,24 +133,18 @@ public class AudioService extends Service implements OnCompletionListener,
   private AudioRequest mAudioRequest = null;
 
   // so user can pass in a serializable AudioRequest to the intent
-  public static final String EXTRA_PLAY_INFO =
-      "com.quran.labs.androidquran.PLAY_INFO";
+  public static final String EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO";
 
   // ignore the passed in play info if we're already playing
-  public static final String EXTRA_IGNORE_IF_PLAYING =
-      "com.quran.labs.androidquran.IGNORE_IF_PLAYING";
+  public static final String EXTRA_IGNORE_IF_PLAYING = "com.quran.labs.androidquran.IGNORE_IF_PLAYING";
 
   // used to override what is playing now (stop then play)
-  public static final String EXTRA_STOP_IF_PLAYING =
-      "com.quran.labs.androidquran.STOP_IF_PLAYING";
+  public static final String EXTRA_STOP_IF_PLAYING = "com.quran.labs.androidquran.STOP_IF_PLAYING";
 
   // repeat info
-  public static final String EXTRA_VERSE_REPEAT_COUNT =
-      "com.quran.labs.androidquran.VERSE_REPEAT_COUNT";
-  public static final String EXTRA_RANGE_REPEAT_COUNT =
-      "com.quran.labs.androidquran.RANGE_REPEAT_COUNT";
-  public static final String EXTRA_RANGE_RESTRICT =
-      "com.quran.labs.androidquran.RANGE_RESTRICT";
+  public static final String EXTRA_VERSE_REPEAT_COUNT = "com.quran.labs.androidquran.VERSE_REPEAT_COUNT";
+  public static final String EXTRA_RANGE_REPEAT_COUNT = "com.quran.labs.androidquran.RANGE_REPEAT_COUNT";
+  public static final String EXTRA_RANGE_RESTRICT = "com.quran.labs.androidquran.RANGE_RESTRICT";
 
   // indicates the state our service:
   private enum State {
@@ -169,19 +157,7 @@ public class AudioService extends Service implements OnCompletionListener,
     Paused      // playback paused (media player ready!)
   }
 
-  ;
-
   private State mState = State.Stopped;
-
-  private enum PauseReason {
-    UserRequest,  // paused by user request
-    FocusLoss,    // paused because of audio focus loss
-  }
-
-  ;
-
-  // why did we pause? (only relevant if mState == State.Paused)
-  PauseReason mPauseReason = PauseReason.UserRequest;
 
   // do we have audio focus?
   private enum AudioFocus {
@@ -222,6 +198,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private NotificationCompat.Builder mNotificationBuilder;
   private NotificationCompat.Builder mPausedNotificationBuilder;
   private LocalBroadcastManager mBroadcastManager = null;
+  private MediaSessionCompat mMediaSession;
 
   private int mGaplessSura = 0;
   private int mNotificationColor;
@@ -291,29 +268,29 @@ public class AudioService extends Service implements OnCompletionListener,
     mHandler = new ServiceHandler(this);
 
     mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
-        .createWifiLock(WifiManager.WIFI_MODE_FULL, "audiolock");
-    mNotificationManager = (NotificationManager)
-        getSystemService(NOTIFICATION_SERVICE);
+        .createWifiLock(WifiManager.WIFI_MODE_FULL, "QuranAudioLock");
+    mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
     // create the Audio Focus Helper, if the Audio Focus feature is available
-    if (Build.VERSION.SDK_INT >= 8) {
-      mAudioFocusHelper = new AudioFocusHelper(
-          getApplicationContext(), this);
-    }
-    // no focus feature, so we always "have" audio focus
-    else {
+    final Context appContext = getApplicationContext();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+      mAudioFocusHelper = new AudioFocusHelper(appContext, this);
+    } else {
+      // no focus feature, so we always "have" audio focus
       mAudioFocus = AudioFocus.Focused;
     }
 
-    mMediaButtonReceiverComponent = new ComponentName(
-        this, AudioIntentReceiver.class);
+    mMediaButtonReceiverComponent = new ComponentName(this, AudioIntentReceiver.class);
     mNotificationName = getString(R.string.app_name);
-
-    final Context appContext = getApplicationContext();
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
-    mNotificationColor = appContext.getResources()
-        .getColor(R.color.notification_color);
+    mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession");
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      mNotificationColor = appContext.getResources().getColor(R.color.notification_color, null);
+    } else {
+      mNotificationColor = appContext.getResources().getColor(R.color.notification_color);
+    }
   }
 
   /**
@@ -333,7 +310,7 @@ public class AudioService extends Service implements OnCompletionListener,
       return START_NOT_STICKY;
     }
 
-    String action = intent.getAction();
+    final String action = intent.getAction();
     if (ACTION_CONNECT.equals(action)) {
       if (mState == State.Stopped) {
         processStopRequest(true);
@@ -397,30 +374,28 @@ public class AudioService extends Service implements OnCompletionListener,
     } else if (ACTION_UPDATE_REPEAT.equals(action)) {
       if (mAudioRequest != null) {
         // set the repeat info if applicable
-        final int verseRepeatCount = intent.getIntExtra(
-            EXTRA_VERSE_REPEAT_COUNT, mAudioRequest.getVerseRepeatCount());
+        final int verseRepeatCount = intent
+            .getIntExtra(EXTRA_VERSE_REPEAT_COUNT, mAudioRequest.getVerseRepeatCount());
         mAudioRequest.setVerseRepeatCount(verseRepeatCount);
 
         // set the range repeat count
-        final int rangeRepeatCount = intent.getIntExtra(
-            EXTRA_RANGE_REPEAT_COUNT, mAudioRequest.getRangeRepeatCount());
+        final int rangeRepeatCount = intent
+            .getIntExtra(EXTRA_RANGE_REPEAT_COUNT, mAudioRequest.getRangeRepeatCount());
         mAudioRequest.setRangeRepeatCount(rangeRepeatCount);
 
         // set the enforce range flag
         if (intent.hasExtra(EXTRA_RANGE_RESTRICT)) {
-          final boolean enforceRange = intent.getBooleanExtra(
-              EXTRA_RANGE_RESTRICT, false);
+          final boolean enforceRange = intent.getBooleanExtra(EXTRA_RANGE_RESTRICT, false);
           mAudioRequest.setEnforceBounds(enforceRange);
         }
       }
     }
 
-    return START_NOT_STICKY; // Means we started the service, but don't want
-    // it to restart in case it's killed.
+    // we don't want the service to restart if killed
+    return START_NOT_STICKY;
   }
 
-  private class ReadGaplessDataTask extends AsyncTask<Integer, Void,
-      SparseIntArray> {
+  private class ReadGaplessDataTask extends AsyncTask<Integer, Void, SparseIntArray> {
 
     private int mSura = 0;
     private String mDatabasePath = null;
@@ -434,8 +409,7 @@ public class AudioService extends Service implements OnCompletionListener,
       int sura = params[0];
       mSura = sura;
 
-      SuraTimingDatabaseHandler db =
-          SuraTimingDatabaseHandler.getDatabaseHandler(mDatabasePath);
+      SuraTimingDatabaseHandler db = SuraTimingDatabaseHandler.getDatabaseHandler(mDatabasePath);
       SparseIntArray map = null;
 
       Cursor cursor = null;
@@ -636,8 +610,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       // If we're stopped, just go ahead to the next file and start playing
-      playAudio(mAudioRequest.getCurrentSura() == 9 &&
-          mAudioRequest.getCurrentAyah() == 1);
+      playAudio(mAudioRequest.getCurrentSura() == 9 && mAudioRequest.getCurrentAyah() == 1);
     } else if (mState == State.Paused) {
       // If we're paused, just continue playback and restore the
       // 'foreground service' state.
@@ -687,14 +660,12 @@ public class AudioService extends Service implements OnCompletionListener,
         tryToGetAudioFocus();
         int sura = mAudioRequest.getCurrentSura();
         mAudioRequest.gotoPreviousAyah();
-        if (mAudioRequest.isGapless() &&
-            sura == mAudioRequest.getCurrentSura()) {
+        if (mAudioRequest.isGapless() && sura == mAudioRequest.getCurrentSura()) {
           int timing = getSeekPosition(true);
           if (timing > -1) {
             mPlayer.seekTo(timing);
           }
-          updateNotification(
-              mAudioRequest.getTitle(getApplicationContext()));
+          updateNotification(mAudioRequest.getTitle(getApplicationContext()));
           mState = State.Playing; // in case we were paused
           return;
         }
@@ -711,18 +682,16 @@ public class AudioService extends Service implements OnCompletionListener,
       if (mPlayerOverride) {
         playAudio(false);
       } else {
-        int sura = mAudioRequest.getCurrentSura();
+        final int sura = mAudioRequest.getCurrentSura();
         tryToGetAudioFocus();
         mAudioRequest.gotoNextAyah(true);
-        if (mAudioRequest.isGapless() &&
-            sura == mAudioRequest.getCurrentSura()) {
+        if (mAudioRequest.isGapless() && sura == mAudioRequest.getCurrentSura()) {
           int timing = getSeekPosition(false);
           if (timing > -1) {
             mPlayer.seekTo(timing);
             mState = State.Playing; // in case we were paused
           }
-          updateNotification(
-              mAudioRequest.getTitle(getApplicationContext()));
+          updateNotification(mAudioRequest.getTitle(getApplicationContext()));
           return;
         }
         playAudio();
@@ -766,12 +735,9 @@ public class AudioService extends Service implements OnCompletionListener,
   private void notifyAyahChanged() {
     if (mAudioRequest != null) {
       Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
-      updateIntent.putExtra(AudioUpdateIntent.STATUS,
-          AudioUpdateIntent.PLAYING);
-      updateIntent.putExtra(AudioUpdateIntent.SURA,
-          mAudioRequest.getCurrentSura());
-      updateIntent.putExtra(AudioUpdateIntent.AYAH,
-          mAudioRequest.getCurrentAyah());
+      updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.PLAYING);
+      updateIntent.putExtra(AudioUpdateIntent.SURA, mAudioRequest.getCurrentSura());
+      updateIntent.putExtra(AudioUpdateIntent.AYAH, mAudioRequest.getCurrentAyah());
       mBroadcastManager.sendBroadcast(updateIntent);
     }
   }
@@ -790,8 +756,7 @@ public class AudioService extends Service implements OnCompletionListener,
    * @param releaseMediaPlayer Indicates whether the Media Player should also
    *                           be released or not
    */
-  private void relaxResources(boolean releaseMediaPlayer,
-      boolean stopForeground) {
+  private void relaxResources(boolean releaseMediaPlayer, boolean stopForeground) {
     if (stopForeground) {
       // stop being a foreground service
       stopForeground(true);
@@ -812,8 +777,8 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void giveUpAudioFocus() {
-    if (mAudioFocus == AudioFocus.Focused && mAudioFocusHelper != null
-        && mAudioFocusHelper.abandonFocus()) {
+    if (mAudioFocus == AudioFocus.Focused &&
+        mAudioFocusHelper != null && mAudioFocusHelper.abandonFocus()) {
       mAudioFocus = AudioFocus.NoFocusNoDuck;
     }
   }
@@ -886,8 +851,8 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void tryToGetAudioFocus() {
-    if (mAudioFocus != AudioFocus.Focused && mAudioFocusHelper != null
-        && mAudioFocusHelper.requestFocus()) {
+    if (mAudioFocus != AudioFocus.Focused &&
+        mAudioFocusHelper != null && mAudioFocusHelper.requestFocus()) {
       mAudioFocus = AudioFocus.Focused;
     }
   }
@@ -908,22 +873,19 @@ public class AudioService extends Service implements OnCompletionListener,
       String url = mAudioRequest == null ? null : mAudioRequest.getUrl();
       if (mAudioRequest == null || url == null) {
         Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
-        updateIntent.putExtra(AudioUpdateIntent.STATUS,
-            AudioUpdateIntent.STOPPED);
+        updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.STOPPED);
         mBroadcastManager.sendBroadcast(updateIntent);
 
         processStopRequest(true); // stop everything!
         return;
       }
 
-      final boolean isStreaming =
-          url.startsWith("http:") || url.startsWith("https:");
+      final boolean isStreaming = url.startsWith("http:") || url.startsWith("https:");
       if (!isStreaming) {
         File f = new File(url);
         if (!f.exists()) {
           Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
-          updateIntent.putExtra(AudioUpdateIntent.STATUS,
-              AudioUpdateIntent.STOPPED);
+          updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.STOPPED);
           updateIntent.putExtra(EXTRA_PLAY_INFO, mAudioRequest);
           mBroadcastManager.sendBroadcast(updateIntent);
 
@@ -945,19 +907,15 @@ public class AudioService extends Service implements OnCompletionListener,
         // otherwise, ayah of 1 will automatically play the file's basmala
       }
 
-      Timber.d("okay, we are preparing to play - streaming is: " +
-          isStreaming);
+      Timber.d("okay, we are preparing to play - streaming is: " + isStreaming);
       createMediaPlayerIfNeeded();
       mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
       try {
         boolean playUrl = true;
         if (overrideResource != 0) {
-          AssetFileDescriptor afd =
-              getResources().openRawResourceFd(overrideResource);
+          AssetFileDescriptor afd = getResources().openRawResourceFd(overrideResource);
           if (afd != null) {
-            mPlayer.setDataSource(afd.getFileDescriptor(),
-                afd.getStartOffset(),
-                afd.getLength());
+            mPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             afd.close();
             mPlayerOverride = true;
             playUrl = false;
@@ -1085,14 +1043,12 @@ public class AudioService extends Service implements OnCompletionListener,
   void updateNotification(String text) {
     mAudioTitle = text;
     mNotificationBuilder.setContentText(text);
-    mNotificationManager.notify(NOTIFICATION_ID,
-        mNotificationBuilder.build());
+    mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
   }
 
   void pauseNotification() {
     mPausedNotificationBuilder.setContentText(mAudioTitle);
-    mNotificationManager.notify(NOTIFICATION_ID,
-        mPausedNotificationBuilder.build());
+    mNotificationManager.notify(NOTIFICATION_ID, mPausedNotificationBuilder.build());
   }
 
   /**
@@ -1103,29 +1059,29 @@ public class AudioService extends Service implements OnCompletionListener,
    */
   private void setUpAsForeground() {
     // clear the "downloading complete" notification (if it exists)
-    mNotificationManager.cancel(
-        QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION);
+    mNotificationManager.cancel(QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION);
 
     final Context appContext = getApplicationContext();
-    final PendingIntent pi = PendingIntent.getActivity(appContext,
-        REQUEST_CODE_MAIN, new Intent(appContext, PagerActivity.class),
+    final PendingIntent pi = PendingIntent.getActivity(
+        appContext, REQUEST_CODE_MAIN, new Intent(appContext, PagerActivity.class),
         PendingIntent.FLAG_UPDATE_CURRENT);
 
     final PendingIntent previousIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_PREVIOUS, getAudioIntent(this, ACTION_REWIND),
+        appContext, REQUEST_CODE_PREVIOUS, AudioUtils.getAudioIntent(this, ACTION_REWIND),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent nextIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_SKIP, getAudioIntent(this, ACTION_SKIP),
+        appContext, REQUEST_CODE_SKIP, AudioUtils.getAudioIntent(this, ACTION_SKIP),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent pauseIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_PAUSE, getAudioIntent(this, ACTION_PAUSE),
+        appContext, REQUEST_CODE_PAUSE, AudioUtils.getAudioIntent(this, ACTION_PAUSE),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent resumeIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_RESUME, getAudioIntent(this, ACTION_PLAYBACK),
+        appContext, REQUEST_CODE_RESUME, AudioUtils.getAudioIntent(this, ACTION_PLAYBACK),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent stopIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_STOP, getAudioIntent(this, ACTION_STOP),
+        appContext, REQUEST_CODE_STOP, AudioUtils.getAudioIntent(this, ACTION_STOP),
         PendingIntent.FLAG_UPDATE_CURRENT);
+    final Bitmap icon = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.icon);
 
     if (mNotificationBuilder == null) {
       mNotificationBuilder = new NotificationCompat.Builder(appContext);
@@ -1136,11 +1092,16 @@ public class AudioService extends Service implements OnCompletionListener,
           .setContentTitle(mNotificationName)
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-          .addAction(R.drawable.ic_previous, "", previousIntent)
-          .addAction(R.drawable.ic_pause, "", pauseIntent)
-          .addAction(R.drawable.ic_next, "", nextIntent);
+          .addAction(R.drawable.ic_previous, getString(R.string.previous), previousIntent)
+          .addAction(R.drawable.ic_pause, getString(R.string.pause), pauseIntent)
+          .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
+          .setLargeIcon(icon)
+          .setStyle(new NotificationCompat.MediaStyle()
+              .setShowActionsInCompactView(new int[]{0, 1, 2})
+              .setMediaSession(mMediaSession.getSessionToken()));
     }
-    mNotificationBuilder.setTicker(mAudioTitle).setContentText(mAudioTitle);
+    mNotificationBuilder.setTicker(mAudioTitle);
+    mNotificationBuilder.setContentText(mAudioTitle);
 
     if (mPausedNotificationBuilder == null) {
       mPausedNotificationBuilder = new NotificationCompat.Builder(appContext);
@@ -1151,10 +1112,12 @@ public class AudioService extends Service implements OnCompletionListener,
           .setContentTitle(mNotificationName)
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-          .addAction(R.drawable.ic_play,
-              getString(R.string.play), resumeIntent)
-          .addAction(R.drawable.ic_stop,
-              getString(R.string.stop), stopIntent);
+          .addAction(R.drawable.ic_play, getString(R.string.play), resumeIntent)
+          .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
+          .setLargeIcon(icon)
+          .setStyle(new NotificationCompat.MediaStyle()
+              .setShowActionsInCompactView(new int[] {0,1})
+              .setMediaSession(mMediaSession.getSessionToken()));
     }
     mPausedNotificationBuilder.setContentText(mAudioTitle);
 
@@ -1168,8 +1131,6 @@ public class AudioService extends Service implements OnCompletionListener,
    * reset the media player.
    */
   public boolean onError(MediaPlayer mp, int what, int extra) {
-    //Toast.makeText(getApplicationContext(), "Media player error! Resetting.",
-    //      Toast.LENGTH_SHORT).show();
     Timber.e("Error: what=" + String.valueOf(what) +
         ", extra=" + String.valueOf(extra));
 
@@ -1180,8 +1141,6 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   public void onGainedAudioFocus() {
-    //Toast.makeText(getApplicationContext(), "gained audio focus.",
-    //        Toast.LENGTH_SHORT).show();
     mAudioFocus = AudioFocus.Focused;
 
     // restart media player with new focus settings
@@ -1191,21 +1150,12 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   public void onLostAudioFocus(boolean canDuck) {
-    //Toast.makeText(getApplicationContext(), "lost audio focus." +
-    //        (canDuck ? "can duck" : "no duck"), Toast.LENGTH_SHORT).show();
-    mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck :
-        AudioFocus.NoFocusNoDuck;
+    mAudioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
 
     // start/restart/pause media player with new focus settings
     if (mPlayer != null && mPlayer.isPlaying()) {
       configAndStartMediaPlayer(false);
     }
-  }
-
-  public static Intent getAudioIntent(Context context, String action) {
-    final Intent intent = new Intent(context, AudioService.class);
-    intent.setAction(action);
-    return intent;
   }
 
   @Override

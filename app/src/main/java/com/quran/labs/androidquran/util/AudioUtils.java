@@ -4,10 +4,12 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -317,5 +319,11 @@ public class AudioUtils {
     }
 
     return true;
+  }
+
+  public static Intent getAudioIntent(Context context, String action) {
+    final Intent intent = new Intent(context, AudioService.class);
+    intent.setAction(action);
+    return intent;
   }
 }
