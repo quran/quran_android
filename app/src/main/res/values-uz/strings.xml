@@ -3,8 +3,8 @@
     <string name="app_name">Qurʼon</string>
     <string name="downloadPrompt_title">Kerakli fayllar yuklansinmi?</string>
     <string name="downloadPrompt">Ilova toʻliq ishlashi uchun baʼzi fayllarni koʻchirib olish lozim.
-        Agar fayllarni hozir saqlab olmasangiz, Qurʼon sahifalarining ochilishi biroz sekin amalga oshishi mumkin.
-        Fayllarni hozir saqlab olasizmi?</string>
+        Agar fayllarni hozir saqlab olmasangiz, Qurʼon sahifalarining ochilishi biroz sekin amalga oshishi mumkin
+        hamda doimiy Internet aloqasi kerak boʻladi. Fayllarni hozir saqlab olasizmi?</string>
     <string name="downloadTabletPrompt">Planshetlar uchun rasmlar yangilandi. Yangi fayllarni hozir saqlab olasizmi?</string>
     <string name="downloadImportantPrompt">Uskunangizdagi Qurʼon rasmlari uchun kichik, ammo muhim oʻzgartirishlar kiritish lozim.
         Yangilangan fayllarni hozir saqlab olasizmi?</string>
@@ -282,7 +282,7 @@
         <item>1 marta</item>
         <item>2 marta</item>
         <item>3 marta</item>
-        <item>uzluksiz</item>
+        <item>davomiy</item>
     </string-array>
 
     <!-- long press -->
