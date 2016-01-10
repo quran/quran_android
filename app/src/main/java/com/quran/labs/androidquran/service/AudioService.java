@@ -168,11 +168,6 @@ public class AudioService extends Service implements OnCompletionListener,
 
   private AudioFocus mAudioFocus = AudioFocus.NoFocusNoDuck;
 
-  private String mNotificationName = "";
-
-  // title of the audio we are currently playing
-  private String mAudioTitle = "";
-
   // are we already in the foreground
   private boolean mIsSetupAsForeground = false;
 
@@ -195,8 +190,10 @@ public class AudioService extends Service implements OnCompletionListener,
   private AudioManager mAudioManager;
   private NotificationManager mNotificationManager;
 
+  // TODO: Merge these builders into one
   private NotificationCompat.Builder mNotificationBuilder;
   private NotificationCompat.Builder mPausedNotificationBuilder;
+
   private LocalBroadcastManager mBroadcastManager = null;
   private MediaSessionCompat mMediaSession;
 
@@ -247,8 +244,7 @@ public class AudioService extends Service implements OnCompletionListener,
       //
       // Remember that to use this, we have to declare the
       // android.permission.WAKE_LOCK permission in AndroidManifest.xml.
-      mPlayer.setWakeMode(getApplicationContext(),
-          PowerManager.PARTIAL_WAKE_LOCK);
+      mPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 
       // we want the media player to notify us when it's ready preparing,
       // and when it's done playing:
@@ -282,7 +278,6 @@ public class AudioService extends Service implements OnCompletionListener,
     }
 
     mMediaButtonReceiverComponent = new ComponentName(this, AudioIntentReceiver.class);
-    mNotificationName = getString(R.string.app_name);
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
     mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession");
 
@@ -303,7 +298,7 @@ public class AudioService extends Service implements OnCompletionListener,
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent == null) {
       // handle a crash that occurs where intent comes in as null
-      if (mState == State.Stopped) {
+      if (State.Stopped == mState) {
         mHandler.removeCallbacksAndMessages(null);
         stopSelf();
       }
@@ -312,14 +307,14 @@ public class AudioService extends Service implements OnCompletionListener,
 
     final String action = intent.getAction();
     if (ACTION_CONNECT.equals(action)) {
-      if (mState == State.Stopped) {
+      if (State.Stopped == mState) {
         processStopRequest(true);
       } else {
         int sura = -1;
         int ayah = -1;
         int repeatCount = -200;
         int state = AudioUpdateIntent.PLAYING;
-        if (mState == State.Paused) {
+        if (State.Paused == mState) {
           state = AudioUpdateIntent.PAUSED;
         }
 
@@ -345,7 +340,7 @@ public class AudioService extends Service implements OnCompletionListener,
     } else if (ACTION_PLAYBACK.equals(action)) {
       AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
       if (playInfo != null) {
-        if (mState == State.Stopped ||
+        if (State.Stopped == mState ||
             !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {
           mAudioRequest = playInfo;
           Crashlytics.log("audio request has changed...");
@@ -422,7 +417,6 @@ public class AudioService extends Service implements OnCompletionListener,
           do {
             int ayah = cursor.getInt(1);
             int time = cursor.getInt(2);
-            // Timber.d("adding: " + ayah + " @ " + time);
             map.put(ayah, time);
           }
           while (cursor.moveToNext());
@@ -477,8 +471,8 @@ public class AudioService extends Service implements OnCompletionListener,
       }
       int pos = mPlayer.getCurrentPosition();
       Integer ayahTime = mGaplessSuraData.get(ayah);
-      Timber.d("updateAudioPlayPosition: " + sura + ":" + ayah +
-          ", currently at " + pos + " vs expected at " + ayahTime);
+      Timber.d("updateAudioPlayPosition: %d:%d, currently at %d vs expected at %d",
+          sura, ayah, pos, ayahTime);
 
       if (ayahTime > pos) {
         int iterAyah = ayah;
@@ -504,8 +498,8 @@ public class AudioService extends Service implements OnCompletionListener,
         }
       }
 
-      Timber.d("updateAudioPlayPosition: " + sura + ":" + ayah +
-          ", decided ayah should be: " + updatedAyah);
+      Timber.d("updateAudioPlayPosition: %d:%d, decided ayah should be: %d",
+          sura, ayah, updatedAyah);
 
       if (updatedAyah != ayah) {
         ayahTime = mGaplessSuraData.get(ayah);
@@ -543,7 +537,7 @@ public class AudioService extends Service implements OnCompletionListener,
         }
 
         // moved on to next ayah
-        updateNotification(mAudioRequest.getTitle(getApplicationContext()));
+        updateNotification();
       } else {
         // if we have end of sura info and we bypassed end of sura
         // line, switch the sura.
@@ -569,7 +563,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (maxAyahs >= (updatedAyah + 1)) {
         Integer t = mGaplessSuraData.get(updatedAyah + 1);
         t = t - mPlayer.getCurrentPosition();
-        Timber.d("updateAudioPlayPosition postingDelayed after: " + t);
+        Timber.d("updateAudioPlayPosition postingDelayed after: %d", t);
 
         if (t < 100) {
           t = 100;
@@ -584,7 +578,7 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void processTogglePlaybackRequest() {
-    if (mState == State.Paused || mState == State.Stopped) {
+    if (State.Paused == mState || State.Stopped == mState) {
       processPlayRequest();
     } else {
       processPauseRequest();
@@ -599,7 +593,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
     // actually play the file
 
-    if (mState == State.Stopped) {
+    if (State.Stopped == mState) {
       if (mAudioRequest.isGapless()) {
         if (mTimingTask != null) {
           mTimingTask.cancel(true);
@@ -611,7 +605,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
       // If we're stopped, just go ahead to the next file and start playing
       playAudio(mAudioRequest.getCurrentSura() == 9 && mAudioRequest.getCurrentAyah() == 1);
-    } else if (mState == State.Paused) {
+    } else if (State.Paused == mState) {
       // If we're paused, just continue playback and restore the
       // 'foreground service' state.
       mState = State.Playing;
@@ -622,7 +616,7 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void processPauseRequest() {
-    if (mState == State.Playing) {
+    if (State.Playing == mState) {
       // Pause media player and cancel the 'foreground service' state.
       mState = State.Paused;
       mHandler.removeCallbacksAndMessages(null);
@@ -637,7 +631,7 @@ public class AudioService extends Service implements OnCompletionListener,
         pauseNotification();
         notifyAudioStatus(AudioUpdateIntent.PAUSED);
       }
-    } else if (mState == State.Stopped) {
+    } else if (State.Stopped == mState) {
       // if we get a pause while we're already stopped, it means we likely woke up because
       // of AudioIntentReceiver, so just stop in this case.
       stopSelf();
@@ -645,7 +639,7 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void processRewindRequest() {
-    if (mState == State.Playing || mState == State.Paused) {
+    if (State.Playing == mState || State.Paused == mState) {
       int seekTo = 0;
       int pos = mPlayer.getCurrentPosition();
       if (mAudioRequest.isGapless()) {
@@ -665,7 +659,7 @@ public class AudioService extends Service implements OnCompletionListener,
           if (timing > -1) {
             mPlayer.seekTo(timing);
           }
-          updateNotification(mAudioRequest.getTitle(getApplicationContext()));
+          updateNotification();
           mState = State.Playing; // in case we were paused
           return;
         }
@@ -678,7 +672,7 @@ public class AudioService extends Service implements OnCompletionListener,
     if (mAudioRequest == null) {
       return;
     }
-    if (mState == State.Playing || mState == State.Paused) {
+    if (State.Playing == mState || State.Paused == mState) {
       if (mPlayerOverride) {
         playAudio(false);
       } else {
@@ -691,7 +685,7 @@ public class AudioService extends Service implements OnCompletionListener,
             mPlayer.seekTo(timing);
             mState = State.Playing; // in case we were paused
           }
-          updateNotification(mAudioRequest.getTitle(getApplicationContext()));
+          updateNotification();
           return;
         }
         playAudio();
@@ -706,12 +700,12 @@ public class AudioService extends Service implements OnCompletionListener,
   private void processStopRequest(boolean force) {
     mHandler.removeCallbacksAndMessages(null);
 
-    if (mState == State.Preparing) {
+    if (State.Preparing == mState) {
       mShouldStop = true;
       relaxResources(false, true);
     }
 
-    if (mState == State.Playing || mState == State.Paused || force) {
+    if (force || State.Playing == mState || State.Paused == mState) {
       mState = State.Stopped;
 
       // let go of all resources...
@@ -832,8 +826,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (canSeek && mAudioRequest.isGapless()) {
         int timing = getSeekPosition(false);
         if (timing != -1) {
-          Timber.d("got timing: " + timing +
-              ", seeking and updating later...");
+          Timber.d("got timing: %d, seeking and updating later...", timing);
           mPlayer.seekTo(timing);
           return;
         } else {
@@ -907,7 +900,7 @@ public class AudioService extends Service implements OnCompletionListener,
         // otherwise, ayah of 1 will automatically play the file's basmala
       }
 
-      Timber.d("okay, we are preparing to play - streaming is: " + isStreaming);
+      Timber.d("okay, we are preparing to play - streaming is: %b", isStreaming);
       createMediaPlayerIfNeeded();
       mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
       try {
@@ -938,8 +931,6 @@ public class AudioService extends Service implements OnCompletionListener,
         mPlayer.setDataSource(url);
       }
 
-      mAudioTitle = mAudioRequest.getTitle(getApplicationContext());
-
       mState = State.Preparing;
       if (!mIsSetupAsForeground) {
         setUpAsForeground();
@@ -947,8 +938,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
       // Use the media button APIs (if available) to register ourselves
       // for media button events
-      MediaButtonHelper.registerMediaButtonEventReceiverCompat(
-          mAudioManager, mMediaButtonReceiverComponent);
+      MediaButtonHelper.registerMediaButtonEventReceiverCompat(mAudioManager,
+          mMediaButtonReceiverComponent);
 
       // starts preparing the media player in the background. When it's
       // done, it will call our OnPreparedListener (that is, the
@@ -970,17 +961,15 @@ public class AudioService extends Service implements OnCompletionListener,
         mWifiLock.release();
       }
     } catch (IOException ex) {
-      Timber.e("IOException playing file: " + ex.getMessage());
+      Timber.e("IOException playing file: %s", ex.getMessage());
       ex.printStackTrace();
     }
   }
 
-
   @Override
   public void onSeekComplete(MediaPlayer mediaPlayer) {
-    Timber.d("seek complete! " +
-        mediaPlayer.getCurrentPosition() +
-        " vs " + mPlayer.getCurrentPosition());
+    Timber.d("seek complete! %d vs %d",
+        mediaPlayer.getCurrentPosition(), mPlayer.getCurrentPosition());
     mPlayer.start();
     mHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
   }
@@ -1035,19 +1024,20 @@ public class AudioService extends Service implements OnCompletionListener,
       notifyAyahChanged();
     }
 
-    updateNotification(mAudioTitle);
+    updateNotification();
     configAndStartMediaPlayer();
   }
 
   /** Updates the notification. */
-  void updateNotification(String text) {
-    mAudioTitle = text;
-    mNotificationBuilder.setContentText(text);
+  void updateNotification() {
+    mNotificationBuilder.setContentText(mAudioRequest.getTitle(getApplicationContext()));
+    mNotificationBuilder.setNumber(mAudioRequest.getCurrentAyah());
     mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
   }
 
   void pauseNotification() {
-    mPausedNotificationBuilder.setContentText(mAudioTitle);
+    mPausedNotificationBuilder.setContentText(mAudioRequest.getTitle(getApplicationContext()));
+    mPausedNotificationBuilder.setNumber(mAudioRequest.getCurrentAyah());
     mNotificationManager.notify(NOTIFICATION_ID, mPausedNotificationBuilder.build());
   }
 
@@ -1083,25 +1073,28 @@ public class AudioService extends Service implements OnCompletionListener,
         PendingIntent.FLAG_UPDATE_CURRENT);
     final Bitmap icon = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.icon);
 
+    String audioTitle = mAudioRequest.getTitle(getApplicationContext());
     if (mNotificationBuilder == null) {
       mNotificationBuilder = new NotificationCompat.Builder(appContext);
       mNotificationBuilder
           .setSmallIcon(R.drawable.ic_notification)
           .setColor(mNotificationColor)
           .setOngoing(true)
-          .setContentTitle(mNotificationName)
+          .setContentTitle(getString(R.string.app_name))
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
           .addAction(R.drawable.ic_previous, getString(R.string.previous), previousIntent)
           .addAction(R.drawable.ic_pause, getString(R.string.pause), pauseIntent)
           .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
           .setLargeIcon(icon)
+          .setShowWhen(false)
+          .setNumber(mAudioRequest.getCurrentAyah())
           .setStyle(new NotificationCompat.MediaStyle()
               .setShowActionsInCompactView(new int[]{0, 1, 2})
               .setMediaSession(mMediaSession.getSessionToken()));
     }
-    mNotificationBuilder.setTicker(mAudioTitle);
-    mNotificationBuilder.setContentText(mAudioTitle);
+    mNotificationBuilder.setTicker(audioTitle);
+    mNotificationBuilder.setContentText(audioTitle);
 
     if (mPausedNotificationBuilder == null) {
       mPausedNotificationBuilder = new NotificationCompat.Builder(appContext);
@@ -1109,17 +1102,19 @@ public class AudioService extends Service implements OnCompletionListener,
           .setSmallIcon(R.drawable.ic_notification)
           .setColor(mNotificationColor)
           .setOngoing(true)
-          .setContentTitle(mNotificationName)
+          .setContentTitle(getString(R.string.app_name))
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
           .addAction(R.drawable.ic_play, getString(R.string.play), resumeIntent)
           .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
           .setLargeIcon(icon)
+          .setShowWhen(false)
+          .setNumber(mAudioRequest.getCurrentAyah())
           .setStyle(new NotificationCompat.MediaStyle()
-              .setShowActionsInCompactView(new int[] {0,1})
+              .setShowActionsInCompactView(new int[]{0, 1})
               .setMediaSession(mMediaSession.getSessionToken()));
     }
-    mPausedNotificationBuilder.setContentText(mAudioTitle);
+    mPausedNotificationBuilder.setContentText(audioTitle);
 
     startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
     mIsSetupAsForeground = true;
@@ -1131,8 +1126,7 @@ public class AudioService extends Service implements OnCompletionListener,
    * reset the media player.
    */
   public boolean onError(MediaPlayer mp, int what, int extra) {
-    Timber.e("Error: what=" + String.valueOf(what) +
-        ", extra=" + String.valueOf(extra));
+    Timber.e("Error: what=%s, extra=%s", String.valueOf(what), String.valueOf(extra));
 
     mState = State.Stopped;
     relaxResources(true, true);
@@ -1144,7 +1138,7 @@ public class AudioService extends Service implements OnCompletionListener,
     mAudioFocus = AudioFocus.Focused;
 
     // restart media player with new focus settings
-    if (mState == State.Playing) {
+    if (State.Playing == mState) {
       configAndStartMediaPlayer(false);
     }
   }
@@ -1165,6 +1159,8 @@ public class AudioService extends Service implements OnCompletionListener,
     mState = State.Stopped;
     relaxResources(true, true);
     giveUpAudioFocus();
+    MediaButtonHelper.unregisterMediaButtonEventReceiverCompat(mAudioManager,
+        mMediaButtonReceiverComponent);
     super.onDestroy();
   }
 
