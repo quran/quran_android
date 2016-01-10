@@ -220,8 +220,7 @@ public abstract class AudioRequest implements Parcelable {
   }
 
   public String getTitle(Context context) {
-    return QuranInfo.getSuraAyahString(context,
-        mCurrentSura, mCurrentAyah);
+    return QuranInfo.getSuraAyahString(context, mCurrentSura, mCurrentAyah);
   }
 
   public int getCurrentSura() {
