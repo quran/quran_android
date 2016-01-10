@@ -43,9 +43,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -199,6 +202,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
   private int mGaplessSura = 0;
   private int mNotificationColor;
+  private Bitmap mNotificationIcon;
   private SparseIntArray mGaplessSuraData = null;
   private AsyncTask<Integer, Void, SparseIntArray> mTimingTask = null;
 
@@ -282,9 +286,9 @@ public class AudioService extends Service implements OnCompletionListener,
     mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession");
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      mNotificationColor = appContext.getResources().getColor(R.color.notification_color, null);
+      mNotificationColor = getResources().getColor(R.color.audio_notification_color, null);
     } else {
-      mNotificationColor = appContext.getResources().getColor(R.color.notification_color);
+      mNotificationColor = getResources().getColor(R.color.audio_notification_color);
     }
   }
 
@@ -1069,8 +1073,30 @@ public class AudioService extends Service implements OnCompletionListener,
     final PendingIntent stopIntent = PendingIntent.getService(
         appContext, REQUEST_CODE_STOP, AudioUtils.getAudioIntent(this, ACTION_STOP),
         PendingIntent.FLAG_UPDATE_CURRENT);
-    final Bitmap icon = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.icon);
 
+    // if the notification icon is null, let's try to build it
+    if (mNotificationIcon == null) {
+      try {
+        Resources resources = appContext.getResources();
+        Bitmap logo = BitmapFactory.decodeResource(resources, R.drawable.icon);
+        int iconWidth = logo.getWidth();
+        int iconHeight = logo.getHeight();
+        ColorDrawable cd = new ColorDrawable(
+            resources.getColor(R.color.audio_notification_background_color));
+        Bitmap bitmap = Bitmap.createBitmap(iconWidth * 2, iconHeight * 2, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        cd.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        cd.draw(canvas);
+        canvas.drawBitmap(logo, iconWidth / 2, iconHeight / 2, null);
+        mNotificationIcon = bitmap;
+      } catch (OutOfMemoryError oomError) {
+        // if this happens, we need to handle it gracefully, since it's not crash worthy.
+        Crashlytics.logException(oomError);
+      }
+    }
+
+    // if we couldn't get the notification icon, we'll use the non-MediaStyle notification.
+    boolean emptyTitles = mNotificationIcon == null;
     String audioTitle = mAudioRequest.getTitle(getApplicationContext());
     if (mNotificationBuilder == null) {
       mNotificationBuilder = new NotificationCompat.Builder(appContext);
@@ -1081,14 +1107,17 @@ public class AudioService extends Service implements OnCompletionListener,
           .setContentTitle(getString(R.string.app_name))
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-          .addAction(R.drawable.ic_previous, getString(R.string.previous), previousIntent)
-          .addAction(R.drawable.ic_pause, getString(R.string.pause), pauseIntent)
-          .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
-          .setLargeIcon(icon)
-          .setShowWhen(false)
-          .setStyle(new NotificationCompat.MediaStyle()
-              .setShowActionsInCompactView(new int[]{0, 1, 2})
-              .setMediaSession(mMediaSession.getSessionToken()));
+          .addAction(R.drawable.ic_previous,
+              emptyTitles ? "" : getString(R.string.previous), previousIntent)
+          .addAction(R.drawable.ic_pause, emptyTitles ? "" : getString(R.string.pause), pauseIntent)
+          .addAction(R.drawable.ic_next, emptyTitles ? "" : getString(R.string.next), nextIntent)
+          .setShowWhen(false);
+      if (mNotificationIcon != null) {
+        mNotificationBuilder.setStyle(new NotificationCompat.MediaStyle()
+            .setShowActionsInCompactView(new int[] { 0, 1, 2 })
+            .setMediaSession(mMediaSession.getSessionToken()))
+            .setLargeIcon(mNotificationIcon);
+      }
     }
     mNotificationBuilder.setTicker(audioTitle);
     mNotificationBuilder.setContentText(audioTitle);
@@ -1102,13 +1131,16 @@ public class AudioService extends Service implements OnCompletionListener,
           .setContentTitle(getString(R.string.app_name))
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-          .addAction(R.drawable.ic_play, getString(R.string.play), resumeIntent)
-          .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
-          .setLargeIcon(icon)
-          .setShowWhen(false)
-          .setStyle(new NotificationCompat.MediaStyle()
-              .setShowActionsInCompactView(new int[]{0, 1})
-              .setMediaSession(mMediaSession.getSessionToken()));
+          .addAction(R.drawable.ic_play, emptyTitles ? "" : getString(R.string.play), resumeIntent)
+          .addAction(R.drawable.ic_stop, emptyTitles ? "" : getString(R.string.stop), stopIntent)
+          .setShowWhen(false);
+      if (mNotificationIcon != null) {
+        mPausedNotificationBuilder
+            .setLargeIcon(mNotificationIcon)
+            .setStyle(new NotificationCompat.MediaStyle()
+            .setShowActionsInCompactView(new int[] { 0, 1 })
+            .setMediaSession(mMediaSession.getSessionToken()));
+      }
     }
     mPausedNotificationBuilder.setContentText(audioTitle);
 
