@@ -1031,13 +1031,11 @@ public class AudioService extends Service implements OnCompletionListener,
   /** Updates the notification. */
   void updateNotification() {
     mNotificationBuilder.setContentText(mAudioRequest.getTitle(getApplicationContext()));
-    mNotificationBuilder.setNumber(mAudioRequest.getCurrentAyah());
     mNotificationManager.notify(NOTIFICATION_ID, mNotificationBuilder.build());
   }
 
   void pauseNotification() {
     mPausedNotificationBuilder.setContentText(mAudioRequest.getTitle(getApplicationContext()));
-    mPausedNotificationBuilder.setNumber(mAudioRequest.getCurrentAyah());
     mNotificationManager.notify(NOTIFICATION_ID, mPausedNotificationBuilder.build());
   }
 
@@ -1088,7 +1086,6 @@ public class AudioService extends Service implements OnCompletionListener,
           .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
           .setLargeIcon(icon)
           .setShowWhen(false)
-          .setNumber(mAudioRequest.getCurrentAyah())
           .setStyle(new NotificationCompat.MediaStyle()
               .setShowActionsInCompactView(new int[]{0, 1, 2})
               .setMediaSession(mMediaSession.getSessionToken()));
@@ -1109,7 +1106,6 @@ public class AudioService extends Service implements OnCompletionListener,
           .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
           .setLargeIcon(icon)
           .setShowWhen(false)
-          .setNumber(mAudioRequest.getCurrentAyah())
           .setStyle(new NotificationCompat.MediaStyle()
               .setShowActionsInCompactView(new int[]{0, 1})
               .setMediaSession(mMediaSession.getSessionToken()));
