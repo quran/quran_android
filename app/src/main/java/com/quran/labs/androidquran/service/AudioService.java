@@ -1111,10 +1111,11 @@ public class AudioService extends Service implements OnCompletionListener,
               emptyTitles ? "" : getString(R.string.previous), previousIntent)
           .addAction(R.drawable.ic_pause, emptyTitles ? "" : getString(R.string.pause), pauseIntent)
           .addAction(R.drawable.ic_next, emptyTitles ? "" : getString(R.string.next), nextIntent)
-          .setShowWhen(false);
+          .setShowWhen(false)
+          .setWhen(0); // older platforms seem to ignore setShowWhen(false)
       if (mNotificationIcon != null) {
         mNotificationBuilder.setStyle(new NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(new int[] { 0, 1, 2 })
+            .setShowActionsInCompactView(0, 1, 2 )
             .setMediaSession(mMediaSession.getSessionToken()))
             .setLargeIcon(mNotificationIcon);
       }
@@ -1133,12 +1134,13 @@ public class AudioService extends Service implements OnCompletionListener,
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
           .addAction(R.drawable.ic_play, emptyTitles ? "" : getString(R.string.play), resumeIntent)
           .addAction(R.drawable.ic_stop, emptyTitles ? "" : getString(R.string.stop), stopIntent)
-          .setShowWhen(false);
+          .setShowWhen(false)
+          .setWhen(0);
       if (mNotificationIcon != null) {
         mPausedNotificationBuilder
             .setLargeIcon(mNotificationIcon)
             .setStyle(new NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(new int[] { 0, 1 })
+            .setShowActionsInCompactView(0, 1)
             .setMediaSession(mMediaSession.getSessionToken()));
       }
     }
