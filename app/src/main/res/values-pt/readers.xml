@@ -1,27 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-     <string-array name="quran_readers_name">
-        <item>Menshawi Morattal (sem intervalo)</item>
-        <item>Hosary (sem intervalo)</item>
-        <item>Abdurrahman As-Sodais (sem intervalo)</item>
-        <item>Nasser Al Qatami (sem intervalo)</item>
-        <item>Abd Al-Baset</item>
-        <item>Abd Al-Baset Mojawwad</item>
-        <item>Abdullah Basfar</item>
-        <item>Abdorrahmaan As-Sudais</item>
-        <item>Abu Bakr Ash-Shatri</item>
-        <item>Meshary Al-Afasy</item>
-        <item>Saad Al-Ghamedi</item>
-        <item>Ibrahim Walk (Trad. Inglês)</item>
-        <item>Hani Ar-Rifai</item>
-        <item>Hosary Mojawwad</item>
-        <item>Ali Al-Hodhaify</item>
-        <item>Maher Al Moaiqly</item>
-        <item>Menshawy Mojawwad</item>
-        <item>Mohammad al Tablaway</item>
-        <item>Mohammad Ayyoub</item>
-        <item>Mohammad Jibreel</item>
-        <item>Saood Ash-Shoraym</item>
-        <item>Yasser Ad-Dossary</item>
+    <string-array name="quran_readers_name">
+        <item>@string/qari_minshawi_murattal_gapless</item>
+        <item>@string/qari_husary_gapless</item>
+        <item>@string/qari_sudais_gapless</item>
+        <item>@string/qari_qatami_gapless</item>
+        <item>@string/qari_abdulbaset</item>
+        <item>@string/qari_abdulbaset_mujawwad</item>
+        <item>@string/qari_basfar</item>
+        <item>@string/qari_suadis</item>
+        <item>@string/qari_shatri</item>
+        <item>@string/qari_afasy</item>
+        <item>@string/qari_saad_al_ghamdi</item>
+        <item>@string/qari_walk</item>
+        <item>@string/qari_hani_rifai</item>
+        <item>@string/qari_husary_mujawwad</item>
+        <item>@string/qari_hudhayfi</item>
+        <item>@string/qari_muaiqly</item>
+        <item>@string/qari_minshawi_mujawwad</item>
+        <item>@string/qari_tablawy</item>
+        <item>@string/qari_ayyoub</item>
+        <item>@string/qari_jibreel</item>
+        <item>@string/qari_shuraym</item>
+        <item>@string/qari_dussary</item>
+        <item>@string/qari_abdulbaset_gapless</item>
+        <item>@string/qari_abdulbaset_mujawwad_gapless</item>
+        <item>@string/qari_aziz_alili_gapless</item>
+        <item>@string/qari_salah_budair_gapless</item>
+        <item>@string/qari_shuraym_gapless</item>
+        <item>@string/qari_yasser_dussary_gapless</item>
+        <item>@string/qari_mohammad_altablawi_gapless</item>
+        <item>@string/qari_sahl_yaseen_gapless</item>
+        <item>@string/qari_shatri_gapless</item>
+        <item>@string/qari_ahmad_nauina_gapless</item>
+        <item>@string/qari_akram_al_alaqmi</item>
+        <item>@string/qari_ali_hajjaj_alsouasi_gapless</item>
     </string-array>
+
+    <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>1</item> <!-- abdul basit -->
+        <item>1</item> <!-- abdul basit mujawwad -->
+        <item>0</item> <!-- abdullah basfar -->
+        <item>1</item> <!-- abdurrahman as sudais -->
+        <item>1</item> <!-- abu bakr al shatiri -->
+        <item>0</item> <!-- mishaari al3afasy -->
+        <item>0</item> <!-- sa3d alghamdi -->
+        <item>0</item> <!-- ibrahim walk -->
+        <item>0</item> <!-- hani ar-rifa3i -->
+        <item>0</item> <!-- husary mujawwad -->
+        <item>0</item> <!-- huthayfi -->
+        <item>0</item> <!-- maher al mu3ayqli -->
+        <item>0</item> <!-- minshawi mujawwad -->
+        <item>1</item> <!-- mohammad al tablaway -->
+        <item>0</item> <!-- muhammad ayyoub -->
+        <item>0</item> <!-- muhammad jibreel -->
+        <item>1</item> <!-- sa3ood al shuraim -->
+        <item>1</item> <!-- yasser ad dussary -->
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+    </integer-array>
+
+    <string-array translatable="false" name="quran_readers_path">
+        <item>minshawi_murattal</item>
+        <item>husary</item>
+        <item>sudais</item>
+        <item>qatami</item>
+        <item>0</item>  <!-- abdul basit -->
+        <item>1</item>  <!-- abdul basit mujawwad -->
+        <item>2</item>  <!-- abdullah basfar -->
+        <item>3</item>  <!-- abdurrahman as sudais -->
+        <item>4</item>  <!-- abu bakr al shatiri -->
+        <item>5</item>  <!-- mishaari al3afasy -->
+        <item>18</item> <!-- sa3d alghamdi -->
+        <item>19</item> <!-- ibrahim walk -->
+        <item>6</item>  <!-- hani ar-rifa3i -->
+        <item>8</item>  <!-- husary mujawwad -->
+        <item>9</item>  <!-- huthayfi -->
+        <item>11</item> <!-- maher al mu3ayqli -->
+        <item>13</item> <!-- minshawi mujawwad -->
+        <item>14</item> <!-- mohammad al tablaway -->
+        <item>15</item> <!-- muhammad ayyoub -->
+        <item>16</item> <!-- muhammad jibreel -->
+        <item>17</item> <!-- sa3ood al shuraim -->
+        <item>ydussary</item> <!-- yasser ad dussary -->
+        <item>abdulbaset_murattal</item>
+        <item>abdulbaset_mujawwad</item>
+        <item>aziz_alili</item>
+        <item>salah_budair</item>
+        <item>shuraym</item>
+        <item>yasser_dussary</item>
+        <item>mohammad_altablawi</item>
+        <item>sahl_yaseen</item>
+        <item>shatri</item>
+        <item>ahmad_nauina</item>
+        <item>akram_al_alaqmi</item>
+        <item>ali_hajjaj_alsouasi</item>
+    </string-array>
+
+    <string-array translatable="false" name="quran_readers_db_name">
+        <item>minshawi_murattal</item>
+        <item>husary</item>
+        <item>sudais_murattal</item>
+        <item>qatami</item>
+        <item></item> <!-- abdul basit -->
+        <item></item> <!-- abdul basit mujawwad -->
+        <item></item> <!-- abdullah basfar -->
+        <item></item> <!-- abdurrahman as sudais -->
+        <item></item> <!-- abu bakr al shatiri -->
+        <item></item> <!-- mishaari al3afasy -->
+        <item></item> <!-- sa3d alghamdi -->
+        <item></item> <!-- ibrahim walk -->
+        <item></item> <!-- hani ar-rifa3i -->
+        <item></item> <!-- husary mujawwad -->
+        <item></item> <!-- huthayfi -->
+        <item></item> <!-- maher al mu3ayqli -->
+        <item></item> <!-- minshawi mujawwad -->
+        <item></item> <!-- mohammad al tablaway -->
+        <item></item> <!-- muhammad ayyoub -->
+        <item></item> <!-- muhammad jibreel -->
+        <item></item> <!-- sa3ood al shuraim -->
+        <item></item> <!-- yasser ad dussary -->
+        <item>abdul_basit_murattal</item>
+        <item>abdul_basit_mujawwad</item>
+        <item>aziz_alili</item>
+        <item>salah_budair</item>
+        <item>shuraym</item>
+        <item>yasser_dussary</item>
+        <item>mohammad_altablawi</item>
+        <item>sahl_yaseen</item>
+        <item>shatri</item>
+        <item>ahmad_nauina</item>
+        <item>akram_al_alaqmi</item>
+        <item>ali_hajjaj_alsouasi</item>
+    </string-array>
+
+    <string-array translatable="false" name="quran_readers_urls">
+        <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
+        <item>http://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
+        <item>http://download.quranicaudio.com/quran/abdurrahmaan_as-sudays/</item>
+        <item>http://download.quranicaudio.com/quran/nasser_bin_ali_alqatami/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdul_Basit_Murattal_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdul_Basit_Mujawwad_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdullah_Basfar_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abdurrahmaan_As-Sudais_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Abu_Bakr_Ash-Shaatree_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Alafasy_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Ghamadi_40kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Ibrahim_Walk_192kbps_TEST/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Hani_Rifai_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Husary_128kbps_Mujawwad/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Hudhaify_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Maher_AlMuaiqly_64kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Minshawy_Mujawwad_192kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Mohammad_al_Tablaway_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Muhammad_Ayyoub_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Muhammad_Jibreel_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Saood_ash-Shuraym_128kbps/</item>
+        <item>http://mirrors.quranicaudio.com/everyayah/Yasser_Ad-Dussary_128kbps/</item>
+        <item>http://download.quranicaudio.com/quran/abdul_basit_murattal/</item>
+        <item>http://download.quranicaudio.com/quran/abdulbaset_mujawwad/</item>
+        <item>http://download.quranicaudio.com/quran/aziz_alili/</item>
+        <item>http://download.quranicaudio.com/quran/salahbudair/</item>
+        <item>http://download.quranicaudio.com/quran/sa3ood_al-shuraym/</item>
+        <item>http://download.quranicaudio.com/quran/yasser_ad-dussary/</item>
+        <item>http://download.quranicaudio.com/quran/mohammad_altablawi/</item>
+        <item>http://download.quranicaudio.com/quran/sahl_yaaseen/</item>
+        <item>http://download.quranicaudio.com/quran/abu_bakr_ash-shaatree/</item>
+        <item>http://download.quranicaudio.com/quran/ahmad_nauina/</item>
+        <item>http://download.quranicaudio.com/quran/akram_al_alaqmi/</item>
+        <item>http://download.quranicaudio.com/quran/ali_hajjaj_alsouasi/</item>
+    </string-array>
+
+    <!-- actual qari names -->
+    <string name="qari_minshawi_murattal_gapless">Menshawi Morattal (sem intervalo)</string>
+    <string name="qari_husary_gapless">Hosary (sem intervalo)</string>
+    <string name="qari_sudais_gapless">Abdurrahman As-Sodais (sem intervalo)</string>
+    <string name="qari_qatami_gapless">Nasser Al Qatami (sem intervalo)</string>
+    <string name="qari_abdulbaset">Abd Al-Baset</string>
+    <string name="qari_abdulbaset_mujawwad">Abd Al-Baset Mujawwad</string>
+    <string name="qari_basfar">Abdullah Basfar</string>
+    <string name="qari_suadis">Abdurrahmaan As-Sudais</string>
+    <string name="qari_shatri">Abu Bakr Ash-Shatri</string>
+    <string name="qari_afasy">Meshary Al-Afasy</string>
+    <string name="qari_saad_al_ghamdi">Saad Al-Ghamedi</string>
+    <string name="qari_walk">Ibrahim Walk (Trad. Inglês)</string>
+    <string name="qari_hani_rifai">Hani Ar-Rifai</string>
+    <string name="qari_husary_mujawwad">Hosary Mujawwad</string>
+    <string name="qari_hudhayfi">Ali Al-Hudhaify</string>
+    <string name="qari_muaiqly">Maher Al Muaiqly</string>
+    <string name="qari_minshawi_mujawwad">Menshawy Mujawwad</string>
+    <string name="qari_tablawy">Mohammad al Tablaway</string>
+    <string name="qari_ayyoub">Muhammad Ayyoub</string>
+    <string name="qari_jibreel">Muhammad Jebreel</string>
+    <string name="qari_shuraym">Saood Ash-Shoraym</string>
+    <string name="qari_dussary">Yasser Ad-Dossary</string>
+    <string name="qari_abdulbaset_gapless">Abd Al-Baset (sem intervalo)</string>
+    <string name="qari_abdulbaset_mujawwad_gapless">Abd Al-Basit Mujawwad (sem intervalo)</string>
+    <string name="qari_aziz_alili_gapless">Aziz Alili (sem intervalo)</string>
+    <string name="qari_salah_budair_gapless">Salah Budair (sem intervalo)</string>
+    <string name="qari_shuraym_gapless">Saood Ash-Shuraym (sem intervalo)</string>
+    <string name="qari_yasser_dussary_gapless">Yasser Ad-Dossary (sem intervalo)</string>
+    <string name="qari_mohammad_altablawi_gapless">Mohammad al Tablawy (sem intervalo)</string>
+    <string name="qari_sahl_yaseen_gapless">Sahl Yasin (sem intervalo)</string>
+    <string name="qari_shatri_gapless">Abu Bakr Ash-Shatri (sem intervalo)</string>
+    <string name="qari_ahmad_nauina_gapless">Ahmad Nauina (sem intervalo)</string>
+    <string name="qari_akram_al_alaqmi">Akram Al-Alaqmi (sem intervalo)</string>
+    <string name="qari_ali_hajjaj_alsouasi_gapless">Ali Hajjaj Alsouasi (sem intervalo)</string>
 </resources>
