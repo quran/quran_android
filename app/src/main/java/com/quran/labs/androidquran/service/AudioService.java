@@ -1095,8 +1095,6 @@ public class AudioService extends Service implements OnCompletionListener,
       }
     }
 
-    // if we couldn't get the notification icon, we'll use the non-MediaStyle notification.
-    boolean emptyTitles = mNotificationIcon == null;
     String audioTitle = mAudioRequest.getTitle(getApplicationContext());
     if (mNotificationBuilder == null) {
       mNotificationBuilder = new NotificationCompat.Builder(appContext);
@@ -1107,18 +1105,15 @@ public class AudioService extends Service implements OnCompletionListener,
           .setContentTitle(getString(R.string.app_name))
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-          .addAction(R.drawable.ic_previous,
-              emptyTitles ? "" : getString(R.string.previous), previousIntent)
-          .addAction(R.drawable.ic_pause, emptyTitles ? "" : getString(R.string.pause), pauseIntent)
-          .addAction(R.drawable.ic_next, emptyTitles ? "" : getString(R.string.next), nextIntent)
+          .addAction(R.drawable.ic_previous, getString(R.string.previous), previousIntent)
+          .addAction(R.drawable.ic_pause, getString(R.string.pause), pauseIntent)
+          .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
           .setShowWhen(false)
-          .setWhen(0); // older platforms seem to ignore setShowWhen(false)
-      if (mNotificationIcon != null) {
-        mNotificationBuilder.setStyle(new NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(0, 1, 2 )
-            .setMediaSession(mMediaSession.getSessionToken()))
-            .setLargeIcon(mNotificationIcon);
-      }
+          .setWhen(0) // older platforms seem to ignore setShowWhen(false)
+          .setStyle(new NotificationCompat.MediaStyle()
+          .setShowActionsInCompactView(0, 1, 2)
+          .setMediaSession(mMediaSession.getSessionToken()))
+          .setLargeIcon(mNotificationIcon);
     }
     mNotificationBuilder.setTicker(audioTitle);
     mNotificationBuilder.setContentText(audioTitle);
@@ -1132,17 +1127,14 @@ public class AudioService extends Service implements OnCompletionListener,
           .setContentTitle(getString(R.string.app_name))
           .setContentIntent(pi)
           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-          .addAction(R.drawable.ic_play, emptyTitles ? "" : getString(R.string.play), resumeIntent)
-          .addAction(R.drawable.ic_stop, emptyTitles ? "" : getString(R.string.stop), stopIntent)
+          .addAction(R.drawable.ic_play, getString(R.string.play), resumeIntent)
+          .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
           .setShowWhen(false)
-          .setWhen(0);
-      if (mNotificationIcon != null) {
-        mPausedNotificationBuilder
-            .setLargeIcon(mNotificationIcon)
-            .setStyle(new NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(0, 1)
-            .setMediaSession(mMediaSession.getSessionToken()));
-      }
+          .setWhen(0)
+          .setLargeIcon(mNotificationIcon)
+          .setStyle(new NotificationCompat.MediaStyle()
+          .setShowActionsInCompactView(0, 1)
+          .setMediaSession(mMediaSession.getSessionToken()));
     }
     mPausedNotificationBuilder.setContentText(audioTitle);
 
