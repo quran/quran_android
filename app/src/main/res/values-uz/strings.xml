@@ -41,7 +41,7 @@
     <string name="about_madani_images">Qurʼon sahifalari rasmlari Podshoh Fahd Qurʼon Bosma Kompleksi shriftlari asosida yaratildi</string>
     <string name="about_naskh_images">\"Quran - Naskh\" ilovasi uchun rasmlar \"SHL Info Systems\" ruhsati bilan olindi</string>
     <string name="about_qaloon_images">\"Quran - Qaloon\" ilovasi uchun rasmlar \"Nous Memes Editions Et Diffusion (Tunisia)\" ruhsati bilan olindi</string>
-    <string name="about_quranicaudio_summary">\"Gapless\" mp3 Qurʼon tilovatlari</string>
+    <string name="about_quranicaudio_summary">Muttasil mp3 Qurʼon tilovatlari</string>
     <string name="about_quran_ksu">Elektron Musʼhaf proyekti</string>
     <string name="about_quran_ksu_summary">Arabcha tafsir hamda baʼzi tarjimalar Podshoh Saud Universiteti qoshidagi Elektron Musʼhaf proyektidan olindi</string>
     <string name="about_tanzil_summary">Koʻplab tillardagi Qurʼon maʼnolari tarjimalari</string>
@@ -151,9 +151,9 @@
     <string name="prefs_ayah_before_translation_summary">Arabcha oyatlarni tarjima matni ustida koʻrsatish</string>
     <string name="prefs_category_download">Saqlab olish</string>
     <string name="prefs_streaming_title">Striming</string>
-    <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish (faqat \"non-gapless audio\" fayllar)</string>
+    <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish (faqat nomuttasil audio fayllar)</string>
     <string name="prefs_download_amount_title">Hajm</string>
-    <string name="prefs_download_amount_summary">\"Non-gapless audio\" fayllarni saqlab olish hajmi</string>
+    <string name="prefs_download_amount_summary">Nomuttasil audio fayllarni saqlab olish hajmi</string>
     <string name="prefs_audio_manager">Audio Menejer (eksperimental)</string>
     <string name="prefs_audio_manager_summary">Qurʼon audio fayllarini saqlab olish va boshqarish</string>
     <string name="downloaded_translations">Saqlab olingan</string>
