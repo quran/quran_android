@@ -307,14 +307,13 @@ public class QuranDownloadService extends Service implements
       NotificationDetails details) {
     // make the directory if it doesn't exist
     new File(destination).mkdirs();
-    Timber.d("making directory: " + destination);
+    Timber.d("making directory %s", destination);
 
     details.setFileStatus(1, 1);
 
     // notify download starting
     mLastSentIntent = mNotifier.notifyProgress(details, 0, 0);
-    boolean result = downloadFileWrapper(urlString, destination,
-        outputFile, details);
+    boolean result = downloadFileWrapper(urlString, destination, outputFile, details);
     if (result) {
       mLastSentIntent = mNotifier.notifyDownloadSuccessful(details);
     }
@@ -356,9 +355,8 @@ public class QuranDownloadService extends Service implements
       }
     }
 
-    Timber.d("downloadRange for " + totalAyahs + " between " +
-        startSura + ":" + startAyah + " to " + endSura + ":" +
-        endAyah + ", gaplessFlag: " + isGapless);
+    Timber.d("downloadRange for %d between %d:%d to %d:%d, gaplessFlag: %s",
+        totalAyahs, startSura, startAyah, endSura, endAyah, isGapless ? "true" : "false");
 
     details.setFileStatus(1, totalAyahs);
     mLastSentIntent = mNotifier.notifyProgress(details, 0, 0);
@@ -387,7 +385,7 @@ public class QuranDownloadService extends Service implements
         }
         String destDir = destination + File.separator;
         String url = String.format(Locale.US, urlString, i);
-        Timber.d("gapless asking to download " + url + " to " + destDir);
+        Timber.d("gapless asking to download %s to %s", url, destDir);
         final String filename = QuranDownloadService.getFilenameFromUrl(url);
         if (!new File(destDir, filename).exists()) {
           result = downloadFileWrapper(url, destDir, filename, details);
@@ -588,8 +586,7 @@ public class QuranDownloadService extends Service implements
             ((read = source.read(sink.buffer(), BUFFER_SIZE)) > 0)) {
           totalRead += read;
           if (loops++ % 5 == 0) {
-            mLastSentIntent = mNotifier.notifyProgress(
-                notificationInfo, totalRead, size);
+            mLastSentIntent = mNotifier.notifyProgress(notificationInfo, totalRead, size);
           }
           sink.flush();
         }
@@ -598,8 +595,7 @@ public class QuranDownloadService extends Service implements
         if (mIsDownloadCanceled) {
           return QuranDownloadNotifier.ERROR_CANCELLED;
         } else if (!partialFile.renameTo(actualFile)) {
-          return notifyError(QuranDownloadNotifier.ERROR_PERMISSIONS,
-              true, notificationInfo);
+          return notifyError(QuranDownloadNotifier.ERROR_PERMISSIONS, true, notificationInfo);
         }
         return DOWNLOAD_SUCCESS;
       } else if (response.code() == 416) {
@@ -609,14 +605,14 @@ public class QuranDownloadService extends Service implements
         return downloadUrl(url, path, filename, notificationInfo);
       }
     } catch (IOException exception) {
-      Timber.e("Failed to download file",exception);
+      Timber.e(exception, "Failed to download file");
     } catch (SecurityException se) {
-      Timber.e("Security exception while downloading file",se);
+      Timber.e(se, "Security exception while downloading file");
     } finally {
       QuranFileUtils.closeQuietly(source);
     }
 
-    return (call.isCanceled()) ?
+    return (call != null && call.isCanceled()) ?
         QuranDownloadNotifier.ERROR_CANCELLED :
         notifyError(QuranDownloadNotifier.ERROR_NETWORK,
             false, notificationInfo);
