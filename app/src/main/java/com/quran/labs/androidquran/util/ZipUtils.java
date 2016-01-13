@@ -35,7 +35,7 @@ public class ZipUtils {
       String destDirectory, T item, ZipListener<T> listener){
     try {
       File file = new File(zipFile);
-      Timber.d("unzipping " + zipFile + ", size: " + file.length());
+      Timber.d("unzipping %s, size: %d", zipFile, file.length());
 
       ZipFile zip = new ZipFile(file, ZipFile.OPEN_READ);
       int numberOfFiles = zip.size();
@@ -89,7 +89,7 @@ public class ZipUtils {
       return true;
     }
     catch (IOException ioe) {
-      Timber.e("Error unzipping file: ",ioe);
+      Timber.e(ioe, "Error unzipping file");
       return false;
     }
   }
