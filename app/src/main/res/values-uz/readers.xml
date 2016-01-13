@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qari_minshawi_murattal_gapless">Minshavi (murattal, muttasil)</string>
+    <string name="qari_husary_gapless">Xusoriy (muttasil)</string>
+    <string name="qari_sudais_gapless">Abdurahmon As-Sudays (muttasil)</string>
+    <string name="qari_qatami_gapless">Nosir Al-Qotomiy (muttasil)</string>
+    <string name="qari_abdulbaset">Abdulbosit</string>
+    <string name="qari_abdulbaset_mujawwad">Abdulbosit (mujavvad)</string>
+    <string name="qari_basfar">Abdulloh Basfar</string>
+    <string name="qari_suadis">Abdurahmon As-Sudays</string>
+    <string name="qari_shatri">Abu Bakr Ash-Shatriy</string>
+    <string name="qari_afasy">Mishariy Al-Afasiy</string>
+    <string name="qari_saad_al_ghamdi">Saʼd Al-Gʻomdiy</string>
+    <string name="qari_walk">Ibrohim Volk (inglizcha)</string>
+    <string name="qari_hani_rifai">Honiy Ar-Rifoiy</string>
+    <string name="qari_husary_mujawwad">Xusoriy (mujavvad)</string>
+    <string name="qari_hudhayfi">Ali Al-Xuzayfiy</string>
+    <string name="qari_muaiqly">Mohir Al-Muayqliy</string>
+    <string name="qari_minshawi_mujawwad">Minshoviy (mujavvad)</string>
+    <string name="qari_tablawy">Muhammad Al-Toblaviy</string>
+    <string name="qari_ayyoub">Muhammad Ayyub</string>
+    <string name="qari_jibreel">Muhammad Jibriyl</string>
+    <string name="qari_shuraym">Saud Ash-Shuroym</string>
+    <string name="qari_dussary">Yosir Ad-Dussoriy</string>
+    <string name="qari_abdulbaset_gapless">Abdulbosit (muttasil)</string>
+    <string name="qari_abdulbaset_mujawwad_gapless">Abdulbosit (mujavvad, muttasil)</string>
+    <string name="qari_aziz_alili_gapless">Aziz Aliliy (muttasil)</string>
+    <string name="qari_salah_budair_gapless">Saloh Budoyr (muttasil)</string>
+    <string name="qari_shuraym_gapless">Saud Ash-Shuroym (muttasil)</string>
+    <string name="qari_yasser_dussary_gapless">Yosir Ad-Dussoriy (muttasil)</string>
+    <string name="qari_mohammad_altablawi_gapless">Muhammad Al-Toblaviy (muttasil)</string>
+    <string name="qari_sahl_yaseen_gapless">Sohil Yosin (muttasil)</string>
+    <string name="qari_shatri_gapless">Abu Bakr Ash-Shatriy (muttasil)</string>
+    <string name="qari_ahmad_nauina_gapless">Ahmad Nauiyna (muttasil)</string>
+    <string name="qari_akram_al_alaqmi">Akram Al-Alaqmiy (muttasil)</string>
+    <string name="qari_ali_hajjaj_alsouasi_gapless">Ali Hajjoj Alsuaysiy (muttasil)</string>
+</resources>
