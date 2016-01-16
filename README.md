@@ -1,30 +1,29 @@
 quran for android
 ==================================
+[<img align="right" src="https://raw.githubusercontent.com/quran/quran_android/master/app/src/madani/res/drawable-xxxhdpi/icon.png" />](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
 
 this is a simple (madani based) quran app for android.
 
-* madani images from [quran images project](http://github.com/quran/quran.com-images) on github.
+* madani images from [quran images project](https://github.com/quran/quran.com-images) on github.
 * qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).
-* naskh images used with permission of SHL Info Systems
-* translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](http://quran.ksu.edu.sa/).
+* naskh images used with permission of SHL Info Systems.
+* translation, tafsir and Arabic data come from [tanzil](http://tanzil.net) and [King Saud University](https://quran.ksu.edu.sa).
 
 patches, comments, etc are welcome.
 
 contributors:
 
-* [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio 
-    and work on the Naskh version
-* [g360230](https://github.com/g360230) - images and work on the Qaloon
-    version
-* [Somaia Gabr](http://twitter.com/somaiagabr) - ui and graphics.
-* [Shuhrat Dehkanov](http://github.com/ozbek)
-* [Ahmed Farra](http://github.com/afarra)
-* [Hussein Maher](http://twitter.com/husseinmaher)
-* [Wael Nafee](http://twitter.com/wnafee)
-* [Ahmed Fouad](http://twitter.com/fo2ad)
-* [Mahmoud Hossam](http://github.com/mahmoudhossam)
-* [Rehab Mohamed](http://twitter.com/hams_rrr)
-* [Ahmed Essam](http://twitter.com/neo_4583)
+* [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio and work on the Naskh version
+* [g360230](https://github.com/g360230) - images and work on the Qaloon version
+* [Somaia Gabr](https://twitter.com/somaiagabr) - ui and graphics
+* [Shuhrat Dehkanov](https://github.com/ozbek)
+* [Ahmed Farra](https://github.com/afarra)
+* [Hussein Maher](https://twitter.com/husseinmaher)
+* [Wael Nafee](https://twitter.com/wnafee)
+* [Ahmed Fouad](https://twitter.com/fo2ad)
+* [Mahmoud Hossam](https://github.com/mahmoudhossam)
+* [Rehab Mohamed](https://twitter.com/hams_rrr)
+* [Ahmed Essam](https://twitter.com/neo_4583)
 
 
 Code Style
@@ -40,10 +39,10 @@ Alternatively, you may copy [`quran_android-code_style.xml`](https://github.com/
 
 Setup
 ------------------------
-1. get and install the [android sdk](http://developer.android.com/sdk/index.html)
+1. get and install the [android sdk](https://developer.android.com/sdk/index.html).
 2. make sure `$ANDROID_HOME` is set to the correct place.
 3. build from the command line by running `./gradlew assembleDebug`
-4. if you want an ide, download the latest version of [android studio](http://tools.android.com/download/studio/canary) (latest as of this writing is version 0.8.14)
+4. if you want an ide, download the latest version of [android studio](https://tools.android.com/download/studio/canary) (latest as of this writing is version 0.8.14)
 5. run android studio, choose import project, then choose build.gradle from the main quran source code directory.
 
 and that's it!
@@ -52,16 +51,16 @@ App localization
 ------------------------
 
 * Farsi for version 2.0 by [M. Jafar Nakar](https://github.com/mjnanakar).
-* Farsi for version 1.6 by [khajavi](http://github.com/khajavi).
-* Turkish by Mehmed Mahmudoglu. 
-* Turkish updates by [Shuhrat Dehkanov](http://github.com/ozbek).
+* Farsi for version 1.6 by [khajavi](https://github.com/khajavi).
+* Turkish by Mehmed Mahmudoglu.
+* Turkish updates by [Shuhrat Dehkanov](https://github.com/ozbek).
 * Russian by Rinat [Ринат Валеев](https://github.com/Valey).
 * Kurdish by [Goran Gharib Karim](https://github.com/GorranKurd).
-* French by Yasser [yasserkad](http://github.com/yasserkad).
-* German by [Armin Supuk](http://github.com/ArminSupuk).
-* Chinese by [Bo Li](http://twitter.com/liboat).
-* Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran).
-* Indonesian by [Saiful Khaliq](http://twitter.com/saifious).
+* French by Yasser [yasserkad](https://github.com/yasserkad).
+* German by [Armin Supuk](https://github.com/ArminSupuk).
+* Chinese by [Bo Li](https://twitter.com/liboat).
+* Uyghur by Abduqadir Abliz [Sahran](https://github.com/Sahran).
+* Indonesian by [Saiful Khaliq](https://twitter.com/saifious).
 * Malaysian by [Ahmad Syazwan](https://github.com/asyazwan).
 * Spanish by [Alexander Salas](https://github.com/alexsalas).
 * Uzbek by [Shuhrat Dehkanov](https://github.com/ozbek").
@@ -88,7 +87,7 @@ Changelog
 - fix launch crash when upgrading prefs for people stuck between the bug
   introduced in p2 (not crashing with it and instead running the wrong
   behavior), and the fix in p3.
-    
+
 **version 2.6.7-p3 (released 11/15/2015)**
 - fix launch crash when upgrading prefs
 
@@ -218,4 +217,4 @@ values and only posting the notification if they changed.
 - right to left layout for arabic (thanks @aessam)
 - many bugfixes and improvements
 
-You can see our complete set of releases [here] (https://github.com/quran/quran_android/releases)
+You can see our complete set of releases [here](https://github.com/quran/quran_android/releases).
