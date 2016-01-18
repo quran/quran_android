@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import timber.log.Timber;
+
 public class QuranDataActivity extends Activity implements
     DefaultDownloadReceiver.SimpleDownloadListener,
     ActivityCompat.OnRequestPermissionsResultCallback {
@@ -348,6 +350,8 @@ public class QuranDataActivity extends Activity implements
         boolean havePortrait = QuranFileUtils.haveAllImages(mAppContext, width);
         mNeedPortraitImages = !havePortrait;
         mNeedLandscapeImages = !haveLandscape;
+        Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
+            havePortrait ? "yes" : "no", haveLandscape ? "yes" : "no");
         if (haveLandscape && havePortrait) {
           // if we have the images, see if we need a patch set or not
           if (!QuranFileUtils.isVersion(mAppContext, width, LATEST_IMAGE_VERSION) ||
@@ -363,6 +367,7 @@ public class QuranDataActivity extends Activity implements
       } else {
         boolean haveAll = QuranFileUtils.haveAllImages(mAppContext,
             QuranScreenInfo.getInstance().getWidthParam());
+        Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
         mNeedPortraitImages = !haveAll;
         mNeedLandscapeImages = false;
         if (haveAll && !QuranFileUtils.isVersion(mAppContext, width, LATEST_IMAGE_VERSION)) {
@@ -388,8 +393,9 @@ public class QuranDataActivity extends Activity implements
           runListView();
           return;
         }
-        
+
         String lastErrorItem = mQuranSettings.getLastDownloadItemWithError();
+        Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem);
         if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)) {
           int lastError = mQuranSettings.getLastDownloadErrorCode();
           int errorId = ServiceIntentHelper
@@ -402,6 +408,7 @@ public class QuranDataActivity extends Activity implements
         }
       } else {
         if (!TextUtils.isEmpty(mPatchParam)) {
+          Timber.d("checkPages: have pages, but need patch %s", mPatchParam);
           mPatchUrl = QuranFileUtils.getPatchFileUrl(mPatchParam, LATEST_IMAGE_VERSION);
           promptForDownload();
           return;

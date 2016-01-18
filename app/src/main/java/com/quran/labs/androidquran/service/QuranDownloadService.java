@@ -502,13 +502,6 @@ public class QuranDownloadService extends Service implements
     final int result = downloadUrl(url, path, filename, notificationInfo);
     if (result == DOWNLOAD_SUCCESS) {
       if (filename.endsWith("zip")) {
-            /*
-            if (notificationInfo.totalFiles == 1){
-               mLastSentIntent = mNotifier.notifyDownloadProcessing(
-                   notificationInfo, 0, 0);
-            }
-            */
-
         final File actualFile = new File(path, filename);
         if (!ZipUtils.unzipFile(actualFile.getAbsolutePath(),
             path, notificationInfo, this)) {
@@ -530,9 +523,12 @@ public class QuranDownloadService extends Service implements
     final File partialFile = new File(path, filename + PARTIAL_EXT);
     final File actualFile = new File(path, filename);
 
+    Timber.d("downloadUrl: trying to download - file %s",
+        actualFile.exists() ? "exists" : "doesn't exist");
     long downloadedAmount = 0;
     if (partialFile.exists()) {
       downloadedAmount = partialFile.length();
+      Timber.d("downloadUrl: partialFile exists, length: %d", downloadedAmount);
       builder.addHeader("Range", "bytes=" + downloadedAmount + "-");
     }
     final boolean isZip = filename.endsWith(".zip");
