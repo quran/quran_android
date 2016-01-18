@@ -61,6 +61,8 @@ public class QuranFileUtils {
   // that we specify (ex if version is 3, check for a .v3 file).
   public static boolean isVersion(Context context, String widthParam, int version) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
+    Timber.d("isVersion: checking if version %d exists for width %s at %s",
+        version, widthParam, quranDirectory);
     if (quranDirectory == null) {
       return false;
     }
@@ -76,6 +78,7 @@ public class QuranFileUtils {
           File.separator + ".v" + version);
       return vFile.exists();
     } catch (Exception e) {
+      Timber.e(e, "isVersion: exception while checking version file");
       return false;
     }
   }
@@ -98,6 +101,7 @@ public class QuranFileUtils {
 
   public static boolean haveAllImages(Context context, String widthParam) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
+    Timber.d("haveAllImages: for width %s, directory is: %s", widthParam, quranDirectory);
     if (quranDirectory == null) {
       return false;
     }
@@ -106,20 +110,25 @@ public class QuranFileUtils {
     if (state.equals(Environment.MEDIA_MOUNTED)) {
       File dir = new File(quranDirectory + File.separator);
       if (dir.isDirectory()) {
+        Timber.d("haveAllImages: media state is mounted and directory exists");
         String[] fileList = dir.list();
         if (fileList == null) {
+          Timber.d("haveAllImages: null fileList, checking page by page...");
           for (int i = 1; i <= PAGES_LAST; i++) {
             if (!new File(dir, getPageFileName(i)).exists()) {
+              Timber.d("haveAllImages: couldn't find page %d", i);
               return false;
             }
           }
         } else if (fileList.length < PAGES_LAST) {
           // ideally, we should loop for each page and ensure
           // all pages are there, but this will do for now.
+          Timber.d("haveAllImages: found %d files instead of 604.", fileList.length);
           return false;
         }
         return true;
       } else {
+        Timber.d("haveAllImages: couldn't find the directory, so making it instead");
         QuranFileUtils.makeQuranDirectory(context);
         if (!IMAGES_DIRECTORY.isEmpty()) {
           QuranFileUtils.makeQuranImagesDirectory(context);
