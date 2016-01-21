@@ -65,6 +65,7 @@ public class Constants {
   public static final String PREF_TRANSLATION_MANAGER = "translationManagerKey";
   public static final String PREF_AUDIO_MANAGER = "audioManagerKey";
   public static final String PREF_EXPORT = "exportKey";
+  public static final String PREF_LOGS = "sendLogsKey";
   public static final String PREF_DID_PRESENT_PERMISSIONS_DIALOG =
       "didPresentStoragePermissionDialog";
 }

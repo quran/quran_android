@@ -11,6 +11,8 @@ import com.quran.labs.androidquran.ui.preference.DataListPreference;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.RecordingLogTree;
 import com.quran.labs.androidquran.util.StorageUtils;
 
 import android.app.Activity;
@@ -37,9 +39,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class QuranSettingsFragment extends PreferenceFragment implements
@@ -55,6 +61,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
   private AlertDialog mDialog;
   private Context mAppContext;
   private Subscription mExportSubscription = null;
+  private Subscription mLogsSubscription;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,52 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       @Override
       public boolean onPreferenceClick(Preference preference) {
         startActivity(new Intent(getActivity(), AudioManagerActivity.class));
+        return true;
+      }
+    });
+
+    final Preference logsPref = findPreference(Constants.PREF_LOGS);
+    logsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        if (mLogsSubscription == null) {
+          mLogsSubscription = Observable.from(Timber.forest())
+              .filter(new Func1<Timber.Tree, Boolean>() {
+                @Override
+                public Boolean call(Timber.Tree tree) {
+                  return tree instanceof RecordingLogTree;
+                }
+              })
+              .first()
+              .map(new Func1<Timber.Tree, String>() {
+                @Override
+                public String call(Timber.Tree tree) {
+                  return ((RecordingLogTree) tree).getLogs();
+                }
+              })
+              .map(new Func1<String, String>() {
+                @Override
+                public String call(String logs) {
+                  return QuranUtils.getDebugInfo(mAppContext) + "\n\n" + logs;
+                }
+              })
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(new Action1<String>() {
+                @Override
+                public void call(String logs) {
+                  Intent intent = new Intent(Intent.ACTION_SEND);
+                  intent.setType("message/rfc822");
+                  intent.putExtra(Intent.EXTRA_EMAIL,
+                      new String[] { mAppContext.getString(R.string.logs_email) });
+                  intent.putExtra(Intent.EXTRA_TEXT, logs);
+                  intent.putExtra(Intent.EXTRA_SUBJECT, "Logs");
+                  startActivity(Intent.createChooser(intent,
+                      mAppContext.getString(R.string.prefs_send_logs_title)));
+                  mLogsSubscription = null;
+                }
+              });
+        }
         return true;
       }
     });
@@ -149,7 +202,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     try {
       mStorageList = StorageUtils.getAllStorageLocations(context.getApplicationContext());
     } catch (Exception e) {
-      Timber.d("Exception while trying to get storage locations",e);
+      Timber.d(e, "Exception while trying to get storage locations");
       mStorageList = new ArrayList<>();
     }
 
@@ -168,6 +221,10 @@ public class QuranSettingsFragment extends PreferenceFragment implements
   public void onDestroy() {
     if (mExportSubscription != null) {
       mExportSubscription.unsubscribe();
+    }
+
+    if (mLogsSubscription != null) {
+      mLogsSubscription.unsubscribe();
     }
 
     if (mDialog != null) {
@@ -239,7 +296,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
           });
       mListStoragePref.setEnabled(true);
     } catch (Exception e) {
-      Timber.e("error loading storage options",e);
+      Timber.e(e, "error loading storage options");
       hideStorageListPref();
     }
   }

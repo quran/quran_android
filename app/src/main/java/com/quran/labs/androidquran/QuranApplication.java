@@ -2,6 +2,7 @@ package com.quran.labs.androidquran;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.RecordingLogTree;
 
 import android.app.Application;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
+import timber.log.Timber;
 
 public class QuranApplication extends Application {
 
@@ -20,6 +22,7 @@ public class QuranApplication extends Application {
   public void onCreate() {
     super.onCreate();
     Fabric.with(this, new Crashlytics());
+    Timber.plant(new RecordingLogTree());
   }
 
   public void refreshLocale(@NonNull Context context, boolean force) {
