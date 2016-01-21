@@ -3,17 +3,21 @@ package com.quran.labs.androidquran.util;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.support.v4.text.TextUtilsCompat;
 import android.support.v4.view.ViewCompat;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -126,9 +130,29 @@ public class QuranUtils {
     return false;
   }
 
-  /*
+  @WorkerThread
   public static String getDebugInfo(Context context){
     StringBuilder builder = new StringBuilder();
+    builder.append("Android SDK Version: ").append(Build.VERSION.SDK_INT);
+    String location = QuranSettings.getInstance(context).getAppCustomLocation();
+    builder.append("\nApp Location:").append(location);
+    try {
+      File file = new File(location);
+      builder.append("\n App Location Directory ")
+          .append(file.exists() ? "exists" : "doesn't exist")
+          .append("\n   Image zip files:");
+      String[] list = file.list();
+      for (String fileName : list) {
+        if (fileName.contains("images_")) {
+          File f = new File(fileName);
+          builder.append("\n   file: ").append(fileName).append("\tlength: ").append(f.length());
+        }
+      }
+    } catch (Exception e) {
+      builder.append("Exception trying to list files")
+          .append(e);
+    }
+
     QuranScreenInfo info = QuranScreenInfo.getInstance();
     if (info != null){
       builder.append("\nDisplay: ").append(info.getWidthParam());
@@ -136,19 +160,6 @@ public class QuranUtils {
         builder.append(", tablet width: ").append(info.getWidthParam());
       }
       builder.append("\n");
-
-      if (QuranFileUtils.haveAllImages(
-          context, info.getWidthParam())){
-        builder.append("all images found for ").
-            append(info.getWidthParam()).append("\n");
-      }
-
-      if (info.isTablet(context) &&
-          QuranFileUtils.haveAllImages(context,
-              info.getTabletWidthParam())){
-        builder.append("all tablet images found for ")
-            .append(info.getTabletWidthParam()).append("\n");
-      }
     }
 
     int memClass = ((ActivityManager)context
@@ -156,5 +167,4 @@ public class QuranUtils {
     builder.append("memory class: ").append(memClass).append("\n\n");
     return builder.toString();
   }
-  */
 }

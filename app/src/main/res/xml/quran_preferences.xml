@@ -159,6 +159,11 @@
             android:key="@string/prefs_app_location"
             android:summary="@string/prefs_app_location_summary"
             android:title="@string/prefs_app_location_title" />
+
+        <com.quran.labs.androidquran.ui.preference.QuranPreference
+            android:key="@string/prefs_send_logs"
+            android:title="@string/prefs_send_logs_title"
+            android:summary="@string/prefs_send_logs_summary"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
