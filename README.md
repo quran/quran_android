@@ -78,9 +78,13 @@ Open Source Projects Used
 
 Changelog
 ---------
-**current**
+**version 2.7.0 (released 1/23/2016)**
 - import / export bookmarks
 - merged tags and bookmarks into one screen
+- improved audio playback notification styles
+- lockscreen audio playback controls
+- ayah bookmarks show ayah preview
+- night mode page separator now takes text brightness
 - lots of improvements and bugfixes
 
 **version 2.6.7-p4 (released 11/15/2015)**
