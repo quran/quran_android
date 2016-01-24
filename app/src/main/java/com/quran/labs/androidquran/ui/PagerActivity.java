@@ -169,6 +169,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private Integer mLastPlayingSura;
   private Integer mLastPlayingAyah;
   private View mToolBarArea;
+  private boolean mPromptedForExtraDownload;
   private ViewGroup.MarginLayoutParams mAudioBarParams;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -1070,7 +1071,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     }
 
-    if (!QuranFileUtils.hasArabicSearchDatabase(this)) {
+    if (!QuranFileUtils.hasArabicSearchDatabase(this) && !mPromptedForExtraDownload) {
+      mPromptedForExtraDownload = true;
       showGetRequiredFilesDialog();
     }
   }

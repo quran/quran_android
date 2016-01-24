@@ -47,6 +47,7 @@ public class TranslationView extends ScrollView {
   private boolean mIsNightMode;
   private int mNightModeTextColor;
   private boolean mIsInAyahActionMode;
+  private boolean mIsDataMissing;
 
   private List<QuranAyah> mAyat;
   private SparseArray<TextView> mAyahMap;
@@ -76,6 +77,7 @@ public class TranslationView extends ScrollView {
     mContext = context;
     mAyahMap = new SparseArray<>();
     mAyahHeaderMap = new SparseArray<>();
+    mIsDataMissing = true;
 
     setFillViewport(true);
     mLinearLayout = new LinearLayout(context);
@@ -125,6 +127,14 @@ public class TranslationView extends ScrollView {
     if (mAyat != null) {
       setAyahs(mAyat);
     }
+  }
+
+  public void setDataMissing(boolean isDataMissing) {
+    mIsDataMissing = isDataMissing;
+  }
+
+  public boolean isDataMissing() {
+    return mIsDataMissing;
   }
 
   public void setNightMode(boolean isNightMode, int textBrightness) {
