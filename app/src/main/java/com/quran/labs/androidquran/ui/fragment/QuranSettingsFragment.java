@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
@@ -176,6 +178,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
                 @Override
                 public void onNext(Uri uri) {
+                  Answers.getInstance().logCustom(new CustomEvent("exportData"));
                   Intent shareIntent = new Intent(Intent.ACTION_SEND);
                   shareIntent.setType("application/json");
                   shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

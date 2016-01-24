@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.presenter.QuranImportPresenter;
 
@@ -22,6 +24,7 @@ public class QuranImportActivity extends AppCompatActivity implements
     ((QuranApplication) getApplication()).refreshLocale(this, false);
     super.onCreate(savedInstanceState);
     mPresenter = QuranImportPresenter.getInstance(this);
+    Answers.getInstance().logCustom(new CustomEvent("importData"));
   }
 
   @Override
@@ -77,6 +80,7 @@ public class QuranImportActivity extends AppCompatActivity implements
   }
 
   public void showImportComplete() {
+    Answers.getInstance().logCustom(new CustomEvent("importDataSuccessful"));
     Toast.makeText(QuranImportActivity.this,
         R.string.import_successful, Toast.LENGTH_LONG).show();
     finish();

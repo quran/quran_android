@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.f2prateek.rx.preferences.Preference;
 import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.quran.labs.androidquran.dao.Bookmark;
@@ -123,6 +125,8 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     mGroupByTags = !mGroupByTags;
     mQuranSettings.setBookmarksGroupedByTags(mGroupByTags);
     requestData();
+    Answers.getInstance().logCustom(
+        new CustomEvent(mGroupByTags ? "groupByTags" : "doNotGroupByTags"));
   }
 
   public boolean shouldShowInlineTags() {
