@@ -162,6 +162,8 @@
     <string name="dialog_ok">OK</string>
     <string name="prefs_app_location_title">Maʼlumotlar jildi</string>
     <string name="prefs_app_location_summary">Qurʼon fayllari saqlanadigan joy</string>
+    <string name="prefs_send_logs_title">Qaydlarni yuborish</string>
+    <string name="prefs_send_logs_summary">Ishlab chiqaruvchiga debag qaydlarini yuborish</string>
     <string name="prefs_sdcard_internal">Ichki xotira</string>
     <string name="prefs_sdcard_external">Tashqi xotira (SD karta %1$d)</string>
     <string name="prefs_app_size">Mavjud fayllar hajmi:</string>
