@@ -68,7 +68,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 	@Override
 	public Fragment getItem(int position){
     int page = QuranInfo.getPageFromPos(position, mIsDualPages);
-	   Timber.d("getting page: " + page);
+	   Timber.d("getting page: %d", page);
       if (mIsDualPages){
          return TabletFragment.newInstance(page,
                 mIsShowingTranslation? TabletFragment.Mode.TRANSLATION :

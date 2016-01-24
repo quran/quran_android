@@ -26,13 +26,12 @@ import timber.log.Timber;
  */
 public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
-  private static final String TAG = "TranslationTask";
-
   private Context mContext;
 
   private Integer[] mAyahBounds;
   private int mHighlightedAyah;
   private String mDatabaseName = null;
+  private boolean mIsMissingData;
   private WeakReference<TranslationView> mTranslationView;
 
   public TranslationTask(Context context, Integer[] ayahBounds,
@@ -96,6 +95,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
               DatabaseHandler.ARABIC_TEXT_TABLE);
         } catch (Exception e) {
           // ignore any exceptions due to no arabic database
+          mIsMissingData = true;
         }
       }
 
@@ -136,9 +136,9 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
   @Override
   protected void onPostExecute(List<QuranAyah> result) {
+    final TranslationView view = mTranslationView == null ?
+        null : mTranslationView.get();
     if (result != null) {
-      final TranslationView view = mTranslationView == null ?
-          null : mTranslationView.get();
       if (view != null) {
         view.setAyahs(result);
         if (mHighlightedAyah > 0) {
@@ -155,6 +155,10 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
       if (mContext != null && mContext instanceof PagerActivity) {
         ((PagerActivity) mContext).setLoading(false);
       }
+    }
+
+    if (view != null) {
+      view.setDataMissing(mIsMissingData);
     }
   }
 }
