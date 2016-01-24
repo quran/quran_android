@@ -11,6 +11,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.support.annotation.StringRes;
 import android.support.v4.view.GravityCompat;
@@ -30,6 +32,8 @@ public abstract class QuranPageLayout extends FrameLayout
     implements ObservableScrollView.OnScrollListener {
   private static PaintDrawable sLeftGradient, sRightGradient = null;
   private static boolean sAreGradientsLandscape;
+  private static int sLineColor;
+  private static ShapeDrawable sLineDrawable;
 
   protected Context mContext;
   protected PageController mPageController;
@@ -76,6 +80,12 @@ public abstract class QuranPageLayout extends FrameLayout
       sRightGradient = null;
       sAreGradientsLandscape = isLandscape;
     }
+
+    if (sLineDrawable == null) {
+      sLineDrawable = new ShapeDrawable(new RectShape());
+      sLineDrawable.setIntrinsicWidth(1);
+      sLineDrawable.setIntrinsicHeight(1);
+    }
   }
 
   protected abstract View generateContentView(Context context);
@@ -104,8 +114,7 @@ public abstract class QuranPageLayout extends FrameLayout
     }
 
     mIsNightMode = nightMode;
-    final int lineImageId = nightMode ?
-        R.drawable.light_line : R.drawable.dark_line;
+    int lineColor = Color.BLACK;
     final int leftBorderImageId = nightMode ?
         R.drawable.night_left_border : R.drawable.border_left;
     final int rightBorderImageId = nightMode ?
@@ -113,6 +122,9 @@ public abstract class QuranPageLayout extends FrameLayout
     final int nightModeTextBrightness = nightMode ?
         QuranSettings.getInstance(mContext).getNightModeTextBrightness() :
         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+    if (nightMode) {
+      lineColor = Color.argb(nightModeTextBrightness, 255, 255, 255);
+    }
 
     if (mLeftBorder == null) {
       mLeftBorder = new ImageView(mContext);
@@ -139,7 +151,11 @@ public abstract class QuranPageLayout extends FrameLayout
       }
       mRightBorder.setVisibility(VISIBLE);
       mRightBorder.setBackgroundResource(rightBorderImageId);
-      mLeftBorder.setBackgroundResource(lineImageId);
+      if (sLineColor != lineColor) {
+        sLineColor = lineColor;
+        sLineDrawable.getPaint().setColor(lineColor);
+      }
+      mLeftBorder.setBackgroundDrawable(sLineDrawable);
     }
     setContentNightMode(nightMode, nightModeTextBrightness);
 
