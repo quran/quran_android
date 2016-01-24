@@ -237,7 +237,7 @@ public class QuranPageFragment extends Fragment
   }
 
   public void cleanup() {
-    Timber.d("cleaning up page " + mPageNumber);
+    Timber.d("cleaning up page %d", mPageNumber);
     mHandler.removeCallbacksAndMessages(null);
     if (mPageLoadTask != null) {
       mPageLoadTask.cancel(false);
