@@ -11,7 +11,6 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -26,135 +25,136 @@ import timber.log.Timber;
  * Time: 11:03 PM
  */
 public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
-   private static final String TAG = "TranslationTask";
 
-   private Context mContext;
+  private static final String TAG = "TranslationTask";
 
-   private Integer[] mAyahBounds;
-   private int mHighlightedAyah;
-   private String mDatabaseName = null;
-   private WeakReference<TranslationView> mTranslationView;
+  private Context mContext;
 
-   public TranslationTask(Context context, Integer[] ayahBounds,
-                          String databaseName){
-     mContext = context;
-     mDatabaseName = databaseName;
-     mAyahBounds = ayahBounds;
-     mHighlightedAyah = 0;
-     mTranslationView = null;
-   }
+  private Integer[] mAyahBounds;
+  private int mHighlightedAyah;
+  private String mDatabaseName = null;
+  private WeakReference<TranslationView> mTranslationView;
 
-   public TranslationTask(Context context, int pageNumber,
-                          int highlightedAyah, String databaseName,
-                          TranslationView view){
-      mContext = context;
-      mDatabaseName = databaseName;
-      mAyahBounds = QuranInfo.getPageBounds(pageNumber);
-      mHighlightedAyah = highlightedAyah;
-      mTranslationView = new WeakReference<>(view);
+  public TranslationTask(Context context, Integer[] ayahBounds,
+      String databaseName) {
+    mContext = context;
+    mDatabaseName = databaseName;
+    mAyahBounds = ayahBounds;
+    mHighlightedAyah = 0;
+    mTranslationView = null;
+  }
 
-      if (context instanceof PagerActivity){
-         ((PagerActivity)context).setLoadingIfPage(pageNumber);
-      }
-   }
+  public TranslationTask(Context context, int pageNumber,
+      int highlightedAyah, String databaseName,
+      TranslationView view) {
+    mContext = context;
+    mDatabaseName = databaseName;
+    mAyahBounds = QuranInfo.getPageBounds(pageNumber);
+    mHighlightedAyah = highlightedAyah;
+    mTranslationView = new WeakReference<>(view);
 
-   protected boolean loadArabicAyahText() {
-     return QuranSettings.getInstance(mContext).wantArabicInTranslationView();
-   }
+    if (context instanceof PagerActivity) {
+      ((PagerActivity) context).setLoadingIfPage(pageNumber);
+    }
+  }
 
-   @Override
-   protected List<QuranAyah> doInBackground(Void... params) {
-      Integer[] bounds = mAyahBounds;
-      if (bounds == null){ return null; }
+  protected boolean loadArabicAyahText() {
+    return QuranSettings.getInstance(mContext).wantArabicInTranslationView();
+  }
 
-      String databaseName = mDatabaseName;
+  @Override
+  protected List<QuranAyah> doInBackground(Void... params) {
+    Integer[] bounds = mAyahBounds;
+    if (bounds == null) {
+      return null;
+    }
 
-      // is this an arabic translation/tafseer or not
-      boolean isArabic = mDatabaseName.contains(".ar.") ||
-              mDatabaseName.equals("quran.muyassar.db");
-      List<QuranAyah> verses = new ArrayList<>();
+    String databaseName = mDatabaseName;
 
-      try {
-         DatabaseHandler translationHandler =
-             DatabaseHandler.getDatabaseHandler(mContext, databaseName);
-         Cursor translationCursor =
-                 translationHandler.getVerses(bounds[0], bounds[1],
-                         bounds[2], bounds[3],
-                         DatabaseHandler.VERSE_TABLE);
+    // is this an arabic translation/tafseer or not
+    boolean isArabic = mDatabaseName.contains(".ar.") ||
+        mDatabaseName.equals("quran.muyassar.db");
+    List<QuranAyah> verses = new ArrayList<>();
 
-         DatabaseHandler ayahHandler;
-         Cursor ayahCursor = null;
+    try {
+      DatabaseHandler translationHandler =
+          DatabaseHandler.getDatabaseHandler(mContext, databaseName);
+      Cursor translationCursor =
+          translationHandler.getVerses(bounds[0], bounds[1],
+              bounds[2], bounds[3],
+              DatabaseHandler.VERSE_TABLE);
 
-         if (loadArabicAyahText()){
-            try {
-               ayahHandler = DatabaseHandler.getDatabaseHandler(mContext,
-                       QuranDataProvider.QURAN_ARABIC_DATABASE);
-               ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
-                       bounds[2], bounds[3],
-                       DatabaseHandler.ARABIC_TEXT_TABLE);
-            }
-            catch (Exception e){
-               // ignore any exceptions due to no arabic database
-            }
-         }
+      DatabaseHandler ayahHandler;
+      Cursor ayahCursor = null;
 
-         if (translationCursor != null) {
-            boolean validAyahCursor = false;
-            if (ayahCursor != null && ayahCursor.moveToFirst()){
-               validAyahCursor = true;
-            }
-
-            if (translationCursor.moveToFirst()) {
-               do {
-                  int sura = translationCursor.getInt(1);
-                  int ayah = translationCursor.getInt(2);
-                  String translation = translationCursor.getString(3);
-                  QuranAyah verse = new QuranAyah(sura, ayah);
-                  verse.setTranslation(translation);
-                  if (validAyahCursor){
-                     String text = ayahCursor.getString(3);
-                     verse.setText(text);
-                  }
-                  verse.setArabic(isArabic);
-                  verses.add(verse);
-               }
-               while (translationCursor.moveToNext() &&
-                       (!validAyahCursor || ayahCursor.moveToNext()));
-            }
-            translationCursor.close();
-            if (ayahCursor != null){
-               ayahCursor.close();
-            }
-         }
-      }
-      catch (Exception e){
-         Timber.d("unable to open " + databaseName + " - " + e);
+      if (loadArabicAyahText()) {
+        try {
+          ayahHandler = DatabaseHandler.getDatabaseHandler(mContext,
+              QuranDataProvider.QURAN_ARABIC_DATABASE);
+          ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
+              bounds[2], bounds[3],
+              DatabaseHandler.ARABIC_TEXT_TABLE);
+        } catch (Exception e) {
+          // ignore any exceptions due to no arabic database
+        }
       }
 
-      return verses;
-   }
+      if (translationCursor != null) {
+        boolean validAyahCursor = false;
+        if (ayahCursor != null && ayahCursor.moveToFirst()) {
+          validAyahCursor = true;
+        }
 
-   @Override
-   protected void onPostExecute(List<QuranAyah> result) {
-      if (result != null){
-         final TranslationView view = mTranslationView == null ?
-             null : mTranslationView.get();
-         if (view != null){
-            view.setAyahs(result);
-            if (mHighlightedAyah > 0){
-               // give a chance for translation view to render
-               view.postDelayed(new Runnable() {
-                  @Override
-                  public void run() {
-                     view.highlightAyah(mHighlightedAyah);
-                  }
-               }, 100);
+        if (translationCursor.moveToFirst()) {
+          do {
+            int sura = translationCursor.getInt(1);
+            int ayah = translationCursor.getInt(2);
+            String translation = translationCursor.getString(3);
+            QuranAyah verse = new QuranAyah(sura, ayah);
+            verse.setTranslation(translation);
+            if (validAyahCursor) {
+              String text = ayahCursor.getString(3);
+              verse.setText(text);
             }
-         }
-
-         if (mContext != null && mContext instanceof PagerActivity){
-            ((PagerActivity)mContext).setLoading(false);
-         }
+            verse.setArabic(isArabic);
+            verses.add(verse);
+          }
+          while (translationCursor.moveToNext() &&
+              (!validAyahCursor || ayahCursor.moveToNext()));
+        }
+        translationCursor.close();
+        if (ayahCursor != null) {
+          ayahCursor.close();
+        }
       }
-   }
+    } catch (Exception e) {
+      Timber.d(e, "unable to open: %s", databaseName);
+    }
+
+    return verses;
+  }
+
+  @Override
+  protected void onPostExecute(List<QuranAyah> result) {
+    if (result != null) {
+      final TranslationView view = mTranslationView == null ?
+          null : mTranslationView.get();
+      if (view != null) {
+        view.setAyahs(result);
+        if (mHighlightedAyah > 0) {
+          // give a chance for translation view to render
+          view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              view.highlightAyah(mHighlightedAyah);
+            }
+          }, 100);
+        }
+      }
+
+      if (mContext != null && mContext instanceof PagerActivity) {
+        ((PagerActivity) mContext).setLoading(false);
+      }
+    }
+  }
 }

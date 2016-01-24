@@ -109,6 +109,7 @@ public class TranslationFragment extends Fragment
     final boolean nightMode = mQuranSettings.isNightMode();
     final boolean useNewBackground = mQuranSettings.useNewBackground();
     mMainView.updateView(nightMode, useNewBackground);
+    refresh(mQuranSettings.getActiveTranslation());
   }
 
   @Override

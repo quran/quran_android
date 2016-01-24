@@ -1069,6 +1069,10 @@ public class PagerActivity extends QuranActionBarActivity implements
         highlightAyah(mHighlightedSura, mHighlightedAyah, false, HighlightType.SELECTION);
       }
     }
+
+    if (!QuranFileUtils.hasArabicSearchDatabase(this)) {
+      showGetRequiredFilesDialog();
+    }
   }
 
   public void startTranslationManager() {
@@ -1081,7 +1085,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         @Override
         public boolean onNavigationItemSelected(int itemPosition,
                                                 long itemId) {
-          Timber.d("item chosen: " + itemPosition);
+          Timber.d("item chosen: %d", itemPosition);
           if (mTranslations != null &&
               mTranslations.size() > itemPosition) {
             TranslationItem item = mTranslations.get(itemPosition);
@@ -1256,6 +1260,9 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void handleDownloadSuccess() {
+    if (mShowingTranslation) {
+      refreshQuranPages();
+    }
     playAudioRequest(mLastAudioDownloadRequest);
   }
 
@@ -1319,7 +1326,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void highlightAyah(int sura, int ayah,
       boolean force, HighlightType type) {
-    Timber.d("highlightAyah() - " + sura + ":" + ayah);
+    Timber.d("highlightAyah() - %s:%s", sura, ayah);
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST ||
         PAGES_LAST < page) {
@@ -1369,7 +1376,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         items = adapter.getTranslations();
         adapter.close();
       } catch (Exception e) {
-        Timber.d("error getting translations list",e);
+        Timber.d(e, "error getting translations list");
       }
       return null;
     }
@@ -1472,14 +1479,12 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     QariItem item = mAudioStatusBar.getAudioInfo();
-    if (item != null) {
-      if (mSettings.shouldStream()) {
-        playStreaming(start, end, page, item,
-            verseRepeat, rangeRepeat, enforceRange);
-      } else {
-        downloadAndPlayAudio(start, end, page, item,
-            verseRepeat, rangeRepeat, enforceRange);
-      }
+    if (mSettings.shouldStream()) {
+      playStreaming(start, end, page, item,
+          verseRepeat, rangeRepeat, enforceRange);
+    } else {
+      downloadAndPlayAudio(start, end, page, item,
+          verseRepeat, rangeRepeat, enforceRange);
     }
   }
 
@@ -1646,7 +1651,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       String notificationTitle = QuranInfo.getNotificationTitle(this,
           request.getMinAyah(), request.getMaxAyah(), request.isGapless());
       String qariUrl = AudioUtils.getQariUrl(request.getQariItem(), true);
-      Timber.d("need to start download: " + qariUrl);
+      Timber.d("need to start download: %s", qariUrl);
 
       // start service
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
