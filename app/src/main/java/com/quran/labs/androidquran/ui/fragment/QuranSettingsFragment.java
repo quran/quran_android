@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -100,50 +101,56 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     });
 
     final Preference logsPref = findPreference(Constants.PREF_LOGS);
-    logsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        if (mLogsSubscription == null) {
-          mLogsSubscription = Observable.from(Timber.forest())
-              .filter(new Func1<Timber.Tree, Boolean>() {
-                @Override
-                public Boolean call(Timber.Tree tree) {
-                  return tree instanceof RecordingLogTree;
-                }
-              })
-              .first()
-              .map(new Func1<Timber.Tree, String>() {
-                @Override
-                public String call(Timber.Tree tree) {
-                  return ((RecordingLogTree) tree).getLogs();
-                }
-              })
-              .map(new Func1<String, String>() {
-                @Override
-                public String call(String logs) {
-                  return QuranUtils.getDebugInfo(mAppContext) + "\n\n" + logs;
-                }
-              })
-              .subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Action1<String>() {
-                @Override
-                public void call(String logs) {
-                  Intent intent = new Intent(Intent.ACTION_SEND);
-                  intent.setType("message/rfc822");
-                  intent.putExtra(Intent.EXTRA_EMAIL,
-                      new String[] { mAppContext.getString(R.string.logs_email) });
-                  intent.putExtra(Intent.EXTRA_TEXT, logs);
-                  intent.putExtra(Intent.EXTRA_SUBJECT, "Logs");
-                  startActivity(Intent.createChooser(intent,
-                      mAppContext.getString(R.string.prefs_send_logs_title)));
-                  mLogsSubscription = null;
-                }
-              });
+    if (BuildConfig.DEBUG || "beta".equals(BuildConfig.BUILD_TYPE)) {
+      logsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+          if (mLogsSubscription == null) {
+            mLogsSubscription = Observable.from(Timber.forest())
+                .filter(new Func1<Timber.Tree, Boolean>() {
+                  @Override
+                  public Boolean call(Timber.Tree tree) {
+                    return tree instanceof RecordingLogTree;
+                  }
+                })
+                .first()
+                .map(new Func1<Timber.Tree, String>() {
+                  @Override
+                  public String call(Timber.Tree tree) {
+                    return ((RecordingLogTree) tree).getLogs();
+                  }
+                })
+                .map(new Func1<String, String>() {
+                  @Override
+                  public String call(String logs) {
+                    return QuranUtils.getDebugInfo(mAppContext) + "\n\n" + logs;
+                  }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                  @Override
+                  public void call(String logs) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("message/rfc822");
+                    intent.putExtra(Intent.EXTRA_EMAIL,
+                        new String[]{mAppContext.getString(R.string.logs_email)});
+                    intent.putExtra(Intent.EXTRA_TEXT, logs);
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Logs");
+                    startActivity(Intent.createChooser(intent,
+                        mAppContext.getString(R.string.prefs_send_logs_title)));
+                    mLogsSubscription = null;
+                  }
+                });
+          }
+          return true;
         }
-        return true;
-      }
-    });
+      });
+    } else {
+      PreferenceCategory category =
+          (PreferenceCategory) findPreference(Constants.PREF_ADVANCED_CATEGORY);
+      category.removePreference(logsPref);
+    }
 
     final Preference exportPref = findPreference(Constants.PREF_EXPORT);
     exportPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
