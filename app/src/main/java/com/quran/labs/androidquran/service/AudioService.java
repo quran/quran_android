@@ -62,6 +62,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.NotificationCompat;
@@ -198,7 +199,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private NotificationCompat.Builder mPausedNotificationBuilder;
 
   private LocalBroadcastManager mBroadcastManager = null;
-  private MediaSessionCompat mMediaSession;
+  @Nullable private MediaSessionCompat mMediaSession;
 
   private int mGaplessSura = 0;
   private int mNotificationColor;
@@ -283,7 +284,13 @@ public class AudioService extends Service implements OnCompletionListener,
 
     mMediaButtonReceiverComponent = new ComponentName(this, AudioIntentReceiver.class);
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
-    mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession");
+
+    try {
+      mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession");
+    } catch (IllegalArgumentException iae) {
+      // see https://code.google.com/p/android/issues/detail?id=199537
+      mMediaSession = null;
+    }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       mNotificationColor = getResources().getColor(R.color.audio_notification_color, null);
@@ -1110,11 +1117,16 @@ public class AudioService extends Service implements OnCompletionListener,
           .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
           .setShowWhen(false)
           .setWhen(0) // older platforms seem to ignore setShowWhen(false)
-          .setStyle(new NotificationCompat.MediaStyle()
-          .setShowActionsInCompactView(0, 1, 2)
-          .setMediaSession(mMediaSession.getSessionToken()))
           .setLargeIcon(mNotificationIcon);
     }
+
+    if (mMediaSession != null) {
+      mNotificationBuilder.setStyle(
+          new NotificationCompat.MediaStyle()
+              .setShowActionsInCompactView(0, 1, 2)
+              .setMediaSession(mMediaSession.getSessionToken()));
+    }
+
     mNotificationBuilder.setTicker(audioTitle);
     mNotificationBuilder.setContentText(audioTitle);
 
@@ -1131,11 +1143,16 @@ public class AudioService extends Service implements OnCompletionListener,
           .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
           .setShowWhen(false)
           .setWhen(0)
-          .setLargeIcon(mNotificationIcon)
-          .setStyle(new NotificationCompat.MediaStyle()
-          .setShowActionsInCompactView(0, 1)
-          .setMediaSession(mMediaSession.getSessionToken()));
+          .setLargeIcon(mNotificationIcon);
     }
+
+    if (mMediaSession != null) {
+      mPausedNotificationBuilder.setStyle(
+          new NotificationCompat.MediaStyle()
+              .setShowActionsInCompactView(0, 1)
+              .setMediaSession(mMediaSession.getSessionToken()));
+    }
+
     mPausedNotificationBuilder.setContentText(audioTitle);
 
     startForeground(NOTIFICATION_ID, mNotificationBuilder.build());
