@@ -57,6 +57,7 @@ App localization
 * Russian by Rinat [Ринат Валеев](https://github.com/Valey).
 * Kurdish by [Goran Gharib Karim](https://github.com/GorranKurd).
 * French by Yasser [yasserkad](https://github.com/yasserkad).
+* French updates by [Abdullah ibn Nadjo](https://github.com/abdullahibnnadjo).
 * German by [Armin Supuk](https://github.com/ArminSupuk).
 * Chinese by [Bo Li](https://twitter.com/liboat).
 * Uyghur by Abduqadir Abliz [Sahran](https://github.com/Sahran).
