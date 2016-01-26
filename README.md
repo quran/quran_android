@@ -78,6 +78,9 @@ Open Source Projects Used
 
 Changelog
 ---------
+**version 2.7.0-p1 (released 1/25/2016)**
+- crash fixes
+
 **version 2.7.0 (released 1/23/2016)**
 - import / export bookmarks
 - merged tags and bookmarks into one screen
