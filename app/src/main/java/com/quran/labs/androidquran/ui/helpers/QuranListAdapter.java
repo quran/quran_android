@@ -71,9 +71,11 @@ public class QuranListAdapter extends
   public List<QuranRow> getCheckedItems() {
     final List<QuranRow> result = new ArrayList<>();
     final int count = mCheckedState.size();
+    final int elements = getItemCount();
     for (int i = 0; i < count; i++) {
       final int key = mCheckedState.keyAt(i);
-      if (mCheckedState.get(key)) {
+      // TODO: figure out why sometimes elements > key
+      if (mCheckedState.get(key) && elements > key) {
         result.add(getQuranRow(key));
       }
     }
