@@ -30,7 +30,6 @@ import com.quran.labs.androidquran.service.util.AudioFocusHelper;
 import com.quran.labs.androidquran.service.util.AudioFocusable;
 import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
 import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.MediaButtonHelper;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -187,10 +186,6 @@ public class AudioService extends Service implements OnCompletionListener,
   // as text as well if the user expands the notification area).
   final int NOTIFICATION_ID = 4;
 
-  // The component name of MusicIntentReceiver, for use with media button
-  // and remote control APIs
-  private ComponentName mMediaButtonReceiverComponent;
-
   private AudioManager mAudioManager;
   private NotificationManager mNotificationManager;
 
@@ -282,14 +277,21 @@ public class AudioService extends Service implements OnCompletionListener,
       mAudioFocus = AudioFocus.Focused;
     }
 
-    mMediaButtonReceiverComponent = new ComponentName(this, AudioIntentReceiver.class);
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
 
+    ComponentName receiver = new ComponentName(this, AudioIntentReceiver.class);
     try {
-      mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession");
+      mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession", receiver, null);
     } catch (IllegalArgumentException iae) {
       // see https://code.google.com/p/android/issues/detail?id=199537
       mMediaSession = null;
+      try {
+        Crashlytics.log("Component enabled setting: " +
+            getPackageManager().getComponentEnabledSetting(receiver));
+      } catch (Exception e) {
+        Crashlytics.logException(e);
+      }
+      Crashlytics.logException(iae);
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -947,11 +949,6 @@ public class AudioService extends Service implements OnCompletionListener,
         setUpAsForeground();
       }
 
-      // Use the media button APIs (if available) to register ourselves
-      // for media button events
-      MediaButtonHelper.registerMediaButtonEventReceiverCompat(mAudioManager,
-          mMediaButtonReceiverComponent);
-
       // starts preparing the media player in the background. When it's
       // done, it will call our OnPreparedListener (that is, the
       // onPrepared() method on this class, since we set the listener
@@ -1198,8 +1195,6 @@ public class AudioService extends Service implements OnCompletionListener,
     mState = State.Stopped;
     relaxResources(true, true);
     giveUpAudioFocus();
-    MediaButtonHelper.unregisterMediaButtonEventReceiverCompat(mAudioManager,
-        mMediaButtonReceiverComponent);
     super.onDestroy();
   }
 
