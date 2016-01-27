@@ -42,7 +42,7 @@ Setup
 1. get and install the [android sdk](https://developer.android.com/sdk/index.html).
 2. make sure `$ANDROID_HOME` is set to the correct place.
 3. build from the command line by running `./gradlew assembleDebug`
-4. if you want an ide, download the latest version of [android studio](https://tools.android.com/download/studio/canary) (latest as of this writing is version 0.8.14)
+4. if you want an ide, download the latest version of [android studio](http://tools.android.com/download/studio/canary/) (latest as of this writing is version 0.8.14)
 5. run android studio, choose import project, then choose build.gradle from the main quran source code directory.
 
 and that's it!
@@ -57,6 +57,7 @@ App localization
 * Russian by Rinat [Ринат Валеев](https://github.com/Valey).
 * Kurdish by [Goran Gharib Karim](https://github.com/GorranKurd).
 * French by Yasser [yasserkad](https://github.com/yasserkad).
+* French updates by [Abdullah ibn Nadjo](https://github.com/abdullahibnnadjo).
 * German by [Armin Supuk](https://github.com/ArminSupuk).
 * Chinese by [Bo Li](https://twitter.com/liboat).
 * Uyghur by Abduqadir Abliz [Sahran](https://github.com/Sahran).

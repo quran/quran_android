@@ -22,4 +22,16 @@
    <string name="qari_jibreel">Muhammad Jibreel</string>
    <string name="qari_shuraym">Saood Ash-Shuraym</string>
    <string name="qari_dussary">Yasser Ad-Dussary</string>
+   <string name="qari_abdulbaset_gapless">Abd Al-Basit (non espacé)</string>
+   <string name="qari_abdulbaset_mujawwad_gapless">Abd Al-Basit Mujawwad (non espacé)</string>
+   <string name="qari_aziz_alili_gapless">Aziz Alili (non espacé)</string>
+   <string name="qari_salah_budair_gapless">Salah Budair (non espacé)</string>
+   <string name="qari_shuraym_gapless">Saood Ash-Shuraym (non espacé)</string>
+   <string name="qari_yasser_dussary_gapless">Yasser Ad-Dussary (non espacé)</string>
+   <string name="qari_mohammad_altablawi_gapless">Mohammad al Tablawy (non espacé)</string>
+   <string name="qari_sahl_yaseen_gapless">Sahl Yaseen (non espacé)</string>
+   <string name="qari_shatri_gapless">Abu Bakr Ash-Shatri (non espacé)</string>
+   <string name="qari_ahmad_nauina_gapless">Ahmad Nauina (non espacé)</string>
+   <string name="qari_akram_al_alaqmi">Akram Al-Alaqmi (non espacé)</string>
+   <string name="qari_ali_hajjaj_alsouasi_gapless">Ali Hajjaj Alsouasi (non espacé)</string>
 </resources>
