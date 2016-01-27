@@ -3,7 +3,7 @@
 <resources>
   <string name="app_name">Coran</string>
   <string name="downloadPrompt_title">Télécharger les fichiers requis ?</string>
-  <string name="downloadPrompt">Pour des performances optimales, certains fichiers doivent être téléchargés.  Si vous ne voulez ne pas faire cela maintenant, chaque page prendra plus de temps à charger. Souhaitez-vous télécharger les fichiers requis maintenant ?   </string>
+  <string name="downloadPrompt">Pour des performances optimales, certains fichiers doivent être téléchargés. Si vous ne voulez ne pas faire cela maintenant, chaque page prendra plus de temps à charger. Souhaitez-vous télécharger les fichiers requis maintenant ?   </string>
   <string name="downloadTabletPrompt">Nous avons récemment ajouté de meilleures images pour les tablettes. Voulez-vous télécharger ces images maintenant ?</string>
   <string name="downloadImportantPrompt">Il y a une petite mais importante mise à jour pour les images du Coran. Voulez-vous télécharger cette mise à jour maintenant ?</string>
   <string name="downloadPrompt_ok">Oui</string>
@@ -12,6 +12,7 @@
   <string name="downloading_message">Veuillez patienter jusqu\'à la fin du téléchargement. (Reprise supportée)</string>
   <string name="extracting_title">Traitement en cours…</string>
   <string name="menu_about">À propos</string>
+  <string name="menu_other_apps">Autres applications</string>
   <string name="menu_settings">Paramètres</string>
   <string name="menu_jump_last_page">Dernière page</string>
   <string name="menu_tags">Étiquettes</string>
@@ -21,6 +22,7 @@
   <string name="menu_sort">Trier</string>
   <string name="menu_sort_date">Par date d\'ajout</string>
   <string name="menu_sort_location">Selon l\'ordre dans le coran</string>
+  <string name="menu_sort_group_by_tags">Par Tag</string>
   <string name="menu_translation">Afficher la traduction</string>
   <string name="menu_back_to_page">Afficher le coran</string>
   <string name="menu_help">Aide</string>
@@ -29,6 +31,23 @@
   <string name="menu_jump">Aller à</string>
   <string name="gotoPage">Aller à la page</string>
   <string name="cancel">Annuler</string>
+
+  <!-- about -->
+  <string name="about_description">Quran pour Android est une application Quran gratuite. S\'il vous plaît, n\'oubliez pas les contributeurs dans vos prières.</string>
+  <string name="about_data_sources">Sources de données</string>
+  <string name="about_images">Images</string>
+  <string name="about_madani_images">Les images du Quran sont basées sur les polices d\'écriture du King Fahd Quran Printing Complex</string>
+  <string name="about_naskh_images">Les images du Quran pour l\'application Naskh sont issues (avec leur permission) de SHL Info Systems</string>
+  <string name="about_qaloon_images">Les images Qaloon sont utilisées avec la permission de Nous Memes Editions Et Diffusion (Tunisie)</string>
+  <string name="about_quranicaudio_summary">Récitations mp3 du Quran non espacées</string>
+  <string name="about_quran_ksu">Projet Electronic Moshaf</string>
+  <string name="about_quran_ksu_summary">Le projet King Saud University Electronic Moshaf était la source du Tafsir en langue arabe et des traductions pour de nombreuses langues</string>
+  <string name="about_tanzil_summary">Traductions pour de nombreuses langues</string>
+  <string name="about_noorhidayat_summary">Police Noorehira et traduction de Mufti Taqi</string>
+  <string name="about_open_source">Projets Open Source</string>
+  <string name="about_others">Autres</string>
+  <string name="about_contributors">Contributeurs</string>
+  <string name="about_contributors_summary">Une liste des personnes ayant contribué au développement de Quran pour Android</string>
 
   <!-- help -->
   <string name="help_title">FAQ</string>
@@ -40,7 +59,7 @@
         globe (ou, si vous ne le voyez pas, vous verrez un icone avec trois points carrés - cliquez dessus
         et choisissez une traduction pour la voir).
         &lt;br/>
-        Si vous n\'avez pas de traduction déjà téléchargée, il vous sera affiché un écran 
+        Si vous n\'avez pas de traduction déjà téléchargée, il vous sera affiché un écran
         pour en télécharger.  Choisissez et téléchargez une traduction,
         puis retournez en arrière et cliquez encore sur le petit globe pour voir la traduction.
         &lt;br/>
@@ -49,7 +68,7 @@
           Cliquez dessus pour la marquer (l\'icone se remplis de blanc).  Recliquez dessus pour l\'effacer des favoris.
         &lt;br/>
         &lt;br/>&lt;b>Comment agrandir le texte ?&lt;/b>
-        &lt;br/>Pour les pages en arabe tenez l\'écran en portrait. 
+        &lt;br/>Pour les pages en arabe tenez l\'écran en portrait.
         Pour les traductions, allez dans paramètres et choisissez la taille de la traduction.
         &lt;br/>
         &lt;br/>&lt;b>Comment partager une Aya ?&lt;/b>
@@ -98,36 +117,54 @@
   <string name="prefs_translations">Traductions</string>
   <string name="prefs_translations_summary">Télécharger et gérer les traductions</string>
   <string name="prefs_ayah_before_translation_title">Aya avant la traduction</string>
-  <string name="prefs_ayah_before_translation_summary">Voir l\'aya en arabe au-dessus de la traduction</string>
+  <string name="prefs_ayah_before_translation_summary">Voir l\'Aya en arabe au-dessus de la traduction</string>
   <string name="prefs_category_download">Options de téléchargement</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Streaming lorsque cela est possible (audio espacé seulement).</string>
   <string name="prefs_download_amount_title">Quantité de téléchargement</string>
   <string name="prefs_download_amount_summary">Quantité du téléchargement préféré pour l\'audio espacé.</string>
+  <string name="prefs_audio_manager">Gestionnaire audio (expérimental)</string>
+  <string name="prefs_audio_manager_summary">Gérer et télécharger les audios coraniques</string>
   <string name="downloaded_translations">Téléchargées</string>
   <string name="available_translations">Disponible en téléchargement</string>
   <string name="remove_button">Supprimer</string>
   <string name="dialog_ok">Ok</string>
   <string name="prefs_app_location_summary">Sélectionnez sur quelle sdcard sauvegarder les fichiers</string>
   <string name="prefs_app_location_title">Location de l\'application</string>
+  <string name="prefs_send_logs_title">Envoyer les logs</string>
+  <string name="prefs_send_logs_summary">Envoyer les logs de debug au développeur.</string>
   <string name="prefs_app_size">La taille de l\'application est</string>
   <string name="prefs_calculating_app_size">Calcul de la taille de l\'application</string>
   <string name="prefs_copying_app_files">Copie des fichier de l\'application</string>
   <string name="prefs_err_moving_app_files">Echec du déplacement des fichiers de l\'application</string>
   <string name="prefs_megabytes_int">%1$d Mo</string>
+  <string name="prefs_megabytes_str">%s Mo</string>
   <string name="prefs_no_enough_space_to_move_files">Espace insuffisant pour déplacer les fichiers de l\'application</string>
   <string name="prefs_sdcard_internal">Stockage interne</string>
   <string name="prefs_sdcard_external">Carte SD externe %1$d</string>
   <string name="prefs_tablet_mode_title">Mode tablette</string>
   <string name="prefs_tablet_mode_enabled">En orientation paysage, deux pages s\'afficheront côte à côte.</string>
   <string name="prefs_tablet_mode_disabled">En orientation paysage, seulement une page s\'affichera.</string>
+  <string name="prefs_category_advanced">Options avancées</string>
+  <string name="prefs_export_title">Exporter</string>
+  <string name="prefs_export_summary">Exporter une sauvegarde des marque-pages et des tags.</string>
 
-    <string name="warning">Attention</string>
-    <string name="kitkat_external_message">Dû à certaines restrictions d\'Android, si vous choisissez
-        de stocker les données de l\'application sur votre carte SD et que par la suite vous désinstallez
-        ou supprimez les données de Quran Android, toutes les pages et les audios de Quran Android
-        seront supprimés et vous serez contraints de les télécharger de nouveau. Êtes-vous certains de
-        vouloir utiliser la carte SD externe ?</string>
+  <string name="import_data_permissions_error">Impossible de lire le fichier de sauvegarde à cause d\'une erreur de permissions.</string>
+  <string name="import_data_error">Fichier de sauvegarde invalide (ou impossible de lire le fichier de sauvegarde).</string>
+  <string name="import_data">Importer des données</string>
+  <string name="import_data_and_override">Si vous importez ce fichier, cela remplacera tous vos marque-pages par %1$d marque-page(s) et %2$d tag(s). Effectuer l\'importation ?</string>
+  <string name="import_successful">Données importées avec succès</string>
+  <string name="export_data_error">Erreur lors de l\'export des données.</string>
+  <string name="exported_data">Données exportées dans %1$s.</string>
+
+  <string name="logs_email">quranandroid+logs@gmail.com</string>
+  <string name="warning">Attention</string>
+  <string name="kitkat_external_message">Dû à certaines restrictions d\'Android, si vous choisissez
+      de stocker les données de l\'application sur votre carte SD et que par la suite vous désinstallez
+      ou supprimez les données de Quran Android, toutes les pages et les audios de Quran Android
+      seront supprimés et vous serez contraints de les télécharger de nouveau. Êtes-vous certains de
+      vouloir utiliser la carte SD externe ?</string>
+  <string name="please_grant_permissions">S\'il vous plaît, accordez les permissions dans les paramètres des applicaitons.</string>
   <!-- Preferences End -->
 
   <!-- translation updates -->
@@ -146,6 +183,7 @@
   <string name="quran_page">Page</string>
   <string name="quran_sura">Sourate</string>
   <string name="quran_ayah">Aya %1$d</string>
+  <string name="quran_ayah_details">%1$s - Aya %2$s, Juz\' %3$s</string>
   <string name="quran_sura_title">Sourate %1$s</string>
   <string name="sura_ayah_notification_str">Sourate %1$s, Aya %2$d</string>
   <string name="bookmarks_current_page">Page courante</string>
@@ -172,6 +210,8 @@
 
   <!-- downloading dialogs -->
   <string name="download_progress">Téléchargé %1$s / %2$s</string>
+  <string name="download_sura_progress">Téléchargé %1$s / %2$s de la sourate %3$d</string>
+  <string name="download_sura_ayah_progress">Téléchargement de l\'Aya %2$d de la sourate %1$d</string>
   <string name="process_progress">Traitement du fichier %1$d / %2$d</string>
   <string name="download_retry">Réessayer</string>
   <string name="download_cancel">Annuler</string>
@@ -200,10 +240,15 @@
   <string name="play_from">Depuis</string>
   <string name="play_to">À</string>
   <string name="play_restrict_range">Écouter uniquement les Ayāt sélectionnés</string>
+  <string name="play_verses_range">Écouter la selection de Ayāt :</string>
+  <string name="play_each_verse">Écouter chaque Aya :</string>
   <string name="play_apply">Appliquer</string>
   <string name="play_apply_and_play">Appliquer et Écouter</string>
+  <string name="previous">Précédant</string>
   <string name="play">Écouter</string>
+  <string name="pause">Pause</string>
   <string name="stop">Stopper</string>
+  <string name="next">Suivant</string>
 
   <string-array name="repeatValues">
       <item>1 fois</item>
@@ -245,6 +290,12 @@
     <item quantity="one">résultat pour \"%1$s\": </item>
     <item quantity="other">%2$d résultats pour \"%1$s\": </item>
   </plurals>
+  <string name="undo">Annuler</string>
 
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Quran demande la permission de stocker ses données sur un stockage externe. Quran continuera de fonctionner sans cette permission, mais si vous effacez les données, ou désintallez l\'application, toutes les pages téléchargées, les audios, et les données seront supprimés. Accorder la permission à Quran ?</string>
+  <string name="storage_permission_please_restart">Redémarrez l\'application pour que les changements prennent effet.</string>
 
+  <!-- audio manager -->
+  <string name="audio_manager">Gestionnaire audio</string>
 </resources>

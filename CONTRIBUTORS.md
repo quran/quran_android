@@ -3,7 +3,7 @@ quran android contributors
 
 ### code
 
-* [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio 
+* [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio
     and work on the Naskh version
 * [g360230](https://github.com/g360230) - images and work on the Qaloon
     version
@@ -23,11 +23,12 @@ quran android contributors
 
 * Farsi for version 2.0 by [M. Jafar Nakar](https://github.com/mjnanakar).
 * Farsi for version 1.6 by [khajavi](http://github.com/khajavi).
-* Turkish by Mehmed Mahmudoglu. 
+* Turkish by Mehmed Mahmudoglu.
 * Turkish updates by [Shuhrat Dehkanov](http://github.com/ozbek).
 * Russian by Rinat [Ринат Валеев](https://github.com/Valey).
 * Kurdish by [Goran Gharib Karim](https://github.com/GorranKurd).
 * French by Yasser [yasserkad](http://github.com/yasserkad).
+* French updates by [Abdullah ibn Nadjo](https://github.com/abdullahibnnadjo).
 * German by [Armin Supuk](http://github.com/ArminSupuk).
 * Chinese by [Bo Li](http://twitter.com/liboat).
 * Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran).
