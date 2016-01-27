@@ -61,7 +61,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.NotificationCompat;
@@ -186,7 +185,6 @@ public class AudioService extends Service implements OnCompletionListener,
   // as text as well if the user expands the notification area).
   final int NOTIFICATION_ID = 4;
 
-  private AudioManager mAudioManager;
   private NotificationManager mNotificationManager;
 
   // TODO: Merge these builders into one
@@ -194,7 +192,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private NotificationCompat.Builder mPausedNotificationBuilder;
 
   private LocalBroadcastManager mBroadcastManager = null;
-  @Nullable private MediaSessionCompat mMediaSession;
+  private MediaSessionCompat mMediaSession;
 
   private int mGaplessSura = 0;
   private int mNotificationColor;
@@ -266,7 +264,6 @@ public class AudioService extends Service implements OnCompletionListener,
     mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
         .createWifiLock(WifiManager.WIFI_MODE_FULL, "QuranAudioLock");
     mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
     // create the Audio Focus Helper, if the Audio Focus feature is available
     final Context appContext = getApplicationContext();
@@ -280,19 +277,7 @@ public class AudioService extends Service implements OnCompletionListener,
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
 
     ComponentName receiver = new ComponentName(this, AudioIntentReceiver.class);
-    try {
-      mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession", receiver, null);
-    } catch (IllegalArgumentException iae) {
-      // see https://code.google.com/p/android/issues/detail?id=199537
-      mMediaSession = null;
-      try {
-        Crashlytics.log("Component enabled setting: " +
-            getPackageManager().getComponentEnabledSetting(receiver));
-      } catch (Exception e) {
-        Crashlytics.logException(e);
-      }
-      Crashlytics.logException(iae);
-    }
+    mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession", receiver, null);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       mNotificationColor = getResources().getColor(R.color.audio_notification_color, null);
@@ -1114,14 +1099,11 @@ public class AudioService extends Service implements OnCompletionListener,
           .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
           .setShowWhen(false)
           .setWhen(0) // older platforms seem to ignore setShowWhen(false)
-          .setLargeIcon(mNotificationIcon);
-    }
-
-    if (mMediaSession != null) {
-      mNotificationBuilder.setStyle(
-          new NotificationCompat.MediaStyle()
-              .setShowActionsInCompactView(0, 1, 2)
-              .setMediaSession(mMediaSession.getSessionToken()));
+          .setLargeIcon(mNotificationIcon)
+          .setStyle(
+              new NotificationCompat.MediaStyle()
+                  .setShowActionsInCompactView(0, 1, 2)
+                  .setMediaSession(mMediaSession.getSessionToken()));
     }
 
     mNotificationBuilder.setTicker(audioTitle);
@@ -1140,14 +1122,11 @@ public class AudioService extends Service implements OnCompletionListener,
           .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
           .setShowWhen(false)
           .setWhen(0)
-          .setLargeIcon(mNotificationIcon);
-    }
-
-    if (mMediaSession != null) {
-      mPausedNotificationBuilder.setStyle(
-          new NotificationCompat.MediaStyle()
-              .setShowActionsInCompactView(0, 1)
-              .setMediaSession(mMediaSession.getSessionToken()));
+          .setLargeIcon(mNotificationIcon)
+          .setStyle(
+              new NotificationCompat.MediaStyle()
+                  .setShowActionsInCompactView(0, 1)
+                  .setMediaSession(mMediaSession.getSessionToken()));
     }
 
     mPausedNotificationBuilder.setContentText(audioTitle);
