@@ -82,26 +82,26 @@
     <string name="help_title">Frequently Asked Questions</string>
     <string name="help">
         &lt;b>How do I play audio?&lt;/b>
-        &lt;br/>Open any Quran page.  Tap on the screen once.  At the bottom, you will notice
-        a play button and some text with the name of a qari.  Click the name of the qari to
-        choose a different qari.  Click play to download and play the current page or sura.
+        &lt;br/>Open any Quran page. Tap on the screen once. At the bottom, you will notice
+        a play button and some text with the name of a qari. Click the name of the qari to
+        choose a different qari. Click play to download and play the current page or sura.
         &lt;br/>
         &lt;br/>&lt;b>How do I view translation?&lt;/b>
-        &lt;br/>Open any Quran page.  Tap on the screen once.  In the top, you will notice a
+        &lt;br/>Open any Quran page. Tap on the screen once. In the top, you will notice a
         globe icon (or, if you don\'t see it, click an icon with three square dots) - click
         this and choose translation to view the translation.
         &lt;br/>
         If you do not have any translations downloaded, it will take
-        you to a screen where you can download translations.  Choose and download a translation,
+        you to a screen where you can download translations. Choose and download a translation,
         then return back and tap the globe icon again to view the translation.
         &lt;br/>
         &lt;br/>&lt;b>How do I bookmark a page?&lt;/b>
-        &lt;br/>Open any Quran page.  Tap on the screen once.  In the top right, you will see a
-        bookmark icon.  Tap the bookmark icon to bookmark the page (the color will turn solid white).  Tap the bookmark icon
+        &lt;br/>Open any Quran page. Tap on the screen once. In the top right, you will see a
+        bookmark icon. Tap the bookmark icon to bookmark the page (the color will turn solid white). Tap the bookmark icon
         again to remove the bookmark.
         &lt;br/>
         &lt;br/>&lt;b>How do I make the text larger?&lt;/b>
-        &lt;br/>For the Arabic pages, hold your phone in landscape.  This makes the text larger.
+        &lt;br/>For the Arabic pages, hold your phone in landscape. This makes the text larger.
         For translations, go to settings and set translation text size.
         &lt;br/>
         &lt;br/>&lt;b>How do I share an ayah?&lt;/b>
@@ -138,7 +138,7 @@
     <string name="no_results">No results found for \"%s\"</string>
     <string name="no_active_translation">You have no active translation set. Please set an active translation first and then search again.</string>
     <string name="translation_settings">Translation Settings</string>
-    <string name="no_arabic_search_available">You have not downloaded the Arabic search pack.  Please download it and try your search again.</string>
+    <string name="no_arabic_search_available">You have not downloaded the Arabic search pack. Please download it and try your search again.</string>
     <string name="get_arabic_search_db">Get Arabic Search Database</string>
 
     <!-- Quran Preference Activity -->
@@ -148,18 +148,18 @@
     <string name="prefs_category_reading">Reading Preferences</string>
     <string name="prefs_category_translation">Translation Preferences</string>
     <string name="prefs_category_display_settings">Display Settings</string>
-    <string name="prefs_use_arabic_title">Arabic Mode</string>
-    <string name="prefs_use_arabic_summary_on">Application will be localized to Arabic</string>
+    <string name="prefs_use_arabic_title">Arabic mode</string>
+    <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
     <string name="prefs_new_background_title">New background</string>
     <string name="prefs_lock_orientation_title">Lock screen orientation</string>
-    <string name="prefs_lock_orientation_summary_on">Quran page will be in fixed orientation mode</string>
+    <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
     <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
     <string name="prefs_landscape_orientation_title">Landscape orientation</string>
-    <string name="prefs_landscape_orientation_summary_on">Landscape orientation will be used</string>
-    <string name="prefs_landscape_orientation_summary_off">Portrait orientation will be used</string>
+    <string name="prefs_landscape_orientation_summary_on">Always use landscape mode</string>
+    <string name="prefs_landscape_orientation_summary_off">Always use portrait mode</string>
     <string name="prefs_night_mode_title">Night mode</string>
-    <string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
-    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
+    <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
+    <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
     <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
     <string name="prefs_overlay_page_info_title">Show page info</string>
     <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
@@ -170,25 +170,25 @@
     <string name="prefs_translation_text_title">Translation text size</string>
     <string name="prefs_translations">Translations</string>
     <string name="prefs_translations_summary">Download and manage translations</string>
-    <string name="prefs_ayah_before_translation_title">Ayah before Translation</string>
+    <string name="prefs_ayah_before_translation_title">Ayah before translation</string>
     <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
     <string name="prefs_category_download">Download Options</string>
     <string name="prefs_streaming_title">Streaming</string>
-    <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only).</string>
-    <string name="prefs_download_amount_title">Download Amount</string>
-    <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio.</string>
-    <string name="prefs_audio_manager">Audio Manager (experimental)</string>
-    <string name="prefs_audio_manager_summary">Manage and download quranic audio.</string>
+    <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only)</string>
+    <string name="prefs_download_amount_title">Download amount</string>
+    <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
+    <string name="prefs_audio_manager">Audio manager (experimental)</string>
+    <string name="prefs_audio_manager_summary">Manage and download Quranic audio</string>
     <string name="downloaded_translations">Downloaded</string>
-    <string name="available_translations">Available for Download</string>
+    <string name="available_translations">Available for download</string>
     <string name="remove_button">Remove</string>
     <string name="dialog_ok">OK</string>
-    <string name="prefs_app_location_title">Quran Data Directory</string>
-    <string name="prefs_app_location_summary">Choose where to store Quran files.</string>
-    <string name="prefs_send_logs_title">Send Logs</string>
-    <string name="prefs_send_logs_summary">Send debug logs to the developer.</string>
-    <string name="prefs_sdcard_internal">Internal Storage</string>
-    <string name="prefs_sdcard_external">External SD Card %1$d</string>
+    <string name="prefs_app_location_title">Quran data directory</string>
+    <string name="prefs_app_location_summary">Choose where to store Quran files</string>
+    <string name="prefs_send_logs_title">Send logs</string>
+    <string name="prefs_send_logs_summary">Send debug logs to the developer</string>
+    <string name="prefs_sdcard_internal">Internal storage</string>
+    <string name="prefs_sdcard_external">External SD card %1$d</string>
     <string name="prefs_app_size">Current data size is</string>
     <string name="prefs_calculating_app_size">Calculating App Size</string>
     <string name="prefs_copying_app_files">Copying App files</string>
@@ -201,7 +201,7 @@
     <string name="prefs_tablet_mode_disabled">In landscape, only one page will appear.</string>
     <string name="prefs_category_advanced">Advanced Options</string>
     <string name="prefs_export_title">Export</string>
-    <string name="prefs_export_summary">Export a copy of bookmarks and tags.</string>
+    <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
 
     <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
     <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
@@ -212,7 +212,7 @@
     <string name="export_data_error">Error exporting data.</string>
     <string name="exported_data">Data exported to %1$s.</string>
 
-    <string name="logs_email">quranandroid+logs@gmail.com</string>
+    <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
     <string name="warning">Warning</string>
     <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran
@@ -223,7 +223,7 @@
 
     <!-- translation updates -->
     <string name="update_available">Update Available</string>
-    <string name="translation_updates_available">An update is available for some of your translations.  Visit the translations screen now?</string>
+    <string name="translation_updates_available">An update is available for some of your translations. Visit the translations screen now?</string>
     <string name="translation_dialog_yes">Yes</string>
     <string name="translation_dialog_later">Later</string>
 
@@ -262,7 +262,7 @@
     <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
     <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
     <string name="notification_download_canceled">Download canceled</string>
-    <string name="download_non_wifi_prompt">You are not on Wi-Fi.  Download data anyway?</string>
+    <string name="download_non_wifi_prompt">You are not on Wi-Fi. Download data anyway?</string>
 
     <!-- downloading dialogs -->
     <string name="download_progress">Downloaded %1$s / %2$s</string>
@@ -271,12 +271,12 @@
     <string name="process_progress">Processing file %1$d / %2$d</string>
     <string name="download_retry">Retry</string>
     <string name="download_cancel">Cancel</string>
-    <string name="download_extra_data">We need to download one or two small files to support sharing and translation.  Download now?</string>
+    <string name="download_extra_data">We need to download one or two small files to support sharing and translation. Download now?</string>
 
     <!-- translation database stuff -->
     <string name="remove_dlg_title">Remove Translation?</string>
     <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
-    <string name="error_getting_translation_list">Unable to download the list of translations.  Please try again later.</string>
+    <string name="error_getting_translation_list">Unable to download the list of translations. Please try again later.</string>
     <string name="search_data">Search Data</string>
     <string name="need_translation">You don\'t have any translations/tafaseer downloaded yet.</string>
     <string name="get_translations">Get Translations</string>
