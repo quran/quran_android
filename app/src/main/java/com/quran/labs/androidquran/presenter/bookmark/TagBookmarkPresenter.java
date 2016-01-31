@@ -6,13 +6,14 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 
-import android.content.Context;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -20,8 +21,8 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
+@Singleton
 public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
-  private static TagBookmarkPresenter sInstance;
 
   private BookmarkModel mBookmarkModel;
   private TagBookmarkDialog mDialog;
@@ -35,15 +36,9 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   private boolean mShouldRefreshTags;
   private HashSet<Long> mCheckedTags = new HashSet<>();
 
-  public synchronized static TagBookmarkPresenter getInstance(Context context) {
-    if (sInstance == null) {
-      sInstance = new TagBookmarkPresenter(context);
-    }
-    return sInstance;
-  }
-
-  private TagBookmarkPresenter(Context context) {
-    mBookmarkModel = BookmarkModel.getInstance(context);
+  @Inject
+  public TagBookmarkPresenter(BookmarkModel bookmarkModel) {
+    mBookmarkModel = bookmarkModel;
     mBookmarkModel.tagsObservable()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Tag>() {
@@ -59,11 +54,6 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
             }
           }
         });
-  }
-
-  @VisibleForTesting
-  TagBookmarkPresenter(BookmarkModel model) {
-    mBookmarkModel = model;
   }
 
   public void setBookmarksMode(long[] bookmarkIds) {

@@ -5,13 +5,14 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 
-import android.content.Context;
+import javax.inject.Inject;
 
 public class AddTagDialogPresenter implements Presenter<AddTagDialog> {
   private BookmarkModel mBookmarkModel;
 
-  public AddTagDialogPresenter(Context context) {
-    mBookmarkModel = BookmarkModel.getInstance(context);
+  @Inject
+  public AddTagDialogPresenter(BookmarkModel bookmarkModel) {
+    mBookmarkModel = bookmarkModel;
   }
 
   public void addTag(String tagName) {

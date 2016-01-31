@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import javax.inject.Inject;
+
 public class AddTagDialog extends DialogFragment {
 
   public static final String TAG = "AddTagDialog";
@@ -23,7 +26,7 @@ public class AddTagDialog extends DialogFragment {
   private static final String EXTRA_ID = "id";
   private static final String EXTRA_NAME = "name";
 
-  private AddTagDialogPresenter mAddTagDialogPresenter;
+  @Inject AddTagDialogPresenter mAddTagDialogPresenter;
 
   public static AddTagDialog newInstance(long id, String name) {
     final Bundle args = new Bundle();
@@ -40,7 +43,7 @@ public class AddTagDialog extends DialogFragment {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    mAddTagDialogPresenter = new AddTagDialogPresenter(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
   }
 
   @Override

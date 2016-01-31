@@ -100,6 +100,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -187,7 +189,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private SuraAyah mStart;
   private SuraAyah mEnd;
 
-  private BookmarkModel mBookmarkModel;
+  @Inject BookmarkModel mBookmarkModel;
   private CompositeSubscription mCompositeSubscription;
 
   private final PagerHandler mHandler = new PagerHandler(this);
@@ -216,8 +218,13 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    ((QuranApplication) getApplication()).refreshLocale(this, false);
+    QuranApplication quranApp = (QuranApplication) getApplication();
+    quranApp.refreshLocale(this, false);
     super.onCreate(savedInstanceState);
+
+    // field injection
+    quranApp.getApplicationComponent().inject(this);
+
     mBookmarksCache = new SparseBooleanArray();
 
     boolean refresh = false;
@@ -284,7 +291,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     mSettings = QuranSettings.getInstance(this);
-    mBookmarkModel = BookmarkModel.getInstance(this);
     mCompositeSubscription = new CompositeSubscription();
 
     // subscribe to changes in bookmarks
@@ -1953,7 +1959,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void updateToolbarPosition(final SuraAyah start, AyahTracker tracker) {
-    Subscription subscription = BookmarkModel.getInstance(this)
+    Subscription subscription = mBookmarkModel
         .getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Boolean>() {

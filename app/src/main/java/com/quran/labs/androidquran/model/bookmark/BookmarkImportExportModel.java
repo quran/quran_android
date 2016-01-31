@@ -11,6 +11,8 @@ import android.support.v4.content.FileProvider;
 import java.io.File;
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
@@ -26,11 +28,7 @@ public class BookmarkImportExportModel {
   private final BookmarkJsonModel jsonModel;
   private final BookmarkModel bookmarkModel;
 
-  public BookmarkImportExportModel(Context context) {
-    this(context.getApplicationContext(),
-        new BookmarkJsonModel(), BookmarkModel.getInstance(context));
-  }
-
+  @Inject
   public BookmarkImportExportModel(Context appContext,
       BookmarkJsonModel model, BookmarkModel bookmarkModel) {
     this.appContext = appContext;

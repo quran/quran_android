@@ -14,16 +14,19 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 public class QuranImportActivity extends AppCompatActivity implements
     ActivityCompat.OnRequestPermissionsResultCallback {
   private AlertDialog mDialog;
-  private QuranImportPresenter mPresenter;
+  @Inject QuranImportPresenter mPresenter;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
-    ((QuranApplication) getApplication()).refreshLocale(this, false);
+    QuranApplication quranApp = ((QuranApplication) getApplication());
+    quranApp.refreshLocale(this, false);
     super.onCreate(savedInstanceState);
-    mPresenter = QuranImportPresenter.getInstance(this);
+    quranApp.getApplicationComponent().inject(this);
     Answers.getInstance().logCustom(new CustomEvent("importData"));
   }
 

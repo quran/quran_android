@@ -6,14 +6,15 @@ import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
-import android.content.Context;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import rx.Observable;
 import rx.functions.Func1;
@@ -22,26 +23,13 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
+@Singleton
 public class BookmarkModel {
-  private static BookmarkModel sInstance;
   private final BookmarksDBAdapter mBookmarksDBAdapter;
   private final Subject<Tag, Tag> mTagPublishSubject;
   private final Subject<Void, Void> mBookmarksPublishSubject;
 
-  public static synchronized BookmarkModel getInstance(Context context) {
-    if (sInstance == null) {
-      sInstance = new BookmarkModel(context);
-    }
-    return sInstance;
-  }
-
-  private BookmarkModel(Context context) {
-    mBookmarksDBAdapter = new BookmarksDBAdapter(context);
-    mTagPublishSubject = PublishSubject.<Tag>create().toSerialized();
-    mBookmarksPublishSubject = PublishSubject.<Void>create().toSerialized();
-  }
-
-  @VisibleForTesting
+  @Inject
   public BookmarkModel(BookmarksDBAdapter adapter) {
     mBookmarksDBAdapter = adapter;
     mTagPublishSubject = PublishSubject.<Tag>create().toSerialized();
