@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import okio.BufferedSource;
 import okio.Okio;
 import rx.Observable;
@@ -33,10 +36,9 @@ import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+@Singleton
 public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private static final int REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1;
-
-  private static QuranImportPresenter sInstance;
 
   private final Context mAppContext;
   private final BookmarkImportExportModel mBookmarkImportExportModel;
@@ -45,22 +47,10 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private Observable<Boolean> mImportObservable;
   private QuranImportActivity mCurrentActivity;
 
-  public static synchronized QuranImportPresenter getInstance(Context context) {
-    if (sInstance == null) {
-      sInstance = new QuranImportPresenter(context);
-    }
-    return sInstance;
-  }
-
-  private QuranImportPresenter(Context context) {
-    mAppContext = context.getApplicationContext();
-    mBookmarkImportExportModel = new BookmarkImportExportModel(mAppContext);
-  }
-
-  @VisibleForTesting
-  QuranImportPresenter(Context appContext, BookmarkImportExportModel bookmarkImportExportModel) {
+  @Inject
+  public QuranImportPresenter(Context appContext, BookmarkImportExportModel model) {
     mAppContext = appContext;
-    mBookmarkImportExportModel = bookmarkImportExportModel;
+    mBookmarkImportExportModel = model;
   }
 
   public void handleIntent(Intent intent) {

@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -42,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -66,6 +69,8 @@ public class QuranSettingsFragment extends PreferenceFragment implements
   private Subscription mExportSubscription = null;
   private Subscription mLogsSubscription;
 
+  @Inject BookmarkImportExportModel bookmarkImportExportModel;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -73,6 +78,10 @@ public class QuranSettingsFragment extends PreferenceFragment implements
 
     final Context context = getActivity();
     mAppContext = context.getApplicationContext();
+
+    // field injection
+    ((QuranApplication) mAppContext).getApplicationComponent().inject(this);
+
     // remove the tablet mode preference if it doesn't exist
     if (!QuranScreenInfo.getOrMakeInstance(context).isTablet(context)) {
       Preference tabletModePreference =
@@ -158,9 +167,8 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     exportPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override
       public boolean onPreferenceClick(Preference preference) {
-        BookmarkImportExportModel model = new BookmarkImportExportModel(getActivity());
         if (mExportSubscription == null) {
-          mExportSubscription = model.exportBookmarksObservable()
+          mExportSubscription = bookmarkImportExportModel.exportBookmarksObservable()
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Subscriber<Uri>() {
                 @Override

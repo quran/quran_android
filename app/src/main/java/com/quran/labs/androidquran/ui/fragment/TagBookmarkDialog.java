@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -29,13 +30,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class TagBookmarkDialog extends DialogFragment {
 
   public static final String TAG = "TagBookmarkDialog";
   private static final String EXTRA_BOOKMARK_IDS = "bookmark_ids";
 
   private TagsAdapter mAdapter;
-  private TagBookmarkPresenter mTagBookmarkPresenter;
+  @Inject TagBookmarkPresenter mTagBookmarkPresenter;
 
 
   public static TagBookmarkDialog newInstance(long bookmarkId) {
@@ -56,7 +59,7 @@ public class TagBookmarkDialog extends DialogFragment {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    mTagBookmarkPresenter = TagBookmarkPresenter.getInstance(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
   }
 
   public void updateAyah(SuraAyah suraAyah) {

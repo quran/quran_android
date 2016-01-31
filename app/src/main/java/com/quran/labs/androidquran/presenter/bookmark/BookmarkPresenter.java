@@ -30,6 +30,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,11 +41,10 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
+@Singleton
 public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;
-
-  private static BookmarkPresenter sInstance;
 
   private final Context mAppContext;
   private final BookmarkModel mBookmarkModel;
@@ -58,21 +60,15 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private Subscription mPendingRemoval;
   private List<QuranRow> mItemsToRemove;
 
-  public synchronized static BookmarkPresenter getInstance(Context context) {
-    if (sInstance == null) {
-      sInstance = new BookmarkPresenter(context);
-    }
-    return sInstance;
-  }
-
-  private BookmarkPresenter(Context context) {
-    mAppContext = context.getApplicationContext();
-    mQuranSettings = QuranSettings.getInstance(context);
-    mBookmarkModel = BookmarkModel.getInstance(context);
+  @Inject
+  public BookmarkPresenter(Context appContext, BookmarkModel bookmarkModel) {
+    mAppContext = appContext;
+    mQuranSettings = QuranSettings.getInstance(appContext);
+    mBookmarkModel = bookmarkModel;
     mSortOrder = mQuranSettings.getBookmarksSortOrder();
     mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
     try {
-      mArabicDatabaseUtils = ArabicDatabaseUtils.getInstance(context);
+      mArabicDatabaseUtils = ArabicDatabaseUtils.getInstance(appContext);
     } catch (Exception e) {
       mArabicDatabaseUtils = null;
     }

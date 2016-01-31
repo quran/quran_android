@@ -1,6 +1,9 @@
 package com.quran.labs.androidquran;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.component.ApplicationComponent;
+import com.quran.labs.androidquran.component.DaggerApplicationComponent;
+import com.quran.labs.androidquran.module.ApplicationModule;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.RecordingLogTree;
 
@@ -17,12 +20,24 @@ import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class QuranApplication extends Application {
+  private ApplicationComponent applicationComponent;
 
   @Override
   public void onCreate() {
     super.onCreate();
     Fabric.with(this, new Crashlytics());
     Timber.plant(new RecordingLogTree());
+    initializeInjector();
+  }
+
+  private void initializeInjector() {
+    this.applicationComponent = DaggerApplicationComponent.builder()
+        .applicationModule(new ApplicationModule(this))
+        .build();
+  }
+
+  public ApplicationComponent getApplicationComponent() {
+    return this.applicationComponent;
   }
 
   public void refreshLocale(@NonNull Context context, boolean force) {
