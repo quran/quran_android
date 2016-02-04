@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.module;
 
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.squareup.okhttp.OkHttpClient;
 
 import android.app.Application;
 import android.content.Context;
@@ -12,6 +11,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 
 @Module
 public class ApplicationModule {
@@ -39,9 +39,9 @@ public class ApplicationModule {
   @Provides
   @Singleton
   OkHttpClient provideOkHttpClient() {
-    OkHttpClient client = new OkHttpClient();
-    client.setReadTimeout(DEFAULT_READ_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-    client.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-    return client;
+    return new OkHttpClient.Builder()
+        .readTimeout(DEFAULT_READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .connectTimeout(DEFAULT_CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .build();
   }
 }

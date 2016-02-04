@@ -3,9 +3,6 @@ package com.quran.labs.androidquran.util;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
@@ -232,7 +232,7 @@ public class QuranFileUtils {
 
     InputStream stream = null;
     try {
-      final com.squareup.okhttp.Response response = call.execute();
+      final okhttp3.Response response = call.execute();
       if (response.isSuccessful()) {
         stream = response.body().byteStream();
         final Bitmap bitmap = decodeBitmapStream(stream);

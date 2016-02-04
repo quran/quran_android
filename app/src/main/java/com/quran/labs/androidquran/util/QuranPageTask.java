@@ -6,7 +6,6 @@ import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.squareup.okhttp.OkHttpClient;
 
 import android.content.Context;
 import android.os.Process;
@@ -15,6 +14,8 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
+
+import okhttp3.OkHttpClient;
 
 public class QuranPageTask implements Runnable {
   private static final String TAG = "QuranPageTask";
