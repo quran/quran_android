@@ -1,25 +1,28 @@
 package com.quran.labs.androidquran.task;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.text.TextUtils;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.QuranAppUtils;
 
-public class ShareQuranAppTask extends PagerActivityTask<Void, Void, String> {
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.text.TextUtils;
+
+import java.lang.ref.WeakReference;
+
+public class ShareQuranAppTask extends AsyncTask<Void, Void, String> {
   private SuraAyah start;
   private SuraAyah end;
   private String mKey;
 
   private ProgressDialog mProgressDialog;
+  private WeakReference<PagerActivity> mActivity;
 
   public ShareQuranAppTask(PagerActivity activity, SuraAyah start, SuraAyah end) {
-    super(activity);
+    mActivity = new WeakReference<>(activity);
     this.start = start;
     this.end = end;
   }
@@ -27,8 +30,9 @@ public class ShareQuranAppTask extends PagerActivityTask<Void, Void, String> {
   @Override
   protected void onPreExecute() {
     super.onPreExecute();
-    Activity activity = getActivity();
+    PagerActivity activity = mActivity.get();
     if (activity != null){
+      activity.registerTask(this);
       mKey = activity.getString(R.string.quranapp_key);
       mProgressDialog = new ProgressDialog(activity);
       mProgressDialog.setIndeterminate(true);
@@ -54,13 +58,16 @@ public class ShareQuranAppTask extends PagerActivityTask<Void, Void, String> {
     super.onPostExecute(url);
     dismissProgressDialog();
 
-    Activity activity = getActivity();
-    if (activity != null && !TextUtils.isEmpty(url)){
-      Intent intent = new Intent(Intent.ACTION_SEND);
-      intent.setType("text/plain");
-      intent.putExtra(Intent.EXTRA_TEXT, url);
-      activity.startActivity(Intent.createChooser(intent,
-          activity.getString(R.string.share_ayah)));
+    PagerActivity activity = mActivity.get();
+    if (activity != null) {
+      if (!TextUtils.isEmpty(url)) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, url);
+        activity.startActivity(Intent.createChooser(intent,
+            activity.getString(R.string.share_ayah)));
+      }
+      activity.unregisterTask(this);
     }
   }
 

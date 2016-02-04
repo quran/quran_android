@@ -66,7 +66,7 @@ public class TranslationListTask extends
       pw.write(response);
       pw.close();
     } catch (Exception e) {
-      Timber.e("failed to cache response", e);
+      Timber.e(e, "failed to cache response");
     }
   }
 
@@ -85,7 +85,7 @@ public class TranslationListTask extends
         br.close();
       }
     } catch (Exception e) {
-      Timber.e("failed reading cached response", e);
+      Timber.e(e, "failed reading cached response");
     }
     return response;
   }
@@ -182,7 +182,7 @@ public class TranslationListTask extends
                 item.localVersion = mHandler.getTextVersion();
               }
             } catch (Exception e) {
-              Timber.d("exception opening database: " + name, e);
+              Timber.d(e, "exception opening database: %s", name);
             }
           } else {
             needsUpdate = true;
@@ -196,9 +196,8 @@ public class TranslationListTask extends
         }
 
         if (item.exists) {
-          Timber.d("found: " + name + " with " +
-              item.localVersion + " vs server's " +
-              item.latestVersion);
+          Timber.d("found: %s with %d vs server's %d", name,
+              item.localVersion == null ? -1 : item.localVersion, item.latestVersion);
         }
         items.add(item);
       }
@@ -213,7 +212,7 @@ public class TranslationListTask extends
       }
       adapter.close();
     } catch (JSONException je) {
-      Timber.d("error parsing json: " + je);
+      Timber.d(je, "error parsing json");
     }
 
     return items;
@@ -254,7 +253,7 @@ public class TranslationListTask extends
 
       return result;
     } catch (Exception e) {
-      Timber.d("error downloading translation data: " + e);
+      Timber.d(e, "error downloading translation data");
     }
 
     return null;
