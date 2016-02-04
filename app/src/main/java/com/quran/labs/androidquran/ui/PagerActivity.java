@@ -24,7 +24,6 @@ import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.service.util.StreamingAudioRequest;
-import com.quran.labs.androidquran.task.AsyncTask;
 import com.quran.labs.androidquran.task.ShareQuranAppTask;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
@@ -64,6 +63,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -875,7 +875,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (!mCurrentTasks.isEmpty()) {
       // Use a copy to avoid concurrent modification when calling cancel
       // since cancel causes the task to remove itself from this set
-      List<AsyncTask> currentTasks = new ArrayList<AsyncTask>(mCurrentTasks);
+      List<AsyncTask> currentTasks = new ArrayList<>(mCurrentTasks);
       for (AsyncTask task : currentTasks) {
         task.cancel(true);
       }
