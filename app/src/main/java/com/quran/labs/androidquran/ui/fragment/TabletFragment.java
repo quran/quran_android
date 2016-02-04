@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
@@ -44,6 +45,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -72,10 +75,11 @@ public class TabletFragment extends Fragment
   private TranslationView mLeftTranslation, mRightTranslation = null;
   private HighlightingImageView mLeftImageView, mRightImageView = null;
   private QuranSettings mQuranSettings;
-  private BookmarkModel mBookmarkModel;
   private CompositeSubscription mCompositeSubscription;
 
   private TabletView mMainView;
+
+  @Inject BookmarkModel mBookmarkModel;
 
   private Future<?> mLeftPageLoadTask;
   private Future<?> mRightPageLoadTask;
@@ -138,7 +142,6 @@ public class TabletFragment extends Fragment
           });
       mMainView.setPageController(null, mPageNumber, mPageNumber - 1);
     }
-    mBookmarkModel = BookmarkModel.getInstance(context);
 
     updateView();
     mJustCreated = true;
@@ -177,6 +180,7 @@ public class TabletFragment extends Fragment
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+    ((QuranApplication) (context.getApplicationContext())).getApplicationComponent().inject(this);
     if (context instanceof AyahSelectedListener) {
       mAyahSelectedListener = (AyahSelectedListener) context;
     }

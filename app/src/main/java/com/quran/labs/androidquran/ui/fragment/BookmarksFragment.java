@@ -1,11 +1,12 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
-import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
@@ -28,12 +29,15 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class BookmarksFragment extends Fragment implements QuranListAdapter.QuranTouchListener {
 
   private QuranListAdapter mBookmarksAdapter;
-  private BookmarkPresenter mBookmarkPresenter;
   private RecyclerView mRecyclerView;
   private BookmarksContextualModePresenter mBookmarksContextualModePresenter;
+
+  @Inject BookmarkPresenter mBookmarkPresenter;
 
   public static BookmarksFragment newInstance(){
     return new BookmarksFragment();
@@ -42,7 +46,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    mBookmarkPresenter = BookmarkPresenter.getInstance(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
     mBookmarksContextualModePresenter = BookmarksContextualModePresenter.getInstance();
     setHasOptionsMenu(true);
   }

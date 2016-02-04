@@ -6,12 +6,15 @@ import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import okio.BufferedSink;
 import okio.BufferedSource;
 
 public class BookmarkJsonModel {
   private final JsonAdapter<BookmarkData> jsonAdapter;
 
+  @Inject
   public BookmarkJsonModel() {
     Moshi moshi = new Moshi.Builder().build();
     jsonAdapter = moshi.adapter(BookmarkData.class);

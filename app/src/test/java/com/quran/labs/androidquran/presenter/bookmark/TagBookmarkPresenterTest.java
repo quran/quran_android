@@ -51,6 +51,7 @@ public class TagBookmarkPresenterTest {
 
     List<Tag> tags = new ArrayList<>();
     tags.add(new Tag(1, "Test"));
+    when(bookmarkModel.tagsObservable()).thenReturn(Observable.<Tag>empty());
     when(bookmarkModel.getTagsObservable()).thenReturn(Observable.just(tags));
     when(bookmarkModel.getBookmarkTagIds(Matchers.<Observable<Long>>any()))
         .thenReturn(Observable.<List<Long>>empty());
