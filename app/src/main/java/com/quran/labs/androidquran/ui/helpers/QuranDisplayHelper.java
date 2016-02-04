@@ -5,7 +5,6 @@ import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.squareup.okhttp.OkHttpClient;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -19,6 +18,7 @@ import android.os.Build;
 import android.view.Display;
 import android.widget.Toast;
 
+import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
 public class QuranDisplayHelper {
