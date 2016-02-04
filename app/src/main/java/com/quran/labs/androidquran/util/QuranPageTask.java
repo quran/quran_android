@@ -1,16 +1,20 @@
 package com.quran.labs.androidquran.util;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.squareup.okhttp.OkHttpClient;
 
 import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+
+import javax.inject.Inject;
 
 public class QuranPageTask implements Runnable {
   private static final String TAG = "QuranPageTask";
@@ -20,6 +24,8 @@ public class QuranPageTask implements Runnable {
   private Context mContext;
   private final WeakReference<AyahTracker> mAyahTrackerWeakReference;
 
+  @Inject OkHttpClient okHttpClient;
+
   public QuranPageTask(Context context, String widthParam,
       AyahTracker tracker, int page) {
     mPageNumber = page;
@@ -27,6 +33,7 @@ public class QuranPageTask implements Runnable {
     // use a WeakReference to ensure the AyahTracker can be gc
     mAyahTrackerWeakReference = new WeakReference<>(tracker);
     mContext = context.getApplicationContext();
+    ((QuranApplication) mContext).getApplicationComponent().inject(this);
   }
 
   @Override
@@ -37,8 +44,7 @@ public class QuranPageTask implements Runnable {
     OutOfMemoryError oom = null;
 
     try {
-      response = QuranDisplayHelper.getQuranPage(
-          mContext, mWidthParam, mPageNumber);
+      response = QuranDisplayHelper.getQuranPage(okHttpClient, mContext, mWidthParam, mPageNumber);
     } catch (OutOfMemoryError me){
       Crashlytics.log(Log.WARN, TAG,
           "out of memory exception loading page " +
@@ -56,8 +62,7 @@ public class QuranPageTask implements Runnable {
         if (param.equals(mWidthParam)){
           param = QuranScreenInfo.getInstance().getTabletWidthParam();
         }
-        response = QuranDisplayHelper.getQuranPage(
-            mContext, param, mPageNumber);
+        response = QuranDisplayHelper.getQuranPage(okHttpClient, mContext, param, mPageNumber);
         if (response.getBitmap() == null){
           Crashlytics.log(Log.WARN, TAG,
               "bitmap still null, giving up... [" +

@@ -24,7 +24,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
@@ -46,16 +45,6 @@ public class QuranFileUtils {
   private static final String AUDIO_DIRECTORY = QuranFileConstants.AUDIO_DIRECTORY;
   private static final String AYAHINFO_DIRECTORY = QuranFileConstants.AYAHINFO_DIRECTORY;
   private static final String IMAGES_DIRECTORY = QuranFileConstants.IMAGES_DIRECTORY;
-
-  private static final int DEFAULT_READ_TIMEOUT = 20; // 20s
-  private static final int DEFAULT_CONNECT_TIMEOUT = 15; // 15s
-  private static OkHttpClient sOkHttpClient;
-
-  static {
-    sOkHttpClient = new OkHttpClient();
-    sOkHttpClient.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT, TimeUnit.SECONDS);
-    sOkHttpClient.setReadTimeout(DEFAULT_READ_TIMEOUT, TimeUnit.SECONDS);
-  }
 
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
@@ -219,11 +208,12 @@ public class QuranFileUtils {
         makeDirectory(getQuranAyahDatabaseDirectory(context));
   }
 
-  public static Response getImageFromWeb(Context context, String filename) {
-    return getImageFromWeb(context, filename, false);
+  public static Response getImageFromWeb(OkHttpClient okHttpClient,
+      Context context, String filename) {
+    return getImageFromWeb(okHttpClient, context, filename, false);
   }
 
-  private static Response getImageFromWeb(
+  private static Response getImageFromWeb(OkHttpClient okHttpClient,
       Context context, String filename, boolean isRetry) {
     QuranScreenInfo instance = QuranScreenInfo.getInstance();
     if (instance == null) {
@@ -233,12 +223,12 @@ public class QuranFileUtils {
     String urlString = IMG_BASE_URL + "width"
         + instance.getWidthParam() + "/"
         + filename;
-    Timber.d("want to download: " + urlString);
+    Timber.d("want to download: %s", urlString);
 
     final Request request = new Request.Builder()
         .url(urlString)
         .build();
-    final Call call = sOkHttpClient.newCall(request);
+    final Call call = okHttpClient.newCall(request);
 
     InputStream stream = null;
     try {
@@ -258,13 +248,13 @@ public class QuranFileUtils {
         }
       }
     } catch (IOException ioe) {
-      Timber.e("exception downloading file",ioe);
+      Timber.e(ioe, "exception downloading file");
     } finally {
       closeQuietly(stream);
     }
 
     return isRetry ? new Response(Response.ERROR_DOWNLOADING_ERROR) :
-        getImageFromWeb(context, filename, true);
+        getImageFromWeb(okHttpClient, context, filename, true);
   }
 
   private static Bitmap decodeBitmapStream(InputStream is) {
@@ -516,7 +506,7 @@ public class QuranFileUtils {
         deleteFileOrDirectory(currentDirectory);
         return true;
       } catch (IOException e) {
-        Timber.e("error moving app files",e);
+        Timber.e(e, "error moving app files");
       }
     }
     return false;

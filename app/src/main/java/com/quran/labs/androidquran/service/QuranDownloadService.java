@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.service;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
@@ -35,6 +36,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import okio.BufferedSink;
 import okio.BufferedSource;
@@ -92,7 +95,6 @@ public class QuranDownloadService extends Service implements
   private static final int DOWNLOAD_SUCCESS = 0;
 
   private Looper mServiceLooper;
-  private OkHttpClient mOkHttpClient;
   private ServiceHandler mServiceHandler;
   private QuranDownloadNotifier mNotifier;
 
@@ -105,6 +107,8 @@ public class QuranDownloadService extends Service implements
   private Intent mLastSentIntent = null;
   private Map<String, Boolean> mSuccessfulZippedDownloads = null;
   private Map<String, Intent> mRecentlyFailedDownloads = null;
+
+  @Inject OkHttpClient mOkHttpClient;
 
   private final class ServiceHandler extends Handler {
 
@@ -138,9 +142,8 @@ public class QuranDownloadService extends Service implements
     mRecentlyFailedDownloads = new HashMap<>();
     mQuranSettings = QuranSettings.getInstance(this);
 
-    mBroadcastManager = LocalBroadcastManager.getInstance(
-        getApplicationContext());
-    mOkHttpClient = new OkHttpClient();
+    ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
+    mBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
   }
 
   private void handleOnStartCommand(Intent intent, int startId) {
