@@ -5,6 +5,7 @@ import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.squareup.okhttp.OkHttpClient;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -22,19 +23,17 @@ import timber.log.Timber;
 
 public class QuranDisplayHelper {
 
-  public static Response getQuranPage(Context context,
-      String widthParam, int page) {
+  public static Response getQuranPage(OkHttpClient okHttpClient,
+      Context context, String widthParam, int page) {
     Response response;
-
     String filename = QuranFileUtils.getPageFileName(page);
     response = QuranFileUtils.getImageFromSD(context, widthParam, filename);
     if (!response.isSuccessful()) {
       // let's only try if an sdcard is found... otherwise, let's tell
       // the user to mount their sdcard and try again.
       if (response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND) {
-        Timber.d("failed to get " + page +
-            " with name " + filename + " from sd...");
-        response = QuranFileUtils.getImageFromWeb(context, filename);
+        Timber.d("failed to get %d with name %s from sd...", page, filename);
+        response = QuranFileUtils.getImageFromWeb(okHttpClient, context, filename);
       }
     }
     return response;
@@ -81,8 +80,7 @@ public class QuranDisplayHelper {
     return drawable;
   }
 
-  public static ShapeDrawable.ShaderFactory
-  getShaderFactory(final int startX, final int endX) {
+  public static ShapeDrawable.ShaderFactory getShaderFactory(final int startX, final int endX) {
     return new ShapeDrawable.ShaderFactory() {
 
       @Override
