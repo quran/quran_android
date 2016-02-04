@@ -24,7 +24,6 @@ import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.service.util.StreamingAudioRequest;
-import com.quran.labs.androidquran.task.ShareQuranAppTask;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
@@ -40,6 +39,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QuranAppUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -52,6 +52,7 @@ import com.quran.labs.androidquran.widgets.IconPageIndicator;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -63,7 +64,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,8 +96,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -108,6 +106,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -176,12 +175,11 @@ public class PagerActivity extends QuranActionBarActivity implements
   private Integer mLastPlayingAyah;
   private View mToolBarArea;
   private boolean mPromptedForExtraDownload;
+  private ProgressDialog mProgressDialog;
   private ViewGroup.MarginLayoutParams mAudioBarParams;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
   public static final int MSG_REMOVE_WINDOW_BACKGROUND = 2;
-
-  private Set<AsyncTask> mCurrentTasks = new HashSet<AsyncTask>();
 
   // AYAH ACTION PANEL STUFF
   // Max height of sliding panel (% of screen)
@@ -862,8 +860,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     // remove broadcast receivers
-    LocalBroadcastManager.getInstance(this)
-        .unregisterReceiver(mAudioReceiver);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(mAudioReceiver);
     if (mDownloadReceiver != null) {
       mDownloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this)
@@ -871,27 +868,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       mDownloadReceiver = null;
     }
 
-    // If there are any unfinished tasks, stop them
-    if (!mCurrentTasks.isEmpty()) {
-      // Use a copy to avoid concurrent modification when calling cancel
-      // since cancel causes the task to remove itself from this set
-      List<AsyncTask> currentTasks = new ArrayList<>(mCurrentTasks);
-      for (AsyncTask task : currentTasks) {
-        task.cancel(true);
-      }
-    }
-
     mCompositeSubscription.unsubscribe();
     mHandler.removeCallbacksAndMessages(null);
+    dismissProgressDialog();
     super.onDestroy();
-  }
-
-  public boolean registerTask(AsyncTask task) {
-    return mCurrentTasks.add(task);
-  }
-
-  public boolean unregisterTask(AsyncTask task) {
-    return mCurrentTasks.remove(task);
   }
 
   @Override
@@ -2051,7 +2031,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           sliderPage = mSlidingPagerAdapter.getPagePosition(AUDIO_PAGE);
           break;
         case R.id.cab_share_ayah_link:
-          new ShareQuranAppTask(PagerActivity.this, mStart, mEnd).execute();
+          shareAyahLink(mStart, mEnd);
           break;
         case R.id.cab_share_ayah_text:
           shareAyah(mStart, mEnd, false);
@@ -2095,6 +2075,48 @@ public class PagerActivity extends QuranActionBarActivity implements
                 }
               }
             }));
+  }
+
+  private void shareAyahLink(SuraAyah start, SuraAyah end) {
+    showProgressDialog();
+    mCompositeSubscription.add(
+    QuranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnError(new Action1<Throwable>() {
+          @Override
+          public void call(Throwable throwable) {
+            dismissProgressDialog();
+          }
+        })
+        .doOnCompleted(new Action0() {
+          @Override
+          public void call() {
+            dismissProgressDialog();
+          }
+        })
+        .subscribe(new Action1<String>() {
+          @Override
+          public void call(String url) {
+            ShareUtil.shareViaIntent(PagerActivity.this, url, R.string.share_ayah);
+          }
+        })
+    );
+  }
+
+  private void showProgressDialog() {
+    if (mProgressDialog == null) {
+      mProgressDialog = new ProgressDialog(this);
+      mProgressDialog.setIndeterminate(true);
+      mProgressDialog.setMessage(getString(R.string.index_loading));
+      mProgressDialog.show();
+    }
+  }
+
+  private void dismissProgressDialog() {
+    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+      mProgressDialog.dismiss();
+    }
+    mProgressDialog = null;
   }
 
   private void showSlider(int sliderPage) {
