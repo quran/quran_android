@@ -1,27 +1,46 @@
 package com.quran.labs.androidquran.util;
 
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 
 import org.json.JSONObject;
 
-import java.io.*;
+import android.text.TextUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
+import rx.Observable;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class QuranAppUtils {
 
-  public static String getQuranAppUrl(String key, int sura,
-      Integer startAyah,
-      Integer endAyah) {
+  public static Observable<String> getQuranAppUrlObservable(final String key,
+      final SuraAyah start, final SuraAyah end) {
+    return Observable.fromCallable(new Callable<String>() {
+      @Override
+      public String call() throws Exception {
+        int sura = start.sura;
+        int startAyah = start.ayah;
+        // quranapp only supports sharing within a sura
+        int endAyah = end.sura == start.sura ? end.ayah : QuranInfo.getNumAyahs(start.sura);
+        return QuranAppUtils.getQuranAppUrl(key, sura, startAyah, endAyah);
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
+  public static String getQuranAppUrl(String key, int sura, Integer startAyah, Integer endAyah) {
     String url = null;
     String fallbackUrl = null;
     try {
@@ -45,10 +64,10 @@ public class QuranAppUtils {
         url = json.getString("url");
       }
     } catch (Exception e) {
-      Timber.d("error getting QuranApp url", e);
+      Timber.d(e, "error getting QuranApp url");
     }
 
-    Timber.d("got back " + url + " and fallback " + fallbackUrl);
+    Timber.d("got back %s and fallback %s", url, fallbackUrl);
     return TextUtils.isEmpty(url) ? fallbackUrl : url;
   }
 
@@ -58,6 +77,7 @@ public class QuranAppUtils {
     try {
       url = new URL(Constants.QURAN_APP_ENDPOINT);
     } catch (MalformedURLException me) {
+      // ignore
     }
 
     StringBuilder builder = new StringBuilder();
@@ -76,6 +96,7 @@ public class QuranAppUtils {
     byte[] bytes = body.getBytes();
     HttpURLConnection conn = null;
     try {
+      // TODO: use OkHttp
       conn = (HttpURLConnection) url.openConnection();
       conn.setReadTimeout(10000);
       conn.setConnectTimeout(15000);
@@ -105,6 +126,7 @@ public class QuranAppUtils {
       try {
         reader.close();
       } catch (Exception e) {
+        // ignore
       }
     } finally {
       if (conn != null) {

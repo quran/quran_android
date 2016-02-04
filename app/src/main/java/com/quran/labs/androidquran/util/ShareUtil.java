@@ -9,6 +9,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.StringRes;
 import android.widget.Toast;
 
 import java.util.List;
@@ -26,10 +27,14 @@ public class ShareUtil {
 
   public static void shareVerses(Activity activity, List<QuranAyah> verses) {
     String text = getShareText(activity, verses);
+    shareViaIntent(activity, text, R.string.share_ayah_text);
+  }
+
+  public static void shareViaIntent(Activity activity, String text, @StringRes int titleResId) {
     final Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setType("text/plain");
     intent.putExtra(Intent.EXTRA_TEXT, text);
-    activity.startActivity(Intent.createChooser(intent, activity.getString(R.string.share_ayah)));
+    activity.startActivity(Intent.createChooser(intent, activity.getString(titleResId)));
   }
 
   private static String getShareText(Activity activity, List<QuranAyah> verses) {
