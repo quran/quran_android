@@ -15,6 +15,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
@@ -24,7 +25,6 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.service.util.StreamingAudioRequest;
 import com.quran.labs.androidquran.task.AsyncTask;
-import com.quran.labs.androidquran.task.ShareAyahTask;
 import com.quran.labs.androidquran.task.ShareQuranAppTask;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
@@ -45,6 +45,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.ShareUtil;
 import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
@@ -2053,10 +2054,10 @@ public class PagerActivity extends QuranActionBarActivity implements
           new ShareQuranAppTask(PagerActivity.this, mStart, mEnd).execute();
           break;
         case R.id.cab_share_ayah_text:
-          new ShareAyahTask(PagerActivity.this, mStart, mEnd, false).execute();
+          shareAyah(mStart, mEnd, false);
           break;
         case R.id.cab_copy_ayah:
-          new ShareAyahTask(PagerActivity.this, mStart, mEnd, true).execute();
+          shareAyah(mStart, mEnd, true);
           break;
         default:
           return false;
@@ -2068,6 +2069,32 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
       return true;
     }
+  }
+
+  private void shareAyah(SuraAyah start, SuraAyah end, final boolean isCopy) {
+    if (start == null || end == null) {
+      return;
+    }
+
+    mCompositeSubscription.add(
+        ArabicDatabaseUtils.getInstance(this).getVerses(start, end)
+            .filter(new Func1<List<QuranAyah>, Boolean>() {
+              @Override
+              public Boolean call(List<QuranAyah> quranAyahs) {
+                return quranAyahs.size() > 0;
+              }
+            })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1<List<QuranAyah>>() {
+              @Override
+              public void call(List<QuranAyah> quranAyahs) {
+                if (isCopy) {
+                  ShareUtil.copyVerses(PagerActivity.this, quranAyahs);
+                } else {
+                  ShareUtil.shareVerses(PagerActivity.this, quranAyahs);
+                }
+              }
+            }));
   }
 
   private void showSlider(int sliderPage) {

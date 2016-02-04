@@ -1,19 +1,26 @@
 package com.quran.labs.androidquran.model.translation;
 
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class ArabicDatabaseUtils {
   public static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
@@ -38,6 +45,32 @@ public class ArabicDatabaseUtils {
   @VisibleForTesting
   ArabicDatabaseUtils(DatabaseHandler arabicDatabaseHandler) {
     mArabicDatabaseHandler = arabicDatabaseHandler;
+  }
+
+  @NonNull
+  public Observable<List<QuranAyah>> getVerses(final SuraAyah start, final SuraAyah end) {
+    return Observable.fromCallable(new Callable<List<QuranAyah>>() {
+      @Override
+      public List<QuranAyah> call() throws Exception {
+        List<QuranAyah> verses = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+          cursor = mArabicDatabaseHandler.getVerses(start.sura, start.ayah,
+              end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
+          while (cursor.moveToNext()) {
+            QuranAyah verse = new QuranAyah(cursor.getInt(1), cursor.getInt(2));
+            verse.setText(cursor.getString(3));
+            verses.add(verse);
+          }
+        } catch (Exception e){
+          // no op
+        } finally {
+          DatabaseUtils.closeCursor(cursor);
+        }
+        return verses;
+      }
+    }).subscribeOn(Schedulers.io());
   }
 
   public List<Bookmark> hydrateAyahText(List<Bookmark> bookmarks) {
