@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -43,6 +44,8 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -66,9 +69,10 @@ public class QuranPageFragment extends Fragment
   private boolean mJustCreated;
   private Future<?> mPageLoadTask;
 
+  @Inject BookmarkModel mBookmarkModel;
+
   private HighlightingImageView mImageView;
   private QuranImagePageLayout mQuranPageLayout;
-  private BookmarkModel mBookmarkModel;
   private CompositeSubscription mCompositeSubscription;
   private Handler mHandler = new Handler();
 
@@ -104,7 +108,6 @@ public class QuranPageFragment extends Fragment
     mQuranPageLayout = new QuranImagePageLayout(context);
     mQuranPageLayout.setPageController(this, mPageNumber);
     mImageView = mQuranPageLayout.getImageView();
-    mBookmarkModel = BookmarkModel.getInstance(context);
 
     if (mCoordinatesData != null) {
       mImageView.setCoordinateData(mCoordinatesData);
@@ -135,6 +138,7 @@ public class QuranPageFragment extends Fragment
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
     if (context instanceof AyahSelectedListener) {
       mAyahSelectedListener = (AyahSelectedListener) context;
     }
