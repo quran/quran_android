@@ -99,13 +99,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
@@ -159,7 +163,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private AlertDialog mPromptDialog = null;
   private List<TranslationItem> mTranslations;
   private String[] mTranslationItems;
-  private TranslationReaderTask mTranslationReaderTask;
   private TranslationsSpinnerAdapter mSpinnerAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
@@ -674,11 +677,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void onResume() {
     // read the list of translations
-    if (mTranslationReaderTask != null) {
-      mTranslationReaderTask.cancel(true);
-    }
-    mTranslationReaderTask = new TranslationReaderTask();
-    mTranslationReaderTask.execute();
+    requestTranslationsList();
 
     super.onResume();
     if (mShouldReconnect) {
@@ -1281,7 +1280,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public void toggleActionBarVisibility(boolean visible) {
-    if (!(visible ^ mIsActionBarHidden)) {
+    if (visible == mIsActionBarHidden) {
       toggleActionBar();
     }
   }
@@ -1373,44 +1372,37 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  class TranslationReaderTask extends AsyncTask<Void, Void, Void> {
-    List<TranslationItem> items = null;
+  private void requestTranslationsList() {
+    mCompositeSubscription.add(
+        Observable.fromCallable(new Callable<List<TranslationItem>>() {
+          @Override
+          public List<TranslationItem> call() throws Exception {
+            return new TranslationsDBAdapter(PagerActivity.this).getTranslations();
+          }
+        }).filter(new Func1<List<TranslationItem>, Boolean>() {
+          @Override
+          public Boolean call(List<TranslationItem> translationItems) {
+            return translationItems != null;
+          }
+        }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1<List<TranslationItem>>() {
+              @Override
+              public void call(List<TranslationItem> translationItems) {
+                int items = translationItems.size();
+                String[] titles = new String[items];
+                for (int i = 0; i < items; i++) {
+                  TranslationItem item = translationItems.get(i);
+                  titles[i] = TextUtils.isEmpty(item.translator) ? item.name : item.translator;
+                }
+                mTranslationItems = titles;
+                mTranslations = translationItems;
 
-    @Override
-    protected Void doInBackground(Void... params) {
-      try {
-        TranslationsDBAdapter adapter =
-            new TranslationsDBAdapter(PagerActivity.this);
-        items = adapter.getTranslations();
-        adapter.close();
-      } catch (Exception e) {
-        Timber.d(e, "error getting translations list");
-      }
-      return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-      if (items != null) {
-        mTranslations = items;
-      }
-
-      int i = 0;
-      String[] items = new String[mTranslations.size()];
-      for (TranslationItem item : mTranslations) {
-        if (TextUtils.isEmpty(item.translator)) {
-          items[i++] = item.name;
-        } else {
-          items[i++] = item.translator;
-        }
-      }
-      mTranslationItems = items;
-      mTranslationReaderTask = null;
-
-      if (mShowingTranslation) {
-        updateActionBarSpinner();
-      }
-    }
+                if (mShowingTranslation) {
+                  updateActionBarSpinner();
+                }
+              }
+            }));
   }
 
   private void toggleBookmark(final Integer sura, final Integer ayah, final int page) {
