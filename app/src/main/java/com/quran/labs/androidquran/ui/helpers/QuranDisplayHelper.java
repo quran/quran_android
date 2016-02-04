@@ -22,83 +22,82 @@ import timber.log.Timber;
 
 public class QuranDisplayHelper {
 
-   public static Response getQuranPage(Context context,
-                                     String widthParam, int page){
-      Response response;
+  public static Response getQuranPage(Context context,
+      String widthParam, int page) {
+    Response response;
 
-      String filename = QuranFileUtils.getPageFileName(page);
-      response = QuranFileUtils.getImageFromSD(context, widthParam, filename);
-      if (!response.isSuccessful()) {
-        // let's only try if an sdcard is found... otherwise, let's tell
-        // the user to mount their sdcard and try again.
-        if (response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND) {
-          Timber.d("failed to get " + page +
-              " with name " + filename + " from sd...");
-          response = QuranFileUtils.getImageFromWeb(context, filename);
-        }
+    String filename = QuranFileUtils.getPageFileName(page);
+    response = QuranFileUtils.getImageFromSD(context, widthParam, filename);
+    if (!response.isSuccessful()) {
+      // let's only try if an sdcard is found... otherwise, let's tell
+      // the user to mount their sdcard and try again.
+      if (response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND) {
+        Timber.d("failed to get " + page +
+            " with name " + filename + " from sd...");
+        response = QuranFileUtils.getImageFromWeb(context, filename);
       }
-      return response;
-   }
-   
-   public static long displayMarkerPopup(Context context, int page,
-                                         long lastPopupTime) {
-      if (System.currentTimeMillis() - lastPopupTime < 3000)
-         return lastPopupTime;
-      int rub3 = QuranInfo.getRub3FromPage(page);
-      if (rub3 == -1)
-         return lastPopupTime;
-      int hizb = (rub3 / 4) + 1;
-      StringBuilder sb = new StringBuilder();
+    }
+    return response;
+  }
 
-      if (rub3 % 8 == 0) {
-         sb.append(context.getString(R.string.quran_juz2)).append(' ')
-                 .append(QuranUtils.getLocalizedNumber(context,
-                         (hizb / 2) + 1));
+  public static long displayMarkerPopup(Context context, int page,
+      long lastPopupTime) {
+    if (System.currentTimeMillis() - lastPopupTime < 3000) {
+      return lastPopupTime;
+    }
+    int rub3 = QuranInfo.getRub3FromPage(page);
+    if (rub3 == -1) {
+      return lastPopupTime;
+    }
+    int hizb = (rub3 / 4) + 1;
+    StringBuilder sb = new StringBuilder();
+
+    if (rub3 % 8 == 0) {
+      sb.append(context.getString(R.string.quran_juz2)).append(' ')
+          .append(QuranUtils.getLocalizedNumber(context,
+              (hizb / 2) + 1));
+    } else {
+      int remainder = rub3 % 4;
+      if (remainder == 1) {
+        sb.append(context.getString(R.string.quran_rob3)).append(' ');
+      } else if (remainder == 2) {
+        sb.append(context.getString(R.string.quran_nos)).append(' ');
+      } else if (remainder == 3) {
+        sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
       }
-      else {
-         int remainder = rub3 % 4;
-         if (remainder == 1){
-            sb.append(context.getString(R.string.quran_rob3)).append(' ');
-         }
-         else if (remainder == 2){
-            sb.append(context.getString(R.string.quran_nos)).append(' ');
-         }
-         else if (remainder == 3){
-            sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
-         }
-         sb.append(context.getString(R.string.quran_hizb)).append(' ')
-                 .append(QuranUtils.getLocalizedNumber(context, hizb));
+      sb.append(context.getString(R.string.quran_hizb)).append(' ')
+          .append(QuranUtils.getLocalizedNumber(context, hizb));
+    }
+
+    String result = sb.toString();
+    Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+    return System.currentTimeMillis();
+  }
+
+  public static PaintDrawable getPaintDrawable(int startX, int endX) {
+    PaintDrawable drawable = new PaintDrawable();
+    drawable.setShape(new RectShape());
+    drawable.setShaderFactory(getShaderFactory(startX, endX));
+    return drawable;
+  }
+
+  public static ShapeDrawable.ShaderFactory
+  getShaderFactory(final int startX, final int endX) {
+    return new ShapeDrawable.ShaderFactory() {
+
+      @Override
+      public Shader resize(int width, int height) {
+        return new LinearGradient(startX, 0, endX, 0,
+            new int[]{0xFFDCDAD5, 0xFFFDFDF4,
+                0xFFFFFFFF, 0xFFFDFBEF},
+            new float[]{0, 0.18f, 0.48f, 1},
+            Shader.TileMode.REPEAT);
       }
-
-      String result = sb.toString();
-      Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-      return System.currentTimeMillis();
-   }
-   
-   public static PaintDrawable getPaintDrawable(int startX, int endX){
-      PaintDrawable drawable = new PaintDrawable();
-      drawable.setShape(new RectShape());
-      drawable.setShaderFactory(getShaderFactory(startX, endX));
-      return drawable;
-   }
-
-   public static ShapeDrawable.ShaderFactory
-   getShaderFactory(final int startX, final int endX){
-      return new ShapeDrawable.ShaderFactory(){
-
-         @Override
-         public Shader resize(int width, int height) {
-            return new LinearGradient(startX, 0, endX, 0,
-                  new int[]{ 0xFFDCDAD5, 0xFFFDFDF4,
-                  0xFFFFFFFF, 0xFFFDFBEF },
-                  new float[]{ 0, 0.18f, 0.48f, 1 },
-                  Shader.TileMode.REPEAT);
-         }
-      };
-   }
+    };
+  }
 
   @TargetApi(Build.VERSION_CODES.KITKAT)
-  public static int getWidthKitKat(Display display){
+  public static int getWidthKitKat(Display display) {
     Point point = new Point();
     display.getRealSize(point);
     return point.x;
