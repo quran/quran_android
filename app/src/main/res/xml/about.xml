@@ -59,8 +59,14 @@
         </com.quran.labs.androidquran.ui.preference.QuranPreference>
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/about_open_source" >
+    <PreferenceCategory android:title="@string/about_open_source" >
+
+        <com.quran.labs.androidquran.ui.preference.QuranPreference
+            android:title="@string/about_dagger2"
+            android:summary="@string/about_dagger2_url">
+            <intent android:action="android.intent.action.VIEW"
+                android:data="@string/about_dagger2_url" />
+        </com.quran.labs.androidquran.ui.preference.QuranPreference>
 
         <com.quran.labs.androidquran.ui.preference.QuranPreference
             android:title="@string/about_okhttp"
