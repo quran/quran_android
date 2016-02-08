@@ -130,7 +130,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
             f.delete();
           }
         } catch (Exception e) {
-          Timber.d("error removing old database file",e);
+          Timber.d(e, "error removing old database file");
         }
       }
       mDownloadingItem.exists = true;
@@ -156,23 +156,21 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           f.delete();
         }
       } catch (Exception e) {
-        Timber.d("error restoring translation after failed download",e);
+        Timber.d(e, "error restoring translation after failed download");
       }
     }
     mDownloadingItem = null;
   }
 
   private void writeDatabaseUpdate(TranslationItem item) {
-    final List<TranslationItem> updates =
-        new ArrayList<TranslationItem>();
+    final List<TranslationItem> updates = new ArrayList<>();
     updates.add(item);
 
     final Activity activity = this;
     new Thread(new Runnable() {
       @Override
       public void run() {
-        TranslationsDBAdapter adapter =
-            new TranslationsDBAdapter(activity);
+        TranslationsDBAdapter adapter = new TranslationsDBAdapter(activity);
         adapter.writeTranslationUpdates(updates);
         adapter.close();
       }
@@ -213,8 +211,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     List<TranslationItem> res = new ArrayList<TranslationItem>();
 
     if (downloaded.size() > 0) {
-      TranslationItem hdr = new TranslationItem(
-          getString(R.string.downloaded_translations));
+      TranslationItem hdr = new TranslationItem(getString(R.string.downloaded_translations));
       hdr.isSeparator = true;
       res.add(hdr);
 
@@ -231,8 +228,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
     }
 
-    TranslationItem hdr = new TranslationItem(
-        getString(R.string.available_translations));
+    TranslationItem hdr = new TranslationItem(getString(R.string.available_translations));
     hdr.isSeparator = true;
     res.add(hdr);
 
@@ -279,7 +275,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       return;
     }
     String destination = mDatabaseDirectory;
-    Timber.d("downloading " + url + " to " + destination);
+    Timber.d("downloading %s to %s", url, destination);
 
     if (selectedItem.exists) {
       try {
@@ -293,7 +289,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           f.renameTo(newPath);
         }
       } catch (Exception e) {
-        Timber.d("error backing database file up",e);
+        Timber.d(e, "error backing database file up");
       }
     }
 
