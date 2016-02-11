@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 
 import android.annotation.TargetApi;
@@ -74,11 +73,6 @@ public class AyahToolBar extends ViewGroup implements
     mMenu = new MenuBuilder(mContext);
     final MenuInflater inflater = new MenuInflater(mContext);
     inflater.inflate(R.menu.ayah_menu, mMenu);
-
-    if ("qaloon".equals(BuildConfig.FLAVOR)) {
-      // TODO remove this when audio is added to qaloon
-      mMenu.findItem(R.id.cab_play_from_here).setVisible(false);
-    }
     showMenu(mMenu);
   }
 
