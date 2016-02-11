@@ -105,7 +105,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0'
     provided 'javax.annotation:jsr250-api:1.0'
     compile 'com.f2prateek.rx.preferences:rx-preferences:1.0.1'
-    compile 'com.squareup.okhttp3:okhttp:3.0.1'
+    compile 'com.squareup.okhttp3:okhttp:3.1.2'
     compile 'com.squareup.moshi:moshi:1.0.0'
     compile 'com.jakewharton.timber:timber:4.1.0'
     debugCompile 'com.facebook.stetho:stetho:1.2.0'
