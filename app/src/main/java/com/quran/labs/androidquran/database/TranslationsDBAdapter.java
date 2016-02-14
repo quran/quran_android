@@ -20,29 +20,29 @@ import static com.quran.labs.androidquran.database.TranslationsDBHelper.Translat
 
 public class TranslationsDBAdapter {
 
-   private SQLiteDatabase mDb;
-   private Context mContext;
-   private static TranslationsDBHelper sDbHelper;
+  private SQLiteDatabase mDb;
+  private Context mContext;
+  private static TranslationsDBHelper sDbHelper;
 
-   public TranslationsDBAdapter(Context context) {
-      mContext = context.getApplicationContext();
-      initHelper(mContext);
-   }
+  public TranslationsDBAdapter(Context context) {
+    mContext = context.getApplicationContext();
+    initHelper(mContext);
+  }
 
-   public static synchronized void initHelper(Context context){
-      if (sDbHelper == null){
-         sDbHelper = new TranslationsDBHelper(context);
-      }
-   }
+  public static synchronized void initHelper(Context context) {
+    if (sDbHelper == null) {
+      sDbHelper = new TranslationsDBHelper(context);
+    }
+  }
 
-   public void open() throws SQLException {
-      if (mDb == null && sDbHelper != null){
-         mDb = sDbHelper.getWritableDatabase();
-      }
-   }
+  public void open() throws SQLException {
+    if (mDb == null && sDbHelper != null) {
+      mDb = sDbHelper.getWritableDatabase();
+    }
+  }
 
-   public void close() {
-      // http://touchlabblog.tumblr.com/post/24474750219/
+  public void close() {
+    // http://touchlabblog.tumblr.com/post/24474750219/
 
       /*
       if (mDb != null){
@@ -50,87 +50,89 @@ public class TranslationsDBAdapter {
          mDb = null;
       }
       */
-   }
+  }
 
-   public SparseArray<TranslationItem> getTranslationsHash(){
-      List<TranslationItem> items = getTranslations();
+  public SparseArray<TranslationItem> getTranslationsHash() {
+    List<TranslationItem> items = getTranslations();
 
-      SparseArray<TranslationItem> result = null;
-      if (items != null){
-         result = new SparseArray<>();
-         for (TranslationItem item : items){
-            result.put(item.id, item);
-         }
+    SparseArray<TranslationItem> result = null;
+    if (items != null) {
+      result = new SparseArray<>();
+      for (TranslationItem item : items) {
+        result.put(item.id, item);
       }
-      return result;
-   }
+    }
+    return result;
+  }
 
-   public List<TranslationItem> getTranslations(){
-      if (mDb == null){
-         open();
-         if (mDb == null){ return null; }
+  public List<TranslationItem> getTranslations() {
+    if (mDb == null) {
+      open();
+      if (mDb == null) {
+        return null;
       }
+    }
 
-      List<TranslationItem> items = null;
-      Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME,
-              null, null, null, null, null,
-              TranslationsTable.ID + " ASC");
-      if (cursor != null){
-         items = new ArrayList<>();
-         while (cursor.moveToNext()){
-            int id = cursor.getInt(0);
-            String name = cursor.getString(1);
-            String translator = cursor.getString(2);
-            String filename = cursor.getString(3);
-            String url = cursor.getString(4);
-            int version = cursor.getInt(5);
+    List<TranslationItem> items = null;
+    Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME,
+        null, null, null, null, null,
+        TranslationsTable.ID + " ASC");
+    if (cursor != null) {
+      items = new ArrayList<>();
+      while (cursor.moveToNext()) {
+        int id = cursor.getInt(0);
+        String name = cursor.getString(1);
+        String translator = cursor.getString(2);
+        String filename = cursor.getString(3);
+        String url = cursor.getString(4);
+        int version = cursor.getInt(5);
 
-            if (QuranFileUtils.hasTranslation(mContext, filename)){
-               TranslationItem item = new TranslationItem(id, name, translator,
-                       -1, filename, url, true);
-               item.localVersion = version;
-               items.add(item);
-            }
-         }
-         cursor.close();
+        if (QuranFileUtils.hasTranslation(mContext, filename)) {
+          TranslationItem item = new TranslationItem(id, name, translator,
+              -1, filename, url, true);
+          item.localVersion = version;
+          items.add(item);
+        }
       }
-      return items;
-   }
+      cursor.close();
+    }
+    return items;
+  }
 
-   public boolean writeTranslationUpdates(List<TranslationItem> updates){
-      if (mDb == null){
-         open();
-         if (mDb == null){ return false; }
+  public boolean writeTranslationUpdates(List<TranslationItem> updates) {
+    if (mDb == null) {
+      open();
+      if (mDb == null) {
+        return false;
       }
+    }
 
-      boolean result = true;
-      mDb.beginTransaction();
-      try {
-         for (TranslationItem item : updates){
-            if (item.exists){
-               ContentValues values = new ContentValues();
-               values.put(TranslationsTable.ID, item.id);
-               values.put(TranslationsTable.NAME, item.name);
-               values.put(TranslationsTable.TRANSLATOR, item.translator);
-               values.put(TranslationsTable.FILENAME, item.filename);
-               values.put(TranslationsTable.URL, item.url);
-               values.put(TranslationsTable.VERSION, item.localVersion);
+    boolean result = true;
+    mDb.beginTransaction();
+    try {
+      for (TranslationItem item : updates) {
+        if (item.exists) {
+          ContentValues values = new ContentValues();
+          values.put(TranslationsTable.ID, item.id);
+          values.put(TranslationsTable.NAME, item.name);
+          values.put(TranslationsTable.TRANSLATOR, item.translator);
+          values.put(TranslationsTable.FILENAME, item.filename);
+          values.put(TranslationsTable.URL, item.url);
+          values.put(TranslationsTable.VERSION, item.localVersion);
 
-               mDb.replace(TranslationsTable.TABLE_NAME, null, values);
-            }
-            else {
-               mDb.delete(TranslationsTable.TABLE_NAME,
-                       TranslationsTable.ID + " = " + item.id, null);
-            }
-         }
-         mDb.setTransactionSuccessful();
+          mDb.replace(TranslationsTable.TABLE_NAME, null, values);
+        } else {
+          mDb.delete(TranslationsTable.TABLE_NAME,
+              TranslationsTable.ID + " = " + item.id, null);
+        }
       }
-      catch (Exception e){
-         result = false;
-         Timber.d("error writing translation updates",e);
-      }
-      mDb.endTransaction();
+      mDb.setTransactionSuccessful();
+    } catch (Exception e) {
+      result = false;
+      Timber.d("error writing translation updates", e);
+    }
+    mDb.endTransaction();
 
-      return result;
-   }
+    return result;
+  }
 }
