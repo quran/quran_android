@@ -2,9 +2,9 @@ package com.quran.labs.androidquran.ui;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.TranslationHeader;
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.common.TranslationRowData;
+import com.quran.labs.androidquran.dao.translation.TranslationHeader;
+import com.quran.labs.androidquran.dao.translation.TranslationItem;
+import com.quran.labs.androidquran.dao.translation.TranslationRowData;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;

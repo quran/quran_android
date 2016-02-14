@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.presenter.translation;
 
-import com.quran.labs.androidquran.common.TranslationList;
+import com.quran.labs.androidquran.dao.translation.TranslationList;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import org.junit.After;

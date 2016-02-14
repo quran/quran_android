@@ -2,9 +2,9 @@ package com.quran.labs.androidquran.presenter.translation;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.common.Translation;
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.common.TranslationList;
+import com.quran.labs.androidquran.dao.translation.Translation;
+import com.quran.labs.androidquran.dao.translation.TranslationItem;
+import com.quran.labs.androidquran.dao.translation.TranslationList;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
