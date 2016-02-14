@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
@@ -29,11 +29,11 @@ public class AyahTranslationFragment extends AyahActionFragment {
   private TranslationView mTranslationView;
   private View mEmptyState;
   private AsyncTask mCurrentTask;
-  private TranslationItem mTranslationItem;
+  private LocalTranslation mTranslationItem;
   private View mTranslationControls;
   private Spinner mTranslator;
   private TranslationsSpinnerAdapter mTranslationAdapter;
-  private List<TranslationItem> mTranslations;
+  private List<LocalTranslation> mTranslations;
 
   @Override
   public View onCreateView(LayoutInflater inflater,
@@ -111,7 +111,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
           @Override
           public void onItemSelected(AdapterView<?> parent, View view, int position,
               long id) {
-            TranslationItem item = mTranslationAdapter.getTranslationItem(position);
+            LocalTranslation item = mTranslationAdapter.getTranslationItem(position);
             if (!item.filename.equals(mTranslationItem.filename)) {
               QuranSettings.getInstance(activity).setActiveTranslation(item.filename);
               refreshView();

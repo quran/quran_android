@@ -4,6 +4,8 @@ import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.module.ApplicationModule;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
@@ -24,6 +26,7 @@ public interface ApplicationComponent {
   void inject(QuranDownloadService quranDownloadService);
 
   // activities
+  void inject(QuranActivity quranActivity);
   void inject(PagerActivity pagerActivity);
   void inject(QuranImportActivity quranImportActivity);
 
@@ -32,6 +35,7 @@ public interface ApplicationComponent {
   void inject(TabletFragment tabletFragment);
   void inject(BookmarksFragment bookmarksFragment);
   void inject(PreferenceFragment fragment);
+  void inject(TranslationManagerActivity translationManagerActivity);
 
   // dialogs
   void inject(TagBookmarkDialog tagBookmarkDialog);

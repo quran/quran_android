@@ -1,17 +1,18 @@
 package com.quran.labs.androidquran.ui;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.TranslationHeader;
 import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.database.TranslationsDBAdapter;
+import com.quran.labs.androidquran.common.TranslationRowData;
+import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
-import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,18 +37,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class TranslationManagerActivity extends QuranActionBarActivity
-    implements DefaultDownloadReceiver.SimpleDownloadListener,
-    TranslationListTask.TranslationsUpdatedListener {
+    implements DefaultDownloadReceiver.SimpleDownloadListener {
 
-  public static final String TRANSLATION_DOWNLOAD_KEY =
-      "TRANSLATION_DOWNLOAD_KEY";
+  public static final String TRANSLATION_DOWNLOAD_KEY = "TRANSLATION_DOWNLOAD_KEY";
   private static final String UPGRADING_EXTENSION = ".old";
 
-  private List<TranslationItem> mItems;
+  private List<TranslationRowData> mItems;
   private List<TranslationItem> mAllItems;
+  private SparseIntArray mTranslationPositions;
 
   private ListView mListView;
   private TextView mMessageArea;
@@ -55,13 +58,15 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private String mDatabaseDirectory;
   private QuranSettings mQuranSettings;
 
+  @Inject TranslationManagerPresenter mPresenter;
   private DefaultDownloadReceiver mDownloadReceiver = null;
-  private TranslationListTask mTask = null;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+    ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
 
     setContentView(R.layout.translation_manager);
     mListView = (ListView) findViewById(R.id.translation_list);
@@ -85,8 +90,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     }
 
     mQuranSettings = QuranSettings.getInstance(this);
-    mTask = new TranslationListTask(this, this);
-    mTask.execute();
+    mPresenter.bind(this);
+    mPresenter.getTranslationsList(false);
   }
 
   @Override
@@ -102,10 +107,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
   @Override
   protected void onDestroy() {
-    if (mTask != null) {
-      mTask.cancel(true);
-    }
-    mTask = null;
+    mPresenter.unbind(this);
     super.onDestroy();
   }
 
@@ -122,10 +124,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   @Override
   public void handleDownloadSuccess() {
     if (mDownloadingItem != null) {
-      if (mDownloadingItem.exists) {
+      if (mDownloadingItem.exists()) {
         try {
           File f = new File(mDatabaseDirectory,
-              mDownloadingItem.filename + UPGRADING_EXTENSION);
+              mDownloadingItem.translation.filename + UPGRADING_EXTENSION);
           if (f.exists()) {
             f.delete();
           }
@@ -133,10 +135,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           Timber.d(e, "error removing old database file");
         }
       }
-      mDownloadingItem.exists = true;
-      mDownloadingItem.localVersion = mDownloadingItem.latestVersion;
-
-      writeDatabaseUpdate(mDownloadingItem);
+      TranslationItem updated = mDownloadingItem.withTranslationVersion(
+          mDownloadingItem.translation.currentVersion);
+      updateTranslationItem(updated);
     }
     mDownloadingItem = null;
     generateListItems();
@@ -144,12 +145,11 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
   @Override
   public void handleDownloadFailure(int errId) {
-    if (mDownloadingItem != null && mDownloadingItem.exists) {
+    if (mDownloadingItem != null && mDownloadingItem.exists()) {
       try {
         File f = new File(mDatabaseDirectory,
-            mDownloadingItem.filename + UPGRADING_EXTENSION);
-        File destFile = new File(mDatabaseDirectory,
-            mDownloadingItem.filename);
+            mDownloadingItem.translation.filename + UPGRADING_EXTENSION);
+        File destFile = new File(mDatabaseDirectory, mDownloadingItem.translation.filename);
         if (f.exists() && !destFile.exists()) {
           f.renameTo(destFile);
         } else {
@@ -162,33 +162,32 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     mDownloadingItem = null;
   }
 
-  private void writeDatabaseUpdate(TranslationItem item) {
-    final List<TranslationItem> updates = new ArrayList<>();
-    updates.add(item);
-
-    final Activity activity = this;
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        TranslationsDBAdapter adapter = new TranslationsDBAdapter(activity);
-        adapter.writeTranslationUpdates(updates);
-        adapter.close();
-      }
-    }).start();
+  private void updateTranslationItem(TranslationItem updated) {
+    int id = updated.translation.id;
+    int allItemsIndex = mTranslationPositions.get(id);
+    if (mAllItems != null && mAllItems.size() > allItemsIndex) {
+      mAllItems.remove(allItemsIndex);
+      mAllItems.add(allItemsIndex, updated);
+    }
+    mPresenter.updateItem(updated);
   }
 
-  @Override
-  public void translationsUpdated(List<TranslationItem> items) {
-    mAllItems = items;
+  public void onErrorDownloadTranslations() {
+    mMessageArea.setText(R.string.error_getting_translation_list);
+  }
 
-    if (mAllItems == null) {
-      mMessageArea.setText(R.string.error_getting_translation_list);
-    } else {
-      mMessageArea.setVisibility(View.GONE);
-      mListView.setVisibility(View.VISIBLE);
-      generateListItems();
+  public void onTranslationsUpdated(List<TranslationItem> items) {
+    SparseIntArray itemsSparseArray = new SparseIntArray(items.size());
+    for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
+      TranslationItem item = items.get(i);
+      itemsSparseArray.put(item.translation.id, i);
     }
-    mTask = null;
+    mAllItems = items;
+    mTranslationPositions = itemsSparseArray;
+
+    mMessageArea.setVisibility(View.GONE);
+    mListView.setVisibility(View.VISIBLE);
+    generateListItems();
   }
 
   private void generateListItems() {
@@ -196,31 +195,26 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       return;
     }
 
-    List<TranslationItem> downloaded = new ArrayList<TranslationItem>();
-    List<TranslationItem> notDownloaded =
-        new ArrayList<TranslationItem>();
-
-    for (TranslationItem item : mAllItems) {
-      if (item.exists) {
+    List<TranslationItem> downloaded = new ArrayList<>();
+    List<TranslationItem> notDownloaded = new ArrayList<>();
+    for (int i = 0, mAllItemsSize = mAllItems.size(); i < mAllItemsSize; i++) {
+      TranslationItem item = mAllItems.get(i);
+      if (item.exists()) {
         downloaded.add(item);
       } else {
         notDownloaded.add(item);
       }
     }
 
-    List<TranslationItem> res = new ArrayList<TranslationItem>();
-
+    List<TranslationRowData> res = new ArrayList<>();
     if (downloaded.size() > 0) {
-      TranslationItem hdr = new TranslationItem(getString(R.string.downloaded_translations));
-      hdr.isSeparator = true;
+      TranslationHeader hdr = new TranslationHeader(getString(R.string.downloaded_translations));
       res.add(hdr);
 
       boolean needsUpgrade = false;
       for (TranslationItem item : downloaded) {
         res.add(item);
-        if (hasUpgrade(item)) {
-          needsUpgrade = true;
-        }
+        needsUpgrade = needsUpgrade || item.needsUpgrade();
       }
 
       if (!needsUpgrade) {
@@ -228,9 +222,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
     }
 
-    TranslationItem hdr = new TranslationItem(getString(R.string.available_translations));
-    hdr.isSeparator = true;
-    res.add(hdr);
+    res.add(new TranslationHeader(getString(R.string.available_translations)));
 
     for (TranslationItem item : notDownloaded) {
       res.add(item);
@@ -242,24 +234,16 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   }
 
   private void downloadItem(int pos) {
-    if (mItems == null || mAdapter == null) {
+    if (mItems == null || !(mAdapter.getItem(pos) instanceof TranslationItem)) {
       return;
     }
 
-    TranslationItem selectedItem =
-        (TranslationItem) mAdapter.getItem(pos);
-    if (selectedItem == null) {
-      return;
-    }
-    if (selectedItem.exists &&
-        (selectedItem.latestVersion <= 0 ||
-            selectedItem.localVersion == null ||
-            selectedItem.latestVersion <= selectedItem.localVersion)) {
+    TranslationItem selectedItem = (TranslationItem) mAdapter.getItem(pos);
+    if (selectedItem.exists() && !selectedItem.needsUpgrade()) {
       return;
     }
 
     mDownloadingItem = selectedItem;
-
     if (mDownloadReceiver == null) {
       mDownloadReceiver = new DefaultDownloadReceiver(this,
           QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
@@ -270,19 +254,19 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     mDownloadReceiver.setListener(this);
 
     // actually start the download
-    String url = selectedItem.url;
-    if (selectedItem.url == null) {
+    String url = selectedItem.translation.fileUrl;
+    if (selectedItem.translation.fileUrl == null) {
       return;
     }
     String destination = mDatabaseDirectory;
     Timber.d("downloading %s to %s", url, destination);
 
-    if (selectedItem.exists) {
+    if (selectedItem.exists()) {
       try {
-        File f = new File(destination, selectedItem.filename);
+        File f = new File(destination, selectedItem.translation.filename);
         if (f.exists()) {
           File newPath = new File(destination,
-              selectedItem.filename + UPGRADING_EXTENSION);
+              selectedItem.translation.filename + UPGRADING_EXTENSION);
           if (newPath.exists()) {
             newPath.delete();
           }
@@ -294,11 +278,11 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     }
 
     // start the download
-    String notificationTitle = selectedItem.name;
+    String notificationTitle = selectedItem.name();
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
         destination, notificationTitle, TRANSLATION_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
-    String filename = selectedItem.filename;
+    String filename = selectedItem.translation.filename;
     if (url.endsWith("zip")) {
       filename += ".zip";
     }
@@ -306,15 +290,14 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     startService(intent);
   }
 
-  private void removeItem(int pos) {
+  private void removeItem(final int pos) {
     if (mItems == null || mAdapter == null) {
       return;
     }
 
     final TranslationItem selectedItem =
         (TranslationItem) mAdapter.getItem(pos);
-    String msg = String.format(getString(R.string.remove_dlg_msg),
-        selectedItem.name);
+    String msg = String.format(getString(R.string.remove_dlg_msg), selectedItem.name());
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(R.string.remove_dlg_title)
         .setMessage(msg)
@@ -322,12 +305,11 @@ public class TranslationManagerActivity extends QuranActionBarActivity
             new DialogInterface.OnClickListener() {
               public void onClick(DialogInterface dialog, int id) {
                 QuranFileUtils.removeTranslation(TranslationManagerActivity.this,
-                    selectedItem.filename);
-                selectedItem.localVersion = null;
-                selectedItem.exists = false;
-                writeDatabaseUpdate(selectedItem);
+                    selectedItem.translation.filename);
+                TranslationItem updatedItem = selectedItem.withTranslationRemoved();
+                updateTranslationItem(updatedItem);
                 String current = mQuranSettings.getActiveTranslation();
-                if (current.compareTo(selectedItem.filename) == 0) {
+                if (current.equals(selectedItem.translation.filename)) {
                   mQuranSettings.removeActiveTranslation();
                 }
                 generateListItems();
@@ -343,25 +325,20 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     builder.show();
   }
 
-  public boolean hasUpgrade(TranslationItem item) {
-    return item.latestVersion > -1 && item.localVersion != null &&
-        item.latestVersion > item.localVersion;
-  }
-
   private class TranslationsAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
-    private List<TranslationItem> mElements;
+    private List<TranslationRowData> mElements;
     private int TYPE_ITEM = 0;
     private int TYPE_SEPARATOR = 1;
 
     public TranslationsAdapter(Context context,
-        List<TranslationItem> elements) {
+        List<TranslationRowData> elements) {
       mInflater = LayoutInflater.from(context);
       mElements = elements;
     }
 
-    public void setData(List<TranslationItem> items) {
+    public void setData(List<TranslationRowData> items) {
       mElements = items;
     }
 
@@ -372,7 +349,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
     @Override
     public int getItemViewType(int position) {
-      return (mElements.get(position).isSeparator) ?
+      return (mElements.get(position).isSeparator()) ?
           TYPE_SEPARATOR : TYPE_ITEM;
     }
 
@@ -383,7 +360,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
 
     @Override
-    public Object getItem(int position) {
+    public TranslationRowData getItem(int position) {
       return mElements.get(position);
     }
 
@@ -419,20 +396,21 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         holder = (ViewHolder) convertView.getTag();
       }
 
-      TranslationItem item = mElements.get(position);
+      TranslationRowData rowItem = mElements.get(position);
       if (getItemViewType(position) == TYPE_SEPARATOR) {
-        holder.separatorText.setText(item.name);
+        holder.separatorText.setText(rowItem.name());
       } else {
-        holder.translationTitle.setText(item.name);
-        if (TextUtils.isEmpty(item.translator)) {
+        TranslationItem item = (TranslationItem) rowItem;
+        holder.translationTitle.setText(item.name());
+        if (TextUtils.isEmpty(item.translation.translatorNameLocalized)) {
           holder.translationInfo.setVisibility(View.GONE);
         } else {
-          holder.translationInfo.setText(item.translator);
+          holder.translationInfo.setText(item.translation.translatorNameLocalized);
           holder.translationInfo.setVisibility(View.VISIBLE);
         }
 
-        if (item.exists) {
-          if (hasUpgrade(item)) {
+        if (item.exists()) {
+          if (item.needsUpgrade()) {
             holder.leftImage.setImageResource(R.drawable.ic_download);
             holder.leftImage.setVisibility(View.VISIBLE);
 

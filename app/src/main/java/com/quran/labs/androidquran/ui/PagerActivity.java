@@ -5,9 +5,9 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -161,7 +161,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private DefaultDownloadReceiver mDownloadReceiver;
   private boolean mNeedsPermissionToDownloadOver3g = true;
   private AlertDialog mPromptDialog = null;
-  private List<TranslationItem> mTranslations;
+  private List<LocalTranslation> mTranslations;
   private String[] mTranslationItems;
   private TranslationsSpinnerAdapter mSpinnerAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
@@ -1042,8 +1042,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (mIsInAyahMode) {
       endAyahMode();
     }
-    String activeDatabase = TranslationUtils.getDefaultTranslation(
-        this, mTranslations);
+    String activeDatabase = TranslationUtils.getDefaultTranslation(this, mTranslations);
     if (activeDatabase == null) {
       startTranslationManager();
     } else {
@@ -1076,7 +1075,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           Timber.d("item chosen: %d", itemPosition);
           if (mTranslations != null &&
               mTranslations.size() > itemPosition) {
-            TranslationItem item = mTranslations.get(itemPosition);
+            LocalTranslation item = mTranslations.get(itemPosition);
             mSettings.setActiveTranslation(item.filename);
 
             int pos = mViewPager.getCurrentItem() - 1;
@@ -1098,7 +1097,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
       };
 
-  public List<TranslationItem> getTranslations() {
+  public List<LocalTranslation> getTranslations() {
     return mTranslations;
   }
 
@@ -1355,25 +1354,25 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void requestTranslationsList() {
     mCompositeSubscription.add(
-        Observable.fromCallable(new Callable<List<TranslationItem>>() {
+        Observable.fromCallable(new Callable<List<LocalTranslation>>() {
           @Override
-          public List<TranslationItem> call() throws Exception {
+          public List<LocalTranslation> call() throws Exception {
             return new TranslationsDBAdapter(PagerActivity.this).getTranslations();
           }
-        }).filter(new Func1<List<TranslationItem>, Boolean>() {
+        }).filter(new Func1<List<LocalTranslation>, Boolean>() {
           @Override
-          public Boolean call(List<TranslationItem> translationItems) {
+          public Boolean call(List<LocalTranslation> translationItems) {
             return translationItems != null;
           }
         }).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<List<TranslationItem>>() {
+            .subscribe(new Action1<List<LocalTranslation>>() {
               @Override
-              public void call(List<TranslationItem> translationItems) {
+              public void call(List<LocalTranslation> translationItems) {
                 int items = translationItems.size();
                 String[] titles = new String[items];
                 for (int i = 0; i < items; i++) {
-                  TranslationItem item = translationItems.get(i);
+                  LocalTranslation item = translationItems.get(i);
                   titles[i] = TextUtils.isEmpty(item.translator) ? item.name : item.translator;
                 }
                 mTranslationItems = titles;

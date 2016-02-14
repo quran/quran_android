@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.ui.util;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.util.TranslationUtils;
 
 import android.content.Context;
@@ -17,11 +17,11 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
 
   private final LayoutInflater mInflater;
   private final String[] mTranslationItems;
-  private final List<TranslationItem> mTranslations;
+  private final List<LocalTranslation> mTranslations;
   private final Context mAppContext;
 
   public TranslationsSpinnerAdapter(Context context, int resource,
-      String[] translationNames, List<TranslationItem> translations) {
+      String[] translationNames, List<LocalTranslation> translations) {
     super(context, resource, translationNames);
     mInflater = LayoutInflater.from(context);
     mTranslationItems = translationNames;
@@ -50,14 +50,15 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     return convertView;
   }
 
-  public TranslationItem getTranslationItem(int pos) {
+  public LocalTranslation getTranslationItem(int pos) {
     return mTranslations.get(pos);
   }
 
   public int getPositionForActiveTranslation() {
     String activeTranslation = TranslationUtils.getDefaultTranslation(mAppContext, mTranslations);
     int index = 0;
-    for (TranslationItem item : mTranslations) {
+    for (int i = 0, mTranslationsSize = mTranslations.size(); i < mTranslationsSize; i++) {
+      LocalTranslation item = mTranslations.get(i);
       if (item.filename.equals(activeTranslation)) {
         return index;
       } else {
