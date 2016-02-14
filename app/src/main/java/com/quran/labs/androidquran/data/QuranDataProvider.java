@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.data;
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
@@ -17,16 +17,13 @@ import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.List;
 
@@ -137,10 +134,9 @@ public class QuranDataProvider extends ContentProvider {
       Crashlytics.log("couldn't find database, searching for another..");
       TranslationsDBAdapter adapter =
           new TranslationsDBAdapter(getContext());
-      List<TranslationItem> items = adapter.getTranslations();
+      List<LocalTranslation> items = adapter.getTranslations();
       if (items != null && items.size() > 0) {
-        return TranslationUtils
-            .getDefaultTranslation(getContext(), items);
+        return TranslationUtils.getDefaultTranslation(getContext(), items);
       }
     } catch (Exception e) {
       Crashlytics.logException(e);

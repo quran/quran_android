@@ -1,29 +1,42 @@
 package com.quran.labs.androidquran.common;
 
-public class TranslationItem {
-   public int id;
-   public String name;
-   public String translator;
-   public String filename;
-   public String url;
-   public boolean exists;
-   public int latestVersion;
-   public Integer localVersion;
-   public boolean isSeparator = false;
+public class TranslationItem implements TranslationRowData {
+  public final int localVersion;
+  public final Translation translation;
 
-   public TranslationItem(String name){
-      this.name = name;
-   }
+  public TranslationItem(Translation translation) {
+    this(translation, 0);
+  }
 
-   public TranslationItem(int id, String name, String translator,
-                          int latestVersion, String filename, String url,
-                          boolean exists){
-      this.id = id;
-      this.name = name;
-      this.translator = translator;
-      this.filename = filename;
-      this.url = url;
-      this.exists = exists;
-      this.latestVersion = latestVersion;
-   }
+  public TranslationItem(Translation translation, int localVersion) {
+    this.translation = translation;
+    this.localVersion = localVersion;
+  }
+
+  public boolean exists() {
+    return localVersion > 0;
+  }
+
+  @Override
+  public String name() {
+    return this.translation.displayName;
+  }
+
+  @Override
+  public boolean isSeparator() {
+    return false;
+  }
+
+  @Override
+  public boolean needsUpgrade() {
+    return localVersion > 0 && this.translation.currentVersion > this.localVersion;
+  }
+
+  public TranslationItem withTranslationRemoved() {
+    return new TranslationItem(this.translation, 0);
+  }
+
+  public TranslationItem withTranslationVersion(int version) {
+    return new TranslationItem(this.translation, version);
+  }
 }

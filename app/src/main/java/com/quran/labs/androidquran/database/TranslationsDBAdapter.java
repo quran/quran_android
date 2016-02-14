@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.database;
 
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.TranslationItem;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -8,7 +9,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
@@ -41,31 +41,20 @@ public class TranslationsDBAdapter {
     }
   }
 
-  public void close() {
-    // http://touchlabblog.tumblr.com/post/24474750219/
+  public SparseArray<LocalTranslation> getTranslationsHash() {
+    List<LocalTranslation> items = getTranslations();
 
-      /*
-      if (mDb != null){
-         sDbHelper.close();
-         mDb = null;
-      }
-      */
-  }
-
-  public SparseArray<TranslationItem> getTranslationsHash() {
-    List<TranslationItem> items = getTranslations();
-
-    SparseArray<TranslationItem> result = null;
+    SparseArray<LocalTranslation> result = new SparseArray<>();
     if (items != null) {
-      result = new SparseArray<>();
-      for (TranslationItem item : items) {
+      for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
+        LocalTranslation item = items.get(i);
         result.put(item.id, item);
       }
     }
     return result;
   }
 
-  public List<TranslationItem> getTranslations() {
+  public List<LocalTranslation> getTranslations() {
     if (mDb == null) {
       open();
       if (mDb == null) {
@@ -73,7 +62,7 @@ public class TranslationsDBAdapter {
       }
     }
 
-    List<TranslationItem> items = null;
+    List<LocalTranslation> items = null;
     Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME,
         null, null, null, null, null,
         TranslationsTable.ID + " ASC");
@@ -88,10 +77,7 @@ public class TranslationsDBAdapter {
         int version = cursor.getInt(5);
 
         if (QuranFileUtils.hasTranslation(mContext, filename)) {
-          TranslationItem item = new TranslationItem(id, name, translator,
-              -1, filename, url, true);
-          item.localVersion = version;
-          items.add(item);
+          items.add(new LocalTranslation(id, filename, name, translator, url, version));
         }
       }
       cursor.close();
@@ -110,26 +96,27 @@ public class TranslationsDBAdapter {
     boolean result = true;
     mDb.beginTransaction();
     try {
-      for (TranslationItem item : updates) {
-        if (item.exists) {
+      for (int i = 0, updatesSize = updates.size(); i < updatesSize; i++) {
+        TranslationItem item = updates.get(i);
+        if (item.exists()) {
           ContentValues values = new ContentValues();
-          values.put(TranslationsTable.ID, item.id);
-          values.put(TranslationsTable.NAME, item.name);
-          values.put(TranslationsTable.TRANSLATOR, item.translator);
-          values.put(TranslationsTable.FILENAME, item.filename);
-          values.put(TranslationsTable.URL, item.url);
+          values.put(TranslationsTable.ID, item.translation.id);
+          values.put(TranslationsTable.NAME, item.translation.displayName);
+          values.put(TranslationsTable.TRANSLATOR, item.translation.translator);
+          values.put(TranslationsTable.FILENAME, item.translation.filename);
+          values.put(TranslationsTable.URL, item.translation.fileUrl);
           values.put(TranslationsTable.VERSION, item.localVersion);
 
           mDb.replace(TranslationsTable.TABLE_NAME, null, values);
         } else {
           mDb.delete(TranslationsTable.TABLE_NAME,
-              TranslationsTable.ID + " = " + item.id, null);
+              TranslationsTable.ID + " = " + item.translation.id, null);
         }
       }
       mDb.setTransactionSuccessful();
     } catch (Exception e) {
       result = false;
-      Timber.d("error writing translation updates", e);
+      Timber.d(e, "error writing translation updates");
     }
     mDb.endTransaction();
 

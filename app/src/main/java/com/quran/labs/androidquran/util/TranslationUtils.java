@@ -1,38 +1,35 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.common.TranslationItem;
-import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.common.LocalTranslation;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import java.util.List;
 
 public class TranslationUtils {
 
-  public static String getDefaultTranslation(Context context,
-      List<TranslationItem> items) {
-    final TranslationItem item = getDefaultTranslationItem(context, items);
+  public static String getDefaultTranslation(Context context, List<LocalTranslation> items) {
+    final LocalTranslation item = getDefaultTranslationItem(context, items);
     return item == null ? null : item.filename;
   }
 
-  public static TranslationItem getDefaultTranslationItem(Context context,
-      List<TranslationItem> items) {
+  public static LocalTranslation getDefaultTranslationItem(Context context,
+      List<LocalTranslation> items) {
     if (items == null || items.size() == 0) {
       return null;
     }
     QuranSettings settings = QuranSettings.getInstance(context.getApplicationContext());
     final String db = settings.getActiveTranslation();
 
-    TranslationItem result = null;
+    LocalTranslation result = null;
     boolean changed = false;
     if (db == null) {
       changed = true;
       result = items.get(0);
     } else {
       boolean found = false;
-      for (TranslationItem item : items) {
+      for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
+        LocalTranslation item = items.get(i);
         if (item.filename.equals(db)) {
           found = true;
           result = item;

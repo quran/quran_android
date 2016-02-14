@@ -2,6 +2,9 @@ package com.quran.labs.androidquran.data;
 
 public class Constants {
 
+  // data domain
+  public static final String HOST = "http://android.quran.com/";
+
   // Numerics
   public static final int DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255;
   public static final int DEFAULT_TEXT_SIZE = 15;

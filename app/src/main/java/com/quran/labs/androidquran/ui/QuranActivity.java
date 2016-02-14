@@ -9,8 +9,8 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.task.TranslationListTask;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
@@ -20,10 +20,8 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.util.UpgradeTranslationListener;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
-import android.app.Application;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -45,6 +43,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import javax.inject.Inject;
 
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
@@ -79,15 +79,16 @@ public class QuranActivity extends QuranActionBarActivity
   private CompositeSubscription mCompositeSubscription;
   private QuranSettings mSettings;
 
+  @Inject TranslationManagerPresenter mTranslationManagerPresenter;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    Application application = getApplication();
-    if (application instanceof QuranApplication) {
-      // instant reload often triggers a crash here, stating that
-      // application is not a QuranApplication
-      ((QuranApplication) application).refreshLocale(this, false);
-    }
+    QuranApplication quranApp = (QuranApplication) getApplication();
+    quranApp.refreshLocale(this, false);
+
     super.onCreate(savedInstanceState);
+    quranApp.getApplicationComponent().inject(this);
+
     setContentView(R.layout.quran_index);
     mCompositeSubscription = new CompositeSubscription();
 
@@ -262,8 +263,7 @@ public class QuranActivity extends QuranActionBarActivity
       if (System.currentTimeMillis() - time > Constants.TRANSLATION_REFRESH_TIME) {
         Timber.d("updating translations list...");
         sUpdatedTranslations = true;
-        new TranslationListTask(
-            this, new UpgradeTranslationListener(this)).execute();
+        mTranslationManagerPresenter.checkForUpdates();
       }
     }
   }
