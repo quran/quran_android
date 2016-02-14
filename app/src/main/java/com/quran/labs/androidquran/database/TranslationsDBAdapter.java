@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.database;
 
 import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.common.TranslationItem;
+import com.quran.labs.androidquran.dao.translation.TranslationItem;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import android.content.ContentValues;
