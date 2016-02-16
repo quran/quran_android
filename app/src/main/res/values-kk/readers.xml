@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qari_minshawi_murattal_gapless">Мұхаммед Сыддық Миншәуи (тұтас)</string>
+    <string name="qari_husary_gapless">Махмұд Һәлил Хусари (тұтас)</string>
+    <string name="qari_sudais_gapless">Әбдурахман Судаис (тұтас)</string>
+    <string name="qari_qatami_gapless">Насыр Қатами (тұтас)</string>
+    <string name="qari_abdulbaset">Әбдүлбәсит Әбдусамад</string>
+    <string name="qari_abdulbaset_mujawwad">Әбдүлбәсит Әбдусамад (тәжуид)</string>
+    <string name="qari_basfar">Абдуллах Басфар</string>
+    <string name="qari_suadis">Әбдурахман Судаис</string>
+    <string name="qari_shatri">Әбу Бәкр Шатри</string>
+    <string name="qari_afasy">Мишәри Әфаси</string>
+    <string name="qari_saad_al_ghamdi">Сәид Ғамиди</string>
+    <string name="qari_walk">Ибрахим Уолк (ағылшынша)</string>
+    <string name="qari_hani_rifai">Һәни Рифаи</string>
+    <string name="qari_husary_mujawwad">Махмұд Һәлил Хусари (тәжуид)</string>
+    <string name="qari_hudhayfi">Әли Хұзайфи</string>
+    <string name="qari_muaiqly">Мәһир Мұғайкли</string>
+    <string name="qari_minshawi_mujawwad">Мұхаммед Сыддық Миншәуи (тәжуид)</string>
+    <string name="qari_tablawy">Мұхаммед Таблауи</string>
+    <string name="qari_ayyoub">Мұхаммед Әйюб</string>
+    <string name="qari_jibreel">Мұхаммед Жибрил</string>
+    <string name="qari_shuraym">Сауд Шураим</string>
+    <string name="qari_dussary">Ясир Дусари</string>
+    <string name="qari_abdulbaset_gapless">Әбдүлбәсит Әбдусамад (тұтас)</string>
+    <string name="qari_abdulbaset_mujawwad_gapless">Әбдүлбәсит Әбдусамад (тәжуид, тұтас)</string>
+    <string name="qari_aziz_alili_gapless">Әзиз Әлили (тұтас)</string>
+    <string name="qari_salah_budair_gapless">Салах Бұдаир (тұтас)</string>
+    <string name="qari_shuraym_gapless">Сауд Шураим (тұтас)</string>
+    <string name="qari_yasser_dussary_gapless">Ясир Дусари (тұтас)</string>
+    <string name="qari_mohammad_altablawi_gapless">Мұхаммед Таблауи (тұтас)</string>
+    <string name="qari_sahl_yaseen_gapless">Сәһил Йасин (тұтас)</string>
+    <string name="qari_shatri_gapless">Әбу Бәкр Шатри (тұтас)</string>
+    <string name="qari_ahmad_nauina_gapless">Ахмед Науина (тұтас)</string>
+    <string name="qari_akram_al_alaqmi">Әкрам Ғалақми (тұтас)</string>
+    <string name="qari_ali_hajjaj_alsouasi_gapless">Әли Хажаж Суайси (тұтас)</string>
+</resources>
