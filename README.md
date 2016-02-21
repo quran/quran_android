@@ -13,6 +13,7 @@ patches, comments, etc are welcome.
 
 contributors:
 
+* [Ahmed El-Helw](https://twitter.com/ahmedre)
 * [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio and work on the Naskh version
 * [g360230](https://github.com/g360230) - images and work on the Qaloon version
 * [Somaia Gabr](https://twitter.com/somaiagabr) - ui and graphics
