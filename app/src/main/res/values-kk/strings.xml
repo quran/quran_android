@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Құран</string>
+    <string name="downloadPrompt_title">Керекті файлдар жүктелінсін бе?</string>
+    <string name="downloadPrompt">Бағдарламаның дұрыс істеуі үшін тағы басқа файлдар жазу керек.
+        Егер файлдар дәл қазір жазылмаса, Құран беттерінің жүктелуі біраз уақыт алуы мүмкін
+        және Интернет қосылысы қажет болады. Файлдар қазір жазылсын ба?</string>
+    <string name="downloadTabletPrompt">Планшеттер үшін суреттер жаңартылды. Жаңа файлдар жүктелінсін бе?</string>
+    <string name="downloadImportantPrompt">Құран суреттері үшін кішігірім, бірақ маңызды өзгерістер пайда болды.
+        Жаңа файлдар қазір жүктелінсін бе?
+    </string>
+    <string name="downloadPrompt_ok">Иә</string>
+    <string name="downloadPrompt_no">Жоқ</string>
+    <string name="downloading_title">Жүктеу&#8230;</string>
+    <string name="downloading_message">Файлдар толық жазылғанша күтіңіз</string>
+    <string name="extracting_title">Шығару&#8230;</string>
+    <string name="menu_about">Бағдарлама туралы</string>
+    <string name="menu_other_apps">Басқа бағдарламалар</string>
+    <string name="menu_settings">Баптау</string>
+    <string name="menu_jump_last_page">Соңғы бет</string>
+    <string name="menu_tags">Белгілер</string>
+    <string name="menu_bookmarks">Бетбелгілер</string>
+    <string name="menu_bookmarks_page">Бет белгілері</string>
+    <string name="menu_bookmarks_ayah">Аят белгілері</string>
+    <string name="menu_sort">Сұрыптау</string>
+    <string name="menu_sort_date">Қосылған күні бойынша</string>
+    <string name="menu_sort_location">Құрандағы реті бойынша</string>
+    <string name="menu_sort_group_by_tags">Белгілер бойынша топтау</string>
+    <string name="menu_translation">Аудармалар</string>
+    <string name="menu_back_to_page">Құран</string>
+    <string name="menu_help">Көмек</string>
+    <string name="menu_search">Іздеу</string>
+    <string name="menu_get_translations">Аударма жүктеу</string>
+    <string name="menu_jump">Өту</string>
+    <string name="gotoPage">Бетке өту</string>
+    <string name="cancel">Болдырмау</string>
+
+    <!-- about -->
+    <string name="about_description">Quran for Android - тегін Құран бағдарламасы.
+        Осы бағдарламаны жасаушыларға дұға жасауды ұмытпаңыз;)</string>
+    <string name="about_data_sources">Деректер көзі</string>
+    <string name="about_images">Суреттер</string>
+    <string name="about_madani_images">Құран суреттері King Fahd Quran Printing Complex шрифттері бойынша жасалынды</string>
+    <string name="about_naskh_images">Naskh бағдарламасының суреттері SHL Info Systems рұқсатымен алынды
+    </string>
+    <string name="about_qaloon_images">Qaloon бағдарламасының суреттері Nous Memes Editions Et Diffusion (Тунис) рұқсатымен алынды</string>
+    <string name="about_quranicaudio_summary">Құранның біріктіріліп (интервалсыз) оқылуы</string>
+    <string name="about_quran_ksu">Электронды Мұсхаф жобасы</string>
+    <string name="about_quran_ksu_summary">Арабша тәпсір мен аудармалар Сауд королі университетінің Электронды Мұсхаф жобасынан алынды</string>
+    <string name="about_tanzil_summary">Бірнеше тілдегі Құран аудармалары</string>
+    <string name="about_noorhidayat_summary">Noorehira шрифті және Мүфти Мұхаммед Тақи Усмани аудармасы</string>
+    <string name="about_open_source">Ашық кодты жобалар</string>
+    <string name="about_others">Басқалар</string>
+    <string name="about_contributors">Жасаушылар</string>
+    <string name="about_contributors_summary">Quran for Android бағдарламасының дамуына үлес қосқандар</string>
+
+    <!-- help -->
+    <string name="help_title">Жиі қойылатын сұрақтар (FAQ)</string>
+    <string name="help">
+        &lt;b>Аудиоларды қалай тыңдауға болады?&lt;/b>
+        &lt;br/>Құран бетін ашып экранды бір рет басыңыз.
+        Экранның төменгі жағынан ойнату батырмасы мен қари есімін көресіз.
+        Есімнің үстіне басып басқа қариды таңдауға болады.
+        Ойнату батырмасын басып ашық тұрған бетті немесе сүрені тыңдауға болады.
+        &lt;br/>
+        &lt;br/>&lt;b>Аудармаларды қалай көруге болады?&lt;/b>
+        &lt;br/>Құран бетін ашып экранды бір рет басыңыз. 
+        Экранның жоғарғы жағынан глобус суретін көресіз. 
+        Глобусты басып аудармасын көре аласыз.
+        &lt;br/>
+        Егер бұрын жүктелген аудармалар болмаса, аудармалар жүктеу беті ашылады.
+        Керекті аударманы жүктеп кері қайтыңыз. Қайта глобусты басып аударманы көре аласыз.
+        &lt;br/>
+        &lt;br/>&lt;b>Бетке қалай белгі қоюға болады?&lt;/b>
+        &lt;br/>Құран бетін ашып экранды бір рет басыңыз. 
+        Экранның жоғарғы оң жағынан бетбелгі суретін көресіз. Белгі қою үшін соны басыңыз 
+        (бетбелгі ақ түске боялады). Белгіні жою үшін батырманы қайта басыңыз.
+        &lt;br/>
+        &lt;br/>&lt;b>Мәтінді қалай үлкейтуге болады?&lt;/b>
+        &lt;br/>Арабша мәтінді үлкейту үшін құрылғыны көлденеңінен ұстаңыз (көлденең режимі).
+        Аударма мәтінін үлкейту үшін баптаулардан шрифт өлшемін таңдаңыз.
+        &lt;br/>
+        &lt;br/>&lt;b>Қалай аяттарды басқа адамдармен бөлісуге болады?&lt;/b>
+        &lt;br/>Құран бетін ашып арабша аяттың үстінен басып тұрыңыз.
+        Ашылған мәзір арқылы аятқа белгі қоюға, бөлісуге, аудармасын көруге,
+        көшіруге және қырағатын тыңдауға болады.
+        &lt;br/>
+        &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu шрифттері істемейді!&lt;/b>
+        &lt;br/>Өкінішке орай Android 4.0-тен төменгі нұсқалар бұл шрифттерді қолдамайды.
+    </string>
+    <string name="search_hint">Іздеу</string>
+    <string name="quranSearchType">Сүрелер</string>
+
+    <plurals name="files_downloaded">
+        <item quantity="one">1 сүре жазылды</item>
+        <item quantity="other">%1$d сүре жазылды</item>
+    </plurals>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+        <item quantity="one">\"%1$s\" бойынша 1 нәтиже: </item>
+        <item quantity="other">\"%1$s\" бойынша %2$d нәтиже: </item>
+    </plurals>
+
+    <!-- m permissions stuff -->
+    <string name="storage_permission_rationale">Құран деректерін сыртқы қоймаға сақтау үшін
+        рұқсат сұралуда. Құран бағдарламасы рұқсат берілмесе де істей береді, бірақ бағдарлама
+        жойылғанда немесе деректер тазартылғанда жүктелген беттер, аудиолар және басқа да мәліметтер
+        бірге жойылып кетеді. Сыртқы қоймаға сақтауға рұқсат бересіз бе?
+    </string>
+    <string name="storage_permission_please_restart">Өзгерістер күшіне ену үшін
+        бағдарламаны қайта қосу керек.
+    </string>
+
+    <!-- Search messages -->
+    <string name="found_in_sura">Сүреде табылды</string>
+    <string name="no_results">\"%s\" бойынша нәтиже табылмады</string>
+    <string name="no_active_translation">Белсенді аударма таңдалмаған.
+    Алдымен белсенді аударма таңдап, қайта іздеп көріңіз.
+    </string>
+    <string name="translation_settings">Аударма баптаулары</string>
+    <string name="no_arabic_search_available">Арабша іздеу деректері орнатылмаған.
+        Алдымен оны жүктеңіз. Кейін қайта іздеп көріңіз.
+    </string>
+    <string name="get_arabic_search_db">Арабша іздеу деректерін орнату</string>
+
+    <!-- Quran Preference Activity -->
+    <string name="prefs_category_navigation">Парақтау</string>
+    <string name="prefs_volume_key_navigation_title">Дауыс пернелерін пайдалану</string>
+    <string name="prefs_volume_key_navigation_summary">Дауыс пернелері арқылы бет аудару</string>
+    <string name="prefs_category_reading">Оқу</string>
+    <string name="prefs_category_translation">Аударма баптаулары</string>
+    <string name="prefs_category_display_settings">Көрініс</string>
+    <string name="prefs_use_arabic_title">Арабша режим</string>
+    <string name="prefs_use_arabic_summary_on">Бағдарлама араб тілінде істейді </string>
+    <string name="prefs_new_background_title">Жаңа фон</string>
+    <string name="prefs_lock_orientation_title">Экран бағытын құлыптау</string>
+    <string name="prefs_lock_orientation_summary_on">Құран беттері экранның белгіленген бағытында ұсталады</string>
+    <string name="prefs_lock_orientation_summary_off">Ағымдық бағытта пайдалану</string>
+    <string name="prefs_landscape_orientation_title">Көлденең бағыт</string>
+    <string name="prefs_landscape_orientation_summary_on">Көлденең бағытта пайдалану</string>
+    <string name="prefs_landscape_orientation_summary_off">Тік бағытта пайдалану</string>
+    <string name="prefs_night_mode_title">Түнгі режим</string>
+    <string name="prefs_night_mode_summary">Қара фон мен ашық түсті шрифт қолданылады</string>
+    <string name="prefs_night_mode_text_brightness_title">Мәтін ашықтығы</string>
+    <string name="prefs_night_mode_text_brightness_summary">Түнгі режимдегі мәтін ашықтығы</string>
+    <string name="prefs_overlay_page_info_title">Бет деректері</string>
+    <string name="prefs_overlay_page_info_summary">Сүре аты, бет және пара ретін көрсету</string>
+    <string name="prefs_display_marker_title">Бөлім деректері</string>
+    <string name="prefs_display_marker_summary">Пара, хизб және т.б. бөлімдерге жеткенде мәлімет көрсету</string>
+    <string name="prefs_highlight_bookmarks_title">Бетбелгі деректері</string>
+    <string name="prefs_highlight_bookmarks_summary">Белгіленген аяттарды ажыратып көрсету</string>
+    <string name="prefs_translation_text_title">Аударма мәтіні өлшемі</string>
+    <string name="prefs_translations">Аудармалар</string>
+    <string name="prefs_translations_summary">Аудармалар жүктеу және басқару</string>
+    <string name="prefs_ayah_before_translation_title">Алдымен аятты көрсету</string>
+    <string name="prefs_ayah_before_translation_summary">Арабша аяттарды аудармалардың үстінен көрсету</string>
+    <string name="prefs_category_download">Жүктеу</string>
+    <string name="prefs_streaming_title">Ағындық</string>
+    <string name="prefs_streaming_summary">Мүмкіндігінше ағындық аудио пайдалану (тек үзіктерге бөлінген аудио)</string>
+    <string name="prefs_download_amount_title">Жүктеу мөлшері</string>
+    <string name="prefs_download_amount_summary">Үзіктерге бөлінген аудио файлдарын жүктеу мөлшері</string>
+    <string name="prefs_audio_manager">Аудио менеджер (эксперименттік)</string>
+    <string name="prefs_audio_manager_summary">Құран аудио файлдарын жүктеу және басқару</string>
+    <string name="downloaded_translations">Жүктелгендер</string>
+    <string name="available_translations">Жүктеуге болатындар</string>
+    <string name="remove_button">Жою</string>
+    <string name="dialog_ok">OK</string>
+    <string name="prefs_app_location_title">Деректер орны</string>
+    <string name="prefs_app_location_summary">Құран файлдары сақталған орын</string>
+    <string name="prefs_sdcard_internal">Ішкі жады</string>
+    <string name="prefs_sdcard_external">Сыртқы жады (SD карта %1$d)</string>
+    <string name="prefs_app_size">Файлдар өлшемі:</string>
+    <string name="prefs_calculating_app_size">Бағдарлама өлшемі есептелуде&#8230;</string>
+    <string name="prefs_copying_app_files">Бағдарлама файлдары көшірілуде&#8230;</string>
+    <string name="prefs_err_moving_app_files">Файлдарды көшіру барсындағы қателік</string>
+    <string name="prefs_no_enough_space_to_move_files">Файлдарды көшіруге бос орын жетпейді</string>
+    <string name="prefs_megabytes_int">%1$d Mб</string>
+    <string name="prefs_megabytes_str">%s Mб</string>
+    <string name="prefs_tablet_mode_title">Планшет режимі</string>
+    <string name="prefs_tablet_mode_enabled">Көлденең режимде екі бет қатарынан көрсетіледі.</string>
+    <string name="prefs_tablet_mode_disabled">Көлденең режимде тек бір бет көрсетіледі.</string>
+    <string name="prefs_category_advanced">Қосымша</string>
+    <string name="prefs_export_title">Экспорт</string>
+    <string name="prefs_export_summary">Бетбелгілерді экспорттау</string>
+
+    <string name="import_data_permissions_error">Рұқсат қателіктеріне байланысты резервтік файлдарды оқу мүмкін емес.</string>
+    <string name="import_data_error">Жарамсыз резервтік файл (немесе резервтік файл оқылмайды).</string>
+    <string name="import_data">Импорт</string>
+    <string name="import_data_and_override">Бұл импорт барлық бетбелгілерді %1$d бетбелгі(лер) және %2$d белгі(лер)ге алмастырады.
+        Импорттау керек пе?</string>
+    <string name="import_successful">Деректер импортталды</string>
+    <string name="export_data_error">Экспорт қателігі</string>
+    <string name="exported_data">Деректер %1$s жеріне экспортталды</string>
+
+    <string name="warning">Назар аударыңыз</string>
+    <string name="kitkat_external_message">Бағдарлама сыртқы жадқа (SD карта) көшірілген соң жойылып қайта орнатылса
+        немесе деректер тазаланса барлық Құран суреттері мен аудиолары жойылады және ол деректерді қайта жүктеу керек болады.
+        Сыртқы жадты пайдалануға сенімдімісіз?</string>
+    <string name="please_grant_permissions">Өтініш, бағдарлама баптаулары арқылы керекті рұқсаттарды беріңіз</string>
+    <!-- Preferences End -->
+
+    <!-- translation updates -->
+    <string name="update_available">Жаңа файлдар пайда болды</string>
+    <string name="translation_updates_available">Жаңа аудармалар пайда болды. Қазір тексеру керек пе?</string>
+    <string name="translation_dialog_yes">Иә</string>
+    <string name="translation_dialog_later">Кейін</string>
+
+    <!-- End Number picker Strings -->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
+    <string name="quran_hizb">Хизб</string>
+    <string name="quran_juz2">Пара</string>
+    <string name="quran_page">Бет</string>
+    <string name="quran_sura">Сүре</string>
+    <string name="quran_ayah">%1$d-аят</string>
+    <string name="quran_ayah_details">%1$s %2$s-аят, %3$s-пара</string>
+    <string name="quran_sura_title">%1$s сүресі</string>
+    <string name="sura_ayah_notification_str">%1$s сүресі, %2$d-аят</string>
+
+    <string name="bookmarks_current_page">Ашылған бет</string>
+    <string name="index_loading">Жүктеу…</string>
+
+    <string name="canceling">Болдырмау&#8230;</string>
+    <string name="juz2_description">%1$s-пара</string>
+    <string name="page_description">%1$s-бет, %2$s-пара</string>
+    <string name="highlighting_database">Керекті файлдар</string>
+    <string name="timing_database">Керекті файлдар</string>
+
+    <!-- download statuses and errors -->
+    <string name="sdcard_error">SD карта табылмады. Картаны салып қайта байқап көріңіз.</string>
+    <string name="download_successful">Жүктелді</string>
+    <string name="download_processing">Жүктеу&#8230;</string>
+    <string name="download_error_general">Жүктелмеді</string>
+    <string name="download_error_disk">Құрылғыда бос орын жоқ</string>
+    <string name="download_error_network">Байланыс қателігі</string>
+    <string name="download_error_perms">Рұқсат қателігі</string>
+    <string name="download_error_invalid_download">Жүктелген файлдар бүлінген</string>
+    <string name="download_error_invalid_download_retry">Файл бүлінген; қайта жүктелуде&#8230;</string>
+    <string name="download_error_network_retry">Байланыс қателігі; қайта қосылуда&#8230;</string>
+    <string name="notification_download_canceled">Жүктелу тоқтатылды</string>
+    <string name="download_non_wifi_prompt">Wi-Fi қосылмаған. Бәрібір жүктелсін бе?</string>
+
+    <!-- downloading dialogs -->
+    <string name="download_progress">%1$s/%2$s жүктелді</string>
+    <string name="download_sura_progress">%3$d-сүренің %1$s жүктелді (барлығы: %2$s)&#8230;</string>
+    <string name="download_sura_ayah_progress">%1$d-сүре %2$d-аят жүктелуде&#8230;</string>
+    <string name="process_progress">%1$d/%2$d жүктелді</string>
+    <string name="download_retry">Қайталау</string>
+    <string name="download_cancel">Болдырмау</string>
+     <string name="download_extra_data">Бөлісу және аудармаларды пайдалану үшін бір-екі файл жүктеу керек. Қазір жүктелсін бе?</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">Аударма жойылсын ба?</string>
+    <string name="remove_dlg_msg">%1$s аудармасын жоюға сенімдімісіз?</string>
+    <string name="error_getting_translation_list">Аударма тізімі жүктелмеді. Кейінірек байқап көріңіз.</string>
+    <string name="search_data">Деректерді іздеу</string>
+    <string name="need_translation">Аударма/тәпсір жүктелмеген.</string>
+    <string name="get_translations">Аударма жүктеу</string>
+
+    <!-- help -->
+    <string name="email_us">Қалаған жауабыңызды алмасаңыз quranandroid@gmail.com поштасына жазыңыз. Бірақ, поштаға
+        көп хаттардың келу себебінен, жауап кешігіп келуі мүмкін. Өтініш, хабарламаны ағылшын тілінде жазыңыз.</string>
+
+    <!-- sura metainfo -->
+    <string name="makki">Мекке</string>
+    <string name="madani">Мәдина</string>
+    <plurals name="verses">
+        <item quantity="one">1 аят</item>
+        <item quantity="other">%s аят</item>
+    </plurals>
+
+    <!-- ayah action panel -->
+    <string name="play_from">Басы</string>
+    <string name="play_to">Соңы</string>
+    <string name="play_restrict_range">Тек жоғарыдағы аяттарды тыңдау</string>
+    <string name="play_verses_range">Аят топтамасын тыңдау:</string>
+    <string name="play_each_verse">Әр бір аятты тыңдау:</string>
+    <string name="play_apply">Қолдану</string>
+    <string name="play_apply_and_play">Қолдану және тыңдау</string>
+    <string name="previous">Алдыңғы</string>
+    <string name="play">Тыңдау</string>
+    <string name="pause">Кідірту</string>
+    <string name="stop">Тоқтату</string>
+    <string name="next">Келесі</string>
+
+    <string-array name="repeatValues">
+        <item>1 рет</item>
+        <item>2 рет</item>
+        <item>3 рет</item>
+        <item>шексіз</item>
+    </string-array>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">Аятқа бетбелгі қою</string>
+    <string name="tag_ayah">Аятты белгілеу</string>
+    <string name="share_ayah">Аятпен бөлісу</string>
+    <string name="share_ayah_text">Аят мәтінімен бөлісу</string>
+    <string name="translation_ayah">Аят аудармасы/тәпсірі</string>
+    <string name="play_from_here">Осы жерден бастап тыңдау</string>
+    <string name="via_string">\u0040QuranAndroid арқылы</string>
+    <string name="search_key">Сүрені табу үшін іздеу батырмасын басыңыз</string>
+    <string name="copy_ayah">Аятты көшіру</string>
+    <string name="ayah_copied_popup">Аят көшірілді</string>
+
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="delete_bookmark">Бетбелгіні жою</string>
+    <string name="tag_bookmark">Бетбелгіні белгілеу</string>
+    <string name="delete_tag">Белгіні жою</string>
+    <string name="edit_tag">Белгіні өзгерту</string>
+    <string name="new_tag">Жаңа белгі</string>
+    <string name="not_tagged">Белгілеусіз</string>
+    <plurals name="bookmark_tag_deleted">
+        <item quantity="one">1 элемент өшірілді</item>
+        <item quantity="other">%d элемент өшірілді</item>
+    </plurals>
+    <string name="undo">@string/cancel</string>
+
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">Белгі</string>
+    <string name="tag_name">Аты</string>
+
+    <!-- bookmark & tag list -->
+    <string name="bookmarks_list_empty">Бетбелгі жоқ</string>
+    <string name="tags_list_empty">Белгі жоқ</string>
+
+    <!-- audio manager -->
+    <string name="audio_manager">Аудио менеджер</string>
+</resources>
