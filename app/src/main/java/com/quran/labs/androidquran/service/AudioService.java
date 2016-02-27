@@ -250,6 +250,8 @@ public class AudioService extends Service implements OnCompletionListener,
       mPlayer.setOnCompletionListener(this);
       mPlayer.setOnErrorListener(this);
       mPlayer.setOnSeekCompleteListener(this);
+
+      mMediaSession.setActive(true);
     } else {
       Crashlytics.log("resetting mPlayer...");
       mPlayer.reset();
@@ -278,6 +280,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
     ComponentName receiver = new ComponentName(this, AudioIntentReceiver.class);
     mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession", receiver, null);
+    mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       mNotificationColor = getResources().getColor(R.color.audio_notification_color, null);
@@ -760,6 +764,7 @@ public class AudioService extends Service implements OnCompletionListener,
       mPlayer.reset();
       mPlayer.release();
       mPlayer = null;
+      mMediaSession.setActive(false);
     }
 
     // we can also release the Wifi lock, if we're holding it
@@ -1174,6 +1179,7 @@ public class AudioService extends Service implements OnCompletionListener,
     mState = State.Stopped;
     relaxResources(true, true);
     giveUpAudioFocus();
+    mMediaSession.release();
     super.onDestroy();
   }
 
