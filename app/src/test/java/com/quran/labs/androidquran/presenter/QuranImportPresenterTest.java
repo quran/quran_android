@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.presenter;
 
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class QuranImportPresenterTest {
   public void setup() {
     appContext = mock(Context.class);
     BookmarkImportExportModel model = mock(BookmarkImportExportModel.class);
-    presenter = new QuranImportPresenter(appContext, model);
+    presenter = new QuranImportPresenter(appContext, model, mock(BookmarkModel.class));
   }
 
   @Test
