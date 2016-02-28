@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.presenter;
 
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -21,7 +21,6 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,6 +40,7 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private static final int REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1;
 
   private final Context mAppContext;
+  private final BookmarkModel mBookmarkModel;
   private final BookmarkImportExportModel mBookmarkImportExportModel;
 
   private boolean mRequestingPermissions;
@@ -48,8 +48,10 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private QuranImportActivity mCurrentActivity;
 
   @Inject
-  public QuranImportPresenter(Context appContext, BookmarkImportExportModel model) {
+  public QuranImportPresenter(Context appContext,
+      BookmarkImportExportModel model, BookmarkModel bookmarkModel) {
     mAppContext = appContext;
+    mBookmarkModel = bookmarkModel;
     mBookmarkImportExportModel = model;
   }
 
@@ -72,16 +74,7 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   }
 
   public void importData(final BookmarkData data) {
-    mImportObservable =
-        Observable.fromCallable(new Callable<Boolean>() {
-          @Override
-          public Boolean call() throws Exception {
-            BookmarksDBAdapter adapter = new BookmarksDBAdapter(mAppContext);
-            return adapter.importBookmarks(data);
-          }
-        })
-        .subscribeOn(Schedulers.io())
-        .cache();
+    mImportObservable = mBookmarkModel.importBookmarksObservable(data);
     subscribeToImportData();
   }
 

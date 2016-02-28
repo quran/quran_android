@@ -314,7 +314,10 @@ public class BookmarksDBAdapter {
       ContentValues values = new ContentValues();
 
       List<Tag> tags = data.getTags();
-      for (int i = 0, tagCount = tags.size(); i < tagCount; i++) {
+      int tagSize = tags.size();
+      Timber.d("importing %d tags...", tagSize);
+
+      for (int i = 0; i < tagSize; i++) {
         Tag tag = tags.get(i);
         values.clear();
         values.put(TagsTable.NAME, tag.name);
@@ -323,7 +326,10 @@ public class BookmarksDBAdapter {
       }
 
       List<Bookmark> bookmarks = data.getBookmarks();
-      for (int i = 0, bookmarkCount = bookmarks.size(); i < bookmarkCount; i++) {
+      int bookmarkSize = bookmarks.size();
+      Timber.d("importing %d bookmarks...", bookmarkSize);
+
+      for (int i = 0; i < bookmarkSize; i++) {
         Bookmark bookmark = bookmarks.get(i);
 
         values.clear();
@@ -343,8 +349,10 @@ public class BookmarksDBAdapter {
         }
       }
 
+      Timber.d("import successful!");
       mDb.setTransactionSuccessful();
     } catch (Exception e) {
+      Timber.e(e, "Failed to import data");
       result = false;
     } finally {
       mDb.endTransaction();

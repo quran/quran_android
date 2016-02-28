@@ -229,4 +229,17 @@ public class BookmarkModel {
           }
         }).subscribeOn(Schedulers.io());
   }
+
+  public Observable<Boolean> importBookmarksObservable(final BookmarkData data) {
+    return Observable.fromCallable(new Callable<Boolean>() {
+      @Override
+      public Boolean call() throws Exception {
+        Boolean result = mBookmarksDBAdapter.importBookmarks(data);
+        if (result) {
+          mBookmarksPublishSubject.onNext(null);
+        }
+        return result;
+      }
+    }).subscribeOn(Schedulers.io()).cache();
+  }
 }
