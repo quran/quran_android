@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -50,6 +51,9 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    QuranApplication quranApp = (QuranApplication) getApplication();
+    quranApp.refreshLocale(this, false);
+
     super.onCreate(savedInstanceState);
     final ActionBar ab = getSupportActionBar();
     if (ab != null) {
