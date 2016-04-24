@@ -26,8 +26,6 @@
 
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -41,6 +39,8 @@ import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.quran.labs.androidquran.R;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -157,14 +157,14 @@ public class IconPageIndicator extends HorizontalScrollView implements
       return;
     }
     if (mViewPager != null) {
-      mViewPager.setOnPageChangeListener(null);
+      mViewPager.addOnPageChangeListener(null);
     }
     PagerAdapter adapter = view.getAdapter();
     if (adapter == null) {
       throw new IllegalStateException("ViewPager does not have adapter instance.");
     }
     mViewPager = view;
-    view.setOnPageChangeListener(this);
+    view.addOnPageChangeListener(this);
     notifyDataSetChanged();
   }
 

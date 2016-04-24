@@ -20,21 +20,6 @@
 
 package com.quran.labs.androidquran.service;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.DatabaseUtils;
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
-import com.quran.labs.androidquran.service.util.AudioFocusHelper;
-import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.RepeatInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.util.AudioUtils;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -61,10 +46,26 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.SparseIntArray;
+
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.DatabaseUtils;
+import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.service.util.AudioFocusHelper;
+import com.quran.labs.androidquran.service.util.AudioFocusable;
+import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
+import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.util.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -283,11 +284,7 @@ public class AudioService extends Service implements OnCompletionListener,
     mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
         MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      mNotificationColor = getResources().getColor(R.color.audio_notification_color, null);
-    } else {
-      mNotificationColor = getResources().getColor(R.color.audio_notification_color);
-    }
+    mNotificationColor = ContextCompat.getColor(this, R.color.audio_notification_color);
   }
 
   /**
@@ -1075,8 +1072,8 @@ public class AudioService extends Service implements OnCompletionListener,
         Bitmap logo = BitmapFactory.decodeResource(resources, R.drawable.icon);
         int iconWidth = logo.getWidth();
         int iconHeight = logo.getHeight();
-        ColorDrawable cd = new ColorDrawable(
-            resources.getColor(R.color.audio_notification_background_color));
+        ColorDrawable cd = new ColorDrawable(ContextCompat.getColor(appContext,
+                R.color.audio_notification_background_color));
         Bitmap bitmap = Bitmap.createBitmap(iconWidth * 2, iconHeight * 2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         cd.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());

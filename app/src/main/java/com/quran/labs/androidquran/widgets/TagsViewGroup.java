@@ -1,13 +1,10 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -15,6 +12,10 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class TagsViewGroup extends LinearLayout {
     mTagWidth = resources.getDimensionPixelSize(R.dimen.tag_width);
     mTagsMargin = resources.getDimensionPixelSize(R.dimen.tag_margin);
     mTagsTextSize = resources.getDimensionPixelSize(R.dimen.tag_text_size);
-    mDefaultTagBackgroundColor = resources.getColor(R.color.accent_color_dark);
+    mDefaultTagBackgroundColor = ContextCompat.getColor(context, R.color.accent_color_dark);
     mTagsToShow = MAX_TAGS;
     mIsRtl = QuranSettings.getInstance(context).isArabicNames();
   }

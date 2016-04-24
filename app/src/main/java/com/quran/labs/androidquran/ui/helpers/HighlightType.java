@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
-import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 
 import com.quran.labs.androidquran.R;
 
@@ -29,7 +29,7 @@ public class HighlightType implements Comparable<HighlightType> {
 
   public int getColor(Context context) {
     if (mColor == null) {
-      mColor = context.getResources().getColor(mColorId);
+      mColor = ContextCompat.getColor(context, mColorId);
     }
     return mColor;
   }

@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.database;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DefaultDatabaseErrorHandler;
@@ -12,6 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class DatabaseHandler {
 
     mSchemaVersion = getSchemaVersion();
     mMatchString = "<font color=\"" +
-        context.getResources().getColor(R.color.translation_highlight) +
+        ContextCompat.getColor(context, R.color.translation_highlight) +
         "\">";
   }
 

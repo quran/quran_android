@@ -1,13 +1,5 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.JuzView;
-import com.quran.labs.androidquran.widgets.TagsViewGroup;
-
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.JuzView;
+import com.quran.labs.androidquran.widgets.TagsViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -203,7 +203,7 @@ public class QuranListAdapter extends
 
   @Override
   public void onClick(View v) {
-    final int position = mRecyclerView.getChildPosition(v);
+    final int position = mRecyclerView.getChildAdapterPosition(v);
     if (position != RecyclerView.NO_POSITION) {
       final QuranRow element = mElements[position];
       if (mTouchListener == null) {
@@ -217,7 +217,7 @@ public class QuranListAdapter extends
   @Override
   public boolean onLongClick(View v) {
     if (mTouchListener != null) {
-      final int position = mRecyclerView.getChildPosition(v);
+      final int position = mRecyclerView.getChildAdapterPosition(v);
       if (position != RecyclerView.NO_POSITION) {
         return mTouchListener.onLongClick(mElements[position], position);
       }

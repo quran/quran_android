@@ -1,18 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QariItem;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
-import com.quran.labs.androidquran.util.AudioManagerUtils;
-import com.quran.labs.androidquran.util.AudioUtils;
-import com.quran.labs.androidquran.util.QariDownloadInfo;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -28,6 +15,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QariItem;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
+import com.quran.labs.androidquran.util.AudioManagerUtils;
+import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QariDownloadInfo;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -124,7 +124,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
   private View.OnClickListener mOnClickListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
-      int position = mRecyclerView.getChildPosition(v);
+      int position = mRecyclerView.getChildAdapterPosition(v);
       if (position != RecyclerView.NO_POSITION) {
         QariDownloadInfo info = mAdapter.getSheikhInfoForPosition(position);
         if (info.downloadedSuras.size() != 114) {
