@@ -1,15 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
-import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
-import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter;
-import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
-import com.quran.labs.androidquran.ui.helpers.QuranRow;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -17,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +17,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
+import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter;
+import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
+import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
 import java.util.List;
 
@@ -194,7 +195,8 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
               res.getQuantityString(R.plurals.bookmark_tag_deleted, size, size),
               BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS);
           snackbar.setAction(R.string.undo, mOnUndoClickListener);
-          snackbar.getView().setBackgroundColor(res.getColor(R.color.snackbar_background_color));
+          snackbar.getView().setBackgroundColor(ContextCompat.getColor(activity,
+              R.color.snackbar_background_color));
           snackbar.show();
           return true;
         }

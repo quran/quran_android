@@ -16,13 +16,12 @@ package com.quran.labs.androidquran.widgets;
  * limitations under the License.
  */
 
-import com.quran.labs.androidquran.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextPaint;
@@ -36,6 +35,8 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
 
 import java.util.Locale;
 
@@ -111,12 +112,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
     mTitleOffset = (int) (TITLE_OFFSET_DIPS * density);
     mTabPadding = (int) (TAB_VIEW_PADDING_DIPS * density);
 
-    mSelectedTabColor = resources.getColor(R.color.color_control_activated);
-    mUnselectedTabColor = resources.getColor(R.color.color_control_normal);
+    mSelectedTabColor = ContextCompat.getColor(context, R.color.color_control_activated);
+    mUnselectedTabColor = ContextCompat.getColor(context, R.color.color_control_normal);
 
     mTabStrip = new SlidingTabStrip(context);
-    mTabStrip.setSelectedIndicatorColors(
-        resources.getColor(R.color.indicator_color));
+    mTabStrip.setSelectedIndicatorColors(ContextCompat.getColor(context, R.color.indicator_color));
     addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
   }
 
@@ -170,7 +170,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     mViewPager = viewPager;
     if (viewPager != null) {
-      viewPager.setOnPageChangeListener(new InternalViewPagerListener());
+      viewPager.addOnPageChangeListener(new InternalViewPagerListener());
       populateTabStrip();
       updateTabsTextColor();
     }

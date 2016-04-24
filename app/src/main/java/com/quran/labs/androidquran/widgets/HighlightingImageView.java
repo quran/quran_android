@@ -1,12 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.util.QuranUtils;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -19,8 +12,16 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -62,7 +63,7 @@ public class HighlightingImageView extends RecyclingImageView {
     super(context, attrs);
     if (sOverlayTextColor == -1) {
       final Resources res = context.getResources();
-      sOverlayTextColor = res.getColor(R.color.overlay_text_color);
+      sOverlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
       sMinFontSize = res.getDimensionPixelSize(R.dimen.min_overlay_font_size);
       sMaxFontSize = res.getDimensionPixelSize(R.dimen.max_overlay_font_size);
     }

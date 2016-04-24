@@ -1,15 +1,15 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.quran.labs.androidquran.R;
 
 import static com.quran.labs.androidquran.widgets.AyahToolBar.PipPosition;
 
@@ -34,11 +34,10 @@ public class AyahToolBarPip extends View {
   }
 
   private void init(Context context) {
-    final Resources resources = context.getResources();
     mPosition = PipPosition.DOWN;
     mPaint = new Paint();
     mPaint.setAntiAlias(true);
-    mPaint.setColor(resources.getColor(R.color.toolbar_background));
+    mPaint.setColor(ContextCompat.getColor(context, R.color.toolbar_background));
     mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
   }
 

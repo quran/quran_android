@@ -32,9 +32,6 @@
 
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.BuildConfig;
-import com.quran.labs.androidquran.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -46,11 +43,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
@@ -58,6 +55,9 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+
+import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.R;
 
 import timber.log.Timber;
 
@@ -250,22 +250,22 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * @param panel The child view that was moved
      * @param slideOffset The new offset of this sliding pane within its range, from 0-1
      */
-    public void onPanelSlide(View panel, float slideOffset);
+    void onPanelSlide(View panel, float slideOffset);
     /**
      * Called when a sliding pane becomes slid completely collapsed. The pane may or may not
      * be interactive at this point depending on if it's shown or hidden
      * @param panel The child view that was slid to an collapsed position, revealing other panes
      */
-    public void onPanelCollapsed(View panel);
+    void onPanelCollapsed(View panel);
 
     /**
      * Called when a sliding pane becomes slid completely expanded. The pane is now guaranteed
      * to be interactive. It may now obscure other views in the layout.
      * @param panel The child view that was slid to a expanded position
      */
-    public void onPanelExpanded(View panel);
+    void onPanelExpanded(View panel);
 
-    public void onPanelAnchored(View panel);
+    void onPanelAnchored(View panel);
   }
 
   /**
@@ -351,9 +351,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
     // If the shadow height is zero, don't show the shadow
     if (mShadowHeight > 0) {
       if (mIsSlidingUp) {
-        mShadowDrawable = getResources().getDrawable(R.drawable.sliding_panel_above_shadow);
+        mShadowDrawable = ContextCompat.getDrawable(context, R.drawable.sliding_panel_above_shadow);
       } else {
-        mShadowDrawable = getResources().getDrawable(R.drawable.sliding_panel_below_shadow);
+        mShadowDrawable = ContextCompat.getDrawable(context, R.drawable.sliding_panel_below_shadow);
       }
 
     } else {
