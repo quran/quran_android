@@ -27,7 +27,7 @@ package com.quran.labs.androidquran.service.util;
  */
 public interface AudioFocusable {
     /** Signals that audio focus was gained. */
-    public void onGainedAudioFocus();
+    void onGainedAudioFocus();
 
     /**
      * Signals that audio focus was lost.
@@ -35,5 +35,5 @@ public interface AudioFocusable {
      * @param canDuck If true, audio can continue in "ducked" mode (low volume). Otherwise, all
      * audio must stop.
      */
-    public void onLostAudioFocus(boolean canDuck);
+    void onLostAudioFocus(boolean canDuck);
 }

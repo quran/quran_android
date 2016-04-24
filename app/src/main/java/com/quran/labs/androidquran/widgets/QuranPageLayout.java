@@ -1,11 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
-import com.quran.labs.androidquran.ui.util.PageController;
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -15,6 +9,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Display;
@@ -27,6 +22,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.ui.util.PageController;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public abstract class QuranPageLayout extends FrameLayout
     implements ObservableScrollView.OnScrollListener {
@@ -165,8 +166,7 @@ public abstract class QuranPageLayout extends FrameLayout
       setBackgroundDrawable((mPageNumber % 2 == 0 ?
           sLeftGradient : sRightGradient));
     } else {
-      setBackgroundColor(mContext.getResources().getColor(
-          R.color.page_background));
+      setBackgroundColor(ContextCompat.getColor(mContext, R.color.page_background));
     }
 
     if (mErrorText != null) {

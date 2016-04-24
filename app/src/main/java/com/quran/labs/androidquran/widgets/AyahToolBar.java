@@ -1,11 +1,10 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.view.menu.MenuBuilder;
 import android.util.AttributeSet;
 import android.view.Menu;
@@ -16,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.quran.labs.androidquran.R;
 
 public class AyahToolBar extends ViewGroup implements
     View.OnClickListener, View.OnLongClickListener {
@@ -56,7 +57,7 @@ public class AyahToolBar extends ViewGroup implements
         resources.getDimensionPixelSize(R.dimen.toolbar_height);
     mPipHeight = resources.getDimensionPixelSize(R.dimen.toolbar_pip_height);
     mPipWidth = resources.getDimensionPixelSize(R.dimen.toolbar_pip_width);
-    final int background = resources.getColor(R.color.toolbar_background);
+    final int background = ContextCompat.getColor(context, R.color.toolbar_background);
 
     mMenuLayout = new LinearLayout(context);
     mMenuLayout.setLayoutParams(

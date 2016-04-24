@@ -6,10 +6,6 @@
 
 package com.quran.labs.androidquran.ui.preference;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.QuranUtils;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -18,11 +14,16 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarChangeListener {
 
@@ -45,7 +46,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         Constants.DEFAULT_TEXT_SIZE);
     mMax = attrs.getAttributeIntValue(ANDROID_NS, "max", 100);
     setLayoutResource(R.layout.seekbar_pref);
-    mTintColor = context.getResources().getColor(R.color.accent_color);
+    mTintColor = ContextCompat.getColor(context, R.color.accent_color);
   }
 
   @Override

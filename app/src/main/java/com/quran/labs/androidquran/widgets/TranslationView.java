@@ -1,20 +1,12 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
-import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
-import com.quran.labs.androidquran.ui.helpers.VerseLineHeightSpan;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.StyleRes;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -25,6 +17,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
+import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
+import com.quran.labs.androidquran.ui.helpers.VerseLineHeightSpan;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
 
@@ -94,14 +95,14 @@ public class TranslationView extends ScrollView {
     });
 
     Resources resources = getResources();
-    mDividerColor = resources.getColor(R.color.translation_hdr_color);
+    mDividerColor = ContextCompat.getColor(context, R.color.translation_hdr_color);
     mLeftRightMargin = resources.getDimensionPixelSize(
         R.dimen.translation_left_right_margin);
     mTopBottomMargin = resources.getDimensionPixelSize(
         R.dimen.translation_top_bottom_margin);
     mFooterSpacerHeight = resources.getDimensionPixelSize(
         R.dimen.translation_footer_spacer);
-    mHeaderColor = resources.getColor(R.color.translation_sura_header);
+    mHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header);
     mHeaderStyle = R.style.translation_sura_title;
     initResources();
   }

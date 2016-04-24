@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -9,8 +7,11 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
+
+import com.quran.labs.androidquran.R;
 
 public class JuzView extends Drawable {
   public static final int TYPE_JUZ = 1;
@@ -31,8 +32,8 @@ public class JuzView extends Drawable {
 
   public JuzView(Context context, int type, String overlayText) {
     final Resources resources = context.getResources();
-    final int circleColor = resources.getColor(R.color.accent_color);
-    final int circleBackground = resources.getColor(R.color.accent_color_dark);
+    final int circleColor = ContextCompat.getColor(context, R.color.accent_color);
+    final int circleBackground = ContextCompat.getColor(context, R.color.accent_color_dark);
 
     mCirclePaint = new Paint();
     mCirclePaint.setStyle(Paint.Style.FILL);
@@ -46,7 +47,7 @@ public class JuzView extends Drawable {
 
     mOverlayText = overlayText;
     if (!TextUtils.isEmpty(mOverlayText)) {
-      final int textColor = resources.getColor(R.color.header_background);
+      final int textColor = ContextCompat.getColor(context, R.color.header_background);
       final int textSize =
           resources.getDimensionPixelSize(R.dimen.juz_overlay_text_size);
       mOverlayTextPaint = new TextPaint();

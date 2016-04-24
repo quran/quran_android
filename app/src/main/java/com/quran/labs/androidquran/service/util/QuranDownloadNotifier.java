@@ -1,15 +1,16 @@
 package com.quran.labs.androidquran.service.util;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.QuranDataActivity;
-import com.quran.labs.androidquran.R;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.QuranDataActivity;
+import com.quran.labs.androidquran.R;
 
 public class QuranDownloadNotifier {
   // error messages
@@ -90,8 +91,7 @@ public class QuranDownloadNotifier {
     mNotificationManager = (NotificationManager) mAppContext
         .getSystemService(Context.NOTIFICATION_SERVICE);
     mBroadcastManager = LocalBroadcastManager.getInstance(mAppContext);
-    mNotificationColor = mAppContext.getResources()
-        .getColor(R.color.notification_color);
+    mNotificationColor = ContextCompat.getColor(mAppContext, R.color.notification_color);
     mLastProgress = -1;
     mLastMaximum = -1;
   }
