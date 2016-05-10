@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Translated by 
 Abdelouali Benkheil (https://github.com/abdelouali) - (a.benkheil@gmail.com)
@@ -46,39 +45,17 @@ Yasser Baghouli (zaterdag@outlook.com)
     <string name="about_data_sources">Gegevens bronnen</string>
     <string name="about_images">Afbeeldingen</string>
     <string name="about_madani_images">De Koran Afbeeldingen zijn gebaseerd op de lettertypen van de Koning Fahd Koran Printing Complex</string>
-    <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
     <string name="about_naskh_images">De koran beelden voor het Naskh app werden genomen (met toestemming) van SHL Info Systems</string>
-    <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
     <string name="about_qaloon_images">Qaloon afbeeldingen gebruikt met toestemming van Nous Memes Editions Et Diffusion (Tunisia)</string>
-    <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
     <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
-    <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
     <string name="about_quran_ksu">Electronic Moshaf Project</string>
     <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
-    <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
-    <string name="about_tanzil" translatable="false">Tanzil</string>
     <string name="about_tanzil_summary">Vertalingen van vele talen</string>
-    <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
-    <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
     <string name="about_noorhidayat_summary">Noorehira lettertype en Mufti Taqi Vertaling</string>
-    <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
     <string name="about_open_source">Open Source Projecten</string>
-    <string name="about_okhttp" translatable="false">OkHttp</string>
-    <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
-    <string name="about_rxjava" translatable="false">RxJava</string>
-    <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
-    <string name="about_rxandroid" translatable="false">RxAndroid</string>
-    <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
-    <string name="about_rxpreferences" translatable="false">RxPreferences</string>
-    <string name="about_rxpreferences_url" translatable="false">https://github.com/f2prateek/rx-preferences</string>
-    <string name="about_moshi" translatable="false">Moshi</string>
-    <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
-    <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
-    <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
     <string name="about_others">Andere</string>
     <string name="about_contributors">Bijdragers</string>
     <string name="about_contributors_summary">Een lijst van personen die hebben bijgedragen aan de ontwikkeling van Koran voor Android</string>
-    <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
 
     <!-- help -->
     <string name="help_title">Veel Gestelde Vragen</string>
@@ -204,7 +181,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
     <string name="export_data_error">Fout bij het exporteren van gegevens.</string>
     <string name="exported_data">Gegevens geëxporteerd naar %1$s.</string>
 
-    <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
     <string name="warning">Waarschuwing</string>
     <string name="kitkat_external_message">Als gevolg van Android beperkingen, als je ervoor kiest om Koran gegevens te plaatsen
           op uw externe SD-kaart en deze later verwijderd, zal je al deze gegevens opnieuw moeten downloaden. Ben jij
@@ -239,7 +215,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
     <string name="page_description">pagina %1$s, Juz\' %2$s</string>
     <string name="highlighting_database">Vereiste Bestanden</string>
     <string name="timing_database">Vereiste Bestanden</string>
-    <string name="infinity" translatable="false">&#8734;</string>
 
     <!-- download statuses and errors -->
     <string name="sdcard_error">Kon geen SD-kaart vinden. Gelieve te dit te controleren en opnieuw te proberen.</string>
