@@ -89,10 +89,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".service.util.AudioIntentReceiver">
-            <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-            </intent-filter>
+        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
@@ -132,6 +129,10 @@
             android:name=".service.QuranDownloadService" />
         <service
             android:exported="false"
-            android:name=".service.AudioService" />
+            android:name=".service.AudioService">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </service>
     </application>
 </manifest> 
