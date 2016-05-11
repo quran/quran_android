@@ -20,6 +20,20 @@
 
 package com.quran.labs.androidquran.service;
 
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.DatabaseUtils;
+import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.service.util.AudioFocusHelper;
+import com.quran.labs.androidquran.service.util.AudioFocusable;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
+import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.util.AudioUtils;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -48,24 +62,11 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.SparseIntArray;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.DatabaseUtils;
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
-import com.quran.labs.androidquran.service.util.AudioFocusHelper;
-import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioIntentReceiver;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.RepeatInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.util.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -279,21 +280,43 @@ public class AudioService extends Service implements OnCompletionListener,
 
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
 
-    ComponentName receiver = new ComponentName(this, AudioIntentReceiver.class);
+    ComponentName receiver = new ComponentName(this, MediaButtonReceiver.class);
     mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession", receiver, null);
     mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
         MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+    mMediaSession.setCallback(new MediaSessionCallback());
 
     mNotificationColor = ContextCompat.getColor(this, R.color.audio_notification_color);
   }
 
-  /**
-   * Called when we receive an Intent. When we receive an intent sent to us
-   * via startService(), this is the method that gets called. So here we
-   * react appropriately depending on the Intent's action, which specifies
-   * what is being requested of us.
-   */
-  @Override
+  private class MediaSessionCallback extends MediaSessionCompat.Callback {
+
+    @Override
+    public void onPlay() {
+      processPlayRequest();
+    }
+
+    @Override
+    public void onSkipToNext() {
+      processSkipRequest();
+    }
+
+    @Override
+    public void onSkipToPrevious() {
+      processRewindRequest();
+    }
+
+    @Override
+    public void onPause() {
+      processPauseRequest();
+    }
+
+    @Override
+    public void onStop() {
+      processStopRequest();
+    }
+  }
+
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent == null) {
       // handle a crash that occurs where intent comes in as null
@@ -383,6 +406,8 @@ public class AudioService extends Service implements OnCompletionListener,
           mAudioRequest.setEnforceBounds(enforceRange);
         }
       }
+    } else {
+      MediaButtonReceiver.handleIntent(mMediaSession, intent);
     }
 
     // we don't want the service to restart if killed
@@ -468,6 +493,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (sura != mGaplessSura) {
         return;
       }
+      setState(PlaybackStateCompat.STATE_PLAYING);
       int pos = mPlayer.getCurrentPosition();
       Integer ayahTime = mGaplessSuraData.get(ayah);
       Timber.d("updateAudioPlayPosition: %d:%d, currently at %d vs expected at %d",
@@ -620,6 +646,7 @@ public class AudioService extends Service implements OnCompletionListener,
       mState = State.Paused;
       mHandler.removeCallbacksAndMessages(null);
       mPlayer.pause();
+      setState(PlaybackStateCompat.STATE_PAUSED);
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
         // while paused, we always retain the MediaPlayer
         relaxResources(false, true);
@@ -633,12 +660,15 @@ public class AudioService extends Service implements OnCompletionListener,
     } else if (State.Stopped == mState) {
       // if we get a pause while we're already stopped, it means we likely woke up because
       // of AudioIntentReceiver, so just stop in this case.
+      setState(PlaybackStateCompat.STATE_STOPPED);
       stopSelf();
     }
   }
 
   private void processRewindRequest() {
     if (State.Playing == mState || State.Paused == mState) {
+      setState(PlaybackStateCompat.STATE_REWINDING);
+
       int seekTo = 0;
       int pos = mPlayer.getCurrentPosition();
       if (mAudioRequest.isGapless()) {
@@ -672,6 +702,8 @@ public class AudioService extends Service implements OnCompletionListener,
       return;
     }
     if (State.Playing == mState || State.Paused == mState) {
+      setState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
+
       if (mPlayerOverride) {
         playAudio(false);
       } else {
@@ -697,6 +729,7 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void processStopRequest(boolean force) {
+    setState(PlaybackStateCompat.STATE_STOPPED);
     mHandler.removeCallbacksAndMessages(null);
 
     if (State.Preparing == mState) {
@@ -903,6 +936,8 @@ public class AudioService extends Service implements OnCompletionListener,
       Timber.d("okay, we are preparing to play - streaming is: %b", isStreaming);
       createMediaPlayerIfNeeded();
       mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+      setState(PlaybackStateCompat.STATE_CONNECTING);
+
       try {
         boolean playUrl = true;
         if (overrideResource != 0) {
@@ -959,6 +994,25 @@ public class AudioService extends Service implements OnCompletionListener,
       Timber.e("IOException playing file: %s", ex.getMessage());
       ex.printStackTrace();
     }
+  }
+
+  private void setState(int state) {
+    long position = 0;
+    if (mPlayer != null && mPlayer.isPlaying()) {
+      position = mPlayer.getCurrentPosition();
+    }
+
+    PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder();
+    builder.setState(state, position, 1.0f);
+    builder.setActions(
+        PlaybackStateCompat.ACTION_PLAY |
+        PlaybackStateCompat.ACTION_STOP |
+        PlaybackStateCompat.ACTION_REWIND |
+        PlaybackStateCompat.ACTION_FAST_FORWARD |
+        PlaybackStateCompat.ACTION_PAUSE |
+        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+        PlaybackStateCompat.ACTION_SKIP_TO_NEXT);
+    mMediaSession.setPlaybackState(builder.build());
   }
 
   @Override
