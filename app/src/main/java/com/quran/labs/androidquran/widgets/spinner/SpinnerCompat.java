@@ -16,6 +16,9 @@
 
 package com.quran.labs.androidquran.widgets.spinner;
 
+import com.quran.labs.androidquran.R;
+
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,7 +29,6 @@ import android.os.Build;
 import android.os.Parcelable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.appcompat.R;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.TintTypedArray;
 import android.support.v7.widget.ViewUtils;
@@ -165,7 +167,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
 
     // Need to reset this for tinting purposes
     // used to be read from R.styleable.Spinner_android_background
-    setBackgroundResource(R.drawable.abc_spinner_mtrl_am_alpha);
+    setBackgroundResource(R.drawable.spinner_mtrl_am_alpha);
 
     if (mode == MODE_THEME) {
       // used to be read from R.styleable.Spinner_spinnerMode
@@ -181,11 +183,12 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
       case MODE_DROPDOWN: {
         final DropdownPopup popup = new DropdownPopup(context, attrs, defStyle);
 
-        mDropDownWidth = a.getLayoutDimension(R.styleable.Spinner_android_dropDownWidth,
-            ViewGroup.LayoutParams.WRAP_CONTENT);
+        mDropDownWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
 
+        //popup.setBackgroundDrawable(
+        //    a.getDrawable(R.styleable.Spinner_android_popupBackground));
         popup.setBackgroundDrawable(
-            a.getDrawable(R.styleable.Spinner_android_popupBackground));
+            getResources().getDrawable(R.drawable.popup_background_material));
 
         mPopup = popup;
         mForwardingListener = new ListPopupWindow.ForwardingListener(this) {
@@ -232,7 +235,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
       Log.e(TAG, "setPopupBackgroundDrawable: incompatible spinner mode; ignoring...");
       return;
     }
-    ((DropdownPopup) mPopup).setBackgroundDrawable(background);
+    mPopup.setBackgroundDrawable(background);
   }
 
   /**
@@ -405,11 +408,8 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
-    if (mForwardingListener != null && mForwardingListener.onTouch(this, event)) {
-      return true;
-    }
-
-    return super.onTouchEvent(event);
+    return mForwardingListener != null && mForwardingListener.onTouch(this, event) ||
+        super.onTouchEvent(event);
   }
 
   @Override
@@ -443,6 +443,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
    * @param delta Change in the selected position. +1 means selection is moving to the right, so
    *              views are scrolling to the left. -1 means selection is moving to the left.
    */
+  @SuppressLint("RtlHardcoded")
   @Override
   void layout(int delta, boolean animate) {
     int childrenLeft = mSpinnerPadding.left;
@@ -581,11 +582,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
 
   @Override
   public boolean performClick() {
-    boolean handled = super.performClick();
-
-    if (!handled) {
-      handled = true;
-
+    if (!super.performClick()) {
       if (!mPopup.isShowing()) {
         mPopup.show();
         // added for Quran Android to set the list to the selected item
@@ -595,7 +592,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
       }
     }
 
-    return handled;
+    return true;
   }
 
   public void onClick(DialogInterface dialog, int which) {
@@ -775,11 +772,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
      */
     public boolean areAllItemsEnabled() {
       final ListAdapter adapter = mListAdapter;
-      if (adapter != null) {
-        return adapter.areAllItemsEnabled();
-      } else {
-        return true;
-      }
+      return adapter == null || adapter.areAllItemsEnabled();
     }
 
     /**
@@ -788,11 +781,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
      */
     public boolean isEnabled(int position) {
       final ListAdapter adapter = mListAdapter;
-      if (adapter != null) {
-        return adapter.isEnabled(position);
-      } else {
-        return true;
-      }
+      return adapter == null || adapter.isEnabled(position);
     }
 
     public int getItemViewType(int position) {
@@ -814,22 +803,22 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
    */
   private interface SpinnerPopup {
 
-    public void setAdapter(ListAdapter adapter);
+    void setAdapter(ListAdapter adapter);
 
     /**
      * Show the popup
      */
-    public void show();
+    void show();
 
     /**
      * Dismiss the popup
      */
-    public void dismiss();
+    void dismiss();
 
     /**
      * @return true if the popup is showing, false otherwise.
      */
-    public boolean isShowing();
+    boolean isShowing();
 
     /**
      * Set hint text to be displayed to the user. This should provide a description of the
@@ -837,21 +826,21 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
      *
      * @param hintText Hint text to set.
      */
-    public void setPromptText(CharSequence hintText);
+    void setPromptText(CharSequence hintText);
 
-    public CharSequence getHintText();
+    CharSequence getHintText();
 
-    public void setBackgroundDrawable(Drawable bg);
+    void setBackgroundDrawable(Drawable bg);
 
-    public void setVerticalOffset(int px);
+    void setVerticalOffset(int px);
 
-    public void setHorizontalOffset(int px);
+    void setHorizontalOffset(int px);
 
-    public Drawable getBackground();
+    Drawable getBackground();
 
-    public int getVerticalOffset();
+    int getVerticalOffset();
 
-    public int getHorizontalOffset();
+    int getHorizontalOffset();
   }
 
   private class DialogPopup implements SpinnerPopup, DialogInterface.OnClickListener {
@@ -870,7 +859,7 @@ public class SpinnerCompat extends AbsSpinnerCompat implements DialogInterface.O
     }
 
     public boolean isShowing() {
-      return mPopup != null ? mPopup.isShowing() : false;
+      return mPopup != null && mPopup.isShowing();
     }
 
     public void setAdapter(ListAdapter adapter) {

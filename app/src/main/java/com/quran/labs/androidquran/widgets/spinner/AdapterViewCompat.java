@@ -908,11 +908,8 @@ public abstract class AdapterViewCompat<T extends Adapter> extends ViewGroup {
   @Override
   public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
     View selectedView = getSelectedView();
-    if (selectedView != null && selectedView.getVisibility() == VISIBLE
-        && selectedView.dispatchPopulateAccessibilityEvent(event)) {
-      return true;
-    }
-    return false;
+    return selectedView != null && selectedView.getVisibility() == VISIBLE
+        && selectedView.dispatchPopulateAccessibilityEvent(event);
   }
 
   @Override
@@ -1065,7 +1062,7 @@ public abstract class AdapterViewCompat<T extends Adapter> extends ViewGroup {
         seed = last;
         // Try going up next time
         next = false;
-      } else if (hitLast || (!next && !hitFirst)) {
+      } else {
         // Either we hit the bottom, or we are trying to move up
         first--;
         seed = first;
