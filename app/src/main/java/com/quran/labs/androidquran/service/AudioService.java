@@ -62,6 +62,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -199,6 +200,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private int mGaplessSura = 0;
   private int mNotificationColor;
   private Bitmap mNotificationIcon;
+  private Bitmap mDisplayIcon;
   private SparseIntArray mGaplessSuraData = null;
   private AsyncTask<Integer, Void, SparseIntArray> mTimingTask = null;
 
@@ -287,6 +289,14 @@ public class AudioService extends Service implements OnCompletionListener,
     mMediaSession.setCallback(new MediaSessionCallback());
 
     mNotificationColor = ContextCompat.getColor(this, R.color.audio_notification_color);
+    try {
+      // for Android Wear, use a 1x1 Bitmap with the notification color
+      mDisplayIcon = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+      Canvas canvas = new Canvas(mDisplayIcon);
+      canvas.drawColor(mNotificationColor);
+    } catch (OutOfMemoryError oom) {
+      Crashlytics.logException(oom);
+    }
   }
 
   private class MediaSessionCallback extends MediaSessionCompat.Callback {
@@ -765,6 +775,17 @@ public class AudioService extends Service implements OnCompletionListener,
       updateIntent.putExtra(AudioUpdateIntent.SURA, mAudioRequest.getCurrentSura());
       updateIntent.putExtra(AudioUpdateIntent.AYAH, mAudioRequest.getCurrentAyah());
       mBroadcastManager.sendBroadcast(updateIntent);
+
+      MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
+          .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mAudioRequest.getTitle(this));
+      if (mPlayer.isPlaying()) {
+        metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mPlayer.getDuration());
+      }
+
+      if (mDisplayIcon != null) {
+        metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, mDisplayIcon);
+      }
+      mMediaSession.setMetadata(metadataBuilder.build());
     }
   }
 
