@@ -193,7 +193,9 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   void writeTranslationList(TranslationList list) {
     File cacheFile = getCachedFile();
     try {
-      cacheFile.delete();
+      if (cacheFile.exists()) {
+        cacheFile.delete();
+      }
       Moshi moshi = new Moshi.Builder().build();
       JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
       BufferedSink sink = Okio.buffer(Okio.sink(cacheFile));
