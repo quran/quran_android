@@ -49,6 +49,14 @@ android {
             versionCode 1040
             versionName "1.0.4"
         }
+
+        shemerly {
+            applicationId "com.quran.labs.androidquran.shemerly"
+            resValue "string", "authority", applicationId + '.data.QuranDataProvider'
+            resValue "string", "file_authority", applicationId + '.fileprovider'
+            versionCode 1040
+            versionName "1.0.4"
+        }
     }
 
     buildTypes {
