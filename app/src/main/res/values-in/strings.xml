@@ -43,41 +43,17 @@
     <string name="about_data_sources">Sumber Data</string>
     <string name="about_images">Gambar</string>
     <string name="about_madani_images">Gambar-gambar halaman Quran dibuat berdasarkan jenis huruf dari Kompleks Percetakan Quran Raja Fahd</string>
-    <string name="about_madani_images_url">https://github.com/quran/quran.com-images</string>
     <string name="about_naskh_images">Gambar-gambar halaman Quran untuk jenis Naskh diperoleh (dengan ijin) dari SHL Info Systems</string>
-    <string name="about_naskh_images_url">http://www.shlinfosystems.com</string>
     <string name="about_qaloon_images">Gambar-gambar tipe Qaluun dipakai dengan ijin dari Nous Memes Editions Et Diffusion (Tunisia)</string>
-    <string name="about_quranicaudio">Audio Quran</string>
     <string name="about_quranicaudio_summary">Bacaan mp3 Quran tanpa jeda</string>
-    <string name="about_quranicaudio_url">http://quranicaudio.com</string>
     <string name="about_quran_ksu">Proyek Mushhaf Elektronik</string>
     <string name="about_quran_ksu_summary">Proyek Mushhaf Elektronik Universitas Raja Saud (Electronic Moshaf Project) adalah sumber Tafsir berbahasa Arab dan terjemahan untuk berbagai bahasa dari aplikasi ini</string>
-    <string name="about_quran_ksu_url">http://quran.ksu.edu.sa</string>
-    <string name="about_tanzil">Tanzil</string>
     <string name="about_tanzil_summary">Terjemahan bagi aneka bahasa</string>
-    <string name="about_tanzil_url">http://tanzil.net</string>
-    <string name="about_noorhidayat">Noorhidayat</string>
     <string name="about_noorhidayat_summary">Font Noorehira dan Terjemahan Mufti Taqi</string>
-    <string name="about_noorhidayat_url">http://www.noorehidayat.org</string>
     <string name="about_open_source">Proyek Open Source</string>
-    <string name="about_dagger2">Dagger 2</string>
-    <string name="about_dagger2_url">http://google.github.io/dagger</string>
-    <string name="about_okhttp">OkHttp</string>
-    <string name="about_okhttp_url">https://github.com/square/okhttp</string>
-    <string name="about_rxjava">RxJava</string>
-    <string name="about_rxjava_url">https://github.com/ReactiveX/RxJava</string>
-    <string name="about_rxandroid">RxAndroid</string>
-    <string name="about_rxandroid_url">https://github.com/ReactiveX/RxAndroid</string>
-    <string name="about_rxpreferences">RxPreferences</string>
-    <string name="about_rxpreferences_url">https://github.com/f2prateek/rx-preferences</string>
-    <string name="about_moshi">Moshi</string>
-    <string name="about_moshi_url">https://github.com/square/moshi</string>
-    <string name="about_sliding_panel">AndroidSlidingUpPanel</string>
-    <string name="about_sliding_panel_url">https://github.com/umano/AndroidSlidingUpPanel</string>
     <string name="about_others">Lainnya</string>
     <string name="about_contributors">Kontributor</string>
     <string name="about_contributors_summary">Daftar orang yang berkontribusi pada pengembangan Quran untuk Android</string>
-    <string name="about_contributors_url">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
 
     <!-- help -->
     <string name="help_title">Pertanyaan yang Sering Mengemuka</string>
@@ -212,7 +188,6 @@
     <string name="export_data_error">Kesalahan dalam mengekspor data.</string>
     <string name="exported_data">Data diekspor ke %1$s.</string>
 
-    <string name="logs_email">quranandroid+logs@gmail.com</string>
     <string name="warning">Peringatan</string>
     <string name="kitkat_external_message">Karena batasan pada Android, jika anda memilih untuk menempatkan data Quran
         pada kartu SD eksternal dan kemudian hari membuang atau menghapus data Quran Android, semua halaman dan audio Quran
@@ -248,7 +223,6 @@
     <string name="page_description">halaman %1$s, Juz\' %2$s</string>
     <string name="highlighting_database">Berkas Diperlukan</string>
     <string name="timing_database">Berkas Diperlukan</string>
-    <string name="infinity">&#8734;</string>
 
     <!-- download statuses and errors -->
     <string name="sdcard_error">Tak bisa menemukan kartu SD. Harap masukkan dan coba lagi.</string>
