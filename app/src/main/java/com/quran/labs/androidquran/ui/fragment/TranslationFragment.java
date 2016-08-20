@@ -15,11 +15,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import java.util.Set;
 
@@ -29,6 +31,8 @@ public class TranslationFragment extends Fragment
 
   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
   private static final String SI_HIGHLIGHTED_AYAH = "SI_HIGHLIGHTED_AYAH";
+  private static final String SI_PERCENT_VERTICAL_SCROLL_POSITION =
+      "SI_PERCENT_VERTICAL_SCROLL_POSITION";
 
   private int mPageNumber;
   private int mHighlightedAyah;
@@ -39,6 +43,15 @@ public class TranslationFragment extends Fragment
   private Resources mResources;
   private QuranSettings mQuranSettings;
   private boolean mJustCreated;
+  private float mPercentLastScrollPosition;
+  private ViewTreeObserver.OnGlobalLayoutListener layoutListener =
+      new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+          mTranslationView.scrollTo(0,
+              Math.round(mPercentLastScrollPosition * getTranslationViewHeight()));
+        }
+      };
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -75,6 +88,10 @@ public class TranslationFragment extends Fragment
     mQuranSettings = QuranSettings.getInstance(context);
     mResources = getResources();
 
+    if (savedInstanceState != null) {
+      mPercentLastScrollPosition = savedInstanceState.getFloat(SI_PERCENT_VERTICAL_SCROLL_POSITION);
+    }
+
     mTranslationView = mMainView.getTranslationView();
     mTranslationView.setTranslationClickedListener(
         new TranslationView.TranslationClickedListener() {
@@ -86,6 +103,7 @@ public class TranslationFragment extends Fragment
             }
           }
         });
+    mTranslationView.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
 
     updateView();
     mJustCreated = true;
@@ -129,7 +147,7 @@ public class TranslationFragment extends Fragment
 
   @Override
   public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
-      int toolBarWidth, int toolBarHeight) {
+                                                            int toolBarWidth, int toolBarHeight) {
     // not yet implemented
     return null;
   }
@@ -180,6 +198,26 @@ public class TranslationFragment extends Fragment
     if (mHighlightedAyah > 0) {
       outState.putInt(SI_HIGHLIGHTED_AYAH, mHighlightedAyah);
     }
+    outState.putFloat(SI_PERCENT_VERTICAL_SCROLL_POSITION, getPercentScrollPosition());
     super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      mTranslationView.getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
+    } else {
+      mTranslationView.getViewTreeObserver().removeGlobalOnLayoutListener(layoutListener);
+    }
+    layoutListener = null;
+  }
+
+  private float getPercentScrollPosition() {
+    return (float) mTranslationView.getScrollY() / getTranslationViewHeight();
+  }
+
+  private int getTranslationViewHeight() {
+    return mTranslationView.getChildAt(0).getHeight();
   }
 }
