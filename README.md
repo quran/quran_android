@@ -64,7 +64,7 @@ App localization
 * Uyghur by Abduqadir Abliz [Sahran](https://github.com/Sahran).
 * Indonesian by [Saiful Khaliq](https://twitter.com/saifious).
 * Malaysian by [Ahmad Syazwan](https://github.com/asyazwan).
-* Spanish by [Alexander Salas](https://github.com/alexsalas).
+* Spanish by [Alexander J. Salas B.](https://github.com/ajsb85).
 * Uzbek by [Shuhrat Dehkanov](https://github.com/ozbek").
 
 and many others, may Allah reward everyone!
