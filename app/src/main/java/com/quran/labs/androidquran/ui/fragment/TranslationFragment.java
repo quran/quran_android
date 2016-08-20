@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -199,6 +200,17 @@ public class TranslationFragment extends Fragment
     }
     outState.putFloat(SI_PERCENT_VERTICAL_SCROLL_POSITION, getPercentScrollPosition());
     super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      mTranslationView.getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
+    } else {
+      mTranslationView.getViewTreeObserver().removeGlobalOnLayoutListener(layoutListener);
+    }
+    layoutListener = null;
   }
 
   private float getPercentScrollPosition() {
