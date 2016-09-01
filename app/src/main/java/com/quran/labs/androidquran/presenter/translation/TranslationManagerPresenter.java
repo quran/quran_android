@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.presenter.translation;
 
+import android.content.Context;
+import android.util.SparseArray;
+
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.dao.translation.Translation;
@@ -14,9 +17,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
-import android.content.Context;
-import android.util.SparseArray;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -193,15 +193,19 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   void writeTranslationList(TranslationList list) {
     File cacheFile = getCachedFile();
     try {
-      if (cacheFile.exists()) {
-        cacheFile.delete();
+      File directory = cacheFile.getParentFile();
+      boolean directoryExists = directory.mkdirs() || directory.isDirectory();
+      if (directoryExists) {
+        if (cacheFile.exists()) {
+          cacheFile.delete();
+        }
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
+        BufferedSink sink = Okio.buffer(Okio.sink(cacheFile));
+        jsonAdapter.toJson(sink, list);
+        sink.close();
+        quranSettings.setLastUpdatedTranslationDate(System.currentTimeMillis());
       }
-      Moshi moshi = new Moshi.Builder().build();
-      JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
-      BufferedSink sink = Okio.buffer(Okio.sink(cacheFile));
-      jsonAdapter.toJson(sink, list);
-      sink.close();
-      quranSettings.setLastUpdatedTranslationDate(System.currentTimeMillis());
     } catch (Exception e) {
       cacheFile.delete();
       Crashlytics.logException(e);
