@@ -27,7 +27,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
+import com.quran.labs.androidquran.widgets.QuranSpinner;
 
 import timber.log.Timber;
 
@@ -48,7 +48,7 @@ public class JumpFragment extends DialogFragment {
     builder.setTitle(activity.getString(R.string.menu_jump));
 
     // Sura Spinner
-    final SpinnerCompat suraSpinner = (SpinnerCompat) layout.findViewById(R.id.sura_spinner);
+    final QuranSpinner suraSpinner = (QuranSpinner) layout.findViewById(R.id.sura_spinner);
     String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < suras.length; i++) {
@@ -64,7 +64,7 @@ public class JumpFragment extends DialogFragment {
     suraSpinner.setAdapter(adapter);
 
     // Ayah Spinner
-    final SpinnerCompat ayahSpinner = (SpinnerCompat) layout.findViewById(R.id.ayah_spinner);
+    final QuranSpinner ayahSpinner = (QuranSpinner) layout.findViewById(R.id.ayah_spinner);
     final ArrayAdapter<CharSequence> ayahAdapter =
         new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item) {
           @Override

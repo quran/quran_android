@@ -18,7 +18,7 @@ import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
+import com.quran.labs.androidquran.widgets.QuranSpinner;
 
 public class AyahPlaybackFragment extends AyahActionFragment {
   private static final int REPEAT_MAX = 3;
@@ -33,12 +33,12 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private int mVerseRepeatCount;
 
   private Button mApplyButton;
-  private SpinnerCompat mStartSuraSpinner;
-  private SpinnerCompat mStartAyahSpinner;
-  private SpinnerCompat mEndingSuraSpinner;
-  private SpinnerCompat mEndingAyahSpinner;
-  private SpinnerCompat mRepeatVerseSpinner;
-  private SpinnerCompat mRepeatRangeSpinner;
+  private QuranSpinner mStartSuraSpinner;
+  private QuranSpinner mStartAyahSpinner;
+  private QuranSpinner mEndingSuraSpinner;
+  private QuranSpinner mEndingAyahSpinner;
+  private QuranSpinner mRepeatVerseSpinner;
+  private QuranSpinner mRepeatRangeSpinner;
   private CheckBox mRestrictToRange;
   private ArrayAdapter<CharSequence> mStartAyahAdapter;
   private ArrayAdapter<CharSequence> mEndingAyahAdapter;
@@ -50,13 +50,13 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         R.layout.audio_panel, container, false);
     view.setOnClickListener(mOnClickListener);
 
-    mStartSuraSpinner = (SpinnerCompat) view.findViewById(R.id.start_sura_spinner);
-    mStartAyahSpinner = (SpinnerCompat) view.findViewById(R.id.start_ayah_spinner);
-    mEndingSuraSpinner = (SpinnerCompat) view.findViewById(R.id.end_sura_spinner);
-    mEndingAyahSpinner = (SpinnerCompat) view.findViewById(R.id.end_ayah_spinner);
-    mRepeatVerseSpinner = (SpinnerCompat) view
+    mStartSuraSpinner = (QuranSpinner) view.findViewById(R.id.start_sura_spinner);
+    mStartAyahSpinner = (QuranSpinner) view.findViewById(R.id.start_ayah_spinner);
+    mEndingSuraSpinner = (QuranSpinner) view.findViewById(R.id.end_sura_spinner);
+    mEndingAyahSpinner = (QuranSpinner) view.findViewById(R.id.end_ayah_spinner);
+    mRepeatVerseSpinner = (QuranSpinner) view
         .findViewById(R.id.repeat_verse_spinner);
-    mRepeatRangeSpinner = (SpinnerCompat) view
+    mRepeatRangeSpinner = (QuranSpinner) view
         .findViewById(R.id.repeat_range_spinner);
     mRestrictToRange = (CheckBox) view.findViewById(R.id.restrict_to_range);
     mApplyButton = (Button) view.findViewById(R.id.apply);
@@ -174,7 +174,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   }
 
   private void initializeSuraSpinner(final Context context,
-      SpinnerCompat spinner, final ArrayAdapter<CharSequence> ayahAdapter) {
+                                     QuranSpinner spinner, final ArrayAdapter<CharSequence> ayahAdapter) {
     String[] suras = context.getResources().
         getStringArray(R.array.sura_names);
     for (int i=0; i<suras.length; i++){
@@ -210,7 +210,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   }
 
   private ArrayAdapter<CharSequence> initializeAyahSpinner(
-      Context context, SpinnerCompat spinner) {
+      Context context, QuranSpinner spinner) {
     final ArrayAdapter<CharSequence> ayahAdapter =
         new ArrayAdapter<>(context, ITEM_LAYOUT);
     ayahAdapter.setDropDownViewResource(ITEM_DROPDOWN_LAYOUT);
@@ -218,7 +218,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     return ayahAdapter;
   }
 
-  private void updateAyahSpinner(SpinnerCompat spinner,
+  private void updateAyahSpinner(QuranSpinner spinner,
                                  ArrayAdapter<CharSequence> adapter,
                                  int maxAyah, int currentAyah) {
     final Context context = getActivity();

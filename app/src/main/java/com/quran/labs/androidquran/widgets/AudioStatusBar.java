@@ -31,7 +31,6 @@ import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class AudioStatusBar extends LinearLayout {
   private boolean mHaveCriticalError = false;
   private SharedPreferences mSharedPreferences;
 
-  private SpinnerCompat mSpinner;
+  private QuranSpinner mSpinner;
   private TextView mProgressText;
   private ProgressBar mProgressBar;
   private RepeatButton mRepeatButton;
@@ -283,7 +282,7 @@ public class AudioStatusBar extends LinearLayout {
 
   private void addSpinner() {
     if (mSpinner == null) {
-      mSpinner = new SpinnerCompat(mContext, null,
+      mSpinner = new QuranSpinner(mContext, null,
           R.attr.actionDropDownStyle);
       mSpinner.setDropDownVerticalOffset(mSpinnerPadding);
       mSpinner.setAdapter(mAdapter);
