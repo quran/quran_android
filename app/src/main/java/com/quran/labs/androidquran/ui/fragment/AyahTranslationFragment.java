@@ -19,7 +19,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.TranslationView;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
+import com.quran.labs.androidquran.widgets.QuranSpinner;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
   private AsyncTask mCurrentTask;
   private LocalTranslation mTranslationItem;
   private View mTranslationControls;
-  private SpinnerCompat mTranslator;
+  private QuranSpinner mTranslator;
   private TranslationsSpinnerAdapter mTranslationAdapter;
   private List<LocalTranslation> mTranslations;
 
@@ -41,7 +41,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
     final View view = inflater.inflate(
         R.layout.translation_panel, container, false);
 
-    mTranslator = (SpinnerCompat) view.findViewById(R.id.translator);
+    mTranslator = (QuranSpinner) view.findViewById(R.id.translator);
     mTranslationView =
         (TranslationView) view.findViewById(R.id.translation_view);
     mTranslationView.setIsInAyahActionMode(true);

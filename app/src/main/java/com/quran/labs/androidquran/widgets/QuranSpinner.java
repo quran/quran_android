@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.quran.labs.androidquran.widgets.spinner;
+package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatSpinner;
@@ -22,20 +6,27 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SpinnerAdapter;
 
-public class SpinnerCompat extends AppCompatSpinner {
+/**
+ * An {@link AppCompatSpinner} that uses the last items in an adapter and a multiplier to
+ * determine the width of the Spinner and its dropdown.
+ *
+ * AppCompatSpinner uses the measurement of the first 15 items to determine the width.
+ */
+public class QuranSpinner extends AppCompatSpinner {
   private static final int MAX_ITEMS_MEASURED = 15;
+  private static final float WIDTH_MULTIPLIER = 1.1f;
 
   private SpinnerAdapter adapter;
 
-  public SpinnerCompat(Context context) {
+  public QuranSpinner(Context context) {
     super(context);
   }
 
-  public SpinnerCompat(Context context, AttributeSet attrs) {
+  public QuranSpinner(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
-  public SpinnerCompat(Context context, AttributeSet attrs, int defStyleAttr) {
+  public QuranSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 
@@ -92,7 +83,7 @@ public class SpinnerCompat extends AppCompatSpinner {
       itemView.measure(widthMeasureSpec, heightMeasureSpec);
       width = Math.max(width, itemView.getMeasuredWidth());
     }
-    width *= 1.1; // add some extra spacing
+    width *= WIDTH_MULTIPLIER; // add some extra spacing
     return width;
   }
 }
