@@ -1,15 +1,5 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QariItem;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.AudioUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -27,11 +17,21 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QariItem;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import java.util.List;
 
@@ -289,10 +289,9 @@ public class AudioStatusBar extends LinearLayout {
       mSpinner.setAdapter(mAdapter);
 
       mSpinner.setOnItemSelectedListener(
-          new AdapterViewCompat.OnItemSelectedListener() {
+          new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterViewCompat<?> parent,
-                View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
               if (position != mCurrentQari) {
                 mSharedPreferences.edit().
                     putInt(Constants.PREF_DEFAULT_QARI,
@@ -302,7 +301,7 @@ public class AudioStatusBar extends LinearLayout {
             }
 
             @Override
-            public void onNothingSelected(AdapterViewCompat<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent) {
             }
           });
     }
