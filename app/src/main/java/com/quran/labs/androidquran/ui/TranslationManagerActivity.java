@@ -1,18 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.translation.TranslationHeader;
-import com.quran.labs.androidquran.dao.translation.TranslationItem;
-import com.quran.labs.androidquran.dao.translation.TranslationRowData;
-import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
-import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +19,19 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.translation.TranslationHeader;
+import com.quran.labs.androidquran.dao.translation.TranslationItem;
+import com.quran.labs.androidquran.dao.translation.TranslationRowData;
+import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
+import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -439,6 +439,11 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
 
       return convertView;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+      return getItemViewType(position) != TYPE_SEPARATOR;
     }
 
     class ViewHolder {
