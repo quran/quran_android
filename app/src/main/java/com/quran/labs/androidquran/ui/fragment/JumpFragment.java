@@ -1,14 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
-import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,9 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
 
 import timber.log.Timber;
 
@@ -93,9 +92,9 @@ public class JumpFragment extends DialogFragment {
       }
     });
 
-    suraSpinner.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
+    suraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
-      public void onItemSelected(AdapterViewCompat<?> parent, View view, int position, long rowId) {
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
         Context context = getActivity();
         if (suraSpinner.getTag() == null) {
           // this is the initialization
@@ -123,13 +122,13 @@ public class JumpFragment extends DialogFragment {
       }
 
       @Override
-      public void onNothingSelected(AdapterViewCompat<?> arg0) {
+      public void onNothingSelected(AdapterView<?> arg0) {
       }
     });
 
-    ayahSpinner.setOnItemSelectedListener(new AdapterViewCompat.OnItemSelectedListener() {
+    ayahSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       @Override
-      public void onItemSelected(AdapterViewCompat<?> parent, View view, int position, long rowId) {
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
         if (ayahSpinner.getTag() == null) {
           // this is the initialization
           ayahSpinner.setTag(0);
@@ -145,7 +144,7 @@ public class JumpFragment extends DialogFragment {
       }
 
       @Override
-      public void onNothingSelected(AdapterViewCompat<?> arg0) {
+      public void onNothingSelected(AdapterView<?> arg0) {
       }
     });
 
@@ -172,7 +171,7 @@ public class JumpFragment extends DialogFragment {
             goToPage(text);
           }
         } catch (Exception e) {
-          Timber.d("Could not jump, something went wrong...",e);
+          Timber.d(e, "Could not jump, something went wrong...");
         }
       }
     });

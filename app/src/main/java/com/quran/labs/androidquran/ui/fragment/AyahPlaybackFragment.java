@@ -1,6 +1,16 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -8,17 +18,7 @@ import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.spinner.AdapterViewCompat;
 import com.quran.labs.androidquran.widgets.spinner.SpinnerCompat;
-
-import android.content.Context;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
 
 public class AyahPlaybackFragment extends AyahActionFragment {
   private static final int REPEAT_MAX = 3;
@@ -77,15 +77,14 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         ITEM_DROPDOWN_LAYOUT);
     mRepeatRangeSpinner.setAdapter(rangeAdapter);
     mRepeatRangeSpinner.setOnItemSelectedListener(
-        new AdapterViewCompat.OnItemSelectedListener() {
+        new AdapterView.OnItemSelectedListener() {
       @Override
-      public void onItemSelected(AdapterViewCompat<?> parent,
-          View view, int position, long id) {
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         updateEnforceBounds(position);
       }
 
       @Override
-      public void onNothingSelected(AdapterViewCompat<?> parent) {
+      public void onNothingSelected(AdapterView<?> parent) {
       }
     });
     final ArrayAdapter<CharSequence> verseAdapter =
@@ -188,10 +187,9 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     spinner.setAdapter(adapter);
 
     spinner.setOnItemSelectedListener(
-        new AdapterViewCompat.OnItemSelectedListener() {
+        new AdapterView.OnItemSelectedListener() {
           @Override
-          public void onItemSelected(AdapterViewCompat<?> parent, View view,
-              int position, long rowId) {
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
             int sura = position + 1;
             int ayahCount = QuranInfo.getNumAyahs(sura);
             CharSequence[] ayahs = new String[ayahCount];
@@ -206,7 +204,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           }
 
           @Override
-          public void onNothingSelected(AdapterViewCompat<?> arg0) {
+          public void onNothingSelected(AdapterView<?> arg0) {
           }
         });
   }
