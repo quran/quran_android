@@ -452,7 +452,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     mSettings.setLastPage(PAGES_LAST - page);
-    setLoading(false);
 
     // just got created, need to reconnect to service
     mShouldReconnect = true;
@@ -1018,18 +1017,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public boolean onSearchRequested() {
     return super.onSearchRequested();
-  }
-
-  public void setLoading(boolean isLoading) {
-    setSupportProgressBarIndeterminateVisibility(isLoading);
-  }
-
-  public void setLoadingIfPage(int page) {
-    int position = mViewPager.getCurrentItem();
-    int currentPage = PAGES_LAST - position;
-    if (currentPage == page) {
-      setLoading(true);
-    }
   }
 
   public void switchToQuran() {
