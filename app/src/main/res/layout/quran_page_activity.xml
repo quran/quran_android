@@ -5,40 +5,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
-    android:layoutDirection="ltr">
+    android:layoutDirection="ltr"
+    >
 
-    <com.quran.labs.androidquran.widgets.QuranViewPager
+  <com.quran.labs.androidquran.widgets.QuranViewPager
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:id="@+id/quran_pager"/>
+      android:id="@+id/quran_pager"
+      />
 
-    <com.quran.labs.androidquran.widgets.AyahToolBar
-        android:id="@+id/ayah_toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/toolbar_total_height"
-        android:visibility="gone"/>
+  <com.quran.labs.androidquran.widgets.AyahToolBar
+      android:id="@+id/ayah_toolbar"
+      android:layout_width="wrap_content"
+      android:layout_height="@dimen/toolbar_total_height"
+      android:visibility="gone"
+      />
 
-    <FrameLayout android:id="@+id/toolbar_area"
+  <FrameLayout
+      android:id="@+id/toolbar_area"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/transparent_actionbar_color"
+      >
+    <View
+        android:id="@+id/status_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/transparent_actionbar_color">
-        <View android:id="@+id/status_bg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
-    </FrameLayout>
+        />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        >
+    </android.support.v7.widget.Toolbar>
+  </FrameLayout>
 
-    <com.quran.labs.androidquran.widgets.AudioStatusBar
-                  android:id="@+id/audio_area"
-                  android:layout_width="match_parent"
-                  android:layout_height="@dimen/audiobar_height"
-                  android:layout_alignParentBottom="true"
-                  android:visibility="gone"
-                  android:itemBackground="?attr/selectableItemBackgroundBorderless"
-                  android:background="@color/transparent_actionbar_color" />
+  <com.quran.labs.androidquran.widgets.AudioStatusBar
+      android:id="@+id/audio_area"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/audiobar_height"
+      android:layout_alignParentBottom="true"
+      android:visibility="gone"
+      android:itemBackground="?attr/selectableItemBackgroundBorderless"
+      android:background="@color/transparent_actionbar_color"
+      />
 </com.quran.labs.androidquran.widgets.FitSystemRelativeLayout>
