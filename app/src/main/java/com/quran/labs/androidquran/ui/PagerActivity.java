@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.HelpActivity;
@@ -92,6 +93,7 @@ import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.IconPageIndicator;
+import com.quran.labs.androidquran.widgets.QuranSpinner;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import java.io.File;
@@ -161,9 +163,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private DefaultDownloadReceiver mDownloadReceiver;
   private boolean mNeedsPermissionToDownloadOver3g = true;
   private AlertDialog mPromptDialog = null;
-  private List<LocalTranslation> mTranslations;
-  private String[] mTranslationItems;
-  private TranslationsSpinnerAdapter mSpinnerAdapter;
   private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
   private AyahToolBar mAyahToolBar;
   private AyahToolBarPosition mAyahToolBarPos;
@@ -175,9 +174,14 @@ public class PagerActivity extends QuranActionBarActivity implements
   private Integer mLastPlayingAyah;
   private View mToolBarArea;
   private boolean mPromptedForExtraDownload;
+  private QuranSpinner translationsSpinner;
   private ProgressDialog mProgressDialog;
   private ViewGroup.MarginLayoutParams mAudioBarParams;
   private boolean isInMultiWindowMode;
+
+  private String[] translationItems;
+  private List<LocalTranslation> translations;
+  private TranslationsSpinnerAdapter translationsSpinnerAdapter;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
   public static final int MSG_REMOVE_WINDOW_BACKGROUND = 2;
@@ -319,6 +323,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     mAudioBarParams = (ViewGroup.MarginLayoutParams) mAudioStatusBar.getLayoutParams();
 
     mToolBarArea = findViewById(R.id.toolbar_area);
+    translationsSpinner = (QuranSpinner) findViewById(R.id.spinner);
 
     // this is the colored view behind the status bar on kitkat and above
     final View statusBarBackground = findViewById(R.id.status_bg);
@@ -353,7 +358,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
     }
 
-    if (mShowingTranslation && mTranslationItems != null) {
+    if (mShowingTranslation && translationItems != null) {
       updateActionBarSpinner();
     } else {
       updateActionBarTitle(PAGES_LAST - page);
@@ -856,7 +861,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       mPromptDialog.dismiss();
       mPromptDialog = null;
     }
-    mSpinnerAdapter = null;
     super.onPause();
   }
 
@@ -1035,7 +1039,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (mIsInAyahMode) {
       endAyahMode();
     }
-    String activeDatabase = TranslationUtils.getDefaultTranslation(this, mTranslations);
+    String activeDatabase = TranslationUtils.getDefaultTranslation(this, translations);
     if (activeDatabase == null) {
       startTranslationManager();
     } else {
@@ -1060,15 +1064,13 @@ public class PagerActivity extends QuranActionBarActivity implements
     startActivity(i);
   }
 
-  ActionBar.OnNavigationListener mNavigationCallback =
-      new ActionBar.OnNavigationListener() {
+  AdapterView.OnItemSelectedListener translationItemSelectedListener =
+      new AdapterView.OnItemSelectedListener() {
         @Override
-        public boolean onNavigationItemSelected(int itemPosition,
-                                                long itemId) {
-          Timber.d("item chosen: %d", itemPosition);
-          if (mTranslations != null &&
-              mTranslations.size() > itemPosition) {
-            LocalTranslation item = mTranslations.get(itemPosition);
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+          Timber.d("item chosen: %d", position);
+          if (translations != null && translations.size() > position) {
+            LocalTranslation item = translations.get(position);
             mSettings.setActiveTranslation(item.filename);
 
             int pos = mViewPager.getCurrentItem() - 1;
@@ -1084,18 +1086,20 @@ public class PagerActivity extends QuranActionBarActivity implements
                 ((TabletFragment) f).refresh(item.filename);
               }
             }
-            return true;
           }
-          return false;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
         }
       };
 
   public List<LocalTranslation> getTranslations() {
-    return mTranslations;
+    return translations;
   }
 
   public String[] getTranslationNames() {
-    return mTranslationItems;
+    return translationItems;
   }
 
   @Override
@@ -1124,18 +1128,17 @@ public class PagerActivity extends QuranActionBarActivity implements
     String sura = QuranInfo.getSuraNameFromPage(this, page, true);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
+      translationsSpinner.setVisibility(View.GONE);
       actionBar.setDisplayShowTitleEnabled(true);
-      actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
       actionBar.setTitle(sura);
       String desc = QuranInfo.getPageSubtitle(this, page);
       actionBar.setSubtitle(desc);
     }
-    mSpinnerAdapter = null;
   }
 
   private void refreshActionBarSpinner() {
-    if (mSpinnerAdapter != null) {
-      mSpinnerAdapter.notifyDataSetChanged();
+    if (translationsSpinnerAdapter != null) {
+      translationsSpinnerAdapter.notifyDataSetChanged();
     } else {
       updateActionBarSpinner();
     }
@@ -1146,36 +1149,40 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void updateActionBarSpinner() {
-    if (mTranslationItems == null || mTranslationItems.length == 0) {
+    if (translationItems == null || translationItems.length == 0) {
       int page = getCurrentPage();
       updateActionBarTitle(page);
       return;
     }
 
-    mSpinnerAdapter = new TranslationsSpinnerAdapter(this,
-        R.layout.support_simple_spinner_dropdown_item,
-        mTranslationItems, mTranslations) {
-      @Override
-      public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = super.getView(position, convertView, parent);
-        SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
-        int page = getCurrentPage();
-        String subtitle = QuranInfo.getPageSubtitle(PagerActivity.this, page);
-        holder.subtitle.setText(subtitle);
-        holder.subtitle.setVisibility(View.VISIBLE);
-        return convertView;
-      }
-    };
+    if (translationsSpinnerAdapter == null) {
+      translationsSpinnerAdapter = new TranslationsSpinnerAdapter(this,
+          R.layout.support_simple_spinner_dropdown_item,
+          translationItems, translations) {
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+          convertView = super.getView(position, convertView, parent);
+          SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
+          int page = getCurrentPage();
+          String subtitle = QuranInfo.getPageSubtitle(PagerActivity.this, page);
+          holder.subtitle.setText(subtitle);
+          holder.subtitle.setVisibility(View.VISIBLE);
+          return convertView;
+        }
+      };
+      translationsSpinner.setAdapter(translationsSpinnerAdapter);
+      translationsSpinner.setOnItemSelectedListener(translationItemSelectedListener);
+    }
 
-    // figure out which translation should be selected
-    int selected = mSpinnerAdapter.getPositionForActiveTranslation();
-
-    getSupportActionBar().setNavigationMode(
-        ActionBar.NAVIGATION_MODE_LIST);
-    getSupportActionBar().setListNavigationCallbacks(mSpinnerAdapter,
-        mNavigationCallback);
-    getSupportActionBar().setSelectedNavigationItem(selected);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      // figure out which translation should be selected
+      int selected = translationsSpinnerAdapter.getPositionForActiveTranslation();
+      translationsSpinner.setSelection(selected);
+      actionBar.setDisplayShowTitleEnabled(false);
+      translationsSpinner.setVisibility(View.VISIBLE);
+    }
   }
 
   BroadcastReceiver mAudioReceiver = new BroadcastReceiver() {
@@ -1228,8 +1235,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void updateProcessingProgress(int progress,
                                        int processFiles, int totalFiles) {
-    mAudioStatusBar.setProgressText(
-        getString(R.string.extracting_title), false);
+    mAudioStatusBar.setProgressText(getString(R.string.extracting_title), false);
     mAudioStatusBar.setProgress(-1);
   }
 
@@ -1263,12 +1269,9 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
         setUiVisibility(true);
       } else {
-        getWindow().addFlags(
-            WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getWindow().clearFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mToolBarArea.setVisibility(View.VISIBLE);
-
         mAudioStatusBar.updateSelectedItem();
         mAudioStatusBar.setVisibility(View.VISIBLE);
       }
@@ -1279,12 +1282,9 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
         setUiVisibility(false);
       } else {
-        getWindow().addFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().clearFlags(
-            WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         mToolBarArea.setVisibility(View.GONE);
-
         mAudioStatusBar.setVisibility(View.GONE);
       }
 
@@ -1361,19 +1361,19 @@ public class PagerActivity extends QuranActionBarActivity implements
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Action1<List<LocalTranslation>>() {
               @Override
-              public void call(List<LocalTranslation> translationItems) {
-                int items = translationItems.size();
+              public void call(List<LocalTranslation> translationList) {
+                int items = translationList.size();
                 String[] titles = new String[items];
                 for (int i = 0; i < items; i++) {
-                  LocalTranslation item = translationItems.get(i);
+                  LocalTranslation item = translationList.get(i);
                   titles[i] = TextUtils.isEmpty(item.translator) ? item.name : item.translator;
                 }
-                mTranslationItems = titles;
-                mTranslations = translationItems;
 
-                if (mShowingTranslation) {
-                  updateActionBarSpinner();
+                if (translationsSpinnerAdapter != null) {
+                  translationsSpinnerAdapter.updateItems(titles, translationList);
                 }
+                translationItems = titles;
+                translations = translationList;
               }
             }));
   }
