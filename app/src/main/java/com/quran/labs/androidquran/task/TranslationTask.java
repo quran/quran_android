@@ -1,16 +1,15 @@
 package com.quran.labs.androidquran.task;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
-import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.TranslationView;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -51,10 +50,6 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
     mAyahBounds = QuranInfo.getPageBounds(pageNumber);
     mHighlightedAyah = highlightedAyah;
     mTranslationView = new WeakReference<>(view);
-
-    if (context instanceof PagerActivity) {
-      ((PagerActivity) context).setLoadingIfPage(pageNumber);
-    }
   }
 
   protected boolean loadArabicAyahText() {
@@ -150,10 +145,6 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
             }
           }, 100);
         }
-      }
-
-      if (mContext != null && mContext instanceof PagerActivity) {
-        ((PagerActivity) mContext).setLoading(false);
       }
     }
 
