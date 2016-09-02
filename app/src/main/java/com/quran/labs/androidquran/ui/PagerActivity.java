@@ -177,6 +177,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private boolean mPromptedForExtraDownload;
   private ProgressDialog mProgressDialog;
   private ViewGroup.MarginLayoutParams mAudioBarParams;
+  private boolean isInMultiWindowMode;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
   public static final int MSG_REMOVE_WINDOW_BACKGROUND = 2;
@@ -572,27 +573,31 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
     if (hasFocus) {
-      mHandler.sendEmptyMessageDelayed(
-          MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME);
+      mHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME);
     } else {
       mHandler.removeMessages(MSG_HIDE_ACTIONBAR);
     }
   }
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-  private void setUiVisibility(boolean isVisible){
+  private void setUiVisibility(boolean isVisible) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
         (mIsLandscape || mImmersiveInPortrait)){
       setUiVisibilityKitKat(isVisible);
+      if (isInMultiWindowMode) {
+        animateToolBar(isVisible);
+      }
       return;
     }
 
     int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
     if (!isVisible) {
-      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE
-          | View.SYSTEM_UI_FLAG_FULLSCREEN;
+      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN;
     }
     mViewPager.setSystemUiVisibility(flags);
+    if (isInMultiWindowMode) {
+      animateToolBar(isVisible);
+    }
   }
 
   @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -615,28 +620,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         new View.OnSystemUiVisibilityChangeListener() {
           @Override
           public void onSystemUiVisibilityChange(int flags) {
-            boolean visible =
-                (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
-            mIsActionBarHidden = !visible;
-            if (visible) {
-              mAudioStatusBar.updateSelectedItem();
-            }
-
-            // animate toolbar
-            mToolBarArea.animate()
-                .translationY(visible ? 0 : -mToolBarArea.getHeight())
-                .setDuration(250)
-                .start();
-
-            /* the bottom margin on the audio bar is not part of its height, and so we have to
-             * take it into account when animating the audio bar off the screen. */
-            final int bottomMargin = mAudioBarParams.bottomMargin;
-
-            // and audio bar
-            mAudioStatusBar.animate()
-                .translationY(visible ? 0 : mAudioStatusBar.getHeight() + bottomMargin)
-                .setDuration(250)
-                .start();
+            boolean visible = (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
+            animateToolBar(visible);
           }
         });
   }
@@ -644,6 +629,29 @@ public class PagerActivity extends QuranActionBarActivity implements
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void clearUiVisibilityListener(){
     mViewPager.setOnSystemUiVisibilityChangeListener(null);
+  }
+
+  private void animateToolBar(boolean visible) {
+    mIsActionBarHidden = !visible;
+    if (visible) {
+      mAudioStatusBar.updateSelectedItem();
+    }
+
+    // animate toolbar
+    mToolBarArea.animate()
+        .translationY(visible ? 0 : -mToolBarArea.getHeight())
+        .setDuration(250)
+        .start();
+
+            /* the bottom margin on the audio bar is not part of its height, and so we have to
+             * take it into account when animating the audio bar off the screen. */
+    final int bottomMargin = mAudioBarParams.bottomMargin;
+
+    // and audio bar
+    mAudioStatusBar.animate()
+        .translationY(visible ? 0 : mAudioStatusBar.getHeight() + bottomMargin)
+        .setDuration(250)
+        .start();
   }
 
   @Override
@@ -675,6 +683,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onResume() {
+    isInMultiWindowMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode();
+
     // read the list of translations
     requestTranslationsList();
 
@@ -799,8 +809,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       updateActionBarTitle(PAGES_LAST - page);
 
       boolean currentValue = mShowingTranslation;
-      mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION,
-          mShowingTranslation);
+      mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, mShowingTranslation);
       mHighlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
       mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
 
@@ -877,8 +886,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void onSaveInstanceState(Bundle state) {
     if (mLastAudioDownloadRequest != null) {
-      state.putParcelable(LAST_AUDIO_DL_REQUEST,
-          mLastAudioDownloadRequest);
+      state.putParcelable(LAST_AUDIO_DL_REQUEST, mLastAudioDownloadRequest);
     }
     int lastPage = QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
     state.putInt(LAST_READ_PAGE, lastPage);
@@ -926,8 +934,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         bookmarked = mBookmarksCache.get(page - 1);
       }
 
-      item.setIcon(bookmarked ? R.drawable.ic_favorite :
-          R.drawable.ic_not_favorite);
+      item.setIcon(bookmarked ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
     }
 
     MenuItem quran = menu.findItem(R.id.goto_quran);
@@ -947,8 +954,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
       final boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
       nightMode.setChecked(isNightMode);
-      nightMode.setIcon(isNightMode ?
-          R.drawable.ic_night_mode : R.drawable.ic_day_mode);
+      nightMode.setIcon(isNightMode ? R.drawable.ic_night_mode : R.drawable.ic_day_mode);
     }
     return true;
   }
