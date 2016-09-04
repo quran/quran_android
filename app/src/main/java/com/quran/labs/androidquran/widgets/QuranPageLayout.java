@@ -3,24 +3,26 @@ package com.quran.labs.androidquran.widgets;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
+import android.support.annotation.IntDef;
+import android.support.annotation.Px;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
@@ -29,12 +31,26 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-public abstract class QuranPageLayout extends FrameLayout
+public abstract class QuranPageLayout extends ViewGroup
     implements ObservableScrollView.OnScrollListener {
+
+  @IntDef( { BorderMode.HIDDEN, BorderMode.LIGHT, BorderMode.DARK, BorderMode.LINE } )
+  @interface BorderMode {
+    int HIDDEN = 0;
+    int LIGHT = 1;
+    int DARK = 2;
+    int LINE = 3;
+  }
+
   private static PaintDrawable leftGradient;
   private static PaintDrawable rightGradient;
   private static int gradientForNumberOfPages;
   private static boolean areGradientsLandscape;
+  private static BitmapDrawable leftPageBorder;
+  private static BitmapDrawable rightPageBorder;
+  private static BitmapDrawable leftPageBorderNight;
+  private static BitmapDrawable rightPageBorderNight;
+  private static int headerFooterHeight;
 
   private static int lineColor;
   private static ShapeDrawable lineDrawable;
@@ -45,8 +61,8 @@ public abstract class QuranPageLayout extends FrameLayout
 
   private boolean isNightMode;
   private ObservableScrollView scrollView;
-  private ImageView leftBorder;
-  private ImageView rightBorder;
+  private @BorderMode int leftBorder;
+  private @BorderMode int rightBorder;
   private View errorLayout;
   private TextView errorText;
   private View innerView;
@@ -59,21 +75,17 @@ public abstract class QuranPageLayout extends FrameLayout
     ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR);
     Resources resources = context.getResources();
     final boolean isLandscape =
-        resources.getConfiguration().orientation ==
-        Configuration.ORIENTATION_LANDSCAPE;
+        resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     innerView = generateContentView(context);
     viewPaddingSmall = resources.getDimensionPixelSize(R.dimen.page_margin_small);
     viewPaddingLarge = resources.getDimensionPixelSize(R.dimen.page_margin_large);
 
-    FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-        LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    lp.gravity = Gravity.CENTER;
+    LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     if (isLandscape && shouldWrapWithScrollView()) {
       scrollView = new ObservableScrollView(context);
       scrollView.setFillViewport(true);
       addView(scrollView, lp);
-      scrollView.addView(innerView, LayoutParams.MATCH_PARENT,
-          LayoutParams.WRAP_CONTENT);
+      scrollView.addView(innerView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
       scrollView.setOnScrollListener(this);
     } else {
       addView(innerView, lp);
@@ -89,6 +101,83 @@ public abstract class QuranPageLayout extends FrameLayout
       lineDrawable = new ShapeDrawable(new RectShape());
       lineDrawable.setIntrinsicWidth(1);
       lineDrawable.setIntrinsicHeight(1);
+
+      // these bitmaps are 11x1, so fairly small to keep both day and night versions around
+      leftPageBorder = new BitmapDrawable(resources,
+          BitmapFactory.decodeResource(resources, R.drawable.border_left));
+      leftPageBorderNight = new BitmapDrawable(resources,
+          BitmapFactory.decodeResource(resources, R.drawable.night_left_border));
+      rightPageBorder = new BitmapDrawable(resources,
+          BitmapFactory.decodeResource(resources, R.drawable.border_right));
+      rightPageBorderNight = new BitmapDrawable(resources,
+          BitmapFactory.decodeResource(resources, R.drawable.night_right_border));
+    }
+    setWillNotDraw(false);
+  }
+
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+    View view = resolveView();
+    if (view != null) {
+      int width = MeasureSpec.getSize(widthMeasureSpec);
+      int height = MeasureSpec.getSize(heightMeasureSpec);
+      int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : leftPageBorder.getIntrinsicWidth();
+      int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
+          0 : rightPageBorder.getIntrinsicWidth();
+      width = width - (leftLineWidth + rightLineWidth + viewPaddingSmall + viewPaddingLarge);
+      height = height - 2 * headerFooterHeight;
+      view.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+          MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+      if (errorLayout != null) {
+        errorLayout.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
+      }
+    }
+  }
+
+  @Override
+  protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    View view = resolveView();
+    if (view != null) {
+      int width = getMeasuredWidth();
+      int height = getMeasuredHeight();
+      @Px int leftLineWidth = leftBorder == BorderMode.LINE ?
+          1 : leftPageBorder.getIntrinsicWidth();
+      @Px int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
+          0 : rightPageBorder.getIntrinsicWidth();
+      view.layout(leftLineWidth, headerFooterHeight,
+          width - rightLineWidth, height - headerFooterHeight);
+      if (errorLayout != null) {
+        int errorLayoutWidth = errorLayout.getMeasuredWidth();
+        int errorLayoutHeight = errorLayout.getMeasuredHeight();
+        int leftRightOffset = ((width - (leftLineWidth + rightLineWidth)) - errorLayoutWidth) / 2;
+        int topBottomOffset = ((height - 2 * headerFooterHeight) - errorLayoutHeight) / 2;
+        errorLayout.layout(leftLineWidth + leftRightOffset,
+            headerFooterHeight + topBottomOffset,
+            leftLineWidth + leftRightOffset + errorLayoutWidth,
+            headerFooterHeight + topBottomOffset + errorLayoutHeight);
+      }
+    }
+  }
+
+  @Override
+  protected void onDraw(Canvas canvas) {
+    super.onDraw(canvas);
+    int width = getWidth();
+    if (width > 0) {
+      int height = getHeight();
+      Drawable left = leftBorder == BorderMode.LINE ? lineDrawable :
+          leftBorder == BorderMode.LIGHT ? leftPageBorder : leftPageBorderNight;
+      left.setBounds(0, 0, left.getIntrinsicWidth(), height);
+      left.draw(canvas);
+
+      if (rightBorder != BorderMode.HIDDEN) {
+        Drawable right = rightBorder == BorderMode.LIGHT ? rightPageBorder : rightPageBorderNight;
+        right.setBounds(width - right.getIntrinsicWidth(), 0, width, height);
+        right.draw(canvas);
+      }
     }
   }
 
@@ -99,6 +188,10 @@ public abstract class QuranPageLayout extends FrameLayout
     return true;
   }
 
+  private View resolveView() {
+    return scrollView != null ? scrollView : innerView;
+  }
+
   public void setPageController(PageController controller, int pageNumber) {
     this.pageNumber = pageNumber;
     this.pageController = controller;
@@ -107,8 +200,7 @@ public abstract class QuranPageLayout extends FrameLayout
   public void updateView(boolean nightMode, boolean useNewBackground, int pagesVisible) {
     if (rightGradient == null || gradientForNumberOfPages != pagesVisible) {
       final WindowManager mgr =
-          (WindowManager) context.getApplicationContext()
-              .getSystemService(Context.WINDOW_SERVICE);
+          (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
       Display display = mgr.getDefaultDisplay();
       int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
           QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
@@ -120,10 +212,6 @@ public abstract class QuranPageLayout extends FrameLayout
 
     isNightMode = nightMode;
     int lineColor = Color.BLACK;
-    final int leftBorderImageId = nightMode ?
-        R.drawable.night_left_border : R.drawable.border_left;
-    final int rightBorderImageId = nightMode ?
-        R.drawable.night_right_border : R.drawable.border_right;
     final int nightModeTextBrightness = nightMode ?
         QuranSettings.getInstance(context).getNightModeTextBrightness() :
         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
@@ -131,36 +219,16 @@ public abstract class QuranPageLayout extends FrameLayout
       lineColor = Color.argb(nightModeTextBrightness, 255, 255, 255);
     }
 
-    if (leftBorder == null) {
-      leftBorder = new ImageView(context);
-      final FrameLayout.LayoutParams params =
-          new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-          ViewGroup.LayoutParams.MATCH_PARENT);
-      params.gravity = GravityCompat.START;
-      addView(leftBorder, params);
-    }
-
     if (pageNumber % 2 == 0) {
-      leftBorder.setBackgroundResource(leftBorderImageId);
-      if (rightBorder != null) {
-        rightBorder.setVisibility(GONE);
-      }
+      leftBorder = nightMode ? BorderMode.DARK : BorderMode.LIGHT;
+      rightBorder = BorderMode.HIDDEN;
     } else {
-      if (rightBorder == null) {
-        rightBorder = new ImageView(context);
-        final FrameLayout.LayoutParams params =
-            new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        params.gravity = GravityCompat.END;
-        addView(rightBorder, params);
-      }
-      rightBorder.setVisibility(VISIBLE);
-      rightBorder.setBackgroundResource(rightBorderImageId);
+      rightBorder = nightMode ? BorderMode.DARK : BorderMode.LIGHT;
       if (QuranPageLayout.lineColor != lineColor) {
         QuranPageLayout.lineColor = lineColor;
         lineDrawable.getPaint().setColor(lineColor);
       }
-      leftBorder.setBackgroundDrawable(lineDrawable);
+      leftBorder = BorderMode.LINE;
     }
     setContentNightMode(nightMode, nightModeTextBrightness);
 
@@ -175,23 +243,6 @@ public abstract class QuranPageLayout extends FrameLayout
     if (errorText != null) {
       updateErrorTextColor();
     }
-
-    // set a margin on the page itself so that it can never overlap the
-    // left or right borders.
-    final View innerView = scrollView == null ? this.innerView : scrollView;
-    final LayoutParams params =
-        (FrameLayout.LayoutParams) innerView.getLayoutParams();
-
-    if (pageNumber % 2 == 0) {
-      params.leftMargin = viewPaddingLarge;
-      params.rightMargin = viewPaddingSmall;
-    } else {
-      params.leftMargin = viewPaddingSmall;
-      params.rightMargin = viewPaddingLarge;
-    }
-
-    // this calls requestLayout
-    innerView.setLayoutParams(params);
   }
 
   public void showError(@StringRes int errorRes) {
@@ -206,7 +257,6 @@ public abstract class QuranPageLayout extends FrameLayout
     final LayoutInflater inflater = LayoutInflater.from(context);
     errorLayout = inflater.inflate(R.layout.page_load_error, this, false);
     LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    lp.gravity = Gravity.CENTER;
     addView(errorLayout, lp);
     errorText = (TextView) errorLayout.findViewById(R.id.reason_text);
     final Button button =
