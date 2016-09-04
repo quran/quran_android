@@ -1,11 +1,11 @@
 package com.quran.labs.androidquran.widgets;
 
-import com.quran.labs.androidquran.ui.util.PageController;
-
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import com.quran.labs.androidquran.ui.util.PageController;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,18 +28,15 @@ public class TabletView extends LinearLayout {
     setOrientation(HORIZONTAL);
   }
 
-  public void init(@TabletPageType int leftPageType,
-      @TabletPageType int rightPageType) {
+  public void init(@TabletPageType int leftPageType, @TabletPageType int rightPageType) {
     mLeftPage = getPageLayout(leftPageType);
     mRightPage = getPageLayout(rightPageType);
 
-    final LayoutParams leftParams = new LayoutParams(
-        0, ViewGroup.LayoutParams.MATCH_PARENT);
+    final LayoutParams leftParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
     leftParams.weight = 1;
     addView(mLeftPage, leftParams);
 
-    final LayoutParams rightParams = new LayoutParams(
-        0, ViewGroup.LayoutParams.MATCH_PARENT);
+    final LayoutParams rightParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
     rightParams.weight = 1;
     addView(mRightPage, rightParams);
   }
@@ -63,8 +60,8 @@ public class TabletView extends LinearLayout {
   }
 
   public void updateView(boolean nightMode, boolean useNewBackground) {
-    mLeftPage.updateView(nightMode, useNewBackground);
-    mRightPage.updateView(nightMode, useNewBackground);
+    mLeftPage.updateView(nightMode, useNewBackground, 2);
+    mRightPage.updateView(nightMode, useNewBackground, 2);
   }
 
   public QuranPageLayout getLeftPage() {

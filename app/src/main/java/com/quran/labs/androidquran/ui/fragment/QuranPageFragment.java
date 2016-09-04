@@ -1,29 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
-import com.quran.labs.androidquran.task.QueryPageCoordsTask;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
-import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
-import com.quran.labs.androidquran.ui.util.PageController;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
-import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Matrix;
@@ -37,6 +13,30 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.Response;
+import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
+import com.quran.labs.androidquran.task.QueryPageCoordsTask;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
+import com.quran.labs.androidquran.ui.helpers.AyahTracker;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
+import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
+import com.quran.labs.androidquran.ui.util.PageController;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 
 import java.util.List;
 import java.util.Map;
@@ -129,7 +129,7 @@ public class QuranPageFragment extends Fragment
     final boolean useNewBackground = settings.useNewBackground();
     final boolean isNightMode = settings.isNightMode();
     mOverlayText = settings.shouldOverlayPageInfo();
-    mQuranPageLayout.updateView(isNightMode, useNewBackground);
+    mQuranPageLayout.updateView(isNightMode, useNewBackground, 1);
     if (!settings.highlightBookmarks()) {
       mImageView.unHighlight(HighlightType.BOOKMARK);
     }

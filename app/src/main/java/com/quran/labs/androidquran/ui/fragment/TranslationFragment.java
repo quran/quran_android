@@ -1,5 +1,15 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.task.TranslationTask;
@@ -10,16 +20,6 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TranslationView;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.Set;
 
@@ -108,7 +108,7 @@ public class TranslationFragment extends Fragment
 
     final boolean nightMode = mQuranSettings.isNightMode();
     final boolean useNewBackground = mQuranSettings.useNewBackground();
-    mMainView.updateView(nightMode, useNewBackground);
+    mMainView.updateView(nightMode, useNewBackground, 1);
     if (mMainView.getTranslationView().isDataMissing()) {
       refresh(mQuranSettings.getActiveTranslation());
     }
