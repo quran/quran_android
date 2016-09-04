@@ -193,8 +193,7 @@ public class HighlightingImageView extends RecyclingImageView {
       return true;
     }
 
-    mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG
-        | Paint.DEV_KERN_TEXT_FLAG);
+    mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     mOverlayParams.paint.setTextSize(sMaxFontSize);
     int overlayColor = sOverlayTextColor;
     if (mIsNightMode) {

@@ -1,5 +1,17 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -7,11 +19,11 @@ import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
 import com.quran.labs.androidquran.task.QueryPageCoordsTask;
 import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -27,18 +39,6 @@ import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TabletView;
 import com.quran.labs.androidquran.widgets.TranslationView;
-
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import java.util.List;
 import java.util.Map;
@@ -112,19 +112,15 @@ public class TabletFragment extends Fragment
     mMode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
     if (mMode == Mode.ARABIC) {
       mMainView.init(TabletView.QURAN_PAGE, TabletView.QURAN_PAGE);
-      mLeftImageView =
-          ((QuranImagePageLayout) mMainView.getLeftPage()).getImageView();
-      mRightImageView =
-          ((QuranImagePageLayout) mMainView.getRightPage()).getImageView();
+      mLeftImageView = ((QuranImagePageLayout) mMainView.getLeftPage()).getImageView();
+      mRightImageView = ((QuranImagePageLayout) mMainView.getRightPage()).getImageView();
       mMainView.setPageController(this, mPageNumber, mPageNumber - 1);
     } else if (mMode == Mode.TRANSLATION) {
       mMainView.init(TabletView.TRANSLATION_PAGE, TabletView.TRANSLATION_PAGE);
       mLeftTranslation =
-          ((QuranTranslationPageLayout) mMainView.getLeftPage())
-              .getTranslationView();
+          ((QuranTranslationPageLayout) mMainView.getLeftPage()).getTranslationView();
       mRightTranslation =
-          ((QuranTranslationPageLayout) mMainView.getRightPage())
-              .getTranslationView();
+          ((QuranTranslationPageLayout) mMainView.getRightPage()).getTranslationView();
 
       mLeftTranslation.setTranslationClickedListener(
           new TranslationView.TranslationClickedListener() {
@@ -215,18 +211,13 @@ public class TabletFragment extends Fragment
     Context context = getActivity();
     if (mMode == Mode.ARABIC) {
       if (PagerActivity.class.isInstance(getActivity())) {
-        QuranPageWorker worker =
-            ((PagerActivity) getActivity()).getQuranPageWorker();
-        String widthParam =
-            QuranScreenInfo.getInstance().getTabletWidthParam();
-        mRightPageLoadTask =
-            worker.loadPage(widthParam, mPageNumber - 1, this);
-        mLeftPageLoadTask =
-            worker.loadPage(widthParam, mPageNumber, this);
+        QuranPageWorker worker = ((PagerActivity) getActivity()).getQuranPageWorker();
+        String widthParam = QuranScreenInfo.getInstance().getTabletWidthParam();
+        mRightPageLoadTask = worker.loadPage(widthParam, mPageNumber - 1, this);
+        mLeftPageLoadTask = worker.loadPage(widthParam, mPageNumber, this);
       }
 
-      new QueryPageCoordinatesTask(context)
-          .execute(mPageNumber - 1, mPageNumber);
+      new QueryPageCoordinatesTask(context).execute(mPageNumber - 1, mPageNumber);
 
       if (QuranSettings.getInstance(context).shouldHighlightBookmarks()) {
         highlightTagsTask();
@@ -257,7 +248,7 @@ public class TabletFragment extends Fragment
   }
 
   public void cleanup() {
-    Timber.d("cleaning up page " + mPageNumber);
+    Timber.d("cleaning up page %d", mPageNumber);
     if (mLeftPageLoadTask != null) {
       mLeftPageLoadTask.cancel(false);
     }
@@ -402,8 +393,7 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void highlightAyat(
-      int page, Set<String> ayahKeys, HighlightType type) {
+  public void highlightAyat(int page, Set<String> ayahKeys, HighlightType type) {
     final HighlightingImageView imageView;
     if (page == mPageNumber - 1) {
       imageView = mRightImageView;
