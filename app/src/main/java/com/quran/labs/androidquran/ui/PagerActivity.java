@@ -184,7 +184,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private TranslationsSpinnerAdapter translationsSpinnerAdapter;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
-  public static final int MSG_REMOVE_WINDOW_BACKGROUND = 2;
 
   // AYAH ACTION PANEL STUFF
   // Max height of sliding panel (% of screen)
@@ -214,8 +213,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (activity != null) {
         if (msg.what == MSG_HIDE_ACTIONBAR) {
           activity.toggleActionBarVisibility(false);
-        } else if (msg.what == MSG_REMOVE_WINDOW_BACKGROUND) {
-          activity.getWindow().setBackgroundDrawable(null);
         } else {
           super.handleMessage(msg);
         }
@@ -237,15 +234,11 @@ public class PagerActivity extends QuranActionBarActivity implements
     boolean shouldAdjustPageNumber = false;
     QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
     mDualPages = QuranUtils.isDualPages(this, qsi);
-    if (QuranUtils.isDualPagesInLandscape(this, qsi)) {
-      // on tablet, delay removing the window background so that the user sees a gray background
-      // during the transition time (while the ViewPager settles on the right page, etc).
-      mHandler.sendEmptyMessageDelayed(MSG_REMOVE_WINDOW_BACKGROUND, 750);
-    } else {
-      // on phone, or when we aren't changing the adapter page count / fragment types, remove the
-      // window background right away to avoid overdraw.
-      getWindow().setBackgroundDrawable(null);
-    }
+
+    // remove the window background to avoid overdraw. note that, per Romain's blog, this is
+    // acceptable (as long as we don't set the background color to null in the theme, since
+    // that is used to generate preview windows).
+    getWindow().setBackgroundDrawable(null);
 
     // initialize ayah info database
     String filename = QuranFileUtils.getAyaPositionFileName();
