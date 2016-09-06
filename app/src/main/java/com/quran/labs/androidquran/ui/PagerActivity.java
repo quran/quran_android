@@ -234,7 +234,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     mBookmarksCache = new SparseBooleanArray();
 
-    boolean refresh = false;
+    boolean shouldAdjustPageNumber = false;
     QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
     mDualPages = QuranUtils.isDualPages(this, qsi);
     if (QuranUtils.isDualPagesInLandscape(this, qsi)) {
@@ -288,9 +288,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         mIsActionBarHidden = !savedInstanceState
             .getBoolean(LAST_ACTIONBAR_STATE);
       }
-      boolean lastWasDualPages = savedInstanceState.getBoolean(
-          LAST_WAS_DUAL_PAGES, mDualPages);
-      refresh = (lastWasDualPages != mDualPages);
+      boolean lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, mDualPages);
+      shouldAdjustPageNumber = (lastWasDualPages != mDualPages);
 
       mStart = savedInstanceState.getParcelable(LAST_START_POINT);
       mEnd = savedInstanceState.getParcelable(LAST_ENDING_POINT);
@@ -348,12 +347,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     Bundle extras = intent.getExtras();
     if (extras != null) {
       if (page == -1) {
-        page = PAGES_LAST -
-            extras.getInt("page", Constants.PAGES_FIRST);
+        page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
       }
 
-      mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION,
-          mShowingTranslation);
+      mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, mShowingTranslation);
       mHighlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
       mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
     }
@@ -450,12 +447,27 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
     toggleActionBarVisibility(true);
 
-    if (mDualPages) {
-      mViewPager.setCurrentItem(page / 2);
-    } else {
-      mViewPager.setCurrentItem(page);
+    if (shouldAdjustPageNumber) {
+      // when going from two page per screen to one or vice versa, we adjust the page number,
+      // such that the first page is always selected.
+      int curPage = PAGES_LAST - page;
+      if (mDualPages) {
+        if (curPage % 2 != 0) {
+          curPage++;
+        }
+        curPage = PAGES_LAST_DUAL - (curPage / 2);
+      } else {
+        if (curPage % 2 == 0) {
+          curPage--;
+        }
+        curPage = PAGES_LAST - curPage;
+      }
+      page = curPage;
+    } else if (mDualPages) {
+      page = page / 2;
     }
 
+    mViewPager.setCurrentItem(page);
     mSettings.setLastPage(PAGES_LAST - page);
 
     // just got created, need to reconnect to service
@@ -474,29 +486,6 @@ public class PagerActivity extends QuranActionBarActivity implements
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         return;
       }
-    }
-
-    if (refresh) {
-      final int curPage = PAGES_LAST - page;
-      mHandler.post(new Runnable() {
-        @Override
-        public void run() {
-          mPagerAdapter.notifyDataSetChanged();
-          int page = curPage;
-          if (mDualPages) {
-            if (page % 2 != 0) {
-              page++;
-            }
-            page = PAGES_LAST_DUAL - (page / 2);
-          } else {
-            if (page % 2 == 0) {
-              page--;
-            }
-            page = PAGES_LAST - page;
-          }
-          mViewPager.setCurrentItem(page);
-        }
-      });
     }
 
     LocalBroadcastManager.getInstance(this).registerReceiver(
