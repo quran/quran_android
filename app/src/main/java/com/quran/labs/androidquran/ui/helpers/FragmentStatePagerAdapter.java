@@ -14,10 +14,6 @@ package com.quran.labs.androidquran.ui.helpers;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Modified for Quran
- * Modifications List (for ease of merging with upstream later on):
- * - added getFragmentIfExists() to return a fragment without recreating it
  */
 
 import android.annotation.SuppressLint;
@@ -45,24 +41,10 @@ import timber.log.Timber;
  * much less memory associated with each visited page as compared to {@link FragmentPagerAdapter} at
  * the cost of potentially more overhead when switching between pages.
  *
- * <p>When using FragmentPagerAdapter the host ViewPager must have a valid ID set.</p>
- *
- * <p>Subclasses only need to implement {@link #getItem(int)} and {@link #getCount()} to have a
- * working adapter.
- *
- * <p>Here is an example implementation of a pager containing fragments of lists:
- *
- * {@sample development/samples/Support13Demos/src/com/example/android/supportv13/app/FragmentStatePagerSupport.java
- * complete}
- *
- * <p>The <code>R.layout.fragment_pager</code> resource of the top-level fragment is:
- *
- * {@sample development/samples/Support13Demos/res/layout/fragment_pager.xml complete}
- *
- * <p>The <code>R.layout.fragment_pager_list</code> resource containing each individual fragment's
- * layout is:
- *
- * {@sample development/samples/Support13Demos/res/layout/fragment_pager_list.xml complete}
+ * Modified for Quran
+ * Modifications List (for ease of merging with upstream later on):
+ * - added getFragmentIfExists() to return a fragment without recreating it
+ * - keep track of a mode, and remove all fragments when said mode changes
  */
 public abstract class FragmentStatePagerAdapter extends PagerAdapter {
   private static final boolean DEBUG = false;
@@ -73,9 +55,11 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
   private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<>();
   private ArrayList<Fragment> mFragments = new ArrayList<>();
   private Fragment mCurrentPrimaryItem = null;
+  private String mode;
 
-  public FragmentStatePagerAdapter(FragmentManager fm) {
+  public FragmentStatePagerAdapter(FragmentManager fm, String mode) {
     mFragmentManager = fm;
+    this.mode = mode;
   }
 
   /**
@@ -196,9 +180,8 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
 
   @Override
   public Parcelable saveState() {
-    Bundle state = null;
+    Bundle state = new Bundle();
     if (mSavedState.size() > 0) {
-      state = new Bundle();
       Fragment.SavedState[] fss = new Fragment.SavedState[mSavedState.size()];
       mSavedState.toArray(fss);
       state.putParcelableArray("states", fss);
@@ -206,13 +189,11 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
     for (int i = 0; i < mFragments.size(); i++) {
       Fragment f = mFragments.get(i);
       if (f != null && f.isAdded()) {
-        if (state == null) {
-          state = new Bundle();
-        }
         String key = "f" + i;
         mFragmentManager.putFragment(state, key, f);
       }
     }
+    state.putString("mode", this.mode);
     return state;
   }
 
@@ -221,9 +202,16 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
     if (state != null) {
       Bundle bundle = (Bundle) state;
       bundle.setClassLoader(loader);
-      Parcelable[] fss = bundle.getParcelableArray("states");
       mSavedState.clear();
       mFragments.clear();
+
+      String lastMode = bundle.getString("mode", "");
+      if (!mode.equals(lastMode)) {
+        cleanupOldFragments(bundle);
+        return;
+      }
+
+      Parcelable[] fss = bundle.getParcelableArray("states");
       if (fss != null) {
         for (Parcelable fs : fss) {
           mSavedState.add((Fragment.SavedState) fs);
@@ -246,5 +234,26 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
         }
       }
     }
+  }
+
+  public void cleanupFragment(Fragment fragment) {
+    // no op, present for overriding
+  }
+
+  private void cleanupOldFragments(Bundle bundle) {
+    // remove suppress once lint rule is updated to treat commitNowAllowingStateLoss as a commit
+    @SuppressLint("CommitTransaction")
+    FragmentTransaction transaction = mFragmentManager.beginTransaction();
+    Iterable<String> keys = bundle.keySet();
+    for (String key : keys) {
+      if (key.startsWith("f")) {
+        Fragment f = mFragmentManager.getFragment(bundle, key);
+        if (f != null) {
+          cleanupFragment(f);
+          transaction.remove(f);
+        }
+      }
+    }
+    transaction.commitNowAllowingStateLoss();
   }
 }

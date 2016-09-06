@@ -1,13 +1,13 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.widgets.IconPageIndicator;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
     IconPageIndicator.IconPagerAdapter {
@@ -25,7 +25,7 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
   private boolean mIsRtl;
 
   public SlidingPagerAdapter(FragmentManager fm, boolean isRtl) {
-    super(fm);
+    super(fm, "sliding");
     mIsRtl = isRtl;
   }
 
