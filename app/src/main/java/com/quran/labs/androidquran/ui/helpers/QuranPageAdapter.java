@@ -83,6 +83,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
   @Override
   public void destroyItem(ViewGroup container, int position, Object object) {
     Fragment f = (Fragment) object;
+    Timber.d("destroying item: %d, %s", position, f);
     cleanupFragment(f);
     super.destroyItem(container, position, object);
   }
