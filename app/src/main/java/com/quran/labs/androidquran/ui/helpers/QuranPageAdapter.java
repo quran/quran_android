@@ -1,14 +1,14 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.view.ViewGroup;
+
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.view.ViewGroup;
 
 import timber.log.Timber;
 
@@ -22,7 +22,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   public QuranPageAdapter(FragmentManager fm, boolean dualPages,
                           boolean isShowingTranslation) {
-    super(fm);
+    super(fm, dualPages ? "dualPages" : "singlePage");
     mIsDualPages = dualPages;
     mIsShowingTranslation = isShowingTranslation;
   }
@@ -83,12 +83,17 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
   @Override
   public void destroyItem(ViewGroup container, int position, Object object) {
     Fragment f = (Fragment) object;
+    cleanupFragment(f);
+    super.destroyItem(container, position, object);
+  }
+
+  @Override
+  public void cleanupFragment(Fragment f) {
     if (f instanceof QuranPageFragment) {
       ((QuranPageFragment) f).cleanup();
     } else if (f instanceof TabletFragment) {
       ((TabletFragment) f).cleanup();
     }
-    super.destroyItem(container, position, object);
   }
 
   public AyahTracker getFragmentIfExistsForPage(int page) {
