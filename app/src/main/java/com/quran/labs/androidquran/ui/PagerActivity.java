@@ -461,7 +461,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     mViewPager.setCurrentItem(page);
-    mSettings.setLastPage(PAGES_LAST - page);
 
     // just got created, need to reconnect to service
     mShouldReconnect = true;
