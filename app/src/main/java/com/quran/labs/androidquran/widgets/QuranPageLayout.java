@@ -50,7 +50,6 @@ public abstract class QuranPageLayout extends ViewGroup
   private static BitmapDrawable rightPageBorder;
   private static BitmapDrawable leftPageBorderNight;
   private static BitmapDrawable rightPageBorderNight;
-  private static int headerFooterHeight;
 
   private static int lineColor;
   private static ShapeDrawable lineDrawable;
@@ -126,6 +125,7 @@ public abstract class QuranPageLayout extends ViewGroup
       int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : leftPageBorder.getIntrinsicWidth();
       int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
           0 : rightPageBorder.getIntrinsicWidth();
+      int headerFooterHeight = 0;
       width = width - (leftLineWidth + rightLineWidth + viewPaddingSmall + viewPaddingLarge);
       height = height - 2 * headerFooterHeight;
       view.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
@@ -147,6 +147,7 @@ public abstract class QuranPageLayout extends ViewGroup
           1 : leftPageBorder.getIntrinsicWidth();
       @Px int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
           0 : rightPageBorder.getIntrinsicWidth();
+      int headerFooterHeight = 0;
       view.layout(leftLineWidth, headerFooterHeight,
           width - rightLineWidth, height - headerFooterHeight);
       if (errorLayout != null) {
