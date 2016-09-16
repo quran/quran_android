@@ -324,13 +324,11 @@ public class TabletFragment extends Fragment
               String suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber - 1, true);
               String juzText = QuranInfo.getJuzString(context, mPageNumber - 1);
               String pageText = QuranUtils.getLocalizedNumber(context, mPageNumber - 1);
-              mRightImageView.setOverlayText(suraText, juzText, pageText,
-                  mMainView.getRightPage().isScrollable());
+              mRightImageView.setOverlayText(suraText, juzText, pageText);
               suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber, true);
               juzText = QuranInfo.getJuzString(context, mPageNumber);
               pageText = QuranUtils.getLocalizedNumber(context, mPageNumber);
-              mLeftImageView.setOverlayText(suraText, juzText, pageText,
-                  mMainView.getLeftPage().isScrollable());
+              mLeftImageView.setOverlayText(suraText, juzText, pageText);
             }
           }
         }
