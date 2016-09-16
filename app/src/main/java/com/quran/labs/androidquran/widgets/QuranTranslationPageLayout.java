@@ -11,7 +11,7 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   }
 
   @Override
-  protected View generateContentView(Context context) {
+  protected View generateContentView(Context context, boolean isLandscape) {
     mTranslationView = new TranslationView(context);
     return mTranslationView;
   }

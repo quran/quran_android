@@ -16,9 +16,10 @@ public class QuranImagePageLayout extends QuranPageLayout {
   }
 
   @Override
-  protected View generateContentView(Context context) {
+  protected View generateContentView(Context context, boolean isLandscape) {
     mImageView = new HighlightingImageView(context);
     mImageView.setAdjustViewBounds(true);
+    mImageView.setIsScrollable(isLandscape && shouldWrapWithScrollView());
     return mImageView;
   }
 

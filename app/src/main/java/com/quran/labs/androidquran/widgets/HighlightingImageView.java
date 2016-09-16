@@ -47,6 +47,7 @@ public class HighlightingImageView extends RecyclingImageView {
   private Set<String> mAlreadyHighlighted = new HashSet<>();
 
   // Params for drawing text
+  private int fontSize;
   private OverlayParams mOverlayParams = null;
   private RectF mPageBounds = null;
   private boolean mDidDraw = false;
@@ -64,6 +65,12 @@ public class HighlightingImageView extends RecyclingImageView {
       sHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
       sScrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
     }
+  }
+
+  public void setIsScrollable(boolean scrollable) {
+    int topBottom = scrollable ? sScrollableHeaderFooterSize : sHeaderFooterSize;
+    setPadding(getPaddingLeft(), topBottom, getPaddingRight(), topBottom);
+    fontSize = topBottom;
   }
 
   public void unHighlight(int sura, int ayah, HighlightType type) {
@@ -156,7 +163,7 @@ public class HighlightingImageView extends RecyclingImageView {
     String pageText = null;
   }
 
-  public void setOverlayText(String suraText, String juzText, String pageText, boolean scrollable) {
+  public void setOverlayText(String suraText, String juzText, String pageText) {
     // Calculate page bounding rect from ayahinfo db
     if (mPageBounds == null) {
       return;
@@ -167,10 +174,7 @@ public class HighlightingImageView extends RecyclingImageView {
     mOverlayParams.juzText = juzText;
     mOverlayParams.pageText = pageText;
     mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
-
-    int topBottom = scrollable ? sScrollableHeaderFooterSize : sHeaderFooterSize;
-    setPadding(getPaddingLeft(), topBottom, getPaddingRight(), topBottom);
-    mOverlayParams.paint.setTextSize(topBottom);
+    mOverlayParams.paint.setTextSize(fontSize);
 
     if (!mDidDraw) {
       invalidate();

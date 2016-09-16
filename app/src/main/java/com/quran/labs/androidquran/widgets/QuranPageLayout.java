@@ -75,7 +75,7 @@ public abstract class QuranPageLayout extends ViewGroup
     Resources resources = context.getResources();
     final boolean isLandscape =
         resources.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-    innerView = generateContentView(context);
+    innerView = generateContentView(context, isLandscape);
     viewPaddingSmall = resources.getDimensionPixelSize(R.dimen.page_margin_small);
     viewPaddingLarge = resources.getDimensionPixelSize(R.dimen.page_margin_large);
 
@@ -182,7 +182,7 @@ public abstract class QuranPageLayout extends ViewGroup
     }
   }
 
-  protected abstract View generateContentView(Context context);
+  protected abstract View generateContentView(Context context, boolean isLandscape);
   protected abstract void setContentNightMode(boolean nightMode, int textBrightness);
 
   protected boolean shouldWrapWithScrollView() {
