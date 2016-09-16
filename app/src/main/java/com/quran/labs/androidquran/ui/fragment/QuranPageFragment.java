@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
@@ -34,6 +35,7 @@ import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
@@ -55,8 +57,7 @@ import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
-public class QuranPageFragment extends Fragment
-    implements AyahTracker, PageController {
+public class QuranPageFragment extends Fragment implements AyahTracker, PageController {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private int mPageNumber;
@@ -295,7 +296,12 @@ public class QuranPageFragment extends Fragment
       if (rect != null && rect.length == 1 && isAdded()) {
         mImageView.setPageBounds(rect[0]);
         if (mOverlayText) {
-          mImageView.setOverlayText(mPageNumber, true);
+          int page = mPageNumber;
+          Context context = getContext();
+          String suraText = QuranInfo.getSuraNameFromPage(context, page, true);
+          String juzText = QuranInfo.getJuzString(context, page);
+          String pageText = QuranUtils.getLocalizedNumber(context, page);
+          mImageView.setOverlayText(suraText, juzText, pageText, mQuranPageLayout.isScrollable());
         }
       }
     }

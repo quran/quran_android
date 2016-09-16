@@ -33,6 +33,7 @@ import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
@@ -319,8 +320,17 @@ public class TabletFragment extends Fragment
             mRightImageView.setPageBounds(rect[0]);
             mLeftImageView.setPageBounds(rect[1]);
             if (mOverlayText) {
-              mRightImageView.setOverlayText(mPageNumber - 1, true);
-              mLeftImageView.setOverlayText(mPageNumber, true);
+              Context context = getContext();
+              String suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber - 1, true);
+              String juzText = QuranInfo.getJuzString(context, mPageNumber - 1);
+              String pageText = QuranUtils.getLocalizedNumber(context, mPageNumber - 1);
+              mRightImageView.setOverlayText(suraText, juzText, pageText,
+                  mMainView.getRightPage().isScrollable());
+              suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber, true);
+              juzText = QuranInfo.getJuzString(context, mPageNumber);
+              pageText = QuranUtils.getLocalizedNumber(context, mPageNumber);
+              mLeftImageView.setOverlayText(suraText, juzText, pageText,
+                  mMainView.getLeftPage().isScrollable());
             }
           }
         }
