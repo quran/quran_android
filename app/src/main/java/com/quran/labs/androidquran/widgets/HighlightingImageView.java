@@ -19,9 +19,7 @@ import android.util.SparseArray;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,16 +31,15 @@ import java.util.TreeMap;
 public class HighlightingImageView extends RecyclingImageView {
 
   private static int sOverlayTextColor = -1;
-  private static float sMaxFontSize = 0;
-  private static float sMinFontSize = 0;
+  private static int sHeaderFooterSize = 0;
+  private static int sScrollableHeaderFooterSize = 0;
 
   // Sorted map so we use highest priority highlighting when iterating
-  private SortedMap<HighlightType, Set<String>> mCurrentHighlights =
-      new TreeMap<>();
-  private boolean mColorFilterOn = false;
-  private boolean mIsNightMode = false;
-  private int mNightModeTextBrightness =
-      Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+  private SortedMap<HighlightType, Set<String>> mCurrentHighlights = new TreeMap<>();
+
+  private boolean mIsNightMode;
+  private boolean mColorFilterOn;
+  private int mNightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
 
   // cached objects for onDraw
   private static SparseArray<Paint> mSparsePaintArray = new SparseArray<>();
@@ -64,8 +61,8 @@ public class HighlightingImageView extends RecyclingImageView {
     if (sOverlayTextColor == -1) {
       final Resources res = context.getResources();
       sOverlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
-      sMinFontSize = res.getDimensionPixelSize(R.dimen.min_overlay_font_size);
-      sMaxFontSize = res.getDimensionPixelSize(R.dimen.max_overlay_font_size);
+      sHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
+      sScrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
     }
   }
 
@@ -150,7 +147,6 @@ public class HighlightingImageView extends RecyclingImageView {
 
   private static class OverlayParams {
     boolean init = false;
-    boolean showOverlay = false;
     Paint paint = null;
     float offsetX;
     float topBaseline;
@@ -160,21 +156,23 @@ public class HighlightingImageView extends RecyclingImageView {
     String pageText = null;
   }
 
-  public void setOverlayText(int page, boolean show) {
-    // Calculate page bounding rect from ayainfo db
+  public void setOverlayText(String suraText, String juzText, String pageText, boolean scrollable) {
+    // Calculate page bounding rect from ayahinfo db
     if (mPageBounds == null) {
       return;
     }
 
     mOverlayParams = new OverlayParams();
-    mOverlayParams.suraText = QuranInfo.getSuraNameFromPage(
-        getContext(), page, true);
-    mOverlayParams.juzText = QuranInfo.getJuzString(getContext(), page);
-    mOverlayParams.pageText = QuranUtils.getLocalizedNumber(
-        getContext(), page);
-    mOverlayParams.showOverlay = show;
+    mOverlayParams.suraText = suraText;
+    mOverlayParams.juzText = juzText;
+    mOverlayParams.pageText = pageText;
+    mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
 
-    if (show && !mDidDraw) {
+    int topBottom = scrollable ? sScrollableHeaderFooterSize : sHeaderFooterSize;
+    setPadding(getPaddingLeft(), topBottom, getPaddingRight(), topBottom);
+    mOverlayParams.paint.setTextSize(topBottom);
+
+    if (!mDidDraw) {
       invalidate();
     }
   }
@@ -193,8 +191,6 @@ public class HighlightingImageView extends RecyclingImageView {
       return true;
     }
 
-    mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
-    mOverlayParams.paint.setTextSize(sMaxFontSize);
     int overlayColor = sOverlayTextColor;
     if (mIsNightMode) {
       overlayColor = Color.rgb(mNightModeTextBrightness,
@@ -204,31 +200,9 @@ public class HighlightingImageView extends RecyclingImageView {
 
     // Use font metrics to calculate the maximum possible height of the text
     FontMetrics fm = mOverlayParams.paint.getFontMetrics();
-    float textHeight = fm.bottom - fm.top;
 
     final RectF mappedRect = new RectF();
     matrix.mapRect(mappedRect, mPageBounds);
-
-    // Text size scale based on the available 'header' and 'footer' space
-    // (i.e. gap between top/bottom of screen and actual start of the
-    // 'bitmap')
-    float scale = mappedRect.top / textHeight;
-
-    // If the height of the drawn text might be greater than the available
-    // gap... scale down the text size by the calculated scale
-    if (scale < 1.0) {
-      // If after scaling the text size will be less than the minimum
-      // size... then don't draw.
-      final float targetSize = sMaxFontSize * scale;
-      if (targetSize < sMinFontSize) {
-        mOverlayParams.init = true;
-        mOverlayParams.showOverlay = false;
-        return true;
-      }
-      // Set the scaled text size, and update the metrics
-      mOverlayParams.paint.setTextSize(targetSize);
-      fm = mOverlayParams.paint.getFontMetrics();
-    }
 
     // Calculate where the text's baseline should be
     // (for top text and bottom text)
@@ -298,7 +272,7 @@ public class HighlightingImageView extends RecyclingImageView {
 
     // Draw overlay text
     mDidDraw = false;
-    if (mOverlayParams != null && mOverlayParams.showOverlay) {
+    if (mOverlayParams != null) {
       overlayText(canvas, matrix);
     }
 
@@ -313,6 +287,7 @@ public class HighlightingImageView extends RecyclingImageView {
            if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
              for (AyahBounds b : rangesToDraw) {
                matrix.mapRect(mScaledRect, b.getBounds());
+               mScaledRect.offset(0, getPaddingTop());
                canvas.drawRect(mScaledRect, paint);
              }
              mAlreadyHighlighted.add(ayah);

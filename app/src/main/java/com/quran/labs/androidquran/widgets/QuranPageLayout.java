@@ -189,6 +189,10 @@ public abstract class QuranPageLayout extends ViewGroup
     return true;
   }
 
+  public boolean isScrollable() {
+    return scrollView != null;
+  }
+
   private View resolveView() {
     return scrollView != null ? scrollView : innerView;
   }
