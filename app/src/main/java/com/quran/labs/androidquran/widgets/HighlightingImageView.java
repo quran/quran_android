@@ -31,8 +31,10 @@ import java.util.TreeMap;
 public class HighlightingImageView extends RecyclingImageView {
 
   private static int sOverlayTextColor = -1;
-  private static int sHeaderFooterSize = 0;
-  private static int sScrollableHeaderFooterSize = 0;
+  private static int sHeaderFooterSize;
+  private static int sHeaderFooterFontSize;
+  private static int sScrollableHeaderFooterSize;
+  private static int sScrollableHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
   private SortedMap<HighlightType, Set<String>> mCurrentHighlights = new TreeMap<>();
@@ -64,13 +66,16 @@ public class HighlightingImageView extends RecyclingImageView {
       sOverlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
       sHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
       sScrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
+      sHeaderFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
+      sScrollableHeaderFooterFontSize =
+          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
     }
   }
 
   public void setIsScrollable(boolean scrollable) {
     int topBottom = scrollable ? sScrollableHeaderFooterSize : sHeaderFooterSize;
     setPadding(getPaddingLeft(), topBottom, getPaddingRight(), topBottom);
-    fontSize = topBottom;
+    fontSize = scrollable ? sScrollableHeaderFooterFontSize : sHeaderFooterFontSize;
   }
 
   public void unHighlight(int sura, int ayah, HighlightType type) {
