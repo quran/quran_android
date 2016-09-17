@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 2710
-        versionName "2.7.1"
+        versionCode 2720
+        versionName "2.7.2"
     }
 
     signingConfigs {
@@ -38,24 +38,24 @@ android {
             applicationId "com.quran.labs.androidquran.qaloon"
             resValue "string", "authority", applicationId + '.data.QuranDataProvider'
             resValue "string", "file_authority", applicationId + '.fileprovider'
-            versionCode 1040
-            versionName "1.0.4"
+            versionCode 1050
+            versionName "1.0.5"
         }
 
         naskh {
             applicationId "com.quran.labs.androidquran.naskh"
             resValue "string", "authority", applicationId + '.data.QuranDataProvider'
             resValue "string", "file_authority", applicationId + '.fileprovider'
-            versionCode 1040
-            versionName "1.0.4"
+            versionCode 1050
+            versionName "1.0.5"
         }
 
         shemerly {
             applicationId "com.quran.labs.androidquran.shemerly"
             resValue "string", "authority", applicationId + '.data.QuranDataProvider'
             resValue "string", "file_authority", applicationId + '.fileprovider'
-            versionCode 1040
-            versionName "1.0.4"
+            versionCode 1050
+            versionName "1.0.5"
         }
     }
 
