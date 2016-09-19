@@ -1,11 +1,11 @@
 package com.quran.labs.androidquran.data;
 
+import android.content.Context;
+import android.text.TextUtils;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.QuranUtils;
-
-import android.content.Context;
-import android.text.TextUtils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -52,11 +52,11 @@ public class BaseQuranInfo {
     }
 
     StringBuilder builder = new StringBuilder();
+    String[] suraNames = context.getResources().getStringArray(R.array.sura_names);
     if (wantPrefix) {
-      builder.append(context.getString(R.string.quran_sura_title,
-          context.getResources().getStringArray(R.array.sura_names)[sura - 1]));
+      builder.append(context.getString(R.string.quran_sura_title, suraNames[sura - 1]));
     } else {
-      builder.append(context.getResources().getStringArray(R.array.sura_names)[sura - 1]);
+      builder.append(suraNames[sura - 1]);
     }
     if (wantTranslation) {
       String translation = context.getResources().getStringArray(R.array.sura_names_translation)[sura - 1];
