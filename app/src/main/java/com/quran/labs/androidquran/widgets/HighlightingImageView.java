@@ -171,7 +171,7 @@ public class HighlightingImageView extends RecyclingImageView {
     String rub3Text = null;
   }
 
-    // same as displayMarker method
+    // same logic used in displayMarkerPopup method
     public static String displayRub3(Context context, int page)
     {
         int rub3 = QuranInfo.getRub3FromPage(page);
