@@ -19,7 +19,9 @@ import android.util.SparseArray;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -166,9 +168,33 @@ public class HighlightingImageView extends RecyclingImageView {
     String suraText = null;
     String juzText = null;
     String pageText = null;
+    String rub3Text = null;
   }
 
-  public void setOverlayText(String suraText, String juzText, String pageText) {
+    // same logic used in displayMarkerPopup method
+    public static String displayRub3(Context context, int page)
+    {
+        int rub3 = QuranInfo.getRub3FromPage(page);
+        int hizb = (rub3 / 4) + 1;
+        StringBuilder sb = new StringBuilder();
+        if (rub3 == -1) {
+            return "";
+        }
+        int remainder = rub3 % 4;
+        if (remainder == 1) {
+            sb.append(context.getString(R.string.quran_rob3)).append(' ');
+        } else if (remainder == 2) {
+            sb.append(context.getString(R.string.quran_nos)).append(' ');
+        } else if (remainder == 3) {
+            sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
+        }
+        sb.append(context.getString(R.string.quran_hizb)).append(' ')
+                .append(QuranUtils.getLocalizedNumber(context, hizb));
+
+        return sb.toString();
+    }
+
+  public void setOverlayText(String suraText, String juzText, String pageText,String rub3Text) {
     // Calculate page bounding rect from ayahinfo db
     if (mPageBounds == null) {
       return;
@@ -178,6 +204,7 @@ public class HighlightingImageView extends RecyclingImageView {
     mOverlayParams.suraText = suraText;
     mOverlayParams.juzText = juzText;
     mOverlayParams.pageText = pageText;
+    mOverlayParams.rub3Text=rub3Text;
     mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     mOverlayParams.paint.setTextSize(fontSize);
 
@@ -245,6 +272,13 @@ public class HighlightingImageView extends RecyclingImageView {
     canvas.drawText(mOverlayParams.pageText,
         getWidth() / 2.0f, mOverlayParams.bottomBaseline,
         mOverlayParams.paint);
+     // Write the current rub3 text at the top middle of the page
+     if (!mOverlayParams.rub3Text.equals("")) {
+          mOverlayParams.paint.setTextAlign(Align.CENTER);
+          canvas.drawText(mOverlayParams.rub3Text,
+                  getWidth() / 2.0f, mOverlayParams.topBaseline,
+                  mOverlayParams.paint);
+      }
     mDidDraw = true;
   }
 
