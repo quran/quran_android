@@ -319,16 +319,18 @@ public class TabletFragment extends Fragment
           if (mRightImageView != null && mLeftImageView != null) {
             mRightImageView.setPageBounds(rect[0]);
             mLeftImageView.setPageBounds(rect[1]);
-            Context context = getContext();
-            if (mOverlayText && context != null) {
+            if (mOverlayText) {
+              Context context = getContext();
               String suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber - 1, true);
               String juzText = QuranInfo.getJuzString(context, mPageNumber - 1);
               String pageText = QuranUtils.getLocalizedNumber(context, mPageNumber - 1);
-              mRightImageView.setOverlayText(suraText, juzText, pageText);
+              String rub3Text =HighlightingImageView.displayRub3(context,mPageNumber - 1);
+              mRightImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
               suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber, true);
               juzText = QuranInfo.getJuzString(context, mPageNumber);
               pageText = QuranUtils.getLocalizedNumber(context, mPageNumber);
-              mLeftImageView.setOverlayText(suraText, juzText, pageText);
+              rub3Text =HighlightingImageView.displayRub3(context,mPageNumber);
+              mLeftImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
             }
           }
         }

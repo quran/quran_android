@@ -301,7 +301,8 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
           String suraText = QuranInfo.getSuraNameFromPage(context, page, true);
           String juzText = QuranInfo.getJuzString(context, page);
           String pageText = QuranUtils.getLocalizedNumber(context, page);
-          mImageView.setOverlayText(suraText, juzText, pageText);
+          String rub3Text =HighlightingImageView.displayRub3(context,page);
+          mImageView.setOverlayText(suraText, juzText, pageText,rub3Text);
         }
       }
     }
