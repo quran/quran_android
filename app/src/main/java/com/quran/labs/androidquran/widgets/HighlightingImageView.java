@@ -171,7 +171,7 @@ public class HighlightingImageView extends RecyclingImageView {
     String rub3Text = null;
   }
 
-  public void setOverlayText(String suraText, String juzText, String pageText,String rub3Text) {
+  public void setOverlayText(String suraText, String juzText, String pageText, String rub3Text) {
     // Calculate page bounding rect from ayahinfo db
     if (mPageBounds == null) {
       return;
@@ -241,21 +241,22 @@ public class HighlightingImageView extends RecyclingImageView {
     canvas.drawText(mOverlayParams.suraText,
         mOverlayParams.offsetX, mOverlayParams.topBaseline,
         mOverlayParams.paint);
-    mOverlayParams.paint.setTextAlign(Align.RIGHT);
-    canvas.drawText(mOverlayParams.juzText,
-        getWidth() - mOverlayParams.offsetX, mOverlayParams.topBaseline,
-        mOverlayParams.paint);
     mOverlayParams.paint.setTextAlign(Align.CENTER);
     canvas.drawText(mOverlayParams.pageText,
         getWidth() / 2.0f, mOverlayParams.bottomBaseline,
         mOverlayParams.paint);
-     // Write the current rub3 text at the top middle of the page
-     if (!mOverlayParams.rub3Text.equals("")) {
-          mOverlayParams.paint.setTextAlign(Align.CENTER);
-          canvas.drawText(mOverlayParams.rub3Text,
-                  getWidth() / 2.0f, mOverlayParams.topBaseline,
-                  mOverlayParams.paint);
-      }
+    // Merge the current rub3 text with the juz' text
+    if (!mOverlayParams.rub3Text.equals("")) {
+       mOverlayParams.paint.setTextAlign(Align.RIGHT);
+       canvas.drawText(mOverlayParams.juzText + mOverlayParams.rub3Text,
+           getWidth() - mOverlayParams.offsetX, mOverlayParams.topBaseline,
+           mOverlayParams.paint);
+    } else {
+      mOverlayParams.paint.setTextAlign(Align.RIGHT);
+      canvas.drawText(mOverlayParams.juzText,
+          getWidth() - mOverlayParams.offsetX, mOverlayParams.topBaseline,
+          mOverlayParams.paint);
+    }
     mDidDraw = true;
   }
 
