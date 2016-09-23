@@ -247,10 +247,10 @@ public class HighlightingImageView extends RecyclingImageView {
         mOverlayParams.paint);
     // Merge the current rub3 text with the juz' text
     if (!mOverlayParams.rub3Text.equals("")) {
-       mOverlayParams.paint.setTextAlign(Align.RIGHT);
-       canvas.drawText(mOverlayParams.juzText + mOverlayParams.rub3Text,
-           getWidth() - mOverlayParams.offsetX, mOverlayParams.topBaseline,
-           mOverlayParams.paint);
+      mOverlayParams.paint.setTextAlign(Align.RIGHT);
+      canvas.drawText(mOverlayParams.juzText + mOverlayParams.rub3Text,
+          getWidth() - mOverlayParams.offsetX, mOverlayParams.topBaseline,
+          mOverlayParams.paint);
     } else {
       mOverlayParams.paint.setTextAlign(Align.RIGHT);
       canvas.drawText(mOverlayParams.juzText,
