@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.ui.util.PageController;
@@ -324,12 +325,12 @@ public class TabletFragment extends Fragment
               String suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber - 1, true);
               String juzText = QuranInfo.getJuzString(context, mPageNumber - 1);
               String pageText = QuranUtils.getLocalizedNumber(context, mPageNumber - 1);
-              String rub3Text =HighlightingImageView.displayRub3(context,mPageNumber - 1);
+              String rub3Text =QuranDisplayHelper.displayRub3(context,mPageNumber - 1);
               mRightImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
               suraText = QuranInfo.getSuraNameFromPage(context, mPageNumber, true);
               juzText = QuranInfo.getJuzString(context, mPageNumber);
               pageText = QuranUtils.getLocalizedNumber(context, mPageNumber);
-              rub3Text =HighlightingImageView.displayRub3(context,mPageNumber);
+              rub3Text = QuranDisplayHelper.displayRub3(context,mPageNumber);
               mLeftImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
             }
           }
