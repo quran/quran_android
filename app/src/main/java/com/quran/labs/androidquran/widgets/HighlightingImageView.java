@@ -171,29 +171,6 @@ public class HighlightingImageView extends RecyclingImageView {
     String rub3Text = null;
   }
 
-    // same logic used in displayMarkerPopup method
-    public static String displayRub3(Context context, int page)
-    {
-        int rub3 = QuranInfo.getRub3FromPage(page);
-        int hizb = (rub3 / 4) + 1;
-        StringBuilder sb = new StringBuilder();
-        if (rub3 == -1) {
-            return "";
-        }
-        int remainder = rub3 % 4;
-        if (remainder == 1) {
-            sb.append(context.getString(R.string.quran_rob3)).append(' ');
-        } else if (remainder == 2) {
-            sb.append(context.getString(R.string.quran_nos)).append(' ');
-        } else if (remainder == 3) {
-            sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
-        }
-        sb.append(context.getString(R.string.quran_hizb)).append(' ')
-                .append(QuranUtils.getLocalizedNumber(context, hizb));
-
-        return sb.toString();
-    }
-
   public void setOverlayText(String suraText, String juzText, String pageText,String rub3Text) {
     // Calculate page bounding rect from ayahinfo db
     if (mPageBounds == null) {
