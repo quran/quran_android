@@ -76,12 +76,12 @@ public class QuranDisplayHelper {
   // same logic used in displayMarkerPopup method
   public static String displayRub3(Context context, int page){
     int rub3 = QuranInfo.getRub3FromPage(page);
-    int hizb = (rub3 / 4) + 1;
-    StringBuilder sb = new StringBuilder();
-    sb.append(" , ");
     if (rub3 == -1) {
       return "";
     }
+    int hizb = (rub3 / 4) + 1;
+    StringBuilder sb = new StringBuilder();
+    sb.append(" , ");
     int remainder = rub3 % 4;
     if (remainder == 1) {
       sb.append(context.getString(R.string.quran_rob3)).append(' ');
