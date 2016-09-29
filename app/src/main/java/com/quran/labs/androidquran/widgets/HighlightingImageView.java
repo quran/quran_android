@@ -181,7 +181,7 @@ public class HighlightingImageView extends RecyclingImageView {
     mOverlayParams.suraText = suraText;
     mOverlayParams.juzText = juzText;
     mOverlayParams.pageText = pageText;
-    mOverlayParams.rub3Text=rub3Text;
+    mOverlayParams.rub3Text = rub3Text;
     mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     mOverlayParams.paint.setTextSize(fontSize);
 
