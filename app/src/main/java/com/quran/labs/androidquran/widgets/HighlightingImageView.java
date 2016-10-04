@@ -19,7 +19,9 @@ import android.util.SparseArray;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -166,9 +168,10 @@ public class HighlightingImageView extends RecyclingImageView {
     String suraText = null;
     String juzText = null;
     String pageText = null;
+    String rub3Text = null;
   }
 
-  public void setOverlayText(String suraText, String juzText, String pageText) {
+  public void setOverlayText(String suraText, String juzText, String pageText, String rub3Text) {
     // Calculate page bounding rect from ayahinfo db
     if (mPageBounds == null) {
       return;
@@ -178,6 +181,7 @@ public class HighlightingImageView extends RecyclingImageView {
     mOverlayParams.suraText = suraText;
     mOverlayParams.juzText = juzText;
     mOverlayParams.pageText = pageText;
+    mOverlayParams.rub3Text = rub3Text;
     mOverlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     mOverlayParams.paint.setTextSize(fontSize);
 
@@ -237,13 +241,14 @@ public class HighlightingImageView extends RecyclingImageView {
     canvas.drawText(mOverlayParams.suraText,
         mOverlayParams.offsetX, mOverlayParams.topBaseline,
         mOverlayParams.paint);
-    mOverlayParams.paint.setTextAlign(Align.RIGHT);
-    canvas.drawText(mOverlayParams.juzText,
-        getWidth() - mOverlayParams.offsetX, mOverlayParams.topBaseline,
-        mOverlayParams.paint);
     mOverlayParams.paint.setTextAlign(Align.CENTER);
     canvas.drawText(mOverlayParams.pageText,
         getWidth() / 2.0f, mOverlayParams.bottomBaseline,
+        mOverlayParams.paint);
+    // Merge the current rub3 text with the juz' text
+    mOverlayParams.paint.setTextAlign(Align.RIGHT);
+    canvas.drawText(mOverlayParams.juzText + mOverlayParams.rub3Text,
+        getWidth() - mOverlayParams.offsetX, mOverlayParams.topBaseline,
         mOverlayParams.paint);
     mDidDraw = true;
   }
