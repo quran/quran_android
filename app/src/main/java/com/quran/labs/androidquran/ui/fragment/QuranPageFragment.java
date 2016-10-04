@@ -29,6 +29,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.ui.util.PageController;
@@ -301,7 +302,8 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
           String suraText = QuranInfo.getSuraNameFromPage(context, page, true);
           String juzText = QuranInfo.getJuzString(context, page);
           String pageText = QuranUtils.getLocalizedNumber(context, page);
-          mImageView.setOverlayText(suraText, juzText, pageText);
+          String rub3Text = QuranDisplayHelper.displayRub3(context,page);
+          mImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
         }
       }
     }
