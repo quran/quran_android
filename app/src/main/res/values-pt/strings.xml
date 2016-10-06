@@ -2,15 +2,15 @@
 <resources>
     <string name="app_name">Quran</string>
     <string name="downloadPrompt_title">Baixar Arquivos Necessários?</string>
-    <string name="downloadPrompt">Para uma performance ótima, alguns arquivos precisam 
-			ser baixados. Se voce optar para não fazer isso agora, cada página irá demorar
-			significamente mais para carregar. Voce gostaria de baixar os arquivos 
-			necessários agora?
-		</string>
-    <string name="downloadTabletPrompt">Recentemente acrescentamos imagens melhoradas para tablets. 
-    	Voce gostaria fazer download dessas imagens agora?</string>
+    <string name="downloadPrompt">Para uma performance ótima, alguns arquivos precisam
+            ser baixados. Se voce optar para não fazer isso agora, cada página irá demorar
+            significamente mais para carregar. Voce gostaria de baixar os arquivos
+            necessários agora?
+        </string>
+    <string name="downloadTabletPrompt">Recentemente acrescentamos imagens melhoradas para tablets.
+        Voce gostaria fazer download dessas imagens agora?</string>
     <string name="downloadImportantPrompt">Há uma atualização pequena porem importante
-        para as imagens do Alcorão instaladas no seu dispositivo. Voce gostaria de baixar 
+        para as imagens do Alcorão instaladas no seu dispositivo. Voce gostaria de baixar
         este patch agora?</string>
     <string name="downloadPrompt_ok">Sim</string>
     <string name="downloadPrompt_no">Não</string>
@@ -27,7 +27,6 @@
     <string name="menu_sort">Ordenar</string>
     <string name="menu_sort_date">Data Adicionado</string>
     <string name="menu_sort_location">Localização em Quran</string>
-    <string name="menu_sort_alphabetical">Alfabetica</string>
     <string name="menu_translation">Mostre Tradução</string>
     <string name="menu_back_to_page">Mostrar o Alcorão</string>
     <string name="menu_help">Ajuda</string>
@@ -36,44 +35,7 @@
     <string name="menu_jump">Pular</string>
     <string name="gotoPage">Ir para página</string>
     <string name="cancel">Cancelar</string>
-    <string name="developedBy">Não nos esqueça nas suas súplicas.</string>
-    <string name="copyRights">Copyright All Muslims</string>
-    <string name="email_logs_subject">Arquivo de Log</string>
-    <string name="aboutUs">Quran Android é um aplicativo para o Android, é um software 
-    		livre gratuito do Alcorão. As imagens usadas são do projeto 
-            <a href="http://quran.com">quran.com</a>
-			, o audio é de 
-            <a href="http://everyayah.com">everyayah.com</a>,
-			os dados usados nas traduções e o Árabe são de
-            <a href="http://tanzil.net">tanzil.net</a> e
-            <a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa</a>
-            <br/><br/><b>Contribuintes de Quran for Android:</b>
-            <br/>Ahmed El-Helw (<a href="http://twitter.com/ahmedre">@ahmedre</a>)
-            <br/>Hussein Maher (<a href="http://twitter.com/husseinmaher">@husseinmaher</a>)
-            <br/>Ahmed Farra (<a href="https://github.com/afarra">github</a>)
-            <br/>Wael Nafee (<a href="http://twitter.com/wnafee">@wnafee</a>)
-            <br/>Ahmed Fouad (<a href="http://twitter.com/fo2ad">@fo2ad</a>)
-            <br/>Somaia Gabr (<a href="http://somaiagabr.com">web</a>)
-            <br/>Mahmoud Hossam (<a href="https://github.com/mahmoudhossam">github</a>)
-            <br/>Rehab Mohamed (<a href="http://twitter.com/hams_rrr">@hams_rrr</a>)
-            <br/><br/><b>Tradutores:</b>
-			<br/>Mehmed Mahmudoglu - Turko
-            <br/>M. Jafar Nanakar - Perso
-            <br/>Rinat (Ринат) - Russo
-            <br/>khajavi (no github) - tradução persa anterior
-	        <br/>Yasser Kadddour - Français
-            <br/>Bo Li (<a href="http://twitter.com/liboat">@liboat</a>) - Chinês
-			<br/>Armin Šupuk - Alemão
-            <br/>Goran Gharib Karim - Kurdo
-            <br/>Abduqadir Abliz - Uyghur
-            <br/>Saiful Khaliq (<a href="http://twitter.com/saifious">@saifious</a>) - Indoneso
-            <br/>Nassim Dhaher - Português
-            <br/><br/><b>Open Source Projects:</b>
-            <br/>ActionBarSherlock (<a href="http://abs.io">abs.io</a>)
-            <br/>maven-android-plugin (<a href="http://code.google.com/p/maven-android-plugin">maven-android-plugin</a>)
-            <br/><br/><b>Special Thanks:</b>
-            <br/>Ahmed Essam (<a href="http://twitter.com/neo_4583">@neo_4583</a>)
-            <br/>Batoul Apps (<a href="http://twitter.com/batoulapps">@batoulapps</a>)</string>
+    <string name="about_description">Quran Android é um aplicativo para o Android, é um software livre gratuito do Alcorão. As imagens usadas são do projeto</string>
     <string name="help_title">Perguntas mais frequentes</string>
     <string name="help">
         <b>Como tocar o audio?</b>
@@ -84,30 +46,30 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
         <br/><b>Como visualizo uma tradução?
         </b>
         <br/>Abra qualquer página de Alcorão.  Toque na tela uma vez. No topo, você vai notar uma
-		ícone de globo (ou, se você não vê-lo, você pode ver um ícone com três pontos quadrados - clique
-		nisso e escolha tradução para ver a tradução).        
-		<br/>        If you do not have any translations downloaded, it will take
+        ícone de globo (ou, se você não vê-lo, você pode ver um ícone com três pontos quadrados - clique
+        nisso e escolha tradução para ver a tradução).
+        <br/>        If you do not have any translations downloaded, it will take
         you to a screen where you can download a translation.  Choose and download a translation,
         then return back and tap the globe icon again to view the translation.
         <br/>
         <br/><b>Como marcar uma página?</b>
         <br/> Toque na tela uma vez. No canto superior direito, você vai ver um
          ícone de estrela. Toque no ícone de estrela para marcá-la (será sólido branco). Toque no ícone de estrela
-         novamente para remover o marcador.     
+         novamente para remover o marcador.
         <br/>
         <br/><b>Como fazer a fonte maior?</b>
         <br/>Para as páginas em árabe, segure o telefone em modo paisagem. Isso faz com que o texto fique maior.
-		Para traduções, vá para configurações e escolha o tamanho de tradução.
+        Para traduções, vá para configurações e escolha o tamanho de tradução.
         <br/>
         <br/><b>Como comparilhar uma ayah?</b>
         <br/>Enquanto em qualquer página em árabe, pressione e segure em qualquer versículo para obter um menu onde você pode
-		escolher para marcar o versículo, compartilhá-lo, ver o tafseer, ou copiar o versículo para a área de transferência.
+        escolher para marcar o versículo, compartilhá-lo, ver o tafseer, ou copiar o versículo para a área de transferência.
         <br/>
         <br/><b>Malayalm/Tamil/Bangla/Urdu fonts don\'t work!</b>
         <br/> Infelizmente, as versões antes de Android 4.0 não suportam essas fontes, e não podemos para ajudar com isso.
         </string>
-	<string name="search_hint">Pesquisar no Alcorão</string>
-	<string name="quranSearchType">Ayas do Alcorão</string>
+    <string name="search_hint">Pesquisar no Alcorão</string>
+    <string name="quranSearchType">Ayas do Alcorão</string>
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
@@ -122,7 +84,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="translation_settings">Definições de Tradução</string>
     <string name="no_arabic_search_available">Voce ainda não fez o download do pacote de pesquisa em Àrabe. Por favor faça o download primeiro e tente novamente.</string>
     <string name="get_arabic_search_db">Obter a base de pesquisa em Árabe</string>
-        
+
     <!-- Quran Preference Activity -->
     <string name="prefs_category_navigation">Navegação</string>
     <string name="prefs_volume_key_navigation_title">Navegação pelo botão de volume</string>
@@ -132,9 +94,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="prefs_category_display_settings">Configurações de Visualização</string>
     <string name="prefs_use_arabic_title">Modo de Árabe</string>
     <string name="prefs_use_arabic_summary_on">Aplicação irá ser alterada para Árabe (Requer reinicialização)</string>
-    <string name="prefs_use_arabic_reshaper_title">Usar reformatação de Árabe</string>
-    <string name="prefs_use_arabic_reshaper_summary_on">Se o texto em Árabe está invertido, desmarque essa opção.</string>
-    <string name="prefs_use_arabic_reshaper_summary_off">Se o texto em Árabe está is disjunto, marque essa opção para corrigí-lo</string>
     <string name="prefs_new_background_title">New background</string>
     <string name="prefs_lock_orientation_title">Lock screen orientation</string>
     <string name="prefs_lock_orientation_summary_on">Quran page will be in fixed orientation mode</string>
@@ -164,18 +123,15 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="available_translations">Disponível para Download</string>
     <string name="remove_button">Remover</string>
     <string name="dialog_ok">OK</string>
-    <string name="prefs_advanced_settings_title">Configurações Avançadas</string>
     <string name="prefs_app_location_title">Local da App</string>
     <string name="prefs_app_location_summary">Selecione qual sdcard para armazenar os arquivos</string>
     <string name="prefs_sdcard_internal">Armazenamento Interno</string>
     <string name="prefs_sdcard_external">Cartão SD Externo</string>
-    <string name="prefs_sdcard_auto">Automatico</string>
     <string name="prefs_app_size">Tamanho da App é</string>
     <string name="prefs_calculating_app_size">Calculando Tamanho da App</string>
     <string name="prefs_copying_app_files">Copiando arquivos do App</string>
     <string name="prefs_err_moving_app_files">Não foi possível mover os arquivos do App</string>
     <string name="prefs_no_enough_space_to_move_files">Espaço Insufficiente para mover arquivos do App</string>
-    <string name="prefs_megabytes">MB</string>
     <string name="prefs_tablet_mode_title">Modo de Tablet</string>
     <string name="prefs_tablet_mode_enabled">Em Paisagem, duas páginas aparecerão lado ao lado</string>
     <string name="prefs_tablet_mode_disabled">Em Paisagem, somente uma página aprecerá</string>
@@ -187,9 +143,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="translation_dialog_yes">Sim</string>
     <string name="translation_dialog_later">Mais Tarde</string>
 
-    <!-- used for screen readers -->
-    <string name="border">borda</string>
-    
     <!-- End Number picker Strings -->
     <string name="quran_rob3">¼</string>
     <string name="quran_nos">½</string>
@@ -210,21 +163,20 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="page_description">página %1$s, Juz\' %2$s</string>
     <string name="highlighting_database">Arquivos Necessários</string>
     <string name="timing_database">Arquivos Necessários</string>
-    <string name="infinity">&#8734;</string>
-    
+
     <!-- download statuses and errors -->
-    <string name="download_successful">Download Sucedido</string>   
-    <string name="download_processing">Processando Download&#8230;</string>              
-    <string name="download_error_general">Download Fahou</string>             
-    <string name="download_error_disk">Não há espaço em disco para fazer o download</string>               
-    <string name="download_error_network">Não foi possivel fazer o download, erro de rede</string>                    
-    <string name="download_error_perms">Não foi possivel fazer o download, erro de permissão</string>                  
+    <string name="download_successful">Download Sucedido</string>
+    <string name="download_processing">Processando Download&#8230;</string>
+    <string name="download_error_general">Download Fahou</string>
+    <string name="download_error_disk">Não há espaço em disco para fazer o download</string>
+    <string name="download_error_network">Não foi possivel fazer o download, erro de rede</string>
+    <string name="download_error_perms">Não foi possivel fazer o download, erro de permissão</string>
     <string name="download_error_invalid_download">Arquivo baixado corrumpido</string>
-    <string name="download_error_invalid_download_retry">Arquivo corrumpido, tentando baixar novamente</string> 
+    <string name="download_error_invalid_download_retry">Arquivo corrumpido, tentando baixar novamente</string>
     <string name="download_error_network_retry">Erro de rede, tentando resumir&#8230;</string>
     <string name="notification_download_canceled">Download cancelado</string>
     <string name="download_non_wifi_prompt">Voce não está no wifi. Deseja realmente baixar os dados?</string>
-    
+
     <!-- downloading dialogs -->
     <string name="download_progress">Baixado %1$s / %2$s</string>
     <string name="process_progress">Procesando arquivo %1$d / %2$d</string>
@@ -253,19 +205,16 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
 
     <!-- long press -->
     <string name="bookmark_ayah">Adicionar Ayah aos Favoritos</string>
-    <string name="unbookmark_ayah">Remover Ayah dos Favoritos</string>
     <string name="tag_ayah">Marcar esta Ayah</string>
     <string name="share_ayah">Compartilhar Link da Ayah</string>
     <string name="share_ayah_text">Compartilhar Texto da Ayah</string>
     <string name="translation_ayah">Ayah Tradução/Tafseer</string>
     <string name="play_from_here">Tocar daqui</string>
-    <string name="ayah_notes">Notas</string>
     <string name="via_string">\n\natraves @QuranAndroid</string>
     <string name="search_key">Clique o botão de pesquisa para procurar um versículo</string>
     <string name="copy_ayah">Copiar Ayah</string>
     <string name="ayah_copied_popup">Ayah Copiada</string>
-    <string name="show_more">Mostrar Mais</string>
-    
+
     <!-- bookmarks & tags contextual action bar -->
     <string name="delete_bookmark">Excluir Favorito</string>
     <string name="tag_bookmark">Tagear Marcador</string>
@@ -273,11 +222,11 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="edit_tag">Editar Tag</string>
     <string name="new_tag">Sem Tag</string>
     <string name="not_tagged">Não Tageado</string>
-    
+
     <!-- tag dialog -->
     <string name="tag_dlg_title">Tag</string>
     <string name="tag_name">Nome</string>
-    
+
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Sem Marcadores</string>
     <string name="tags_list_empty">Sem Tags</string>
