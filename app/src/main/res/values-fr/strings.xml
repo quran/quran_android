@@ -157,7 +157,6 @@
   <string name="export_data_error">Erreur lors de l\'export des données.</string>
   <string name="exported_data">Données exportées dans %1$s.</string>
 
-  <string name="logs_email">quranandroid+logs@gmail.com</string>
   <string name="warning">Attention</string>
   <string name="kitkat_external_message">Dû à certaines restrictions d\'Android, si vous choisissez
       de stocker les données de l\'application sur votre carte SD et que par la suite vous désinstallez
