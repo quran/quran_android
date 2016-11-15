@@ -1,24 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.BuildConfig;
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.QuranPreferenceActivity;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
-import com.quran.labs.androidquran.service.util.PermissionUtil;
-import com.quran.labs.androidquran.ui.AudioManagerActivity;
-import com.quran.labs.androidquran.ui.TranslationManagerActivity;
-import com.quran.labs.androidquran.ui.preference.DataListPreference;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.util.RecordingLogTree;
-import com.quran.labs.androidquran.util.StorageUtils;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -38,6 +19,26 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.QuranImportActivity;
+import com.quran.labs.androidquran.QuranPreferenceActivity;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
+import com.quran.labs.androidquran.service.util.PermissionUtil;
+import com.quran.labs.androidquran.ui.AudioManagerActivity;
+import com.quran.labs.androidquran.ui.TranslationManagerActivity;
+import com.quran.labs.androidquran.ui.preference.DataListPreference;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.RecordingLogTree;
+import com.quran.labs.androidquran.util.StorageUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +57,7 @@ import timber.log.Timber;
 
 public class QuranSettingsFragment extends PreferenceFragment implements
     SharedPreferences.OnSharedPreferenceChangeListener {
+  private static final int REQUEST_CODE_IMPORT = 1;
 
   private DataListPreference mListStoragePref;
   private MoveFilesAsyncTask mMoveFilesTask;
@@ -163,6 +165,21 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       category.removePreference(logsPref);
     }
 
+    final Preference importPref = findPreference(Constants.PREF_IMPORT);
+    importPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+      @Override
+      public boolean onPreferenceClick(Preference preference) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          String[] mimeTypes = new String[]{ "application/*", "text/*" };
+          intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        }
+        startActivityForResult(intent, REQUEST_CODE_IMPORT);
+        return true;
+      }
+    });
+
     final Preference exportPref = findPreference(Constants.PREF_EXPORT);
     exportPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
       @Override
@@ -249,6 +266,19 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       mDialog.dismiss();
     }
     super.onDestroy();
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == REQUEST_CODE_IMPORT && resultCode == Activity.RESULT_OK) {
+      Activity activity = getActivity();
+      if (activity != null) {
+        Intent intent = new Intent(activity, QuranImportActivity.class);
+        intent.setData(data.getData());
+        startActivity(intent);
+      }
+    }
   }
 
   private void hideStorageListPref() {

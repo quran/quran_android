@@ -59,7 +59,6 @@ public class Constants {
   public static final String PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation";
   public static final String PREF_SORT_BOOKMARKS = "sortBookmarks";
   public static final String PREF_GROUP_BOOKMARKS_BY_TAG = "groupBookmarksByTag";
-  public static final String PREF_SORT_TAGS = "sortTags";
   public static final String PREF_DISPLAY_CATEGORY = "displayCategoryKey";
   public static final String PREF_ADVANCED_CATEGORY = "advancedCategoryKey";
   public static final String PREF_TABLET_ENABLED = "useTabletMode";
@@ -67,6 +66,7 @@ public class Constants {
   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
   public static final String PREF_TRANSLATION_MANAGER = "translationManagerKey";
   public static final String PREF_AUDIO_MANAGER = "audioManagerKey";
+  public static final String PREF_IMPORT = "importKey";
   public static final String PREF_EXPORT = "exportKey";
   public static final String PREF_LOGS = "sendLogsKey";
   public static final String PREF_DID_PRESENT_PERMISSIONS_DIALOG =
