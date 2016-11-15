@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Quran</string>
-    <string name="downloadPrompt_title">Download Required Files?</string>
+  <string name="app_name">Quran</string>
+  <string name="downloadPrompt_title">Download Required Files?</string>
     <string name="downloadPrompt">In order for Quran Android to work properly,
         we need to download some files. If you do not do this now, the app
         may not work reliably and will require an Internet connection for reading.
@@ -13,75 +13,75 @@
         for the Quran images you have on your device. Would you like to download this
         patch now?
     </string>
-    <string name="downloadPrompt_ok">Yes</string>
-    <string name="downloadPrompt_no">No</string>
-    <string name="downloading_title">Downloading&#8230;</string>
-    <string name="downloading_message">Please wait for the files to download (resume supported).</string>
-    <string name="extracting_title">Processing&#8230;</string>
-    <string name="menu_about">About Us</string>
-    <string name="menu_other_apps">Other apps</string>
-    <string name="menu_settings">Settings</string>
-    <string name="menu_jump_last_page">Last page</string>
-    <string name="menu_tags">Tags</string>
-    <string name="menu_bookmarks">Bookmarks</string>
-    <string name="menu_bookmarks_page">Page Bookmarks</string>
-    <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
-    <string name="menu_sort">Sort</string>
-    <string name="menu_sort_date">Date Added</string>
-    <string name="menu_sort_location">Location in Quran</string>
-    <string name="menu_sort_group_by_tags">Group by Tags</string>
-    <string name="menu_translation">Show Translation</string>
-    <string name="menu_back_to_page">Show Quran</string>
-    <string name="menu_help">Help</string>
-    <string name="menu_search">Search</string>
-    <string name="menu_get_translations">Get Translations</string>
-    <string name="menu_jump">Jump</string>
-    <string name="gotoPage">Go to page</string>
-    <string name="cancel">Cancel</string>
+  <string name="downloadPrompt_ok">Yes</string>
+  <string name="downloadPrompt_no">No</string>
+  <string name="downloading_title">Downloading&#8230;</string>
+  <string name="downloading_message">Please wait for the files to download (resume supported).</string>
+  <string name="extracting_title">Processing&#8230;</string>
+  <string name="menu_about">About Us</string>
+  <string name="menu_other_apps">Other apps</string>
+  <string name="menu_settings">Settings</string>
+  <string name="menu_jump_last_page">Last page</string>
+  <string name="menu_tags">Tags</string>
+  <string name="menu_bookmarks">Bookmarks</string>
+  <string name="menu_bookmarks_page">Page Bookmarks</string>
+  <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
+  <string name="menu_sort">Sort</string>
+  <string name="menu_sort_date">Date Added</string>
+  <string name="menu_sort_location">Location in Quran</string>
+  <string name="menu_sort_group_by_tags">Group by Tags</string>
+  <string name="menu_translation">Show Translation</string>
+  <string name="menu_back_to_page">Show Quran</string>
+  <string name="menu_help">Help</string>
+  <string name="menu_search">Search</string>
+  <string name="menu_get_translations">Get Translations</string>
+  <string name="menu_jump">Jump</string>
+  <string name="gotoPage">Go to page</string>
+  <string name="cancel">Cancel</string>
 
-    <!-- about -->
-    <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>
-    <string name="about_data_sources">Data Sources</string>
-    <string name="about_images">Images</string>
-    <string name="about_madani_images">The Quran images are based on the fonts from the King Fahd Quran Printing Complex</string>
-    <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
-    <string name="about_naskh_images">The Quran images for the Naskh app were taken (with permission) from SHL Info Systems</string>
-    <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
-    <string name="about_qaloon_images">Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia)</string>
-    <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
-    <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
-    <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
-    <string name="about_quran_ksu">Electronic Moshaf Project</string>
-    <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
-    <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
-    <string name="about_tanzil" translatable="false">Tanzil</string>
-    <string name="about_tanzil_summary">Translations for many languages</string>
-    <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
-    <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
-    <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
-    <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
-    <string name="about_open_source">Open Source Projects</string>
-    <string name="about_dagger2" translatable="false">Dagger 2</string>
-    <string name="about_dagger2_url" translatable="false">http://google.github.io/dagger</string>
-    <string name="about_okhttp" translatable="false">OkHttp</string>
-    <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
-    <string name="about_rxjava" translatable="false">RxJava</string>
-    <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
-    <string name="about_rxandroid" translatable="false">RxAndroid</string>
-    <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
-    <string name="about_rxpreferences" translatable="false">RxPreferences</string>
-    <string name="about_rxpreferences_url" translatable="false">https://github.com/f2prateek/rx-preferences</string>
-    <string name="about_moshi" translatable="false">Moshi</string>
-    <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
-    <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
-    <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
-    <string name="about_others">Others</string>
-    <string name="about_contributors">Contributors</string>
-    <string name="about_contributors_summary">A list of people who contributed to the development of Quran for Android</string>
-    <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
+  <!-- about -->
+  <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>
+  <string name="about_data_sources">Data Sources</string>
+  <string name="about_images">Images</string>
+  <string name="about_madani_images">The Quran images are based on the fonts from the King Fahd Quran Printing Complex</string>
+  <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
+  <string name="about_naskh_images">The Quran images for the Naskh app were taken (with permission) from SHL Info Systems</string>
+  <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
+  <string name="about_qaloon_images">Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia)</string>
+  <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
+  <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
+  <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
+  <string name="about_quran_ksu">Electronic Moshaf Project</string>
+  <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
+  <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
+  <string name="about_tanzil" translatable="false">Tanzil</string>
+  <string name="about_tanzil_summary">Translations for many languages</string>
+  <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
+  <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
+  <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
+  <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
+  <string name="about_open_source">Open Source Projects</string>
+  <string name="about_dagger2" translatable="false">Dagger 2</string>
+  <string name="about_dagger2_url" translatable="false">http://google.github.io/dagger</string>
+  <string name="about_okhttp" translatable="false">OkHttp</string>
+  <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
+  <string name="about_rxjava" translatable="false">RxJava</string>
+  <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
+  <string name="about_rxandroid" translatable="false">RxAndroid</string>
+  <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
+  <string name="about_rxpreferences" translatable="false">RxPreferences</string>
+  <string name="about_rxpreferences_url" translatable="false">https://github.com/f2prateek/rx-preferences</string>
+  <string name="about_moshi" translatable="false">Moshi</string>
+  <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
+  <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
+  <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
+  <string name="about_others">Others</string>
+  <string name="about_contributors">Contributors</string>
+  <string name="about_contributors_summary">A list of people who contributed to the development of Quran for Android</string>
+  <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
 
-    <!-- help -->
-    <string name="help_title">Frequently Asked Questions</string>
+  <!-- help -->
+  <string name="help_title">Frequently Asked Questions</string>
     <string name="help">
         &lt;b>How do I play audio?&lt;/b>
         &lt;br/>Open any Quran page. Tap on the screen once. At the bottom, you will notice
@@ -114,242 +114,242 @@
         &lt;br/>Unfortunately, Android versions prior to 4.0 do not support these fonts, and there is
         little we can do to help with this.
     </string>
-    <string name="search_hint">Search the Quran</string>
-    <string name="quranSearchType">Verses of the Quran</string>
+  <string name="search_hint">Search the Quran</string>
+  <string name="quranSearchType">Verses of the Quran</string>
 
-    <plurals name="files_downloaded">
-        <item quantity="one">1 sura downloaded</item>
-        <item quantity="other">%1$d suras downloaded</item>
-    </plurals>
+  <plurals name="files_downloaded">
+    <item quantity="one">1 sura downloaded</item>
+    <item quantity="other">%1$d suras downloaded</item>
+  </plurals>
 
-    <!-- Shown above search results when we receive a search request. -->
-    <plurals name="search_results">
-        <item quantity="one">One result for \"%1$s\": </item>
-        <item quantity="other">%2$d results for \"%1$s\": </item>
-    </plurals>
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">One result for \"%1$s\": </item>
+    <item quantity="other">%2$d results for \"%1$s\": </item>
+  </plurals>
 
-    <!-- m permissions stuff -->
+  <!-- m permissions stuff -->
     <string name="storage_permission_rationale">Quran wants your permission to store its data on
         external storage. Quran will work without this permission, but if you clear data or
         uninstall the app, all downloaded pages, audio, and data will be removed. Grant
         Quran permission?</string>
-    <string name="storage_permission_please_restart">Please restart the app for this to take effect.</string>
+  <string name="storage_permission_please_restart">Please restart the app for this to take effect.</string>
 
-    <!-- Search messages -->
-    <string name="found_in_sura">Found in Sura</string>
-    <string name="no_results">No results found for \"%s\"</string>
-    <string name="no_active_translation">You have no active translation set. Please set an active translation first and then search again.</string>
-    <string name="translation_settings">Translation Settings</string>
-    <string name="no_arabic_search_available">You have not downloaded the Arabic search pack. Please download it and try your search again.</string>
-    <string name="get_arabic_search_db">Get Arabic Search Database</string>
+  <!-- Search messages -->
+  <string name="found_in_sura">Found in Sura</string>
+  <string name="no_results">No results found for \"%s\"</string>
+  <string name="no_active_translation">You have no active translation set. Please set an active translation first and then search again.</string>
+  <string name="translation_settings">Translation Settings</string>
+  <string name="no_arabic_search_available">You have not downloaded the Arabic search pack. Please download it and try your search again.</string>
+  <string name="get_arabic_search_db">Get Arabic Search Database</string>
 
-    <!-- Quran Preference Activity -->
-    <string name="prefs_category_navigation">Navigation</string>
-    <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
-    <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
-    <string name="prefs_category_reading">Reading Preferences</string>
-    <string name="prefs_category_translation">Translation Preferences</string>
-    <string name="prefs_category_display_settings">Display Settings</string>
-    <string name="prefs_use_arabic_title">Arabic mode</string>
-    <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
-    <string name="prefs_new_background_title">New background</string>
-    <string name="prefs_lock_orientation_title">Lock screen orientation</string>
-    <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
-    <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
-    <string name="prefs_landscape_orientation_title">Landscape orientation</string>
-    <string name="prefs_landscape_orientation_summary_on">Always use landscape mode</string>
-    <string name="prefs_landscape_orientation_summary_off">Always use portrait mode</string>
-    <string name="prefs_night_mode_title">Night mode</string>
-    <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
-    <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
-    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
-    <string name="prefs_overlay_page_info_title">Show page info</string>
-    <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
-    <string name="prefs_display_marker_title">Display marker popups</string>
-    <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
-    <string name="prefs_highlight_bookmarks_title">Highlight bookmarks</string>
-    <string name="prefs_highlight_bookmarks_summary">Highlight bookmarked ayahs while reading</string>
-    <string name="prefs_translation_text_title">Translation text size</string>
-    <string name="prefs_translations">Translations</string>
-    <string name="prefs_translations_summary">Download and manage translations</string>
-    <string name="prefs_ayah_before_translation_title">Ayah before translation</string>
-    <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
-    <string name="prefs_category_download">Download Options</string>
-    <string name="prefs_streaming_title">Streaming</string>
-    <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only)</string>
-    <string name="prefs_download_amount_title">Download amount</string>
-    <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
-    <string name="prefs_audio_manager">Audio manager (experimental)</string>
-    <string name="prefs_audio_manager_summary">Manage and download Quranic audio</string>
-    <string name="downloaded_translations">Downloaded</string>
-    <string name="available_translations">Available for download</string>
-    <string name="remove_button">Remove</string>
-    <string name="dialog_ok">OK</string>
-    <string name="prefs_app_location_title">Quran data directory</string>
-    <string name="prefs_app_location_summary">Choose where to store Quran files</string>
-    <string name="prefs_send_logs_title">Send logs</string>
-    <string name="prefs_send_logs_summary">Send debug logs to the developer</string>
-    <string name="prefs_sdcard_internal">Internal storage</string>
-    <string name="prefs_sdcard_external">External SD card %1$d</string>
-    <string name="prefs_app_size">Current data size is</string>
-    <string name="prefs_calculating_app_size">Calculating App Size</string>
-    <string name="prefs_copying_app_files">Copying App files</string>
-    <string name="prefs_err_moving_app_files">Failed to move app files</string>
-    <string name="prefs_no_enough_space_to_move_files">Insufficient space to move app files</string>
-    <string name="prefs_megabytes_int">%1$d MB</string>
-    <string name="prefs_megabytes_str">%s MB</string>
-    <string name="prefs_tablet_mode_title">Tablet Mode</string>
-    <string name="prefs_tablet_mode_enabled">In landscape, two pages will appear side by side.</string>
-    <string name="prefs_tablet_mode_disabled">In landscape, only one page will appear.</string>
-    <string name="prefs_category_advanced">Advanced Options</string>
-    <string name="prefs_export_title">Export</string>
-    <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
+  <!-- Quran Preference Activity -->
+  <string name="prefs_category_navigation">Navigation</string>
+  <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
+  <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
+  <string name="prefs_category_reading">Reading Preferences</string>
+  <string name="prefs_category_translation">Translation Preferences</string>
+  <string name="prefs_category_display_settings">Display Settings</string>
+  <string name="prefs_use_arabic_title">Arabic mode</string>
+  <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
+  <string name="prefs_new_background_title">New background</string>
+  <string name="prefs_lock_orientation_title">Lock screen orientation</string>
+  <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
+  <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
+  <string name="prefs_landscape_orientation_title">Landscape orientation</string>
+  <string name="prefs_landscape_orientation_summary_on">Always use landscape mode</string>
+  <string name="prefs_landscape_orientation_summary_off">Always use portrait mode</string>
+  <string name="prefs_night_mode_title">Night mode</string>
+  <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
+  <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
+  <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
+  <string name="prefs_overlay_page_info_title">Show page info</string>
+  <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
+  <string name="prefs_display_marker_title">Display marker popups</string>
+  <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
+  <string name="prefs_highlight_bookmarks_title">Highlight bookmarks</string>
+  <string name="prefs_highlight_bookmarks_summary">Highlight bookmarked ayahs while reading</string>
+  <string name="prefs_translation_text_title">Translation text size</string>
+  <string name="prefs_translations">Translations</string>
+  <string name="prefs_translations_summary">Download and manage translations</string>
+  <string name="prefs_ayah_before_translation_title">Ayah before translation</string>
+  <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
+  <string name="prefs_category_download">Download Options</string>
+  <string name="prefs_streaming_title">Streaming</string>
+  <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only)</string>
+  <string name="prefs_download_amount_title">Download amount</string>
+  <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
+  <string name="prefs_audio_manager">Audio manager (experimental)</string>
+  <string name="prefs_audio_manager_summary">Manage and download Quranic audio</string>
+  <string name="downloaded_translations">Downloaded</string>
+  <string name="available_translations">Available for download</string>
+  <string name="remove_button">Remove</string>
+  <string name="dialog_ok">OK</string>
+  <string name="prefs_app_location_title">Quran data directory</string>
+  <string name="prefs_app_location_summary">Choose where to store Quran files</string>
+  <string name="prefs_send_logs_title">Send logs</string>
+  <string name="prefs_send_logs_summary">Send debug logs to the developer</string>
+  <string name="prefs_sdcard_internal">Internal storage</string>
+  <string name="prefs_sdcard_external">External SD card %1$d</string>
+  <string name="prefs_app_size">Current data size is</string>
+  <string name="prefs_calculating_app_size">Calculating App Size</string>
+  <string name="prefs_copying_app_files">Copying App files</string>
+  <string name="prefs_err_moving_app_files">Failed to move app files</string>
+  <string name="prefs_no_enough_space_to_move_files">Insufficient space to move app files</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_megabytes_str">%s MB</string>
+  <string name="prefs_tablet_mode_title">Tablet Mode</string>
+  <string name="prefs_tablet_mode_enabled">In landscape, two pages will appear side by side.</string>
+  <string name="prefs_tablet_mode_disabled">In landscape, only one page will appear.</string>
+  <string name="prefs_category_advanced">Advanced Options</string>
+  <string name="prefs_export_title">Export</string>
+  <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
 
-    <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
-    <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
-    <string name="import_data">Import Data</string>
+  <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
+  <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
+  <string name="import_data">Import Data</string>
     <string name="import_data_and_override">If you import this file, it will replace all your \
         bookmarks with %1$d bookmark(s) and %2$d tag(s). Import?</string>
-    <string name="import_successful">Import Successful</string>
-    <string name="export_data_error">Error exporting data.</string>
-    <string name="exported_data">Data exported to %1$s.</string>
+  <string name="import_successful">Import Successful</string>
+  <string name="export_data_error">Error exporting data.</string>
+  <string name="exported_data">Data exported to %1$s.</string>
 
-    <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
-    <string name="warning">Warning</string>
+  <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
+  <string name="warning">Warning</string>
     <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran
         Android pages and audio will be deleted and you will have to download them again. Are you
         sure you want to use the external SD card?</string>
-    <string name="please_grant_permissions">Please grant permission in application settings.</string>
-    <!-- Preferences End -->
+  <string name="please_grant_permissions">Please grant permission in application settings.</string>
+  <!-- Preferences End -->
 
-    <!-- translation updates -->
-    <string name="update_available">Update Available</string>
-    <string name="translation_updates_available">An update is available for some of your translations. Visit the translations screen now?</string>
-    <string name="translation_dialog_yes">Yes</string>
-    <string name="translation_dialog_later">Later</string>
+  <!-- translation updates -->
+  <string name="update_available">Update Available</string>
+  <string name="translation_updates_available">An update is available for some of your translations. Visit the translations screen now?</string>
+  <string name="translation_dialog_yes">Yes</string>
+  <string name="translation_dialog_later">Later</string>
 
-    <!-- End Number picker Strings -->
-    <string name="quran_rob3">¼</string>
-    <string name="quran_nos">½</string>
-    <string name="quran_talt_arb3">¾</string>
-    <string name="quran_hizb">Hizb</string>
-    <string name="quran_juz2">Juz\'</string>
-    <string name="quran_page">Page</string>
-    <string name="quran_sura">Surahs</string>
-    <string name="quran_ayah">Ayah %1$d</string>
-    <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
-    <string name="quran_sura_title">Surat %1$s</string>
-    <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Juz\'</string>
+  <string name="quran_page">Page</string>
+  <string name="quran_sura">Surahs</string>
+  <string name="quran_ayah">Ayah %1$d</string>
+  <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
+  <string name="quran_sura_title">Surat %1$s</string>
+  <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
 
-    <string name="bookmarks_current_page">Current Page</string>
-    <string name="index_loading">Loading&#8230;</string>
+  <string name="bookmarks_current_page">Current Page</string>
+  <string name="index_loading">Loading&#8230;</string>
 
-    <string name="canceling">Canceling&#8230;</string>
-    <string name="juz2_description">Juz\' %1$s</string>
-    <string name="page_description">page %1$s, Juz\' %2$s</string>
-    <string name="highlighting_database">Required Files</string>
-    <string name="timing_database">Required Files</string>
-    <string name="infinity" translatable="false">&#8734;</string>
+  <string name="canceling">Canceling&#8230;</string>
+  <string name="juz2_description">Juz\' %1$s</string>
+  <string name="page_description">page %1$s, Juz\' %2$s</string>
+  <string name="highlighting_database">Required Files</string>
+  <string name="timing_database">Required Files</string>
+  <string name="infinity" translatable="false">&#8734;</string>
 
-    <!-- download statuses and errors -->
-    <string name="sdcard_error">Could not find SD card. Please mount it and try again.</string>
-    <string name="download_successful">Download Successful</string>
-    <string name="download_processing">Processing Download&#8230;</string>
-    <string name="download_error_general">Download failed</string>
-    <string name="download_error_disk">Not enough disk space to download</string>
-    <string name="download_error_network">Could not download due to network error</string>
-    <string name="download_error_perms">Could not download due to permissions error</string>
-    <string name="download_error_invalid_download">Downloaded file was corrupted</string>
-    <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
-    <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
-    <string name="notification_download_canceled">Download canceled</string>
-    <string name="download_non_wifi_prompt">You are not on Wi-Fi. Download data anyway?</string>
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">Could not find SD card. Please mount it and try again.</string>
+  <string name="download_successful">Download Successful</string>
+  <string name="download_processing">Processing Download&#8230;</string>
+  <string name="download_error_general">Download failed</string>
+  <string name="download_error_disk">Not enough disk space to download</string>
+  <string name="download_error_network">Could not download due to network error</string>
+  <string name="download_error_perms">Could not download due to permissions error</string>
+  <string name="download_error_invalid_download">Downloaded file was corrupted</string>
+  <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
+  <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
+  <string name="notification_download_canceled">Download canceled</string>
+  <string name="download_non_wifi_prompt">You are not on Wi-Fi. Download data anyway?</string>
 
-    <!-- downloading dialogs -->
-    <string name="download_progress">Downloaded %1$s / %2$s</string>
-    <string name="download_sura_progress">Downloaded %1$s / %2$s of sura %3$d</string>
-    <string name="download_sura_ayah_progress">Downloading sura %1$d ayah %2$d</string>
-    <string name="process_progress">Processing file %1$d / %2$d</string>
-    <string name="download_retry">Retry</string>
-    <string name="download_cancel">Cancel</string>
-    <string name="download_extra_data">We need to download one or two small files to support sharing and translation. Download now?</string>
+  <!-- downloading dialogs -->
+  <string name="download_progress">Downloaded %1$s / %2$s</string>
+  <string name="download_sura_progress">Downloaded %1$s / %2$s of sura %3$d</string>
+  <string name="download_sura_ayah_progress">Downloading sura %1$d ayah %2$d</string>
+  <string name="process_progress">Processing file %1$d / %2$d</string>
+  <string name="download_retry">Retry</string>
+  <string name="download_cancel">Cancel</string>
+  <string name="download_extra_data">We need to download one or two small files to support sharing and translation. Download now?</string>
 
-    <!-- translation database stuff -->
-    <string name="remove_dlg_title">Remove Translation?</string>
-    <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
-    <string name="error_getting_translation_list">Unable to download the list of translations. Please try again later.</string>
-    <string name="search_data">Search Data</string>
-    <string name="need_translation">You don\'t have any translations/tafaseer downloaded yet.</string>
-    <string name="get_translations">Get Translations</string>
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Remove Translation?</string>
+  <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>
+  <string name="error_getting_translation_list">Unable to download the list of translations. Please try again later.</string>
+  <string name="search_data">Search Data</string>
+  <string name="need_translation">You don\'t have any translations/tafaseer downloaded yet.</string>
+  <string name="get_translations">Get Translations</string>
 
-    <!-- help -->
+  <!-- help -->
     <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.
         Please note that we receive lots of emails, so we may not be able to reply to all of them.
     </string>
 
-    <!-- sura metainfo -->
-    <string name="makki">Makki</string>
-    <string name="madani">Madani</string>
-    <plurals name="verses">
-        <item quantity="one">One verse</item>
-        <item quantity="other">%s verses</item>
-    </plurals>
+  <!-- sura metainfo -->
+  <string name="makki">Makki</string>
+  <string name="madani">Madani</string>
+  <plurals name="verses">
+    <item quantity="one">One verse</item>
+    <item quantity="other">%s verses</item>
+  </plurals>
 
-    <!-- ayah action panel -->
-    <string name="play_from">From</string>
-    <string name="play_to">To</string>
-    <string name="play_restrict_range">Only play the above verses</string>
-    <string name="play_verses_range">Play set of verses:</string>
-    <string name="play_each_verse">Play each verse:</string>
-    <string name="play_apply">Apply</string>
-    <string name="play_apply_and_play">Apply and Play</string>
-    <string name="previous">Previous</string>
-    <string name="play">Play</string>
-    <string name="pause">Pause</string>
-    <string name="stop">Stop</string>
-    <string name="next">Next</string>
+  <!-- ayah action panel -->
+  <string name="play_from">From</string>
+  <string name="play_to">To</string>
+  <string name="play_restrict_range">Only play the above verses</string>
+  <string name="play_verses_range">Play set of verses:</string>
+  <string name="play_each_verse">Play each verse:</string>
+  <string name="play_apply">Apply</string>
+  <string name="play_apply_and_play">Apply and Play</string>
+  <string name="previous">Previous</string>
+  <string name="play">Play</string>
+  <string name="pause">Pause</string>
+  <string name="stop">Stop</string>
+  <string name="next">Next</string>
 
-    <string-array name="repeatValues">
-        <item>1 time</item>
-        <item>2 times</item>
-        <item>3 times</item>
-        <item>loop</item>
-    </string-array>
+  <string-array name="repeatValues">
+    <item>1 time</item>
+    <item>2 times</item>
+    <item>3 times</item>
+    <item>loop</item>
+  </string-array>
 
-    <!-- long press -->
-    <string name="bookmark_ayah">Bookmark this Ayah</string>
-    <string name="tag_ayah">Tag this Ayah</string>
-    <string name="share_ayah">Share Ayah Link</string>
-    <string name="share_ayah_text">Share Ayah Text</string>
-    <string name="translation_ayah">Ayah Translation/Tafseer</string>
-    <string name="play_from_here">Play from Here</string>
-    <string name="via_string">via @QuranAndroid</string>
-    <string name="search_key">Press the search key to look up a verse</string>
-    <string name="copy_ayah">Copy Ayah</string>
-    <string name="ayah_copied_popup">Ayah Copied</string>
+  <!-- long press -->
+  <string name="bookmark_ayah">Bookmark this Ayah</string>
+  <string name="tag_ayah">Tag this Ayah</string>
+  <string name="share_ayah">Share Ayah Link</string>
+  <string name="share_ayah_text">Share Ayah Text</string>
+  <string name="translation_ayah">Ayah Translation/Tafseer</string>
+  <string name="play_from_here">Play from Here</string>
+  <string name="via_string">via @QuranAndroid</string>
+  <string name="search_key">Press the search key to look up a verse</string>
+  <string name="copy_ayah">Copy Ayah</string>
+  <string name="ayah_copied_popup">Ayah Copied</string>
 
-    <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Delete Bookmark</string>
-    <string name="tag_bookmark">Tag Bookmark</string>
-    <string name="delete_tag">Delete Tag</string>
-    <string name="edit_tag">Edit Tag</string>
-    <string name="new_tag">New Tag</string>
-    <string name="not_tagged">Not Tagged</string>
-    <plurals name="bookmark_tag_deleted">
-        <item quantity="one">Deleted one item</item>
-        <item quantity="other">Deleted %d items</item>
-    </plurals>
-    <string name="undo">Undo</string>
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="delete_bookmark">Delete Bookmark</string>
+  <string name="tag_bookmark">Tag Bookmark</string>
+  <string name="delete_tag">Delete Tag</string>
+  <string name="edit_tag">Edit Tag</string>
+  <string name="new_tag">New Tag</string>
+  <string name="not_tagged">Not Tagged</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Deleted one item</item>
+    <item quantity="other">Deleted %d items</item>
+  </plurals>
+  <string name="undo">Undo</string>
 
-    <!-- tag dialog -->
-    <string name="tag_dlg_title">Tag</string>
-    <string name="tag_name">Name</string>
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Tag</string>
+  <string name="tag_name">Name</string>
 
-    <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">No Bookmarks</string>
-    <string name="tags_list_empty">No Tags</string>
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">No Bookmarks</string>
+  <string name="tags_list_empty">No Tags</string>
 
-    <!-- audio manager -->
-    <string name="audio_manager">Audio Manager</string>
+  <!-- audio manager -->
+  <string name="audio_manager">Audio Manager</string>
 </resources>
