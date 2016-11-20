@@ -1,17 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
-import com.quran.labs.androidquran.ui.helpers.QuranRow;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,6 +10,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
+import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
@@ -45,7 +43,7 @@ public class SuraListFragment extends Fragment {
     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
     final QuranListAdapter adapter =
-        new QuranListAdapter(context, mRecyclerView, getSuraList(), true);
+        new QuranListAdapter(context, mRecyclerView, getSuraList(), false);
     mRecyclerView.setAdapter(adapter);
     return view;
   }
@@ -64,15 +62,13 @@ public class SuraListFragment extends Fragment {
       mRecyclerView.scrollToPosition(position);
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB &&
-        settings.isArabicNames()) {
+    if (settings.isArabicNames()) {
       updateScrollBarPositionHoneycomb();
     }
 
     super.onResume();
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void updateScrollBarPositionHoneycomb() {
     mRecyclerView.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
   }

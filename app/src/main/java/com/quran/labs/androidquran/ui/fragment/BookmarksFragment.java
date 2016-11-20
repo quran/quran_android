@@ -34,8 +34,8 @@ import javax.inject.Inject;
 
 public class BookmarksFragment extends Fragment implements QuranListAdapter.QuranTouchListener {
 
-  private QuranListAdapter mBookmarksAdapter;
   private RecyclerView mRecyclerView;
+  private QuranListAdapter mBookmarksAdapter;
   private BookmarksContextualModePresenter mBookmarksContextualModePresenter;
 
   @Inject BookmarkPresenter mBookmarkPresenter;
@@ -190,7 +190,6 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
           final Resources res = getResources();
           onNewData(mBookmarkPresenter.predictQuranListAfterDeletion(selected));
           mBookmarkPresenter.deleteAfterSomeTime(selected);
-          //noinspection ResourceType
           Snackbar snackbar = Snackbar.make(mRecyclerView,
               res.getQuantityString(R.plurals.bookmark_tag_deleted, size, size),
               BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS);

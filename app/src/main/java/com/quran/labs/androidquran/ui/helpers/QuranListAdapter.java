@@ -26,24 +26,24 @@ public class QuranListAdapter extends
     RecyclerView.Adapter<QuranListAdapter.HeaderHolder>
     implements View.OnClickListener, View.OnLongClickListener {
 
-  private Context mContext;
-  private LayoutInflater mInflater;
-  private QuranRow[] mElements;
-  private boolean mSelectableHeaders;
-  private RecyclerView mRecyclerView;
-  private SparseBooleanArray mCheckedState;
-  private QuranTouchListener mTouchListener;
-  private Map<Long, Tag> mTagMap;
-  private boolean mShowTags;
+  private Context context;
+  private LayoutInflater inflater;
+  private QuranRow[] elements;
+  private RecyclerView recyclerView;
+  private SparseBooleanArray checkedState;
+  private QuranTouchListener touchListener;
+  private Map<Long, Tag> tagMap;
+  private boolean showTags;
+  private boolean isEditable;
 
   public QuranListAdapter(Context context, RecyclerView recyclerView,
-      QuranRow[] items, boolean selectableHeaders) {
-    mInflater = LayoutInflater.from(context);
-    mRecyclerView = recyclerView;
-    mElements = items;
-    mContext = context;
-    mSelectableHeaders = selectableHeaders;
-    mCheckedState = new SparseBooleanArray();
+                          QuranRow[] items, boolean isEditable) {
+    inflater = LayoutInflater.from(context);
+    this.recyclerView = recyclerView;
+    elements = items;
+    this.context = context;
+    checkedState = new SparseBooleanArray();
+    this.isEditable = isEditable;
   }
 
   public long getItemId(int position) {
@@ -52,30 +52,30 @@ public class QuranListAdapter extends
 
   @Override
   public int getItemCount() {
-    return mElements.length;
+    return elements.length;
   }
 
-  public QuranRow getQuranRow(int position) {
-    return mElements[position];
+  private QuranRow getQuranRow(int position) {
+    return elements[position];
   }
 
   public boolean isItemChecked(int position) {
-    return mCheckedState.get(position);
+    return checkedState.get(position);
   }
 
   public void setItemChecked(int position, boolean checked) {
-    mCheckedState.put(position, checked);
+    checkedState.put(position, checked);
     notifyItemChanged(position);
   }
 
   public List<QuranRow> getCheckedItems() {
     final List<QuranRow> result = new ArrayList<>();
-    final int count = mCheckedState.size();
+    final int count = checkedState.size();
     final int elements = getItemCount();
     for (int i = 0; i < count; i++) {
-      final int key = mCheckedState.keyAt(i);
+      final int key = checkedState.keyAt(i);
       // TODO: figure out why sometimes elements > key
-      if (mCheckedState.get(key) && elements > key) {
+      if (checkedState.get(key) && elements > key) {
         result.add(getQuranRow(key));
       }
     }
@@ -83,26 +83,26 @@ public class QuranListAdapter extends
   }
 
   public void uncheckAll() {
-    mCheckedState.clear();
+    checkedState.clear();
     notifyDataSetChanged();
   }
 
   public void setElements(QuranRow[] elements, Map<Long, Tag> tagMap) {
-    mElements = elements;
-    mTagMap = tagMap;
+    this.elements = elements;
+    this.tagMap = tagMap;
   }
 
   public void setShowTags(boolean showTags) {
-    mShowTags = showTags;
+    this.showTags = showTags;
   }
 
   private void bindRow(HeaderHolder vh, int position) {
     ViewHolder holder = (ViewHolder) vh;
 
-    final QuranRow item = mElements[position];
+    final QuranRow item = elements[position];
     bindHeader(vh, position);
     holder.number.setText(
-        QuranUtils.getLocalizedNumber(mContext, item.sura));
+        QuranUtils.getLocalizedNumber(context, item.sura));
 
     holder.metadata.setVisibility(View.VISIBLE);
     holder.metadata.setText(item.metadata);
@@ -110,7 +110,7 @@ public class QuranListAdapter extends
 
     if (item.juzType != null) {
       holder.image.setImageDrawable(
-          new JuzView(mContext, item.juzType, item.juzOverlayText));
+          new JuzView(context, item.juzType, item.juzOverlayText));
       holder.image.setVisibility(View.VISIBLE);
       holder.number.setVisibility(View.GONE);
     } else if (item.imageResource == null) {
@@ -129,10 +129,10 @@ public class QuranListAdapter extends
 
       List<Tag> tags = new ArrayList<>();
       Bookmark bookmark = item.bookmark;
-      if (bookmark != null && !bookmark.tags.isEmpty() && mShowTags) {
+      if (bookmark != null && !bookmark.tags.isEmpty() && showTags) {
         for (int i = 0, bookmarkTags = bookmark.tags.size(); i < bookmarkTags; i++) {
           Long tagId = bookmark.tags.get(i);
-          Tag tag = mTagMap.get(tagId);
+          Tag tag = tagMap.get(tagId);
           if (tag != null) {
             tags.add(tag);
           }
@@ -149,28 +149,28 @@ public class QuranListAdapter extends
   }
 
   private void bindHeader(HeaderHolder holder, int pos) {
-    final QuranRow item = mElements[pos];
+    final QuranRow item = elements[pos];
     holder.title.setText(item.text);
     if (item.page == 0) {
       holder.pageNumber.setVisibility(View.GONE);
     } else {
       holder.pageNumber.setVisibility(View.VISIBLE);
       holder.pageNumber.setText(
-          QuranUtils.getLocalizedNumber(mContext, item.page));
+          QuranUtils.getLocalizedNumber(context, item.page));
     }
     holder.setChecked(isItemChecked(pos));
 
     final boolean enabled = isEnabled(pos);
-    holder.view.setEnabled(enabled);
+    holder.setEnabled(enabled);
   }
 
   @Override
   public HeaderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     if (viewType == 0) {
-      final View view = mInflater.inflate(R.layout.index_header_row, parent, false);
+      final View view = inflater.inflate(R.layout.index_header_row, parent, false);
       return new HeaderHolder(view);
     } else {
-      final View view = mInflater.inflate(R.layout.index_sura_row, parent, false);
+      final View view = inflater.inflate(R.layout.index_sura_row, parent, false);
       return new ViewHolder(view);
     }
   }
@@ -187,39 +187,40 @@ public class QuranListAdapter extends
 
   @Override
   public int getItemViewType(int position) {
-    return mElements[position].isHeader() ? 0 : 1;
+    return elements[position].isHeader() ? 0 : 1;
   }
 
-  public boolean isEnabled(int position) {
-    final QuranRow selected = mElements[position];
-    return mSelectableHeaders || selected.isBookmark() ||
-        selected.rowType == QuranRow.NONE ||
-        (selected.isBookmarkHeader() && selected.tagId >= 0);
+  private boolean isEnabled(int position) {
+    final QuranRow selected = elements[position];
+    return !isEditable ||                     // anything in surahs or juzs
+        selected.isBookmark() ||              // actual bookmarks
+        selected.rowType == QuranRow.NONE ||  // the actual "current page"
+        selected.isBookmarkHeader();          // tags
   }
 
   public void setQuranTouchListener(QuranTouchListener listener) {
-    mTouchListener = listener;
+    touchListener = listener;
   }
 
   @Override
   public void onClick(View v) {
-    final int position = mRecyclerView.getChildAdapterPosition(v);
+    final int position = recyclerView.getChildAdapterPosition(v);
     if (position != RecyclerView.NO_POSITION) {
-      final QuranRow element = mElements[position];
-      if (mTouchListener == null) {
-        ((QuranActivity) mContext).jumpTo(element.page);
+      final QuranRow element = elements[position];
+      if (touchListener == null) {
+        ((QuranActivity) context).jumpTo(element.page);
       } else {
-        mTouchListener.onClick(element, position);
+        touchListener.onClick(element, position);
       }
     }
   }
 
   @Override
   public boolean onLongClick(View v) {
-    if (mTouchListener != null) {
-      final int position = mRecyclerView.getChildAdapterPosition(v);
+    if (touchListener != null) {
+      final int position = recyclerView.getChildAdapterPosition(v);
       if (position != RecyclerView.NO_POSITION) {
-        return mTouchListener.onLongClick(mElements[position], position);
+        return touchListener.onLongClick(elements[position], position);
       }
     }
     return false;
@@ -231,29 +232,32 @@ public class QuranListAdapter extends
     TextView pageNumber;
     View view;
 
-    public HeaderHolder(View itemView) {
+    HeaderHolder(View itemView) {
       super(itemView);
       view = itemView;
       title = (TextView) itemView.findViewById(R.id.title);
       pageNumber = (TextView) itemView.findViewById(R.id.pageNumber);
-
-      itemView.setOnClickListener(QuranListAdapter.this);
-      itemView.setOnLongClickListener(QuranListAdapter.this);
     }
 
-    public void setChecked(boolean checked) {
+    void setEnabled(boolean enabled) {
+      view.setEnabled(enabled);
+      itemView.setOnClickListener(enabled ? QuranListAdapter.this : null);
+      itemView.setOnLongClickListener(isEditable && enabled ? QuranListAdapter.this : null);
+    }
+
+    void setChecked(boolean checked) {
       view.setActivated(checked);
     }
   }
 
-  class ViewHolder extends HeaderHolder {
+  private class ViewHolder extends HeaderHolder {
 
     TextView number;
     TextView metadata;
     ImageView image;
     TagsViewGroup tags;
 
-    public ViewHolder(View itemView) {
+    ViewHolder(View itemView) {
       super(itemView);
       metadata = (TextView) itemView.findViewById(R.id.metadata);
       number = (TextView) itemView.findViewById(R.id.suraNumber);
