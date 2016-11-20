@@ -1,5 +1,10 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import android.content.Context;
+import android.preference.PreferenceManager;
+import android.support.annotation.VisibleForTesting;
+import android.support.design.widget.Snackbar;
+
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.f2prateek.rx.preferences.Preference;
@@ -17,10 +22,6 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-
-import android.content.Context;
-import android.preference.PreferenceManager;
-import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ import timber.log.Timber;
 
 @Singleton
 public class BookmarkPresenter implements Presenter<BookmarksFragment> {
-  public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
+  @Snackbar.Duration public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;
 
   private final Context mAppContext;
