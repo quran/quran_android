@@ -47,31 +47,31 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @Snackbar.Duration public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;
 
-  private final Context mAppContext;
-  private final BookmarkModel mBookmarkModel;
-  private final QuranSettings mQuranSettings;
+  private final Context appContext;
+  private final BookmarkModel bookmarkModel;
+  private final QuranSettings quranSettings;
 
-  private int mSortOrder;
-  private boolean mGroupByTags;
-  private BookmarkResult mCachedData;
-  private BookmarksFragment mFragment;
-  private ArabicDatabaseUtils mArabicDatabaseUtils;
+  private int sortOrder;
+  private boolean groupByTags;
+  private BookmarkResult cachedData;
+  private BookmarksFragment fragment;
+  private ArabicDatabaseUtils arabicDatabaseUtils;
 
-  private boolean mIsRtl;
-  private Subscription mPendingRemoval;
-  private List<QuranRow> mItemsToRemove;
+  private boolean isRtl;
+  private Subscription pendingRemoval;
+  private List<QuranRow> itemsToRemove;
 
   @Inject
-  public BookmarkPresenter(Context appContext, BookmarkModel bookmarkModel) {
-    mAppContext = appContext;
-    mQuranSettings = QuranSettings.getInstance(appContext);
-    mBookmarkModel = bookmarkModel;
-    mSortOrder = mQuranSettings.getBookmarksSortOrder();
-    mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
+  BookmarkPresenter(Context appContext, BookmarkModel bookmarkModel) {
+    this.appContext = appContext;
+    quranSettings = QuranSettings.getInstance(appContext);
+    this.bookmarkModel = bookmarkModel;
+    sortOrder = quranSettings.getBookmarksSortOrder();
+    groupByTags = quranSettings.getBookmarksGroupedByTags();
     try {
-      mArabicDatabaseUtils = ArabicDatabaseUtils.getInstance(appContext);
+      arabicDatabaseUtils = ArabicDatabaseUtils.getInstance(appContext);
     } catch (Exception e) {
-      mArabicDatabaseUtils = null;
+      arabicDatabaseUtils = null;
     }
     subscribeToChanges();
   }
@@ -79,11 +79,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @VisibleForTesting
   BookmarkPresenter(Context context, QuranSettings settings,
       BookmarkModel bookmarkModel, boolean subscribeToChanges) {
-    mAppContext = context.getApplicationContext();
-    mQuranSettings = settings;
-    mBookmarkModel = bookmarkModel;
-    mSortOrder = mQuranSettings.getBookmarksSortOrder();
-    mGroupByTags = mQuranSettings.getBookmarksGroupedByTags();
+    appContext = context.getApplicationContext();
+    quranSettings = settings;
+    this.bookmarkModel = bookmarkModel;
+    sortOrder = quranSettings.getBookmarksSortOrder();
+    groupByTags = quranSettings.getBookmarksGroupedByTags();
     if (subscribeToChanges) {
       subscribeToChanges();
     }
@@ -91,47 +91,47 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   private void subscribeToChanges() {
     RxSharedPreferences prefs = RxSharedPreferences.create(
-        PreferenceManager.getDefaultSharedPreferences(mAppContext));
+        PreferenceManager.getDefaultSharedPreferences(appContext));
     Preference<Integer> lastPage = prefs.getInteger(Constants.PREF_LAST_PAGE);
-    Observable.merge(mBookmarkModel.tagsObservable(),
-        mBookmarkModel.bookmarksObservable(), lastPage.asObservable())
+    Observable.merge(bookmarkModel.tagsObservable(),
+        bookmarkModel.bookmarksObservable(), lastPage.asObservable())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Object>() {
           @Override
           public void call(Object o) {
-            if (mFragment != null) {
+            if (fragment != null) {
               requestData(false);
             } else {
-              mCachedData = null;
+              cachedData = null;
             }
           }
         });
   }
 
   public int getSortOrder() {
-    return mSortOrder;
+    return sortOrder;
   }
 
   public void setSortOrder(int sortOrder) {
-    mSortOrder = sortOrder;
-    mQuranSettings.setBookmarksSortOrder(mSortOrder);
-    requestData();
+    this.sortOrder = sortOrder;
+    quranSettings.setBookmarksSortOrder(this.sortOrder);
+    requestData(false);
   }
 
   public void toggleGroupByTags() {
-    mGroupByTags = !mGroupByTags;
-    mQuranSettings.setBookmarksGroupedByTags(mGroupByTags);
-    requestData();
+    groupByTags = !groupByTags;
+    quranSettings.setBookmarksGroupedByTags(groupByTags);
+    requestData(false);
     Answers.getInstance().logCustom(
-        new CustomEvent(mGroupByTags ? "groupByTags" : "doNotGroupByTags"));
+        new CustomEvent(groupByTags ? "groupByTags" : "doNotGroupByTags"));
   }
 
   public boolean shouldShowInlineTags() {
-    return !mGroupByTags;
+    return !groupByTags;
   }
 
   public boolean isGroupedByTags() {
-    return mGroupByTags;
+    return groupByTags;
   }
 
   public boolean[] getContextualOperationsForItems(List<QuranRow> rows) {
@@ -154,26 +154,22 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     return result;
   }
 
-  public void requestData() {
-    requestData(false);
-  }
-
   public void requestData(boolean canCache) {
-    if (canCache && mCachedData != null) {
-      if (mFragment != null) {
+    if (canCache && cachedData != null) {
+      if (fragment != null) {
         Timber.d("sending cached bookmark data");
-        mFragment.onNewData(mCachedData);
+        fragment.onNewData(cachedData);
       }
     } else {
       Timber.d("requesting bookmark data from the database");
-      getBookmarks(mSortOrder, mGroupByTags);
+      getBookmarks(sortOrder, groupByTags);
     }
   }
 
   public BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
-    if (mCachedData != null) {
-      List<QuranRow> placeholder = new ArrayList<>(mCachedData.rows.size() - remove.size());
-      List<QuranRow> rows = mCachedData.rows;
+    if (cachedData != null) {
+      List<QuranRow> placeholder = new ArrayList<>(cachedData.rows.size() - remove.size());
+      List<QuranRow> rows = cachedData.rows;
       List<Long> removedTags = new ArrayList<>();
       for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {
         QuranRow row = rows.get(i);
@@ -191,9 +187,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
       Map<Long, Tag> tagMap;
       if (removedTags.isEmpty()) {
-        tagMap = mCachedData.tagMap;
+        tagMap = cachedData.tagMap;
       } else {
-        tagMap = new HashMap<>(mCachedData.tagMap);
+        tagMap = new HashMap<>(cachedData.tagMap);
         for (int i = 0, removedTagsSize = removedTags.size(); i < removedTagsSize; i++) {
           Long tagId = removedTags.get(i);
           tagMap.remove(tagId);
@@ -205,17 +201,17 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   public void deleteAfterSomeTime(List<QuranRow> remove) {
-    if (mPendingRemoval != null) {
+    if (pendingRemoval != null) {
       // handle a new delete request when one is already happening by adding those items to delete
       // now and un-subscribing from the old request.
-      if (mItemsToRemove != null) {
-        remove.addAll(mItemsToRemove);
+      if (itemsToRemove != null) {
+        remove.addAll(itemsToRemove);
       }
       cancelDeletion();
     }
 
-    mItemsToRemove = remove;
-    mPendingRemoval = Observable.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
+    itemsToRemove = remove;
+    pendingRemoval = Observable.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
         .flatMap(new Func1<Long, Observable<BookmarkResult>>() {
           @Override
           public Observable<BookmarkResult> call(Long aLong) {
@@ -227,41 +223,41 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .subscribe(new Action1<BookmarkResult>() {
           @Override
           public void call(BookmarkResult result) {
-            mPendingRemoval = null;
-            mCachedData = result;
-            if (mFragment != null) {
-              mFragment.onNewData(result);
+            pendingRemoval = null;
+            cachedData = result;
+            if (fragment != null) {
+              fragment.onNewData(result);
             }
           }
         });
   }
 
   private Observable<BookmarkResult> removeItemsObservable() {
-    return mBookmarkModel.removeItemsObservable(new ArrayList<>(mItemsToRemove))
+    return bookmarkModel.removeItemsObservable(new ArrayList<>(itemsToRemove))
         .flatMap(new Func1<Void, Observable<BookmarkResult>>() {
           @Override
           public Observable<BookmarkResult> call(Void aVoid) {
-            return getBookmarksListObservable(mSortOrder, mGroupByTags);
+            return getBookmarksListObservable(sortOrder, groupByTags);
           }
         });
   }
 
   public void cancelDeletion() {
-    if (mPendingRemoval != null) {
-      mPendingRemoval.unsubscribe();
-      mPendingRemoval = null;
-      mItemsToRemove = null;
+    if (pendingRemoval != null) {
+      pendingRemoval.unsubscribe();
+      pendingRemoval = null;
+      itemsToRemove = null;
     }
   }
 
   private Observable<BookmarkData> getBookmarksWithAyatObservable(int sortOrder) {
-    return mBookmarkModel.getBookmarkDataObservable(sortOrder)
+    return bookmarkModel.getBookmarkDataObservable(sortOrder)
         .map(new Func1<BookmarkData, BookmarkData>() {
           @Override
           public BookmarkData call(BookmarkData bookmarkData) {
             try {
               return new BookmarkData(bookmarkData.getTags(),
-                  mArabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()));
+                  arabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()));
             } catch (Exception e) {
               return bookmarkData;
             }
@@ -291,12 +287,12 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
           @Override
           public void call(BookmarkResult result) {
             // notify the ui if we're attached
-            mCachedData = result;
-            if (mFragment != null) {
-              if (mPendingRemoval != null && mItemsToRemove != null) {
-                mFragment.onNewData(predictQuranListAfterDeletion(mItemsToRemove));
+            cachedData = result;
+            if (fragment != null) {
+              if (pendingRemoval != null && itemsToRemove != null) {
+                fragment.onNewData(predictQuranListAfterDeletion(itemsToRemove));
               } else {
-                mFragment.onNewData(result);
+                fragment.onNewData(result);
               }
             }
           }
@@ -315,7 +311,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       rows = getSortedRows(bookmarks);
     }
 
-    int lastPage = mQuranSettings.getLastPage();
+    int lastPage = quranSettings.getLastPage();
     boolean showLastPage = lastPage != Constants.NO_PAGE_SAVED;
     if (showLastPage && (lastPage > Constants.PAGES_LAST || lastPage < Constants.PAGES_FIRST)) {
       showLastPage = false;
@@ -323,8 +319,8 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
 
     if (showLastPage) {
-      rows.add(0, QuranRowFactory.fromCurrentPageHeader(mAppContext));
-      rows.add(1, QuranRowFactory.fromCurrentPage(mAppContext, lastPage));
+      rows.add(0, QuranRowFactory.fromCurrentPageHeader(appContext));
+      rows.add(1, QuranRowFactory.fromCurrentPage(appContext, lastPage));
     }
 
     return rows;
@@ -339,16 +335,16 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       rows.add(QuranRowFactory.fromTag(tag));
       List<Bookmark> tagBookmarks = tagsMapping.get(tag.id);
       for (int j = 0, tagBookmarksSize = tagBookmarks.size(); j < tagBookmarksSize; j++) {
-        rows.add(QuranRowFactory.fromBookmark(mAppContext, tagBookmarks.get(j), tag.id));
+        rows.add(QuranRowFactory.fromBookmark(appContext, tagBookmarks.get(j), tag.id));
       }
     }
 
     // add untagged bookmarks
     List<Bookmark> untagged = tagsMapping.get(BOOKMARKS_WITHOUT_TAGS_ID);
     if (untagged.size() > 0) {
-      rows.add(QuranRowFactory.fromNotTaggedHeader(mAppContext));
+      rows.add(QuranRowFactory.fromNotTaggedHeader(appContext));
       for (int i = 0, untaggedSize = untagged.size(); i < untaggedSize; i++) {
-        rows.add(QuranRowFactory.fromBookmark(mAppContext, untagged.get(i)));
+        rows.add(QuranRowFactory.fromBookmark(appContext, untagged.get(i)));
       }
     }
     return rows;
@@ -362,7 +358,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
       if (bookmark.isPageBookmark()) {
-        rows.add(QuranRowFactory.fromBookmark(mAppContext, bookmark));
+        rows.add(QuranRowFactory.fromBookmark(appContext, bookmark));
       } else {
         ayahBookmarks.add(bookmark);
       }
@@ -370,14 +366,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
     // add page bookmarks header if needed
     if (rows.size() > 0) {
-      rows.add(0, QuranRowFactory.fromPageBookmarksHeader(mAppContext));
+      rows.add(0, QuranRowFactory.fromPageBookmarksHeader(appContext));
     }
 
     // add ayah bookmarks if any
     if (ayahBookmarks.size() > 0) {
-      rows.add(QuranRowFactory.fromAyahBookmarksHeader(mAppContext));
+      rows.add(QuranRowFactory.fromAyahBookmarksHeader(appContext));
       for (int i = 0, ayahBookmarksSize = ayahBookmarks.size(); i < ayahBookmarksSize; i++) {
-        rows.add(QuranRowFactory.fromBookmark(mAppContext, ayahBookmarks.get(i)));
+        rows.add(QuranRowFactory.fromBookmark(appContext, ayahBookmarks.get(i)));
       }
     }
 
@@ -425,21 +421,21 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   @Override
   public void bind(BookmarksFragment fragment) {
-    mFragment = fragment;
-    boolean isRtl = mQuranSettings.isArabicNames() || QuranUtils.isRtl();
-    if (isRtl == mIsRtl) {
+    this.fragment = fragment;
+    boolean isRtl = quranSettings.isArabicNames() || QuranUtils.isRtl();
+    if (isRtl == this.isRtl) {
       requestData(true);
     } else {
       // don't use the cache if rtl changed
-      mIsRtl = isRtl;
+      this.isRtl = isRtl;
       requestData(false);
     }
   }
 
   @Override
   public void unbind(BookmarksFragment fragment) {
-    if (fragment == mFragment) {
-      mFragment = null;
+    if (fragment == this.fragment) {
+      this.fragment = null;
     }
   }
 }
