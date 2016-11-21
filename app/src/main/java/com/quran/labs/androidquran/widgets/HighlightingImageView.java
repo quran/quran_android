@@ -15,13 +15,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+import android.widget.ImageView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class HighlightingImageView extends RecyclingImageView {
+public class HighlightingImageView extends ImageView {
 
   private static int sOverlayTextColor = -1;
   private static int sHeaderFooterSize;

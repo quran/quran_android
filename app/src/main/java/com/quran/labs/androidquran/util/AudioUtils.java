@@ -1,5 +1,11 @@
 package com.quran.labs.androidquran.util;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -7,12 +13,6 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,14 +32,14 @@ public class AudioUtils {
   private static final String DB_EXTENSION = ".db";
   private static final String ZIP_EXTENSION = ".zip";
 
-  public final static class LookAheadAmount {
-    public static final int PAGE = 1;
-    public static final int SURA = 2;
-    public static final int JUZ = 3;
+  final static class LookAheadAmount {
+    static final int PAGE = 1;
+    static final int SURA = 2;
+    static final int JUZ = 3;
 
     // make sure to update these when a lookup type is added
-    public static final int MIN = 1;
-    public static final int MAX = 3;
+    static final int MIN = 1;
+    static final int MAX = 3;
   }
 
   /**
@@ -247,7 +247,7 @@ public class AudioUtils {
 
       for (int j = firstAyah; j < lastAyah; j++) {
         if (j == 1 && i != 1 && i != 9) {
-          Timber.d("need basmalla for " + i + ":" + j);
+          Timber.d("need basmalla for %d:%d", i, j);
 
           return true;
         }
@@ -257,7 +257,7 @@ public class AudioUtils {
     return false;
   }
 
-  public static boolean haveAnyFiles(Context context, String path) {
+  private static boolean haveAnyFiles(Context context, String path) {
     final String basePath = QuranFileUtils.getQuranAudioDirectory(context);
     final File file = new File(basePath, path);
     return file.isDirectory() && file.list().length > 0;
@@ -300,7 +300,7 @@ public class AudioUtils {
         }
         String p = request.getBaseUrl();
         String fileName = String.format(Locale.US, p, i);
-        Timber.d("gapless, checking if we have " + fileName);
+        Timber.d("gapless, checking if we have %s", fileName);
         f = new File(fileName);
         if (!f.exists()) {
           return false;

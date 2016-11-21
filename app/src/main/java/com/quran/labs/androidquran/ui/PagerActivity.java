@@ -805,7 +805,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           mPagerAdapter.setQuranMode();
         }
 
-        invalidateOptionsMenu();
+        supportInvalidateOptionsMenu();
       }
 
       if (mHighlightedAyah > 0 && mHighlightedSura > 0) {
@@ -1008,7 +1008,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     mPagerAdapter.setQuranMode();
     mShowingTranslation = false;
     int page = getCurrentPage();
-    invalidateOptionsMenu();
+    supportInvalidateOptionsMenu();
     updateActionBarTitle(page);
 
     if (mHighlightedSura > 0 && mHighlightedAyah > 0) {
@@ -1026,7 +1026,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     } else {
       mPagerAdapter.setTranslationMode();
       mShowingTranslation = true;
-      invalidateOptionsMenu();
+      supportInvalidateOptionsMenu();
       updateActionBarSpinner();
 
       if (mHighlightedSura > 0 && mHighlightedAyah > 0) {
@@ -1368,7 +1368,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             if (sura == null || ayah == null) {
               // page bookmark
               mBookmarksCache.put(page, isBookmarked);
-              invalidateOptionsMenu();
+              supportInvalidateOptionsMenu();
             } else {
               // ayah bookmark
               SuraAyah suraAyah = new SuraAyah(sura, ayah);
@@ -1385,7 +1385,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         .subscribe(new Subscriber<Pair<Integer, Boolean>>() {
           @Override
           public void onCompleted() {
-            invalidateOptionsMenu();
+            supportInvalidateOptionsMenu();
           }
 
           @Override

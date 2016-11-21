@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="?attr/actionBarSize"
-    android:gravity="center_vertical"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp"
-    android:paddingStart="4dp"
-    android:paddingEnd="4dp"
-    android:layout_gravity="center_vertical|start">
-    <TextView android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:singleLine="true"
-        android:ellipsize="end" />
-    <TextView android:id="@+id/subtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:singleLine="true"
-        android:ellipsize="end" />
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="?attr/actionBarSize"
+              android:gravity="center_vertical"
+              android:paddingLeft="4dp"
+              android:paddingRight="4dp"
+              android:paddingStart="4dp"
+              android:paddingEnd="4dp"
+              android:layout_gravity="center_vertical|start"
+    >
+  <TextView
+      android:id="@+id/title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:maxLines="1"
+      android:ellipsize="end"
+      />
+  <TextView
+      android:id="@+id/subtitle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:maxLines="1"
+      android:ellipsize="end"
+      />
 </LinearLayout>

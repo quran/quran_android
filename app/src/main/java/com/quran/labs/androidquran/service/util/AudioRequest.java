@@ -1,13 +1,12 @@
 package com.quran.labs.androidquran.service.util;
 
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
-
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
+
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 
 import java.util.Locale;
 
@@ -43,7 +42,7 @@ public abstract class AudioRequest implements Parcelable {
 
   public abstract boolean haveSuraAyah(int sura, int ayah);
 
-  public AudioRequest(String baseUrl, QuranAyah verse) {
+  AudioRequest(String baseUrl, QuranAyah verse) {
     mBaseUrl = baseUrl;
     final int startSura = verse.getSura();
     final int startAyah = verse.getAyah();
@@ -62,7 +61,7 @@ public abstract class AudioRequest implements Parcelable {
     mRangeRepeatInfo = new RepeatInfo(0);
   }
 
-  protected AudioRequest(Parcel in) {
+  AudioRequest(Parcel in) {
     this.mBaseUrl = in.readString();
     this.mGaplessDatabasePath = in.readString();
     this.mAyahsInThisSura = in.readInt();
@@ -132,7 +131,7 @@ public abstract class AudioRequest implements Parcelable {
   }
 
   public QuranAyah setCurrentAyah(int sura, int ayah) {
-    Timber.d("got setCurrentAyah of: " + sura + ":" + ayah);
+    Timber.d("got setCurrentAyah of: %d:%d", sura, ayah);
     if (mRepeatInfo.shouldRepeat()) {
       mRepeatInfo.incrementRepeat();
     } else {
@@ -194,7 +193,7 @@ public abstract class AudioRequest implements Parcelable {
 
     if (isGapless()) {
       String url = String.format(Locale.US, mBaseUrl, mCurrentSura);
-      Timber.d("isGapless, url: " + url);
+      Timber.d("isGapless, url: %s", url);
       return url;
     }
 

@@ -2,37 +2,44 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/panel_background_color">
-    <LinearLayout
-        android:id="@+id/ayah_action_bar"
-        android:layout_width="match_parent"
+    android:background="@color/panel_background_color"
+    tools:ignore="Overdraw"
+    >
+  <LinearLayout
+      android:id="@+id/ayah_action_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+    <ImageView
+        android:id="@+id/sliding_menu_close"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <ImageView
-            android:id="@+id/sliding_menu_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            style="?attr/actionModeCloseButtonStyle"
-            android:focusable="true"
-            android:clickable="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_action_expand" />
-        <com.quran.labs.androidquran.widgets.IconPageIndicator
-            android:id="@+id/sliding_pager_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:indicatorColor="@color/indicator_color"
-            app:indicatorHeight="@dimen/icon_page_indicator_height"
-            android:layoutDirection="ltr"/>
-    </LinearLayout>
-    <com.quran.labs.androidquran.widgets.QuranViewPager
-        android:id="@+id/sliding_layout_pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_gravity="center"
+        style="?attr/actionModeCloseButtonStyle"
+        android:focusable="true"
+        android:clickable="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_action_expand"
+        />
+    <com.quran.labs.androidquran.widgets.IconPageIndicator
+        android:id="@+id/sliding_pager_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:indicatorColor="@color/indicator_color"
+        app:indicatorHeight="@dimen/icon_page_indicator_height"
+        android:layoutDirection="ltr"
+        />
+  </LinearLayout>
+  <com.quran.labs.androidquran.widgets.QuranViewPager
+      android:id="@+id/sliding_layout_pager"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      />
 </LinearLayout>

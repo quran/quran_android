@@ -12,8 +12,7 @@
     <string name="menu_about">درباره ما</string>
     <string name="menu_settings">تنظيمات</string>
     <string name="menu_jump_last_page">آخرين صفحه</string>
-    <string name="menu_tags">برچسب ها</string>
-    <string name="menu_bookmarks">نشانکها</string>
+  <string name="menu_bookmarks">نشانکها</string>
     <string name="menu_bookmarks_page">صفحه نشانکها</string>
     <string name="menu_bookmarks_ayah">نشانکهاي آيه</string>
     <string name="menu_sort">مرتب سازی</string>
@@ -175,8 +174,7 @@
     <string name="ayah_copied_popup">آيه کپي شد</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">حذف نشانک</string>
-    <string name="tag_bookmark">نشانک برچسب</string>
+  <string name="tag_bookmark">نشانک برچسب</string>
     <string name="delete_tag">حذف برچسب</string>
     <string name="edit_tag">تغییر برچسب</string>
     <string name="new_tag">برچسب جدید</string>
@@ -188,5 +186,4 @@
     
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">لیست نشانه خالی است</string>
-    <string name="tags_list_empty">لیست برچسب خالی است.</string>
 </resources>

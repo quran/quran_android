@@ -13,8 +13,7 @@
     <string name="menu_about">Tentang Kami</string>
     <string name="menu_settings">Tetapan</string>
     <string name="menu_jump_last_page">Halaman terakhir</string>
-    <string name="menu_tags">Label</string>
-    <string name="menu_bookmarks">Penanda</string>
+  <string name="menu_bookmarks">Penanda</string>
     <string name="menu_bookmarks_page">Penanda Halaman</string>
     <string name="menu_bookmarks_ayah">Penanda Ayat</string>
     <string name="menu_sort">Susunan</string>
@@ -197,8 +196,7 @@
     <string name="ayah_copied_popup">Ayat telah disalin</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Hapus Penanda</string>
-    <string name="tag_bookmark">Beri Label pada Penanda</string>
+  <string name="tag_bookmark">Beri Label pada Penanda</string>
     <string name="delete_tag">Hapus Label</string>
     <string name="edit_tag">Sunting Label</string>
     <string name="new_tag">Label Baru</string>
@@ -210,5 +208,4 @@
 
     <!-- penanda & tag list -->
     <string name="bookmarks_list_empty">Tidak ada Penanda</string>
-    <string name="tags_list_empty">Tidak ada Label</string>
 </resources>

@@ -23,8 +23,7 @@
     <string name="menu_about">Über uns</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_jump_last_page">Letzte Seite</string>
-    <string name="menu_tags">Schlagwörter</string>
-    <string name="menu_bookmarks">Lesezeichen</string>
+  <string name="menu_bookmarks">Lesezeichen</string>
     <string name="menu_bookmarks_page">Seiten-Lesezeichen</string>
     <string name="menu_bookmarks_ayah">Vers-Lesezeichen</string>
     <string name="menu_sort">Sortieren</string>
@@ -271,8 +270,7 @@
     <string name="ayah_copied_popup">Vers kopiert</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Lesezeichen löschen</string>
-    <string name="tag_bookmark">Ein Schlagwort zum Lesezeichen hinzufügen</string>
+  <string name="tag_bookmark">Ein Schlagwort zum Lesezeichen hinzufügen</string>
     <string name="delete_tag">Schlagwort löschen</string>
     <string name="edit_tag">Schlagwort bearbeiten</string>
     <string name="new_tag">Neues Schlagwort</string>
@@ -284,8 +282,7 @@
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Keine Lesezeichen</string>
-    <string name="tags_list_empty">Keine Schlagwörter</string>
 
-    <!-- audio manager -->
+  <!-- audio manager -->
     <string name="audio_manager">Audioverwaltung</string>
 </resources>

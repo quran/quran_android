@@ -1,16 +1,15 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.util.QuranExecutorService;
-import com.quran.labs.androidquran.util.QuranPageTask;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+
+import com.quran.labs.androidquran.common.Response;
+import com.quran.labs.androidquran.util.QuranExecutorService;
+import com.quran.labs.androidquran.util.QuranPageTask;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -62,17 +61,13 @@ public class QuranPageWorker {
   }
 
   // once complete, see if ImageView is still around and set bitmap.
-  protected void onImageLoaded(QuranPageTask.QuranTaskData quranTaskData) {
+  private void onImageLoaded(QuranPageTask.QuranTaskData quranTaskData) {
     final Response response = quranTaskData.getResponse();
     BitmapDrawable drawable = null;
     if (response != null) {
       final Bitmap bitmap = response.getBitmap();
       if (bitmap != null) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-          drawable = new BitmapDrawable(mResources, bitmap);
-        } else {
-          drawable = new RecyclingBitmapDrawable(mResources, bitmap);
-        }
+        drawable = new BitmapDrawable(mResources, bitmap);
       }
     }
 

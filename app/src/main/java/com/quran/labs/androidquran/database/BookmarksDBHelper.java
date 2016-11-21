@@ -11,34 +11,31 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
   private static final String DB_NAME = "bookmarks.db";
   private static final int DB_VERSION = 2;
 
-  public static class BookmarksTable {
-
-    public static final String TABLE_NAME = "bookmarks";
-    public static final String ID = "_ID";
-    public static final String SURA = "sura";
-    public static final String AYAH = "ayah";
-    public static final String PAGE = "page";
-    public static final String ADDED_DATE = "added_date";
+  static class BookmarksTable {
+    static final String TABLE_NAME = "bookmarks";
+    static final String ID = "_ID";
+    static final String SURA = "sura";
+    static final String AYAH = "ayah";
+    static final String PAGE = "page";
+    static final String ADDED_DATE = "added_date";
   }
 
-  public static class TagsTable {
-
-    public static final String TABLE_NAME = "tags";
-    public static final String ID = "_ID";
-    public static final String NAME = "name";
-    public static final String ADDED_DATE = "added_date";
+  static class TagsTable {
+    static final String TABLE_NAME = "tags";
+    static final String ID = "_ID";
+    static final String NAME = "name";
+    static final String ADDED_DATE = "added_date";
   }
 
-  public static class BookmarkTagTable {
-
-    public static final String TABLE_NAME = "bookmark_tag";
-    public static final String ID = "_ID";
-    public static final String BOOKMARK_ID = "bookmark_id";
-    public static final String TAG_ID = "tag_id";
-    public static final String ADDED_DATE = "added_date";
+  static class BookmarkTagTable {
+    static final String TABLE_NAME = "bookmark_tag";
+    static final String ID = "_ID";
+    static final String BOOKMARK_ID = "bookmark_id";
+    static final String TAG_ID = "tag_id";
+    static final String ADDED_DATE = "added_date";
   }
 
-  public static final String QUERY_BOOKMARKS =
+  static final String QUERY_BOOKMARKS =
       "SELECT " + BookmarksTable.TABLE_NAME + "." + BookmarksTable.ID + ", " +
           BookmarksTable.TABLE_NAME + "." + BookmarksTable.SURA + ", " +
           BookmarksTable.TABLE_NAME + "." + BookmarksTable.AYAH + "," +
@@ -105,12 +102,10 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     if (newVersion <= oldVersion) {
-      Timber.w("Can't downgrade from version " +
-          oldVersion + " to version " + newVersion);
+      Timber.w("Can't downgrade from version %d to version %d", oldVersion, newVersion);
       return;
     }
-    Timber.i("Upgrading database from version " +
-        oldVersion + " to version " + newVersion);
+    Timber.i("Upgrading database from version %d to version %d", oldVersion, newVersion);
     if (oldVersion < 2) {
       upgradeToVer2(db);
     }
@@ -137,7 +132,7 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
       db.execSQL("INSERT INTO bookmarks(page) " +
           "SELECT _id from page_bookmarks where bookmarked = 1");
     } catch (Exception e) {
-      Timber.e("Failed to copy old bookmarks", e);
+      Timber.e(e, "Failed to copy old bookmarks");
     }
   }
 }

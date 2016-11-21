@@ -1,15 +1,15 @@
 package com.quran.labs.androidquran.ui.util;
 
-import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
-
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.widget.ImageView;
+
+import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +84,7 @@ public class ImageAyahUtils {
          String closestAyah = null;
          List<String> ayat = lineAyahs.get(closestLine);
          if (ayat != null){
-            Timber.d("no exact match, " + ayat.size() + " candidates.");
+            Timber.d("no exact match, %d candidates.", ayat.size());
             for (String ayah : ayat){
                List<AyahBounds> bounds = coords.get(ayah);
                if (bounds == null){ continue; }
@@ -114,7 +114,7 @@ public class ImageAyahUtils {
          }
 
          if (closestAyah != null){
-            Timber.d("fell back to closest ayah of " + closestAyah);
+            Timber.d("fell back to closest ayah of %s", closestAyah);
             return getAyahFromKey(closestAyah);
          }
       }

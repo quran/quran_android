@@ -1,15 +1,14 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.QuranConstants;
-
 import android.content.Context;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranConstants;
 
 import timber.log.Timber;
 
@@ -28,7 +27,7 @@ public class QuranScreenInfo {
     mHeight = point.y;
     mMaxWidth = (point.x > point.y) ? point.x : point.y;
     mPageProvider = QuranConstants.getPageProvider(display);
-    Timber.d("initializing with " + point.y + " and " + point.x);
+    Timber.d("initializing with %d and %d", point.y, point.x);
   }
 
   public static QuranScreenInfo getInstance() {

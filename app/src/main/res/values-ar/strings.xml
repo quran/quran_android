@@ -13,8 +13,7 @@
     <string name="menu_other_apps">تطبيقات اخرى‎</string>
     <string name="menu_settings">الإعدادات</string>
     <string name="menu_jump_last_page">الصفحة الأخيرة</string>
-    <string name="menu_tags">التصنيفات</string>
-    <string name="menu_bookmarks">المرجعيات</string>
+  <string name="menu_bookmarks">المرجعيات</string>
     <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
     <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
     <string name="menu_sort">تغير الترتيب</string>
@@ -238,8 +237,7 @@
     <string name="ayah_copied_popup">تم نسخ الآية</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">حذف المرجعية</string>
-    <string name="tag_bookmark">تصنيف المرجعية</string>
+  <string name="tag_bookmark">تصنيف المرجعية</string>
     <string name="delete_tag">حذف التصنيف</string>
     <string name="edit_tag">تعديل الصنف</string>
     <string name="new_tag">صنف جديد</string>
@@ -251,9 +249,8 @@
     
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">لا توجد أي مرجعيات</string>
-    <string name="tags_list_empty">لا توجد أي تصنيفات</string>
 
-    <!-- audio manager -->
+  <!-- audio manager -->
     <string name="audio_manager">إدارة الصوتيات</string>
     <string name="prefs_use_arabic_summary_on">سيتم تحويل التطبيق إلى اللغة العربية</string>
     <string name="prefs_use_arabic_title">الوضع العربي</string>

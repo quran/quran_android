@@ -1,13 +1,12 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.R;
-
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
+
+import com.quran.labs.androidquran.R;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,31 +31,31 @@ public class StorageUtils {
    */
   public static List<Storage> getAllStorageLocations(Context context) {
 
-    /**
-     * This first condition is the code moving forward, since the else case is a bunch
-     * of unsupported hacks.
-     *
-     * For Kitkat and above, we rely on Environment.getExternalFilesDirs to give us a list
-     * of application writable directories (none of which require WRITE_EXTERNAL_STORAGE on
-     * Kitkat and above).
-     *
-     * Previously, we only would show anything if there were at least 2 entries. For M,
-     * some changes were made, such that on M, we even show this if there is only one
-     * entry.
-     *
-     * Irrespective of whether we require 1 entry (M) or 2 (Kitkat and L), we add an
-     * additional entry explicitly for the sdcard itself, (the one requiring
-     * WRITE_EXTERNAL_STORAGE to write).
-     *
-     * Thus, on Kitkat, the user may either:
-     * a. not see any item (if there's only one entry returned by getExternalFilesDirs, we won't
-     * show any options since it's the same sdcard and we have the permission and the user can't
-     * revoke it pre-Kitkat), or
-     * b. see 3+ items - /sdcard, and then at least 2 external fiels directories.
-     *
-     * on M, the user will always see at least 2 items (the external files dir and the actual
-     * external storage directory), and potentially more (depending on how many items are returned
-     * by getExternalFilesDirs).
+    /*
+      This first condition is the code moving forward, since the else case is a bunch
+      of unsupported hacks.
+
+      For Kitkat and above, we rely on Environment.getExternalFilesDirs to give us a list
+      of application writable directories (none of which require WRITE_EXTERNAL_STORAGE on
+      Kitkat and above).
+
+      Previously, we only would show anything if there were at least 2 entries. For M,
+      some changes were made, such that on M, we even show this if there is only one
+      entry.
+
+      Irrespective of whether we require 1 entry (M) or 2 (Kitkat and L), we add an
+      additional entry explicitly for the sdcard itself, (the one requiring
+      WRITE_EXTERNAL_STORAGE to write).
+
+      Thus, on Kitkat, the user may either:
+      a. not see any item (if there's only one entry returned by getExternalFilesDirs, we won't
+      show any options since it's the same sdcard and we have the permission and the user can't
+      revoke it pre-Kitkat), or
+      b. see 3+ items - /sdcard, and then at least 2 external fiels directories.
+
+      on M, the user will always see at least 2 items (the external files dir and the actual
+      external storage directory), and potentially more (depending on how many items are returned
+      by getExternalFilesDirs).
      */
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       List<Storage> result = new ArrayList<>();
@@ -110,10 +109,10 @@ public class StorageUtils {
         mounts.remove(s);
       }
     } else {
-      Timber.d("Android version: " + Build.VERSION.SDK_INT + ", skip reading vold.fstab file");
+      Timber.d("Android version: %d, skip reading vold.fstab file", Build.VERSION.SDK_INT);
     }
 
-    Timber.d("mounts list is: " + mounts);
+    Timber.d("mounts list is: %s", mounts);
     return buildMountsList(context, mounts);
   }
 
@@ -148,7 +147,7 @@ public class StorageUtils {
       }
     }
 
-    Timber.d("final storage list is: " + list);
+    Timber.d("final storage list is: %s", list);
     return list;
   }
 
@@ -169,25 +168,25 @@ public class StorageUtils {
         Scanner scanner = new Scanner(mountFile);
         while (scanner.hasNext()) {
           String line = scanner.nextLine();
-          Timber.d("line: " + line);
+          Timber.d("line: %s", line);
           if (line.startsWith("/dev/block/vold/")) {
             String[] lineElements = line.split(" ");
             String element = lineElements[1];
-            Timber.d("mount element is: " + element);
+            Timber.d("mount element is: %s", element);
             if (!sdcardPath.equals(element)) {
               mounts.add(element);
             }
           } else {
-            Timber.d("skipping mount line: " + line);
+            Timber.d("skipping mount line: %s", line);
           }
         }
       } else {
         Timber.d("mounts file doesn't exist");
       }
 
-      Timber.d("reading mounts file end.. list is: " + mounts);
+      Timber.d("reading mounts file end.. list is: %s", mounts);
     } catch (Exception e) {
-      Timber.e("Error reading mounts file",e);
+      Timber.e(e, "Error reading mounts file");
     }
     return mounts;
   }
@@ -211,29 +210,29 @@ public class StorageUtils {
         Scanner scanner = new Scanner(voldFile);
         while (scanner.hasNext()) {
           String line = scanner.nextLine();
-          Timber.d("line: " + line);
+          Timber.d("line: %s", line);
           if (line.startsWith("dev_mount")) {
             String[] lineElements = line.split(" ");
             String element = lineElements[2];
-            Timber.d("volds element is: " + element);
+            Timber.d("volds element is: %s", element);
 
             if (element.contains(":")) {
               element = element.substring(0, element.indexOf(":"));
-              Timber.d("volds element is: " + element);
+              Timber.d("volds element is: %s", element);
             }
 
-            Timber.d("adding volds element to list: " + element);
+            Timber.d("adding volds element to list: %s", element);
             volds.add(element);
           } else {
-            Timber.d("skipping volds line: " + line);
+            Timber.d("skipping volds line: %s", line);
           }
         }
       } else {
         Timber.d("volds file doesn't exit");
       }
-      Timber.d("reading volds file end.. list is: " + volds);
+      Timber.d("reading volds file end.. list is: %s", volds);
     } catch (Exception e) {
-      Timber.e("Error reading volds file",e);
+      Timber.e(e, "Error reading volds file");
     }
 
     return volds;
@@ -246,11 +245,11 @@ public class StorageUtils {
 
     private int freeSpace;
 
-    public Storage(String label, String mountPoint) {
+    Storage(String label, String mountPoint) {
       this(label, mountPoint, false);
     }
 
-    public Storage(String label, String mountPoint, boolean requiresPermission) {
+    Storage(String label, String mountPoint, boolean requiresPermission) {
       this.label = label;
       this.mountPoint = mountPoint;
       this.requiresPermission = requiresPermission;

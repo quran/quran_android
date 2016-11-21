@@ -1,17 +1,5 @@
 package com.quran.labs.androidquran.service;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.util.ZipUtils;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +13,18 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.StatFs;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.ZipUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,8 +131,9 @@ public class QuranDownloadService extends Service implements
     HandlerThread thread = new HandlerThread(TAG);
     thread.start();
 
+    Context appContext = getApplicationContext();
     mNotifier = new QuranDownloadNotifier(this);
-    mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+    mWifiLock = ((WifiManager) appContext.getSystemService(Context.WIFI_SERVICE))
         .createWifiLock(WifiManager.WIFI_MODE_FULL, "downloadLock");
 
     mServiceLooper = thread.getLooper();
@@ -143,7 +144,7 @@ public class QuranDownloadService extends Service implements
     mQuranSettings = QuranSettings.getInstance(this);
 
     ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
-    mBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+    mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
   }
 
   private void handleOnStartCommand(Intent intent, int startId) {
