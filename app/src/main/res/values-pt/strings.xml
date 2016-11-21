@@ -168,8 +168,8 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="download_processing">Processando Download&#8230;</string>
     <string name="download_error_general">Download Fahou</string>
     <string name="download_error_disk">Não há espaço em disco para fazer o download</string>
-    <string name="download_error_network">Não foi possivel fazer o download, erro de rede</string>
-    <string name="download_error_perms">Não foi possivel fazer o download, erro de permissão</string>
+    <string name="download_error_network">Não foi possível fazer o download, erro de rede</string>
+    <string name="download_error_perms">Não foi possível fazer o download, erro de permissão</string>
     <string name="download_error_invalid_download">Arquivo baixado corrumpido</string>
     <string name="download_error_invalid_download_retry">Arquivo corrumpido, tentando baixar novamente</string>
     <string name="download_error_network_retry">Erro de rede, tentando resumir&#8230;</string>
@@ -198,7 +198,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="makki">Makkita</string>
     <string name="madani">Madanita</string>
     <plurals name="verses">
-        <item quantity="one">versículo</item>
+        <item quantity="one">%1$s versículo</item>
         <item quantity="other">versículos</item>
     </plurals>
 
@@ -209,7 +209,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="share_ayah_text">Compartilhar Texto da Ayah</string>
     <string name="translation_ayah">Ayah Tradução/Tafseer</string>
     <string name="play_from_here">Tocar daqui</string>
-    <string name="via_string">\n\natraves @QuranAndroid</string>
+    <string name="via_string">\n\natravés @QuranAndroid</string>
     <string name="search_key">Clique o botão de pesquisa para procurar um versículo</string>
     <string name="copy_ayah">Copiar Ayah</string>
     <string name="ayah_copied_popup">Ayah Copiada</string>

@@ -145,7 +145,6 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private static final long DEFAULT_HIDE_AFTER_TIME = 2000;
 
-  private QuranPageWorker mWorker = null;
   private QuranSettings mSettings = null;
   private long mLastPopupTime = 0;
   private boolean mIsActionBarHidden = true;
@@ -195,6 +194,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private SuraAyah mStart;
   private SuraAyah mEnd;
 
+  @Inject QuranPageWorker mWorker;
   @Inject BookmarkModel mBookmarkModel;
   private CompositeSubscription mCompositeSubscription;
 
@@ -203,7 +203,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private static class PagerHandler extends Handler {
     private final WeakReference<PagerActivity> mActivity;
 
-    public PagerHandler(PagerActivity activity) {
+    PagerHandler(PagerActivity activity) {
       mActivity = new WeakReference<>(activity);
     }
 
@@ -354,7 +354,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       updateActionBarTitle(PAGES_LAST - page);
     }
 
-    mWorker = QuranPageWorker.getInstance(this);
     mLastPopupTime = System.currentTimeMillis();
     mPagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), mDualPages, mShowingTranslation);
