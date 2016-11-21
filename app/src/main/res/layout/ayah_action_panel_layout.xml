@@ -34,7 +34,6 @@
         android:layout_height="wrap_content"
         app:indicatorColor="@color/indicator_color"
         app:indicatorHeight="@dimen/icon_page_indicator_height"
-        android:layoutDirection="ltr"
         />
   </LinearLayout>
   <com.quran.labs.androidquran.widgets.QuranViewPager

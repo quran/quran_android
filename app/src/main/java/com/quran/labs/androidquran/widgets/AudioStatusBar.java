@@ -34,7 +34,7 @@ import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.List;
 
-public class AudioStatusBar extends LinearLayout {
+public class AudioStatusBar extends LeftToRightLinearLayout {
 
   public static final int STOPPED_MODE = 1;
   public static final int DOWNLOADING_MODE = 2;
@@ -230,10 +230,10 @@ public class AudioStatusBar extends LinearLayout {
     @LayoutRes private final int mLayoutViewId;
     @LayoutRes private final int mDropDownViewId;
 
-    public QariAdapter(@NonNull Context context,
-        @NonNull List<QariItem> items,
-        @LayoutRes int layoutViewId,
-        @LayoutRes int dropDownViewId) {
+    QariAdapter(@NonNull Context context,
+                @NonNull List<QariItem> items,
+                @LayoutRes int layoutViewId,
+                @LayoutRes int dropDownViewId) {
       mItems = items;
       mLayoutViewId = layoutViewId;
       mDropDownViewId = dropDownViewId;
