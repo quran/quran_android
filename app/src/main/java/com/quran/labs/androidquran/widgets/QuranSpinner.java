@@ -47,6 +47,8 @@ public class QuranSpinner extends AppCompatSpinner {
             Math.min(calculatedWidth, MeasureSpec.getSize(widthMeasureSpec)),
             getMeasuredHeight());
         setDropDownWidth(calculatedWidth);
+      } else {
+        setDropDownWidth(measuredWidth);
       }
     }
   }
