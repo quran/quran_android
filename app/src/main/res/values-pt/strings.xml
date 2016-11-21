@@ -20,8 +20,7 @@
     <string name="menu_about">Sobre Nos</string>
     <string name="menu_settings">Configurações</string>
     <string name="menu_jump_last_page">Última página</string>
-    <string name="menu_tags">Tags</string>
-    <string name="menu_bookmarks">Favoritos</string>
+  <string name="menu_bookmarks">Favoritos</string>
     <string name="menu_bookmarks_page">Páginas Favoritas </string>
     <string name="menu_bookmarks_ayah">Ayas Favoritas</string>
     <string name="menu_sort">Ordenar</string>
@@ -126,7 +125,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="prefs_app_location_title">Local da App</string>
     <string name="prefs_app_location_summary">Selecione qual sdcard para armazenar os arquivos</string>
     <string name="prefs_sdcard_internal">Armazenamento Interno</string>
-    <string name="prefs_sdcard_external">Cartão SD Externo</string>
+    <string name="prefs_sdcard_external">Cartão SD Externo %1$d</string>
     <string name="prefs_app_size">Tamanho da App é</string>
     <string name="prefs_calculating_app_size">Calculando Tamanho da App</string>
     <string name="prefs_copying_app_files">Copiando arquivos do App</string>
@@ -216,8 +215,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
     <string name="ayah_copied_popup">Ayah Copiada</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Excluir Favorito</string>
-    <string name="tag_bookmark">Tagear Marcador</string>
+  <string name="tag_bookmark">Tagear Marcador</string>
     <string name="delete_tag">Deletar Tag</string>
     <string name="edit_tag">Editar Tag</string>
     <string name="new_tag">Sem Tag</string>
@@ -229,5 +227,4 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Sem Marcadores</string>
-    <string name="tags_list_empty">Sem Tags</string>
 </resources>

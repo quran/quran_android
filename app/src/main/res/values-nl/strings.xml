@@ -23,8 +23,7 @@ Yasser Baghouli (zaterdag@outlook.com)
     <string name="menu_other_apps">Andere apps</string>
     <string name="menu_settings">Instellingen</string>
     <string name="menu_jump_last_page">Laatste Pagina</string>
-    <string name="menu_tags">Label</string>
-    <string name="menu_bookmarks">Bladwijzers</string>
+  <string name="menu_bookmarks">Bladwijzers</string>
     <string name="menu_bookmarks_page">Pagina Bladwijzers</string>
     <string name="menu_bookmarks_ayah">Ayah Bladwijzers</string>
     <string name="menu_sort">Sorteren</string>
@@ -294,8 +293,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
     <string name="ayah_copied_popup">Ayah Gekopieerd</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Delete Bookmark</string>
-    <string name="tag_bookmark">Label Bladwijzer</string>
+  <string name="tag_bookmark">Label Bladwijzer</string>
     <string name="delete_tag">Label Verwijderen</string>
     <string name="edit_tag">Label Bewerken</string>
     <string name="new_tag">Nieuwe Label</string>
@@ -312,8 +310,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Geen Favorieten</string>
-    <string name="tags_list_empty">Geen Labels</string>
 
-    <!-- audio manager -->
+  <!-- audio manager -->
     <string name="audio_manager">Geluid Manager</string>
 </resources>

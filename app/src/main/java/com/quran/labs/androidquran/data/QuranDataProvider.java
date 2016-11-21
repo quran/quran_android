@@ -1,17 +1,5 @@
 package com.quran.labs.androidquran.data;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.BuildConfig;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.database.DatabaseHandler;
-import com.quran.labs.androidquran.database.DatabaseUtils;
-import com.quran.labs.androidquran.database.TranslationsDBAdapter;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.util.TranslationUtils;
-
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -24,6 +12,18 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.database.DatabaseUtils;
+import com.quran.labs.androidquran.database.TranslationsDBAdapter;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.TranslationUtils;
 
 import java.util.List;
 
@@ -220,7 +220,7 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   private Cursor search(String query, String language, boolean wantSnippets) {
-    Timber.d("q: " + query + ", l: " + language);
+    Timber.d("q: %s, l: %s", query, language);
     if (language == null) {
       return null;
     }
@@ -240,7 +240,7 @@ public class QuranDataProvider extends ContentProvider {
 
     List<String> parts = uri.getPathSegments();
     for (String s : parts) {
-      Timber.d("uri part: " + s);
+      Timber.d("uri part: %s", s);
     }
 
     final DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(getContext(), lang);
@@ -248,7 +248,7 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   @Override
-  public String getType(Uri uri) {
+  public String getType(@NonNull Uri uri) {
     switch (sURIMatcher.match(uri)) {
       case SEARCH_VERSES: {
         return VERSES_MIME_TYPE;
@@ -266,18 +266,18 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   @Override
-  public Uri insert(Uri uri, ContentValues values) {
+  public Uri insert(@NonNull Uri uri, ContentValues values) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int update(Uri uri, ContentValues values, String selection,
-      String[] selectionArgs) {
+  public int update(@NonNull Uri uri, ContentValues values, String selection,
+                    String[] selectionArgs) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int delete(Uri uri, String selection, String[] selectionArgs) {
+  public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
     throw new UnsupportedOperationException();
   }
 }

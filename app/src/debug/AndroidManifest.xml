@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.quran.labs.androidquran"
-    android:installLocation="auto">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.quran.labs.androidquran"
+          android:installLocation="auto">
 
-    <application
-        android:name=".DebugApplication"
-        tools:replace="android:name"
-        />
+  <application
+      android:name=".DebugApplication"
+      tools:replace="android:name"
+      android:allowBackup="true"
+      android:fullBackupContent="@xml/backup"/>
 </manifest> 

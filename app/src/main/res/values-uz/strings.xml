@@ -17,8 +17,7 @@
     <string name="menu_other_apps">Boshqa ilovalar</string>
     <string name="menu_settings">Sozlamalar</string>
     <string name="menu_jump_last_page">Oxirgi sahifa</string>
-    <string name="menu_tags">Teglar</string>
-    <string name="menu_bookmarks">Xatchoʻplar</string>
+  <string name="menu_bookmarks">Xatchoʻplar</string>
     <string name="menu_bookmarks_page">Sahifa xatchoʻplari</string>
     <string name="menu_bookmarks_ayah">Oyat xatchoʻplari</string>
     <string name="menu_sort">Tartib</string>
@@ -303,8 +302,7 @@
     <string name="ayah_copied_popup">Oyat xotiraga koʻchirildi</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Xatchoʻpni oʻchirish</string>
-    <string name="tag_bookmark">Xatchoʻpni teglash</string>
+  <string name="tag_bookmark">Xatchoʻpni teglash</string>
     <string name="delete_tag">Tegni oʻchirish</string>
     <string name="edit_tag">Tegni tahrir qilish</string>
     <string name="new_tag">Yangi teg</string>
@@ -321,8 +319,7 @@
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Xatchoʻplar mavjud emas</string>
-    <string name="tags_list_empty">Teglar mavjud emas</string>
 
-    <!-- audio manager -->
+  <!-- audio manager -->
     <string name="audio_manager">Audio menejer</string>
 </resources>

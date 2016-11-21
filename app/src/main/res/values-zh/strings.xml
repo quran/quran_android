@@ -12,8 +12,7 @@
     <string name="menu_about">关于</string>
     <string name="menu_settings">设置</string>
     <string name="menu_jump_last_page">上次的页面</string>
-    <string name="menu_tags">标签</string>
-    <string name="menu_bookmarks">收藏</string>
+  <string name="menu_bookmarks">收藏</string>
     <string name="menu_bookmarks_page">页面收藏</string>
     <string name="menu_bookmarks_ayah">节收藏</string>
     <string name="menu_sort">排序</string>
@@ -185,8 +184,7 @@
     <string name="ayah_copied_popup">复制成功</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">取消收藏</string>
-    <string name="tag_bookmark">为收藏加标签</string>
+  <string name="tag_bookmark">为收藏加标签</string>
     <string name="delete_tag">删除标签</string>
     <string name="edit_tag">编辑标签</string>
     <string name="new_tag">新建标签</string>
@@ -198,5 +196,4 @@
     
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">没有收藏</string>
-    <string name="tags_list_empty">没有标签</string>
 </resources>

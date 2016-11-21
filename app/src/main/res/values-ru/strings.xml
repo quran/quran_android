@@ -23,8 +23,7 @@
     <string name="menu_other_apps">Другие приложения</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_jump_last_page">Последняя страница</string>
-    <string name="menu_tags">Метки</string>
-    <string name="menu_bookmarks">Закладки</string>
+  <string name="menu_bookmarks">Закладки</string>
     <string name="menu_bookmarks_page">Закладки страниц</string>
     <string name="menu_bookmarks_ayah">Закладки аятов</string>
     <string name="menu_sort">Сортировать</string>
@@ -328,8 +327,7 @@
     <string name="ayah_copied_popup">Аят скопирован</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Удалить закладку</string>
-    <string name="tag_bookmark">Отметить закладку</string>
+  <string name="tag_bookmark">Отметить закладку</string>
     <string name="delete_tag">Удалить метку</string>
     <string name="edit_tag">Редактировать метку</string>
     <string name="new_tag">Новая метка</string>
@@ -348,8 +346,7 @@
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Закладки отсутствуют</string>
-    <string name="tags_list_empty">Метки отсутствуют</string>
 
-    <!-- audio manager -->
+  <!-- audio manager -->
     <string name="audio_manager">Аудио менеджер</string>
 </resources>

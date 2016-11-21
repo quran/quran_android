@@ -106,8 +106,7 @@
     <string name="translation_dialog_later">Sonra</string>
     <string name="translation_dialog_yes">Evet</string>
     <string name="timing_database">Gerekli dosyalar</string>
-    <string name="tags_list_empty">Etiket yok</string>
-    <string name="tag_bookmark">Sayfa işareti etiketi</string>
+  <string name="tag_bookmark">Sayfa işareti etiketi</string>
     <string name="tag_ayah">Bu âyeti işaretle</string>
     <string name="tag_dlg_title">Etiket</string>
     <string name="sura_ayah_notification_str">Sure %1$s, âyet %2$d</string>
@@ -155,8 +154,7 @@
     <string name="not_tagged">Etiketlenmedi</string>
     <string name="new_tag">Yeni etiket</string>
     <string name="need_translation">Hiçbir meâl indirilmedi</string>
-    <string name="menu_tags">Etiketler</string>
-    <string name="menu_bookmarks_ayah">Âyet işaretleri</string>
+  <string name="menu_bookmarks_ayah">Âyet işaretleri</string>
     <string name="menu_bookmarks_page">Sayfa işaretleri</string>
     <string name="menu_sort_date">Eklendiği tarih</string>
     <string name="menu_sort_location">Kur\'andaki yeri</string>
@@ -171,8 +169,7 @@
     <string name="gotoPage">Sayfaya git</string>
     <string name="get_translations">Meâlleri getir</string>
     <string name="delete_tag">Etiketi kaldır</string>
-    <string name="delete_bookmark">Sayfa işaretini kaldır</string>
-    <string name="copy_ayah">Âyet kopyala</string>
+  <string name="copy_ayah">Âyet kopyala</string>
     <string name="canceling">İptal ediliyor</string>
     <string name="bookmarks_list_empty">Sayfa işareti yok</string>
     <string name="bookmarks_current_page">Mevcut sayfa</string>

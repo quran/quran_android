@@ -13,8 +13,7 @@
     <string name="menu_about">بىز ھەققىدە</string>
     <string name="menu_settings">تەڭشەكلەر</string>
     <string name="menu_jump_last_page">ئاخىرقى بەت</string>
-    <string name="menu_tags">خەتكۈچلەر</string>
-    <string name="menu_bookmarks">خەتكۈچلەر</string>
+  <string name="menu_bookmarks">خەتكۈچلەر</string>
     <string name="menu_bookmarks_page">بەت خەتكۈچلىرى</string>
     <string name="menu_bookmarks_ayah">ئايەت بەتكۈچلىرى</string>
     <string name="menu_sort">تەرتىپلە</string>
@@ -171,8 +170,7 @@
     <string name="ayah_copied_popup">ئايەت كۆچۈرۈلدى</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">خەتكۈچ ئۆچۈر</string>
-    <string name="tag_bookmark">خەتكۈچكە بەلگە قوش</string>
+  <string name="tag_bookmark">خەتكۈچكە بەلگە قوش</string>
     <string name="delete_tag">بەلگە ئۆچۈر</string>
     <string name="edit_tag">بەلگە تەھرىر</string>
     <string name="new_tag">يېڭى بەلگە</string>
@@ -184,5 +182,4 @@
     
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">خەتكۈچ يوق</string>
-    <string name="tags_list_empty">بەلگە يوق</string>
 </resources>

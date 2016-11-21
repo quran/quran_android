@@ -22,7 +22,6 @@
   <string name="menu_other_apps">Other apps</string>
   <string name="menu_settings">Settings</string>
   <string name="menu_jump_last_page">Last page</string>
-  <string name="menu_tags">Tags</string>
   <string name="menu_bookmarks">Bookmarks</string>
   <string name="menu_bookmarks_page">Page Bookmarks</string>
   <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
@@ -332,7 +331,6 @@
   <string name="ayah_copied_popup">Ayah Copied</string>
 
   <!-- bookmarks & tags contextual action bar -->
-  <string name="delete_bookmark">Delete Bookmark</string>
   <string name="tag_bookmark">Tag Bookmark</string>
   <string name="delete_tag">Delete Tag</string>
   <string name="edit_tag">Edit Tag</string>
@@ -350,7 +348,6 @@
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">No Bookmarks</string>
-  <string name="tags_list_empty">No Tags</string>
 
   <!-- audio manager -->
   <string name="audio_manager">Audio Manager</string>

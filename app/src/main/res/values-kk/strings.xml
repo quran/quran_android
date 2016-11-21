@@ -18,8 +18,7 @@
     <string name="menu_other_apps">Басқа бағдарламалар</string>
     <string name="menu_settings">Баптау</string>
     <string name="menu_jump_last_page">Соңғы бет</string>
-    <string name="menu_tags">Белгілер</string>
-    <string name="menu_bookmarks">Бетбелгілер</string>
+  <string name="menu_bookmarks">Бетбелгілер</string>
     <string name="menu_bookmarks_page">Бет белгілері</string>
     <string name="menu_bookmarks_ayah">Аят белгілері</string>
     <string name="menu_sort">Сұрыптау</string>
@@ -305,8 +304,7 @@
     <string name="ayah_copied_popup">Аят көшірілді</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Бетбелгіні жою</string>
-    <string name="tag_bookmark">Бетбелгіні белгілеу</string>
+  <string name="tag_bookmark">Бетбелгіні белгілеу</string>
     <string name="delete_tag">Белгіні жою</string>
     <string name="edit_tag">Белгіні өзгерту</string>
     <string name="new_tag">Жаңа белгі</string>
@@ -323,8 +321,7 @@
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Бетбелгі жоқ</string>
-    <string name="tags_list_empty">Белгі жоқ</string>
 
-    <!-- audio manager -->
+  <!-- audio manager -->
     <string name="audio_manager">Аудио менеджер</string>
 </resources>

@@ -21,8 +21,7 @@
     <string name="menu_other_apps">Aplikasi lainnya</string>
     <string name="menu_settings">Setelan</string>
     <string name="menu_jump_last_page">Halaman terakhir</string>
-    <string name="menu_tags">Label</string>
-    <string name="menu_bookmarks">Penanda</string>
+  <string name="menu_bookmarks">Penanda</string>
     <string name="menu_bookmarks_page">Penanda Halaman</string>
     <string name="menu_bookmarks_ayah">Penanda Ayat</string>
     <string name="menu_sort">Sortir</string>
@@ -92,13 +91,11 @@
     <string name="quranSearchType">Ayat-ayat al Quran</string>
 
     <plurals name="files_downloaded">
-        <item quantity="one">1 surat telah diunduh</item>
         <item quantity="other">%1$d surat telah diunduh</item>
     </plurals>
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
-        <item quantity="one">Satu hasil pencarian untuk \"%1$s\": </item>
         <item quantity="other">%2$d hasil pencarian untuk \"%1$s\": </item>
     </plurals>
 
@@ -264,7 +261,6 @@
     <string name="makki">Makkiyah</string>
     <string name="madani">Madaniyah</string>
     <plurals name="verses">
-        <item quantity="one">Satu ayat</item>
         <item quantity="other">%s ayat</item>
     </plurals>
 
@@ -302,14 +298,12 @@
     <string name="ayah_copied_popup">Ayat telah tersalin</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Buang Penanda</string>
-    <string name="tag_bookmark">Labeli Penanda</string>
+  <string name="tag_bookmark">Labeli Penanda</string>
     <string name="delete_tag">Buang Label</string>
     <string name="edit_tag">Sunting Label</string>
     <string name="new_tag">Label Baru</string>
     <string name="not_tagged">Tidak Dilabel</string>
     <plurals name="bookmark_tag_deleted">
-        <item quantity="one">Menghapus satu butir</item>
         <item quantity="other">Menghapus %d butir</item>
     </plurals>
     <string name="undo">Urungkan</string>
@@ -320,9 +314,8 @@
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Tak ada Penanda</string>
-    <string name="tags_list_empty">Tak ada Label</string>
 
-    <!-- audio manager -->
+  <!-- audio manager -->
     <string name="audio_manager">Pengelola Audio</string>
 
 </resources>

@@ -1,10 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter;
-
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +13,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter;
+
 import javax.inject.Inject;
 
 public class AddTagDialog extends DialogFragment {
@@ -26,7 +27,7 @@ public class AddTagDialog extends DialogFragment {
   private static final String EXTRA_ID = "id";
   private static final String EXTRA_NAME = "name";
 
-  @Inject AddTagDialogPresenter mAddTagDialogPresenter;
+  @Inject AddTagDialogPresenter addTagDialogPresenter;
 
   public static AddTagDialog newInstance(long id, String name) {
     final Bundle args = new Bundle();
@@ -49,12 +50,12 @@ public class AddTagDialog extends DialogFragment {
   @Override
   public void onStart() {
     super.onStart();
-    mAddTagDialogPresenter.bind(this);
+    addTagDialogPresenter.bind(this);
   }
 
   @Override
   public void onStop() {
-    mAddTagDialogPresenter.unbind(this);
+    addTagDialogPresenter.unbind(this);
     super.onStop();
   }
 
@@ -74,7 +75,7 @@ public class AddTagDialog extends DialogFragment {
     }
 
     LayoutInflater inflater = getActivity().getLayoutInflater();
-    View layout = inflater.inflate(R.layout.tag_dialog, null);
+    @SuppressLint("InflateParams") View layout = inflater.inflate(R.layout.tag_dialog, null);
 
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     builder.setTitle(getString(R.string.tag_dlg_title));
@@ -93,9 +94,9 @@ public class AddTagDialog extends DialogFragment {
           public void onClick(DialogInterface dialog, int which) {
             String name = nameText.getText().toString();
             if (id > 0) {
-              mAddTagDialogPresenter.updateTag(new Tag(id, name));
+              addTagDialogPresenter.updateTag(new Tag(id, name));
             } else {
-              mAddTagDialogPresenter.addTag(name);
+              addTagDialogPresenter.addTag(name);
             }
 
             dismiss();

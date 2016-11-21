@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical"
-                  android:padding="10dip">
-
-        <TextView android:id="@+id/txtHelpTitle"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:textAppearance="?android:attr/textAppearanceMedium"
-                  android:textColor="#FFFFFF"
-                  android:singleLine="true"
-                  android:text="@string/help_title"
-                  android:textStyle="bold"
-                  android:paddingBottom="8dp" />
-
-        <TextView android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#FFFFFF"
-            android:id="@+id/txtHelp"
-            android:textSize="16sp"
-            android:paddingBottom="8dp"
-            android:lineSpacingExtra="4dip" />
+    >
 
-        <TextView android:id="@+id/email_us"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoLink="email"
-                android:text="@string/email_us" />
-    </LinearLayout>
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="10dip"
+      >
+
+    <TextView
+        android:id="@+id/txtHelpTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFFFF"
+        android:maxLines="1"
+        android:text="@string/help_title"
+        android:textStyle="bold"
+        android:paddingBottom="8dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#FFFFFF"
+        android:id="@+id/txtHelp"
+        android:textSize="16sp"
+        android:paddingBottom="8dp"
+        android:lineSpacingExtra="4dip"
+        />
+
+    <TextView
+        android:id="@+id/email_us"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="email"
+        android:text="@string/email_us"
+        />
+  </LinearLayout>
 </ScrollView>

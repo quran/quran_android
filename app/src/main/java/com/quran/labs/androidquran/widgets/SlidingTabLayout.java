@@ -16,11 +16,9 @@ package com.quran.labs.androidquran.widgets;
  * limitations under the License.
  */
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -66,7 +64,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
    * Allows complete control over the colors drawn in the tab layout. Set with
    * {@link #setCustomTabColorizer(TabColorizer)}.
    */
-  public interface TabColorizer {
+  interface TabColorizer {
 
     /**
      * @return return the color of the indicator used when {@code position} is selected.
@@ -188,29 +186,18 @@ public class SlidingTabLayout extends HorizontalScrollView {
     textView.setSingleLine();
     textView.setTextColor(mUnselectedTabColor);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-      // If we're running on Honeycomb or newer, then we can use the Theme's
-      // selectableItemBackground to ensure that the View has a pressed state
-      TypedValue outValue = new TypedValue();
-      getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,
-          outValue, true);
-      textView.setBackgroundResource(outValue.resourceId);
-    }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-      // If we're running on ICS or newer, enable all-caps to match the Action Bar tab style
-      setCapsTextIcs(textView);
-    }
+    // If we're running on Honeycomb or newer, then we can use the Theme's
+    // selectableItemBackground to ensure that the View has a pressed state
+    TypedValue outValue = new TypedValue();
+    getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,
+        outValue, true);
+    textView.setBackgroundResource(outValue.resourceId);
+    textView.setAllCaps(true);
 
     int padding = mTabPadding;
     textView.setPadding(padding, padding, padding, padding);
 
     return textView;
-  }
-
-  @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-  private void setCapsTextIcs(TextView textView) {
-    textView.setAllCaps(true);
   }
 
   private void populateTabStrip() {
@@ -228,9 +215,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     final int tabs = adapter.getCount();
     for (int i = 0; i < tabs; i++) {
       String str = adapter.getPageTitle(i).toString();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
-        str = str.toUpperCase(Locale.getDefault());
-      }
+      str = str.toUpperCase(Locale.getDefault());
 
       int width = (int) paint.measureText(str);
       width = width + 2 * mTabPadding;

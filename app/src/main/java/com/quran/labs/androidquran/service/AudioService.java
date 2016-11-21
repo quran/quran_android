@@ -20,20 +20,6 @@
 
 package com.quran.labs.androidquran.service;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.database.DatabaseUtils;
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
-import com.quran.labs.androidquran.service.util.AudioFocusHelper;
-import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.RepeatInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.util.AudioUtils;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -68,6 +54,20 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.SparseIntArray;
+
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.database.DatabaseUtils;
+import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.service.util.AudioFocusHelper;
+import com.quran.labs.androidquran.service.util.AudioFocusable;
+import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
+import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.util.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -267,18 +267,13 @@ public class AudioService extends Service implements OnCompletionListener,
     Timber.i("debug: Creating service");
     mHandler = new ServiceHandler(this);
 
-    mWifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+    final Context appContext = getApplicationContext();
+    mWifiLock = ((WifiManager) appContext.getSystemService(Context.WIFI_SERVICE))
         .createWifiLock(WifiManager.WIFI_MODE_FULL, "QuranAudioLock");
-    mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    mNotificationManager = (NotificationManager) appContext.getSystemService(NOTIFICATION_SERVICE);
 
     // create the Audio Focus Helper, if the Audio Focus feature is available
-    final Context appContext = getApplicationContext();
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-      mAudioFocusHelper = new AudioFocusHelper(appContext, this);
-    } else {
-      // no focus feature, so we always "have" audio focus
-      mAudioFocus = AudioFocus.Focused;
-    }
+    mAudioFocusHelper = new AudioFocusHelper(appContext, this);
 
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
 

@@ -15,7 +15,6 @@
   <string name="menu_other_apps">Autres applications</string>
   <string name="menu_settings">Paramètres</string>
   <string name="menu_jump_last_page">Dernière page</string>
-  <string name="menu_tags">Étiquettes</string>
   <string name="menu_bookmarks">Favoris</string>
   <string name="menu_bookmarks_page">Pages en favoris</string>
   <string name="menu_bookmarks_ayah">Ayāt en favoris</string>
@@ -269,7 +268,6 @@
   <string name="ayah_copied_popup">Aya copiée</string>
 
   <!-- bookmarks & tags contextual action bar -->
-  <string name="delete_bookmark">Supprimer le favori</string>
   <string name="tag_bookmark">Étiqueter le favori</string>
   <string name="delete_tag">Supprimez l\'étiquette</string>
   <string name="edit_tag">Modifier l\'étiquette</string>
@@ -282,7 +280,6 @@
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Aucun favori</string>
-  <string name="tags_list_empty">Aucune étiquette</string>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">

@@ -13,7 +13,6 @@
   <string name="menu_about">Acerca de Nosotros</string>
   <string name="menu_settings">Ajustes</string>
   <string name="menu_jump_last_page">Última página</string>
-  <string name="menu_tags">Etiquetas</string>
   <string name="menu_bookmarks">Favoritos</string>
   <string name="menu_bookmarks_page">Página de favoritos</string>
   <string name="menu_bookmarks_ayah">Versículos favoritos</string>
@@ -180,7 +179,6 @@
   <string name="copy_ayah">Copiar versículo</string>
   <string name="ayah_copied_popup">Versículo copiado</string>
   <!--bookmarks & tags contextual action bar-->
-  <string name="delete_bookmark">Borrar Favorito</string>
   <string name="tag_bookmark">Etiquetar Favorito</string>
   <string name="delete_tag">Borrar Etiqueta</string>
   <string name="edit_tag">Editar Etiqueta</string>
@@ -191,5 +189,4 @@
   <string name="tag_name">Nombre</string>
   <!--bookmark & tag list-->
   <string name="bookmarks_list_empty">Sin Favoritos</string>
-  <string name="tags_list_empty">Sin Etiquetas</string>
 </resources>

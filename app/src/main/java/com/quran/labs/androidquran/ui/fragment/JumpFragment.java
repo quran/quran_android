@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -42,7 +43,7 @@ public class JumpFragment extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     Activity activity = getActivity();
     LayoutInflater inflater = activity.getLayoutInflater();
-    View layout = inflater.inflate(R.layout.jump_dialog, null);
+    @SuppressLint("InflateParams") View layout = inflater.inflate(R.layout.jump_dialog, null);
 
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
     builder.setTitle(activity.getString(R.string.menu_jump));

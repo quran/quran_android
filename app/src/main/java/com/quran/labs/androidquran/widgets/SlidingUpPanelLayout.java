@@ -56,7 +56,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 
 import timber.log.Timber;
@@ -966,28 +965,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     dispatchOnPanelSlide(mSlideableView);
 
     if (mParallaxOffset > 0) {
-      if (BuildConfig.DEBUG) {
-        throw new IllegalArgumentException(
-            "Parallax will crash 2.x - see comment in SlidingUpPanelLayout.");
-        /* dear future self:
-         * this is an intentional, dev only, crash for Quran Android.
-         *
-         * the commented out else, below, is the single line that causes us
-         * to need NineOldAndroids. since we currently don't use a parallax
-         * value that is greater than 0, there is no point in including it.
-         * one day, however, things may change.
-         *
-         * if we want this to work, we can just include the AnimatorProxy
-         * class from NineOldAndroids (instead of the entire library).
-         */
-      } else {
         int mainViewOffset = getCurrentParallaxOffset();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-          moveMainView(mainViewOffset);
-        } /* else {
-          AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
-        } */
-      }
+        moveMainView(mainViewOffset);
     }
   }
 
