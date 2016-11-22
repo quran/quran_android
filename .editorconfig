@@ -5,22 +5,5 @@ root = true
 [*]
 end_of_line = lf
 insert_final_newline = true
-
-# Matches the exact files either package.json or .travis.yml
-[{package.json,.travis.yml}]
-indent_style = space
-indent_size = 2
-
-# Tab indentation (no size specified)
-[Makefile]
-indent_style = tab
-
-# Indentation override for all java files
-[*.java]
-indent_style = space
-indent_size = 2
-
-# 2 space indentation
-[*.sh]
 indent_style = space
 indent_size = 2
