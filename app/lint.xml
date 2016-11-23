@@ -11,4 +11,6 @@
    <issue id="TypographyDashes">
       <ignore regexp="com_crashlytics_export_strings.xml"/>
    </issue>
+
+   <issue id="MissingTranslation" severity="warning"/>
 </lint>

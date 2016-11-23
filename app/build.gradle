@@ -7,7 +7,7 @@ android {
     buildToolsVersion '25.0.0'
 
     lintOptions {
-      checkReleaseBuilds false
+      checkReleaseBuilds true
       lintConfig file("lint.xml")
     }
 
