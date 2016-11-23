@@ -27,6 +27,7 @@
         android:clickable="true"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_action_expand"
+        android:contentDescription="@string/cancel"
         />
     <com.quran.labs.androidquran.widgets.IconPageIndicator
         android:id="@+id/sliding_pager_indicator"

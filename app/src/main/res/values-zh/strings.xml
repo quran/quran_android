@@ -62,7 +62,7 @@
     </plurals>
 
     <!-- Search messages -->
-    <string name="found_in_sura">对应章节</string>
+    <string name="found_in_sura">对应章节 %1$s 节 %2$d</string>
     <string name="no_results">未搜索到\"%s\"</string>
     <string name="no_active_translation">当前没有可用的译文，请设置译文语言后再次进行搜索.</string>
     <string name="translation_settings">译文设置</string>

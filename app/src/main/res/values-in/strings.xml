@@ -107,7 +107,7 @@
     <string name="storage_permission_please_restart">Harap hidupkan ulang aplikasi ini agar penyimpanan data bisa dilakukan.</string>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Ditemukan dalam Surat</string>
+    <string name="found_in_sura">Ditemukan dalam Surat %1$s, Ayat %2$d</string>
     <string name="no_results">Tak ada hasil pencarian untuk \"%s\"</string>
     <string name="no_active_translation">Anda belum memiliki terjemahan aktif. Aktifkan salah satu terjemahan dulu kemudian ulangi pencarian.</string>
     <string name="translation_settings">Setelan Terjemahan</string>

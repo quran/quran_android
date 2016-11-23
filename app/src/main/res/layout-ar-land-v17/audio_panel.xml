@@ -139,6 +139,5 @@
       android:text="@string/play_apply"
       android:layout_gravity="end|bottom"
       android:layout_marginEnd="12dp"
-      android:layout_marginRight="12dp"
       />
 </FrameLayout>

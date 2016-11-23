@@ -60,7 +60,7 @@
     </plurals>
 
     <!-- Search messages -->
-    <string name="found_in_sura">در سوره</string>
+    <string name="found_in_sura">در سوره %1$s, %2$d آية</string>
     <string name="no_results">هيچ نتيجه اي يافت نشد براي \"%s\"</string>
     <string name="no_active_translation">شما هيچ ترجمه را فعال نکرده ايد</string>
     <string name="translation_settings">تنظيمات ترجمه</string>

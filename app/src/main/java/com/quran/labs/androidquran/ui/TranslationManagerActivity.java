@@ -421,6 +421,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           }
           holder.rightImage.setImageResource(R.drawable.ic_cancel);
           holder.rightImage.setVisibility(View.VISIBLE);
+          holder.rightImage.setContentDescription(getString(R.string.remove_button));
 
           final int pos = position;
           holder.rightImage.setOnClickListener(new View.OnClickListener() {
@@ -435,6 +436,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           holder.rightImage.setVisibility(View.VISIBLE);
           holder.rightImage.setOnClickListener(null);
           holder.rightImage.setClickable(false);
+          holder.rightImage.setContentDescription(null);
         }
       }
 

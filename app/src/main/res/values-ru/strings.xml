@@ -132,7 +132,7 @@
     </string>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Найдено в суре</string>
+    <string name="found_in_sura">Найдено в суре %1$s, Аят %2$d</string>
     <string name="no_results">Результатов для \"%s\" не найдено</string>
     <string name="no_active_translation">Вы не выбрали активный перевод. Сначала выберите активный
         перевод и воспользуйтесь поиском снова.

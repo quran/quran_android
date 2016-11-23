@@ -35,6 +35,7 @@ public class TranslationView extends ScrollView {
   private static final float ARABIC_RELATIVE_SIZE = 1.4f;
 
   private Context mContext;
+  private Resources mResources;
   private int mDividerColor;
   private int mLeftRightMargin;
   private int mTopBottomMargin;
@@ -94,14 +95,11 @@ public class TranslationView extends ScrollView {
       }
     });
 
-    Resources resources = getResources();
+    mResources = getResources();
     mDividerColor = ContextCompat.getColor(context, R.color.translation_hdr_color);
-    mLeftRightMargin = resources.getDimensionPixelSize(
-        R.dimen.translation_left_right_margin);
-    mTopBottomMargin = resources.getDimensionPixelSize(
-        R.dimen.translation_top_bottom_margin);
-    mFooterSpacerHeight = resources.getDimensionPixelSize(
-        R.dimen.translation_footer_spacer);
+    mLeftRightMargin = mResources.getDimensionPixelSize(R.dimen.translation_left_right_margin);
+    mTopBottomMargin = mResources.getDimensionPixelSize(R.dimen.translation_top_bottom_margin);
+    mFooterSpacerHeight = mResources.getDimensionPixelSize(R.dimen.translation_footer_spacer);
     mHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header);
     mHeaderStyle = R.style.translation_sura_title;
     initResources();
@@ -248,7 +246,7 @@ public class TranslationView extends ScrollView {
     final int ayahId = QuranInfo.getAyahId(suraNumber, ayahNumber);
     TextView ayahHeader = new TextView(mContext);
     styleAyahHeader(ayahHeader, mTextStyle);
-    ayahHeader.setText(suraNumber + ":" + ayahNumber);
+    ayahHeader.setText(mResources.getString(R.string.sura_ayah, suraNumber, ayahNumber));
     mLinearLayout.addView(ayahHeader, params);
     mAyahHeaderMap.put(ayahId, ayahHeader);
 

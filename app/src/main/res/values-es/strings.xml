@@ -39,7 +39,7 @@
     <item quantity="other">%2$d resultados para \"%1$s\": </item>
   </plurals>
   <!--Search messages-->
-  <string name="found_in_sura">Capítulo encontrado</string>
+  <string name="found_in_sura">Capítulo encontrado %1$s, Versículo %2$d</string>
   <string name="no_results">No se encontró \"%s\"</string>
   <string name="no_active_translation">Usted no tiene grupo de traducción activa. Por favor, configure una traducción activa primero y luego volver a buscar.</string>
   <string name="translation_settings">Ajustes de traducción</string>

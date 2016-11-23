@@ -14,7 +14,8 @@
         android:layout_gravity="center_vertical"
         android:layout_alignParentStart="true"
         android:src="@drawable/ic_download"
-        android:background="@drawable/download_button_circle"/>
+        android:background="@drawable/download_button_circle"
+        android:contentDescription="@null"/>
 
     <LinearLayout
         android:layout_width="match_parent"
