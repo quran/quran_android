@@ -26,7 +26,6 @@ contributors:
 * [Rehab Mohamed](https://twitter.com/hams_rrr)
 * [Ahmed Essam](https://twitter.com/neo_4583)
 
-
 Code Style
 ------------------------
 General [Android code style guidelines](https://source.android.com/source/code-style.html) apply, with the exception of following indent sizes:
@@ -34,9 +33,7 @@ General [Android code style guidelines](https://source.android.com/source/code-s
 - indent: 2 space
 - continuous indent: 4 space
 
-You can set these under Code Style in Android Studio or IntelliJ IDEA.
-
-Alternatively, you may copy [`quran_android-code_style.xml`](https://github.com/quran/quran_android/blob/master/quran_android-code_style.xml) to Android Studio/IntelliJ IDEA codestyles folder. For Android Studio, that folder is located at `~/.AndroidStudioPreview1.2/config/codestyles` (the root folder name may differ depending on the host machine and Android Studio version, but the rest of the path should be same). After copying the `quran_android-code_style.xml`, go to Code Style preferences screen and choose `quran_android-code_style` from Code Style Schemes.
+You can set these in Settings->Editor->Code Style then Check "Enable EditorConfig".
 
 Setup
 ------------------------
