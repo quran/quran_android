@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -11,7 +12,8 @@
         android:src="@drawable/ic_translation"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:scaleType="center" />
+        android:scaleType="center"
+        android:contentDescription="@null"/>
     <LinearLayout android:id="@+id/translation_area"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
@@ -33,9 +35,14 @@
     <ImageView android:id="@+id/left_image"
                android:layout_width="48dp"
                android:layout_height="match_parent"
-               android:scaleType="center" />
+               android:scaleType="center"
+               android:contentDescription="@null"/>
+
+    <!-- content description set in code -->
     <ImageView android:id="@+id/right_image"
                android:layout_width="48dp"
                android:layout_height="match_parent"
-               android:scaleType="center" />
+               android:scaleType="center"
+               tools:ignore="ContentDescription"
+        />
 </LinearLayout>

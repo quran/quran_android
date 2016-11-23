@@ -108,7 +108,7 @@
         ilovani qayta ishga tushiring.</string>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Surada topildi</string>
+    <string name="found_in_sura">Surada topildi %1$s, %2$d-oyat</string>
     <string name="no_results">\"%s\" boʻyicha natija topilmadi</string>
     <string name="no_active_translation">Birorta ham tarjima faol foydalanishda emas.
         Iltimos, avval biror tarjimani foydalanish uchun tanlang, soʻngra qayta izlab koʻring.

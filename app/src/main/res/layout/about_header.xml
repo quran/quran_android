@@ -16,7 +16,8 @@
         android:src="@drawable/icon"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@null"/>
 
     <TextView android:id="@android:id/title"
         android:layout_width="match_parent"

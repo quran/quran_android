@@ -112,7 +112,7 @@
     </string>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Сүреде табылды</string>
+    <string name="found_in_sura">Сүреде табылды %1$s, %2$d-аят</string>
     <string name="no_results">\"%s\" бойынша нәтиже табылмады</string>
     <string name="no_active_translation">Белсенді аударма таңдалмаған.
     Алдымен белсенді аударма таңдап, қайта іздеп көріңіз.

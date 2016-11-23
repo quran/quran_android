@@ -15,7 +15,8 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_new"
         android:scaleType="center"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:contentDescription="@null"/>
     <TextView android:id="@+id/tag_name"
         android:layout_width="0dp"
         android:layout_height="48dp"

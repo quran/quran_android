@@ -30,6 +30,7 @@
       android:layout_gravity="center_vertical"
       android:scaleType="center"
       android:visibility="gone"
+      android:contentDescription="@null"
       />
 
   <LinearLayout
