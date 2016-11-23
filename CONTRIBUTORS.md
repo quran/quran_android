@@ -35,7 +35,7 @@ quran android contributors
 * Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran).
 * Indonesian by [Saiful Khaliq](http://twitter.com/saifious).
 * Malaysian by [Ahmad Syazwan](https://github.com/asyazwan).
-* Spanish by [Alexander Salas](https://github.com/alexsalas).
+* Spanish by [Alexander J. Salas B.](https://github.com/ajsb85).
 * Uzbek by [Shuhrat Dehkanov](https://github.com/ozbek").
 
 
