@@ -2,14 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_name">Quran</string>
   <string name="downloadPrompt_title">Download Required Files?</string>
-    <string name="downloadPrompt">In order for Quran Android to work properly,
+  <string name="downloadPrompt">In order for Quran Android to work properly,
         we need to download some files. If you do not do this now, the app
         may not work reliably and will require an Internet connection for reading.
         Would you like to download the required files now?
     </string>
-    <string name="downloadTabletPrompt">We recently added improved images for
+  <string name="downloadTabletPrompt">We recently added improved images for
         tablets. Would you like to download these images now?</string>
-    <string name="downloadImportantPrompt">There is a small yet important update
+  <string name="downloadImportantPrompt">There is a small yet important update
         for the Quran images you have on your device. Would you like to download this
         patch now?
     </string>
@@ -81,7 +81,7 @@
 
   <!-- help -->
   <string name="help_title">Frequently Asked Questions</string>
-    <string name="help">
+  <string name="help">
         &lt;b>How do I play audio?&lt;/b>
         &lt;br/>Open any Quran page. Tap on the screen once. At the bottom, you will notice
         a play button and some text with the name of a qari. Click the name of the qari to
@@ -128,7 +128,7 @@
   </plurals>
 
   <!-- m permissions stuff -->
-    <string name="storage_permission_rationale">Quran wants your permission to store its data on
+  <string name="storage_permission_rationale">Quran wants your permission to store its data on
         external storage. Quran will work without this permission, but if you clear data or
         uninstall the app, all downloaded pages, audio, and data will be removed. Grant
         Quran permission?</string>
@@ -209,7 +209,7 @@
   <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
   <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
   <string name="import_data">Import Data</string>
-    <string name="import_data_and_override">If you import this file, it will replace all your \
+  <string name="import_data_and_override">If you import this file, it will replace all your \
         bookmarks with %1$d bookmark(s) and %2$d tag(s). Import?</string>
   <string name="import_successful">Import Successful</string>
   <string name="export_data_error">Error exporting data.</string>
@@ -217,7 +217,7 @@
 
   <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">Warning</string>
-    <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
+  <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran
         Android pages and audio will be deleted and you will have to download them again. Are you
         sure you want to use the external SD card?</string>
@@ -285,7 +285,7 @@
   <string name="get_translations">Get Translations</string>
 
   <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.
+  <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.
         Please note that we receive lots of emails, so we may not be able to reply to all of them.
     </string>
 

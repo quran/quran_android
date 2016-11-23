@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">古兰经</string>
-    <string name="downloadPrompt_title">下载所需的文件吗？</string>
-    <string name="downloadPrompt">为了更好的使用体验，需要下载一些文件。如果目前选择不下载，每个页面载入时会花较长的时间。确认开始下载这些文件吗？
+  <string name="app_name">古兰经</string>
+  <string name="downloadPrompt_title">下载所需的文件吗？</string>
+  <string name="downloadPrompt">为了更好的使用体验，需要下载一些文件。如果目前选择不下载，每个页面载入时会花较长的时间。确认开始下载这些文件吗？
 		</string>
-    <string name="downloadPrompt_ok">确认</string>
-    <string name="downloadPrompt_no">取消</string>
-    <string name="downloading_title">下载中&#8230;</string>
-    <string name="downloading_message">文件下载中，请等待。（支持续传）</string>
-    <string name="extracting_title">处理中&#8230;</string>
-    <string name="menu_about">关于</string>
-    <string name="menu_settings">设置</string>
-    <string name="menu_jump_last_page">上次的页面</string>
+  <string name="downloadPrompt_ok">确认</string>
+  <string name="downloadPrompt_no">取消</string>
+  <string name="downloading_title">下载中&#8230;</string>
+  <string name="downloading_message">文件下载中，请等待。（支持续传）</string>
+  <string name="extracting_title">处理中&#8230;</string>
+  <string name="menu_about">关于</string>
+  <string name="menu_settings">设置</string>
+  <string name="menu_jump_last_page">上次的页面</string>
   <string name="menu_bookmarks">收藏</string>
-    <string name="menu_bookmarks_page">页面收藏</string>
-    <string name="menu_bookmarks_ayah">节收藏</string>
-    <string name="menu_sort">排序</string>
-    <string name="menu_sort_date">按添加日期</string>
-    <string name="menu_sort_location">按章节位置</string>
-    <string name="menu_translation">显示译文</string>
-    <string name="menu_back_to_page">显示古兰经</string>
-    <string name="menu_help">帮助</string>
-    <string name="menu_search">搜索</string>
-    <string name="menu_get_translations">译文下载</string>
-    <string name="menu_jump">跳转</string>
-    <string name="gotoPage">跳转到页数</string>
-    <string name="cancel">取消</string>
+  <string name="menu_bookmarks_page">页面收藏</string>
+  <string name="menu_bookmarks_ayah">节收藏</string>
+  <string name="menu_sort">排序</string>
+  <string name="menu_sort_date">按添加日期</string>
+  <string name="menu_sort_location">按章节位置</string>
+  <string name="menu_translation">显示译文</string>
+  <string name="menu_back_to_page">显示古兰经</string>
+  <string name="menu_help">帮助</string>
+  <string name="menu_search">搜索</string>
+  <string name="menu_get_translations">译文下载</string>
+  <string name="menu_jump">跳转</string>
+  <string name="gotoPage">跳转到页数</string>
+  <string name="cancel">取消</string>
 
-    <!-- help -->
-    <string name="help_title">常见问题</string>
-    <string name="help">
+  <!-- help -->
+  <string name="help_title">常见问题</string>
+  <string name="help">
         &lt;b>怎样播放音频？&lt;/b>
         &lt;br/>打开任意古兰经页面，轻触屏幕，屏幕底部会出现播放按钮和诵经家的名字.
         点击诵经家的名字可以调出诵经家列表进行选择，点击播放按钮会下载当前页面或当前章的音频后开始播放。
@@ -53,147 +53,147 @@
         &lt;br/>&lt;b>无法使用马拉雅拉姆语、泰米尔语、孟加拉语、乌尔都语的字体!&lt;/b>
         &lt;br/>很抱歉，安卓4.0以前的版本不支持这些字体，目前还没有好的解决方案。
     </string>
-	<string name="search_hint">搜索古兰经</string>
-	<string name="quranSearchType">Verses of the Quran</string>
+  <string name="search_hint">搜索古兰经</string>
+  <string name="quranSearchType">Verses of the Quran</string>
 
-    <!-- Shown above search results when we receive a search request. -->
-    <plurals name="search_results">
-        <item quantity="other">%2$d 搜索\"%1$s\"的结果: </item>
-    </plurals>
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="other">%2$d 搜索\"%1$s\"的结果: </item>
+  </plurals>
 
-    <!-- Search messages -->
-    <string name="found_in_sura">对应章节 %1$s 节 %2$d</string>
-    <string name="no_results">未搜索到\"%s\"</string>
-    <string name="no_active_translation">当前没有可用的译文，请设置译文语言后再次进行搜索.</string>
-    <string name="translation_settings">译文设置</string>
-    <string name="no_arabic_search_available">还没有下载搜索包，请下载后再次进行搜索.</string>
-    <string name="get_arabic_search_db">下载阿拉伯语搜索包</string>
-        
-    <!-- Quran Preference Activity -->
-    <string name="prefs_category_navigation">浏览</string>
-    <string name="prefs_volume_key_navigation_title">音量键翻页</string>
-    <string name="prefs_volume_key_navigation_summary">用音量键控制翻页</string>
-    <string name="prefs_category_reading">朗读设置</string>
-    <string name="prefs_category_translation">译文设置</string>
-    <string name="prefs_category_display_settings">显示设置</string>
-    <string name="prefs_use_arabic_title">阿拉伯语模式</string>
-    <string name="prefs_use_arabic_summary_on">应用程序将采用阿拉伯语界面</string>
-    <string name="prefs_new_background_title">新的壁纸</string>
-    <string name="prefs_lock_orientation_title">屏幕旋转方向</string>
-    <string name="prefs_lock_orientation_summary_on">古兰经页面的屏幕旋转方向</string>
-    <string name="prefs_lock_orientation_summary_off">跟随系统</string>
-    <string name="prefs_landscape_orientation_title">锁屏方向</string>
-    <string name="prefs_landscape_orientation_summary_on">锁定横屏</string>
-    <string name="prefs_landscape_orientation_summary_off">锁定竖屏</string>
-    <string name="prefs_night_mode_title">夜间模式</string>
-    <string name="prefs_night_mode_summary">黑色背景和白色字体</string>
-    <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
-    <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
-    <string name="prefs_overlay_page_info_title">显示页面信息</string>
-    <string name="prefs_overlay_page_info_summary">阅读时显示页数，章名和卷数</string>
-    <string name="prefs_display_marker_title">显示卷章标记弹出窗口</string>
-    <string name="prefs_display_marker_summary">阅读时弹出卷章标记窗口</string>
-    <string name="prefs_translation_text_title">译文页面字体大小</string>
-    <string name="prefs_translations">译文</string>
-    <string name="prefs_translations_summary">下载与管理译文</string>
-    <string name="prefs_ayah_before_translation_title">显示原文</string>
-    <string name="prefs_ayah_before_translation_summary">在译文前显示阿拉伯语原文</string>
-    <string name="prefs_category_download">下载选项</string>
-    <string name="prefs_streaming_title">流式音频</string>
-    <string name="prefs_streaming_summary">优先使用流式音频（仅适用于non-gapless音频）。</string>
-    <string name="prefs_download_amount_title">下载方式</string>
-    <string name="prefs_download_amount_summary">non-gapless音频的下载方式。</string>
-    <string name="downloaded_translations">已经下载</string>
-    <string name="available_translations">可供下载</string>
-    <string name="remove_button">移除</string>
-    <string name="dialog_ok">确认</string>
+  <!-- Search messages -->
+  <string name="found_in_sura">对应章节 %1$s 节 %2$d</string>
+  <string name="no_results">未搜索到\"%s\"</string>
+  <string name="no_active_translation">当前没有可用的译文，请设置译文语言后再次进行搜索.</string>
+  <string name="translation_settings">译文设置</string>
+  <string name="no_arabic_search_available">还没有下载搜索包，请下载后再次进行搜索.</string>
+  <string name="get_arabic_search_db">下载阿拉伯语搜索包</string>
 
-    <!-- translation updates -->
-    <string name="update_available">有可用更新</string>
-    <string name="translation_updates_available">译文中有可用更新. 访问译文页面吗？</string>
-    <string name="translation_dialog_yes">好的</string>
-    <string name="translation_dialog_later">稍后再说</string>
+  <!-- Quran Preference Activity -->
+  <string name="prefs_category_navigation">浏览</string>
+  <string name="prefs_volume_key_navigation_title">音量键翻页</string>
+  <string name="prefs_volume_key_navigation_summary">用音量键控制翻页</string>
+  <string name="prefs_category_reading">朗读设置</string>
+  <string name="prefs_category_translation">译文设置</string>
+  <string name="prefs_category_display_settings">显示设置</string>
+  <string name="prefs_use_arabic_title">阿拉伯语模式</string>
+  <string name="prefs_use_arabic_summary_on">应用程序将采用阿拉伯语界面</string>
+  <string name="prefs_new_background_title">新的壁纸</string>
+  <string name="prefs_lock_orientation_title">屏幕旋转方向</string>
+  <string name="prefs_lock_orientation_summary_on">古兰经页面的屏幕旋转方向</string>
+  <string name="prefs_lock_orientation_summary_off">跟随系统</string>
+  <string name="prefs_landscape_orientation_title">锁屏方向</string>
+  <string name="prefs_landscape_orientation_summary_on">锁定横屏</string>
+  <string name="prefs_landscape_orientation_summary_off">锁定竖屏</string>
+  <string name="prefs_night_mode_title">夜间模式</string>
+  <string name="prefs_night_mode_summary">黑色背景和白色字体</string>
+  <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
+  <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
+  <string name="prefs_overlay_page_info_title">显示页面信息</string>
+  <string name="prefs_overlay_page_info_summary">阅读时显示页数，章名和卷数</string>
+  <string name="prefs_display_marker_title">显示卷章标记弹出窗口</string>
+  <string name="prefs_display_marker_summary">阅读时弹出卷章标记窗口</string>
+  <string name="prefs_translation_text_title">译文页面字体大小</string>
+  <string name="prefs_translations">译文</string>
+  <string name="prefs_translations_summary">下载与管理译文</string>
+  <string name="prefs_ayah_before_translation_title">显示原文</string>
+  <string name="prefs_ayah_before_translation_summary">在译文前显示阿拉伯语原文</string>
+  <string name="prefs_category_download">下载选项</string>
+  <string name="prefs_streaming_title">流式音频</string>
+  <string name="prefs_streaming_summary">优先使用流式音频（仅适用于non-gapless音频）。</string>
+  <string name="prefs_download_amount_title">下载方式</string>
+  <string name="prefs_download_amount_summary">non-gapless音频的下载方式。</string>
+  <string name="downloaded_translations">已经下载</string>
+  <string name="available_translations">可供下载</string>
+  <string name="remove_button">移除</string>
+  <string name="dialog_ok">确认</string>
 
-    <!-- End Number picker Strings -->
-    <string name="quran_rob3">¼</string>
-    <string name="quran_nos">½</string>
-    <string name="quran_talt_arb3">¾</string>
-    <string name="quran_hizb">段落</string>
-    <string name="quran_juz2">卷</string>
-    <string name="quran_page">页</string>
-    <string name="quran_sura">章</string>
-    <string name="quran_ayah">节 %1$d</string>
-    <string name="sura_ayah_notification_str">第%1$s章，第%2$d节</string>
+  <!-- translation updates -->
+  <string name="update_available">有可用更新</string>
+  <string name="translation_updates_available">译文中有可用更新. 访问译文页面吗？</string>
+  <string name="translation_dialog_yes">好的</string>
+  <string name="translation_dialog_later">稍后再说</string>
 
-    <string name="bookmarks_current_page">当前页</string>
-    <string name="index_loading">正在载入…</string>
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">段落</string>
+  <string name="quran_juz2">卷</string>
+  <string name="quran_page">页</string>
+  <string name="quran_sura">章</string>
+  <string name="quran_ayah">节 %1$d</string>
+  <string name="sura_ayah_notification_str">第%1$s章，第%2$d节</string>
 
-    <string name="canceling">正在取消&#8230;</string>
-    <string name="juz2_description">第%1$s卷</string>
-    <string name="page_description">第%2$s卷，第%1$s页</string>
-    <string name="highlighting_database">所需文件</string>
-    <string name="timing_database">所需文件</string>
-    
-    <!-- download statuses and errors -->
-    <string name="download_successful">下载成功</string>   
-    <string name="download_processing">正在下载&#8230;</string>              
-    <string name="download_error_general">下载失败</string>             
-    <string name="download_error_disk">磁盘可供下载空间不足</string>               
-    <string name="download_error_network">网络错误，无法下载</string>                    
-    <string name="download_error_perms">权限错误，无法下载</string>                  
-    <string name="download_error_invalid_download">下载文件损坏</string>
-    <string name="download_error_invalid_download_retry">文件损坏，正在尝试重新下载</string> 
-    <string name="download_error_network_retry">网络错误，正在重新连接&#8230;</string>
-    <string name="notification_download_canceled">下载已取消</string>
-    <string name="download_non_wifi_prompt">没有连接到wifi. 要继续下载吗？</string>
-    
-    <!-- downloading dialogs -->
-    <string name="download_progress">已下载 %1$s / %2$s</string>
-    <string name="process_progress">正在处理文件 %1$d / %2$d</string>
-    <string name="download_retry">重试</string>
-    <string name="download_cancel">取消</string>
-    <string name="download_extra_data">共享功能和下载功能需要下载一两个小文件，现在下载吗？</string>
+  <string name="bookmarks_current_page">当前页</string>
+  <string name="index_loading">正在载入…</string>
 
-    <!-- translation database stuff -->
-    <string name="remove_dlg_title">移除译文吗？</string>
-    <string name="remove_dlg_msg">确定要移除译文%1$s吗？</string>
-    <string name="error_getting_translation_list">无法下载译文列表。请稍后重试.</string>
-    <string name="search_data">搜索数据</string>
-    <string name="need_translation">还没有下载任何译文。</string>
-    <string name="get_translations">下载译文</string>
+  <string name="canceling">正在取消&#8230;</string>
+  <string name="juz2_description">第%1$s卷</string>
+  <string name="page_description">第%2$s卷，第%1$s页</string>
+  <string name="highlighting_database">所需文件</string>
+  <string name="timing_database">所需文件</string>
 
-    <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+  <!-- download statuses and errors -->
+  <string name="download_successful">下载成功</string>
+  <string name="download_processing">正在下载&#8230;</string>
+  <string name="download_error_general">下载失败</string>
+  <string name="download_error_disk">磁盘可供下载空间不足</string>
+  <string name="download_error_network">网络错误，无法下载</string>
+  <string name="download_error_perms">权限错误，无法下载</string>
+  <string name="download_error_invalid_download">下载文件损坏</string>
+  <string name="download_error_invalid_download_retry">文件损坏，正在尝试重新下载</string>
+  <string name="download_error_network_retry">网络错误，正在重新连接&#8230;</string>
+  <string name="notification_download_canceled">下载已取消</string>
+  <string name="download_non_wifi_prompt">没有连接到wifi. 要继续下载吗？</string>
 
-    <!-- sura metainfo -->
-    <string name="makki">麦加章</string>
-    <string name="madani">麦地那章</string>
-    <plurals name="verses">
-        <item quantity="other">%s 节</item>
-    </plurals>
+  <!-- downloading dialogs -->
+  <string name="download_progress">已下载 %1$s / %2$s</string>
+  <string name="process_progress">正在处理文件 %1$d / %2$d</string>
+  <string name="download_retry">重试</string>
+  <string name="download_cancel">取消</string>
+  <string name="download_extra_data">共享功能和下载功能需要下载一两个小文件，现在下载吗？</string>
 
-    <!-- long press -->
-    <string name="bookmark_ayah">收藏此节</string>
-    <string name="tag_ayah">为此节加上标签</string>
-    <string name="share_ayah">分享此节</string>
-    <string name="translation_ayah">翻译此节</string>
-    <string name="play_from_here">从当前节开始播放</string>
-    <string name="via_string">via @QuranAndroid</string>
-    <string name="search_key">按住搜索键来查找某节</string>
-    <string name="copy_ayah">复制此节</string>
-    <string name="ayah_copied_popup">复制成功</string>
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">移除译文吗？</string>
+  <string name="remove_dlg_msg">确定要移除译文%1$s吗？</string>
+  <string name="error_getting_translation_list">无法下载译文列表。请稍后重试.</string>
+  <string name="search_data">搜索数据</string>
+  <string name="need_translation">还没有下载任何译文。</string>
+  <string name="get_translations">下载译文</string>
 
-    <!-- bookmarks & tags contextual action bar -->
+  <!-- help -->
+  <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">麦加章</string>
+  <string name="madani">麦地那章</string>
+  <plurals name="verses">
+    <item quantity="other">%s 节</item>
+  </plurals>
+
+  <!-- long press -->
+  <string name="bookmark_ayah">收藏此节</string>
+  <string name="tag_ayah">为此节加上标签</string>
+  <string name="share_ayah">分享此节</string>
+  <string name="translation_ayah">翻译此节</string>
+  <string name="play_from_here">从当前节开始播放</string>
+  <string name="via_string">via @QuranAndroid</string>
+  <string name="search_key">按住搜索键来查找某节</string>
+  <string name="copy_ayah">复制此节</string>
+  <string name="ayah_copied_popup">复制成功</string>
+
+  <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">为收藏加标签</string>
-    <string name="delete_tag">删除标签</string>
-    <string name="edit_tag">编辑标签</string>
-    <string name="new_tag">新建标签</string>
-    <string name="not_tagged">未命名</string>
-    
-    <!-- tag dialog -->
-    <string name="tag_dlg_title">标签</string>
-    <string name="tag_name">标签名</string>
-    
-    <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">没有收藏</string>
+  <string name="delete_tag">删除标签</string>
+  <string name="edit_tag">编辑标签</string>
+  <string name="new_tag">新建标签</string>
+  <string name="not_tagged">未命名</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">标签</string>
+  <string name="tag_name">标签名</string>
+
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">没有收藏</string>
 </resources>

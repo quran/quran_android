@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">قورئان</string>
-    <string name="downloadPrompt_title">داگرتنی فایلە پێویستەکان؟</string>
-    <string name="downloadPrompt">بۆ کارکردنی بەرنامە، پێویستە ھەندێ فایل دابگریت. ئەگەر ئێستا ئەم فرمانە ئەنجام نەدەیت، ھەر پەڕەیەک کاتێکی زیاتری ئەوێت بۆ کردنەوە. ئەتەوێ ئێستا فایلە پێویستەکان دابگریت؟
+  <string name="app_name">قورئان</string>
+  <string name="downloadPrompt_title">داگرتنی فایلە پێویستەکان؟</string>
+  <string name="downloadPrompt">بۆ کارکردنی بەرنامە، پێویستە ھەندێ فایل دابگریت. ئەگەر ئێستا ئەم فرمانە ئەنجام نەدەیت، ھەر پەڕەیەک کاتێکی زیاتری ئەوێت بۆ کردنەوە. ئەتەوێ ئێستا فایلە پێویستەکان دابگریت؟
 		</string>
-    <string name="downloadPrompt_ok">بەڵێ</string>
-    <string name="downloadPrompt_no">نەخێر</string>
-    <string name="downloading_title">داگرتن&#8230;</string>
-    <string name="downloading_message">تکایە چاوەڕوانبە ھەتا فایلەکان دادەگیرێت. (پشگیری بەردەوامبون دەکرێت)</string>
-    <string name="extracting_title">ئەنجامدان&#8230;</string>
-    <string name="menu_about">دەربارەی ئێمە</string>
-    <string name="menu_settings">ڕێکخستنەکان</string>
-    <string name="menu_jump_last_page">دواین پەڕە</string>
+  <string name="downloadPrompt_ok">بەڵێ</string>
+  <string name="downloadPrompt_no">نەخێر</string>
+  <string name="downloading_title">داگرتن&#8230;</string>
+  <string name="downloading_message">تکایە چاوەڕوانبە ھەتا فایلەکان دادەگیرێت. (پشگیری بەردەوامبون دەکرێت)</string>
+  <string name="extracting_title">ئەنجامدان&#8230;</string>
+  <string name="menu_about">دەربارەی ئێمە</string>
+  <string name="menu_settings">ڕێکخستنەکان</string>
+  <string name="menu_jump_last_page">دواین پەڕە</string>
   <string name="menu_bookmarks">نیشانەکراوەکان</string>
-    <string name="menu_bookmarks_page">پەڕە نیشانەکراوەکان</string>
-    <string name="menu_bookmarks_ayah">ئایەتە نیشانەکراوەکان</string>
-    <string name="menu_sort">ڕیزکردن</string>
-    <string name="menu_sort_date">بەرواری زیادکردن</string>
-    <string name="menu_sort_location">شوێن لە قورئاندا</string>
-    <string name="menu_translation">پیشاندانی وەرگێڕان</string>
-    <string name="menu_back_to_page">پیشاندانی قورئان</string>
-    <string name="menu_help">یارمەتی</string>
-    <string name="menu_search">گەڕان</string>
-    <string name="menu_get_translations">داگرتنی وەرگێڕان</string>
-    <string name="menu_jump">چوون بۆ</string>
-    <string name="gotoPage">چوون بۆ پەڕەی</string>
-    <string name="cancel">پاشگەزبونەوە</string>
+  <string name="menu_bookmarks_page">پەڕە نیشانەکراوەکان</string>
+  <string name="menu_bookmarks_ayah">ئایەتە نیشانەکراوەکان</string>
+  <string name="menu_sort">ڕیزکردن</string>
+  <string name="menu_sort_date">بەرواری زیادکردن</string>
+  <string name="menu_sort_location">شوێن لە قورئاندا</string>
+  <string name="menu_translation">پیشاندانی وەرگێڕان</string>
+  <string name="menu_back_to_page">پیشاندانی قورئان</string>
+  <string name="menu_help">یارمەتی</string>
+  <string name="menu_search">گەڕان</string>
+  <string name="menu_get_translations">داگرتنی وەرگێڕان</string>
+  <string name="menu_jump">چوون بۆ</string>
+  <string name="gotoPage">چوون بۆ پەڕەی</string>
+  <string name="cancel">پاشگەزبونەوە</string>
 
-    <!-- help -->
-    <string name="help_title">ئەو پرسیارانەی کە زۆر کراون</string>
-    <string name="help">
+  <!-- help -->
+  <string name="help_title">ئەو پرسیارانەی کە زۆر کراون</string>
+  <string name="help">
         &lt;b>چۆن دەنگ چالاک بکەم؟&lt;/b>
         &lt;br/>هەر پەڕەیەکی قورئانت کردەوە یەک جار پەنجە بنێ بە شاشەکەدا، لە بەشی خوارەوەدا دوگمەی لێدان دەرئەکەوێت لەگەڵ هەندێک نوسین و ناوی قورئانخوێن. کلیک لەسەر ناوی قورئانخوێن بکە و بۆ هەڵبژاردنی قورئانخوێنی جیاواز. پەنجە بنێ بە دوگمەی لێداندا بۆ داگرتن و لێدانی پەڕە یان سورەت.
         &lt;br/>
@@ -52,161 +52,161 @@
         &lt;br/>&lt;b>فۆنتی زمانەکانی مالایلامی/تامیلی/بەنگالی/ئۆردۆ پیشان نادرێن!&lt;/b>
         &lt;br/>بەداخەوە، لە وەشانەکانی ئەندرۆیدی پێش ٤.٠ پشگیری ئەو فۆنتانە ناکرێت، بەڵام لەم بەرنامەیەدا چارەسەری ئەو کێشەیە کراوە.
     </string>
-	<string name="search_hint">گەڕان لە قورئاندا</string>
-	<string name="quranSearchType">ئایەتەکانی قورئان</string>
+  <string name="search_hint">گەڕان لە قورئاندا</string>
+  <string name="quranSearchType">ئایەتەکانی قورئان</string>
 
-    <!-- Shown above search results when we receive a search request. -->
-    <plurals name="search_results">
-        <item quantity="one">ئەنجامی گەڕان بۆ \"%1$s\": </item>
-        <item quantity="other">%2$d ئەنجامی گەڕان بۆ \"%1$s\": </item>
-    </plurals>
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">ئەنجامی گەڕان بۆ \"%1$s\": </item>
+    <item quantity="other">%2$d ئەنجامی گەڕان بۆ \"%1$s\": </item>
+  </plurals>
 
-    <!-- Search messages -->
-    <string name="found_in_sura">دۆزرایەوە لە سورەتدا %1$s, %2$d ئایەت</string>
-    <string name="no_results">ھیچ ئەنجامێک نەدۆزایەوە بۆ \"%s\"</string>
-    <string name="no_active_translation">هیچ وەرگێڕانێک چالاک نەکراوە. تکایە یەکەمجار وەرگێڕانێک چالاک بکە و دواتر دووبارە هەوڵی گەڕان بدەرەوە.</string>
-    <string name="translation_settings">ڕێکخستنەکانی وەرگێڕان</string>
-    <string name="no_arabic_search_available">داتاکانی گەڕان بە عەرەبی دانەگیراوە. تکایە دایبگرە و دووبارە هەوڵێ گەڕان بدەرەوە.</string>
-    <string name="get_arabic_search_db">داگرتنی داتابەیسی گەڕانی عەرەبی</string>
+  <!-- Search messages -->
+  <string name="found_in_sura">دۆزرایەوە لە سورەتدا %1$s, %2$d ئایەت</string>
+  <string name="no_results">ھیچ ئەنجامێک نەدۆزایەوە بۆ \"%s\"</string>
+  <string name="no_active_translation">هیچ وەرگێڕانێک چالاک نەکراوە. تکایە یەکەمجار وەرگێڕانێک چالاک بکە و دواتر دووبارە هەوڵی گەڕان بدەرەوە.</string>
+  <string name="translation_settings">ڕێکخستنەکانی وەرگێڕان</string>
+  <string name="no_arabic_search_available">داتاکانی گەڕان بە عەرەبی دانەگیراوە. تکایە دایبگرە و دووبارە هەوڵێ گەڕان بدەرەوە.</string>
+  <string name="get_arabic_search_db">داگرتنی داتابەیسی گەڕانی عەرەبی</string>
 
-    <!-- Quran Preference Activity -->
-    <string name="prefs_category_navigation">گەڕان</string>
-    <string name="prefs_volume_key_navigation_title">فرمانی دوگمەی دەنگ</string>
-    <string name="prefs_volume_key_navigation_summary">گۆڕینی پەڕەکان بەهۆی دوگمەکانی دەنگەوە</string>
-    <string name="prefs_category_reading">ڕێکخستنی خوێندنەوە</string>
-    <string name="prefs_category_translation">ڕێکخستنی وەرگێڕان</string>
-    <string name="prefs_category_display_settings">ڕێکخستنی پیشاندان</string>
-    <string name="prefs_use_arabic_title">شێوازی عەرەبی</string>
-    <string name="prefs_use_arabic_summary_on">زمانی بەرنامەکە ئەبێت بە عەرەبی </string>
-    <string name="prefs_new_background_title">پشت شاشەی نوێ</string>
-    <string name="prefs_lock_orientation_title">قفڵکردنی گۆڕینی ئاڕاستەی شاشە</string>
-    <string name="prefs_lock_orientation_summary_on">پەڕەکانی قورئان تەنها بەیەک ئاڕاستە پیشان ئەدرێن</string>
-    <string name="prefs_lock_orientation_summary_off">گونجاندن بۆ شێوازی ئاڕاستەی ئێستا</string>
-    <string name="prefs_landscape_orientation_title">ئاڕاستەی لەسەرلا (ئاسۆیی)</string>
-    <string name="prefs_landscape_orientation_summary_on">شێوازی ئاسۆیی بەکاردێت</string>
-    <string name="prefs_landscape_orientation_summary_off">شێوازی ستوونی بەکاردێت</string>
-    <string name="prefs_night_mode_title">شێوازی شەو (تاریک)</string>
-    <string name="prefs_night_mode_summary">پشت شاشەی ڕەش و نوسینی سپی </string>
-    <string name="prefs_night_mode_text_brightness_title">ڕووناکی نوسین</string>
-    <string name="prefs_night_mode_text_brightness_summary">ڕووناکی نوسین کاتێک شیوازی شەو چالاککرا</string>
-    <string name="prefs_overlay_page_info_title">پیشاندانی زانیاری پەڕە </string>
-    <string name="prefs_overlay_page_info_summary">پیشاندانی ژمارەی پەڕە، ناوی سورەت، وە ژمارەی جوزئـ لەکاتی خوێندنەوەدا</string>
-    <string name="prefs_display_marker_title">ئاگادارکردنەوە لە بەشەکان</string>
-    <string name="prefs_display_marker_summary">پیشاندانی ئاگادارکردنەوە لەکاتی گەیشتن بە چارەکی بەش یان جوزئـ، هتد.</string>
-    <string name="prefs_translation_text_title">قەبارەی نوسینی وەرگێڕان</string>
-    <string name="prefs_translations">وەرگێڕانەکان</string>
-    <string name="prefs_translations_summary">داگرتن و ڕێکخستنی وەرگێڕان</string>
-    <string name="prefs_ayah_before_translation_title">ئایەت پێش وەرگێڕان</string>
-    <string name="prefs_ayah_before_translation_summary">پیشاندانی ئایەت بە عەرەبی لەسەرووی وەرگیڕان</string>
-    <string name="prefs_category_download">ھەڵبژاردنەکانی داگرتن</string>
-    <string name="prefs_streaming_title">شەپۆلی دەنگی سەرهێڵ</string>
-    <string name="prefs_streaming_summary">لێدانی دەنگ لەڕێی شەپۆلی ئینتەرنێتەوە لەکاتی شیاودا (تەنها ئەو دەنگانەی کە دانەگیراون).</string>
-    <string name="prefs_download_amount_title">ڕێژەی داگرتن</string>
-    <string name="prefs_download_amount_summary">ڕێژەی پەسەندی داگرتن بۆ دەنگە دانەگیراوەکان.</string>
-    <string name="downloaded_translations">داگیرا</string>
-    <string name="available_translations">ئامادەیە بۆ داگرتن</string>
-    <string name="remove_button">لابردن</string>
-    <string name="dialog_ok">باشە</string>
-    <string name="prefs_app_location_title">شوێنی بەرنامە</string>
-    <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
-    <string name="prefs_sdcard_internal">یادگەی ناوەکی</string>
-    <string name="prefs_sdcard_external">یادگەی دەرەکی SD %1$d</string>
-    <string name="prefs_app_size">قەبارەی بەرنامە</string>
-    <string name="prefs_copying_app_files">لەبەرگرتنەوەی فایلەکانی بەرنامە</string>
-    <string name="prefs_err_moving_app_files">گواستنەوەی فایلەکانی بەرنامە سەرکەوتو نەبوو</string>
-    <string name="prefs_no_enough_space_to_move_files">شوێنی بەتاڵ کەمە بۆ گواستنەوەی فایلەکانی بەرنامە</string>
-    <string name="prefs_megabytes_int">مێگابایت  %1$d</string>
-    <!-- Preferences End -->
+  <!-- Quran Preference Activity -->
+  <string name="prefs_category_navigation">گەڕان</string>
+  <string name="prefs_volume_key_navigation_title">فرمانی دوگمەی دەنگ</string>
+  <string name="prefs_volume_key_navigation_summary">گۆڕینی پەڕەکان بەهۆی دوگمەکانی دەنگەوە</string>
+  <string name="prefs_category_reading">ڕێکخستنی خوێندنەوە</string>
+  <string name="prefs_category_translation">ڕێکخستنی وەرگێڕان</string>
+  <string name="prefs_category_display_settings">ڕێکخستنی پیشاندان</string>
+  <string name="prefs_use_arabic_title">شێوازی عەرەبی</string>
+  <string name="prefs_use_arabic_summary_on">زمانی بەرنامەکە ئەبێت بە عەرەبی </string>
+  <string name="prefs_new_background_title">پشت شاشەی نوێ</string>
+  <string name="prefs_lock_orientation_title">قفڵکردنی گۆڕینی ئاڕاستەی شاشە</string>
+  <string name="prefs_lock_orientation_summary_on">پەڕەکانی قورئان تەنها بەیەک ئاڕاستە پیشان ئەدرێن</string>
+  <string name="prefs_lock_orientation_summary_off">گونجاندن بۆ شێوازی ئاڕاستەی ئێستا</string>
+  <string name="prefs_landscape_orientation_title">ئاڕاستەی لەسەرلا (ئاسۆیی)</string>
+  <string name="prefs_landscape_orientation_summary_on">شێوازی ئاسۆیی بەکاردێت</string>
+  <string name="prefs_landscape_orientation_summary_off">شێوازی ستوونی بەکاردێت</string>
+  <string name="prefs_night_mode_title">شێوازی شەو (تاریک)</string>
+  <string name="prefs_night_mode_summary">پشت شاشەی ڕەش و نوسینی سپی </string>
+  <string name="prefs_night_mode_text_brightness_title">ڕووناکی نوسین</string>
+  <string name="prefs_night_mode_text_brightness_summary">ڕووناکی نوسین کاتێک شیوازی شەو چالاککرا</string>
+  <string name="prefs_overlay_page_info_title">پیشاندانی زانیاری پەڕە </string>
+  <string name="prefs_overlay_page_info_summary">پیشاندانی ژمارەی پەڕە، ناوی سورەت، وە ژمارەی جوزئـ لەکاتی خوێندنەوەدا</string>
+  <string name="prefs_display_marker_title">ئاگادارکردنەوە لە بەشەکان</string>
+  <string name="prefs_display_marker_summary">پیشاندانی ئاگادارکردنەوە لەکاتی گەیشتن بە چارەکی بەش یان جوزئـ، هتد.</string>
+  <string name="prefs_translation_text_title">قەبارەی نوسینی وەرگێڕان</string>
+  <string name="prefs_translations">وەرگێڕانەکان</string>
+  <string name="prefs_translations_summary">داگرتن و ڕێکخستنی وەرگێڕان</string>
+  <string name="prefs_ayah_before_translation_title">ئایەت پێش وەرگێڕان</string>
+  <string name="prefs_ayah_before_translation_summary">پیشاندانی ئایەت بە عەرەبی لەسەرووی وەرگیڕان</string>
+  <string name="prefs_category_download">ھەڵبژاردنەکانی داگرتن</string>
+  <string name="prefs_streaming_title">شەپۆلی دەنگی سەرهێڵ</string>
+  <string name="prefs_streaming_summary">لێدانی دەنگ لەڕێی شەپۆلی ئینتەرنێتەوە لەکاتی شیاودا (تەنها ئەو دەنگانەی کە دانەگیراون).</string>
+  <string name="prefs_download_amount_title">ڕێژەی داگرتن</string>
+  <string name="prefs_download_amount_summary">ڕێژەی پەسەندی داگرتن بۆ دەنگە دانەگیراوەکان.</string>
+  <string name="downloaded_translations">داگیرا</string>
+  <string name="available_translations">ئامادەیە بۆ داگرتن</string>
+  <string name="remove_button">لابردن</string>
+  <string name="dialog_ok">باشە</string>
+  <string name="prefs_app_location_title">شوێنی بەرنامە</string>
+  <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
+  <string name="prefs_sdcard_internal">یادگەی ناوەکی</string>
+  <string name="prefs_sdcard_external">یادگەی دەرەکی SD %1$d</string>
+  <string name="prefs_app_size">قەبارەی بەرنامە</string>
+  <string name="prefs_copying_app_files">لەبەرگرتنەوەی فایلەکانی بەرنامە</string>
+  <string name="prefs_err_moving_app_files">گواستنەوەی فایلەکانی بەرنامە سەرکەوتو نەبوو</string>
+  <string name="prefs_no_enough_space_to_move_files">شوێنی بەتاڵ کەمە بۆ گواستنەوەی فایلەکانی بەرنامە</string>
+  <string name="prefs_megabytes_int">مێگابایت  %1$d</string>
+  <!-- Preferences End -->
 
-    <!-- translation updates -->
-    <string name="update_available">نوێکردنەوە ئامادەیە</string>
-    <string name="translation_updates_available">نوێکردنەوە ئامادەیە بۆ هەندێک لە وەرگێڕانەکان. کردنەوەی بەشی وەرگێڕانەکان ئێستا؟</string>
-    <string name="translation_dialog_yes">بەڵێ</string>
-    <string name="translation_dialog_later">دواتر</string>
+  <!-- translation updates -->
+  <string name="update_available">نوێکردنەوە ئامادەیە</string>
+  <string name="translation_updates_available">نوێکردنەوە ئامادەیە بۆ هەندێک لە وەرگێڕانەکان. کردنەوەی بەشی وەرگێڕانەکان ئێستا؟</string>
+  <string name="translation_dialog_yes">بەڵێ</string>
+  <string name="translation_dialog_later">دواتر</string>
 
-    <!-- End Number picker Strings -->
-    <string name="quran_rob3">¼</string>
-    <string name="quran_nos">½</string>
-    <string name="quran_talt_arb3">¾</string>
-    <string name="quran_hizb">بەشی</string>
-    <string name="quran_juz2">جوزئـ\'</string>
-    <string name="quran_page">پەڕەی</string>
-    <string name="quran_sura">سورەتی</string>
-    <string name="quran_ayah">%1$d ئایەت</string>
-    <string name="quran_sura_title">سورەت %1$s</string>
-    <string name="sura_ayah_notification_str">سورەتی %1$s, ئایەتی %2$d</string>
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">بەشی</string>
+  <string name="quran_juz2">جوزئـ\'</string>
+  <string name="quran_page">پەڕەی</string>
+  <string name="quran_sura">سورەتی</string>
+  <string name="quran_ayah">%1$d ئایەت</string>
+  <string name="quran_sura_title">سورەت %1$s</string>
+  <string name="sura_ayah_notification_str">سورەتی %1$s, ئایەتی %2$d</string>
 
-    <string name="bookmarks_current_page">پەڕەی ئێستا</string>
-    <string name="index_loading">چاوەڕوانبە…</string>
+  <string name="bookmarks_current_page">پەڕەی ئێستا</string>
+  <string name="index_loading">چاوەڕوانبە…</string>
 
-    <string name="canceling">هەڵوەشاندنەوە&#8230;</string>
-    <string name="juz2_description">جوزئی %1$s</string>
-    <string name="page_description">پەڕەی %1$s, جوزئی %2$s</string>
-    <string name="highlighting_database">فایلە پێویستەکان</string>
-    <string name="timing_database">فایلە پێویستەکان</string>
+  <string name="canceling">هەڵوەشاندنەوە&#8230;</string>
+  <string name="juz2_description">جوزئی %1$s</string>
+  <string name="page_description">پەڕەی %1$s, جوزئی %2$s</string>
+  <string name="highlighting_database">فایلە پێویستەکان</string>
+  <string name="timing_database">فایلە پێویستەکان</string>
 
-    <!-- download statuses and errors -->
-    <string name="download_successful">داگرتن سەرکەوتو بوو</string>
-    <string name="download_processing">داگرتن لە ئەنجامداندایە&#8230;</string>
-    <string name="download_error_general">داگرتن سەرکەوتو نەبوو</string>
-    <string name="download_error_disk">شوێنی بەتاڵی پێویست نیە بۆ داگرتن</string>
-    <string name="download_error_network">ناتوانرێت دابگیرێت بەهۆی هەڵە لە تۆڕدا</string>
-    <string name="download_error_perms">ناتوانرێت دابگیرێت بەهۆی هەڵە لە ڕێگەپێداندا</string>
-    <string name="download_error_invalid_download">فایلی داگیراو تێکچووە</string>
-    <string name="download_error_invalid_download_retry">فایل تێکچووە، هەوڵدان بۆ داگرتنەوە.</string>
-    <string name="download_error_network_retry">هەڵە هەیە لە تۆڕدا، هەوڵدان بۆ بەردەوامبون&#8230;</string>
-    <string name="notification_download_canceled">داگرتن هەڵوەشێنرایەوە</string>
-    <string name="download_non_wifi_prompt">تۆ لەسەر تۆڕی بێتەل نیت WiFi. داگرتن بەهەرحاڵ؟</string>
+  <!-- download statuses and errors -->
+  <string name="download_successful">داگرتن سەرکەوتو بوو</string>
+  <string name="download_processing">داگرتن لە ئەنجامداندایە&#8230;</string>
+  <string name="download_error_general">داگرتن سەرکەوتو نەبوو</string>
+  <string name="download_error_disk">شوێنی بەتاڵی پێویست نیە بۆ داگرتن</string>
+  <string name="download_error_network">ناتوانرێت دابگیرێت بەهۆی هەڵە لە تۆڕدا</string>
+  <string name="download_error_perms">ناتوانرێت دابگیرێت بەهۆی هەڵە لە ڕێگەپێداندا</string>
+  <string name="download_error_invalid_download">فایلی داگیراو تێکچووە</string>
+  <string name="download_error_invalid_download_retry">فایل تێکچووە، هەوڵدان بۆ داگرتنەوە.</string>
+  <string name="download_error_network_retry">هەڵە هەیە لە تۆڕدا، هەوڵدان بۆ بەردەوامبون&#8230;</string>
+  <string name="notification_download_canceled">داگرتن هەڵوەشێنرایەوە</string>
+  <string name="download_non_wifi_prompt">تۆ لەسەر تۆڕی بێتەل نیت WiFi. داگرتن بەهەرحاڵ؟</string>
 
-    <!-- downloading dialogs -->
-    <string name="download_progress">داگیرا %1$s / %2$s</string>
-    <string name="process_progress">ئەنجامدان %1$d / %2$d</string>
-    <string name="download_retry">ھەوڵدانەوە</string>
-    <string name="download_cancel">پاشگەزبونەوە</string>
-    <string name="download_extra_data">پێویستە فایلێک یان دوو فایلی بچووک دابگریت بۆ پاڵپشتیکردنی بڵاوکردنەوە. داگرتن ئێستا؟</string>
+  <!-- downloading dialogs -->
+  <string name="download_progress">داگیرا %1$s / %2$s</string>
+  <string name="process_progress">ئەنجامدان %1$d / %2$d</string>
+  <string name="download_retry">ھەوڵدانەوە</string>
+  <string name="download_cancel">پاشگەزبونەوە</string>
+  <string name="download_extra_data">پێویستە فایلێک یان دوو فایلی بچووک دابگریت بۆ پاڵپشتیکردنی بڵاوکردنەوە. داگرتن ئێستا؟</string>
 
-    <!-- translation database stuff -->
-    <string name="remove_dlg_title">لابردنی وەرگێڕان؟</string>
-    <string name="remove_dlg_msg">ئایا دڵنیایت لە لابردنی %1$s?</string>
-    <string name="error_getting_translation_list">ناتوانرێت لیستی وەرگێڕانەکان دابگیرێت، تکایە دواتر هەوڵبدەرەوە.</string>
-    <string name="search_data">گەڕان بەدوای داتادا</string>
-    <string name="need_translation">تۆ هێشتا هیچ وەرگێڕانێک/تەفسیرێکت دانگرتووە.</string>
-    <string name="get_translations">داگرتنی وەرگێڕان</string>
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">لابردنی وەرگێڕان؟</string>
+  <string name="remove_dlg_msg">ئایا دڵنیایت لە لابردنی %1$s?</string>
+  <string name="error_getting_translation_list">ناتوانرێت لیستی وەرگێڕانەکان دابگیرێت، تکایە دواتر هەوڵبدەرەوە.</string>
+  <string name="search_data">گەڕان بەدوای داتادا</string>
+  <string name="need_translation">تۆ هێشتا هیچ وەرگێڕانێک/تەفسیرێکت دانگرتووە.</string>
+  <string name="get_translations">داگرتنی وەرگێڕان</string>
 
-    <!-- help -->
-    <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+  <!-- help -->
+  <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
 
-    <!-- sura metainfo -->
-    <string name="makki">مه ککه یی</string>
-    <string name="madani">مه د ینه يی</string>
-    <plurals name="verses">
-        <item quantity="one">%s ئایەت</item>
-        <item quantity="other">%s ئایەت</item>
-    </plurals>
+  <!-- sura metainfo -->
+  <string name="makki">مه ککه یی</string>
+  <string name="madani">مه د ینه يی</string>
+  <plurals name="verses">
+    <item quantity="one">%s ئایەت</item>
+    <item quantity="other">%s ئایەت</item>
+  </plurals>
 
-    <!-- long press -->
-    <string name="bookmark_ayah">نیشانەکردنی ئەم ئایەتە</string>
-    <string name="tag_ayah">بڕگەکردنی ئەم ئایەتە</string>
-    <string name="share_ayah">ناردنی ئایەت</string>
-    <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
-    <string name="translation_ayah">وەرگێڕانی ئایەت/تەفسیر</string>
-    <string name="play_from_here">لێدان لێرەوە</string>
-    <string name="via_string">via @QuranAndroid</string>
-    <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
-    <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>
-    <string name="ayah_copied_popup">ئایەت لەبەریگیراوە</string>
+  <!-- long press -->
+  <string name="bookmark_ayah">نیشانەکردنی ئەم ئایەتە</string>
+  <string name="tag_ayah">بڕگەکردنی ئەم ئایەتە</string>
+  <string name="share_ayah">ناردنی ئایەت</string>
+  <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
+  <string name="translation_ayah">وەرگێڕانی ئایەت/تەفسیر</string>
+  <string name="play_from_here">لێدان لێرەوە</string>
+  <string name="via_string">via @QuranAndroid</string>
+  <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
+  <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>
+  <string name="ayah_copied_popup">ئایەت لەبەریگیراوە</string>
 
-    <!-- bookmarks & tags contextual action bar -->
+  <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">بڕگە نیشانەکرا</string>
-    <string name="delete_tag">سڕینەوەی بڕگە</string>
-    <string name="edit_tag">دەستکاریکردنی بڕگە</string>
-    <string name="new_tag">بڕگەی نوێ</string>
-    <string name="not_tagged">بڕگە نەکراوە</string>
+  <string name="delete_tag">سڕینەوەی بڕگە</string>
+  <string name="edit_tag">دەستکاریکردنی بڕگە</string>
+  <string name="new_tag">بڕگەی نوێ</string>
+  <string name="not_tagged">بڕگە نەکراوە</string>
 
-    <!-- tag dialog -->
-    <string name="tag_dlg_title">بڕگە</string>
-    <string name="tag_name">ناو</string>
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">بڕگە</string>
+  <string name="tag_name">ناو</string>
 
-    <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">ھیچ نیشانەکراوێک نیە</string>
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">ھیچ نیشانەکراوێک نیە</string>
 </resources>

@@ -4,61 +4,61 @@ Abdelouali Benkheil (https://github.com/abdelouali) - (a.benkheil@gmail.com)
 Yasser Baghouli (zaterdag@outlook.com)
 -->
 <resources>
-    <string name="app_name">Koran</string>
-    <string name="downloadPrompt_title">Download vereiste bestanden?</string>
-    <string name="downloadPrompt">Om Koran Android goed te laten werken,
+  <string name="app_name">Koran</string>
+  <string name="downloadPrompt_title">Download vereiste bestanden?</string>
+  <string name="downloadPrompt">Om Koran Android goed te laten werken,
          moeten we een aantal bestanden downloaden. Als u dit niet doet, werkt de app
          mogelijk niet betrouwbaar en zal een internetverbinding vereist zijn voor het lezen.
          Wilt u de benodigde bestanden nu downloaden?
     </string>
-    <string name="downloadTabletPrompt">We hebben onlangs betere afbeeldingen toegevoegd voor Tablets. Wil je deze afbeeldingen nu toevoegen?</string>
-    <string name="downloadImportantPrompt">Er is een kleine maar belangrijke update voor Koran afbeeldingen die je op je apparaat hebt staat. Wil je deze patch nu downloaden?
+  <string name="downloadTabletPrompt">We hebben onlangs betere afbeeldingen toegevoegd voor Tablets. Wil je deze afbeeldingen nu toevoegen?</string>
+  <string name="downloadImportantPrompt">Er is een kleine maar belangrijke update voor Koran afbeeldingen die je op je apparaat hebt staat. Wil je deze patch nu downloaden?
     </string>
-    <string name="downloadPrompt_ok">Ja</string>
-    <string name="downloadPrompt_no">Nee</string>
-    <string name="downloading_title">Downloaden&#8230;</string>
-    <string name="downloading_message">Wacht tot de bestanden zijn gedownload (CV ondersteund).</string>
-    <string name="extracting_title">Verwerken&#8230;</string>
-    <string name="menu_about">Over Ons</string>
-    <string name="menu_other_apps">Andere apps</string>
-    <string name="menu_settings">Instellingen</string>
-    <string name="menu_jump_last_page">Laatste Pagina</string>
+  <string name="downloadPrompt_ok">Ja</string>
+  <string name="downloadPrompt_no">Nee</string>
+  <string name="downloading_title">Downloaden&#8230;</string>
+  <string name="downloading_message">Wacht tot de bestanden zijn gedownload (CV ondersteund).</string>
+  <string name="extracting_title">Verwerken&#8230;</string>
+  <string name="menu_about">Over Ons</string>
+  <string name="menu_other_apps">Andere apps</string>
+  <string name="menu_settings">Instellingen</string>
+  <string name="menu_jump_last_page">Laatste Pagina</string>
   <string name="menu_bookmarks">Bladwijzers</string>
-    <string name="menu_bookmarks_page">Pagina Bladwijzers</string>
-    <string name="menu_bookmarks_ayah">Ayah Bladwijzers</string>
-    <string name="menu_sort">Sorteren</string>
-    <string name="menu_sort_date">Datum Toegevoegd</string>
-    <string name="menu_sort_location">Locatie in Koran</string>
-    <string name="menu_sort_group_by_tags">Groepeer via Label</string> 
-    <string name="menu_translation">Toon Vertalingen</string>
-    <string name="menu_back_to_page">Toon Koran</string>
-    <string name="menu_help">Ondersteuning</string>
-    <string name="menu_search">Zoek</string>
-    <string name="menu_get_translations">Verkrijg Vertalingen</string>
-    <string name="menu_jump">Ga</string>
-    <string name="gotoPage">Ga naar pagina</string>
-    <string name="cancel">Annuleer</string>
+  <string name="menu_bookmarks_page">Pagina Bladwijzers</string>
+  <string name="menu_bookmarks_ayah">Ayah Bladwijzers</string>
+  <string name="menu_sort">Sorteren</string>
+  <string name="menu_sort_date">Datum Toegevoegd</string>
+  <string name="menu_sort_location">Locatie in Koran</string>
+  <string name="menu_sort_group_by_tags">Groepeer via Label</string>
+  <string name="menu_translation">Toon Vertalingen</string>
+  <string name="menu_back_to_page">Toon Koran</string>
+  <string name="menu_help">Ondersteuning</string>
+  <string name="menu_search">Zoek</string>
+  <string name="menu_get_translations">Verkrijg Vertalingen</string>
+  <string name="menu_jump">Ga</string>
+  <string name="gotoPage">Ga naar pagina</string>
+  <string name="cancel">Annuleer</string>
 
-    <!-- about -->
-    <string name="about_description">Koran voor Android is een gratis Koran Applicatie. Vergeet a.u.b. de ontwikkelaars niet in uw gebeden.</string>
-    <string name="about_data_sources">Gegevens bronnen</string>
-    <string name="about_images">Afbeeldingen</string>
-    <string name="about_madani_images">De Koran Afbeeldingen zijn gebaseerd op de lettertypen van de Koning Fahd Koran Printing Complex</string>
-    <string name="about_naskh_images">De koran beelden voor het Naskh app werden genomen (met toestemming) van SHL Info Systems</string>
-    <string name="about_qaloon_images">Qaloon afbeeldingen gebruikt met toestemming van Nous Memes Editions Et Diffusion (Tunisia)</string>
-    <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
-    <string name="about_quran_ksu">Electronic Moshaf Project</string>
-    <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
-    <string name="about_tanzil_summary">Vertalingen van vele talen</string>
-    <string name="about_noorhidayat_summary">Noorehira lettertype en Mufti Taqi Vertaling</string>
-    <string name="about_open_source">Open Source Projecten</string>
-    <string name="about_others">Andere</string>
-    <string name="about_contributors">Bijdragers</string>
-    <string name="about_contributors_summary">Een lijst van personen die hebben bijgedragen aan de ontwikkeling van Koran voor Android</string>
+  <!-- about -->
+  <string name="about_description">Koran voor Android is een gratis Koran Applicatie. Vergeet a.u.b. de ontwikkelaars niet in uw gebeden.</string>
+  <string name="about_data_sources">Gegevens bronnen</string>
+  <string name="about_images">Afbeeldingen</string>
+  <string name="about_madani_images">De Koran Afbeeldingen zijn gebaseerd op de lettertypen van de Koning Fahd Koran Printing Complex</string>
+  <string name="about_naskh_images">De koran beelden voor het Naskh app werden genomen (met toestemming) van SHL Info Systems</string>
+  <string name="about_qaloon_images">Qaloon afbeeldingen gebruikt met toestemming van Nous Memes Editions Et Diffusion (Tunisia)</string>
+  <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
+  <string name="about_quran_ksu">Electronic Moshaf Project</string>
+  <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
+  <string name="about_tanzil_summary">Vertalingen van vele talen</string>
+  <string name="about_noorhidayat_summary">Noorehira lettertype en Mufti Taqi Vertaling</string>
+  <string name="about_open_source">Open Source Projecten</string>
+  <string name="about_others">Andere</string>
+  <string name="about_contributors">Bijdragers</string>
+  <string name="about_contributors_summary">Een lijst van personen die hebben bijgedragen aan de ontwikkeling van Koran voor Android</string>
 
-    <!-- help -->
-    <string name="help_title">Veel Gestelde Vragen</string>
-    <string name="help">
+  <!-- help -->
+  <string name="help_title">Veel Gestelde Vragen</string>
+  <string name="help">
         &lt;b>Hoe kan ik de audio afspelen?&lt;/b>
         &lt;br/>Open even welke Koran pagina. Tik op het scherm eenmaal. Aan de onderkant, zult u
 een afspeelknop zien en wat tekst met de naam van de Qari. Klik op de naam van de qari
@@ -82,235 +82,235 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
         &lt;br/>&lt;b>De lettertypes: Malayam, Tamil, Bengali en Urdu werken niet!&lt;/b>
         &lt;br/>Helaas ondersteunen Android versies ouder dan 4.0 deze lettertypes niet en is er weinig dat wij hieraan kunnen doen.
     </string>
-    <string name="search_hint">Zoeken in de Koran</string>
-    <string name="quranSearchType">Verzen van de Koran</string>
+  <string name="search_hint">Zoeken in de Koran</string>
+  <string name="quranSearchType">Verzen van de Koran</string>
 
-    <plurals name="files_downloaded">
-        <item quantity="one">1 soera gedownload</item>
-        <item quantity="other">%1$d soera\'s gedownload</item>
-    </plurals>
+  <plurals name="files_downloaded">
+    <item quantity="one">1 soera gedownload</item>
+    <item quantity="other">%1$d soera\'s gedownload</item>
+  </plurals>
 
-    <!-- Shown above search results when we receive a search request. -->
-    <plurals name="search_results">
-        <item quantity="one">Eén resultaat voor \"%1$s\": </item>
-        <item quantity="other">%2$d resultaten voor \"%1$s\": </item>
-    </plurals>
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">Eén resultaat voor \"%1$s\": </item>
+    <item quantity="other">%2$d resultaten voor \"%1$s\": </item>
+  </plurals>
 
-    <!-- m permissions stuff -->
-    <string name="storage_permission_rationale">Koran wil uw toestemming om zijn gegevens op te slaan op
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Koran wil uw toestemming om zijn gegevens op te slaan op
          uw externe opslag. Koran zal werken zonder deze toestemming, maar als je de app deinstalleerd zullen alle gedownloade pagina\'s, audio en gegevens verwijderd worden. Verleen je Koran toestemming?
 </string>
-    <string name="storage_permission_please_restart">Gelieve de app opnieuw opstarten om de veranderingen uit te voeren.</string>
+  <string name="storage_permission_please_restart">Gelieve de app opnieuw opstarten om de veranderingen uit te voeren.</string>
 
-    <!-- Search messages -->
-    <string name="found_in_sura">Gevonden in Soera %1$s, Ayah %2$d</string>
-    <string name="no_results">Geen resultaten gevonden voor \"%s\"</string>
-    <string name="no_active_translation">U heeft geen actieve vertaling set. Stel een actieve vertaling in en probeer uw zoekopdracht opnieuw.</string>
-    <string name="translation_settings">Vertaling Instellingen</string>
-    <string name="no_arabic_search_available">Je hebt \"Arabisch Zoeken\" niet gedownload. Download het en probeer uw zoekopdracht opnieuw.</string>
-    <string name="get_arabic_search_db">Verkrijg "Arabisch Zoeken" Database</string>
+  <!-- Search messages -->
+  <string name="found_in_sura">Gevonden in Soera %1$s, Ayah %2$d</string>
+  <string name="no_results">Geen resultaten gevonden voor \"%s\"</string>
+  <string name="no_active_translation">U heeft geen actieve vertaling set. Stel een actieve vertaling in en probeer uw zoekopdracht opnieuw.</string>
+  <string name="translation_settings">Vertaling Instellingen</string>
+  <string name="no_arabic_search_available">Je hebt \"Arabisch Zoeken\" niet gedownload. Download het en probeer uw zoekopdracht opnieuw.</string>
+  <string name="get_arabic_search_db">Verkrijg "Arabisch Zoeken" Database</string>
 
-    <!-- Quran Preference Activity -->
-    <string name="prefs_category_navigation">Navigatie</string>
-    <string name="prefs_volume_key_navigation_title">Volumetoets navigatie</string>
-    <string name="prefs_volume_key_navigation_summary">Navigeren tussen pagina\'s met behulp van de volumetoetsen</string>
-    <string name="prefs_category_reading">Voorkeuren voor Lezen</string>
-    <string name="prefs_category_translation">Voorkeuren voor Vertalingen</string>
-    <string name="prefs_category_display_settings">Beeldscherminstellingen</string>
-    <string name="prefs_use_arabic_title">Arabisch-modus</string>
-    <string name="prefs_use_arabic_summary_on">Gebruik Arabisch voor de applicatie-interface</string>
-    <string name="prefs_new_background_title">Nieuwe achtergrond</string>
-    <string name="prefs_lock_orientation_title">Vergrendel schermoriëntatie</string>
-    <string name="prefs_lock_orientation_summary_on">Gebruik vaste oriëntatie-modus</string>
-    <string name="prefs_lock_orientation_summary_off">Aanpassen aan de huidige oriëntatie mode</string>
-    <string name="prefs_landscape_orientation_title">Landscape modus</string>
-    <string name="prefs_landscape_orientation_summary_on">Gebruik altijd landscape modus</string>
-    <string name="prefs_landscape_orientation_summary_off">Gebruik altijd portret-modus</string>
-    <string name="prefs_night_mode_title">Nacht modus</string>
-    <string name="prefs_night_mode_summary">Gebruik een donkere achtergrond en een lichte lettertype</string>
-    <string name="prefs_night_mode_text_brightness_title">Tekst helderheid</string>
-    <string name="prefs_night_mode_text_brightness_summary">Helederheid van de tekst wanneer de nacht modus zijn ingeschakeld.</string>
-    <string name="prefs_overlay_page_info_title">Toon pagina info</string>
-    <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
-    <string name="prefs_display_marker_title">Weergeef marker popups</string>
-    <string name="prefs_display_marker_summary">Er komt een popup bij het bereiken van juz\', hizb, etc.</string>
-    <string name="prefs_highlight_bookmarks_title">Markeer bladwijzers</string>
-    <string name="prefs_highlight_bookmarks_summary">Markeer opgeslagen ayah verzen</string>
-    <string name="prefs_translation_text_title">Vertaling tekstgrootte</string>
-    <string name="prefs_translations">Vertaling</string>
-    <string name="prefs_translations_summary">Downloaden en beheren van vertalingen</string>
-    <string name="prefs_ayah_before_translation_title">Ayah voor vertaling</string>
-    <string name="prefs_ayah_before_translation_summary">Toon ayah in het Arabisch boven de vertaling</string>
-    <string name="prefs_category_download">Download Opties</string>
-    <string name="prefs_streaming_title">Streaming</string>
-    <string name="prefs_streaming_summary">Audio streamen indien mogelijk (niet-gapless alleen audio)</string>
-    <string name="prefs_download_amount_title">Hoeveelheid te downloaden</string>
-    <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
-    <string name="prefs_audio_manager">Audio manager (test fase)</string>
-    <string name="prefs_audio_manager_summary">Beheer en download Koran audio</string>
-    <string name="downloaded_translations">Gedownload</string>
-    <string name="available_translations">Beschikbaar om te downloaden</string>
-    <string name="remove_button">Verwijder</string>
-    <string name="dialog_ok">OK</string>
-    <string name="prefs_app_location_title">Koran gegevens bibliotheek</string>
-    <string name="prefs_app_location_summary">Kies de locatie voor het opslaan van Koran gegevens.</string>
-    <string name="prefs_send_logs_title">Verstuur logbestanden</string>
-    <string name="prefs_send_logs_summary">Verstuur debug logbestanden naar de ontwikkelaar</string>
-    <string name="prefs_sdcard_internal">Interne geheugen</string>
-    <string name="prefs_sdcard_external">Externe SD kaart %1$d</string>
-    <string name="prefs_app_size">Huidige gegevens geheugen is</string>
-    <string name="prefs_calculating_app_size">Berekenen van App Grootte</string>
-    <string name="prefs_copying_app_files">App-bestanden kopiëren</string>
-    <string name="prefs_err_moving_app_files">Kan app bestanden niet verplaatsen</string>
-    <string name="prefs_no_enough_space_to_move_files">Onvoldoende ruimte om app bestanden te verplaatsen</string>
-    <string name="prefs_megabytes_int">%1$d MB</string>
-    <string name="prefs_megabytes_str">%s MB</string>
-    <string name="prefs_tablet_mode_title">Tablet Mode</string>
-    <string name="prefs_tablet_mode_enabled">In landscape, worden twee pagina\'s naast elkaar weergegeven.</string>
-    <string name="prefs_tablet_mode_disabled">In landscape, zal slechts één pagina verschijnen.</string>
-    <string name="prefs_category_advanced">Geavanceerde opties</string>
-    <string name="prefs_export_title">Exporteren</string>
-    <string name="prefs_export_summary">Exporteer een kopie van bladwijzers en labels</string>
+  <!-- Quran Preference Activity -->
+  <string name="prefs_category_navigation">Navigatie</string>
+  <string name="prefs_volume_key_navigation_title">Volumetoets navigatie</string>
+  <string name="prefs_volume_key_navigation_summary">Navigeren tussen pagina\'s met behulp van de volumetoetsen</string>
+  <string name="prefs_category_reading">Voorkeuren voor Lezen</string>
+  <string name="prefs_category_translation">Voorkeuren voor Vertalingen</string>
+  <string name="prefs_category_display_settings">Beeldscherminstellingen</string>
+  <string name="prefs_use_arabic_title">Arabisch-modus</string>
+  <string name="prefs_use_arabic_summary_on">Gebruik Arabisch voor de applicatie-interface</string>
+  <string name="prefs_new_background_title">Nieuwe achtergrond</string>
+  <string name="prefs_lock_orientation_title">Vergrendel schermoriëntatie</string>
+  <string name="prefs_lock_orientation_summary_on">Gebruik vaste oriëntatie-modus</string>
+  <string name="prefs_lock_orientation_summary_off">Aanpassen aan de huidige oriëntatie mode</string>
+  <string name="prefs_landscape_orientation_title">Landscape modus</string>
+  <string name="prefs_landscape_orientation_summary_on">Gebruik altijd landscape modus</string>
+  <string name="prefs_landscape_orientation_summary_off">Gebruik altijd portret-modus</string>
+  <string name="prefs_night_mode_title">Nacht modus</string>
+  <string name="prefs_night_mode_summary">Gebruik een donkere achtergrond en een lichte lettertype</string>
+  <string name="prefs_night_mode_text_brightness_title">Tekst helderheid</string>
+  <string name="prefs_night_mode_text_brightness_summary">Helederheid van de tekst wanneer de nacht modus zijn ingeschakeld.</string>
+  <string name="prefs_overlay_page_info_title">Toon pagina info</string>
+  <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
+  <string name="prefs_display_marker_title">Weergeef marker popups</string>
+  <string name="prefs_display_marker_summary">Er komt een popup bij het bereiken van juz\', hizb, etc.</string>
+  <string name="prefs_highlight_bookmarks_title">Markeer bladwijzers</string>
+  <string name="prefs_highlight_bookmarks_summary">Markeer opgeslagen ayah verzen</string>
+  <string name="prefs_translation_text_title">Vertaling tekstgrootte</string>
+  <string name="prefs_translations">Vertaling</string>
+  <string name="prefs_translations_summary">Downloaden en beheren van vertalingen</string>
+  <string name="prefs_ayah_before_translation_title">Ayah voor vertaling</string>
+  <string name="prefs_ayah_before_translation_summary">Toon ayah in het Arabisch boven de vertaling</string>
+  <string name="prefs_category_download">Download Opties</string>
+  <string name="prefs_streaming_title">Streaming</string>
+  <string name="prefs_streaming_summary">Audio streamen indien mogelijk (niet-gapless alleen audio)</string>
+  <string name="prefs_download_amount_title">Hoeveelheid te downloaden</string>
+  <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
+  <string name="prefs_audio_manager">Audio manager (test fase)</string>
+  <string name="prefs_audio_manager_summary">Beheer en download Koran audio</string>
+  <string name="downloaded_translations">Gedownload</string>
+  <string name="available_translations">Beschikbaar om te downloaden</string>
+  <string name="remove_button">Verwijder</string>
+  <string name="dialog_ok">OK</string>
+  <string name="prefs_app_location_title">Koran gegevens bibliotheek</string>
+  <string name="prefs_app_location_summary">Kies de locatie voor het opslaan van Koran gegevens.</string>
+  <string name="prefs_send_logs_title">Verstuur logbestanden</string>
+  <string name="prefs_send_logs_summary">Verstuur debug logbestanden naar de ontwikkelaar</string>
+  <string name="prefs_sdcard_internal">Interne geheugen</string>
+  <string name="prefs_sdcard_external">Externe SD kaart %1$d</string>
+  <string name="prefs_app_size">Huidige gegevens geheugen is</string>
+  <string name="prefs_calculating_app_size">Berekenen van App Grootte</string>
+  <string name="prefs_copying_app_files">App-bestanden kopiëren</string>
+  <string name="prefs_err_moving_app_files">Kan app bestanden niet verplaatsen</string>
+  <string name="prefs_no_enough_space_to_move_files">Onvoldoende ruimte om app bestanden te verplaatsen</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_megabytes_str">%s MB</string>
+  <string name="prefs_tablet_mode_title">Tablet Mode</string>
+  <string name="prefs_tablet_mode_enabled">In landscape, worden twee pagina\'s naast elkaar weergegeven.</string>
+  <string name="prefs_tablet_mode_disabled">In landscape, zal slechts één pagina verschijnen.</string>
+  <string name="prefs_category_advanced">Geavanceerde opties</string>
+  <string name="prefs_export_title">Exporteren</string>
+  <string name="prefs_export_summary">Exporteer een kopie van bladwijzers en labels</string>
 
-    <string name="import_data_permissions_error">Kan geen back-upbestand lezen wegens bevoegdheden fouten.</string>
-    <string name="import_data_error">Ongeldige backup-bestand (of niet in staat om back-up bestand te lezen).</string>
-    <string name="import_data">Importeer Gegevens</string>
-    <string name="import_data_and_override">Als je dit bestand importeer zal het al je bladwijzers vervangen met %1$d bladwijzer(s) en %2$d label(s). Importeren?</string>
-    <string name="import_successful">Import Successvol</string>
-    <string name="export_data_error">Fout bij het exporteren van gegevens.</string>
-    <string name="exported_data">Gegevens geëxporteerd naar %1$s.</string>
+  <string name="import_data_permissions_error">Kan geen back-upbestand lezen wegens bevoegdheden fouten.</string>
+  <string name="import_data_error">Ongeldige backup-bestand (of niet in staat om back-up bestand te lezen).</string>
+  <string name="import_data">Importeer Gegevens</string>
+  <string name="import_data_and_override">Als je dit bestand importeer zal het al je bladwijzers vervangen met %1$d bladwijzer(s) en %2$d label(s). Importeren?</string>
+  <string name="import_successful">Import Successvol</string>
+  <string name="export_data_error">Fout bij het exporteren van gegevens.</string>
+  <string name="exported_data">Gegevens geëxporteerd naar %1$s.</string>
 
-    <string name="warning">Waarschuwing</string>
-    <string name="kitkat_external_message">Als gevolg van Android beperkingen, als je ervoor kiest om Koran gegevens te plaatsen
+  <string name="warning">Waarschuwing</string>
+  <string name="kitkat_external_message">Als gevolg van Android beperkingen, als je ervoor kiest om Koran gegevens te plaatsen
           op uw externe SD-kaart en deze later verwijderd, zal je al deze gegevens opnieuw moeten downloaden. Ben jij
          zeker dat je de externe SD-kaart wilt gebruiken?</string>
-    <string name="please_grant_permissions">Gelieve toestemming te verlenen in programma-instellingen.</string>
-    <!-- Preferences End -->
+  <string name="please_grant_permissions">Gelieve toestemming te verlenen in programma-instellingen.</string>
+  <!-- Preferences End -->
 
-    <!-- translation updates -->
-    <string name="update_available">Update Beschikbaar</string>
-    <string name="translation_updates_available">Er is een update beschikbaar voor een aantal van uw vertalingen. Bezoek het scherm vertalingen nu?</string>
-    <string name="translation_dialog_yes">Ja</string>
-    <string name="translation_dialog_later">Later</string>
+  <!-- translation updates -->
+  <string name="update_available">Update Beschikbaar</string>
+  <string name="translation_updates_available">Er is een update beschikbaar voor een aantal van uw vertalingen. Bezoek het scherm vertalingen nu?</string>
+  <string name="translation_dialog_yes">Ja</string>
+  <string name="translation_dialog_later">Later</string>
 
-    <!-- End Number picker Strings -->
-    <string name="quran_rob3">¼</string>
-    <string name="quran_nos">½</string>
-    <string name="quran_talt_arb3">¾</string>
-    <string name="quran_hizb">Hizb</string>
-    <string name="quran_juz2">Juz\'</string>
-    <string name="quran_page">Pagina</string>
-    <string name="quran_sura">Soera</string>
-    <string name="quran_ayah">Ayah %1$d</string>
-    <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
-    <string name="quran_sura_title">Soera %1$s</string>
-    <string name="sura_ayah_notification_str">Soera %1$s, Ayah %2$d</string>
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Juz\'</string>
+  <string name="quran_page">Pagina</string>
+  <string name="quran_sura">Soera</string>
+  <string name="quran_ayah">Ayah %1$d</string>
+  <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
+  <string name="quran_sura_title">Soera %1$s</string>
+  <string name="sura_ayah_notification_str">Soera %1$s, Ayah %2$d</string>
 
-    <string name="bookmarks_current_page">Huidige Pagina</string>
-    <string name="index_loading">Laden&#8230;</string>
+  <string name="bookmarks_current_page">Huidige Pagina</string>
+  <string name="index_loading">Laden&#8230;</string>
 
-    <string name="canceling">annuleren&#8230;</string>
-    <string name="juz2_description">Juz\' %1$s</string>
-    <string name="page_description">pagina %1$s, Juz\' %2$s</string>
-    <string name="highlighting_database">Vereiste Bestanden</string>
-    <string name="timing_database">Vereiste Bestanden</string>
+  <string name="canceling">annuleren&#8230;</string>
+  <string name="juz2_description">Juz\' %1$s</string>
+  <string name="page_description">pagina %1$s, Juz\' %2$s</string>
+  <string name="highlighting_database">Vereiste Bestanden</string>
+  <string name="timing_database">Vereiste Bestanden</string>
 
-    <!-- download statuses and errors -->
-    <string name="sdcard_error">Kon geen SD-kaart vinden. Gelieve te dit te controleren en opnieuw te proberen.</string>
-    <string name="download_successful">Download Succesvol</string>
-    <string name="download_processing">Download Verwerken&#8230;</string>
-    <string name="download_error_general">Download mislukt</string>
-    <string name="download_error_disk">Er is onvoeldoende schijfruimte om te downloaden</string>
-    <string name="download_error_network">Er is een netwerk fout opgetreden tijdens het downloaden</string>
-    <string name="download_error_perms">Er is een toestemming fout opgetreden tijdens het downloaden</string>
-    <string name="download_error_invalid_download">Downloaded file was corrupted</string>
-    <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
-    <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
-    <string name="notification_download_canceled">Download canceled</string>
-    <string name="download_non_wifi_prompt">Je maak geen gebruik van Wifi. Toch gegevens downloaden?</string>
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">Kon geen SD-kaart vinden. Gelieve te dit te controleren en opnieuw te proberen.</string>
+  <string name="download_successful">Download Succesvol</string>
+  <string name="download_processing">Download Verwerken&#8230;</string>
+  <string name="download_error_general">Download mislukt</string>
+  <string name="download_error_disk">Er is onvoeldoende schijfruimte om te downloaden</string>
+  <string name="download_error_network">Er is een netwerk fout opgetreden tijdens het downloaden</string>
+  <string name="download_error_perms">Er is een toestemming fout opgetreden tijdens het downloaden</string>
+  <string name="download_error_invalid_download">Downloaded file was corrupted</string>
+  <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
+  <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
+  <string name="notification_download_canceled">Download canceled</string>
+  <string name="download_non_wifi_prompt">Je maak geen gebruik van Wifi. Toch gegevens downloaden?</string>
 
-    <!-- downloading dialogs -->
-    <string name="download_progress">%1$s Gedowload van %2$s</string>
-    <string name="download_sura_progress">%1$s Gedowload van %2$s van soera %3$d</string>
-    <string name="download_sura_ayah_progress">Downloaden van Soera %1$d ayah %2$d</string>
-    <string name="process_progress">Processing file %1$d / %2$d</string>
-    <string name="download_retry">Probeer opnieuw</string>
-    <string name="download_cancel">Annuleren</string>
-    <string name="download_extra_data">We moeten één of twee kleine bestanden downloaden om het delen en vertaling te ondersteunen. Download nu?</string>
+  <!-- downloading dialogs -->
+  <string name="download_progress">%1$s Gedowload van %2$s</string>
+  <string name="download_sura_progress">%1$s Gedowload van %2$s van soera %3$d</string>
+  <string name="download_sura_ayah_progress">Downloaden van Soera %1$d ayah %2$d</string>
+  <string name="process_progress">Processing file %1$d / %2$d</string>
+  <string name="download_retry">Probeer opnieuw</string>
+  <string name="download_cancel">Annuleren</string>
+  <string name="download_extra_data">We moeten één of twee kleine bestanden downloaden om het delen en vertaling te ondersteunen. Download nu?</string>
 
-    <!-- translation database stuff -->
-    <string name="remove_dlg_title">Vertaling Verwijderen?</string>
-    <string name="remove_dlg_msg">Bent u zeker dat u %1$s wilt verwijderen?</string>
-    <string name="error_getting_translation_list">Kan geen lijst met vertalingen downloaden. Probeer het later opnieuw.</string>
-    <string name="search_data">Zoek Gegevens</string>
-    <string name="need_translation">Je heb geen enkele vertaling/tafseer gedownload</string>
-    <string name="get_translations">Ontvang Vertalingen</string>
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Vertaling Verwijderen?</string>
+  <string name="remove_dlg_msg">Bent u zeker dat u %1$s wilt verwijderen?</string>
+  <string name="error_getting_translation_list">Kan geen lijst met vertalingen downloaden. Probeer het later opnieuw.</string>
+  <string name="search_data">Zoek Gegevens</string>
+  <string name="need_translation">Je heb geen enkele vertaling/tafseer gedownload</string>
+  <string name="get_translations">Ontvang Vertalingen</string>
 
-    <!-- help -->
-    <string name="email_us">Als uw vraag hierboven niet wordt beantwoord, kunt u een e-mail sturen naar quranandroid@gmail.com voor ondersteuning.
+  <!-- help -->
+  <string name="email_us">Als uw vraag hierboven niet wordt beantwoord, kunt u een e-mail sturen naar quranandroid@gmail.com voor ondersteuning.
          Houd er rekening mee dat we veel e-mails ontvangen. Wij zijn daarom niet instaat om deze allemaal te beantwoorden.
     </string>
 
-    <!-- sura metainfo -->
-    <string name="makki">Makki</string>
-    <string name="madani">Madani</string>
-    <plurals name="verses">
-        <item quantity="one">Eén vers</item>
-        <item quantity="other">%s verzen</item>
-    </plurals>
+  <!-- sura metainfo -->
+  <string name="makki">Makki</string>
+  <string name="madani">Madani</string>
+  <plurals name="verses">
+    <item quantity="one">Eén vers</item>
+    <item quantity="other">%s verzen</item>
+  </plurals>
 
-    <!-- ayah action panel -->
-    <string name="play_from">Van</string>
-    <string name="play_to">Naar</string>
-       <string name="play_restrict_range">Speel enkel de bovenstaande verzen af</string>
-    <string name="play_verses_range">Speel een reeks verzen af:</string>
-    <string name="play_each_verse">Speel elke vers af:</string>
-    <string name="play_apply">Pas toe</string>
-    <string name="play_apply_and_play">Pas toe en Speel af</string>
-    <string name="previous">Vorige</string>
-    <string name="play">Afspelen</string>
-    <string name="pause">Pauze</string>
-    <string name="stop">Stop</string>
-    <string name="next">Volgende</string>
+  <!-- ayah action panel -->
+  <string name="play_from">Van</string>
+  <string name="play_to">Naar</string>
+  <string name="play_restrict_range">Speel enkel de bovenstaande verzen af</string>
+  <string name="play_verses_range">Speel een reeks verzen af:</string>
+  <string name="play_each_verse">Speel elke vers af:</string>
+  <string name="play_apply">Pas toe</string>
+  <string name="play_apply_and_play">Pas toe en Speel af</string>
+  <string name="previous">Vorige</string>
+  <string name="play">Afspelen</string>
+  <string name="pause">Pauze</string>
+  <string name="stop">Stop</string>
+  <string name="next">Volgende</string>
 
-    <string-array name="repeatValues">
-        <item>1 keer</item>
-        <item>2 keer</item>
-        <item>3 keer</item>
-        <item>lus</item>
-    </string-array>
+  <string-array name="repeatValues">
+    <item>1 keer</item>
+    <item>2 keer</item>
+    <item>3 keer</item>
+    <item>lus</item>
+  </string-array>
 
-    <!-- long press -->
-    <string name="bookmark_ayah">Bladwijzer deze Ayah</string>
-    <string name="tag_ayah">Label deze Ayah</string>
-    <string name="share_ayah">Deel Ayah Link</string>
-    <string name="share_ayah_text">Deel Ayah Tekst</string>
-    <string name="translation_ayah">Ayah Vertaling/Tafseer</string>
-    <string name="play_from_here">Afspelen van hier</string>
-    <string name="via_string">via @QuranAndroid</string>
-    <string name="search_key">Druk op de zoek-toets om een vers te zoeken.</string>
-    <string name="copy_ayah">Kopieer Ayah</string>
-    <string name="ayah_copied_popup">Ayah Gekopieerd</string>
+  <!-- long press -->
+  <string name="bookmark_ayah">Bladwijzer deze Ayah</string>
+  <string name="tag_ayah">Label deze Ayah</string>
+  <string name="share_ayah">Deel Ayah Link</string>
+  <string name="share_ayah_text">Deel Ayah Tekst</string>
+  <string name="translation_ayah">Ayah Vertaling/Tafseer</string>
+  <string name="play_from_here">Afspelen van hier</string>
+  <string name="via_string">via @QuranAndroid</string>
+  <string name="search_key">Druk op de zoek-toets om een vers te zoeken.</string>
+  <string name="copy_ayah">Kopieer Ayah</string>
+  <string name="ayah_copied_popup">Ayah Gekopieerd</string>
 
-    <!-- bookmarks & tags contextual action bar -->
+  <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Label Bladwijzer</string>
-    <string name="delete_tag">Label Verwijderen</string>
-    <string name="edit_tag">Label Bewerken</string>
-    <string name="new_tag">Nieuwe Label</string>
-    <string name="not_tagged">Niet Gelabeld</string>
-    <plurals name="bookmark_tag_deleted">
-        <item quantity="one">een item verwijderd</item>
-        <item quantity="other">%d items verwijderd</item>
-    </plurals>
-    <string name="undo">Ongedaan Maken</string>
+  <string name="delete_tag">Label Verwijderen</string>
+  <string name="edit_tag">Label Bewerken</string>
+  <string name="new_tag">Nieuwe Label</string>
+  <string name="not_tagged">Niet Gelabeld</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">een item verwijderd</item>
+    <item quantity="other">%d items verwijderd</item>
+  </plurals>
+  <string name="undo">Ongedaan Maken</string>
 
-    <!-- tag dialog -->
-    <string name="tag_dlg_title">Label</string>
-    <string name="tag_name">Naam</string>
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Label</string>
+  <string name="tag_name">Naam</string>
 
-    <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">Geen Favorieten</string>
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">Geen Favorieten</string>
 
   <!-- audio manager -->
-    <string name="audio_manager">Geluid Manager</string>
+  <string name="audio_manager">Geluid Manager</string>
 </resources>

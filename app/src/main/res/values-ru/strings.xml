@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Коран</string>
-    <string name="downloadPrompt_title">Загрузить необходимые файлы?</string>
-    <string name="downloadPrompt">Для правильной работы приложения необходимо скачать некоторые
+  <string name="app_name">Коран</string>
+  <string name="downloadPrompt_title">Загрузить необходимые файлы?</string>
+  <string name="downloadPrompt">Для правильной работы приложения необходимо скачать некоторые
         файлы. Если не сделать этого сейчас, загрузка каждой страницы будет занимать значительно
         большее время. Вы хотите загрузить требуемые файлы сейчас?
     </string>
-    <string name="downloadTabletPrompt">Недавно мы добавили улучшенные изображения текста Корана для
+  <string name="downloadTabletPrompt">Недавно мы добавили улучшенные изображения текста Корана для
         планшетов. Хотите ли Вы загрузить эти изображения сейчас?
     </string>
-    <string name="downloadImportantPrompt">Для Вашего устройства имеется небольшое, но важное
+  <string name="downloadImportantPrompt">Для Вашего устройства имеется небольшое, но важное
         обновление изображений текста Корана. Хотите ли Вы загрузить это обновление сейчас?
     </string>
-    <string name="downloadPrompt_ok">Да</string>
-    <string name="downloadPrompt_no">Нет</string>
-    <string name="downloading_title">Загрузка &#8230;</string>
-    <string name="downloading_message">Пожалуйста, дождитесь загрузки файлов (имеется возможность
+  <string name="downloadPrompt_ok">Да</string>
+  <string name="downloadPrompt_no">Нет</string>
+  <string name="downloading_title">Загрузка &#8230;</string>
+  <string name="downloading_message">Пожалуйста, дождитесь загрузки файлов (имеется возможность
         возобновить).
     </string>
-    <string name="extracting_title">Извлечение&#8230;</string>
-    <string name="menu_about">О нас</string>
-    <string name="menu_other_apps">Другие приложения</string>
-    <string name="menu_settings">Настройки</string>
-    <string name="menu_jump_last_page">Последняя страница</string>
+  <string name="extracting_title">Извлечение&#8230;</string>
+  <string name="menu_about">О нас</string>
+  <string name="menu_other_apps">Другие приложения</string>
+  <string name="menu_settings">Настройки</string>
+  <string name="menu_jump_last_page">Последняя страница</string>
   <string name="menu_bookmarks">Закладки</string>
-    <string name="menu_bookmarks_page">Закладки страниц</string>
-    <string name="menu_bookmarks_ayah">Закладки аятов</string>
-    <string name="menu_sort">Сортировать</string>
-    <string name="menu_sort_date">По дате добавления</string>
-    <string name="menu_sort_location">По расположению в Коране</string>
-    <string name="menu_sort_group_by_tags">Группировать по меткам</string>
-    <string name="menu_translation">Показать перевод</string>
-    <string name="menu_back_to_page">Показать Коран</string>
-    <string name="menu_help">Помощь</string>
-    <string name="menu_search">Поиск</string>
-    <string name="menu_get_translations">Скачать перевод</string>
-    <string name="menu_jump">Перейти</string>
-    <string name="gotoPage">Перейти на страницу</string>
-    <string name="cancel">Отмена</string>
+  <string name="menu_bookmarks_page">Закладки страниц</string>
+  <string name="menu_bookmarks_ayah">Закладки аятов</string>
+  <string name="menu_sort">Сортировать</string>
+  <string name="menu_sort_date">По дате добавления</string>
+  <string name="menu_sort_location">По расположению в Коране</string>
+  <string name="menu_sort_group_by_tags">Группировать по меткам</string>
+  <string name="menu_translation">Показать перевод</string>
+  <string name="menu_back_to_page">Показать Коран</string>
+  <string name="menu_help">Помощь</string>
+  <string name="menu_search">Поиск</string>
+  <string name="menu_get_translations">Скачать перевод</string>
+  <string name="menu_jump">Перейти</string>
+  <string name="gotoPage">Перейти на страницу</string>
+  <string name="cancel">Отмена</string>
 
-    <!-- about -->
-    <string name="about_description">Quran for Android - это бесплатное приложение Корана.
+  <!-- about -->
+  <string name="about_description">Quran for Android - это бесплатное приложение Корана.
         Пожалуйста, не забывайте разработчиков и вкладчиков в ваших молитвах.
     </string>
-    <string name="about_data_sources">Источники данных</string>
-    <string name="about_images">Изображений</string>
-    <string name="about_madani_images">Изображения Корана основаны на шрифтах от King Fahd Quran
+  <string name="about_data_sources">Источники данных</string>
+  <string name="about_images">Изображений</string>
+  <string name="about_madani_images">Изображения Корана основаны на шрифтах от King Fahd Quran
         Printing Complex
     </string>
-    <string name="about_naskh_images">Изображения Коран для приложения Naskh были взяты
+  <string name="about_naskh_images">Изображения Коран для приложения Naskh были взяты
         (с разрешения) от SHL Info Systems
     </string>
-    <string name="about_qaloon_images">Изображения Qaloon используются с разрешением Nous Memes
+  <string name="about_qaloon_images">Изображения Qaloon используются с разрешением Nous Memes
         Editions Et Diffusion (Тунис)
     </string>
-    <string name="about_quranicaudio_summary">Безинтервальное рецитация Корана</string>
-    <string name="about_quran_ksu">Проект Электронный Мусхаф</string>
-    <string name="about_quran_ksu_summary">Проект Электронный Мусхаф Университета Короля Сауда
+  <string name="about_quranicaudio_summary">Безинтервальное рецитация Корана</string>
+  <string name="about_quran_ksu">Проект Электронный Мусхаф</string>
+  <string name="about_quran_ksu_summary">Проект Электронный Мусхаф Университета Короля Сауда
         служил источником арабского тафсира и переводов на нескольких языков
     </string>
-    <string name="about_tanzil_summary">Перевод для многих языков</string>
-    <string name="about_noorhidayat_summary">Шрифт Noorehira и перевод муфтия Мухаммада Таки Усмани</string>
-    <string name="about_open_source">Проекты с открытыми исходниками</string>
-    <string name="about_others">Другие</string>
-    <string name="about_contributors">Разработчики</string>
-    <string name="about_contributors_summary">Список людей, которые внесли свой вклад в развитие
+  <string name="about_tanzil_summary">Перевод для многих языков</string>
+  <string name="about_noorhidayat_summary">Шрифт Noorehira и перевод муфтия Мухаммада Таки Усмани</string>
+  <string name="about_open_source">Проекты с открытыми исходниками</string>
+  <string name="about_others">Другие</string>
+  <string name="about_contributors">Разработчики</string>
+  <string name="about_contributors_summary">Список людей, которые внесли свой вклад в развитие
         Quran for Android
     </string>
 
-    <!-- help -->
-    <string name="help_title">Часто задаваемые вопросы (FAQ)</string>
-    <string name="help">
+  <!-- help -->
+  <string name="help_title">Часто задаваемые вопросы (FAQ)</string>
+  <string name="help">
         &lt;b>Как мне воспроизвести аудио?&lt;/b>
         &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Внизу Вы заметите кнопку воспроизведения
         и текст с именем чтеца. Для выбора другого чтеца нажмите на имени текущего чтеца. Нажмите на
@@ -103,250 +103,250 @@
         &lt;br/>К сожалению, Android версии до 4.0 не поддерживают эти шрифты, и мы ничего не можем сделать,
         чтобы как-то помочь Вам в этом вопросе.
     </string>
-    <string name="search_hint">Поиск по Корану</string>
-    <string name="quranSearchType">Стихи Корана</string>
+  <string name="search_hint">Поиск по Корану</string>
+  <string name="quranSearchType">Стихи Корана</string>
 
-    <plurals name="files_downloaded">
-        <item quantity="one">Загружено %1$d сура</item>
-        <item quantity="few">Загружено %1$d суры</item>
-        <item quantity="many">Загружено %1$d сур</item>
-        <item quantity="other">Загружено %1$d сур</item>
-    </plurals>
+  <plurals name="files_downloaded">
+    <item quantity="one">Загружено %1$d сура</item>
+    <item quantity="few">Загружено %1$d суры</item>
+    <item quantity="many">Загружено %1$d сур</item>
+    <item quantity="other">Загружено %1$d сур</item>
+  </plurals>
 
-    <!-- Shown above search results when we receive a search request. -->
-    <plurals name="search_results">
-        <item quantity="one">%2$d результат для \"%1$s\": </item>
-        <item quantity="few">%2$d результата для \"%1$s\": </item>
-        <item quantity="many">%2$d результатов для \"%1$s\": </item>
-        <item quantity="other">%2$d результатов для \"%1$s\": </item>
-    </plurals>
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">%2$d результат для \"%1$s\": </item>
+    <item quantity="few">%2$d результата для \"%1$s\": </item>
+    <item quantity="many">%2$d результатов для \"%1$s\": </item>
+    <item quantity="other">%2$d результатов для \"%1$s\": </item>
+  </plurals>
 
-    <!-- m permissions stuff -->
-    <string name="storage_permission_rationale">Коран хочет вашего разрешения, чтобы сохранить свои
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Коран хочет вашего разрешения, чтобы сохранить свои
         данные на внешнем хранилище. Коран будет работать без этого разрешения, но если вы будете
         стереть данные или удалить приложение, то все загруженные страницы, аудио и другие данные
         будут удалены. Дать Корану разрешение?
     </string>
-    <string name="storage_permission_please_restart">Пожалуйста, перезапустите приложение, чтобы
+  <string name="storage_permission_please_restart">Пожалуйста, перезапустите приложение, чтобы
         изменения вступили в силу.
     </string>
 
-    <!-- Search messages -->
-    <string name="found_in_sura">Найдено в суре %1$s, Аят %2$d</string>
-    <string name="no_results">Результатов для \"%s\" не найдено</string>
-    <string name="no_active_translation">Вы не выбрали активный перевод. Сначала выберите активный
+  <!-- Search messages -->
+  <string name="found_in_sura">Найдено в суре %1$s, Аят %2$d</string>
+  <string name="no_results">Результатов для \"%s\" не найдено</string>
+  <string name="no_active_translation">Вы не выбрали активный перевод. Сначала выберите активный
         перевод и воспользуйтесь поиском снова.
     </string>
-    <string name="translation_settings">Настройки перевода</string>
-    <string name="no_arabic_search_available">Вы не скачали пакет данных для арабского поиска.
+  <string name="translation_settings">Настройки перевода</string>
+  <string name="no_arabic_search_available">Вы не скачали пакет данных для арабского поиска.
         Пожалуйста, сначала скачайте его и воспользуйтесь поиском снова.
     </string>
-    <string name="get_arabic_search_db">Скачать данные для арабского поиска</string>
+  <string name="get_arabic_search_db">Скачать данные для арабского поиска</string>
 
-    <!-- Quran Preference Activity -->
-    <string name="prefs_category_navigation">Перемещение</string>
-    <string name="prefs_volume_key_navigation_title">Переход клавишами громкости</string>
-    <string name="prefs_volume_key_navigation_summary">Листать страницы с помощью кнопок громкости звука</string>
-    <string name="prefs_category_reading">Настройки чтения</string>
-    <string name="prefs_category_translation">Настройки перевода</string>
-    <string name="prefs_category_display_settings">Настройки экрана</string>
-    <string name="prefs_use_arabic_title">Режим арабского</string>
-    <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык </string>
-    <string name="prefs_new_background_title">Новый фон</string>
-    <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
-    <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
-    <string name="prefs_lock_orientation_summary_off">Адаптировать под текущую ориентацию</string>
-    <string name="prefs_landscape_orientation_title">Альбомный режим</string>
-    <string name="prefs_landscape_orientation_summary_on">Использовать альбомный режим</string>
-    <string name="prefs_landscape_orientation_summary_off">Использовать книжный режим</string>
-    <string name="prefs_night_mode_title">Ночной режим</string>
-    <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
-    <string name="prefs_night_mode_text_brightness_title">Яркость текста</string>
-    <string name="prefs_night_mode_text_brightness_summary">Яркость текста при включенном ночном режиме</string>
-    <string name="prefs_overlay_page_info_title">Показать инфо страницы</string>
-    <string name="prefs_overlay_page_info_summary">При чтении использовать наложение поверх экрана номера страницы, название суры и номера джуза</string>
-    <string name="prefs_display_marker_title">Всплывающие сообщения</string>
-    <string name="prefs_display_marker_summary">Показывать всплывающие сообщения по достижении джуза, хизба и т.д.</string>
-    <string name="prefs_highlight_bookmarks_title">Выделять закладки</string>
-    <string name="prefs_highlight_bookmarks_summary">Выделять при чтении аяты из закладок</string>
-    <string name="prefs_translation_text_title">Размер текста перевода</string>
-    <string name="prefs_translations">Переводы</string>
-    <string name="prefs_translations_summary">Загрузка и управление переводами</string>
-    <string name="prefs_ayah_before_translation_title">Аят до перевода</string>
-    <string name="prefs_ayah_before_translation_summary">Показывать аят на арабском раньше перевода</string>
-    <string name="prefs_category_download">Настройки загрузки</string>
-    <string name="prefs_streaming_title">Потоковое</string>
-    <string name="prefs_streaming_summary">При возможности потоковое аудио (только прерывистое аудио)</string>
-    <string name="prefs_download_amount_title">Объем скачивания</string>
-    <string name="prefs_download_amount_summary">Предпочтительный объем загрузки для прерывистого аудио</string>
-    <string name="prefs_audio_manager">Аудио менеджер (экспериментальный)</string>
-    <string name="prefs_audio_manager_summary">Управлять и скачать аудио рецитация Корана</string>
-    <string name="downloaded_translations">Загруженные переводы</string>
-    <string name="available_translations">Доступные для загрузки</string>
-    <string name="remove_button">Удалить</string>
-    <string name="dialog_ok">OK</string>
-    <string name="prefs_app_location_title">Расположение приложения</string>
-    <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
-    <string name="prefs_sdcard_internal">Внутренняя память</string>
-    <string name="prefs_sdcard_external">Внешняя SD карта %1$d</string>
-    <string name="prefs_app_size">Размер приложения</string>
-    <string name="prefs_calculating_app_size">Расчет размера приложения</string>
-    <string name="prefs_copying_app_files">Копирование файлов приложения</string>
-    <string name="prefs_err_moving_app_files">Ошибка перемещения файлов приложения</string>
-    <string name="prefs_no_enough_space_to_move_files">Недостаточно свободного места для перемещения файлов приложения</string>
-    <string name="prefs_megabytes_int">%1$d Mб</string>
-    <string name="prefs_megabytes_str">%s Mб</string>
-    <string name="prefs_tablet_mode_title">Режим планшета</string>
-    <string name="prefs_tablet_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом.</string>
-    <string name="prefs_tablet_mode_disabled">В альбомном режиме будет отображена только одна страницы.</string>
-    <string name="prefs_category_advanced">Расширенные настройки</string>
-    <string name="prefs_export_title">Экспорт</string>
-    <string name="prefs_export_summary">Экспорт копию закладок и тегов</string>
+  <!-- Quran Preference Activity -->
+  <string name="prefs_category_navigation">Перемещение</string>
+  <string name="prefs_volume_key_navigation_title">Переход клавишами громкости</string>
+  <string name="prefs_volume_key_navigation_summary">Листать страницы с помощью кнопок громкости звука</string>
+  <string name="prefs_category_reading">Настройки чтения</string>
+  <string name="prefs_category_translation">Настройки перевода</string>
+  <string name="prefs_category_display_settings">Настройки экрана</string>
+  <string name="prefs_use_arabic_title">Режим арабского</string>
+  <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык </string>
+  <string name="prefs_new_background_title">Новый фон</string>
+  <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
+  <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
+  <string name="prefs_lock_orientation_summary_off">Адаптировать под текущую ориентацию</string>
+  <string name="prefs_landscape_orientation_title">Альбомный режим</string>
+  <string name="prefs_landscape_orientation_summary_on">Использовать альбомный режим</string>
+  <string name="prefs_landscape_orientation_summary_off">Использовать книжный режим</string>
+  <string name="prefs_night_mode_title">Ночной режим</string>
+  <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
+  <string name="prefs_night_mode_text_brightness_title">Яркость текста</string>
+  <string name="prefs_night_mode_text_brightness_summary">Яркость текста при включенном ночном режиме</string>
+  <string name="prefs_overlay_page_info_title">Показать инфо страницы</string>
+  <string name="prefs_overlay_page_info_summary">При чтении использовать наложение поверх экрана номера страницы, название суры и номера джуза</string>
+  <string name="prefs_display_marker_title">Всплывающие сообщения</string>
+  <string name="prefs_display_marker_summary">Показывать всплывающие сообщения по достижении джуза, хизба и т.д.</string>
+  <string name="prefs_highlight_bookmarks_title">Выделять закладки</string>
+  <string name="prefs_highlight_bookmarks_summary">Выделять при чтении аяты из закладок</string>
+  <string name="prefs_translation_text_title">Размер текста перевода</string>
+  <string name="prefs_translations">Переводы</string>
+  <string name="prefs_translations_summary">Загрузка и управление переводами</string>
+  <string name="prefs_ayah_before_translation_title">Аят до перевода</string>
+  <string name="prefs_ayah_before_translation_summary">Показывать аят на арабском раньше перевода</string>
+  <string name="prefs_category_download">Настройки загрузки</string>
+  <string name="prefs_streaming_title">Потоковое</string>
+  <string name="prefs_streaming_summary">При возможности потоковое аудио (только прерывистое аудио)</string>
+  <string name="prefs_download_amount_title">Объем скачивания</string>
+  <string name="prefs_download_amount_summary">Предпочтительный объем загрузки для прерывистого аудио</string>
+  <string name="prefs_audio_manager">Аудио менеджер (экспериментальный)</string>
+  <string name="prefs_audio_manager_summary">Управлять и скачать аудио рецитация Корана</string>
+  <string name="downloaded_translations">Загруженные переводы</string>
+  <string name="available_translations">Доступные для загрузки</string>
+  <string name="remove_button">Удалить</string>
+  <string name="dialog_ok">OK</string>
+  <string name="prefs_app_location_title">Расположение приложения</string>
+  <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
+  <string name="prefs_sdcard_internal">Внутренняя память</string>
+  <string name="prefs_sdcard_external">Внешняя SD карта %1$d</string>
+  <string name="prefs_app_size">Размер приложения</string>
+  <string name="prefs_calculating_app_size">Расчет размера приложения</string>
+  <string name="prefs_copying_app_files">Копирование файлов приложения</string>
+  <string name="prefs_err_moving_app_files">Ошибка перемещения файлов приложения</string>
+  <string name="prefs_no_enough_space_to_move_files">Недостаточно свободного места для перемещения файлов приложения</string>
+  <string name="prefs_megabytes_int">%1$d Mб</string>
+  <string name="prefs_megabytes_str">%s Mб</string>
+  <string name="prefs_tablet_mode_title">Режим планшета</string>
+  <string name="prefs_tablet_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом.</string>
+  <string name="prefs_tablet_mode_disabled">В альбомном режиме будет отображена только одна страницы.</string>
+  <string name="prefs_category_advanced">Расширенные настройки</string>
+  <string name="prefs_export_title">Экспорт</string>
+  <string name="prefs_export_summary">Экспорт копию закладок и тегов</string>
 
-    <string name="import_data_permissions_error">Не удается прочитать файл резервной копии из-за ошибки разрешения.</string>
-    <string name="import_data_error">Неверный файл резервной копии (или не удалось открыть файл с резервной копией).</string>
-    <string name="import_data">Импорт данных</string>
-    <string name="import_data_and_override">Если вы будете импортировать этот файл, все ваши закладки будут заменены
+  <string name="import_data_permissions_error">Не удается прочитать файл резервной копии из-за ошибки разрешения.</string>
+  <string name="import_data_error">Неверный файл резервной копии (или не удалось открыть файл с резервной копией).</string>
+  <string name="import_data">Импорт данных</string>
+  <string name="import_data_and_override">Если вы будете импортировать этот файл, все ваши закладки будут заменены
         с %1$d закладки и %2$d метки. Импортировать?</string>
-    <string name="import_successful">Данные успешно импортированы</string>
-    <string name="export_data_error">Ошибка экспорта данных</string>
-    <string name="exported_data">Данные экспортированы в %1$s</string>
+  <string name="import_successful">Данные успешно импортированы</string>
+  <string name="export_data_error">Ошибка экспорта данных</string>
+  <string name="exported_data">Данные экспортированы в %1$s</string>
 
-    <string name="warning">Внимание</string>
-    <string name="kitkat_external_message">Из-за ограничений Android, если Вы сейчас разместите исходные данные
+  <string name="warning">Внимание</string>
+  <string name="kitkat_external_message">Из-за ограничений Android, если Вы сейчас разместите исходные данные
         приложения Quran for Android на Вашей внешней SD карте, а затем очистите или деинсталлируете приложение,
         все страницы и аудио приложения Quran for Android будут удалены. Все эти данные нужно будет скачать снова. Вы уверены,
         что хотите использовать внешнюю SD карту?</string>
-    <string name="please_grant_permissions">Пожалуйста, предоставляйте разрешения в настройках приложения</string>
-    <!-- Preferences End -->
+  <string name="please_grant_permissions">Пожалуйста, предоставляйте разрешения в настройках приложения</string>
+  <!-- Preferences End -->
 
-    <!-- translation updates -->
-    <string name="update_available">Доступно обновление</string>
-    <string name="translation_updates_available">Для Ваших переводов доступны обновления. Перейти на экран переводов?</string>
-    <string name="translation_dialog_yes">Да</string>
-    <string name="translation_dialog_later">Позже</string>
+  <!-- translation updates -->
+  <string name="update_available">Доступно обновление</string>
+  <string name="translation_updates_available">Для Ваших переводов доступны обновления. Перейти на экран переводов?</string>
+  <string name="translation_dialog_yes">Да</string>
+  <string name="translation_dialog_later">Позже</string>
 
-    <!-- End Number picker Strings -->
-    <string name="quran_rob3">¼</string>
-    <string name="quran_nos">½</string>
-    <string name="quran_talt_arb3">¾</string>
-    <string name="quran_hizb">Хизб</string>
-    <string name="quran_juz2">Джуз</string>
-    <string name="quran_page">Страница</string>
-    <string name="quran_sura">Сура</string>
-    <string name="quran_ayah">Аят %1$d</string>
-    <string name="quran_ayah_details">%1$s - аят %2$s, джуз %3$s</string>
-    <string name="quran_sura_title">Сура %1$s</string>
-    <string name="sura_ayah_notification_str">Сура %1$s, аят %2$d</string>
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Хизб</string>
+  <string name="quran_juz2">Джуз</string>
+  <string name="quran_page">Страница</string>
+  <string name="quran_sura">Сура</string>
+  <string name="quran_ayah">Аят %1$d</string>
+  <string name="quran_ayah_details">%1$s - аят %2$s, джуз %3$s</string>
+  <string name="quran_sura_title">Сура %1$s</string>
+  <string name="sura_ayah_notification_str">Сура %1$s, аят %2$d</string>
 
-    <string name="bookmarks_current_page">Текущая страница</string>
-    <string name="index_loading">Загрузка…</string>
+  <string name="bookmarks_current_page">Текущая страница</string>
+  <string name="index_loading">Загрузка…</string>
 
-    <string name="canceling">Отмена&#8230;</string>
-    <string name="juz2_description">джуз %1$s</string>
-    <string name="page_description">стр. %1$s, джуз %2$s</string>
-    <string name="highlighting_database">Необходимые файлы</string>
-    <string name="timing_database">Необходимые файлы</string>
+  <string name="canceling">Отмена&#8230;</string>
+  <string name="juz2_description">джуз %1$s</string>
+  <string name="page_description">стр. %1$s, джуз %2$s</string>
+  <string name="highlighting_database">Необходимые файлы</string>
+  <string name="timing_database">Необходимые файлы</string>
 
-    <!-- download statuses and errors -->
-    <string name="sdcard_error">SD карта не найдена. Пожалуйста, вставьте карту и попробуйте снова.</string>
-    <string name="download_successful">Загрузка завершена</string>
-    <string name="download_processing">Загрузка&#8230;</string>
-    <string name="download_error_general">Загрузка оборвалась</string>
-    <string name="download_error_disk">Для загрузки недостаточно места на диске</string>
-    <string name="download_error_network">Не удалось загрузить из-за ошибки соединения</string>
-    <string name="download_error_perms">Не удалось загрузить из-за ошибки разрешений</string>
-    <string name="download_error_invalid_download">Загруженный файл был поврежден</string>
-    <string name="download_error_invalid_download_retry">Поврежденный файл, попытка загрузить заново</string>
-    <string name="download_error_network_retry">Ошибка соединения, попытка возобновить&#8230;</string>
-    <string name="notification_download_canceled">Загрузка отменена</string>
-    <string name="download_non_wifi_prompt">Вы не подключены к Wi-Fi. Все равно продолжить загрузку?</string>
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">SD карта не найдена. Пожалуйста, вставьте карту и попробуйте снова.</string>
+  <string name="download_successful">Загрузка завершена</string>
+  <string name="download_processing">Загрузка&#8230;</string>
+  <string name="download_error_general">Загрузка оборвалась</string>
+  <string name="download_error_disk">Для загрузки недостаточно места на диске</string>
+  <string name="download_error_network">Не удалось загрузить из-за ошибки соединения</string>
+  <string name="download_error_perms">Не удалось загрузить из-за ошибки разрешений</string>
+  <string name="download_error_invalid_download">Загруженный файл был поврежден</string>
+  <string name="download_error_invalid_download_retry">Поврежденный файл, попытка загрузить заново</string>
+  <string name="download_error_network_retry">Ошибка соединения, попытка возобновить&#8230;</string>
+  <string name="notification_download_canceled">Загрузка отменена</string>
+  <string name="download_non_wifi_prompt">Вы не подключены к Wi-Fi. Все равно продолжить загрузку?</string>
 
-    <!-- downloading dialogs -->
-    <string name="download_progress">Загружено %1$s / %2$s</string>
-    <string name="download_sura_progress">Загружено %1$s / %2$s суры %3$d</string>
-    <string name="download_sura_ayah_progress">Загружается сура %1$d аят %2$d</string>
-    <string name="process_progress">Загрузка файла %1$d / %2$d</string>
-    <string name="download_retry">Повторить</string>
-    <string name="download_cancel">Отмена</string>
-     <string name="download_extra_data">Для поддержки перевода и обмена аятами необходимо скачать один или два маленьких файла. Загрузить сейчас?</string>
+  <!-- downloading dialogs -->
+  <string name="download_progress">Загружено %1$s / %2$s</string>
+  <string name="download_sura_progress">Загружено %1$s / %2$s суры %3$d</string>
+  <string name="download_sura_ayah_progress">Загружается сура %1$d аят %2$d</string>
+  <string name="process_progress">Загрузка файла %1$d / %2$d</string>
+  <string name="download_retry">Повторить</string>
+  <string name="download_cancel">Отмена</string>
+  <string name="download_extra_data">Для поддержки перевода и обмена аятами необходимо скачать один или два маленьких файла. Загрузить сейчас?</string>
 
-    <!-- translation database stuff -->
-    <string name="remove_dlg_title">Удалить перевод?</string>
-    <string name="remove_dlg_msg">Вы уверены, что хотите удалить %1$s?</string>
-    <string name="error_getting_translation_list">Нет возможности скачать лист переводов. Пожалуйста, попробуйте позже.</string>
-    <string name="search_data">Поиск данных</string>
-    <string name="need_translation">У Вас еще нет ни одного скачанного перевода/тафсира.</string>
-    <string name="get_translations">Скачать перевод</string>
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Удалить перевод?</string>
+  <string name="remove_dlg_msg">Вы уверены, что хотите удалить %1$s?</string>
+  <string name="error_getting_translation_list">Нет возможности скачать лист переводов. Пожалуйста, попробуйте позже.</string>
+  <string name="search_data">Поиск данных</string>
+  <string name="need_translation">У Вас еще нет ни одного скачанного перевода/тафсира.</string>
+  <string name="get_translations">Скачать перевод</string>
 
-    <!-- help -->
-    <string name="email_us">Если Вы не нашли нужного ответа, то можете написать на email quranandroid@gmail.com . Пожалуйста, имейте ввиду, что
+  <!-- help -->
+  <string name="email_us">Если Вы не нашли нужного ответа, то можете написать на email quranandroid@gmail.com . Пожалуйста, имейте ввиду, что
     мы получаем множество писем, поэтому оперативно отвечать на все просто невозможно.</string>
 
-    <!-- sura metainfo -->
-    <string name="makki">Мекка</string>
-    <string name="madani">Медина</string>
-    <plurals name="verses">
-        <item quantity="one">%s аят</item>
-        <item quantity="few">%s аятa</item>
-        <item quantity="many">%s аятов</item>
-        <item quantity="other">%s аятов</item>
-    </plurals>
+  <!-- sura metainfo -->
+  <string name="makki">Мекка</string>
+  <string name="madani">Медина</string>
+  <plurals name="verses">
+    <item quantity="one">%s аят</item>
+    <item quantity="few">%s аятa</item>
+    <item quantity="many">%s аятов</item>
+    <item quantity="other">%s аятов</item>
+  </plurals>
 
-    <!-- ayah action panel -->
-    <string name="play_from">От</string>
-    <string name="play_to">До</string>
-    <string name="play_restrict_range">Воспроизвести только вышестоящие аяты</string>
-    <string name="play_verses_range">Вос-ти набор аятов:</string>
-    <string name="play_each_verse">Вос-ти каждый аят:</string>
-    <string name="play_apply">Применить</string>
-    <string name="play_apply_and_play">Применить и воспроизвести</string>
-    <string name="previous">Предыдущий</string>
-    <string name="play">Воспроизвести</string>
-    <string name="pause">Пауза</string>
-    <string name="stop">Приостановить</string>
-    <string name="next">Следующий</string>
+  <!-- ayah action panel -->
+  <string name="play_from">От</string>
+  <string name="play_to">До</string>
+  <string name="play_restrict_range">Воспроизвести только вышестоящие аяты</string>
+  <string name="play_verses_range">Вос-ти набор аятов:</string>
+  <string name="play_each_verse">Вос-ти каждый аят:</string>
+  <string name="play_apply">Применить</string>
+  <string name="play_apply_and_play">Применить и воспроизвести</string>
+  <string name="previous">Предыдущий</string>
+  <string name="play">Воспроизвести</string>
+  <string name="pause">Пауза</string>
+  <string name="stop">Приостановить</string>
+  <string name="next">Следующий</string>
 
-    <string-array name="repeatValues">
-        <item>1 раз</item>
-        <item>2 раза</item>
-        <item>3 раза</item>
-        <item>бесконечно</item>
-    </string-array>
+  <string-array name="repeatValues">
+    <item>1 раз</item>
+    <item>2 раза</item>
+    <item>3 раза</item>
+    <item>бесконечно</item>
+  </string-array>
 
-    <!-- long press -->
-    <string name="bookmark_ayah">Создать закладку этого аята</string>
-    <string name="tag_ayah">Создать метку для этого аята</string>
-    <string name="share_ayah">Поделиться аятом</string>
-    <string name="share_ayah_text">Поделиться текстом аята</string>
-    <string name="translation_ayah">Перевод/тафсир аята</string>
-    <string name="play_from_here">Воспроизвести отсюда</string>
-    <string name="via_string">через @QuranAndroid</string>
-    <string name="search_key">Нажмите кнопку поиска, чтобы найти стих</string>
-    <string name="copy_ayah">Скопировать аят</string>
-    <string name="ayah_copied_popup">Аят скопирован</string>
+  <!-- long press -->
+  <string name="bookmark_ayah">Создать закладку этого аята</string>
+  <string name="tag_ayah">Создать метку для этого аята</string>
+  <string name="share_ayah">Поделиться аятом</string>
+  <string name="share_ayah_text">Поделиться текстом аята</string>
+  <string name="translation_ayah">Перевод/тафсир аята</string>
+  <string name="play_from_here">Воспроизвести отсюда</string>
+  <string name="via_string">через @QuranAndroid</string>
+  <string name="search_key">Нажмите кнопку поиска, чтобы найти стих</string>
+  <string name="copy_ayah">Скопировать аят</string>
+  <string name="ayah_copied_popup">Аят скопирован</string>
 
-    <!-- bookmarks & tags contextual action bar -->
+  <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Отметить закладку</string>
-    <string name="delete_tag">Удалить метку</string>
-    <string name="edit_tag">Редактировать метку</string>
-    <string name="new_tag">Новая метка</string>
-    <string name="not_tagged">Без метки</string>
-    <plurals name="bookmark_tag_deleted">
-        <item quantity="one">Удалено %d элемент</item>
-        <item quantity="few">Удалено %d элемента</item>
-        <item quantity="many">Удалено %d элементов</item>
-        <item quantity="other">Удалено %d элементов</item>
-    </plurals>
-    <string name="undo">@string/cancel</string>
+  <string name="delete_tag">Удалить метку</string>
+  <string name="edit_tag">Редактировать метку</string>
+  <string name="new_tag">Новая метка</string>
+  <string name="not_tagged">Без метки</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Удалено %d элемент</item>
+    <item quantity="few">Удалено %d элемента</item>
+    <item quantity="many">Удалено %d элементов</item>
+    <item quantity="other">Удалено %d элементов</item>
+  </plurals>
+  <string name="undo">@string/cancel</string>
 
-    <!-- tag dialog -->
-    <string name="tag_dlg_title">Метка</string>
-    <string name="tag_name">Название</string>
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Метка</string>
+  <string name="tag_name">Название</string>
 
-    <!-- bookmark & tag list -->
-    <string name="bookmarks_list_empty">Закладки отсутствуют</string>
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">Закладки отсутствуют</string>
 
   <!-- audio manager -->
-    <string name="audio_manager">Аудио менеджер</string>
+  <string name="audio_manager">Аудио менеджер</string>
 </resources>

@@ -20,13 +20,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.LinearLayout;
 
-class SlidingTabStrip extends LinearLayout {
+class SlidingTabStrip extends LeftToRightLinearLayout {
 
   private static final int DEFAULT_BOTTOM_BORDER_THICKNESS_DIPS = 0;
   private static final byte DEFAULT_BOTTOM_BORDER_COLOR_ALPHA = 0x26;
@@ -71,11 +69,6 @@ class SlidingTabStrip extends LinearLayout {
 
     mSelectedIndicatorThickness = (int) (SELECTED_INDICATOR_THICKNESS_DIPS * density);
     mSelectedIndicatorPaint = new Paint();
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      // Quran already flips everything for RTL, so ask LinearLayout not to re-flip
-      setLayoutDirection(LAYOUT_DIRECTION_LTR);
-    }
   }
 
   void setCustomTabColorizer(SlidingTabLayout.TabColorizer customTabColorizer) {

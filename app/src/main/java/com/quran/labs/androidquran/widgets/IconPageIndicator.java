@@ -31,7 +31,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -77,12 +76,8 @@ public class IconPageIndicator extends HorizontalScrollView implements
     super(context, attrs);
     setHorizontalScrollBarEnabled(false);
 
-    mIconsLayout = new LinearLayout(context);
+    mIconsLayout = new LeftToRightLinearLayout(context);
     addView(mIconsLayout, new LayoutParams(WRAP_CONTENT, MATCH_PARENT));
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      // Quran explicitly passes views flipped, so ask LinearLayout not to re-flip
-      mIconsLayout.setLayoutDirection(LAYOUT_DIRECTION_LTR);
-    }
 
     // Set indicator attributes (to defaults)
     final float density = context.getResources().getDisplayMetrics().density;

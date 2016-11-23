@@ -229,7 +229,7 @@
   <!-- sura metainfo -->
   <string name="makki">Makki</string>
   <string name="madani">Madani</string>
-    <plurals name="verses">
+  <plurals name="verses">
     <item quantity="one">%s Aya</item>
     <item quantity="other">%s Ayāt</item>
   </plurals>
@@ -249,10 +249,10 @@
   <string name="next">Suivant</string>
 
   <string-array name="repeatValues">
-      <item>1 fois</item>
-      <item>2 fois</item>
-      <item>3 fois</item>
-      <item>indéfiniment</item>
+    <item>1 fois</item>
+    <item>2 fois</item>
+    <item>3 fois</item>
+    <item>indéfiniment</item>
   </string-array>
 
   <!-- long press -->
