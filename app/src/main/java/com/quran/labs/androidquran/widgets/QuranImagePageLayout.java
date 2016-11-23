@@ -9,7 +9,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.util.PageController;
 
 public class QuranImagePageLayout extends QuranPageLayout {
-  private HighlightingImageView mImageView;
+  private HighlightingImageView imageView;
 
   public QuranImagePageLayout(Context context) {
     super(context);
@@ -17,19 +17,19 @@ public class QuranImagePageLayout extends QuranPageLayout {
 
   @Override
   protected View generateContentView(Context context, boolean isLandscape) {
-    mImageView = new HighlightingImageView(context);
-    mImageView.setAdjustViewBounds(true);
-    mImageView.setIsScrollable(isLandscape && shouldWrapWithScrollView());
-    return mImageView;
+    imageView = new HighlightingImageView(context);
+    imageView.setAdjustViewBounds(true);
+    imageView.setIsScrollable(isLandscape && shouldWrapWithScrollView());
+    return imageView;
   }
 
   @Override
   protected void setContentNightMode(boolean nightMode, int textBrightness) {
-    mImageView.setNightMode(nightMode, textBrightness);
+    imageView.setNightMode(nightMode, textBrightness);
   }
 
   public HighlightingImageView getImageView() {
-    return mImageView;
+    return imageView;
   }
 
   @Override
@@ -43,9 +43,9 @@ public class QuranImagePageLayout extends QuranPageLayout {
         return gestureDetector.onTouchEvent(event);
       }
     };
-    mImageView.setOnTouchListener(gestureListener);
-    mImageView.setClickable(true);
-    mImageView.setLongClickable(true);
+    imageView.setOnTouchListener(gestureListener);
+    imageView.setClickable(true);
+    imageView.setLongClickable(true);
   }
 
   private class PageGestureDetector extends

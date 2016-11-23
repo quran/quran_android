@@ -47,16 +47,16 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   public static final String TRANSLATION_DOWNLOAD_KEY = "TRANSLATION_DOWNLOAD_KEY";
   private static final String UPGRADING_EXTENSION = ".old";
 
-  private List<TranslationRowData> mItems;
-  private List<TranslationItem> mAllItems;
-  private SparseIntArray mTranslationPositions;
+  private List<TranslationRowData> items;
+  private List<TranslationItem> allItems;
+  private SparseIntArray translationPositions;
 
-  private ListView mListView;
-  private TextView mMessageArea;
-  private TranslationsAdapter mAdapter;
-  private TranslationItem mDownloadingItem;
-  private String mDatabaseDirectory;
-  private QuranSettings mQuranSettings;
+  private ListView listView;
+  private TextView messageArea;
+  private TranslationsAdapter adapter;
+  private TranslationItem downloadingItem;
+  private String databaseDirectory;
+  private QuranSettings quranSettings;
 
   @Inject TranslationManagerPresenter mPresenter;
   private DefaultDownloadReceiver mDownloadReceiver = null;
@@ -69,11 +69,11 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
 
     setContentView(R.layout.translation_manager);
-    mListView = (ListView) findViewById(R.id.translation_list);
-    mAdapter = new TranslationsAdapter(this, null);
-    mListView.setAdapter(mAdapter);
-    mMessageArea = (TextView) findViewById(R.id.message_area);
-    mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    listView = (ListView) findViewById(R.id.translation_list);
+    adapter = new TranslationsAdapter(this, null);
+    listView.setAdapter(adapter);
+    messageArea = (TextView) findViewById(R.id.message_area);
+    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView,
           View view, int pos, long id) {
@@ -81,7 +81,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
     });
 
-    mDatabaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);
+    databaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);
 
     final ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -89,7 +89,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       actionBar.setTitle(R.string.prefs_translations);
     }
 
-    mQuranSettings = QuranSettings.getInstance(this);
+    quranSettings = QuranSettings.getInstance(this);
     mPresenter.bind(this);
     mPresenter.getTranslationsList(false);
   }
@@ -123,11 +123,11 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
   @Override
   public void handleDownloadSuccess() {
-    if (mDownloadingItem != null) {
-      if (mDownloadingItem.exists()) {
+    if (downloadingItem != null) {
+      if (downloadingItem.exists()) {
         try {
-          File f = new File(mDatabaseDirectory,
-              mDownloadingItem.translation.filename + UPGRADING_EXTENSION);
+          File f = new File(databaseDirectory,
+              downloadingItem.translation.filename + UPGRADING_EXTENSION);
           if (f.exists()) {
             f.delete();
           }
@@ -135,21 +135,21 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           Timber.d(e, "error removing old database file");
         }
       }
-      TranslationItem updated = mDownloadingItem.withTranslationVersion(
-          mDownloadingItem.translation.currentVersion);
+      TranslationItem updated = downloadingItem.withTranslationVersion(
+          downloadingItem.translation.currentVersion);
       updateTranslationItem(updated);
     }
-    mDownloadingItem = null;
+    downloadingItem = null;
     generateListItems();
   }
 
   @Override
   public void handleDownloadFailure(int errId) {
-    if (mDownloadingItem != null && mDownloadingItem.exists()) {
+    if (downloadingItem != null && downloadingItem.exists()) {
       try {
-        File f = new File(mDatabaseDirectory,
-            mDownloadingItem.translation.filename + UPGRADING_EXTENSION);
-        File destFile = new File(mDatabaseDirectory, mDownloadingItem.translation.filename);
+        File f = new File(databaseDirectory,
+            downloadingItem.translation.filename + UPGRADING_EXTENSION);
+        File destFile = new File(databaseDirectory, downloadingItem.translation.filename);
         if (f.exists() && !destFile.exists()) {
           f.renameTo(destFile);
         } else {
@@ -159,21 +159,21 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         Timber.d(e, "error restoring translation after failed download");
       }
     }
-    mDownloadingItem = null;
+    downloadingItem = null;
   }
 
   private void updateTranslationItem(TranslationItem updated) {
     int id = updated.translation.id;
-    int allItemsIndex = mTranslationPositions.get(id);
-    if (mAllItems != null && mAllItems.size() > allItemsIndex) {
-      mAllItems.remove(allItemsIndex);
-      mAllItems.add(allItemsIndex, updated);
+    int allItemsIndex = translationPositions.get(id);
+    if (allItems != null && allItems.size() > allItemsIndex) {
+      allItems.remove(allItemsIndex);
+      allItems.add(allItemsIndex, updated);
     }
     mPresenter.updateItem(updated);
   }
 
   public void onErrorDownloadTranslations() {
-    mMessageArea.setText(R.string.error_getting_translation_list);
+    messageArea.setText(R.string.error_getting_translation_list);
   }
 
   public void onTranslationsUpdated(List<TranslationItem> items) {
@@ -182,23 +182,23 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       TranslationItem item = items.get(i);
       itemsSparseArray.put(item.translation.id, i);
     }
-    mAllItems = items;
-    mTranslationPositions = itemsSparseArray;
+    allItems = items;
+    translationPositions = itemsSparseArray;
 
-    mMessageArea.setVisibility(View.GONE);
-    mListView.setVisibility(View.VISIBLE);
+    messageArea.setVisibility(View.GONE);
+    listView.setVisibility(View.VISIBLE);
     generateListItems();
   }
 
   private void generateListItems() {
-    if (mAllItems == null) {
+    if (allItems == null) {
       return;
     }
 
     List<TranslationItem> downloaded = new ArrayList<>();
     List<TranslationItem> notDownloaded = new ArrayList<>();
-    for (int i = 0, mAllItemsSize = mAllItems.size(); i < mAllItemsSize; i++) {
-      TranslationItem item = mAllItems.get(i);
+    for (int i = 0, mAllItemsSize = allItems.size(); i < mAllItemsSize; i++) {
+      TranslationItem item = allItems.get(i);
       if (item.exists()) {
         downloaded.add(item);
       } else {
@@ -218,7 +218,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
 
       if (!needsUpgrade) {
-        mQuranSettings.setHaveUpdatedTranslations(false);
+        quranSettings.setHaveUpdatedTranslations(false);
       }
     }
 
@@ -228,22 +228,22 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       res.add(item);
     }
 
-    mItems = res;
-    mAdapter.setData(mItems);
-    mAdapter.notifyDataSetChanged();
+    items = res;
+    adapter.setData(items);
+    adapter.notifyDataSetChanged();
   }
 
   private void downloadItem(int pos) {
-    if (mItems == null || !(mAdapter.getItem(pos) instanceof TranslationItem)) {
+    if (items == null || !(adapter.getItem(pos) instanceof TranslationItem)) {
       return;
     }
 
-    TranslationItem selectedItem = (TranslationItem) mAdapter.getItem(pos);
+    TranslationItem selectedItem = (TranslationItem) adapter.getItem(pos);
     if (selectedItem.exists() && !selectedItem.needsUpgrade()) {
       return;
     }
 
-    mDownloadingItem = selectedItem;
+    downloadingItem = selectedItem;
     if (mDownloadReceiver == null) {
       mDownloadReceiver = new DefaultDownloadReceiver(this,
           QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
@@ -258,7 +258,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     if (selectedItem.translation.fileUrl == null) {
       return;
     }
-    String destination = mDatabaseDirectory;
+    String destination = databaseDirectory;
     Timber.d("downloading %s to %s", url, destination);
 
     if (selectedItem.exists()) {
@@ -291,12 +291,12 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   }
 
   private void removeItem(final int pos) {
-    if (mItems == null || mAdapter == null) {
+    if (items == null || adapter == null) {
       return;
     }
 
     final TranslationItem selectedItem =
-        (TranslationItem) mAdapter.getItem(pos);
+        (TranslationItem) adapter.getItem(pos);
     String msg = String.format(getString(R.string.remove_dlg_msg), selectedItem.name());
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(R.string.remove_dlg_title)
@@ -308,9 +308,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
                     selectedItem.translation.filename);
                 TranslationItem updatedItem = selectedItem.withTranslationRemoved();
                 updateTranslationItem(updatedItem);
-                String current = mQuranSettings.getActiveTranslation();
+                String current = quranSettings.getActiveTranslation();
                 if (current.equals(selectedItem.translation.filename)) {
-                  mQuranSettings.removeActiveTranslation();
+                  quranSettings.removeActiveTranslation();
                 }
                 generateListItems();
               }

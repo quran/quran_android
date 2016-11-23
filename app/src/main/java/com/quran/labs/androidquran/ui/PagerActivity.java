@@ -145,37 +145,37 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private static final long DEFAULT_HIDE_AFTER_TIME = 2000;
 
-  private QuranSettings mSettings = null;
-  private long mLastPopupTime = 0;
-  private boolean mIsActionBarHidden = true;
-  private AudioStatusBar mAudioStatusBar = null;
-  private ViewPager mViewPager = null;
-  private QuranPageAdapter mPagerAdapter = null;
-  private boolean mShouldReconnect = false;
-  private SparseBooleanArray mBookmarksCache = null;
-  private DownloadAudioRequest mLastAudioDownloadRequest = null;
-  private boolean mShowingTranslation = false;
-  private int mHighlightedSura = -1;
-  private int mHighlightedAyah = -1;
-  private int mAyahToolBarTotalHeight;
-  private boolean mShouldOverridePlaying = false;
-  private DefaultDownloadReceiver mDownloadReceiver;
-  private boolean mNeedsPermissionToDownloadOver3g = true;
-  private AlertDialog mPromptDialog = null;
-  private AyahInfoDatabaseHandler mAyahInfoAdapter, mTabletAyahInfoAdapter;
-  private AyahToolBar mAyahToolBar;
-  private AyahToolBarPosition mAyahToolBarPos;
-  private AudioRequest mLastAudioRequest;
-  private boolean mDualPages = false;
-  private boolean mIsLandscape;
-  private boolean mImmersiveInPortrait;
-  private Integer mLastPlayingSura;
-  private Integer mLastPlayingAyah;
-  private View mToolBarArea;
-  private boolean mPromptedForExtraDownload;
+  private QuranSettings settings = null;
+  private long lastPopupTime = 0;
+  private boolean isActionBarHidden = true;
+  private AudioStatusBar audioStatusBar = null;
+  private ViewPager viewPager = null;
+  private QuranPageAdapter pagerAdapter = null;
+  private boolean shouldReconnect = false;
+  private SparseBooleanArray bookmarksCache = null;
+  private DownloadAudioRequest lastAudioDownloadRequest = null;
+  private boolean showingTranslation = false;
+  private int highlightedSura = -1;
+  private int highlightedAyah = -1;
+  private int ayahToolBarTotalHeight;
+  private boolean shouldOverridePlaying = false;
+  private DefaultDownloadReceiver downloadReceiver;
+  private boolean needsPermissionToDownloadOver3g = true;
+  private AlertDialog promptDialog = null;
+  private AyahInfoDatabaseHandler ayahInfoAdapter, tabletAyahInfoAdapter;
+  private AyahToolBar ayahToolBar;
+  private AyahToolBarPosition ayahToolBarPos;
+  private AudioRequest lastAudioRequest;
+  private boolean isDualPages = false;
+  private boolean isLandscape;
+  private boolean isImmersiveInPortrait;
+  private Integer lastPlayingSura;
+  private Integer lastPlayingAyah;
+  private View toolBarArea;
+  private boolean promptedForExtraDownload;
   private QuranSpinner translationsSpinner;
-  private ProgressDialog mProgressDialog;
-  private ViewGroup.MarginLayoutParams mAudioBarParams;
+  private ProgressDialog progressDialog;
+  private ViewGroup.MarginLayoutParams audioBarParams;
   private boolean isInMultiWindowMode;
 
   private String[] translationItems;
@@ -187,29 +187,29 @@ public class PagerActivity extends QuranActionBarActivity implements
   // AYAH ACTION PANEL STUFF
   // Max height of sliding panel (% of screen)
   private static final float PANEL_MAX_HEIGHT = 0.6f;
-  private SlidingUpPanelLayout mSlidingPanel;
-  private ViewPager mSlidingPager;
-  private SlidingPagerAdapter mSlidingPagerAdapter;
-  private boolean mIsInAyahMode;
-  private SuraAyah mStart;
-  private SuraAyah mEnd;
+  private SlidingUpPanelLayout slidingPanel;
+  private ViewPager slidingPager;
+  private SlidingPagerAdapter slidingPagerAdapter;
+  private boolean isInAyahMode;
+  private SuraAyah start;
+  private SuraAyah end;
 
-  @Inject QuranPageWorker mWorker;
-  @Inject BookmarkModel mBookmarkModel;
-  private CompositeSubscription mCompositeSubscription;
+  @Inject QuranPageWorker quranPageWorker;
+  @Inject BookmarkModel bookmarkModel;
+  private CompositeSubscription compositeSubscription;
 
-  private final PagerHandler mHandler = new PagerHandler(this);
+  private final PagerHandler handler = new PagerHandler(this);
 
   private static class PagerHandler extends Handler {
-    private final WeakReference<PagerActivity> mActivity;
+    private final WeakReference<PagerActivity> activity;
 
     PagerHandler(PagerActivity activity) {
-      mActivity = new WeakReference<>(activity);
+      this.activity = new WeakReference<>(activity);
     }
 
     @Override
     public void handleMessage(Message msg) {
-      PagerActivity activity = mActivity.get();
+      PagerActivity activity = this.activity.get();
       if (activity != null) {
         if (msg.what == MSG_HIDE_ACTIONBAR) {
           activity.toggleActionBarVisibility(false);
@@ -229,11 +229,11 @@ public class PagerActivity extends QuranActionBarActivity implements
     // field injection
     quranApp.getApplicationComponent().inject(this);
 
-    mBookmarksCache = new SparseBooleanArray();
+    bookmarksCache = new SparseBooleanArray();
 
     boolean shouldAdjustPageNumber = false;
     QuranScreenInfo qsi = QuranScreenInfo.getOrMakeInstance(this);
-    mDualPages = QuranUtils.isDualPages(this, qsi);
+    isDualPages = QuranUtils.isDualPages(this, qsi);
 
     // remove the window background to avoid overdraw. note that, per Romain's blog, this is
     // acceptable (as long as we don't set the background color to null in the theme, since
@@ -243,17 +243,17 @@ public class PagerActivity extends QuranActionBarActivity implements
     // initialize ayah info database
     String filename = QuranFileUtils.getAyaPositionFileName();
     try {
-      mAyahInfoAdapter = AyahInfoDatabaseHandler.getDatabaseHandler(this, filename);
+      ayahInfoAdapter = AyahInfoDatabaseHandler.getDatabaseHandler(this, filename);
     } catch (Exception e) {
       // no ayah info database available
     }
 
-    mTabletAyahInfoAdapter = null;
+    tabletAyahInfoAdapter = null;
     if (qsi.isTablet(this)) {
       try {
         filename = QuranFileUtils.getAyaPositionFileName(
             qsi.getTabletWidthParam());
-        mTabletAyahInfoAdapter =
+        tabletAyahInfoAdapter =
             AyahInfoDatabaseHandler.getDatabaseHandler(this, filename);
       } catch (Exception e) {
         // no ayah info database available for tablet
@@ -262,39 +262,39 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     int page = -1;
 
-    mIsActionBarHidden = true;
+    isActionBarHidden = true;
     if (savedInstanceState != null) {
       Timber.d("non-null saved instance state!");
       DownloadAudioRequest lastAudioRequest =
           savedInstanceState.getParcelable(LAST_AUDIO_DL_REQUEST);
       if (lastAudioRequest != null) {
         Timber.d("restoring request from saved instance!");
-        mLastAudioDownloadRequest = lastAudioRequest;
+        lastAudioDownloadRequest = lastAudioRequest;
       }
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
       if (page != -1) {
         page = PAGES_LAST - page;
       }
-      mShowingTranslation = savedInstanceState
+      showingTranslation = savedInstanceState
           .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
       if (savedInstanceState.containsKey(LAST_ACTIONBAR_STATE)) {
-        mIsActionBarHidden = !savedInstanceState
+        isActionBarHidden = !savedInstanceState
             .getBoolean(LAST_ACTIONBAR_STATE);
       }
-      boolean lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, mDualPages);
-      shouldAdjustPageNumber = (lastWasDualPages != mDualPages);
+      boolean lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, isDualPages);
+      shouldAdjustPageNumber = (lastWasDualPages != isDualPages);
 
-      mStart = savedInstanceState.getParcelable(LAST_START_POINT);
-      mEnd = savedInstanceState.getParcelable(LAST_ENDING_POINT);
-      mLastAudioRequest = savedInstanceState.getParcelable(LAST_AUDIO_REQUEST);
+      start = savedInstanceState.getParcelable(LAST_START_POINT);
+      end = savedInstanceState.getParcelable(LAST_ENDING_POINT);
+      this.lastAudioRequest = savedInstanceState.getParcelable(LAST_AUDIO_REQUEST);
     }
 
-    mSettings = QuranSettings.getInstance(this);
-    mCompositeSubscription = new CompositeSubscription();
+    settings = QuranSettings.getInstance(this);
+    compositeSubscription = new CompositeSubscription();
 
     // subscribe to changes in bookmarks
-    mCompositeSubscription.add(
-        mBookmarkModel.bookmarksObservable()
+    compositeSubscription.add(
+        bookmarkModel.bookmarksObservable()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Action1<Void>() {
               @Override
@@ -304,17 +304,17 @@ public class PagerActivity extends QuranActionBarActivity implements
             }));
 
     final Resources resources = getResources();
-    mImmersiveInPortrait = resources.getBoolean(R.bool.immersive_in_portrait);
-    mIsLandscape = resources.getConfiguration().orientation ==
+    isImmersiveInPortrait = resources.getBoolean(R.bool.immersive_in_portrait);
+    isLandscape = resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
-    mAyahToolBarTotalHeight = resources
+    ayahToolBarTotalHeight = resources
         .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
-    mAudioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
-    mAudioStatusBar.setAudioBarListener(this);
-    mAudioBarParams = (ViewGroup.MarginLayoutParams) mAudioStatusBar.getLayoutParams();
+    audioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
+    audioStatusBar.setAudioBarListener(this);
+    audioBarParams = (ViewGroup.MarginLayoutParams) audioStatusBar.getLayoutParams();
 
-    mToolBarArea = findViewById(R.id.toolbar_area);
+    toolBarArea = findViewById(R.id.toolbar_area);
     translationsSpinner = (QuranSpinner) findViewById(R.id.spinner);
 
     // this is the colored view behind the status bar on kitkat and above
@@ -322,7 +322,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     statusBarBackground.getLayoutParams().height = getStatusBarHeight();
 
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    if (mSettings.isArabicNames() || QuranUtils.isRtl()) {
+    if (settings.isArabicNames() || QuranUtils.isRtl()) {
       // remove when we remove LTR from quran_page_activity's root
       ViewCompat.setLayoutDirection(toolbar, ViewCompat.LAYOUT_DIRECTION_RTL);
     }
@@ -343,26 +343,26 @@ public class PagerActivity extends QuranActionBarActivity implements
         page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
       }
 
-      mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, mShowingTranslation);
-      mHighlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
-      mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+      showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
+      highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
+      highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
     }
 
-    if (mShowingTranslation && translationItems != null) {
+    if (showingTranslation && translationItems != null) {
       updateActionBarSpinner();
     } else {
       updateActionBarTitle(PAGES_LAST - page);
     }
 
-    mLastPopupTime = System.currentTimeMillis();
-    mPagerAdapter = new QuranPageAdapter(
-        getSupportFragmentManager(), mDualPages, mShowingTranslation);
-    mAyahToolBar = (AyahToolBar) findViewById(R.id.ayah_toolbar);
-    mViewPager = (ViewPager) findViewById(R.id.quran_pager);
-    mViewPager.setAdapter(mPagerAdapter);
+    lastPopupTime = System.currentTimeMillis();
+    pagerAdapter = new QuranPageAdapter(
+        getSupportFragmentManager(), isDualPages, showingTranslation);
+    ayahToolBar = (AyahToolBar) findViewById(R.id.ayah_toolbar);
+    viewPager = (ViewPager) findViewById(R.id.quran_pager);
+    viewPager.setAdapter(pagerAdapter);
 
-    mAyahToolBar.setOnItemSelectedListener(new AyahMenuItemSelectionHandler());
-    mViewPager.addOnPageChangeListener(new OnPageChangeListener() {
+    ayahToolBar.setOnItemSelectedListener(new AyahMenuItemSelectionHandler());
+    viewPager.addOnPageChangeListener(new OnPageChangeListener() {
 
       @Override
       public void onPageScrollStateChanged(int state) {
@@ -371,23 +371,23 @@ public class PagerActivity extends QuranActionBarActivity implements
       @Override
       public void onPageScrolled(int position, float positionOffset,
                                  int positionOffsetPixels) {
-        if (mAyahToolBar.isShowing() && mAyahToolBarPos != null) {
-          int barPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
+        if (ayahToolBar.isShowing() && ayahToolBarPos != null) {
+          int barPos = QuranInfo.getPosFromPage(start.getPage(), isDualPages);
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
-            mAyahToolBarPos.xScroll = 0 - positionOffsetPixels;
+            ayahToolBarPos.xScroll = 0 - positionOffsetPixels;
           } else if (position == barPos - 1) {
             // Swiping to prev ViewPager page (i.e. next quran page)
-            mAyahToolBarPos.xScroll = mViewPager.getWidth() - positionOffsetPixels;
+            ayahToolBarPos.xScroll = viewPager.getWidth() - positionOffsetPixels;
           } else {
             // Totally off screen, should hide toolbar
-            mAyahToolBar.setVisibility(View.GONE);
+            ayahToolBar.setVisibility(View.GONE);
             return;
           }
-          mAyahToolBar.updatePosition(mAyahToolBarPos);
+          ayahToolBar.updatePosition(ayahToolBarPos);
           // If the toolbar is not showing, show it
-          if (mAyahToolBar.getVisibility() != View.VISIBLE) {
-            mAyahToolBar.setVisibility(View.VISIBLE);
+          if (ayahToolBar.getVisibility() != View.VISIBLE) {
+            ayahToolBar.setVisibility(View.VISIBLE);
           }
         }
       }
@@ -395,26 +395,26 @@ public class PagerActivity extends QuranActionBarActivity implements
       @Override
       public void onPageSelected(int position) {
         Timber.d("onPageSelected(): %d", position);
-        final int page = QuranInfo.getPageFromPos(position, mDualPages);
-        mSettings.setLastPage(page);
-        if (mSettings.shouldDisplayMarkerPopup()) {
-          mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
-              PagerActivity.this, page, mLastPopupTime);
-          if (mDualPages) {
-            mLastPopupTime = QuranDisplayHelper.displayMarkerPopup(
-                PagerActivity.this, page - 1, mLastPopupTime);
+        final int page = QuranInfo.getPageFromPos(position, isDualPages);
+        settings.setLastPage(page);
+        if (settings.shouldDisplayMarkerPopup()) {
+          lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+              PagerActivity.this, page, lastPopupTime);
+          if (isDualPages) {
+            lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+                PagerActivity.this, page - 1, lastPopupTime);
           }
         }
 
-        if (!mShowingTranslation) {
+        if (!showingTranslation) {
           updateActionBarTitle(page);
         } else {
           refreshActionBarSpinner();
         }
 
-        if (mBookmarksCache.indexOfKey(page) < 0) {
-          if (mDualPages) {
-            if (mBookmarksCache.indexOfKey(page - 1) < 0) {
+        if (bookmarksCache.indexOfKey(page) < 0) {
+          if (isDualPages) {
+            if (bookmarksCache.indexOfKey(page - 1) < 0) {
               checkIfPageIsBookmarked(page - 1, page);
             }
           } else {
@@ -424,8 +424,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
 
         // If we're more than 1 page away from ayah selection end ayah mode
-        if (mIsInAyahMode) {
-          int ayahPos = QuranInfo.getPosFromPage(mStart.getPage(), mDualPages);
+        if (isInAyahMode) {
+          int ayahPos = QuranInfo.getPosFromPage(start.getPage(), isDualPages);
           if (Math.abs(ayahPos - position) > 1) {
             endAyahMode();
           }
@@ -435,7 +435,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
       setUiVisibilityListener();
-      mAudioStatusBar.setVisibility(View.VISIBLE);
+      audioStatusBar.setVisibility(View.VISIBLE);
     }
     toggleActionBarVisibility(true);
 
@@ -443,7 +443,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       // when going from two page per screen to one or vice versa, we adjust the page number,
       // such that the first page is always selected.
       int curPage = PAGES_LAST - page;
-      if (mDualPages) {
+      if (isDualPages) {
         if (curPage % 2 != 0) {
           curPage++;
         }
@@ -455,19 +455,19 @@ public class PagerActivity extends QuranActionBarActivity implements
         curPage = PAGES_LAST - curPage;
       }
       page = curPage;
-    } else if (mDualPages) {
+    } else if (isDualPages) {
       page = page / 2;
     }
 
-    mViewPager.setCurrentItem(page);
+    viewPager.setCurrentItem(page);
 
     // just got created, need to reconnect to service
-    mShouldReconnect = true;
+    shouldReconnect = true;
 
     // enforce orientation lock
-    if (mSettings.isLockOrientation()) {
+    if (settings.isLockOrientation()) {
       int current = getResources().getConfiguration().orientation;
-      if (mSettings.isLandscapeOrientation()) {
+      if (settings.isLandscapeOrientation()) {
         if (current == Configuration.ORIENTATION_PORTRAIT) {
           setRequestedOrientation(
               ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -483,13 +483,13 @@ public class PagerActivity extends QuranActionBarActivity implements
         mAudioReceiver,
         new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
 
-    mDownloadReceiver = new DefaultDownloadReceiver(this,
+    downloadReceiver = new DefaultDownloadReceiver(this,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
     String action = QuranDownloadNotifier.ProgressIntent.INTENT_NAME;
     LocalBroadcastManager.getInstance(this).registerReceiver(
-        mDownloadReceiver,
+        downloadReceiver,
         new IntentFilter(action));
-    mDownloadReceiver.setListener(this);
+    downloadReceiver.setListener(this);
   }
 
   private int getStatusBarHeight() {
@@ -506,17 +506,17 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void initAyahActionPanel() {
-    mSlidingPanel = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
+    slidingPanel = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
     final ViewGroup slidingLayout =
-        (ViewGroup) mSlidingPanel.findViewById(R.id.sliding_layout);
-    mSlidingPager = (ViewPager) mSlidingPanel
+        (ViewGroup) slidingPanel.findViewById(R.id.sliding_layout);
+    slidingPager = (ViewPager) slidingPanel
         .findViewById(R.id.sliding_layout_pager);
     final IconPageIndicator slidingPageIndicator =
-        (IconPageIndicator) mSlidingPanel
+        (IconPageIndicator) slidingPanel
             .findViewById(R.id.sliding_pager_indicator);
 
     // Find close button and set listener
-    final View closeButton = mSlidingPanel
+    final View closeButton = slidingPanel
         .findViewById(R.id.sliding_menu_close);
     closeButton.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -526,28 +526,28 @@ public class PagerActivity extends QuranActionBarActivity implements
     });
 
     // Create and set fragment pager adapter
-    mSlidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
+    slidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-            (mSettings.isArabicNames() || QuranUtils.isRtl()));
-    mSlidingPager.setAdapter(mSlidingPagerAdapter);
+            (settings.isArabicNames() || QuranUtils.isRtl()));
+    slidingPager.setAdapter(slidingPagerAdapter);
 
     // Attach the view pager to the action bar
-    slidingPageIndicator.setViewPager(mSlidingPager);
+    slidingPageIndicator.setViewPager(slidingPager);
 
     // Set sliding layout parameters
     int displayHeight = getResources().getDisplayMetrics().heightPixels;
     slidingLayout.getLayoutParams().height =
         (int) (displayHeight * PANEL_MAX_HEIGHT);
-    mSlidingPanel.setEnableDragViewTouchEvents(true);
-    mSlidingPanel.setPanelSlideListener(new SlidingPanelListener());
+    slidingPanel.setEnableDragViewTouchEvents(true);
+    slidingPanel.setPanelSlideListener(new SlidingPanelListener());
     slidingLayout.setVisibility(View.GONE);
 
     // When clicking any menu items, expand the panel
     slidingPageIndicator.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (!mSlidingPanel.isExpanded()) {
-          mSlidingPanel.expandPane();
+        if (!slidingPanel.isExpanded()) {
+          slidingPanel.expandPane();
         }
       }
     });
@@ -557,16 +557,16 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
     if (hasFocus) {
-      mHandler.sendEmptyMessageDelayed(MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME);
+      handler.sendEmptyMessageDelayed(MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME);
     } else {
-      mHandler.removeMessages(MSG_HIDE_ACTIONBAR);
+      handler.removeMessages(MSG_HIDE_ACTIONBAR);
     }
   }
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibility(boolean isVisible) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-        (mIsLandscape || mImmersiveInPortrait)){
+        (isLandscape || isImmersiveInPortrait)){
       setUiVisibilityKitKat(isVisible);
       if (isInMultiWindowMode) {
         animateToolBar(isVisible);
@@ -578,7 +578,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (!isVisible) {
       flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN;
     }
-    mViewPager.setSystemUiVisibility(flags);
+    viewPager.setSystemUiVisibility(flags);
     if (isInMultiWindowMode) {
       animateToolBar(isVisible);
     }
@@ -595,12 +595,12 @@ public class PagerActivity extends QuranActionBarActivity implements
           | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
           | View.SYSTEM_UI_FLAG_IMMERSIVE;
     }
-    mViewPager.setSystemUiVisibility(flags);
+    viewPager.setSystemUiVisibility(flags);
   }
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibilityListener(){
-    mViewPager.setOnSystemUiVisibilityChangeListener(
+    viewPager.setOnSystemUiVisibilityChangeListener(
         new View.OnSystemUiVisibilityChangeListener() {
           @Override
           public void onSystemUiVisibilityChange(int flags) {
@@ -612,43 +612,43 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void clearUiVisibilityListener(){
-    mViewPager.setOnSystemUiVisibilityChangeListener(null);
+    viewPager.setOnSystemUiVisibilityChangeListener(null);
   }
 
   private void animateToolBar(boolean visible) {
-    mIsActionBarHidden = !visible;
+    isActionBarHidden = !visible;
     if (visible) {
-      mAudioStatusBar.updateSelectedItem();
+      audioStatusBar.updateSelectedItem();
     }
 
     // animate toolbar
-    mToolBarArea.animate()
-        .translationY(visible ? 0 : -mToolBarArea.getHeight())
+    toolBarArea.animate()
+        .translationY(visible ? 0 : -toolBarArea.getHeight())
         .setDuration(250)
         .start();
 
             /* the bottom margin on the audio bar is not part of its height, and so we have to
              * take it into account when animating the audio bar off the screen. */
-    final int bottomMargin = mAudioBarParams.bottomMargin;
+    final int bottomMargin = audioBarParams.bottomMargin;
 
     // and audio bar
-    mAudioStatusBar.animate()
-        .translationY(visible ? 0 : mAudioStatusBar.getHeight() + bottomMargin)
+    audioStatusBar.animate()
+        .translationY(visible ? 0 : audioStatusBar.getHeight() + bottomMargin)
         .setDuration(250)
         .start();
   }
 
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
-    boolean navigate = mAudioStatusBar.getCurrentMode() !=
+    boolean navigate = audioStatusBar.getCurrentMode() !=
         AudioStatusBar.PLAYING_MODE
         && PreferenceManager.getDefaultSharedPreferences(this).
         getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
     if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+      viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
       return true;
     } else if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-      mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
+      viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
       return true;
     }
     return super.onKeyDown(keyCode, event);
@@ -658,7 +658,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public boolean onKeyUp(int keyCode, @NonNull KeyEvent event) {
     return ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
         keyCode == KeyEvent.KEYCODE_VOLUME_UP) &&
-        mAudioStatusBar.getCurrentMode() !=
+        audioStatusBar.getCurrentMode() !=
             AudioStatusBar.PLAYING_MODE &&
         PreferenceManager.getDefaultSharedPreferences(this)
             .getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false))
@@ -673,17 +673,17 @@ public class PagerActivity extends QuranActionBarActivity implements
     requestTranslationsList();
 
     super.onResume();
-    if (mShouldReconnect) {
+    if (shouldReconnect) {
       startService(AudioUtils.getAudioIntent(
           this, AudioService.ACTION_CONNECT));
-      mShouldReconnect = false;
+      shouldReconnect = false;
     }
 
-    if (mHighlightedSura > 0 && mHighlightedAyah > 0) {
-      mHandler.postDelayed(
+    if (highlightedSura > 0 && highlightedAyah > 0) {
+      handler.postDelayed(
           new Runnable() {
             public void run() {
-              highlightAyah(mHighlightedSura, mHighlightedAyah, false, HighlightType.SELECTION);
+              highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION);
             }
           }, 750);
     }
@@ -691,14 +691,14 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public AyahInfoDatabaseHandler getAyahInfoDatabase(String widthParam) {
     if (QuranScreenInfo.getInstance().getWidthParam().equals(widthParam)) {
-      return mAyahInfoAdapter;
+      return ayahInfoAdapter;
     } else {
-      return mTabletAyahInfoAdapter;
+      return tabletAyahInfoAdapter;
     }
   }
 
   public void showGetRequiredFilesDialog() {
-    if (mPromptDialog != null) {
+    if (promptDialog != null) {
       return;
     }
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -708,26 +708,26 @@ public class PagerActivity extends QuranActionBarActivity implements
               public void onClick(DialogInterface dialog, int option) {
                 downloadRequiredFiles();
                 dialog.dismiss();
-                mPromptDialog = null;
+                promptDialog = null;
               }
             })
         .setNegativeButton(R.string.downloadPrompt_no,
             new DialogInterface.OnClickListener() {
               public void onClick(DialogInterface dialog, int option) {
                 dialog.dismiss();
-                mPromptDialog = null;
+                promptDialog = null;
               }
             });
-    mPromptDialog = builder.create();
-    mPromptDialog.show();
+    promptDialog = builder.create();
+    promptDialog.show();
   }
 
   public void downloadRequiredFiles() {
     int downloadType = QuranDownloadService.DOWNLOAD_TYPE_AUDIO;
-    if (mAudioStatusBar.getCurrentMode() == AudioStatusBar.STOPPED_MODE) {
+    if (audioStatusBar.getCurrentMode() == AudioStatusBar.STOPPED_MODE) {
       // if we're stopped, use audio download bar as our progress bar
-      mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      if (mIsActionBarHidden) {
+      audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+      if (isActionBarHidden) {
         toggleActionBar();
       }
     } else {
@@ -792,29 +792,29 @@ public class PagerActivity extends QuranActionBarActivity implements
           extras.getInt("page", Constants.PAGES_FIRST);
       updateActionBarTitle(PAGES_LAST - page);
 
-      boolean currentValue = mShowingTranslation;
-      mShowingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, mShowingTranslation);
-      mHighlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
-      mHighlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+      boolean currentValue = showingTranslation;
+      showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
+      highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
+      highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
 
-      if (mShowingTranslation != currentValue) {
-        if (mShowingTranslation) {
-          mPagerAdapter.setTranslationMode();
+      if (showingTranslation != currentValue) {
+        if (showingTranslation) {
+          pagerAdapter.setTranslationMode();
         } else {
-          mPagerAdapter.setQuranMode();
+          pagerAdapter.setQuranMode();
         }
 
         supportInvalidateOptionsMenu();
       }
 
-      if (mHighlightedAyah > 0 && mHighlightedSura > 0) {
+      if (highlightedAyah > 0 && highlightedSura > 0) {
         // this will jump to the right page automagically
-        highlightAyah(mHighlightedSura, mHighlightedAyah, true, HighlightType.SELECTION);
+        highlightAyah(highlightedSura, highlightedAyah, true, HighlightType.SELECTION);
       } else {
-        if (mDualPages) {
+        if (isDualPages) {
           page = page / 2;
         }
-        mViewPager.setCurrentItem(page);
+        viewPager.setCurrentItem(page);
       }
 
       setIntent(intent);
@@ -837,9 +837,9 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onPause() {
-    if (mPromptDialog != null) {
-      mPromptDialog.dismiss();
-      mPromptDialog = null;
+    if (promptDialog != null) {
+      promptDialog.dismiss();
+      promptDialog = null;
     }
     super.onPause();
   }
@@ -853,35 +853,35 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     // remove broadcast receivers
     LocalBroadcastManager.getInstance(this).unregisterReceiver(mAudioReceiver);
-    if (mDownloadReceiver != null) {
-      mDownloadReceiver.setListener(null);
+    if (downloadReceiver != null) {
+      downloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this)
-          .unregisterReceiver(mDownloadReceiver);
-      mDownloadReceiver = null;
+          .unregisterReceiver(downloadReceiver);
+      downloadReceiver = null;
     }
 
-    mCompositeSubscription.unsubscribe();
-    mHandler.removeCallbacksAndMessages(null);
+    compositeSubscription.unsubscribe();
+    handler.removeCallbacksAndMessages(null);
     dismissProgressDialog();
     super.onDestroy();
   }
 
   @Override
   public void onSaveInstanceState(Bundle state) {
-    if (mLastAudioDownloadRequest != null) {
-      state.putParcelable(LAST_AUDIO_DL_REQUEST, mLastAudioDownloadRequest);
+    if (lastAudioDownloadRequest != null) {
+      state.putParcelable(LAST_AUDIO_DL_REQUEST, lastAudioDownloadRequest);
     }
-    int lastPage = QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
+    int lastPage = QuranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
     state.putInt(LAST_READ_PAGE, lastPage);
-    state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, mShowingTranslation);
-    state.putBoolean(LAST_ACTIONBAR_STATE, mIsActionBarHidden);
-    state.putBoolean(LAST_WAS_DUAL_PAGES, mDualPages);
-    if (mStart != null && mEnd != null) {
-      state.putParcelable(LAST_START_POINT, mStart);
-      state.putParcelable(LAST_ENDING_POINT, mEnd);
+    state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, showingTranslation);
+    state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden);
+    state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages);
+    if (start != null && end != null) {
+      state.putParcelable(LAST_START_POINT, start);
+      state.putParcelable(LAST_ENDING_POINT, end);
     }
-    if (mLastAudioRequest != null) {
-      state.putParcelable(LAST_AUDIO_REQUEST, mLastAudioRequest);
+    if (lastAudioRequest != null) {
+      state.putParcelable(LAST_AUDIO_REQUEST, lastAudioRequest);
     }
     super.onSaveInstanceState(state);
   }
@@ -905,16 +905,16 @@ public class PagerActivity extends QuranActionBarActivity implements
     super.onPrepareOptionsMenu(menu);
     MenuItem item = menu.findItem(R.id.favorite_item);
     if (item != null) {
-      int page = QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
+      int page = QuranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
 
       boolean bookmarked = false;
-      if (mBookmarksCache.indexOfKey(page) >= 0) {
-        bookmarked = mBookmarksCache.get(page);
+      if (bookmarksCache.indexOfKey(page) >= 0) {
+        bookmarked = bookmarksCache.get(page);
       }
 
-      if (!bookmarked && mDualPages &&
-          mBookmarksCache.indexOfKey(page - 1) >= 0) {
-        bookmarked = mBookmarksCache.get(page - 1);
+      if (!bookmarked && isDualPages &&
+          bookmarksCache.indexOfKey(page - 1) >= 0) {
+        bookmarked = bookmarksCache.get(page - 1);
       }
 
       item.setIcon(bookmarked ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
@@ -923,7 +923,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     MenuItem quran = menu.findItem(R.id.goto_quran);
     MenuItem translation = menu.findItem(R.id.goto_translation);
     if (quran != null && translation != null) {
-      if (!mShowingTranslation) {
+      if (!showingTranslation) {
         quran.setVisible(false);
         translation.setVisible(true);
       } else {
@@ -987,11 +987,11 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void refreshQuranPages() {
-    int pos = mViewPager.getCurrentItem();
+    int pos = viewPager.getCurrentItem();
     int start = (pos == 0) ? pos : pos - 1;
-    int end = (pos == mPagerAdapter.getCount() - 1) ? pos : pos + 1;
+    int end = (pos == pagerAdapter.getCount() - 1) ? pos : pos + 1;
     for (int i = start; i <= end; i++) {
-      Fragment f = mPagerAdapter.getFragmentIfExists(i);
+      Fragment f = pagerAdapter.getFragmentIfExists(i);
       if (f != null && f instanceof AyahTracker) {
         ((AyahTracker) f).updateView();
       }
@@ -1004,37 +1004,37 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public void switchToQuran() {
-    mPagerAdapter.setQuranMode();
-    mShowingTranslation = false;
+    pagerAdapter.setQuranMode();
+    showingTranslation = false;
     int page = getCurrentPage();
     supportInvalidateOptionsMenu();
     updateActionBarTitle(page);
 
-    if (mHighlightedSura > 0 && mHighlightedAyah > 0) {
-      highlightAyah(mHighlightedSura, mHighlightedAyah, false, HighlightType.SELECTION);
+    if (highlightedSura > 0 && highlightedAyah > 0) {
+      highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION);
     }
   }
 
   public void switchToTranslation() {
-    if (mIsInAyahMode) {
+    if (isInAyahMode) {
       endAyahMode();
     }
     String activeDatabase = TranslationUtils.getDefaultTranslation(this, translations);
     if (activeDatabase == null) {
       startTranslationManager();
     } else {
-      mPagerAdapter.setTranslationMode();
-      mShowingTranslation = true;
+      pagerAdapter.setTranslationMode();
+      showingTranslation = true;
       supportInvalidateOptionsMenu();
       updateActionBarSpinner();
 
-      if (mHighlightedSura > 0 && mHighlightedAyah > 0) {
-        highlightAyah(mHighlightedSura, mHighlightedAyah, false, HighlightType.SELECTION);
+      if (highlightedSura > 0 && highlightedAyah > 0) {
+        highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION);
       }
     }
 
-    if (!QuranFileUtils.hasArabicSearchDatabase(this) && !mPromptedForExtraDownload) {
-      mPromptedForExtraDownload = true;
+    if (!QuranFileUtils.hasArabicSearchDatabase(this) && !promptedForExtraDownload) {
+      promptedForExtraDownload = true;
       showGetRequiredFilesDialog();
     }
   }
@@ -1051,14 +1051,14 @@ public class PagerActivity extends QuranActionBarActivity implements
           Timber.d("item chosen: %d", position);
           if (translations != null && translations.size() > position) {
             LocalTranslation item = translations.get(position);
-            mSettings.setActiveTranslation(item.filename);
+            settings.setActiveTranslation(item.filename);
 
-            int pos = mViewPager.getCurrentItem() - 1;
+            int pos = viewPager.getCurrentItem() - 1;
             for (int count = 0; count < 3; count++) {
               if (pos + count < 0) {
                 continue;
               }
-              Fragment f = mPagerAdapter
+              Fragment f = pagerAdapter
                   .getFragmentIfExists(pos + count);
               if (f instanceof TranslationFragment) {
                 ((TranslationFragment) f).refresh(item.filename);
@@ -1090,17 +1090,17 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void onBookmarksChanged() {
-    if (mIsInAyahMode) {
+    if (isInAyahMode) {
       Subscription subscription =
-          mBookmarkModel.getIsBookmarkedObservable(mStart.sura, mStart.ayah, mStart.getPage())
+          bookmarkModel.getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean isBookmarked) {
-              updateAyahBookmark(mStart, isBookmarked, true);
+              updateAyahBookmark(start, isBookmarked, true);
             }
           });
-      mCompositeSubscription.add(subscription);
+      compositeSubscription.add(subscription);
     }
   }
 
@@ -1125,7 +1125,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private int getCurrentPage() {
-    return QuranInfo.getPageFromPos(mViewPager.getCurrentItem(), mDualPages);
+    return QuranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
   }
 
   private void updateActionBarSpinner() {
@@ -1179,21 +1179,21 @@ public class PagerActivity extends QuranActionBarActivity implements
             AudioService.AudioUpdateIntent.REPEAT_COUNT, -200);
         AudioRequest request = intent.getParcelableExtra(AudioService.AudioUpdateIntent.REQUEST);
         if (request != null) {
-          mLastAudioRequest = request;
+          lastAudioRequest = request;
         }
         if (state == AudioService.AudioUpdateIntent.PLAYING) {
-          mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
+          audioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
           highlightAyah(sura, ayah, HighlightType.AUDIO);
           if (repeatCount >= -1) {
-            mAudioStatusBar.setRepeatCount(repeatCount);
+            audioStatusBar.setRepeatCount(repeatCount);
           }
         } else if (state == AudioService.AudioUpdateIntent.PAUSED) {
-          mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+          audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
           highlightAyah(sura, ayah, HighlightType.AUDIO);
         } else if (state == AudioService.AudioUpdateIntent.STOPPED) {
-          mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+          audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
           unHighlightAyahs(HighlightType.AUDIO);
-          mLastAudioRequest = null;
+          lastAudioRequest = null;
 
           AudioRequest qi = intent.getParcelableExtra(AudioService.EXTRA_PLAY_INFO);
           if (qi != null) {
@@ -1207,79 +1207,79 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void updateDownloadProgress(int progress,
                                      long downloadedSize, long totalSize) {
-    mAudioStatusBar.switchMode(
+    audioStatusBar.switchMode(
         AudioStatusBar.DOWNLOADING_MODE);
-    mAudioStatusBar.setProgress(progress);
+    audioStatusBar.setProgress(progress);
   }
 
   @Override
   public void updateProcessingProgress(int progress,
                                        int processFiles, int totalFiles) {
-    mAudioStatusBar.setProgressText(getString(R.string.extracting_title), false);
-    mAudioStatusBar.setProgress(-1);
+    audioStatusBar.setProgressText(getString(R.string.extracting_title), false);
+    audioStatusBar.setProgress(-1);
   }
 
   @Override
   public void handleDownloadTemporaryError(int errorId) {
-    mAudioStatusBar.setProgressText(getString(errorId), false);
+    audioStatusBar.setProgressText(getString(errorId), false);
   }
 
   @Override
   public void handleDownloadSuccess() {
-    if (mShowingTranslation) {
+    if (showingTranslation) {
       refreshQuranPages();
     }
-    playAudioRequest(mLastAudioDownloadRequest);
+    playAudioRequest(lastAudioDownloadRequest);
   }
 
   @Override
   public void handleDownloadFailure(int errId) {
     String s = getString(errId);
-    mAudioStatusBar.setProgressText(s, true);
+    audioStatusBar.setProgressText(s, true);
   }
 
   public void toggleActionBarVisibility(boolean visible) {
-    if (visible == mIsActionBarHidden) {
+    if (visible == isActionBarHidden) {
       toggleActionBar();
     }
   }
 
   public void toggleActionBar() {
-    if (mIsActionBarHidden) {
+    if (isActionBarHidden) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
         setUiVisibility(true);
       } else {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mToolBarArea.setVisibility(View.VISIBLE);
-        mAudioStatusBar.updateSelectedItem();
-        mAudioStatusBar.setVisibility(View.VISIBLE);
+        toolBarArea.setVisibility(View.VISIBLE);
+        audioStatusBar.updateSelectedItem();
+        audioStatusBar.setVisibility(View.VISIBLE);
       }
 
-      mIsActionBarHidden = false;
+      isActionBarHidden = false;
     } else {
-      mHandler.removeMessages(MSG_HIDE_ACTIONBAR);
+      handler.removeMessages(MSG_HIDE_ACTIONBAR);
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
         setUiVisibility(false);
       } else {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        mToolBarArea.setVisibility(View.GONE);
-        mAudioStatusBar.setVisibility(View.GONE);
+        toolBarArea.setVisibility(View.GONE);
+        audioStatusBar.setVisibility(View.GONE);
       }
 
-      mIsActionBarHidden = true;
+      isActionBarHidden = true;
     }
   }
 
   public QuranPageWorker getQuranPageWorker() {
-    return mWorker;
+    return quranPageWorker;
   }
 
   public void highlightAyah(int sura, int ayah, HighlightType type) {
     if (type == HighlightType.AUDIO) {
-        mLastPlayingSura = sura;
-        mLastPlayingAyah = ayah;
+        lastPlayingSura = sura;
+        lastPlayingAyah = ayah;
     }
     highlightAyah(sura, ayah, true, type);
   }
@@ -1293,21 +1293,21 @@ public class PagerActivity extends QuranActionBarActivity implements
       return;
     }
 
-    int position = QuranInfo.getPosFromPage(page, mDualPages);
-    if (position != mViewPager.getCurrentItem() && force) {
+    int position = QuranInfo.getPosFromPage(page, isDualPages);
+    if (position != viewPager.getCurrentItem() && force) {
       unHighlightAyahs(type);
-      mViewPager.setCurrentItem(position);
+      viewPager.setCurrentItem(position);
     }
 
-    Fragment f = mPagerAdapter.getFragmentIfExists(position);
+    Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
       ((AyahTracker) f).highlightAyah(sura, ayah, type);
     }
   }
 
   public void unHighlightAyah(int sura, int ayah, HighlightType type) {
-    int position = mViewPager.getCurrentItem();
-    Fragment f = mPagerAdapter.getFragmentIfExists(position);
+    int position = viewPager.getCurrentItem();
+    Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
       ((AyahTracker) f).unHighlightAyah(sura, ayah, type);
     }
@@ -1315,18 +1315,18 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void unHighlightAyahs(HighlightType type) {
     if (type == HighlightType.AUDIO) {
-        mLastPlayingSura = null;
-        mLastPlayingAyah = null;
+        lastPlayingSura = null;
+        lastPlayingAyah = null;
     }
-    int position = mViewPager.getCurrentItem();
-    Fragment f = mPagerAdapter.getFragmentIfExists(position);
+    int position = viewPager.getCurrentItem();
+    Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
       ((AyahTracker) f).unHighlightAyahs(type);
     }
   }
 
   private void requestTranslationsList() {
-    mCompositeSubscription.add(
+    compositeSubscription.add(
         Observable.fromCallable(new Callable<List<LocalTranslation>>() {
           @Override
           public List<LocalTranslation> call() throws Exception {
@@ -1359,14 +1359,14 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void toggleBookmark(final Integer sura, final Integer ayah, final int page) {
-    Subscription subscription = mBookmarkModel.toggleBookmarkObservable(sura, ayah, page)
+    Subscription subscription = bookmarkModel.toggleBookmarkObservable(sura, ayah, page)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Boolean>() {
           @Override
           public void call(Boolean isBookmarked) {
             if (sura == null || ayah == null) {
               // page bookmark
-              mBookmarksCache.put(page, isBookmarked);
+              bookmarksCache.put(page, isBookmarked);
               supportInvalidateOptionsMenu();
             } else {
               // ayah bookmark
@@ -1375,11 +1375,11 @@ public class PagerActivity extends QuranActionBarActivity implements
             }
           }
         });
-    mCompositeSubscription.add(subscription);
+    compositeSubscription.add(subscription);
   }
 
   private void checkIfPageIsBookmarked(Integer... pages) {
-    Subscription subscription = mBookmarkModel.getIsBookmarkedObservable(pages)
+    Subscription subscription = bookmarkModel.getIsBookmarkedObservable(pages)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Subscriber<Pair<Integer, Boolean>>() {
           @Override
@@ -1393,23 +1393,23 @@ public class PagerActivity extends QuranActionBarActivity implements
 
           @Override
           public void onNext(Pair<Integer, Boolean> result) {
-            mBookmarksCache.put(result.first, result.second);
+            bookmarksCache.put(result.first, result.second);
           }
         });
-    mCompositeSubscription.add(subscription);
+    compositeSubscription.add(subscription);
   }
 
   @Override
   public void onPlayPressed() {
-    if (mAudioStatusBar.getCurrentMode() == AudioStatusBar.PAUSED_MODE) {
+    if (audioStatusBar.getCurrentMode() == AudioStatusBar.PAUSED_MODE) {
       // if we are "paused," just un-pause.
       play(null);
       return;
     }
 
-    int position = mViewPager.getCurrentItem();
+    int position = viewPager.getCurrentItem();
     int page = PAGES_LAST - position;
-    if (mDualPages) {
+    if (isDualPages) {
       page = ((PAGES_LAST_DUAL - position) * 2) - 1;
     }
 
@@ -1428,11 +1428,11 @@ public class PagerActivity extends QuranActionBarActivity implements
                             int page, int verseRepeat, int rangeRepeat,
                             boolean enforceRange, boolean force) {
     if (force) {
-      mShouldOverridePlaying = true;
+      shouldOverridePlaying = true;
     }
 
-    QariItem item = mAudioStatusBar.getAudioInfo();
-    if (mSettings.shouldStream()) {
+    QariItem item = audioStatusBar.getAudioInfo();
+    if (settings.shouldStream()) {
       playStreaming(start, end, page, item,
           verseRepeat, rangeRepeat, enforceRange);
     } else {
@@ -1460,7 +1460,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       // this won't be enforced unless the user sets a range
       // repeat, but we set it to a sane default anyway.
       ending = AudioUtils.getLastAyahToPlay(ayah, page,
-          mSettings.getPreferredDownloadAmount(), mDualPages);
+          settings.getPreferredDownloadAmount(), isDualPages);
     }
     AudioRequest request = new StreamingAudioRequest(qariUrl, ayah);
     request.setPlayBounds(ayah, ending);
@@ -1469,8 +1469,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     request.setVerseRepeatCount(verseRepeat);
     play(request);
 
-    mAudioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
-    mAudioStatusBar.setRepeatCount(verseRepeat);
+    audioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
+    audioStatusBar.setRepeatCount(verseRepeat);
   }
 
   private void downloadAndPlayAudio(QuranAyah ayah, QuranAyah ending,
@@ -1481,7 +1481,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       endAyah = ending;
     } else {
       endAyah = AudioUtils.getLastAyahToPlay(ayah, page,
-          mSettings.getPreferredDownloadAmount(), mDualPages);
+          settings.getPreferredDownloadAmount(), isDualPages);
     }
     String baseUri = AudioUtils.getLocalQariUrl(this, item);
     if (endAyah == null || baseUri == null) {
@@ -1505,17 +1505,17 @@ public class PagerActivity extends QuranActionBarActivity implements
     request.setEnforceBounds(enforceBounds);
     request.setRangeRepeatCount(rangeRepeat);
     request.setVerseRepeatCount(verseRepeat);
-    mLastAudioDownloadRequest = request;
+    lastAudioDownloadRequest = request;
     playAudioRequest(request);
   }
 
   private void playAudioRequest(DownloadAudioRequest request) {
     if (request == null) {
-      mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+      audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
       return;
     }
 
-    boolean needsPermission = mNeedsPermissionToDownloadOver3g;
+    boolean needsPermission = needsPermissionToDownloadOver3g;
     if (needsPermission) {
       if (QuranUtils.isOnWifiNetwork(this)) {
         Timber.d("on wifi, don't need permission for download...");
@@ -1526,14 +1526,14 @@ public class PagerActivity extends QuranActionBarActivity implements
     Timber.d("seeing if we can play audio request...");
     if (!QuranFileUtils.haveAyaPositionFile(this)) {
       if (needsPermission) {
-        mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+        audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
         return;
       }
 
-      if (mIsActionBarHidden) {
+      if (isActionBarHidden) {
         toggleActionBar();
       }
-      mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+      audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
       String url = QuranFileUtils.getAyaPositionFileUrl();
       String destination = QuranFileUtils.getQuranDatabaseDirectory(this);
       // start the download
@@ -1545,14 +1545,14 @@ public class PagerActivity extends QuranActionBarActivity implements
     } else if (AudioUtils.shouldDownloadGaplessDatabase(request)) {
       Timber.d("need to download gapless database...");
       if (needsPermission) {
-        mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+        audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
         return;
       }
 
-      if (mIsActionBarHidden) {
+      if (isActionBarHidden) {
         toggleActionBar();
       }
-      mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+      audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
       String url = AudioUtils.getGaplessDatabaseUrl(request);
       String destination = request.getLocalPath();
       // start the download
@@ -1565,19 +1565,19 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (!AudioUtils.shouldDownloadBasmallah(request)) {
         Timber.d("have all files, playing!");
         play(request);
-        mLastAudioDownloadRequest = null;
+        lastAudioDownloadRequest = null;
       } else {
         Timber.d("should download basmalla...");
         if (needsPermission) {
-          mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+          audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
           return;
         }
 
         QuranAyah firstAyah = new QuranAyah(1, 1);
         String qariUrl = AudioUtils.getQariUrl(request.getQariItem(), true);
-        mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+        audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
-        if (mIsActionBarHidden) {
+        if (isActionBarHidden) {
           toggleActionBar();
         }
         String notificationTitle = QuranInfo.getNotificationTitle(
@@ -1592,14 +1592,14 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     } else {
       if (needsPermission) {
-        mAudioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+        audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
         return;
       }
 
-      if (mIsActionBarHidden) {
+      if (isActionBarHidden) {
         toggleActionBar();
       }
-      mAudioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+      audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
       String notificationTitle = QuranInfo.getNotificationTitle(this,
           request.getMinAyah(), request.getMaxAyah(), request.isGapless());
@@ -1621,19 +1621,19 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void play(AudioRequest request) {
-    mNeedsPermissionToDownloadOver3g = true;
+    needsPermissionToDownloadOver3g = true;
     Intent i = new Intent(this, AudioService.class);
     i.setAction(AudioService.ACTION_PLAYBACK);
     if (request != null) {
       i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
-      mLastAudioRequest = request;
-      mAudioStatusBar.setRepeatCount(request.getVerseRepeatCount());
+      lastAudioRequest = request;
+      audioStatusBar.setRepeatCount(request.getVerseRepeatCount());
     }
 
-    if (mShouldOverridePlaying) {
+    if (shouldOverridePlaying) {
       // force the current audio to stop and start playing new request
       i.putExtra(AudioService.EXTRA_STOP_IF_PLAYING, true);
-      mShouldOverridePlaying = false;
+      shouldOverridePlaying = false;
     }
     // just a playback request, so tell audio service to just continue
     // playing (and don't store new audio data) if it was already playing
@@ -1647,7 +1647,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void onPausePressed() {
     startService(AudioUtils.getAudioIntent(
         this, AudioService.ACTION_PAUSE));
-    mAudioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+    audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
   }
 
   @Override
@@ -1664,22 +1664,22 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onAudioSettingsPressed() {
-    if (mLastPlayingSura != null) {
-      mStart = new SuraAyah(mLastPlayingSura, mLastPlayingAyah);
-      mEnd = mStart;
+    if (lastPlayingSura != null) {
+      start = new SuraAyah(lastPlayingSura, lastPlayingAyah);
+      end = start;
     }
 
-    if (mStart == null) {
+    if (start == null) {
       final Integer[] bounds = QuranInfo.getPageBounds(getCurrentPage());
-      mStart = new SuraAyah(bounds[0], bounds[1]);
-      mEnd = mStart;
+      start = new SuraAyah(bounds[0], bounds[1]);
+      end = start;
     }
     showSlider(AUDIO_PAGE);
   }
 
   public boolean updatePlayOptions(int rangeRepeat,
       int verseRepeat, boolean enforceRange) {
-    if (mLastAudioRequest != null) {
+    if (lastAudioRequest != null) {
       Intent i = new Intent(this, AudioService.class);
       i.setAction(AudioService.ACTION_UPDATE_REPEAT);
       i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, verseRepeat);
@@ -1687,10 +1687,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       i.putExtra(AudioService.EXTRA_RANGE_RESTRICT, enforceRange);
       startService(i);
 
-      mLastAudioRequest.setVerseRepeatCount(verseRepeat);
-      mLastAudioRequest.setRangeRepeatCount(rangeRepeat);
-      mLastAudioRequest.setEnforceBounds(enforceRange);
-      mAudioStatusBar.setRepeatCount(verseRepeat);
+      lastAudioRequest.setVerseRepeatCount(verseRepeat);
+      lastAudioRequest.setRangeRepeatCount(rangeRepeat);
+      lastAudioRequest.setEnforceBounds(enforceRange);
+      audioStatusBar.setRepeatCount(verseRepeat);
       return true;
     } else {
       return false;
@@ -1699,43 +1699,43 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void setRepeatCount(int repeatCount) {
-    if (mLastAudioRequest != null) {
+    if (lastAudioRequest != null) {
       Intent i = new Intent(this, AudioService.class);
       i.setAction(AudioService.ACTION_UPDATE_REPEAT);
       i.putExtra(AudioService.EXTRA_VERSE_REPEAT_COUNT, repeatCount);
       startService(i);
-      mLastAudioRequest.setVerseRepeatCount(repeatCount);
+      lastAudioRequest.setVerseRepeatCount(repeatCount);
     }
   }
 
   @Override
   public void onStopPressed() {
     startService(AudioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
-    mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+    audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
     unHighlightAyahs(HighlightType.AUDIO);
-    mLastAudioRequest = null;
+    lastAudioRequest = null;
   }
 
   @Override
   public void onCancelPressed(boolean cancelDownload) {
     if (cancelDownload) {
-      mNeedsPermissionToDownloadOver3g = true;
+      needsPermissionToDownloadOver3g = true;
 
       int resId = R.string.canceling;
-      mAudioStatusBar.setProgressText(getString(resId), true);
+      audioStatusBar.setProgressText(getString(resId), true);
       Intent i = new Intent(this, QuranDownloadService.class);
       i.setAction(QuranDownloadService.ACTION_CANCEL_DOWNLOADS);
       startService(i);
     } else {
-      mAudioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+      audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
     }
   }
 
   @Override
   public void onAcceptPressed() {
-    if (mLastAudioDownloadRequest != null) {
-      mNeedsPermissionToDownloadOver3g = false;
-      playAudioRequest(mLastAudioDownloadRequest);
+    if (lastAudioDownloadRequest != null) {
+      needsPermissionToDownloadOver3g = false;
+      playAudioRequest(lastAudioDownloadRequest);
     }
   }
 
@@ -1745,9 +1745,9 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onBackPressed() {
-    if (mIsInAyahMode) {
+    if (isInAyahMode) {
       endAyahMode();
-    } else if (mShowingTranslation) {
+    } else if (showingTranslation) {
       switchToQuran();
     } else {
       super.onBackPressed();
@@ -1757,7 +1757,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public boolean isListeningForAyahSelection(EventType eventType) {
     return eventType == EventType.LONG_PRESS ||
-        eventType == EventType.SINGLE_TAP && mIsInAyahMode;
+        eventType == EventType.SINGLE_TAP && isInAyahMode;
   }
 
   @Override
@@ -1765,18 +1765,18 @@ public class PagerActivity extends QuranActionBarActivity implements
       SuraAyah suraAyah, AyahTracker tracker) {
     switch (eventType) {
       case SINGLE_TAP:
-        if (mIsInAyahMode) {
+        if (isInAyahMode) {
           updateAyahStartSelection(suraAyah, tracker);
           return true;
         }
         return false;
       case LONG_PRESS:
-        if (mIsInAyahMode) {
+        if (isInAyahMode) {
           updateAyahEndSelection(suraAyah);
         } else {
           startAyahMode(suraAyah, tracker);
         }
-        mViewPager.performHapticFeedback(
+        viewPager.performHapticFeedback(
             HapticFeedbackConstants.LONG_PRESS);
         return true;
       default:
@@ -1788,13 +1788,13 @@ public class PagerActivity extends QuranActionBarActivity implements
   public boolean onClick(EventType eventType) {
     switch (eventType) {
       case SINGLE_TAP:
-        if (!mIsInAyahMode) {
+        if (!isInAyahMode) {
           toggleActionBar();
           return true;
         }
         return false;
       case DOUBLE_TAP:
-        if (mIsInAyahMode) {
+        if (isInAyahMode) {
           endAyahMode();
           return true;
         }
@@ -1805,42 +1805,42 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public SuraAyah getSelectionStart() {
-    return mStart;
+    return start;
   }
 
   public SuraAyah getSelectionEnd() {
-    return mEnd;
+    return end;
   }
 
   public AudioRequest getLastAudioRequest() {
-    return mLastAudioRequest;
+    return lastAudioRequest;
   }
 
   public void startAyahMode(SuraAyah suraAyah, AyahTracker tracker) {
-    if (!mIsInAyahMode) {
-      mStart = mEnd = suraAyah;
+    if (!isInAyahMode) {
+      start = end = suraAyah;
       updateToolbarPosition(suraAyah, tracker);
-      mAyahToolBar.showMenu();
+      ayahToolBar.showMenu();
       showAyahModeHighlights(suraAyah, tracker);
-      mIsInAyahMode = true;
+      isInAyahMode = true;
     }
   }
 
   public void endAyahMode() {
-    mAyahToolBar.hideMenu();
-    mSlidingPanel.collapsePane();
+    ayahToolBar.hideMenu();
+    slidingPanel.collapsePane();
     clearAyahModeHighlights();
-    mIsInAyahMode = false;
+    isInAyahMode = false;
   }
 
   public void nextAyah() {
-    final int ayat = QuranInfo.getNumAyahs(mEnd.sura);
+    final int ayat = QuranInfo.getNumAyahs(end.sura);
 
     final SuraAyah s;
-    if (mEnd.ayah + 1 <= ayat) {
-      s = new SuraAyah(mEnd.sura, mEnd.ayah + 1);
-    } else if (mEnd.sura < 114) {
-      s = new SuraAyah(mEnd.sura + 1, 1);
+    if (end.ayah + 1 <= ayat) {
+      s = new SuraAyah(end.sura, end.ayah + 1);
+    } else if (end.sura < 114) {
+      s = new SuraAyah(end.sura + 1, 1);
     } else {
       return;
     }
@@ -1849,10 +1849,10 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void previousAyah() {
     final SuraAyah s;
-    if (mEnd.ayah > 1) {
-      s = new SuraAyah(mEnd.sura, mEnd.ayah - 1);
-    } else if (mEnd.sura > 1) {
-      s = new SuraAyah(mEnd.sura - 1, QuranInfo.getNumAyahs(mEnd.sura - 1));
+    if (end.ayah > 1) {
+      s = new SuraAyah(end.sura, end.ayah - 1);
+    } else if (end.sura > 1) {
+      s = new SuraAyah(end.sura - 1, QuranInfo.getNumAyahs(end.sura - 1));
     } else {
       return;
     }
@@ -1861,11 +1861,11 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void selectAyah(SuraAyah s) {
     final int page = s.getPage();
-    final int position = QuranInfo.getPosFromPage(page, mDualPages);
-    Fragment f = mPagerAdapter.getFragmentIfExists(position);
+    final int position = QuranInfo.getPosFromPage(page, isDualPages);
+    Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f instanceof AyahTracker) {
-      if (position != mViewPager.getCurrentItem()) {
-        mViewPager.setCurrentItem(position);
+      if (position != viewPager.getCurrentItem()) {
+        viewPager.setCurrentItem(position);
       }
       updateAyahStartSelection(s, (AyahTracker) f);
     }
@@ -1873,14 +1873,14 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void updateAyahStartSelection(
       SuraAyah suraAyah, AyahTracker tracker) {
-    if (mIsInAyahMode) {
+    if (isInAyahMode) {
       clearAyahModeHighlights();
-      mStart = mEnd = suraAyah;
-      if (mAyahToolBar.isShowing()) {
-        mAyahToolBar.resetMenu();
+      start = end = suraAyah;
+      if (ayahToolBar.isShowing()) {
+        ayahToolBar.resetMenu();
         updateToolbarPosition(suraAyah, tracker);
       }
-      if (mSlidingPanel.isPaneVisible()) {
+      if (slidingPanel.isPaneVisible()) {
         refreshPages();
       }
       showAyahModeHighlights(suraAyah, tracker);
@@ -1888,15 +1888,15 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public void updateAyahEndSelection(SuraAyah suraAyah) {
-    if (mIsInAyahMode) {
+    if (isInAyahMode) {
       clearAyahModeHighlights();
-      if (suraAyah.after(mStart)) {
-        mEnd = suraAyah;
+      if (suraAyah.after(start)) {
+        end = suraAyah;
       } else {
-        mEnd = mStart;
-        mStart = suraAyah;
+        end = start;
+        start = suraAyah;
       }
-      if (mSlidingPanel.isPaneVisible()) {
+      if (slidingPanel.isPaneVisible()) {
         refreshPages();
       }
       showAyahModeRangeHighlights();
@@ -1904,7 +1904,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void updateToolbarPosition(final SuraAyah start, AyahTracker tracker) {
-    Subscription subscription = mBookmarkModel
+    Subscription subscription = bookmarkModel
         .getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Boolean>() {
@@ -1913,41 +1913,41 @@ public class PagerActivity extends QuranActionBarActivity implements
             updateAyahBookmark(start, isBookmarked, false);
           }
         });
-    mCompositeSubscription.add(subscription);
+    compositeSubscription.add(subscription);
 
-    mAyahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
-            mAyahToolBar.getToolBarWidth(), mAyahToolBarTotalHeight);
-    mAyahToolBar.updatePosition(mAyahToolBarPos);
-    if (mAyahToolBar.getVisibility() != View.VISIBLE) {
-      mAyahToolBar.setVisibility(View.VISIBLE);
+    ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
+            ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
+    ayahToolBar.updatePosition(ayahToolBarPos);
+    if (ayahToolBar.getVisibility() != View.VISIBLE) {
+      ayahToolBar.setVisibility(View.VISIBLE);
     }
   }
 
   // Used to sync toolbar with page's SV (landscape non-tablet mode)
   public void onQuranPageScroll(int scrollY) {
-    if (mAyahToolBarPos != null) {
-      mAyahToolBarPos.yScroll = 0 - scrollY;
-      if (mIsInAyahMode) {
-        mAyahToolBar.updatePosition(mAyahToolBarPos);
+    if (ayahToolBarPos != null) {
+      ayahToolBarPos.yScroll = 0 - scrollY;
+      if (isInAyahMode) {
+        ayahToolBar.updatePosition(ayahToolBarPos);
       }
     }
   }
 
   private void refreshPages() {
     for (int page : PAGES) {
-      final int mappedTagPage = mSlidingPagerAdapter.getPagePosition(TAG_PAGE);
+      final int mappedTagPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);
       if (page == mappedTagPage) {
         TagBookmarkDialog tagsFrag =
-            (TagBookmarkDialog) mSlidingPagerAdapter
+            (TagBookmarkDialog) slidingPagerAdapter
                 .getFragmentIfExists(mappedTagPage);
         if (tagsFrag != null) {
-          tagsFrag.updateAyah(mStart);
+          tagsFrag.updateAyah(start);
         }
       } else {
-        AyahActionFragment f = (AyahActionFragment) mSlidingPagerAdapter
+        AyahActionFragment f = (AyahActionFragment) slidingPagerAdapter
             .getFragmentIfExists(page);
         if (f != null) {
-          f.updateAyahSelection(mStart, mEnd);
+          f.updateAyahSelection(start, end);
         }
       }
     }
@@ -1955,13 +1955,13 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void showAyahModeRangeHighlights() {
     // Determine the start and end of the selection
-    int minPage = Math.min(mStart.getPage(), mEnd.getPage());
-    int maxPage = Math.max(mStart.getPage(), mEnd.getPage());
-    SuraAyah start = SuraAyah.min(mStart, mEnd);
-    SuraAyah end = SuraAyah.max(mStart, mEnd);
+    int minPage = Math.min(start.getPage(), end.getPage());
+    int maxPage = Math.max(start.getPage(), end.getPage());
+    SuraAyah start = SuraAyah.min(this.start, end);
+    SuraAyah end = SuraAyah.max(this.start, this.end);
     // Iterate from beginning to end
     for (int i = minPage; i <= maxPage; i++) {
-      AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
+      AyahTracker fragment = pagerAdapter.getFragmentIfExistsForPage(i);
       if (fragment != null) {
         Set<String> ayahKeys = QuranInfo.getAyahKeysOnPage(i, start, end);
         fragment.highlightAyat(i, ayahKeys, HighlightType.SELECTION);
@@ -1975,9 +1975,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void clearAyahModeHighlights() {
-    if (mIsInAyahMode) {
-      for (int i = mStart.getPage(); i <= mEnd.getPage(); i++) {
-        AyahTracker fragment = mPagerAdapter.getFragmentIfExistsForPage(i);
+    if (isInAyahMode) {
+      for (int i = start.getPage(); i <= end.getPage(); i++) {
+        AyahTracker fragment = pagerAdapter.getFragmentIfExistsForPage(i);
         if (fragment != null) {
           fragment.unHighlightAyahs(HighlightType.SELECTION);
         }
@@ -1991,25 +1991,25 @@ public class PagerActivity extends QuranActionBarActivity implements
       int sliderPage = -1;
       switch (item.getItemId()) {
         case R.id.cab_bookmark_ayah:
-          toggleBookmark(mStart.sura, mStart.ayah, mStart.getPage());
+          toggleBookmark(start.sura, start.ayah, start.getPage());
           break;
         case R.id.cab_tag_ayah:
-          sliderPage = mSlidingPagerAdapter.getPagePosition(TAG_PAGE);
+          sliderPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);
           break;
         case R.id.cab_translate_ayah:
-          sliderPage = mSlidingPagerAdapter.getPagePosition(TRANSLATION_PAGE);
+          sliderPage = slidingPagerAdapter.getPagePosition(TRANSLATION_PAGE);
           break;
         case R.id.cab_play_from_here:
-          sliderPage = mSlidingPagerAdapter.getPagePosition(AUDIO_PAGE);
+          sliderPage = slidingPagerAdapter.getPagePosition(AUDIO_PAGE);
           break;
         case R.id.cab_share_ayah_link:
-          shareAyahLink(mStart, mEnd);
+          shareAyahLink(start, end);
           break;
         case R.id.cab_share_ayah_text:
-          shareAyah(mStart, mEnd, false);
+          shareAyah(start, end, false);
           break;
         case R.id.cab_copy_ayah:
-          shareAyah(mStart, mEnd, true);
+          shareAyah(start, end, true);
           break;
         default:
           return false;
@@ -2028,7 +2028,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       return;
     }
 
-    mCompositeSubscription.add(
+    compositeSubscription.add(
         ArabicDatabaseUtils.getInstance(this).getVerses(start, end)
             .filter(new Func1<List<QuranAyah>, Boolean>() {
               @Override
@@ -2051,7 +2051,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void shareAyahLink(SuraAyah start, SuraAyah end) {
     showProgressDialog();
-    mCompositeSubscription.add(
+    compositeSubscription.add(
     QuranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
         .observeOn(AndroidSchedulers.mainThread())
         .doOnError(new Action1<Throwable>() {
@@ -2076,25 +2076,25 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void showProgressDialog() {
-    if (mProgressDialog == null) {
-      mProgressDialog = new ProgressDialog(this);
-      mProgressDialog.setIndeterminate(true);
-      mProgressDialog.setMessage(getString(R.string.index_loading));
-      mProgressDialog.show();
+    if (progressDialog == null) {
+      progressDialog = new ProgressDialog(this);
+      progressDialog.setIndeterminate(true);
+      progressDialog.setMessage(getString(R.string.index_loading));
+      progressDialog.show();
     }
   }
 
   private void dismissProgressDialog() {
-    if (mProgressDialog != null && mProgressDialog.isShowing()) {
-      mProgressDialog.dismiss();
+    if (progressDialog != null && progressDialog.isShowing()) {
+      progressDialog.dismiss();
     }
-    mProgressDialog = null;
+    progressDialog = null;
   }
 
   private void showSlider(int sliderPage) {
-    mAyahToolBar.hideMenu();
-    mSlidingPager.setCurrentItem(sliderPage);
-    mSlidingPanel.showPane();
+    ayahToolBar.hideMenu();
+    slidingPager.setCurrentItem(sliderPage);
+    slidingPanel.showPane();
     // TODO there's got to be a better way than this hack
     // The issue is that smoothScrollTo returns if mCanSlide is false
     // and it's false when the panel is GONE and showPane only calls
@@ -2102,10 +2102,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     // So by posting this later it gives time for onLayout to run.
     // Another issue is that the fragments haven't been created yet
     // (on first run), so calling refreshPages() before then won't work.
-    mHandler.post(new Runnable() {
+    handler.post(new Runnable() {
       @Override
       public void run() {
-        mSlidingPanel.expandPane();
+        slidingPanel.expandPane();
         refreshPages();
       }
     });
@@ -2114,11 +2114,11 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void updateAyahBookmark(
       SuraAyah suraAyah, boolean bookmarked, boolean refreshHighlight) {
     // Refresh toolbar icon
-    if (mIsInAyahMode && mStart.equals(suraAyah)) {
-      mAyahToolBar.setBookmarked(bookmarked);
+    if (isInAyahMode && start.equals(suraAyah)) {
+      ayahToolBar.setBookmarked(bookmarked);
     }
     // Refresh highlight
-    if (refreshHighlight && mSettings.shouldHighlightBookmarks()) {
+    if (refreshHighlight && settings.shouldHighlightBookmarks()) {
       if (bookmarked) {
         highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
       } else {
@@ -2135,10 +2135,10 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     @Override
     public void onPanelCollapsed(View panel) {
-      if (mIsInAyahMode) {
+      if (isInAyahMode) {
         endAyahMode();
       }
-      mSlidingPanel.hidePane();
+      slidingPanel.hidePane();
     }
 
     @Override

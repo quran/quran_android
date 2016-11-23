@@ -1,27 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.AboutUsActivity;
-import com.quran.labs.androidquran.HelpActivity;
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.QuranPreferenceActivity;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
-import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
-import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
-import com.quran.labs.androidquran.ui.fragment.JumpFragment;
-import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
-import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
-import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-import com.quran.labs.androidquran.util.AudioUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.SlidingTabLayout;
-
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -43,6 +21,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+import com.quran.labs.androidquran.AboutUsActivity;
+import com.quran.labs.androidquran.HelpActivity;
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.QuranPreferenceActivity;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
+import com.quran.labs.androidquran.service.AudioService;
+import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
+import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
+import com.quran.labs.androidquran.ui.fragment.JumpFragment;
+import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
+import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
+import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
+import com.quran.labs.androidquran.util.AudioUtils;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
 import javax.inject.Inject;
 
@@ -68,18 +68,18 @@ public class QuranActivity extends QuranActionBarActivity
   private static final int JUZ2_LIST = 1;
   private static final int BOOKMARKS_LIST = 2;
 
-  private static boolean sUpdatedTranslations;
+  private static boolean updatedTranslations;
 
-  private AlertDialog mUpgradeDialog = null;
-  private boolean mShowedTranslationUpgradeDialog = false;
-  private boolean mIsRtl;
-  private boolean mIsPaused;
-  private MenuItem mSearchItem;
-  private ActionMode mSupportActionMode;
-  private CompositeSubscription mCompositeSubscription;
-  private QuranSettings mSettings;
+  private AlertDialog upgradeDialog = null;
+  private boolean showedTranslationUpgradeDialog = false;
+  private boolean isRtl;
+  private boolean isPaused;
+  private MenuItem searchItem;
+  private ActionMode supportActionMode;
+  private CompositeSubscription compositeSubscription;
+  private QuranSettings settings;
 
-  @Inject TranslationManagerPresenter mTranslationManagerPresenter;
+  @Inject TranslationManagerPresenter translationManagerPresenter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -90,10 +90,10 @@ public class QuranActivity extends QuranActionBarActivity
     quranApp.getApplicationComponent().inject(this);
 
     setContentView(R.layout.quran_index);
-    mCompositeSubscription = new CompositeSubscription();
+    compositeSubscription = new CompositeSubscription();
 
-    mSettings = QuranSettings.getInstance(this);
-    mIsRtl = isRtl();
+    settings = QuranSettings.getInstance(this);
+    isRtl = isRtl();
 
     final Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(tb);
@@ -112,12 +112,12 @@ public class QuranActivity extends QuranActionBarActivity
         (SlidingTabLayout) findViewById(R.id.indicator);
     indicator.setViewPager(pager);
 
-    if (mIsRtl) {
+    if (isRtl) {
       pager.setCurrentItem(TITLES.length - 1);
     }
 
     if (savedInstanceState != null) {
-      mShowedTranslationUpgradeDialog = savedInstanceState.getBoolean(
+      showedTranslationUpgradeDialog = savedInstanceState.getBoolean(
           SI_SHOWED_UPGRADE_DIALOG, false);
     }
 
@@ -126,7 +126,7 @@ public class QuranActivity extends QuranActionBarActivity
       Bundle extras = intent.getExtras();
       if (extras != null) {
         if (extras.getBoolean(EXTRA_SHOW_TRANSLATION_UPGRADE, false)) {
-          if (!mShowedTranslationUpgradeDialog) {
+          if (!showedTranslationUpgradeDialog) {
             showTranslationsUpgradeDialog();
           }
         }
@@ -140,30 +140,30 @@ public class QuranActivity extends QuranActionBarActivity
   public void onResume() {
     super.onResume();
     final boolean isRtl = isRtl();
-    if (isRtl != mIsRtl) {
+    if (isRtl != this.isRtl) {
       final Intent i = getIntent();
       finish();
       startActivity(i);
     } else {
       startService(AudioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
     }
-    mIsPaused = false;
+    isPaused = false;
   }
 
   @Override
   protected void onPause() {
-    mIsPaused = true;
+    isPaused = true;
     super.onPause();
   }
 
   @Override
   protected void onDestroy() {
-    mCompositeSubscription.unsubscribe();
+    compositeSubscription.unsubscribe();
     super.onDestroy();
   }
 
   private boolean isRtl() {
-    return mSettings.isArabicNames() || QuranUtils.isRtl();
+    return settings.isArabicNames() || QuranUtils.isRtl();
   }
 
   @Override
@@ -171,8 +171,8 @@ public class QuranActivity extends QuranActionBarActivity
     super.onCreateOptionsMenu(menu);
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.home_menu, menu);
-    mSearchItem = menu.findItem(R.id.search);
-    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
+    searchItem = menu.findItem(R.id.search);
+    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setQueryHint(getString(R.string.search_hint));
     searchView.setSearchableInfo(searchManager.getSearchableInfo(
@@ -189,7 +189,7 @@ public class QuranActivity extends QuranActionBarActivity
         return true;
       }
       case R.id.last_page: {
-        int page = mSettings.getLastPage();
+        int page = settings.getLastPage();
         jumpTo(page);
         return true;
       }
@@ -226,22 +226,22 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   public void onSupportActionModeFinished(ActionMode mode) {
-    mSupportActionMode = null;
+    supportActionMode = null;
     super.onSupportActionModeFinished(mode);
   }
 
   @Override
   public void onSupportActionModeStarted(ActionMode mode) {
-    mSupportActionMode = mode;
+    supportActionMode = mode;
     super.onSupportActionModeStarted(mode);
   }
 
   @Override
   public void onBackPressed() {
-    if (mSupportActionMode != null) {
-      mSupportActionMode.finish();
-    } else if (mSearchItem != null && mSearchItem.isActionViewExpanded()) {
-      mSearchItem.collapseActionView();
+    if (supportActionMode != null) {
+      supportActionMode.finish();
+    } else if (searchItem != null && searchItem.isActionViewExpanded()) {
+      searchItem.collapseActionView();
     } else {
       super.onBackPressed();
     }
@@ -250,26 +250,26 @@ public class QuranActivity extends QuranActionBarActivity
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     outState.putBoolean(SI_SHOWED_UPGRADE_DIALOG,
-        mShowedTranslationUpgradeDialog);
+        showedTranslationUpgradeDialog);
     super.onSaveInstanceState(outState);
   }
 
   private void updateTranslationsListAsNeeded() {
-    if (mSettings.haveUpdatedTranslations()) {
+    if (settings.haveUpdatedTranslations()) {
       showTranslationsUpgradeDialog();
-    } else if (!sUpdatedTranslations) {
-      long time = mSettings.getLastUpdatedTranslationDate();
+    } else if (!updatedTranslations) {
+      long time = settings.getLastUpdatedTranslationDate();
       Timber.d("checking whether we should update translations..");
       if (System.currentTimeMillis() - time > Constants.TRANSLATION_REFRESH_TIME) {
         Timber.d("updating translations list...");
-        sUpdatedTranslations = true;
-        mTranslationManagerPresenter.checkForUpdates();
+        updatedTranslations = true;
+        translationManagerPresenter.checkForUpdates();
       }
     }
   }
 
   private void showTranslationsUpgradeDialog() {
-    mShowedTranslationUpgradeDialog = true;
+    showedTranslationUpgradeDialog = true;
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(R.string.translation_updates_available);
     builder.setCancelable(false);
@@ -278,7 +278,7 @@ public class QuranActivity extends QuranActionBarActivity
           @Override
           public void onClick(DialogInterface dialog, int id) {
             dialog.dismiss();
-            mUpgradeDialog = null;
+            upgradeDialog = null;
             launchTranslationActivity();
           }
         });
@@ -288,16 +288,16 @@ public class QuranActivity extends QuranActionBarActivity
           @Override
           public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
-            mUpgradeDialog = null;
+            upgradeDialog = null;
 
             // pretend we don't have updated translations.  we'll
             // check again after 10 days.
-            mSettings.setHaveUpdatedTranslations(false);
+            settings.setHaveUpdatedTranslations(false);
           }
         });
 
-    mUpgradeDialog = builder.create();
-    mUpgradeDialog.show();
+    upgradeDialog = builder.create();
+    upgradeDialog.show();
   }
 
   public void launchTranslationActivity() {
@@ -320,7 +320,7 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   private void gotoPageDialog() {
-    if (!mIsPaused) {
+    if (!isPaused) {
       FragmentManager fm = getSupportFragmentManager();
       JumpFragment jumpDialog = new JumpFragment();
       jumpDialog.show(fm, JumpFragment.TAG);
@@ -328,7 +328,7 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   public void addTag() {
-    if (!mIsPaused) {
+    if (!isPaused) {
       FragmentManager fm = getSupportFragmentManager();
       AddTagDialog addTagDialog = new AddTagDialog();
       addTagDialog.show(fm, AddTagDialog.TAG);
@@ -336,7 +336,7 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   public void editTag(long id, String name) {
-    if (!mIsPaused) {
+    if (!isPaused) {
       FragmentManager fm = getSupportFragmentManager();
       AddTagDialog addTagDialog = AddTagDialog.newInstance(id, name);
       addTagDialog.show(fm, AddTagDialog.TAG);
@@ -349,7 +349,7 @@ public class QuranActivity extends QuranActionBarActivity
       return;
     }
 
-    if (!mIsPaused) {
+    if (!isPaused) {
       FragmentManager fm = getSupportFragmentManager();
       TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(ids);
       tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
@@ -357,7 +357,7 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   private void tagBookmark(long id) {
-    if (!mIsPaused) {
+    if (!isPaused) {
       FragmentManager fm = getSupportFragmentManager();
       TagBookmarkDialog tagBookmarkDialog = TagBookmarkDialog.newInstance(id);
       tagBookmarkDialog.show(fm, TagBookmarkDialog.TAG);
@@ -385,7 +385,7 @@ public class QuranActivity extends QuranActionBarActivity
     @Override
     public Fragment getItem(int position) {
       int pos = position;
-      if (mIsRtl) {
+      if (isRtl) {
         pos = Math.abs(position - 2);
       }
 
@@ -402,7 +402,7 @@ public class QuranActivity extends QuranActionBarActivity
 
     @Override
     public long getItemId(int position) {
-      int pos = mIsRtl ? Math.abs(position - 2) : position;
+      int pos = isRtl ? Math.abs(position - 2) : position;
       switch (pos) {
         case QuranActivity.SURA_LIST:
           return SURA_LIST;
@@ -416,7 +416,7 @@ public class QuranActivity extends QuranActionBarActivity
 
     @Override
     public CharSequence getPageTitle(int position) {
-      final int resId = mIsRtl ?
+      final int resId = isRtl ?
           ARABIC_TITLES[position] : TITLES[position];
       return getString(resId);
     }
