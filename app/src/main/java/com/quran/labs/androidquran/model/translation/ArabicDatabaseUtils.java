@@ -1,5 +1,10 @@
 package com.quran.labs.androidquran.model.translation;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
+
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -7,11 +12,6 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import rx.schedulers.Schedulers;
 
 public class ArabicDatabaseUtils {
   public static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
-  @VisibleForTesting static final int NUMBER_OF_WORDS = 4;
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE) static final int NUMBER_OF_WORDS = 4;
 
   private static ArabicDatabaseUtils sInstance;
 
@@ -42,7 +42,7 @@ public class ArabicDatabaseUtils {
         context.getApplicationContext(), QuranDataProvider.QURAN_ARABIC_DATABASE);
   }
 
-  @VisibleForTesting
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   ArabicDatabaseUtils(DatabaseHandler arabicDatabaseHandler) {
     mArabicDatabaseHandler = arabicDatabaseHandler;
   }
@@ -106,7 +106,7 @@ public class ArabicDatabaseUtils {
     return result;
   }
 
-  List<Bookmark> mergeBookmarksWithAyahText(
+  private List<Bookmark> mergeBookmarksWithAyahText(
       List<Bookmark> bookmarks, Map<Integer, String> ayahMap) {
     List<Bookmark> result;
     if (ayahMap.isEmpty()) {
@@ -128,7 +128,7 @@ public class ArabicDatabaseUtils {
     return result;
   }
 
-  public static String getFirstFewWordsFromAyah(int sura, int ayah, String text) {
+  static String getFirstFewWordsFromAyah(int sura, int ayah, String text) {
     String ayahText = getAyahWithoutBasmallah(sura, ayah, text);
     int start = 0;
     for (int i = 0; i < NUMBER_OF_WORDS && start > -1; i++) {

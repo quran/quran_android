@@ -1,12 +1,5 @@
 package com.quran.labs.androidquran.presenter;
 
-import com.quran.labs.androidquran.QuranImportActivity;
-import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.service.util.PermissionUtil;
-import com.quran.labs.androidquran.util.QuranSettings;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +9,13 @@ import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.ActivityCompat;
+
+import com.quran.labs.androidquran.QuranImportActivity;
+import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.service.util.PermissionUtil;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -48,14 +48,15 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private QuranImportActivity mCurrentActivity;
 
   @Inject
-  public QuranImportPresenter(Context appContext,
-      BookmarkImportExportModel model, BookmarkModel bookmarkModel) {
+  QuranImportPresenter(Context appContext,
+                       BookmarkImportExportModel model,
+                       BookmarkModel bookmarkModel) {
     mAppContext = appContext;
     mBookmarkModel = bookmarkModel;
     mBookmarkImportExportModel = model;
   }
 
-  public void handleIntent(Intent intent) {
+  private void handleIntent(Intent intent) {
     mRequestingPermissions = false;
     if (mImportObservable == null) {
       Uri uri = intent.getData();
@@ -181,7 +182,7 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
         .subscribeOn(Schedulers.io());
   }
 
-  @NonNull @VisibleForTesting
+  @NonNull @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   Observable<BufferedSource> parseUri(final Uri uri) {
     return Observable.defer(new Func0<Observable<BufferedSource>>() {
       @Override
@@ -193,16 +194,14 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
             return Observable.just(Okio.buffer(Okio.source(new FileInputStream(fd))));
           }
           return Observable.just(null);
-        } catch (IOException ioe) {
+        } catch (IOException | NullPointerException ioe) {
           return Observable.error(ioe);
-        } catch (NullPointerException npe) {
-          return Observable.error(npe);
         }
       }
     });
   }
 
-  @NonNull @VisibleForTesting
+  @NonNull @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   Observable<BufferedSource> parseExternalFile(final Uri uri) {
     return Observable.defer(new Func0<Observable<BufferedSource>>() {
       @Override
