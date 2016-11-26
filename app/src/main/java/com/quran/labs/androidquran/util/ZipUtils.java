@@ -17,7 +17,7 @@ public class ZipUtils {
   private static final int BUFFER_SIZE = 512;
   private static final int MAX_FILES = 2048; // Max number of files
 
-  @VisibleForTesting
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   static int MAX_UNZIPPED_SIZE = 0x1f400000; // Max size of unzipped data, 500MB
 
   /**

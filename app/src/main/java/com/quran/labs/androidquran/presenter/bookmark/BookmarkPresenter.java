@@ -76,7 +76,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     subscribeToChanges();
   }
 
-  @VisibleForTesting
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   BookmarkPresenter(Context context, QuranSettings settings,
       BookmarkModel bookmarkModel, boolean subscribeToChanges) {
     appContext = context.getApplicationContext();
@@ -265,7 +265,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         });
   }
 
-  @VisibleForTesting
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   Observable<BookmarkResult> getBookmarksListObservable(
       int sortOrder, final boolean groupByTags) {
     return getBookmarksWithAyatObservable(sortOrder)

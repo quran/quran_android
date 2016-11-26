@@ -1,15 +1,15 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.BuildConfig;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.service.QuranDownloadService;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+
+import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.service.QuranDownloadService;
 
 
 public class QuranSettings {
@@ -26,7 +26,7 @@ public class QuranSettings {
     return sInstance;
   }
 
-  @VisibleForTesting
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   public static void setInstance(QuranSettings settings) {
     sInstance = settings;
   }
