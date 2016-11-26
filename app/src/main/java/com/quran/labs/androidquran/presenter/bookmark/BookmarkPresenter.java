@@ -166,7 +166,42 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
   }
 
-  public BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
+  public void deleteAfterSomeTime(List<QuranRow> remove) {
+    // the fragment just called this, so fragment should be valid
+    fragment.onNewData(predictQuranListAfterDeletion(remove));
+
+    if (pendingRemoval != null) {
+      // handle a new delete request when one is already happening by adding those items to delete
+      // now and un-subscribing from the old request.
+      if (itemsToRemove != null) {
+        remove.addAll(itemsToRemove);
+      }
+      cancelDeletion();
+    }
+
+    itemsToRemove = remove;
+    pendingRemoval = Observable.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
+        .flatMap(new Func1<Long, Observable<BookmarkResult>>() {
+          @Override
+          public Observable<BookmarkResult> call(Long aLong) {
+            return removeItemsObservable();
+          }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<BookmarkResult>() {
+          @Override
+          public void call(BookmarkResult result) {
+            pendingRemoval = null;
+            cachedData = result;
+            if (fragment != null) {
+              fragment.onNewData(result);
+            }
+          }
+        });
+  }
+
+  private BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
     if (cachedData != null) {
       List<QuranRow> placeholder = new ArrayList<>(cachedData.rows.size() - remove.size());
       List<QuranRow> rows = cachedData.rows;
@@ -198,38 +233,6 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       return new BookmarkResult(placeholder, tagMap);
     }
     return null;
-  }
-
-  public void deleteAfterSomeTime(List<QuranRow> remove) {
-    if (pendingRemoval != null) {
-      // handle a new delete request when one is already happening by adding those items to delete
-      // now and un-subscribing from the old request.
-      if (itemsToRemove != null) {
-        remove.addAll(itemsToRemove);
-      }
-      cancelDeletion();
-    }
-
-    itemsToRemove = remove;
-    pendingRemoval = Observable.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
-        .flatMap(new Func1<Long, Observable<BookmarkResult>>() {
-          @Override
-          public Observable<BookmarkResult> call(Long aLong) {
-            return removeItemsObservable();
-          }
-        })
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<BookmarkResult>() {
-          @Override
-          public void call(BookmarkResult result) {
-            pendingRemoval = null;
-            cachedData = result;
-            if (fragment != null) {
-              fragment.onNewData(result);
-            }
-          }
-        });
   }
 
   private Observable<BookmarkResult> removeItemsObservable() {

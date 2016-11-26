@@ -1,18 +1,18 @@
 package com.quran.labs.androidquran.database;
 
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
+
+import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class BookmarksDBAdapter {
 
   public static final int SORT_DATE_ADDED = 0;
   public static final int SORT_LOCATION = 1;
-  public static final int SORT_ALPHABETICAL = 2;
+  private static final int SORT_ALPHABETICAL = 2;
 
   private SQLiteDatabase mDb;
 
@@ -44,7 +44,7 @@ public class BookmarksDBAdapter {
   }
 
   @NonNull
-  public List<Bookmark> getBookmarks(int sortOrder, Integer pageFilter) {
+  private List<Bookmark> getBookmarks(int sortOrder, Integer pageFilter) {
     String orderBy;
     switch (sortOrder) {
       case SORT_LOCATION:
@@ -132,10 +132,6 @@ public class BookmarksDBAdapter {
     return bookmarkTags;
   }
 
-  public boolean isPageBookmarked(int page) {
-    return getBookmarkId(null, null, page) >= 0;
-  }
-
   public long getBookmarkId(Integer sura, Integer ayah, int page) {
     Cursor cursor = null;
     try {
@@ -221,7 +217,7 @@ public class BookmarksDBAdapter {
   }
 
   @NonNull
-  public List<Tag> getTags(int sortOrder) {
+  private List<Tag> getTags(int sortOrder) {
     String orderBy;
     switch (sortOrder) {
       case SORT_DATE_ADDED:
