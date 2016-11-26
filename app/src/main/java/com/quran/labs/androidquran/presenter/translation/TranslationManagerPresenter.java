@@ -55,7 +55,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   private final TranslationsDBAdapter translationsDBAdapter;
 
   @Inject
-  public TranslationManagerPresenter(Context appContext, OkHttpClient okHttpClient) {
+  TranslationManagerPresenter(Context appContext, OkHttpClient okHttpClient) {
     this(appContext, okHttpClient, QuranSettings.getInstance(appContext), Constants.HOST);
   }
 

@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import android.content.Context;
+import android.content.res.Resources;
+
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
@@ -11,9 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import android.content.Context;
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,10 +74,10 @@ public class BookmarkPresenterTest {
     MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total;
   }
 
-  @Mock Context appContext;
-  @Mock Resources resources;
-  @Mock QuranSettings settings;
-  @Mock BookmarksDBAdapter bookmarksAdapter;
+  @Mock private Context appContext;
+  @Mock private Resources resources;
+  @Mock private QuranSettings settings;
+  @Mock private BookmarksDBAdapter bookmarksAdapter;
   private BookmarkPresenter presenter;
 
   @Before

@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import android.support.v4.util.Pair;
+
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-
-import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,32 +24,32 @@ import rx.functions.Func2;
 @Singleton
 public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
 
-  private BookmarkModel mBookmarkModel;
-  private TagBookmarkDialog mDialog;
+  private final BookmarkModel bookmarkModel;
+  private final HashSet<Long> checkedTags = new HashSet<>();
 
-  private long[] mBookmarkIds;
-  private Bookmark mPotentialAyahBookmark;
+  private TagBookmarkDialog dialog;
 
-  private List<Tag> mTags;
-  private boolean mMadeChanges;
-  private boolean mSaveImmediate;
-  private boolean mShouldRefreshTags;
-  private HashSet<Long> mCheckedTags = new HashSet<>();
+  private List<Tag> tags;
+  private long[] bookmarkIds;
+  private boolean madeChanges;
+  private boolean saveImmediate;
+  private boolean shouldRefreshTags;
+  private Bookmark potentialAyahBookmark;
 
   @Inject
-  public TagBookmarkPresenter(BookmarkModel bookmarkModel) {
-    mBookmarkModel = bookmarkModel;
-    mBookmarkModel.tagsObservable()
+  TagBookmarkPresenter(BookmarkModel bookmarkModel) {
+    this.bookmarkModel = bookmarkModel;
+    this.bookmarkModel.tagsObservable()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Tag>() {
           @Override
           public void call(Tag tag) {
-            mShouldRefreshTags = true;
-            if (mTags != null && mDialog != null) {
+            shouldRefreshTags = true;
+            if (tags != null && dialog != null) {
               // change this if we support updating tags from outside of QuranActivity
-              mTags.add(mTags.size() - 1, tag);
-              mCheckedTags.add(tag.id);
-              mDialog.setData(mTags, mCheckedTags);
+              tags.add(tags.size() - 1, tag);
+              checkedTags.add(tag.id);
+              dialog.setData(tags, checkedTags);
               setMadeChanges();
             }
           }
@@ -65,14 +65,14 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   }
 
   private void setMode(long[] bookmarkIds, Bookmark potentialAyahBookmark) {
-    mBookmarkIds = bookmarkIds;
-    mPotentialAyahBookmark = potentialAyahBookmark;
-    mSaveImmediate = mPotentialAyahBookmark != null;
-    mCheckedTags.clear();
+    this.bookmarkIds = bookmarkIds;
+    this.potentialAyahBookmark = potentialAyahBookmark;
+    saveImmediate = this.potentialAyahBookmark != null;
+    checkedTags.clear();
     refresh();
   }
 
-  public void refresh() {
+  void refresh() {
     Observable.zip(getTagsObservable(), getBookmarkTagIdsObservable(),
         new Func2<List<Tag>, List<Long>, Pair<List<Tag>, List<Long>>>() {
           @Override
@@ -91,46 +91,46 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
             }
 
             List<Long> bookmarkTags = data.second;
-            mCheckedTags.clear();
+            checkedTags.clear();
             for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
               Tag tag = tags.get(i);
               if (bookmarkTags.contains(tag.id)) {
-                mCheckedTags.add(tag.id);
+                checkedTags.add(tag.id);
               }
             }
-            mMadeChanges = false;
-            mTags = tags;
-            mShouldRefreshTags = false;
-            if (mDialog != null) {
-              mDialog.setData(mTags, mCheckedTags);
+            madeChanges = false;
+            TagBookmarkPresenter.this.tags = tags;
+            shouldRefreshTags = false;
+            if (dialog != null) {
+              dialog.setData(TagBookmarkPresenter.this.tags, checkedTags);
             }
           }
         });
   }
 
   private Observable<List<Tag>> getTagsObservable() {
-    if (mTags == null || mShouldRefreshTags) {
-      return mBookmarkModel.getTagsObservable();
+    if (tags == null || shouldRefreshTags) {
+      return bookmarkModel.getTagsObservable();
     } else {
-      return Observable.just(mTags);
+      return Observable.just(tags);
     }
   }
 
   public void saveChanges() {
-    if (mMadeChanges) {
+    if (madeChanges) {
       getBookmarkIdsObservable()
           .flatMap(new Func1<long[], Observable<Boolean>>() {
             @Override
             public Observable<Boolean> call(long[] bookmarkIds) {
-              return mBookmarkModel.updateBookmarkTags(
-                  bookmarkIds, mCheckedTags, bookmarkIds.length == 1);
+              return bookmarkModel.updateBookmarkTags(
+                  bookmarkIds, checkedTags, bookmarkIds.length == 1);
             }
           })
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
-              mMadeChanges = false;
+              madeChanges = false;
             }
           });
     }
@@ -142,13 +142,13 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
    */
   private Observable<long[]> getBookmarkIdsObservable() {
     Observable<long[]> observable;
-    if (mBookmarkIds != null) {
+    if (bookmarkIds != null) {
       // if we already have a list, we just use that
-      observable = Observable.just(mBookmarkIds);
+      observable = Observable.just(bookmarkIds);
     } else {
       // if we don't have a bookmark id, we'll add the bookmark and use its id
-      observable = mBookmarkModel.safeAddBookmark(mPotentialAyahBookmark.sura,
-          mPotentialAyahBookmark.ayah, mPotentialAyahBookmark.page)
+      observable = bookmarkModel.safeAddBookmark(potentialAyahBookmark.sura,
+          potentialAyahBookmark.ayah, potentialAyahBookmark.page)
           .map(new Func1<Long, long[]>() {
             @Override
             public long[] call(Long bookmarkId) {
@@ -162,52 +162,52 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   public boolean toggleTag(long id) {
     boolean result = false;
     if (id > 0) {
-      if (mCheckedTags.contains(id)) {
-        mCheckedTags.remove(id);
+      if (checkedTags.contains(id)) {
+        checkedTags.remove(id);
       } else {
-        mCheckedTags.add(id);
+        checkedTags.add(id);
         result = true;
       }
       setMadeChanges();
-    } else if (mDialog != null) {
-      mDialog.showAddTagDialog();
+    } else if (dialog != null) {
+      dialog.showAddTagDialog();
     }
     return result;
   }
 
   void setMadeChanges() {
-    mMadeChanges = true;
-    if (mSaveImmediate) {
+    madeChanges = true;
+    if (saveImmediate) {
       saveChanges();
     }
   }
 
   private Observable<List<Long>> getBookmarkTagIdsObservable() {
     Observable<Long> bookmarkId;
-    if (mPotentialAyahBookmark != null) {
-      bookmarkId = mBookmarkModel.getBookmarkId(mPotentialAyahBookmark.sura,
-          mPotentialAyahBookmark.ayah, mPotentialAyahBookmark.page);
+    if (potentialAyahBookmark != null) {
+      bookmarkId = bookmarkModel.getBookmarkId(potentialAyahBookmark.sura,
+          potentialAyahBookmark.ayah, potentialAyahBookmark.page);
     } else {
       bookmarkId = Observable.just(
-          mBookmarkIds != null && mBookmarkIds.length == 1 ? mBookmarkIds[0] : 0);
+          bookmarkIds != null && bookmarkIds.length == 1 ? bookmarkIds[0] : 0);
     }
-    return mBookmarkModel.getBookmarkTagIds(bookmarkId)
+    return bookmarkModel.getBookmarkTagIds(bookmarkId)
         .defaultIfEmpty(new ArrayList<Long>());
   }
 
   @Override
   public void bind(TagBookmarkDialog dialog) {
-    mDialog = dialog;
-    if (mTags != null) {
+    this.dialog = dialog;
+    if (tags != null) {
       // replay the last set of tags and checked tags that we had.
-      mDialog.setData(mTags, mCheckedTags);
+      this.dialog.setData(tags, checkedTags);
     }
   }
 
   @Override
   public void unbind(TagBookmarkDialog dialog) {
-    if (dialog == mDialog) {
-      mDialog = null;
+    if (dialog == this.dialog) {
+      this.dialog = null;
     }
   }
 }
