@@ -356,6 +356,8 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     }
   }
 
+
+
   private void handleMove(String newLocation) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ||
         newLocation.equals(mInternalSdcardLocation)) {
