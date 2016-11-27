@@ -146,6 +146,9 @@
         android:summary="@string/prefs_audio_manager_summary"/>
   </PreferenceCategory>
 
+  <PreferenceScreen
+      android:key="@string/prefs_path"
+      android:title="@string/prefs_category_advanced">
   <PreferenceCategory
       android:key="@string/prefs_advanced_category_key"
       android:title="@string/prefs_category_advanced">
@@ -170,6 +173,6 @@
         android:title="@string/prefs_send_logs_title"
         android:summary="@string/prefs_send_logs_summary"/>
   </PreferenceCategory>
-
+</PreferenceScreen>
 </PreferenceScreen>
 
