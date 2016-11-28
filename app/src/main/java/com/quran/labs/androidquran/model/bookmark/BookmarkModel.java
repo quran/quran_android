@@ -1,9 +1,11 @@
 package com.quran.labs.androidquran.model.bookmark;
 
+import android.support.annotation.UiThread;
 import android.support.v4.util.Pair;
 
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
@@ -17,8 +19,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
+import rx.functions.Func3;
+import rx.internal.operators.UnicastSubject;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
@@ -28,16 +32,36 @@ public class BookmarkModel {
   private final BookmarksDBAdapter bookmarksDBAdapter;
   private final Subject<Tag, Tag> tagPublishSubject;
   private final Subject<Void, Void> bookmarksPublishSubject;
+  private final Subject<Void, Void> recentPagesPublishSubject;
+
+  private final Subject<Pair<Integer, Integer>, Pair<Integer, Integer>> recentUpdatesSubject;
 
   @Inject
   public BookmarkModel(BookmarksDBAdapter adapter) {
     bookmarksDBAdapter = adapter;
     tagPublishSubject = PublishSubject.<Tag>create().toSerialized();
+    recentPagesPublishSubject = PublishSubject.<Void>create().toSerialized();
     bookmarksPublishSubject = PublishSubject.<Void>create().toSerialized();
+
+    // doesn't need to be serialized since onNext will only be called from the ui thread
+    recentUpdatesSubject = UnicastSubject.create();
+    recentUpdatesSubject
+        .subscribeOn(Schedulers.io())
+        .subscribe(new Action1<Pair<Integer, Integer>>() {
+          @Override
+          public void call(Pair<Integer, Integer> updates) {
+            bookmarksDBAdapter.addRecentPage(updates.first, updates.second);
+            recentPagesPublishSubject.onNext(null);
+          }
+        });
   }
 
   public Observable<Tag> tagsObservable() {
     return tagPublishSubject.asObservable();
+  }
+
+  public Observable<Void> recentPagesObservable() {
+    return recentPagesPublishSubject.asObservable();
   }
 
   public Observable<Void> bookmarksObservable() {
@@ -46,11 +70,13 @@ public class BookmarkModel {
 
   public Observable<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
     return Observable
-        .zip(getTagsObservable(), getBookmarksObservable(sortOrder),
-            new Func2<List<Tag>, List<Bookmark>, BookmarkData>() {
+        .zip(getTagsObservable(), getBookmarksObservable(sortOrder), getRecentPagesObservable(),
+            new Func3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>() {
               @Override
-              public BookmarkData call(List<Tag> tags, List<Bookmark> bookmarks) {
-                return new BookmarkData(tags, bookmarks);
+              public BookmarkData call(List<Tag> tags,
+                                       List<Bookmark> bookmarks,
+                                       List<RecentPage> recentPages) {
+                return new BookmarkData(tags, bookmarks, recentPages);
               }
             })
             .subscribeOn(Schedulers.io());
@@ -136,6 +162,24 @@ public class BookmarkModel {
       @Override
       public List<Tag> call() throws Exception {
         return bookmarksDBAdapter.getTags();
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
+  public void addRecentPage(final int lastPage) {
+    recentUpdatesSubject.onNext(new Pair<Integer, Integer>(null, lastPage));
+  }
+
+  @UiThread
+  public void updateLastPage(final int fromPage, final int lastPage) {
+    recentUpdatesSubject.onNext(new Pair<>(fromPage, lastPage));
+  }
+
+  public Observable<List<RecentPage>> getRecentPagesObservable() {
+    return Observable.fromCallable(new Callable<List<RecentPage>>() {
+      @Override
+      public List<RecentPage> call() throws Exception {
+        return bookmarksDBAdapter.getRecentPages();
       }
     }).subscribeOn(Schedulers.io());
   }

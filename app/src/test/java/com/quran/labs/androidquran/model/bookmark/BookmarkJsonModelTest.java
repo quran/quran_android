@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.model.bookmark.BookmarkJsonModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class BookmarkJsonModelTest {
   private static final String TAGS_JSON =
-      "{\"bookmarks\":[],\"tags\":[{\"id\":1,\"name\":\"First\"}," +
+      "{\"bookmarks\":[],\"recentPages\":[],\"tags\":[{\"id\":1,\"name\":\"First\"}," +
       "{\"id\":2,\"name\":\"Second\"},{\"id\":3,\"name\":\"Third\"}]}";
   private static final List<Tag> TAGS =
       Arrays.asList(new Tag(1, "First"), new Tag(2, "Second"), new Tag(3, "Third"));
@@ -33,7 +33,8 @@ public class BookmarkJsonModelTest {
 
   @Test
   public void simpleTestToJson() throws IOException {
-    BookmarkData data = new BookmarkData(TAGS, new ArrayList<Bookmark>());
+    BookmarkData data = new BookmarkData(
+        TAGS, new ArrayList<Bookmark>(), new ArrayList<RecentPage>());
     Buffer output = new Buffer();
     jsonModel.toJson(output, data);
     String result = output.readUtf8();

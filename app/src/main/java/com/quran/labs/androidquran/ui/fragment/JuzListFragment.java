@@ -13,13 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.JuzView;
+
+import java.util.List;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 
@@ -29,6 +36,7 @@ public class JuzListFragment extends Fragment {
       JuzView.TYPE_HALF, JuzView.TYPE_THREE_QUARTERS };
 
   private RecyclerView mRecyclerView;
+  private Subscription subscription;
 
   public static JuzListFragment newInstance() {
     return new JuzListFragment();
@@ -52,17 +60,35 @@ public class JuzListFragment extends Fragment {
   }
 
   @Override
+  public void onPause() {
+    if (subscription != null) {
+      subscription.unsubscribe();
+    }
+    super.onPause();
+  }
+
+  @Override
   public void onResume() {
     final Activity activity = getActivity();
 
-    QuranSettings settings = QuranSettings.getInstance(activity);
-    int lastPage = settings.getLastPage();
-    if (lastPage != Constants.NO_PAGE_SAVED) {
-      int juz = QuranInfo.getJuzFromPage(lastPage);
-      int position = (juz - 1) * 9;
-      mRecyclerView.scrollToPosition(position);
+    if (activity instanceof QuranActivity) {
+      subscription = ((QuranActivity) activity).getRecentPagesObservable()
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(new Action1<List<RecentPage>>() {
+            @Override
+            public void call(List<RecentPage> recentPages) {
+              if (recentPages.size() > 0) {
+                int lastPage = recentPages.get(0).page;
+                int juz = QuranInfo.getJuzFromPage(lastPage);
+                int position = (juz - 1) * 9;
+                mRecyclerView.scrollToPosition(position);
+              }
+              subscription = null;
+            }
+          });
     }
 
+    QuranSettings settings = QuranSettings.getInstance(activity);
     if (settings.isArabicNames()) {
       updateScrollBarPositionHoneycomb();
     }

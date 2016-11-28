@@ -12,12 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import java.util.List;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
@@ -26,6 +33,7 @@ import static com.quran.labs.androidquran.data.Constants.SURAS_COUNT;
 public class SuraListFragment extends Fragment {
 
   private RecyclerView mRecyclerView;
+  private Subscription subscription;
 
   public static SuraListFragment newInstance() {
     return new SuraListFragment();
@@ -49,17 +57,33 @@ public class SuraListFragment extends Fragment {
   }
 
   @Override
+  public void onPause() {
+    if (subscription != null) {
+      subscription.unsubscribe();
+    }
+    super.onPause();
+  }
+
+  @Override
   public void onResume() {
     final Activity activity = getActivity();
     QuranSettings settings = QuranSettings.getInstance(activity);
-    int lastPage = settings.getLastPage();
-    if (lastPage != Constants.NO_PAGE_SAVED &&
-        lastPage >= Constants.PAGES_FIRST &&
-        lastPage <= Constants.PAGES_LAST) {
-      int sura = QuranInfo.PAGE_SURA_START[lastPage - 1];
-      int juz = QuranInfo.getJuzFromPage(lastPage);
-      int position = sura + juz - 1;
-      mRecyclerView.scrollToPosition(position);
+    if (activity instanceof QuranActivity) {
+      subscription = ((QuranActivity) activity).getRecentPagesObservable()
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(new Action1<List<RecentPage>>() {
+            @Override
+            public void call(List<RecentPage> recentPages) {
+              if (recentPages.size() > 0) {
+                int lastPage = recentPages.get(0).page;
+                int sura = QuranInfo.PAGE_SURA_START[lastPage - 1];
+                int juz = QuranInfo.getJuzFromPage(lastPage);
+                int position = sura + juz - 1;
+                mRecyclerView.scrollToPosition(position);
+              }
+              subscription = null;
+            }
+          });
     }
 
     if (settings.isArabicNames()) {

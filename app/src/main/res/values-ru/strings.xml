@@ -239,7 +239,6 @@
   <string name="quran_sura_title">Сура %1$s</string>
   <string name="sura_ayah_notification_str">Сура %1$s, аят %2$d</string>
 
-  <string name="bookmarks_current_page">Текущая страница</string>
   <string name="index_loading">Загрузка…</string>
 
   <string name="canceling">Отмена&#8230;</string>

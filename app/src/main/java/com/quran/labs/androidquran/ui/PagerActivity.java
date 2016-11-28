@@ -193,6 +193,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private boolean isInAyahMode;
   private SuraAyah start;
   private SuraAyah end;
+  private int mostRecentLastPage;
 
   @Inject QuranPageWorker quranPageWorker;
   @Inject BookmarkModel bookmarkModel;
@@ -354,6 +355,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       updateActionBarTitle(PAGES_LAST - page);
     }
 
+    // save this page
+    bookmarkModel.addRecentPage(PAGES_LAST - page);
+    mostRecentLastPage = PAGES_LAST - page;
+
     lastPopupTime = System.currentTimeMillis();
     pagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), isDualPages, showingTranslation);
@@ -396,7 +401,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       public void onPageSelected(int position) {
         Timber.d("onPageSelected(): %d", position);
         final int page = QuranInfo.getPageFromPos(position, isDualPages);
-        settings.setLastPage(page);
+        saveRecentPage(page);
         if (settings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
               PagerActivity.this, page, lastPopupTime);
@@ -490,6 +495,13 @@ public class PagerActivity extends QuranActionBarActivity implements
         downloadReceiver,
         new IntentFilter(action));
     downloadReceiver.setListener(this);
+  }
+
+  private void saveRecentPage(int page) {
+    if (page != mostRecentLastPage) {
+      bookmarkModel.updateLastPage(mostRecentLastPage, page);
+      mostRecentLastPage = page;
+    }
   }
 
   private int getStatusBarHeight() {
@@ -788,9 +800,12 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     Bundle extras = intent.getExtras();
     if (extras != null) {
-      int page = PAGES_LAST -
-          extras.getInt("page", Constants.PAGES_FIRST);
+      int page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
       updateActionBarTitle(PAGES_LAST - page);
+
+      // save this page
+      bookmarkModel.addRecentPage(PAGES_LAST - page);
+      mostRecentLastPage = PAGES_LAST - page;
 
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);

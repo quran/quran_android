@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 public class BookmarkPresenterTest {
   private static final List<Tag> TAG_LIST;
+  private static final List<RecentPage> RECENTS_LIST;
   private static final List<Bookmark> AYAH_BOOKMARKS_LIST;
   private static final List<Bookmark> MIXED_BOOKMARKS_LIST;
   private static final String[] RESOURCE_ARRAY;
@@ -39,6 +41,10 @@ public class BookmarkPresenterTest {
     TAG_LIST = new ArrayList<>(2);
     TAG_LIST.add(new Tag(1, "First Tag"));
     TAG_LIST.add(new Tag(2, "Second Tag"));
+
+    // recent page
+    RECENTS_LIST = new ArrayList<>(1);
+    RECENTS_LIST.add(new RecentPage(42, System.currentTimeMillis()));
 
     // two ayah bookmarks
     AYAH_BOOKMARKS_LIST = new ArrayList<>(2);
@@ -124,6 +130,7 @@ public class BookmarkPresenterTest {
         .thenReturn(MIXED_BOOKMARKS_LIST);
     when(bookmarksAdapter.getTags()).thenReturn(TAG_LIST);
     when(settings.getLastPage()).thenReturn(42);
+    when(bookmarksAdapter.getRecentPages()).thenReturn(RECENTS_LIST);
 
     BookmarkResult result = getBookmarkResultByDateAndValidate(false);
     assertThat(result.tagMap).hasSize(2);
@@ -164,7 +171,7 @@ public class BookmarkPresenterTest {
     when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
         .thenReturn(MIXED_BOOKMARKS_LIST);
     when(bookmarksAdapter.getTags()).thenReturn(TAG_LIST);
-    when(settings.getLastPage()).thenReturn(42);
+    when(bookmarksAdapter.getRecentPages()).thenReturn(RECENTS_LIST);
 
     BookmarkResult result = getBookmarkResultByDateAndValidate(true);
     assertThat(result.tagMap).hasSize(2);
