@@ -108,11 +108,7 @@ public class QuranSettings {
   }
 
   public int getLastPage() {
-    return mPrefs.getInt(Constants.PREF_LAST_PAGE, Constants.NO_PAGE_SAVED);
-  }
-
-  public void setLastPage(int page) {
-    mPrefs.edit().putInt(Constants.PREF_LAST_PAGE, page).apply();
+    return mPrefs.getInt(Constants.PREF_LAST_PAGE, Constants.NO_PAGE);
   }
 
   public int getBookmarksSortOrder() {

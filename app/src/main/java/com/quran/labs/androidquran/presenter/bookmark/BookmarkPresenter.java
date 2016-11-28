@@ -1,18 +1,15 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.Snackbar;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.f2prateek.rx.preferences.Preference;
-import com.f2prateek.rx.preferences.RxSharedPreferences;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
@@ -90,11 +87,8 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   private void subscribeToChanges() {
-    RxSharedPreferences prefs = RxSharedPreferences.create(
-        PreferenceManager.getDefaultSharedPreferences(appContext));
-    Preference<Integer> lastPage = prefs.getInteger(Constants.PREF_LAST_PAGE);
     Observable.merge(bookmarkModel.tagsObservable(),
-        bookmarkModel.bookmarksObservable(), lastPage.asObservable())
+        bookmarkModel.bookmarksObservable(), bookmarkModel.recentPagesObservable())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Object>() {
           @Override
@@ -260,7 +254,8 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
           public BookmarkData call(BookmarkData bookmarkData) {
             try {
               return new BookmarkData(bookmarkData.getTags(),
-                  arabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()));
+                  arabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()),
+                  bookmarkData.getRecentPages());
             } catch (Exception e) {
               return bookmarkData;
             }
@@ -314,16 +309,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       rows = getSortedRows(bookmarks);
     }
 
-    int lastPage = quranSettings.getLastPage();
-    boolean showLastPage = lastPage != Constants.NO_PAGE_SAVED;
-    if (showLastPage && (lastPage > Constants.PAGES_LAST || lastPage < Constants.PAGES_FIRST)) {
-      showLastPage = false;
-      Timber.w("Got invalid last saved page as %d", lastPage);
-    }
+    List<RecentPage> recentPages = data.getRecentPages();
+    boolean showLastPage = recentPages.size() > 0;
 
     if (showLastPage) {
-      rows.add(0, QuranRowFactory.fromCurrentPageHeader(appContext));
-      rows.add(1, QuranRowFactory.fromCurrentPage(appContext, lastPage));
+      rows.add(0, QuranRowFactory.fromRecentPageHeader(appContext, rows.size()));
+      for (int i = 0, length = recentPages.size(); i < length; i++) {
+        rows.add(i + 1, QuranRowFactory.fromCurrentPage(appContext, recentPages.get(i).page));
+      }
     }
 
     return rows;

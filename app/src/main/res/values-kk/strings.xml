@@ -218,7 +218,6 @@
   <string name="quran_sura_title">%1$s сүресі</string>
   <string name="sura_ayah_notification_str">%1$s сүресі, %2$d-аят</string>
 
-  <string name="bookmarks_current_page">Ашылған бет</string>
   <string name="index_loading">Жүктеу…</string>
 
   <string name="canceling">Болдырмау&#8230;</string>

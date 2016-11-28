@@ -243,7 +243,6 @@
   <string name="quran_sura_title">Surat %1$s</string>
   <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
 
-  <string name="bookmarks_current_page">Current Page</string>
   <string name="index_loading">Loading&#8230;</string>
 
   <string name="canceling">Canceling&#8230;</string>
@@ -341,6 +340,11 @@
     <item quantity="other">Deleted %d items</item>
   </plurals>
   <string name="undo">Undo</string>
+
+  <plurals name="recent_pages">
+    <item quantity="one">Current page</item>
+    <item quantity="other">Recent pages</item>
+  </plurals>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Tag</string>
