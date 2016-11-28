@@ -310,11 +310,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
 
     List<RecentPage> recentPages = data.getRecentPages();
-    boolean showLastPage = recentPages.size() > 0;
+    int size = recentPages.size();
 
-    if (showLastPage) {
-      rows.add(0, QuranRowFactory.fromRecentPageHeader(appContext, rows.size()));
-      for (int i = 0, length = recentPages.size(); i < length; i++) {
+    if (size > 0) {
+      rows.add(0, QuranRowFactory.fromRecentPageHeader(appContext, size));
+      for (int i = 0; i < size; i++) {
         rows.add(i + 1, QuranRowFactory.fromCurrentPage(appContext, recentPages.get(i).page));
       }
     }
