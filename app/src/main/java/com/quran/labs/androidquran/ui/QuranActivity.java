@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -30,7 +31,9 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
@@ -44,8 +47,13 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
@@ -62,7 +70,7 @@ public class QuranActivity extends QuranActionBarActivity
       R.string.quran_sura };
 
   public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
-  public static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
+  private static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
 
   private static final int SURA_LIST = 0;
   private static final int JUZ2_LIST = 1;
@@ -78,7 +86,9 @@ public class QuranActivity extends QuranActionBarActivity
   private ActionMode supportActionMode;
   private CompositeSubscription compositeSubscription;
   private QuranSettings settings;
+  private Observable<List<RecentPage>> recentPages;
 
+  @Inject BookmarkModel bookmarkModel;
   @Inject TranslationManagerPresenter translationManagerPresenter;
 
   @Override
@@ -138,6 +148,10 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   public void onResume() {
+    // TODO place in a presenter that caches and know when to invalidate its cache
+    recentPages = bookmarkModel.getRecentPagesObservable().replay(1).autoConnect();
+    compositeSubscription.add(recentPages.subscribe());
+
     super.onResume();
     final boolean isRtl = isRtl();
     if (isRtl != this.isRtl) {
@@ -152,18 +166,17 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   protected void onPause() {
+    compositeSubscription.clear();
     isPaused = true;
     super.onPause();
   }
 
-  @Override
-  protected void onDestroy() {
-    compositeSubscription.unsubscribe();
-    super.onDestroy();
-  }
-
   private boolean isRtl() {
     return settings.isArabicNames() || QuranUtils.isRtl();
+  }
+
+  public Observable<List<RecentPage>> getRecentPagesObservable() {
+    return recentPages;
   }
 
   @Override
@@ -189,8 +202,15 @@ public class QuranActivity extends QuranActionBarActivity
         return true;
       }
       case R.id.last_page: {
-        int page = settings.getLastPage();
-        jumpTo(page);
+        compositeSubscription.add(recentPages
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Action1<List<RecentPage>>() {
+              @Override
+              public void call(List<RecentPage> recentPages) {
+                int page = recentPages.size() > 0 ? recentPages.get(0).page : 1;
+                jumpTo(page);
+              }
+            }));
         return true;
       }
       case R.id.help: {
@@ -225,13 +245,13 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   @Override
-  public void onSupportActionModeFinished(ActionMode mode) {
+  public void onSupportActionModeFinished(@NonNull ActionMode mode) {
     supportActionMode = null;
     super.onSupportActionModeFinished(mode);
   }
 
   @Override
-  public void onSupportActionModeStarted(ActionMode mode) {
+  public void onSupportActionModeStarted(@NonNull ActionMode mode) {
     supportActionMode = mode;
     super.onSupportActionModeStarted(mode);
   }
@@ -300,7 +320,7 @@ public class QuranActivity extends QuranActionBarActivity
     upgradeDialog.show();
   }
 
-  public void launchTranslationActivity() {
+  private void launchTranslationActivity() {
     Intent i = new Intent(this, TranslationManagerActivity.class);
     startActivity(i);
   }

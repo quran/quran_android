@@ -4,12 +4,15 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.QuranSettings;
+
 import timber.log.Timber;
 
 class BookmarksDBHelper extends SQLiteOpenHelper {
 
   private static final String DB_NAME = "bookmarks.db";
-  private static final int DB_VERSION = 2;
+  private static final int DB_VERSION = 3;
 
   static class BookmarksTable {
     static final String TABLE_NAME = "bookmarks";
@@ -32,6 +35,13 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
     static final String ID = "_ID";
     static final String BOOKMARK_ID = "bookmark_id";
     static final String TAG_ID = "tag_id";
+    static final String ADDED_DATE = "added_date";
+  }
+
+  static class LastPagesTable {
+    static final String TABLE_NAME = "last_pages";
+    static final String ID = "_ID";
+    static final String PAGE = "page";
     static final String ADDED_DATE = "added_date";
   }
 
@@ -78,6 +88,12 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
           BookmarkTagTable.BOOKMARK_ID + "," +
           BookmarkTagTable.TAG_ID + ");";
 
+  private static final String LAST_PAGES_TABLE =
+      "create table if not exists " + LastPagesTable.TABLE_NAME + " (" +
+          LastPagesTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+          LastPagesTable.PAGE + " INTEGER NOT NULL UNIQUE, " +
+          LastPagesTable.ADDED_DATE + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+
   private static BookmarksDBHelper sInstance;
 
   public static BookmarksDBHelper getInstance(Context context) {
@@ -87,8 +103,12 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
     return sInstance;
   }
 
+  private final int lastPage;
+
   private BookmarksDBHelper(Context context) {
     super(context, DB_NAME, null, DB_VERSION);
+    QuranSettings quranSettings = QuranSettings.getInstance(context);
+    lastPage = quranSettings.getLastPage();
   }
 
   @Override
@@ -97,6 +117,7 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
     db.execSQL(CREATE_TAGS_TABLE);
     db.execSQL(CREATE_BOOKMARK_TAG_TABLE);
     db.execSQL(BOOKMARK_TAGS_INDEX);
+    db.execSQL(LAST_PAGES_TABLE);
   }
 
   @Override
@@ -108,6 +129,17 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
     Timber.i("Upgrading database from version %d to version %d", oldVersion, newVersion);
     if (oldVersion < 2) {
       upgradeToVer2(db);
+    }
+
+    if (oldVersion < 3) {
+      upgradeToVer3(db);
+    }
+  }
+
+  private void upgradeToVer3(SQLiteDatabase db) {
+    db.execSQL(LAST_PAGES_TABLE);
+    if (this.lastPage != Constants.NO_PAGE) {
+      db.execSQL("INSERT INTO last_pages(page) values(?)", new Object[] { lastPage });
     }
   }
 

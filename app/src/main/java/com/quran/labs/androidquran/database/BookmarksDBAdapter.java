@@ -1,18 +1,22 @@
 package com.quran.labs.androidquran.database;
 
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
-import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
+
+import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.RecentPage;
+import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.LastPagesTable;
+import com.quran.labs.androidquran.database.BookmarksDBHelper.TagsTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +28,7 @@ public class BookmarksDBAdapter {
 
   public static final int SORT_DATE_ADDED = 0;
   public static final int SORT_LOCATION = 1;
-  public static final int SORT_ALPHABETICAL = 2;
+  private static final int SORT_ALPHABETICAL = 2;
 
   private SQLiteDatabase mDb;
 
@@ -44,7 +48,7 @@ public class BookmarksDBAdapter {
   }
 
   @NonNull
-  public List<Bookmark> getBookmarks(int sortOrder, Integer pageFilter) {
+  private List<Bookmark> getBookmarks(int sortOrder, Integer pageFilter) {
     String orderBy;
     switch (sortOrder) {
       case SORT_LOCATION:
@@ -113,6 +117,41 @@ public class BookmarksDBAdapter {
   }
 
   @NonNull
+  public List<RecentPage> getRecentPages() {
+    List<RecentPage> recents = new ArrayList<>();
+    Cursor cursor = null;
+    try {
+      cursor = mDb.query(LastPagesTable.TABLE_NAME, null, null, null, null, null,
+          LastPagesTable.ADDED_DATE + " DESC");
+      if (cursor != null) {
+        while (cursor.moveToNext()) {
+          recents.add(new RecentPage(cursor.getInt(1), cursor.getLong(2)));
+        }
+      }
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+    return recents;
+  }
+
+  public boolean addRecentPage(@Nullable Integer previousRecentPage, int page) {
+    if (previousRecentPage != null) {
+      mDb.delete(LastPagesTable.TABLE_NAME, LastPagesTable.PAGE + " IN(?, ?)",
+          new String[] { String.valueOf(previousRecentPage), String.valueOf(page) });
+    }
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(LastPagesTable.PAGE, page);
+    if (mDb.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1) {
+      mDb.execSQL("DELETE FROM " + LastPagesTable.TABLE_NAME + " WHERE " +
+          LastPagesTable.ID + " NOT IN( SELECT " + LastPagesTable.ID + " FROM " +
+          LastPagesTable.TABLE_NAME + " ORDER BY " + LastPagesTable.ADDED_DATE + " DESC LIMIT ? )",
+          new Object[] { Constants.MAX_RECENT_PAGES });
+      return true;
+    }
+    return false;
+  }
+
+  @NonNull
   public List<Long> getBookmarkTagIds(long bookmarkId) {
     List<Long> bookmarkTags = new ArrayList<>();
     Cursor cursor = null;
@@ -130,10 +169,6 @@ public class BookmarksDBAdapter {
       DatabaseUtils.closeCursor(cursor);
     }
     return bookmarkTags;
-  }
-
-  public boolean isPageBookmarked(int page) {
-    return getBookmarkId(null, null, page) >= 0;
   }
 
   public long getBookmarkId(Integer sura, Integer ayah, int page) {
@@ -221,7 +256,7 @@ public class BookmarksDBAdapter {
   }
 
   @NonNull
-  public List<Tag> getTags(int sortOrder) {
+  private List<Tag> getTags(int sortOrder) {
     String orderBy;
     switch (sortOrder) {
       case SORT_DATE_ADDED:

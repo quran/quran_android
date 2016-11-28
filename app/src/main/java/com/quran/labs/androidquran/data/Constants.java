@@ -25,7 +25,8 @@ public class Constants {
   public static final int JUZ2_COUNT = 30;
   public static final int AYA_MIN = 1;
   public static final int AYA_MAX = 286;
-  public static final int NO_PAGE_SAVED = -1;
+  public static final int NO_PAGE = -1;
+  public static final int MAX_RECENT_PAGES = 3;
 
   // quranapp
   public static final String QURAN_APP_BASE = "http://quranapp.com/";
