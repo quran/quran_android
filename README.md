@@ -35,6 +35,5 @@ Choose "Import Project," and choose the `build.gradle` file from the top level d
 * [OkHttp](https://github.com/square/okhttp)
 * [RxJava](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
-* [RxPreferences](https://github.com/f2prateek/rx-preferences)
 * [moshi](https://github.com/square/moshi)
 * [dagger2](http://google.github.io/dagger/)
