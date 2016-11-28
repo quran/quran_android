@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
+import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
@@ -35,6 +36,7 @@ public interface ApplicationComponent {
   void inject(BookmarksFragment bookmarksFragment);
   void inject(QuranSettingsFragment fragment);
   void inject(TranslationManagerActivity translationManagerActivity);
+  void inject(QuranAdvancedSettingsFragment quranAdvancedSettingsFragment);
 
   // dialogs
   void inject(TagBookmarkDialog tagBookmarkDialog);
@@ -42,4 +44,5 @@ public interface ApplicationComponent {
 
   // misc
   void inject(QuranPageTask quranPageTask);
+
 }
