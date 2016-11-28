@@ -1,12 +1,14 @@
 package com.quran.labs.androidquran.model.bookmark;
 
+import android.support.annotation.UiThread;
+import android.support.v4.util.Pair;
+
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
-
-import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,40 +19,64 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func2;
+import rx.functions.Func3;
+import rx.internal.operators.UnicastSubject;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 @Singleton
 public class BookmarkModel {
-  private final BookmarksDBAdapter mBookmarksDBAdapter;
-  private final Subject<Tag, Tag> mTagPublishSubject;
-  private final Subject<Void, Void> mBookmarksPublishSubject;
+  private final BookmarksDBAdapter bookmarksDBAdapter;
+  private final Subject<Tag, Tag> tagPublishSubject;
+  private final Subject<Void, Void> bookmarksPublishSubject;
+  private final Subject<Void, Void> recentPagesPublishSubject;
+
+  private final Subject<Pair<Integer, Integer>, Pair<Integer, Integer>> recentUpdatesSubject;
 
   @Inject
   public BookmarkModel(BookmarksDBAdapter adapter) {
-    mBookmarksDBAdapter = adapter;
-    mTagPublishSubject = PublishSubject.<Tag>create().toSerialized();
-    mBookmarksPublishSubject = PublishSubject.<Void>create().toSerialized();
+    bookmarksDBAdapter = adapter;
+    tagPublishSubject = PublishSubject.<Tag>create().toSerialized();
+    recentPagesPublishSubject = PublishSubject.<Void>create().toSerialized();
+    bookmarksPublishSubject = PublishSubject.<Void>create().toSerialized();
+
+    // doesn't need to be serialized since onNext will only be called from the ui thread
+    recentUpdatesSubject = UnicastSubject.create();
+    recentUpdatesSubject
+        .subscribeOn(Schedulers.io())
+        .subscribe(new Action1<Pair<Integer, Integer>>() {
+          @Override
+          public void call(Pair<Integer, Integer> updates) {
+            bookmarksDBAdapter.addRecentPage(updates.first, updates.second);
+            recentPagesPublishSubject.onNext(null);
+          }
+        });
   }
 
   public Observable<Tag> tagsObservable() {
-    return mTagPublishSubject.asObservable();
+    return tagPublishSubject.asObservable();
+  }
+
+  public Observable<Void> recentPagesObservable() {
+    return recentPagesPublishSubject.asObservable();
   }
 
   public Observable<Void> bookmarksObservable() {
-    return mBookmarksPublishSubject.asObservable();
+    return bookmarksPublishSubject.asObservable();
   }
 
   public Observable<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
     return Observable
-        .zip(getTagsObservable(), getBookmarksObservable(sortOrder),
-            new Func2<List<Tag>, List<Bookmark>, BookmarkData>() {
+        .zip(getTagsObservable(), getBookmarksObservable(sortOrder), getRecentPagesObservable(),
+            new Func3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>() {
               @Override
-              public BookmarkData call(List<Tag> tags, List<Bookmark> bookmarks) {
-                return new BookmarkData(tags, bookmarks);
+              public BookmarkData call(List<Tag> tags,
+                                       List<Bookmark> bookmarks,
+                                       List<RecentPage> recentPages) {
+                return new BookmarkData(tags, bookmarks, recentPages);
               }
             })
             .subscribeOn(Schedulers.io());
@@ -76,7 +102,7 @@ public class BookmarkModel {
             }
           }
         }
-        mBookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag);
+        bookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag);
         return null;
       }
     }).subscribeOn(Schedulers.io());
@@ -86,8 +112,8 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Long>() {
       @Override
       public Long call() throws Exception {
-        Long result = mBookmarksDBAdapter.addTag(title);
-        mTagPublishSubject.onNext(new Tag(result, title));
+        Long result = bookmarksDBAdapter.addTag(title);
+        tagPublishSubject.onNext(new Tag(result, title));
         return result;
       }
     }).subscribeOn(Schedulers.io());
@@ -97,9 +123,9 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        Boolean result = mBookmarksDBAdapter.updateTag(tag.id, tag.name);
+        Boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
         if (result) {
-          mTagPublishSubject.onNext(new Tag(tag.id, tag.name));
+          tagPublishSubject.onNext(new Tag(tag.id, tag.name));
         }
         return result;
       }
@@ -111,9 +137,9 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        Boolean result = mBookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
+        Boolean result = bookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
         if (result) {
-          mBookmarksPublishSubject.onNext(null);
+          bookmarksPublishSubject.onNext(null);
         }
         return result;
       }
@@ -124,8 +150,8 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Long>() {
       @Override
       public Long call() throws Exception {
-        long result = mBookmarksDBAdapter.addBookmarkIfNotExists(sura, ayah, page);
-        mBookmarksPublishSubject.onNext(null);
+        long result = bookmarksDBAdapter.addBookmarkIfNotExists(sura, ayah, page);
+        bookmarksPublishSubject.onNext(null);
         return result;
       }
     }).subscribeOn(Schedulers.io());
@@ -135,7 +161,25 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<List<Tag>>() {
       @Override
       public List<Tag> call() throws Exception {
-        return mBookmarksDBAdapter.getTags();
+        return bookmarksDBAdapter.getTags();
+      }
+    }).subscribeOn(Schedulers.io());
+  }
+
+  public void addRecentPage(final int lastPage) {
+    recentUpdatesSubject.onNext(new Pair<Integer, Integer>(null, lastPage));
+  }
+
+  @UiThread
+  public void updateLastPage(final int fromPage, final int lastPage) {
+    recentUpdatesSubject.onNext(new Pair<>(fromPage, lastPage));
+  }
+
+  public Observable<List<RecentPage>> getRecentPagesObservable() {
+    return Observable.fromCallable(new Callable<List<RecentPage>>() {
+      @Override
+      public List<RecentPage> call() throws Exception {
+        return bookmarksDBAdapter.getRecentPages();
       }
     }).subscribeOn(Schedulers.io());
   }
@@ -144,7 +188,7 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<List<Bookmark>>() {
       @Override
       public List<Bookmark> call() throws Exception {
-        return mBookmarksDBAdapter.getBookmarks(sortOrder);
+        return bookmarksDBAdapter.getBookmarks(sortOrder);
       }
     });
   }
@@ -158,7 +202,7 @@ public class BookmarkModel {
     }).map(new Func1<Long, List<Long>>() {
       @Override
       public List<Long> call(Long bookmarkId) {
-        return mBookmarksDBAdapter.getBookmarkTagIds(bookmarkId);
+        return bookmarksDBAdapter.getBookmarkTagIds(bookmarkId);
       }
     }).subscribeOn(Schedulers.io());
   }
@@ -167,7 +211,7 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Long>() {
       @Override
       public Long call() throws Exception {
-        return mBookmarksDBAdapter.getBookmarkId(sura, ayah, page);
+        return bookmarksDBAdapter.getBookmarkId(sura, ayah, page);
       }
     }).subscribeOn(Schedulers.io());
   }
@@ -177,7 +221,7 @@ public class BookmarkModel {
         .map(new Func1<Integer, List<Bookmark>>() {
           @Override
           public List<Bookmark> call(Integer page) {
-            return mBookmarksDBAdapter.getBookmarkedAyahsOnPage(page);
+            return bookmarksDBAdapter.getBookmarkedAyahsOnPage(page);
           }
         })
         .filter(new Func1<List<Bookmark>, Boolean>() {
@@ -194,7 +238,7 @@ public class BookmarkModel {
         .map(new Func1<Integer, Pair<Integer, Boolean>>() {
           @Override
           public Pair<Integer, Boolean> call(Integer page) {
-            return new Pair<>(page, mBookmarksDBAdapter.getBookmarkId(null, null, page) > 0);
+            return new Pair<>(page, bookmarksDBAdapter.getBookmarkId(null, null, page) > 0);
           }
         }).subscribeOn(Schedulers.io());
   }
@@ -218,13 +262,13 @@ public class BookmarkModel {
           public Boolean call(Long bookmarkId) {
             boolean result;
             if (bookmarkId > 0) {
-              mBookmarksDBAdapter.removeBookmark(bookmarkId);
+              bookmarksDBAdapter.removeBookmark(bookmarkId);
               result = false;
             } else {
-              mBookmarksDBAdapter.addBookmark(sura, ayah, page);
+              bookmarksDBAdapter.addBookmark(sura, ayah, page);
               result = true;
             }
-            mBookmarksPublishSubject.onNext(null);
+            bookmarksPublishSubject.onNext(null);
             return result;
           }
         }).subscribeOn(Schedulers.io());
@@ -234,9 +278,9 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        Boolean result = mBookmarksDBAdapter.importBookmarks(data);
+        Boolean result = bookmarksDBAdapter.importBookmarks(data);
         if (result) {
-          mBookmarksPublishSubject.onNext(null);
+          bookmarksPublishSubject.onNext(null);
         }
         return result;
       }

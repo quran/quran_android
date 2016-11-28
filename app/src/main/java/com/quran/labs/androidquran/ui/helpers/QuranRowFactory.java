@@ -1,18 +1,18 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.QuranInfo;
 
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
-
 public class QuranRowFactory {
 
-  public static QuranRow fromCurrentPageHeader(Context context) {
+  public static QuranRow fromRecentPageHeader(Context context, int count) {
     return new QuranRow.Builder()
-        .withText(context.getString(R.string.bookmarks_current_page))
+        .withText(context.getResources().getQuantityString(R.plurals.recent_pages, count))
         .withType(QuranRow.HEADER).build();
   }
 

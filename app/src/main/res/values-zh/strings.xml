@@ -125,7 +125,6 @@
   <string name="quran_ayah">节 %1$d</string>
   <string name="sura_ayah_notification_str">第%1$s章，第%2$d节</string>
 
-  <string name="bookmarks_current_page">当前页</string>
   <string name="index_loading">正在载入…</string>
 
   <string name="canceling">正在取消&#8230;</string>

@@ -136,7 +136,6 @@
   <string name="quran_sura_title">سورەت %1$s</string>
   <string name="sura_ayah_notification_str">سورەتی %1$s, ئایەتی %2$d</string>
 
-  <string name="bookmarks_current_page">پەڕەی ئێستا</string>
   <string name="index_loading">چاوەڕوانبە…</string>
 
   <string name="canceling">هەڵوەشاندنەوە&#8230;</string>

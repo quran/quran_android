@@ -214,7 +214,6 @@
   <string name="quran_sura_title">%1$s surasi</string>
   <string name="sura_ayah_notification_str">%1$s surasi %2$d-oyat</string>
 
-  <string name="bookmarks_current_page">Joriy sahifa</string>
   <string name="index_loading">Yuklanmoqda&#8230;</string>
 
   <string name="canceling">Bekor qilinmoqda&#8230;</string>

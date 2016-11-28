@@ -193,6 +193,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private boolean isInAyahMode;
   private SuraAyah start;
   private SuraAyah end;
+  private int mostRecentLastPage;
 
   @Inject QuranPageWorker quranPageWorker;
   @Inject BookmarkModel bookmarkModel;
@@ -354,6 +355,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       updateActionBarTitle(PAGES_LAST - page);
     }
 
+    // save this page
+    bookmarkModel.addRecentPage(PAGES_LAST - page);
+    mostRecentLastPage = PAGES_LAST - page;
+
     lastPopupTime = System.currentTimeMillis();
     pagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), isDualPages, showingTranslation);
@@ -396,7 +401,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       public void onPageSelected(int position) {
         Timber.d("onPageSelected(): %d", position);
         final int page = QuranInfo.getPageFromPos(position, isDualPages);
-        settings.setLastPage(page);
+        saveRecentPage(page);
         if (settings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
               PagerActivity.this, page, lastPopupTime);
@@ -490,6 +495,13 @@ public class PagerActivity extends QuranActionBarActivity implements
         downloadReceiver,
         new IntentFilter(action));
     downloadReceiver.setListener(this);
+  }
+
+  private void saveRecentPage(int page) {
+    if (page != mostRecentLastPage) {
+      bookmarkModel.updateLastPage(mostRecentLastPage, page);
+      mostRecentLastPage = page;
+    }
   }
 
   private int getStatusBarHeight() {
@@ -722,7 +734,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     promptDialog.show();
   }
 
-  public void downloadRequiredFiles() {
+  private void downloadRequiredFiles() {
     int downloadType = QuranDownloadService.DOWNLOAD_TYPE_AUDIO;
     if (audioStatusBar.getCurrentMode() == AudioStatusBar.STOPPED_MODE) {
       // if we're stopped, use audio download bar as our progress bar
@@ -788,9 +800,12 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     Bundle extras = intent.getExtras();
     if (extras != null) {
-      int page = PAGES_LAST -
-          extras.getInt("page", Constants.PAGES_FIRST);
+      int page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
       updateActionBarTitle(PAGES_LAST - page);
+
+      // save this page
+      bookmarkModel.addRecentPage(PAGES_LAST - page);
+      mostRecentLastPage = PAGES_LAST - page;
 
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
@@ -1003,7 +1018,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     return super.onSearchRequested();
   }
 
-  public void switchToQuran() {
+  private void switchToQuran() {
     pagerAdapter.setQuranMode();
     showingTranslation = false;
     int page = getCurrentPage();
@@ -1015,7 +1030,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  public void switchToTranslation() {
+  private void switchToTranslation() {
     if (isInAyahMode) {
       endAyahMode();
     }
@@ -1044,7 +1059,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     startActivity(i);
   }
 
-  AdapterView.OnItemSelectedListener translationItemSelectedListener =
+  private AdapterView.OnItemSelectedListener translationItemSelectedListener =
       new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -1284,8 +1299,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     highlightAyah(sura, ayah, true, type);
   }
 
-  public void highlightAyah(int sura, int ayah,
-      boolean force, HighlightType type) {
+  private void highlightAyah(int sura, int ayah,
+                             boolean force, HighlightType type) {
     Timber.d("highlightAyah() - %s:%s", sura, ayah);
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST ||
@@ -1305,7 +1320,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  public void unHighlightAyah(int sura, int ayah, HighlightType type) {
+  private void unHighlightAyah(int sura, int ayah, HighlightType type) {
     int position = viewPager.getCurrentItem();
     Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f != null && f instanceof AyahTracker) {
@@ -1313,7 +1328,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  public void unHighlightAyahs(HighlightType type) {
+  private void unHighlightAyahs(HighlightType type) {
     if (type == HighlightType.AUDIO) {
         lastPlayingSura = null;
         lastPlayingAyah = null;
@@ -1887,7 +1902,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  public void updateAyahEndSelection(SuraAyah suraAyah) {
+  private void updateAyahEndSelection(SuraAyah suraAyah) {
     if (isInAyahMode) {
       clearAyahModeHighlights();
       if (suraAyah.after(start)) {
@@ -2111,7 +2126,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     });
   }
 
-  public void updateAyahBookmark(
+  private void updateAyahBookmark(
       SuraAyah suraAyah, boolean bookmarked, boolean refreshHighlight) {
     // Refresh toolbar icon
     if (isInAyahMode && start.equals(suraAyah)) {
