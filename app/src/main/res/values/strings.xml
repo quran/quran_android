@@ -340,7 +340,7 @@
   <string name="undo">Undo</string>
 
   <plurals name="recent_pages">
-    <item quantity="one">Current page</item>
+    <item quantity="one">@string/menu_jump_last_page</item>
     <item quantity="other">Recent pages</item>
   </plurals>
 
