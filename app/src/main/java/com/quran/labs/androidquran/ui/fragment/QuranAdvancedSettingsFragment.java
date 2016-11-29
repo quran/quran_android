@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -21,8 +20,8 @@ import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.AdvancedQuranPreferenceActivity;
 import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.R;
@@ -52,8 +51,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class QuranAdvancedSettingsFragment extends PreferenceFragment implements
-    SharedPreferences.OnSharedPreferenceChangeListener {
+public class QuranAdvancedSettingsFragment extends PreferenceFragment{
   private static final int REQUEST_CODE_IMPORT = 1;
 
   private DataListPreference mListStoragePref;
@@ -320,8 +318,8 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment implements
 
   private void requestExternalStoragePermission(String newLocation) {
     Activity activity = getActivity();
-    if (activity instanceof AdvancedQuranPreferenceActivity) {
-      ((AdvancedQuranPreferenceActivity) activity).requestWriteExternalSdcardPermission(newLocation);
+    if (activity instanceof QuranAdvancedPreferenceActivity) {
+      ((QuranAdvancedPreferenceActivity) activity).requestWriteExternalSdcardPermission(newLocation);
     }
   }
 
@@ -369,22 +367,15 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment implements
   public void onResume() {
     super.onResume();
     mIsPaused = false;
-    getPreferenceScreen().getSharedPreferences()
-        .registerOnSharedPreferenceChangeListener(this);
   }
 
   @Override
   public void onPause() {
     mIsPaused = true;
-    getPreferenceScreen().getSharedPreferences()
-        .unregisterOnSharedPreferenceChangeListener(this);
     super.onPause();
   }
 
-  @Override
-  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
 
-  }
 
 
   private class MoveFilesAsyncTask extends AsyncTask<Void, Void, Boolean> {

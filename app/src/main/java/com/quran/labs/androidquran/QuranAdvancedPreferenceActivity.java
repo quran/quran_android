@@ -18,7 +18,7 @@ import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment;
 import com.quran.labs.androidquran.util.AudioManagerUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-public class AdvancedQuranPreferenceActivity extends QuranActionBarActivity {
+public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
 
   private static final String SI_LOCATION_TO_WRITE = "SI_LOCATION_TO_WRITE";
   private static final int REQUEST_WRITE_TO_SDCARD_PERMISSION = 1;
@@ -32,7 +32,7 @@ public class AdvancedQuranPreferenceActivity extends QuranActionBarActivity {
     setContentView(R.layout.preferences);
 
     final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    toolbar.setTitle(R.string.menu_settings);
+    toolbar.setTitle(R.string.prefs_category_advanced);
     setSupportActionBar(toolbar);
     final ActionBar ab = getSupportActionBar();
     if (ab != null) {

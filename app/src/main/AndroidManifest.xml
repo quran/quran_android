@@ -52,7 +52,7 @@
         android:theme="@style/QuranToolBar"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
     <activity
-        android:name=".AdvancedQuranPreferenceActivity"
+        android:name=".QuranAdvancedPreferenceActivity"
         android:theme="@style/QuranToolBar"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
 
