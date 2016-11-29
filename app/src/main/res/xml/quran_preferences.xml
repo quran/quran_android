@@ -154,8 +154,8 @@
       android:title="@string/prefs_category_advanced">
     <intent
         android:targetPackage="com.quran.labs.androidquran"
-        android:targetClass="com.quran.labs.androidquran.AdvancedQuranPreferenceActivity"
-        android:action="com.example.prefs.PREFS_ONE" />
+        android:targetClass="com.quran.labs.androidquran.QuranAdvancedPreferenceActivity"
+        android:action="com.quran.labs.androidquran.PREFS_ONE" />
   </Preference>
 </PreferenceCategory>
 </PreferenceScreen>
