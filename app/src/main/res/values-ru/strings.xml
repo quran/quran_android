@@ -339,6 +339,8 @@
   </plurals>
   <string name="undo">@string/cancel</string>
 
+  <string name="recent_pages">Недавние страницы</string>
+
   <!-- tag dialog -->
   <string name="tag_dlg_title">Метка</string>
   <string name="tag_name">Название</string>
