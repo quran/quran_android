@@ -101,6 +101,4 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       }
     }
   }
-
-
 }
