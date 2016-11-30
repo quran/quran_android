@@ -339,9 +339,10 @@
   </plurals>
   <string name="undo">Undo</string>
 
-  <plurals name="recent_pages">
+  <string name="recent_pages">Recent pages</string>
+  <plurals name="plural_recent_pages" translatable="false">
     <item quantity="one">@string/menu_jump_last_page</item>
-    <item quantity="other">Recent pages</item>
+    <item quantity="other">@string/recent_pages</item>
   </plurals>
 
   <!-- tag dialog -->

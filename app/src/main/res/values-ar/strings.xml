@@ -273,13 +273,7 @@
   <string name="export_data_error">خطأ في استيراد البيانات.</string>
   <string name="warning">تحذير</string>
 
-  <plurals name="recent_pages">
-    <item quantity="zero">آخر المتصفحات</item>
-    <item quantity="one">الصفحة الحالية</item>
-    <item quantity="two">آخر المتصفحات</item>
-    <item quantity="few">آخر المتصفحات</item>
-    <item quantity="many">آخر المتصفحات</item>
-  </plurals>
+  <string name="recent_pages">تم حذف عنصران</string>
 
   <plurals name="bookmark_tag_deleted">
     <item quantity="zero">لم يتم حذف عناصر</item>

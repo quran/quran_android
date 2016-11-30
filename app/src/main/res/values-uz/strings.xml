@@ -16,7 +16,7 @@
   <string name="menu_about">Ilova haqida</string>
   <string name="menu_other_apps">Boshqa ilovalar</string>
   <string name="menu_settings">Sozlamalar</string>
-  <string name="menu_jump_last_page">Oxirgi sahifa</string>
+  <string name="menu_jump_last_page">Soʻnggi oʻqilgan sahifa</string>
   <string name="menu_bookmarks">Xatchoʻplar</string>
   <string name="menu_bookmarks_page">Sahifa xatchoʻplari</string>
   <string name="menu_bookmarks_ayah">Oyat xatchoʻplari</string>
@@ -311,6 +311,8 @@
     <item quantity="other">%d ta element oʻchirildi</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+
+  <string name="recent_pages">Soʻnggi oʻqilgan sahifalar</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Teg</string>

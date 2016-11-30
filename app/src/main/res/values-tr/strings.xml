@@ -194,4 +194,5 @@
     <item quantity="one">1 âyet</item>
     <item quantity="other">%s âyet</item>
   </plurals>
+  <string name="recent_pages">Son sayfalar</string>
 </resources>
