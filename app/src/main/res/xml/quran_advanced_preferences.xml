@@ -27,5 +27,3 @@
         android:summary="@string/prefs_send_logs_summary"/>
   </PreferenceCategory>
 </PreferenceScreen>
-
-

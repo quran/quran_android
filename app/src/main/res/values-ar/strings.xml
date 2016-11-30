@@ -126,6 +126,10 @@
   <string name="prefs_tablet_mode_title">وضع الأجهزة اللوحية</string>
   <string name="prefs_tablet_mode_enabled">عرض صفحتين في الوضع الأفقي</string>
   <string name="prefs_tablet_mode_disabled">عرض صفحة واحدة في الوضع الأفقي</string>
+  <string name="prefs_import_title">استيراد</string>
+  <string name="prefs_import_summary">استيراد الاشارات المرجعية والعلامات</string>
+  <string name="prefs_send_logs_title">إرسال السجلات</string>
+  <string name="prefs_send_logs_summary">إرسال سجلات التصحيح للمطور</string>
   <!-- Preferences End -->
 
   <string name="downloaded_translations">الملفات المحملة</string>
