@@ -52,6 +52,11 @@
         android:theme="@style/QuranToolBar"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
     <activity
+        android:name=".QuranAdvancedPreferenceActivity"
+        android:theme="@style/QuranToolBar"
+        android:configChanges="keyboardHidden|orientation|screenSize"/>
+
+    <activity
         android:name=".SearchActivity"
         android:launchMode="singleTop">
       <intent-filter>
