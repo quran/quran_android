@@ -135,13 +135,16 @@ public class BookmarksDBAdapter {
   }
 
   public boolean addRecentPage(@Nullable Integer previousRecentPage, int page) {
+    boolean shouldDelete = true;
     if (previousRecentPage != null) {
-      mDb.delete(LastPagesTable.TABLE_NAME, LastPagesTable.PAGE + " IN(?, ?)",
+      int count = mDb.delete(LastPagesTable.TABLE_NAME, LastPagesTable.PAGE + " IN(?, ?)",
           new String[] { String.valueOf(previousRecentPage), String.valueOf(page) });
+      // avoid doing a delete if this delete caused us to remove any rows
+      shouldDelete = count == 0;
     }
     ContentValues contentValues = new ContentValues();
     contentValues.put(LastPagesTable.PAGE, page);
-    if (mDb.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1) {
+    if (mDb.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1 && shouldDelete) {
       mDb.execSQL("DELETE FROM " + LastPagesTable.TABLE_NAME + " WHERE " +
           LastPagesTable.ID + " NOT IN( SELECT " + LastPagesTable.ID + " FROM " +
           LastPagesTable.TABLE_NAME + " ORDER BY " + LastPagesTable.ADDED_DATE + " DESC LIMIT ? )",
