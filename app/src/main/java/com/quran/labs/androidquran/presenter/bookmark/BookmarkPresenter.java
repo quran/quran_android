@@ -88,7 +88,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   private void subscribeToChanges() {
     Observable.merge(bookmarkModel.tagsObservable(),
-        bookmarkModel.bookmarksObservable(), bookmarkModel.recentPagesObservable())
+        bookmarkModel.bookmarksObservable(), bookmarkModel.recentPagesUpdatedObservable())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<Object>() {
           @Override

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 
 import com.quran.labs.androidquran.dao.Bookmark;
@@ -134,14 +133,20 @@ public class BookmarksDBAdapter {
     return recents;
   }
 
-  public boolean addRecentPage(@Nullable Integer previousRecentPage, int page) {
-    boolean shouldDelete = true;
-    if (previousRecentPage != null) {
-      int count = mDb.delete(LastPagesTable.TABLE_NAME, LastPagesTable.PAGE + " IN(?, ?)",
-          new String[] { String.valueOf(previousRecentPage), String.valueOf(page) });
-      // avoid doing a delete if this delete caused us to remove any rows
-      shouldDelete = count == 0;
-    }
+  public boolean replaceRecentRangeWithPage(int deleteRangeStart, int deleteRangeEnd, int page) {
+    int count = mDb.delete(LastPagesTable.TABLE_NAME,
+        LastPagesTable.PAGE + " >= ? AND " + LastPagesTable.PAGE + " <= ?",
+        new String[] { String.valueOf(deleteRangeStart), String.valueOf(deleteRangeEnd) });
+    // avoid doing a delete if this delete caused us to remove any rows
+    boolean shouldDelete = count == 0;
+    return addRecentPage(page, shouldDelete);
+  }
+
+  public boolean addRecentPage(int page) {
+    return addRecentPage(page, true);
+  }
+
+  private boolean addRecentPage(int page, boolean shouldDelete) {
     ContentValues contentValues = new ContentValues();
     contentValues.put(LastPagesTable.PAGE, page);
     if (mDb.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1 && shouldDelete) {

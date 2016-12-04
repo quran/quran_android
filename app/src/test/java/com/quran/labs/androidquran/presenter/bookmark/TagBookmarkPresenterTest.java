@@ -37,7 +37,9 @@ public class TagBookmarkPresenterTest {
 
   @BeforeClass
   public static void setupMainThread() {
-    RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
+    RxAndroidPlugins rxAndroidPlugins = RxAndroidPlugins.getInstance();
+    rxAndroidPlugins.reset();
+    rxAndroidPlugins.registerSchedulersHook(new RxAndroidSchedulersHook() {
       @Override
       public Scheduler getMainThreadScheduler() {
         return Schedulers.immediate();

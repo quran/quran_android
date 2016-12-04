@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.model.bookmark.RecentPageModel;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import org.junit.Before;
@@ -21,7 +22,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import rx.Scheduler;
+import rx.android.plugins.RxAndroidPlugins;
+import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.observers.TestSubscriber;
+import rx.schedulers.Schedulers;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -78,6 +83,16 @@ public class BookmarkPresenterTest {
       total += Math.max(tags, 1);
     }
     MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total;
+
+    // AndroidSchedulers.mainThread should be Schedulers.io in tests
+    RxAndroidPlugins rxAndroidPlugins = RxAndroidPlugins.getInstance();
+    rxAndroidPlugins.reset();
+    rxAndroidPlugins.registerSchedulersHook(new RxAndroidSchedulersHook() {
+      @Override
+      public Scheduler getMainThreadScheduler() {
+        return Schedulers.io();
+      }
+    });
   }
 
   @Mock private Context appContext;
@@ -96,7 +111,8 @@ public class BookmarkPresenterTest {
     when(resources.getStringArray(anyInt())).thenReturn(RESOURCE_ARRAY);
     when(appContext.getApplicationContext()).thenReturn(appContext);
 
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter);
+    RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel);
     presenter = new BookmarkPresenter(appContext, settings, model, false);
   }
 

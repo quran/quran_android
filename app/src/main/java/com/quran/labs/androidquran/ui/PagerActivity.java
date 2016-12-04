@@ -60,6 +60,7 @@ import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
+import com.quran.labs.androidquran.presenter.bookmark.RecentPagePresenter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
@@ -193,10 +194,10 @@ public class PagerActivity extends QuranActionBarActivity implements
   private boolean isInAyahMode;
   private SuraAyah start;
   private SuraAyah end;
-  private int mostRecentLastPage;
 
   @Inject QuranPageWorker quranPageWorker;
   @Inject BookmarkModel bookmarkModel;
+  @Inject RecentPagePresenter recentPagePresenter;
   private CompositeSubscription compositeSubscription;
 
   private final PagerHandler handler = new PagerHandler(this);
@@ -355,10 +356,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       updateActionBarTitle(PAGES_LAST - page);
     }
 
-    // save this page
-    bookmarkModel.addRecentPage(PAGES_LAST - page);
-    mostRecentLastPage = PAGES_LAST - page;
-
     lastPopupTime = System.currentTimeMillis();
     pagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), isDualPages, showingTranslation);
@@ -498,10 +495,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void saveRecentPage(int page) {
-    if (page != mostRecentLastPage) {
-      bookmarkModel.updateLastPage(mostRecentLastPage, page);
-      mostRecentLastPage = page;
-    }
+    recentPagePresenter.onPageChanged(page);
   }
 
   private int getStatusBarHeight() {
@@ -679,15 +673,16 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onResume() {
+    super.onResume();
+
+    recentPagePresenter.bind(this);
     isInMultiWindowMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode();
 
     // read the list of translations
     requestTranslationsList();
 
-    super.onResume();
     if (shouldReconnect) {
-      startService(AudioUtils.getAudioIntent(
-          this, AudioService.ACTION_CONNECT));
+      startService(AudioUtils.getAudioIntent(this, AudioService.ACTION_CONNECT));
       shouldReconnect = false;
     }
 
@@ -803,10 +798,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       int page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
       updateActionBarTitle(PAGES_LAST - page);
 
-      // save this page
-      bookmarkModel.addRecentPage(PAGES_LAST - page);
-      mostRecentLastPage = PAGES_LAST - page;
-
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
       highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
@@ -856,6 +847,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       promptDialog.dismiss();
       promptDialog = null;
     }
+    recentPagePresenter.unbind(this);
     super.onPause();
   }
 
