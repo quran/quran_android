@@ -6,7 +6,6 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -19,7 +18,6 @@ import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -126,18 +124,21 @@ public class RecentPageModelTest {
   @Test
   public void testRecentPagesUpdated() {
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
+
+    TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+    recentPageModel.getRecentPagesUpdatedObservable()
+        .first()
+        .subscribe(testSubscriber);
+
     recentPageModel.persistLatestPage(200, 200, 200);
+    testSubscriber.awaitTerminalEvent();
 
-    ArgumentCaptor<Integer> argumentCaptor = ArgumentCaptor.forClass(Integer.class);
-
-    // implicitly wait for addRecentPage to be called due to forcing argument capture
-    verify(bookmarksAdapter, times(1)).addRecentPage(argumentCaptor.capture());
-    assertThat(argumentCaptor.getValue()).isEqualTo(200);
+    verify(bookmarksAdapter, times(1)).addRecentPage(200);
     verify(bookmarksAdapter, times(0)).replaceRecentRangeWithPage(anyInt(), anyInt(), anyInt());
   }
 
   @Test
-  public void testRecentPagesUpdatedWithSubscription() {
+  public void testRecentPagesUpdatedWithRange() {
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
     TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
