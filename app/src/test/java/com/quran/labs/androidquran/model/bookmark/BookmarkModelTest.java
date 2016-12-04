@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.model.bookmark;
 
+import android.support.v4.util.Pair;
+
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
@@ -8,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,12 +28,13 @@ import static org.mockito.Mockito.when;
 public class BookmarkModelTest {
 
   @Mock BookmarksDBAdapter bookmarksAdapter;
+  @Mock RecentPageModel recentPageModel;
   private BookmarkModel model;
 
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(BookmarkModelTest.this);
-    model = new BookmarkModel(bookmarksAdapter);
+    model = new BookmarkModel(bookmarksAdapter, recentPageModel);
   }
 
   @Test

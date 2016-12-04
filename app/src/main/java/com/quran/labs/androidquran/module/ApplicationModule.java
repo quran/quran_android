@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.module;
 
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-
 import android.app.Application;
 import android.content.Context;
+
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import java.util.concurrent.TimeUnit;
 

@@ -31,9 +31,8 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.bookmark.RecentPageModel;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
@@ -46,8 +45,6 @@ import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -86,9 +83,9 @@ public class QuranActivity extends QuranActionBarActivity
   private ActionMode supportActionMode;
   private CompositeSubscription compositeSubscription;
   private QuranSettings settings;
-  private Observable<List<RecentPage>> recentPages;
+  private Observable<Integer> recentPages;
 
-  @Inject BookmarkModel bookmarkModel;
+  @Inject RecentPageModel recentPageModel;
   @Inject TranslationManagerPresenter translationManagerPresenter;
 
   @Override
@@ -148,8 +145,7 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   public void onResume() {
-    // TODO place in a presenter that caches and know when to invalidate its cache
-    recentPages = bookmarkModel.getRecentPagesObservable().replay(1).autoConnect();
+    recentPages = recentPageModel.getLatestPageObservable();
     compositeSubscription.add(recentPages.subscribe());
 
     super.onResume();
@@ -175,7 +171,7 @@ public class QuranActivity extends QuranActionBarActivity
     return settings.isArabicNames() || QuranUtils.isRtl();
   }
 
-  public Observable<List<RecentPage>> getRecentPagesObservable() {
+  public Observable<Integer> getLatestPageObservable() {
     return recentPages;
   }
 
@@ -204,11 +200,10 @@ public class QuranActivity extends QuranActionBarActivity
       case R.id.last_page: {
         compositeSubscription.add(recentPages
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<List<RecentPage>>() {
+            .subscribe(new Action1<Integer>() {
               @Override
-              public void call(List<RecentPage> recentPages) {
-                int page = recentPages.size() > 0 ? recentPages.get(0).page : 1;
-                jumpTo(page);
+              public void call(Integer recentPage) {
+                jumpTo(recentPage == Constants.NO_PAGE ? 1 : recentPage);
               }
             }));
         return true;

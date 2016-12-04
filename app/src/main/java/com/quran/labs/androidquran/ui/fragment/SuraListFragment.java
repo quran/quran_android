@@ -12,15 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.RecentPage;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-
-import java.util.List;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -69,15 +67,15 @@ public class SuraListFragment extends Fragment {
     final Activity activity = getActivity();
     QuranSettings settings = QuranSettings.getInstance(activity);
     if (activity instanceof QuranActivity) {
-      subscription = ((QuranActivity) activity).getRecentPagesObservable()
+      subscription = ((QuranActivity) activity).getLatestPageObservable()
+          .first()
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new Action1<List<RecentPage>>() {
+          .subscribe(new Action1<Integer>() {
             @Override
-            public void call(List<RecentPage> recentPages) {
-              if (recentPages.size() > 0) {
-                int lastPage = recentPages.get(0).page;
-                int sura = QuranInfo.PAGE_SURA_START[lastPage - 1];
-                int juz = QuranInfo.getJuzFromPage(lastPage);
+            public void call(Integer recentPage) {
+              if (recentPage != Constants.NO_PAGE) {
+                int sura = QuranInfo.PAGE_SURA_START[recentPage - 1];
+                int juz = QuranInfo.getJuzFromPage(recentPage);
                 int position = sura + juz - 1;
                 mRecyclerView.scrollToPosition(position);
               }
