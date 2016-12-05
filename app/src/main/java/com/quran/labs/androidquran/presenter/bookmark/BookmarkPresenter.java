@@ -31,12 +31,13 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 @Singleton
@@ -55,7 +56,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private ArabicDatabaseUtils arabicDatabaseUtils;
 
   private boolean isRtl;
-  private Subscription pendingRemoval;
+  private DisposableSingleObserver<BookmarkResult> pendingRemoval;
   private List<QuranRow> itemsToRemove;
 
   @Inject
@@ -90,9 +91,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     Observable.merge(bookmarkModel.tagsObservable(),
         bookmarkModel.bookmarksObservable(), bookmarkModel.recentPagesUpdatedObservable())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Object>() {
+        .subscribe(new Consumer<Object>() {
           @Override
-          public void call(Object o) {
+          public void accept(Object o) {
             if (fragment != null) {
               requestData(false);
             } else {
@@ -174,23 +175,28 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
 
     itemsToRemove = remove;
-    pendingRemoval = Observable.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
-        .flatMap(new Func1<Long, Observable<BookmarkResult>>() {
+    pendingRemoval = Single.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
+        .flatMap(new Function<Long, Single<BookmarkResult>>() {
           @Override
-          public Observable<BookmarkResult> call(Long aLong) {
+          public Single<BookmarkResult> apply(Long aLong) {
             return removeItemsObservable();
           }
         })
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<BookmarkResult>() {
+        .subscribeWith(new DisposableSingleObserver<BookmarkResult>() {
+
           @Override
-          public void call(BookmarkResult result) {
+          public void onSuccess(BookmarkResult result) {
             pendingRemoval = null;
             cachedData = result;
             if (fragment != null) {
               fragment.onNewData(result);
             }
+          }
+
+          @Override
+          public void onError(Throwable e) {
           }
         });
   }
@@ -229,29 +235,24 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     return null;
   }
 
-  private Observable<BookmarkResult> removeItemsObservable() {
+  private Single<BookmarkResult> removeItemsObservable() {
     return bookmarkModel.removeItemsObservable(new ArrayList<>(itemsToRemove))
-        .flatMap(new Func1<Void, Observable<BookmarkResult>>() {
-          @Override
-          public Observable<BookmarkResult> call(Void aVoid) {
-            return getBookmarksListObservable(sortOrder, groupByTags);
-          }
-        });
+        .andThen(getBookmarksListObservable(sortOrder, groupByTags));
   }
 
   public void cancelDeletion() {
     if (pendingRemoval != null) {
-      pendingRemoval.unsubscribe();
+      pendingRemoval.dispose();
       pendingRemoval = null;
       itemsToRemove = null;
     }
   }
 
-  private Observable<BookmarkData> getBookmarksWithAyatObservable(int sortOrder) {
+  private Single<BookmarkData> getBookmarksWithAyatObservable(int sortOrder) {
     return bookmarkModel.getBookmarkDataObservable(sortOrder)
-        .map(new Func1<BookmarkData, BookmarkData>() {
+        .map(new Function<BookmarkData, BookmarkData>() {
           @Override
-          public BookmarkData call(BookmarkData bookmarkData) {
+          public BookmarkData apply(BookmarkData bookmarkData) {
             try {
               return new BookmarkData(bookmarkData.getTags(),
                   arabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()),
@@ -264,12 +265,12 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   }
 
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-  Observable<BookmarkResult> getBookmarksListObservable(
+  Single<BookmarkResult> getBookmarksListObservable(
       int sortOrder, final boolean groupByTags) {
     return getBookmarksWithAyatObservable(sortOrder)
-        .map(new Func1<BookmarkData, BookmarkResult>() {
+        .map(new Function<BookmarkData, BookmarkResult>() {
           @Override
-          public BookmarkResult call(BookmarkData bookmarkData) {
+          public BookmarkResult apply(BookmarkData bookmarkData) {
             List<QuranRow> rows = getBookmarkRows(bookmarkData, groupByTags);
             Map<Long, Tag> tagMap = generateTagMap(bookmarkData.getTags());
             return new BookmarkResult(rows, tagMap);
@@ -281,9 +282,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private void getBookmarks(final int sortOrder, final boolean groupByTags) {
     getBookmarksListObservable(sortOrder, groupByTags)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<BookmarkResult>() {
+        .subscribe(new Consumer<BookmarkResult>() {
           @Override
-          public void call(BookmarkResult result) {
+          public void accept(BookmarkResult result) {
             // notify the ui if we're attached
             cachedData = result;
             if (fragment != null) {

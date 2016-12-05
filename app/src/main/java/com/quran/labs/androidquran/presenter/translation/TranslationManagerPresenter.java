@@ -27,19 +27,20 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.observers.DisposableMaybeObserver;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSink;
 import okio.Okio;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func0;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 @Singleton
@@ -75,40 +76,30 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   public void getTranslationsList(boolean forceDownload) {
     Observable.concat(
         getCachedTranslationListObservable(forceDownload), getRemoteTranslationListObservable())
-        .takeFirst(new Func1<TranslationList, Boolean>() {
+        .filter(new Predicate<TranslationList>() {
           @Override
-          public Boolean call(TranslationList translationList) {
+          public boolean test(TranslationList translationList) throws Exception {
             return translationList != null && translationList.translations != null;
           }
         })
-        .filter(new Func1<TranslationList, Boolean>() {
+        .firstElement()
+        .filter(new Predicate<TranslationList>() {
           @Override
-          public Boolean call(TranslationList translationList) {
+          public boolean test(TranslationList translationList) throws Exception {
             return !translationList.translations.isEmpty();
           }
         })
-        .map(new Func1<TranslationList, List<TranslationItem>>() {
+        .map(new Function<TranslationList, List<TranslationItem>>() {
           @Override
-          public List<TranslationItem> call(TranslationList translationList) {
+          public List<TranslationItem> apply(TranslationList translationList) throws Exception {
             return mergeWithServerTranslations(translationList.translations);
           }
         })
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<List<TranslationItem>>() {
+        .subscribe(new DisposableMaybeObserver<List<TranslationItem>>() {
           @Override
-          public void onCompleted() {
-          }
-
-          @Override
-          public void onError(Throwable e) {
-            if (currentActivity != null) {
-              currentActivity.onErrorDownloadTranslations();
-            }
-          }
-
-          @Override
-          public void onNext(List<TranslationItem> translationItems) {
+          public void onSuccess(List<TranslationItem> translationItems) {
             if (currentActivity != null) {
               currentActivity.onTranslationsUpdated(translationItems);
             }
@@ -122,6 +113,20 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
               }
             }
             quranSettings.setHaveUpdatedTranslations(updatedTranslations);
+          }
+
+          @Override
+          public void onError(Throwable e) {
+            if (currentActivity != null) {
+              currentActivity.onErrorDownloadTranslations();
+            }
+          }
+
+          @Override
+          public void onComplete() {
+            if (currentActivity != null) {
+              currentActivity.onErrorDownloadTranslations();
+            }
           }
         });
   }
@@ -139,9 +144,9 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   Observable<TranslationList> getCachedTranslationListObservable(final boolean forceDownload) {
-    return Observable.defer(new Func0<Observable<TranslationList>>() {
+    return Observable.defer(new Callable<ObservableSource<? extends TranslationList>>() {
       @Override
-      public Observable<TranslationList> call() {
+      public ObservableSource<TranslationList> call() throws Exception {
         boolean isCacheStale = System.currentTimeMillis() -
             quranSettings.getLastUpdatedTranslationDate() > Constants.MIN_TRANSLATION_REFRESH_TIME;
         if (forceDownload || isCacheStale) {
@@ -180,9 +185,9 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
         responseBody.close();
         return result;
       }
-    }).doOnNext(new Action1<TranslationList>() {
+    }).doOnNext(new Consumer<TranslationList>() {
       @Override
-      public void call(TranslationList translationList) {
+      public void accept(TranslationList translationList) {
         if (translationList.translations != null && !translationList.translations.isEmpty()) {
           writeTranslationList(translationList);
         }

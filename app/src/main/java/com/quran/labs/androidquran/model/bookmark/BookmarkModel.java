@@ -17,19 +17,24 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import rx.Observable;
-import rx.functions.Func1;
-import rx.functions.Func3;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
+import io.reactivex.Completable;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Function3;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+
 
 @Singleton
 public class BookmarkModel {
   private final RecentPageModel recentPageModel;
   private final BookmarksDBAdapter bookmarksDBAdapter;
-  private final Subject<Tag, Tag> tagPublishSubject;
-  private final Subject<Void, Void> bookmarksPublishSubject;
+  private final Subject<Tag> tagPublishSubject;
+  private final Subject<Void> bookmarksPublishSubject;
 
   @Inject
   public BookmarkModel(BookmarksDBAdapter bookmarksAdapter, RecentPageModel recentPageModel) {
@@ -41,7 +46,7 @@ public class BookmarkModel {
   }
 
   public Observable<Tag> tagsObservable() {
-    return tagPublishSubject.asObservable();
+    return tagPublishSubject.hide();
   }
 
   public Observable<Void> recentPagesUpdatedObservable() {
@@ -49,28 +54,27 @@ public class BookmarkModel {
   }
 
   public Observable<Void> bookmarksObservable() {
-    return bookmarksPublishSubject.asObservable();
+    return bookmarksPublishSubject.hide();
   }
 
-  public Observable<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
-    return Observable
-        .zip(getTagsObservable(),
-            getBookmarksObservable(sortOrder),
-            recentPageModel.getRecentPagesObservable(),
-            new Func3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>() {
-              @Override
-              public BookmarkData call(List<Tag> tags,
-                                       List<Bookmark> bookmarks,
-                                       List<RecentPage> recentPages) {
-                return new BookmarkData(tags, bookmarks, recentPages);
-              }
-            })
+  public Single<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
+    return Single.zip(getTagsObservable(),
+        getBookmarksObservable(sortOrder),
+        recentPageModel.getRecentPagesObservable(),
+        new Function3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>() {
+          @Override
+          public BookmarkData apply(List<Tag> tags,
+                                    List<Bookmark> bookmarks,
+                                    List<RecentPage> recentPages) {
+            return new BookmarkData(tags, bookmarks, recentPages);
+          }
+        })
         .subscribeOn(Schedulers.io());
   }
 
-  public Observable<Void> removeItemsObservable(
+  public Completable removeItemsObservable(
       final List<QuranRow> itemsToRemoveRef) {
-    return Observable.fromCallable(new Callable<Void>() {
+    return Completable.fromCallable(new Callable<Void>() {
       @Override
       public Void call() throws Exception {
         List<Long> tagsToDelete = new ArrayList<>();
@@ -119,7 +123,8 @@ public class BookmarkModel {
   }
 
   public Observable<Boolean> updateBookmarkTags(final long[] bookmarkIds,
-      final Set<Long> tagIds, final boolean deleteNonTagged) {
+                                                final Set<Long> tagIds,
+                                                final boolean deleteNonTagged) {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
@@ -143,8 +148,8 @@ public class BookmarkModel {
     }).subscribeOn(Schedulers.io());
   }
 
-  public Observable<List<Tag>> getTagsObservable() {
-    return Observable.fromCallable(new Callable<List<Tag>>() {
+  public Single<List<Tag>> getTagsObservable() {
+    return Single.fromCallable(new Callable<List<Tag>>() {
       @Override
       public List<Tag> call() throws Exception {
         return bookmarksDBAdapter.getTags();
@@ -152,8 +157,8 @@ public class BookmarkModel {
     }).subscribeOn(Schedulers.io());
   }
 
-  private Observable<List<Bookmark>> getBookmarksObservable(final int sortOrder) {
-    return Observable.fromCallable(new Callable<List<Bookmark>>() {
+  private Single<List<Bookmark>> getBookmarksObservable(final int sortOrder) {
+    return Single.fromCallable(new Callable<List<Bookmark>>() {
       @Override
       public List<Bookmark> call() throws Exception {
         return bookmarksDBAdapter.getBookmarks(sortOrder);
@@ -161,22 +166,22 @@ public class BookmarkModel {
     });
   }
 
-  public Observable<List<Long>> getBookmarkTagIds(Observable<Long> bookmarkId) {
-    return bookmarkId.filter(new Func1<Long, Boolean>() {
+  public Maybe<List<Long>> getBookmarkTagIds(Single<Long> bookmarkId) {
+    return bookmarkId.filter(new Predicate<Long>() {
       @Override
-      public Boolean call(Long bookmarkId) {
+      public boolean test(Long bookmarkId) throws Exception {
         return bookmarkId > 0;
       }
-    }).map(new Func1<Long, List<Long>>() {
+    }).map(new Function<Long, List<Long>>() {
       @Override
-      public List<Long> call(Long bookmarkId) {
+      public List<Long> apply(Long bookmarkId) throws Exception {
         return bookmarksDBAdapter.getBookmarkTagIds(bookmarkId);
       }
     }).subscribeOn(Schedulers.io());
   }
 
-  public Observable<Long> getBookmarkId(final Integer sura, final Integer ayah, final int page) {
-    return Observable.fromCallable(new Callable<Long>() {
+  public Single<Long> getBookmarkId(final Integer sura, final Integer ayah, final int page) {
+    return Single.fromCallable(new Callable<Long>() {
       @Override
       public Long call() throws Exception {
         return bookmarksDBAdapter.getBookmarkId(sura, ayah, page);
@@ -185,16 +190,16 @@ public class BookmarkModel {
   }
 
   public Observable<List<Bookmark>> getBookmarkedAyahsOnPageObservable(Integer... pages) {
-    return Observable.from(pages)
-        .map(new Func1<Integer, List<Bookmark>>() {
+    return Observable.fromArray(pages)
+        .map(new Function<Integer, List<Bookmark>>() {
           @Override
-          public List<Bookmark> call(Integer page) {
+          public List<Bookmark> apply(Integer page) {
             return bookmarksDBAdapter.getBookmarkedAyahsOnPage(page);
           }
         })
-        .filter(new Func1<List<Bookmark>, Boolean>() {
+        .filter(new Predicate<List<Bookmark>>() {
           @Override
-          public Boolean call(List<Bookmark> bookmarks) {
+          public boolean test(List<Bookmark> bookmarks) {
             return !bookmarks.isEmpty();
           }
         })
@@ -202,32 +207,32 @@ public class BookmarkModel {
   }
 
   public Observable<Pair<Integer, Boolean>> getIsBookmarkedObservable(Integer... pages) {
-    return Observable.from(pages)
-        .map(new Func1<Integer, Pair<Integer, Boolean>>() {
+    return Observable.fromArray(pages)
+        .map(new Function<Integer, Pair<Integer, Boolean>>() {
           @Override
-          public Pair<Integer, Boolean> call(Integer page) {
+          public Pair<Integer, Boolean> apply(Integer page) {
             return new Pair<>(page, bookmarksDBAdapter.getBookmarkId(null, null, page) > 0);
           }
         }).subscribeOn(Schedulers.io());
   }
 
-  public Observable<Boolean> getIsBookmarkedObservable(
+  public Single<Boolean> getIsBookmarkedObservable(
       final Integer sura, final Integer ayah, final int page) {
     return getBookmarkId(sura, ayah, page)
-        .map(new Func1<Long, Boolean>() {
+        .map(new Function<Long, Boolean>() {
           @Override
-          public Boolean call(Long bookmarkId) {
+          public Boolean apply(Long bookmarkId) {
             return bookmarkId > 0;
           }
         }).subscribeOn(Schedulers.io());
   }
 
-  public Observable<Boolean> toggleBookmarkObservable(
+  public Single<Boolean> toggleBookmarkObservable(
       final Integer sura, final Integer ayah, final int page) {
     return getBookmarkId(sura, ayah, page)
-        .map(new Func1<Long, Boolean>() {
+        .map(new Function<Long, Boolean>() {
           @Override
-          public Boolean call(Long bookmarkId) {
+          public Boolean apply(Long bookmarkId) {
             boolean result;
             if (bookmarkId > 0) {
               bookmarksDBAdapter.removeBookmark(bookmarkId);

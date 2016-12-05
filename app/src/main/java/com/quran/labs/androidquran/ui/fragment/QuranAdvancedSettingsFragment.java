@@ -42,13 +42,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.observers.DisposableMaybeObserver;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class QuranAdvancedSettingsFragment extends PreferenceFragment{
@@ -63,8 +64,8 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
   private String mInternalSdcardLocation;
   private AlertDialog mDialog;
   private Context mAppContext;
-  private Subscription mExportSubscription = null;
-  private Subscription mLogsSubscription;
+  private Disposable mExportSubscription = null;
+  private Disposable mLogsSubscription;
 
   @Inject BookmarkImportExportModel bookmarkImportExportModel;
 
@@ -86,31 +87,31 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
         @Override
         public boolean onPreferenceClick(Preference preference) {
           if (mLogsSubscription == null) {
-            mLogsSubscription = Observable.from(Timber.forest())
-                .filter(new Func1<Timber.Tree, Boolean>() {
+            mLogsSubscription = Observable.fromIterable(Timber.forest())
+                .filter(new Predicate<Timber.Tree>() {
                   @Override
-                  public Boolean call(Timber.Tree tree) {
+                  public boolean test(Timber.Tree tree) throws Exception {
                     return tree instanceof RecordingLogTree;
                   }
                 })
-                .first()
-                .map(new Func1<Timber.Tree, String>() {
+                .firstElement()
+                .map(new Function<Timber.Tree, String>() {
                   @Override
-                  public String call(Timber.Tree tree) {
+                  public String apply(Timber.Tree tree) {
                     return ((RecordingLogTree) tree).getLogs();
                   }
                 })
-                .map(new Func1<String, String>() {
+                .map(new Function<String, String>() {
                   @Override
-                  public String call(String logs) {
+                  public String apply(String logs) {
                     return QuranUtils.getDebugInfo(mAppContext) + "\n\n" + logs;
                   }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribeWith(new DisposableMaybeObserver<String>() {
                   @Override
-                  public void call(String logs) {
+                  public void onSuccess(String logs) {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("message/rfc822");
                     intent.putExtra(Intent.EXTRA_EMAIL,
@@ -120,6 +121,14 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
                     startActivity(Intent.createChooser(intent,
                         mAppContext.getString(R.string.prefs_send_logs_title)));
                     mLogsSubscription = null;
+                  }
+
+                  @Override
+                  public void onError(Throwable e) {
+                  }
+
+                  @Override
+                  public void onComplete() {
                   }
                 });
           }
@@ -154,22 +163,9 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
         if (mExportSubscription == null) {
           mExportSubscription = bookmarkImportExportModel.exportBookmarksObservable()
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Subscriber<Uri>() {
+              .subscribeWith(new DisposableSingleObserver<Uri>() {
                 @Override
-                public void onCompleted() {
-                  mExportSubscription = null;
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                  mExportSubscription = null;
-                  if (isAdded()) {
-                    Toast.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
-                  }
-                }
-
-                @Override
-                public void onNext(Uri uri) {
+                public void onSuccess(Uri uri) {
                   Answers.getInstance().logCustom(new CustomEvent("exportData"));
                   Intent shareIntent = new Intent(Intent.ACTION_SEND);
                   shareIntent.setType("application/json");
@@ -187,6 +183,14 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
                     String exported = mAppContext.getString(
                         R.string.exported_data, exportedPath.toString());
                     Toast.makeText(mAppContext, exported, Toast.LENGTH_LONG).show();
+                  }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                  mExportSubscription = null;
+                  if (isAdded()) {
+                    Toast.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
                   }
                 }
               });
@@ -222,11 +226,11 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
   @Override
   public void onDestroy() {
     if (mExportSubscription != null) {
-      mExportSubscription.unsubscribe();
+      mExportSubscription.dispose();
     }
 
     if (mLogsSubscription != null) {
-      mLogsSubscription.unsubscribe();
+      mLogsSubscription.dispose();
     }
 
     if (mDialog != null) {

@@ -11,20 +11,20 @@ import javax.inject.Inject;
 import okio.BufferedSink;
 import okio.BufferedSource;
 
-public class BookmarkJsonModel {
+class BookmarkJsonModel {
   private final JsonAdapter<BookmarkData> jsonAdapter;
 
   @Inject
-  public BookmarkJsonModel() {
+  BookmarkJsonModel() {
     Moshi moshi = new Moshi.Builder().build();
     jsonAdapter = moshi.adapter(BookmarkData.class);
   }
 
-  public void toJson(BufferedSink sink, BookmarkData bookmarks) throws IOException {
+  void toJson(BufferedSink sink, BookmarkData bookmarks) throws IOException {
     jsonAdapter.toJson(sink, bookmarks);
   }
 
-  public BookmarkData fromJson(BufferedSource jsonSource) throws IOException {
+  BookmarkData fromJson(BufferedSource jsonSource) throws IOException {
     return jsonAdapter.fromJson(jsonSource);
   }
 }

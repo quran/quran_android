@@ -48,10 +48,10 @@ import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
 public class QuranActivity extends QuranActionBarActivity
@@ -81,7 +81,7 @@ public class QuranActivity extends QuranActionBarActivity
   private boolean isPaused;
   private MenuItem searchItem;
   private ActionMode supportActionMode;
-  private CompositeSubscription compositeSubscription;
+  private CompositeDisposable compositeDisposable;
   private QuranSettings settings;
   private Observable<Integer> recentPages;
 
@@ -97,7 +97,7 @@ public class QuranActivity extends QuranActionBarActivity
     quranApp.getApplicationComponent().inject(this);
 
     setContentView(R.layout.quran_index);
-    compositeSubscription = new CompositeSubscription();
+    compositeDisposable = new CompositeDisposable();
 
     settings = QuranSettings.getInstance(this);
     isRtl = isRtl();
@@ -146,7 +146,7 @@ public class QuranActivity extends QuranActionBarActivity
   @Override
   public void onResume() {
     recentPages = recentPageModel.getLatestPageObservable();
-    compositeSubscription.add(recentPages.subscribe());
+    compositeDisposable.add(recentPages.subscribe());
 
     super.onResume();
     final boolean isRtl = isRtl();
@@ -162,7 +162,7 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   protected void onPause() {
-    compositeSubscription.clear();
+    compositeDisposable.clear();
     isPaused = true;
     super.onPause();
   }
@@ -198,11 +198,11 @@ public class QuranActivity extends QuranActionBarActivity
         return true;
       }
       case R.id.last_page: {
-        compositeSubscription.add(recentPages
+        compositeDisposable.add(recentPages
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<Integer>() {
+            .subscribe(new Consumer<Integer>() {
               @Override
-              public void call(Integer recentPage) {
+              public void accept(Integer recentPage) {
                 jumpTo(recentPage == Constants.NO_PAGE ? 1 : recentPage);
               }
             }));
