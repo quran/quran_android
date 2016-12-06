@@ -297,9 +297,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     compositeDisposable.add(
         bookmarkModel.bookmarksObservable()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Consumer<Void>() {
+            .subscribe(new Consumer<Boolean>() {
               @Override
-              public void accept(Void aVoid) {
+              public void accept(Boolean ignore) {
                 onBookmarksChanged();
               }
             }));

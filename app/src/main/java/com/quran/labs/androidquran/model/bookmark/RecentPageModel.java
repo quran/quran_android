@@ -29,7 +29,7 @@ public class RecentPageModel {
   private final Subject<Integer> lastPageSubject;
 
   private DisposableSingleObserver<List<RecentPage>> initialDataSubscription;
-  private final Observable<Void> recentPagesUpdatedObservable;
+  private final Observable<Boolean> recentPagesUpdatedObservable;
   private final Subject<PersistRecentPagesRequest> recentWriterSubject;
 
   @Inject
@@ -40,16 +40,16 @@ public class RecentPageModel {
 
     recentPagesUpdatedObservable = this.recentWriterSubject.hide()
         .observeOn(Schedulers.io())
-        .map(new Function<PersistRecentPagesRequest, Void>() {
+        .map(new Function<PersistRecentPagesRequest, Boolean>() {
           @Override
-          public Void apply(PersistRecentPagesRequest update) throws Exception {
+          public Boolean apply(PersistRecentPagesRequest update) throws Exception {
             if (update.deleteRangeStart != null) {
               bookmarksDBAdapter.replaceRecentRangeWithPage(
                   update.deleteRangeStart, update.deleteRangeEnd, update.page);
             } else {
               bookmarksDBAdapter.addRecentPage(update.page);
             }
-            return null;
+            return true;
           }
         }).share();
 
@@ -114,7 +114,7 @@ public class RecentPageModel {
    *
    * @return an observable that receives events whenever recent pages is persisted
    */
-  Observable<Void> getRecentPagesUpdatedObservable() {
+  Observable<Boolean> getRecentPagesUpdatedObservable() {
     return recentPagesUpdatedObservable;
   }
 

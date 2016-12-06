@@ -128,7 +128,7 @@ public class RecentPageModelTest {
   public void testRecentPagesUpdated() {
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
-    TestObserver<Void> testObserver = new TestObserver<>();
+    TestObserver<Boolean> testObserver = new TestObserver<>();
     recentPageModel.getRecentPagesUpdatedObservable()
         .firstOrError()
         .subscribe(testObserver);
@@ -144,7 +144,7 @@ public class RecentPageModelTest {
   public void testRecentPagesUpdatedWithRange() {
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
-    TestObserver<Void> testObserver = new TestObserver<>();
+    TestObserver<Boolean> testObserver = new TestObserver<>();
     recentPageModel.getRecentPagesUpdatedObservable()
         .firstOrError()
         .subscribe(testObserver);

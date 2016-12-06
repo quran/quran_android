@@ -34,7 +34,7 @@ public class BookmarkModel {
   private final RecentPageModel recentPageModel;
   private final BookmarksDBAdapter bookmarksDBAdapter;
   private final Subject<Tag> tagPublishSubject;
-  private final Subject<Void> bookmarksPublishSubject;
+  private final Subject<Boolean> bookmarksPublishSubject;
 
   @Inject
   public BookmarkModel(BookmarksDBAdapter bookmarksAdapter, RecentPageModel recentPageModel) {
@@ -42,18 +42,18 @@ public class BookmarkModel {
     this.bookmarksDBAdapter = bookmarksAdapter;
 
     tagPublishSubject = PublishSubject.<Tag>create().toSerialized();
-    bookmarksPublishSubject = PublishSubject.<Void>create().toSerialized();
+    bookmarksPublishSubject = PublishSubject.<Boolean>create().toSerialized();
   }
 
   public Observable<Tag> tagsObservable() {
     return tagPublishSubject.hide();
   }
 
-  public Observable<Void> recentPagesUpdatedObservable() {
+  public Observable<Boolean> recentPagesUpdatedObservable() {
     return recentPageModel.getRecentPagesUpdatedObservable();
   }
 
-  public Observable<Void> bookmarksObservable() {
+  public Observable<Boolean> bookmarksObservable() {
     return bookmarksPublishSubject.hide();
   }
 
@@ -130,8 +130,7 @@ public class BookmarkModel {
       public Boolean call() throws Exception {
         boolean result = bookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
         if (result) {
-          // this is okay because this is a Subject<Void>
-          bookmarksPublishSubject.onNext(null);
+          bookmarksPublishSubject.onNext(true);
         }
         return result;
       }
@@ -143,8 +142,7 @@ public class BookmarkModel {
       @Override
       public Long call() throws Exception {
         long result = bookmarksDBAdapter.addBookmarkIfNotExists(sura, ayah, page);
-        // this is okay because this is a Subject<Void>
-        bookmarksPublishSubject.onNext(null);
+        bookmarksPublishSubject.onNext(true);
         return result;
       }
     }).subscribeOn(Schedulers.io());
@@ -243,7 +241,7 @@ public class BookmarkModel {
               bookmarksDBAdapter.addBookmark(sura, ayah, page);
               result = true;
             }
-            bookmarksPublishSubject.onNext(null);
+            bookmarksPublishSubject.onNext(true);
             return result;
           }
         }).subscribeOn(Schedulers.io());
@@ -255,8 +253,7 @@ public class BookmarkModel {
       public Boolean call() throws Exception {
         boolean result = bookmarksDBAdapter.importBookmarks(data);
         if (result) {
-          // this is okay because this is a Subject<Void>
-          bookmarksPublishSubject.onNext(null);
+          bookmarksPublishSubject.onNext(true);
         }
         return result;
       }
