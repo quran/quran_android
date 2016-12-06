@@ -79,7 +79,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
         .filter(new Predicate<TranslationList>() {
           @Override
           public boolean test(TranslationList translationList) throws Exception {
-            return translationList != null && translationList.translations != null;
+            return translationList.translations != null;
           }
         })
         .firstElement()

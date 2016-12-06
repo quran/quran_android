@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.model.bookmark;
 
+import android.support.annotation.NonNull;
+
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -24,6 +26,7 @@ class BookmarkJsonModel {
     jsonAdapter.toJson(sink, bookmarks);
   }
 
+  @NonNull
   BookmarkData fromJson(BufferedSource jsonSource) throws IOException {
     return jsonAdapter.fromJson(jsonSource);
   }

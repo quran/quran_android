@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 
 import com.quran.labs.androidquran.R;
@@ -31,14 +32,14 @@ public class BookmarkImportExportModel {
   private final BookmarkModel bookmarkModel;
 
   @Inject
-  public BookmarkImportExportModel(Context appContext,
-      BookmarkJsonModel model, BookmarkModel bookmarkModel) {
+  BookmarkImportExportModel(Context appContext,
+                            BookmarkJsonModel model, BookmarkModel bookmarkModel) {
     this.appContext = appContext;
     this.jsonModel = model;
     this.bookmarkModel = bookmarkModel;
   }
 
-  public Single<BookmarkData> readBookmarks(final BufferedSource source) {
+  public Single<BookmarkData> readBookmarks(@NonNull final BufferedSource source) {
     return Single.defer(new Callable<SingleSource<BookmarkData>>() {
       @Override
       public SingleSource<BookmarkData> call() throws Exception {
@@ -59,8 +60,8 @@ public class BookmarkImportExportModel {
         .subscribeOn(Schedulers.io());
   }
 
+  @NonNull
   private Uri exportBookmarks(BookmarkData data) throws IOException {
-    Uri result = null;
     File externalFilesDir = new File(appContext.getExternalFilesDir(null), "backups");
     if (externalFilesDir.exists() || externalFilesDir.mkdir()) {
       File file = new File(externalFilesDir, FILE_NAME);
@@ -68,9 +69,9 @@ public class BookmarkImportExportModel {
       jsonModel.toJson(sink, data);
       sink.close();
 
-      result = FileProvider.getUriForFile(
+      return FileProvider.getUriForFile(
           appContext, appContext.getString(R.string.file_authority), file);
     }
-    return result;
+    throw new IOException("Unable to write to external files directory.");
   }
 }

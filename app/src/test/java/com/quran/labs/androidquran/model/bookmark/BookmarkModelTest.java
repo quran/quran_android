@@ -13,13 +13,17 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import io.reactivex.observers.TestObserver;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,6 +54,19 @@ public class BookmarkModelTest {
     testObserver.assertComplete();
 
     verify(bookmarksAdapter, times(1)).updateTag(tag.id, tag.name);
+  }
+
+  @Test
+  public void testUpdateBookmarkTags() {
+    when(bookmarksAdapter.tagBookmarks(
+        any(long[].class), anySetOf(long.class), anyBoolean())).thenReturn(true);
+
+    TestObserver<Boolean> testObserver = new TestObserver<>();
+    model.updateBookmarkTags(new long[] { }, new HashSet<Long>(), false)
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertNoErrors();
+    testObserver.assertComplete();
   }
 
   @Test

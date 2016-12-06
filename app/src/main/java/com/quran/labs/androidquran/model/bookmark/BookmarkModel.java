@@ -128,8 +128,9 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        Boolean result = bookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
+        boolean result = bookmarksDBAdapter.tagBookmarks(bookmarkIds, tagIds, deleteNonTagged);
         if (result) {
+          // this is okay because this is a Subject<Void>
           bookmarksPublishSubject.onNext(null);
         }
         return result;
@@ -142,6 +143,7 @@ public class BookmarkModel {
       @Override
       public Long call() throws Exception {
         long result = bookmarksDBAdapter.addBookmarkIfNotExists(sura, ayah, page);
+        // this is okay because this is a Subject<Void>
         bookmarksPublishSubject.onNext(null);
         return result;
       }
@@ -251,8 +253,9 @@ public class BookmarkModel {
     return Observable.fromCallable(new Callable<Boolean>() {
       @Override
       public Boolean call() throws Exception {
-        Boolean result = bookmarksDBAdapter.importBookmarks(data);
+        boolean result = bookmarksDBAdapter.importBookmarks(data);
         if (result) {
+          // this is okay because this is a Subject<Void>
           bookmarksPublishSubject.onNext(null);
         }
         return result;
