@@ -109,15 +109,15 @@ public class BookmarkModel {
     }).subscribeOn(Schedulers.io());
   }
 
-  public Observable<Boolean> updateTag(final Tag tag) {
-    return Observable.fromCallable(new Callable<Boolean>() {
+  public Completable updateTag(final Tag tag) {
+    return Completable.fromCallable(new Callable<Void>() {
       @Override
-      public Boolean call() throws Exception {
-        Boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
+      public Void call() throws Exception {
+        boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
         if (result) {
           tagPublishSubject.onNext(new Tag(tag.id, tag.name));
         }
-        return result;
+        return null;
       }
     }).subscribeOn(Schedulers.io());
   }

@@ -1,14 +1,14 @@
 package com.quran.labs.androidquran.model.bookmark;
 
+import android.content.Context;
+
 import com.quran.labs.androidquran.dao.BookmarkData;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import android.content.Context;
-
+import io.reactivex.observers.TestObserver;
 import okio.Buffer;
-import rx.observers.TestSubscriber;
 
 import static org.mockito.Mockito.mock;
 
@@ -30,23 +30,21 @@ public class BookmarkImportExportModelTest {
   @Test
   public void testReadBookmarks() {
     Buffer buffer = new Buffer().writeUtf8(TAGS_JSON);
-    TestSubscriber<BookmarkData> testSubscriber = new TestSubscriber<>();
+    TestObserver<BookmarkData> testObserver = new TestObserver<>();
     bookmarkImportExportModel.readBookmarks(buffer)
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertValueCount(1);
-    testSubscriber.assertCompleted();
-    testSubscriber.assertNoErrors();
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertValueCount(1);
+    testObserver.assertNoErrors();
   }
 
   @Test
   public void testReadInvalidBookmarks() {
-    TestSubscriber<BookmarkData> testSubscriber = new TestSubscriber<>();
+    TestObserver<BookmarkData> testObserver = new TestObserver<>();
     bookmarkImportExportModel.readBookmarks(null)
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertValueCount(0);
-    testSubscriber.assertNotCompleted();
-    testSubscriber.assertError(NullPointerException.class);
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertValueCount(0);
+    testObserver.assertError(NullPointerException.class);
   }
 }

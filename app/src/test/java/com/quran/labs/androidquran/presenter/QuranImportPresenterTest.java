@@ -1,23 +1,23 @@
 package com.quran.labs.androidquran.presenter;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
+import io.reactivex.observers.TestObserver;
 import okio.BufferedSource;
-import rx.observers.TestSubscriber;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
@@ -44,16 +44,15 @@ public class QuranImportPresenterTest {
     when(resolver.openInputStream(any(Uri.class))).thenReturn(is);
     when(appContext.getContentResolver()).thenReturn(resolver);
 
-    TestSubscriber<BufferedSource> subscriber = new TestSubscriber<>();
+    TestObserver<BufferedSource> observer = new TestObserver<>();
     presenter.parseExternalFile(Uri.EMPTY)
-        .subscribe(subscriber);
-    subscriber.awaitTerminalEvent();
-    subscriber.assertValueCount(1);
-    subscriber.assertNoErrors();
-    subscriber.assertCompleted();
-    subscriber.assertUnsubscribed();
+        .subscribe(observer);
+    observer.awaitTerminalEvent();
+    observer.assertValueCount(1);
+    observer.assertNoErrors();
+    observer.assertComplete();
 
-    List<BufferedSource> events = subscriber.getOnNextEvents();
+    List<BufferedSource> events = observer.values();
     assertThat(events).hasSize(1);
     assertThat(events.get(0)).isNotNull();
   }
@@ -64,15 +63,13 @@ public class QuranImportPresenterTest {
     when(resolver.openInputStream(any(Uri.class))).thenReturn(null);
     when(appContext.getContentResolver()).thenReturn(resolver);
 
-    TestSubscriber<BufferedSource> subscriber = new TestSubscriber<>();
+    TestObserver<BufferedSource> observer = new TestObserver<>();
     presenter.parseExternalFile(Uri.EMPTY)
-        .subscribe(subscriber);
-    subscriber.awaitTerminalEvent();
-    subscriber.assertValueCount(1);
-    subscriber.assertValue(null);
-    subscriber.assertNoErrors();
-    subscriber.assertCompleted();
-    subscriber.assertUnsubscribed();
+        .subscribe(observer);
+    observer.awaitTerminalEvent();
+    observer.assertValueCount(0);
+    observer.assertNoErrors();
+    observer.assertComplete();
   }
 
   @Test
@@ -81,15 +78,13 @@ public class QuranImportPresenterTest {
     when(resolver.openFileDescriptor(any(Uri.class), anyString())).thenReturn(null);
     when(appContext.getContentResolver()).thenReturn(resolver);
 
-    TestSubscriber<BufferedSource> subscriber = new TestSubscriber<>();
+    TestObserver<BufferedSource> observer = new TestObserver<>();
     presenter.parseUri(Uri.EMPTY)
-        .subscribe(subscriber);
-    subscriber.awaitTerminalEvent();
-    subscriber.assertValueCount(1);
-    subscriber.assertValue(null);
-    subscriber.assertNoErrors();
-    subscriber.assertCompleted();
-    subscriber.assertUnsubscribed();
+        .subscribe(observer);
+    observer.awaitTerminalEvent();
+    observer.assertComplete();
+    observer.assertValueCount(0);
+    observer.assertNoErrors();
   }
 
   @Test
@@ -101,12 +96,11 @@ public class QuranImportPresenterTest {
     when(resolver.openFileDescriptor(any(Uri.class), anyString())).thenReturn(pfd);
     when(appContext.getContentResolver()).thenReturn(resolver);
 
-    TestSubscriber<BufferedSource> subscriber = new TestSubscriber<>();
+    TestObserver<BufferedSource> observer = new TestObserver<>();
     presenter.parseUri(Uri.EMPTY)
-        .subscribe(subscriber);
-    subscriber.awaitTerminalEvent();
-    subscriber.assertError(NullPointerException.class);
-    subscriber.assertValueCount(0);
-    subscriber.assertUnsubscribed();
+        .subscribe(observer);
+    observer.awaitTerminalEvent();
+    observer.assertError(NullPointerException.class);
+    observer.assertValueCount(0);
   }
 }

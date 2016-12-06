@@ -5,18 +5,20 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-import rx.Scheduler;
-import rx.android.plugins.RxAndroidPlugins;
-import rx.android.plugins.RxAndroidSchedulersHook;
-import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
+import io.reactivex.Scheduler;
+import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.schedulers.Schedulers;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.times;
@@ -25,26 +27,27 @@ import static org.mockito.Mockito.when;
 
 public class RecentPageModelTest {
   private static final List<RecentPage> SAMPLE_RECENT_PAGES = new ArrayList<>();
-  static {
-    long timestamp = System.currentTimeMillis();
-    SAMPLE_RECENT_PAGES.add(new RecentPage(49, timestamp));
-    SAMPLE_RECENT_PAGES.add(new RecentPage(100, timestamp - 10000));
-
-    // AndroidSchedulers.mainThread should be Schedulers.io in tests
-    RxAndroidPlugins rxAndroidPlugins = RxAndroidPlugins.getInstance();
-    rxAndroidPlugins.reset();
-    rxAndroidPlugins.registerSchedulersHook(new RxAndroidSchedulersHook() {
-      @Override
-      public Scheduler getMainThreadScheduler() {
-        return Schedulers.io();
-      }
-    });
-  }
 
   @Mock BookmarksDBAdapter bookmarksAdapter;
 
+  @BeforeClass
+  public static void setup() {
+    RxAndroidPlugins.setInitMainThreadSchedulerHandler(
+        new Function<Callable<Scheduler>, Scheduler>() {
+          @Override
+          public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
+            return Schedulers.io();
+          }
+        });
+
+    // sample recent pages
+    long timestamp = System.currentTimeMillis();
+    SAMPLE_RECENT_PAGES.add(new RecentPage(49, timestamp));
+    SAMPLE_RECENT_PAGES.add(new RecentPage(100, timestamp - 10000));
+  }
+
   @Before
-  public void setup() {
+  public void setupTest() {
     MockitoAnnotations.initMocks(RecentPageModelTest.this);
   }
 
@@ -54,12 +57,12 @@ public class RecentPageModelTest {
 
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
-    TestSubscriber<Integer> testSubscriber = new TestSubscriber<>();
+    TestObserver<Integer> testObserver = new TestObserver<>();
     recentPageModel.getLatestPageObservable()
-        .first()
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertValue(Constants.NO_PAGE);
+        .firstOrError()
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertValue(Constants.NO_PAGE);
   }
 
   @Test
@@ -68,12 +71,12 @@ public class RecentPageModelTest {
 
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
-    TestSubscriber<Integer> testSubscriber = new TestSubscriber<>();
+    TestObserver<Integer> testObserver = new TestObserver<>();
     recentPageModel.getLatestPageObservable()
-        .first()
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertValue(49);
+        .firstOrError()
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertValue(49);
   }
 
   @Test
@@ -83,22 +86,22 @@ public class RecentPageModelTest {
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
     // make sure the mock data is received and onNext happens
-    TestSubscriber<Integer> testSubscriber = new TestSubscriber<>();
+    TestObserver<Integer> testObserver = new TestObserver<>();
     recentPageModel.getLatestPageObservable()
         .take(1)
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
 
     // after that, let's resubscribe and update with 2 other pages
-    testSubscriber = new TestSubscriber<>();
+    testObserver = new TestObserver<>();
     recentPageModel.getLatestPageObservable()
         .take(3)
-        .subscribe(testSubscriber);
+        .subscribe(testObserver);
     recentPageModel.updateLatestPage(51);
     recentPageModel.updateLatestPage(23);
 
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertValues(49, 51, 23);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertValues(49, 51, 23);
   }
 
   @Test
@@ -107,31 +110,31 @@ public class RecentPageModelTest {
 
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
-    TestSubscriber<Integer> testSubscriber = new TestSubscriber<>();
+    TestObserver<Integer> testObserver = new TestObserver<>();
     recentPageModel.getLatestPageObservable()
         .take(2)
-        .subscribe(testSubscriber);
+        .subscribe(testObserver);
 
     // we immediately write 2 pages before the mock data has returned - in this case, we
     // should not get the test data (because otherwise, it would be out of order!)
     recentPageModel.updateLatestPage(51);
     recentPageModel.updateLatestPage(23);
 
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertValues(51, 23);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertValues(51, 23);
   }
 
   @Test
   public void testRecentPagesUpdated() {
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
-    TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+    TestObserver<Void> testObserver = new TestObserver<>();
     recentPageModel.getRecentPagesUpdatedObservable()
-        .first()
-        .subscribe(testSubscriber);
+        .firstOrError()
+        .subscribe(testObserver);
 
     recentPageModel.persistLatestPage(200, 200, 200);
-    testSubscriber.awaitTerminalEvent();
+    testObserver.awaitTerminalEvent();
 
     verify(bookmarksAdapter, times(1)).addRecentPage(200);
     verify(bookmarksAdapter, times(0)).replaceRecentRangeWithPage(anyInt(), anyInt(), anyInt());
@@ -141,13 +144,13 @@ public class RecentPageModelTest {
   public void testRecentPagesUpdatedWithRange() {
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 
-    TestSubscriber<Void> testSubscriber = new TestSubscriber<>();
+    TestObserver<Void> testObserver = new TestObserver<>();
     recentPageModel.getRecentPagesUpdatedObservable()
-        .first()
-        .subscribe(testSubscriber);
+        .firstOrError()
+        .subscribe(testObserver);
 
     recentPageModel.persistLatestPage(100, 300, 200);
-    testSubscriber.awaitTerminalEvent();
+    testObserver.awaitTerminalEvent();
 
     verify(bookmarksAdapter, times(1)).replaceRecentRangeWithPage(100, 300, 200);
   }
