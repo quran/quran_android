@@ -22,7 +22,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.schedulers.TestScheduler;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TagBookmarkPresenterTest {
+  private static final TestScheduler testScheduler = new TestScheduler();
 
   @Mock BookmarkModel bookmarkModel;
 
@@ -44,7 +45,7 @@ public class TagBookmarkPresenterTest {
         new Function<Callable<Scheduler>, Scheduler>() {
           @Override
           public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
-            return Schedulers.io();
+            return testScheduler;
           }
         });
   }
@@ -65,11 +66,15 @@ public class TagBookmarkPresenterTest {
   public void testTagRefresh() {
     TagBookmarkPresenter presenter = spy(new TagBookmarkPresenter(bookmarkModel));
     presenter.setBookmarksMode(new long[] { 1 });
+    testScheduler.triggerActions();
     presenter.setAyahBookmarkMode(6, 76, 137);
+    testScheduler.triggerActions();
 
     // make sure we called refresh twice
     verify(presenter, times(2)).refresh();
+
     // but make sure we only queried tags from the database once
+    testScheduler.triggerActions();
     verify(bookmarkModel, times(1)).getTagsObservable();
   }
 
@@ -81,10 +86,14 @@ public class TagBookmarkPresenterTest {
 
     TagBookmarkPresenter presenter = spy(new TagBookmarkPresenter(bookmarkModel));
     presenter.setBookmarksMode(new long[] { 1 });
+
+    testScheduler.triggerActions();
     assertThat(presenter.toggleTag(1)).isTrue();
+    testScheduler.triggerActions();
 
     verify(presenter, times(0)).saveChanges();
     presenter.saveChanges();
+    testScheduler.triggerActions();
     verify(presenter, times(1)).saveChanges();
   }
 
@@ -98,11 +107,15 @@ public class TagBookmarkPresenterTest {
 
     TagBookmarkPresenter presenter = spy(new TagBookmarkPresenter(bookmarkModel));
     presenter.setAyahBookmarkMode(6, 76, 137);
+    testScheduler.triggerActions();
 
     assertThat(presenter.toggleTag(1)).isTrue();
     verify(presenter, times(1)).saveChanges();
+    testScheduler.triggerActions();
 
     presenter.saveChanges();
+    testScheduler.triggerActions();
+
     verify(bookmarkModel, times(1))
         .updateBookmarkTags(any(long[].class), Matchers.<Set<Long>>any(), anyBoolean());
   }
