@@ -105,9 +105,13 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
@@ -397,7 +401,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       public void onPageSelected(int position) {
         Timber.d("onPageSelected(): %d", position);
         final int page = QuranInfo.getPageFromPos(position, isDualPages);
-        saveRecentPage(page);
         if (settings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
               PagerActivity.this, page, lastPopupTime);
@@ -493,8 +496,29 @@ public class PagerActivity extends QuranActionBarActivity implements
     downloadReceiver.setListener(this);
   }
 
-  private void saveRecentPage(int page) {
-    recentPagePresenter.onPageChanged(page);
+  public Observable<Integer> getViewPagerObservable() {
+    return Observable.create(new ObservableOnSubscribe<Integer>() {
+      @Override
+      public void subscribe(final ObservableEmitter<Integer> e) throws Exception {
+        final OnPageChangeListener pageChangedListener =
+            new ViewPager.SimpleOnPageChangeListener() {
+          @Override
+          public void onPageSelected(int position) {
+            e.onNext(QuranInfo.getPageFromPos(position, isDualPages));
+          }
+        };
+
+        viewPager.addOnPageChangeListener(pageChangedListener);
+        e.onNext(getCurrentPage());
+
+        e.setCancellable(new Cancellable() {
+          @Override
+          public void cancel() throws Exception {
+            viewPager.removeOnPageChangeListener(pageChangedListener);
+          }
+        });
+      }
+    });
   }
 
   private int getStatusBarHeight() {
@@ -792,6 +816,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       return;
     }
 
+    recentPagePresenter.onJump();
     Bundle extras = intent.getExtras();
     if (extras != null) {
       int page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
