@@ -8,6 +8,9 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+
 @Singleton
 public class RecentPagePresenter implements Presenter<PagerActivity> {
   private final RecentPageModel model;
@@ -15,13 +18,14 @@ public class RecentPagePresenter implements Presenter<PagerActivity> {
   private int lastPage;
   private int minimumPage;
   private int maximumPage;
+  private Disposable disposable;
 
   @Inject
   RecentPagePresenter(RecentPageModel model) {
     this.model = model;
   }
 
-  public void onPageChanged(int page) {
+  private void onPageChanged(int page) {
     model.updateLatestPage(page);
 
     lastPage = page;
@@ -35,15 +39,40 @@ public class RecentPagePresenter implements Presenter<PagerActivity> {
     }
   }
 
+  public void onJump() {
+    saveAndReset();
+  }
+
   @Override
   public void bind(PagerActivity what) {
     minimumPage = Constants.NO_PAGE;
     maximumPage = Constants.NO_PAGE;
     lastPage = Constants.NO_PAGE;
+
+    disposable = what.getViewPagerObservable()
+        .subscribeWith(new DisposableObserver<Integer>() {
+          @Override
+          public void onNext(Integer value) {
+            onPageChanged(value);
+          }
+
+          @Override
+          public void onError(Throwable e) {
+          }
+
+          @Override
+          public void onComplete() {
+          }
+        });
   }
 
   @Override
   public void unbind(PagerActivity what) {
+    disposable.dispose();
+    saveAndReset();
+  }
+
+  private void saveAndReset() {
     if (minimumPage != Constants.NO_PAGE || maximumPage != Constants.NO_PAGE) {
       model.persistLatestPage(minimumPage, maximumPage, lastPage);
 
