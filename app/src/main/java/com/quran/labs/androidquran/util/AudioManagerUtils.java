@@ -1,20 +1,24 @@
 package com.quran.labs.androidquran.util;
 
 
+import android.util.Pair;
+
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.QuranInfo;
-
-import android.util.Pair;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
+
 
 public class AudioManagerUtils {
 
@@ -34,12 +38,12 @@ public class AudioManagerUtils {
     sCache.remove(qariItem);
   }
 
-  public static Observable<List<QariDownloadInfo>> shuyookhDownloadObservable(
+  public static Single<List<QariDownloadInfo>> shuyookhDownloadObservable(
       final String basePath, List<QariItem> qariItems) {
-    return Observable.from(qariItems)
-        .flatMap(new Func1<QariItem, Observable<QariDownloadInfo>>() {
+    return Observable.fromIterable(qariItems)
+        .flatMap(new Function<QariItem, ObservableSource<QariDownloadInfo>>() {
           @Override
-          public Observable<QariDownloadInfo> call(final QariItem item) {
+          public ObservableSource<QariDownloadInfo> apply(QariItem item) throws Exception {
             QariDownloadInfo cached = sCache.get(item);
             if (cached != null) {
               return Observable.just(cached);
@@ -47,13 +51,13 @@ public class AudioManagerUtils {
 
             File baseFile = new File(basePath, item.getPath());
             return !baseFile.exists() ? Observable.just(new QariDownloadInfo(item)) :
-                item.isGapless() ? getGaplessSheikhObservable(baseFile, item) :
-                    getGappedSheikhObservable(baseFile, item);
+                item.isGapless() ? getGaplessSheikhObservable(baseFile, item).toObservable() :
+                    getGappedSheikhObservable(baseFile, item).toObservable();
           }
         })
-        .doOnNext(new Action1<QariDownloadInfo>() {
+        .doOnNext(new Consumer<QariDownloadInfo>() {
           @Override
-          public void call(QariDownloadInfo qariDownloadInfo) {
+          public void accept(QariDownloadInfo qariDownloadInfo) {
             sCache.put(qariDownloadInfo.mQariItem, qariDownloadInfo);
           }
         })
@@ -61,45 +65,45 @@ public class AudioManagerUtils {
         .subscribeOn(Schedulers.io());
   }
 
-  private static Observable<QariDownloadInfo> getGaplessSheikhObservable(
+  private static Single<QariDownloadInfo> getGaplessSheikhObservable(
       final File path, final QariItem qariItem) {
     return Observable.range(1, 114)
-        .map(new Func1<Integer, Integer>() {
+        .map(new Function<Integer, Integer>() {
           @Override
-          public Integer call(Integer sura) {
+          public Integer apply(Integer sura) {
             return new File(path, padSuraNumber(sura) + ".mp3").exists() ? sura : null;
           }
         })
-        .filter(new Func1<Integer, Boolean>() {
+        .filter(new Predicate<Integer>() {
           @Override
-          public Boolean call(Integer integer) {
+          public boolean test(Integer integer) {
             return integer != null;
           }
         })
         .toList()
-        .map(new Func1<List<Integer>, QariDownloadInfo>() {
+        .map(new Function<List<Integer>, QariDownloadInfo>() {
           @Override
-          public QariDownloadInfo call(List<Integer> suras) {
+          public QariDownloadInfo apply(List<Integer> suras) {
             return new QariDownloadInfo(qariItem, suras);
           }
         });
   }
 
-  private static Observable<QariDownloadInfo> getGappedSheikhObservable(
+  private static Single<QariDownloadInfo> getGappedSheikhObservable(
       final File basePath, final QariItem qariItem) {
     return Observable.range(1, 114)
-      .map(new Func1<Integer, Pair<Integer, Boolean>>() {
+      .map(new Function<Integer, Pair<Integer, Boolean>>() {
         @Override
-        public Pair<Integer, Boolean> call(Integer sura) {
+        public Pair<Integer, Boolean> apply(Integer sura) {
           final File path = new File(basePath, String.valueOf(sura));
           return !path.exists() ? null :
               new Pair<>(sura, path.listFiles().length >= QuranInfo.SURA_NUM_AYAHS[sura - 1]);
         }
       })
       .toList()
-      .map(new Func1<List<Pair<Integer, Boolean>>, QariDownloadInfo>() {
+      .map(new Function<List<Pair<Integer, Boolean>>, QariDownloadInfo>() {
         @Override
-        public QariDownloadInfo call(List<Pair<Integer, Boolean>> downloaded) {
+        public QariDownloadInfo apply(List<Pair<Integer, Boolean>> downloaded) {
           return QariDownloadInfo.withPartials(qariItem, downloaded);
         }
       });

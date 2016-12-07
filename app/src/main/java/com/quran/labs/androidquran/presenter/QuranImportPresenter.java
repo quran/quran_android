@@ -19,21 +19,23 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableMaybeObserver;
+import io.reactivex.schedulers.Schedulers;
 import okio.BufferedSource;
 import okio.Okio;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func0;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+
 
 @Singleton
 public class QuranImportPresenter implements Presenter<QuranImportActivity> {
@@ -95,9 +97,9 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private void subscribeToImportData() {
     mImportObservable
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Boolean>() {
+        .subscribe(new Consumer<Boolean>() {
           @Override
-          public void call(Boolean aBoolean) {
+          public void accept(Boolean aBoolean) {
             if (mCurrentActivity != null) {
               mCurrentActivity.showImportComplete();
               mImportObservable = null;
@@ -109,9 +111,12 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private void parseIntentUri(final Uri uri) {
     getBookmarkDataObservable(parseUri(uri))
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<BookmarkData>() {
+        .subscribe(new DisposableMaybeObserver<BookmarkData>() {
           @Override
-          public void onCompleted() {
+          public void onSuccess(BookmarkData bookmarkData) {
+            if (mCurrentActivity != null) {
+              mCurrentActivity.showImportConfirmationDialog(bookmarkData);
+            }
           }
 
           @Override
@@ -122,9 +127,9 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
           }
 
           @Override
-          public void onNext(BookmarkData bookmarkData) {
+          public void onComplete() {
             if (mCurrentActivity != null) {
-              mCurrentActivity.showImportConfirmationDialog(bookmarkData);
+              handleExternalStorageFile(uri);
             }
           }
         });
@@ -149,9 +154,12 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private void handleExternalStorageFileInternal(Uri uri) {
     getBookmarkDataObservable(parseExternalFile(uri))
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<BookmarkData>() {
+        .subscribe(new DisposableMaybeObserver<BookmarkData>() {
           @Override
-          public void onCompleted() {
+          public void onSuccess(BookmarkData bookmarkData) {
+            if (mCurrentActivity != null) {
+              mCurrentActivity.showImportConfirmationDialog(bookmarkData);
+            }
           }
 
           @Override
@@ -162,59 +170,50 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
           }
 
           @Override
-          public void onNext(BookmarkData bookmarkData) {
+          public void onComplete() {
             if (mCurrentActivity != null) {
-              mCurrentActivity.showImportConfirmationDialog(bookmarkData);
+              mCurrentActivity.showError();
             }
           }
         });
   }
 
-  private Observable<BookmarkData> getBookmarkDataObservable(Observable<BufferedSource> source) {
+  private Maybe<BookmarkData> getBookmarkDataObservable(Maybe<BufferedSource> source) {
     return source
-        .flatMap(new Func1<BufferedSource, Observable<BookmarkData>>() {
+        .flatMap(new Function<BufferedSource, MaybeSource<BookmarkData>>() {
           @Override
-          public Observable<BookmarkData> call(BufferedSource bufferedSource) {
-            return bufferedSource == null ? Observable.<BookmarkData>just(null) :
-                mBookmarkImportExportModel.readBookmarks(bufferedSource);
+          public MaybeSource<BookmarkData> apply(BufferedSource bufferedSource) throws Exception {
+            return mBookmarkImportExportModel.readBookmarks(bufferedSource).toMaybe();
           }
         })
         .subscribeOn(Schedulers.io());
   }
 
   @NonNull @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-  Observable<BufferedSource> parseUri(final Uri uri) {
-    return Observable.defer(new Func0<Observable<BufferedSource>>() {
+  Maybe<BufferedSource> parseUri(final Uri uri) {
+    return Maybe.defer(new Callable<MaybeSource<BufferedSource>>() {
       @Override
-      public Observable<BufferedSource> call() {
-        try {
-          ParcelFileDescriptor pfd = mAppContext.getContentResolver().openFileDescriptor(uri, "r");
-          if (pfd != null) {
-            FileDescriptor fd = pfd.getFileDescriptor();
-            return Observable.just(Okio.buffer(Okio.source(new FileInputStream(fd))));
-          }
-          return Observable.just(null);
-        } catch (IOException | NullPointerException ioe) {
-          return Observable.error(ioe);
+      public MaybeSource<BufferedSource> call() throws Exception {
+        ParcelFileDescriptor pfd = mAppContext.getContentResolver().openFileDescriptor(uri, "r");
+        if (pfd != null) {
+          FileDescriptor fd = pfd.getFileDescriptor();
+          return Maybe.just(Okio.buffer(Okio.source(new FileInputStream(fd))));
         }
+        return Maybe.empty();
       }
     });
   }
 
   @NonNull @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-  Observable<BufferedSource> parseExternalFile(final Uri uri) {
-    return Observable.defer(new Func0<Observable<BufferedSource>>() {
+  Maybe<BufferedSource> parseExternalFile(final Uri uri) {
+    return Maybe.defer(new Callable<MaybeSource<BufferedSource>>() {
       @Override
-      public Observable<BufferedSource> call() {
-        try {
-          InputStream stream = mAppContext.getContentResolver().openInputStream(uri);
-          if (stream != null) {
-            return Observable.just(Okio.buffer(Okio.source(stream)));
-          }
-        } catch (IOException ioe) {
-          return Observable.error(ioe);
+      public MaybeSource<BufferedSource> call() throws Exception {
+        InputStream stream = mAppContext.getContentResolver().openInputStream(uri);
+        if (stream != null) {
+          return Maybe.just(Okio.buffer(Okio.source(stream)));
         }
-        return Observable.just(null);
+        return Maybe.empty();
       }
     });
   }

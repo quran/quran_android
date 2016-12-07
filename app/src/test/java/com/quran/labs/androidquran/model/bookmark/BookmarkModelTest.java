@@ -13,13 +13,17 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
-import rx.observers.TestSubscriber;
+import io.reactivex.observers.TestObserver;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,16 +46,27 @@ public class BookmarkModelTest {
     when(bookmarksAdapter.updateTag(anyLong(), anyString())).thenReturn(true);
 
     Tag tag = new Tag(1, "First Tag");
-    TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
+    TestObserver<Void> testObserver = new TestObserver<>();
     model.updateTag(tag)
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertCompleted();
-    testSubscriber.assertNoErrors();
-    testSubscriber.assertValueCount(1);
-    testSubscriber.assertValue(true);
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertNoErrors();
+    testObserver.assertComplete();
 
     verify(bookmarksAdapter, times(1)).updateTag(tag.id, tag.name);
+  }
+
+  @Test
+  public void testUpdateBookmarkTags() {
+    when(bookmarksAdapter.tagBookmarks(
+        any(long[].class), anySetOf(long.class), anyBoolean())).thenReturn(true);
+
+    TestObserver<Boolean> testObserver = new TestObserver<>();
+    model.updateBookmarkTags(new long[] { }, new HashSet<Long>(), false)
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertNoErrors();
+    testObserver.assertComplete();
   }
 
   @Test
@@ -66,13 +81,12 @@ public class BookmarkModelTest {
 
     int total = 0;
     for (Integer[] input : inputs) {
-      TestSubscriber<List<Bookmark>> testSubscriber = new TestSubscriber<>();
+      TestObserver<List<Bookmark>> testObserver = new TestObserver<>();
       model.getBookmarkedAyahsOnPageObservable(input)
-          .subscribe(testSubscriber);
-      testSubscriber.awaitTerminalEvent();
-      testSubscriber.assertCompleted();
-      testSubscriber.assertNoErrors();
-      testSubscriber.assertValueCount(input.length);
+          .subscribe(testObserver);
+      testObserver.awaitTerminalEvent();
+      testObserver.assertNoErrors();
+      testObserver.assertValueCount(input.length);
       verify(bookmarksAdapter, times(input.length + total)).getBookmarkedAyahsOnPage(anyInt());
       total += input.length;
     }
@@ -83,15 +97,14 @@ public class BookmarkModelTest {
     when(bookmarksAdapter.getBookmarkId(null, null, 42)).thenReturn(1L);
     when(bookmarksAdapter.getBookmarkId(null, null, 43)).thenReturn(-1L);
 
-    TestSubscriber<Pair<Integer, Boolean>> testSubscriber = new TestSubscriber<>();
+    TestObserver<Pair<Integer, Boolean>> testObserver = new TestObserver<>();
     model.getIsBookmarkedObservable(42, 43)
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertCompleted();
-    testSubscriber.assertNoErrors();
-    testSubscriber.assertValueCount(2);
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertNoErrors();
+    testObserver.assertValueCount(2);
 
-    List<Pair<Integer, Boolean>> results = testSubscriber.getOnNextEvents();
+    List<Pair<Integer, Boolean>> results = testObserver.values();
     for (int i = 0; i < results.size(); i++) {
       Pair<Integer, Boolean> result = results.get(i);
       assertThat(result.first).isAnyOf(42, 43);

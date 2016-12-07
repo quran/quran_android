@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.presenter.translation;
 
+import android.content.Context;
+
 import com.quran.labs.androidquran.dao.translation.TranslationList;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -8,17 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import android.content.Context;
-
 import java.io.File;
 import java.io.IOException;
 
+import io.reactivex.observers.TestObserver;
 import okhttp3.OkHttpClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okio.Buffer;
 import okio.Okio;
-import rx.observers.TestSubscriber;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -54,13 +54,12 @@ public class TranslationManagerPresenterTest {
 
   @Test
   public void testGetCachedTranslationListObservable() {
-    TestSubscriber<TranslationList> testSubscriber = new TestSubscriber<>();
+    TestObserver<TranslationList> testObserver = new TestObserver<>();
     this.translationManager.getCachedTranslationListObservable(true)
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertNoValues();
-    testSubscriber.assertCompleted();
-    testSubscriber.assertNoErrors();
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertNoValues();
+    testObserver.assertNoErrors();
   }
 
   @Test
@@ -72,14 +71,13 @@ public class TranslationManagerPresenterTest {
     mockResponse.setBody(buffer);
     this.mockWebServer.enqueue(mockResponse);
 
-    TestSubscriber<TranslationList> testSubscriber = new TestSubscriber<>();
+    TestObserver<TranslationList> testObserver = new TestObserver<>();
     this.translationManager.getRemoteTranslationListObservable()
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertValueCount(1);
-    testSubscriber.assertCompleted();
-    testSubscriber.assertNoErrors();
-    TranslationList list = testSubscriber.getOnNextEvents().get(0);
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertValueCount(1);
+    testObserver.assertNoErrors();
+    TranslationList list = testObserver.values().get(0);
     assertThat(list.translations).hasSize(50);
   }
 
@@ -89,11 +87,11 @@ public class TranslationManagerPresenterTest {
     mockResponse.setResponseCode(500);
     this.mockWebServer.enqueue(mockResponse);
 
-    TestSubscriber<TranslationList> testSubscriber = new TestSubscriber<>();
+    TestObserver<TranslationList> testObserver = new TestObserver<>();
     this.translationManager.getRemoteTranslationListObservable()
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertNoValues();
-    testSubscriber.assertError(IOException.class);
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertNoValues();
+    testObserver.assertError(IOException.class);
   }
 }

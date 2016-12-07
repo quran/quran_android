@@ -19,12 +19,8 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import javax.inject.Inject;
 
-import rx.Subscription;
-
 public class QuranSettingsFragment extends PreferenceFragment implements
     SharedPreferences.OnSharedPreferenceChangeListener {
-  private Context mAppContext;
-  private Subscription mExportSubscription = null;
   @Inject BookmarkImportExportModel bookmarkImportExportModel;
 
   @Override
@@ -33,7 +29,7 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     addPreferencesFromResource(R.xml.quran_preferences);
 
     final Context context = getActivity();
-    mAppContext = context.getApplicationContext();
+    Context mAppContext = context.getApplicationContext();
 
     // field injection
     ((QuranApplication) mAppContext).getApplicationComponent().inject(this);
@@ -67,14 +63,6 @@ public class QuranSettingsFragment extends PreferenceFragment implements
       }
     });
 
-  }
-
-  @Override
-  public void onDestroy() {
-    if (mExportSubscription != null) {
-      mExportSubscription.unsubscribe();
-    }
-    super.onDestroy();
   }
 
   @Override

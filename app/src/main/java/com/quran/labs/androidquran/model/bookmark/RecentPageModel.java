@@ -12,26 +12,25 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.subjects.BehaviorSubject;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 @Singleton
 public class RecentPageModel {
 
   private final BookmarksDBAdapter bookmarksDBAdapter;
-  private final Subject<Integer, Integer> lastPageSubject;
+  private final Subject<Integer> lastPageSubject;
 
-  private Subscription initialDataSubscription;
-  private final Observable<Void> recentPagesUpdatedObservable;
-  private final Subject<PersistRecentPagesRequest, PersistRecentPagesRequest> recentWriterSubject;
+  private DisposableSingleObserver<List<RecentPage>> initialDataSubscription;
+  private final Observable<Boolean> recentPagesUpdatedObservable;
+  private final Subject<PersistRecentPagesRequest> recentWriterSubject;
 
   @Inject
   public RecentPageModel(BookmarksDBAdapter adapter) {
@@ -39,18 +38,18 @@ public class RecentPageModel {
     this.lastPageSubject = BehaviorSubject.create();
     this.recentWriterSubject = PublishSubject.create();
 
-    recentPagesUpdatedObservable = this.recentWriterSubject.asObservable()
+    recentPagesUpdatedObservable = this.recentWriterSubject.hide()
         .observeOn(Schedulers.io())
-        .map(new Func1<PersistRecentPagesRequest, Void>() {
+        .map(new Function<PersistRecentPagesRequest, Boolean>() {
           @Override
-          public Void call(PersistRecentPagesRequest update) {
+          public Boolean apply(PersistRecentPagesRequest update) throws Exception {
             if (update.deleteRangeStart != null) {
               bookmarksDBAdapter.replaceRecentRangeWithPage(
                   update.deleteRangeStart, update.deleteRangeEnd, update.page);
             } else {
               bookmarksDBAdapter.addRecentPage(update.page);
             }
-            return null;
+            return true;
           }
         }).share();
 
@@ -62,17 +61,16 @@ public class RecentPageModel {
     initialDataSubscription = getRecentPagesObservable()
         // this is only to avoid serializing lastPageSubject
         .observeOn(AndroidSchedulers.mainThread())
-        .doOnUnsubscribe(new Action0() {
+        .subscribeWith(new DisposableSingleObserver<List<RecentPage>>() {
           @Override
-          public void call() {
-            initialDataSubscription = null;
-          }
-        })
-        .subscribe(new Action1<List<RecentPage>>() {
-          @Override
-          public void call(List<RecentPage> recentPages) {
+          public void onSuccess(List<RecentPage> recentPages) {
             int page = recentPages.size() > 0 ? recentPages.get(0).page : Constants.NO_PAGE;
             lastPageSubject.onNext(page);
+            initialDataSubscription = null;
+          }
+
+          @Override
+          public void onError(Throwable e) {
           }
         });
   }
@@ -83,7 +81,7 @@ public class RecentPageModel {
       // it is possible (though unlikely) for a page update to come in while we're still waiting
       // for the initial query of recent pages from the database. if so, unsubscribe from the initial
       // query since its data will be stale relative to this data.
-      initialDataSubscription.unsubscribe();
+      initialDataSubscription.dispose();
     }
     lastPageSubject.onNext(page);
   }
@@ -104,7 +102,7 @@ public class RecentPageModel {
    * @return an Observable of the latest pages visited
    */
   public Observable<Integer> getLatestPageObservable() {
-    return lastPageSubject.asObservable();
+    return lastPageSubject.hide();
   }
 
   /**
@@ -116,12 +114,12 @@ public class RecentPageModel {
    *
    * @return an observable that receives events whenever recent pages is persisted
    */
-  Observable<Void> getRecentPagesUpdatedObservable() {
+  Observable<Boolean> getRecentPagesUpdatedObservable() {
     return recentPagesUpdatedObservable;
   }
 
-  Observable<List<RecentPage>> getRecentPagesObservable() {
-    return Observable.fromCallable(new Callable<List<RecentPage>>() {
+  Single<List<RecentPage>> getRecentPagesObservable() {
+    return Single.fromCallable(new Callable<List<RecentPage>>() {
       @Override
       public List<RecentPage> call() throws Exception {
         return bookmarksDBAdapter.getRecentPages();

@@ -13,6 +13,7 @@ import com.quran.labs.androidquran.model.bookmark.RecentPageModel;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -21,12 +22,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-import rx.Scheduler;
-import rx.android.plugins.RxAndroidPlugins;
-import rx.android.plugins.RxAndroidSchedulersHook;
-import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
+import io.reactivex.Scheduler;
+import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -83,16 +85,6 @@ public class BookmarkPresenterTest {
       total += Math.max(tags, 1);
     }
     MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total;
-
-    // AndroidSchedulers.mainThread should be Schedulers.io in tests
-    RxAndroidPlugins rxAndroidPlugins = RxAndroidPlugins.getInstance();
-    rxAndroidPlugins.reset();
-    rxAndroidPlugins.registerSchedulersHook(new RxAndroidSchedulersHook() {
-      @Override
-      public Scheduler getMainThreadScheduler() {
-        return Schedulers.io();
-      }
-    });
   }
 
   @Mock private Context appContext;
@@ -101,8 +93,19 @@ public class BookmarkPresenterTest {
   @Mock private BookmarksDBAdapter bookmarksAdapter;
   private BookmarkPresenter presenter;
 
+  @BeforeClass
+  public static void setup() {
+    RxAndroidPlugins.setInitMainThreadSchedulerHandler(
+        new Function<Callable<Scheduler>, Scheduler>() {
+          @Override
+          public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
+            return Schedulers.io();
+          }
+        });
+  }
+
   @Before
-  public void setup() {
+  public void setupTest() {
     MockitoAnnotations.initMocks(BookmarkPresenterTest.this);
 
     QuranSettings.setInstance(settings);
@@ -199,13 +202,12 @@ public class BookmarkPresenterTest {
   }
 
   private BookmarkResult getBookmarkResultByDateAndValidate(boolean groupByTags) {
-    TestSubscriber<BookmarkResult> testSubscriber = new TestSubscriber<>();
+    TestObserver<BookmarkResult> testObserver = new TestObserver<>();
     presenter.getBookmarksListObservable(BookmarksDBAdapter.SORT_DATE_ADDED, groupByTags)
-        .subscribe(testSubscriber);
-    testSubscriber.awaitTerminalEvent();
-    testSubscriber.assertCompleted();
-    testSubscriber.assertNoErrors();
-    testSubscriber.assertValueCount(1);
-    return testSubscriber.getOnNextEvents().get(0);
+        .subscribe(testObserver);
+    testObserver.awaitTerminalEvent();
+    testObserver.assertNoErrors();
+    testObserver.assertValueCount(1);
+    return testObserver.values().get(0);
   }
 }

@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.util;
 
+import android.text.TextUtils;
+
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 
 import org.json.JSONObject;
-
-import android.text.TextUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,15 +20,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class QuranAppUtils {
 
-  public static Observable<String> getQuranAppUrlObservable(final String key,
+  public static Single<String> getQuranAppUrlObservable(final String key,
       final SuraAyah start, final SuraAyah end) {
-    return Observable.fromCallable(new Callable<String>() {
+    return Single.fromCallable(new Callable<String>() {
       @Override
       public String call() throws Exception {
         int sura = start.sura;
@@ -40,7 +40,7 @@ public class QuranAppUtils {
     }).subscribeOn(Schedulers.io());
   }
 
-  public static String getQuranAppUrl(String key, int sura, Integer startAyah, Integer endAyah) {
+  private static String getQuranAppUrl(String key, int sura, Integer startAyah, Integer endAyah) {
     String url = null;
     String fallbackUrl = null;
     try {
