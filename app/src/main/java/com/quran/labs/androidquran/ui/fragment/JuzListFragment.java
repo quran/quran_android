@@ -22,9 +22,9 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.JuzView;
 
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableSingleObserver;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 
@@ -34,7 +34,7 @@ public class JuzListFragment extends Fragment {
       JuzView.TYPE_HALF, JuzView.TYPE_THREE_QUARTERS };
 
   private RecyclerView mRecyclerView;
-  private Subscription subscription;
+  private Disposable disposable;
 
   public static JuzListFragment newInstance() {
     return new JuzListFragment();
@@ -59,8 +59,8 @@ public class JuzListFragment extends Fragment {
 
   @Override
   public void onPause() {
-    if (subscription != null) {
-      subscription.unsubscribe();
+    if (disposable != null) {
+      disposable.dispose();
     }
     super.onPause();
   }
@@ -70,18 +70,21 @@ public class JuzListFragment extends Fragment {
     final Activity activity = getActivity();
 
     if (activity instanceof QuranActivity) {
-      subscription = ((QuranActivity) activity).getLatestPageObservable()
-          .first()
+      disposable = ((QuranActivity) activity).getLatestPageObservable()
+          .first(Constants.NO_PAGE)
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new Action1<Integer>() {
+          .subscribeWith(new DisposableSingleObserver<Integer>() {
             @Override
-            public void call(Integer recentPage) {
+            public void onSuccess(Integer recentPage) {
               if (recentPage != Constants.NO_PAGE) {
                 int juz = QuranInfo.getJuzFromPage(recentPage);
                 int position = (juz - 1) * 9;
                 mRecyclerView.scrollToPosition(position);
               }
-              subscription = null;
+            }
+
+            @Override
+            public void onError(Throwable e) {
             }
           });
     }

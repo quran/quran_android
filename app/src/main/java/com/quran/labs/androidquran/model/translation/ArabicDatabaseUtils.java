@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 public class ArabicDatabaseUtils {
   public static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
@@ -48,8 +48,8 @@ public class ArabicDatabaseUtils {
   }
 
   @NonNull
-  public Observable<List<QuranAyah>> getVerses(final SuraAyah start, final SuraAyah end) {
-    return Observable.fromCallable(new Callable<List<QuranAyah>>() {
+  public Single<List<QuranAyah>> getVerses(final SuraAyah start, final SuraAyah end) {
+    return Single.fromCallable(new Callable<List<QuranAyah>>() {
       @Override
       public List<QuranAyah> call() throws Exception {
         List<QuranAyah> verses = new ArrayList<>();

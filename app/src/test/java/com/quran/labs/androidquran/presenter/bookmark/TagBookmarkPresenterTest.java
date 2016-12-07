@@ -14,12 +14,15 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
-import rx.Observable;
-import rx.Scheduler;
-import rx.android.plugins.RxAndroidPlugins;
-import rx.android.plugins.RxAndroidSchedulersHook;
-import rx.schedulers.Schedulers;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
@@ -36,27 +39,26 @@ public class TagBookmarkPresenterTest {
   @Mock BookmarkModel bookmarkModel;
 
   @BeforeClass
-  public static void setupMainThread() {
-    RxAndroidPlugins rxAndroidPlugins = RxAndroidPlugins.getInstance();
-    rxAndroidPlugins.reset();
-    rxAndroidPlugins.registerSchedulersHook(new RxAndroidSchedulersHook() {
-      @Override
-      public Scheduler getMainThreadScheduler() {
-        return Schedulers.immediate();
-      }
-    });
+  public static void setup() {
+    RxAndroidPlugins.setInitMainThreadSchedulerHandler(
+        new Function<Callable<Scheduler>, Scheduler>() {
+          @Override
+          public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
+            return Schedulers.io();
+          }
+        });
   }
 
   @Before
-  public void setup() {
+  public void setupTest() {
     MockitoAnnotations.initMocks(TagBookmarkPresenterTest.this);
 
     List<Tag> tags = new ArrayList<>();
     tags.add(new Tag(1, "Test"));
     when(bookmarkModel.tagsObservable()).thenReturn(Observable.<Tag>empty());
-    when(bookmarkModel.getTagsObservable()).thenReturn(Observable.just(tags));
-    when(bookmarkModel.getBookmarkTagIds(Matchers.<Observable<Long>>any()))
-        .thenReturn(Observable.<List<Long>>empty());
+    when(bookmarkModel.getTagsObservable()).thenReturn(Single.just(tags));
+    when(bookmarkModel.getBookmarkTagIds(Matchers.<Single<Long>>any()))
+        .thenReturn(Maybe.<List<Long>>empty());
   }
 
   @Test

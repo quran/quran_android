@@ -49,11 +49,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
@@ -75,7 +75,7 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
 
   private HighlightingImageView mImageView;
   private QuranImagePageLayout mQuranPageLayout;
-  private CompositeSubscription mCompositeSubscription;
+  private CompositeDisposable compositeDisposable;
   private Handler mHandler = new Handler();
 
   public static QuranPageFragment newInstance(int page) {
@@ -144,13 +144,13 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
     if (context instanceof AyahSelectedListener) {
       mAyahSelectedListener = (AyahSelectedListener) context;
     }
-    mCompositeSubscription = new CompositeSubscription();
+    compositeDisposable = new CompositeDisposable();
   }
 
   @Override
   public void onDetach() {
     mAyahSelectedListener = null;
-    mCompositeSubscription.unsubscribe();
+    compositeDisposable.dispose();
     super.onDetach();
   }
 
@@ -172,15 +172,18 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
 
       if (QuranSettings.getInstance(activity).shouldHighlightBookmarks()) {
         // Observable.timer by default runs on Schedulers.computation()
-        Subscription s = Observable.timer(250, TimeUnit.MILLISECONDS)
+        compositeDisposable.add(Completable.timer(250, TimeUnit.MILLISECONDS)
             .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<Long>() {
+            .subscribeWith(new DisposableCompletableObserver() {
               @Override
-              public void call(Long aLong) {
+              public void onComplete() {
                 highlightTagsTask();
               }
-            });
-        mCompositeSubscription.add(s);
+
+              @Override
+              public void onError(Throwable e) {
+              }
+            }));
       }
     }
   }
@@ -256,39 +259,46 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
   }
 
   private void highlightTagsTask() {
-    Subscription s =
+    compositeDisposable.add(
         mBookmarkModel.getBookmarkedAyahsOnPageObservable(mPageNumber)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<List<Bookmark>>() {
-          @Override
-          public void call(List<Bookmark> bookmarks) {
-            for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
-              Bookmark taggedAyah = bookmarks.get(i);
-              mImageView.highlightAyah(taggedAyah.sura,
-                  taggedAyah.ayah, HighlightType.BOOKMARK);
-            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableObserver<List<Bookmark>>() {
+              @Override
+              public void onNext(List<Bookmark> bookmarks) {
+                for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
+                  Bookmark taggedAyah = bookmarks.get(i);
+                  mImageView.highlightAyah(taggedAyah.sura,
+                      taggedAyah.ayah, HighlightType.BOOKMARK);
+                }
 
-            if (mCoordinatesData == null) {
-              if (mCurrentTask != null &&
-                  !(mCurrentTask instanceof QueryAyahCoordsTask)) {
-                mCurrentTask.cancel(true);
-                mCurrentTask = null;
+                if (mCoordinatesData == null) {
+                  if (mCurrentTask != null &&
+                      !(mCurrentTask instanceof QueryAyahCoordsTask)) {
+                    mCurrentTask.cancel(true);
+                    mCurrentTask = null;
+                  }
+
+                  if (mCurrentTask == null) {
+                    mCurrentTask = new GetAyahCoordsTask(
+                        getActivity()).execute(mPageNumber);
+                  }
+                } else {
+                  mImageView.invalidate();
+                }
               }
 
-              if (mCurrentTask == null) {
-                mCurrentTask = new GetAyahCoordsTask(
-                    getActivity()).execute(mPageNumber);
+              @Override
+              public void onError(Throwable e) {
               }
-            } else {
-              mImageView.invalidate();
-            }
-          }
-        });
-    mCompositeSubscription.add(s);
+
+              @Override
+              public void onComplete() {
+              }
+            }));
   }
 
   private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
-    public QueryPageCoordinatesTask(Context context) {
+    QueryPageCoordinatesTask(Context context) {
       super(context, QuranScreenInfo.getInstance().getWidthParam());
     }
 
@@ -310,17 +320,17 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
   }
 
   private class GetAyahCoordsTask extends QueryAyahCoordsTask {
-    public GetAyahCoordsTask(Context context) {
+    GetAyahCoordsTask(Context context) {
       super(context, QuranScreenInfo.getInstance().getWidthParam());
     }
 
-    public GetAyahCoordsTask(Context context, MotionEvent event, EventType eventType) {
+    GetAyahCoordsTask(Context context, MotionEvent event, EventType eventType) {
       super(context, event, eventType,
           QuranScreenInfo.getInstance().getWidthParam(), mPageNumber);
     }
 
-    public GetAyahCoordsTask(Context context, int sura, int ayah,
-                             HighlightType type) {
+    GetAyahCoordsTask(Context context, int sura, int ayah,
+                      HighlightType type) {
       super(context, QuranScreenInfo.getInstance().getWidthParam(),
           sura, ayah, type);
     }

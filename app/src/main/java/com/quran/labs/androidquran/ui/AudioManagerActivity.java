@@ -33,16 +33,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableSingleObserver;
+
 
 public class AudioManagerActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener {
   private static final String AUDIO_DOWNLOAD_KEY = "AudioManager.DownloadKey";
 
   private ProgressBar mProgressBar;
-  private Subscription mSubscription;
+  private Disposable disposable;
   private ShuyookhAdapter mAdapter;
   private RecyclerView mRecyclerView;
   private DefaultDownloadReceiver mReceiver;
@@ -79,12 +80,12 @@ public class AudioManagerActivity extends QuranActionBarActivity
   }
 
   private void getShuyookhData() {
-    if (mSubscription != null) {
-      mSubscription.unsubscribe();
+    if (disposable != null) {
+      disposable.dispose();
     }
-    mSubscription = AudioManagerUtils.shuyookhDownloadObservable(mBasePath, mQariItems)
+    disposable = AudioManagerUtils.shuyookhDownloadObservable(mBasePath, mQariItems)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(mOnDownloadInfo);
+        .subscribeWith(mOnDownloadInfo);
   }
 
   @Override
@@ -107,17 +108,21 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
   @Override
   protected void onDestroy() {
-    mSubscription.unsubscribe();
+    disposable.dispose();
     super.onDestroy();
   }
 
-  private Action1<List<QariDownloadInfo>> mOnDownloadInfo =
-      new Action1<List<QariDownloadInfo>>() {
+  private DisposableSingleObserver<List<QariDownloadInfo>> mOnDownloadInfo =
+      new DisposableSingleObserver<List<QariDownloadInfo>>() {
         @Override
-        public void call(List<QariDownloadInfo> downloadInfo) {
+        public void onSuccess(List<QariDownloadInfo> downloadInfo) {
           mProgressBar.setVisibility(View.GONE);
           mAdapter.setDownloadInfo(downloadInfo);
           mAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onError(Throwable e) {
         }
       };
 
@@ -174,13 +179,13 @@ public class AudioManagerActivity extends QuranActionBarActivity
     private final List<QariItem> mQariItems;
     private final Map<QariItem, QariDownloadInfo> mDownloadInfoMap;
 
-    public ShuyookhAdapter(List<QariItem> items) {
+    ShuyookhAdapter(List<QariItem> items) {
       mQariItems = items;
       mDownloadInfoMap = new HashMap<>();
       mInflater = LayoutInflater.from(AudioManagerActivity.this);
     }
 
-    public void setDownloadInfo(List<QariDownloadInfo> downloadInfo) {
+    void setDownloadInfo(List<QariDownloadInfo> downloadInfo) {
       for (QariDownloadInfo info : downloadInfo) {
         mDownloadInfoMap.put(info.mQariItem, info);
       }
@@ -202,7 +207,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
             fullyDownloaded, fullyDownloaded));
     }
 
-    public QariDownloadInfo getSheikhInfoForPosition(int position) {
+    QariDownloadInfo getSheikhInfoForPosition(int position) {
       return mDownloadInfoMap.get(mQariItems.get(position));
     }
 
@@ -217,7 +222,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
     public final TextView quantity;
     public final ImageView image;
 
-    public SheikhViewHolder(View itemView) {
+    SheikhViewHolder(View itemView) {
       super(itemView);
       name = (TextView) itemView.findViewById(R.id.name);
       quantity = (TextView) itemView.findViewById(R.id.quantity);

@@ -11,7 +11,7 @@ public class AddTagDialogPresenter implements Presenter<AddTagDialog> {
   private BookmarkModel mBookmarkModel;
 
   @Inject
-  public AddTagDialogPresenter(BookmarkModel bookmarkModel) {
+  AddTagDialogPresenter(BookmarkModel bookmarkModel) {
     mBookmarkModel = bookmarkModel;
   }
 

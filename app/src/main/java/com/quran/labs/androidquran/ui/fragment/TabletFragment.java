@@ -49,10 +49,9 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
@@ -77,7 +76,7 @@ public class TabletFragment extends Fragment
   private TranslationView mLeftTranslation, mRightTranslation = null;
   private HighlightingImageView mLeftImageView, mRightImageView = null;
   private QuranSettings mQuranSettings;
-  private CompositeSubscription mCompositeSubscription;
+  private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
   private TabletView mMainView;
 
@@ -182,14 +181,13 @@ public class TabletFragment extends Fragment
     if (context instanceof AyahSelectedListener) {
       mAyahSelectedListener = (AyahSelectedListener) context;
     }
-    mCompositeSubscription = new CompositeSubscription();
   }
 
   @Override
   public void onDetach() {
     super.onDetach();
     mAyahSelectedListener = null;
-    mCompositeSubscription.unsubscribe();
+    compositeDisposable.clear();
   }
 
   @Override
@@ -271,45 +269,44 @@ public class TabletFragment extends Fragment
   }
 
   private void highlightTagsTask() {
-    Subscription s =
+    compositeDisposable.add(
         mBookmarkModel.getBookmarkedAyahsOnPageObservable(mPageNumber - 1, mPageNumber)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<List<Bookmark>>() {
-          @Override
-          public void onCompleted() {
-            if (mCoordinateData == null) {
-              new GetAyahCoordsTask(getActivity()).execute(mPageNumber - 1, mPageNumber);
-            } else {
-              mRightImageView.invalidate();
-              mLeftImageView.invalidate();
-            }
-          }
-
-          @Override
-          public void onError(Throwable e) {
-          }
-
-          @Override
-          public void onNext(List<Bookmark> bookmarks) {
-            if (mMode == Mode.ARABIC && mRightImageView != null && mLeftImageView != null) {
-              for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
-                Bookmark taggedAyah = bookmarks.get(i);
-                if (taggedAyah.page == mPageNumber - 1) {
-                  mRightImageView.highlightAyah(
-                      taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
-                } else if (taggedAyah.page == mPageNumber) {
-                  mLeftImageView.highlightAyah(
-                      taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableObserver<List<Bookmark>>() {
+              @Override
+              public void onNext(List<Bookmark> bookmarks) {
+                if (mMode == Mode.ARABIC && mRightImageView != null && mLeftImageView != null) {
+                  for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
+                    Bookmark taggedAyah = bookmarks.get(i);
+                    if (taggedAyah.page == mPageNumber - 1) {
+                      mRightImageView.highlightAyah(
+                          taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+                    } else if (taggedAyah.page == mPageNumber) {
+                      mLeftImageView.highlightAyah(
+                          taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+                    }
+                  }
                 }
               }
-            }
-          }
-        });
-    mCompositeSubscription.add(s);
+
+              @Override
+              public void onError(Throwable e) {
+              }
+
+              @Override
+              public void onComplete() {
+                if (mCoordinateData == null) {
+                  new GetAyahCoordsTask(getActivity()).execute(mPageNumber - 1, mPageNumber);
+                } else {
+                  mRightImageView.invalidate();
+                  mLeftImageView.invalidate();
+                }
+              }
+            }));
   }
 
   private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
-    public QueryPageCoordinatesTask(Context context) {
+    QueryPageCoordinatesTask(Context context) {
       super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
     }
 
@@ -341,18 +338,18 @@ public class TabletFragment extends Fragment
 
   private class GetAyahCoordsTask extends QueryAyahCoordsTask {
 
-    public GetAyahCoordsTask(Context context) {
+    GetAyahCoordsTask(Context context) {
       super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
     }
 
-    public GetAyahCoordsTask(Context context, MotionEvent event,
-        EventType eventType, int page) {
+    GetAyahCoordsTask(Context context, MotionEvent event,
+                      EventType eventType, int page) {
       super(context, event, eventType,
           QuranScreenInfo.getInstance().getTabletWidthParam(), page);
     }
 
-    public GetAyahCoordsTask(Context context, int sura,
-        int ayah, HighlightType type) {
+    GetAyahCoordsTask(Context context, int sura,
+                      int ayah, HighlightType type) {
       super(context,
           QuranScreenInfo.getInstance().getTabletWidthParam(),
           sura, ayah, type);

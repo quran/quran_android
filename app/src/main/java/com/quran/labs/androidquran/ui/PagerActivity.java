@@ -105,15 +105,14 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
@@ -198,7 +197,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranPageWorker quranPageWorker;
   @Inject BookmarkModel bookmarkModel;
   @Inject RecentPagePresenter recentPagePresenter;
-  private CompositeSubscription compositeSubscription;
+  private CompositeDisposable compositeDisposable;
 
   private final PagerHandler handler = new PagerHandler(this);
 
@@ -292,15 +291,15 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     settings = QuranSettings.getInstance(this);
-    compositeSubscription = new CompositeSubscription();
+    compositeDisposable = new CompositeDisposable();
 
     // subscribe to changes in bookmarks
-    compositeSubscription.add(
+    compositeDisposable.add(
         bookmarkModel.bookmarksObservable()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<Void>() {
+            .subscribe(new Consumer<Boolean>() {
               @Override
-              public void call(Void aVoid) {
+              public void accept(Boolean ignore) {
                 onBookmarksChanged();
               }
             }));
@@ -867,7 +866,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       downloadReceiver = null;
     }
 
-    compositeSubscription.unsubscribe();
+    compositeDisposable.dispose();
     handler.removeCallbacksAndMessages(null);
     dismissProgressDialog();
     super.onDestroy();
@@ -1098,16 +1097,19 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void onBookmarksChanged() {
     if (isInAyahMode) {
-      Subscription subscription =
+      compositeDisposable.add(
           bookmarkModel.getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean isBookmarked) {
-              updateAyahBookmark(start, isBookmarked, true);
-            }
-          });
-      compositeSubscription.add(subscription);
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribeWith(new DisposableSingleObserver<Boolean>() {
+                @Override
+                public void onSuccess(Boolean isBookmarked) {
+                  updateAyahBookmark(start, isBookmarked, true);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                }
+              }));
     }
   }
 
@@ -1333,44 +1335,43 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void requestTranslationsList() {
-    compositeSubscription.add(
-        Observable.fromCallable(new Callable<List<LocalTranslation>>() {
+    compositeDisposable.add(
+        Single.fromCallable(new Callable<List<LocalTranslation>>() {
           @Override
           public List<LocalTranslation> call() throws Exception {
             return new TranslationsDBAdapter(PagerActivity.this).getTranslations();
           }
-        }).filter(new Func1<List<LocalTranslation>, Boolean>() {
-          @Override
-          public Boolean call(List<LocalTranslation> translationItems) {
-            return translationItems != null;
-          }
         }).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<List<LocalTranslation>>() {
-              @Override
-              public void call(List<LocalTranslation> translationList) {
-                int items = translationList.size();
-                String[] titles = new String[items];
-                for (int i = 0; i < items; i++) {
-                  LocalTranslation item = translationList.get(i);
-                  titles[i] = TextUtils.isEmpty(item.translator) ? item.name : item.translator;
-                }
-
-                if (translationsSpinnerAdapter != null) {
-                  translationsSpinnerAdapter.updateItems(titles, translationList);
-                }
-                translationItems = titles;
-                translations = translationList;
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {
+            @Override
+            public void onSuccess(List<LocalTranslation> translationList) {
+              int items = translationList.size();
+              String[] titles = new String[items];
+              for (int i = 0; i < items; i++) {
+                LocalTranslation item = translationList.get(i);
+                titles[i] = TextUtils.isEmpty(item.translator) ? item.name : item.translator;
               }
-            }));
+
+              if (translationsSpinnerAdapter != null) {
+                translationsSpinnerAdapter.updateItems(titles, translationList);
+              }
+              translationItems = titles;
+              translations = translationList;
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+          }));
   }
 
   private void toggleBookmark(final Integer sura, final Integer ayah, final int page) {
-    Subscription subscription = bookmarkModel.toggleBookmarkObservable(sura, ayah, page)
+    compositeDisposable.add(bookmarkModel.toggleBookmarkObservable(sura, ayah, page)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Boolean>() {
+        .subscribeWith(new DisposableSingleObserver<Boolean>() {
           @Override
-          public void call(Boolean isBookmarked) {
+          public void onSuccess(Boolean isBookmarked) {
             if (sura == null || ayah == null) {
               // page bookmark
               bookmarksCache.put(page, isBookmarked);
@@ -1381,17 +1382,21 @@ public class PagerActivity extends QuranActionBarActivity implements
               updateAyahBookmark(suraAyah, isBookmarked, true);
             }
           }
-        });
-    compositeSubscription.add(subscription);
+
+          @Override
+          public void onError(Throwable e) {
+          }
+        }));
   }
 
   private void checkIfPageIsBookmarked(Integer... pages) {
-    Subscription subscription = bookmarkModel.getIsBookmarkedObservable(pages)
+    compositeDisposable.add(bookmarkModel.getIsBookmarkedObservable(pages)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<Pair<Integer, Boolean>>() {
+        .subscribeWith(new DisposableObserver<Pair<Integer, Boolean>>() {
+
           @Override
-          public void onCompleted() {
-            supportInvalidateOptionsMenu();
+          public void onNext(Pair<Integer, Boolean> result) {
+            bookmarksCache.put(result.first, result.second);
           }
 
           @Override
@@ -1399,11 +1404,10 @@ public class PagerActivity extends QuranActionBarActivity implements
           }
 
           @Override
-          public void onNext(Pair<Integer, Boolean> result) {
-            bookmarksCache.put(result.first, result.second);
+          public void onComplete() {
+            supportInvalidateOptionsMenu();
           }
-        });
-    compositeSubscription.add(subscription);
+        }));
   }
 
   @Override
@@ -1911,16 +1915,19 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void updateToolbarPosition(final SuraAyah start, AyahTracker tracker) {
-    Subscription subscription = bookmarkModel
+    compositeDisposable.add(bookmarkModel
         .getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<Boolean>() {
+        .subscribeWith(new DisposableSingleObserver<Boolean>() {
           @Override
-          public void call(Boolean isBookmarked) {
+          public void onSuccess(Boolean isBookmarked) {
             updateAyahBookmark(start, isBookmarked, false);
           }
-        });
-    compositeSubscription.add(subscription);
+
+          @Override
+          public void onError(Throwable e) {
+          }
+        }));
 
     ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
             ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
@@ -2035,18 +2042,18 @@ public class PagerActivity extends QuranActionBarActivity implements
       return;
     }
 
-    compositeSubscription.add(
+    compositeDisposable.add(
         ArabicDatabaseUtils.getInstance(this).getVerses(start, end)
-            .filter(new Func1<List<QuranAyah>, Boolean>() {
+            .filter(new Predicate<List<QuranAyah>>() {
               @Override
-              public Boolean call(List<QuranAyah> quranAyahs) {
+              public boolean test(List<QuranAyah> quranAyahs) {
                 return quranAyahs.size() > 0;
               }
             })
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Action1<List<QuranAyah>>() {
+            .subscribe(new Consumer<List<QuranAyah>>() {
               @Override
-              public void call(List<QuranAyah> quranAyahs) {
+              public void accept(List<QuranAyah> quranAyahs) {
                 if (isCopy) {
                   ShareUtil.copyVerses(PagerActivity.this, quranAyahs);
                 } else {
@@ -2058,27 +2065,21 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void shareAyahLink(SuraAyah start, SuraAyah end) {
     showProgressDialog();
-    compositeSubscription.add(
-    QuranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnError(new Action1<Throwable>() {
-          @Override
-          public void call(Throwable throwable) {
-            dismissProgressDialog();
-          }
-        })
-        .doOnCompleted(new Action0() {
-          @Override
-          public void call() {
-            dismissProgressDialog();
-          }
-        })
-        .subscribe(new Action1<String>() {
-          @Override
-          public void call(String url) {
-            ShareUtil.shareViaIntent(PagerActivity.this, url, R.string.share_ayah);
-          }
-        })
+    compositeDisposable.add(
+        QuranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableSingleObserver<String>() {
+              @Override
+              public void onSuccess(String url) {
+                ShareUtil.shareViaIntent(PagerActivity.this, url, R.string.share_ayah);
+                dismissProgressDialog();
+              }
+
+              @Override
+              public void onError(Throwable e) {
+                dismissProgressDialog();
+              }
+            })
     );
   }
 
