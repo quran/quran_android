@@ -403,10 +403,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         TranslationItem item = (TranslationItem) rowItem;
         holder.translationTitle.setText(item.name());
         if (TextUtils.isEmpty(item.translation.translatorNameLocalized)) {
-          holder.translationInfo.setVisibility(View.GONE);
+          holder.translationInfo.setText(item.translation.translator);
         } else {
           holder.translationInfo.setText(item.translation.translatorNameLocalized);
-          holder.translationInfo.setVisibility(View.VISIBLE);
         }
 
         if (item.exists()) {
@@ -415,7 +414,6 @@ public class TranslationManagerActivity extends QuranActionBarActivity
             holder.leftImage.setVisibility(View.VISIBLE);
 
             holder.translationInfo.setText(R.string.update_available);
-            holder.translationInfo.setVisibility(View.VISIBLE);
           } else {
             holder.leftImage.setVisibility(View.GONE);
           }
