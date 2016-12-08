@@ -12,11 +12,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import io.reactivex.Scheduler;
 import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.functions.Function;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -32,13 +29,7 @@ public class RecentPageModelTest {
 
   @BeforeClass
   public static void setup() {
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(
-        new Function<Callable<Scheduler>, Scheduler>() {
-          @Override
-          public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
-            return Schedulers.io();
-          }
-        });
+    RxAndroidPlugins.setInitMainThreadSchedulerHandler(schedulerCallable -> Schedulers.io());
 
     // sample recent pages
     long timestamp = System.currentTimeMillis();
@@ -53,7 +44,7 @@ public class RecentPageModelTest {
 
   @Test
   public void testEmptyRecentPages() {
-    when(bookmarksAdapter.getRecentPages()).thenReturn(new ArrayList<RecentPage>());
+    when(bookmarksAdapter.getRecentPages()).thenReturn(new ArrayList<>());
 
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
 

@@ -1,8 +1,6 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 
 import org.junit.Before;
@@ -33,8 +31,7 @@ public class BookmarkJsonModelTest {
 
   @Test
   public void simpleTestToJson() throws IOException {
-    BookmarkData data = new BookmarkData(
-        TAGS, new ArrayList<Bookmark>(), new ArrayList<RecentPage>());
+    BookmarkData data = new BookmarkData(TAGS, new ArrayList<>(), new ArrayList<>());
     Buffer output = new Buffer();
     jsonModel.toJson(output, data);
     String result = output.readUtf8();

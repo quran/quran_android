@@ -7,7 +7,6 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,7 +14,6 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
@@ -40,17 +38,14 @@ public class RecentPageModel {
 
     recentPagesUpdatedObservable = this.recentWriterSubject.hide()
         .observeOn(Schedulers.io())
-        .map(new Function<PersistRecentPagesRequest, Boolean>() {
-          @Override
-          public Boolean apply(PersistRecentPagesRequest update) throws Exception {
-            if (update.deleteRangeStart != null) {
-              bookmarksDBAdapter.replaceRecentRangeWithPage(
-                  update.deleteRangeStart, update.deleteRangeEnd, update.page);
-            } else {
-              bookmarksDBAdapter.addRecentPage(update.page);
-            }
-            return true;
+        .map(update -> {
+          if (update.deleteRangeStart != null) {
+            bookmarksDBAdapter.replaceRecentRangeWithPage(
+                update.deleteRangeStart, update.deleteRangeEnd, update.page);
+          } else {
+            bookmarksDBAdapter.addRecentPage(update.page);
           }
+          return true;
         }).share();
 
     // there needs to always be one subscriber in order for us to properly be able
@@ -96,8 +91,8 @@ public class RecentPageModel {
   /**
    * Returns an observable of the very latest pages visited
    *
-   * Note that this stream never terminates, and will return pages even when they have not yet
-   * been persisted to the database. This is basically a stream of every page as it gets visited.
+   * Note that this stream never terminates, and will return pages even when they have not yet been
+   * persisted to the database. This is basically a stream of every page as it gets visited.
    *
    * @return an Observable of the latest pages visited
    */
@@ -119,12 +114,8 @@ public class RecentPageModel {
   }
 
   Single<List<RecentPage>> getRecentPagesObservable() {
-    return Single.fromCallable(new Callable<List<RecentPage>>() {
-      @Override
-      public List<RecentPage> call() throws Exception {
-        return bookmarksDBAdapter.getRecentPages();
-      }
-    }).subscribeOn(Schedulers.io());
+    return Single.fromCallable(bookmarksDBAdapter::getRecentPages)
+        .subscribeOn(Schedulers.io());
   }
 
   private static class PersistRecentPagesRequest {

@@ -35,7 +35,6 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
@@ -76,7 +75,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   BookmarkPresenter(Context context, QuranSettings settings,
-      BookmarkModel bookmarkModel, boolean subscribeToChanges) {
+                    BookmarkModel bookmarkModel, boolean subscribeToChanges) {
     appContext = context.getApplicationContext();
     quranSettings = settings;
     this.bookmarkModel = bookmarkModel;
@@ -91,14 +90,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     Observable.merge(bookmarkModel.tagsObservable(),
         bookmarkModel.bookmarksObservable(), bookmarkModel.recentPagesUpdatedObservable())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<Object>() {
-          @Override
-          public void accept(Object o) {
-            if (fragment != null) {
-              requestData(false);
-            } else {
-              cachedData = null;
-            }
+        .subscribe(ignore -> {
+          if (fragment != null) {
+            requestData(false);
+          } else {
+            cachedData = null;
           }
         });
   }
@@ -176,12 +172,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
     itemsToRemove = remove;
     pendingRemoval = Single.timer(DELAY_DELETION_DURATION_IN_MS, TimeUnit.MILLISECONDS)
-        .flatMap(new Function<Long, Single<BookmarkResult>>() {
-          @Override
-          public Single<BookmarkResult> apply(Long aLong) {
-            return removeItemsObservable();
-          }
-        })
+        .flatMap(ignore -> removeItemsObservable())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableSingleObserver<BookmarkResult>() {
@@ -215,7 +206,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
       for (int i = 0, removedSize = remove.size(); i < removedSize; i++) {
         QuranRow row = remove.get(i);
-        if (row.isHeader() && row.tagId > 0){
+        if (row.isHeader() && row.tagId > 0) {
           removedTags.add(row.tagId);
         }
       }
@@ -250,16 +241,13 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   private Single<BookmarkData> getBookmarksWithAyatObservable(int sortOrder) {
     return bookmarkModel.getBookmarkDataObservable(sortOrder)
-        .map(new Function<BookmarkData, BookmarkData>() {
-          @Override
-          public BookmarkData apply(BookmarkData bookmarkData) {
-            try {
-              return new BookmarkData(bookmarkData.getTags(),
-                  arabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()),
-                  bookmarkData.getRecentPages());
-            } catch (Exception e) {
-              return bookmarkData;
-            }
+        .map(bookmarkData -> {
+          try {
+            return new BookmarkData(bookmarkData.getTags(),
+                arabicDatabaseUtils.hydrateAyahText(bookmarkData.getBookmarks()),
+                bookmarkData.getRecentPages());
+          } catch (Exception e) {
+            return bookmarkData;
           }
         });
   }
@@ -268,13 +256,10 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   Single<BookmarkResult> getBookmarksListObservable(
       int sortOrder, final boolean groupByTags) {
     return getBookmarksWithAyatObservable(sortOrder)
-        .map(new Function<BookmarkData, BookmarkResult>() {
-          @Override
-          public BookmarkResult apply(BookmarkData bookmarkData) {
-            List<QuranRow> rows = getBookmarkRows(bookmarkData, groupByTags);
-            Map<Long, Tag> tagMap = generateTagMap(bookmarkData.getTags());
-            return new BookmarkResult(rows, tagMap);
-          }
+        .map(bookmarkData -> {
+          List<QuranRow> rows = getBookmarkRows(bookmarkData, groupByTags);
+          Map<Long, Tag> tagMap = generateTagMap(bookmarkData.getTags());
+          return new BookmarkResult(rows, tagMap);
         })
         .subscribeOn(Schedulers.io());
   }
