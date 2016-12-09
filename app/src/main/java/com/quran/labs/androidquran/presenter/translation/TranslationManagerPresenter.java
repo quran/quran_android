@@ -30,9 +30,6 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
@@ -61,7 +58,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   TranslationManagerPresenter(Context appContext, OkHttpClient okHttpClient,
-      QuranSettings quranSettings, String hostName) {
+                              QuranSettings quranSettings, String hostName) {
     this.host = hostName;
     this.appContext = appContext;
     this.okHttpClient = okHttpClient;
@@ -76,25 +73,10 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   public void getTranslationsList(boolean forceDownload) {
     Observable.concat(
         getCachedTranslationListObservable(forceDownload), getRemoteTranslationListObservable())
-        .filter(new Predicate<TranslationList>() {
-          @Override
-          public boolean test(TranslationList translationList) throws Exception {
-            return translationList.translations != null;
-          }
-        })
+        .filter(translationList -> translationList.translations != null)
         .firstElement()
-        .filter(new Predicate<TranslationList>() {
-          @Override
-          public boolean test(TranslationList translationList) throws Exception {
-            return !translationList.translations.isEmpty();
-          }
-        })
-        .map(new Function<TranslationList, List<TranslationItem>>() {
-          @Override
-          public List<TranslationItem> apply(TranslationList translationList) throws Exception {
-            return mergeWithServerTranslations(translationList.translations);
-          }
-        })
+        .filter(translationList -> !translationList.translations.isEmpty())
+        .map(translationList -> mergeWithServerTranslations(translationList.translations))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new DisposableMaybeObserver<List<TranslationItem>>() {
@@ -132,15 +114,11 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   public void updateItem(final TranslationItem item) {
-    Observable.fromCallable(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        TranslationManagerPresenter.this.translationsDBAdapter.
-            writeTranslationUpdates(Collections.singletonList(item));
-        return null;
-      }
+    Observable.fromCallable(() -> {
+      translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item));
+      return null;
     }).subscribeOn(Schedulers.io())
-      .subscribe();
+        .subscribe();
   }
 
   Observable<TranslationList> getCachedTranslationListObservable(final boolean forceDownload) {
@@ -169,28 +147,22 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   Observable<TranslationList> getRemoteTranslationListObservable() {
-    return Observable.fromCallable(new Callable<TranslationList>() {
-      @Override
-      public TranslationList call() throws Exception {
-        Request request = new Request.Builder()
-            .url(host + WEB_SERVICE_ENDPOINT)
-            .build();
-        Response response = okHttpClient.newCall(request).execute();
+    return Observable.fromCallable(() -> {
+      Request request = new Request.Builder()
+          .url(host + WEB_SERVICE_ENDPOINT)
+          .build();
+      Response response = okHttpClient.newCall(request).execute();
 
-        Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
+      Moshi moshi = new Moshi.Builder().build();
+      JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
 
-        ResponseBody responseBody = response.body();
-        TranslationList result = jsonAdapter.fromJson(responseBody.source());
-        responseBody.close();
-        return result;
-      }
-    }).doOnNext(new Consumer<TranslationList>() {
-      @Override
-      public void accept(TranslationList translationList) {
-        if (translationList.translations != null && !translationList.translations.isEmpty()) {
-          writeTranslationList(translationList);
-        }
+      ResponseBody responseBody = response.body();
+      TranslationList result = jsonAdapter.fromJson(responseBody.source());
+      responseBody.close();
+      return result;
+    }).doOnNext(translationList -> {
+      if (translationList.translations != null && !translationList.translations.isEmpty()) {
+        writeTranslationList(translationList);
       }
     });
   }

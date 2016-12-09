@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -49,27 +48,24 @@ public class ArabicDatabaseUtils {
 
   @NonNull
   public Single<List<QuranAyah>> getVerses(final SuraAyah start, final SuraAyah end) {
-    return Single.fromCallable(new Callable<List<QuranAyah>>() {
-      @Override
-      public List<QuranAyah> call() throws Exception {
-        List<QuranAyah> verses = new ArrayList<>();
+    return Single.fromCallable(() -> {
+      List<QuranAyah> verses = new ArrayList<>();
 
-        Cursor cursor = null;
-        try {
-          cursor = mArabicDatabaseHandler.getVerses(start.sura, start.ayah,
-              end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
-          while (cursor.moveToNext()) {
-            QuranAyah verse = new QuranAyah(cursor.getInt(1), cursor.getInt(2));
-            verse.setText(cursor.getString(3));
-            verses.add(verse);
-          }
-        } catch (Exception e){
-          // no op
-        } finally {
-          DatabaseUtils.closeCursor(cursor);
+      Cursor cursor = null;
+      try {
+        cursor = mArabicDatabaseHandler.getVerses(start.sura, start.ayah,
+            end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
+        while (cursor.moveToNext()) {
+          QuranAyah verse = new QuranAyah(cursor.getInt(1), cursor.getInt(2));
+          verse.setText(cursor.getString(3));
+          verses.add(verse);
         }
-        return verses;
+      } catch (Exception e) {
+        // no op
+      } finally {
+        DatabaseUtils.closeCursor(cursor);
       }
+      return verses;
     }).subscribeOn(Schedulers.io());
   }
 
@@ -138,11 +134,12 @@ public class ArabicDatabaseUtils {
   }
 
   /**
-   * Get the actual ayahText from the given ayahText.
-   * This is important because, currently, the arabic database (quran.ar.db) has the first verse
-   * from each sura as "[basmallah] ayah" - this method just returns ayah without basmallah.
-   * @param sura the sura number
-   * @param ayah the ayah number
+   * Get the actual ayahText from the given ayahText. This is important because, currently, the
+   * arabic database (quran.ar.db) has the first verse from each sura as "[basmallah] ayah" - this
+   * method just returns ayah without basmallah.
+   *
+   * @param sura     the sura number
+   * @param ayah     the ayah number
    * @param ayahText the ayah text
    * @return the ayah without the basmallah
    */

@@ -14,14 +14,11 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.TestScheduler;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -41,13 +38,7 @@ public class TagBookmarkPresenterTest {
 
   @BeforeClass
   public static void setup() {
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(
-        new Function<Callable<Scheduler>, Scheduler>() {
-          @Override
-          public Scheduler apply(Callable<Scheduler> schedulerCallable) throws Exception {
-            return testScheduler;
-          }
-        });
+    RxAndroidPlugins.setInitMainThreadSchedulerHandler(schedulerCallable -> testScheduler);
   }
 
   @Before

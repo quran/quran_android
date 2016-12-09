@@ -18,9 +18,6 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 
 @Singleton
@@ -43,17 +40,14 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
     this.bookmarkModel = bookmarkModel;
     this.bookmarkModel.tagsObservable()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<Tag>() {
-          @Override
-          public void accept(Tag tag) {
-            shouldRefreshTags = true;
-            if (tags != null && dialog != null) {
-              // change this if we support updating tags from outside of QuranActivity
-              tags.add(tags.size() - 1, tag);
-              checkedTags.add(tag.id);
-              dialog.setData(tags, checkedTags);
-              setMadeChanges();
-            }
+        .subscribe(tag -> {
+          shouldRefreshTags = true;
+          if (tags != null && dialog != null) {
+            // change this if we support updating tags from outside of QuranActivity
+            tags.add(tags.size() - 1, tag);
+            checkedTags.add(tag.id);
+            dialog.setData(tags, checkedTags);
+            setMadeChanges();
           }
         });
   }
@@ -75,37 +69,28 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   }
 
   void refresh() {
-    Single.zip(getTagsObservable(), getBookmarkTagIdsObservable(),
-        new BiFunction<List<Tag>, List<Long>, Pair<List<Tag>, List<Long>>>() {
-          @Override
-          public Pair<List<Tag>, List<Long>> apply(List<Tag> tags, List<Long> bookmarkTagIds) {
-            return new Pair<>(tags, bookmarkTagIds);
-          }
-        })
+    Single.zip(getTagsObservable(), getBookmarkTagIdsObservable(), Pair::new)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<Pair<List<Tag>,List<Long>>>() {
-          @Override
-          public void accept(Pair<List<Tag>, List<Long>> data) {
-            List<Tag> tags = data.first;
-            int numberOfTags = tags.size();
-            if (numberOfTags == 0 || tags.get(numberOfTags - 1).id != -1) {
-              tags.add(new Tag(-1, ""));
-            }
+        .subscribe(data -> {
+          List<Tag> tags1 = data.first;
+          int numberOfTags = tags1.size();
+          if (numberOfTags == 0 || tags1.get(numberOfTags - 1).id != -1) {
+            tags1.add(new Tag(-1, ""));
+          }
 
-            List<Long> bookmarkTags = data.second;
-            checkedTags.clear();
-            for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
-              Tag tag = tags.get(i);
-              if (bookmarkTags.contains(tag.id)) {
-                checkedTags.add(tag.id);
-              }
+          List<Long> bookmarkTags = data.second;
+          checkedTags.clear();
+          for (int i = 0, tagsSize = tags1.size(); i < tagsSize; i++) {
+            Tag tag = tags1.get(i);
+            if (bookmarkTags.contains(tag.id)) {
+              checkedTags.add(tag.id);
             }
-            madeChanges = false;
-            TagBookmarkPresenter.this.tags = tags;
-            shouldRefreshTags = false;
-            if (dialog != null) {
-              dialog.setData(TagBookmarkPresenter.this.tags, checkedTags);
-            }
+          }
+          madeChanges = false;
+          TagBookmarkPresenter.this.tags = tags1;
+          shouldRefreshTags = false;
+          if (dialog != null) {
+            dialog.setData(TagBookmarkPresenter.this.tags, checkedTags);
           }
         });
   }
@@ -121,25 +106,18 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   public void saveChanges() {
     if (madeChanges) {
       getBookmarkIdsObservable()
-          .flatMap(new Function<long[], Observable<Boolean>>() {
-            @Override
-            public Observable<Boolean> apply(long[] bookmarkIds) {
-              return bookmarkModel.updateBookmarkTags(
-                  bookmarkIds, checkedTags, bookmarkIds.length == 1);
-            }
-          })
+          .flatMap(bookmarkIds ->
+              bookmarkModel.updateBookmarkTags(bookmarkIds, checkedTags, bookmarkIds.length == 1))
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new Consumer<Boolean>() {
-            @Override
-            public void accept(Boolean aBoolean) {
-              madeChanges = false;
-            }
+          .subscribe(aBoolean -> {
+            madeChanges = false;
           });
     }
   }
 
   /**
    * Get an Observable with the list of bookmark ids that will be tagged.
+   *
    * @return the list of bookmark ids to tag
    */
   private Observable<long[]> getBookmarkIdsObservable() {
@@ -151,12 +129,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
       // if we don't have a bookmark id, we'll add the bookmark and use its id
       observable = bookmarkModel.safeAddBookmark(potentialAyahBookmark.sura,
           potentialAyahBookmark.ayah, potentialAyahBookmark.page)
-          .map(new Function<Long, long[]>() {
-            @Override
-            public long[] apply(Long bookmarkId) {
-              return new long[]{ bookmarkId };
-            }
-          });
+          .map(bookmarkId -> new long[]{ bookmarkId });
     }
     return observable;
   }
@@ -194,7 +167,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
           bookmarkIds != null && bookmarkIds.length == 1 ? bookmarkIds[0] : 0);
     }
     return bookmarkModel.getBookmarkTagIds(bookmarkId)
-        .defaultIfEmpty(new ArrayList<Long>())
+        .defaultIfEmpty(new ArrayList<>())
         .toSingle();
   }
 
