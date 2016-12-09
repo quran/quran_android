@@ -3,10 +3,7 @@ package com.quran.labs.androidquran.model.bookmark;
 import android.content.Context;
 import android.net.Uri;
 
-import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.dao.RecentPage;
-import com.quran.labs.androidquran.dao.Tag;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -71,8 +68,7 @@ public class BookmarkImportExportModelTest {
     TestObserver<Uri> testObserver = new TestObserver<>();
 
     when(bookmarkModel.getBookmarkDataObservable(anyInt())).thenReturn(
-        Single.just(new BookmarkData(new ArrayList<Tag>(),
-            new ArrayList<Bookmark>(), new ArrayList<RecentPage>())));
+        Single.just(new BookmarkData(new ArrayList<>(), new ArrayList<>(), new ArrayList<>())));
     when(context.getExternalFilesDir(anyString())).thenReturn(new File("/tmp/a/b/c"));
 
     bookmarkImportExportModel.exportBookmarksObservable()

@@ -11,13 +11,10 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import io.reactivex.Single;
-import io.reactivex.SingleSource;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okio.BufferedSink;
 import okio.BufferedSource;
@@ -40,23 +37,13 @@ public class BookmarkImportExportModel {
   }
 
   public Single<BookmarkData> readBookmarks(@NonNull final BufferedSource source) {
-    return Single.defer(new Callable<SingleSource<BookmarkData>>() {
-      @Override
-      public SingleSource<BookmarkData> call() throws Exception {
-        return Single.just(jsonModel.fromJson(source));
-      }
-    })
-    .subscribeOn(Schedulers.io());
+    return Single.defer(() -> Single.just(jsonModel.fromJson(source)))
+        .subscribeOn(Schedulers.io());
   }
 
   public Single<Uri> exportBookmarksObservable() {
     return bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED)
-        .flatMap(new Function<BookmarkData, SingleSource<Uri>>() {
-          @Override
-          public SingleSource<Uri> apply(BookmarkData bookmarkData) throws Exception {
-            return Single.just(exportBookmarks(bookmarkData));
-          }
-        })
+        .flatMap(bookmarkData -> Single.just(exportBookmarks(bookmarkData)))
         .subscribeOn(Schedulers.io());
   }
 

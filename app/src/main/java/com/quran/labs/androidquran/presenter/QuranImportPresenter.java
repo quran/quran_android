@@ -29,7 +29,6 @@ import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -97,13 +96,10 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private void subscribeToImportData() {
     mImportObservable
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<Boolean>() {
-          @Override
-          public void accept(Boolean aBoolean) {
-            if (mCurrentActivity != null) {
-              mCurrentActivity.showImportComplete();
-              mImportObservable = null;
-            }
+        .subscribe(aBoolean -> {
+          if (mCurrentActivity != null) {
+            mCurrentActivity.showImportComplete();
+            mImportObservable = null;
           }
         });
   }
@@ -189,7 +185,8 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
         .subscribeOn(Schedulers.io());
   }
 
-  @NonNull @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+  @NonNull
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   Maybe<BufferedSource> parseUri(final Uri uri) {
     return Maybe.defer(new Callable<MaybeSource<BufferedSource>>() {
       @Override
@@ -204,7 +201,8 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
     });
   }
 
-  @NonNull @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+  @NonNull
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   Maybe<BufferedSource> parseExternalFile(final Uri uri) {
     return Maybe.defer(new Callable<MaybeSource<BufferedSource>>() {
       @Override
