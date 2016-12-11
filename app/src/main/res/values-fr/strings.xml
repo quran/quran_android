@@ -87,7 +87,6 @@
   <string name="get_arabic_search_db">Télécharger la base de données de recherche arabe</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_category_navigation">Navigation</string>
   <string name="prefs_volume_key_navigation_title">Navigation avec les touches de son</string>
   <string name="prefs_volume_key_navigation_summary">Naviguer entre les pages avec les touches du contrôle du volume.</string>
   <string name="prefs_category_reading">Preférences de lecture</string>

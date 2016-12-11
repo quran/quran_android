@@ -70,7 +70,6 @@
   <string name="get_arabic_search_db">داگرتنی داتابەیسی گەڕانی عەرەبی</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_category_navigation">گەڕان</string>
   <string name="prefs_volume_key_navigation_title">فرمانی دوگمەی دەنگ</string>
   <string name="prefs_volume_key_navigation_summary">گۆڕینی پەڕەکان بەهۆی دوگمەکانی دەنگەوە</string>
   <string name="prefs_category_reading">ڕێکخستنی خوێندنەوە</string>
