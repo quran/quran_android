@@ -118,7 +118,6 @@
   <string name="get_arabic_search_db">Arabcha izlash bazasini oʻrnatish</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_category_navigation">Varoqlash</string>
   <string name="prefs_volume_key_navigation_title">Ovoz tugmalaridan foydalanish</string>
   <string name="prefs_volume_key_navigation_summary">Qurilmaning ovoz tugmalari yordamida varoqlash</string>
   <string name="prefs_category_reading">Oʻqish</string>

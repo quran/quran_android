@@ -43,7 +43,6 @@
   <string name="get_arabic_search_db">ئەرەبچە ئىزدەش ساندانىغا ئېرىش</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_category_navigation">يولباشچى</string>
   <string name="prefs_volume_key_navigation_title">ئاۋاز كۇنۇپكا يولباشچى</string>
   <string name="prefs_volume_key_navigation_summary">ئاۋاز كۇنۇپكىسىدا بەت ئۆرۈشكە يول باشلايدۇ</string>
   <string name="prefs_category_reading">ئوقۇش مايىللىقى</string>

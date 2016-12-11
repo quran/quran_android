@@ -124,7 +124,6 @@
   <string name="get_arabic_search_db">Арабша іздеу деректерін орнату</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_category_navigation">Парақтау</string>
   <string name="prefs_volume_key_navigation_title">Дауыс пернелерін пайдалану</string>
   <string name="prefs_volume_key_navigation_summary">Дауыс пернелері арқылы бет аудару</string>
   <string name="prefs_category_reading">Оқу</string>
