@@ -111,7 +111,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="get_arabic_search_db">Verkrijg "Arabisch Zoeken" Database</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_category_navigation">Navigatie</string>
   <string name="prefs_volume_key_navigation_title">Volumetoets navigatie</string>
   <string name="prefs_volume_key_navigation_summary">Navigeren tussen pagina\'s met behulp van de volumetoetsen</string>
   <string name="prefs_category_reading">Voorkeuren voor Lezen</string>

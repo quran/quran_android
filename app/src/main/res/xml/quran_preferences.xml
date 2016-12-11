@@ -63,16 +63,6 @@
   </PreferenceCategory>
 
   <PreferenceCategory
-      android:title="@string/prefs_category_navigation">
-    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/prefs_volume_key_navigation"
-        android:persistent="true"
-        android:summary="@string/prefs_volume_key_navigation_summary"
-        android:title="@string/prefs_volume_key_navigation_title"/>
-  </PreferenceCategory>
-
-  <PreferenceCategory
       android:title="@string/prefs_category_reading">
 
     <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
@@ -95,6 +85,13 @@
         android:persistent="true"
         android:summary="@string/prefs_highlight_bookmarks_summary"
         android:title="@string/prefs_highlight_bookmarks_title"/>
+
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/prefs_volume_key_navigation"
+        android:persistent="true"
+        android:summary="@string/prefs_volume_key_navigation_summary"
+        android:title="@string/prefs_volume_key_navigation_title"/>
   </PreferenceCategory>
 
   <PreferenceCategory

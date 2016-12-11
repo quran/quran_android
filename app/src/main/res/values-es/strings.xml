@@ -46,7 +46,6 @@
   <string name="no_arabic_search_available">Usted no ha descargado el paquete de búsqueda árabe. Por favor descargue y pruebe nuevamente su búsqueda.</string>
   <string name="get_arabic_search_db">Buscar en la Base de Datos Árabe</string>
   <!--Quran Preference Activity-->
-  <string name="prefs_category_navigation">Navegación</string>
   <string name="prefs_volume_key_navigation_title">Navegar con la tecla de volumen</string>
   <string name="prefs_volume_key_navigation_summary">Navegar entre páginas utilizando las teclas de volumen</string>
   <string name="prefs_category_reading">Preferencias de lectura</string>

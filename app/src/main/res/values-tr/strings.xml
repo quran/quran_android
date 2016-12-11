@@ -138,7 +138,6 @@
   <string name="prefs_download_amount_title">İndirme miktarı</string>
   <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
   <string name="prefs_err_moving_app_files">Uygulama dosyalarını taşınamadı</string>
-  <string name="prefs_category_navigation">Gezinme</string>
   <string name="prefs_copying_app_files">Uygulama dosyaları kopyalanıyor</string>
   <string name="prefs_category_download">İndirme seçenekleri</string>
   <string name="prefs_calculating_app_size">Uygulama büyüklüğü hesaplanıyor</string>

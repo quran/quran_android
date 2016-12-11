@@ -85,7 +85,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="get_arabic_search_db">Obter a base de pesquisa em Árabe</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_category_navigation">Navegação</string>
   <string name="prefs_volume_key_navigation_title">Navegação pelo botão de volume</string>
   <string name="prefs_volume_key_navigation_summary">Navegar entre páginas usando o botão de volume</string>
   <string name="prefs_category_reading">Preferencias de Leitura</string>
