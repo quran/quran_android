@@ -1375,7 +1375,13 @@ public class PagerActivity extends QuranActionBarActivity implements
               String[] titles = new String[items];
               for (int i = 0; i < items; i++) {
                 LocalTranslation item = translationList.get(i);
-                titles[i] = TextUtils.isEmpty(item.translator) ? item.name : item.translator;
+                if (!TextUtils.isEmpty(item.translatorForeign)) {
+                  titles[i] = item.translatorForeign;
+                } else if (!TextUtils.isEmpty(item.translator)) {
+                  titles[i] = item.translator;
+                } else {
+                  titles[i] = item.name;
+                }
               }
 
               if (translationsSpinnerAdapter != null) {

@@ -4,40 +4,67 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class TranslationsDBHelper extends SQLiteOpenHelper {
+class TranslationsDBHelper extends SQLiteOpenHelper {
 
-   private static final String DB_NAME = "translations.db";
-   private static final int DB_VERSION = 1;
+  private static final String DB_NAME = "translations.db";
+  private static final int DB_VERSION = 2;
 
-   public static class TranslationsTable {
-      public static final String TABLE_NAME = "translations";
-      public static final String ID = "id";
-      public static final String NAME = "name";
-      public static final String TRANSLATOR = "translator";
-      public static final String FILENAME = "filename";
-      public static final String URL = "url";
-      public static final String VERSION = "version";
-   }
+  TranslationsDBHelper(Context context) {
+    super(context, DB_NAME, null, DB_VERSION);
+  }
 
-   private static final String CREATE_TRANSLATIONS_TABLE =
-           "CREATE TABLE " + TranslationsTable.TABLE_NAME + "(" +
-                   TranslationsTable.ID + " integer primary key, " +
-                   TranslationsTable.NAME + " varchar not null, " +
-                   TranslationsTable.TRANSLATOR + " varchar, " +
-                   TranslationsTable.FILENAME + " varchar not null, " +
-                   TranslationsTable.URL + " varchar, " +
-                   TranslationsTable.VERSION + " integer not null default 0);";
+  @Override
+  public void onCreate(SQLiteDatabase db) {
+    db.execSQL(TranslationsTable.getCreateTableSql(TranslationsTable.TABLE_NAME));
+  }
 
-   public TranslationsDBHelper(Context context) {
-      super(context, DB_NAME, null, DB_VERSION);
-   }
+  @Override
+  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    if (oldVersion < 2) {
+      // a new column is added and columns are re-arranged
+      final String BACKUP_TABLE = TranslationsTable.TABLE_NAME + "_backup";
+      db.execSQL(TranslationsTable.getCreateTableSql(BACKUP_TABLE));
 
-   @Override
-   public void onCreate(SQLiteDatabase db) {
-      db.execSQL(CREATE_TRANSLATIONS_TABLE);
-   }
+      db.execSQL("INSERT INTO " + BACKUP_TABLE + " (" +
+          TranslationsTable.ID + ", " +
+          TranslationsTable.NAME + ", " +
+          TranslationsTable.TRANSLATOR + ", " +
+          TranslationsTable.FILENAME + ", " +
+          TranslationsTable.URL + ", " +
+          TranslationsTable.VERSION + ")" +
+          "SELECT " + TranslationsTable.ID + ", " +
+          TranslationsTable.NAME + ", " +
+          TranslationsTable.TRANSLATOR + ", " +
+          TranslationsTable.FILENAME + ", " +
+          TranslationsTable.URL + ", " +
+          TranslationsTable.VERSION +
+          " FROM " + TranslationsTable.TABLE_NAME + ";");
 
-   @Override
-   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-   }
+      db.execSQL("DROP TABLE " + TranslationsTable.TABLE_NAME);
+      db.execSQL("ALTER TABLE " + BACKUP_TABLE +
+          " RENAME TO " + TranslationsTable.TABLE_NAME);
+    }
+  }
+
+  static class TranslationsTable {
+    static final String TABLE_NAME = "translations";
+    static final String ID = "id";
+    static final String NAME = "name";
+    static final String TRANSLATOR = "translator";
+    static final String TRANSLATOR_FOREIGN = "translator_foreign";
+    static final String FILENAME = "filename";
+    static final String URL = "url";
+    static final String VERSION = "version";
+
+    static String getCreateTableSql(String tableName) {
+      return "CREATE TABLE " + tableName + "(" +
+          ID + " integer primary key, " +
+          NAME + " varchar not null, " +
+          TRANSLATOR + " varchar, " +
+          TRANSLATOR_FOREIGN + " varchar, " +
+          FILENAME + " varchar not null, " +
+          URL + " varchar, " +
+          VERSION + " integer not null default 0);";
+    }
+  }
 }

@@ -5,15 +5,17 @@ public class LocalTranslation {
   public final String filename;
   public final String name;
   public final String translator;
+  public final String translatorForeign;
   public final String url;
   public final int version;
 
-  public LocalTranslation(int id, String filename,
-      String name, String translator, String url, int version) {
+  public LocalTranslation(int id, String filename, String name,
+                          String translator, String translatorForeign, String url, int version) {
     this.id = id;
     this.filename = filename;
     this.name = name;
     this.translator = translator;
+    this.translatorForeign = translatorForeign;
     this.url = url;
     this.version = version;
   }
