@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.ShortcutManager;
 import android.os.Build;
@@ -25,11 +26,16 @@ public class ShortcutsActivity extends AppCompatActivity {
     if (ACTION_JUMP_TO_LATEST.equals(action)) {
       intent.setAction(action);
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-        ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-        shortcutManager.reportShortcutUsed(JUMP_TO_LATEST_SHORTCUT_NAME);
+        recordShortcutUsage(JUMP_TO_LATEST_SHORTCUT_NAME);
       }
     }
     finish();
     startActivity(intent);
+  }
+
+  @TargetApi(Build.VERSION_CODES.N_MR1)
+  private void recordShortcutUsage(String shortcut) {
+    ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+    shortcutManager.reportShortcutUsed(shortcut);
   }
 }

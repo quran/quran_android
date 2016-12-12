@@ -13,4 +13,8 @@
    </issue>
 
    <issue id="MissingTranslation" severity="warning"/>
+
+   <issue id="UnusedAttribute">
+      <ignore regexp="shortcuts.xml"/>
+   </issue>
 </lint>
