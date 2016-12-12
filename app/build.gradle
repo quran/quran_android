@@ -93,7 +93,8 @@ android {
       testLogging {
          events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
          outputs.upToDateWhen { false }
-         showStandardStreams = true
+         showStandardStreams true
+         exceptionFormat "full"
       }
     }
 }
