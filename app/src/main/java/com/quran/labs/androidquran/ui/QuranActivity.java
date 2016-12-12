@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -31,6 +30,7 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.ShortcutsActivity;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
@@ -51,7 +51,6 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
 public class QuranActivity extends QuranActionBarActivity
@@ -128,6 +127,7 @@ public class QuranActivity extends QuranActionBarActivity
           SI_SHOWED_UPGRADE_DIALOG, false);
     }
 
+    recentPages = recentPageModel.getLatestPageObservable();
     Intent intent = getIntent();
     if (intent != null) {
       Bundle extras = intent.getExtras();
@@ -138,6 +138,10 @@ public class QuranActivity extends QuranActionBarActivity
           }
         }
       }
+
+      if (ShortcutsActivity.ACTION_JUMP_TO_LATEST.equals(intent.getAction())) {
+        jumpToLastPage();
+      }
     }
 
     updateTranslationsListAsNeeded();
@@ -145,7 +149,6 @@ public class QuranActivity extends QuranActionBarActivity
 
   @Override
   public void onResume() {
-    recentPages = recentPageModel.getLatestPageObservable();
     compositeDisposable.add(recentPages.subscribe());
 
     super.onResume();
@@ -198,14 +201,7 @@ public class QuranActivity extends QuranActionBarActivity
         return true;
       }
       case R.id.last_page: {
-        compositeDisposable.add(recentPages
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Consumer<Integer>() {
-              @Override
-              public void accept(Integer recentPage) {
-                jumpTo(recentPage == Constants.NO_PAGE ? 1 : recentPage);
-              }
-            }));
+        jumpToLastPage();
         return true;
       }
       case R.id.help: {
@@ -269,6 +265,12 @@ public class QuranActivity extends QuranActionBarActivity
     super.onSaveInstanceState(outState);
   }
 
+  private void jumpToLastPage() {
+    compositeDisposable.add(recentPages
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(recentPage -> jumpTo(recentPage == Constants.NO_PAGE ? 1 : recentPage)));
+  }
+
   private void updateTranslationsListAsNeeded() {
     if (settings.haveUpdatedTranslations()) {
       showTranslationsUpgradeDialog();
@@ -289,26 +291,20 @@ public class QuranActivity extends QuranActionBarActivity
     builder.setMessage(R.string.translation_updates_available);
     builder.setCancelable(false);
     builder.setPositiveButton(R.string.translation_dialog_yes,
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int id) {
-            dialog.dismiss();
-            upgradeDialog = null;
-            launchTranslationActivity();
-          }
+        (dialog, id) -> {
+          dialog.dismiss();
+          upgradeDialog = null;
+          launchTranslationActivity();
         });
 
     builder.setNegativeButton(R.string.translation_dialog_later,
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-            upgradeDialog = null;
+        (dialog, which) -> {
+          dialog.dismiss();
+          upgradeDialog = null;
 
-            // pretend we don't have updated translations.  we'll
-            // check again after 10 days.
-            settings.setHaveUpdatedTranslations(false);
-          }
+          // pretend we don't have updated translations.  we'll
+          // check again after 10 days.
+          settings.setHaveUpdatedTranslations(false);
         });
 
     upgradeDialog = builder.create();
@@ -386,9 +382,9 @@ public class QuranActivity extends QuranActionBarActivity
     dialog.show(fm, AddTagDialog.TAG);
   }
 
-  public class PagerAdapter extends FragmentPagerAdapter {
+  private class PagerAdapter extends FragmentPagerAdapter {
 
-    public PagerAdapter(FragmentManager fm) {
+    PagerAdapter(FragmentManager fm) {
       super(fm);
     }
 
