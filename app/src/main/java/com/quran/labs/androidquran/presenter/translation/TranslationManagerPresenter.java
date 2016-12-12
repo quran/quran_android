@@ -114,10 +114,9 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   public void updateItem(final TranslationItem item) {
-    Observable.fromCallable(() -> {
-      translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item));
-      return null;
-    }).subscribeOn(Schedulers.io())
+    Observable.fromCallable(() ->
+        translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item))
+    ).subscribeOn(Schedulers.io())
         .subscribe();
   }
 
