@@ -13,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
@@ -47,10 +46,10 @@ public class TagBookmarkPresenterTest {
 
     List<Tag> tags = new ArrayList<>();
     tags.add(new Tag(1, "Test"));
-    when(bookmarkModel.tagsObservable()).thenReturn(Observable.<Tag>empty());
+    when(bookmarkModel.tagsObservable()).thenReturn(Observable.empty());
     when(bookmarkModel.getTagsObservable()).thenReturn(Single.just(tags));
-    when(bookmarkModel.getBookmarkTagIds(Matchers.<Single<Long>>any()))
-        .thenReturn(Maybe.<List<Long>>empty());
+    when(bookmarkModel.getBookmarkTagIds(Matchers.any()))
+        .thenReturn(Maybe.empty());
   }
 
   @Test
@@ -72,7 +71,7 @@ public class TagBookmarkPresenterTest {
   @Test
   public void testChangeShouldOnlySaveExplicitlyForBookmarkIds() {
     when(bookmarkModel.updateBookmarkTags(
-        any(long[].class), Matchers.<Set<Long>>any(), anyBoolean()))
+        any(long[].class), Matchers.any(), anyBoolean()))
         .thenReturn(Observable.just(true));
 
     TagBookmarkPresenter presenter = spy(new TagBookmarkPresenter(bookmarkModel));
@@ -91,7 +90,7 @@ public class TagBookmarkPresenterTest {
   @Test
   public void testChangeShouldSaveImmediatelyForAyahBookmarks() {
     when(bookmarkModel.updateBookmarkTags(
-        any(long[].class), Matchers.<Set<Long>>any(), anyBoolean()))
+        any(long[].class), Matchers.any(), anyBoolean()))
         .thenReturn(Observable.just(true));
     when(bookmarkModel.safeAddBookmark(anyInt(), anyInt(), anyInt()))
         .thenReturn(Observable.just(2L));
@@ -108,7 +107,7 @@ public class TagBookmarkPresenterTest {
     testScheduler.triggerActions();
 
     verify(bookmarkModel, times(1))
-        .updateBookmarkTags(any(long[].class), Matchers.<Set<Long>>any(), anyBoolean());
+        .updateBookmarkTags(any(long[].class), Matchers.any(), anyBoolean());
   }
 
   @Test
