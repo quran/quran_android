@@ -55,6 +55,7 @@ public class TagBookmarkPresenterTest {
   @Test
   public void testTagRefresh() {
     TagBookmarkPresenter presenter = spy(new TagBookmarkPresenter(bookmarkModel));
+    testScheduler.triggerActions();
     presenter.setBookmarksMode(new long[] { 1 });
     testScheduler.triggerActions();
     presenter.setAyahBookmarkMode(6, 76, 137);
