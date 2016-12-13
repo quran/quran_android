@@ -41,6 +41,10 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     }
   }
 
+  public boolean getIsShowingTranslation() {
+    return mIsShowingTranslation;
+  }
+
   @Override
   public int getItemPosition(Object object) {
     /* when the ViewPager gets a notifyDataSetChanged (or invalidated),
