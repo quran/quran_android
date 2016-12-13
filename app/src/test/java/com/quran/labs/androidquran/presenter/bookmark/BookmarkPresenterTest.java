@@ -114,7 +114,7 @@ public class BookmarkPresenterTest {
   public void testBookmarkObservableAyahBookmarksByDate() {
     when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
         .thenReturn(AYAH_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(new ArrayList<Tag>());
+    when(bookmarksAdapter.getTags()).thenReturn(new ArrayList<>());
 
     BookmarkResult result = getBookmarkResultByDateAndValidate(false);
     assertThat(result.tagMap).isEmpty();
@@ -126,7 +126,7 @@ public class BookmarkPresenterTest {
   public void testBookmarkObservableMixedBookmarksByDate() {
     when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
         .thenReturn(MIXED_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(new ArrayList<Tag>());
+    when(bookmarksAdapter.getTags()).thenReturn(new ArrayList<>());
 
     BookmarkResult result = getBookmarkResultByDateAndValidate(false);
     assertThat(result.tagMap).isEmpty();
@@ -182,6 +182,11 @@ public class BookmarkPresenterTest {
         .thenReturn(MIXED_BOOKMARKS_LIST);
     when(bookmarksAdapter.getTags()).thenReturn(TAG_LIST);
     when(bookmarksAdapter.getRecentPages()).thenReturn(RECENTS_LIST);
+
+    // override presenter so we get a correct recents
+    RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel);
+    presenter = new BookmarkPresenter(appContext, settings, model, false);
 
     BookmarkResult result = getBookmarkResultByDateAndValidate(true);
     assertThat(result.tagMap).hasSize(2);

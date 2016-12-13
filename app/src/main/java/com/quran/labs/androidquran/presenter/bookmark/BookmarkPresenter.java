@@ -34,7 +34,6 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
@@ -267,17 +266,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private void getBookmarks(final int sortOrder, final boolean groupByTags) {
     getBookmarksListObservable(sortOrder, groupByTags)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Consumer<BookmarkResult>() {
-          @Override
-          public void accept(BookmarkResult result) {
-            // notify the ui if we're attached
-            cachedData = result;
-            if (fragment != null) {
-              if (pendingRemoval != null && itemsToRemove != null) {
-                fragment.onNewData(predictQuranListAfterDeletion(itemsToRemove));
-              } else {
-                fragment.onNewData(result);
-              }
+        .subscribe(result -> {
+          // notify the ui if we're attached
+          cachedData = result;
+          if (fragment != null) {
+            if (pendingRemoval != null && itemsToRemove != null) {
+              fragment.onNewData(predictQuranListAfterDeletion(itemsToRemove));
+            } else {
+              fragment.onNewData(result);
             }
           }
         });
