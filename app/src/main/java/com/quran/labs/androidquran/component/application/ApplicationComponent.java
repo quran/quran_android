@@ -1,7 +1,9 @@
-package com.quran.labs.androidquran.component;
+package com.quran.labs.androidquran.component.application;
 
 import com.quran.labs.androidquran.QuranImportActivity;
-import com.quran.labs.androidquran.module.ApplicationModule;
+import com.quran.labs.androidquran.module.application.ApplicationModule;
+import com.quran.labs.androidquran.module.application.DatabaseModule;
+import com.quran.labs.androidquran.module.application.NetworkModule;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
@@ -20,7 +22,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = ApplicationModule.class)
+@Component(modules = { ApplicationModule.class, DatabaseModule.class, NetworkModule.class } )
 public interface ApplicationComponent {
   // services
   void inject(QuranDownloadService quranDownloadService);
