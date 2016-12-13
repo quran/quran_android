@@ -1,18 +1,18 @@
 package com.quran.labs.androidquran;
 
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.component.ApplicationComponent;
-import com.quran.labs.androidquran.component.DaggerApplicationComponent;
-import com.quran.labs.androidquran.module.ApplicationModule;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.RecordingLogTree;
-
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.NonNull;
+
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.component.application.DaggerApplicationComponent;
+import com.quran.labs.androidquran.component.application.ApplicationComponent;
+import com.quran.labs.androidquran.module.application.ApplicationModule;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.RecordingLogTree;
 
 import java.util.Locale;
 
