@@ -46,5 +46,4 @@ public interface ApplicationComponent {
 
   // misc
   void inject(QuranPageTask quranPageTask);
-
 }

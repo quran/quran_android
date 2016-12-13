@@ -17,5 +17,4 @@ public class DatabaseModule {
   BookmarksDBAdapter provideBookmarkDatabaseAdapter(Context context) {
     return new BookmarksDBAdapter(context);
   }
-
 }

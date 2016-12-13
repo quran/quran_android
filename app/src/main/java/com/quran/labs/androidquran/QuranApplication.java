@@ -27,11 +27,11 @@ public class QuranApplication extends Application {
     super.onCreate();
     Fabric.with(this, new Crashlytics());
     Timber.plant(new RecordingLogTree());
-    initializeInjector();
+    this.applicationComponent = initializeInjector();
   }
 
-  private void initializeInjector() {
-    this.applicationComponent = DaggerApplicationComponent.builder()
+  protected ApplicationComponent initializeInjector() {
+    return DaggerApplicationComponent.builder()
         .applicationModule(new ApplicationModule(this))
         .build();
   }
