@@ -8,6 +8,15 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
 
   private static final String DB_NAME = "translations.db";
   private static final int DB_VERSION = 2;
+  private static final String CREATE_TRANSLATIONS_TABLE =
+      "CREATE TABLE " + TranslationsTable.TABLE_NAME + "(" +
+          TranslationsTable.ID + " integer primary key, " +
+          TranslationsTable.NAME + " varchar not null, " +
+          TranslationsTable.TRANSLATOR + " varchar, " +
+          TranslationsTable.TRANSLATOR_FOREIGN + " varchar, " +
+          TranslationsTable.FILENAME + " varchar not null, " +
+          TranslationsTable.URL + " varchar, " +
+          TranslationsTable.VERSION + " integer not null default 0);";
 
   TranslationsDBHelper(Context context) {
     super(context, DB_NAME, null, DB_VERSION);
@@ -15,7 +24,7 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-    db.execSQL(TranslationsTable.getCreateTableSql(TranslationsTable.TABLE_NAME));
+    db.execSQL(CREATE_TRANSLATIONS_TABLE);
   }
 
   @Override
@@ -23,26 +32,29 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
     if (oldVersion < 2) {
       // a new column is added and columns are re-arranged
       final String BACKUP_TABLE = TranslationsTable.TABLE_NAME + "_backup";
-      db.execSQL(TranslationsTable.getCreateTableSql(BACKUP_TABLE));
-
-      db.execSQL("INSERT INTO " + BACKUP_TABLE + " (" +
-          TranslationsTable.ID + ", " +
-          TranslationsTable.NAME + ", " +
-          TranslationsTable.TRANSLATOR + ", " +
-          TranslationsTable.FILENAME + ", " +
-          TranslationsTable.URL + ", " +
-          TranslationsTable.VERSION + ")" +
-          "SELECT " + TranslationsTable.ID + ", " +
-          TranslationsTable.NAME + ", " +
-          TranslationsTable.TRANSLATOR + ", " +
-          TranslationsTable.FILENAME + ", " +
-          TranslationsTable.URL + ", " +
-          TranslationsTable.VERSION +
-          " FROM " + TranslationsTable.TABLE_NAME + ";");
-
-      db.execSQL("DROP TABLE " + TranslationsTable.TABLE_NAME);
-      db.execSQL("ALTER TABLE " + BACKUP_TABLE +
-          " RENAME TO " + TranslationsTable.TABLE_NAME);
+      db.beginTransaction();
+      try {
+        db.execSQL("ALTER TABLE " + TranslationsTable.TABLE_NAME + " RENAME TO " + BACKUP_TABLE);
+        db.execSQL(CREATE_TRANSLATIONS_TABLE);
+        db.execSQL("INSERT INTO " + TranslationsTable.TABLE_NAME + " (" +
+            TranslationsTable.ID + ", " +
+            TranslationsTable.NAME + ", " +
+            TranslationsTable.TRANSLATOR + ", " +
+            TranslationsTable.FILENAME + ", " +
+            TranslationsTable.URL + ", " +
+            TranslationsTable.VERSION + ")" +
+            "SELECT " + TranslationsTable.ID + ", " +
+            TranslationsTable.NAME + ", " +
+            TranslationsTable.TRANSLATOR + ", " +
+            TranslationsTable.FILENAME + ", " +
+            TranslationsTable.URL + ", " +
+            TranslationsTable.VERSION +
+            " FROM " + BACKUP_TABLE);
+        db.execSQL("DROP TABLE " + BACKUP_TABLE);
+        db.setTransactionSuccessful();
+      } finally {
+        db.endTransaction();
+      }
     }
   }
 
@@ -55,16 +67,5 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
     static final String FILENAME = "filename";
     static final String URL = "url";
     static final String VERSION = "version";
-
-    static String getCreateTableSql(String tableName) {
-      return "CREATE TABLE " + tableName + "(" +
-          ID + " integer primary key, " +
-          NAME + " varchar not null, " +
-          TRANSLATOR + " varchar, " +
-          TRANSLATOR_FOREIGN + " varchar, " +
-          FILENAME + " varchar not null, " +
-          URL + " varchar, " +
-          VERSION + " integer not null default 0);";
-    }
   }
 }
