@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.util;
 
 
+import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import com.quran.labs.androidquran.common.QariItem;
@@ -14,9 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Single;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -38,6 +37,7 @@ public class AudioManagerUtils {
     sCache.remove(qariItem);
   }
 
+  @NonNull
   public static Single<List<QariDownloadInfo>> shuyookhDownloadObservable(
       final String basePath, List<QariItem> qariItems) {
     return Observable.fromIterable(qariItems)
@@ -55,57 +55,41 @@ public class AudioManagerUtils {
                     getGappedSheikhObservable(baseFile, item).toObservable();
           }
         })
-        .doOnNext(new Consumer<QariDownloadInfo>() {
-          @Override
-          public void accept(QariDownloadInfo qariDownloadInfo) {
-            sCache.put(qariDownloadInfo.mQariItem, qariDownloadInfo);
-          }
-        })
+        .doOnNext(qariDownloadInfo -> sCache.put(qariDownloadInfo.qariItem, qariDownloadInfo))
         .toList()
         .subscribeOn(Schedulers.io());
   }
 
+  @NonNull
   private static Single<QariDownloadInfo> getGaplessSheikhObservable(
       final File path, final QariItem qariItem) {
     return Observable.range(1, 114)
-        .map(new Function<Integer, Integer>() {
-          @Override
-          public Integer apply(Integer sura) {
-            return new File(path, padSuraNumber(sura) + ".mp3").exists() ? sura : null;
-          }
-        })
-        .filter(new Predicate<Integer>() {
-          @Override
-          public boolean test(Integer integer) {
-            return integer != null;
-          }
-        })
+        .map(sura -> new SuraFileName(sura, new File(path, padSuraNumber(sura) + ".mp3")))
+        .filter(sf -> sf.file.exists())
+        .map(sf -> sf.sura)
         .toList()
-        .map(new Function<List<Integer>, QariDownloadInfo>() {
-          @Override
-          public QariDownloadInfo apply(List<Integer> suras) {
-            return new QariDownloadInfo(qariItem, suras);
-          }
-        });
+        .map(suras -> new QariDownloadInfo(qariItem, suras));
   }
 
+  @NonNull
   private static Single<QariDownloadInfo> getGappedSheikhObservable(
       final File basePath, final QariItem qariItem) {
     return Observable.range(1, 114)
-      .map(new Function<Integer, Pair<Integer, Boolean>>() {
-        @Override
-        public Pair<Integer, Boolean> apply(Integer sura) {
-          final File path = new File(basePath, String.valueOf(sura));
-          return !path.exists() ? null :
-              new Pair<>(sura, path.listFiles().length >= QuranInfo.SURA_NUM_AYAHS[sura - 1]);
-        }
-      })
-      .toList()
-      .map(new Function<List<Pair<Integer, Boolean>>, QariDownloadInfo>() {
-        @Override
-        public QariDownloadInfo apply(List<Pair<Integer, Boolean>> downloaded) {
-          return QariDownloadInfo.withPartials(qariItem, downloaded);
-        }
-      });
+        .map(sura -> new SuraFileName(sura, new File(basePath, String.valueOf(sura))))
+        .filter(suraFile -> suraFile.file.exists())
+        .map(sf -> new Pair<>(sf.sura,
+            sf.file.listFiles().length >= QuranInfo.SURA_NUM_AYAHS[sf.sura - 1]))
+        .toList()
+        .map(downloaded -> QariDownloadInfo.withPartials(qariItem, downloaded));
+  }
+
+  private static class SuraFileName {
+    public final int sura;
+    public final File file;
+
+    SuraFileName(int sura, File file) {
+      this.sura = sura;
+      this.file = file;
+    }
   }
 }
