@@ -5,8 +5,10 @@
           android:installLocation="auto">
 
   <application
+      android:icon="@drawable/debug_icon"
+      android:label="Quran Debug"
       android:name=".DebugApplication"
-      tools:replace="android:name"
+      tools:replace="android:icon,android:label,android:name"
       android:allowBackup="true"
       android:fullBackupContent="@xml/backup"/>
-</manifest> 
+</manifest>

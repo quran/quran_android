@@ -72,6 +72,9 @@ android {
 
       debug {
          ext.enableCrashlytics = false
+         applicationIdSuffix ".debug"
+         resValue "string", "authority", applicationIdSuffix + '.data.QuranDataProvider'
+         resValue "string", "file_authority", applicationIdSuffix + '.fileprovider'
       }
 
       release {
