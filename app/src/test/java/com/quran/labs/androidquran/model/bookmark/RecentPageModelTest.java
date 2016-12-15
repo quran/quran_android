@@ -12,10 +12,13 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.schedulers.TestScheduler;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.times;
@@ -25,7 +28,7 @@ import static org.mockito.Mockito.when;
 public class RecentPageModelTest {
   private static final List<RecentPage> SAMPLE_RECENT_PAGES = new ArrayList<>();
 
-  @Mock BookmarksDBAdapter bookmarksAdapter;
+  @Mock private BookmarksDBAdapter bookmarksAdapter;
 
   @BeforeClass
   public static void setup() {
@@ -97,18 +100,32 @@ public class RecentPageModelTest {
 
   @Test
   public void testUpdateLatestPageWithSlowRecents() {
-    when(bookmarksAdapter.getRecentPages()).thenReturn(SAMPLE_RECENT_PAGES);
+    final TestScheduler testScheduler = new TestScheduler();
 
-    RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
+    RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter) {
+
+      @Override
+      Single<List<RecentPage>> getRecentPagesObservable() {
+        // use an implementation of getRecentPagesObservable that delays the results until
+        // testScheduler simulates the passing of 5 seconds (the timer time).
+        return Single.timer(5, TimeUnit.SECONDS, testScheduler)
+            .map(aLong -> SAMPLE_RECENT_PAGES)
+            .subscribeOn(Schedulers.trampoline());
+      }
+    };
 
     TestObserver<Integer> testObserver = new TestObserver<>();
     recentPageModel.getLatestPageObservable()
         .take(2)
         .subscribe(testObserver);
 
-    // we immediately write 2 pages before the mock data has returned - in this case, we
-    // should not get the test data (because otherwise, it would be out of order!)
+    // write before the mock data from getRecentPagesObservable comes back
     recentPageModel.updateLatestPage(51);
+
+    // now let's pretend the recent page came back - we expect that this page should be ignored.
+    testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
+
+    // and that another page afterwards was written
     recentPageModel.updateLatestPage(23);
 
     testObserver.awaitTerminalEvent();
