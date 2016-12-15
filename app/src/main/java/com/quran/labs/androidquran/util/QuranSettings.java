@@ -296,4 +296,13 @@ public class QuranSettings {
   public String getDefaultImagesDirectory() {
     return mPerInstallationPrefs.getString(Constants.PREF_DEFAULT_IMAGES_DIR, "");
   }
+
+  public void setWasShowingTranslation(boolean wasShowingTranslation) {
+    mPerInstallationPrefs.edit().putBoolean(Constants.PREF_WAS_SHOWING_TRANSLATION,
+        wasShowingTranslation).apply();
+  }
+
+  public boolean getWasShowingTranslation() {
+    return mPerInstallationPrefs.getBoolean(Constants.PREF_WAS_SHOWING_TRANSLATION, false);
+  }
 }

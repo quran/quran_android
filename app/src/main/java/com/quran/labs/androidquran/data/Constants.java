@@ -72,4 +72,5 @@ public class Constants {
   public static final String PREF_LOGS = "sendLogsKey";
   public static final String PREF_DID_PRESENT_PERMISSIONS_DIALOG =
       "didPresentStoragePermissionDialog";
+  public static final String PREF_WAS_SHOWING_TRANSLATION = "wasShowingTranslation";
 }

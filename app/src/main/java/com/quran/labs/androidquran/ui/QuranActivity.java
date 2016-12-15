@@ -319,6 +319,7 @@ public class QuranActivity extends QuranActionBarActivity
   public void jumpTo(int page) {
     Intent i = new Intent(this, PagerActivity.class);
     i.putExtra("page", page);
+    i.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, settings.getWasShowingTranslation());
     startActivity(i);
   }
 
