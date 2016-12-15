@@ -30,30 +30,22 @@ android {
     productFlavors {
         madani {
             applicationId "com.quran.labs.androidquran"
-            resValue "string", "authority", applicationId + '.data.QuranDataProvider'
-            resValue "string", "file_authority", applicationId + '.fileprovider'
         }
 
         qaloon {
             applicationId "com.quran.labs.androidquran.qaloon"
-            resValue "string", "authority", applicationId + '.data.QuranDataProvider'
-            resValue "string", "file_authority", applicationId + '.fileprovider'
             versionCode 1050
             versionName "1.0.5"
         }
 
         naskh {
             applicationId "com.quran.labs.androidquran.naskh"
-            resValue "string", "authority", applicationId + '.data.QuranDataProvider'
-            resValue "string", "file_authority", applicationId + '.fileprovider'
             versionCode 1050
             versionName "1.0.5"
         }
 
         shemerly {
             applicationId "com.quran.labs.androidquran.shemerly"
-            resValue "string", "authority", applicationId + '.data.QuranDataProvider'
-            resValue "string", "file_authority", applicationId + '.fileprovider'
             versionCode 1050
             versionName "1.0.5"
         }
@@ -72,6 +64,8 @@ android {
 
       debug {
          ext.enableCrashlytics = false
+         applicationIdSuffix ".debug"
+         versionNameSuffix "-debug"
       }
 
       release {
@@ -83,6 +77,14 @@ android {
          }
       }
     }
+
+  applicationVariants.all { variant ->
+    resValue "string", "authority", applicationId + '.data.QuranDataProvider'
+    resValue "string", "file_authority", applicationId + '.fileprovider'
+    if (applicationId.endsWith("debug")) {
+      mergedFlavor.manifestPlaceholders = [app_debug_label: "Quran " + flavorName.capitalize()]
+    }
+  }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
