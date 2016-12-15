@@ -5,8 +5,17 @@
           android:installLocation="auto">
 
   <application
+      android:icon="@drawable/debug_icon"
+      android:label="${app_debug_label}"
       android:name=".DebugApplication"
-      tools:replace="android:name"
+      tools:replace="android:icon,android:label,android:name"
       android:allowBackup="true"
-      android:fullBackupContent="@xml/backup"/>
-</manifest> 
+      android:fullBackupContent="@xml/backup">
+
+    <activity
+        android:name=".QuranDataActivity"
+        android:label="${app_debug_label}"
+        tools:replace="android:label" />
+
+      </application>
+</manifest>
