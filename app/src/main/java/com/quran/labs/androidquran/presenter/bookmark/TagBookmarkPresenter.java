@@ -71,28 +71,30 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   void refresh() {
     Single.zip(getTagsObservable(), getBookmarkTagIdsObservable(), Pair::new)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(data -> {
-          List<Tag> tags1 = data.first;
-          int numberOfTags = tags1.size();
-          if (numberOfTags == 0 || tags1.get(numberOfTags - 1).id != -1) {
-            tags1.add(new Tag(-1, ""));
-          }
+        .subscribe(this::onRefreshedData);
+  }
 
-          List<Long> bookmarkTags = data.second;
-          checkedTags.clear();
-          for (int i = 0, tagsSize = tags1.size(); i < tagsSize; i++) {
-            Tag tag = tags1.get(i);
-            if (bookmarkTags.contains(tag.id)) {
-              checkedTags.add(tag.id);
-            }
-          }
-          madeChanges = false;
-          TagBookmarkPresenter.this.tags = tags1;
-          shouldRefreshTags = false;
-          if (dialog != null) {
-            dialog.setData(TagBookmarkPresenter.this.tags, checkedTags);
-          }
-        });
+  void onRefreshedData(Pair<List<Tag>, List<Long>> data) {
+    List<Tag> tags1 = data.first;
+    int numberOfTags = tags1.size();
+    if (numberOfTags == 0 || tags1.get(numberOfTags - 1).id != -1) {
+      tags1.add(new Tag(-1, ""));
+    }
+
+    List<Long> bookmarkTags = data.second;
+    checkedTags.clear();
+    for (int i = 0, tagsSize = tags1.size(); i < tagsSize; i++) {
+      Tag tag = tags1.get(i);
+      if (bookmarkTags.contains(tag.id)) {
+        checkedTags.add(tag.id);
+      }
+    }
+    madeChanges = false;
+    TagBookmarkPresenter.this.tags = tags1;
+    shouldRefreshTags = false;
+    if (dialog != null) {
+      dialog.setData(TagBookmarkPresenter.this.tags, checkedTags);
+    }
   }
 
   private Single<List<Tag>> getTagsObservable() {
@@ -110,9 +112,15 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
               bookmarkModel.updateBookmarkTags(bookmarkIds, checkedTags, bookmarkIds.length == 1))
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(aBoolean -> {
-            madeChanges = false;
+            onSaveChangesDone();
           });
+    } else {
+      onSaveChangesDone();
     }
+  }
+
+  void onSaveChangesDone() {
+    madeChanges = false;
   }
 
   /**
