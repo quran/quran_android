@@ -11,7 +11,6 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -93,15 +92,12 @@ public class BookmarkModel {
   }
 
   public Completable updateTag(final Tag tag) {
-    return Completable.fromCallable(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
-        if (result) {
-          tagPublishSubject.onNext(new Tag(tag.id, tag.name));
-        }
-        return null;
+    return Completable.fromCallable(() -> {
+      boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
+      if (result) {
+        tagPublishSubject.onNext(new Tag(tag.id, tag.name));
       }
+      return null;
     }).subscribeOn(Schedulers.io());
   }
 
