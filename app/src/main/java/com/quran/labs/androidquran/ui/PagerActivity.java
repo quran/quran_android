@@ -872,6 +872,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       promptDialog = null;
     }
     recentPagePresenter.unbind(this);
+    settings.setWasShowingTranslation(pagerAdapter.getIsShowingTranslation());
     super.onPause();
   }
 
