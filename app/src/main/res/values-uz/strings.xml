@@ -175,6 +175,7 @@
   <string name="prefs_tablet_mode_enabled">Yotiq holatda ikki bet yonma-yon koʻrinadi</string>
   <string name="prefs_tablet_mode_disabled">Yotiq holatda ham faqat bitta bet koʻrinadi</string>
   <string name="prefs_category_advanced">Ilgʻor</string>
+  <string name="prefs_category_advanced_summary">Xatchoʻplarni import/eksport qilish, maʼlumotlar jildini tanlash va h.k.</string>
   <string name="prefs_export_title">Eksport</string>
   <string name="prefs_export_summary">Xatchoʻp va teglarni eksport qilish</string>
 
