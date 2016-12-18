@@ -1,54 +1,54 @@
 package com.quran.labs.androidquran.service.util;
 
-import com.quran.labs.androidquran.common.QuranAyah;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.quran.labs.androidquran.common.QuranAyah;
+
 public class RepeatInfo implements Parcelable {
 
-  private int mRepeatCount;
-  private int mCurrentAyah;
-  private int mCurrentSura;
-  private int mCurrentPlayCount;
+  private int repeatCount;
+  private int currentAyah;
+  private int currentSura;
+  private int currentPlayCount;
 
-  public RepeatInfo(int repeatCount) {
-    mRepeatCount = repeatCount;
+  RepeatInfo(int repeatCount) {
+    this.repeatCount = repeatCount;
   }
 
-  protected RepeatInfo(Parcel in) {
-    this.mRepeatCount = in.readInt();
-    this.mCurrentAyah = in.readInt();
-    this.mCurrentSura = in.readInt();
-    this.mCurrentPlayCount = in.readInt();
+  private RepeatInfo(Parcel in) {
+    this.repeatCount = in.readInt();
+    this.currentAyah = in.readInt();
+    this.currentSura = in.readInt();
+    this.currentPlayCount = in.readInt();
   }
 
-  public void setCurrentVerse(int sura, int ayah) {
-    if (sura != mCurrentSura || ayah != mCurrentAyah) {
-      mCurrentSura = sura;
-      mCurrentAyah = ayah;
-      mCurrentPlayCount = 0;
+  void setCurrentVerse(int sura, int ayah) {
+    if (sura != currentSura || ayah != currentAyah) {
+      currentSura = sura;
+      currentAyah = ayah;
+      currentPlayCount = 0;
     }
   }
 
   public int getRepeatCount() {
-    return mRepeatCount;
+    return repeatCount;
   }
 
-  public void setRepeatCount(int repeatCount) {
-    mRepeatCount = repeatCount;
+  void setRepeatCount(int repeatCount) {
+    this.repeatCount = repeatCount;
   }
 
-  public boolean shouldRepeat() {
-    return mRepeatCount == -1 || (mCurrentPlayCount < mRepeatCount);
+  boolean shouldRepeat() {
+    return repeatCount == -1 || (currentPlayCount < repeatCount);
   }
 
-  public void incrementRepeat() {
-    mCurrentPlayCount++;
+  void incrementRepeat() {
+    currentPlayCount++;
   }
 
-  public QuranAyah getCurrentAyah() {
-    return new QuranAyah(mCurrentSura, mCurrentAyah);
+  QuranAyah getCurrentAyah() {
+    return new QuranAyah(currentSura, currentAyah);
   }
 
   @Override
@@ -58,10 +58,10 @@ public class RepeatInfo implements Parcelable {
 
   @Override
   public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(this.mRepeatCount);
-    dest.writeInt(this.mCurrentAyah);
-    dest.writeInt(this.mCurrentSura);
-    dest.writeInt(this.mCurrentPlayCount);
+    dest.writeInt(this.repeatCount);
+    dest.writeInt(this.currentAyah);
+    dest.writeInt(this.currentSura);
+    dest.writeInt(this.currentPlayCount);
   }
 
   public static final Parcelable.Creator<RepeatInfo> CREATOR

@@ -5,62 +5,62 @@ import android.os.Parcelable;
 
 public class QuranAyah implements Parcelable {
 
-  private int mSura = 0;
-  private int mAyah = 0;
+  private int sura = 0;
+  private int ayah = 0;
 
   // arabic text
-  private String mText = null;
+  private String text = null;
 
   // translation or tafseer text
-  private String mTranslation = null;
+  private String translation = null;
 
   // is translation or tafseer text arabic or not
-  private boolean mIsArabic = false;
+  private boolean isArabic = false;
 
   public QuranAyah(int sura, int ayah) {
-    mSura = sura;
-    mAyah = ayah;
+    this.sura = sura;
+    this.ayah = ayah;
   }
 
   protected QuranAyah(Parcel in) {
-    this.mSura = in.readInt();
-    this.mAyah = in.readInt();
-    this.mText = in.readString();
-    this.mTranslation = in.readString();
-    this.mIsArabic = in.readByte() != 0;
+    this.sura = in.readInt();
+    this.ayah = in.readInt();
+    this.text = in.readString();
+    this.translation = in.readString();
+    this.isArabic = in.readByte() != 0;
   }
 
 
   public int getSura() {
-    return mSura;
+    return sura;
   }
 
   public int getAyah() {
-    return mAyah;
+    return ayah;
   }
 
   public String getText() {
-    return mText;
+    return text;
   }
 
   public void setText(String text) {
-    mText = text;
+    this.text = text;
   }
 
   public String getTranslation() {
-    return mTranslation;
+    return translation;
   }
 
   public void setTranslation(String translation) {
-    mTranslation = translation;
+    this.translation = translation;
   }
 
   public boolean isArabic() {
-    return mIsArabic;
+    return isArabic;
   }
 
   public void setArabic(boolean isArabic) {
-    mIsArabic = isArabic;
+    this.isArabic = isArabic;
   }
 
   @Override
@@ -70,11 +70,11 @@ public class QuranAyah implements Parcelable {
 
   @Override
   public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(this.mSura);
-    dest.writeInt(this.mAyah);
-    dest.writeString(this.mText);
-    dest.writeString(this.mTranslation);
-    dest.writeByte(mIsArabic ? (byte) 1 : (byte) 0);
+    dest.writeInt(this.sura);
+    dest.writeInt(this.ayah);
+    dest.writeString(this.text);
+    dest.writeString(this.translation);
+    dest.writeByte(isArabic ? (byte) 1 : (byte) 0);
   }
 
   public static final Parcelable.Creator<QuranAyah> CREATOR = new Parcelable.Creator<QuranAyah>() {

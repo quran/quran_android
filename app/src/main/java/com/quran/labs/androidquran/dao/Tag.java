@@ -1,9 +1,8 @@
 package com.quran.labs.androidquran.dao;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
-public class Tag implements Parcelable {
+public class Tag {
 
   public final long id;
   public final String name;
@@ -41,26 +40,4 @@ public class Tag implements Parcelable {
   public String toString() {
     return name == null ? super.toString() : name;
   }
-
-  @Override
-  public int describeContents() {
-    return 0;
-  }
-
-  @Override
-  public void writeToParcel(Parcel dest, int flags) {
-    dest.writeLong(id);
-    dest.writeString(name);
-  }
-
-  public static final Creator<Tag> CREATOR =
-      new Creator<Tag>() {
-        public Tag createFromParcel(Parcel in) {
-          return new Tag(in);
-        }
-
-        public Tag[] newArray(int size) {
-          return new Tag[size];
-        }
-      };
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 public class QuranTranslationPageLayout extends QuranPageLayout {
-  private TranslationView mTranslationView;
+  private TranslationView translationView;
 
   public QuranTranslationPageLayout(Context context) {
     super(context);
@@ -12,13 +12,13 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
 
   @Override
   protected View generateContentView(Context context, boolean isLandscape) {
-    mTranslationView = new TranslationView(context);
-    return mTranslationView;
+    translationView = new TranslationView(context);
+    return translationView;
   }
 
   @Override
   protected void setContentNightMode(boolean nightMode, int textBrightness) {
-    mTranslationView.setNightMode(nightMode, textBrightness);
+    translationView.setNightMode(nightMode, textBrightness);
   }
 
   @Override
@@ -27,6 +27,6 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   }
 
   public TranslationView getTranslationView() {
-    return mTranslationView;
+    return translationView;
   }
 }

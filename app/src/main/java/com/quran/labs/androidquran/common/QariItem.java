@@ -7,55 +7,55 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 public class QariItem implements Parcelable {
-  private final int mId;
-  @NonNull private final String mName;
-  @NonNull private final String mUrl;
-  @NonNull private final String mPath;
-  @Nullable private final String mDatabaseName;
+  private final int id;
+  @NonNull private final String name;
+  @NonNull private final String url;
+  @NonNull private final String path;
+  @Nullable private final String databaseName;
 
   public QariItem(int id, @NonNull String name, @NonNull String url,
       @NonNull String path, @Nullable String databaseName) {
-    mId = id;
-    mName = name;
-    mUrl = url;
-    mPath = path;
-    mDatabaseName = TextUtils.isEmpty(databaseName) ? null : databaseName;
+    this.id = id;
+    this.name = name;
+    this.url = url;
+    this.path = path;
+    this.databaseName = TextUtils.isEmpty(databaseName) ? null : databaseName;
   }
 
-  protected QariItem(Parcel in) {
-    this.mId = in.readInt();
-    this.mName = in.readString();
-    this.mUrl = in.readString();
-    this.mPath = in.readString();
-    this.mDatabaseName = in.readString();
+  private QariItem(Parcel in) {
+    this.id = in.readInt();
+    this.name = in.readString();
+    this.url = in.readString();
+    this.path = in.readString();
+    this.databaseName = in.readString();
   }
 
   public int getId() {
-    return mId;
+    return id;
   }
 
   public boolean isGapless() {
-    return mDatabaseName != null;
+    return databaseName != null;
   }
 
   @NonNull
   public String getName() {
-    return mName;
+    return name;
   }
 
   @NonNull
   public String getUrl() {
-    return mUrl;
+    return url;
   }
 
   @NonNull
   public String getPath() {
-    return mPath;
+    return path;
   }
 
   @Nullable
   public String getDatabaseName() {
-    return mDatabaseName;
+    return databaseName;
   }
 
   @Override
@@ -65,11 +65,11 @@ public class QariItem implements Parcelable {
 
   @Override
   public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(this.mId);
-    dest.writeString(this.mName);
-    dest.writeString(this.mUrl);
-    dest.writeString(this.mPath);
-    dest.writeString(this.mDatabaseName);
+    dest.writeInt(this.id);
+    dest.writeString(this.name);
+    dest.writeString(this.url);
+    dest.writeString(this.path);
+    dest.writeString(this.databaseName);
   }
 
   public static final Parcelable.Creator<QariItem> CREATOR =

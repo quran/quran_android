@@ -30,15 +30,15 @@ public class TranslationFragment extends Fragment
   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
   private static final String SI_HIGHLIGHTED_AYAH = "SI_HIGHLIGHTED_AYAH";
 
-  private int mPageNumber;
-  private int mHighlightedAyah;
-  private TranslationView mTranslationView;
+  private int pageNumber;
+  private int highlightedAyah;
+  private TranslationView translationView;
 
-  private QuranTranslationPageLayout mMainView;
+  private QuranTranslationPageLayout mainView;
 
-  private Resources mResources;
-  private QuranSettings mQuranSettings;
-  private boolean mJustCreated;
+  private Resources resources;
+  private QuranSettings quranSettings;
+  private boolean justCreated;
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -51,15 +51,15 @@ public class TranslationFragment extends Fragment
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mPageNumber = getArguments() != null ?
+    pageNumber = getArguments() != null ?
         getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
     if (savedInstanceState != null) {
       int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
-      if (page == mPageNumber) {
+      if (page == pageNumber) {
         int highlightedAyah =
             savedInstanceState.getInt(SI_HIGHLIGHTED_AYAH, -1);
         if (highlightedAyah > 0) {
-          mHighlightedAyah = highlightedAyah;
+          this.highlightedAyah = highlightedAyah;
         }
       }
     }
@@ -70,29 +70,25 @@ public class TranslationFragment extends Fragment
   public View onCreateView(LayoutInflater inflater,
                            ViewGroup container, Bundle savedInstanceState) {
     Context context = getActivity();
-    mMainView = new QuranTranslationPageLayout(context);
-    mMainView.setPageController(null, mPageNumber);
-    mQuranSettings = QuranSettings.getInstance(context);
-    mResources = getResources();
+    mainView = new QuranTranslationPageLayout(context);
+    mainView.setPageController(null, pageNumber);
+    quranSettings = QuranSettings.getInstance(context);
+    resources = getResources();
 
-    mTranslationView = mMainView.getTranslationView();
-    mTranslationView.setTranslationClickedListener(
-        new TranslationView.TranslationClickedListener() {
-          @Override
-          public void onTranslationClicked() {
-            final Activity activity = getActivity();
-            if (activity != null && activity instanceof PagerActivity){
-              ((PagerActivity) getActivity()).toggleActionBar();
-            }
-          }
-        });
+    translationView = mainView.getTranslationView();
+    translationView.setTranslationClickedListener(() -> {
+      final Activity activity = getActivity();
+      if (activity != null && activity instanceof PagerActivity) {
+        ((PagerActivity) getActivity()).toggleActionBar();
+      }
+    });
 
     updateView();
-    mJustCreated = true;
+    justCreated = true;
 
-    String database = mQuranSettings.getActiveTranslation();
+    String database = quranSettings.getActiveTranslation();
     refresh(database);
-    return mMainView;
+    return mainView;
   }
 
   @Override
@@ -101,16 +97,16 @@ public class TranslationFragment extends Fragment
   }
 
   public void updateView() {
-    if (getActivity() == null || mResources == null ||
-        mMainView == null || !isAdded()) {
+    if (getActivity() == null || resources == null ||
+        mainView == null || !isAdded()) {
       return;
     }
 
-    final boolean nightMode = mQuranSettings.isNightMode();
-    final boolean useNewBackground = mQuranSettings.useNewBackground();
-    mMainView.updateView(nightMode, useNewBackground, 1);
-    if (mMainView.getTranslationView().isDataMissing()) {
-      refresh(mQuranSettings.getActiveTranslation());
+    final boolean nightMode = quranSettings.isNightMode();
+    final boolean useNewBackground = quranSettings.useNewBackground();
+    mainView.updateView(nightMode, useNewBackground, 1);
+    if (mainView.getTranslationView().isDataMissing()) {
+      refresh(quranSettings.getActiveTranslation());
     }
   }
 
@@ -121,9 +117,9 @@ public class TranslationFragment extends Fragment
 
   @Override
   public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
-    if (mTranslationView != null) {
-      mHighlightedAyah = QuranInfo.getAyahId(sura, ayah);
-      mTranslationView.highlightAyah(mHighlightedAyah);
+    if (translationView != null) {
+      highlightedAyah = QuranInfo.getAyahId(sura, ayah);
+      translationView.highlightAyah(highlightedAyah);
     }
   }
 
@@ -142,43 +138,43 @@ public class TranslationFragment extends Fragment
 
   @Override
   public void unHighlightAyah(int sura, int ayah, HighlightType type) {
-    if (mHighlightedAyah == QuranInfo.getAyahId(sura, ayah)) {
+    if (highlightedAyah == QuranInfo.getAyahId(sura, ayah)) {
       unHighlightAyahs(type);
     }
   }
 
   @Override
   public void unHighlightAyahs(HighlightType type) {
-    if (mTranslationView != null) {
-      mTranslationView.unhighlightAyat();
-      mHighlightedAyah = -1;
+    if (translationView != null) {
+      translationView.unhighlightAyat();
+      highlightedAyah = -1;
     }
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    if (!mJustCreated) {
+    if (!justCreated) {
       updateView();
-      mTranslationView.refresh();
+      translationView.refresh();
     }
-    mJustCreated = false;
+    justCreated = false;
   }
 
   public void refresh(String database) {
     if (database != null) {
       Activity activity = getActivity();
       if (activity != null) {
-        new TranslationTask(activity, mPageNumber,
-            mHighlightedAyah, database, mTranslationView).execute();
+        new TranslationTask(activity, pageNumber,
+            highlightedAyah, database, translationView).execute();
       }
     }
   }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    if (mHighlightedAyah > 0) {
-      outState.putInt(SI_HIGHLIGHTED_AYAH, mHighlightedAyah);
+    if (highlightedAyah > 0) {
+      outState.putInt(SI_HIGHLIGHTED_AYAH, highlightedAyah);
     }
     super.onSaveInstanceState(outState);
   }

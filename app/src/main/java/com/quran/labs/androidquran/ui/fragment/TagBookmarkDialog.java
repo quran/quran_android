@@ -1,14 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter;
-
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -16,15 +9,19 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -88,16 +85,14 @@ public class TagBookmarkDialog extends DialogFragment {
     final ListView listview = new ListView(activity);
     listview.setAdapter(mAdapter);
     listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-    listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Tag tag = (Tag) mAdapter.getItem(position);
-        boolean isChecked = mTagBookmarkPresenter.toggleTag(tag.id);
+    listview.setOnItemClickListener((parent, view, position, id) -> {
+      Tag tag = (Tag) mAdapter.getItem(position);
+      boolean isChecked = mTagBookmarkPresenter.toggleTag(tag.id);
 
-        Object viewTag = view.getTag();
-        if (viewTag instanceof ViewHolder) {
-          ViewHolder holder = (ViewHolder) viewTag;
-          holder.checkBox.setChecked(isChecked);
-        }
+      Object viewTag = view.getTag();
+      if (viewTag instanceof ViewHolder) {
+        ViewHolder holder = (ViewHolder) viewTag;
+        holder.checkBox.setChecked(isChecked);
       }
     });
     return listview;
@@ -120,18 +115,10 @@ public class TagBookmarkDialog extends DialogFragment {
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     builder.setView(createTagsListView());
-    builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        // no-op - set in onStart to avoid closing dialog now
-      }
+    builder.setPositiveButton(R.string.dialog_ok, (dialog, which) -> {
+      // no-op - set in onStart to avoid closing dialog now
     });
-    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        dismiss();
-      }
-    });
+    builder.setNegativeButton(R.string.cancel, (dialog, which) -> dismiss());
     return builder.create();
   }
 
@@ -143,12 +130,9 @@ public class TagBookmarkDialog extends DialogFragment {
     if (dialog instanceof AlertDialog) {
       final Button positive = ((AlertDialog) dialog)
           .getButton(Dialog.BUTTON_POSITIVE);
-      positive.setOnClickListener(new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          mTagBookmarkPresenter.saveChanges();
-          dismiss();
-        }
+      positive.setOnClickListener(v -> {
+        mTagBookmarkPresenter.saveChanges();
+        dismiss();
       });
     }
   }
@@ -179,13 +163,13 @@ public class TagBookmarkDialog extends DialogFragment {
     private List<Tag> mTags = new ArrayList<>();
     private HashSet<Long> mCheckedTags = new HashSet<>();
 
-    public TagsAdapter(Context context, TagBookmarkPresenter presenter) {
+    TagsAdapter(Context context, TagBookmarkPresenter presenter) {
       mInflater = LayoutInflater.from(context);
       mTagBookmarkPresenter = presenter;
       mNewTagString = context.getString(R.string.new_tag);
     }
 
-    public void setData(List<Tag> tags, HashSet<Long> checkedTags) {
+    void setData(List<Tag> tags, HashSet<Long> checkedTags) {
       mTags = tags;
       mCheckedTags = checkedTags;
     }
@@ -232,11 +216,7 @@ public class TagBookmarkDialog extends DialogFragment {
         holder.checkBox.setVisibility(View.VISIBLE);
         holder.checkBox.setChecked(mCheckedTags.contains(tag.id));
         holder.tagName.setText(tag.name);
-        holder.checkBox.setOnClickListener(new OnClickListener() {
-          public void onClick(View v) {
-            mTagBookmarkPresenter.toggleTag(tag.id);
-          }
-        });
+        holder.checkBox.setOnClickListener(v -> mTagBookmarkPresenter.toggleTag(tag.id));
       }
       return convertView;
     }

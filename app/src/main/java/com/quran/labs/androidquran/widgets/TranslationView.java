@@ -34,29 +34,29 @@ public class TranslationView extends ScrollView {
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
   private static final float ARABIC_RELATIVE_SIZE = 1.4f;
 
-  private Context mContext;
-  private Resources mResources;
-  private int mDividerColor;
-  private int mLeftRightMargin;
-  private int mTopBottomMargin;
-  @StyleRes private int mTextStyle;
-  @StyleRes private int mHighlightedStyle;
-  private int mFontSize;
-  private int mHeaderColor;
-  private int mHeaderStyle;
-  private int mFooterSpacerHeight;
-  private int mLastHighlightedAyah;
-  private boolean mIsNightMode;
-  private int mNightModeTextColor;
-  private boolean mIsInAyahActionMode;
-  private boolean mIsDataMissing;
+  private Context context;
+  private Resources resources;
+  private int dividerColor;
+  private int leftRightMargin;
+  private int topBottomMargin;
+  @StyleRes private int textStyle;
+  @StyleRes private int highlightedStyle;
+  private int fontSize;
+  private int headerColor;
+  private int headerStyle;
+  private int footerSpacerHeight;
+  private int lastHighlightedAyah;
+  private boolean isNightMode;
+  private int nightModeTextColor;
+  private boolean isInAyahActionMode;
+  private boolean isDataMissing;
 
-  private List<QuranAyah> mAyat;
-  private SparseArray<TextView> mAyahMap;
-  private SparseArray<TextView> mAyahHeaderMap;
+  private List<QuranAyah> ayat;
+  private SparseArray<TextView> ayahMap;
+  private SparseArray<TextView> ayahHeaderMap;
 
-  private LinearLayout mLinearLayout;
-  private TranslationClickedListener mTranslationClickedListener;
+  private LinearLayout linearLayout;
+  private TranslationClickedListener translationClickedListener;
 
   public TranslationView(Context context) {
     this(context, null);
@@ -72,99 +72,96 @@ public class TranslationView extends ScrollView {
   }
 
   public void setIsInAyahActionMode(boolean isInAyahActionMode) {
-    mIsInAyahActionMode = isInAyahActionMode;
+    this.isInAyahActionMode = isInAyahActionMode;
   }
 
-  public void init(Context context) {
-    mContext = context;
-    mAyahMap = new SparseArray<>();
-    mAyahHeaderMap = new SparseArray<>();
-    mIsDataMissing = true;
+  private void init(Context context) {
+    this.context = context;
+    ayahMap = new SparseArray<>();
+    ayahHeaderMap = new SparseArray<>();
+    isDataMissing = true;
 
     setFillViewport(true);
-    mLinearLayout = new LinearLayout(context);
-    mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-    addView(mLinearLayout, ScrollView.LayoutParams.MATCH_PARENT,
+    linearLayout = new LinearLayout(context);
+    linearLayout.setOrientation(LinearLayout.VERTICAL);
+    addView(linearLayout, ScrollView.LayoutParams.MATCH_PARENT,
         ScrollView.LayoutParams.WRAP_CONTENT);
-    mLinearLayout.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (mTranslationClickedListener != null) {
-          mTranslationClickedListener.onTranslationClicked();
-        }
+    linearLayout.setOnClickListener(v -> {
+      if (translationClickedListener != null) {
+        translationClickedListener.onTranslationClicked();
       }
     });
 
-    mResources = getResources();
-    mDividerColor = ContextCompat.getColor(context, R.color.translation_hdr_color);
-    mLeftRightMargin = mResources.getDimensionPixelSize(R.dimen.translation_left_right_margin);
-    mTopBottomMargin = mResources.getDimensionPixelSize(R.dimen.translation_top_bottom_margin);
-    mFooterSpacerHeight = mResources.getDimensionPixelSize(R.dimen.translation_footer_spacer);
-    mHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header);
-    mHeaderStyle = R.style.translation_sura_title;
+    resources = getResources();
+    dividerColor = ContextCompat.getColor(context, R.color.translation_hdr_color);
+    leftRightMargin = resources.getDimensionPixelSize(R.dimen.translation_left_right_margin);
+    topBottomMargin = resources.getDimensionPixelSize(R.dimen.translation_top_bottom_margin);
+    footerSpacerHeight = resources.getDimensionPixelSize(R.dimen.translation_footer_spacer);
+    headerColor = ContextCompat.getColor(context, R.color.translation_sura_header);
+    headerStyle = R.style.translation_sura_title;
     initResources();
   }
 
   private void initResources() {
-    QuranSettings settings = QuranSettings.getInstance(mContext);
-    mFontSize = settings.getTranslationTextSize();
+    QuranSettings settings = QuranSettings.getInstance(context);
+    fontSize = settings.getTranslationTextSize();
 
-    mIsNightMode = settings.isNightMode();
-    if (mIsNightMode) {
+    isNightMode = settings.isNightMode();
+    if (isNightMode) {
       int brightness = settings.getNightModeTextBrightness();
-      mNightModeTextColor = Color.rgb(brightness, brightness, brightness);
+      nightModeTextColor = Color.rgb(brightness, brightness, brightness);
     }
-    mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
+    textStyle = isNightMode ? R.style.TranslationText_NightMode :
         R.style.TranslationText;
-    mHighlightedStyle = mIsNightMode ?
+    highlightedStyle = isNightMode ?
         R.style.TranslationText_NightMode_Highlighted :
         R.style.TranslationText_Highlighted;
   }
 
   public void refresh() {
     initResources();
-    if (mAyat != null) {
-      setAyahs(mAyat);
+    if (ayat != null) {
+      setAyahs(ayat);
     }
   }
 
   public void setDataMissing(boolean isDataMissing) {
-    mIsDataMissing = isDataMissing;
+    this.isDataMissing = isDataMissing;
   }
 
   public boolean isDataMissing() {
-    return mIsDataMissing;
+    return isDataMissing;
   }
 
   public void setNightMode(boolean isNightMode, int textBrightness) {
-    mIsNightMode = isNightMode;
+    this.isNightMode = isNightMode;
     if (isNightMode) {
-      mNightModeTextColor = Color.rgb(textBrightness, textBrightness, textBrightness);
+      nightModeTextColor = Color.rgb(textBrightness, textBrightness, textBrightness);
     }
-    mTextStyle = mIsNightMode ? R.style.TranslationText_NightMode :
+    textStyle = this.isNightMode ? R.style.TranslationText_NightMode :
         R.style.TranslationText;
-    mHighlightedStyle = mIsNightMode ?
+    highlightedStyle = this.isNightMode ?
         R.style.TranslationText_NightMode_Highlighted :
         R.style.TranslationText_Highlighted;
-    if (mAyat != null) {
-      setAyahs(mAyat);
+    if (ayat != null) {
+      setAyahs(ayat);
     }
   }
 
   public void setAyahs(List<QuranAyah> ayat) {
-    mLastHighlightedAyah = -1;
+    lastHighlightedAyah = -1;
 
-    mLinearLayout.removeAllViews();
-    mAyahMap.clear();
-    mAyahHeaderMap.clear();
-    mAyat = ayat;
+    linearLayout.removeAllViews();
+    ayahMap.clear();
+    ayahHeaderMap.clear();
+    this.ayat = ayat;
 
     int currentSura = 0;
     for (int i = 0, ayatSize = ayat.size(); i < ayatSize; i++) {
       QuranAyah ayah = ayat.get(i);
 
       final int sura = ayah.getSura();
-      if (!mIsInAyahActionMode && sura != currentSura) {
+      if (!isInAyahActionMode && sura != currentSura) {
         addSuraHeader(sura);
         if (ayah.getAyah() == 1 && (sura != 1 && sura != 9)) {
           // explicitly add basmallah
@@ -179,88 +176,88 @@ public class TranslationView extends ScrollView {
   }
 
   public void unhighlightAyat() {
-    if (mLastHighlightedAyah > 0) {
-      TextView text = mAyahMap.get(mLastHighlightedAyah);
+    if (lastHighlightedAyah > 0) {
+      TextView text = ayahMap.get(lastHighlightedAyah);
       if (text != null) {
-        text.setTextAppearance(mContext, mTextStyle);
-        text.setTextSize(mFontSize);
+        text.setTextAppearance(context, textStyle);
+        text.setTextSize(fontSize);
       }
 
-      text = mAyahHeaderMap.get(mLastHighlightedAyah);
+      text = ayahHeaderMap.get(lastHighlightedAyah);
       if (text != null) {
-        styleAyahHeader(text, mTextStyle);
+        styleAyahHeader(text, textStyle);
       }
     }
-    mLastHighlightedAyah = -1;
+    lastHighlightedAyah = -1;
   }
 
   public void highlightAyah(int ayahId) {
-    if (mLastHighlightedAyah > 0) {
+    if (lastHighlightedAyah > 0) {
       unhighlightAyat();
     }
 
-    TextView text = mAyahMap.get(ayahId);
+    TextView text = ayahMap.get(ayahId);
     if (text != null) {
-      text.setTextAppearance(mContext, mHighlightedStyle);
-      text.setTextSize(mFontSize);
-      mLastHighlightedAyah = ayahId;
+      text.setTextAppearance(context, highlightedStyle);
+      text.setTextSize(fontSize);
+      lastHighlightedAyah = ayahId;
 
-      TextView header = mAyahHeaderMap.get(ayahId);
+      TextView header = ayahHeaderMap.get(ayahId);
       if (header != null) {
-        styleAyahHeader(header, mHighlightedStyle);
+        styleAyahHeader(header, highlightedStyle);
       }
 
       int screenHeight = QuranScreenInfo.getInstance().getHeight();
       int y = text.getTop() - (int) (0.25 * screenHeight);
       smoothScrollTo(getScrollX(), y);
     } else {
-      mLastHighlightedAyah = -1;
+      lastHighlightedAyah = -1;
     }
   }
 
   private OnClickListener mOnAyahClickListener = new OnClickListener() {
     @Override
     public void onClick(View v) {
-      if (mTranslationClickedListener != null) {
-        mTranslationClickedListener.onTranslationClicked();
+      if (translationClickedListener != null) {
+        translationClickedListener.onTranslationClicked();
       }
     }
   };
 
   private void addFooterSpacer() {
     final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-        LayoutParams.MATCH_PARENT, mFooterSpacerHeight);
-    final View view = new View(mContext);
-    mLinearLayout.addView(view, params);
+        LayoutParams.MATCH_PARENT, footerSpacerHeight);
+    final View view = new View(context);
+    linearLayout.addView(view, params);
   }
 
   private void addTextForAyah(QuranAyah ayah) {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
         LayoutParams.MATCH_PARENT,
         LayoutParams.WRAP_CONTENT);
-    params.setMargins(mLeftRightMargin, mTopBottomMargin,
-        mLeftRightMargin, mTopBottomMargin);
+    params.setMargins(leftRightMargin, topBottomMargin,
+        leftRightMargin, topBottomMargin);
 
     final int suraNumber = ayah.getSura();
     final int ayahNumber = ayah.getAyah();
     final int ayahId = QuranInfo.getAyahId(suraNumber, ayahNumber);
-    TextView ayahHeader = new TextView(mContext);
-    styleAyahHeader(ayahHeader, mTextStyle);
-    ayahHeader.setText(mResources.getString(R.string.sura_ayah, suraNumber, ayahNumber));
-    mLinearLayout.addView(ayahHeader, params);
-    mAyahHeaderMap.put(ayahId, ayahHeader);
+    TextView ayahHeader = new TextView(context);
+    styleAyahHeader(ayahHeader, textStyle);
+    ayahHeader.setText(resources.getString(R.string.sura_ayah, suraNumber, ayahNumber));
+    linearLayout.addView(ayahHeader, params);
+    ayahHeaderMap.put(ayahId, ayahHeader);
 
-    TextView ayahView = new TextView(mContext);
+    TextView ayahView = new TextView(context);
     ayahView.setOnClickListener(mOnAyahClickListener);
-    mAyahMap.put(ayahId, ayahView);
+    ayahMap.put(ayahId, ayahView);
 
-    ayahView.setTextAppearance(mContext, mTextStyle);
-    if (mIsInAyahActionMode) {
+    ayahView.setTextAppearance(context, textStyle);
+    if (isInAyahActionMode) {
       ayahView.setTextColor(Color.WHITE);
-    } else if (mIsNightMode) {
-      ayahView.setTextColor(mNightModeTextColor);
+    } else if (isNightMode) {
+      ayahView.setTextColor(nightModeTextColor);
     }
-    ayahView.setTextSize(mFontSize);
+    ayahView.setTextSize(fontSize);
 
     // arabic
     String ayahText = ayah.getText();
@@ -273,7 +270,7 @@ public class TranslationView extends ScrollView {
 
       SpannableString arabicText = new SpannableString(ayahText);
       if (USE_UTHMANI_SPAN) {
-        UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
+        UthmaniSpan uthmaniSpan = new UthmaniSpan(context);
         int length = ayahText.length();
         arabicText.setSpan(uthmaniSpan, 0, length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -295,20 +292,20 @@ public class TranslationView extends ScrollView {
     params = new LinearLayout.LayoutParams(
         LayoutParams.MATCH_PARENT,
         LayoutParams.WRAP_CONTENT);
-    params.setMargins(mLeftRightMargin, mTopBottomMargin,
-        mLeftRightMargin, mTopBottomMargin);
+    params.setMargins(leftRightMargin, topBottomMargin,
+        leftRightMargin, topBottomMargin);
     setTextSelectable(ayahView);
-    mLinearLayout.addView(ayahView, params);
+    linearLayout.addView(ayahView, params);
   }
 
   private void styleAyahHeader(TextView headerView, @StyleRes int style) {
-    headerView.setTextAppearance(mContext, style);
-    if (mIsInAyahActionMode) {
+    headerView.setTextAppearance(context, style);
+    if (isInAyahActionMode) {
       headerView.setTextColor(Color.WHITE);
-    } else if (mIsNightMode) {
-      headerView.setTextColor(mNightModeTextColor);
+    } else if (isNightMode) {
+      headerView.setTextColor(nightModeTextColor);
     }
-    headerView.setTextSize(mFontSize);
+    headerView.setTextSize(fontSize);
     headerView.setTypeface(null, Typeface.BOLD);
   }
 
@@ -317,44 +314,44 @@ public class TranslationView extends ScrollView {
   }
 
   private void addSuraHeader(int currentSura) {
-    View view = new View(mContext);
+    View view = new View(context);
 
-    view.setBackgroundColor(mHeaderColor);
+    view.setBackgroundColor(headerColor);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
         LayoutParams.MATCH_PARENT, 2);
-    params.topMargin = mTopBottomMargin;
-    mLinearLayout.addView(view, params);
+    params.topMargin = topBottomMargin;
+    linearLayout.addView(view, params);
 
-    String suraName = QuranInfo.getSuraName(mContext, currentSura, true);
+    String suraName = QuranInfo.getSuraName(context, currentSura, true);
 
-    TextView headerView = new TextView(mContext);
+    TextView headerView = new TextView(context);
     params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
         LayoutParams.WRAP_CONTENT);
-    params.leftMargin = mLeftRightMargin;
-    params.rightMargin = mLeftRightMargin;
-    params.topMargin = mTopBottomMargin / 2;
-    params.bottomMargin = mTopBottomMargin / 2;
-    headerView.setTextAppearance(mContext, mHeaderStyle);
+    params.leftMargin = leftRightMargin;
+    params.rightMargin = leftRightMargin;
+    params.topMargin = topBottomMargin / 2;
+    params.bottomMargin = topBottomMargin / 2;
+    headerView.setTextAppearance(context, headerStyle);
     headerView.setText(suraName);
-    mLinearLayout.addView(headerView, params);
+    linearLayout.addView(headerView, params);
 
-    view = new View(mContext);
-    view.setBackgroundColor(mDividerColor);
-    mLinearLayout.addView(view, LayoutParams.MATCH_PARENT, 2);
+    view = new View(context);
+    view.setBackgroundColor(dividerColor);
+    linearLayout.addView(view, LayoutParams.MATCH_PARENT, 2);
   }
 
   private void addBasmallah() {
-    TextView tv = new TextView(mContext);
-    tv.setTextAppearance(mContext, mTextStyle);
-    if (mIsNightMode) {
-      tv.setTextColor(mNightModeTextColor);
+    TextView tv = new TextView(context);
+    tv.setTextAppearance(context, textStyle);
+    if (isNightMode) {
+      tv.setTextColor(nightModeTextColor);
     }
-    tv.setTextSize(mFontSize);
+    tv.setTextSize(fontSize);
 
     SpannableString str = new SpannableString(ArabicDatabaseUtils.AR_BASMALLAH);
 
     if (USE_UTHMANI_SPAN) {
-      UthmaniSpan uthmaniSpan = new UthmaniSpan(mContext);
+      UthmaniSpan uthmaniSpan = new UthmaniSpan(context);
       int length = str.length();
       str.setSpan(uthmaniSpan, 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
       str.setSpan(new RelativeSizeSpan(ARABIC_RELATIVE_SIZE),
@@ -365,17 +362,17 @@ public class TranslationView extends ScrollView {
 
     LinearLayout.LayoutParams params =
         new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    params.leftMargin = mLeftRightMargin;
-    params.rightMargin = mLeftRightMargin;
-    params.topMargin = mTopBottomMargin / 2;
-    params.bottomMargin = mTopBottomMargin / 2;
+    params.leftMargin = leftRightMargin;
+    params.rightMargin = leftRightMargin;
+    params.topMargin = topBottomMargin / 2;
+    params.bottomMargin = topBottomMargin / 2;
 
-    mLinearLayout.addView(tv, params);
+    linearLayout.addView(tv, params);
   }
 
   public void setTranslationClickedListener(
       TranslationClickedListener listener) {
-    mTranslationClickedListener = listener;
+    translationClickedListener = listener;
   }
 
   public interface TranslationClickedListener {

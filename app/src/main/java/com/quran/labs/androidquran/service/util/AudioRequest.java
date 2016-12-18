@@ -14,36 +14,36 @@ import timber.log.Timber;
 
 public abstract class AudioRequest implements Parcelable {
 
-  private String mBaseUrl = null;
-  private String mGaplessDatabasePath = null;
+  private String baseUrl = null;
+  private String gaplessDatabasePath = null;
 
   // where we started from
-  private int mAyahsInThisSura = 0;
+  private int ayahsInThisSura = 0;
 
   // min and max sura/ayah
-  private int mMinSura;
-  private int mMinAyah;
-  private int mMaxSura;
-  private int mMaxAyah;
+  private int minSura;
+  private int minAyah;
+  private int maxSura;
+  private int maxAyah;
 
   // what we're currently playing
-  private int mCurrentSura = 0;
-  private int mCurrentAyah = 0;
+  private int currentSura = 0;
+  private int currentAyah = 0;
 
   // range repeat info
-  private RepeatInfo mRangeRepeatInfo;
-  private boolean mEnforceBounds;
+  private RepeatInfo rangeRepeatInfo;
+  private boolean enforceBounds;
 
   // did we just play the basmallah?
-  private boolean mJustPlayedBasmallah = false;
+  private boolean justPlayedBasmallah = false;
 
   // repeat information
-  private RepeatInfo mRepeatInfo;
+  private RepeatInfo repeatInfo;
 
   public abstract boolean haveSuraAyah(int sura, int ayah);
 
   AudioRequest(String baseUrl, QuranAyah verse) {
-    mBaseUrl = baseUrl;
+    this.baseUrl = baseUrl;
     final int startSura = verse.getSura();
     final int startAyah = verse.getAyah();
 
@@ -51,237 +51,237 @@ public abstract class AudioRequest implements Parcelable {
       throw new IllegalArgumentException();
     }
 
-    mCurrentSura = startSura;
-    mCurrentAyah = startAyah;
-    mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura - 1];
+    currentSura = startSura;
+    currentAyah = startAyah;
+    ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
 
-    mRepeatInfo = new RepeatInfo(0);
-    mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
+    repeatInfo = new RepeatInfo(0);
+    repeatInfo.setCurrentVerse(currentSura, currentAyah);
 
-    mRangeRepeatInfo = new RepeatInfo(0);
+    rangeRepeatInfo = new RepeatInfo(0);
   }
 
   AudioRequest(Parcel in) {
-    this.mBaseUrl = in.readString();
-    this.mGaplessDatabasePath = in.readString();
-    this.mAyahsInThisSura = in.readInt();
-    this.mMinSura = in.readInt();
-    this.mMinAyah = in.readInt();
-    this.mMaxSura = in.readInt();
-    this.mMaxAyah = in.readInt();
-    this.mCurrentSura = in.readInt();
-    this.mCurrentAyah = in.readInt();
-    this.mRangeRepeatInfo = in.readParcelable(RepeatInfo.class.getClassLoader());
-    this.mEnforceBounds = in.readByte() != 0;
-    this.mJustPlayedBasmallah = in.readByte() != 0;
-    this.mRepeatInfo = in.readParcelable(RepeatInfo.class.getClassLoader());
+    this.baseUrl = in.readString();
+    this.gaplessDatabasePath = in.readString();
+    this.ayahsInThisSura = in.readInt();
+    this.minSura = in.readInt();
+    this.minAyah = in.readInt();
+    this.maxSura = in.readInt();
+    this.maxAyah = in.readInt();
+    this.currentSura = in.readInt();
+    this.currentAyah = in.readInt();
+    this.rangeRepeatInfo = in.readParcelable(RepeatInfo.class.getClassLoader());
+    this.enforceBounds = in.readByte() != 0;
+    this.justPlayedBasmallah = in.readByte() != 0;
+    this.repeatInfo = in.readParcelable(RepeatInfo.class.getClassLoader());
   }
 
   public boolean needsIsti3athaAudio() {
     // TODO base this check on a boolean array in readers.xml
-    return !isGapless() || mGaplessDatabasePath.contains("minshawi_murattal");
+    return !isGapless() || gaplessDatabasePath.contains("minshawi_murattal");
   }
 
   public void setGaplessDatabaseFilePath(String databaseFile) {
-    mGaplessDatabasePath = databaseFile;
+    gaplessDatabasePath = databaseFile;
   }
 
   public String getGaplessDatabaseFilePath() {
-    return mGaplessDatabasePath;
+    return gaplessDatabasePath;
   }
 
   public boolean isGapless() {
-    return mGaplessDatabasePath != null;
+    return gaplessDatabasePath != null;
   }
 
   public void setVerseRepeatCount(int count) {
-    mRepeatInfo.setRepeatCount(count);
+    repeatInfo.setRepeatCount(count);
   }
 
   public int getVerseRepeatCount() {
-    return mRepeatInfo.getRepeatCount();
+    return repeatInfo.getRepeatCount();
   }
 
   public void setRangeRepeatCount(int rangeRepeatCount) {
-    mRangeRepeatInfo.setRepeatCount(rangeRepeatCount);
+    rangeRepeatInfo.setRepeatCount(rangeRepeatCount);
   }
 
   public void setEnforceBounds(boolean enforceBounds) {
-    mEnforceBounds = enforceBounds;
+    this.enforceBounds = enforceBounds;
   }
 
   public boolean shouldEnforceBounds() {
-    return mEnforceBounds;
+    return enforceBounds;
   }
 
   public int getRangeRepeatCount() {
-    return mRangeRepeatInfo.getRepeatCount();
+    return rangeRepeatInfo.getRepeatCount();
   }
 
   public SuraAyah getRangeStart() {
-    return new SuraAyah(mMinSura, mMinAyah);
+    return new SuraAyah(minSura, minAyah);
   }
 
   public SuraAyah getRangeEnd() {
-    return new SuraAyah(mMaxSura, mMaxAyah);
+    return new SuraAyah(maxSura, maxAyah);
   }
 
   public RepeatInfo getRepeatInfo() {
-    return mRepeatInfo;
+    return repeatInfo;
   }
 
   public QuranAyah setCurrentAyah(int sura, int ayah) {
     Timber.d("got setCurrentAyah of: %d:%d", sura, ayah);
-    if (mRepeatInfo.shouldRepeat()) {
-      mRepeatInfo.incrementRepeat();
+    if (repeatInfo.shouldRepeat()) {
+      repeatInfo.incrementRepeat();
     } else {
-      mCurrentSura = sura;
-      mCurrentAyah = ayah;
-      if (mEnforceBounds &&
-          ((mCurrentSura == mMaxSura && mCurrentAyah > mMaxAyah) ||
-              (mCurrentSura > mMaxSura))) {
-        if (mRangeRepeatInfo.shouldRepeat()) {
-          mRangeRepeatInfo.incrementRepeat();
-          mCurrentSura = mMinSura;
-          mCurrentAyah = mMinAyah;
+      currentSura = sura;
+      currentAyah = ayah;
+      if (enforceBounds &&
+          ((currentSura == maxSura && currentAyah > maxAyah) ||
+              (currentSura > maxSura))) {
+        if (rangeRepeatInfo.shouldRepeat()) {
+          rangeRepeatInfo.incrementRepeat();
+          currentSura = minSura;
+          currentAyah = minAyah;
         } else {
           return null;
         }
       }
 
-      if (mCurrentSura >= 1 && mCurrentSura <= 114) {
-        mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura - 1];
+      if (currentSura >= 1 && currentSura <= 114) {
+        ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
       }
-      mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
+      repeatInfo.setCurrentVerse(currentSura, currentAyah);
     }
-    return mRepeatInfo.getCurrentAyah();
+    return repeatInfo.getCurrentAyah();
   }
 
   public String getBaseUrl() {
-    return mBaseUrl;
+    return baseUrl;
   }
 
   public void setPlayBounds(QuranAyah minVerse, QuranAyah maxVerse) {
-    mMinSura = minVerse.getSura();
-    mMinAyah = minVerse.getAyah();
-    mMaxSura = maxVerse.getSura();
-    mMaxAyah = maxVerse.getAyah();
+    minSura = minVerse.getSura();
+    minAyah = minVerse.getAyah();
+    maxSura = maxVerse.getSura();
+    maxAyah = maxVerse.getAyah();
   }
 
   public QuranAyah getMinAyah() {
-    return new QuranAyah(mMinSura, mMinAyah);
+    return new QuranAyah(minSura, minAyah);
   }
 
   public QuranAyah getMaxAyah() {
-    return new QuranAyah(mMaxSura, mMaxAyah);
+    return new QuranAyah(maxSura, maxAyah);
   }
 
   public String getUrl() {
-    if (mEnforceBounds &&
-        ((mMaxSura > 0 && mCurrentSura > mMaxSura)
-            || (mMaxAyah > 0 && mCurrentAyah > mMaxAyah
-            && mCurrentSura >= mMaxSura)
-            || (mMinSura > 0 && mCurrentSura < mMinSura)
-            || (mMinAyah > 0 && mCurrentAyah < mMinAyah
-            && mCurrentSura <= mMinSura))) {
+    if (enforceBounds &&
+        ((maxSura > 0 && currentSura > maxSura)
+            || (maxAyah > 0 && currentAyah > maxAyah
+            && currentSura >= maxSura)
+            || (minSura > 0 && currentSura < minSura)
+            || (minAyah > 0 && currentAyah < minAyah
+            && currentSura <= minSura))) {
       return null;
     }
 
-    if (mCurrentSura > 114 || mCurrentSura < 1) {
+    if (currentSura > 114 || currentSura < 1) {
       return null;
     }
 
     if (isGapless()) {
-      String url = String.format(Locale.US, mBaseUrl, mCurrentSura);
+      String url = String.format(Locale.US, baseUrl, currentSura);
       Timber.d("isGapless, url: %s", url);
       return url;
     }
 
-    int sura = mCurrentSura;
-    int ayah = mCurrentAyah;
-    if (ayah == 1 && sura != 1 && sura != 9 && !mJustPlayedBasmallah) {
-      mJustPlayedBasmallah = true;
+    int sura = currentSura;
+    int ayah = currentAyah;
+    if (ayah == 1 && sura != 1 && sura != 9 && !justPlayedBasmallah) {
+      justPlayedBasmallah = true;
       sura = 1;
       ayah = 1;
     } else {
-      mJustPlayedBasmallah = false;
+      justPlayedBasmallah = false;
     }
 
-    if (mJustPlayedBasmallah) {
+    if (justPlayedBasmallah) {
       // really if "about to play" bismillah...
-      if (!haveSuraAyah(mCurrentSura, mCurrentAyah)) {
+      if (!haveSuraAyah(currentSura, currentAyah)) {
         // if we don't have the first ayah, don't play basmallah
         return null;
       }
     }
 
-    return String.format(Locale.US, mBaseUrl, sura, ayah);
+    return String.format(Locale.US, baseUrl, sura, ayah);
   }
 
   public String getTitle(Context context) {
-    return QuranInfo.getSuraAyahString(context, mCurrentSura, mCurrentAyah);
+    return QuranInfo.getSuraAyahString(context, currentSura, currentAyah);
   }
 
   public int getCurrentSura() {
-    return mCurrentSura;
+    return currentSura;
   }
 
   public int getCurrentAyah() {
-    return mCurrentAyah;
+    return currentAyah;
   }
 
   public boolean gotoNextAyah(boolean force) {
     // don't go to next ayah if we haven't played basmallah yet
-    if (mJustPlayedBasmallah) {
+    if (justPlayedBasmallah) {
       return false;
     }
-    if (!force && mRepeatInfo.shouldRepeat()) {
-      mRepeatInfo.incrementRepeat();
-      if (mCurrentAyah == 1 && mCurrentSura != 1 && mCurrentSura != 9) {
-        mJustPlayedBasmallah = true;
+    if (!force && repeatInfo.shouldRepeat()) {
+      repeatInfo.incrementRepeat();
+      if (currentAyah == 1 && currentSura != 1 && currentSura != 9) {
+        justPlayedBasmallah = true;
       }
       return false;
     }
 
-    if (mEnforceBounds && ((mCurrentSura > mMaxSura) ||
-        (mCurrentAyah >= mMaxAyah && mCurrentSura == mMaxSura))) {
-      if (mRangeRepeatInfo.shouldRepeat()) {
-        mRangeRepeatInfo.incrementRepeat();
-        mCurrentSura = mMinSura;
-        mCurrentAyah = mMinAyah;
-        mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
+    if (enforceBounds && ((currentSura > maxSura) ||
+        (currentAyah >= maxAyah && currentSura == maxSura))) {
+      if (rangeRepeatInfo.shouldRepeat()) {
+        rangeRepeatInfo.incrementRepeat();
+        currentSura = minSura;
+        currentAyah = minAyah;
+        repeatInfo.setCurrentVerse(currentSura, currentAyah);
         return true;
       }
     }
 
-    mCurrentAyah++;
-    if (mAyahsInThisSura < mCurrentAyah) {
-      mCurrentAyah = 1;
-      mCurrentSura++;
-      if (mCurrentSura <= 114) {
-        mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura - 1];
-        mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
+    currentAyah++;
+    if (ayahsInThisSura < currentAyah) {
+      currentAyah = 1;
+      currentSura++;
+      if (currentSura <= 114) {
+        ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
+        repeatInfo.setCurrentVerse(currentSura, currentAyah);
       }
     } else {
-      mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
+      repeatInfo.setCurrentVerse(currentSura, currentAyah);
     }
     return true;
   }
 
   public void gotoPreviousAyah() {
-    mCurrentAyah--;
-    if (mCurrentAyah < 1) {
-      mCurrentSura--;
-      if (mCurrentSura > 0) {
-        mAyahsInThisSura = QuranInfo.SURA_NUM_AYAHS[mCurrentSura - 1];
-        mCurrentAyah = mAyahsInThisSura;
+    currentAyah--;
+    if (currentAyah < 1) {
+      currentSura--;
+      if (currentSura > 0) {
+        ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
+        currentAyah = ayahsInThisSura;
       }
-    } else if (mCurrentAyah == 1 && !isGapless()) {
-      mJustPlayedBasmallah = true;
+    } else if (currentAyah == 1 && !isGapless()) {
+      justPlayedBasmallah = true;
     }
 
-    if (mCurrentSura > 0 && mCurrentAyah > 0) {
-      mRepeatInfo.setCurrentVerse(mCurrentSura, mCurrentAyah);
+    if (currentSura > 0 && currentAyah > 0) {
+      repeatInfo.setCurrentVerse(currentSura, currentAyah);
     }
   }
 
@@ -292,19 +292,19 @@ public abstract class AudioRequest implements Parcelable {
 
   @Override
   public void writeToParcel(Parcel dest, int flags) {
-    dest.writeString(this.mBaseUrl);
-    dest.writeString(this.mGaplessDatabasePath);
-    dest.writeInt(this.mAyahsInThisSura);
-    dest.writeInt(this.mMinSura);
-    dest.writeInt(this.mMinAyah);
-    dest.writeInt(this.mMaxSura);
-    dest.writeInt(this.mMaxAyah);
-    dest.writeInt(this.mCurrentSura);
-    dest.writeInt(this.mCurrentAyah);
-    dest.writeParcelable(this.mRangeRepeatInfo, 0);
-    dest.writeByte(mEnforceBounds ? (byte) 1 : (byte) 0);
-    dest.writeByte(mJustPlayedBasmallah ? (byte) 1 : (byte) 0);
-    dest.writeParcelable(this.mRepeatInfo, 0);
+    dest.writeString(this.baseUrl);
+    dest.writeString(this.gaplessDatabasePath);
+    dest.writeInt(this.ayahsInThisSura);
+    dest.writeInt(this.minSura);
+    dest.writeInt(this.minAyah);
+    dest.writeInt(this.maxSura);
+    dest.writeInt(this.maxAyah);
+    dest.writeInt(this.currentSura);
+    dest.writeInt(this.currentAyah);
+    dest.writeParcelable(this.rangeRepeatInfo, 0);
+    dest.writeByte(enforceBounds ? (byte) 1 : (byte) 0);
+    dest.writeByte(justPlayedBasmallah ? (byte) 1 : (byte) 0);
+    dest.writeParcelable(this.repeatInfo, 0);
   }
 
 }
