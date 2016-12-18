@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 
+import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
@@ -88,5 +90,17 @@ public class QuranSettingsFragment extends PreferenceFragment implements
         ((QuranPreferenceActivity) context).restartActivity();
       }
     }
+  }
+
+  @Override
+  public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+    final String key = preference.getKey();
+    if ("key_prefs_advanced".equals(key)) {
+      Intent intent = new Intent(getActivity(), QuranAdvancedPreferenceActivity.class);
+      startActivity(intent);
+      return true;
+    }
+
+    return super.onPreferenceTreeClick(preferenceScreen, preference);
   }
 }

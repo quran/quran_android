@@ -146,13 +146,10 @@
   <PreferenceCategory
       android:key="@string/prefs_path"
       android:title="@string/prefs_category_advanced">
-<Preference
-      android:key="@string/prefs_path"
-      android:title="@string/prefs_category_advanced">
-    <intent
-        android:targetPackage="com.quran.labs.androidquran"
-        android:targetClass="com.quran.labs.androidquran.QuranAdvancedPreferenceActivity" />
-  </Preference>
-</PreferenceCategory>
-</PreferenceScreen>
 
+    <com.quran.labs.androidquran.ui.preference.QuranPreference
+        android:key="key_prefs_advanced"
+        android:summary="@string/prefs_category_advanced_summary"
+        android:title="@string/prefs_category_advanced" />
+  </PreferenceCategory>
+</PreferenceScreen>

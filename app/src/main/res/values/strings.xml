@@ -201,6 +201,7 @@
   <string name="prefs_tablet_mode_enabled">In landscape, two pages will appear side by side.</string>
   <string name="prefs_tablet_mode_disabled">In landscape, only one page will appear.</string>
   <string name="prefs_category_advanced">Advanced Options</string>
+  <string name="prefs_category_advanced_summary">Import/export bookmarks, set Quran data directory, etc.</string>
   <string name="prefs_import_title">Import</string>
   <string name="prefs_import_summary">Import bookmarks and tags</string>
   <string name="prefs_export_title">Export</string>

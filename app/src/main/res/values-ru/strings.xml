@@ -199,6 +199,7 @@
   <string name="prefs_tablet_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом.</string>
   <string name="prefs_tablet_mode_disabled">В альбомном режиме будет отображена только одна страницы.</string>
   <string name="prefs_category_advanced">Расширенные настройки</string>
+  <string name="prefs_category_advanced_summary">Импорт/экспорт закладок, выбрать место хранения файлов и т.д.</string>
   <string name="prefs_export_title">Экспорт</string>
   <string name="prefs_export_summary">Экспорт копию закладок и тегов</string>
 
