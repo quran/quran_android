@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -88,7 +90,7 @@ public class BookmarkPresenterTest {
   @Mock private Resources resources;
   @Mock private QuranSettings settings;
   @Mock private BookmarksDBAdapter bookmarksAdapter;
-  private BookmarkPresenter presenter;
+  @Mock private RecentPageModel recentPageModel;
 
   @BeforeClass
   public static void setup() {
@@ -104,19 +106,24 @@ public class BookmarkPresenterTest {
     when(appContext.getResources()).thenReturn(resources);
     when(resources.getStringArray(anyInt())).thenReturn(RESOURCE_ARRAY);
     when(appContext.getApplicationContext()).thenReturn(appContext);
-
-    RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel);
-    presenter = new BookmarkPresenter(appContext, settings, model, false);
   }
 
   @Test
   public void testBookmarkObservableAyahBookmarksByDate() {
-    when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
-        .thenReturn(AYAH_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(new ArrayList<>());
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
 
-    BookmarkResult result = getBookmarkResultByDateAndValidate(false);
+      @Override
+      public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
+        return Single.zip(
+            Single.just(new ArrayList<>()),
+            Single.just(AYAH_BOOKMARKS_LIST),
+            Single.just(new ArrayList<>()),
+            BookmarkData::new);
+      }
+    };
+
+    BookmarkPresenter presenter = makeBookmarkPresenter(model);
+    BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, false);
     assertThat(result.tagMap).isEmpty();
     // 1 for the header, plus one row per item
     assertThat(result.rows).hasSize(AYAH_BOOKMARKS_LIST.size() + 1);
@@ -124,11 +131,20 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksByDate() {
-    when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
-        .thenReturn(MIXED_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(new ArrayList<>());
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
 
-    BookmarkResult result = getBookmarkResultByDateAndValidate(false);
+      @Override
+      public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
+        return Single.zip(
+            Single.just(new ArrayList<>()),
+            Single.just(MIXED_BOOKMARKS_LIST),
+            Single.just(new ArrayList<>()),
+            BookmarkData::new);
+      }
+    };
+
+    BookmarkPresenter presenter = makeBookmarkPresenter(model);
+    BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, false);
     assertThat(result.tagMap).isEmpty();
     // 1 for "page bookmarks" and 1 for "ayah bookmarks"
     assertThat(result.rows).hasSize(MIXED_BOOKMARKS_LIST.size() + 2);
@@ -136,13 +152,22 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksByDateWithRecentPage() {
-    when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
-        .thenReturn(MIXED_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(TAG_LIST);
-    when(settings.getLastPage()).thenReturn(42);
-    when(bookmarksAdapter.getRecentPages()).thenReturn(RECENTS_LIST);
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
 
-    BookmarkResult result = getBookmarkResultByDateAndValidate(false);
+      @Override
+      public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
+        return Single.zip(
+            Single.just(TAG_LIST),
+            Single.just(MIXED_BOOKMARKS_LIST),
+            Single.just(RECENTS_LIST),
+            BookmarkData::new);
+      }
+    };
+
+    when(settings.getLastPage()).thenReturn(42);
+
+    BookmarkPresenter presenter = makeBookmarkPresenter(model);
+    BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, false);
     assertThat(result.tagMap).hasSize(2);
     // 2 for "current page", 1 for "page bookmarks" and 1 for "ayah bookmarks"
     assertThat(result.rows).hasSize(MIXED_BOOKMARKS_LIST.size() + 4);
@@ -150,11 +175,20 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableAyahBookmarksGroupedByTag() {
-    when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
-        .thenReturn(AYAH_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(TAG_LIST);
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
 
-    BookmarkResult result = getBookmarkResultByDateAndValidate(true);
+      @Override
+      public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
+        return Single.zip(
+            Single.just(TAG_LIST),
+            Single.just(AYAH_BOOKMARKS_LIST),
+            Single.just(new ArrayList<>()),
+            BookmarkData::new);
+      }
+    };
+
+    BookmarkPresenter presenter = makeBookmarkPresenter(model);
+    BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, true);
     assertThat(result.tagMap).hasSize(2);
 
     // number of tags (or 1) for each bookmark, plus number of tags (headers), plus unsorted
@@ -164,11 +198,20 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksGroupedByTag() {
-    when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
-        .thenReturn(MIXED_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(TAG_LIST);
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
 
-    BookmarkResult result = getBookmarkResultByDateAndValidate(true);
+      @Override
+      public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
+        return Single.zip(
+            Single.just(TAG_LIST),
+            Single.just(MIXED_BOOKMARKS_LIST),
+            Single.just(new ArrayList<>()),
+            BookmarkData::new);
+      }
+    };
+
+    BookmarkPresenter presenter = makeBookmarkPresenter(model);
+    BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, true);
     assertThat(result.tagMap).hasSize(2);
 
     // number of tags (or 1) for each bookmark, plus number of tags (headers), plus unsorted
@@ -178,17 +221,20 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksGroupedByTagWithRecentPage() {
-    when(bookmarksAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED))
-        .thenReturn(MIXED_BOOKMARKS_LIST);
-    when(bookmarksAdapter.getTags()).thenReturn(TAG_LIST);
-    when(bookmarksAdapter.getRecentPages()).thenReturn(RECENTS_LIST);
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
 
-    // override presenter so we get a correct recents
-    RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter);
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel);
-    presenter = new BookmarkPresenter(appContext, settings, model, false);
+      @Override
+      public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
+        return Single.zip(
+            Single.just(TAG_LIST),
+            Single.just(MIXED_BOOKMARKS_LIST),
+            Single.just(RECENTS_LIST),
+            BookmarkData::new);
+      }
+    };
 
-    BookmarkResult result = getBookmarkResultByDateAndValidate(true);
+    BookmarkPresenter presenter = makeBookmarkPresenter(model);
+    BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, true);
     assertThat(result.tagMap).hasSize(2);
 
     // number of tags (or 1) for each bookmark, plus number of tags (headers), plus unsorted, plus
@@ -197,10 +243,21 @@ public class BookmarkPresenterTest {
         MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG + TAG_LIST.size() + 1 + 2);
   }
 
-  private BookmarkResult getBookmarkResultByDateAndValidate(boolean groupByTags) {
-    TestObserver<BookmarkResult> testObserver = new TestObserver<>();
+  private BookmarkPresenter makeBookmarkPresenter(BookmarkModel model) {
+    return new BookmarkPresenter(appContext, model) {
+      @Override
+      void subscribeToChanges() {
+        // nothing
+      }
+    };
+  }
+
+  private BookmarkResult getBookmarkResultByDateAndValidate(BookmarkPresenter presenter,
+                                                            boolean groupByTags) {
+
+    TestObserver<BookmarkResult> testObserver =
     presenter.getBookmarksListObservable(BookmarksDBAdapter.SORT_DATE_ADDED, groupByTags)
-        .subscribe(testObserver);
+        .test();
     testObserver.awaitTerminalEvent();
     testObserver.assertNoErrors();
     testObserver.assertValueCount(1);

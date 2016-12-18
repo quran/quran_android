@@ -72,20 +72,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     subscribeToChanges();
   }
 
-  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-  BookmarkPresenter(Context context, QuranSettings settings,
-                    BookmarkModel bookmarkModel, boolean subscribeToChanges) {
-    appContext = context.getApplicationContext();
-    quranSettings = settings;
-    this.bookmarkModel = bookmarkModel;
-    sortOrder = quranSettings.getBookmarksSortOrder();
-    groupByTags = quranSettings.getBookmarksGroupedByTags();
-    if (subscribeToChanges) {
-      subscribeToChanges();
-    }
-  }
-
-  private void subscribeToChanges() {
+  void subscribeToChanges() {
     Observable.merge(bookmarkModel.tagsObservable(),
         bookmarkModel.bookmarksObservable(), bookmarkModel.recentPagesUpdatedObservable())
         .observeOn(AndroidSchedulers.mainThread())
