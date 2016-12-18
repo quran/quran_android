@@ -3,9 +3,9 @@
   <string name="app_name">Kur\'an</string>
   <string name="downloadPrompt_title">Gerekli dosyalari yükleyeyim mi?</string>
   <string name="downloadPrompt" tools:ignore="Typos">Daha iyi performans için bazı dosyalar SD karta kopyalanmalı.
-		Eğer şimdi bu işlemi gerçekleştirmezseniz sayfaların ayrı ayrı indirilmesi daha uzun sürebilir.
-		Şimdi gerekli dosyaları indirmek istiyor musunuz?
-    </string>
+    Eğer şimdi bu işlemi gerçekleştirmezseniz sayfaların ayrı ayrı indirilmesi daha uzun sürebilir.
+    Şimdi gerekli dosyaları indirmek istiyor musunuz?
+  </string>
   <string name="downloadTabletPrompt">Daha gelişmiş resimler eklendi, indirmek istiyor musunuz?</string>
   <string name="downloadImportantPrompt">Kur\'an resim dosyaları için küçük ama önemli bir güncelleme var. Bu güncellemeyi indirmek istiyor musunuz?</string>
   <string name="downloadPrompt_ok">Evet</string>
@@ -15,6 +15,7 @@
   <string name="extracting_title">İşlem yapılıyor&#8230;</string>
   <string name="menu_jump">Atla</string>
   <string name="menu_about">Hakkında</string>
+  <string name="menu_other_apps">Diğer uygulamalar</string>
   <string name="menu_settings">Ayarlar</string>
   <string name="menu_jump_last_page">Son sayfa</string>
   <string name="menu_bookmarks">Sayfa işaretleri</string>
@@ -78,12 +79,14 @@
   <string name="prefs_lock_orientation_summary_on">Kur\'an sayfları döndürme özellikleri olmadan gösterilecek</string>
   <string name="prefs_lock_orientation_summary_off">Otomatik döndürme özellikleri çalışır vaziyette</string>
   <string name="prefs_landscape_orientation_title">Yatay düzen yönelimli</string>
-  <string name="prefs_landscape_orientation_summary_on">Yatay yönelimi Açık</string>
-  <string name="prefs_landscape_orientation_summary_off">Dikey yönelimi Açık</string>
+  <string name="prefs_landscape_orientation_summary_on">Yatay yönelimi açık</string>
+  <string name="prefs_landscape_orientation_summary_off">Dikey yönelimi açık</string>
   <string name="prefs_night_mode_title">Gece modu</string>
-  <string name="prefs_night_mode_summary">Karanlık arkaplan ve parklak fontlar kullanılacak</string>
+  <string name="prefs_night_mode_summary">Karanlık arkaplan ve parlak fontlar kullanılacak</string>
   <string name="prefs_display_marker_title">Kur\'an kısımlarını gösteren uyarı göster</string>
   <string name="prefs_display_marker_summary">Ekranda cüz ve hizip bilgileri görüntüle</string>
+  <string name="prefs_highlight_bookmarks_title">İşaretleri vurgulama</string>
+  <string name="prefs_highlight_bookmarks_summary">İşaretlenen âyetleri̇ vurgulayarak göster</string>
   <string name="prefs_translation_text_title">Meâllerin metin büyüklüğü</string>
   <string name="downloaded_translations">Yüklendi</string>
   <string name="available_translations">İndirmek için hazır</string>
@@ -126,6 +129,12 @@
   <string name="prefs_tablet_mode_title">Tablet modu</string>
   <string name="prefs_tablet_mode_enabled">Yatık modda iki sayfa birlikte görüntülenir</string>
   <string name="prefs_tablet_mode_disabled">Yatık modda tek sayfa  görüntülenir</string>
+  <string name="prefs_category_advanced">Gelişmiş seçenekler</string>
+  <string name="prefs_category_advanced_summary">İşaretleri içe/dışa aktar, uygulama konumunu ayarla, vb.</string>
+  <string name="prefs_import_title">İçe aktar</string>
+  <string name="prefs_import_summary">İşaret ve etiketleri içe aktar</string>
+  <string name="prefs_export_title">Dışa aktar</string>
+  <string name="prefs_export_summary">İşaret ve etiketleri dışa aktar</string>
   <string name="prefs_streaming_title">Akıcı</string>
   <string name="prefs_streaming_summary">Online olarak ses akışı sağla (ayrık olmayan ses dosyaları için)</string>
   <string name="prefs_sdcard_internal">Dahili hafıza</string>
@@ -137,6 +146,8 @@
   <string name="prefs_new_background_title">Yeni arkaplan</string>
   <string name="prefs_download_amount_title">İndirme miktarı</string>
   <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
+  <string name="prefs_audio_manager">Ses yöneticisi (deneysel)</string>
+  <string name="prefs_audio_manager_summary">Kur\'an seslerini yönetme ve indirme</string>
   <string name="prefs_err_moving_app_files">Uygulama dosyalarını taşınamadı</string>
   <string name="prefs_copying_app_files">Uygulama dosyaları kopyalanıyor</string>
   <string name="prefs_category_download">İndirme seçenekleri</string>
@@ -146,6 +157,8 @@
   <string name="prefs_app_size">Uygulama büyüklüğü:</string>
   <string name="prefs_app_location_title">Uygulama konumu</string>
   <string name="prefs_app_location_summary">Lütfen hangi SD karta kopyalanacağını seçin</string>
+  <string name="prefs_send_logs_title">Günlükleri gönder</string>
+  <string name="prefs_send_logs_summary">Hata ayıklama günlüklerini geliştiriciye gönder</string>
   <string name="play_from_here">Buradan çalmaya başla</string>
   <string name="page_description">sayfa  %1$s, cüz %2$s</string>
   <string name="download_progress">%1$s / %2$s indirildi</string>
@@ -194,4 +207,9 @@
     <item quantity="other">%s âyet</item>
   </plurals>
   <string name="recent_pages">Son sayfalar</string>
+  <string name="audio_manager">Ses yöneticisi</string>
+  <plurals name="files_downloaded">
+    <item quantity="one">1 sure i̇ndirildi</item>
+    <item quantity="other">%1$d sure i̇ndirildi</item>
+  </plurals>
 </resources>
