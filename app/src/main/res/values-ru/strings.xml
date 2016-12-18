@@ -186,6 +186,8 @@
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Расположение приложения</string>
   <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
+  <string name="prefs_send_logs_title">Отправить журналы</string>
+  <string name="prefs_send_logs_summary">Отправить журналы отладки разработчику</string>
   <string name="prefs_sdcard_internal">Внутренняя память</string>
   <string name="prefs_sdcard_external">Внешняя SD карта %1$d</string>
   <string name="prefs_app_size">Размер приложения</string>
@@ -200,6 +202,8 @@
   <string name="prefs_tablet_mode_disabled">В альбомном режиме будет отображена только одна страницы.</string>
   <string name="prefs_category_advanced">Расширенные настройки</string>
   <string name="prefs_category_advanced_summary">Импорт/экспорт закладок, выбрать место хранения файлов и т.д.</string>
+  <string name="prefs_import_title">Импорт</string>
+  <string name="prefs_import_summary">Импорт закладок и тегов</string>
   <string name="prefs_export_title">Экспорт</string>
   <string name="prefs_export_summary">Экспорт копию закладок и тегов</string>
 
