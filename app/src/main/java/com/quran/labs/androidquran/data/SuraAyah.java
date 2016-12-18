@@ -1,9 +1,10 @@
 package com.quran.labs.androidquran.data;
 
-import com.quran.labs.androidquran.common.QuranAyah;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+
+import com.quran.labs.androidquran.common.QuranAyah;
 
 public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
   final public int sura;
@@ -47,7 +48,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
   }
 
   @Override
-  public int compareTo(SuraAyah another) {
+  public int compareTo(@NonNull SuraAyah another) {
     if (this.equals(another)) {
       return 0;
     } else if (sura == another.sura) {
@@ -79,7 +80,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     return "("+ sura +":"+ ayah +")";
   }
 
-  public static Iterator getIterator(SuraAyah start, SuraAyah end) {
+  static Iterator getIterator(SuraAyah start, SuraAyah end) {
     return new Iterator(start, end);
   }
 
@@ -95,7 +96,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     return sura > next.sura || (sura == next.sura && ayah > next.ayah);
   }
 
-  public static class Iterator {
+  static class Iterator {
 
     private SuraAyah mStart;
     private SuraAyah mEnd;
@@ -104,7 +105,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     private int mCurSura;
     private int mCurAyah;
 
-    public Iterator(SuraAyah start, SuraAyah end) {
+    Iterator(SuraAyah start, SuraAyah end) {
       // Sanity check
       if (start.compareTo(end) <= 0) {
         mStart = start;
@@ -116,7 +117,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
       reset();
     }
 
-    public void reset() {
+    void reset() {
       mCurSura = mStart.sura;
       mCurAyah = mStart.ayah;
       started = false;
@@ -130,7 +131,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
       return mCurAyah;
     }
 
-    public boolean hasNext() {
+    boolean hasNext() {
       return !started || mCurSura < mEnd.sura || mCurAyah < mEnd.ayah;
     }
 

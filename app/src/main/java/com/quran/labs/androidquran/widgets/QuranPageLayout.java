@@ -189,10 +189,6 @@ public abstract class QuranPageLayout extends ViewGroup
     return true;
   }
 
-  public boolean isScrollable() {
-    return scrollView != null;
-  }
-
   private View resolveView() {
     return scrollView != null ? scrollView : innerView;
   }
@@ -267,13 +263,10 @@ public abstract class QuranPageLayout extends ViewGroup
     final Button button =
         (Button) errorLayout.findViewById(R.id.retry_button);
     updateErrorTextColor();
-    button.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        errorLayout.setVisibility(GONE);
-        if (pageController != null) {
-          pageController.handleRetryClicked();
-        }
+    button.setOnClickListener(v -> {
+      errorLayout.setVisibility(GONE);
+      if (pageController != null) {
+        pageController.handleRetryClicked();
       }
     });
   }

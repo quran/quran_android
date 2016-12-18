@@ -25,54 +25,54 @@ import timber.log.Timber;
  */
 public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
-  private Context mContext;
+  private Context context;
 
-  private Integer[] mAyahBounds;
-  private int mHighlightedAyah;
-  private String mDatabaseName = null;
-  private boolean mIsMissingData;
-  private WeakReference<TranslationView> mTranslationView;
+  private Integer[] ayahBounds;
+  private int highlightedAyah;
+  private String databaseName = null;
+  private boolean isMissingData;
+  private WeakReference<TranslationView> translationView;
 
   public TranslationTask(Context context, Integer[] ayahBounds,
       String databaseName) {
-    mContext = context;
-    mDatabaseName = databaseName;
-    mAyahBounds = ayahBounds;
-    mHighlightedAyah = 0;
-    mTranslationView = null;
+    this.context = context;
+    this.databaseName = databaseName;
+    this.ayahBounds = ayahBounds;
+    highlightedAyah = 0;
+    translationView = null;
   }
 
   public TranslationTask(Context context, int pageNumber,
       int highlightedAyah, String databaseName,
       TranslationView view) {
-    mContext = context;
-    mDatabaseName = databaseName;
-    mAyahBounds = QuranInfo.getPageBounds(pageNumber);
-    mHighlightedAyah = highlightedAyah;
-    mTranslationView = new WeakReference<>(view);
+    this.context = context;
+    this.databaseName = databaseName;
+    ayahBounds = QuranInfo.getPageBounds(pageNumber);
+    this.highlightedAyah = highlightedAyah;
+    translationView = new WeakReference<>(view);
   }
 
   protected boolean loadArabicAyahText() {
-    return QuranSettings.getInstance(mContext).wantArabicInTranslationView();
+    return QuranSettings.getInstance(context).wantArabicInTranslationView();
   }
 
   @Override
   protected List<QuranAyah> doInBackground(Void... params) {
-    Integer[] bounds = mAyahBounds;
+    Integer[] bounds = ayahBounds;
     if (bounds == null) {
       return null;
     }
 
-    String databaseName = mDatabaseName;
+    String databaseName = this.databaseName;
 
     // is this an arabic translation/tafseer or not
-    boolean isArabic = mDatabaseName.contains(".ar.") ||
-        mDatabaseName.equals("quran.muyassar.db");
+    boolean isArabic = this.databaseName.contains(".ar.") ||
+        this.databaseName.equals("quran.muyassar.db");
     List<QuranAyah> verses = new ArrayList<>();
 
     try {
       DatabaseHandler translationHandler =
-          DatabaseHandler.getDatabaseHandler(mContext, databaseName);
+          DatabaseHandler.getDatabaseHandler(context, databaseName);
       Cursor translationCursor =
           translationHandler.getVerses(bounds[0], bounds[1],
               bounds[2], bounds[3],
@@ -83,14 +83,14 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
       if (loadArabicAyahText()) {
         try {
-          ayahHandler = DatabaseHandler.getDatabaseHandler(mContext,
+          ayahHandler = DatabaseHandler.getDatabaseHandler(context,
               QuranDataProvider.QURAN_ARABIC_DATABASE);
           ayahCursor = ayahHandler.getVerses(bounds[0], bounds[1],
               bounds[2], bounds[3],
               DatabaseHandler.ARABIC_TEXT_TABLE);
         } catch (Exception e) {
           // ignore any exceptions due to no arabic database
-          mIsMissingData = true;
+          isMissingData = true;
         }
       }
 
@@ -131,25 +131,20 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
   @Override
   protected void onPostExecute(List<QuranAyah> result) {
-    final TranslationView view = mTranslationView == null ?
-        null : mTranslationView.get();
+    final TranslationView view = translationView == null ?
+        null : translationView.get();
     if (result != null) {
       if (view != null) {
         view.setAyahs(result);
-        if (mHighlightedAyah > 0) {
+        if (highlightedAyah > 0) {
           // give a chance for translation view to render
-          view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              view.highlightAyah(mHighlightedAyah);
-            }
-          }, 100);
+          view.postDelayed(() -> view.highlightAyah(highlightedAyah), 100);
         }
       }
     }
 
     if (view != null) {
-      view.setDataMissing(mIsMissingData);
+      view.setDataMissing(isMissingData);
     }
   }
 }

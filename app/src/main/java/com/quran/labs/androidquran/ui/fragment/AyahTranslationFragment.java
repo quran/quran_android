@@ -25,15 +25,15 @@ import java.util.List;
 
 public class AyahTranslationFragment extends AyahActionFragment {
 
-  private ProgressBar mProgressBar;
-  private TranslationView mTranslationView;
-  private View mEmptyState;
-  private AsyncTask mCurrentTask;
-  private LocalTranslation mTranslationItem;
-  private View mTranslationControls;
-  private QuranSpinner mTranslator;
-  private TranslationsSpinnerAdapter mTranslationAdapter;
-  private List<LocalTranslation> mTranslations;
+  private ProgressBar progressBar;
+  private TranslationView translationView;
+  private View emptyState;
+  private AsyncTask currentTask;
+  private LocalTranslation translationItem;
+  private View translationControls;
+  private QuranSpinner translator;
+  private TranslationsSpinnerAdapter translationAdapter;
+  private List<LocalTranslation> translations;
 
   @Override
   public View onCreateView(LayoutInflater inflater,
@@ -41,35 +41,29 @@ public class AyahTranslationFragment extends AyahActionFragment {
     final View view = inflater.inflate(
         R.layout.translation_panel, container, false);
 
-    mTranslator = (QuranSpinner) view.findViewById(R.id.translator);
-    mTranslationView =
+    translator = (QuranSpinner) view.findViewById(R.id.translator);
+    translationView =
         (TranslationView) view.findViewById(R.id.translation_view);
-    mTranslationView.setIsInAyahActionMode(true);
-    mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-    mEmptyState = view.findViewById(R.id.empty_state);
-    mTranslationControls = view.findViewById(R.id.controls);
-    final View next = mTranslationControls.findViewById(R.id.next_ayah);
-    next.setOnClickListener(mOnClickListener);
+    translationView.setIsInAyahActionMode(true);
+    progressBar = (ProgressBar) view.findViewById(R.id.progress);
+    emptyState = view.findViewById(R.id.empty_state);
+    translationControls = view.findViewById(R.id.controls);
+    final View next = translationControls.findViewById(R.id.next_ayah);
+    next.setOnClickListener(onClickListener);
 
-    final View prev = mTranslationControls.findViewById(R.id.previous_ayah);
-    prev.setOnClickListener(mOnClickListener);
+    final View prev = translationControls.findViewById(R.id.previous_ayah);
+    prev.setOnClickListener(onClickListener);
 
     final Button getTranslations =
         (Button) view.findViewById(R.id.get_translations_button);
-    getTranslations.setOnClickListener(mOnClickListener);
+    getTranslations.setOnClickListener(onClickListener);
     return view;
   }
 
-  private View.OnClickListener mOnClickListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-      final Activity activity = getActivity();
-      final PagerActivity pagerActivity;
-      if (activity instanceof PagerActivity) {
-        pagerActivity = (PagerActivity) activity;
-      } else {
-        return;
-      }
+  private View.OnClickListener onClickListener = v -> {
+    final Activity activity = getActivity();
+    if (activity instanceof PagerActivity) {
+      final PagerActivity pagerActivity = (PagerActivity) activity;
 
       switch (v.getId()) {
         case R.id.get_translations_button:
@@ -91,27 +85,27 @@ public class AyahTranslationFragment extends AyahActionFragment {
     final Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
       PagerActivity pagerActivity = (PagerActivity) activity;
-      if (mTranslations == null) {
-        mTranslations = pagerActivity.getTranslations();
+      if (translations == null) {
+        translations = pagerActivity.getTranslations();
       }
 
-      if (mTranslations == null || mTranslations.size() == 0) {
-        mProgressBar.setVisibility(View.GONE);
-        mEmptyState.setVisibility(View.VISIBLE);
-        mTranslationControls.setVisibility(View.GONE);
+      if (translations == null || translations.size() == 0) {
+        progressBar.setVisibility(View.GONE);
+        emptyState.setVisibility(View.VISIBLE);
+        translationControls.setVisibility(View.GONE);
         return;
       }
 
-      if (mTranslationAdapter == null) {
-        mTranslationAdapter = new TranslationsSpinnerAdapter(activity,
+      if (translationAdapter == null) {
+        translationAdapter = new TranslationsSpinnerAdapter(activity,
             R.layout.support_simple_spinner_dropdown_item,
-            pagerActivity.getTranslationNames(), mTranslations);
-        mTranslator.setAdapter(mTranslationAdapter);
-        mTranslator.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            pagerActivity.getTranslationNames(), translations);
+        translator.setAdapter(translationAdapter);
+        translator.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
           @Override
           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            LocalTranslation item = mTranslationAdapter.getTranslationItem(position);
-            if (!item.filename.equals(mTranslationItem.filename)) {
+            LocalTranslation item = translationAdapter.getTranslationItem(position);
+            if (!item.filename.equals(translationItem.filename)) {
               QuranSettings.getInstance(activity).setActiveTranslation(item.filename);
               refreshView();
             }
@@ -124,30 +118,30 @@ public class AyahTranslationFragment extends AyahActionFragment {
       }
 
       if (mStart.equals(mEnd)) {
-        mTranslationControls.setVisibility(View.VISIBLE);
+        translationControls.setVisibility(View.VISIBLE);
       } else {
-        mTranslationControls.setVisibility(View.GONE);
+        translationControls.setVisibility(View.GONE);
       }
 
       Integer[] bounds = new Integer[]{ mStart.sura,
           mStart.ayah, mEnd.sura, mEnd.ayah };
-      if (mCurrentTask != null) {
-        mCurrentTask.cancel(true);
+      if (currentTask != null) {
+        currentTask.cancel(true);
       }
 
-      int pos = mTranslationAdapter.getPositionForActiveTranslation();
-      mTranslationItem = mTranslationAdapter.getTranslationItem(pos);
-      mTranslator.setSelection(pos);
-      mCurrentTask = new ShowTafsirTask(activity, bounds,
-          mTranslationItem.filename).execute();
+      int pos = translationAdapter.getPositionForActiveTranslation();
+      translationItem = translationAdapter.getTranslationItem(pos);
+      translator.setSelection(pos);
+      currentTask = new ShowTafsirTask(activity, bounds,
+          translationItem.filename).execute();
     }
   }
 
   private class ShowTafsirTask extends TranslationTask {
 
-    public ShowTafsirTask(Context context, Integer[] bounds, String db) {
+    ShowTafsirTask(Context context, Integer[] bounds, String db) {
       super(context, bounds, db);
-      mProgressBar.setVisibility(View.VISIBLE);
+      progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -157,14 +151,14 @@ public class AyahTranslationFragment extends AyahActionFragment {
 
     @Override
     protected void onPostExecute(List<QuranAyah> result) {
-      mProgressBar.setVisibility(View.GONE);
+      progressBar.setVisibility(View.GONE);
       if (result != null) {
-        mEmptyState.setVisibility(View.GONE);
-        mTranslationView.setAyahs(result);
+        emptyState.setVisibility(View.GONE);
+        translationView.setAyahs(result);
       } else {
-        mEmptyState.setVisibility(View.VISIBLE);
+        emptyState.setVisibility(View.VISIBLE);
       }
-      mCurrentTask = null;
+      currentTask = null;
     }
   }
 

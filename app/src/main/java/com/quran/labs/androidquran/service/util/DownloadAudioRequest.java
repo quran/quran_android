@@ -1,42 +1,42 @@
 package com.quran.labs.androidquran.service.util;
 
+import android.os.Parcel;
+import android.support.annotation.NonNull;
+
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.AudioUtils;
 
-import android.os.Parcel;
-import android.support.annotation.NonNull;
-
 public class DownloadAudioRequest extends AudioRequest {
 
-  @NonNull private final QariItem mQariItem;
-  private String mLocalDirectoryPath = null;
+  @NonNull private final QariItem qariItem;
+  private String localDirectoryPath = null;
 
   public DownloadAudioRequest(String baseUrl, QuranAyah verse,
       @NonNull QariItem qariItem, String localPath) {
     super(baseUrl, verse);
-    mQariItem = qariItem;
-    mLocalDirectoryPath = localPath;
+    this.qariItem = qariItem;
+    localDirectoryPath = localPath;
   }
 
-  protected DownloadAudioRequest(Parcel in) {
+  private DownloadAudioRequest(Parcel in) {
     super(in);
-    this.mQariItem = in.readParcelable(QariItem.class.getClassLoader());
-    this.mLocalDirectoryPath = in.readString();
+    this.qariItem = in.readParcelable(QariItem.class.getClassLoader());
+    this.localDirectoryPath = in.readString();
   }
   
   @NonNull
   public QariItem getQariItem() {
-    return mQariItem;
+    return qariItem;
   }
 
   public String getLocalPath() {
-    return mLocalDirectoryPath;
+    return localDirectoryPath;
   }
 
   @Override
   public boolean haveSuraAyah(int sura, int ayah) {
-    return AudioUtils.haveSuraAyahForQari(mLocalDirectoryPath, sura, ayah);
+    return AudioUtils.haveSuraAyahForQari(localDirectoryPath, sura, ayah);
   }
 
   @Override
@@ -47,8 +47,8 @@ public class DownloadAudioRequest extends AudioRequest {
   @Override
   public void writeToParcel(Parcel dest, int flags) {
     super.writeToParcel(dest, flags);
-    dest.writeParcelable(this.mQariItem, 0);
-    dest.writeString(this.mLocalDirectoryPath);
+    dest.writeParcelable(this.qariItem, 0);
+    dest.writeString(this.localDirectoryPath);
   }
 
   public static final Creator<DownloadAudioRequest> CREATOR = new Creator<DownloadAudioRequest>() {
