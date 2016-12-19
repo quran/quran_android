@@ -1,48 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/sort"
-          android:icon="@drawable/ic_sort"
-          android:title="@string/menu_sort"
-          android:visible="false"
-          android:enabled="false"
-          app:showAsAction="ifRoom" >
-          <menu>
-              <item android:id="@+id/sort_date"
-                  android:title="@string/menu_sort_date"
-                  app:showAsAction="withText" />
-              <item android:id="@+id/sort_location"
-                  android:title="@string/menu_sort_location"
-                  app:showAsAction="withText" />
-              <item android:id="@+id/group_by_tags"
-                  android:checkable="true"
-                  android:title="@string/menu_sort_group_by_tags"
-                  app:showAsAction="withText" />
-          </menu>
-    </item>
-    <item android:id="@+id/last_page"
-          android:icon="@drawable/ic_goto_quran"
-          android:title="@string/menu_jump_last_page"
-          app:showAsAction="ifRoom" />
-    <item android:id="@+id/search"
-          android:icon="@drawable/ic_ab_search"
-          android:title="@string/menu_search"
-          app:actionViewClass="android.support.v7.widget.SearchView"
-          app:showAsAction="ifRoom|collapseActionView" />
-    <item android:id="@+id/jump"
-          android:title="@string/menu_jump"
-          app:showAsAction="never" />
-    <item android:id="@+id/settings"
-          android:icon="@drawable/ic_action_settings"
-          android:title="@string/menu_settings"
-          app:showAsAction="never" />
-    <item android:id="@+id/help"
-          android:title="@string/menu_help"
-          app:showAsAction="never"/>
-    <item android:id="@+id/about"
-          android:title="@string/menu_about"
-          app:showAsAction="never"/>
-    <item android:id="@+id/other_apps"
-          android:title="@string/menu_other_apps"
-          app:showAsAction="never"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+  <item
+      android:id="@+id/sort"
+      android:enabled="false"
+      android:icon="@drawable/ic_sort"
+      android:title="@string/menu_sort"
+      android:visible="false"
+      tools:visible="true"
+      app:showAsAction="ifRoom">
+    <menu>
+      <group
+          android:checkableBehavior="single">
+        <item
+            android:id="@+id/sort_date"
+            android:title="@string/menu_sort_date"
+            app:showAsAction="withText" />
+        <item
+            android:id="@+id/sort_location"
+            android:title="@string/menu_sort_location"
+            app:showAsAction="withText" />
+      </group>
+      <item
+          android:id="@+id/group_by_tags"
+          android:checkable="true"
+          android:title="@string/menu_sort_group_by_tags"
+          app:showAsAction="withText" />
+    </menu>
+  </item>
+  <item
+      android:id="@+id/last_page"
+      android:icon="@drawable/ic_goto_quran"
+      android:title="@string/menu_jump_last_page"
+      app:showAsAction="ifRoom" />
+  <item
+      android:id="@+id/search"
+      android:icon="@drawable/ic_ab_search"
+      android:title="@string/menu_search"
+      app:actionViewClass="android.support.v7.widget.SearchView"
+      app:showAsAction="ifRoom|collapseActionView" />
+  <item
+      android:id="@+id/jump"
+      android:title="@string/menu_jump"
+      app:showAsAction="never" />
+  <item
+      android:id="@+id/settings"
+      android:icon="@drawable/ic_action_settings"
+      android:title="@string/menu_settings"
+      app:showAsAction="never" />
+  <item
+      android:id="@+id/help"
+      android:title="@string/menu_help"
+      app:showAsAction="never" />
+  <item
+      android:id="@+id/about"
+      android:title="@string/menu_about"
+      app:showAsAction="never" />
+  <item
+      android:id="@+id/other_apps"
+      android:title="@string/menu_other_apps"
+      app:showAsAction="never" />
 </menu>
