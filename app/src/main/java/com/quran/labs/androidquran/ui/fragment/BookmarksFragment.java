@@ -91,12 +91,13 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
       sortItem.setVisible(true);
       sortItem.setEnabled(true);
 
-      boolean isSortByDate =
-          BookmarksDBAdapter.SORT_DATE_ADDED == bookmarkPresenter.getSortOrder();
-      MenuItem sortByDate = menu.findItem(R.id.sort_date);
-      sortByDate.setVisible(!isSortByDate);
-      MenuItem sortByLocation = menu.findItem(R.id.sort_location);
-      sortByLocation.setVisible(isSortByDate);
+      if (BookmarksDBAdapter.SORT_DATE_ADDED == bookmarkPresenter.getSortOrder()) {
+        MenuItem sortByDate = menu.findItem(R.id.sort_date);
+        sortByDate.setChecked(true);
+      } else {
+        MenuItem sortByLocation = menu.findItem(R.id.sort_location);
+        sortByLocation.setChecked(true);
+      }
 
       MenuItem groupByTags = menu.findItem(R.id.group_by_tags);
       groupByTags.setChecked(bookmarkPresenter.isGroupedByTags());
@@ -109,17 +110,20 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     switch (itemId) {
       case R.id.sort_date:
         bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_DATE_ADDED);
-        break;
+        item.setChecked(true);
+        return true;
       case R.id.sort_location: {
         bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_LOCATION);
-        break;
+        item.setChecked(true);
+        return true;
       }
       case R.id.group_by_tags: {
         bookmarkPresenter.toggleGroupByTags();
-        break;
+        item.setChecked(bookmarkPresenter.isGroupedByTags());
+        return true;
       }
     }
-    getActivity().invalidateOptionsMenu();
+
     return super.onOptionsItemSelected(item);
   }
 
