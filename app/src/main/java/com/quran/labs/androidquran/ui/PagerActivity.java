@@ -1475,12 +1475,12 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     QariItem item = audioStatusBar.getAudioInfo();
-    if (settings.shouldStream()) {
-      playStreaming(start, end, page, item,
-          verseRepeat, rangeRepeat, enforceRange);
+    lastAudioDownloadRequest = getAudioDownloadRequest(start, end, page, item,
+        verseRepeat, rangeRepeat, enforceRange);
+    if (settings.shouldStream() && !AudioUtils.haveAllFiles(lastAudioDownloadRequest)) {
+      playStreaming(start, end, page, item, verseRepeat, rangeRepeat, enforceRange);
     } else {
-      downloadAndPlayAudio(start, end, page, item,
-          verseRepeat, rangeRepeat, enforceRange);
+      playAudioRequest(lastAudioDownloadRequest);
     }
   }
 
@@ -1491,8 +1491,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, item);
     if (!TextUtils.isEmpty(dbFile)) {
       // gapless audio is "download only"
-      downloadAndPlayAudio(ayah, end, page, item,
+      lastAudioDownloadRequest = getAudioDownloadRequest(ayah, end, page, item,
           verseRepeat, rangeRepeat, enforceRange);
+      playAudioRequest(lastAudioDownloadRequest);
       return;
     }
 
@@ -1516,7 +1517,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     audioStatusBar.setRepeatCount(verseRepeat);
   }
 
-  private void downloadAndPlayAudio(QuranAyah ayah, QuranAyah ending,
+  private DownloadAudioRequest getAudioDownloadRequest(QuranAyah ayah, QuranAyah ending,
                                     int page, @NonNull QariItem item, int verseRepeat,
                                     int rangeRepeat, boolean enforceBounds) {
     final QuranAyah endAyah;
@@ -1528,7 +1529,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
     String baseUri = AudioUtils.getLocalQariUrl(this, item);
     if (endAyah == null || baseUri == null) {
-      return;
+      return null;
     }
     String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, item);
 
@@ -1541,15 +1542,14 @@ public class PagerActivity extends QuranActionBarActivity implements
           AudioUtils.AUDIO_EXTENSION;
     }
 
-    DownloadAudioRequest request =
-        new DownloadAudioRequest(fileUrl, ayah, item, baseUri);
+    DownloadAudioRequest request = new DownloadAudioRequest(fileUrl, ayah, item, baseUri);
     request.setGaplessDatabaseFilePath(dbFile);
     request.setPlayBounds(ayah, endAyah);
     request.setEnforceBounds(enforceBounds);
     request.setRangeRepeatCount(rangeRepeat);
     request.setVerseRepeatCount(verseRepeat);
-    lastAudioDownloadRequest = request;
-    playAudioRequest(request);
+
+    return request;
   }
 
   private void playAudioRequest(DownloadAudioRequest request) {
