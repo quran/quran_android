@@ -1487,7 +1487,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void playStreaming(QuranAyah ayah, QuranAyah end,
                             int page, QariItem item, int verseRepeat,
                             int rangeRepeat, boolean enforceRange) {
-    String qariUrl = AudioUtils.getQariUrl(item, true);
+    String qariUrl = AudioUtils.getQariUrl(item);
     String dbFile = AudioUtils.getQariDatabasePathIfGapless(this, item);
     if (!TextUtils.isEmpty(dbFile)) {
       // gapless audio is "download only"
@@ -1617,7 +1617,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
 
         QuranAyah firstAyah = new QuranAyah(1, 1);
-        String qariUrl = AudioUtils.getQariUrl(request.getQariItem(), true);
+        String qariUrl = AudioUtils.getQariUrl(request.getQariItem());
         audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 
         if (isActionBarHidden) {
@@ -1646,7 +1646,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       String notificationTitle = QuranInfo.getNotificationTitle(this,
           request.getMinAyah(), request.getMaxAyah(), request.isGapless());
-      String qariUrl = AudioUtils.getQariUrl(request.getQariItem(), true);
+      String qariUrl = AudioUtils.getQariUrl(request.getQariItem());
       Timber.d("need to start download: %s", qariUrl);
 
       // start service

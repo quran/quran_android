@@ -79,14 +79,12 @@ public class AudioUtils {
     return items;
   }
 
-  public static String getQariUrl(@NonNull QariItem item, boolean addPlaceHolders) {
+  public static String getQariUrl(@NonNull QariItem item) {
     String url = item.getUrl();
-    if (addPlaceHolders) {
-      if (item.isGapless()) {
-        url += "%03d" + AudioUtils.AUDIO_EXTENSION;
-      } else {
-        url += "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
-      }
+    if (item.isGapless()) {
+      url += "%03d" + AudioUtils.AUDIO_EXTENSION;
+    } else {
+      url += "%03d%03d" + AudioUtils.AUDIO_EXTENSION;
     }
     return url;
   }

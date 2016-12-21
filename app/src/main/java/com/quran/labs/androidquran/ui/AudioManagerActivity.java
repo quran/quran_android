@@ -145,7 +145,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
     String sheikhName = qariItem.getName();
     Intent intent = ServiceIntentHelper.getDownloadIntent(this,
-        AudioUtils.getQariUrl(qariItem, true),
+        AudioUtils.getQariUrl(qariItem),
         baseUri, sheikhName, AUDIO_DOWNLOAD_KEY, QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
     intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, new QuranAyah(1, 1));
     intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, new QuranAyah(114, 6));
