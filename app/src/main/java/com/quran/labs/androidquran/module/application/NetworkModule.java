@@ -15,7 +15,7 @@ public class NetworkModule {
 
   @Provides
   @Singleton
-  OkHttpClient provideOkHttpClient() {
+  static OkHttpClient provideOkHttpClient() {
     return new OkHttpClient.Builder()
         .readTimeout(DEFAULT_READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .connectTimeout(DEFAULT_CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)

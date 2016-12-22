@@ -14,7 +14,7 @@ public class DatabaseModule {
 
   @Provides
   @Singleton
-  BookmarksDBAdapter provideBookmarkDatabaseAdapter(Context context) {
+  static BookmarksDBAdapter provideBookmarkDatabaseAdapter(Context context) {
     return new BookmarksDBAdapter(context);
   }
 }
