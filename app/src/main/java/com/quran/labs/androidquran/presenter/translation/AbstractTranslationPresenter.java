@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.presenter.translation;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.VerseRange;
@@ -15,13 +16,12 @@ import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
-class AbstractTranslationPresenter implements
-    Presenter<AbstractTranslationPresenter.TranslationScreen> {
+abstract class AbstractTranslationPresenter<T> implements Presenter<T> {
   private final Context appContext;
   private final TranslationModel translationModel;
 
-  private Disposable disposable;
-  private InlineTranslationPresenter.TranslationScreen translationScreen;
+  private @Nullable Disposable disposable;
+  private @Nullable T translationScreen;
 
   AbstractTranslationPresenter(Context context) {
     appContext = context.getApplicationContext();
@@ -55,9 +55,7 @@ class AbstractTranslationPresenter implements
     disposable = verses.subscribeWith(new DisposableSingleObserver<List<QuranAyah>>() {
       @Override
       public void onSuccess(List<QuranAyah> verses) {
-        if (translationScreen != null) {
-          translationScreen.setVerses(verses);
-        }
+        onData(translationScreen, verses);
       }
 
       @Override
@@ -66,17 +64,15 @@ class AbstractTranslationPresenter implements
     });
   }
 
+  abstract void onData(@Nullable T translationScreen, @NonNull List<QuranAyah> verses);
+
   @Override
-  public void bind(TranslationScreen what) {
+  public void bind(T what) {
     translationScreen = what;
   }
 
   @Override
-  public void unbind(TranslationScreen what) {
+  public void unbind(T what) {
     translationScreen = null;
-  }
-
-  public interface TranslationScreen {
-    void setVerses(@NonNull List<QuranAyah> verses);
   }
 }

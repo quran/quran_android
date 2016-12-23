@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -148,7 +149,7 @@ public class TranslationFragment extends Fragment
   }
 
   @Override
-  public void setVerses(List<QuranAyah> verses) {
+  public void setVerses(int page, @NonNull List<QuranAyah> verses) {
     translationView.setAyahs(verses);
     if (highlightedAyah > 0) {
       translationView.highlightAyah(highlightedAyah);
