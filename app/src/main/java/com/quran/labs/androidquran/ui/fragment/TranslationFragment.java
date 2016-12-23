@@ -56,8 +56,7 @@ public class TranslationFragment extends Fragment
     pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
 
     Context context = getContext();
-    presenter = new TranslationPresenter(context.getApplicationContext(), pageNumber,
-        QuranSettings.getInstance(context).wantArabicInTranslationView());
+    presenter = new TranslationPresenter(context.getApplicationContext(), pageNumber);
     if (savedInstanceState != null) {
       int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
       if (page == pageNumber) {
