@@ -1,9 +1,8 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,26 +13,34 @@ import android.widget.ProgressBar;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.task.TranslationTask;
+import com.quran.labs.androidquran.data.VerseRange;
+import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.TranslationView;
 import com.quran.labs.androidquran.widgets.QuranSpinner;
+import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 
-public class AyahTranslationFragment extends AyahActionFragment {
+public class AyahTranslationFragment extends AyahActionFragment
+    implements InlineTranslationPresenter.TranslationScreen {
 
   private ProgressBar progressBar;
   private TranslationView translationView;
   private View emptyState;
-  private AsyncTask currentTask;
   private LocalTranslation translationItem;
   private View translationControls;
   private QuranSpinner translator;
   private TranslationsSpinnerAdapter translationAdapter;
   private List<LocalTranslation> translations;
+  private InlineTranslationPresenter translationPresenter;
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    translationPresenter = new InlineTranslationPresenter(getContext().getApplicationContext());
+  }
 
   @Override
   public View onCreateView(LayoutInflater inflater,
@@ -58,6 +65,19 @@ public class AyahTranslationFragment extends AyahActionFragment {
         (Button) view.findViewById(R.id.get_translations_button);
     getTranslations.setOnClickListener(onClickListener);
     return view;
+  }
+
+  @Override
+  public void onResume() {
+    // currently needs to be before we call super.onResume
+    translationPresenter.bind(this);
+    super.onResume();
+  }
+
+  @Override
+  public void onPause() {
+    translationPresenter.unbind(this);
+    super.onPause();
   }
 
   private View.OnClickListener onClickListener = v -> {
@@ -123,41 +143,23 @@ public class AyahTranslationFragment extends AyahActionFragment {
         translationControls.setVisibility(View.GONE);
       }
 
-      int[] bounds = new int[]{ mStart.sura, mStart.ayah, mEnd.sura, mEnd.ayah };
-      if (currentTask != null) {
-        currentTask.cancel(true);
-      }
-
       int pos = translationAdapter.getPositionForActiveTranslation();
       translationItem = translationAdapter.getTranslationItem(pos);
       translator.setSelection(pos);
-      currentTask = new ShowTafsirTask(activity, bounds, translationItem.filename).execute();
+
+      VerseRange verseRange = new VerseRange(mStart.sura, mStart.ayah, mEnd.sura, mEnd.ayah);
+      translationPresenter.refresh(verseRange, translationItem.filename);
     }
   }
 
-  private class ShowTafsirTask extends TranslationTask {
-
-    ShowTafsirTask(Context context, int[] bounds, String db) {
-      super(context, bounds, db);
-      progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    protected boolean loadArabicAyahText() {
-      return false;
-    }
-
-    @Override
-    protected void onPostExecute(List<QuranAyah> result) {
-      progressBar.setVisibility(View.GONE);
-      if (result != null) {
-        emptyState.setVisibility(View.GONE);
-        translationView.setAyahs(result);
-      } else {
-        emptyState.setVisibility(View.VISIBLE);
-      }
-      currentTask = null;
+  @Override
+  public void setVerses(@NonNull List<QuranAyah> verses) {
+    progressBar.setVisibility(View.GONE);
+    if (verses.size() > 0) {
+      emptyState.setVisibility(View.GONE);
+      translationView.setAyahs(verses);
+    } else {
+      emptyState.setVisibility(View.VISIBLE);
     }
   }
-
 }
