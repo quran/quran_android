@@ -10,9 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.task.TranslationTask;
+import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -21,10 +22,11 @@ import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
+import java.util.List;
 import java.util.Set;
 
 public class TranslationFragment extends Fragment
-    implements AyahTracker {
+    implements AyahTracker, TranslationPresenter.TranslationScreen {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
@@ -38,7 +40,7 @@ public class TranslationFragment extends Fragment
 
   private Resources resources;
   private QuranSettings quranSettings;
-  private boolean justCreated;
+  private TranslationPresenter presenter;
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -51,8 +53,11 @@ public class TranslationFragment extends Fragment
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    pageNumber = getArguments() != null ?
-        getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
+    pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
+
+    Context context = getContext();
+    presenter = new TranslationPresenter(context.getApplicationContext(), pageNumber,
+        QuranSettings.getInstance(context).wantArabicInTranslationView());
     if (savedInstanceState != null) {
       int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
       if (page == pageNumber) {
@@ -83,11 +88,6 @@ public class TranslationFragment extends Fragment
       }
     });
 
-    updateView();
-    justCreated = true;
-
-    String database = quranSettings.getActiveTranslation();
-    refresh(database);
     return mainView;
   }
 
@@ -97,17 +97,14 @@ public class TranslationFragment extends Fragment
   }
 
   public void updateView() {
-    if (getActivity() == null || resources == null ||
-        mainView == null || !isAdded()) {
+    if (getActivity() == null || resources == null || mainView == null || !isAdded()) {
       return;
     }
 
     final boolean nightMode = quranSettings.isNightMode();
     final boolean useNewBackground = quranSettings.useNewBackground();
     mainView.updateView(nightMode, useNewBackground, 1);
-    if (mainView.getTranslationView().isDataMissing()) {
-      refresh(quranSettings.getActiveTranslation());
-    }
+    refresh();
   }
 
   @Override
@@ -152,23 +149,28 @@ public class TranslationFragment extends Fragment
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
-    if (!justCreated) {
-      updateView();
-      translationView.refresh();
+  public void setVerses(List<QuranAyah> verses) {
+    translationView.setAyahs(verses);
+    if (highlightedAyah > 0) {
+      translationView.highlightAyah(highlightedAyah);
     }
-    justCreated = false;
   }
 
-  public void refresh(String database) {
-    if (database != null) {
-      Activity activity = getActivity();
-      if (activity != null) {
-        new TranslationTask(activity, pageNumber,
-            highlightedAyah, database, translationView).execute();
-      }
-    }
+  @Override
+  public void onResume() {
+    super.onResume();
+    presenter.bind(this);
+    updateView();
+  }
+
+  @Override
+  public void onPause() {
+    presenter.unbind(this);
+    super.onPause();
+  }
+
+  public void refresh() {
+    presenter.refresh();
   }
 
   @Override

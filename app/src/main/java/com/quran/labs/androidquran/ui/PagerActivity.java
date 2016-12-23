@@ -1093,7 +1093,7 @@ public class PagerActivity extends QuranActionBarActivity implements
               Fragment f = pagerAdapter
                   .getFragmentIfExists(pos + count);
               if (f instanceof TranslationFragment) {
-                ((TranslationFragment) f).refresh(item.filename);
+                ((TranslationFragment) f).refresh();
               } else if (f instanceof TabletFragment) {
                 ((TabletFragment) f).refresh(item.filename);
               }
@@ -1713,7 +1713,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     if (start == null) {
-      final Integer[] bounds = QuranInfo.getPageBounds(getCurrentPage());
+      final int[] bounds = QuranInfo.getPageBounds(getCurrentPage());
       start = new SuraAyah(bounds[0], bounds[1]);
       end = start;
     }

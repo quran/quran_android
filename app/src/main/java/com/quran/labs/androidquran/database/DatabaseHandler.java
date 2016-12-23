@@ -7,14 +7,20 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.provider.BaseColumns;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +47,13 @@ public class DatabaseHandler {
   private int schemaVersion = 1;
   private String matchString;
   private SQLiteDatabase database = null;
+
+  @Retention(RetentionPolicy.SOURCE)
+  @IntDef( { TextType.ARABIC, TextType.TRANSLATION } )
+  public @interface TextType {
+    int ARABIC = 0;
+    int TRANSLATION = 1;
+  }
 
   public static synchronized DatabaseHandler getDatabaseHandler(
       Context context, String databaseName) {
@@ -116,8 +129,47 @@ public class DatabaseHandler {
     return getVerses(sura, minAyah, sura, maxAyah, table);
   }
 
+  /**
+   * @deprecated use {@link #getVerses(VerseRange, int)} instead
+   *
+   * @param minSura start sura
+   * @param minAyah start ayah
+   * @param maxSura end sura
+   * @param maxAyah end ayah
+   * @param table the table
+   * @return a Cursor with the data
+   */
   public Cursor getVerses(int minSura, int minAyah, int maxSura,
                           int maxAyah, String table) {
+    return getVersesInternal(new VerseRange(minSura, minAyah, maxSura, maxAyah), table);
+  }
+
+  public List<QuranAyah> getVerses(VerseRange verses, @TextType int textType) {
+    Cursor cursor = null;
+    List<QuranAyah> results = new ArrayList<>();
+    try {
+      String table = textType == TextType.ARABIC ? ARABIC_TEXT_TABLE : VERSE_TABLE;
+      cursor = getVersesInternal(verses, table);
+      while (cursor != null && cursor.moveToNext()) {
+        int sura = cursor.getInt(1);
+        int ayah = cursor.getInt(2);
+        String text = cursor.getString(3);
+
+        QuranAyah quranAyah = new QuranAyah(sura, ayah);
+        if (textType == TextType.TRANSLATION) {
+          quranAyah.setTranslation(text);
+        } else {
+          quranAyah.setText(text);
+        }
+        results.add(quranAyah);
+      }
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+    return results;
+  }
+
+  private Cursor getVersesInternal(VerseRange verses, String table) {
     if (!validDatabase()) {
         return null;
     }
@@ -125,33 +177,33 @@ public class DatabaseHandler {
     StringBuilder whereQuery = new StringBuilder();
     whereQuery.append("(");
 
-    if (minSura == maxSura) {
+    if (verses.startSura == verses.endingSura) {
       whereQuery.append(COL_SURA)
-          .append("=").append(minSura)
+          .append("=").append(verses.startSura)
           .append(" and ").append(COL_AYAH)
-          .append(">=").append(minAyah)
+          .append(">=").append(verses.startAyah)
           .append(" and ").append(COL_AYAH)
-          .append("<=").append(maxAyah);
+          .append("<=").append(verses.endingAyah);
     } else {
       // (sura = minSura and ayah >= minAyah)
       whereQuery.append("(").append(COL_SURA).append("=")
-          .append(minSura).append(" and ")
-          .append(COL_AYAH).append(">=").append(minAyah).append(")");
+          .append(verses.startSura).append(" and ")
+          .append(COL_AYAH).append(">=").append(verses.startAyah).append(")");
 
       whereQuery.append(" or ");
 
       // (sura = maxSura and ayah <= maxAyah)
       whereQuery.append("(").append(COL_SURA).append("=")
-          .append(maxSura).append(" and ")
-          .append(COL_AYAH).append("<=").append(maxAyah).append(")");
+          .append(verses.endingSura).append(" and ")
+          .append(COL_AYAH).append("<=").append(verses.endingAyah).append(")");
 
       whereQuery.append(" or ");
 
       // (sura > minSura and sura < maxSura)
       whereQuery.append("(").append(COL_SURA).append(">")
-          .append(minSura).append(" and ")
+          .append(verses.startSura).append(" and ")
           .append(COL_SURA).append("<")
-          .append(maxSura).append(")");
+          .append(verses.endingSura).append(")");
     }
 
     whereQuery.append(")");
@@ -162,6 +214,12 @@ public class DatabaseHandler {
         COL_SURA + "," + COL_AYAH);
   }
 
+  /**
+   * @deprecated use {@link #getVerses(VerseRange, int)} instead
+   * @param sura the sura
+   * @param ayah the ayah
+   * @return the result
+   */
   public Cursor getVerse(int sura, int ayah) {
     return getVerses(sura, ayah, ayah);
   }

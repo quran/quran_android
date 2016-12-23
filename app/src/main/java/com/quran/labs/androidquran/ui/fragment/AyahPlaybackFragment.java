@@ -281,14 +281,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       } else {
         start = mStart;
         if (mStart.equals(mEnd)) {
-          final Integer[] pageBounds =
-              QuranInfo.getPageBounds(start.getPage());
-          if (pageBounds != null) {
-            ending = new SuraAyah(pageBounds[2], pageBounds[3]);
-          } else {
-            ending = new SuraAyah(start.sura,
-                QuranInfo.getNumAyahs(start.sura));
-          }
+          final int[] pageBounds = QuranInfo.getPageBounds(start.getPage());
+          ending = new SuraAyah(pageBounds[2], pageBounds[3]);
           mShouldEnforce = false;
         } else {
           ending = mEnd;
