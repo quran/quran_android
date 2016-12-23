@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.data;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.quran.labs.androidquran.R;
@@ -163,12 +164,18 @@ public class BaseQuranInfo {
     return info;
   }
 
-  public static Integer[] getPageBounds(int page) {
+  public static VerseRange getVerseRangeForPage(int page) {
+    int[] result = getPageBounds(page);
+    return new VerseRange(result[0], result[1], result[2], result[3]);
+  }
+
+  @NonNull
+  public static int[] getPageBounds(int page) {
     if (page > PAGES_LAST)
       page = PAGES_LAST;
     if (page < 1) page = 1;
 
-    Integer[] bounds = new Integer[4];
+    int[] bounds = new int[4];
     bounds[0] = PAGE_SURA_START[page - 1];
     bounds[1] = PAGE_AYAH_START[page - 1];
     if (page == PAGES_LAST) {
@@ -292,20 +299,18 @@ public class BaseQuranInfo {
 
   public static Set<String> getAyahKeysOnPage(int page, SuraAyah lowerBound, SuraAyah upperBound) {
     Set<String> ayahKeys = new LinkedHashSet<>();
-    Integer[] bounds = QuranInfo.getPageBounds(page);
-    if (bounds != null) {
-      SuraAyah start = new SuraAyah(bounds[0], bounds[1]);
-      SuraAyah end = new SuraAyah(bounds[2], bounds[3]);
-      if (lowerBound != null) {
-        start = SuraAyah.max(start, lowerBound);
-      }
-      if (upperBound != null) {
-        end = SuraAyah.min(end, upperBound);
-      }
-      SuraAyah.Iterator iterator = SuraAyah.getIterator(start, end);
-      while (iterator.next()) {
-        ayahKeys.add(iterator.getSura() + ":" + iterator.getAyah());
-      }
+    int[] bounds = QuranInfo.getPageBounds(page);
+    SuraAyah start = new SuraAyah(bounds[0], bounds[1]);
+    SuraAyah end = new SuraAyah(bounds[2], bounds[3]);
+    if (lowerBound != null) {
+      start = SuraAyah.max(start, lowerBound);
+    }
+    if (upperBound != null) {
+      end = SuraAyah.min(end, upperBound);
+    }
+    SuraAyah.Iterator iterator = SuraAyah.getIterator(start, end);
+    while (iterator.next()) {
+      ayahKeys.add(iterator.getSura() + ":" + iterator.getAyah());
     }
     return ayahKeys;
   }

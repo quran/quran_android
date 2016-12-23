@@ -27,14 +27,13 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
   private Context context;
 
-  private Integer[] ayahBounds;
+  private int[] ayahBounds;
   private int highlightedAyah;
   private String databaseName = null;
   private boolean isMissingData;
   private WeakReference<TranslationView> translationView;
 
-  public TranslationTask(Context context, Integer[] ayahBounds,
-      String databaseName) {
+  public TranslationTask(Context context, int[] ayahBounds, String databaseName) {
     this.context = context;
     this.databaseName = databaseName;
     this.ayahBounds = ayahBounds;
@@ -58,11 +57,7 @@ public class TranslationTask extends AsyncTask<Void, Void, List<QuranAyah>> {
 
   @Override
   protected List<QuranAyah> doInBackground(Void... params) {
-    Integer[] bounds = ayahBounds;
-    if (bounds == null) {
-      return null;
-    }
-
+    int[] bounds = ayahBounds;
     String databaseName = this.databaseName;
 
     // is this an arabic translation/tafseer or not

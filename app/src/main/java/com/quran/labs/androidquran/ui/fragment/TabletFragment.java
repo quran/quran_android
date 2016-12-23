@@ -124,19 +124,9 @@ public class TabletFragment extends Fragment
           ((QuranTranslationPageLayout) mMainView.getRightPage()).getTranslationView();
 
       mLeftTranslation.setTranslationClickedListener(
-          new TranslationView.TranslationClickedListener() {
-            @Override
-            public void onTranslationClicked() {
-              ((PagerActivity) getActivity()).toggleActionBar();
-            }
-          });
+          () -> ((PagerActivity) getActivity()).toggleActionBar());
       mRightTranslation.setTranslationClickedListener(
-          new TranslationView.TranslationClickedListener() {
-            @Override
-            public void onTranslationClicked() {
-              ((PagerActivity) getActivity()).toggleActionBar();
-            }
-          });
+          () -> ((PagerActivity) getActivity()).toggleActionBar());
       mMainView.setPageController(null, mPageNumber, mPageNumber - 1);
     }
 

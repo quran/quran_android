@@ -123,8 +123,7 @@ public class AyahTranslationFragment extends AyahActionFragment {
         translationControls.setVisibility(View.GONE);
       }
 
-      Integer[] bounds = new Integer[]{ mStart.sura,
-          mStart.ayah, mEnd.sura, mEnd.ayah };
+      int[] bounds = new int[]{ mStart.sura, mStart.ayah, mEnd.sura, mEnd.ayah };
       if (currentTask != null) {
         currentTask.cancel(true);
       }
@@ -132,14 +131,13 @@ public class AyahTranslationFragment extends AyahActionFragment {
       int pos = translationAdapter.getPositionForActiveTranslation();
       translationItem = translationAdapter.getTranslationItem(pos);
       translator.setSelection(pos);
-      currentTask = new ShowTafsirTask(activity, bounds,
-          translationItem.filename).execute();
+      currentTask = new ShowTafsirTask(activity, bounds, translationItem.filename).execute();
     }
   }
 
   private class ShowTafsirTask extends TranslationTask {
 
-    ShowTafsirTask(Context context, Integer[] bounds, String db) {
+    ShowTafsirTask(Context context, int[] bounds, String db) {
       super(context, bounds, db);
       progressBar.setVisibility(View.VISIBLE);
     }
