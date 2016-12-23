@@ -1090,12 +1090,11 @@ public class PagerActivity extends QuranActionBarActivity implements
               if (pos + count < 0) {
                 continue;
               }
-              Fragment f = pagerAdapter
-                  .getFragmentIfExists(pos + count);
+              Fragment f = pagerAdapter.getFragmentIfExists(pos + count);
               if (f instanceof TranslationFragment) {
                 ((TranslationFragment) f).refresh();
               } else if (f instanceof TabletFragment) {
-                ((TabletFragment) f).refresh(item.filename);
+                ((TabletFragment) f).refresh();
               }
             }
           }

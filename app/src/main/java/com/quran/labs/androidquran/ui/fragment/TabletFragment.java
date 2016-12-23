@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,9 +21,9 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
 import com.quran.labs.androidquran.task.QueryPageCoordsTask;
-import com.quran.labs.androidquran.task.TranslationTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
@@ -57,7 +58,7 @@ import timber.log.Timber;
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
-    implements AyahTracker, PageController {
+    implements AyahTracker, PageController, TranslationPresenter.TranslationScreen {
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
 
@@ -75,8 +76,10 @@ public class TabletFragment extends Fragment
   private List<Map<String, List<AyahBounds>>> coordinateData;
   private TranslationView leftTranslation, rightTranslation = null;
   private HighlightingImageView leftImageView, rightImageView = null;
-  private QuranSettings quranSettings;
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+  private TranslationPresenter leftPageTranslationPresenter;
+  private TranslationPresenter rightPageTranslationPresenter;
 
   private TabletView mainView;
 
@@ -102,6 +105,16 @@ public class TabletFragment extends Fragment
     pageNumber = getArguments() != null ?
         getArguments().getInt(FIRST_PAGE_EXTRA) : -1;
     setHasOptionsMenu(true);
+
+    mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
+    if (mode == Mode.TRANSLATION) {
+      Context context = getContext();
+      leftPageTranslationPresenter = new TranslationPresenter(context, pageNumber);
+      rightPageTranslationPresenter = new TranslationPresenter(context, pageNumber - 1);
+
+      leftPageTranslationPresenter.bind(this);
+      rightPageTranslationPresenter.bind(this);
+    }
   }
 
   @Override
@@ -134,9 +147,17 @@ public class TabletFragment extends Fragment
     justCreated = true;
 
     lastHighlightedPage = 0;
-    quranSettings = QuranSettings.getInstance(context);
-    mOverlayText = quranSettings.shouldOverlayPageInfo();
+    mOverlayText = QuranSettings.getInstance(context).shouldOverlayPageInfo();
     return mainView;
+  }
+
+  @Override
+  public void onDestroy() {
+    if (rightPageTranslationPresenter != null) {
+      leftPageTranslationPresenter.unbind(this);
+      rightPageTranslationPresenter.unbind(this);
+    }
+    super.onDestroy();
   }
 
   @Override
@@ -213,28 +234,23 @@ public class TabletFragment extends Fragment
         highlightTagsTask();
       }
     } else if (mode == Mode.TRANSLATION) {
-      if (context != null) {
-        String database = quranSettings.getActiveTranslation();
-        if (database != null) {
-          new TranslationTask(context, pageNumber - 1, 0,
-              database, rightTranslation).execute();
-          new TranslationTask(context, pageNumber, 0,
-              database, leftTranslation).execute();
-        }
-      }
+      leftPageTranslationPresenter.refresh();
+      rightPageTranslationPresenter.refresh();
     }
   }
 
-  public void refresh(String database) {
-    if (database != null) {
-      Activity activity = getActivity();
-      if (activity != null) {
-        new TranslationTask(activity, pageNumber - 1, 0,
-            database, rightTranslation).execute();
-        new TranslationTask(activity, pageNumber, 0,
-            database, leftTranslation).execute();
-      }
+  @Override
+  public void setVerses(int page, @NonNull List<QuranAyah> verses) {
+    if (page == pageNumber) {
+      leftTranslation.setAyahs(verses);
+    } else if (page == pageNumber - 1) {
+      rightTranslation.setAyahs(verses);
     }
+  }
+
+  public void refresh() {
+    leftPageTranslationPresenter.refresh();
+    rightPageTranslationPresenter.refresh();
   }
 
   public void cleanup() {
