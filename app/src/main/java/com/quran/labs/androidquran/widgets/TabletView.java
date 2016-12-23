@@ -18,57 +18,56 @@ public class TabletView extends LinearLayout {
   @IntDef( { QURAN_PAGE, TRANSLATION_PAGE } )
   public @interface TabletPageType {}
 
-  private Context mContext;
-  private QuranPageLayout mLeftPage;
-  private QuranPageLayout mRightPage;
+  private Context context;
+  private QuranPageLayout leftPage;
+  private QuranPageLayout rightPage;
 
   public TabletView(Context context) {
     super(context);
-    mContext = context;
+    this.context = context;
     setOrientation(HORIZONTAL);
   }
 
   public void init(@TabletPageType int leftPageType, @TabletPageType int rightPageType) {
-    mLeftPage = getPageLayout(leftPageType);
-    mRightPage = getPageLayout(rightPageType);
+    leftPage = getPageLayout(leftPageType);
+    rightPage = getPageLayout(rightPageType);
 
     final LayoutParams leftParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
     leftParams.weight = 1;
-    addView(mLeftPage, leftParams);
+    addView(leftPage, leftParams);
 
     final LayoutParams rightParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
     rightParams.weight = 1;
-    addView(mRightPage, rightParams);
+    addView(rightPage, rightParams);
   }
 
   private QuranPageLayout getPageLayout(@TabletPageType int type) {
     switch (type) {
       case TRANSLATION_PAGE: {
-        return new QuranTranslationPageLayout(mContext);
+        return new QuranTranslationPageLayout(context);
       }
       case QURAN_PAGE:
       default: {
-        return new QuranTabletImagePageLayout(mContext);
+        return new QuranTabletImagePageLayout(context);
       }
     }
   }
 
-  public void setPageController(PageController controller,
-      int leftPage, int rightPage) {
-    mLeftPage.setPageController(controller, leftPage);
-    mRightPage.setPageController(controller, rightPage);
+  public void setPageController(PageController controller, int leftPage, int rightPage) {
+    this.leftPage.setPageController(controller, leftPage);
+    this.rightPage.setPageController(controller, rightPage);
   }
 
   public void updateView(boolean nightMode, boolean useNewBackground) {
-    mLeftPage.updateView(nightMode, useNewBackground, 2);
-    mRightPage.updateView(nightMode, useNewBackground, 2);
+    leftPage.updateView(nightMode, useNewBackground, 2);
+    rightPage.updateView(nightMode, useNewBackground, 2);
   }
 
   public QuranPageLayout getLeftPage() {
-    return mLeftPage;
+    return leftPage;
   }
 
   public QuranPageLayout getRightPage() {
-    return mRightPage;
+    return rightPage;
   }
 }

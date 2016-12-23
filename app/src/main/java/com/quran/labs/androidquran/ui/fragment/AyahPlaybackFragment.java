@@ -143,9 +143,9 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           !currentEnding.equals(mDecidedEnd)) {
         // different range or not playing, so make a new request
         updatedRange = true;
-        if (mStart != null) {
+        if (this.start != null) {
           final int origPage = mDecidedStart == null ?
-              mStart.getPage() : mDecidedStart.getPage();
+              this.start.getPage() : mDecidedStart.getPage();
           if (page != origPage) {
             pagerActivity.highlightAyah(currentStart.sura,
                 currentStart.ayah, HighlightType.AUDIO);
@@ -264,7 +264,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   @Override
   protected void refreshView() {
     final Context context = getActivity();
-    if (context instanceof PagerActivity && mStart != null && mEnd != null) {
+    if (context instanceof PagerActivity && start != null && end != null) {
       final AudioRequest lastRequest =
           ((PagerActivity) context).getLastAudioRequest();
       final SuraAyah start;
@@ -279,13 +279,13 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         mDecidedEnd = ending;
         mApplyButton.setText(R.string.play_apply);
       } else {
-        start = mStart;
-        if (mStart.equals(mEnd)) {
+        start = this.start;
+        if (this.start.equals(end)) {
           final int[] pageBounds = QuranInfo.getPageBounds(start.getPage());
           ending = new SuraAyah(pageBounds[2], pageBounds[3]);
           mShouldEnforce = false;
         } else {
-          ending = mEnd;
+          ending = end;
           mShouldEnforce = true;
         }
         mRangeRepeatCount = 0;

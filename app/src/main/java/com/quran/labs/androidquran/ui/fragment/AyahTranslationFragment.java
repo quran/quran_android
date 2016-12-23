@@ -100,7 +100,7 @@ public class AyahTranslationFragment extends AyahActionFragment
   };
 
   public void refreshView() {
-    if (mStart == null || mEnd == null) { return; }
+    if (start == null || end == null) { return; }
 
     final Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
@@ -137,7 +137,7 @@ public class AyahTranslationFragment extends AyahActionFragment
         });
       }
 
-      if (mStart.equals(mEnd)) {
+      if (start.equals(end)) {
         translationControls.setVisibility(View.VISIBLE);
       } else {
         translationControls.setVisibility(View.GONE);
@@ -147,7 +147,7 @@ public class AyahTranslationFragment extends AyahActionFragment
       translationItem = translationAdapter.getTranslationItem(pos);
       translator.setSelection(pos);
 
-      VerseRange verseRange = new VerseRange(mStart.sura, mStart.ayah, mEnd.sura, mEnd.ayah);
+      VerseRange verseRange = new VerseRange(start.sura, start.ayah, end.sura, end.ayah);
       translationPresenter.refresh(verseRange, translationItem.filename);
     }
   }
