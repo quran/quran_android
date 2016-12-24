@@ -6,7 +6,6 @@ import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -53,6 +52,7 @@ import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
+import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -166,7 +166,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private DefaultDownloadReceiver downloadReceiver;
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
-  private AyahInfoDatabaseHandler ayahInfoAdapter, tabletAyahInfoAdapter;
   private AyahToolBar ayahToolBar;
   private AyahToolBarPosition ayahToolBarPos;
   private AudioRequest lastAudioRequest;
@@ -201,6 +200,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranPageWorker quranPageWorker;
   @Inject BookmarkModel bookmarkModel;
   @Inject RecentPagePresenter recentPagePresenter;
+  @Inject AyahInfoDatabaseProvider ayahInfoDatabaseProvider;
   private CompositeDisposable compositeDisposable;
 
   private final PagerHandler handler = new PagerHandler(this);
@@ -245,28 +245,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     // that is used to generate preview windows).
     getWindow().setBackgroundDrawable(null);
 
-    // initialize ayah info database
-    String filename = QuranFileUtils.getAyaPositionFileName();
-    try {
-      ayahInfoAdapter = AyahInfoDatabaseHandler.getDatabaseHandler(this, filename);
-    } catch (Exception e) {
-      // no ayah info database available
-    }
-
-    tabletAyahInfoAdapter = null;
-    if (qsi.isTablet(this)) {
-      try {
-        filename = QuranFileUtils.getAyaPositionFileName(
-            qsi.getTabletWidthParam());
-        tabletAyahInfoAdapter =
-            AyahInfoDatabaseHandler.getDatabaseHandler(this, filename);
-      } catch (Exception e) {
-        // no ayah info database available for tablet
-      }
-    }
-
     int page = -1;
-
     isActionBarHidden = true;
     if (savedInstanceState != null) {
       Timber.d("non-null saved instance state!");
@@ -710,20 +689,16 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     if (highlightedSura > 0 && highlightedAyah > 0) {
-      handler.postDelayed(
-          new Runnable() {
-            public void run() {
-              highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION);
-            }
-          }, 750);
+      handler.postDelayed(() ->
+          highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION), 750);
     }
   }
 
   public AyahInfoDatabaseHandler getAyahInfoDatabase(String widthParam) {
     if (QuranScreenInfo.getInstance().getWidthParam().equals(widthParam)) {
-      return ayahInfoAdapter;
+      return ayahInfoDatabaseProvider.getAyahInfoHandler();
     } else {
-      return tabletAyahInfoAdapter;
+      return ayahInfoDatabaseProvider.getTabletAyahInfoHandler();
     }
   }
 
@@ -734,19 +709,15 @@ public class PagerActivity extends QuranActionBarActivity implements
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(R.string.download_extra_data)
         .setPositiveButton(R.string.downloadPrompt_ok,
-            new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int option) {
-                downloadRequiredFiles();
-                dialog.dismiss();
-                promptDialog = null;
-              }
+            (dialog, option) -> {
+              downloadRequiredFiles();
+              dialog.dismiss();
+              promptDialog = null;
             })
         .setNegativeButton(R.string.downloadPrompt_no,
-            new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int option) {
-                dialog.dismiss();
-                promptDialog = null;
-              }
+            (dialog, option) -> {
+              dialog.dismiss();
+              promptDialog = null;
             });
     promptDialog = builder.create();
     promptDialog.show();
