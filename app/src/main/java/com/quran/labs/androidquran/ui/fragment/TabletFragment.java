@@ -28,6 +28,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.PageDownloadListener;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
@@ -58,7 +59,8 @@ import timber.log.Timber;
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
-    implements AyahTracker, PageController, TranslationPresenter.TranslationScreen {
+    implements AyahTracker, PageController, PageDownloadListener,
+    TranslationPresenter.TranslationScreen {
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
 
@@ -328,12 +330,12 @@ public class TabletFragment extends Fragment
               String suraText = QuranInfo.getSuraNameFromPage(context, pageNumber - 1, true);
               String juzText = QuranInfo.getJuzString(context, pageNumber - 1);
               String pageText = QuranUtils.getLocalizedNumber(context, pageNumber - 1);
-              String rub3Text =QuranDisplayHelper.displayRub3(context,pageNumber - 1);
+              String rub3Text = QuranDisplayHelper.displayRub3(context, pageNumber - 1);
               rightImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
               suraText = QuranInfo.getSuraNameFromPage(context, pageNumber, true);
               juzText = QuranInfo.getJuzString(context, pageNumber);
               pageText = QuranUtils.getLocalizedNumber(context, pageNumber);
-              rub3Text = QuranDisplayHelper.displayRub3(context,pageNumber);
+              rub3Text = QuranDisplayHelper.displayRub3(context, pageNumber);
               leftImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
             }
           }
@@ -385,7 +387,7 @@ public class TabletFragment extends Fragment
   }
 
   private boolean checkCoordinateData(MotionEvent event,
-      EventType eventType, int page) {
+                                      EventType eventType, int page) {
     // Check files downloaded
     if (!QuranFileUtils.haveAyaPositionFile(getActivity()) ||
         !QuranFileUtils.hasArabicSearchDatabase(getActivity())) {
@@ -440,7 +442,7 @@ public class TabletFragment extends Fragment
 
   @Override
   public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
-      int toolBarWidth, int toolBarHeight) {
+                                                            int toolBarWidth, int toolBarHeight) {
     final String key = sura + ":" + ayah;
     List<AyahBounds> bounds = null;
     if (coordinateData != null) {
@@ -574,7 +576,7 @@ public class TabletFragment extends Fragment
 
   @Override
   public boolean handleTouchEvent(MotionEvent event,
-      EventType eventType, int page) {
+                                  EventType eventType, int page) {
     if (eventType == EventType.DOUBLE_TAP) {
       unHighlightAyahs(HighlightType.SELECTION);
     }

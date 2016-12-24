@@ -37,12 +37,7 @@ public class QuranImagePageLayout extends QuranPageLayout {
     super.setPageController(controller, pageNumber);
     final GestureDetector gestureDetector = new GestureDetector(context,
         new PageGestureDetector());
-    OnTouchListener gestureListener = new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
-      }
-    };
+    OnTouchListener gestureListener = (v, event) -> gestureDetector.onTouchEvent(event);
     imageView.setOnTouchListener(gestureListener);
     imageView.setClickable(true);
     imageView.setLongClickable(true);
