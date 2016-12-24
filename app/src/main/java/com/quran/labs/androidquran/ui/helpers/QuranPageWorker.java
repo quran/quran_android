@@ -22,7 +22,7 @@ import javax.inject.Singleton;
 public class QuranPageWorker {
   private static final int MSG_IMAGE_LOADED = 1;
 
-  private static final WorkerHandler sHandler = new WorkerHandler();
+  private static final WorkerHandler handler = new WorkerHandler();
   private static final ExecutorService executorService = new QuranExecutorService();
 
   private final Context appContext;
@@ -32,17 +32,16 @@ public class QuranPageWorker {
   QuranPageWorker(Context context) {
     appContext = context.getApplicationContext();
     resources = appContext.getResources();
-    sHandler.setQuranPageWorker(this);
+    handler.setQuranPageWorker(this);
   }
 
   public static void submitResult(QuranPageTask.QuranTaskData quranTaskData) {
-    final Message message = sHandler.obtainMessage(MSG_IMAGE_LOADED, quranTaskData);
-    sHandler.sendMessage(message);
+    final Message message = handler.obtainMessage(MSG_IMAGE_LOADED, quranTaskData);
+    handler.sendMessage(message);
   }
 
-  public Future<?> loadPage(String widthParam, int page, AyahTracker tracker) {
-    QuranPageTask task = new QuranPageTask(appContext,
-        widthParam, tracker, page);
+  public Future<?> loadPage(String widthParam, int page, PageDownloadListener listener) {
+    QuranPageTask task = new QuranPageTask(appContext, widthParam, listener, page);
     return executorService.submit(task);
   }
 
@@ -57,11 +56,9 @@ public class QuranPageWorker {
       }
     }
 
-    final AyahTracker ayahTracker =
-        quranTaskData.getAyahTrackerReference().get();
-    if (ayahTracker != null) {
-      ayahTracker.onLoadImageResponse(drawable,
-          Response.lightResponse(response));
+    final PageDownloadListener pageDownloadListener = quranTaskData.getAyahTrackerReference().get();
+    if (pageDownloadListener != null) {
+      pageDownloadListener.onLoadImageResponse(drawable, Response.lightResponse(response));
     }
   }
 
@@ -80,4 +77,5 @@ public class QuranPageWorker {
       }
     }
   }
+
 }

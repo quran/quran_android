@@ -29,6 +29,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.PageDownloadListener;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
@@ -58,7 +59,8 @@ import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
-public class QuranPageFragment extends Fragment implements AyahTracker, PageController {
+public class QuranPageFragment extends Fragment
+    implements AyahTracker, PageController, PageDownloadListener {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private int pageNumber;
@@ -72,6 +74,7 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
   private Future<?> pageLoadTask;
 
   @Inject BookmarkModel bookmarkModel;
+  @Inject QuranPageWorker quranPageWorker;
 
   private HighlightingImageView imageView;
   private QuranImagePageLayout quranPageLayout;
@@ -89,8 +92,7 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    pageNumber = getArguments() != null ?
-        getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
+    pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
     setHasOptionsMenu(true);
   }
 
@@ -185,10 +187,8 @@ public class QuranPageFragment extends Fragment implements AyahTracker, PageCont
   }
 
   private void downloadImage() {
-    final Activity activity = getActivity();
-    if (activity instanceof PagerActivity) {
-      QuranPageWorker worker = ((PagerActivity) activity).getQuranPageWorker();
-      pageLoadTask = worker.loadPage(
+    if (isAdded()) {
+      pageLoadTask = quranPageWorker.loadPage(
           QuranScreenInfo.getInstance().getWidthParam(),
           pageNumber, QuranPageFragment.this);
     }

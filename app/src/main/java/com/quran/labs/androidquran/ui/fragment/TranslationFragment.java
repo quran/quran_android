@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -89,11 +87,6 @@ public class TranslationFragment extends Fragment
     });
 
     return mainView;
-  }
-
-  @Override
-  public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
-    // no op, we're not requesting images here
   }
 
   public void updateView() {
