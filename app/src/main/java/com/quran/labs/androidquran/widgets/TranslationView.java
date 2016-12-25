@@ -119,8 +119,8 @@ public class TranslationView extends ScrollView {
   }
 
   public void refresh() {
-    initResources();
     if (ayat != null) {
+      initResources();
       setAyahs(ayat);
     }
   }

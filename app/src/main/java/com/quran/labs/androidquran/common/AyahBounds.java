@@ -3,38 +3,29 @@ package com.quran.labs.androidquran.common;
 import android.graphics.RectF;
 
 public class AyahBounds {
-	private int mLine;
-	private int mPosition;
-	private RectF mBounds;
-	
-	public AyahBounds(Integer line, Integer position,
-			int minX, int minY, int maxX, int maxY){
-		mLine = line;
-		mPosition = position;
-		mBounds = new RectF(minX, minY, maxX, maxY);
-	}
-	
-	public void engulf(AyahBounds other){
-		mBounds.union(other.getBounds());
-	}
+  private int line;
+  private int position;
+  private RectF bounds;
 
-	public RectF getBounds() {
-		return new RectF(mBounds);
-	}
+  public AyahBounds(int line, int position, int minX, int minY, int maxX, int maxY) {
+    this.line = line;
+    this.position = position;
+    bounds = new RectF(minX, minY, maxX, maxY);
+  }
 
-	public void setLine(int line) {
-		mLine = line;
-	}
+  public void engulf(AyahBounds other) {
+    bounds.union(other.getBounds());
+  }
 
-	public int getLine() {
-		return mLine;
-	}
+  public RectF getBounds() {
+    return new RectF(bounds);
+  }
 
-	public void setPosition(int position) {
-		mPosition = position;
-	}
+  public int getLine() {
+    return line;
+  }
 
-	public int getPosition() {
-		return mPosition;
-	}
+  public int getPosition() {
+    return position;
+  }
 }

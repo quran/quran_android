@@ -97,8 +97,10 @@ public class HighlightingImageView extends ImageView {
   }
 
   public void unHighlight(HighlightType type) {
-    currentHighlights.remove(type);
-    invalidate();
+    if (!currentHighlights.isEmpty()) {
+      currentHighlights.remove(type);
+      invalidate();
+    }
   }
 
   public void setCoordinateData(Map<String, List<AyahBounds>> data) {
