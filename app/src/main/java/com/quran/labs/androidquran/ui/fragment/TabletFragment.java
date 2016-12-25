@@ -15,15 +15,17 @@ import android.widget.ImageView;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.labs.androidquran.common.HighlightInfo;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.labs.androidquran.model.quran.CoordinatesModel;
+import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
+import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
-import com.quran.labs.androidquran.task.QueryAyahCoordsTask;
-import com.quran.labs.androidquran.task.QueryPageCoordsTask;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
@@ -44,6 +46,8 @@ import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TabletView;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,16 +55,14 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
     implements AyahTracker, PageController, PageDownloadListener,
-    TranslationPresenter.TranslationScreen {
+    TranslationPresenter.TranslationScreen, QuranPageScreen {
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
 
@@ -72,8 +74,9 @@ public class TabletFragment extends Fragment
 
   private int mode;
   private int pageNumber;
-  private boolean mOverlayText;
+  private boolean overlayText;
   private int lastHighlightedPage;
+  private boolean ayahCoordinatesError;
   private AyahSelectedListener ayahSelectedListener;
   private List<Map<String, List<AyahBounds>>> coordinateData;
   private TranslationView leftTranslation, rightTranslation = null;
@@ -82,15 +85,17 @@ public class TabletFragment extends Fragment
 
   private TranslationPresenter leftPageTranslationPresenter;
   private TranslationPresenter rightPageTranslationPresenter;
+  private QuranPagePresenter quranPagePresenter;
 
   private TabletView mainView;
 
   @Inject BookmarkModel bookmarkModel;
+  @Inject QuranPageWorker quranPageWorker;
+  @Inject CoordinatesModel coordinatesModel;
 
   private Future<?> leftPageLoadTask;
   private Future<?> rightPageLoadTask;
-
-  private boolean justCreated;
+  private HighlightInfo highlightInfo;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
     final TabletFragment f = new TabletFragment();
@@ -145,11 +150,8 @@ public class TabletFragment extends Fragment
       mainView.setPageController(null, pageNumber, pageNumber - 1);
     }
 
-    updateView();
-    justCreated = true;
-
     lastHighlightedPage = 0;
-    mOverlayText = QuranSettings.getInstance(context).shouldOverlayPageInfo();
+    overlayText = QuranSettings.getInstance(context).shouldOverlayPageInfo();
     return mainView;
   }
 
@@ -163,28 +165,34 @@ public class TabletFragment extends Fragment
   }
 
   @Override
+  public void onStart() {
+    super.onStart();
+    quranPagePresenter.bind(this);
+  }
+
+  @Override
+  public void onStop() {
+    quranPagePresenter.unbind(this);
+    super.onStop();
+  }
+
+  @Override
   public void onResume() {
     super.onResume();
-    if (!justCreated) {
-      updateView();
-      if (mode == Mode.TRANSLATION) {
-        rightTranslation.refresh();
-        leftTranslation.refresh();
-      }
+    updateView();
+    if (mode == Mode.TRANSLATION) {
+      rightTranslation.refresh();
+      leftTranslation.refresh();
     }
-    justCreated = false;
   }
 
   public void updateView() {
-    final Context context = getActivity();
-    if (context == null || !isAdded()) {
-      return;
+    if (isAdded()) {
+      final QuranSettings settings = QuranSettings.getInstance(getContext());
+      final boolean useNewBackground = settings.useNewBackground();
+      final boolean isNightMode = settings.isNightMode();
+      mainView.updateView(isNightMode, useNewBackground);
     }
-
-    final QuranSettings settings = QuranSettings.getInstance(context);
-    final boolean useNewBackground = settings.useNewBackground();
-    final boolean isNightMode = settings.isNightMode();
-    mainView.updateView(isNightMode, useNewBackground);
   }
 
   @Override
@@ -194,6 +202,14 @@ public class TabletFragment extends Fragment
     if (context instanceof AyahSelectedListener) {
       ayahSelectedListener = (AyahSelectedListener) context;
     }
+
+    coordinateData = new ArrayList<>(2);
+    coordinateData.add(new HashMap<>());
+    coordinateData.add(new HashMap<>());
+
+    int page = getArguments().getInt(FIRST_PAGE_EXTRA);
+    quranPagePresenter = new QuranPagePresenter(bookmarkModel, coordinatesModel,
+        QuranSettings.getInstance(context), true, page - 1, page);
   }
 
   @Override
@@ -220,21 +236,10 @@ public class TabletFragment extends Fragment
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-
-    Context context = getActivity();
     if (mode == Mode.ARABIC) {
-      if (PagerActivity.class.isInstance(getActivity())) {
-        QuranPageWorker worker = ((PagerActivity) getActivity()).getQuranPageWorker();
-        String widthParam = QuranScreenInfo.getInstance().getTabletWidthParam();
-        rightPageLoadTask = worker.loadPage(widthParam, pageNumber - 1, this);
-        leftPageLoadTask = worker.loadPage(widthParam, pageNumber, this);
-      }
-
-      new QueryPageCoordinatesTask(context).execute(pageNumber - 1, pageNumber);
-
-      if (QuranSettings.getInstance(context).shouldHighlightBookmarks()) {
-        highlightTagsTask();
-      }
+      String widthParam = QuranScreenInfo.getInstance().getTabletWidthParam();
+      rightPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber - 1, this);
+      leftPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber, this);
     } else if (mode == Mode.TRANSLATION) {
       leftPageTranslationPresenter.refresh();
       rightPageTranslationPresenter.refresh();
@@ -276,136 +281,75 @@ public class TabletFragment extends Fragment
     }
   }
 
-  private void highlightTagsTask() {
-    compositeDisposable.add(
-        bookmarkModel.getBookmarkedAyahsOnPageObservable(pageNumber - 1, pageNumber)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableObserver<List<Bookmark>>() {
-              @Override
-              public void onNext(List<Bookmark> bookmarks) {
-                if (mode == Mode.ARABIC && rightImageView != null && leftImageView != null) {
-                  for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
-                    Bookmark taggedAyah = bookmarks.get(i);
-                    if (taggedAyah.page == pageNumber - 1) {
-                      rightImageView.highlightAyah(
-                          taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
-                    } else if (taggedAyah.page == pageNumber) {
-                      leftImageView.highlightAyah(
-                          taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
-                    }
-                  }
-                }
-              }
+  @Override
+  public void setBookmarksOnPage(List<Bookmark> bookmarks) {
+    if (mode == Mode.ARABIC && rightImageView != null && leftImageView != null) {
+      for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
+        Bookmark taggedAyah = bookmarks.get(i);
+        if (taggedAyah.page == pageNumber - 1) {
+          rightImageView.highlightAyah(
+              taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+        } else if (taggedAyah.page == pageNumber) {
+          leftImageView.highlightAyah(
+              taggedAyah.sura, taggedAyah.ayah, HighlightType.BOOKMARK);
+        }
+      }
 
-              @Override
-              public void onError(Throwable e) {
-              }
-
-              @Override
-              public void onComplete() {
-                if (coordinateData == null) {
-                  new GetAyahCoordsTask(getActivity()).execute(pageNumber - 1, pageNumber);
-                } else {
-                  rightImageView.invalidate();
-                  leftImageView.invalidate();
-                }
-              }
-            }));
+      if (coordinateData.get(0).size() + coordinateData.get(1).size() > 0) {
+        rightImageView.invalidate();
+        leftImageView.invalidate();
+      }
+    }
   }
 
-  private class QueryPageCoordinatesTask extends QueryPageCoordsTask {
-    QueryPageCoordinatesTask(Context context) {
-      super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
-    }
-
-    @Override
-    protected void onPostExecute(RectF[] rect) {
-      if (rect != null) {
-        if (mode == Mode.ARABIC && rect.length == 2) {
-          if (rightImageView != null && leftImageView != null) {
-            rightImageView.setPageBounds(rect[0]);
-            leftImageView.setPageBounds(rect[1]);
-            if (mOverlayText && isAdded()) {
-              Context context = getContext();
-              String suraText = QuranInfo.getSuraNameFromPage(context, pageNumber - 1, true);
-              String juzText = QuranInfo.getJuzString(context, pageNumber - 1);
-              String pageText = QuranUtils.getLocalizedNumber(context, pageNumber - 1);
-              String rub3Text = QuranDisplayHelper.displayRub3(context, pageNumber - 1);
-              rightImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
-              suraText = QuranInfo.getSuraNameFromPage(context, pageNumber, true);
-              juzText = QuranInfo.getJuzString(context, pageNumber);
-              pageText = QuranUtils.getLocalizedNumber(context, pageNumber);
-              rub3Text = QuranDisplayHelper.displayRub3(context, pageNumber);
-              leftImageView.setOverlayText(suraText, juzText, pageText, rub3Text);
-            }
-          }
+  @Override
+  public void setPageCoordinates(int page, RectF pageCoordinates) {
+    if (mode == Mode.ARABIC) {
+      HighlightingImageView imageView = page == pageNumber ? leftImageView : rightImageView;
+      if (imageView != null) {
+        imageView.setPageBounds(pageCoordinates);
+        if (overlayText && isAdded()) {
+          Context context = getContext();
+          String suraText = QuranInfo.getSuraNameFromPage(context, page, true);
+          String juzText = QuranInfo.getJuzString(context, page);
+          String pageText = QuranUtils.getLocalizedNumber(context, page);
+          String rub3Text = QuranDisplayHelper.displayRub3(context, page);
+          imageView.setOverlayText(suraText, juzText, pageText, rub3Text);
         }
       }
     }
   }
 
-  private class GetAyahCoordsTask extends QueryAyahCoordsTask {
+  @Override
+  public void setAyahCoordinatesError() {
+    ayahCoordinatesError = true;
+  }
 
-    GetAyahCoordsTask(Context context) {
-      super(context, QuranScreenInfo.getInstance().getTabletWidthParam());
-    }
+  @Override
+  public void setAyahCoordinatesData(int page, Map<String, List<AyahBounds>> coordinates) {
+    HighlightingImageView imageView = page == pageNumber ? leftImageView : rightImageView;
+    if (mode == Mode.ARABIC && imageView != null) {
+      imageView.setCoordinateData(coordinates);
+      coordinateData.set(pageNumber - page, coordinates);
 
-    GetAyahCoordsTask(Context context, MotionEvent event,
-                      EventType eventType, int page) {
-      super(context, event, eventType,
-          QuranScreenInfo.getInstance().getTabletWidthParam(), page);
-    }
-
-    GetAyahCoordsTask(Context context, int sura,
-                      int ayah, HighlightType type) {
-      super(context,
-          QuranScreenInfo.getInstance().getTabletWidthParam(),
-          sura, ayah, type);
-    }
-
-    @Override
-    protected void onPostExecute(List<Map<String, List<AyahBounds>>> maps) {
-      if (maps != null && maps.size() > 0) {
-        if (mode == Mode.ARABIC && maps.size() == 2 &&
-            rightImageView != null && leftImageView != null) {
-          rightImageView.setCoordinateData(maps.get(0));
-          leftImageView.setCoordinateData(maps.get(1));
-
-          coordinateData = maps;
-
-          if (mHighlightAyah) {
-            handleHighlightAyah(mSura, mAyah, mHighlightType);
-          } else if (mEvent != null) {
-            handlePress(mEvent, mEventType, mPage);
-          } else {
-            rightImageView.invalidate();
-            leftImageView.invalidate();
-          }
-        }
+      if (highlightInfo != null) {
+        handleHighlightAyah(highlightInfo.sura, highlightInfo.ayah, highlightInfo.highlightType);
+        highlightInfo = null;
+      } else {
+        rightImageView.invalidate();
+        leftImageView.invalidate();
       }
     }
   }
 
-  private boolean checkCoordinateData(MotionEvent event,
-                                      EventType eventType, int page) {
-    // Check files downloaded
-    if (!QuranFileUtils.haveAyaPositionFile(getActivity()) ||
-        !QuranFileUtils.hasArabicSearchDatabase(getActivity())) {
-      Activity activity = getActivity();
-      if (activity != null) {
-        PagerActivity pagerActivity = (PagerActivity) activity;
-        pagerActivity.showGetRequiredFilesDialog();
-        return false;
-      }
+  private void checkCoordinateData() {
+    Activity activity = getActivity();
+    if (activity instanceof PagerActivity &&
+        (!QuranFileUtils.haveAyaPositionFile(activity) ||
+            !QuranFileUtils.hasArabicSearchDatabase(activity))) {
+      PagerActivity pagerActivity = (PagerActivity) activity;
+      pagerActivity.showGetRequiredFilesDialog();
     }
-    // Check we fetched the data
-    if (coordinateData == null) {
-      new GetAyahCoordsTask(getActivity(), event, eventType, page)
-          .execute(pageNumber - 1, pageNumber);
-      return false;
-    }
-    // All good
-    return true;
   }
 
   @Override
@@ -432,10 +376,16 @@ public class TabletFragment extends Fragment
 
   @Override
   public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
-    if (mode == Mode.ARABIC && coordinateData == null) {
-      new GetAyahCoordsTask(getActivity(), sura, ayah, type)
-          .execute(pageNumber - 1, pageNumber);
-    } else {
+    boolean highlight = true;
+    if (mode == Mode.ARABIC) {
+      int index = pageNumber - QuranInfo.getPageFromSuraAyah(sura, ayah);
+      if (coordinateData.get(index).isEmpty()) {
+        highlightInfo = new HighlightInfo(sura, ayah, type, scrollToAyah);
+        highlight = false;
+      }
+    }
+
+    if (highlight) {
       handleHighlightAyah(sura, ayah, type);
     }
   }
@@ -445,7 +395,7 @@ public class TabletFragment extends Fragment
                                                             int toolBarWidth, int toolBarHeight) {
     final String key = sura + ":" + ayah;
     List<AyahBounds> bounds = null;
-    if (coordinateData != null) {
+    if (coordinateData.get(0).size() + coordinateData.get(1).size() > 0) {
       for (final Map<String, List<AyahBounds>> pageBounds : coordinateData) {
         if (pageBounds.containsKey(key)) {
           bounds = pageBounds.get(key);
@@ -482,35 +432,25 @@ public class TabletFragment extends Fragment
   private void handleHighlightAyah(int sura, int ayah, HighlightType type) {
     int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
     if (mode == Mode.ARABIC) {
-      if (leftImageView == null || rightImageView == null) {
-        return;
-      }
-
-      if (page == pageNumber - 1) {
-        rightImageView.highlightAyah(sura, ayah, type);
-        rightImageView.invalidate();
-        if (lastHighlightedPage == pageNumber) {
-          leftImageView.unHighlight(type);
-        }
-      } else if (page == pageNumber) {
-        leftImageView.highlightAyah(sura, ayah, type);
-        leftImageView.invalidate();
-        if (lastHighlightedPage == pageNumber - 1) {
-          rightImageView.unHighlight(type);
+      HighlightingImageView imageView = page == pageNumber ? leftImageView : rightImageView;
+      HighlightingImageView other = imageView == leftImageView ? rightImageView : leftImageView;
+      if (imageView != null) {
+        imageView.highlightAyah(sura, ayah, type);
+        imageView.invalidate();
+        if (lastHighlightedPage != page && other != null) {
+          other.unHighlight(type);
         }
       }
       lastHighlightedPage = page;
     } else if (mode == Mode.TRANSLATION) {
       int ayahId = QuranInfo.getAyahId(sura, ayah);
-      if (leftTranslation == null || rightTranslation == null) {
-        return;
-      }
-      if (page == pageNumber - 1) {
-        rightTranslation.highlightAyah(ayahId);
-        leftTranslation.unhighlightAyat();
-      } else {
-        leftTranslation.highlightAyah(ayahId);
-        rightTranslation.unhighlightAyat();
+      TranslationView active = page == pageNumber ? leftTranslation : rightTranslation;
+      TranslationView other = active == leftTranslation ? rightTranslation : leftTranslation;
+      if (active != null) {
+        active.highlightAyah(ayahId);
+        if (other != null) {
+          other.unhighlightAyat();
+        }
       }
     }
   }
@@ -549,29 +489,15 @@ public class TabletFragment extends Fragment
   }
 
   private QuranAyah getAyahFromCoordinates(int page, float xc, float yc) {
-    if (coordinateData == null) {
-      return null;
-    }
-
-    Map<String, List<AyahBounds>> coords;
-    if (coordinateData.size() == 1) {
-      coords = coordinateData.get(0);
-    } else {
-      if (page == pageNumber - 1) {
-        coords = coordinateData.get(0);
-      } else {
-        coords = coordinateData.get(1);
+    int index = pageNumber - page;
+    if (coordinateData.size() > index) {
+      Map<String, List<AyahBounds>> coords = coordinateData.get(index);
+      if (!coords.isEmpty()) {
+        HighlightingImageView imageView = index == 0 ? leftImageView : rightImageView;
+        return ImageAyahUtils.getAyahFromCoordinates(coords, imageView, xc, yc);
       }
     }
-
-    HighlightingImageView imageView;
-    if (page == pageNumber - 1) {
-      imageView = rightImageView;
-    } else {
-      imageView = leftImageView;
-    }
-
-    return ImageAyahUtils.getAyahFromCoordinates(coords, imageView, xc, yc);
+    return null;
   }
 
   @Override
@@ -582,7 +508,9 @@ public class TabletFragment extends Fragment
     }
     if (ayahSelectedListener == null) return false;
     if (ayahSelectedListener.isListeningForAyahSelection(eventType)) {
-      if (checkCoordinateData(event, eventType, page)) {
+      if (ayahCoordinatesError) {
+        checkCoordinateData();
+      } else {
         handlePress(event, eventType, page);
       }
       return true;

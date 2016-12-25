@@ -44,6 +44,7 @@ public class AyahInfoDatabaseProvider {
     return tabletDatabaseHandler;
   }
 
+  @Nullable
   private AyahInfoDatabaseHandler getDatabaseForWidth(String width) {
     String filename = QuranFileUtils.getAyaPositionFileName(width);
     try {

@@ -1231,9 +1231,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void handleDownloadSuccess() {
-    if (showingTranslation) {
-      refreshQuranPages();
-    }
+    refreshQuranPages();
     playAudioRequest(lastAudioDownloadRequest);
   }
 
