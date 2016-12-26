@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,21 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
+import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
+import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
 import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
-import java.util.Set;
 
-public class TranslationFragment extends Fragment
-    implements AyahTracker, TranslationPresenter.TranslationScreen {
+public class TranslationFragment extends Fragment implements
+    AyahTrackerPresenter.AyahInteractionHandler, QuranPage, TranslationPresenter.TranslationScreen {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
@@ -37,9 +36,9 @@ public class TranslationFragment extends Fragment
 
   private QuranTranslationPageLayout mainView;
 
-  private Resources resources;
   private QuranSettings quranSettings;
   private TranslationPresenter presenter;
+  private AyahTrackerPresenter ayahTrackerPresenter;
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -55,6 +54,7 @@ public class TranslationFragment extends Fragment
     pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
 
     Context context = getContext();
+    ayahTrackerPresenter = new AyahTrackerPresenter();
     presenter = new TranslationPresenter(context.getApplicationContext(), pageNumber);
     if (savedInstanceState != null) {
       int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
@@ -76,7 +76,6 @@ public class TranslationFragment extends Fragment
     mainView = new QuranTranslationPageLayout(context);
     mainView.setPageController(null, pageNumber);
     quranSettings = QuranSettings.getInstance(context);
-    resources = getResources();
 
     translationView = mainView.getTranslationView();
     translationView.setTranslationClickedListener(() -> {
@@ -89,56 +88,24 @@ public class TranslationFragment extends Fragment
     return mainView;
   }
 
+  @Override
   public void updateView() {
-    if (getActivity() == null || resources == null || mainView == null || !isAdded()) {
-      return;
-    }
-
-    final boolean nightMode = quranSettings.isNightMode();
-    final boolean useNewBackground = quranSettings.useNewBackground();
-    mainView.updateView(nightMode, useNewBackground, 1);
-    refresh();
-  }
-
-  @Override
-  public void highlightAyah(int sura, int ayah, HighlightType type) {
-    highlightAyah(sura, ayah, type, true);
-  }
-
-  @Override
-  public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
-    if (translationView != null) {
-      highlightedAyah = QuranInfo.getAyahId(sura, ayah);
-      translationView.highlightAyah(highlightedAyah);
+    if (isAdded()) {
+      final boolean nightMode = quranSettings.isNightMode();
+      final boolean useNewBackground = quranSettings.useNewBackground();
+      mainView.updateView(nightMode, useNewBackground, 1);
+      refresh();
     }
   }
 
   @Override
-  public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
-      int toolBarWidth, int toolBarHeight) {
-    // not yet implemented
-    return null;
+  public AyahTracker getAyahTracker() {
+    return ayahTrackerPresenter;
   }
 
   @Override
-  public void highlightAyat(
-      int page, Set<String> ayahKeys, HighlightType type) {
-    // not yet supported
-  }
-
-  @Override
-  public void unHighlightAyah(int sura, int ayah, HighlightType type) {
-    if (highlightedAyah == QuranInfo.getAyahId(sura, ayah)) {
-      unHighlightAyahs(type);
-    }
-  }
-
-  @Override
-  public void unHighlightAyahs(HighlightType type) {
-    if (translationView != null) {
-      translationView.unhighlightAyat();
-      highlightedAyah = -1;
-    }
+  public AyahTrackerItem[] getAyahTrackerItems() {
+    return new AyahTrackerItem[] { new AyahTranslationTrackerItem(pageNumber, translationView) };
   }
 
   @Override
@@ -152,12 +119,14 @@ public class TranslationFragment extends Fragment
   @Override
   public void onResume() {
     super.onResume();
+    ayahTrackerPresenter.bind(this);
     presenter.bind(this);
     updateView();
   }
 
   @Override
   public void onPause() {
+    ayahTrackerPresenter.unbind(this);
     presenter.unbind(this);
     super.onPause();
   }

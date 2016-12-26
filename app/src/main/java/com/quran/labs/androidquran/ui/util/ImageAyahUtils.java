@@ -184,14 +184,12 @@ public class ImageAyahUtils {
 
   public static RectF getYBoundsForHighlight(
       Map<String, List<AyahBounds>> coordinateData, int sura, int ayah) {
-    if (coordinateData == null ||
-        coordinateData.get(sura + ":" + ayah) == null) {
+    final List<AyahBounds> ayahBounds = coordinateData.get(sura + ":" + ayah);
+    if (ayahBounds == null) {
       return null;
     }
 
-
     RectF ayahBoundsRect = null;
-    final List<AyahBounds> ayahBounds = coordinateData.get(sura + ":" + ayah);
     for (AyahBounds bounds : ayahBounds) {
       if (ayahBoundsRect == null) {
         ayahBoundsRect = bounds.getBounds();
@@ -199,7 +197,6 @@ public class ImageAyahUtils {
         ayahBoundsRect.union(bounds.getBounds());
       }
     }
-
     return ayahBoundsRect;
   }
 }

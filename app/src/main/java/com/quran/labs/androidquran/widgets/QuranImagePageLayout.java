@@ -43,8 +43,7 @@ public class QuranImagePageLayout extends QuranPageLayout {
     imageView.setLongClickable(true);
   }
 
-  private class PageGestureDetector extends
-      GestureDetector.SimpleOnGestureListener {
+  private class PageGestureDetector extends GestureDetector.SimpleOnGestureListener {
 
     @Override
     public boolean onDown(MotionEvent e) {

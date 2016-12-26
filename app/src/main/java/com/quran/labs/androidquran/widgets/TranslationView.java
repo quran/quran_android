@@ -149,8 +149,6 @@ public class TranslationView extends ScrollView {
   }
 
   public void setAyahs(List<QuranAyah> ayat) {
-    lastHighlightedAyah = -1;
-
     linearLayout.removeAllViews();
     ayahMap.clear();
     ayahHeaderMap.clear();
@@ -173,6 +171,10 @@ public class TranslationView extends ScrollView {
     }
 
     addFooterSpacer();
+
+    if (lastHighlightedAyah > -1) {
+      highlightAyah(lastHighlightedAyah);
+    }
   }
 
   public void unhighlightAyat() {
@@ -210,8 +212,10 @@ public class TranslationView extends ScrollView {
       int screenHeight = QuranScreenInfo.getInstance().getHeight();
       int y = text.getTop() - (int) (0.25 * screenHeight);
       smoothScrollTo(getScrollX(), y);
-    } else {
+    } else if (ayat != null && ayat.size() > 0) {
       lastHighlightedAyah = -1;
+    } else {
+      lastHighlightedAyah = ayahId;
     }
   }
 

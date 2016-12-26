@@ -79,6 +79,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
+import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter;
@@ -101,7 +102,6 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -995,8 +995,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     int end = (pos == pagerAdapter.getCount() - 1) ? pos : pos + 1;
     for (int i = start; i <= end; i++) {
       Fragment f = pagerAdapter.getFragmentIfExists(i);
-      if (f != null && f instanceof AyahTracker) {
-        ((AyahTracker) f).updateView();
+      if (f instanceof QuranPage) {
+        ((QuranPage) f).updateView();
       }
     }
   }
@@ -1303,16 +1303,16 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f != null && f instanceof AyahTracker) {
-      ((AyahTracker) f).highlightAyah(sura, ayah, type);
+    if (f instanceof QuranPage && f.isAdded()) {
+      ((QuranPage) f).getAyahTracker().highlightAyah(sura, ayah, type, true);
     }
   }
 
   private void unHighlightAyah(int sura, int ayah, HighlightType type) {
     int position = viewPager.getCurrentItem();
     Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f != null && f instanceof AyahTracker) {
-      ((AyahTracker) f).unHighlightAyah(sura, ayah, type);
+    if (f instanceof QuranPage && f.isVisible()) {
+      ((QuranPage) f).getAyahTracker().unHighlightAyah(sura, ayah, type);
     }
   }
 
@@ -1323,19 +1323,16 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
     int position = viewPager.getCurrentItem();
     Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f != null && f instanceof AyahTracker) {
-      ((AyahTracker) f).unHighlightAyahs(type);
+    if (f instanceof QuranPage && f.isVisible()) {
+      ((QuranPage) f).getAyahTracker().unHighlightAyahs(type);
     }
   }
 
   private void requestTranslationsList() {
     compositeDisposable.add(
-        Single.fromCallable(new Callable<List<LocalTranslation>>() {
-          @Override
-          public List<LocalTranslation> call() throws Exception {
-            return new TranslationsDBAdapter(PagerActivity.this).getTranslations();
-          }
-        }).subscribeOn(Schedulers.io())
+        Single.fromCallable(() ->
+            new TranslationsDBAdapter(PagerActivity.this).getTranslations())
+          .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {
             @Override
@@ -1772,8 +1769,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   @Override
-  public boolean onAyahSelected(EventType eventType,
-      SuraAyah suraAyah, AyahTracker tracker) {
+  public boolean onAyahSelected(EventType eventType, SuraAyah suraAyah, AyahTracker tracker) {
     switch (eventType) {
       case SINGLE_TAP:
         if (isInAyahMode) {
@@ -1827,7 +1823,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     return lastAudioRequest;
   }
 
-  public void startAyahMode(SuraAyah suraAyah, AyahTracker tracker) {
+  private void startAyahMode(SuraAyah suraAyah, AyahTracker tracker) {
     if (!isInAyahMode) {
       start = end = suraAyah;
       updateToolbarPosition(suraAyah, tracker);
@@ -1874,16 +1870,15 @@ public class PagerActivity extends QuranActionBarActivity implements
     final int page = s.getPage();
     final int position = QuranInfo.getPosFromPage(page, isDualPages);
     Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f instanceof AyahTracker) {
+    if (f instanceof QuranPage && f.isVisible()) {
       if (position != viewPager.getCurrentItem()) {
         viewPager.setCurrentItem(position);
       }
-      updateAyahStartSelection(s, (AyahTracker) f);
+      updateAyahStartSelection(s, ((QuranPage) f).getAyahTracker());
     }
   }
 
-  public void updateAyahStartSelection(
-      SuraAyah suraAyah, AyahTracker tracker) {
+  private void updateAyahStartSelection(SuraAyah suraAyah, AyahTracker tracker) {
     if (isInAyahMode) {
       clearAyahModeHighlights();
       start = end = suraAyah;
@@ -1930,10 +1925,12 @@ public class PagerActivity extends QuranActionBarActivity implements
         }));
 
     ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
-            ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
-    ayahToolBar.updatePosition(ayahToolBarPos);
-    if (ayahToolBar.getVisibility() != View.VISIBLE) {
-      ayahToolBar.setVisibility(View.VISIBLE);
+        ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
+    if (ayahToolBarPos != null) {
+      ayahToolBar.updatePosition(ayahToolBarPos);
+      if (ayahToolBar.getVisibility() != View.VISIBLE) {
+        ayahToolBar.setVisibility(View.VISIBLE);
+      }
     }
   }
 
@@ -1975,10 +1972,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     SuraAyah end = SuraAyah.max(this.start, this.end);
     // Iterate from beginning to end
     for (int i = minPage; i <= maxPage; i++) {
-      AyahTracker fragment = pagerAdapter.getFragmentIfExistsForPage(i);
+      QuranPage fragment = pagerAdapter.getFragmentIfExistsForPage(i);
       if (fragment != null) {
         Set<String> ayahKeys = QuranInfo.getAyahKeysOnPage(i, start, end);
-        fragment.highlightAyat(i, ayahKeys, HighlightType.SELECTION);
+        fragment.getAyahTracker().highlightAyat(i, ayahKeys, HighlightType.SELECTION);
       }
     }
   }
@@ -1991,9 +1988,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void clearAyahModeHighlights() {
     if (isInAyahMode) {
       for (int i = start.getPage(); i <= end.getPage(); i++) {
-        AyahTracker fragment = pagerAdapter.getFragmentIfExistsForPage(i);
+        QuranPage fragment = pagerAdapter.getFragmentIfExistsForPage(i);
         if (fragment != null) {
-          fragment.unHighlightAyahs(HighlightType.SELECTION);
+          fragment.getAyahTracker().unHighlightAyahs(HighlightType.SELECTION);
         }
       }
     }
