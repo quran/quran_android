@@ -48,7 +48,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
   private void getPageCoordinates(Integer... pages) {
     compositeDisposable.add(
-        Completable.timer(1, TimeUnit.SECONDS)
+        Completable.timer(500, TimeUnit.MILLISECONDS)
             .andThen(coordinatesModel.getPageCoordinates(isTabletMode, pages))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<Pair<Integer, RectF>>() {
@@ -66,15 +66,15 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
               @Override
               public void onComplete() {
+                getAyahCoordinates(pages);
               }
             }));
   }
 
   private void getBookmarkedAyahs(Integer... pages) {
     compositeDisposable.add(
-        Completable.timer(250, TimeUnit.MILLISECONDS)
-            .andThen(bookmarkModel.getBookmarkedAyahsOnPageObservable(pages)
-                .observeOn(AndroidSchedulers.mainThread()))
+        bookmarkModel.getBookmarkedAyahsOnPageObservable(pages)
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<List<Bookmark>>() {
 
               @Override
@@ -90,18 +90,14 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
               @Override
               public void onComplete() {
-                getAyahCoordinates(false, pages);
               }
             }));
   }
 
-  private void getAyahCoordinates(boolean delay, Integer... pages) {
-    Completable completable = delay ?
-        Completable.timer(1, TimeUnit.SECONDS) : Completable.complete();
+  private void getAyahCoordinates(Integer... pages) {
     compositeDisposable.add(
-        completable.andThen(
-            Observable.fromArray(pages)
-                .flatMap(p -> coordinatesModel.getAyahCoordinates(isTabletMode, p)))
+        Observable.fromArray(pages)
+            .flatMap(p -> coordinatesModel.getAyahCoordinates(isTabletMode, p))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<Pair<Integer, Map<String, List<AyahBounds>>>>() {
               @Override
@@ -121,6 +117,9 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
               @Override
               public void onComplete() {
+                if (quranSettings.shouldHighlightBookmarks()) {
+                  getBookmarkedAyahs(pages);
+                }
               }
             })
     );
@@ -129,7 +128,6 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   public void refresh() {
     if (encounteredError) {
       encounteredError = false;
-      getAyahCoordinates(false, pages);
       getPageCoordinates(pages);
     }
   }
@@ -137,11 +135,6 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   @Override
   public void bind(QuranPageScreen screen) {
     this.screen = screen;
-    if (quranSettings.shouldHighlightBookmarks()) {
-      getBookmarkedAyahs(pages);
-    } else {
-      getAyahCoordinates(true, pages);
-    }
     getPageCoordinates(pages);
   }
 
