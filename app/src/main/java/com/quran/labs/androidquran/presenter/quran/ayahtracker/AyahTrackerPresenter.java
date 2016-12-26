@@ -1,15 +1,21 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
+import android.app.Activity;
 import android.graphics.RectF;
+import android.view.MotionEvent;
 
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.HighlightInfo;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.presenter.Presenter;
+import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 
 import java.util.List;
@@ -99,7 +105,33 @@ public class AyahTrackerPresenter implements AyahTracker,
     return null;
   }
 
-  public QuranAyah getAyahForPosition(int page, float x, float y) {
+  public boolean handleTouchEvent(Activity activity, MotionEvent event,
+                                  AyahSelectedListener.EventType eventType, int page,
+                                  AyahSelectedListener ayahSelectedListener,
+                                  boolean ayahCoordinatesError) {
+    if (eventType == AyahSelectedListener.EventType.DOUBLE_TAP) {
+      unHighlightAyahs(HighlightType.SELECTION);
+    } else if (ayahSelectedListener.isListeningForAyahSelection(eventType)) {
+      if (ayahCoordinatesError) {
+        checkCoordinateData(activity);
+      } else {
+        handlePress(event, eventType, page, ayahSelectedListener);
+      }
+      return true;
+    }
+    return ayahSelectedListener.onClick(eventType);
+  }
+
+  private void handlePress(MotionEvent ev, AyahSelectedListener.EventType eventType, int page,
+                           AyahSelectedListener ayahSelectedListener) {
+    QuranAyah result = getAyahForPosition(page, ev.getX(), ev.getY());
+    if (result != null && ayahSelectedListener != null) {
+      SuraAyah suraAyah = new SuraAyah(result.getSura(), result.getAyah());
+      ayahSelectedListener.onAyahSelected(eventType, suraAyah, this);
+    }
+  }
+
+  private QuranAyah getAyahForPosition(int page, float x, float y) {
     for (AyahTrackerItem item : items) {
       QuranAyah ayah = item.getAyahForPosition(page, x, y);
       if (ayah != null) {
@@ -107,6 +139,15 @@ public class AyahTrackerPresenter implements AyahTracker,
       }
     }
     return null;
+  }
+
+  private void checkCoordinateData(Activity activity) {
+    if (activity instanceof PagerActivity &&
+        (!QuranFileUtils.haveAyaPositionFile(activity) ||
+            !QuranFileUtils.hasArabicSearchDatabase(activity))) {
+      PagerActivity pagerActivity = (PagerActivity) activity;
+      pagerActivity.showGetRequiredFilesDialog();
+    }
   }
 
   @Override

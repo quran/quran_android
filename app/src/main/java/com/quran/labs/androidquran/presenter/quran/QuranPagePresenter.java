@@ -62,6 +62,9 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
               @Override
               public void onError(Throwable e) {
                 encounteredError = true;
+                if (screen != null) {
+                  screen.setAyahCoordinatesError();
+                }
               }
 
               @Override
@@ -109,10 +112,6 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
               @Override
               public void onError(Throwable e) {
-                encounteredError = true;
-                if (screen != null) {
-                  screen.setAyahCoordinatesError();
-                }
               }
 
               @Override

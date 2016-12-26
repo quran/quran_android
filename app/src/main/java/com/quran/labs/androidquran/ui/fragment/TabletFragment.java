@@ -20,7 +20,6 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
-import com.quran.labs.androidquran.presenter.quran.QuranPageTouchUtil;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
@@ -303,9 +302,8 @@ public class TabletFragment extends Fragment
 
   @Override
   public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
-    return isVisible() && QuranPageTouchUtil
-        .handleTouchEvent(getActivity(), event, eventType, page, ayahTrackerPresenter,
-            ayahSelectedListener, ayahCoordinatesError);
+    return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
+        page, ayahSelectedListener, ayahCoordinatesError);
   }
 
   @Override
