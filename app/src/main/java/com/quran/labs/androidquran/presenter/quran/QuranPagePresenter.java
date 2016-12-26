@@ -31,6 +31,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   private final Integer[] pages;
 
   private QuranPageScreen screen;
+  private boolean encounteredError;
 
   public QuranPagePresenter(BookmarkModel bookmarkModel,
                             CoordinatesModel coordinatesModel,
@@ -60,6 +61,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
               @Override
               public void onError(Throwable e) {
+                encounteredError = true;
               }
 
               @Override
@@ -111,6 +113,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
               @Override
               public void onError(Throwable e) {
+                encounteredError = true;
                 if (screen != null) {
                   screen.setAyahCoordinatesError();
                 }
@@ -124,8 +127,11 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   }
 
   public void refresh() {
-    getAyahCoordinates(false, pages);
-    getPageCoordinates(pages);
+    if (encounteredError) {
+      encounteredError = false;
+      getAyahCoordinates(false, pages);
+      getPageCoordinates(pages);
+    }
   }
 
   @Override

@@ -101,14 +101,13 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     }
   }
 
-  public AyahTracker getFragmentIfExistsForPage(int page) {
+  public QuranPage getFragmentIfExistsForPage(int page) {
     if (page < Constants.PAGES_FIRST || PAGES_LAST < page) {
       return null;
     }
     int position = QuranInfo.getPosFromPage(page, mIsDualPages);
     Fragment fragment = getFragmentIfExists(position);
-    return fragment != null && fragment instanceof AyahTracker ?
-        (AyahTracker) fragment : null;
+    return fragment instanceof QuranPage && fragment.isAdded() ? (QuranPage) fragment : null;
   }
 
 }
