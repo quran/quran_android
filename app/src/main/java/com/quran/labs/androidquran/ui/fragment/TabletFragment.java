@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -220,9 +221,9 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void setPageImage(int page, @NonNull BitmapDrawable pageDrawable) {
+  public void setPageBitmap(int page, @NonNull Bitmap pageBitmap) {
     ImageView imageView = page == pageNumber - 1 ? rightImageView : leftImageView;
-    imageView.setImageDrawable(pageDrawable);
+    imageView.setImageDrawable(new BitmapDrawable(getResources(), pageBitmap));
   }
 
   @Override

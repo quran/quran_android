@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -201,8 +202,8 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void setPageImage(int page, @NonNull BitmapDrawable pageDrawable) {
-    imageView.setImageDrawable(pageDrawable);
+  public void setPageBitmap(int page, @NonNull Bitmap pageBitmap) {
+    imageView.setImageDrawable(new BitmapDrawable(getResources(), pageBitmap));
   }
 
   @Override

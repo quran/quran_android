@@ -1,81 +1,74 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Handler;
-import android.os.Message;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.util.QuranExecutorService;
-import com.quran.labs.androidquran.util.QuranPageTask;
-
-import java.lang.ref.WeakReference;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+
 @Singleton
 public class QuranPageWorker {
-  private static final int MSG_IMAGE_LOADED = 1;
-
-  private static final WorkerHandler handler = new WorkerHandler();
-  private static final ExecutorService executorService = new QuranExecutorService();
+  private static final String TAG = "QuranPageWorker";
 
   private final Context appContext;
-  private final Resources resources;
+  private final OkHttpClient okHttpClient;
 
   @Inject
-  QuranPageWorker(Context context) {
-    appContext = context.getApplicationContext();
-    resources = appContext.getResources();
-    handler.setQuranPageWorker(this);
+  QuranPageWorker(Context context, OkHttpClient okHttpClient) {
+    this.appContext = context;
+    this.okHttpClient = okHttpClient;
   }
 
-  public static void submitResult(QuranPageTask.QuranTaskData quranTaskData) {
-    final Message message = handler.obtainMessage(MSG_IMAGE_LOADED, quranTaskData);
-    handler.sendMessage(message);
-  }
+  private Response downloadImage(String widthParam, int pageNumber) {
+    Response response = null;
+    OutOfMemoryError oom = null;
 
-  public Future<?> loadPage(String widthParam, int page, PageDownloadListener listener) {
-    QuranPageTask task = new QuranPageTask(appContext, widthParam, listener, page);
-    return executorService.submit(task);
-  }
+    try {
+      response = QuranDisplayHelper.getQuranPage(okHttpClient, appContext, widthParam, pageNumber);
+    } catch (OutOfMemoryError me){
+      Crashlytics.log(Log.WARN, TAG,
+          "out of memory exception loading page " + pageNumber + ", " + widthParam);
+      oom = me;
+    }
 
-  // once complete, see if ImageView is still around and set bitmap.
-  private void onImageLoaded(QuranPageTask.QuranTaskData quranTaskData) {
-    final Response response = quranTaskData.getResponse();
-    BitmapDrawable drawable = null;
-    if (response != null) {
-      final Bitmap bitmap = response.getBitmap();
-      if (bitmap != null) {
-        drawable = new BitmapDrawable(resources, bitmap);
+    if (response == null ||
+        (response.getBitmap() == null &&
+            response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND)){
+      if (QuranScreenInfo.getInstance().isTablet(appContext)){
+        Crashlytics.log(Log.WARN, TAG, "tablet got bitmap null, trying alternate width...");
+        String param = QuranScreenInfo.getInstance().getWidthParam();
+        if (param.equals(widthParam)){
+          param = QuranScreenInfo.getInstance().getTabletWidthParam();
+        }
+        response = QuranDisplayHelper.getQuranPage(okHttpClient, appContext, param, pageNumber);
+        if (response.getBitmap() == null){
+          Crashlytics.log(Log.WARN, TAG,
+              "bitmap still null, giving up... [" + response.getErrorCode() + "]");
+        }
       }
+      Crashlytics.log(Log.WARN, TAG, "got response back as null... [" +
+          (response == null ? "" : response.getErrorCode()));
     }
 
-    final PageDownloadListener pageDownloadListener = quranTaskData.getAyahTrackerReference().get();
-    if (pageDownloadListener != null) {
-      pageDownloadListener.onLoadImageResponse(drawable, Response.lightResponse(response));
+    if ((response == null || response.getBitmap() == null) && oom != null) {
+      throw oom;
     }
+
+    response.setPageData(pageNumber);
+    return response;
   }
 
-  private static class WorkerHandler extends Handler {
-    private WeakReference<QuranPageWorker> workerReference = new WeakReference<>(null);
-
-    void setQuranPageWorker(QuranPageWorker worker) {
-      workerReference = new WeakReference<>(worker);
-    }
-
-    @Override
-    public void handleMessage(Message msg) {
-      QuranPageWorker worker = workerReference.get();
-      if (msg.what == MSG_IMAGE_LOADED && worker != null) {
-        worker.onImageLoaded((QuranPageTask.QuranTaskData) msg.obj);
-      }
-    }
+  public Observable<Response> loadPages(final String widthParam, Integer... pages) {
+    return Observable.fromArray(pages)
+        .flatMap(page -> Observable.fromCallable(() -> downloadImage(widthParam, page)))
+        .subscribeOn(Schedulers.io());
   }
-
 }

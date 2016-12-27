@@ -1,14 +1,15 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.data.QuranDataProvider;
-import com.quran.labs.androidquran.data.QuranFileConstants;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.quran.labs.androidquran.common.Response;
+import com.quran.labs.androidquran.data.QuranDataProvider;
+import com.quran.labs.androidquran.data.QuranFileConstants;
 
 import java.io.Closeable;
 import java.io.File;
@@ -133,13 +134,13 @@ public class QuranFileUtils {
     return "page" + nf.format(p) + ".png";
   }
 
-  public static boolean isSDCardMounted() {
+  private static boolean isSDCardMounted() {
     String state = Environment.getExternalStorageState();
     return state.equals(Environment.MEDIA_MOUNTED);
   }
 
-  public static Response getImageFromSD(Context context, String widthParam,
-      String filename) {
+  @NonNull
+  public static Response getImageFromSD(Context context, String widthParam, String filename) {
     String location;
     if (widthParam != null) {
       location = getQuranImagesDirectory(context, widthParam);
@@ -155,11 +156,10 @@ public class QuranFileUtils {
     options.inPreferredConfig = Bitmap.Config.ALPHA_8;
     final Bitmap bitmap = BitmapFactory.decodeFile(location +
         File.separator + filename, options);
-    return bitmap == null ? new Response(Response.ERROR_FILE_NOT_FOUND) :
-        new Response(bitmap);
+    return bitmap == null ? new Response(Response.ERROR_FILE_NOT_FOUND) : new Response(bitmap);
   }
 
-  public static boolean writeNoMediaFile(Context context) {
+  private static boolean writeNoMediaFile(Context context) {
     File f = new File(getQuranImagesDirectory(context) + "/.nomedia");
     if (f.exists()) {
       return true;
@@ -199,11 +199,11 @@ public class QuranFileUtils {
     return directory.exists() && directory.isDirectory() || directory.mkdirs();
   }
 
-  public static boolean makeQuranDatabaseDirectory(Context context) {
+  private static boolean makeQuranDatabaseDirectory(Context context) {
     return makeDirectory(getQuranDatabaseDirectory(context));
   }
 
-  public static boolean makeQuranAyahDatabaseDirectory(Context context) {
+  private static boolean makeQuranAyahDatabaseDirectory(Context context) {
     return makeQuranDatabaseDirectory(context) &&
         makeDirectory(getQuranAyahDatabaseDirectory(context));
   }
@@ -213,6 +213,7 @@ public class QuranFileUtils {
     return getImageFromWeb(okHttpClient, context, filename, false);
   }
 
+  @NonNull
   private static Response getImageFromWeb(OkHttpClient okHttpClient,
       Context context, String filename, boolean isRetry) {
     QuranScreenInfo instance = QuranScreenInfo.getInstance();
@@ -241,8 +242,7 @@ public class QuranFileUtils {
           int warning = Response.WARN_SD_CARD_NOT_FOUND;
           if (path != null && QuranFileUtils.makeQuranDirectory(context)) {
             path += File.separator + filename;
-            warning = tryToSaveBitmap(bitmap, path) ? 0 :
-                Response.WARN_COULD_NOT_SAVE_FILE;
+            warning = tryToSaveBitmap(bitmap, path) ? 0 : Response.WARN_COULD_NOT_SAVE_FILE;
           }
           return new Response(bitmap, warning);
         }
@@ -364,7 +364,7 @@ public class QuranFileUtils {
     return s == null ? null : s + IMAGES_DIRECTORY;
   }
 
-  public static String getQuranImagesDirectory(Context context) {
+  private static String getQuranImagesDirectory(Context context) {
     QuranScreenInfo qsi = QuranScreenInfo.getInstance();
     if (qsi == null) {
       return null;
@@ -421,7 +421,7 @@ public class QuranFileUtils {
     return AYAHINFO_BASE_URL + "ayahinfo" + widthParam + ".zip";
   }
 
-  public static String getGaplessDatabaseRootUrl() {
+  static String getGaplessDatabaseRootUrl() {
     QuranScreenInfo qsi = QuranScreenInfo.getInstance();
     if (qsi == null) {
       return null;

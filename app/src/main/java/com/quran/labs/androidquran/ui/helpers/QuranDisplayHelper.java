@@ -1,11 +1,5 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranUtils;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.LinearGradient;
@@ -15,16 +9,24 @@ import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.view.Display;
 import android.widget.Toast;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.Response;
+import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranUtils;
 
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
 public class QuranDisplayHelper {
 
-  public static Response getQuranPage(OkHttpClient okHttpClient,
-      Context context, String widthParam, int page) {
+  @NonNull
+  static Response getQuranPage(OkHttpClient okHttpClient,
+                               Context context, String widthParam, int page) {
     Response response;
     String filename = QuranFileUtils.getPageFileName(page);
     response = QuranFileUtils.getImageFromSD(context, widthParam, filename);
@@ -103,7 +105,7 @@ public class QuranDisplayHelper {
     return drawable;
   }
 
-  public static ShapeDrawable.ShaderFactory getShaderFactory(final int startX, final int endX) {
+  private static ShapeDrawable.ShaderFactory getShaderFactory(final int startX, final int endX) {
     return new ShapeDrawable.ShaderFactory() {
 
       @Override
