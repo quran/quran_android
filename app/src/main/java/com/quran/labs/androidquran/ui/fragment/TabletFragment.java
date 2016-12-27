@@ -64,7 +64,6 @@ public class TabletFragment extends Fragment
 
   private int mode;
   private int pageNumber;
-  private boolean overlayText;
   private boolean ayahCoordinatesError;
   private AyahSelectedListener ayahSelectedListener;
   private TranslationView leftTranslation, rightTranslation = null;
@@ -117,7 +116,6 @@ public class TabletFragment extends Fragment
       mainView.setPageController(null, pageNumber, pageNumber - 1);
     }
 
-    overlayText = QuranSettings.getInstance(context).shouldOverlayPageInfo();
     return mainView;
   }
 
@@ -175,8 +173,8 @@ public class TabletFragment extends Fragment
     AyahTrackerItem left;
     AyahTrackerItem right;
     if (mode == Mode.ARABIC) {
-      left = new AyahImageTrackerItem(pageNumber, false, overlayText, leftImageView);
-      right = new AyahImageTrackerItem(pageNumber - 1, true, overlayText, rightImageView);
+      left = new AyahImageTrackerItem(pageNumber, false, leftImageView);
+      right = new AyahImageTrackerItem(pageNumber - 1, true, rightImageView);
     } else if (mode == Mode.TRANSLATION) {
       left = new AyahTranslationTrackerItem(pageNumber, leftTranslation);
       right = new AyahTranslationTrackerItem(pageNumber - 1, rightTranslation);

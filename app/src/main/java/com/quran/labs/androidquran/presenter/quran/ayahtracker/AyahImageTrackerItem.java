@@ -22,34 +22,30 @@ import java.util.Map;
 import java.util.Set;
 
 public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView> {
-  private final boolean overlayText;
   private final boolean isPageOnRightSide;
   @Nullable Map<String, List<AyahBounds>> coordinates;
 
-  public AyahImageTrackerItem(int page, boolean overlayText,
-                              @NonNull HighlightingImageView highlightingImageView) {
-    this(page, false, overlayText, highlightingImageView);
+  public AyahImageTrackerItem(int page, @NonNull HighlightingImageView highlightingImageView) {
+    this(page, false, highlightingImageView);
   }
 
-  public AyahImageTrackerItem(int page, boolean isPageOnTheRight, boolean overlayText,
+  public AyahImageTrackerItem(int page, boolean isPageOnTheRight,
                               @NonNull HighlightingImageView highlightingImageView) {
     super(page, highlightingImageView);
-    this.overlayText = overlayText;
     this.isPageOnRightSide = isPageOnTheRight;
   }
 
   @Override
   void onSetPageBounds(int page, @NonNull RectF bounds) {
     if (this.page == page) {
+      // this is only called if overlayText is set
       ayahView.setPageBounds(bounds);
-      if (overlayText) {
-        Context context = ayahView.getContext();
-        String suraText = QuranInfo.getSuraNameFromPage(context, page, true);
-        String juzText = QuranInfo.getJuzString(context, page);
-        String pageText = QuranUtils.getLocalizedNumber(context, page);
-        String rub3Text = QuranDisplayHelper.displayRub3(context, page);
-        ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);
-      }
+      Context context = ayahView.getContext();
+      String suraText = QuranInfo.getSuraNameFromPage(context, page, true);
+      String juzText = QuranInfo.getJuzString(context, page);
+      String pageText = QuranUtils.getLocalizedNumber(context, page);
+      String rub3Text = QuranDisplayHelper.displayRub3(context, page);
+      ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);
     }
   }
 

@@ -16,9 +16,8 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
 
   public AyahScrollableImageTrackerItem(int page,
                                         @NonNull QuranPageLayout quranPageLayout,
-                                        @NonNull HighlightingImageView highlightingImageView,
-                                        boolean overlayText) {
-    super(page, overlayText, highlightingImageView);
+                                        @NonNull HighlightingImageView highlightingImageView) {
+    super(page, highlightingImageView);
     this.quranPageLayout = quranPageLayout;
   }
 
