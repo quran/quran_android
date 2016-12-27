@@ -112,8 +112,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -204,6 +202,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject AyahInfoDatabaseProvider ayahInfoDatabaseProvider;
   @Inject QuranSettings quranSettings;
   @Inject QuranScreenInfo quranScreenInfo;
+  @Inject ArabicDatabaseUtils arabicDatabaseUtils;
 
   private CompositeDisposable compositeDisposable;
 
@@ -236,11 +235,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     super.onCreate(savedInstanceState);
 
     // field injection
-    pagerActivityComponent = quranApp.getApplicationComponent()
-        .pagerActivityComponentBuilder()
-        .withPagerActivityModule(new PagerActivityModule(this))
-        .build();
-    pagerActivityComponent.inject(this);
+    getPagerActivityComponent().inject(this);
 
     bookmarksCache = new SparseBooleanArray();
 
@@ -683,7 +678,15 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @NonNull
   public PagerActivityComponent getPagerActivityComponent() {
-    return this.pagerActivityComponent;
+    // a fragment may call this before Activity's onCreate, so cache and reuse.
+    if (pagerActivityComponent == null) {
+      pagerActivityComponent = ((QuranApplication) getApplication())
+          .getApplicationComponent()
+          .pagerActivityComponentBuilder()
+          .withPagerActivityModule(new PagerActivityModule(this))
+          .build();
+    }
+    return pagerActivityComponent;
   }
 
   public void showGetRequiredFilesDialog() {
@@ -2023,22 +2026,15 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     compositeDisposable.add(
-        ArabicDatabaseUtils.getInstance(this).getVerses(start, end)
-            .filter(new Predicate<List<QuranAyah>>() {
-              @Override
-              public boolean test(List<QuranAyah> quranAyahs) {
-                return quranAyahs.size() > 0;
-              }
-            })
+        arabicDatabaseUtils
+            .getVerses(start, end)
+            .filter(quranAyahs -> quranAyahs.size() > 0)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Consumer<List<QuranAyah>>() {
-              @Override
-              public void accept(List<QuranAyah> quranAyahs) {
-                if (isCopy) {
-                  ShareUtil.copyVerses(PagerActivity.this, quranAyahs);
-                } else {
-                  ShareUtil.shareVerses(PagerActivity.this, quranAyahs);
-                }
+            .subscribe(quranAyahs -> {
+              if (isCopy) {
+                ShareUtil.copyVerses(PagerActivity.this, quranAyahs);
+              } else {
+                ShareUtil.shareVerses(PagerActivity.this, quranAyahs);
               }
             }));
   }

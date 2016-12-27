@@ -30,9 +30,27 @@ public class AyahInfoDatabaseHandler {
   private static final String MAX_Y = "max_y";
   private static final String GLYPHS_TABLE = "glyphs";
 
+  private static Map<String, AyahInfoDatabaseHandler> ayahInfoCache = new HashMap<>();
+
   private final SQLiteDatabase database;
 
-  AyahInfoDatabaseHandler(Context context, String databaseName) throws SQLException {
+  static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(Context context, String databaseName) {
+    AyahInfoDatabaseHandler handler = ayahInfoCache.get(databaseName);
+    if (handler == null) {
+      try {
+        AyahInfoDatabaseHandler db = new AyahInfoDatabaseHandler(context, databaseName);
+        if (db.validDatabase()) {
+          ayahInfoCache.put(databaseName, db);
+          handler = db;
+        }
+      } catch (SQLException sqlException) {
+        // it's okay, we'll try again later
+      }
+    }
+    return handler;
+  }
+
+  private AyahInfoDatabaseHandler(Context context, String databaseName) throws SQLException {
     String base = QuranFileUtils.getQuranAyahDatabaseDirectory(context);
     if (base == null) {
       database = null;
@@ -42,7 +60,7 @@ public class AyahInfoDatabaseHandler {
     }
   }
 
-  boolean validDatabase() {
+  private boolean validDatabase() {
     return database != null && database.isOpen();
   }
 

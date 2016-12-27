@@ -58,17 +58,16 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private List<QuranRow> itemsToRemove;
 
   @Inject
-  BookmarkPresenter(Context appContext, BookmarkModel bookmarkModel) {
+  BookmarkPresenter(Context appContext,
+                    BookmarkModel bookmarkModel,
+                    QuranSettings quranSettings,
+                    ArabicDatabaseUtils arabicDatabaseUtils) {
     this.appContext = appContext;
-    quranSettings = QuranSettings.getInstance(appContext);
+    this.quranSettings = quranSettings;
     this.bookmarkModel = bookmarkModel;
+    this.arabicDatabaseUtils = arabicDatabaseUtils;
     sortOrder = quranSettings.getBookmarksSortOrder();
     groupByTags = quranSettings.getBookmarksGroupedByTags();
-    try {
-      arabicDatabaseUtils = ArabicDatabaseUtils.getInstance(appContext);
-    } catch (Exception e) {
-      arabicDatabaseUtils = null;
-    }
     subscribeToChanges();
   }
 

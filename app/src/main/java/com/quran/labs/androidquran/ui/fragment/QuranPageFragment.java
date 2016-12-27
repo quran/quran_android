@@ -67,7 +67,6 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
     setHasOptionsMenu(true);
   }
 
@@ -120,7 +119,7 @@ public class QuranPageFragment extends Fragment implements PageController,
     pageNumber = getArguments().getInt(PAGE_NUMBER_EXTRA);
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()
-        .withQuranPageModule(new QuranPageModule(false, pageNumber))
+        .withQuranPageModule(new QuranPageModule(pageNumber))
         .build()
         .inject(this);
   }

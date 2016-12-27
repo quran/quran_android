@@ -185,7 +185,7 @@ public class TabletFragment extends Fragment
     pageNumber = getArguments().getInt(FIRST_PAGE_EXTRA);
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()
-        .withQuranPageModule(new QuranPageModule(true, pageNumber - 1, pageNumber))
+        .withQuranPageModule(new QuranPageModule(pageNumber - 1, pageNumber))
         .build()
         .inject(this);
 

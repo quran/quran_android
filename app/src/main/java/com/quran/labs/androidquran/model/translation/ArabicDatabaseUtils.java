@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.model.translation;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -19,28 +18,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
+@Singleton
 public class ArabicDatabaseUtils {
   public static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE) static final int NUMBER_OF_WORDS = 4;
 
-  // the context here is an application context
-  @SuppressLint("StaticFieldLeak")
-  private static ArabicDatabaseUtils instance;
-
   private final Context appContext;
   private DatabaseHandler arabicDatabaseHandler;
 
-  public static synchronized ArabicDatabaseUtils getInstance(Context context) {
-    if (instance == null) {
-      instance = new ArabicDatabaseUtils(context.getApplicationContext());
-    }
-    return instance;
-  }
-
-  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+  @Inject
   ArabicDatabaseUtils(Context context) {
     this.appContext = context;
     arabicDatabaseHandler = getArabicDatabaseHandler();
