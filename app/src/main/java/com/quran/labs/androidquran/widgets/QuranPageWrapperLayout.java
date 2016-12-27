@@ -58,6 +58,10 @@ public abstract class QuranPageWrapperLayout extends ViewGroup {
     errorText.setText(errorRes);
   }
 
+  public void hideError() {
+    errorLayout.setVisibility(GONE);
+  }
+
   private void inflateErrorLayout() {
     final LayoutInflater inflater = LayoutInflater.from(getContext());
     errorLayout = inflater.inflate(R.layout.page_load_error, this, false);

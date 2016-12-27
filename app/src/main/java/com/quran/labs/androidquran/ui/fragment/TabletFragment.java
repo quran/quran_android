@@ -226,6 +226,13 @@ public class TabletFragment extends Fragment
   }
 
   @Override
+  public void hidePageDownloadError() {
+    mainView.hideError();
+    mainView.setOnClickListener(null);
+    mainView.setClickable(false);
+  }
+
+  @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     if (mode == Mode.TRANSLATION) {
@@ -289,8 +296,7 @@ public class TabletFragment extends Fragment
 
   @Override
   public void handleRetryClicked() {
-    mainView.setOnClickListener(null);
-    mainView.setClickable(false);
+    hidePageDownloadError();
     quranPagePresenter.downloadImages();
   }
 

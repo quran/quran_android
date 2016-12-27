@@ -16,6 +16,7 @@ public interface QuranPageScreen {
   void setPageCoordinates(int page, RectF pageCoordinates);
   void setAyahCoordinatesError();
   void setPageImage(int page, @NonNull BitmapDrawable pageDrawable);
+  void hidePageDownloadError();
   void setPageDownloadError(@StringRes int errorMessage);
   void setAyahCoordinatesData(int page, Map<String, List<AyahBounds>> coordinates);
 }
