@@ -1,17 +1,17 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 
-@Singleton
+@ActivityScope
 public class RecentPagePresenter implements Presenter<PagerActivity> {
   private final RecentPageModel model;
 

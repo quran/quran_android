@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
@@ -55,11 +54,11 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Inject BookmarkModel bookmarkModel;
   @Inject QuranPageWorker quranPageWorker;
   @Inject CoordinatesModel coordinatesModel;
+  @Inject AyahTrackerPresenter ayahTrackerPresenter;
 
   private HighlightingImageView imageView;
   private QuranImagePageLayout quranPageLayout;
   private QuranPagePresenter quranPagePresenter;
-  private AyahTrackerPresenter ayahTrackerPresenter;
   private boolean ayahCoordinatesError;
 
   public static QuranPageFragment newInstance(int page) {
@@ -123,7 +122,11 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
+    ((PagerActivity) getActivity()).getPagerActivityComponent()
+        .quranPageComponentBuilder()
+        .build()
+        .inject(this);
+
     if (context instanceof AyahSelectedListener) {
       ayahSelectedListener = (AyahSelectedListener) context;
     }
@@ -132,7 +135,6 @@ public class QuranPageFragment extends Fragment implements PageController,
     quranPagePresenter = new QuranPagePresenter(bookmarkModel, coordinatesModel,
         QuranSettings.getInstance(context), QuranScreenInfo.getOrMakeInstance(context),
         quranPageWorker, false, page);
-    ayahTrackerPresenter = new AyahTrackerPresenter();
   }
 
   @Override
