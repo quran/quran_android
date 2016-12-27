@@ -16,6 +16,7 @@ public interface PagerActivityComponent {
   void inject(PagerActivity pagerActivity);
 
   @Subcomponent.Builder interface Builder {
+    Builder withPagerActivityModule(PagerActivityModule pagerModule);
     PagerActivityComponent build();
   }
 }

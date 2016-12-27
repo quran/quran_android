@@ -17,8 +17,7 @@ import android.widget.ImageView;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.model.quran.CoordinatesModel;
+import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
@@ -30,9 +29,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.PageController;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
@@ -45,6 +42,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import dagger.Lazy;
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 
@@ -64,21 +62,19 @@ public class TabletFragment extends Fragment
   private int mode;
   private int pageNumber;
   private boolean ayahCoordinatesError;
-  private AyahSelectedListener ayahSelectedListener;
   private TranslationView leftTranslation, rightTranslation = null;
   private HighlightingImageView leftImageView, rightImageView = null;
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
   private TranslationPresenter leftPageTranslationPresenter;
   private TranslationPresenter rightPageTranslationPresenter;
-  private QuranPagePresenter quranPagePresenter;
 
   private TabletView mainView;
 
-  @Inject BookmarkModel bookmarkModel;
-  @Inject QuranPageWorker quranPageWorker;
-  @Inject CoordinatesModel coordinatesModel;
+  @Inject QuranSettings quranSettings;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
+  @Inject Lazy<QuranPagePresenter> quranPagePresenter;
+  @Inject AyahSelectedListener ayahSelectedListener;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
     final TabletFragment f = new TabletFragment();
@@ -123,7 +119,7 @@ public class TabletFragment extends Fragment
     super.onStart();
     ayahTrackerPresenter.bind(this);
     if (mode == Mode.ARABIC) {
-      quranPagePresenter.bind(this);
+      quranPagePresenter.get().bind(this);
     } else {
       leftPageTranslationPresenter.bind(this);
       rightPageTranslationPresenter.bind(this);
@@ -134,7 +130,7 @@ public class TabletFragment extends Fragment
   public void onStop() {
     ayahTrackerPresenter.unbind(this);
     if (mode == Mode.ARABIC) {
-      quranPagePresenter.unbind(this);
+      quranPagePresenter.get().unbind(this);
     } else {
       leftPageTranslationPresenter.unbind(this);
       rightPageTranslationPresenter.unbind(this);
@@ -155,9 +151,8 @@ public class TabletFragment extends Fragment
   @Override
   public void updateView() {
     if (isAdded()) {
-      final QuranSettings settings = QuranSettings.getInstance(getContext());
-      final boolean useNewBackground = settings.useNewBackground();
-      final boolean isNightMode = settings.isNightMode();
+      final boolean useNewBackground = quranSettings.useNewBackground();
+      final boolean isNightMode = quranSettings.isNightMode();
       mainView.updateView(isNightMode, useNewBackground);
     }
   }
@@ -187,24 +182,17 @@ public class TabletFragment extends Fragment
   public void onAttach(Context context) {
     super.onAttach(context);
 
+    pageNumber = getArguments().getInt(FIRST_PAGE_EXTRA);
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()
+        .withQuranPageModule(new QuranPageModule(true, pageNumber - 1, pageNumber))
         .build()
         .inject(this);
 
-    if (context instanceof AyahSelectedListener) {
-      ayahSelectedListener = (AyahSelectedListener) context;
-    }
-
-    pageNumber = getArguments().getInt(FIRST_PAGE_EXTRA);
     mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
     if (mode == Mode.TRANSLATION) {
       leftPageTranslationPresenter = new TranslationPresenter(context, pageNumber);
       rightPageTranslationPresenter = new TranslationPresenter(context, pageNumber - 1);
-    } else if (mode == Mode.ARABIC) {
-      quranPagePresenter = new QuranPagePresenter(bookmarkModel, coordinatesModel,
-          QuranSettings.getInstance(context), QuranScreenInfo.getOrMakeInstance(context),
-          quranPageWorker, true, pageNumber - 1, pageNumber);
     }
   }
 
@@ -299,7 +287,7 @@ public class TabletFragment extends Fragment
   @Override
   public void handleRetryClicked() {
     hidePageDownloadError();
-    quranPagePresenter.downloadImages();
+    quranPagePresenter.get().downloadImages();
   }
 
   @Override

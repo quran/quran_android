@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
 import com.quran.labs.androidquran.presenter.Presenter;
@@ -20,12 +21,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 
+@QuranPageScope
 public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
   private final boolean isTabletMode;
@@ -41,6 +45,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   private boolean encounteredError;
   private boolean didDownloadImages;
 
+  @Inject
   public QuranPagePresenter(BookmarkModel bookmarkModel,
                             CoordinatesModel coordinatesModel,
                             QuranSettings quranSettings,
