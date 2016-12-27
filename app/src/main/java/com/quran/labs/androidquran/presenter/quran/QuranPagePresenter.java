@@ -158,6 +158,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
         didDownloadImages = true;
         screen.setPageImage(response.getPageNumber(), drawable);
       } else {
+        didDownloadImages = false;
         final int errorCode = response.getErrorCode();
         final int errorRes;
         switch (errorCode) {

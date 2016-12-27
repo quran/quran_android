@@ -80,6 +80,13 @@ public class TabletView extends QuranPageWrapperLayout {
     rightPage.invalidate();
   }
 
+  @Override
+  public void hideError() {
+    super.hideError();
+    rightPage.shouldHideLine = false;
+    rightPage.invalidate();
+  }
+
   public QuranPageLayout getLeftPage() {
     return leftPage;
   }
