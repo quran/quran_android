@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import android.app.Activity;
 import android.graphics.RectF;
+import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 
 import com.quran.labs.androidquran.common.AyahBounds;
@@ -131,6 +132,7 @@ public class AyahTrackerPresenter implements AyahTracker,
     }
   }
 
+  @Nullable
   private QuranAyah getAyahForPosition(int page, float x, float y) {
     for (AyahTrackerItem item : items) {
       QuranAyah ayah = item.getAyahForPosition(page, x, y);

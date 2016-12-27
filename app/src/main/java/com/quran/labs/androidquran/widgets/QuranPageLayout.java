@@ -14,16 +14,11 @@ import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.Px;
-import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -31,7 +26,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-public abstract class QuranPageLayout extends ViewGroup
+public abstract class QuranPageLayout extends QuranPageWrapperLayout
     implements ObservableScrollView.OnScrollListener {
 
   @IntDef( { BorderMode.HIDDEN, BorderMode.LIGHT, BorderMode.DARK, BorderMode.LINE } )
@@ -57,13 +52,11 @@ public abstract class QuranPageLayout extends ViewGroup
   protected Context context;
   protected PageController pageController;
   protected int pageNumber;
+  protected boolean shouldHideLine;
 
-  private boolean isNightMode;
   private ObservableScrollView scrollView;
   private @BorderMode int leftBorder;
   private @BorderMode int rightBorder;
-  private View errorLayout;
-  private TextView errorText;
   private View innerView;
   private int viewPaddingSmall;
   private int viewPaddingLarge;
@@ -130,10 +123,6 @@ public abstract class QuranPageLayout extends ViewGroup
       height = height - 2 * headerFooterHeight;
       view.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
           MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-      if (errorLayout != null) {
-        errorLayout.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
-            MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
-      }
     }
   }
 
@@ -150,16 +139,7 @@ public abstract class QuranPageLayout extends ViewGroup
       int headerFooterHeight = 0;
       view.layout(leftLineWidth, headerFooterHeight,
           width - rightLineWidth, height - headerFooterHeight);
-      if (errorLayout != null) {
-        int errorLayoutWidth = errorLayout.getMeasuredWidth();
-        int errorLayoutHeight = errorLayout.getMeasuredHeight();
-        int leftRightOffset = ((width - (leftLineWidth + rightLineWidth)) - errorLayoutWidth) / 2;
-        int topBottomOffset = ((height - 2 * headerFooterHeight) - errorLayoutHeight) / 2;
-        errorLayout.layout(leftLineWidth + leftRightOffset,
-            headerFooterHeight + topBottomOffset,
-            leftLineWidth + leftRightOffset + errorLayoutWidth,
-            headerFooterHeight + topBottomOffset + errorLayoutHeight);
-      }
+      super.onLayout(changed, l, t, r, b);
     }
   }
 
@@ -169,10 +149,12 @@ public abstract class QuranPageLayout extends ViewGroup
     int width = getWidth();
     if (width > 0) {
       int height = getHeight();
-      Drawable left = leftBorder == BorderMode.LINE ? lineDrawable :
-          leftBorder == BorderMode.LIGHT ? leftPageBorder : leftPageBorderNight;
-      left.setBounds(0, 0, left.getIntrinsicWidth(), height);
-      left.draw(canvas);
+      if (leftBorder != BorderMode.LINE || !shouldHideLine) {
+        Drawable left = leftBorder == BorderMode.LINE ? lineDrawable :
+            leftBorder == BorderMode.LIGHT ? leftPageBorder : leftPageBorderNight;
+        left.setBounds(0, 0, left.getIntrinsicWidth(), height);
+        left.draw(canvas);
+      }
 
       if (rightBorder != BorderMode.HIDDEN) {
         Drawable right = rightBorder == BorderMode.LIGHT ? rightPageBorder : rightPageBorderNight;
@@ -199,6 +181,7 @@ public abstract class QuranPageLayout extends ViewGroup
   }
 
   public void updateView(boolean nightMode, boolean useNewBackground, int pagesVisible) {
+    updateView(nightMode);
     if (rightGradient == null || gradientForNumberOfPages != pagesVisible) {
       final WindowManager mgr =
           (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -211,7 +194,6 @@ public abstract class QuranPageLayout extends ViewGroup
       gradientForNumberOfPages = pagesVisible;
     }
 
-    isNightMode = nightMode;
     int lineColor = Color.BLACK;
     final int nightModeTextBrightness = nightMode ?
         QuranSettings.getInstance(context).getNightModeTextBrightness() :
@@ -240,38 +222,13 @@ public abstract class QuranPageLayout extends ViewGroup
     } else {
       setBackgroundColor(ContextCompat.getColor(context, R.color.page_background));
     }
+  }
 
-    if (errorText != null) {
-      updateErrorTextColor();
+  @Override
+  void handleRetryClicked() {
+    if (pageController != null) {
+      pageController.handleRetryClicked();
     }
-  }
-
-  public void showError(@StringRes int errorRes) {
-    if (errorLayout == null) {
-      inflateErrorLayout();
-    }
-    errorLayout.setVisibility(VISIBLE);
-    errorText.setText(errorRes);
-  }
-
-  private void inflateErrorLayout() {
-    final LayoutInflater inflater = LayoutInflater.from(context);
-    errorLayout = inflater.inflate(R.layout.page_load_error, this, false);
-    LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    addView(errorLayout, lp);
-    errorText = (TextView) errorLayout.findViewById(R.id.reason_text);
-    final Button button = (Button) errorLayout.findViewById(R.id.retry_button);
-    updateErrorTextColor();
-    button.setOnClickListener(v -> {
-      errorLayout.setVisibility(GONE);
-      if (pageController != null) {
-        pageController.handleRetryClicked();
-      }
-    });
-  }
-
-  private void updateErrorTextColor() {
-    errorText.setTextColor(isNightMode ? Color.WHITE : Color.BLACK);
   }
 
   public int getCurrentScrollY() {

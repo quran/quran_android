@@ -5,6 +5,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.QuranApplication;
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.common.Response;
@@ -217,8 +219,8 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
-    if (drawable != null && response != null) {
+  public void onLoadImageResponse(@Nullable BitmapDrawable drawable, @NonNull Response response) {
+    if (drawable != null) {
       final int page = response.getPageNumber();
       if (page == pageNumber - 1 && rightImageView != null) {
         rightPageLoadTask = null;
@@ -227,6 +229,22 @@ public class TabletFragment extends Fragment
         leftPageLoadTask = null;
         leftImageView.setImageDrawable(drawable);
       }
+    } else {
+      // failed to get the image... let's notify the user
+      final int errorCode = response.getErrorCode();
+      final int errorRes;
+      switch (errorCode) {
+        case Response.ERROR_SD_CARD_NOT_FOUND:
+          errorRes = R.string.sdcard_error;
+          break;
+        case Response.ERROR_DOWNLOADING_ERROR:
+          errorRes = R.string.download_error_network;
+          break;
+        default:
+          errorRes = R.string.download_error_general;
+      }
+      mainView.showError(errorRes);
+      mainView.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
     }
   }
 
@@ -234,9 +252,7 @@ public class TabletFragment extends Fragment
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     if (mode == Mode.ARABIC) {
-      String widthParam = QuranScreenInfo.getInstance().getTabletWidthParam();
-      rightPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber - 1, this);
-      leftPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber, this);
+      downloadImages();
     } else if (mode == Mode.TRANSLATION) {
       leftPageTranslationPresenter.refresh();
       rightPageTranslationPresenter.refresh();
@@ -250,6 +266,12 @@ public class TabletFragment extends Fragment
     } else if (page == pageNumber - 1) {
       rightTranslation.setAyahs(verses);
     }
+  }
+
+  private void downloadImages() {
+    String widthParam = QuranScreenInfo.getInstance().getTabletWidthParam();
+    rightPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber - 1, this);
+    leftPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber, this);
   }
 
   public void refresh() {
@@ -308,8 +330,9 @@ public class TabletFragment extends Fragment
 
   @Override
   public void handleRetryClicked() {
-    // currently no-op - we don't show retry button in tablet right now,
-    // though we should since it's now easy.
+    mainView.setOnClickListener(null);
+    mainView.setClickable(false);
+    downloadImages();
   }
 
   @Override

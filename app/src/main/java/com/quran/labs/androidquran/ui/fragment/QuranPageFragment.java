@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -175,12 +177,12 @@ public class QuranPageFragment extends Fragment
   }
 
   @Override
-  public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
+  public void onLoadImageResponse(@Nullable BitmapDrawable drawable, @NonNull Response response) {
     pageLoadTask = null;
     if (isAdded()) {
       if (drawable != null) {
         imageView.setImageDrawable(drawable);
-      } else if (response != null) {
+      } else {
         // failed to get the image... let's notify the user
         final int errorCode = response.getErrorCode();
         final int errorRes;
