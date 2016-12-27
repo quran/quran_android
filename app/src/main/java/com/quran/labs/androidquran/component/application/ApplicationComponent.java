@@ -15,7 +15,6 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-import com.quran.labs.androidquran.util.QuranPageTask;
 
 import javax.inject.Singleton;
 
@@ -43,7 +42,4 @@ public interface ApplicationComponent {
   // dialogs
   void inject(TagBookmarkDialog tagBookmarkDialog);
   void inject(AddTagDialog addTagDialog);
-
-  // misc
-  void inject(QuranPageTask quranPageTask);
 }

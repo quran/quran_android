@@ -9,81 +9,40 @@ public class Response {
   public static final int WARN_SD_CARD_NOT_FOUND = 4;
   public static final int WARN_COULD_NOT_SAVE_FILE = 5;
 
-  private Bitmap mBitmap;
-  private int mWarningCode;
-  private int mErrorCode;
-  private int mPageNumber;
-  private String mWidthParam;
-
-  public static Response lightResponse(Response r) {
-    final Response resp;
-    if (r != null) {
-      resp = new Response(r.getWarningCode(), r.getErrorCode());
-      resp.setPageNumber(r.getPageNumber());
-    } else {
-      resp = null;
-    }
-
-    return resp;
-  }
-
-  public static Response fromPage(int page) {
-    final Response r = new Response();
-    r.mPageNumber = page;
-    return r;
-  }
+  private Bitmap bitmap;
+  private int errorCode;
+  private int pageNumber;
 
   public Response(Bitmap bitmap) {
-    mBitmap = bitmap;
+    this.bitmap = bitmap;
   }
 
   public Response(Bitmap bitmap, int warningCode) {
-    mBitmap = bitmap;
-    mWarningCode = warningCode;
-  }
-
-  public Response(int warningCode, int errorCode) {
-    mWarningCode = warningCode;
-    mErrorCode = errorCode;
+    this.bitmap = bitmap;
+    // we currently ignore warnings
   }
 
   public Response(int errorCode) {
-    mErrorCode = errorCode;
-  }
-
-  private Response() {
-  }
-
-  public void setPageNumber(int pageNumber) {
-    mPageNumber = pageNumber;
+    this.errorCode = errorCode;
   }
 
   public int getPageNumber() {
-    return mPageNumber;
+    return pageNumber;
   }
 
-  public void setPageData(int pageNumber, String widthParam) {
-    mPageNumber = pageNumber;
-    mWidthParam = widthParam;
-  }
-
-  public String getWidthParam() {
-    return mWidthParam;
+  public void setPageData(int pageNumber) {
+    this.pageNumber = pageNumber;
   }
 
   public Bitmap getBitmap() {
-    return mBitmap;
+    return bitmap;
   }
 
   public boolean isSuccessful() {
-    return mErrorCode == 0;
-  }
-
-  public int getWarningCode() {
-    return mWarningCode;
+    return errorCode == 0;
   }
 
   public int getErrorCode() {
-    return mErrorCode;
+    return errorCode;
   }
 }

@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran;
 
 
+import android.graphics.Bitmap;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.util.Pair;
 
 import com.quran.labs.androidquran.R;
@@ -12,14 +12,12 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
 import com.quran.labs.androidquran.presenter.Presenter;
-import com.quran.labs.androidquran.ui.helpers.PageDownloadListener;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
@@ -28,7 +26,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 
-public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownloadListener {
+public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
   private final boolean isTabletMode;
   private final BookmarkModel bookmarkModel;
@@ -38,7 +36,6 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
   private final QuranPageWorker quranPageWorker;
   private final String widthParameter;
   private final Integer[] pages;
-  private final Future[] pageTasks;
 
   private QuranPageScreen screen;
   private boolean encounteredError;
@@ -60,7 +57,6 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
     this.quranPageWorker = quranPageWorker;
     this.compositeDisposable = new CompositeDisposable();
     this.pages = pages;
-    this.pageTasks = new Future[pages.length];
   }
 
   private void getPageCoordinates(Integer... pages) {
@@ -143,37 +139,43 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
 
   public void downloadImages() {
     screen.hidePageDownloadError();
-    for (int i = 0; i < pages.length; i++) {
-      if (pageTasks[i] != null && !pageTasks[i].isDone()) {
-        pageTasks[i].cancel(true);
-      }
-      pageTasks[i] = quranPageWorker.loadPage(widthParameter, pages[i], this);
-    }
-  }
+    quranPageWorker.loadPages(widthParameter, pages)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeWith(new DisposableObserver<Response>() {
+          @Override
+          public void onNext(Response response) {
+            if (screen != null) {
+              Bitmap bitmap = response.getBitmap();
+              if (bitmap != null) {
+                didDownloadImages = true;
+                screen.setPageBitmap(response.getPageNumber(), bitmap);
+              } else {
+                didDownloadImages = false;
+                final int errorCode = response.getErrorCode();
+                final int errorRes;
+                switch (errorCode) {
+                  case Response.ERROR_SD_CARD_NOT_FOUND:
+                    errorRes = R.string.sdcard_error;
+                    break;
+                  case Response.ERROR_DOWNLOADING_ERROR:
+                    errorRes = R.string.download_error_network;
+                    break;
+                  default:
+                    errorRes = R.string.download_error_general;
+                }
+                screen.setPageDownloadError(errorRes);
+              }
+            }
+          }
 
-  @Override
-  public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
-    if (this.screen != null) {
-      if (drawable != null) {
-        didDownloadImages = true;
-        screen.setPageImage(response.getPageNumber(), drawable);
-      } else {
-        didDownloadImages = false;
-        final int errorCode = response.getErrorCode();
-        final int errorRes;
-        switch (errorCode) {
-          case Response.ERROR_SD_CARD_NOT_FOUND:
-            errorRes = R.string.sdcard_error;
-            break;
-          case Response.ERROR_DOWNLOADING_ERROR:
-            errorRes = R.string.download_error_network;
-            break;
-          default:
-            errorRes = R.string.download_error_general;
-        }
-        screen.setPageDownloadError(errorRes);
-      }
-    }
+          @Override
+          public void onError(Throwable e) {
+          }
+
+          @Override
+          public void onComplete() {
+          }
+        });
   }
 
   public void refresh() {
@@ -196,10 +198,5 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
   public void unbind(QuranPageScreen screen) {
     this.screen = null;
     compositeDisposable.dispose();
-    for (Future future : pageTasks) {
-      if (future != null && !future.isDone()) {
-        future.cancel(true);
-      }
-    }
   }
 }
