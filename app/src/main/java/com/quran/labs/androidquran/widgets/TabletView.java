@@ -2,15 +2,14 @@ package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.support.annotation.StringRes;
 
 import com.quran.labs.androidquran.ui.util.PageController;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class TabletView extends LinearLayout {
+public class TabletView extends QuranPageWrapperLayout {
   public static final int QURAN_PAGE = 1;
   public static final int TRANSLATION_PAGE = 2;
 
@@ -21,46 +20,64 @@ public class TabletView extends LinearLayout {
   private Context context;
   private QuranPageLayout leftPage;
   private QuranPageLayout rightPage;
+  private PageController pageController;
 
   public TabletView(Context context) {
     super(context);
     this.context = context;
-    setOrientation(HORIZONTAL);
   }
 
   public void init(@TabletPageType int leftPageType, @TabletPageType int rightPageType) {
     leftPage = getPageLayout(leftPageType);
     rightPage = getPageLayout(rightPageType);
 
-    final LayoutParams leftParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
-    leftParams.weight = 1;
-    addView(leftPage, leftParams);
+    addView(leftPage);
+    addView(rightPage);
+  }
 
-    final LayoutParams rightParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
-    rightParams.weight = 1;
-    addView(rightPage, rightParams);
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    int pageWidth = MeasureSpec.makeMeasureSpec(getMeasuredWidth() / 2, MeasureSpec.EXACTLY);
+    int pageHeight = MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY);
+    leftPage.measure(pageWidth, pageHeight);
+    rightPage.measure(pageWidth, pageHeight);
+  }
+
+  @Override
+  protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    super.onLayout(changed, l, t, r, b);
+    final int width = getMeasuredWidth();
+    final int height = getMeasuredHeight();
+    leftPage.layout(0, 0, width / 2, height);
+    rightPage.layout(width / 2, 0, width, height);
   }
 
   private QuranPageLayout getPageLayout(@TabletPageType int type) {
-    switch (type) {
-      case TRANSLATION_PAGE: {
-        return new QuranTranslationPageLayout(context);
-      }
-      case QURAN_PAGE:
-      default: {
-        return new QuranTabletImagePageLayout(context);
-      }
+    if (type == TRANSLATION_PAGE) {
+      return new QuranTranslationPageLayout(context);
+    } else {
+      return new QuranTabletImagePageLayout(context);
     }
   }
 
   public void setPageController(PageController controller, int leftPage, int rightPage) {
+    this.pageController = controller;
     this.leftPage.setPageController(controller, leftPage);
     this.rightPage.setPageController(controller, rightPage);
   }
 
   public void updateView(boolean nightMode, boolean useNewBackground) {
+    updateView(nightMode);
     leftPage.updateView(nightMode, useNewBackground, 2);
     rightPage.updateView(nightMode, useNewBackground, 2);
+  }
+
+  @Override
+  public void showError(@StringRes int errorRes) {
+    super.showError(errorRes);
+    rightPage.shouldHideLine = true;
+    rightPage.invalidate();
   }
 
   public QuranPageLayout getLeftPage() {
@@ -69,5 +86,14 @@ public class TabletView extends LinearLayout {
 
   public QuranPageLayout getRightPage() {
     return rightPage;
+  }
+
+  @Override
+  void handleRetryClicked() {
+    if (pageController != null) {
+      rightPage.shouldHideLine = false;
+      rightPage.invalidate();
+      pageController.handleRetryClicked();
+    }
   }
 }
