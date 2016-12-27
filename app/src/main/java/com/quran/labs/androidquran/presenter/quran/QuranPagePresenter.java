@@ -42,6 +42,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
 
   private QuranPageScreen screen;
   private boolean encounteredError;
+  private boolean didDownloadImages;
 
   public QuranPagePresenter(BookmarkModel bookmarkModel,
                             CoordinatesModel coordinatesModel,
@@ -141,6 +142,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
   }
 
   public void downloadImages() {
+    screen.hidePageDownloadError();
     for (int i = 0; i < pages.length; i++) {
       if (pageTasks[i] != null && !pageTasks[i].isDone()) {
         pageTasks[i].cancel(true);
@@ -153,6 +155,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
   public void onLoadImageResponse(BitmapDrawable drawable, Response response) {
     if (this.screen != null) {
       if (drawable != null) {
+        didDownloadImages = true;
         screen.setPageImage(response.getPageNumber(), drawable);
       } else {
         final int errorCode = response.getErrorCode();
@@ -182,7 +185,9 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen>, PageDownl
   @Override
   public void bind(QuranPageScreen screen) {
     this.screen = screen;
-    downloadImages();
+    if (!didDownloadImages) {
+      downloadImages();
+    }
     getPageCoordinates(pages);
   }
 

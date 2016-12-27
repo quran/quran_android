@@ -206,9 +206,15 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void handleRetryClicked() {
+  public void hidePageDownloadError() {
+    quranPageLayout.hideError();
     quranPageLayout.setOnClickListener(null);
     quranPageLayout.setClickable(false);
+  }
+
+  @Override
+  public void handleRetryClicked() {
+    hidePageDownloadError();
     quranPagePresenter.downloadImages();
   }
 
