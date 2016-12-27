@@ -50,7 +50,6 @@ public class QuranPageFragment extends Fragment implements PageController,
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private int pageNumber;
-  private boolean overlayText;
   private AyahSelectedListener ayahSelectedListener;
 
   @Inject BookmarkModel bookmarkModel;
@@ -100,7 +99,6 @@ public class QuranPageFragment extends Fragment implements PageController,
       final QuranSettings settings = QuranSettings.getInstance(getActivity());
       final boolean useNewBackground = settings.useNewBackground();
       final boolean isNightMode = settings.isNightMode();
-      overlayText = settings.shouldOverlayPageInfo();
       quranPageLayout.updateView(isNightMode, useNewBackground, 1);
       if (!settings.highlightBookmarks()) {
         imageView.unHighlight(HighlightType.BOOKMARK);
@@ -118,9 +116,8 @@ public class QuranPageFragment extends Fragment implements PageController,
   public AyahTrackerItem[] getAyahTrackerItems() {
     return new AyahTrackerItem[]{
         quranPageLayout.canScroll() ?
-            new AyahScrollableImageTrackerItem(pageNumber, quranPageLayout, imageView,
-                overlayText) :
-            new AyahImageTrackerItem(pageNumber, overlayText, imageView) };
+            new AyahScrollableImageTrackerItem(pageNumber, quranPageLayout, imageView) :
+            new AyahImageTrackerItem(pageNumber, imageView) };
   }
 
   @Override

@@ -62,7 +62,8 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   private void getPageCoordinates(Integer... pages) {
     compositeDisposable.add(
         Completable.timer(500, TimeUnit.MILLISECONDS)
-            .andThen(coordinatesModel.getPageCoordinates(isTabletMode, pages))
+            .andThen(quranSettings.shouldOverlayPageInfo() ?
+                coordinatesModel.getPageCoordinates(isTabletMode, pages) : Observable.empty())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<Pair<Integer, RectF>>() {
               @Override
