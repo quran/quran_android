@@ -14,7 +14,6 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
@@ -32,13 +31,11 @@ import io.reactivex.observers.DisposableObserver;
 @QuranPageScope
 public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
-  private final boolean isTabletMode;
   private final BookmarkModel bookmarkModel;
   private final CoordinatesModel coordinatesModel;
   private final CompositeDisposable compositeDisposable;
   private final QuranSettings quranSettings;
   private final QuranPageWorker quranPageWorker;
-  private final String widthParameter;
   private final Integer[] pages;
 
   private QuranPageScreen screen;
@@ -46,19 +43,14 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   private boolean didDownloadImages;
 
   @Inject
-  public QuranPagePresenter(BookmarkModel bookmarkModel,
-                            CoordinatesModel coordinatesModel,
-                            QuranSettings quranSettings,
-                            QuranScreenInfo quranScreenInfo,
-                            QuranPageWorker quranPageWorker,
-                            boolean isTabletMode,
-                            Integer... pages) {
-    this.isTabletMode = isTabletMode;
+  QuranPagePresenter(BookmarkModel bookmarkModel,
+                     CoordinatesModel coordinatesModel,
+                     QuranSettings quranSettings,
+                     QuranPageWorker quranPageWorker,
+                     Integer... pages) {
     this.bookmarkModel = bookmarkModel;
     this.quranSettings = quranSettings;
     this.coordinatesModel = coordinatesModel;
-    this.widthParameter = isTabletMode ?
-        quranScreenInfo.getTabletWidthParam() : quranScreenInfo.getWidthParam();
     this.quranPageWorker = quranPageWorker;
     this.compositeDisposable = new CompositeDisposable();
     this.pages = pages;
@@ -68,7 +60,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
     compositeDisposable.add(
         Completable.timer(500, TimeUnit.MILLISECONDS)
             .andThen(quranSettings.shouldOverlayPageInfo() ?
-                coordinatesModel.getPageCoordinates(isTabletMode, pages) : Observable.empty())
+                coordinatesModel.getPageCoordinates(pages) : Observable.empty())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<Pair<Integer, RectF>>() {
               @Override
@@ -119,7 +111,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   private void getAyahCoordinates(Integer... pages) {
     compositeDisposable.add(
         Observable.fromArray(pages)
-            .flatMap(p -> coordinatesModel.getAyahCoordinates(isTabletMode, p))
+            .flatMap(coordinatesModel::getAyahCoordinates)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<Pair<Integer, Map<String, List<AyahBounds>>>>() {
               @Override
@@ -145,7 +137,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
   public void downloadImages() {
     screen.hidePageDownloadError();
-    quranPageWorker.loadPages(widthParameter, pages)
+    quranPageWorker.loadPages(pages)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableObserver<Response>() {
           @Override

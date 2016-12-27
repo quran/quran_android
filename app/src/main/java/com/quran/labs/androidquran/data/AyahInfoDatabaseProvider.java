@@ -1,60 +1,31 @@
 package com.quran.labs.androidquran.data;
 
 import android.content.Context;
-import android.database.SQLException;
 import android.support.annotation.Nullable;
 
+import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
+@ActivityScope
 public class AyahInfoDatabaseProvider {
   private final Context context;
   private final String widthParameter;
-  @Nullable private final String tabletWidthParameter;
-
-  @Nullable private AyahInfoDatabaseHandler pageDatabaseHandler;
-  @Nullable private AyahInfoDatabaseHandler tabletDatabaseHandler;
+  @Nullable private AyahInfoDatabaseHandler databaseHandler;
 
   @Inject
-  AyahInfoDatabaseProvider(Context context) {
+  AyahInfoDatabaseProvider(Context context, String widthParameter) {
     this.context = context;
-
-    QuranScreenInfo quranScreenInfo = QuranScreenInfo.getOrMakeInstance(context);
-    this.widthParameter = quranScreenInfo.getWidthParam();
-    this.tabletWidthParameter = quranScreenInfo.getTabletWidthParam();
+    this.widthParameter = widthParameter;
   }
 
   @Nullable
   public AyahInfoDatabaseHandler getAyahInfoHandler() {
-    if (pageDatabaseHandler == null) {
-      pageDatabaseHandler = getDatabaseForWidth(widthParameter);
+    if (databaseHandler == null) {
+      String filename = QuranFileUtils.getAyaPositionFileName(widthParameter);
+      databaseHandler = AyahInfoDatabaseHandler.getAyahInfoDatabaseHandler(context, filename);
     }
-    return pageDatabaseHandler;
-  }
-
-  @Nullable
-  public AyahInfoDatabaseHandler getTabletAyahInfoHandler() {
-    if (tabletDatabaseHandler == null) {
-      tabletDatabaseHandler = getDatabaseForWidth(tabletWidthParameter);
-    }
-    return tabletDatabaseHandler;
-  }
-
-  @Nullable
-  private AyahInfoDatabaseHandler getDatabaseForWidth(String width) {
-    String filename = QuranFileUtils.getAyaPositionFileName(width);
-    try {
-      AyahInfoDatabaseHandler handler = new AyahInfoDatabaseHandler(context, filename);
-      if (handler.validDatabase()) {
-        return handler;
-      }
-    } catch (SQLException ignored) {
-      // database might not yet exist, etc
-    }
-    return null;
+    return databaseHandler;
   }
 }

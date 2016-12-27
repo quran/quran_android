@@ -244,7 +244,7 @@ public class BookmarkPresenterTest {
   }
 
   private BookmarkPresenter makeBookmarkPresenter(BookmarkModel model) {
-    return new BookmarkPresenter(appContext, model) {
+    return new BookmarkPresenter(appContext, model, settings, null) {
       @Override
       void subscribeToChanges() {
         // nothing
