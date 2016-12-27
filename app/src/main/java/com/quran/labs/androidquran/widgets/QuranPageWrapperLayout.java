@@ -59,7 +59,9 @@ public abstract class QuranPageWrapperLayout extends ViewGroup {
   }
 
   public void hideError() {
-    errorLayout.setVisibility(GONE);
+    if (errorLayout != null) {
+      errorLayout.setVisibility(GONE);
+    }
   }
 
   private void inflateErrorLayout() {

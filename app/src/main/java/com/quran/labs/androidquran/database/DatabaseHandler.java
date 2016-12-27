@@ -65,8 +65,7 @@ public class DatabaseHandler {
     return handler;
   }
 
-  private DatabaseHandler(Context context, String databaseName)
-      throws SQLException {
+  private DatabaseHandler(Context context, String databaseName) throws SQLException {
     String base = QuranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
     String path = base + File.separator + databaseName;
