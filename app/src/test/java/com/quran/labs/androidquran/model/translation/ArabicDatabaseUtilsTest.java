@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.model.translation;
 
+import android.content.Context;
+
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkWithAyahText;
 import com.quran.labs.androidquran.database.DatabaseHandler;
@@ -17,6 +19,7 @@ import java.util.Map;
 import static com.google.common.truth.Truth.assertThat;
 
 public class ArabicDatabaseUtilsTest {
+  @Mock Context context;
   @Mock DatabaseHandler arabicHandler;
 
   @Before
@@ -26,7 +29,13 @@ public class ArabicDatabaseUtilsTest {
 
   @Test
   public void testHydrateAyahText() {
-    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(arabicHandler) {
+    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context) {
+
+      @Override
+      DatabaseHandler getArabicDatabaseHandler() {
+        return arabicHandler;
+      }
+
       @Override
       Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
         Map<Integer, String> result = new HashMap<>();
@@ -57,7 +66,12 @@ public class ArabicDatabaseUtilsTest {
 
   @Test
   public void testHydrateAyahTextEmpty() {
-    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(arabicHandler) {
+    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context) {
+      @Override
+      DatabaseHandler getArabicDatabaseHandler() {
+        return arabicHandler;
+      }
+
       @Override
       Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
         Map<Integer, String> result = new HashMap<>();

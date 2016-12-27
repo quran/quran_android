@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.model.translation;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -25,25 +26,36 @@ public class ArabicDatabaseUtils {
   public static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE) static final int NUMBER_OF_WORDS = 4;
 
-  private static ArabicDatabaseUtils sInstance;
+  // the context here is an application context
+  @SuppressLint("StaticFieldLeak")
+  private static ArabicDatabaseUtils instance;
 
-  private final DatabaseHandler mArabicDatabaseHandler;
+  private final Context appContext;
+  private DatabaseHandler arabicDatabaseHandler;
 
   public static synchronized ArabicDatabaseUtils getInstance(Context context) {
-    if (sInstance == null) {
-      sInstance = new ArabicDatabaseUtils(context);
+    if (instance == null) {
+      instance = new ArabicDatabaseUtils(context.getApplicationContext());
     }
-    return sInstance;
-  }
-
-  private ArabicDatabaseUtils(Context context) {
-    mArabicDatabaseHandler = DatabaseHandler.getDatabaseHandler(
-        context.getApplicationContext(), QuranDataProvider.QURAN_ARABIC_DATABASE);
+    return instance;
   }
 
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-  ArabicDatabaseUtils(DatabaseHandler arabicDatabaseHandler) {
-    mArabicDatabaseHandler = arabicDatabaseHandler;
+  ArabicDatabaseUtils(Context context) {
+    this.appContext = context;
+    arabicDatabaseHandler = getArabicDatabaseHandler();
+  }
+
+  DatabaseHandler getArabicDatabaseHandler() {
+    if (arabicDatabaseHandler == null) {
+      try {
+        arabicDatabaseHandler = DatabaseHandler.getDatabaseHandler(
+            appContext.getApplicationContext(), QuranDataProvider.QURAN_ARABIC_DATABASE);
+      } catch (Exception e) {
+        // ignore
+      }
+    }
+    return null;
   }
 
   @NonNull
@@ -53,7 +65,8 @@ public class ArabicDatabaseUtils {
 
       Cursor cursor = null;
       try {
-        cursor = mArabicDatabaseHandler.getVerses(start.sura, start.ayah,
+        DatabaseHandler arabicDatabaseHandler = getArabicDatabaseHandler();
+        cursor = arabicDatabaseHandler.getVerses(start.sura, start.ayah,
             end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
         while (cursor.moveToNext()) {
           QuranAyah verse = new QuranAyah(cursor.getInt(1), cursor.getInt(2));
@@ -84,10 +97,11 @@ public class ArabicDatabaseUtils {
 
   Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
     Map<Integer, String> result = new HashMap<>(ayat.size());
-    if (mArabicDatabaseHandler != null) {
+    DatabaseHandler arabicDatabaseHandler = getArabicDatabaseHandler();
+    if (arabicDatabaseHandler != null) {
       Cursor cursor = null;
       try {
-        cursor = mArabicDatabaseHandler.getVersesByIds(ayat);
+        cursor = arabicDatabaseHandler.getVersesByIds(ayat);
         while (cursor.moveToNext()) {
           int id = cursor.getInt(0);
           int sura = cursor.getInt(1);
