@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
@@ -23,11 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+@QuranPageScope
 public class AyahTrackerPresenter implements AyahTracker,
     Presenter<AyahTrackerPresenter.AyahInteractionHandler> {
   private AyahTrackerItem[] items;
   private HighlightInfo pendingHighlightInfo;
 
+  @Inject
   public AyahTrackerPresenter() {
     this.items = new AyahTrackerItem[0];
   }

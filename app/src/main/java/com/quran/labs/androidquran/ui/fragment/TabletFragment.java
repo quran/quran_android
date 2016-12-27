@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.dao.Bookmark;
@@ -73,13 +72,13 @@ public class TabletFragment extends Fragment
   private TranslationPresenter leftPageTranslationPresenter;
   private TranslationPresenter rightPageTranslationPresenter;
   private QuranPagePresenter quranPagePresenter;
-  private AyahTrackerPresenter ayahTrackerPresenter;
 
   private TabletView mainView;
 
   @Inject BookmarkModel bookmarkModel;
   @Inject QuranPageWorker quranPageWorker;
   @Inject CoordinatesModel coordinatesModel;
+  @Inject AyahTrackerPresenter ayahTrackerPresenter;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
     final TabletFragment f = new TabletFragment();
@@ -187,7 +186,12 @@ public class TabletFragment extends Fragment
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    ((QuranApplication) (context.getApplicationContext())).getApplicationComponent().inject(this);
+
+    ((PagerActivity) getActivity()).getPagerActivityComponent()
+        .quranPageComponentBuilder()
+        .build()
+        .inject(this);
+
     if (context instanceof AyahSelectedListener) {
       ayahSelectedListener = (AyahSelectedListener) context;
     }
@@ -202,7 +206,6 @@ public class TabletFragment extends Fragment
           QuranSettings.getInstance(context), QuranScreenInfo.getOrMakeInstance(context),
           quranPageWorker, true, pageNumber - 1, pageNumber);
     }
-    ayahTrackerPresenter = new AyahTrackerPresenter();
   }
 
   @Override

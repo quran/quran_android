@@ -51,7 +51,7 @@ import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
+import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -111,7 +111,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
@@ -197,6 +196,8 @@ public class PagerActivity extends QuranActionBarActivity implements
   private SuraAyah start;
   private SuraAyah end;
 
+  private PagerActivityComponent pagerActivityComponent;
+
   @Inject QuranPageWorker quranPageWorker;
   @Inject BookmarkModel bookmarkModel;
   @Inject RecentPagePresenter recentPagePresenter;
@@ -232,7 +233,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     super.onCreate(savedInstanceState);
 
     // field injection
-    quranApp.getApplicationComponent().inject(this);
+    pagerActivityComponent = quranApp.getApplicationComponent()
+        .pagerActivityComponentBuilder()
+        .build();
+    pagerActivityComponent.inject(this);
 
     bookmarksCache = new SparseBooleanArray();
 
@@ -490,12 +494,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         viewPager.addOnPageChangeListener(pageChangedListener);
         e.onNext(getCurrentPage());
 
-        e.setCancellable(new Cancellable() {
-          @Override
-          public void cancel() throws Exception {
-            viewPager.removeOnPageChangeListener(pageChangedListener);
-          }
-        });
+        e.setCancellable(() -> viewPager.removeOnPageChangeListener(pageChangedListener));
       }
     });
   }
@@ -526,12 +525,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     // Find close button and set listener
     final View closeButton = slidingPanel
         .findViewById(R.id.sliding_menu_close);
-    closeButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        endAyahMode();
-      }
-    });
+    closeButton.setOnClickListener(v -> endAyahMode());
 
     // Create and set fragment pager adapter
     slidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
@@ -551,12 +545,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     slidingLayout.setVisibility(View.GONE);
 
     // When clicking any menu items, expand the panel
-    slidingPageIndicator.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (!slidingPanel.isExpanded()) {
-          slidingPanel.expandPane();
-        }
+    slidingPageIndicator.setOnClickListener(v -> {
+      if (!slidingPanel.isExpanded()) {
+        slidingPanel.expandPane();
       }
     });
   }
@@ -609,12 +600,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibilityListener(){
     viewPager.setOnSystemUiVisibilityChangeListener(
-        new View.OnSystemUiVisibilityChangeListener() {
-          @Override
-          public void onSystemUiVisibilityChange(int flags) {
-            boolean visible = (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
-            animateToolBar(visible);
-          }
+        flags -> {
+          boolean visible = (flags & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0;
+          animateToolBar(visible);
         });
   }
 
@@ -694,12 +682,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  public AyahInfoDatabaseHandler getAyahInfoDatabase(String widthParam) {
-    if (QuranScreenInfo.getInstance().getWidthParam().equals(widthParam)) {
-      return ayahInfoDatabaseProvider.getAyahInfoHandler();
-    } else {
-      return ayahInfoDatabaseProvider.getTabletAyahInfoHandler();
-    }
+  @NonNull
+  public PagerActivityComponent getPagerActivityComponent() {
+    return this.pagerActivityComponent;
   }
 
   public void showGetRequiredFilesDialog() {
