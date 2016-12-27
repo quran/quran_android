@@ -14,6 +14,7 @@ public interface QuranPageComponent {
   void inject(TabletFragment tabletFragment);
 
   @Subcomponent.Builder interface Builder {
+    Builder withQuranPageModule(QuranPageModule quranPageModule);
     QuranPageComponent build();
   }
 }

@@ -15,8 +15,7 @@ import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.model.quran.CoordinatesModel;
+import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
@@ -28,9 +27,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.PageController;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
@@ -49,16 +46,14 @@ public class QuranPageFragment extends Fragment implements PageController,
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private int pageNumber;
-  private AyahSelectedListener ayahSelectedListener;
 
-  @Inject BookmarkModel bookmarkModel;
-  @Inject QuranPageWorker quranPageWorker;
-  @Inject CoordinatesModel coordinatesModel;
+  @Inject QuranSettings quranSettings;
+  @Inject QuranPagePresenter quranPagePresenter;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
+  @Inject AyahSelectedListener ayahSelectedListener;
 
   private HighlightingImageView imageView;
   private QuranImagePageLayout quranPageLayout;
-  private QuranPagePresenter quranPagePresenter;
   private boolean ayahCoordinatesError;
 
   public static QuranPageFragment newInstance(int page) {
@@ -95,11 +90,10 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public void updateView() {
     if (isAdded()) {
-      final QuranSettings settings = QuranSettings.getInstance(getActivity());
-      final boolean useNewBackground = settings.useNewBackground();
-      final boolean isNightMode = settings.isNightMode();
+      final boolean useNewBackground = quranSettings.useNewBackground();
+      final boolean isNightMode = quranSettings.isNightMode();
       quranPageLayout.updateView(isNightMode, useNewBackground, 1);
-      if (!settings.highlightBookmarks()) {
+      if (!quranSettings.highlightBookmarks()) {
         imageView.unHighlight(HighlightType.BOOKMARK);
       }
       quranPagePresenter.refresh();
@@ -122,19 +116,13 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+
+    pageNumber = getArguments().getInt(PAGE_NUMBER_EXTRA);
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()
+        .withQuranPageModule(new QuranPageModule(false, pageNumber))
         .build()
         .inject(this);
-
-    if (context instanceof AyahSelectedListener) {
-      ayahSelectedListener = (AyahSelectedListener) context;
-    }
-
-    int page = getArguments().getInt(PAGE_NUMBER_EXTRA);
-    quranPagePresenter = new QuranPagePresenter(bookmarkModel, coordinatesModel,
-        QuranSettings.getInstance(context), QuranScreenInfo.getOrMakeInstance(context),
-        quranPageWorker, false, page);
   }
 
   @Override
