@@ -5,7 +5,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,9 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
@@ -29,7 +27,6 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.helpers.PageDownloadListener;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.PageController;
@@ -40,7 +37,6 @@ import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -48,16 +44,13 @@ import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
-public class QuranPageFragment extends Fragment
-    implements PageController, PageDownloadListener, QuranPage, QuranPageScreen,
-    AyahTrackerPresenter.AyahInteractionHandler {
+public class QuranPageFragment extends Fragment implements PageController,
+    QuranPage, QuranPageScreen, AyahTrackerPresenter.AyahInteractionHandler {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private int pageNumber;
-  private AyahSelectedListener ayahSelectedListener;
-
   private boolean overlayText;
-  private Future<?> pageLoadTask;
+  private AyahSelectedListener ayahSelectedListener;
 
   @Inject BookmarkModel bookmarkModel;
   @Inject QuranPageWorker quranPageWorker;
@@ -138,8 +131,9 @@ public class QuranPageFragment extends Fragment
     }
 
     int page = getArguments().getInt(PAGE_NUMBER_EXTRA);
-    quranPagePresenter = new QuranPagePresenter(bookmarkModel,
-        coordinatesModel, QuranSettings.getInstance(context), false, page);
+    quranPagePresenter = new QuranPagePresenter(bookmarkModel, coordinatesModel,
+        QuranSettings.getInstance(context), QuranScreenInfo.getOrMakeInstance(context),
+        quranPageWorker, false, page);
     ayahTrackerPresenter = new AyahTrackerPresenter();
   }
 
@@ -163,51 +157,8 @@ public class QuranPageFragment extends Fragment
     super.onStop();
   }
 
-  @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-    downloadImage();
-  }
-
-  private void downloadImage() {
-    if (isAdded()) {
-      pageLoadTask = quranPageWorker.loadPage(
-          QuranScreenInfo.getInstance().getWidthParam(), pageNumber, QuranPageFragment.this);
-    }
-  }
-
-  @Override
-  public void onLoadImageResponse(@Nullable BitmapDrawable drawable, @NonNull Response response) {
-    pageLoadTask = null;
-    if (isAdded()) {
-      if (drawable != null) {
-        imageView.setImageDrawable(drawable);
-      } else {
-        // failed to get the image... let's notify the user
-        final int errorCode = response.getErrorCode();
-        final int errorRes;
-        switch (errorCode) {
-          case Response.ERROR_SD_CARD_NOT_FOUND:
-            errorRes = R.string.sdcard_error;
-            break;
-          case Response.ERROR_DOWNLOADING_ERROR:
-            errorRes = R.string.download_error_network;
-            break;
-          default:
-            errorRes = R.string.download_error_general;
-        }
-        quranPageLayout.showError(errorRes);
-        quranPageLayout.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
-      }
-    }
-  }
-
   public void cleanup() {
     Timber.d("cleaning up page %d", pageNumber);
-    if (pageLoadTask != null) {
-      pageLoadTask.cancel(false);
-    }
-
     if (quranPageLayout != null) {
       imageView.setImageDrawable(null);
       quranPageLayout = null;
@@ -244,10 +195,21 @@ public class QuranPageFragment extends Fragment
   }
 
   @Override
+  public void setPageDownloadError(@StringRes int errorMessage) {
+    quranPageLayout.showError(errorMessage);
+    quranPageLayout.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
+  }
+
+  @Override
+  public void setPageImage(int page, @NonNull BitmapDrawable pageDrawable) {
+    imageView.setImageDrawable(pageDrawable);
+  }
+
+  @Override
   public void handleRetryClicked() {
     quranPageLayout.setOnClickListener(null);
     quranPageLayout.setClickable(false);
-    downloadImage();
+    quranPagePresenter.downloadImages();
   }
 
   @Override

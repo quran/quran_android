@@ -5,18 +5,17 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.QuranAyah;
-import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
@@ -30,7 +29,6 @@ import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.PageDownloadListener;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.util.PageController;
@@ -44,7 +42,6 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -54,7 +51,7 @@ import timber.log.Timber;
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
-    implements PageController, PageDownloadListener, TranslationPresenter.TranslationScreen,
+    implements PageController, TranslationPresenter.TranslationScreen,
     QuranPage, QuranPageScreen, AyahTrackerPresenter.AyahInteractionHandler {
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
@@ -83,9 +80,6 @@ public class TabletFragment extends Fragment
   @Inject BookmarkModel bookmarkModel;
   @Inject QuranPageWorker quranPageWorker;
   @Inject CoordinatesModel coordinatesModel;
-
-  private Future<?> leftPageLoadTask;
-  private Future<?> rightPageLoadTask;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
     final TabletFragment f = new TabletFragment();
@@ -206,7 +200,8 @@ public class TabletFragment extends Fragment
       rightPageTranslationPresenter = new TranslationPresenter(context, pageNumber - 1);
     } else if (mode == Mode.ARABIC) {
       quranPagePresenter = new QuranPagePresenter(bookmarkModel, coordinatesModel,
-          QuranSettings.getInstance(context), true, pageNumber - 1, pageNumber);
+          QuranSettings.getInstance(context), QuranScreenInfo.getOrMakeInstance(context),
+          quranPageWorker, true, pageNumber - 1, pageNumber);
     }
     ayahTrackerPresenter = new AyahTrackerPresenter();
   }
@@ -219,41 +214,21 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onLoadImageResponse(@Nullable BitmapDrawable drawable, @NonNull Response response) {
-    if (drawable != null) {
-      final int page = response.getPageNumber();
-      if (page == pageNumber - 1 && rightImageView != null) {
-        rightPageLoadTask = null;
-        rightImageView.setImageDrawable(drawable);
-      } else if (page == pageNumber && leftImageView != null) {
-        leftPageLoadTask = null;
-        leftImageView.setImageDrawable(drawable);
-      }
-    } else {
-      // failed to get the image... let's notify the user
-      final int errorCode = response.getErrorCode();
-      final int errorRes;
-      switch (errorCode) {
-        case Response.ERROR_SD_CARD_NOT_FOUND:
-          errorRes = R.string.sdcard_error;
-          break;
-        case Response.ERROR_DOWNLOADING_ERROR:
-          errorRes = R.string.download_error_network;
-          break;
-        default:
-          errorRes = R.string.download_error_general;
-      }
-      mainView.showError(errorRes);
-      mainView.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
-    }
+  public void setPageDownloadError(@StringRes int errorMessage) {
+    mainView.showError(errorMessage);
+    mainView.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
+  }
+
+  @Override
+  public void setPageImage(int page, @NonNull BitmapDrawable pageDrawable) {
+    ImageView imageView = page == pageNumber - 1 ? rightImageView : leftImageView;
+    imageView.setImageDrawable(pageDrawable);
   }
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    if (mode == Mode.ARABIC) {
-      downloadImages();
-    } else if (mode == Mode.TRANSLATION) {
+    if (mode == Mode.TRANSLATION) {
       leftPageTranslationPresenter.refresh();
       rightPageTranslationPresenter.refresh();
     }
@@ -268,12 +243,6 @@ public class TabletFragment extends Fragment
     }
   }
 
-  private void downloadImages() {
-    String widthParam = QuranScreenInfo.getInstance().getTabletWidthParam();
-    rightPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber - 1, this);
-    leftPageLoadTask = quranPageWorker.loadPage(widthParam, pageNumber, this);
-  }
-
   public void refresh() {
     if (mode == Mode.TRANSLATION) {
       leftPageTranslationPresenter.refresh();
@@ -283,22 +252,12 @@ public class TabletFragment extends Fragment
 
   public void cleanup() {
     Timber.d("cleaning up page %d", pageNumber);
-    if (leftPageLoadTask != null) {
-      leftPageLoadTask.cancel(false);
-    }
-
-    if (rightPageLoadTask != null) {
-      rightPageLoadTask.cancel(false);
-    }
-
     if (leftImageView != null) {
       leftImageView.setImageDrawable(null);
-      leftImageView = null;
     }
 
     if (rightImageView != null) {
       rightImageView.setImageDrawable(null);
-      rightImageView = null;
     }
   }
 
@@ -332,7 +291,7 @@ public class TabletFragment extends Fragment
   public void handleRetryClicked() {
     mainView.setOnClickListener(null);
     mainView.setClickable(false);
-    downloadImages();
+    quranPagePresenter.downloadImages();
   }
 
   @Override
