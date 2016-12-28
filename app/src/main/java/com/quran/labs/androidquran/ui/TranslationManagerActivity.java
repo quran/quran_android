@@ -23,7 +23,7 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
-import com.quran.labs.androidquran.ui.adapter.TranslationAdapter;
+import com.quran.labs.androidquran.ui.adapter.TranslationsAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -46,7 +46,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private List<TranslationItem> allItems;
   private SparseIntArray translationPositions;
 
-  private TranslationAdapter adapter;
+  private TranslationsAdapter adapter;
   private TranslationItem downloadingItem;
   private String databaseDirectory;
   private QuranSettings quranSettings;
@@ -71,7 +71,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mTranslationRecycler.setLayoutManager(mLayoutManager);
 
-    adapter = new TranslationAdapter(this);
+    adapter = new TranslationsAdapter(this);
     mTranslationRecycler.setAdapter(adapter);
 
     databaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);

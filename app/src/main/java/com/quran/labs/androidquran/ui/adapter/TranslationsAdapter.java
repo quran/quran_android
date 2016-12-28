@@ -23,7 +23,7 @@ import io.reactivex.subjects.PublishSubject;
 
 import static android.text.TextUtils.isEmpty;
 
-public class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.TranslationViewHolder> {
+public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapter.TranslationViewHolder> {
 
   private final PublishSubject<TranslationRowData> onClickDownloadSubject = PublishSubject.create();
   private final PublishSubject<TranslationRowData> onClickRemoveSubject = PublishSubject.create();
@@ -31,7 +31,7 @@ public class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.
   private List<TranslationRowData> mTranslations = new ArrayList<>();
   private Context context;
 
-  public TranslationAdapter(Context context) {
+  public TranslationsAdapter(Context context) {
     this.context = context;
   }
 
