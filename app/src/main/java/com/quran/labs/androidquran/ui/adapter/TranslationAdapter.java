@@ -106,7 +106,7 @@ public class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.
     this.mTranslations = data;
   }
 
-  public List<TranslationRowData> getData() {
+  public List<TranslationRowData> getTranslations() {
     return mTranslations;
   }
 
