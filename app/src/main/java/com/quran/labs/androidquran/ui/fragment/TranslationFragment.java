@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
@@ -23,6 +24,8 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class TranslationFragment extends Fragment implements
     AyahTrackerPresenter.AyahInteractionHandler, QuranPage, TranslationPresenter.TranslationScreen {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
@@ -33,12 +36,12 @@ public class TranslationFragment extends Fragment implements
   private int pageNumber;
   private int highlightedAyah;
   private TranslationView translationView;
-
   private QuranTranslationPageLayout mainView;
+  private AyahTrackerItem[] ayahTrackerItems;
 
-  private QuranSettings quranSettings;
-  private TranslationPresenter presenter;
-  private AyahTrackerPresenter ayahTrackerPresenter;
+  @Inject QuranSettings quranSettings;
+  @Inject TranslationPresenter presenter;
+  @Inject AyahTrackerPresenter ayahTrackerPresenter;
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -51,11 +54,7 @@ public class TranslationFragment extends Fragment implements
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
 
-    Context context = getContext();
-    ayahTrackerPresenter = new AyahTrackerPresenter();
-    presenter = new TranslationPresenter(context.getApplicationContext(), pageNumber);
     if (savedInstanceState != null) {
       int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
       if (page == pageNumber) {
@@ -75,7 +74,6 @@ public class TranslationFragment extends Fragment implements
     Context context = getActivity();
     mainView = new QuranTranslationPageLayout(context);
     mainView.setPageController(null, pageNumber);
-    quranSettings = QuranSettings.getInstance(context);
 
     translationView = mainView.getTranslationView();
     translationView.setTranslationClickedListener(() -> {
@@ -86,6 +84,18 @@ public class TranslationFragment extends Fragment implements
     });
 
     return mainView;
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+
+    pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
+    ((PagerActivity) getActivity()).getPagerActivityComponent()
+        .quranPageComponentBuilder()
+        .withQuranPageModule(new QuranPageModule(pageNumber))
+        .build()
+        .inject(this);
   }
 
   @Override
@@ -105,7 +115,11 @@ public class TranslationFragment extends Fragment implements
 
   @Override
   public AyahTrackerItem[] getAyahTrackerItems() {
-    return new AyahTrackerItem[] { new AyahTranslationTrackerItem(pageNumber, translationView) };
+    if (ayahTrackerItems == null) {
+      ayahTrackerItems = new AyahTrackerItem[] {
+          new AyahTranslationTrackerItem(pageNumber, translationView) };
+    }
+    return ayahTrackerItems;
   }
 
   @Override

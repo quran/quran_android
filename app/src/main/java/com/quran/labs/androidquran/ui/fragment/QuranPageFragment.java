@@ -46,6 +46,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private int pageNumber;
+  private AyahTrackerItem[] ayahTrackerItems;
 
   @Inject QuranSettings quranSettings;
   @Inject QuranPagePresenter quranPagePresenter;
@@ -106,10 +107,14 @@ public class QuranPageFragment extends Fragment implements PageController,
 
   @Override
   public AyahTrackerItem[] getAyahTrackerItems() {
-    return new AyahTrackerItem[]{
+    if (ayahTrackerItems == null) {
+      ayahTrackerItems = new AyahTrackerItem[]{
         quranPageLayout.canScroll() ?
             new AyahScrollableImageTrackerItem(pageNumber, quranPageLayout, imageView) :
-            new AyahImageTrackerItem(pageNumber, imageView) };
+            new AyahImageTrackerItem(pageNumber, imageView)
+      };
+    }
+    return ayahTrackerItems;
   }
 
   @Override

@@ -62,18 +62,18 @@ public class TabletFragment extends Fragment
   private int mode;
   private int pageNumber;
   private boolean ayahCoordinatesError;
-  private TranslationView leftTranslation, rightTranslation = null;
-  private HighlightingImageView leftImageView, rightImageView = null;
-  private CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-  private TranslationPresenter leftPageTranslationPresenter;
-  private TranslationPresenter rightPageTranslationPresenter;
-
   private TabletView mainView;
+  private TranslationView leftTranslation;
+  private TranslationView rightTranslation;
+  private HighlightingImageView leftImageView;
+  private HighlightingImageView rightImageView;
+  private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  private AyahTrackerItem[] ayahTrackerItems;
 
   @Inject QuranSettings quranSettings;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
   @Inject Lazy<QuranPagePresenter> quranPagePresenter;
+  @Inject Lazy<TranslationPresenter> translationPresenter;
   @Inject AyahSelectedListener ayahSelectedListener;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
@@ -91,7 +91,6 @@ public class TabletFragment extends Fragment
     final Context context = getActivity();
     mainView = new TabletView(context);
 
-    mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
     if (mode == Mode.ARABIC) {
       mainView.init(TabletView.QURAN_PAGE, TabletView.QURAN_PAGE);
       leftImageView = ((QuranImagePageLayout) mainView.getLeftPage()).getImageView();
@@ -104,13 +103,11 @@ public class TabletFragment extends Fragment
       rightTranslation =
           ((QuranTranslationPageLayout) mainView.getRightPage()).getTranslationView();
 
-      leftTranslation.setTranslationClickedListener(
-          () -> ((PagerActivity) getActivity()).toggleActionBar());
-      rightTranslation.setTranslationClickedListener(
-          () -> ((PagerActivity) getActivity()).toggleActionBar());
+      PagerActivity pagerActivity = (PagerActivity) context;
+      leftTranslation.setTranslationClickedListener(pagerActivity::toggleActionBar);
+      rightTranslation.setTranslationClickedListener(pagerActivity::toggleActionBar);
       mainView.setPageController(null, pageNumber, pageNumber - 1);
     }
-
     return mainView;
   }
 
@@ -121,8 +118,7 @@ public class TabletFragment extends Fragment
     if (mode == Mode.ARABIC) {
       quranPagePresenter.get().bind(this);
     } else {
-      leftPageTranslationPresenter.bind(this);
-      rightPageTranslationPresenter.bind(this);
+      translationPresenter.get().bind(this);
     }
   }
 
@@ -132,8 +128,7 @@ public class TabletFragment extends Fragment
     if (mode == Mode.ARABIC) {
       quranPagePresenter.get().unbind(this);
     } else {
-      leftPageTranslationPresenter.unbind(this);
-      rightPageTranslationPresenter.unbind(this);
+      translationPresenter.get().unbind(this);
     }
     super.onStop();
   }
@@ -164,18 +159,21 @@ public class TabletFragment extends Fragment
 
   @Override
   public AyahTrackerItem[] getAyahTrackerItems() {
-    AyahTrackerItem left;
-    AyahTrackerItem right;
-    if (mode == Mode.ARABIC) {
-      left = new AyahImageTrackerItem(pageNumber, false, leftImageView);
-      right = new AyahImageTrackerItem(pageNumber - 1, true, rightImageView);
-    } else if (mode == Mode.TRANSLATION) {
-      left = new AyahTranslationTrackerItem(pageNumber, leftTranslation);
-      right = new AyahTranslationTrackerItem(pageNumber - 1, rightTranslation);
-    } else {
-      return new AyahTrackerItem[0];
+    if (ayahTrackerItems == null) {
+      AyahTrackerItem left;
+      AyahTrackerItem right;
+      if (mode == Mode.ARABIC) {
+        left = new AyahImageTrackerItem(pageNumber, false, leftImageView);
+        right = new AyahImageTrackerItem(pageNumber - 1, true, rightImageView);
+      } else if (mode == Mode.TRANSLATION) {
+        left = new AyahTranslationTrackerItem(pageNumber, leftTranslation);
+        right = new AyahTranslationTrackerItem(pageNumber - 1, rightTranslation);
+      } else {
+        return new AyahTrackerItem[0];
+      }
+      ayahTrackerItems = new AyahTrackerItem[]{ right, left };
     }
-    return new AyahTrackerItem[] { right, left };
+    return ayahTrackerItems;
   }
 
   @Override
@@ -183,17 +181,13 @@ public class TabletFragment extends Fragment
     super.onAttach(context);
 
     pageNumber = getArguments().getInt(FIRST_PAGE_EXTRA);
+    mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
+
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()
         .withQuranPageModule(new QuranPageModule(pageNumber - 1, pageNumber))
         .build()
         .inject(this);
-
-    mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
-    if (mode == Mode.TRANSLATION) {
-      leftPageTranslationPresenter = new TranslationPresenter(context, pageNumber);
-      rightPageTranslationPresenter = new TranslationPresenter(context, pageNumber - 1);
-    }
   }
 
   @Override
@@ -226,8 +220,7 @@ public class TabletFragment extends Fragment
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     if (mode == Mode.TRANSLATION) {
-      leftPageTranslationPresenter.refresh();
-      rightPageTranslationPresenter.refresh();
+      translationPresenter.get().refresh();
     }
   }
 
@@ -242,8 +235,7 @@ public class TabletFragment extends Fragment
 
   public void refresh() {
     if (mode == Mode.TRANSLATION) {
-      leftPageTranslationPresenter.refresh();
-      rightPageTranslationPresenter.refresh();
+      translationPresenter.get().refresh();
     }
   }
 
