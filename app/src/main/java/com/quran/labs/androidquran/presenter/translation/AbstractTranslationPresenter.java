@@ -22,9 +22,9 @@ abstract class AbstractTranslationPresenter<T> implements Presenter<T> {
   @Nullable T translationScreen;
   Disposable disposable;
 
-  AbstractTranslationPresenter(Context appContext) {
+  AbstractTranslationPresenter(Context appContext, TranslationModel translationModel) {
     this.appContext = appContext;
-    translationModel = new TranslationModel(appContext);
+    this.translationModel = translationModel;
   }
 
   Single<List<QuranAyah>> getVerses(boolean getArabic,

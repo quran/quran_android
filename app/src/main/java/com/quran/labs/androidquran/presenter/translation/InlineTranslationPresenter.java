@@ -5,8 +5,11 @@ import android.support.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.VerseRange;
+import com.quran.labs.androidquran.model.translation.TranslationModel;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -14,8 +17,9 @@ import io.reactivex.observers.DisposableSingleObserver;
 public class InlineTranslationPresenter extends
     AbstractTranslationPresenter<InlineTranslationPresenter.TranslationScreen> {
 
-  public InlineTranslationPresenter(Context appContext) {
-    super(appContext);
+  @Inject
+  public InlineTranslationPresenter(Context appContext, TranslationModel translationModel) {
+    super(appContext, translationModel);
   }
 
   public void refresh(VerseRange verseRange, String activeTranslation) {
