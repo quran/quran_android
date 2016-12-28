@@ -6,14 +6,19 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.di.ActivityScope;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Single;
 
+@ActivityScope
 public class TranslationModel {
   private Context appContext;
 
+  @Inject
   public TranslationModel(Context appContext) {
     this.appContext = appContext;
   }

@@ -7,6 +7,7 @@ import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.BaseQuranInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.di.QuranPageScope;
+import com.quran.labs.androidquran.model.translation.TranslationModel;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
@@ -24,8 +25,11 @@ public class TranslationPresenter extends
   private final QuranSettings quranSettings;
 
   @Inject
-  public TranslationPresenter(Context appContext, QuranSettings quranSettings, Integer... pages) {
-    super(appContext);
+  public TranslationPresenter(Context appContext,
+                              TranslationModel translationModel,
+                              QuranSettings quranSettings,
+                              Integer... pages) {
+    super(appContext, translationModel);
     this.pages = pages;
     this.quranSettings = quranSettings;
   }

@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -23,6 +24,8 @@ import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class AyahTranslationFragment extends AyahActionFragment
     implements InlineTranslationPresenter.TranslationScreen {
 
@@ -34,12 +37,13 @@ public class AyahTranslationFragment extends AyahActionFragment
   private QuranSpinner translator;
   private TranslationsSpinnerAdapter translationAdapter;
   private List<LocalTranslation> translations;
-  private InlineTranslationPresenter translationPresenter;
+
+  @Inject InlineTranslationPresenter translationPresenter;
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    translationPresenter = new InlineTranslationPresenter(getContext().getApplicationContext());
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    ((PagerActivity) getActivity()).getPagerActivityComponent().inject(this);
   }
 
   @Override

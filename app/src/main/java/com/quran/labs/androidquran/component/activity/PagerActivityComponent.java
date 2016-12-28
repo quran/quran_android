@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.component.fragment.QuranPageComponent;
 import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.module.activity.PagerActivityModule;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 
 import dagger.Subcomponent;
 
@@ -14,6 +15,7 @@ public interface PagerActivityComponent {
   QuranPageComponent.Builder quranPageComponentBuilder();
 
   void inject(PagerActivity pagerActivity);
+  void inject(AyahTranslationFragment ayahTranslationFragment);
 
   @Subcomponent.Builder interface Builder {
     Builder withPagerActivityModule(PagerActivityModule pagerModule);
