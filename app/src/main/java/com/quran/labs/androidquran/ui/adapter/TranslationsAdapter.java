@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.adapter;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +20,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-
-import static android.text.TextUtils.isEmpty;
+import io.reactivex.subjects.UnicastSubject;
 
 public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapter.TranslationViewHolder> {
 
-  private final PublishSubject<TranslationRowData> onClickDownloadSubject = PublishSubject.create();
-  private final PublishSubject<TranslationRowData> onClickRemoveSubject = PublishSubject.create();
+  private final UnicastSubject<TranslationRowData> onClickDownloadSubject = UnicastSubject.create();
+  private final UnicastSubject<TranslationRowData> onClickRemoveSubject = UnicastSubject.create();
 
   private List<TranslationRowData> mTranslations = new ArrayList<>();
   private Context context;
@@ -48,32 +47,35 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       case R.layout.translation_row:
         TranslationItem item = (TranslationItem) rowItem;
         holder.getTranslationTitle().setText(item.name());
-        if (isEmpty(item.translation.translatorNameLocalized)) {
+        if (TextUtils.isEmpty(item.translation.translatorNameLocalized)) {
           holder.getTranslationInfo().setText(item.translation.translator);
         } else {
           holder.getTranslationInfo().setText(item.translation.translatorNameLocalized);
         }
 
+        ImageView leftImage = holder.getLeftImage();
+        ImageView rightImage = holder.getRightImage();
+
         if (item.exists()) {
           if (item.needsUpgrade()) {
-            holder.getLeftImage().setImageResource(R.drawable.ic_download);
-            holder.getLeftImage().setVisibility(View.VISIBLE);
+            leftImage.setImageResource(R.drawable.ic_download);
+            leftImage.setVisibility(View.VISIBLE);
             holder.getTranslationInfo().setText(R.string.update_available);
           } else {
-            holder.getLeftImage().setVisibility(View.GONE);
+            leftImage.setVisibility(View.GONE);
           }
-          holder.getRightImage().setImageResource(R.drawable.ic_cancel);
-          holder.getRightImage().setVisibility(View.VISIBLE);
-          holder.getRightImage().setContentDescription(context.getString(R.string.remove_button));
+          rightImage.setImageResource(R.drawable.ic_cancel);
+          rightImage.setVisibility(View.VISIBLE);
+          rightImage.setContentDescription(context.getString(R.string.remove_button));
 
           holder.itemView.setOnClickListener(v -> onClickRemoveSubject.onNext(item));
         } else {
-          holder.getLeftImage().setVisibility(View.GONE);
-          holder.getRightImage().setImageResource(R.drawable.ic_download);
-          holder.getRightImage().setVisibility(View.VISIBLE);
-          holder.getRightImage().setOnClickListener(null);
-          holder.getRightImage().setClickable(false);
-          holder.getRightImage().setContentDescription(null);
+          leftImage.setVisibility(View.GONE);
+          rightImage.setImageResource(R.drawable.ic_download);
+          rightImage.setVisibility(View.VISIBLE);
+          rightImage.setOnClickListener(null);
+          rightImage.setClickable(false);
+          rightImage.setContentDescription(null);
           holder.itemView.setOnClickListener(v -> onClickDownloadSubject.onNext(item));
         }
         break;
@@ -95,11 +97,11 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
   }
 
   public Observable<TranslationRowData> getOnClickDownloadSubject() {
-    return onClickDownloadSubject;
+    return onClickDownloadSubject.hide();
   }
 
   public Observable<TranslationRowData> getOnClickRemoveSubject() {
-    return onClickRemoveSubject;
+    return onClickRemoveSubject.hide();
   }
 
   public void setTranslations(List<TranslationRowData> data) {
@@ -110,7 +112,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     return mTranslations;
   }
 
-  public class TranslationViewHolder extends RecyclerView.ViewHolder {
+  static class TranslationViewHolder extends RecyclerView.ViewHolder {
 
     @Nullable
     @BindView(R.id.translation_title)
@@ -137,23 +139,23 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       ButterKnife.bind(this, itemView);
     }
 
-    public TextView getSeparatorText() {
+    TextView getSeparatorText() {
       return separatorText;
     }
 
-    public TextView getTranslationTitle() {
+    TextView getTranslationTitle() {
       return translationTitle;
     }
 
-    public TextView getTranslationInfo() {
+    TextView getTranslationInfo() {
       return translationInfo;
     }
 
-    public ImageView getLeftImage() {
+    ImageView getLeftImage() {
       return leftImage;
     }
 
-    public ImageView getRightImage() {
+    ImageView getRightImage() {
       return rightImage;
     }
   }
