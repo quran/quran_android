@@ -56,10 +56,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   TranslationManagerPresenter presenter;
 
   @BindView(R.id.translation_recycler)
-  RecyclerView mTranslationRecycler;
-
-  @BindView(R.id.translation_layout)
-  View mTranslationLayout;
+  RecyclerView translationRecycler;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -69,10 +66,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     ButterKnife.bind(this);
 
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-    mTranslationRecycler.setLayoutManager(mLayoutManager);
+    translationRecycler.setLayoutManager(mLayoutManager);
 
     adapter = new TranslationsAdapter(this);
-    mTranslationRecycler.setAdapter(adapter);
+    translationRecycler.setAdapter(adapter);
 
     databaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);
 
@@ -169,7 +166,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
   public void onErrorDownloadTranslations() {
     Snackbar
-        .make(mTranslationLayout, R.string.error_getting_translation_list, Snackbar.LENGTH_SHORT)
+        .make(translationRecycler, R.string.error_getting_translation_list, Snackbar.LENGTH_SHORT)
         .show();
   }
 
