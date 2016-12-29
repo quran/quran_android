@@ -273,6 +273,15 @@ public class PagerActivity extends QuranActionBarActivity implements
       start = savedInstanceState.getParcelable(LAST_START_POINT);
       end = savedInstanceState.getParcelable(LAST_ENDING_POINT);
       this.lastAudioRequest = savedInstanceState.getParcelable(LAST_AUDIO_REQUEST);
+    } else {
+      Intent intent = getIntent();
+      Bundle extras = intent.getExtras();
+      if (extras != null) {
+        page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
+        showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
+        highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
+        highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+      }
     }
 
     compositeDisposable = new CompositeDisposable();
@@ -317,18 +326,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     initAyahActionPanel();
-
-    Intent intent = getIntent();
-    Bundle extras = intent.getExtras();
-    if (extras != null) {
-      if (page == -1) {
-        page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
-      }
-
-      showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
-      highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
-      highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
-    }
 
     if (showingTranslation && translationItems != null) {
       updateActionBarSpinner();
