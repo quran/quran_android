@@ -53,7 +53,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private DefaultDownloadReceiver mDownloadReceiver = null;
 
   @Inject
-  TranslationManagerPresenter mPresenter;
+  TranslationManagerPresenter presenter;
 
   @BindView(R.id.translation_recycler)
   RecyclerView mTranslationRecycler;
@@ -83,8 +83,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     }
 
     quranSettings = QuranSettings.getInstance(this);
-    mPresenter.bind(this);
-    mPresenter.getTranslationsList(false);
+    presenter.bind(this);
+    presenter.getTranslationsList(false);
     adapter.getOnClickDownloadSubject().subscribe(this::downloadItem);
     adapter.getOnClickRemoveSubject().subscribe(this::removeItem);
   }
@@ -102,7 +102,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
   @Override
   protected void onDestroy() {
-    mPresenter.unbind(this);
+    presenter.unbind(this);
     super.onDestroy();
   }
 
@@ -164,7 +164,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       allItems.remove(allItemsIndex);
       allItems.add(allItemsIndex, updated);
     }
-    mPresenter.updateItem(updated);
+    presenter.updateItem(updated);
   }
 
   public void onErrorDownloadTranslations() {
@@ -226,10 +226,6 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   }
 
   private void downloadItem(TranslationRowData translationRowData) {
-    if (!(translationRowData instanceof TranslationItem)) {
-      return;
-    }
-
     TranslationItem selectedItem = (TranslationItem) translationRowData;
     if (selectedItem.exists() && !selectedItem.needsUpgrade()) {
       return;
