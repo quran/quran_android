@@ -27,7 +27,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
   private final UnicastSubject<TranslationRowData> onClickDownloadSubject = UnicastSubject.create();
   private final UnicastSubject<TranslationRowData> onClickRemoveSubject = UnicastSubject.create();
 
-  private List<TranslationRowData> mTranslations = new ArrayList<>();
+  private List<TranslationRowData> translations = new ArrayList<>();
   private Context context;
 
   public TranslationsAdapter(Context context) {
@@ -42,7 +42,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
 
   @Override
   public void onBindViewHolder(TranslationViewHolder holder, int position) {
-    TranslationRowData rowItem = mTranslations.get(position);
+    TranslationRowData rowItem = translations.get(position);
     switch (holder.getItemViewType()) {
       case R.layout.translation_row:
         TranslationItem item = (TranslationItem) rowItem;
@@ -67,8 +67,6 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
           rightImage.setImageResource(R.drawable.ic_cancel);
           rightImage.setVisibility(View.VISIBLE);
           rightImage.setContentDescription(context.getString(R.string.remove_button));
-
-          holder.itemView.setOnClickListener(v -> onClickRemoveSubject.onNext(item));
         } else {
           leftImage.setVisibility(View.GONE);
           rightImage.setImageResource(R.drawable.ic_download);
@@ -76,7 +74,6 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
           rightImage.setOnClickListener(null);
           rightImage.setClickable(false);
           rightImage.setContentDescription(null);
-          holder.itemView.setOnClickListener(v -> onClickDownloadSubject.onNext(item));
         }
         break;
       case R.layout.translation_sep:
@@ -87,12 +84,12 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
 
   @Override
   public int getItemCount() {
-    return mTranslations.size();
+    return translations.size();
   }
 
   @Override
   public int getItemViewType(int position) {
-    return mTranslations.get(position).isSeparator() ?
+    return translations.get(position).isSeparator() ?
         R.layout.translation_sep : R.layout.translation_row;
   }
 
@@ -105,14 +102,14 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
   }
 
   public void setTranslations(List<TranslationRowData> data) {
-    this.mTranslations = data;
+    this.translations = data;
   }
 
   public List<TranslationRowData> getTranslations() {
-    return mTranslations;
+    return translations;
   }
 
-  static class TranslationViewHolder extends RecyclerView.ViewHolder {
+  class TranslationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     @Nullable
     @BindView(R.id.translation_title)
@@ -137,6 +134,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     TranslationViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
+      itemView.setOnClickListener(this);
     }
 
     TextView getSeparatorText() {
@@ -157,6 +155,16 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
 
     ImageView getRightImage() {
       return rightImage;
+    }
+
+    @Override
+    public void onClick(View v) {
+      TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
+      if(item.exists()) {
+        onClickRemoveSubject.onNext(item);
+      } else {
+        onClickDownloadSubject.onNext(item);
+      }
     }
   }
 }
