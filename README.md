@@ -38,3 +38,4 @@ Choose "Import Project," and choose the `build.gradle` file from the top level d
 * [moshi](https://github.com/square/moshi)
 * [dagger2](http://google.github.io/dagger/)
 * [retrolambda](https://github.com/orfjackal/retrolambda) and [retrolambda gradle plugin](https://github.com/evant/gradle-retrolambda).
+* [butterknife](http://jakewharton.github.io/butterknife/)
