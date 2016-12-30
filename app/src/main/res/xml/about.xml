@@ -122,6 +122,14 @@
           android:action="android.intent.action.VIEW"
           android:data="@string/about_retrolambda_url"/>
     </com.quran.labs.androidquran.ui.preference.QuranPreference>
+
+    <com.quran.labs.androidquran.ui.preference.QuranPreference
+        android:title="@string/about_butterknife"
+        android:summary="@string/about_butterknife_desc">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_butterknife_url"/>
+    </com.quran.labs.androidquran.ui.preference.QuranPreference>
   </PreferenceCategory>
 
   <PreferenceCategory
