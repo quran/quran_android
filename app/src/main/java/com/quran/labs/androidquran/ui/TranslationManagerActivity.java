@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseIntArray;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
@@ -35,6 +34,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class TranslationManagerActivity extends QuranActionBarActivity
@@ -51,6 +51,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private String databaseDirectory;
   private QuranSettings quranSettings;
   private DefaultDownloadReceiver mDownloadReceiver = null;
+
+  private Disposable onClickDownloadDisposable;
+  private Disposable onClickRemoveDisposable;
 
   @Inject
   TranslationManagerPresenter presenter;
@@ -82,8 +85,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     quranSettings = QuranSettings.getInstance(this);
     presenter.bind(this);
     presenter.getTranslationsList(false);
-    adapter.getOnClickDownloadSubject().subscribe(this::downloadItem);
-    adapter.getOnClickRemoveSubject().subscribe(this::removeItem);
+    onClickDownloadDisposable = adapter.getOnClickDownloadSubject().subscribe(this::downloadItem);
+    onClickRemoveDisposable = adapter.getOnClickRemoveSubject().subscribe(this::removeItem);
   }
 
   @Override
@@ -100,6 +103,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   @Override
   protected void onDestroy() {
     presenter.unbind(this);
+    onClickDownloadDisposable.dispose();
+    onClickRemoveDisposable.dispose();
     super.onDestroy();
   }
 
