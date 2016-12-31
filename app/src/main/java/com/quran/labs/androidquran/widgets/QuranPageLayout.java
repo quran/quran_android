@@ -54,6 +54,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   protected PageController pageController;
   protected int pageNumber;
   protected boolean shouldHideLine;
+  protected boolean isFullWidth;
 
   private ObservableScrollView scrollView;
   private @BorderMode int leftBorder;
@@ -118,12 +119,14 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     if (view != null) {
       int width = MeasureSpec.getSize(widthMeasureSpec);
       int height = MeasureSpec.getSize(heightMeasureSpec);
-      int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : leftPageBorder.getIntrinsicWidth();
-      int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
-          0 : rightPageBorder.getIntrinsicWidth();
-      int headerFooterHeight = 0;
-      width = width - (leftLineWidth + rightLineWidth + viewPaddingSmall + viewPaddingLarge);
-      height = height - 2 * headerFooterHeight;
+      if (!isFullWidth) {
+        int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : leftPageBorder.getIntrinsicWidth();
+        int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
+            0 : rightPageBorder.getIntrinsicWidth();
+        int headerFooterHeight = 0;
+        width = width - (leftLineWidth + rightLineWidth + viewPaddingSmall + viewPaddingLarge);
+        height = height - 2 * headerFooterHeight;
+      }
       view.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
           MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
     }

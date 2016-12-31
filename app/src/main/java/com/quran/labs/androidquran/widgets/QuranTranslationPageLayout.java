@@ -14,6 +14,7 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
 
   public QuranTranslationPageLayout(Context context) {
     super(context);
+    isFullWidth = true;
   }
 
   @Override
