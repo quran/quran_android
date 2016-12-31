@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/text"
-          android:layout_width="36dp"
-          android:layout_height="36dp"
-          android:paddingTop="8dp"
-          android:paddingBottom="8dp"
-          android:gravity="center"
-          android:textColor="@color/translation_verse_text_color"
-          android:background="@color/translation_verse_background_color"
-    />
+<!-- the FrameLayout here is a hack to ensure we get touch, until we can replace this with a
+     custom View -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:padding="12dp"
+    >
+  <TextView
+      android:id="@+id/text"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:gravity="center"
+      android:textColor="@color/translation_verse_text_color"
+      android:background="@color/translation_verse_background_color"
+      />
+</FrameLayout>

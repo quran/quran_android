@@ -3,8 +3,7 @@
           android:id="@+id/text"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingTop="8dp"
-          android:paddingBottom="8dp"
+          android:padding="12dp"
           android:lineSpacingMultiplier="1.4"
           android:lineSpacingExtra="1.4dp"
     />
