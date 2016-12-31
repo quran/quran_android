@@ -20,7 +20,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranSpinner;
-import com.quran.labs.androidquran.widgets.TranslationView;
+import com.quran.labs.androidquran.widgets.InlineTranslationView;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     implements InlineTranslationPresenter.TranslationScreen {
 
   private ProgressBar progressBar;
-  private TranslationView translationView;
+  private InlineTranslationView translationView;
   private View emptyState;
   private LocalTranslation translationItem;
   private View translationControls;
@@ -53,9 +53,7 @@ public class AyahTranslationFragment extends AyahActionFragment
         R.layout.translation_panel, container, false);
 
     translator = (QuranSpinner) view.findViewById(R.id.translator);
-    translationView =
-        (TranslationView) view.findViewById(R.id.translation_view);
-    translationView.setIsInAyahActionMode(true);
+    translationView = (InlineTranslationView) view.findViewById(R.id.translation_view);
     progressBar = (ProgressBar) view.findViewById(R.id.progress);
     emptyState = view.findViewById(R.id.empty_state);
     translationControls = view.findViewById(R.id.controls);
