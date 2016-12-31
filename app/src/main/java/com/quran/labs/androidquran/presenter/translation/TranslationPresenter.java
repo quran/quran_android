@@ -43,6 +43,7 @@ public class TranslationPresenter extends
     final String activeTranslation = quranSettings.getActiveTranslation();
     disposable = Observable.zip(
         Observable.fromCallable(() -> translationsAdapter.getTranslations())
+            .repeat(pages.length)
             .onErrorReturn(throwable -> new ArrayList<>()),
         Observable.fromArray(pages)
             .flatMap(page -> getVerses(quranSettings.wantArabicInTranslationView(),
