@@ -25,10 +25,10 @@ public class TranslationPresenter extends
   private final QuranSettings quranSettings;
 
   @Inject
-  public TranslationPresenter(Context appContext,
-                              TranslationModel translationModel,
-                              QuranSettings quranSettings,
-                              Integer... pages) {
+  TranslationPresenter(Context appContext,
+                       TranslationModel translationModel,
+                       QuranSettings quranSettings,
+                       Integer... pages) {
     super(appContext, translationModel);
     this.pages = pages;
     this.quranSettings = quranSettings;

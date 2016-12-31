@@ -90,9 +90,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public void updateView() {
     if (isAdded()) {
-      final boolean useNewBackground = quranSettings.useNewBackground();
-      final boolean isNightMode = quranSettings.isNightMode();
-      quranPageLayout.updateView(isNightMode, useNewBackground, 1);
+      quranPageLayout.updateView(quranSettings);
       if (!quranSettings.highlightBookmarks()) {
         imageView.unHighlight(HighlightType.BOOKMARK);
       }

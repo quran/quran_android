@@ -2,9 +2,11 @@ package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
 import com.quran.labs.androidquran.ui.util.PageController;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,7 +17,7 @@ public class TabletView extends QuranPageWrapperLayout {
 
   @Retention(RetentionPolicy.SOURCE)
   @IntDef( { QURAN_PAGE, TRANSLATION_PAGE } )
-  public @interface TabletPageType {}
+  @interface TabletPageType {}
 
   private Context context;
   private QuranPageLayout leftPage;
@@ -67,10 +69,11 @@ public class TabletView extends QuranPageWrapperLayout {
     this.rightPage.setPageController(controller, rightPage);
   }
 
-  public void updateView(boolean nightMode, boolean useNewBackground) {
-    updateView(nightMode);
-    leftPage.updateView(nightMode, useNewBackground, 2);
-    rightPage.updateView(nightMode, useNewBackground, 2);
+  @Override
+  public void updateView(@NonNull QuranSettings quranSettings) {
+    super.updateView(quranSettings);
+    leftPage.updateView(quranSettings);
+    rightPage.updateView(quranSettings);
   }
 
   @Override

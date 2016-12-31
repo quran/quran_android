@@ -29,13 +29,13 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
+import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TabletView;
-import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 import java.util.Map;
@@ -104,8 +104,8 @@ public class TabletFragment extends Fragment
           ((QuranTranslationPageLayout) mainView.getRightPage()).getTranslationView();
 
       PagerActivity pagerActivity = (PagerActivity) context;
-      leftTranslation.setTranslationClickedListener(pagerActivity::toggleActionBar);
-      rightTranslation.setTranslationClickedListener(pagerActivity::toggleActionBar);
+      leftTranslation.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
+      rightTranslation.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
       mainView.setPageController(null, pageNumber, pageNumber - 1);
     }
     return mainView;
@@ -138,17 +138,15 @@ public class TabletFragment extends Fragment
     super.onResume();
     updateView();
     if (mode == Mode.TRANSLATION) {
-      rightTranslation.refresh();
-      leftTranslation.refresh();
+      rightTranslation.refresh(quranSettings);
+      leftTranslation.refresh(quranSettings);
     }
   }
 
   @Override
   public void updateView() {
     if (isAdded()) {
-      final boolean useNewBackground = quranSettings.useNewBackground();
-      final boolean isNightMode = quranSettings.isNightMode();
-      mainView.updateView(isNightMode, useNewBackground);
+      mainView.updateView(quranSettings);
     }
   }
 
@@ -227,9 +225,9 @@ public class TabletFragment extends Fragment
   @Override
   public void setVerses(int page, @NonNull List<QuranAyah> verses) {
     if (page == pageNumber) {
-      leftTranslation.setAyahs(verses);
+      leftTranslation.setVerses(verses);
     } else if (page == pageNumber - 1) {
-      rightTranslation.setAyahs(verses);
+      rightTranslation.setVerses(verses);
     }
   }
 
