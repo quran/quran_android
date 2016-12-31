@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public abstract class QuranPageWrapperLayout extends ViewGroup {
 
@@ -43,8 +45,8 @@ public abstract class QuranPageWrapperLayout extends ViewGroup {
     }
   }
 
-  public void updateView(boolean nightMode) {
-    isNightMode = nightMode;
+  public void updateView(@NonNull QuranSettings quranSettings) {
+    isNightMode = quranSettings.isNightMode();
     if (errorText != null) {
       updateErrorTextColor();
     }

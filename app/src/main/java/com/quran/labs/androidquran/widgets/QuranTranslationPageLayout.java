@@ -1,10 +1,13 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 
+import com.quran.labs.androidquran.util.QuranSettings;
+
 public class QuranTranslationPageLayout extends QuranPageLayout {
-  private TranslationView translationView;
+  private com.quran.labs.androidquran.ui.translation.TranslationView translationView;
 
   public QuranTranslationPageLayout(Context context) {
     super(context);
@@ -12,13 +15,14 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
 
   @Override
   protected View generateContentView(Context context, boolean isLandscape) {
-    translationView = new TranslationView(context);
+    translationView = new com.quran.labs.androidquran.ui.translation.TranslationView(context);
     return translationView;
   }
 
   @Override
-  protected void setContentNightMode(boolean nightMode, int textBrightness) {
-    translationView.setNightMode(nightMode, textBrightness);
+  public void updateView(@NonNull QuranSettings quranSettings) {
+    super.updateView(quranSettings);
+    translationView.refresh(quranSettings);
   }
 
   @Override
@@ -26,7 +30,7 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
     return false;
   }
 
-  public TranslationView getTranslationView() {
+  public com.quran.labs.androidquran.ui.translation.TranslationView getTranslationView() {
     return translationView;
   }
 }
