@@ -22,7 +22,7 @@
         android:textStyle="bold"
         android:textColor="@color/accent_color"
         />
-    <com.quran.labs.androidquran.widgets.TranslationView
+    <com.quran.labs.androidquran.widgets.InlineTranslationView
         android:id="@+id/translation_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -4,10 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
 
+import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranTranslationPageLayout extends QuranPageLayout {
-  private com.quran.labs.androidquran.ui.translation.TranslationView translationView;
+  private TranslationView translationView;
 
   public QuranTranslationPageLayout(Context context) {
     super(context);
@@ -15,7 +16,7 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
 
   @Override
   protected View generateContentView(Context context, boolean isLandscape) {
-    translationView = new com.quran.labs.androidquran.ui.translation.TranslationView(context);
+    translationView = new TranslationView(context);
     return translationView;
   }
 
@@ -30,7 +31,7 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
     return false;
   }
 
-  public com.quran.labs.androidquran.ui.translation.TranslationView getTranslationView() {
+  public TranslationView getTranslationView() {
     return translationView;
   }
 }
