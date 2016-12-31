@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.LayoutRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -26,8 +27,6 @@ import javax.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.quran.labs.androidquran.ui.translation.TranslationViewRow.Type.SPACER;
-
 class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowViewHolder> {
   private static final boolean USE_UTHMANI_SPAN =
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
@@ -40,6 +39,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   private int fontSize;
   private int textColor;
+  private int arabicTextColor;
 
   private View.OnClickListener defaultClickListener = new View.OnClickListener() {
     @Override
@@ -71,8 +71,10 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     if (isNightMode) {
       int textBrightness = quranSettings.getNightModeTextBrightness();
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness);
+      this.arabicTextColor = textColor;
     } else {
-      this.textColor = Color.BLACK;
+      this.textColor = ContextCompat.getColor(context, R.color.translation_text_color);
+      this.arabicTextColor = Color.BLACK;
     }
 
     if (!this.data.isEmpty()) {
@@ -93,8 +95,12 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     } else if (viewType == TranslationViewRow.Type.BASMALLAH ||
         viewType == TranslationViewRow.Type.QURAN_TEXT) {
       layout = R.layout.quran_translation_arabic_row;
-    } else if (viewType == SPACER) {
+    } else if (viewType == TranslationViewRow.Type.SPACER) {
       layout = R.layout.quran_translation_spacer_row;
+    } else if (viewType == TranslationViewRow.Type.VERSE_NUMBER) {
+      layout = R.layout.quran_translation_verse_number_row;
+    } else if (viewType == TranslationViewRow.Type.TRANSLATOR) {
+      layout = R.layout.quran_translation_translator_row;
     } else {
       layout = R.layout.quran_translation_text_row;
     }
@@ -119,16 +125,18 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
           str.setSpan(new UthmaniSpan(context), 0, str.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         text = str;
-        holder.text.setTextColor(textColor);
+        holder.text.setTextColor(arabicTextColor);
         holder.text.setTextSize(ARABIC_MULTIPLIER * fontSize);
       } else {
         if (row.type == TranslationViewRow.Type.VERSE_NUMBER) {
           text = context.getString(R.string.sura_ayah, row.data.getSura(), row.data.getAyah());
+        } else if (row.type == TranslationViewRow.Type.TRANSLATOR) {
+          text = row.data.getTranslator();
         } else {
           text = row.data.getTranslation();
+          holder.text.setTextColor(textColor);
+          holder.text.setTextSize(fontSize);
         }
-        holder.text.setTextColor(textColor);
-        holder.text.setTextSize(fontSize);
       }
       holder.text.setText(text);
     }

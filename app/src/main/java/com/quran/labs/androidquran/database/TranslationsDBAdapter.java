@@ -1,15 +1,15 @@
 package com.quran.labs.androidquran.database;
 
-import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.dao.translation.TranslationItem;
-import com.quran.labs.androidquran.util.QuranFileUtils;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.SparseArray;
+
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.dao.translation.TranslationItem;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,24 +20,24 @@ import static com.quran.labs.androidquran.database.TranslationsDBHelper.Translat
 
 public class TranslationsDBAdapter {
 
-  private SQLiteDatabase mDb;
-  private Context mContext;
-  private static TranslationsDBHelper sDbHelper;
+  private SQLiteDatabase db;
+  private Context context;
+  private static TranslationsDBHelper dbHelper;
 
   public TranslationsDBAdapter(Context context) {
-    mContext = context.getApplicationContext();
-    initHelper(mContext);
+    this.context = context.getApplicationContext();
+    initHelper(this.context);
   }
 
-  public static synchronized void initHelper(Context context) {
-    if (sDbHelper == null) {
-      sDbHelper = new TranslationsDBHelper(context);
+  private static synchronized void initHelper(Context context) {
+    if (dbHelper == null) {
+      dbHelper = new TranslationsDBHelper(context);
     }
   }
 
   public void open() throws SQLException {
-    if (mDb == null && sDbHelper != null) {
-      mDb = sDbHelper.getWritableDatabase();
+    if (db == null && dbHelper != null) {
+      db = dbHelper.getWritableDatabase();
     }
   }
 
@@ -55,15 +55,15 @@ public class TranslationsDBAdapter {
   }
 
   public List<LocalTranslation> getTranslations() {
-    if (mDb == null) {
+    if (db == null) {
       open();
-      if (mDb == null) {
+      if (db == null) {
         return null;
       }
     }
 
     List<LocalTranslation> items = null;
-    Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME,
+    Cursor cursor = db.query(TranslationsTable.TABLE_NAME,
         null, null, null, null, null,
         TranslationsTable.ID + " ASC");
     if (cursor != null) {
@@ -77,7 +77,7 @@ public class TranslationsDBAdapter {
         String url = cursor.getString(5);
         int version = cursor.getInt(6);
 
-        if (QuranFileUtils.hasTranslation(mContext, filename)) {
+        if (QuranFileUtils.hasTranslation(context, filename)) {
           items.add(new LocalTranslation(id, filename, name, translator, translatorForeign, url, version));
         }
       }
@@ -87,15 +87,15 @@ public class TranslationsDBAdapter {
   }
 
   public boolean writeTranslationUpdates(List<TranslationItem> updates) {
-    if (mDb == null) {
+    if (db == null) {
       open();
-      if (mDb == null) {
+      if (db == null) {
         return false;
       }
     }
 
     boolean result = true;
-    mDb.beginTransaction();
+    db.beginTransaction();
     try {
       for (int i = 0, updatesSize = updates.size(); i < updatesSize; i++) {
         TranslationItem item = updates.get(i);
@@ -109,18 +109,18 @@ public class TranslationsDBAdapter {
           values.put(TranslationsTable.URL, item.translation.fileUrl);
           values.put(TranslationsTable.VERSION, item.localVersion);
 
-          mDb.replace(TranslationsTable.TABLE_NAME, null, values);
+          db.replace(TranslationsTable.TABLE_NAME, null, values);
         } else {
-          mDb.delete(TranslationsTable.TABLE_NAME,
+          db.delete(TranslationsTable.TABLE_NAME,
               TranslationsTable.ID + " = " + item.translation.id, null);
         }
       }
-      mDb.setTransactionSuccessful();
+      db.setTransactionSuccessful();
     } catch (Exception e) {
       result = false;
       Timber.d(e, "error writing translation updates");
     }
-    mDb.endTransaction();
+    db.endTransaction();
 
     return result;
   }

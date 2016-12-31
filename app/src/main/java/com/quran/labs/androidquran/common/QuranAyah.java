@@ -14,6 +14,9 @@ public class QuranAyah implements Parcelable {
   // translation or tafseer text
   private String translation = null;
 
+  // translator
+  private String translator;
+
   // is translation or tafseer text arabic or not
   private boolean isArabic = false;
 
@@ -27,9 +30,9 @@ public class QuranAyah implements Parcelable {
     this.ayah = in.readInt();
     this.text = in.readString();
     this.translation = in.readString();
+    this.translator = in.readString();
     this.isArabic = in.readByte() != 0;
   }
-
 
   public int getSura() {
     return sura;
@@ -45,6 +48,14 @@ public class QuranAyah implements Parcelable {
 
   public void setText(String text) {
     this.text = text;
+  }
+
+  public String getTranslator() {
+    return translator;
+  }
+
+  public void setTranslator(String translator) {
+    this.translator = translator;
   }
 
   public String getTranslation() {
@@ -74,6 +85,7 @@ public class QuranAyah implements Parcelable {
     dest.writeInt(this.ayah);
     dest.writeString(this.text);
     dest.writeString(this.translation);
+    dest.writeString(this.translator);
     dest.writeByte(isArabic ? (byte) 1 : (byte) 0);
   }
 
