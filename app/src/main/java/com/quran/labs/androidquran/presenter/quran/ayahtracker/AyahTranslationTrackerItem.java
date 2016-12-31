@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.widgets.TranslationView;
+import com.quran.labs.androidquran.ui.translation.TranslationView;
 
 public class AyahTranslationTrackerItem extends AyahTrackerItem<TranslationView> {
 

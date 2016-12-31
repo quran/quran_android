@@ -13,6 +13,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Px;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
@@ -104,6 +105,8 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       rightPageBorderNight = new BitmapDrawable(resources,
           BitmapFactory.decodeResource(resources, R.drawable.night_right_border));
     }
+
+    updateGradients();
     setWillNotDraw(false);
   }
 
@@ -165,7 +168,6 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   }
 
   protected abstract View generateContentView(Context context, boolean isLandscape);
-  protected abstract void setContentNightMode(boolean nightMode, int textBrightness);
 
   protected boolean shouldWrapWithScrollView() {
     return true;
@@ -180,8 +182,12 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     this.pageController = controller;
   }
 
-  public void updateView(boolean nightMode, boolean useNewBackground, int pagesVisible) {
-    updateView(nightMode);
+  protected int getPagesVisible() {
+    return 1;
+  }
+
+  private void updateGradients() {
+    int pagesVisible = getPagesVisible();
     if (rightGradient == null || gradientForNumberOfPages != pagesVisible) {
       final WindowManager mgr =
           (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -193,11 +199,15 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       rightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
       gradientForNumberOfPages = pagesVisible;
     }
+  }
 
+  @Override
+  public void updateView(@NonNull QuranSettings quranSettings) {
+    super.updateView(quranSettings);
+    boolean nightMode = quranSettings.isNightMode();
     int lineColor = Color.BLACK;
     final int nightModeTextBrightness = nightMode ?
-        QuranSettings.getInstance(context).getNightModeTextBrightness() :
-        Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+        quranSettings.getNightModeTextBrightness() : Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
     if (nightMode) {
       lineColor = Color.argb(nightModeTextBrightness, 255, 255, 255);
     }
@@ -213,11 +223,10 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       }
       leftBorder = BorderMode.LINE;
     }
-    setContentNightMode(nightMode, nightModeTextBrightness);
 
     if (nightMode) {
       setBackgroundColor(Color.BLACK);
-    } else if (useNewBackground) {
+    } else if (quranSettings.useNewBackground()) {
       setBackgroundDrawable((pageNumber % 2 == 0 ? leftGradient : rightGradient));
     } else {
       setBackgroundColor(ContextCompat.getColor(context, R.color.page_background));

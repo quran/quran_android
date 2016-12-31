@@ -18,9 +18,9 @@ import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
+import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
-import com.quran.labs.androidquran.widgets.TranslationView;
 
 import java.util.List;
 
@@ -76,7 +76,7 @@ public class TranslationFragment extends Fragment implements
     mainView.setPageController(null, pageNumber);
 
     translationView = mainView.getTranslationView();
-    translationView.setTranslationClickedListener(() -> {
+    translationView.setTranslationClickedListener(v -> {
       final Activity activity = getActivity();
       if (activity != null && activity instanceof PagerActivity) {
         ((PagerActivity) getActivity()).toggleActionBar();
@@ -101,9 +101,7 @@ public class TranslationFragment extends Fragment implements
   @Override
   public void updateView() {
     if (isAdded()) {
-      final boolean nightMode = quranSettings.isNightMode();
-      final boolean useNewBackground = quranSettings.useNewBackground();
-      mainView.updateView(nightMode, useNewBackground, 1);
+      mainView.updateView(quranSettings);
       refresh();
     }
   }
@@ -124,7 +122,7 @@ public class TranslationFragment extends Fragment implements
 
   @Override
   public void setVerses(int page, @NonNull List<QuranAyah> verses) {
-    translationView.setAyahs(verses);
+    translationView.setVerses(verses);
     if (highlightedAyah > 0) {
       translationView.highlightAyah(highlightedAyah);
     }

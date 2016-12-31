@@ -1,12 +1,14 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.util.PageController;
+import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranImagePageLayout extends QuranPageLayout {
   private HighlightingImageView imageView;
@@ -24,8 +26,9 @@ public class QuranImagePageLayout extends QuranPageLayout {
   }
 
   @Override
-  protected void setContentNightMode(boolean nightMode, int textBrightness) {
-    imageView.setNightMode(nightMode, textBrightness);
+  public void updateView(@NonNull QuranSettings quranSettings) {
+    super.updateView(quranSettings);
+    imageView.setNightMode(quranSettings.isNightMode(), quranSettings.getNightModeTextBrightness());
   }
 
   public HighlightingImageView getImageView() {
