@@ -69,6 +69,10 @@ public class TranslationView extends ViewGroup {
       if (ayah.getText() != null) {
         rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, ayah));
       }
+
+      if (ayah.getTranslator() != null) {
+        rows.add(new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR, ayah));
+      }
       rows.add(new TranslationViewRow(TranslationViewRow.Type.TRANSLATION_TEXT, ayah));
       rows.add(new TranslationViewRow(TranslationViewRow.Type.SPACER, ayah));
     }

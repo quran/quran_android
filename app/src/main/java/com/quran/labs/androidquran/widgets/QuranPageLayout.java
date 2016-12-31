@@ -224,6 +224,10 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       leftBorder = BorderMode.LINE;
     }
 
+    updateBackground(nightMode, quranSettings);
+  }
+
+  protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
     if (nightMode) {
       setBackgroundColor(Color.BLACK);
     } else if (quranSettings.useNewBackground()) {
