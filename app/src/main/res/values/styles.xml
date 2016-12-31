@@ -12,13 +12,9 @@
 
     <style name="NotificationText"
         parent="android:TextAppearance.StatusBar.EventContent" />
+
     <style name="NotificationTitle"
         parent="android:TextAppearance.StatusBar.EventContent.Title" />
-
-    <style name="translation_sura_title">
-        <item name="android:textColor">@color/translation_hdr_color</item>
-        <item name="android:textSize">16sp</item>
-    </style>
 
     <style name="TranslationText">
         <item name="android:textColor">@android:color/black</item>

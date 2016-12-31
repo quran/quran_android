@@ -5,4 +5,7 @@
           android:layout_height="wrap_content"
           android:paddingTop="8dp"
           android:paddingBottom="8dp"
+          android:textAllCaps="true"
+          android:textSize="12sp"
+          android:textColor="@color/translation_translator_color"
     />
