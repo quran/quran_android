@@ -20,12 +20,15 @@ import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahNumberView;
+import com.quran.labs.androidquran.widgets.DividerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.R.attr.visibility;
 
 class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowViewHolder> {
   private static final boolean USE_UTHMANI_SPAN =
@@ -139,16 +142,16 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       }
       holder.text.setText(text);
     } else if (holder.divider != null) {
-      int visibility = View.VISIBLE;
+      boolean showLine = true;
       if (position + 1 < data.size()) {
         TranslationViewRow nextRow = data.get(position + 1);
         if (nextRow.data.getSura() != row.data.getSura()) {
-          visibility = View.GONE;
+          showLine = false;
         }
       } else {
-        visibility = View.GONE;
+        showLine = false;
       }
-      holder.divider.setVisibility(visibility);
+      holder.divider.toggleLine(showLine);
     } else if (holder.ayahNumber != null) {
       String text = context.getString(R.string.sura_ayah, row.data.getSura(), row.data.getAyah());
       holder.ayahNumber.setAyahString(text);
@@ -163,7 +166,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   class RowViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.text) @Nullable TextView text;
-    @BindView(R.id.divider) @Nullable View divider;
+    @BindView(R.id.divider) @Nullable DividerView divider;
     @BindView(R.id.ayah_number) @Nullable AyahNumberView ayahNumber;
 
     RowViewHolder(View itemView) {
