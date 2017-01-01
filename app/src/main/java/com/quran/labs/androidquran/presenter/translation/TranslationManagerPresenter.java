@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.presenter.translation;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.util.SparseArray;
 
 import com.crashlytics.android.Crashlytics;
@@ -45,25 +46,24 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   private static final String WEB_SERVICE_ENDPOINT = "data/translations.php?v=3";
   private static final String CACHED_RESPONSE_FILE_NAME = "translations.cache";
 
-  private final String host;
   private final Context appContext;
   private final OkHttpClient okHttpClient;
   private final QuranSettings quranSettings;
-  private TranslationManagerActivity currentActivity;
   private final TranslationsDBAdapter translationsDBAdapter;
 
-  @Inject
-  TranslationManagerPresenter(Context appContext, OkHttpClient okHttpClient) {
-    this(appContext, okHttpClient, QuranSettings.getInstance(appContext), Constants.HOST);
-  }
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE) String host;
+  private TranslationManagerActivity currentActivity;
 
-  TranslationManagerPresenter(Context appContext, OkHttpClient okHttpClient,
-                              QuranSettings quranSettings, String hostName) {
-    this.host = hostName;
+  @Inject
+  TranslationManagerPresenter(Context appContext,
+                              OkHttpClient okHttpClient,
+                              QuranSettings quranSettings,
+                              TranslationsDBAdapter dbAdapter) {
+    this.host = Constants.HOST;
     this.appContext = appContext;
     this.okHttpClient = okHttpClient;
     this.quranSettings = quranSettings;
-    this.translationsDBAdapter = new TranslationsDBAdapter(this.appContext);
+    this.translationsDBAdapter = dbAdapter;
   }
 
   public void checkForUpdates() {
