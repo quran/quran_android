@@ -28,8 +28,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.R.attr.visibility;
-
 class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowViewHolder> {
   private static final boolean USE_UTHMANI_SPAN =
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
@@ -42,6 +40,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   private int fontSize;
   private int textColor;
+  private int dividerColor;
   private int arabicTextColor;
   private boolean isNightMode;
 
@@ -76,8 +75,10 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       int textBrightness = quranSettings.getNightModeTextBrightness();
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness);
       this.arabicTextColor = textColor;
+      this.dividerColor = textColor;
     } else {
       this.textColor = ContextCompat.getColor(context, R.color.translation_text_color);
+      this.dividerColor = ContextCompat.getColor(context, R.color.translation_divider_color);
       this.arabicTextColor = Color.BLACK;
     }
 
@@ -152,6 +153,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
         showLine = false;
       }
       holder.divider.toggleLine(showLine);
+      holder.divider.setDividerColor(dividerColor);
     } else if (holder.ayahNumber != null) {
       String text = context.getString(R.string.sura_ayah, row.data.getSura(), row.data.getAyah());
       holder.ayahNumber.setAyahString(text);

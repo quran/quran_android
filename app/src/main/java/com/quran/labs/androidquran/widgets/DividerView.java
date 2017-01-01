@@ -45,6 +45,14 @@ public class DividerView extends View {
     }
   }
 
+  public void setDividerColor(int color) {
+    if (dividerColor != color) {
+      dividerColor = color;
+      paint.setColor(color);
+      invalidate();
+    }
+  }
+
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
