@@ -90,8 +90,12 @@ public class TranslationPresenter extends
 
   private List<QuranAyah> populateTranslator(List<QuranAyah> result, String activeTranslation) {
     LocalTranslation localTranslation = translationMap.get(activeTranslation);
-    String translator = localTranslation == null ?
-        null : localTranslation.translator;
+    String translator = null;
+    if (localTranslation != null) {
+      translator = localTranslation.translator != null ? localTranslation.translator :
+          localTranslation.translatorForeign != null ? localTranslation.translatorForeign :
+              localTranslation.name;
+    }
     if (translator != null && result.size() > 0) {
       for (int i = 0, size = result.size(); i < size; i++) {
         QuranAyah ayah = result.get(i);
@@ -104,7 +108,7 @@ public class TranslationPresenter extends
   @NonNull
   private Completable getTranslationMapCompletable() {
     if (this.translationMap.size() == 0) {
-      return Single.fromCallable(() -> translationsAdapter.getTranslations())
+      return Single.fromCallable(translationsAdapter::getTranslations)
           .map(translations -> {
             Map<String, LocalTranslation> map = new HashMap<>();
             for (int i = 0, size = translations.size(); i < size; i++) {
