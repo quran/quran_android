@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.quran.labs.androidquran.common.LocalTranslation;
@@ -11,6 +12,7 @@ import com.quran.labs.androidquran.dao.translation.TranslationItem;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,6 +27,7 @@ public class TranslationsDBAdapter {
 
   private final Context context;
   private final SQLiteDatabase db;
+  private volatile List<LocalTranslation> cachedTranslations;
 
   @Inject
   public TranslationsDBAdapter(Context context, TranslationsDBHelper adapter) {
@@ -36,22 +39,25 @@ public class TranslationsDBAdapter {
     List<LocalTranslation> items = getTranslations();
 
     SparseArray<LocalTranslation> result = new SparseArray<>();
-    if (items != null) {
-      for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
-        LocalTranslation item = items.get(i);
-        result.put(item.id, item);
-      }
+    for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
+      LocalTranslation item = items.get(i);
+      result.put(item.id, item);
     }
     return result;
   }
 
+  @NonNull
   public List<LocalTranslation> getTranslations() {
-    List<LocalTranslation> items = null;
+    List<LocalTranslation> cached = cachedTranslations;
+    if (cached != null && cached.size() > 0) {
+      return cached;
+    }
+
+    List<LocalTranslation> items = new ArrayList<>();
     Cursor cursor = db.query(TranslationsTable.TABLE_NAME,
         null, null, null, null, null,
         TranslationsTable.ID + " ASC");
     if (cursor != null) {
-      items = new ArrayList<>();
       while (cursor.moveToNext()) {
         int id = cursor.getInt(0);
         String name = cursor.getString(1);
@@ -62,10 +68,15 @@ public class TranslationsDBAdapter {
         int version = cursor.getInt(6);
 
         if (QuranFileUtils.hasTranslation(context, filename)) {
-          items.add(new LocalTranslation(id, filename, name, translator, translatorForeign, url, version));
+          items.add(new LocalTranslation(id, filename, name, translator,
+              translatorForeign, url, version));
         }
       }
       cursor.close();
+    }
+    items = Collections.unmodifiableList(items);
+    if (items.size() > 0) {
+      cachedTranslations = items;
     }
     return items;
   }
@@ -81,7 +92,8 @@ public class TranslationsDBAdapter {
           values.put(TranslationsTable.ID, item.translation.id);
           values.put(TranslationsTable.NAME, item.translation.displayName);
           values.put(TranslationsTable.TRANSLATOR, item.translation.translator);
-          values.put(TranslationsTable.TRANSLATOR_FOREIGN, item.translation.translatorNameLocalized);
+          values.put(TranslationsTable.TRANSLATOR_FOREIGN,
+              item.translation.translatorNameLocalized);
           values.put(TranslationsTable.FILENAME, item.translation.filename);
           values.put(TranslationsTable.URL, item.translation.fileUrl);
           values.put(TranslationsTable.VERSION, item.localVersion);
@@ -93,11 +105,15 @@ public class TranslationsDBAdapter {
         }
       }
       db.setTransactionSuccessful();
+
+      // clear the cached translations
+      this.cachedTranslations = null;
     } catch (Exception e) {
       result = false;
       Timber.d(e, "error writing translation updates");
+    } finally {
+      db.endTransaction();
     }
-    db.endTransaction();
 
     return result;
   }
