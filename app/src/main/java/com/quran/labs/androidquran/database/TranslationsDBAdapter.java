@@ -48,6 +48,8 @@ public class TranslationsDBAdapter {
 
   @NonNull
   public List<LocalTranslation> getTranslations() {
+    // intentional, since cachedTranslations can be replaced by another thread, causing the check
+    // to be true, but the cached object returned to be null (or to change).
     List<LocalTranslation> cached = cachedTranslations;
     if (cached != null && cached.size() > 0) {
       return cached;
