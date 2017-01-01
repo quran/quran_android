@@ -19,6 +19,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.AyahNumberView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   private int fontSize;
   private int textColor;
   private int arabicTextColor;
+  private boolean isNightMode;
 
   private View.OnClickListener defaultClickListener = new View.OnClickListener() {
     @Override
@@ -66,7 +68,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   void refresh(QuranSettings quranSettings) {
     this.fontSize = quranSettings.getTranslationTextSize();
-    boolean isNightMode = quranSettings.isNightMode();
+    isNightMode = quranSettings.isNightMode();
     if (isNightMode) {
       int textBrightness = quranSettings.getNightModeTextBrightness();
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness);
@@ -127,9 +129,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
         holder.text.setTextColor(arabicTextColor);
         holder.text.setTextSize(ARABIC_MULTIPLIER * fontSize);
       } else {
-        if (row.type == TranslationViewRow.Type.VERSE_NUMBER) {
-          text = context.getString(R.string.sura_ayah, row.data.getSura(), row.data.getAyah());
-        } else if (row.type == TranslationViewRow.Type.TRANSLATOR) {
+        if (row.type == TranslationViewRow.Type.TRANSLATOR) {
           text = row.data.getTranslator();
         } else {
           text = row.data.getTranslation();
@@ -149,6 +149,10 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
         visibility = View.GONE;
       }
       holder.divider.setVisibility(visibility);
+    } else if (holder.ayahNumber != null) {
+      String text = context.getString(R.string.sura_ayah, row.data.getSura(), row.data.getAyah());
+      holder.ayahNumber.setAyahString(text);
+      holder.ayahNumber.setNightMode(isNightMode);
     }
   }
 
@@ -160,6 +164,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   class RowViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.text) @Nullable TextView text;
     @BindView(R.id.divider) @Nullable View divider;
+    @BindView(R.id.ayah_number) @Nullable AyahNumberView ayahNumber;
 
     RowViewHolder(View itemView) {
       super(itemView);
