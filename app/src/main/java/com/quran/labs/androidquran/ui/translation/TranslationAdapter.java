@@ -42,6 +42,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   private int textColor;
   private int dividerColor;
   private int arabicTextColor;
+  private int suraHeaderColor;
   private boolean isNightMode;
 
   private View.OnClickListener defaultClickListener = new View.OnClickListener() {
@@ -76,10 +77,12 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness);
       this.arabicTextColor = textColor;
       this.dividerColor = textColor;
+      this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header_night);
     } else {
       this.textColor = ContextCompat.getColor(context, R.color.translation_text_color);
       this.dividerColor = ContextCompat.getColor(context, R.color.translation_divider_color);
       this.arabicTextColor = Color.BLACK;
+      this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header);
     }
 
     if (!this.data.isEmpty()) {
@@ -121,6 +124,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       final CharSequence text;
       if (row.type == TranslationViewRow.Type.SURA_HEADER) {
         text = QuranInfo.getSuraName(context, row.data.getSura(), true);
+        holder.text.setBackgroundColor(suraHeaderColor);
       } else if (row.type == TranslationViewRow.Type.BASMALLAH ||
           row.type == TranslationViewRow.Type.QURAN_TEXT) {
         SpannableString str = new SpannableString(row.type == TranslationViewRow.Type.BASMALLAH ?
