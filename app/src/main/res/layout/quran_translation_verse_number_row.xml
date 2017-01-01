@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- the FrameLayout here is a hack to ensure we get touch, until we can replace this with a
-     custom View -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:padding="12dp"
-    >
-  <TextView
-      android:id="@+id/text"
-      android:layout_width="48dp"
-      android:layout_height="48dp"
-      android:gravity="center"
-      android:textColor="@color/translation_verse_text_color"
-      android:background="@color/translation_verse_background_color"
-      />
-</FrameLayout>
+<com.quran.labs.androidquran.widgets.AyahNumberView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ayah_number"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    app:verseBoxWidth="42dp"
+    app:verseBoxHeight="42dp"
+    app:nightTextColor="@color/translation_verse_text_night_color"
+    app:nightBackgroundColor="@color/translation_verse_background_night_color"
+    app:backgroundColor="@color/translation_verse_background_color"
+    android:textColor="@color/translation_verse_text_color"
+    android:textSize="14sp"
+    />

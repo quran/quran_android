@@ -1,24 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <declare-styleable name="SlidingUpPanelLayout">
-        <attr name="panelHeight" format="dimension" />
-        <attr name="shadowHeight" format="dimension" />
-        <attr name="parallaxOffset" format="dimension" />
-        <attr name="fadeColor" format="color" />
-        <attr name="flingVelocity" format="integer" />
-        <attr name="dragView" format="reference" />
-        <attr name="overlay" format="boolean"/>
-        <attr name="arbitraryPosition" format="boolean"/>
-    </declare-styleable>
+  <declare-styleable name="SlidingUpPanelLayout">
+    <attr name="panelHeight" format="dimension"/>
+    <attr name="shadowHeight" format="dimension"/>
+    <attr name="parallaxOffset" format="dimension"/>
+    <attr name="fadeColor" format="color"/>
+    <attr name="flingVelocity" format="integer"/>
+    <attr name="dragView" format="reference"/>
+    <attr name="overlay" format="boolean"/>
+    <attr name="arbitraryPosition" format="boolean"/>
+  </declare-styleable>
 
-    <declare-styleable name="IconPageIndicator">
-        <attr name="indicatorHeight" format="dimension" />
-        <attr name="indicatorColor" format="color" />
-    </declare-styleable>
+  <declare-styleable name="IconPageIndicator">
+    <attr name="indicatorHeight" format="dimension"/>
+    <attr name="indicatorColor" format="color"/>
+  </declare-styleable>
 
-    <declare-styleable name="AudioStatusBar">
-        <attr name="android:itemBackground" />
-    </declare-styleable>
+  <declare-styleable name="AudioStatusBar">
+    <attr name="android:itemBackground"/>
+  </declare-styleable>
 
-    <attr name="spinnerItemStyle" format="reference" />
+  <attr name="spinnerItemStyle" format="reference"/>
+
+  <declare-styleable name="AyahNumberView">
+    <attr name="android:textColor" />
+    <attr name="android:textSize" />
+    <attr name="backgroundColor" format="color" />
+    <attr name="nightTextColor" format="color" />
+    <attr name="nightBackgroundColor" format="color" />
+    <attr name="verseBoxWidth" format="dimension" />
+    <attr name="verseBoxHeight" format="dimension" />
+  </declare-styleable>
 </resources>
