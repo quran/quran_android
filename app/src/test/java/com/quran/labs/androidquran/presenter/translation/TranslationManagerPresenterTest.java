@@ -35,12 +35,13 @@ public class TranslationManagerPresenterTest {
     OkHttpClient mockOkHttp = new OkHttpClient.Builder().build();
     mockWebServer = new MockWebServer();
     translationManager = new TranslationManagerPresenter(
-        mockAppContext, mockOkHttp, mockSettings, mockWebServer.url("").toString()) {
+        mockAppContext, mockOkHttp, mockSettings, null) {
       @Override
       void writeTranslationList(TranslationList list) {
         // no op
       }
     };
+    translationManager.host = mockWebServer.url("").toString();
   }
 
   @After
