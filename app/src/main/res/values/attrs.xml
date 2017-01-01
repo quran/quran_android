@@ -31,4 +31,9 @@
     <attr name="verseBoxWidth" format="dimension" />
     <attr name="verseBoxHeight" format="dimension" />
   </declare-styleable>
+
+  <declare-styleable name="DividerView">
+    <attr name="dividerColor" format="color" />
+    <attr name="dividerHeight" format="dimension" />
+  </declare-styleable>
 </resources>
