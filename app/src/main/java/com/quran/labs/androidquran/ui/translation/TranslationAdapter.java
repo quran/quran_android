@@ -138,6 +138,17 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
         }
       }
       holder.text.setText(text);
+    } else if (holder.divider != null) {
+      int visibility = View.VISIBLE;
+      if (position + 1 < data.size()) {
+        TranslationViewRow nextRow = data.get(position + 1);
+        if (nextRow.data.getSura() != row.data.getSura()) {
+          visibility = View.GONE;
+        }
+      } else {
+        visibility = View.GONE;
+      }
+      holder.divider.setVisibility(visibility);
     }
   }
 
@@ -148,6 +159,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   class RowViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.text) @Nullable TextView text;
+    @BindView(R.id.divider) @Nullable View divider;
 
     RowViewHolder(View itemView) {
       super(itemView);
