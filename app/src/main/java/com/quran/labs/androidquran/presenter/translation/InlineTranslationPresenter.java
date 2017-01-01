@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.presenter.translation;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.QuranAyah;
@@ -18,12 +17,16 @@ public class InlineTranslationPresenter extends
     AbstractTranslationPresenter<InlineTranslationPresenter.TranslationScreen> {
 
   @Inject
-  public InlineTranslationPresenter(Context appContext, TranslationModel translationModel) {
-    super(appContext, translationModel);
+  InlineTranslationPresenter(TranslationModel translationModel) {
+    super(translationModel);
   }
 
   public void refresh(VerseRange verseRange, String activeTranslation) {
-    getVerses(false, activeTranslation, verseRange)
+    if (disposable != null) {
+      disposable.dispose();
+    }
+
+    disposable = getVerses(false, activeTranslation, verseRange)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableSingleObserver<List<QuranAyah>>() {
           @Override
