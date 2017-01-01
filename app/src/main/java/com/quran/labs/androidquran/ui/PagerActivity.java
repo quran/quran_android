@@ -203,6 +203,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranSettings quranSettings;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject ArabicDatabaseUtils arabicDatabaseUtils;
+  @Inject TranslationsDBAdapter translationsDBAdapter;
 
   private CompositeDisposable compositeDisposable;
 
@@ -1314,7 +1315,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void requestTranslationsList() {
     compositeDisposable.add(
         Single.fromCallable(() ->
-            new TranslationsDBAdapter(PagerActivity.this).getTranslations())
+            translationsDBAdapter.getTranslations())
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.component.application;
 
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.module.application.ApplicationModule;
 import com.quran.labs.androidquran.module.application.DatabaseModule;
 import com.quran.labs.androidquran.module.application.NetworkModule;
@@ -23,6 +24,9 @@ import dagger.Component;
 public interface ApplicationComponent {
   // subcomponents
   PagerActivityComponent.Builder pagerActivityComponentBuilder();
+
+  // content provider
+  void inject(QuranDataProvider quranDataProvider);
 
   // services
   void inject(QuranDownloadService quranDownloadService);

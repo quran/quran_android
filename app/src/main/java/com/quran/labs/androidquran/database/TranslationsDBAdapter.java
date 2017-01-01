@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.SparseArray;
 
@@ -14,31 +13,23 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.database.TranslationsDBHelper.TranslationsTable;
 
+@Singleton
 public class TranslationsDBAdapter {
 
-  private SQLiteDatabase db;
-  private Context context;
-  private static TranslationsDBHelper dbHelper;
+  private final Context context;
+  private final SQLiteDatabase db;
 
-  public TranslationsDBAdapter(Context context) {
-    this.context = context.getApplicationContext();
-    initHelper(this.context);
-  }
-
-  private static synchronized void initHelper(Context context) {
-    if (dbHelper == null) {
-      dbHelper = new TranslationsDBHelper(context);
-    }
-  }
-
-  public void open() throws SQLException {
-    if (db == null && dbHelper != null) {
-      db = dbHelper.getWritableDatabase();
-    }
+  @Inject
+  public TranslationsDBAdapter(Context context, TranslationsDBHelper adapter) {
+    this.context = context;
+    this.db = adapter.getWritableDatabase();
   }
 
   public SparseArray<LocalTranslation> getTranslationsHash() {
@@ -55,13 +46,6 @@ public class TranslationsDBAdapter {
   }
 
   public List<LocalTranslation> getTranslations() {
-    if (db == null) {
-      open();
-      if (db == null) {
-        return null;
-      }
-    }
-
     List<LocalTranslation> items = null;
     Cursor cursor = db.query(TranslationsTable.TABLE_NAME,
         null, null, null, null, null,
@@ -87,13 +71,6 @@ public class TranslationsDBAdapter {
   }
 
   public boolean writeTranslationUpdates(List<TranslationItem> updates) {
-    if (db == null) {
-      open();
-      if (db == null) {
-        return false;
-      }
-    }
-
     boolean result = true;
     db.beginTransaction();
     try {

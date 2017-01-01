@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.presenter.translation;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.LocalTranslation;
@@ -30,20 +29,20 @@ public class TranslationPresenter extends
     AbstractTranslationPresenter<TranslationPresenter.TranslationScreen> {
   private final Integer[] pages;
   private final QuranSettings quranSettings;
+  private final TranslationsDBAdapter translationsAdapter;
   private final Map<String, LocalTranslation> translationMap;
 
-  private TranslationsDBAdapter translationsAdapter;
 
   @Inject
-  TranslationPresenter(Context appContext,
-                       TranslationModel translationModel,
+  TranslationPresenter(TranslationModel translationModel,
                        QuranSettings quranSettings,
+                       TranslationsDBAdapter translationsAdapter,
                        Integer... pages) {
     super(translationModel);
     this.pages = pages;
     this.quranSettings = quranSettings;
     this.translationMap = new HashMap<>();
-    this.translationsAdapter = new TranslationsDBAdapter(appContext);
+    this.translationsAdapter = translationsAdapter;
   }
 
   public void refresh() {

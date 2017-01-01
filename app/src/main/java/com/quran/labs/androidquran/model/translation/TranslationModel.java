@@ -19,7 +19,7 @@ public class TranslationModel {
   private Context appContext;
 
   @Inject
-  public TranslationModel(Context appContext) {
+  TranslationModel(Context appContext) {
     this.appContext = appContext;
   }
 

@@ -15,6 +15,7 @@ import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.database.DatabaseHandler;
@@ -27,6 +28,8 @@ import com.quran.labs.androidquran.util.TranslationUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class QuranDataProvider extends ContentProvider {
@@ -35,20 +38,20 @@ public class QuranDataProvider extends ContentProvider {
   public static final Uri SEARCH_URI = Uri.parse("content://" + AUTHORITY + "/quran/search");
 
   public static final String VERSES_MIME_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE +
-          "/vnd.com.quran.labs.androidquran";
+      ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.quran.labs.androidquran";
   public static final String AYAH_MIME_TYPE =
-      ContentResolver.CURSOR_ITEM_BASE_TYPE +
-          "/vnd.com.quran.labs.androidquran";
+      ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.quran.labs.androidquran";
   public static final String QURAN_ARABIC_DATABASE = QuranFileConstants.ARABIC_DATABASE;
 
   // UriMatcher stuff
   private static final int SEARCH_VERSES = 0;
   private static final int GET_VERSE = 1;
   private static final int SEARCH_SUGGEST = 2;
-  private static final UriMatcher sURIMatcher = buildUriMatcher();
+  private static final UriMatcher uriMatcher = buildUriMatcher();
 
-  private QuranSettings mQuranSettings;
+  private boolean didInject;
+  @Inject QuranSettings quranSettings;
+  @Inject TranslationsDBAdapter translationsDBAdapter;
 
   private static UriMatcher buildUriMatcher() {
     UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -66,15 +69,26 @@ public class QuranDataProvider extends ContentProvider {
 
   @Override
   public boolean onCreate() {
-    mQuranSettings = QuranSettings.getInstance(getContext());
     return true;
   }
 
   @Override
   public Cursor query(@NonNull Uri uri, String[] projection, String selection,
       String[] selectionArgs, String sortOrder) {
+    Context context = getContext();
+    if (!didInject) {
+      Context appContext = context == null ? null : context.getApplicationContext();
+      if (appContext instanceof QuranApplication) {
+        ((QuranApplication) appContext).getApplicationComponent().inject(this);
+        didInject = true;
+      } else {
+        Timber.e("unable to inject QuranDataProvider");
+        return null;
+      }
+    }
+
     Crashlytics.log("uri: " + uri.toString());
-    switch (sURIMatcher.match(uri)) {
+    switch (uriMatcher.match(uri)) {
       case SEARCH_SUGGEST: {
         if (selectionArgs == null) {
           throw new IllegalArgumentException(
@@ -121,20 +135,18 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   private String getActiveTranslation() {
-    String db = mQuranSettings.getActiveTranslation();
+    String db = quranSettings.getActiveTranslation();
     if (!TextUtils.isEmpty(db)) {
       if (QuranFileUtils.hasTranslation(getContext(), db)) {
         return db;
       }
       // our active database no longer exists, remove the pref
-      mQuranSettings.removeActiveTranslation();
+      quranSettings.removeActiveTranslation();
     }
 
     try {
       Crashlytics.log("couldn't find database, searching for another..");
-      TranslationsDBAdapter adapter =
-          new TranslationsDBAdapter(getContext());
-      List<LocalTranslation> items = adapter.getTranslations();
+      List<LocalTranslation> items = translationsDBAdapter.getTranslations();
       if (items != null && items.size() > 0) {
         return TranslationUtils.getDefaultTranslation(getContext(), items);
       }
@@ -247,7 +259,7 @@ public class QuranDataProvider extends ContentProvider {
 
   @Override
   public String getType(@NonNull Uri uri) {
-    switch (sURIMatcher.match(uri)) {
+    switch (uriMatcher.match(uri)) {
       case SEARCH_VERSES: {
         return VERSES_MIME_TYPE;
       }

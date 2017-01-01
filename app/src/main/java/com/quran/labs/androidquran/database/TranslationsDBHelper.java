@@ -4,6 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 class TranslationsDBHelper extends SQLiteOpenHelper {
 
   private static final String DB_NAME = "translations.db";
@@ -18,6 +22,7 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
           TranslationsTable.URL + " varchar, " +
           TranslationsTable.VERSION + " integer not null default 0);";
 
+  @Inject
   TranslationsDBHelper(Context context) {
     super(context, DB_NAME, null, DB_VERSION);
   }
