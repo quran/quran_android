@@ -31,7 +31,7 @@ public class TranslationView extends ViewGroup {
     translationRecycler = new RecyclerView(context);
     translationRecycler.setLayoutManager(new LinearLayoutManager(context));
     translationRecycler.setItemAnimator(new DefaultItemAnimator());
-    translationAdapter = new TranslationAdapter(context);
+    translationAdapter = new TranslationAdapter(context, translationRecycler);
     translationRecycler.setAdapter(translationAdapter);
     addView(translationRecycler, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
   }
