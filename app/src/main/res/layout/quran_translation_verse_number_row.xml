@@ -7,7 +7,6 @@
     android:layout_height="72dp"
     app:verseBoxWidth="42dp"
     app:verseBoxHeight="42dp"
-    app:nightTextColor="@color/translation_verse_text_night_color"
     app:nightBackgroundColor="@color/translation_verse_background_night_color"
     app:backgroundColor="@color/translation_verse_background_color"
     android:textColor="@color/translation_verse_text_color"
