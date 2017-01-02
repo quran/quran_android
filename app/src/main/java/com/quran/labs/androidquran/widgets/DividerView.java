@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -16,6 +17,7 @@ public class DividerView extends View {
   private final Paint paint;
 
   private int y;
+  private int highlightedColor;
   private boolean isLineVisible;
 
   public DividerView(Context context) {
@@ -53,14 +55,32 @@ public class DividerView extends View {
     }
   }
 
+  public void highlight(@ColorInt int color) {
+    if (color != highlightedColor) {
+      highlightedColor = color;
+      invalidate();
+    }
+  }
+
+  public void unhighlight() {
+    if (highlightedColor != 0) {
+      highlightedColor = 0;
+      invalidate();
+    }
+  }
+
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    y = (getMeasuredHeight() - dividerHeight) / 2;
+    y = getMeasuredHeight() - dividerHeight;
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
+    if (highlightedColor != 0) {
+      canvas.drawColor(highlightedColor);
+    }
+
     if (isLineVisible) {
       canvas.drawRect(0, y, getWidth(), y + dividerHeight, paint);
     }

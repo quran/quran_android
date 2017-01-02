@@ -3,10 +3,13 @@ package com.quran.labs.androidquran.common;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.quran.labs.androidquran.data.QuranInfo;
+
 public class QuranAyah implements Parcelable {
 
-  private int sura = 0;
-  private int ayah = 0;
+  private final int sura;
+  private final int ayah;
+  private final int ayahId;
 
   // arabic text
   private String text = null;
@@ -23,6 +26,7 @@ public class QuranAyah implements Parcelable {
   public QuranAyah(int sura, int ayah) {
     this.sura = sura;
     this.ayah = ayah;
+    this.ayahId = QuranInfo.getAyahId(sura, ayah);
   }
 
   protected QuranAyah(Parcel in) {
@@ -32,6 +36,7 @@ public class QuranAyah implements Parcelable {
     this.translation = in.readString();
     this.translator = in.readString();
     this.isArabic = in.readByte() != 0;
+    this.ayahId = QuranInfo.getAyahId(sura, ayah);
   }
 
   public int getSura() {
@@ -72,6 +77,10 @@ public class QuranAyah implements Parcelable {
 
   public void setArabic(boolean isArabic) {
     this.isArabic = isArabic;
+  }
+
+  public int getAyahId() {
+    return this.ayahId;
   }
 
   @Override

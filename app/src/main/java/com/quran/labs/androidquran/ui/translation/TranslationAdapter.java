@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
@@ -43,7 +45,12 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   private int dividerColor;
   private int arabicTextColor;
   private int suraHeaderColor;
+  private int ayahSelectionColor;
   private boolean isNightMode;
+
+  private int highlightedAyah;
+  private int highlightedRowCount;
+  private int highlightedStartPosition;
 
   private View.OnClickListener defaultClickListener = new View.OnClickListener() {
     @Override
@@ -63,6 +70,52 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   void setData(List<TranslationViewRow> data) {
     this.data.clear();
     this.data.addAll(data);
+    if (highlightedAyah > 0) {
+      highlightAyah(highlightedAyah, false);
+    }
+  }
+
+  void setHighlightedAyah(int ayahId) {
+    highlightAyah(ayahId, true);
+  }
+
+  private void highlightAyah(int ayahId, boolean notify) {
+    if (ayahId != highlightedAyah) {
+      int count = 0;
+      int startPosition = -1;
+      for (int i = 0, size = this.data.size(); i < size; i++) {
+        QuranAyah item = this.data.get(i).data;
+        if (item.getAyahId() == ayahId) {
+          if (count == 0) {
+            startPosition = i;
+          }
+          count++;
+        } else if (count > 0) {
+          break;
+        }
+      }
+
+      highlightedAyah = ayahId;
+      if (highlightedRowCount > 0 && notify) {
+        notifyItemRangeChanged(highlightedStartPosition, highlightedRowCount);
+      }
+
+      highlightedStartPosition = startPosition;
+      highlightedRowCount = count;
+      if (count > 0 && notify) {
+        notifyItemRangeChanged(startPosition, count);
+      }
+    }
+  }
+
+  void unhighlight() {
+    if (highlightedAyah > 0 && highlightedRowCount > 0) {
+      notifyItemRangeChanged(highlightedAyah, highlightedRowCount);
+    }
+
+    highlightedAyah = 0;
+    highlightedRowCount = 0;
+    highlightedStartPosition = -1;
   }
 
   void setOnTranslationClickedListener(View.OnClickListener listener) {
@@ -78,11 +131,15 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       this.arabicTextColor = textColor;
       this.dividerColor = textColor;
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header_night);
+      this.ayahSelectionColor =
+          ContextCompat.getColor(context, R.color.translation_ayah_selected_color_night);
     } else {
       this.textColor = ContextCompat.getColor(context, R.color.translation_text_color);
       this.dividerColor = ContextCompat.getColor(context, R.color.translation_divider_color);
       this.arabicTextColor = Color.BLACK;
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header);
+      this.ayahSelectionColor =
+          ContextCompat.getColor(context, R.color.translation_ayah_selected_color);
     }
 
     if (!this.data.isEmpty()) {
@@ -163,6 +220,24 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       holder.ayahNumber.setAyahString(text);
       holder.ayahNumber.setNightMode(isNightMode);
     }
+
+    // toggle highlighting of the ayah, but not for sura headers and basmallah
+    boolean isHighlighted = row.data.getAyahId() == highlightedAyah;
+    if (row.type != TranslationViewRow.Type.SURA_HEADER &&
+        row.type != TranslationViewRow.Type.BASMALLAH &&
+        row.type != TranslationViewRow.Type.SPACER) {
+      if (isHighlighted) {
+        holder.wrapperView.setBackgroundColor(ayahSelectionColor);
+      } else {
+        holder.wrapperView.setBackgroundColor(0);
+      }
+    } else if (row.type == TranslationViewRow.Type.SPACER) {
+      if (isHighlighted) {
+        holder.divider.highlight(ayahSelectionColor);
+      } else {
+        holder.divider.unhighlight();
+      }
+    }
   }
 
   @Override
@@ -171,12 +246,14 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   }
 
   class RowViewHolder extends RecyclerView.ViewHolder {
+    @NonNull View wrapperView;
     @BindView(R.id.text) @Nullable TextView text;
     @BindView(R.id.divider) @Nullable DividerView divider;
     @BindView(R.id.ayah_number) @Nullable AyahNumberView ayahNumber;
 
-    RowViewHolder(View itemView) {
+    RowViewHolder(@NonNull View itemView) {
       super(itemView);
+      this.wrapperView = itemView;
       ButterKnife.bind(this, itemView);
       itemView.setOnClickListener(defaultClickListener);
     }
