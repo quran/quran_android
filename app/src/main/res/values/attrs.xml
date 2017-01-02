@@ -26,7 +26,6 @@
     <attr name="android:textColor" />
     <attr name="android:textSize" />
     <attr name="backgroundColor" format="color" />
-    <attr name="nightTextColor" format="color" />
     <attr name="nightBackgroundColor" format="color" />
     <attr name="verseBoxWidth" format="dimension" />
     <attr name="verseBoxHeight" format="dimension" />
