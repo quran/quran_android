@@ -37,6 +37,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   private final Context context;
   private final LayoutInflater inflater;
+  private final RecyclerView recyclerView;
   private final List<TranslationViewRow> data;
   private View.OnClickListener onClickListener;
 
@@ -61,9 +62,10 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     }
   };
 
-  TranslationAdapter(Context context) {
+  TranslationAdapter(Context context, RecyclerView recyclerView) {
     this.context = context;
     this.data = new ArrayList<>();
+    this.recyclerView = recyclerView;
     this.inflater = LayoutInflater.from(context);
   }
 
@@ -96,10 +98,12 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       }
 
       highlightedAyah = ayahId;
+      // unhighlight the previously highlighted ayah
       if (highlightedRowCount > 0 && notify) {
         notifyItemRangeChanged(highlightedStartPosition, highlightedRowCount);
       }
 
+      // highlight the newly highlighted ayah
       highlightedStartPosition = startPosition;
       highlightedRowCount = count;
       if (count > 0 && notify) {
@@ -110,7 +114,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   void unhighlight() {
     if (highlightedAyah > 0 && highlightedRowCount > 0) {
-      notifyItemRangeChanged(highlightedAyah, highlightedRowCount);
+      notifyItemRangeChanged(highlightedStartPosition, highlightedRowCount);
     }
 
     highlightedAyah = 0;
