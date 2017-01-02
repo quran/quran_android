@@ -10,5 +10,5 @@
     app:nightBackgroundColor="@color/translation_verse_background_night_color"
     app:backgroundColor="@color/translation_verse_background_color"
     android:textColor="@color/translation_verse_text_color"
-    android:textSize="14sp"
+    android:textSize="12sp"
     />
