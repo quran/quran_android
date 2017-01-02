@@ -35,6 +35,8 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
   private static final float ARABIC_MULTIPLIER = 1.4f;
 
+  private static final int HIGHLIGHT_CHANGE = 1;
+
   private final Context context;
   private final LayoutInflater inflater;
   private final RecyclerView recyclerView;
@@ -97,18 +99,32 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
         }
       }
 
-      highlightedAyah = ayahId;
-      // unhighlight the previously highlighted ayah
-      if (highlightedRowCount > 0 && notify) {
-        notifyItemRangeChanged(highlightedStartPosition, highlightedRowCount);
+      // highlight the newly highlighted ayah
+      if (count > 0 && notify) {
+        int startChangeCount = count;
+        int startChangeRange = startPosition;
+        if (highlightedRowCount > 0) {
+          // merge the requests for notifyItemRangeChanged when we're either the next ayah
+          if (highlightedStartPosition + highlightedRowCount + 1 == startPosition) {
+            startChangeRange = highlightedStartPosition;
+            startChangeCount = startChangeCount + highlightedRowCount;
+          } else if (highlightedStartPosition - 1 == startPosition + count) {
+            // ... or when we're the previous ayah
+            startChangeCount = startChangeCount + highlightedRowCount;
+          } else {
+            // otherwise, unhighlight
+            notifyItemRangeChanged(highlightedStartPosition, highlightedRowCount, HIGHLIGHT_CHANGE);
+          }
+        }
+
+        // and update rows to be highlighted
+        notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE);
+        recyclerView.smoothScrollToPosition(startPosition + count);
       }
 
-      // highlight the newly highlighted ayah
+      highlightedAyah = ayahId;
       highlightedStartPosition = startPosition;
       highlightedRowCount = count;
-      if (count > 0 && notify) {
-        notifyItemRangeChanged(startPosition, count);
-      }
     }
   }
 
@@ -225,7 +241,19 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       holder.ayahNumber.setTextColor(textColor);
       holder.ayahNumber.setNightMode(isNightMode);
     }
+    updateHighlight(row, holder);
+  }
 
+  @Override
+  public void onBindViewHolder(RowViewHolder holder, int position, List<Object> payloads) {
+    if (payloads.contains(HIGHLIGHT_CHANGE)) {
+      updateHighlight(data.get(position), holder);
+    } else {
+      super.onBindViewHolder(holder, position, payloads);
+    }
+  }
+
+  private void updateHighlight(TranslationViewRow row, RowViewHolder holder) {
     // toggle highlighting of the ayah, but not for sura headers and basmallah
     boolean isHighlighted = row.data.getAyahId() == highlightedAyah;
     if (row.type != TranslationViewRow.Type.SURA_HEADER &&
@@ -236,7 +264,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       } else {
         holder.wrapperView.setBackgroundColor(0);
       }
-    } else if (row.type == TranslationViewRow.Type.SPACER) {
+    } else if (holder.divider != null) { // SPACER type
       if (isHighlighted) {
         holder.divider.highlight(ayahSelectionColor);
       } else {
