@@ -90,8 +90,10 @@ public class TranslationView extends ViewGroup {
   }
 
   public void highlightAyah(int ayahId) {
+    translationAdapter.setHighlightedAyah(ayahId);
   }
 
   public void unhighlightAyat() {
+    translationAdapter.unhighlight();
   }
 }
