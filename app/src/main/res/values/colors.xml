@@ -17,7 +17,6 @@
   <color name="translation_sura_header">#fff1ecd8</color>
   <color name="translation_sura_header_night">#ff424242</color>
   <color name="translation_verse_text_color">#ff858383</color>
-  <color name="translation_verse_text_night_color">#fff2f2f2</color>
   <color name="translation_verse_background_color">#fff2f2f2</color>
   <color name="translation_verse_background_night_color">#ff333333</color>
   <color name="translation_translator_color">#ff22a5ad</color>

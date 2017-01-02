@@ -15,8 +15,6 @@ import android.view.View;
 import com.quran.labs.androidquran.R;
 
 public class AyahNumberView extends View {
-  private int textColor;
-  private int nightTextColor;
   private int boxColor;
   private int nightBoxColor;
   private int boxWidth;
@@ -37,10 +35,10 @@ public class AyahNumberView extends View {
   public AyahNumberView(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
+    int textColor = 0;
     if (attrs != null) {
       TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.AyahNumberView);
       textColor = ta.getColor(R.styleable.AyahNumberView_android_textColor, textColor);
-      nightTextColor = ta.getColor(R.styleable.AyahNumberView_nightTextColor, nightTextColor);
       boxColor = ta.getColor(R.styleable.AyahNumberView_backgroundColor, boxColor);
       nightBoxColor = ta.getColor(R.styleable.AyahNumberView_nightBackgroundColor, nightBoxColor);
       boxWidth = ta.getDimensionPixelSize(R.styleable.AyahNumberView_verseBoxWidth, boxWidth);
@@ -68,10 +66,13 @@ public class AyahNumberView extends View {
   public void setNightMode(boolean isNightMode) {
     if (this.isNightMode != isNightMode) {
       boxPaint.setColor(isNightMode ? nightBoxColor : boxColor);
-      textPaint.setColor(isNightMode ? nightTextColor : textColor);
       this.isNightMode = isNightMode;
       invalidate();
     }
+  }
+
+  public void setTextColor(int textColor) {
+    textPaint.setColor(textColor);
   }
 
   @Override
