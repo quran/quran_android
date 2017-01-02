@@ -222,6 +222,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     } else if (holder.ayahNumber != null) {
       String text = context.getString(R.string.sura_ayah, row.data.getSura(), row.data.getAyah());
       holder.ayahNumber.setAyahString(text);
+      holder.ayahNumber.setTextColor(textColor);
       holder.ayahNumber.setNightMode(isNightMode);
     }
 
