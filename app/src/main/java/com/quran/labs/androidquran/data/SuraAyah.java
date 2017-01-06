@@ -80,7 +80,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     return "("+ sura +":"+ ayah +")";
   }
 
-  static Iterator getIterator(SuraAyah start, SuraAyah end) {
+  public static Iterator getIterator(SuraAyah start, SuraAyah end) {
     return new Iterator(start, end);
   }
 
@@ -96,7 +96,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     return sura > next.sura || (sura == next.sura && ayah > next.ayah);
   }
 
-  static class Iterator {
+  public static class Iterator {
 
     private SuraAyah mStart;
     private SuraAyah mEnd;
@@ -131,7 +131,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
       return mCurAyah;
     }
 
-    boolean hasNext() {
+    public boolean hasNext() {
       return !started || mCurSura < mEnd.sura || mCurAyah < mEnd.ayah;
     }
 

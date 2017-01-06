@@ -5,10 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.ArrayList;
@@ -49,32 +50,41 @@ public class TranslationView extends ViewGroup {
     translationRecycler.layout(x, 0, x + width, getMeasuredHeight());
   }
 
-  public void setVerses(List<QuranAyah> verses) {
+  public void setVerses(@NonNull String[] translations, @NonNull List<QuranAyahInfo> verses) {
     List<TranslationViewRow> rows = new ArrayList<>();
 
     int currentSura = -1;
+    boolean wantTranslationHeaders = translations.length > 1;
     for (int i = 0, size = verses.size(); i < size; i++) {
-      QuranAyah ayah = verses.get(i);
-      int sura = ayah.getSura();
+      QuranAyahInfo verse = verses.get(i);
+      int sura = verse.sura;
       if (sura != currentSura) {
-        rows.add(new TranslationViewRow(TranslationViewRow.Type.SURA_HEADER, ayah));
+        rows.add(new TranslationViewRow(TranslationViewRow.Type.SURA_HEADER, verse));
         currentSura = sura;
       }
 
-      if (ayah.getAyah() == 1 && sura != 1 && sura != 9) {
-        rows.add(new TranslationViewRow(TranslationViewRow.Type.BASMALLAH, ayah));
+      if (verse.ayah == 1 && sura != 1 && sura != 9) {
+        rows.add(new TranslationViewRow(TranslationViewRow.Type.BASMALLAH, verse));
       }
 
-      rows.add(new TranslationViewRow(TranslationViewRow.Type.VERSE_NUMBER, ayah));
-      if (ayah.getText() != null) {
-        rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, ayah));
+      rows.add(new TranslationViewRow(TranslationViewRow.Type.VERSE_NUMBER, verse));
+
+      if (verse.arabicText != null) {
+        rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, verse));
       }
 
-      if (ayah.getTranslator() != null) {
-        rows.add(new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR, ayah));
+      for (int j = 0; j < translations.length; j++) {
+        String text = verse.texts.get(j);
+        if (!TextUtils.isEmpty(text)) {
+          if (wantTranslationHeaders) {
+            rows.add(
+                new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR, verse, translations[j]));
+          }
+          rows.add(new TranslationViewRow(TranslationViewRow.Type.TRANSLATION_TEXT, verse, text));
+        }
       }
-      rows.add(new TranslationViewRow(TranslationViewRow.Type.TRANSLATION_TEXT, ayah));
-      rows.add(new TranslationViewRow(TranslationViewRow.Type.SPACER, ayah));
+
+      rows.add(new TranslationViewRow(TranslationViewRow.Type.SPACER, verse));
     }
 
     translationAdapter.setData(rows);

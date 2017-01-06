@@ -13,7 +13,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class InlineTranslationView extends ScrollView {
   private int fontSize;
   private int footerSpacerHeight;
 
-  private List<QuranAyah> ayat;
+  private List<QuranAyahInfo> ayat;
 
   private LinearLayout linearLayout;
 
@@ -73,14 +73,16 @@ public class InlineTranslationView extends ScrollView {
     }
   }
 
-  public void setAyahs(List<QuranAyah> ayat) {
+  public void setAyahs(List<QuranAyahInfo> ayat) {
     linearLayout.removeAllViews();
-    this.ayat = ayat;
+    if (ayat.size() > 0 && ayat.get(0).texts.size() > 0) {
+      this.ayat = ayat;
 
-    for (int i = 0, ayatSize = ayat.size(); i < ayatSize; i++) {
-      addTextForAyah(ayat.get(i));
+      for (int i = 0, ayatSize = ayat.size(); i < ayatSize; i++) {
+        addTextForAyah(ayat.get(i));
+      }
+      addFooterSpacer();
     }
-    addFooterSpacer();
   }
 
   private void addFooterSpacer() {
@@ -90,13 +92,13 @@ public class InlineTranslationView extends ScrollView {
     linearLayout.addView(view, params);
   }
 
-  private void addTextForAyah(QuranAyah ayah) {
+  private void addTextForAyah(QuranAyahInfo ayah) {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     params.setMargins(leftRightMargin, topBottomMargin, leftRightMargin, topBottomMargin);
 
-    final int suraNumber = ayah.getSura();
-    final int ayahNumber = ayah.getAyah();
+    final int suraNumber = ayah.sura;
+    final int ayahNumber = ayah.ayah;
     TextView ayahHeader = new TextView(context);
     ayahHeader.setTextColor(Color.WHITE);
     ayahHeader.setTextSize(fontSize);
@@ -110,7 +112,7 @@ public class InlineTranslationView extends ScrollView {
     ayahView.setTextSize(fontSize);
 
     // translation
-    String translationText = ayah.getTranslation();
+    String translationText = ayah.texts.get(0);
 
     SpannableString translation = new SpannableString(translationText);
     ayahView.append(translation);
