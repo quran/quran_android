@@ -19,4 +19,16 @@ public class LocalTranslation {
     this.url = url;
     this.version = version;
   }
+
+  public String getTranslatorName() {
+    final String result;
+    if (this.translatorForeign != null) {
+      result = this.translator;
+    } else if (this.translator != null) {
+      result = this.translator;
+    } else {
+      result = this.name;
+    }
+    return result;
+  }
 }

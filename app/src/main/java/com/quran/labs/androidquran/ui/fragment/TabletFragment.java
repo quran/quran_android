@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
@@ -223,11 +223,13 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void setVerses(int page, @NonNull List<QuranAyah> verses) {
+  public void setVerses(int page,
+                        @NonNull String[] translations,
+                        @NonNull List<QuranAyahInfo> verses) {
     if (page == pageNumber) {
-      leftTranslation.setVerses(verses);
+      leftTranslation.setVerses(translations, verses);
     } else if (page == pageNumber - 1) {
-      rightTranslation.setVerses(verses);
+      rightTranslation.setVerses(translations, verses);
     }
   }
 

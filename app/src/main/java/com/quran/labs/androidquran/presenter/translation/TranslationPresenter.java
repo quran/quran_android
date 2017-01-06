@@ -2,8 +2,7 @@ package com.quran.labs.androidquran.presenter.translation;
 
 import android.support.annotation.NonNull;
 
-import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.BaseQuranInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
@@ -11,38 +10,28 @@ import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.model.translation.TranslationModel;
 import com.quran.labs.androidquran.util.QuranSettings;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 @QuranPageScope
 public class TranslationPresenter extends
-    AbstractTranslationPresenter<TranslationPresenter.TranslationScreen> {
+    BaseTranslationPresenter<TranslationPresenter.TranslationScreen> {
   private final Integer[] pages;
   private final QuranSettings quranSettings;
-  private final TranslationsDBAdapter translationsAdapter;
-  private final Map<String, LocalTranslation> translationMap;
-
 
   @Inject
   TranslationPresenter(TranslationModel translationModel,
                        QuranSettings quranSettings,
                        TranslationsDBAdapter translationsAdapter,
                        Integer... pages) {
-    super(translationModel);
+    super(translationModel, translationsAdapter);
     this.pages = pages;
     this.quranSettings = quranSettings;
-    this.translationMap = new HashMap<>();
-    this.translationsAdapter = translationsAdapter;
   }
 
   public void refresh() {
@@ -50,86 +39,42 @@ public class TranslationPresenter extends
       disposable.dispose();
     }
 
-    final String activeTranslation = quranSettings.getActiveTranslation();
-    disposable =
-        getTranslationMapCompletable()
-            .andThen(Observable.fromArray(pages)
-                .flatMap(page -> getVerses(quranSettings.wantArabicInTranslationView(),
-                    activeTranslation, BaseQuranInfo.getVerseRangeForPage(page))
-                    .toObservable()))
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableObserver<List<QuranAyah>>() {
-              @Override
-              public void onNext(List<QuranAyah> result) {
-                if (translationScreen != null && result.size() > 0) {
-                  result = populateTranslator(result, activeTranslation);
-                  translationScreen.setVerses(getPage(result), result);
-                }
-              }
+    disposable = Observable.fromArray(pages)
+        .flatMap(page -> getVerses(quranSettings.wantArabicInTranslationView(),
+            getTranslations(quranSettings), BaseQuranInfo.getVerseRangeForPage(page))
+            .toObservable())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeWith(new DisposableObserver<ResultHolder>() {
+          @Override
+          public void onNext(ResultHolder result) {
+            if (translationScreen != null && result.ayahInformation.size() > 0) {
+              translationScreen.setVerses(
+                  getPage(result.ayahInformation), result.translations, result.ayahInformation);
+            }
+          }
 
-              @Override
-              public void onError(Throwable e) {
-              }
+          @Override
+          public void onError(Throwable e) {
+          }
 
-              @Override
-              public void onComplete() {
-              }
-            });
+          @Override
+          public void onComplete() {
+          }
+        });
   }
 
-  private int getPage(List<QuranAyah> result) {
+  private int getPage(List<QuranAyahInfo> result) {
     final int page;
     if (pages.length == 1) {
       page = pages[0];
     } else {
-      QuranAyah ayah = result.get(0);
-      page = QuranInfo.getPageFromSuraAyah(ayah.getSura(), ayah.getAyah());
+      QuranAyahInfo ayahInfo = result.get(0);
+      page = QuranInfo.getPageFromSuraAyah(ayahInfo.sura, ayahInfo.ayah);
     }
     return page;
   }
 
-  private List<QuranAyah> populateTranslator(List<QuranAyah> result, String activeTranslation) {
-    LocalTranslation localTranslation = translationMap.get(activeTranslation);
-    String translator = null;
-    if (localTranslation != null) {
-      translator = localTranslation.translator != null ? localTranslation.translator :
-          localTranslation.translatorForeign != null ? localTranslation.translatorForeign :
-              localTranslation.name;
-    }
-    if (translator != null && result.size() > 0) {
-      for (int i = 0, size = result.size(); i < size; i++) {
-        QuranAyah ayah = result.get(i);
-        ayah.setTranslator(translator);
-      }
-    }
-    return result;
-  }
-
-  @NonNull
-  private Completable getTranslationMapCompletable() {
-    if (this.translationMap.size() == 0) {
-      return Single.fromCallable(translationsAdapter::getTranslations)
-          .map(translations -> {
-            Map<String, LocalTranslation> map = new HashMap<>();
-            for (int i = 0, size = translations.size(); i < size; i++) {
-              LocalTranslation translation = translations.get(i);
-              map.put(translation.filename, translation);
-            }
-            return map;
-          })
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .doOnSuccess(map -> {
-            this.translationMap.clear();
-            this.translationMap.putAll(map);
-          })
-          .toCompletable();
-    } else {
-      return Completable.complete();
-    }
-  }
-
   public interface TranslationScreen {
-    void setVerses(int page, @NonNull List<QuranAyah> verses);
+    void setVerses(int page, @NonNull String[] translations, @NonNull List<QuranAyahInfo> verses);
   }
 }
