@@ -23,7 +23,7 @@ public class LocalTranslation {
   public String getTranslatorName() {
     final String result;
     if (this.translatorForeign != null) {
-      result = this.translator;
+      result = this.translatorForeign;
     } else if (this.translator != null) {
       result = this.translator;
     } else {
