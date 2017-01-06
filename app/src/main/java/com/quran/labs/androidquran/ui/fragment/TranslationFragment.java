@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
@@ -121,8 +121,10 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void setVerses(int page, @NonNull List<QuranAyah> verses) {
-    translationView.setVerses(verses);
+  public void setVerses(int page,
+                        @NonNull String[] translations,
+                        @NonNull List<QuranAyahInfo> verses) {
+    translationView.setVerses(translations, verses);
     if (highlightedAyah > 0) {
       translationView.highlightAyah(highlightedAyah);
     }

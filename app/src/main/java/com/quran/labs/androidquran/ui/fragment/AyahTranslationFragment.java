@@ -13,14 +13,14 @@ import android.widget.ProgressBar;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.QuranSpinner;
 import com.quran.labs.androidquran.widgets.InlineTranslationView;
+import com.quran.labs.androidquran.widgets.QuranSpinner;
 
 import java.util.List;
 
@@ -155,7 +155,7 @@ public class AyahTranslationFragment extends AyahActionFragment
   }
 
   @Override
-  public void setVerses(@NonNull List<QuranAyah> verses) {
+  public void setVerses(@NonNull List<QuranAyahInfo> verses) {
     progressBar.setVisibility(View.GONE);
     if (verses.size() > 0) {
       emptyState.setVisibility(View.GONE);

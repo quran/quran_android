@@ -13,7 +13,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -143,9 +143,9 @@ public class DatabaseHandler {
     return getVersesInternal(new VerseRange(minSura, minAyah, maxSura, maxAyah), table);
   }
 
-  public List<QuranAyah> getVerses(VerseRange verses, @TextType int textType) {
+  public List<QuranText> getVerses(VerseRange verses, @TextType int textType) {
     Cursor cursor = null;
-    List<QuranAyah> results = new ArrayList<>();
+    List<QuranText> results = new ArrayList<>();
     try {
       String table = textType == TextType.ARABIC ? ARABIC_TEXT_TABLE : VERSE_TABLE;
       cursor = getVersesInternal(verses, table);
@@ -153,14 +153,7 @@ public class DatabaseHandler {
         int sura = cursor.getInt(1);
         int ayah = cursor.getInt(2);
         String text = cursor.getString(3);
-
-        QuranAyah quranAyah = new QuranAyah(sura, ayah);
-        if (textType == TextType.TRANSLATION) {
-          quranAyah.setTranslation(text);
-        } else {
-          quranAyah.setText(text);
-        }
-        results.add(quranAyah);
+        results.add(new QuranText(sura, ayah, text));
       }
     } finally {
       DatabaseUtils.closeCursor(cursor);

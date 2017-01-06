@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
@@ -88,8 +88,8 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       int count = 0;
       int startPosition = -1;
       for (int i = 0, size = this.data.size(); i < size; i++) {
-        QuranAyah item = this.data.get(i).data;
-        if (item.getAyahId() == ayahId) {
+        QuranAyahInfo item = this.data.get(i).ayahInfo;
+        if (item.ayahId == ayahId) {
           if (count == 0) {
             startPosition = i;
           }
@@ -200,13 +200,13 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     if (holder.text != null) {
       final CharSequence text;
       if (row.type == TranslationViewRow.Type.SURA_HEADER) {
-        text = QuranInfo.getSuraName(context, row.data.getSura(), true);
+        text = QuranInfo.getSuraName(context, row.ayahInfo.sura, true);
         holder.text.setBackgroundColor(suraHeaderColor);
       } else if (row.type == TranslationViewRow.Type.BASMALLAH ||
           row.type == TranslationViewRow.Type.QURAN_TEXT) {
         SpannableString str = new SpannableString(row.type == TranslationViewRow.Type.BASMALLAH ?
             ArabicDatabaseUtils.AR_BASMALLAH : ArabicDatabaseUtils.getAyahWithoutBasmallah(
-            row.data.getSura(), row.data.getAyah(), row.data.getText()));
+            row.ayahInfo.sura, row.ayahInfo.ayah, row.ayahInfo.arabicText));
         if (USE_UTHMANI_SPAN) {
           str.setSpan(new UthmaniSpan(context), 0, str.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
@@ -215,9 +215,10 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
         holder.text.setTextSize(ARABIC_MULTIPLIER * fontSize);
       } else {
         if (row.type == TranslationViewRow.Type.TRANSLATOR) {
-          text = row.data.getTranslator();
+          text = row.data;
         } else {
-          text = row.data.getTranslation();
+          // translation
+          text = row.data;
           holder.text.setTextColor(textColor);
           holder.text.setTextSize(fontSize);
         }
@@ -227,7 +228,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       boolean showLine = true;
       if (position + 1 < data.size()) {
         TranslationViewRow nextRow = data.get(position + 1);
-        if (nextRow.data.getSura() != row.data.getSura()) {
+        if (nextRow.ayahInfo.sura != row.ayahInfo.sura) {
           showLine = false;
         }
       } else {
@@ -236,7 +237,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       holder.divider.toggleLine(showLine);
       holder.divider.setDividerColor(dividerColor);
     } else if (holder.ayahNumber != null) {
-      String text = context.getString(R.string.sura_ayah, row.data.getSura(), row.data.getAyah());
+      String text = context.getString(R.string.sura_ayah, row.ayahInfo.sura, row.ayahInfo.ayah);
       holder.ayahNumber.setAyahString(text);
       holder.ayahNumber.setTextColor(textColor);
       holder.ayahNumber.setNightMode(isNightMode);
@@ -255,7 +256,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   private void updateHighlight(TranslationViewRow row, RowViewHolder holder) {
     // toggle highlighting of the ayah, but not for sura headers and basmallah
-    boolean isHighlighted = row.data.getAyahId() == highlightedAyah;
+    boolean isHighlighted = row.ayahInfo.ayahId == highlightedAyah;
     if (row.type != TranslationViewRow.Type.SURA_HEADER &&
         row.type != TranslationViewRow.Type.BASMALLAH &&
         row.type != TranslationViewRow.Type.SPACER) {
