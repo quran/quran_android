@@ -69,6 +69,15 @@ public class BaseTranslationPresenterTest {
   }
 
   @Test
+  public void testCombineAyahDataOneVerseEmpty() throws Exception {
+    VerseRange verseRange = new VerseRange(1, 1, 1, 1);
+    List<QuranText> arabic = Collections.emptyList();
+    List<QuranAyahInfo> info =
+        presenter.combineAyahData(verseRange, arabic, Collections.emptyList());
+    assertThat(info).hasSize(0);
+  }
+
+  @Test
   public void testCombineAyahDataOneVerseNoArabic() throws Exception {
     VerseRange verseRange = new VerseRange(1, 1, 1, 1);
     List<QuranText> arabic = Collections.emptyList();
