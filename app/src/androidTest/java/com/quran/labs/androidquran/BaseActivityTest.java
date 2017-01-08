@@ -13,8 +13,7 @@ public abstract class BaseActivityTest<T extends Activity> {
   @Rule
   public IntentsTestRule<T> rule;
 
-  public BaseActivityTest(
-      Class<T> activityClass) {
+  public BaseActivityTest(Class<T> activityClass) {
     rule = new IntentsTestRule<>(activityClass, true, false);
   }
 }
