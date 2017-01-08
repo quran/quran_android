@@ -28,7 +28,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     // intentionally making a new ArrayList instead of using the constructor for String[].
     // this is because clear() relies on being able to clear the List passed into the constructor,
     // and the String[] constructor makes a new (immutable) List with the items of the array.
-    super(context, resource, new ArrayList<String>());
+    super(context, resource, new ArrayList<>());
     this.layoutInflater = LayoutInflater.from(context);
     this.translationNames = translationNames;
     this.translations = translations;
