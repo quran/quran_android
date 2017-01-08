@@ -1391,6 +1391,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         }));
   }
 
+  // region Audio playback
+
   @Override
   public void onPlayPressed() {
     if (audioStatusBar.getCurrentMode() == AudioStatusBar.PAUSED_MODE) {
@@ -1731,9 +1733,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  // #######################################################################
-  // ####################    AYAH ACTION PANEL STUFF    ####################
-  // #######################################################################
+  //endregion
 
   @Override
   public void onBackPressed() {
@@ -1745,6 +1745,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       super.onBackPressed();
     }
   }
+
+  // region Ayah selection
 
   @Override
   public boolean isListeningForAyahSelection(EventType eventType) {
@@ -1892,6 +1894,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       showAyahModeRangeHighlights();
     }
   }
+
+  //endregion
 
   private void updateToolbarPosition(final SuraAyah start, AyahTracker tracker) {
     compositeDisposable.add(bookmarkModel
@@ -2084,12 +2088,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     // So by posting this later it gives time for onLayout to run.
     // Another issue is that the fragments haven't been created yet
     // (on first run), so calling refreshPages() before then won't work.
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        slidingPanel.expandPane();
-        refreshPages();
-      }
+    handler.post(() -> {
+      slidingPanel.expandPane();
+      refreshPages();
     });
   }
 
