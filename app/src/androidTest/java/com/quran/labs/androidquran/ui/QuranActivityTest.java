@@ -14,6 +14,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDis
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.startsWith;
 
 public class QuranActivityTest extends BaseActivityTest {
 
@@ -29,7 +30,7 @@ public class QuranActivityTest extends BaseActivityTest {
   @Test
   public void testClickingOnSuraOnListViewNavigatesToSurah() {
     //given
-    onView(withText("Quran"))
+    onView(withText(startsWith("Quran")))
         .check(matches(isDisplayed()));
 
     //when
@@ -40,9 +41,6 @@ public class QuranActivityTest extends BaseActivityTest {
     intended(hasComponent(PagerActivity.class.getName()));
 
     onView(withText("Surat Al-Fatihah"))
-        .check(matches(isDisplayed()));
-
-    onView(withText("page 1, Juz' 1"))
         .check(matches(isDisplayed()));
   }
 }
