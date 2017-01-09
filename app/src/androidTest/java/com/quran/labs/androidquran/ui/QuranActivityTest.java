@@ -28,7 +28,7 @@ public class QuranActivityTest extends BaseActivityTest {
   }
 
   @Test
-  public void testClickingOnSuraOnListViewNavigatesToSurah() {
+  public void testClickingOnSuraOnListViewNavigatesToSura() {
     //given
     onView(withText(startsWith("Quran")))
         .check(matches(isDisplayed()));
