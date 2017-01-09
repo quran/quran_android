@@ -1117,8 +1117,11 @@ public class PagerActivity extends QuranActionBarActivity implements
           convertView = super.getView(position, convertView, parent);
           SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
           int page = getCurrentPage();
-          String subtitle = QuranInfo.getPageSubtitle(PagerActivity.this, page);
-          holder.subtitle.setText(subtitle);
+
+          String sura = QuranInfo.getSuraNameFromPage(PagerActivity.this, page, true);
+          holder.title.setText(sura);
+          String desc = QuranInfo.getPageSubtitle(PagerActivity.this, page);
+          holder.subtitle.setText(desc);
           holder.subtitle.setVisibility(View.VISIBLE);
           return convertView;
         }

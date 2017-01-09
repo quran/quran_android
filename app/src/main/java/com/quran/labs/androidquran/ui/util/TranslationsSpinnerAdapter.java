@@ -78,7 +78,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     }
     holder = (SpinnerHolder) convertView.getTag();
 
-    holder.title.setText(translationNames[position]);
+    holder.title.setText(R.string.translations);
     holder.subtitle.setVisibility(View.GONE);
 
     return convertView;
