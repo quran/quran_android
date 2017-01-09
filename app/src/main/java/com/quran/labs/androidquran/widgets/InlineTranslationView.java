@@ -5,7 +5,10 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.StyleRes;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -27,6 +30,7 @@ public class InlineTranslationView extends ScrollView {
   private int fontSize;
   private int footerSpacerHeight;
 
+  private String[] translations;
   private List<QuranAyahInfo> ayat;
 
   private LinearLayout linearLayout;
@@ -67,19 +71,20 @@ public class InlineTranslationView extends ScrollView {
   }
 
   public void refresh() {
-    if (ayat != null) {
+    if (ayat != null && translations != null) {
       initResources();
-      setAyahs(ayat);
+      setAyahs(translations, ayat);
     }
   }
 
-  public void setAyahs(List<QuranAyahInfo> ayat) {
+  public void setAyahs(String[] translations, List<QuranAyahInfo> ayat) {
     linearLayout.removeAllViews();
     if (ayat.size() > 0 && ayat.get(0).texts.size() > 0) {
       this.ayat = ayat;
+      this.translations = translations;
 
       for (int i = 0, ayatSize = ayat.size(); i < ayatSize; i++) {
-        addTextForAyah(ayat.get(i));
+        addTextForAyah(translations, ayat.get(i));
       }
       addFooterSpacer();
     }
@@ -92,7 +97,7 @@ public class InlineTranslationView extends ScrollView {
     linearLayout.addView(view, params);
   }
 
-  private void addTextForAyah(QuranAyahInfo ayah) {
+  private void addTextForAyah(String[] translations, QuranAyahInfo ayah) {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     params.setMargins(leftRightMargin, topBottomMargin, leftRightMargin, topBottomMargin);
@@ -112,10 +117,25 @@ public class InlineTranslationView extends ScrollView {
     ayahView.setTextSize(fontSize);
 
     // translation
-    String translationText = ayah.texts.get(0);
-
-    SpannableString translation = new SpannableString(translationText);
-    ayahView.append(translation);
+    boolean showHeader = translations.length > 1;
+    SpannableStringBuilder builder = new SpannableStringBuilder();
+    for (int i = 0; i < translations.length; i++) {
+      String translationText = ayah.texts.get(i);
+      if (!TextUtils.isEmpty(translationText)) {
+        if (showHeader) {
+          if (i > 0) {
+            builder.append("\n\n");
+          }
+          int start = builder.length();
+          builder.append(translations[i]);
+          builder.setSpan(new StyleSpan(Typeface.BOLD),
+              start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+          builder.append("\n\n");
+        }
+        builder.append(translationText);
+      }
+      ayahView.append(builder);
+    }
 
     params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     params.setMargins(leftRightMargin, topBottomMargin, leftRightMargin, topBottomMargin);

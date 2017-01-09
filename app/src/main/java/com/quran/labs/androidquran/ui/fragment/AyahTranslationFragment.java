@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -32,12 +31,12 @@ public class AyahTranslationFragment extends AyahActionFragment
   private ProgressBar progressBar;
   private InlineTranslationView translationView;
   private View emptyState;
-  private LocalTranslation translationItem;
   private View translationControls;
   private QuranSpinner translator;
   private TranslationsSpinnerAdapter translationAdapter;
   private List<LocalTranslation> translations;
 
+  @Inject QuranSettings quranSettings;
   @Inject InlineTranslationPresenter translationPresenter;
 
   @Override
@@ -120,23 +119,15 @@ public class AyahTranslationFragment extends AyahActionFragment
 
       if (translationAdapter == null) {
         translationAdapter = new TranslationsSpinnerAdapter(activity,
-            R.layout.support_simple_spinner_dropdown_item,
-            pagerActivity.getTranslationNames(), translations);
-        translator.setAdapter(translationAdapter);
-        translator.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-          @Override
-          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            LocalTranslation item = translationAdapter.getTranslationItem(position);
-            if (!item.filename.equals(translationItem.filename)) {
-              QuranSettings.getInstance(activity).setActiveTranslation(item.filename);
+            R.layout.translation_ab_spinner_item,
+            pagerActivity.getTranslationNames(),
+            translations,
+            quranSettings.getActiveTranslations(),
+            selectedItems -> {
+              quranSettings.setActiveTranslations(selectedItems);
               refreshView();
-            }
-          }
-
-          @Override
-          public void onNothingSelected(AdapterView<?> parent) {
-          }
-        });
+            });
+        translator.setAdapter(translationAdapter);
       }
 
       if (start.equals(end)) {
@@ -145,21 +136,17 @@ public class AyahTranslationFragment extends AyahActionFragment
         translationControls.setVisibility(View.GONE);
       }
 
-      int pos = translationAdapter.getPositionForActiveTranslation();
-      translationItem = translationAdapter.getTranslationItem(pos);
-      translator.setSelection(pos);
-
       VerseRange verseRange = new VerseRange(start.sura, start.ayah, end.sura, end.ayah);
-      translationPresenter.refresh(verseRange, translationItem.filename);
+      translationPresenter.refresh(verseRange);
     }
   }
 
   @Override
-  public void setVerses(@NonNull List<QuranAyahInfo> verses) {
+  public void setVerses(@NonNull String[] translations, @NonNull List<QuranAyahInfo> verses) {
     progressBar.setVisibility(View.GONE);
     if (verses.size() > 0) {
       emptyState.setVisibility(View.GONE);
-      translationView.setAyahs(verses);
+      translationView.setAyahs(translations, verses);
     } else {
       emptyState.setVisibility(View.VISIBLE);
     }

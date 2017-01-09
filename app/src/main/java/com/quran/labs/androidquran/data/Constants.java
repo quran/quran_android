@@ -41,6 +41,7 @@ public class Constants {
       "landscapeOrientation";
   public static final String PREF_TRANSLATION_TEXT_SIZE = "translationTextSize";
   public static final String PREF_ACTIVE_TRANSLATION = "activeTranslation";
+  public static final String PREF_ACTIVE_TRANSLATIONS = "activeTranslations";
   public static final String PREF_NIGHT_MODE = "nightMode";
   public static final String PREF_NIGHT_MODE_TEXT_BRIGHTNESS = "nightModeTextBrightness";
   public static final String PREF_DEFAULT_QARI = "defaultQari";

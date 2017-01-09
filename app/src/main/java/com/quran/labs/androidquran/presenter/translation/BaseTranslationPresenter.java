@@ -63,7 +63,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
 
   List<String> getTranslations(QuranSettings quranSettings) {
     List<String> results = new ArrayList<>();
-    results.add(quranSettings.getActiveTranslation());
+    results.addAll(quranSettings.getActiveTranslations());
     return results;
   }
 
