@@ -40,7 +40,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.HelpActivity;
@@ -107,8 +106,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -459,7 +456,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     LocalBroadcastManager.getInstance(this).registerReceiver(
-        mAudioReceiver,
+        audioReceiver,
         new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
 
     downloadReceiver = new DefaultDownloadReceiver(this,
@@ -472,22 +469,19 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public Observable<Integer> getViewPagerObservable() {
-    return Observable.create(new ObservableOnSubscribe<Integer>() {
-      @Override
-      public void subscribe(final ObservableEmitter<Integer> e) throws Exception {
-        final OnPageChangeListener pageChangedListener =
-            new ViewPager.SimpleOnPageChangeListener() {
-          @Override
-          public void onPageSelected(int position) {
-            e.onNext(QuranInfo.getPageFromPos(position, isDualPages));
-          }
-        };
+    return Observable.create(e -> {
+      final OnPageChangeListener pageChangedListener =
+          new ViewPager.SimpleOnPageChangeListener() {
+        @Override
+        public void onPageSelected(int position) {
+          e.onNext(QuranInfo.getPageFromPos(position, isDualPages));
+        }
+      };
 
-        viewPager.addOnPageChangeListener(pageChangedListener);
-        e.onNext(getCurrentPage());
+      viewPager.addOnPageChangeListener(pageChangedListener);
+      e.onNext(getCurrentPage());
 
-        e.setCancellable(() -> viewPager.removeOnPageChangeListener(pageChangedListener));
-      }
+      e.setCancellable(() -> viewPager.removeOnPageChangeListener(pageChangedListener));
     });
   }
 
@@ -839,7 +833,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     // remove broadcast receivers
-    LocalBroadcastManager.getInstance(this).unregisterReceiver(mAudioReceiver);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(audioReceiver);
     if (downloadReceiver != null) {
       downloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this)
@@ -1031,32 +1025,20 @@ public class PagerActivity extends QuranActionBarActivity implements
     startActivity(i);
   }
 
-  private AdapterView.OnItemSelectedListener translationItemSelectedListener =
-      new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-          Timber.d("item chosen: %d", position);
-          if (translations != null && translations.size() > position) {
-            LocalTranslation item = translations.get(position);
-            quranSettings.setActiveTranslation(item.filename);
-
-            int pos = viewPager.getCurrentItem() - 1;
-            for (int count = 0; count < 3; count++) {
-              if (pos + count < 0) {
-                continue;
-              }
-              Fragment f = pagerAdapter.getFragmentIfExists(pos + count);
-              if (f instanceof TranslationFragment) {
-                ((TranslationFragment) f).refresh();
-              } else if (f instanceof TabletFragment) {
-                ((TabletFragment) f).refresh();
-              }
-            }
+  private TranslationsSpinnerAdapter.OnSelectionChangedListener translationItemChangedListener =
+      selectedItems -> {
+        quranSettings.setActiveTranslations(selectedItems);
+        int pos = viewPager.getCurrentItem() - 1;
+        for (int count = 0; count < 3; count++) {
+          if (pos + count < 0) {
+            continue;
           }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
+          Fragment f = pagerAdapter.getFragmentIfExists(pos + count);
+          if (f instanceof TranslationFragment) {
+            ((TranslationFragment) f).refresh();
+          } else if (f instanceof TabletFragment) {
+            ((TabletFragment) f).refresh();
+          }
         }
       };
 
@@ -1126,8 +1108,9 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (translationsSpinnerAdapter == null) {
       translationsSpinnerAdapter = new TranslationsSpinnerAdapter(this,
-          R.layout.support_simple_spinner_dropdown_item,
-          translationItems, translations) {
+          R.layout.translation_ab_spinner_item, translationItems, translations,
+          quranSettings.getActiveTranslations(),
+          translationItemChangedListener) {
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -1141,20 +1124,16 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
       };
       translationsSpinner.setAdapter(translationsSpinnerAdapter);
-      translationsSpinner.setOnItemSelectedListener(translationItemSelectedListener);
     }
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
-      // figure out which translation should be selected
-      int selected = translationsSpinnerAdapter.getPositionForActiveTranslation();
-      translationsSpinner.setSelection(selected);
       actionBar.setDisplayShowTitleEnabled(false);
       translationsSpinner.setVisibility(View.VISIBLE);
     }
   }
 
-  BroadcastReceiver mAudioReceiver = new BroadcastReceiver() {
+  private BroadcastReceiver audioReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
       if (intent != null) {
@@ -1333,9 +1312,10 @@ public class PagerActivity extends QuranActionBarActivity implements
                   titles[i] = item.name;
                 }
               }
+              Set<String> activeTranslations = quranSettings.getActiveTranslations();
 
               if (translationsSpinnerAdapter != null) {
-                translationsSpinnerAdapter.updateItems(titles, translationList);
+                translationsSpinnerAdapter.updateItems(titles, translationList, activeTranslations);
               }
               translationItems = titles;
               translations = translationList;
