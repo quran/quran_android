@@ -11,7 +11,7 @@ this is a simple (madani based) quran app for android.
 
 ## Contributing
 
-If you'd like to contribute, please take a look at the [Help Wanted](https://github.com/quran/quran_android/issues?q=is%3Aissue+is%3Aopen+label%3A%22Help+Wanted%22) label on the issue tracker. For new features, please open an issue to discuss it before beginning implementation.
+If you'd like to contribute, please take a look at the [PRs Welcome](https://github.com/quran/quran_android/issues?q=is%3Aissue+is%3Aopen+label%3A%22PRs+Welcome%22) label on the issue tracker. For new features, please open an issue to discuss it before beginning implementation.
 
 Use [`quran_android-code_style.xml`](https://github.com/quran/quran_android/blob/master/quran_android-code_style.xml) for Android Studio / IntelliJ code styles. Import it by copying it to the Android Studio/IntelliJ IDEA codestyles folder. For Android Studio, that folder is located at `~/.AndroidStudio[Version]/config/codestyles` (the root folder name may differ depending on the host machine and Android Studio version, but the rest of the path should be same). After copying the `quran_android-code_style.xml`, go to Code Style preferences screen and choose `quran_android-code_style` from Code Style Schemes.
 
