@@ -1322,6 +1322,11 @@ public class PagerActivity extends QuranActionBarActivity implements
               }
               translationItems = titles;
               translations = translationList;
+
+              if (showingTranslation) {
+                // Since translation items have changed, need to
+                updateActionBarSpinner();
+              }
             }
 
             @Override
