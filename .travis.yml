@@ -8,8 +8,7 @@ android:
       - tools
       - platform-tools
       - build-tools-25.0.0
-      - android-25
-      - android-22
+      - android-22 # latest supported emulator image
       - extra-android-m2repository
       - sys-img-armeabi-v7a-android-22
 
