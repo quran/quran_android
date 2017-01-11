@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/quran/quran_android.svg?branch=master)](https://travis-ci.org/quran/quran_android)
+
 # Quran for Android
 
 [<img align="right" src="https://raw.githubusercontent.com/quran/quran_android/master/app/src/madani/res/drawable-xxxhdpi/icon.png" />](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)

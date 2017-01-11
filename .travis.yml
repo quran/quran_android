@@ -9,7 +9,17 @@ android:
       - platform-tools
       - build-tools-25.0.0
       - android-25
+      - android-22 # required for emulator below
       - extra-android-m2repository
+      - sys-img-armeabi-v7a-android-22
+
+before_script:
+  # Create and start emulator
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
 
 script:
    - ./gradlew clean testMadaniRelease -PdisableCrashlytics
+   - ./gradlew clean connectedMadaniDebugAndroidTest -PdisableCrashlytics
