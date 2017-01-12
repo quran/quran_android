@@ -309,9 +309,11 @@ public class QuranDownloadService extends Service implements
   private boolean download(String urlString, String destination,
       String outputFile,
       NotificationDetails details) {
-    // make the directory if it doesn't exist
-    new File(destination).mkdirs();
     Timber.d("making directory %s", destination);
+    File f = new File(destination);
+    if (f.mkdirs() && destination.contains("audio")) {
+      QuranFileUtils.writeNoMediaFile(f.getPath());
+    }
 
     details.setFileStatus(1, 1);
 
@@ -329,7 +331,10 @@ public class QuranDownloadService extends Service implements
       QuranAyah endVerse, boolean isGapless,
       NotificationDetails details) {
     details.setIsGapless(isGapless);
-    new File(destination).mkdirs();
+    File f = new File(destination);
+    if (f.mkdirs() && destination.contains("audio")) {
+      QuranFileUtils.writeNoMediaFile(f.getPath());
+    }
 
     int totalAyahs = 0;
     int startSura = startVerse.getSura();
@@ -403,7 +408,10 @@ public class QuranDownloadService extends Service implements
 
       // same destination directory for ayahs within the same sura
       String destDir = destination + File.separator + i + File.separator;
-      new File(destDir).mkdirs();
+      f = new File(destDir);
+      if (f.mkdirs() && destDir.contains("audio")) {
+        QuranFileUtils.writeNoMediaFile(f.getPath());
+      }
 
       for (int j = firstAyah; j <= lastAyah; j++) {
         details.ayah = j;
@@ -423,7 +431,10 @@ public class QuranDownloadService extends Service implements
     if (!isGapless) {
       // attempt to download basmallah if it doesn't exist
       String destDir = destination + File.separator + 1 + File.separator;
-      new File(destDir).mkdirs();
+      f = new File(destDir);
+      if (f.mkdirs() && destDir.contains("audio")) {
+        QuranFileUtils.writeNoMediaFile(f.getPath());
+      }
       File basmallah = new File(destDir, "1" + extension);
       if (!basmallah.exists()) {
         Timber.d("basmallah doesn't exist, downloading...");

@@ -208,7 +208,9 @@ public class AudioUtils {
           return false;
         }
       } else {
-        f.mkdirs();
+        if (f.mkdirs()) {
+          QuranFileUtils.writeNoMediaFile(f.getPath());
+        }
       }
     }
 
@@ -270,7 +272,9 @@ public class AudioUtils {
     boolean isGapless = request.isGapless();
     File f = new File(baseDirectory);
     if (!f.exists()) {
-      f.mkdirs();
+      if (f.mkdirs()) {
+        QuranFileUtils.writeNoMediaFile(f.getPath());
+      }
       return false;
     }
 
