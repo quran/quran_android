@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.service.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.SuraAyah;
 
 public class RepeatInfo implements Parcelable {
 
@@ -47,8 +47,8 @@ public class RepeatInfo implements Parcelable {
     currentPlayCount++;
   }
 
-  QuranAyah getCurrentAyah() {
-    return new QuranAyah(currentSura, currentAyah);
+  SuraAyah getCurrentAyah() {
+    return new SuraAyah(currentSura, currentAyah);
   }
 
   @Override

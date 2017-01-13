@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -51,9 +51,9 @@ public class ArabicDatabaseUtils {
   }
 
   @NonNull
-  public Single<List<QuranAyah>> getVerses(final SuraAyah start, final SuraAyah end) {
+  public Single<List<QuranText>> getVerses(final SuraAyah start, final SuraAyah end) {
     return Single.fromCallable(() -> {
-      List<QuranAyah> verses = new ArrayList<>();
+      List<QuranText> verses = new ArrayList<>();
 
       Cursor cursor = null;
       try {
@@ -61,8 +61,7 @@ public class ArabicDatabaseUtils {
         cursor = arabicDatabaseHandler.getVerses(start.sura, start.ayah,
             end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
         while (cursor.moveToNext()) {
-          QuranAyah verse = new QuranAyah(cursor.getInt(1), cursor.getInt(2));
-          verse.setText(cursor.getString(3));
+          QuranText verse = new QuranText(cursor.getInt(1), cursor.getInt(2), cursor.getString(3));
           verses.add(verse);
         }
       } catch (Exception e) {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 
@@ -42,10 +41,10 @@ public abstract class AudioRequest implements Parcelable {
 
   public abstract boolean haveSuraAyah(int sura, int ayah);
 
-  AudioRequest(String baseUrl, QuranAyah verse) {
+  AudioRequest(String baseUrl, SuraAyah verse) {
     this.baseUrl = baseUrl;
-    final int startSura = verse.getSura();
-    final int startAyah = verse.getAyah();
+    final int startSura = verse.sura;
+    final int startAyah = verse.ayah;
 
     if (startSura < 1 || startSura > 114 || startAyah < 1) {
       throw new IllegalArgumentException();
@@ -130,7 +129,7 @@ public abstract class AudioRequest implements Parcelable {
     return repeatInfo;
   }
 
-  public QuranAyah setCurrentAyah(int sura, int ayah) {
+  public SuraAyah setCurrentAyah(int sura, int ayah) {
     Timber.d("got setCurrentAyah of: %d:%d", sura, ayah);
     if (repeatInfo.shouldRepeat()) {
       repeatInfo.incrementRepeat();
@@ -161,19 +160,19 @@ public abstract class AudioRequest implements Parcelable {
     return baseUrl;
   }
 
-  public void setPlayBounds(QuranAyah minVerse, QuranAyah maxVerse) {
-    minSura = minVerse.getSura();
-    minAyah = minVerse.getAyah();
-    maxSura = maxVerse.getSura();
-    maxAyah = maxVerse.getAyah();
+  public void setPlayBounds(SuraAyah minVerse, SuraAyah maxVerse) {
+    minSura = minVerse.sura;
+    minAyah = minVerse.ayah;
+    maxSura = maxVerse.sura;
+    maxAyah = maxVerse.ayah;
   }
 
-  public QuranAyah getMinAyah() {
-    return new QuranAyah(minSura, minAyah);
+  public SuraAyah getMinAyah() {
+    return new SuraAyah(minSura, minAyah);
   }
 
-  public QuranAyah getMaxAyah() {
-    return new QuranAyah(maxSura, maxAyah);
+  public SuraAyah getMaxAyah() {
+    return new SuraAyah(maxSura, maxAyah);
   }
 
   public String getUrl() {

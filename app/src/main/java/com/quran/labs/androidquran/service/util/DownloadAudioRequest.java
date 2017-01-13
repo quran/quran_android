@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.support.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.QariItem;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.util.AudioUtils;
 
 public class DownloadAudioRequest extends AudioRequest {
@@ -12,7 +12,7 @@ public class DownloadAudioRequest extends AudioRequest {
   @NonNull private final QariItem qariItem;
   private String localDirectoryPath = null;
 
-  public DownloadAudioRequest(String baseUrl, QuranAyah verse,
+  public DownloadAudioRequest(String baseUrl, SuraAyah verse,
       @NonNull QariItem qariItem, String localPath) {
     super(baseUrl, verse);
     this.qariItem = qariItem;
