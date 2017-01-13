@@ -7,6 +7,7 @@ import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.data.SuraAyahIterator;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.translation.TranslationModel;
@@ -139,7 +140,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
     // ex. ibn katheer is missing 3 records, 1 in each of suras 5, 17, and 87.
     SuraAyah start = new SuraAyah(verseRange.startSura, verseRange.startAyah);
     SuraAyah end = new SuraAyah(verseRange.endingSura, verseRange.endingAyah);
-    SuraAyah.Iterator iterator = SuraAyah.getIterator(start, end);
+    SuraAyahIterator iterator = new SuraAyahIterator(start, end);
 
     int i = 0;
     while (iterator.next()) {
