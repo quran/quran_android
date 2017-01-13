@@ -35,7 +35,7 @@ Choose "Import Project," and choose the `build.gradle` file from the top level d
 * [Android Support Library](https://developer.android.com/topic/libraries/support-library/features.html)
 * [AndroidSlidingUpPanel](https://github.com/umano/AndroidSlidingUpPanel)
 * [OkHttp](https://github.com/square/okhttp)
-* [RxJava](https://github.com/ReactiveX/RxJava)
+* [RxJava 2](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [moshi](https://github.com/square/moshi)
 * [dagger2](http://google.github.io/dagger/)
