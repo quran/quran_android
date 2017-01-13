@@ -307,7 +307,7 @@ public class BaseQuranInfo {
     if (upperBound != null) {
       end = SuraAyah.min(end, upperBound);
     }
-    SuraAyah.Iterator iterator = SuraAyah.getIterator(start, end);
+    SuraAyahIterator iterator = new SuraAyahIterator(start, end);
     while (iterator.next()) {
       ayahKeys.add(iterator.getSura() + ":" + iterator.getAyah());
     }
