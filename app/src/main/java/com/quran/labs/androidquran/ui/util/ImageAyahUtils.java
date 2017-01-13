@@ -7,7 +7,7 @@ import android.util.SparseArray;
 import android.widget.ImageView;
 
 import com.quran.labs.androidquran.common.AyahBounds;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
@@ -20,14 +20,14 @@ import timber.log.Timber;
 
 public class ImageAyahUtils {
 
-   private static QuranAyah getAyahFromKey(String key){
+   private static SuraAyah getAyahFromKey(String key){
       String[] parts = key.split(":");
-      QuranAyah result = null;
+     SuraAyah result = null;
       if (parts.length == 2){
          try {
             int sura = Integer.parseInt(parts[0]);
             int ayah = Integer.parseInt(parts[1]);
-            result = new QuranAyah(sura, ayah);
+            result = new SuraAyah(sura, ayah);
          }
          catch (Exception e){
            // no op
@@ -36,7 +36,7 @@ public class ImageAyahUtils {
       return result;
    }
 
-   public static QuranAyah getAyahFromCoordinates(
+   public static SuraAyah getAyahFromCoordinates(
            Map<String, List<AyahBounds>> coords,
            HighlightingImageView imageView, float xc, float yc) {
       if (coords == null || imageView == null){ return null; }

@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.LinkedHashSet;
@@ -113,11 +112,11 @@ public class BaseQuranInfo {
   }
 
   public static String getNotificationTitle(Context context,
-                                            QuranAyah minVerse,
-                                            QuranAyah maxVerse,
+                                            SuraAyah minVerse,
+                                            SuraAyah maxVerse,
                                             boolean isGapless) {
-    int minSura = minVerse.getSura();
-    int maxSura = maxVerse.getSura();
+    int minSura = minVerse.sura;
+    int maxSura = maxVerse.sura;
 
     String notificationTitle =
         QuranInfo.getSuraName(context, minSura, true, false);
@@ -132,21 +131,21 @@ public class BaseQuranInfo {
       }
     }
 
-    int maxAyah = maxVerse.getAyah();
+    int maxAyah = maxVerse.ayah;
     if (maxAyah == 0) {
       maxSura--;
       maxAyah = QuranInfo.getNumAyahs(maxSura);
     }
 
     if (minSura == maxSura) {
-      if (minVerse.getAyah() == maxAyah) {
+      if (minVerse.ayah == maxAyah) {
         notificationTitle += " (" + maxAyah + ")";
       } else {
-        notificationTitle += " (" + minVerse.getAyah() +
+        notificationTitle += " (" + minVerse.ayah +
             "-" + maxAyah + ")";
       }
     } else {
-      notificationTitle += " (" + minVerse.getAyah() +
+      notificationTitle += " (" + minVerse.ayah +
           ") - " + QuranInfo.getSuraName(context, maxSura, true, false) +
           " (" + maxAyah + ")";
     }

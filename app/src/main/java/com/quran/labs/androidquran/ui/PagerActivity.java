@@ -49,7 +49,6 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QariItem;
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
 import com.quran.labs.androidquran.data.Constants;
@@ -1402,11 +1401,11 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void playFromAyah(int page, int startSura,
                             int startAyah, boolean force) {
-    final QuranAyah start = new QuranAyah(startSura, startAyah);
+    final SuraAyah start = new SuraAyah(startSura, startAyah);
     playFromAyah(start, null, page, 0, 0, false, force);
   }
 
-  public void playFromAyah(QuranAyah start, QuranAyah end,
+  public void playFromAyah(SuraAyah start, SuraAyah end,
                             int page, int verseRepeat, int rangeRepeat,
                             boolean enforceRange, boolean force) {
     if (force) {
@@ -1423,7 +1422,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  private void playStreaming(QuranAyah ayah, QuranAyah end,
+  private void playStreaming(SuraAyah ayah, SuraAyah end,
                             int page, QariItem item, int verseRepeat,
                             int rangeRepeat, boolean enforceRange) {
     String qariUrl = AudioUtils.getQariUrl(item);
@@ -1436,7 +1435,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       return;
     }
 
-    final QuranAyah ending;
+    final SuraAyah ending;
     if (end != null) {
       ending = end;
     } else {
@@ -1456,10 +1455,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     audioStatusBar.setRepeatCount(verseRepeat);
   }
 
-  private DownloadAudioRequest getAudioDownloadRequest(QuranAyah ayah, QuranAyah ending,
+  private DownloadAudioRequest getAudioDownloadRequest(SuraAyah ayah, SuraAyah ending,
                                     int page, @NonNull QariItem item, int verseRepeat,
                                     int rangeRepeat, boolean enforceBounds) {
-    final QuranAyah endAyah;
+    final SuraAyah endAyah;
     if (ending != null) {
       endAyah = ending;
     } else {
@@ -1555,7 +1554,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           return;
         }
 
-        QuranAyah firstAyah = new QuranAyah(1, 1);
+        SuraAyah firstAyah = new SuraAyah(1, 1);
         String qariUrl = AudioUtils.getQariUrl(request.getQariItem());
         audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
 

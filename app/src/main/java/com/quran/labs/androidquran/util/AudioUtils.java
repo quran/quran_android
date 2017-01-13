@@ -8,8 +8,8 @@ import android.text.TextUtils;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
@@ -129,7 +129,7 @@ public class AudioUtils {
     return QuranFileUtils.getGaplessDatabaseRootUrl() + "/" + dbname;
   }
 
-  public static QuranAyah getLastAyahToPlay(QuranAyah startAyah,
+  public static SuraAyah getLastAyahToPlay(SuraAyah startAyah,
       int page, int mode, boolean isDualPages) {
     if (isDualPages && mode == LookAheadAmount.PAGE && (page % 2 == 1)) {
       // if we download page by page and we are currently in tablet mode
@@ -158,7 +158,7 @@ public class AudioUtils {
     }
 
     if (mode == LookAheadAmount.SURA) {
-      int sura = startAyah.getSura();
+      int sura = startAyah.sura;
       int lastAyah = QuranInfo.getNumAyahs(sura);
       if (lastAyah == -1) {
         return null;
@@ -169,11 +169,11 @@ public class AudioUtils {
         sura = pageLastSura;
         lastAyah = QuranInfo.getNumAyahs(sura);
       }
-      return new QuranAyah(sura, lastAyah);
+      return new SuraAyah(sura, lastAyah);
     } else if (mode == LookAheadAmount.JUZ) {
       int juz = QuranInfo.getJuzFromPage(page);
       if (juz == 30) {
-        return new QuranAyah(114, 6);
+        return new SuraAyah(114, 6);
       } else if (juz >= 1 && juz < 30) {
         int[] endJuz = QuranInfo.QUARTERS[juz * 8];
         if (pageLastSura > endJuz[0]) {
@@ -185,12 +185,12 @@ public class AudioUtils {
           endJuz = QuranInfo.QUARTERS[(juz + 1) * 8];
         }
 
-        return new QuranAyah(endJuz[0], endJuz[1]);
+        return new SuraAyah(endJuz[0], endJuz[1]);
       }
     }
 
     // page mode (fallback also from errors above)
-    return new QuranAyah(pageLastSura, pageLastAyah);
+    return new SuraAyah(pageLastSura, pageLastAyah);
   }
 
   public static boolean shouldDownloadBasmallah(DownloadAudioRequest request) {
@@ -223,13 +223,13 @@ public class AudioUtils {
   }
 
   private static boolean doesRequireBasmallah(AudioRequest request) {
-    QuranAyah minAyah = request.getMinAyah();
-    int startSura = minAyah.getSura();
-    int startAyah = minAyah.getAyah();
+    SuraAyah minAyah = request.getMinAyah();
+    int startSura = minAyah.sura;
+    int startAyah = minAyah.ayah;
 
-    QuranAyah maxAyah = request.getMaxAyah();
-    int endSura = maxAyah.getSura();
-    int endAyah = maxAyah.getAyah();
+    SuraAyah maxAyah = request.getMaxAyah();
+    int endSura = maxAyah.sura;
+    int endAyah = maxAyah.ayah;
 
     Timber.d("seeing if need basmalla...");
 
@@ -274,13 +274,13 @@ public class AudioUtils {
       return false;
     }
 
-    QuranAyah minAyah = request.getMinAyah();
-    int startSura = minAyah.getSura();
-    int startAyah = minAyah.getAyah();
+    SuraAyah minAyah = request.getMinAyah();
+    int startSura = minAyah.sura;
+    int startAyah = minAyah.ayah;
 
-    QuranAyah maxAyah = request.getMaxAyah();
-    int endSura = maxAyah.getSura();
-    int endAyah = maxAyah.getAyah();
+    SuraAyah maxAyah = request.getMaxAyah();
+    int endSura = maxAyah.sura;
+    int endAyah = maxAyah.ayah;
 
     for (int i = startSura; i <= endSura; i++) {
       int lastAyah = QuranInfo.getNumAyahs(i);
