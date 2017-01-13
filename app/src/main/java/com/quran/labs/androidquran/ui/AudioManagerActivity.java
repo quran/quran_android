@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
-import com.quran.labs.androidquran.common.QuranAyah;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
@@ -147,8 +147,8 @@ public class AudioManagerActivity extends QuranActionBarActivity
     Intent intent = ServiceIntentHelper.getDownloadIntent(this,
         AudioUtils.getQariUrl(qariItem),
         baseUri, sheikhName, AUDIO_DOWNLOAD_KEY, QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, new QuranAyah(1, 1));
-    intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, new QuranAyah(114, 6));
+    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, new SuraAyah(1, 1));
+    intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, new SuraAyah(114, 6));
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless);
     startService(intent);
 

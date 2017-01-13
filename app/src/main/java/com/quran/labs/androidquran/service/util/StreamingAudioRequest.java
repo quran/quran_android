@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.service.util;
 
-import com.quran.labs.androidquran.common.QuranAyah;
-
 import android.os.Parcel;
+
+import com.quran.labs.androidquran.data.SuraAyah;
 
 public class StreamingAudioRequest extends AudioRequest {
 
-  public StreamingAudioRequest(String baseUrl, QuranAyah verse) {
+  public StreamingAudioRequest(String baseUrl, SuraAyah verse) {
     super(baseUrl, verse);
   }
 

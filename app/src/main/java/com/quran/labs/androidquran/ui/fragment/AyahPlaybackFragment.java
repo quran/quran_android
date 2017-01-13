@@ -151,9 +151,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
                 currentStart.ayah, HighlightType.AUDIO);
           }
         }
-        pagerActivity.playFromAyah(currentStart.toQuranAyah(),
-            currentEnding.toQuranAyah(), page, verseRepeat, rangeRepeat,
-            enforceRange, true);
+        pagerActivity.playFromAyah(currentStart, currentEnding, page, verseRepeat,
+            rangeRepeat, enforceRange, true);
       } else if (mShouldEnforce != enforceRange ||
           mRangeRepeatCount != rangeRepeat ||
           mVerseRepeatCount != verseRepeat) {
@@ -161,9 +160,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         if (!pagerActivity.updatePlayOptions(
             rangeRepeat, verseRepeat, enforceRange)) {
           // audio stopped in the process, let's start it
-          pagerActivity.playFromAyah(currentStart.toQuranAyah(),
-              currentEnding.toQuranAyah(), page, verseRepeat, rangeRepeat,
-              enforceRange, true);
+          pagerActivity.playFromAyah(currentStart, currentEnding, page, verseRepeat,
+              rangeRepeat, enforceRange, true);
         }
       }
       pagerActivity.endAyahMode();

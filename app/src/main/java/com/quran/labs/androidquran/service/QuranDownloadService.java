@@ -16,8 +16,8 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranApplication;
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
@@ -276,8 +276,8 @@ public class QuranDownloadService extends Service implements
       mNotifier.resetNotifications();
 
       // get the start/end ayah info if it's a ranged download
-      QuranAyah startAyah = intent.getParcelableExtra(EXTRA_START_VERSE);
-      QuranAyah endAyah = intent.getParcelableExtra(EXTRA_END_VERSE);
+      SuraAyah startAyah = intent.getParcelableExtra(EXTRA_START_VERSE);
+      SuraAyah endAyah = intent.getParcelableExtra(EXTRA_END_VERSE);
       boolean isGapless = intent.getBooleanExtra(EXTRA_IS_GAPLESS, false);
 
       String outputFile = intent.getStringExtra(EXTRA_OUTPUT_FILE_NAME);
@@ -324,18 +324,20 @@ public class QuranDownloadService extends Service implements
     return result;
   }
 
-  private boolean downloadRange(String urlString, String destination,
-      QuranAyah startVerse,
-      QuranAyah endVerse, boolean isGapless,
+  private boolean downloadRange(String urlString,
+                                String destination,
+                                SuraAyah startVerse,
+                                SuraAyah endVerse,
+                                boolean isGapless,
       NotificationDetails details) {
     details.setIsGapless(isGapless);
     new File(destination).mkdirs();
 
     int totalAyahs = 0;
-    int startSura = startVerse.getSura();
-    int startAyah = startVerse.getAyah();
-    int endSura = endVerse.getSura();
-    int endAyah = endVerse.getAyah();
+    int startSura = startVerse.sura;
+    int startAyah = startVerse.ayah;
+    int endSura = endVerse.sura;
+    int endAyah = endVerse.ayah;
 
     if (isGapless) {
       totalAyahs = endSura - startSura + 1;

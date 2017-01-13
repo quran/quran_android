@@ -57,8 +57,8 @@ import android.util.SparseIntArray;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QuranAyah;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.service.util.AudioFocusHelper;
@@ -539,12 +539,12 @@ public class AudioService extends Service implements OnCompletionListener,
           return;
         }
 
-        QuranAyah nextAyah = mAudioRequest.setCurrentAyah(sura, updatedAyah);
+        SuraAyah nextAyah = mAudioRequest.setCurrentAyah(sura, updatedAyah);
         if (nextAyah == null) {
           processStopRequest();
           return;
-        } else if (nextAyah.getSura() != sura ||
-            nextAyah.getAyah() != updatedAyah) {
+        } else if (nextAyah.sura != sura ||
+            nextAyah.ayah != updatedAyah) {
           // remove any messages currently in the queue
           mHandler.removeCallbacksAndMessages(null);
 
@@ -552,7 +552,7 @@ public class AudioService extends Service implements OnCompletionListener,
           // otherwise, we're repeating a range. this variable is
           // what determines whether or not we replay the basmallah.
           final boolean ayahRepeat =
-              (ayah == nextAyah.getAyah() && sura == nextAyah.getSura());
+              (ayah == nextAyah.ayah && sura == nextAyah.sura);
 
           if (ayahRepeat) {
             // jump back to the ayah we should repeat and play it
@@ -573,8 +573,8 @@ public class AudioService extends Service implements OnCompletionListener,
         // line, switch the sura.
         ayahTime = mGaplessSuraData.get(999);
         if (ayahTime > 0 && pos >= ayahTime) {
-          QuranAyah repeat = mAudioRequest.setCurrentAyah(sura + 1, 1);
-          if (repeat != null && repeat.getSura() == sura) {
+          SuraAyah repeat = mAudioRequest.setCurrentAyah(sura + 1, 1);
+          if (repeat != null && repeat.sura == sura) {
             // remove any messages currently in the queue
             mHandler.removeCallbacksAndMessages(null);
 
