@@ -1,8 +1,5 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,6 +14,9 @@ import android.support.annotation.WorkerThread;
 import android.support.v4.text.TextUtilsCompat;
 import android.support.v4.view.ViewCompat;
 
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -24,8 +24,9 @@ import java.util.Locale;
 
 public class QuranUtils {
 
-  private static boolean mIsArabicFormatter = false;
-  private static NumberFormat mNumberFormatter;
+  private static boolean isArabicFormatter;
+  private static NumberFormat numberFormat;
+  private static Locale lastLocale;
 
   public static boolean doesStringContainArabic(String s) {
     if (s == null) {
@@ -79,21 +80,20 @@ public class QuranUtils {
   }
 
   public static String getLocalizedNumber(Context context, int number) {
-    if (QuranSettings.getInstance(context).isArabicNames()) {
-      if (mNumberFormatter == null || !mIsArabicFormatter) {
-        mIsArabicFormatter = true;
-        mNumberFormatter =
-            DecimalFormat.getIntegerInstance(new Locale("ar"));
-      }
-    } else {
-      if (mNumberFormatter == null || mIsArabicFormatter) {
-        mIsArabicFormatter = false;
-        mNumberFormatter =
-            DecimalFormat.getIntegerInstance();
-      }
-    }
+    Locale locale = Locale.getDefault();
+    boolean isArabicNames = QuranSettings.getInstance(context).isArabicNames();
+    boolean change = numberFormat == null ||
+        !locale.equals(lastLocale) ||
+        isArabicNames != isArabicFormatter;
 
-    return mNumberFormatter.format(number);
+    if (change) {
+      numberFormat = isArabicNames ?
+          DecimalFormat.getIntegerInstance(new Locale("ar")) :
+          DecimalFormat.getIntegerInstance(locale);
+      lastLocale = locale;
+      isArabicFormatter = isArabicNames;
+    }
+    return numberFormat.format(number);
   }
 
   public static boolean isDualPages(Context context, QuranScreenInfo qsi) {
