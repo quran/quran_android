@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,6 +59,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   @Inject
   TranslationManagerPresenter presenter;
 
+  @BindView(R.id.translation_swipe_refresh)
+  SwipeRefreshLayout translationSwipeRefresh;
+
   @BindView(R.id.translation_recycler)
   RecyclerView translationRecycler;
 
@@ -87,6 +91,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     presenter.getTranslationsList(false);
     onClickDownloadDisposable = adapter.getOnClickDownloadSubject().subscribe(this::downloadItem);
     onClickRemoveDisposable = adapter.getOnClickRemoveSubject().subscribe(this::removeItem);
+
+    translationSwipeRefresh.setOnRefreshListener(this::onRefresh);
   }
 
   @Override
@@ -159,6 +165,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     downloadingItem = null;
   }
 
+  private void onRefresh() {
+    presenter.getTranslationsList(true);
+  }
+
   private void updateTranslationItem(TranslationItem updated) {
     int id = updated.translation.id;
     int allItemsIndex = translationPositions.get(id);
@@ -170,12 +180,14 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   }
 
   public void onErrorDownloadTranslations() {
+    translationSwipeRefresh.setRefreshing(false);
     Snackbar
         .make(translationRecycler, R.string.error_getting_translation_list, Snackbar.LENGTH_SHORT)
         .show();
   }
 
   public void onTranslationsUpdated(List<TranslationItem> items) {
+    translationSwipeRefresh.setRefreshing(false);
     SparseIntArray itemsSparseArray = new SparseIntArray(items.size());
     for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
       TranslationItem item = items.get(i);
