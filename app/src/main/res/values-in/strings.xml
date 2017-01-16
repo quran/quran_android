@@ -306,6 +306,12 @@
   </plurals>
   <string name="undo">Urungkan</string>
 
+  <string name="recent_pages">Halaman terakhir</string>
+  <plurals name="plural_recent_pages">
+    <item quantity="one">@string/menu_jump_last_page</item>
+    <item quantity="other">@string/recent_pages</item>
+  </plurals>
+
   <!-- tag dialog -->
   <string name="tag_dlg_title">Label</string>
   <string name="tag_name">Nama</string>
