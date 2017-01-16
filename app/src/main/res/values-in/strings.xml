@@ -215,7 +215,7 @@
 
   <string name="canceling">Membatalkan&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
-  <string name="page_description">halaman %1$s, Juz\' %2$s</string>
+  <string name="page_description">Halaman %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Berkas Diperlukan</string>
   <string name="timing_database">Berkas Diperlukan</string>
 
