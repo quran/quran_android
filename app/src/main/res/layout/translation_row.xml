@@ -8,6 +8,7 @@
               android:paddingTop="4dp"
               android:paddingBottom="4dp"
               android:orientation="horizontal"
+              android:background="?attr/selectableItemBackground"
     >
   <ImageView
       android:id="@+id/translation_icon"
