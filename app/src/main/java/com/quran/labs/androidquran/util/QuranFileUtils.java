@@ -159,8 +159,8 @@ public class QuranFileUtils {
     return bitmap == null ? new Response(Response.ERROR_FILE_NOT_FOUND) : new Response(bitmap);
   }
 
-  private static boolean writeNoMediaFile(Context context) {
-    File f = new File(getQuranImagesDirectory(context) + "/.nomedia");
+  private static boolean writeNoMediaFile(String parentDir) {
+    File f = new File(parentDir + "/.nomedia");
     if (f.exists()) {
       return true;
     }
@@ -180,9 +180,9 @@ public class QuranFileUtils {
 
     File directory = new File(path);
     if (directory.exists() && directory.isDirectory()) {
-      return writeNoMediaFile(context);
+      return writeNoMediaFile(path);
     } else {
-      return directory.mkdirs() && writeNoMediaFile(context);
+      return directory.mkdirs() && writeNoMediaFile(path);
     }
   }
 
@@ -355,8 +355,21 @@ public class QuranFileUtils {
 
   @Nullable
   public static String getQuranAudioDirectory(Context context){
-    String s = QuranFileUtils.getQuranBaseDirectory(context);
-    return (s == null)? null : s + AUDIO_DIRECTORY + File.separator;
+    String path = getQuranBaseDirectory(context);
+    if (path == null) {
+      return null;
+    }
+    path += AUDIO_DIRECTORY;
+    File dir = new File(path);
+    if (dir.exists() && !dir.isDirectory() && !dir.delete()) {
+      return null;
+    }
+    if (!dir.exists() && !dir.mkdirs()) {
+      return null;
+    }
+
+    writeNoMediaFile(path);
+    return path + File.separator;
   }
 
   public static String getQuranImagesBaseDirectory(Context context) {
