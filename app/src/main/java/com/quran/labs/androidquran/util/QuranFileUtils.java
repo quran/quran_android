@@ -361,9 +361,6 @@ public class QuranFileUtils {
     }
     path += AUDIO_DIRECTORY;
     File dir = new File(path);
-    if (dir.exists() && !dir.isDirectory() && !dir.delete()) {
-      return null;
-    }
     if (!dir.exists() && !dir.mkdirs()) {
       return null;
     }
