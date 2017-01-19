@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
@@ -222,7 +223,7 @@ public class QuranFileUtils {
     }
 
     String urlString = IMG_BASE_URL + "width"
-        + instance.getWidthParam() + "/"
+        + instance.getWidthParam() + File.separator
         + filename;
     Timber.d("want to download: %s", urlString);
 
@@ -302,14 +303,14 @@ public class QuranFileUtils {
       // being mounted, then set the base path to null for now.
       if (basePath == null || basePath.equals(
           Environment.getExternalStorageDirectory().getAbsolutePath()) ||
-          (basePath.contains("com.quran") && context.getExternalFilesDir(null) == null)) {
+          (basePath.contains(BuildConfig.APPLICATION_ID) && context.getExternalFilesDir(null) == null)) {
         basePath = null;
       }
     }
 
     if (basePath != null) {
-      if (!basePath.endsWith("/")) {
-        basePath += "/";
+      if (!basePath.endsWith(File.separator)) {
+        basePath += File.separator;
       }
       return basePath + QURAN_BASE;
     }
@@ -350,7 +351,7 @@ public class QuranFileUtils {
 
   public static String getQuranAyahDatabaseDirectory(Context context) {
     String base = getQuranBaseDirectory(context);
-    return base == null ? null : base + "/" + AYAHINFO_DIRECTORY;
+    return base == null ? null : base + File.separator + AYAHINFO_DIRECTORY;
   }
 
   @Nullable
@@ -385,7 +386,7 @@ public class QuranFileUtils {
   private static String getQuranImagesDirectory(Context context, String widthParam) {
     String base = getQuranBaseDirectory(context);
     return (base == null) ? null : base +
-        (IMAGES_DIRECTORY.isEmpty() ? "" : IMAGES_DIRECTORY + "/") + "width" + widthParam;
+        (IMAGES_DIRECTORY.isEmpty() ? "" : IMAGES_DIRECTORY + File.separator) + "width" + widthParam;
   }
 
   public static String getZipFileUrl() {
@@ -407,7 +408,7 @@ public class QuranFileUtils {
         widthParam + "_v" + toVersion + ".zip";
   }
 
-  public static String getAyaPositionFileName() {
+  private static String getAyaPositionFileName() {
     QuranScreenInfo qsi = QuranScreenInfo.getInstance();
     if (qsi == null) {
       return null;
@@ -482,15 +483,19 @@ public class QuranFileUtils {
       // be shared across all flavors of quran android
       final File ayahInfoFile = new File(getQuranAyahDatabaseDirectory(context),
           QuranDataProvider.QURAN_ARABIC_DATABASE);
-      if (ayahInfoFile.exists()) {
-        final File base = new File(getQuranDatabaseDirectory(context));
+      final String baseDir = getQuranDatabaseDirectory(context);
+      if (ayahInfoFile.exists() && baseDir != null) {
+        final File base = new File(baseDir);
         final File translationsFile = new File(base, QuranDataProvider.QURAN_ARABIC_DATABASE);
-        try {
-          base.mkdir();
-          copyFile(ayahInfoFile, translationsFile);
-          return true;
-        } catch (IOException ioe) {
-          translationsFile.delete();
+        if (base.mkdir()) {
+          try {
+            copyFile(ayahInfoFile, translationsFile);
+            return true;
+          } catch (IOException ioe) {
+            if (!translationsFile.delete()) {
+              Timber.e("Error deleting translations file");
+            }
+          }
         }
       }
     }
@@ -505,7 +510,11 @@ public class QuranFileUtils {
     if (QuranSettings.getInstance(context).getAppCustomLocation().equals(newLocation)) {
       return true;
     }
-    File currentDirectory = new File(getQuranBaseDirectory(context));
+    final String baseDir = getQuranBaseDirectory(context);
+    if (baseDir == null) {
+      return false;
+    }
+    File currentDirectory = new File(baseDir);
     File newDirectory = new File(newLocation, QURAN_BASE);
     if (!currentDirectory.exists()) {
       // No files to copy, so change the app directory directly
@@ -527,19 +536,23 @@ public class QuranFileUtils {
       File[] subFiles = file.listFiles();
       for (File sf : subFiles) {
         if (sf.isFile()) {
-          sf.delete();
+          if (!sf.delete()) {
+            Timber.e("Error deleting %s", sf.getPath());
+          }
         } else {
           deleteFileOrDirectory(sf);
         }
       }
     }
-    file.delete();
+    if (!file.delete()) {
+      Timber.e("Error deleting %s", file.getPath());
+    }
   }
 
   private static void copyFileOrDirectory(File source, File destination) throws IOException {
     if (source.isDirectory()) {
-      if (!destination.exists()) {
-        destination.mkdirs();
+      if (!destination.exists() && !destination.mkdirs()) {
+        return;
       }
 
       File[] files = source.listFiles();
