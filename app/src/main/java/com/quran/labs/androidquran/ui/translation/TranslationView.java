@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.presenter.translation.TranslationImagePresenter;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.ArrayList;
@@ -48,6 +49,10 @@ public class TranslationView extends ViewGroup {
     int width = translationRecycler.getMeasuredWidth();
     int x = ((r - l) - width) / 2;
     translationRecycler.layout(x, 0, x + width, getMeasuredHeight());
+  }
+
+  public void setImagePresenter(TranslationImagePresenter presenter) {
+    translationAdapter.setImagePresenter(presenter);
   }
 
   public void setVerses(@NonNull String[] translations, @NonNull List<QuranAyahInfo> verses) {

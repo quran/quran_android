@@ -14,6 +14,7 @@ import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
+import com.quran.labs.androidquran.presenter.translation.TranslationImagePresenter;
 import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
@@ -42,6 +43,7 @@ public class TranslationFragment extends Fragment implements
   @Inject QuranSettings quranSettings;
   @Inject TranslationPresenter presenter;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
+  @Inject TranslationImagePresenter translationImagePresenter;
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -76,6 +78,7 @@ public class TranslationFragment extends Fragment implements
     mainView.setPageController(null, pageNumber);
 
     translationView = mainView.getTranslationView();
+    translationView.setImagePresenter(translationImagePresenter);
     translationView.setTranslationClickedListener(v -> {
       final Activity activity = getActivity();
       if (activity != null && activity instanceof PagerActivity) {

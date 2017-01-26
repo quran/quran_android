@@ -375,7 +375,7 @@ public class QuranFileUtils {
     return s == null ? null : s + IMAGES_DIRECTORY;
   }
 
-  private static String getQuranImagesDirectory(Context context) {
+  public static String getQuranImagesDirectory(Context context) {
     QuranScreenInfo qsi = QuranScreenInfo.getInstance();
     if (qsi == null) {
       return null;

@@ -19,6 +19,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
+import com.quran.labs.androidquran.presenter.translation.TranslationImagePresenter;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahNumberView;
@@ -55,6 +56,8 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   private int highlightedRowCount;
   private int highlightedStartPosition;
 
+  private TranslationImagePresenter imagePresenter;
+
   private View.OnClickListener defaultClickListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
@@ -69,6 +72,10 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     this.data = new ArrayList<>();
     this.recyclerView = recyclerView;
     this.inflater = LayoutInflater.from(context);
+  }
+
+  void setImagePresenter(TranslationImagePresenter presenter) {
+    imagePresenter = presenter;
   }
 
   void setData(List<TranslationViewRow> data) {
@@ -242,6 +249,13 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       holder.ayahNumber.setTextColor(textColor);
       holder.ayahNumber.setNightMode(isNightMode);
     }
+
+    if (row.type == TranslationViewRow.Type.QURAN_TEXT) {
+      if (imagePresenter != null) {
+        this.imagePresenter.loadImageForAyah(
+            holder.imageView, holder.text, row.ayahInfo.sura, row.ayahInfo.ayah);
+      }
+    }
     updateHighlight(row, holder);
   }
 
@@ -284,6 +298,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     @BindView(R.id.text) @Nullable TextView text;
     @BindView(R.id.divider) @Nullable DividerView divider;
     @BindView(R.id.ayah_number) @Nullable AyahNumberView ayahNumber;
+    @BindView(R.id.image) @Nullable AyahImageView imageView;
 
     RowViewHolder(@NonNull View itemView) {
       super(itemView);
