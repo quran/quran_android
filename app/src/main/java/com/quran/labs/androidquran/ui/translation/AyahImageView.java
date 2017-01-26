@@ -69,7 +69,7 @@ public class AyahImageView extends View {
       }
     }
 
-    setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), height);
+    setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), (int) (height * scaleFactor));
   }
 
   @Override
@@ -91,13 +91,12 @@ public class AyahImageView extends View {
     for (int i = 0, size = bitmaps.size(); i < size; i++) {
       int currentRow = drawingRows.get(i);
       Bitmap bitmap = bitmaps.get(i);
-      if (currentRow == row) {
-        lastBitmap = bitmap;
-      } else {
+      if (currentRow != row) {
         x = width;
         y += lastBitmap != null ? lastBitmap.getHeight() : 0;
         row = currentRow;
       }
+      lastBitmap = bitmap;
       x = x - bitmap.getWidth();
       canvas.drawBitmap(bitmap, x, y, null);
     }

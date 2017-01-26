@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
 import android.view.View;
 
 import com.quran.labs.androidquran.common.AyahBounds;
@@ -67,10 +68,25 @@ public class TranslationImagePresenter implements Presenter<TranslationView> {
           BitmapFactory.Options options = new BitmapFactory.Options();
           options.inPreferredConfig = Bitmap.Config.ALPHA_8;
 
+          List<Rect> rects = new ArrayList<>();
+          for (int i = 0, size = ayahBounds.size(); i < size; i++) {
+            if (i == 0 || i == size - 1) {
+              rects.add(ayahBounds.get(i).getBoundsAsRect());
+            } else {
+              Rect rect = ayahBounds.get(i).getBoundsAsRect();
+              for (i = i + 1; i < size - 1; i++) {
+                AyahBounds b = ayahBounds.get(i);
+                rect.union(b.getBoundsAsRect());
+              }
+              rects.add(rect);
+              i--;
+            }
+          }
+
           List<Bitmap> bitmaps = new ArrayList<>();
-          for (int i = 0; i < ayahBounds.size(); i++) {
-            AyahBounds bounds = ayahBounds.get(i);
-            bitmaps.add(bitmapDecoder.decodeRegion(bounds.getBoundsAsRect(), options));
+          for (int i = 0, size = rects.size(); i < size; i++) {
+            Rect bounds = rects.get(i);
+            bitmaps.add(bitmapDecoder.decodeRegion(bounds, options));
           }
           return bitmaps;
         })
