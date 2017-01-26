@@ -18,6 +18,8 @@ import javax.inject.Singleton;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -28,20 +30,27 @@ import io.reactivex.subjects.Subject;
 public class BookmarkModel {
   private final RecentPageModel recentPageModel;
   private final BookmarksDBAdapter bookmarksDBAdapter;
-  private final Subject<Tag> tagPublishSubject;
+  private final Observable<Tag> tagObservable;
   private final Subject<Boolean> bookmarksPublishSubject;
+
+  private ObservableEmitter<Tag> tagEmitter;
 
   @Inject
   public BookmarkModel(BookmarksDBAdapter bookmarksAdapter, RecentPageModel recentPageModel) {
     this.recentPageModel = recentPageModel;
     this.bookmarksDBAdapter = bookmarksAdapter;
 
-    tagPublishSubject = PublishSubject.<Tag>create().toSerialized();
+    tagObservable = Observable.create(new ObservableOnSubscribe<Tag>() {
+      @Override
+      public void subscribe(ObservableEmitter<Tag> e) throws Exception {
+        tagEmitter = e;
+      }
+    }).publish().autoConnect().share();
     bookmarksPublishSubject = PublishSubject.<Boolean>create().toSerialized();
   }
 
   public Observable<Tag> tagsObservable() {
-    return tagPublishSubject.hide();
+    return tagObservable;
   }
 
   public Observable<Boolean> recentPagesUpdatedObservable() {
@@ -86,7 +95,7 @@ public class BookmarkModel {
   public Observable<Long> addTagObservable(final String title) {
     return Observable.fromCallable(() -> {
       Long result = bookmarksDBAdapter.addTag(title);
-      tagPublishSubject.onNext(new Tag(result, title));
+      tagEmitter.onNext(new Tag(result, title));
       return result;
     }).subscribeOn(Schedulers.io());
   }
@@ -94,8 +103,8 @@ public class BookmarkModel {
   public Completable updateTag(final Tag tag) {
     return Completable.fromCallable(() -> {
       boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
-      if (result) {
-        tagPublishSubject.onNext(new Tag(tag.id, tag.name));
+      if (result && tagEmitter != null) {
+        tagEmitter.onNext(new Tag(tag.id, tag.name));
       }
       return null;
     }).subscribeOn(Schedulers.io());
