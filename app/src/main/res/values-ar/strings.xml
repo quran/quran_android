@@ -276,7 +276,7 @@
   <string name="export_data_error">خطأ في استيراد البيانات.</string>
   <string name="warning">تحذير</string>
 
-  <string name="recent_pages">تم حذف عنصران</string>
+  <string name="recent_pages">آخر المتصفحات</string>
 
   <plurals name="bookmark_tag_deleted">
     <item quantity="zero">لم يتم حذف عناصر</item>
