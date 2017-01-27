@@ -95,7 +95,7 @@ public class BookmarkModel {
     return Completable.fromCallable(() -> {
       boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
       if (result) {
-        tagPublishSubject.onNext(new Tag(tag.id, tag.name));
+        tagPublishSubject.onNext(tag);
       }
       return null;
     }).subscribeOn(Schedulers.io());

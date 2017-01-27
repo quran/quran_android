@@ -75,6 +75,7 @@ public class DatabaseHandler {
         SQLiteDatabase.NO_LOCALIZED_COLLATORS, new DefaultDatabaseErrorHandler());
     } catch (SQLiteDatabaseCorruptException sce) {
       Crashlytics.log("corrupt database: " + databaseName);
+      throw sce;
     } catch (SQLException se){
       Crashlytics.log("database file " + path +
           (new File(path).exists()? " exists" : " doesn't exist"));

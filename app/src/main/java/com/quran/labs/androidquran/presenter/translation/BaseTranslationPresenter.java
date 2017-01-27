@@ -51,8 +51,8 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
                     .map(texts -> ensureProperTranslations(verseRange, texts))
                     .toObservable())
             .toList();
-    Single<List<QuranText>> arabicObservable = getArabic ?
-        translationModel.getArabicFromDatabase(verseRange) : Single.just(new ArrayList<>());
+    Single<List<QuranText>> arabicObservable = !getArabic ? Single.just(new ArrayList<>()) :
+        translationModel.getArabicFromDatabase(verseRange).onErrorReturnItem(new ArrayList<>());
     return Single.zip(arabicObservable, translationsObservable, getTranslationMapSingle(),
         (arabic, texts, map) -> {
           List<QuranAyahInfo> ayahInfo = combineAyahData(verseRange, arabic, texts);
