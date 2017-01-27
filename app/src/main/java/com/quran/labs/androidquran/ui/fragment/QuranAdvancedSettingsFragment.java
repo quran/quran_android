@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -45,27 +44,25 @@ import javax.inject.Inject;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class QuranAdvancedSettingsFragment extends PreferenceFragment{
+public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   private static final int REQUEST_CODE_IMPORT = 1;
 
-  private DataListPreference mListStoragePref;
-  private MoveFilesAsyncTask mMoveFilesTask;
-  private List<StorageUtils.Storage> mStorageList;
-  private LoadStorageOptionsTask mLoadStorageOptionsTask;
-  private int mAppSize;
-  private boolean mIsPaused;
-  private String mInternalSdcardLocation;
-  private AlertDialog mDialog;
-  private Context mAppContext;
-  private Disposable mExportSubscription = null;
-  private Disposable mLogsSubscription;
+  private DataListPreference listStoragePref;
+  private MoveFilesAsyncTask noveFilesTask;
+  private List<StorageUtils.Storage> storageList;
+  private LoadStorageOptionsTask loadStorageOptionsTask;
+  private int appSize;
+  private boolean isPaused;
+  private String internalSdcardLocation;
+  private AlertDialog dialog;
+  private Context appContext;
+  private Disposable exportSubscription = null;
+  private Disposable logsSubscription;
 
   @Inject BookmarkImportExportModel bookmarkImportExportModel;
 
@@ -75,65 +72,47 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
     addPreferencesFromResource(R.xml.quran_advanced_preferences);
 
     final Context context = getActivity();
-    mAppContext = context.getApplicationContext();
+    appContext = context.getApplicationContext();
 
     // field injection
-    ((QuranApplication) mAppContext).getApplicationComponent().inject(this);
+    ((QuranApplication) appContext).getApplicationComponent().inject(this);
 
 
     final Preference logsPref = findPreference(Constants.PREF_LOGS);
     if (BuildConfig.DEBUG || "beta".equals(BuildConfig.BUILD_TYPE)) {
-      logsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-          if (mLogsSubscription == null) {
-            mLogsSubscription = Observable.fromIterable(Timber.forest())
-                .filter(new Predicate<Timber.Tree>() {
-                  @Override
-                  public boolean test(Timber.Tree tree) throws Exception {
-                    return tree instanceof RecordingLogTree;
-                  }
-                })
-                .firstElement()
-                .map(new Function<Timber.Tree, String>() {
-                  @Override
-                  public String apply(Timber.Tree tree) {
-                    return ((RecordingLogTree) tree).getLogs();
-                  }
-                })
-                .map(new Function<String, String>() {
-                  @Override
-                  public String apply(String logs) {
-                    return QuranUtils.getDebugInfo(mAppContext) + "\n\n" + logs;
-                  }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableMaybeObserver<String>() {
-                  @Override
-                  public void onSuccess(String logs) {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("message/rfc822");
-                    intent.putExtra(Intent.EXTRA_EMAIL,
-                        new String[]{mAppContext.getString(R.string.logs_email)});
-                    intent.putExtra(Intent.EXTRA_TEXT, logs);
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "Logs");
-                    startActivity(Intent.createChooser(intent,
-                        mAppContext.getString(R.string.prefs_send_logs_title)));
-                    mLogsSubscription = null;
-                  }
+      logsPref.setOnPreferenceClickListener(preference -> {
+        if (logsSubscription == null) {
+          logsSubscription = Observable.fromIterable(Timber.forest())
+              .filter(tree -> tree instanceof RecordingLogTree)
+              .firstElement()
+              .map(tree -> ((RecordingLogTree) tree).getLogs())
+              .map(logs -> QuranUtils.getDebugInfo(appContext) + "\n\n" + logs)
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribeWith(new DisposableMaybeObserver<String>() {
+                @Override
+                public void onSuccess(String logs) {
+                  Intent intent = new Intent(Intent.ACTION_SEND);
+                  intent.setType("message/rfc822");
+                  intent.putExtra(Intent.EXTRA_EMAIL,
+                      new String[]{ appContext.getString(R.string.logs_email) });
+                  intent.putExtra(Intent.EXTRA_TEXT, logs);
+                  intent.putExtra(Intent.EXTRA_SUBJECT, "Logs");
+                  startActivity(Intent.createChooser(intent,
+                      appContext.getString(R.string.prefs_send_logs_title)));
+                  logsSubscription = null;
+                }
 
-                  @Override
-                  public void onError(Throwable e) {
-                  }
+                @Override
+                public void onError(Throwable e) {
+                }
 
-                  @Override
-                  public void onComplete() {
-                  }
-                });
-          }
-          return true;
+                @Override
+                public void onComplete() {
+                }
+              });
         }
+        return true;
       });
     } else {
       PreferenceCategory category =
@@ -142,99 +121,93 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
     }
 
     final Preference importPref = findPreference(Constants.PREF_IMPORT);
-    importPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-          String[] mimeTypes = new String[]{ "application/*", "text/*" };
-          intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-        }
-        startActivityForResult(intent, REQUEST_CODE_IMPORT);
-        return true;
+    importPref.setOnPreferenceClickListener(preference -> {
+      Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+      intent.setType("*/*");
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        String[] mimeTypes = new String[]{ "application/*", "text/*" };
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
       }
+      startActivityForResult(intent, REQUEST_CODE_IMPORT);
+      return true;
     });
 
     final Preference exportPref = findPreference(Constants.PREF_EXPORT);
-    exportPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        if (mExportSubscription == null) {
-          mExportSubscription = bookmarkImportExportModel.exportBookmarksObservable()
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribeWith(new DisposableSingleObserver<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                  Answers.getInstance().logCustom(new CustomEvent("exportData"));
-                  Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                  shareIntent.setType("application/json");
-                  shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                  shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                  List<ResolveInfo> intents = mAppContext.getPackageManager()
-                      .queryIntentActivities(shareIntent, 0);
-                  if (intents.size() > 1) {
-                    // if only one, then that is likely Quran for Android itself, so don't show
-                    // the chooser since it doesn't really make sense.
-                    context.startActivity(Intent.createChooser(shareIntent,
-                        context.getString(R.string.prefs_export_title)));
-                  } else {
-                    File exportedPath = new File(mAppContext.getExternalFilesDir(null), "backups");
-                    String exported = mAppContext.getString(
-                        R.string.exported_data, exportedPath.toString());
-                    Toast.makeText(mAppContext, exported, Toast.LENGTH_LONG).show();
-                  }
+    exportPref.setOnPreferenceClickListener(preference -> {
+      if (exportSubscription == null) {
+        exportSubscription = bookmarkImportExportModel.exportBookmarksObservable()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableSingleObserver<Uri>() {
+              @Override
+              public void onSuccess(Uri uri) {
+                Answers.getInstance().logCustom(new CustomEvent("exportData"));
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("application/json");
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                List<ResolveInfo> intents = appContext.getPackageManager()
+                    .queryIntentActivities(shareIntent, 0);
+                if (intents.size() > 1) {
+                  // if only one, then that is likely Quran for Android itself, so don't show
+                  // the chooser since it doesn't really make sense.
+                  context.startActivity(Intent.createChooser(shareIntent,
+                      context.getString(R.string.prefs_export_title)));
+                } else {
+                  File exportedPath = new File(appContext.getExternalFilesDir(null), "backups");
+                  String exported = appContext.getString(
+                      R.string.exported_data, exportedPath.toString());
+                  Toast.makeText(appContext, exported, Toast.LENGTH_LONG).show();
                 }
+              }
 
-                @Override
-                public void onError(Throwable e) {
-                  mExportSubscription = null;
-                  if (isAdded()) {
-                    Toast.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
-                  }
+              @Override
+              public void onError(Throwable e) {
+                exportSubscription = null;
+                if (isAdded()) {
+                  Toast.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
                 }
-              });
-        }
-        return true;
+              }
+            });
       }
+      return true;
     });
 
-    mInternalSdcardLocation =
+    internalSdcardLocation =
         Environment.getExternalStorageDirectory().getAbsolutePath();
 
-    mListStoragePref = (DataListPreference) findPreference(getString(R.string.prefs_app_location));
-    mListStoragePref.setEnabled(false);
+    listStoragePref = (DataListPreference) findPreference(getString(R.string.prefs_app_location));
+    listStoragePref.setEnabled(false);
 
     try {
-      mStorageList = StorageUtils.getAllStorageLocations(context.getApplicationContext());
+      storageList = StorageUtils.getAllStorageLocations(context.getApplicationContext());
     } catch (Exception e) {
       Timber.d(e, "Exception while trying to get storage locations");
-      mStorageList = new ArrayList<>();
+      storageList = new ArrayList<>();
     }
 
     // Hide app location pref if there is no storage option
     // except for the normal Environment.getExternalStorageDirectory
-    if (mStorageList == null || mStorageList.size() <= 1) {
+    if (storageList == null || storageList.size() <= 1) {
       Timber.d("removing advanced settings from preferences");
       hideStorageListPref();
     } else {
-      mLoadStorageOptionsTask = new LoadStorageOptionsTask(context);
-      mLoadStorageOptionsTask.execute();
+      loadStorageOptionsTask = new LoadStorageOptionsTask(context);
+      loadStorageOptionsTask.execute();
     }
   }
 
   @Override
   public void onDestroy() {
-    if (mExportSubscription != null) {
-      mExportSubscription.dispose();
+    if (exportSubscription != null) {
+      exportSubscription.dispose();
     }
 
-    if (mLogsSubscription != null) {
-      mLogsSubscription.dispose();
+    if (logsSubscription != null) {
+      logsSubscription.dispose();
     }
 
-    if (mDialog != null) {
-      mDialog.dismiss();
+    if (dialog != null) {
+      dialog.dismiss();
     }
     super.onDestroy();
   }
@@ -255,65 +228,62 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
   private void hideStorageListPref() {
     PreferenceCategory category =
         (PreferenceCategory) findPreference(Constants.PREF_ADVANCED_CATEGORY);
-    category.removePreference(mListStoragePref);
+    category.removePreference(listStoragePref);
   }
 
   private void loadStorageOptions(Context context) {
     try {
-      if (mAppSize == -1) {
+      if (appSize == -1) {
         // sdcard is not mounted...
         hideStorageListPref();
         return;
       }
 
-      mListStoragePref.setLabelsAndSummaries(context, mAppSize, mStorageList);
+      listStoragePref.setLabelsAndSummaries(context, appSize, storageList);
       final HashMap<String, StorageUtils.Storage> storageMap =
-          new HashMap<>(mStorageList.size());
-      for (StorageUtils.Storage storage : mStorageList) {
+          new HashMap<>(storageList.size());
+      for (StorageUtils.Storage storage : storageList) {
         storageMap.put(storage.getMountPoint(), storage);
       }
 
-      mListStoragePref
-          .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-              final Context context = getActivity();
-              final QuranSettings settings = QuranSettings.getInstance(context);
+      listStoragePref
+          .setOnPreferenceChangeListener((preference, newValue) -> {
+            final Context context1 = getActivity();
+            final QuranSettings settings = QuranSettings.getInstance(context1);
 
-              if (TextUtils.isEmpty(settings.getAppCustomLocation()) &&
-                  Environment.getExternalStorageDirectory().equals(newValue)) {
-                // do nothing since we're moving from empty settings to
-                // the default sdcard setting, which are the same, but write it.
-                return false;
-              }
-
-              // this is called right before the preference is saved
-              String newLocation = (String) newValue;
-              StorageUtils.Storage destStorage = storageMap.get(newLocation);
-              String current = settings.getAppCustomLocation();
-              if (mAppSize < destStorage.getFreeSpace()) {
-                if (current == null || !current.equals(newLocation)) {
-                  if (destStorage.doesRequirePermission()) {
-                    if (!PermissionUtil.haveWriteExternalStoragePermission(context)) {
-                      requestExternalStoragePermission(newLocation);
-                      return false;
-                    }
-
-                    // we have the permission, so fall through and handle the move
-                  }
-                  handleMove(newLocation);
-                }
-              } else {
-                Toast.makeText(context,
-                    getString(
-                        R.string.prefs_no_enough_space_to_move_files),
-                    Toast.LENGTH_LONG).show();
-              }
-              // this says, "don't write the preference"
+            if (TextUtils.isEmpty(settings.getAppCustomLocation()) &&
+                Environment.getExternalStorageDirectory().equals(newValue)) {
+              // do nothing since we're moving from empty settings to
+              // the default sdcard setting, which are the same, but write it.
               return false;
             }
+
+            // this is called right before the preference is saved
+            String newLocation = (String) newValue;
+            StorageUtils.Storage destStorage = storageMap.get(newLocation);
+            String current = settings.getAppCustomLocation();
+            if (appSize < destStorage.getFreeSpace()) {
+              if (current == null || !current.equals(newLocation)) {
+                if (destStorage.doesRequirePermission()) {
+                  if (!PermissionUtil.haveWriteExternalStoragePermission(context1)) {
+                    requestExternalStoragePermission(newLocation);
+                    return false;
+                  }
+
+                  // we have the permission, so fall through and handle the move
+                }
+                handleMove(newLocation);
+              }
+            } else {
+              Toast.makeText(context1,
+                  getString(
+                      R.string.prefs_no_enough_space_to_move_files),
+                  Toast.LENGTH_LONG).show();
+            }
+            // this says, "don't write the preference"
+            return false;
           });
-      mListStoragePref.setEnabled(true);
+      listStoragePref.setEnabled(true);
     } catch (Exception e) {
       Timber.e(e, "error loading storage options");
       hideStorageListPref();
@@ -323,15 +293,15 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
   private void requestExternalStoragePermission(String newLocation) {
     Activity activity = getActivity();
     if (activity instanceof QuranAdvancedPreferenceActivity) {
-      ((QuranAdvancedPreferenceActivity) activity).requestWriteExternalSdcardPermission(newLocation);
+      ((QuranAdvancedPreferenceActivity) activity)
+          .requestWriteExternalSdcardPermission(newLocation);
     }
   }
 
 
-
   private void handleMove(String newLocation) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ||
-        newLocation.equals(mInternalSdcardLocation)) {
+        newLocation.equals(internalSdcardLocation)) {
       moveFiles(newLocation);
     } else {
       showKitKatConfirmation(newLocation);
@@ -343,43 +313,35 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
     final AlertDialog.Builder b = new AlertDialog.Builder(context)
         .setTitle(R.string.warning)
         .setMessage(R.string.kitkat_external_message)
-        .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            moveFiles(newLocation);
-            dialog.dismiss();
-            mDialog = null;
-          }
+        .setPositiveButton(R.string.dialog_ok, (currentDialog, which) -> {
+          moveFiles(newLocation);
+          currentDialog.dismiss();
+          QuranAdvancedSettingsFragment.this.dialog = null;
         })
-        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-            mDialog = null;
-          }
+        .setNegativeButton(R.string.cancel, (currentDialog, which) -> {
+          currentDialog.dismiss();
+          QuranAdvancedSettingsFragment.this.dialog = null;
         });
-    mDialog = b.create();
-    mDialog.show();
+    dialog = b.create();
+    dialog.show();
   }
 
   public void moveFiles(String newLocation) {
-    mMoveFilesTask = new MoveFilesAsyncTask(getActivity(), newLocation);
-    mMoveFilesTask.execute();
+    noveFilesTask = new MoveFilesAsyncTask(getActivity(), newLocation);
+    noveFilesTask.execute();
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    mIsPaused = false;
+    isPaused = false;
   }
 
   @Override
   public void onPause() {
-    mIsPaused = true;
+    isPaused = true;
     super.onPause();
   }
-
-
 
 
   private class MoveFilesAsyncTask extends AsyncTask<Void, Void, Boolean> {
@@ -408,12 +370,12 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
 
     @Override
     protected void onPostExecute(Boolean result) {
-      if (!mIsPaused) {
+      if (!isPaused) {
         dialog.dismiss();
         if (result) {
           QuranSettings.getInstance(appContext).setAppCustomLocation(newLocation);
-          if (mListStoragePref != null) {
-            mListStoragePref.setValue(newLocation);
+          if (listStoragePref != null) {
+            listStoragePref.setValue(newLocation);
           }
         } else {
           Toast.makeText(appContext,
@@ -421,7 +383,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
               Toast.LENGTH_LONG).show();
         }
         dialog = null;
-        mMoveFilesTask = null;
+        noveFilesTask = null;
       }
     }
   }
@@ -430,27 +392,27 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment{
 
     private Context appContext;
 
-    public LoadStorageOptionsTask(Context context) {
+    LoadStorageOptionsTask(Context context) {
       this.appContext = context.getApplicationContext();
     }
 
     @Override
     protected void onPreExecute() {
-      mListStoragePref.setSummary(R.string.prefs_calculating_app_size);
+      listStoragePref.setSummary(R.string.prefs_calculating_app_size);
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-      mAppSize = QuranFileUtils.getAppUsedSpace(appContext);
+      appSize = QuranFileUtils.getAppUsedSpace(appContext);
       return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-      if (!mIsPaused) {
+      if (!isPaused) {
         loadStorageOptions(appContext);
-        mLoadStorageOptionsTask = null;
-        mListStoragePref.setSummary(R.string.prefs_app_location_summary);
+        loadStorageOptionsTask = null;
+        listStoragePref.setSummary(R.string.prefs_app_location_summary);
       }
     }
   }
