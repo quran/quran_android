@@ -49,6 +49,10 @@ public class BookmarkImportExportModel {
 
   @NonNull
   private Uri exportBookmarks(BookmarkData data) throws IOException {
+    // exporting often fails due to the thread being interrupted (when okio sees an interrupted
+    // thread, it doesn't flush the buffer and instead just throws an exception and returns).
+    // may revisit this after hearing back about https://github.com/ReactiveX/RxJava/issues/5024.
+    Thread.interrupted();
     File externalFilesDir = new File(appContext.getExternalFilesDir(null), "backups");
     if (externalFilesDir.exists() || externalFilesDir.mkdir()) {
       File file = new File(externalFilesDir, FILE_NAME);
