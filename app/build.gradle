@@ -131,7 +131,7 @@ dependencies {
   androidTestCompile "com.android.support.test.espresso:espresso-core:${espressoVersion}"
   androidTestCompile "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
   androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
-  compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+  compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
     transitive = true
   }
 }
