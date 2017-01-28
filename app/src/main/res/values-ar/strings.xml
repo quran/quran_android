@@ -267,6 +267,7 @@
   <string name="about_madani_images">صور صفحات القران الموجودة بالتطبيق مصدرها مجمع الملك فهد لطباعة المصف الشريف بالمدينة المنورة</string>
   <string name="about_naskh_images">صور صفحات القران الموجودة بتطبيق النسخ مأخوذه بتصريح من SHL Info Systems</string>
   <string name="prefs_category_advanced">خيارات متقدمة</string>
+  <string name="prefs_category_advanced_summary">استيراد وتصدير المرجعيات وإعدادات أخرى</string>
   <string name="prefs_export_title">تصدير</string>
   <string name="prefs_export_summary">تصدير نسخة من المرجعيات و التصنيفات.</string>
 
