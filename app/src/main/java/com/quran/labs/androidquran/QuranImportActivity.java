@@ -1,11 +1,5 @@
 package com.quran.labs.androidquran;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.dao.BookmarkData;
-import com.quran.labs.androidquran.presenter.QuranImportPresenter;
-
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +7,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.presenter.QuranImportPresenter;
 
 import javax.inject.Inject;
 
@@ -61,24 +60,10 @@ public class QuranImportActivity extends AppCompatActivity implements
         bookmarkData.getTags().size());
     AlertDialog.Builder builder = new AlertDialog.Builder(this)
         .setMessage(message)
-        .setPositiveButton(R.string.import_data, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            mPresenter.importData(bookmarkData);
-          }
-        })
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            finish();
-          }
-        })
-        .setOnCancelListener(new DialogInterface.OnCancelListener() {
-          @Override
-          public void onCancel(DialogInterface dialog) {
-            finish();
-          }
-        });
+        .setPositiveButton(R.string.import_data,
+            (dialog, which) -> mPresenter.importData(bookmarkData))
+        .setNegativeButton(android.R.string.cancel, (dialog, which) -> finish())
+        .setOnCancelListener(dialog -> finish());
     mDialog = builder.show();
   }
 
@@ -100,12 +85,7 @@ public class QuranImportActivity extends AppCompatActivity implements
   private void showErrorInternal(int messageId) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this)
         .setMessage(messageId)
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            finish();
-          }
-        });
+        .setPositiveButton(android.R.string.ok, (dialog, which) -> finish());
     mDialog = builder.show();
   }
 
