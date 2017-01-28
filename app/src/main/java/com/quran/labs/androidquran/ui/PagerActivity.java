@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -1415,7 +1416,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     QariItem item = audioStatusBar.getAudioInfo();
     lastAudioDownloadRequest = getAudioDownloadRequest(start, end, page, item,
         verseRepeat, rangeRepeat, enforceRange);
-    if (quranSettings.shouldStream() && !AudioUtils.haveAllFiles(lastAudioDownloadRequest)) {
+    if (quranSettings.shouldStream() && lastAudioDownloadRequest != null &&
+        !AudioUtils.haveAllFiles(lastAudioDownloadRequest)) {
       playStreaming(start, end, page, item, verseRepeat, rangeRepeat, enforceRange);
     } else {
       playAudioRequest(lastAudioDownloadRequest);
@@ -1455,6 +1457,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     audioStatusBar.setRepeatCount(verseRepeat);
   }
 
+  @Nullable
   private DownloadAudioRequest getAudioDownloadRequest(SuraAyah ayah, SuraAyah ending,
                                     int page, @NonNull QariItem item, int verseRepeat,
                                     int rangeRepeat, boolean enforceBounds) {
@@ -1490,7 +1493,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     return request;
   }
 
-  private void playAudioRequest(DownloadAudioRequest request) {
+  private void playAudioRequest(@Nullable DownloadAudioRequest request) {
     if (request == null) {
       audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
       return;
