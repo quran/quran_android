@@ -11,8 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceGroup;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -115,9 +115,9 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
         return true;
       });
     } else {
-      PreferenceCategory category =
-          (PreferenceCategory) findPreference(Constants.PREF_ADVANCED_CATEGORY);
-      category.removePreference(logsPref);
+      PreferenceGroup group =
+          (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
+      group.removePreference(logsPref);
     }
 
     final Preference importPref = findPreference(Constants.PREF_IMPORT);
@@ -226,9 +226,9 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   }
 
   private void hideStorageListPref() {
-    PreferenceCategory category =
-        (PreferenceCategory) findPreference(Constants.PREF_ADVANCED_CATEGORY);
-    category.removePreference(listStoragePref);
+    PreferenceGroup group =
+        (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
+    group.removePreference(listStoragePref);
   }
 
   private void loadStorageOptions(Context context) {
