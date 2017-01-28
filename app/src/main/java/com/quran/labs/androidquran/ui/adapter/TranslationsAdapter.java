@@ -37,7 +37,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
   @Override
   public TranslationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-    return new TranslationViewHolder(view);
+    return new TranslationViewHolder(view, viewType);
   }
 
   @Override
@@ -131,10 +131,12 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     @BindView(R.id.separator_txt)
     TextView separatorText;
 
-    TranslationViewHolder(View itemView) {
+    TranslationViewHolder(View itemView, int viewType) {
       super(itemView);
       ButterKnife.bind(this, itemView);
-      itemView.setOnClickListener(this);
+      if (viewType == R.layout.translation_row) {
+        itemView.setOnClickListener(this);
+      }
     }
 
     TextView getSeparatorText() {
@@ -160,7 +162,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     @Override
     public void onClick(View v) {
       TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
-      if(item.exists()) {
+      if (item.exists()) {
         onClickRemoveSubject.onNext(item);
       } else {
         onClickDownloadSubject.onNext(item);
