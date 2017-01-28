@@ -23,7 +23,7 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
 
   @Override
   boolean onHighlightAyah(int page, int sura, int ayah, HighlightType type, boolean scrollToAyah) {
-    if (this.page == page && scrollToAyah) {
+    if (this.page == page && scrollToAyah && coordinates != null) {
       final RectF highlightBounds = ImageAyahUtils.getYBoundsForHighlight(coordinates, sura, ayah);
       if (highlightBounds != null) {
         int screenHeight = QuranScreenInfo.getInstance().getHeight();
