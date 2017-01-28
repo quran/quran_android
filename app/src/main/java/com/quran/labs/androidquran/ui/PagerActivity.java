@@ -1817,29 +1817,33 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public void nextAyah() {
-    final int ayat = QuranInfo.getNumAyahs(end.sura);
+    if (end != null) {
+      final int ayat = QuranInfo.getNumAyahs(end.sura);
 
-    final SuraAyah s;
-    if (end.ayah + 1 <= ayat) {
-      s = new SuraAyah(end.sura, end.ayah + 1);
-    } else if (end.sura < 114) {
-      s = new SuraAyah(end.sura + 1, 1);
-    } else {
-      return;
+      final SuraAyah s;
+      if (end.ayah + 1 <= ayat) {
+        s = new SuraAyah(end.sura, end.ayah + 1);
+      } else if (end.sura < 114) {
+        s = new SuraAyah(end.sura + 1, 1);
+      } else {
+        return;
+      }
+      selectAyah(s);
     }
-    selectAyah(s);
   }
 
   public void previousAyah() {
-    final SuraAyah s;
-    if (end.ayah > 1) {
-      s = new SuraAyah(end.sura, end.ayah - 1);
-    } else if (end.sura > 1) {
-      s = new SuraAyah(end.sura - 1, QuranInfo.getNumAyahs(end.sura - 1));
-    } else {
-      return;
+    if (end != null) {
+      final SuraAyah s;
+      if (end.ayah > 1) {
+        s = new SuraAyah(end.sura, end.ayah - 1);
+      } else if (end.sura > 1) {
+        s = new SuraAyah(end.sura - 1, QuranInfo.getNumAyahs(end.sura - 1));
+      } else {
+        return;
+      }
+      selectAyah(s);
     }
-    selectAyah(s);
   }
 
   private void selectAyah(SuraAyah s) {
