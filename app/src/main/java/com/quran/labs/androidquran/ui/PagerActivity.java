@@ -1929,7 +1929,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         TagBookmarkDialog tagsFrag =
             (TagBookmarkDialog) slidingPagerAdapter
                 .getFragmentIfExists(mappedTagPage);
-        if (tagsFrag != null) {
+        if (tagsFrag != null && start != null) {
           tagsFrag.updateAyah(start);
         }
       } else {
