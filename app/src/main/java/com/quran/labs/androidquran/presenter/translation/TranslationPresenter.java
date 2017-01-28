@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.presenter.translation;
 import android.support.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.data.BaseQuranInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.QuranPageScope;
@@ -41,7 +40,7 @@ public class TranslationPresenter extends
 
     disposable = Observable.fromArray(pages)
         .flatMap(page -> getVerses(quranSettings.wantArabicInTranslationView(),
-            getTranslations(quranSettings), BaseQuranInfo.getVerseRangeForPage(page))
+            getTranslations(quranSettings), QuranInfo.getVerseRangeForPage(page))
             .toObservable())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableObserver<ResultHolder>() {
