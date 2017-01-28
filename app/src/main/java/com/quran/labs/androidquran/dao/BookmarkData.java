@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookmarkData {
@@ -8,9 +9,9 @@ public class BookmarkData {
   private final List<RecentPage> recentPages;
 
   public BookmarkData(List<Tag> tags, List<Bookmark> bookmarks, List<RecentPage> recentPages) {
-    this.tags = tags;
-    this.bookmarks = bookmarks;
-    this.recentPages = recentPages;
+    this.tags = tags == null ? new ArrayList<>() : tags;
+    this.bookmarks = bookmarks == null ? new ArrayList<>() : bookmarks;
+    this.recentPages = recentPages == null ? new ArrayList<>() : recentPages;
   }
 
   public List<Tag> getTags() {
