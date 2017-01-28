@@ -1930,11 +1930,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     for (int page : PAGES) {
       final int mappedTagPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);
       if (page == mappedTagPage) {
-        TagBookmarkDialog tagsFrag =
-            (TagBookmarkDialog) slidingPagerAdapter
-                .getFragmentIfExists(mappedTagPage);
-        if (tagsFrag != null && start != null) {
-          tagsFrag.updateAyah(start);
+        Fragment fragment = slidingPagerAdapter.getFragmentIfExists(mappedTagPage);
+        if (fragment instanceof TagBookmarkDialog && start != null) {
+          ((TagBookmarkDialog) fragment).updateAyah(start);
         }
       } else {
         AyahActionFragment f = (AyahActionFragment) slidingPagerAdapter
