@@ -59,7 +59,7 @@ public class TagBookmarkDialog extends DialogFragment {
     ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
   }
 
-  public void updateAyah(SuraAyah suraAyah) {
+  public void updateAyah(@NonNull SuraAyah suraAyah) {
     mTagBookmarkPresenter.setAyahBookmarkMode(suraAyah.sura, suraAyah.ayah, suraAyah.getPage());
   }
 
