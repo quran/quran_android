@@ -73,8 +73,10 @@ public class TranslationView extends ViewGroup {
         rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, verse));
       }
 
+      // added this to guard against a crash that happened when verse.texts was empty
+      int verseTexts = verse.texts.size();
       for (int j = 0; j < translations.length; j++) {
-        String text = verse.texts.get(j);
+        String text = verseTexts > j ? verse.texts.get(j) : "";
         if (!TextUtils.isEmpty(text)) {
           if (wantTranslationHeaders) {
             rows.add(

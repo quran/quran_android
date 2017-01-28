@@ -115,9 +115,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
         return true;
       });
     } else {
-      PreferenceGroup group =
-          (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
-      group.removePreference(logsPref);
+      removeAdvancePreference(logsPref);
     }
 
     final Preference importPref = findPreference(Constants.PREF_IMPORT);
@@ -225,10 +223,19 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
     }
   }
 
+  private void removeAdvancePreference(Preference preference) {
+    // these null checks are to fix a crash due to an NPE on 4.4.4
+    if (preference != null) {
+      PreferenceGroup group =
+          (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
+      if (group != null) {
+        group.removePreference(preference);
+      }
+    }
+  }
+
   private void hideStorageListPref() {
-    PreferenceGroup group =
-        (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
-    group.removePreference(listStoragePref);
+    removeAdvancePreference(listStoragePref);
   }
 
   private void loadStorageOptions(Context context) {

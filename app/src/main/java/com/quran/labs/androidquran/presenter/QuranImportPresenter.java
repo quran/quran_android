@@ -61,7 +61,7 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
     mRequestingPermissions = false;
     if (mImportObservable == null) {
       Uri uri = intent.getData();
-      if (uri == null) {
+      if (uri == null && intent.getExtras() != null) {
         uri = (Uri) intent.getExtras().get(Intent.EXTRA_STREAM);
       }
 
