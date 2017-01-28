@@ -23,6 +23,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
+import static com.quran.labs.androidquran.data.Constants.PAGES_FIRST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
 public class AudioUtils {
@@ -139,12 +140,12 @@ public class AudioUtils {
 
     int pageLastSura = 114;
     int pageLastAyah = 6;
-    if (page > PAGES_LAST || page < 0) {
+    if (page > PAGES_LAST || page < PAGES_FIRST) {
       return null;
     }
     if (page < PAGES_LAST) {
-      int nextPageSura = QuranInfo.PAGE_SURA_START[page];
-      int nextPageAyah = QuranInfo.PAGE_AYAH_START[page];
+      int nextPageSura = QuranInfo.safelyGetSuraOnPage(page);
+      int nextPageAyah = QuranInfo.PAGE_AYAH_START[page - 1];
 
       pageLastSura = nextPageSura;
       pageLastAyah = nextPageAyah - 1;

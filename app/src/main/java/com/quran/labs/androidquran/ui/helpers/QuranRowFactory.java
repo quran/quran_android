@@ -32,7 +32,7 @@ public class QuranRowFactory {
     return new QuranRow.Builder()
         .withText(QuranInfo.getSuraNameString(context, page))
         .withMetadata(QuranInfo.getPageSubtitle(context, page))
-        .withSura(QuranInfo.PAGE_SURA_START[page-1])
+        .withSura(QuranInfo.safelyGetSuraOnPage(page))
         .withPage(page)
         .withImageResource(R.drawable.bookmark_currentpage).build();
   }

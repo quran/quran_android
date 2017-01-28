@@ -74,7 +74,7 @@ public class SuraListFragment extends Fragment {
             @Override
             public void onSuccess(Integer recentPage) {
               if (recentPage != Constants.NO_PAGE) {
-                int sura = QuranInfo.PAGE_SURA_START[recentPage - 1];
+                int sura = QuranInfo.safelyGetSuraOnPage(recentPage);
                 int juz = QuranInfo.getJuzFromPage(recentPage);
                 int position = sura + juz - 1;
                 mRecyclerView.scrollToPosition(position);

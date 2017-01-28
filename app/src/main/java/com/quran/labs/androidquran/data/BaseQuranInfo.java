@@ -4,12 +4,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static com.quran.labs.androidquran.data.Constants.PAGES_FIRST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 
@@ -198,6 +200,14 @@ public class BaseQuranInfo {
       }
     }
     return bounds;
+  }
+
+  public static int safelyGetSuraOnPage(int page) {
+    if (page < PAGES_FIRST || page > PAGES_LAST) {
+      Crashlytics.logException(new IllegalArgumentException("got page: " + page));
+      page = 1;
+    }
+    return PAGE_SURA_START[page - 1];
   }
 
   public static String getSuraNameFromPage(Context context, int page) {
