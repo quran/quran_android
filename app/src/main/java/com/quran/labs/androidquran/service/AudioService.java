@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -450,6 +451,9 @@ public class AudioService extends Service implements OnCompletionListener,
           }
           while (cursor.moveToNext());
         }
+      } catch (SQLException se) {
+        // don't crash the app if the database is corrupt
+        Crashlytics.logException(se);
       } finally {
         DatabaseUtils.closeCursor(cursor);
       }
