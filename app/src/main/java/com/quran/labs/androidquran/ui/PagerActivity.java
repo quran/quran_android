@@ -1980,6 +1980,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     @Override
     public boolean onMenuItemClick(MenuItem item) {
       int sliderPage = -1;
+      if (start == null || end == null) {
+        return false;
+      }
+
       switch (item.getItemId()) {
         case R.id.cab_bookmark_ayah:
           toggleBookmark(start.sura, start.ayah, start.getPage());
