@@ -534,7 +534,10 @@ public class QuranFileUtils {
   private static void deleteFileOrDirectory(File file) {
     if (file.isDirectory()) {
       File[] subFiles = file.listFiles();
-      for (File sf : subFiles) {
+      // subFiles is null on some devices, despite this being a directory
+      int length = subFiles == null ? 0 : subFiles.length;
+      for (int i = 0; i < length; i++) {
+        File sf = subFiles[i];
         if (sf.isFile()) {
           if (!sf.delete()) {
             Timber.e("Error deleting %s", sf.getPath());
