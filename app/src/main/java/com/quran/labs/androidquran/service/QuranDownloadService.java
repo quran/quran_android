@@ -642,13 +642,20 @@ public class QuranDownloadService extends Service implements
   }
 
   // TODO: this is actually a bug - we may not be using /sdcard...
+  // we may not have permission, etc - some devices get a IllegalArgumentException
+  // because the path passed is /storage/emulated/0, for example.
   private boolean isSpaceAvailable(long spaceNeeded) {
-    StatFs fsStats = new StatFs(
-        Environment.getExternalStorageDirectory().getAbsolutePath());
-    double availableSpace = (double) fsStats.getAvailableBlocks() *
-        (double) fsStats.getBlockSize();
+    try {
+      StatFs fsStats = new StatFs(
+          Environment.getExternalStorageDirectory().getAbsolutePath());
+      double availableSpace = (double) fsStats.getAvailableBlocks() *
+          (double) fsStats.getBlockSize();
 
-    return availableSpace > spaceNeeded;
+      return availableSpace > spaceNeeded;
+    } catch (Exception e) {
+      Crashlytics.logException(e);
+      return true;
+    }
   }
 
   private static String getFilenameFromUrl(String url) {
