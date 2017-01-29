@@ -49,6 +49,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   private int sortOrder;
   private boolean groupByTags;
+  private boolean showRecents;
   private BookmarkResult cachedData;
   private BookmarksFragment fragment;
   private ArabicDatabaseUtils arabicDatabaseUtils;
@@ -68,6 +69,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     this.arabicDatabaseUtils = arabicDatabaseUtils;
     sortOrder = quranSettings.getBookmarksSortOrder();
     groupByTags = quranSettings.getBookmarksGroupedByTags();
+    showRecents = quranSettings.getShowRecents();
     subscribeToChanges();
   }
 
@@ -100,6 +102,18 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     requestData(false);
     Answers.getInstance().logCustom(
         new CustomEvent(groupByTags ? "groupByTags" : "doNotGroupByTags"));
+  }
+
+  public void toggleShowRecents() {
+    showRecents = !showRecents;
+    quranSettings.setShowRecents(showRecents);
+    requestData(false);
+    Answers.getInstance().logCustom(
+        new CustomEvent(showRecents ? "showRecents" : "doNotMinimizeRecents"));
+  }
+
+  public boolean isShowingRecents() {
+    return showRecents;
   }
 
   public boolean shouldShowInlineTags() {
@@ -281,6 +295,10 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     int size = recentPages.size();
 
     if (size > 0) {
+      if (!showRecents) {
+        // only show the last bookmark if show recents is off
+        size = 1;
+      }
       rows.add(0, QuranRowFactory.fromRecentPageHeader(appContext, size));
       for (int i = 0; i < size; i++) {
         rows.add(i + 1, QuranRowFactory.fromCurrentPage(appContext, recentPages.get(i).page));

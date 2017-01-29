@@ -101,6 +101,9 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
       MenuItem groupByTags = menu.findItem(R.id.group_by_tags);
       groupByTags.setChecked(bookmarkPresenter.isGroupedByTags());
+
+      MenuItem showRecents = menu.findItem(R.id.show_recents);
+      showRecents.setChecked(bookmarkPresenter.isShowingRecents());
     }
   }
 
@@ -120,6 +123,11 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
       case R.id.group_by_tags: {
         bookmarkPresenter.toggleGroupByTags();
         item.setChecked(bookmarkPresenter.isGroupedByTags());
+        return true;
+      }
+      case R.id.show_recents: {
+        bookmarkPresenter.toggleShowRecents();
+        item.setChecked(bookmarkPresenter.isShowingRecents());
         return true;
       }
     }
