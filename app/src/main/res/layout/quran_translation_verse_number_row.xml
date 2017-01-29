@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.quran.labs.androidquran.widgets.AyahNumberView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ayah_number"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
-    app:verseBoxWidth="42dp"
-    app:verseBoxHeight="42dp"
-    app:nightBackgroundColor="@color/translation_verse_background_night_color"
-    app:backgroundColor="@color/translation_verse_background_color"
-    android:textColor="@color/translation_verse_text_color"
-    android:textSize="12sp"
-    />
+    android:layout_height="wrap_content"
+    >
+
+  <com.quran.labs.androidquran.widgets.AyahNumberView
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:id="@+id/ayah_number"
+      android:layout_width="72dp"
+      android:layout_height="72dp"
+      app:verseBoxWidth="42dp"
+      app:verseBoxHeight="42dp"
+      app:boxPadding="4dp"
+      app:nightBackgroundColor="@color/translation_verse_background_night_color"
+      app:backgroundColor="@color/translation_verse_background_color"
+      app:actionFontSize="10sp"
+      android:textColor="@color/translation_verse_text_color"
+      android:textSize="12sp"
+      />
+</FrameLayout>

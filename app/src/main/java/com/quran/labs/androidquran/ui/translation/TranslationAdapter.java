@@ -64,6 +64,17 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     }
   };
 
+  private View.OnClickListener copyClickListener = new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+      /*
+      int adapterPosition = recyclerView.getChildAdapterPosition((View) v.getParent());
+      TranslationViewRow row = data.get(adapterPosition);
+      ShareUtil.copyVerses(context, row.ayahInfo);
+      */
+    }
+  };
+
   TranslationAdapter(Context context, RecyclerView recyclerView) {
     this.context = context;
     this.data = new ArrayList<>();
@@ -290,6 +301,9 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       this.wrapperView = itemView;
       ButterKnife.bind(this, itemView);
       itemView.setOnClickListener(defaultClickListener);
+      if (ayahNumber != null) {
+        ayahNumber.setOnClickListener(copyClickListener);
+      }
     }
   }
 }

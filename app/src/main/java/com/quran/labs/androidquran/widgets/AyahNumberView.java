@@ -14,19 +14,25 @@ import android.view.View;
 
 import com.quran.labs.androidquran.R;
 
+import java.util.Locale;
+
 public class AyahNumberView extends View {
   private int boxColor;
   private int nightBoxColor;
   private int boxWidth;
   private int boxHeight;
-  private int padding;
   private int textSize;
+  private int textBoxPadding;
   private String suraAyah;
   private boolean isNightMode;
+  private int verticalPadding;
+  private int horizontalPadding;
 
   private Paint boxPaint;
   private TextPaint textPaint;
+  private TextPaint actionTextPaint;
   private StaticLayout textLayout;
+  private StaticLayout copyLayout;
 
   public AyahNumberView(Context context) {
     this(context, null);
@@ -36,6 +42,7 @@ public class AyahNumberView extends View {
     super(context, attrs);
 
     int textColor = 0;
+    int actionTextSize = 0;
     if (attrs != null) {
       TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.AyahNumberView);
       textColor = ta.getColor(R.styleable.AyahNumberView_android_textColor, textColor);
@@ -44,6 +51,10 @@ public class AyahNumberView extends View {
       boxWidth = ta.getDimensionPixelSize(R.styleable.AyahNumberView_verseBoxWidth, boxWidth);
       boxHeight = ta.getDimensionPixelSize(R.styleable.AyahNumberView_verseBoxHeight, boxHeight);
       textSize = ta.getDimensionPixelSize(R.styleable.AyahNumberView_android_textSize, textSize);
+      textBoxPadding = ta.getDimensionPixelSize(
+          R.styleable.AyahNumberView_boxPadding, textBoxPadding);
+      actionTextSize = ta.getDimensionPixelSize(
+          R.styleable.AyahNumberView_actionFontSize, textSize);
       ta.recycle();
     }
 
@@ -52,6 +63,9 @@ public class AyahNumberView extends View {
     textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     textPaint.setColor(textColor);
     textPaint.setTextSize(textSize);
+    actionTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    actionTextPaint.setColor(textColor);
+    actionTextPaint.setTextSize(actionTextSize);
   }
 
   public void setAyahString(@NonNull String suraAyah) {
@@ -78,17 +92,33 @@ public class AyahNumberView extends View {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    padding = (getMeasuredHeight() - boxHeight) / 2;
+    if (copyLayout == null) {
+      String copyString = getContext().getString(R.string.copy)
+          .toUpperCase(Locale.getDefault());
+      copyLayout = new StaticLayout(copyString, actionTextPaint, getMeasuredWidth(),
+          Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+    }
+    verticalPadding = (getMeasuredHeight() -
+        (boxHeight + copyLayout.getHeight() + textBoxPadding)) / 2;
+    horizontalPadding = (getMeasuredWidth() - boxWidth) / 2;
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
-    canvas.drawRect(padding, padding, padding + boxWidth, padding + boxHeight, boxPaint);
+    canvas.drawRect(horizontalPadding, verticalPadding,
+        horizontalPadding + boxWidth, verticalPadding + boxHeight, boxPaint);
     if (this.textLayout != null) {
-      int startY = padding + ((boxHeight - this.textLayout.getHeight()) / 2);
-      canvas.translate(padding, startY);
+      int startY = verticalPadding + ((boxHeight - this.textLayout.getHeight()) / 2);
+      canvas.translate(horizontalPadding, startY);
       this.textLayout.draw(canvas);
-      canvas.translate(padding, -startY);
+      canvas.translate(-horizontalPadding, -startY);
+    }
+
+    if (copyLayout != null) {
+      int startY = verticalPadding + boxHeight + textBoxPadding;
+      canvas.translate(0, startY);
+      this.copyLayout.draw(canvas);
+      canvas.translate(0, -startY);
     }
   }
 }
