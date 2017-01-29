@@ -47,7 +47,7 @@ public class ArabicDatabaseUtils {
         // ignore
       }
     }
-    return null;
+    return arabicDatabaseHandler;
   }
 
   @NonNull
