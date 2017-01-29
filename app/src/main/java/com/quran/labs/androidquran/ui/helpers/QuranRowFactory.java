@@ -13,7 +13,8 @@ public class QuranRowFactory {
   public static QuranRow fromRecentPageHeader(Context context, int count) {
     return new QuranRow.Builder()
         .withText(context.getResources().getQuantityString(R.plurals.plural_recent_pages, count))
-        .withType(QuranRow.HEADER).build();
+        .withType(QuranRow.HEADER)
+        .build();
   }
 
   public static QuranRow fromPageBookmarksHeader(Context context) {

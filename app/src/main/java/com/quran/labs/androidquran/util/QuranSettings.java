@@ -131,6 +131,14 @@ public class QuranSettings {
     prefs.edit().putBoolean(Constants.PREF_GROUP_BOOKMARKS_BY_TAG, groupedByTags).apply();
   }
 
+  public boolean getShowRecents() {
+    return prefs.getBoolean(Constants.PREF_SHOW_RECENTS, true);
+  }
+
+  public void setShowRecents(boolean minimizeRecents) {
+    prefs.edit().putBoolean(Constants.PREF_SHOW_RECENTS, minimizeRecents).apply();
+  }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences() {
     int version = getVersion();
