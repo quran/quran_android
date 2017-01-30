@@ -49,6 +49,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
             .concatMapEager(db ->
                 translationModel.getTranslationFromDatabase(verseRange, db)
                     .map(texts -> ensureProperTranslations(verseRange, texts))
+                    .onErrorReturnItem(new ArrayList<>())
                     .toObservable())
             .toList();
     Single<List<QuranText>> arabicObservable = !getArabic ? Single.just(new ArrayList<>()) :
@@ -97,6 +98,10 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
           if (item != null) {
             ayahTranslations.add(texts.get(j).get(i).text);
             element = item;
+          } else {
+            // this keeps the translations aligned with their translators
+            // even when a particular translator doesn't load.
+            ayahTranslations.add("");
           }
         }
 
