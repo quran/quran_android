@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.quran.labs.androidquran.component.application.DaggerApplicationComponent;
 import com.quran.labs.androidquran.component.application.ApplicationComponent;
 import com.quran.labs.androidquran.module.application.ApplicationModule;
@@ -25,7 +26,11 @@ public class QuranApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    Fabric.with(this, new Crashlytics());
+    Fabric.with(this, new Crashlytics.Builder()
+        .core(new CrashlyticsCore.Builder()
+            .disabled(BuildConfig.DEBUG)
+            .build())
+        .build());
     Timber.plant(new RecordingLogTree());
     this.applicationComponent = initializeInjector();
   }
