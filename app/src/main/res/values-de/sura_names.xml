@@ -116,4 +116,121 @@
     <item>Al-Falaq</item>
     <item>An-Nās</item>
   </string-array>
+
+  <string-array name="sura_names_translation">
+    <item>Die Eröffnende</item>
+    <item>Die Kuh</item>
+    <item>Die Sippe ʿImrāns</item>
+    <item>Die Frauen</item>
+    <item>Der Tisch (mit Speisen)</item>
+    <item>Das Vieh</item>
+    <item>Die Höhen</item>
+    <item>Die Kriegsbeute</item>
+    <item>Die Reue</item>
+    <item>Jonas</item>
+    <item>Hūd</item>
+    <item>Josef</item>
+    <item>Der Donner</item>
+    <item>Abraham</item>
+    <item>Das steinige Land</item>
+    <item>Die Bienen</item>
+    <item>Die Nachtreise</item>
+    <item>Die Höhle</item>
+    <item>Maria</item>
+    <item>(Die Buchstaben) Ṭā-Hā</item>
+    <item>Die Propheten</item>
+    <item>Die Pilgerfahrt</item>
+    <item>Die Gläubigen</item>
+    <item>Das Licht</item>
+    <item>Die Unterscheidung</item>
+    <item>Die Dichter</item>
+    <item>Die Ameisen</item>
+    <item>Die Geschichte</item>
+    <item>Die Spinne</item>
+    <item>Die Römer</item>
+    <item>Luqmān</item>
+    <item>Die Niederwerfung</item>
+    <item>Die Verbündeten</item>
+    <item>Saba (Königreich aus der Antike)</item>
+    <item>Der Schöpfer (der Existenz)</item>
+    <item>(Die Buchstaben) Yā-Sīn</item>
+    <item>Die Sich-Reihenden</item>
+    <item>(Der Buchstabe) Ṣād</item>
+    <item>Die Gruppen</item>
+    <item>Der Vergebende</item>
+    <item>Sie sind ausführlich erläutert (die Verse)</item>
+    <item>Die Beratung</item>
+    <item>Die Verzierung</item>
+    <item>Der Rauch</item>
+    <item>Das Knien</item>
+    <item>Die Sanddünen</item>
+    <item>Muḥammad ﷺ</item>
+    <item>Der Sieg</item>
+    <item>Die Gemächer</item>
+    <item>(Der Buchstabe) Qāf </item>
+    <item>Die Zerstreuenden (Winde)</item>
+    <item>Der Berg</item>
+    <item>Der Stern</item>
+    <item>Der Mond</item>
+    <item>Der Allerbarmer</item>
+    <item>Das eintreffende Ereignis</item>
+    <item>Das Eisen</item>
+    <item>Die Diskussion</item>
+    <item>Die Versammlung</item>
+    <item>Die Geprüfte (Frau)</item>
+    <item>Die Reihe; die Einreihung</item>
+    <item>Der Freitag</item>
+    <item>Die Heuchler</item>
+    <item>(Der Tag von) Gewinn und Verlust </item>
+    <item>Die Scheidung</item>
+    <item>Das Verbot</item>
+    <item>Die Herrschaft</item>
+    <item>Das Schreibrohr; der Stift</item>
+    <item>Die unabwendbare Wahrheit</item>
+    <item>Die Aufstiegswege</item>
+    <item>Noah</item>
+    <item>Die Dschinn</item>
+    <item>Der Eingehüllte</item>
+    <item>Der Zugedeckte</item>
+    <item>Die Auferstehung</item>
+    <item>Der Mensch</item>
+    <item>Die Entsandten</item>
+    <item>Die Kunde</item>
+    <item>Die Entreißenden</item>
+    <item>Er runzelte die Stirn</item>
+    <item>Das Umschlingen; das Zusammenrollen</item>
+    <item>Das Zerbrechen (des Himmels)</item>
+    <item>Die das Maß Kürzenden (betrügende Händler)</item>
+    <item>Das Auseinanderspalten (des Himmels)</item>
+    <item>Die Türme</item>
+    <item>Der Pochende (helle Stern)</item>
+    <item>Der Allerhöchste</item>
+    <item>Die Überdeckende (Stunde)</item>
+    <item>Die Morgendämmerung; das Frühlicht</item>
+    <item>Die Ortschaft</item>
+    <item>Die Sonne</item>
+    <item>Die Nacht</item>
+    <item>Die Morgenhelle; der Vormittag</item>
+    <item>Das Auftun; das Weiten (der Brust)</item>
+    <item>Die Feige</item>
+    <item>Das Anhängsel; der Blutklumpen</item>
+    <item>Die (Nacht der) Bestimmung</item>
+    <item>Der klare Beweis</item>
+    <item>Das Beben</item>
+    <item>Die Rennenden (Pferde)</item>
+    <item>Das Verhängnis</item>
+    <item>Die Vermehrung; das Streben nach Mehr</item>
+    <item>Das Zeitalter; die Zeit; der Nachmittag</item>
+    <item>Der Stichler (der mit der Rede verleumdet)</item>
+    <item>Der Elefant</item>
+    <item>Die Quraisch (arab. Stamm)</item>
+    <item>Die Hilfeleistung</item>
+    <item>Die Überfülle; der Überfluss</item>
+    <item>Die Ungläubigen</item>
+    <item>Die Hilfe</item>
+    <item>Die Palmfasern</item>
+    <item>Die Aufrichtigkeit</item>
+    <item>Der Tagesanbruch; das Morgengrauen</item>
+    <item>Die Menschen</item>
+  </string-array>
 </resources>
