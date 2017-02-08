@@ -10,6 +10,7 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
@@ -301,7 +302,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       }
       rows.add(0, QuranRowFactory.fromRecentPageHeader(appContext, size));
       for (int i = 0; i < size; i++) {
-        rows.add(i + 1, QuranRowFactory.fromCurrentPage(appContext, recentPages.get(i).page));
+        int page = recentPages.get(i).page;
+        if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
+          page = 1;
+        }
+        rows.add(i + 1, QuranRowFactory.fromCurrentPage(appContext, page));
       }
     }
 
