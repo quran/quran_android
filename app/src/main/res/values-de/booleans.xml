@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <bool name="show_sura_names_translation">true</bool>
+  <bool name="show_sura_names_translation">false</bool>
 </resources>
