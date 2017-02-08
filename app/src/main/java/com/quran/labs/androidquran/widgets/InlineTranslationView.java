@@ -134,8 +134,8 @@ public class InlineTranslationView extends ScrollView {
         }
         builder.append(translationText);
       }
-      ayahView.append(builder);
     }
+    ayahView.append(builder);
 
     params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     params.setMargins(leftRightMargin, topBottomMargin, leftRightMargin, topBottomMargin);
