@@ -261,10 +261,10 @@
 
   <string name="downloadTabletPrompt">تم تحسين الصور الخاصه بالتابلت. هل تود تحميلها الان؟</string>
   <string name="menu_sort_group_by_tags">رتب حسب للتصنيفات</string>
-  <string name="about_description">هذا التطبيق مجانا.لا تنسونا من صالح دعاءكم.</string>
-  <string name="about_data_sources">مصدار المعلومات</string>
+  <string name="about_description">هذا التطبيق مجانا. لا تنسونا من صالح دعائكم.</string>
+  <string name="about_data_sources">مصدر المعلومات</string>
   <string name="about_images">الصور</string>
-  <string name="about_madani_images">صور صفحات القران الموجودة بالتطبيق مصدرها مجمع الملك فهد لطباعة المصف الشريف بالمدينة المنورة</string>
+  <string name="about_madani_images">صور صفحات القران الموجودة بالتطبيق مصدرها مجمع الملك فهد لطباعة المصحف الشريف بالمدينة المنورة</string>
   <string name="about_naskh_images">صور صفحات القران الموجودة بتطبيق النسخ مأخوذه بتصريح من SHL Info Systems</string>
   <string name="prefs_category_advanced">خيارات متقدمة</string>
   <string name="prefs_category_advanced_summary">استيراد وتصدير المرجعيات وإعدادات أخرى</string>
