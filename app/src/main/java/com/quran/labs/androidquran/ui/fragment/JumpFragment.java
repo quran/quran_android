@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,7 +22,9 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
@@ -29,6 +34,8 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.QuranSpinner;
+
+import java.util.Arrays;
 
 import timber.log.Timber;
 
@@ -49,8 +56,8 @@ public class JumpFragment extends DialogFragment {
     builder.setTitle(activity.getString(R.string.menu_jump));
 
     // Sura Spinner
-    final QuranSpinner suraSpinner = (QuranSpinner) layout.findViewById(R.id.sura_spinner);
-    String[] suras = activity.getResources().getStringArray(R.array.sura_names);
+    final AutoCompleteTextView suraSpinner = (AutoCompleteTextView) layout.findViewById(R.id.sura_spinner);
+    final String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < suras.length; i++) {
       sb.append(QuranUtils.getLocalizedNumber(activity, (i + 1)));
@@ -65,18 +72,18 @@ public class JumpFragment extends DialogFragment {
     suraSpinner.setAdapter(adapter);
 
     // Ayah Spinner
-    final QuranSpinner ayahSpinner = (QuranSpinner) layout.findViewById(R.id.ayah_spinner);
-    final ArrayAdapter<CharSequence> ayahAdapter =
-        new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item) {
-          @Override
-          public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            TextView v = (TextView) super.getDropDownView(position, convertView, parent);
-            v.setGravity(Gravity.CENTER);
-            return v;
-          }
-        };
-    ayahAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    ayahSpinner.setAdapter(ayahAdapter);
+    final EditText ayahSpinner = (EditText) layout.findViewById(R.id.ayah_spinner);
+//    final ArrayAdapter<CharSequence> ayahAdapter =
+//        new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item) {
+//          @Override
+//          public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//            TextView v = (TextView) super.getDropDownView(position, convertView, parent);
+//            v.setGravity(Gravity.CENTER);
+//            return v;
+//          }
+//        };
+//    ayahAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//    ayahSpinner.setAdapter(ayahAdapter);
 
     // Page text
     final EditText input = (EditText) layout.findViewById(R.id.page_number);
@@ -93,61 +100,101 @@ public class JumpFragment extends DialogFragment {
       }
     });
 
-    suraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    input.setHint(QuranUtils.getLocalizedNumber(activity, 1));
+    suraSpinner.setTag(1);
+    suraSpinner.setText(suras[0]);
+    suraSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
+      public void onItemClick(AdapterView<?> parent, View view, int position, long rowId) {
         Context context = getActivity();
-        if (suraSpinner.getTag() == null) {
-          // this is the initialization
-          for (int i = 1; i <= QuranInfo.SURA_NUM_AYAHS[0]/*al-Fatiha*/; i++) {
-            ayahAdapter.add(QuranUtils.getLocalizedNumber(context, i));
-          }
-          input.setHint(QuranUtils.getLocalizedNumber(context, 1));
-//          input.setText(null); // not needed for now (redundant)
-          suraSpinner.setTag(0);
-        } else {
+//        if (suraSpinner.getTag() == null) {
+//          // this is the initialization
+//          for (int i = 1; i <= QuranInfo.SURA_NUM_AYAHS[0]/*al-Fatiha*/; i++) {
+//            ayahAdapter.add(QuranUtils.getLocalizedNumber(context, i));
+//          }
+//          input.setHint(QuranUtils.getLocalizedNumber(context, 1));
+////          input.setText(null); // not needed for now (redundant)
+//          suraSpinner.setTag(0);
+//        } else {
           // user interaction
-          ayahAdapter.clear();
+//          ayahAdapter.clear();
 
-          int sura = position + 1;
+          String suraName = (String) parent.getItemAtPosition(position);
+          int sura = Arrays.asList(suras).indexOf(suraName) + 1;
+          if (sura == 0)
+            sura = 1;
           int ayahCount = QuranInfo.getNumAyahs(sura);
-          for (int i = 1; i <= ayahCount; i++) {
-            ayahAdapter.add(QuranUtils.getLocalizedNumber(context, i));
-          }
+//          for (int i = 1; i <= ayahCount; i++) {
+//            ayahAdapter.add(QuranUtils.getLocalizedNumber(context, i));
+//          }
 
-          int page = QuranInfo.getPageFromSuraAyah(sura, ayahSpinner.getSelectedItemPosition() + 1);
+          int ayah;
+          try {
+            ayah = Integer.parseInt(ayahSpinner.getText().toString());
+          } catch (NumberFormatException e) {
+            ayah = 1;
+          }
+          ayah = Math.max(1, Math.min(ayahCount, ayah));
+          ayahSpinner.setText(QuranUtils.getLocalizedNumber(context, ayah));
+
+          int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
           input.setHint(QuranUtils.getLocalizedNumber(context, page));
           input.setText(null);
           suraSpinner.setTag(sura);
-        }
+//        }
       }
 
-      @Override
-      public void onNothingSelected(AdapterView<?> arg0) {
-      }
+//      @Override
+//      public void onNothingSelected(AdapterView<?> arg0) {
+//      }
     });
 
-    ayahSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//    ayahSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//      @Override
+//      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
+//        if (ayahSpinner.getTag() == null) {
+//          // this is the initialization
+          ayahSpinner.setTag(1);
+          ayahSpinner.setText(QuranUtils.getLocalizedNumber(activity, 1));
+//        } else {
+    ayahSpinner.addTextChangedListener(new TextWatcher() {
       @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
-        if (ayahSpinner.getTag() == null) {
-          // this is the initialization
-          ayahSpinner.setTag(0);
-        } else {
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+      @Override
+      public void afterTextChanged(Editable s) {
           // user interaction
-          Context context = view.getContext();
-          int ayah = position + 1;
-          int page = QuranInfo.getPageFromSuraAyah(suraSpinner.getSelectedItemPosition() + 1, ayah);
+          Context context = getActivity(); //view.getContext();
+          int ayah; // = position + 1;
+          try {
+            ayah = Integer.parseInt(s.toString());
+          } catch (NumberFormatException e) {
+            ayah = 1;
+          }
+          int sura = (int) suraSpinner.getTag();
+          int ayahCount = QuranInfo.getNumAyahs(sura);
+          int realAyah = Math.max(1, Math.min(ayahCount, ayah));
+          if (ayah != realAyah) {
+            ayah = realAyah;
+            s.clear();
+            s.append(QuranUtils.getLocalizedNumber(context, ayah));
+          }
+          int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
           input.setHint(QuranUtils.getLocalizedNumber(context, page));
           input.setText(null);
           ayahSpinner.setTag(ayah);
-        }
-      }
-
-      @Override
-      public void onNothingSelected(AdapterView<?> arg0) {
       }
     });
+//        }
+//      }
+//
+//      @Override
+//      public void onNothingSelected(AdapterView<?> arg0) {
+//      }
+//    });
 
     builder.setView(layout);
     builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
