@@ -210,7 +210,7 @@ public class JumpFragment extends DialogFragment {
     }
   }
 
-  private static int parseInt(String s, int defaultValue) {
+  static int parseInt(String s, int defaultValue) {
     // May be extracted to util
     try {
       return Integer.parseInt(s);
