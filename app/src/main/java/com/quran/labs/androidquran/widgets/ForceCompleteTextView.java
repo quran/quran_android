@@ -8,13 +8,15 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 
 /**
- * AutoCompleteTextView that forces show the suggestion when focused and forces choose when
- * unfocused.
+ * AutoCompleteTextView that forces show the suggestion when focused and forces choose the
+ * suggestion when unfocused. Force choose is done by calling the listener set by {@link
+ * #setOnItemClickListener(AdapterView.OnItemClickListener)} with null for the first two arguments,
+ * if there is at least one suggestion appears then the position would be 0 and the text will be the
+ * first item appears, otherwise the position would be -1 and the text will be empty, the rest is
+ * left to the listener.
  */
 public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
-  /** Thanks to those in http://stackoverflow.com/q/15544943/1197317 for inspiration */
-
-  private boolean allowOnItemClickWithNull = false;
+  /* Thanks to those in http://stackoverflow.com/q/15544943/1197317 for inspiration */
 
   public ForceCompleteTextView(Context context) {
     super(context);
@@ -28,18 +30,6 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     super(context, attrs, defStyleAttr);
   }
 
-  /**
-   * Just like {@link #setOnItemClickListener(AdapterView.OnItemClickListener)}, but accepting null
-   * also causes the listener to be called when suggestion is auto-chosen (force choose), e.g. when
-   * user leaves without choosing.
-   * @param acceptNull whether the listener accept null to be passed as first two arguments
-   * @param l the listener
-   */
-  public void setOnItemClickListener(boolean acceptNull, AdapterView.OnItemClickListener l) {
-    setOnItemClickListener(l);
-    allowOnItemClickWithNull = acceptNull;
-  }
-
   @Override
   public boolean enoughToFilter() {
     // Break the limit of minimum 1
@@ -51,15 +41,18 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     super.onFocusChanged(focused, direction, previouslyFocusedRect);
     if (focused) {
       performFiltering(getText(), 0);
-      showDropDown();
     } else {
       ListAdapter adapter = getAdapter();
-      Object value = adapter.isEmpty() ? null : adapter.getItem(0);
-      setText(value == null ? null : value.toString());
-
       AdapterView.OnItemClickListener listener = getOnItemClickListener();
-      if (allowOnItemClickWithNull && listener != null) {
-        listener.onItemClick(null, null, 0, 0);
+      if (adapter.isEmpty()) {
+        setText(null);
+        if (listener != null)
+          listener.onItemClick(null, null, -1, -1);
+      } else {
+        Object value = adapter.getItem(0);
+        setText(value == null ? null : value.toString());
+        if (listener != null)
+          listener.onItemClick(null, null, 0, 0);
       }
     }
   }

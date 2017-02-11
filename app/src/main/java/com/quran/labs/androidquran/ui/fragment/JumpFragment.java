@@ -93,14 +93,19 @@ public class JumpFragment extends DialogFragment {
     input.setHint(QuranUtils.getLocalizedNumber(activity, 1));
     suraSpinner.setTag(1); // al-Fatiha
     suraSpinner.setText(suras[0]);
-    suraSpinner.setOnItemClickListener(true, (AdapterView<?> parent, View view, int position,
+    suraSpinner.setOnItemClickListener((AdapterView<?> parent, View view, int position,
                                         long rowId) -> {
       Context context = getActivity();
 
-      String suraName = (String) suraSpinner.getAdapter().getItem(position);
-      int sura = Arrays.asList(suras).indexOf(suraName) + 1;
-      if (sura == 0) // default to al-Fatiha
-        sura = 1;
+      int sura = 0;
+      if (position >= 0) {
+        String suraName = (String) suraSpinner.getAdapter().getItem(position);
+        sura = Arrays.asList(suras).indexOf(suraName) + 1;
+      }
+      if (sura == 0) { // sura not found or position is -1
+        sura = 1; // default to al-Fatiha
+        suraSpinner.setText(suras[0]);
+      }
       int ayahCount = QuranInfo.getNumAyahs(sura);
 
       int ayah = parseInt(ayahSpinner.getText().toString(), 1);
