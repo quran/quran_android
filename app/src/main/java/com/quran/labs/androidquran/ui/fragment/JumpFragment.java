@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -94,11 +93,11 @@ public class JumpFragment extends DialogFragment {
     input.setHint(QuranUtils.getLocalizedNumber(activity, 1));
     suraSpinner.setTag(1); // al-Fatiha
     suraSpinner.setText(suras[0]);
-    suraSpinner.setOnItemClickListener((AdapterView<?> parent, View view, int position,
+    suraSpinner.setOnItemClickListener(true, (AdapterView<?> parent, View view, int position,
                                         long rowId) -> {
       Context context = getActivity();
 
-      String suraName = (String) parent.getItemAtPosition(position);
+      String suraName = (String) suraSpinner.getAdapter().getItem(position);
       int sura = Arrays.asList(suras).indexOf(suraName) + 1;
       if (sura == 0) // default to al-Fatiha
         sura = 1;
@@ -220,7 +219,7 @@ public class JumpFragment extends DialogFragment {
   }
 
   /**
-   * ListAdapter that supports filtering by using case-insensitive infix (substring)
+   * ListAdapter that supports filtering by using case-insensitive infix (substring).
    */
   private static class InfixFilterArrayAdapter extends BaseAdapter implements Filterable {
     // May be extracted to other package
@@ -232,7 +231,7 @@ public class JumpFragment extends DialogFragment {
     private Filter filter = new ItemFilter();
     private final Object lock = new Object();
 
-    public InfixFilterArrayAdapter(@NonNull Context context, @LayoutRes int itemLayoutRes,
+    InfixFilterArrayAdapter(@NonNull Context context, @LayoutRes int itemLayoutRes,
                                    @NonNull String[] items) {
       this.items = originalItems = Arrays.asList(items);
       this.inflater = LayoutInflater.from(context);
@@ -271,7 +270,7 @@ public class JumpFragment extends DialogFragment {
     }
 
     /**
-     * Filter that do filtering by matching case-insensitive infix of the input
+     * Filter that do filtering by matching case-insensitive infix of the input.
      */
     private class ItemFilter extends Filter {
 
