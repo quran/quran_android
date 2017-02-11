@@ -32,11 +32,13 @@
       android:layout_height="wrap_content"
       android:orientation="horizontal">
 
-    <AutoCompleteTextView
+    <com.quran.labs.androidquran.widgets.ForceCompleteTextView
         android:id="@+id/sura_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:inputType="text|textAutoComplete"
+        android:selectAllOnFocus="true"/>
 
     <!-- 'minWidth' is in 'sp' because we actually need that width only
      to accommodate ayah numbers and avoid horizontal jiggering -->
@@ -45,6 +47,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:minWidth="64sp"/>
+        android:minWidth="64sp"
+        android:inputType="number"
+        android:selectAllOnFocus="true"/>
   </LinearLayout>
 </LinearLayout>
