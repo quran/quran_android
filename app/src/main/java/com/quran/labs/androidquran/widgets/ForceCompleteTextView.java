@@ -5,15 +5,9 @@ import android.graphics.Rect;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 
 /**
- * AutoCompleteTextView that forces show the suggestion when focused and forces choose the
- * suggestion when unfocused. Force choose is done by calling the listener set by {@link
- * #setOnItemClickListener(AdapterView.OnItemClickListener)} with null for the first two arguments,
- * if there is at least one suggestion appears then the position would be 0 and the text will be the
- * first item appears, otherwise the position would be -1 and the text will be empty, the rest is
- * left to the listener.
+ * AutoCompleteTextView that forces to use value from one of the values in adapter (choices).
  */
 public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
   /* Thanks to those in http://stackoverflow.com/q/15544943/1197317 for inspiration */
@@ -31,6 +25,16 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
   }
 
   @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+
+    // TODO create relevant listener name, such as onSelectChoice
+    AdapterView.OnItemClickListener listener = getOnItemClickListener();
+    if (listener != null)
+      listener.onItemClick(null, null, -1, -1);
+  }
+
+  @Override
   public boolean enoughToFilter() {
     // Break the limit of minimum 1
     return true;
@@ -42,18 +46,10 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     if (focused) {
       performFiltering(getText(), 0);
     } else {
-      ListAdapter adapter = getAdapter();
+      // TODO create relevant listener name, such as onSelectChoice
       AdapterView.OnItemClickListener listener = getOnItemClickListener();
-      if (adapter.isEmpty()) {
-        setText(null);
-        if (listener != null)
-          listener.onItemClick(null, null, -1, -1);
-      } else {
-        Object value = adapter.getItem(0);
-        setText(value == null ? null : value.toString());
-        if (listener != null)
-          listener.onItemClick(null, null, 0, 0);
-      }
+      if (listener != null)
+        listener.onItemClick(null, null, -1, -1);
     }
   }
 

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -90,41 +91,32 @@ public class JumpFragment extends DialogFragment {
       }
     });
 
-    input.setHint(QuranUtils.getLocalizedNumber(activity, 1));
-    suraSpinner.setTag(1); // al-Fatiha
-    suraSpinner.setText(suras[0]);
-    suraSpinner.setOnItemClickListener((AdapterView<?> parent, View view, int position,
-                                        long rowId) -> {
-      Context context = getActivity();
+    suraSpinner.setOnItemClickListener((@Nullable AdapterView<?> parent, @Nullable View view,
+                                        int position, long rowId) -> {
+      List<String> suraList = Arrays.asList(suras);
+      String enteredText = suraSpinner.getText().toString();
 
-      int sura = 0;
-      if (position >= 0) {
-        String suraName = (String) suraSpinner.getAdapter().getItem(position);
-        sura = Arrays.asList(suras).indexOf(suraName) + 1;
+      String suraName;
+      if (position >= 0) { // user selects
+        suraName = adapter.getItem(position);
+      } else if (suraList.contains(enteredText)) {
+        suraName = enteredText;
+      } else if (adapter.isEmpty()) {
+        suraName = null; // leave to the next code
+      } else { // maybe first initialization or invalid input
+        suraName = adapter.getItem(0);
       }
-      if (sura == 0) { // sura not found or position is -1
+      int sura = suraList.indexOf(suraName) + 1;
+      if (sura == 0)
         sura = 1; // default to al-Fatiha
-        suraSpinner.setText(suras[0]);
-      }
-      int ayahCount = QuranInfo.getNumAyahs(sura);
 
-      int ayah = parseInt(ayahSpinner.getText().toString(), 1);
-      int allowedAyah = Math.max(1, Math.min(ayahCount, ayah)); // ensure 1..ayahCount
-      if (ayah != allowedAyah) {
-        ayah = allowedAyah;
-        // seems numeric IM always use latin
-        ayahSpinner.setText(String.valueOf(ayah)); // (QuranUtils.getLocalizedNumber(context, ayah));
-      }
-
-      int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
-      input.setHint(QuranUtils.getLocalizedNumber(context, page));
-      input.setText(null);
       suraSpinner.setTag(sura);
+      suraSpinner.setText(suras[sura - 1]);
+      //  trigger ayah change
+      CharSequence ayahValue = ayahSpinner.getText();
+      ayahSpinner.setText(ayahValue.length() > 0 ? ayahValue : " "); // space is intentional
     });
 
-    ayahSpinner.setTag(1);
-    // seems numeric IM always use latin
-    ayahSpinner.setText(String.valueOf(1)); // (QuranUtils.getLocalizedNumber(activity, 1));
     ayahSpinner.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -137,19 +129,25 @@ public class JumpFragment extends DialogFragment {
       @Override
       public void afterTextChanged(Editable s) {
         Context context = getActivity();
-        int sura = (int) suraSpinner.getTag();
-        int ayahCount = QuranInfo.getNumAyahs(sura);
-        int ayah = parseInt(s.toString(), 1);
-        int allowedAyah = Math.max(1, Math.min(ayahCount, ayah));
-        if (ayah != allowedAyah) {
-          ayah = allowedAyah;
-          s.clear();
-          s.append(QuranUtils.getLocalizedNumber(context, ayah));
+        String ayahString = s.toString();
+        int ayah = parseInt(ayahString, 1);
+
+        Object suraTag = suraSpinner.getTag();
+        if (suraTag != null) {
+          int sura = (int) suraTag;
+          int ayahCount = QuranInfo.getNumAyahs(sura);
+          ayah = Math.max(1, Math.min(ayahCount, ayah)); // ensure in 1..ayahCount
+          int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+          input.setHint(QuranUtils.getLocalizedNumber(context, page));
+          input.setText(null);
         }
-        int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
-        input.setHint(QuranUtils.getLocalizedNumber(context, page));
-        input.setText(null);
+
         ayahSpinner.setTag(ayah);
+        // seems numeric IM always use western arabic (not localized)
+        String correctText = String.valueOf(ayah);
+        if (s.length() > 0 && !correctText.equals(ayahString)) {
+          s.replace(0, s.length(), correctText);
+        }
       }
     });
 
@@ -237,7 +235,7 @@ public class JumpFragment extends DialogFragment {
     private final Object lock = new Object();
 
     InfixFilterArrayAdapter(@NonNull Context context, @LayoutRes int itemLayoutRes,
-                                   @NonNull String[] items) {
+                            @NonNull String[] items) {
       this.items = originalItems = Arrays.asList(items);
       this.inflater = LayoutInflater.from(context);
       this.itemLayoutRes = itemLayoutRes;
