@@ -41,6 +41,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.LayoutInflater;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.HelpActivity;
@@ -1114,15 +1116,45 @@ public class PagerActivity extends QuranActionBarActivity implements
         @NonNull
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-          convertView = super.getView(position, convertView, parent);
-          SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
-          int page = getCurrentPage();
+          int type = super.getItemViewType(position);
+          if (type == 1) {
+            LayoutInflater inflater = getLayoutInflater();
+            convertView = inflater.inflate(R.layout.translation_ab_spinner_selected, parent, false);
+          }else{
+            convertView = super.getView(position, convertView, parent);
+            SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
+            int page = getCurrentPage();
 
-          String sura = QuranInfo.getSuraNameFromPage(PagerActivity.this, page, true);
-          holder.title.setText(sura);
-          String desc = QuranInfo.getPageSubtitle(PagerActivity.this, page);
-          holder.subtitle.setText(desc);
-          holder.subtitle.setVisibility(View.VISIBLE);
+            String sura = QuranInfo.getSuraNameFromPage(PagerActivity.this, page, true);
+            holder.title.setText(sura);
+            String desc = QuranInfo.getPageSubtitle(PagerActivity.this, page);
+            holder.subtitle.setText(desc);
+            holder.subtitle.setVisibility(View.VISIBLE);
+
+          }
+          return convertView;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+          int type = super.getItemViewType(position);
+          if (type == 1) {
+            LayoutInflater inflater = getLayoutInflater();
+            convertView = inflater.inflate(
+                  R.layout.translation_ab_spinner_more_item, parent, false);
+            TextView tv =  (TextView) convertView.findViewById(R.id.textbox);
+            tv.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                Intent i = new Intent(PagerActivity.this, TranslationManagerActivity.class);
+                startActivity(i);
+              }
+            });
+
+          }else{
+            convertView = super.getDropDownView(position, convertView, parent);
+          }
           return convertView;
         }
       };

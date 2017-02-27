@@ -13,6 +13,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +37,9 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     // and the String[] constructor makes a new (immutable) List with the items of the array.
     super(context, resource, new ArrayList<>());
     this.layoutInflater = LayoutInflater.from(context);
+    List<String> transList = new ArrayList<String>(Arrays.asList(translationNames));
+    transList.add("More Translations");
+    translationNames = transList.toArray(new String[transList.size()]);
     this.translationNames = translationNames;
     this.translations = translations;
     this.selectedItems = selectedItems;
@@ -87,24 +91,35 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
   @Override
   public View getDropDownView(int position, View convertView, ViewGroup parent) {
     CheckBoxHolder holder;
-    if (convertView == null) {
-      convertView = layoutInflater.inflate(
+    convertView = layoutInflater.inflate(
           R.layout.translation_ab_spinner_item, parent, false);
-      convertView.setTag(new CheckBoxHolder(convertView));
-    }
-    holder = (CheckBoxHolder) convertView.getTag();
+    convertView.setTag(new CheckBoxHolder(convertView));
 
+    holder = (CheckBoxHolder) convertView.getTag();
     holder.checkBoxPosition = position;
     holder.checkBox.setText(translationNames[position]);
     holder.checkBox.setChecked(selectedItems.contains(translations.get(position).filename));
     holder.checkBox.setOnClickListener(onCheckedChangeListener);
+
     return convertView;
+  }
+
+  @Override
+  public int getItemViewType(int position) {
+    if (position == translationNames.length - 1){
+      return 1; // Last item in spinner should be text "More Translations"
+    }else{
+      return 0;
+    }
   }
 
   public void updateItems(String[] translationNames,
                           List<LocalTranslation> translations,
                           Set<String> selectedItems) {
     clear();
+    List<String> transList = new ArrayList<String>(Arrays.asList(translationNames));
+    transList.add("More Translations");
+    translationNames = transList.toArray(new String[transList.size()]);
     this.translationNames = translationNames;
     this.translations = translations;
     this.selectedItems = selectedItems;
