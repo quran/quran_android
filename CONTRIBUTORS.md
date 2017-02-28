@@ -17,7 +17,7 @@ quran android contributors
 * [Rehab Mohamed](http://twitter.com/hams_rrr)
 * [Ahmed Essam](http://twitter.com/neo_4583)
 * [Hosain Al Ahmad](https://github.com/hosainnet)
-* [Ahmed Abdelaal](https://github.com/hulk9914)
+* [Ahmed Abdelaal](https://github.com/Ahmed9914)
 
 ### ui and design
 * [Somaia Gabr](http://twitter.com/somaiagabr).
