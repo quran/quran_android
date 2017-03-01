@@ -1135,7 +1135,6 @@ public class PagerActivity extends QuranActionBarActivity implements
             String desc = QuranInfo.getPageSubtitle(PagerActivity.this, page);
             holder.subtitle.setText(desc);
             holder.subtitle.setVisibility(View.VISIBLE);
-
           }
           return convertView;
         }

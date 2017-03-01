@@ -104,13 +104,11 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
       holder.checkBox.setButtonDrawable(transparentDrawable);
       holder.checkBox.setText(R.string.more_translations);
       holder.checkBox.setOnClickListener(this.textListener);
-
     } else {
       holder.checkBoxPosition = position;
       holder.checkBox.setText(translationNames[position]);
       holder.checkBox.setChecked(selectedItems.contains(translations.get(position).filename));
       holder.checkBox.setOnClickListener(onCheckedChangeListener);
-
     }
 
     return convertView;
@@ -151,13 +149,12 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
   }
 
   public String[] updateTranslationNames(String[] translationNames) {
-
-    List<String> transList = new ArrayList<>();
+    List<String> translationsList = new ArrayList<>();
     for (String translation : translationNames) {
-      transList.add(translation);
+      translationsList.add(translation);
     }
-    transList.add(getContext().getString(R.string.more_translations));
-    translationNames = transList.toArray(new String[transList.size()]);
+    translationsList.add(getContext().getString(R.string.more_translations));
+    translationNames = translationsList.toArray(new String[translationsList.size()]);
 
     return translationNames;
   }
