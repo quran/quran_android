@@ -50,10 +50,6 @@
       android:title="@string/menu_jump"
       app:showAsAction="never" />
   <item
-      android:id="@+id/translations"
-      android:title="Translations"
-      app:showAsAction="never" />
-  <item
       android:id="@+id/settings"
       android:icon="@drawable/ic_action_settings"
       android:title="@string/menu_settings"

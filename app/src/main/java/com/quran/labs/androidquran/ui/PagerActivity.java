@@ -1044,6 +1044,11 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
       };
 
+  private View.OnClickListener textListener = (v -> {
+    Intent i = new Intent(PagerActivity.this, TranslationManagerActivity.class);
+    startActivity(i);
+  });
+
   public List<LocalTranslation> getTranslations() {
     return translations;
   }
@@ -1120,7 +1125,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           if (type == 1) {
             LayoutInflater inflater = getLayoutInflater();
             convertView = inflater.inflate(R.layout.translation_ab_spinner_selected, parent, false);
-          }else{
+          } else {
             convertView = super.getView(position, convertView, parent);
             SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
             int page = getCurrentPage();
@@ -1134,30 +1139,8 @@ public class PagerActivity extends QuranActionBarActivity implements
           }
           return convertView;
         }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-
-          int type = super.getItemViewType(position);
-          if (type == 1) {
-            LayoutInflater inflater = getLayoutInflater();
-            convertView = inflater.inflate(
-                  R.layout.translation_ab_spinner_more_item, parent, false);
-            TextView tv =  (TextView) convertView.findViewById(R.id.textbox);
-            tv.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                Intent i = new Intent(PagerActivity.this, TranslationManagerActivity.class);
-                startActivity(i);
-              }
-            });
-
-          }else{
-            convertView = super.getDropDownView(position, convertView, parent);
-          }
-          return convertView;
-        }
       };
+      translationsSpinnerAdapter.setOnClickListener(textListener);
       translationsSpinner.setAdapter(translationsSpinnerAdapter);
     }
 

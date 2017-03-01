@@ -205,11 +205,6 @@ public class QuranActivity extends QuranActionBarActivity
         jumpToLastPage();
         return true;
       }
-      case R.id.translations: {
-        Intent i = new Intent(this, TranslationManagerActivity.class);
-        startActivity(i);
-        return true;
-      }
       case R.id.help: {
         Intent i = new Intent(this, HelpActivity.class);
         startActivity(i);

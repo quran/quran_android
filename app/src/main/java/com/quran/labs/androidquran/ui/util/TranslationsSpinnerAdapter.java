@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
@@ -25,6 +28,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
   private List<LocalTranslation> translations;
   private Set<String> selectedItems;
   private OnSelectionChangedListener listener;
+  private View.OnClickListener textListener;
 
   public TranslationsSpinnerAdapter(Context context,
                                     int resource,
@@ -37,9 +41,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     // and the String[] constructor makes a new (immutable) List with the items of the array.
     super(context, resource, new ArrayList<>());
     this.layoutInflater = LayoutInflater.from(context);
-    List<String> transList = new ArrayList<String>(Arrays.asList(translationNames));
-    transList.add("More Translations");
-    translationNames = transList.toArray(new String[transList.size()]);
+    translationNames = updateTranslationNames(translationNames);
     this.translationNames = translationNames;
     this.translations = translations;
     this.selectedItems = selectedItems;
@@ -91,35 +93,34 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
   @Override
   public View getDropDownView(int position, View convertView, ViewGroup parent) {
     CheckBoxHolder holder;
-    convertView = layoutInflater.inflate(
+    if (convertView == null) {
+      convertView = layoutInflater.inflate(
           R.layout.translation_ab_spinner_item, parent, false);
-    convertView.setTag(new CheckBoxHolder(convertView));
-
+      convertView.setTag(new CheckBoxHolder(convertView));
+    }
     holder = (CheckBoxHolder) convertView.getTag();
-    holder.checkBoxPosition = position;
-    holder.checkBox.setText(translationNames[position]);
-    holder.checkBox.setChecked(selectedItems.contains(translations.get(position).filename));
-    holder.checkBox.setOnClickListener(onCheckedChangeListener);
+    if (position == translationNames.length - 1) {
+      Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
+      holder.checkBox.setButtonDrawable(transparentDrawable);
+      holder.checkBox.setText(R.string.more_translations);
+      holder.checkBox.setOnClickListener(this.textListener);
+
+    } else {
+      holder.checkBoxPosition = position;
+      holder.checkBox.setText(translationNames[position]);
+      holder.checkBox.setChecked(selectedItems.contains(translations.get(position).filename));
+      holder.checkBox.setOnClickListener(onCheckedChangeListener);
+
+    }
 
     return convertView;
-  }
-
-  @Override
-  public int getItemViewType(int position) {
-    if (position == translationNames.length - 1){
-      return 1; // Last item in spinner should be text "More Translations"
-    }else{
-      return 0;
-    }
   }
 
   public void updateItems(String[] translationNames,
                           List<LocalTranslation> translations,
                           Set<String> selectedItems) {
     clear();
-    List<String> transList = new ArrayList<String>(Arrays.asList(translationNames));
-    transList.add("More Translations");
-    translationNames = transList.toArray(new String[transList.size()]);
+    translationNames = updateTranslationNames(translationNames);
     this.translationNames = translationNames;
     this.translations = translations;
     this.selectedItems = selectedItems;
@@ -143,5 +144,21 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
 
   public interface OnSelectionChangedListener {
     void onSelectionChanged(Set<String> selectedItems);
+  }
+
+  public void setOnClickListener(View.OnClickListener onClickListener) {
+    this.textListener = onClickListener;
+  }
+
+  public String[] updateTranslationNames(String[] translationNames) {
+
+    List<String> transList = new ArrayList<>();
+    for (String translation : translationNames) {
+      transList.add(translation);
+    }
+    transList.add(getContext().getString(R.string.more_translations));
+    translationNames = transList.toArray(new String[transList.size()]);
+
+    return translationNames;
   }
 }
