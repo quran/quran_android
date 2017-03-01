@@ -100,6 +100,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
       holder.checkBox.setText(R.string.more_translations);
       holder.checkBox.setOnClickListener(this.textListener);
     } else {
+      holder.checkBox.setButtonDrawable(R.drawable.abc_btn_check_material);
       holder.checkBoxPosition = position;
       holder.checkBox.setText(translationNames[position]);
       holder.checkBox.setChecked(selectedItems.contains(translations.get(position).filename));
