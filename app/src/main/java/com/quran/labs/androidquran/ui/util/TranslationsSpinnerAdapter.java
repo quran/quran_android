@@ -8,15 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.Color;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -100,8 +96,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     }
     holder = (CheckBoxHolder) convertView.getTag();
     if (position == translationNames.length - 1) {
-      Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
-      holder.checkBox.setButtonDrawable(transparentDrawable);
+      holder.checkBox.setButtonDrawable(null);
       holder.checkBox.setText(R.string.more_translations);
       holder.checkBox.setOnClickListener(this.textListener);
     } else {
@@ -112,6 +107,14 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     }
 
     return convertView;
+  }
+
+  public int getItemViewType(int position) {
+    if (position == translationNames.length - 1) {
+      return 1; // Last item in spinner should be text "More Translations"
+    } else {
+      return 0;
+    }
   }
 
   public void updateItems(String[] translationNames,
@@ -148,7 +151,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     this.textListener = onClickListener;
   }
 
-  public String[] updateTranslationNames(String[] translationNames) {
+  private String[] updateTranslationNames(String[] translationNames) {
     List<String> translationsList = new ArrayList<>();
     for (String translation : translationNames) {
       translationsList.add(translation);

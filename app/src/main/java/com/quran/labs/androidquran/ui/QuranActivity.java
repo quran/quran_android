@@ -35,7 +35,6 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
