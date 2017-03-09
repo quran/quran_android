@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.ui.util;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.ui.PagerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +21,13 @@ import java.util.Set;
 
 public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
 
+  private Context context;
   private final LayoutInflater layoutInflater;
 
   private String[] translationNames;
   private List<LocalTranslation> translations;
   private Set<String> selectedItems;
   private OnSelectionChangedListener listener;
-  private View.OnClickListener textListener;
 
   public TranslationsSpinnerAdapter(Context context,
                                     int resource,
@@ -36,7 +39,8 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     // this is because clear() relies on being able to clear the List passed into the constructor,
     // and the String[] constructor makes a new (immutable) List with the items of the array.
     super(context, resource, new ArrayList<>());
-    this.layoutInflater = LayoutInflater.from(context);
+    this.context = context;
+    this.layoutInflater = LayoutInflater.from(this.context);
     translationNames = updateTranslationNames(translationNames);
     this.translationNames = translationNames;
     this.translations = translations;
@@ -47,7 +51,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
 
   private View.OnClickListener onCheckedChangeListener = buttonView -> {
     CheckBoxHolder holder = (CheckBoxHolder) ((View) buttonView.getParent()).getTag();
-    LocalTranslation localTranslation = translations.get(holder.checkBoxPosition);
+    LocalTranslation localTranslation = translations.get(holder.position);
 
     boolean updated = true;
     if (selectedItems.contains(localTranslation.filename)) {
@@ -65,6 +69,18 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
       listener.onSelectionChanged(selectedItems);
     }
 
+  };
+
+  private View.OnClickListener onTextClickedListener = textView -> {
+    CheckBoxHolder holder = (CheckBoxHolder) ((View) textView.getParent()).getTag();
+    if (holder.position == translationNames.length - 1) {
+      if (this.context instanceof PagerActivity) {
+        final PagerActivity pagerActivity = (PagerActivity) this.context;
+        pagerActivity.startTranslationManager();
+      }
+    } else {
+      holder.checkBox.performClick();
+    }
   };
 
   @NonNull
@@ -87,7 +103,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
   }
 
   @Override
-  public View getDropDownView(int position, View convertView, ViewGroup parent) {
+  public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
     CheckBoxHolder holder;
     if (convertView == null) {
       convertView = layoutInflater.inflate(
@@ -95,16 +111,20 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
       convertView.setTag(new CheckBoxHolder(convertView));
     }
     holder = (CheckBoxHolder) convertView.getTag();
+    holder.position = position;
+    holder.textView.setOnClickListener(onTextClickedListener);
     if (position == translationNames.length - 1) {
-      holder.checkBox.setButtonDrawable(null);
-      holder.checkBox.setText(R.string.more_translations);
-      holder.checkBox.setOnClickListener(this.textListener);
+      holder.checkBox.setVisibility(View.GONE);
+      holder.checkBox.setOnClickListener(null);
+      Resources r = convertView.getResources();
+      float leftPadding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
+      holder.textView.setPadding(Math.round(leftPadding), 0, 0, 0);
+      holder.textView.setText(R.string.more_translations);
     } else {
-      holder.checkBox.setButtonDrawable(R.drawable.abc_btn_check_material);
-      holder.checkBoxPosition = position;
-      holder.checkBox.setText(translationNames[position]);
+      holder.checkBox.setVisibility(View.VISIBLE);
       holder.checkBox.setChecked(selectedItems.contains(translations.get(position).filename));
       holder.checkBox.setOnClickListener(onCheckedChangeListener);
+      holder.textView.setText(translationNames[position]);
     }
 
     return convertView;
@@ -130,12 +150,14 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     notifyDataSetChanged();
   }
 
-  static class CheckBoxHolder {
+  private static class CheckBoxHolder {
     final CheckBox checkBox;
-    int checkBoxPosition;
+    final TextView textView;
+    int position;
 
     CheckBoxHolder(View view) {
       this.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+      this.textView = (TextView) view.findViewById(R.id.text);
     }
   }
 
@@ -146,10 +168,6 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
 
   public interface OnSelectionChangedListener {
     void onSelectionChanged(Set<String> selectedItems);
-  }
-
-  public void setOnClickListener(View.OnClickListener onClickListener) {
-    this.textListener = onClickListener;
   }
 
   private String[] updateTranslationNames(String[] translationNames) {

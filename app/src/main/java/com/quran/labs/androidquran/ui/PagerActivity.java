@@ -1043,11 +1043,6 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
       };
 
-  private View.OnClickListener textListener = (v -> {
-    Intent i = new Intent(PagerActivity.this, TranslationManagerActivity.class);
-    startActivity(i);
-  });
-
   public List<LocalTranslation> getTranslations() {
     return translations;
   }
@@ -1138,7 +1133,6 @@ public class PagerActivity extends QuranActionBarActivity implements
           return convertView;
         }
       };
-      translationsSpinnerAdapter.setOnClickListener(textListener);
       translationsSpinner.setAdapter(translationsSpinnerAdapter);
     }
 
