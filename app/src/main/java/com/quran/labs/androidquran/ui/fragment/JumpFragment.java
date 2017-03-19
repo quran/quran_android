@@ -6,11 +6,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.TextUtils;
-import android.view.Gravity;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +21,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
@@ -28,7 +33,11 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.QuranSpinner;
+import com.quran.labs.androidquran.widgets.ForceCompleteTextView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -49,8 +58,9 @@ public class JumpFragment extends DialogFragment {
     builder.setTitle(activity.getString(R.string.menu_jump));
 
     // Sura Spinner
-    final QuranSpinner suraSpinner = (QuranSpinner) layout.findViewById(R.id.sura_spinner);
-    String[] suras = activity.getResources().getStringArray(R.array.sura_names);
+    final ForceCompleteTextView suraSpinner = (ForceCompleteTextView) layout.findViewById(
+        R.id.sura_spinner);
+    final String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < suras.length; i++) {
       sb.append(QuranUtils.getLocalizedNumber(activity, (i + 1)));
@@ -59,24 +69,12 @@ public class JumpFragment extends DialogFragment {
       suras[i] = sb.toString();
       sb.setLength(0);
     }
-    ArrayAdapter<CharSequence> adapter =
-        new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item, suras);
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    InfixFilterArrayAdapter adapter = new InfixFilterArrayAdapter(activity,
+        android.R.layout.simple_spinner_dropdown_item, suras);
     suraSpinner.setAdapter(adapter);
 
     // Ayah Spinner
-    final QuranSpinner ayahSpinner = (QuranSpinner) layout.findViewById(R.id.ayah_spinner);
-    final ArrayAdapter<CharSequence> ayahAdapter =
-        new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item) {
-          @Override
-          public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            TextView v = (TextView) super.getDropDownView(position, convertView, parent);
-            v.setGravity(Gravity.CENTER);
-            return v;
-          }
-        };
-    ayahAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    ayahSpinner.setAdapter(ayahAdapter);
+    final EditText ayahSpinner = (EditText) layout.findViewById(R.id.ayah_spinner);
 
     // Page text
     final EditText input = (EditText) layout.findViewById(R.id.page_number);
@@ -93,59 +91,63 @@ public class JumpFragment extends DialogFragment {
       }
     });
 
-    suraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-      @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
-        Context context = getActivity();
-        if (suraSpinner.getTag() == null) {
-          // this is the initialization
-          for (int i = 1; i <= QuranInfo.SURA_NUM_AYAHS[0]/*al-Fatiha*/; i++) {
-            ayahAdapter.add(QuranUtils.getLocalizedNumber(context, i));
-          }
-          input.setHint(QuranUtils.getLocalizedNumber(context, 1));
-//          input.setText(null); // not needed for now (redundant)
-          suraSpinner.setTag(0);
-        } else {
-          // user interaction
-          ayahAdapter.clear();
+    suraSpinner.setOnItemClickListener((@Nullable AdapterView<?> parent, @Nullable View view,
+                                        int position, long rowId) -> {
+      List<String> suraList = Arrays.asList(suras);
+      String enteredText = suraSpinner.getText().toString();
 
-          int sura = position + 1;
-          int ayahCount = QuranInfo.getNumAyahs(sura);
-          for (int i = 1; i <= ayahCount; i++) {
-            ayahAdapter.add(QuranUtils.getLocalizedNumber(context, i));
-          }
-
-          int page = QuranInfo.getPageFromSuraAyah(sura, ayahSpinner.getSelectedItemPosition() + 1);
-          input.setHint(QuranUtils.getLocalizedNumber(context, page));
-          input.setText(null);
-          suraSpinner.setTag(sura);
-        }
+      String suraName;
+      if (position >= 0) { // user selects
+        suraName = adapter.getItem(position);
+      } else if (suraList.contains(enteredText)) {
+        suraName = enteredText;
+      } else if (adapter.isEmpty()) {
+        suraName = null; // leave to the next code
+      } else { // maybe first initialization or invalid input
+        suraName = adapter.getItem(0);
       }
+      int sura = suraList.indexOf(suraName) + 1;
+      if (sura == 0)
+        sura = 1; // default to al-Fatiha
 
-      @Override
-      public void onNothingSelected(AdapterView<?> arg0) {
-      }
+      suraSpinner.setTag(sura);
+      suraSpinner.setText(suras[sura - 1]);
+      //  trigger ayah change
+      CharSequence ayahValue = ayahSpinner.getText();
+      ayahSpinner.setText(ayahValue.length() > 0 ? ayahValue : " "); // space is intentional
     });
 
-    ayahSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    ayahSpinner.addTextChangedListener(new TextWatcher() {
       @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
-        if (ayahSpinner.getTag() == null) {
-          // this is the initialization
-          ayahSpinner.setTag(0);
-        } else {
-          // user interaction
-          Context context = view.getContext();
-          int ayah = position + 1;
-          int page = QuranInfo.getPageFromSuraAyah(suraSpinner.getSelectedItemPosition() + 1, ayah);
-          input.setHint(QuranUtils.getLocalizedNumber(context, page));
-          input.setText(null);
-          ayahSpinner.setTag(ayah);
-        }
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
       }
 
       @Override
-      public void onNothingSelected(AdapterView<?> arg0) {
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {
+        Context context = getActivity();
+        String ayahString = s.toString();
+        int ayah = parseInt(ayahString, 1);
+
+        Object suraTag = suraSpinner.getTag();
+        if (suraTag != null) {
+          int sura = (int) suraTag;
+          int ayahCount = QuranInfo.getNumAyahs(sura);
+          ayah = Math.max(1, Math.min(ayahCount, ayah)); // ensure in 1..ayahCount
+          int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+          input.setHint(QuranUtils.getLocalizedNumber(context, page));
+          input.setText(null);
+        }
+
+        ayahSpinner.setTag(ayah);
+        // seems numeric IM always use western arabic (not localized)
+        String correctText = String.valueOf(ayah);
+        if (s.length() > 0 && !correctText.equals(ayahString)) {
+          s.replace(0, s.length(), correctText);
+        }
       }
     });
 
@@ -209,4 +211,115 @@ public class JumpFragment extends DialogFragment {
       ((PagerActivity) activity).jumpTo(page);
     }
   }
+
+  static int parseInt(String s, int defaultValue) {
+    // May be extracted to util
+    try {
+      return Integer.parseInt(s);
+    } catch (NumberFormatException e) {
+      return defaultValue;
+    }
+  }
+
+  /**
+   * ListAdapter that supports filtering by using case-insensitive infix (substring).
+   */
+  private static class InfixFilterArrayAdapter extends BaseAdapter implements Filterable {
+    // May be extracted to other package
+
+    private List<String> originalItems;
+    private List<String> items;
+    private LayoutInflater inflater;
+    private int itemLayoutRes;
+    private Filter filter = new ItemFilter();
+    private final Object lock = new Object();
+
+    InfixFilterArrayAdapter(@NonNull Context context, @LayoutRes int itemLayoutRes,
+                            @NonNull String[] items) {
+      this.items = originalItems = Arrays.asList(items);
+      this.inflater = LayoutInflater.from(context);
+      this.itemLayoutRes = itemLayoutRes;
+    }
+
+    @Override
+    public int getCount() {
+      return items.size();
+    }
+
+    @Override
+    public String getItem(int position) {
+      return items.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+      return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      if (convertView == null) {
+        convertView = inflater.inflate(itemLayoutRes, parent, false);
+      }
+      // As no fieldId is known/assigned, assume it is a TextView
+      TextView text = (TextView) convertView;
+      text.setText(getItem(position));
+      return convertView;
+    }
+
+    @Override
+    public Filter getFilter() {
+      return filter;
+    }
+
+    /**
+     * Filter that do filtering by matching case-insensitive infix of the input.
+     */
+    private class ItemFilter extends Filter {
+
+      @Override
+      protected FilterResults performFiltering(CharSequence constraint) {
+        final FilterResults results = new FilterResults();
+
+        // The items never change after construction, not sure if really needs to copy
+        final ArrayList<String> copy;
+        synchronized (lock) {
+          copy = new ArrayList<>(originalItems);
+        }
+
+        if (constraint == null || constraint.length() == 0) {
+          results.values = copy;
+          results.count = copy.size();
+        } else {
+          final String infix = constraint.toString().toLowerCase();
+          final ArrayList<String> filteredCopy = new ArrayList<>();
+          for (String i : copy) {
+            if (i == null)
+              continue;
+            String value = i.toLowerCase();
+            if (value.contains(infix)) {
+              filteredCopy.add(i);
+            }
+          }
+
+          results.values = filteredCopy;
+          results.count = filteredCopy.size();
+        }
+        return results;
+      }
+
+      @Override
+      protected void publishResults(CharSequence constraint, FilterResults results) {
+        //noinspection unchecked
+        items = (List<String>) results.values;
+        if (results.count > 0) {
+          notifyDataSetChanged();
+        } else {
+          notifyDataSetInvalidated();
+        }
+      }
+    }
+
+  }
+
 }
