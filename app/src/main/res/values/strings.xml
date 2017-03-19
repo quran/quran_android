@@ -212,6 +212,7 @@
   <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
 
   <string name="translations">@string/prefs_translations</string>
+  <string name="more_translations">More Translations</string>
   <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
   <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
   <string name="import_data">Import Data</string>
