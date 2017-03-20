@@ -4,23 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -57,8 +53,8 @@ public class JumpFragment extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
     builder.setTitle(activity.getString(R.string.menu_jump));
 
-    // Sura Spinner
-    final ForceCompleteTextView suraSpinner = (ForceCompleteTextView) layout.findViewById(
+    // Sura chooser
+    final ForceCompleteTextView suraInput = (ForceCompleteTextView) layout.findViewById(
         R.id.sura_spinner);
     final String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
@@ -69,55 +65,52 @@ public class JumpFragment extends DialogFragment {
       suras[i] = sb.toString();
       sb.setLength(0);
     }
-    InfixFilterArrayAdapter adapter = new InfixFilterArrayAdapter(activity,
+    InfixFilterArrayAdapter suraAdapter = new InfixFilterArrayAdapter(activity,
         android.R.layout.simple_spinner_dropdown_item, suras);
-    suraSpinner.setAdapter(adapter);
+    suraInput.setAdapter(suraAdapter);
 
-    // Ayah Spinner
-    final EditText ayahSpinner = (EditText) layout.findViewById(R.id.ayah_spinner);
+    // Ayah chooser
+    final EditText ayahInput = (EditText) layout.findViewById(R.id.ayah_spinner);
 
-    // Page text
-    final EditText input = (EditText) layout.findViewById(R.id.page_number);
-    input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-      @Override
-      public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        boolean handled = false;
-        if (actionId == EditorInfo.IME_ACTION_GO) {
-          dismiss();
-          goToPage(input.getText().toString());
-          handled = true;
-        }
-        return handled;
+    // Page chooser
+    final EditText pageInput = (EditText) layout.findViewById(R.id.page_number);
+    pageInput.setOnEditorActionListener((v, actionId, event) -> {
+      boolean handled = false;
+      if (actionId == EditorInfo.IME_ACTION_GO) {
+        dismiss();
+        goToPage(pageInput.getText().toString());
+        handled = true;
       }
+      return handled;
     });
 
-    suraSpinner.setOnItemClickListener((@Nullable AdapterView<?> parent, @Nullable View view,
-                                        int position, long rowId) -> {
+    suraInput.setOnItemClickListener((parent, view, position, rowId) -> {
       List<String> suraList = Arrays.asList(suras);
-      String enteredText = suraSpinner.getText().toString();
+      String enteredText = suraInput.getText().toString();
 
       String suraName;
       if (position >= 0) { // user selects
-        suraName = adapter.getItem(position);
+        suraName = suraAdapter.getItem(position);
       } else if (suraList.contains(enteredText)) {
         suraName = enteredText;
-      } else if (adapter.isEmpty()) {
+      } else if (suraAdapter.isEmpty()) {
         suraName = null; // leave to the next code
       } else { // maybe first initialization or invalid input
-        suraName = adapter.getItem(0);
+        suraName = suraAdapter.getItem(0);
       }
       int sura = suraList.indexOf(suraName) + 1;
       if (sura == 0)
         sura = 1; // default to al-Fatiha
 
-      suraSpinner.setTag(sura);
-      suraSpinner.setText(suras[sura - 1]);
+      suraInput.setTag(sura);
+      suraInput.setText(suras[sura - 1]);
       //  trigger ayah change
-      CharSequence ayahValue = ayahSpinner.getText();
-      ayahSpinner.setText(ayahValue.length() > 0 ? ayahValue : " "); // space is intentional
+      CharSequence ayahValue = ayahInput.getText();
+      // space is intentional, to differentiate with value set by the user (delete/backspace)
+      ayahInput.setText(ayahValue.length() > 0 ? ayahValue : " ");
     });
 
-    ayahSpinner.addTextChangedListener(new TextWatcher() {
+    ayahInput.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {
       }
@@ -132,19 +125,20 @@ public class JumpFragment extends DialogFragment {
         String ayahString = s.toString();
         int ayah = parseInt(ayahString, 1);
 
-        Object suraTag = suraSpinner.getTag();
+        Object suraTag = suraInput.getTag();
         if (suraTag != null) {
           int sura = (int) suraTag;
           int ayahCount = QuranInfo.getNumAyahs(sura);
           ayah = Math.max(1, Math.min(ayahCount, ayah)); // ensure in 1..ayahCount
           int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
-          input.setHint(QuranUtils.getLocalizedNumber(context, page));
-          input.setText(null);
+          pageInput.setHint(QuranUtils.getLocalizedNumber(context, page));
+          pageInput.setText(null);
         }
 
-        ayahSpinner.setTag(ayah);
+        ayahInput.setTag(ayah);
         // seems numeric IM always use western arabic (not localized)
         String correctText = String.valueOf(ayah);
+        // empty input means the user clears the input, we don't force to fill it, let him type
         if (s.length() > 0 && !correctText.equals(ayahString)) {
           s.replace(0, s.length(), correctText);
         }
@@ -152,30 +146,26 @@ public class JumpFragment extends DialogFragment {
     });
 
     builder.setView(layout);
-    builder.setPositiveButton(getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        try {
-          dismiss();
-          String text = input.getText().toString();
-          if (TextUtils.isEmpty(text)) {
-            text = input.getHint().toString();
-            int page = Integer.parseInt(text);
-            int selectedSura = (int) suraSpinner.getTag();
-            int selectedAyah = (int) ayahSpinner.getTag();
+    builder.setPositiveButton(getString(R.string.dialog_ok), (dialog, which) -> {
+      try {
+        dismiss();
+        String pageStr = pageInput.getText().toString();
+        if (TextUtils.isEmpty(pageStr)) {
+          pageStr = pageInput.getHint().toString();
+          int page = Integer.parseInt(pageStr);
+          int selectedSura = (int) suraInput.getTag();
+          int selectedAyah = (int) ayahInput.getTag();
 
-            Activity activity = getActivity();
-            if (activity instanceof QuranActivity) {
-              ((QuranActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
-            } else if (activity instanceof PagerActivity) {
-              ((PagerActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
-            }
-          } else {
-            goToPage(text);
+          if (activity instanceof QuranActivity) {
+            ((QuranActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
+          } else if (activity instanceof PagerActivity) {
+            ((PagerActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
           }
-        } catch (Exception e) {
-          Timber.d(e, "Could not jump, something went wrong...");
+        } else {
+          goToPage(pageStr);
         }
+      } catch (Exception e) {
+        Timber.d(e, "Could not jump, something went wrong...");
       }
     });
 
