@@ -272,9 +272,7 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   private void updateTranslationsListAsNeeded() {
-    if (settings.haveUpdatedTranslations()) {
-      showTranslationsUpgradeDialog();
-    } else if (!updatedTranslations) {
+    if (!updatedTranslations) {
       long time = settings.getLastUpdatedTranslationDate();
       Timber.d("checking whether we should update translations..");
       if (System.currentTimeMillis() - time > Constants.TRANSLATION_REFRESH_TIME) {
