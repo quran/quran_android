@@ -1116,11 +1116,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
           int type = super.getItemViewType(position);
-          if (type == 1) {
-            LayoutInflater inflater = getLayoutInflater();
-            convertView = inflater.inflate(R.layout.translation_ab_spinner_selected, parent, false);
-          } else {
-            convertView = super.getView(position, convertView, parent);
+          convertView = super.getView(position, convertView, parent);
+          if (type == 0) {
             SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
             int page = getCurrentPage();
 
@@ -1130,6 +1127,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             holder.subtitle.setText(desc);
             holder.subtitle.setVisibility(View.VISIBLE);
           }
+
           return convertView;
         }
       };
