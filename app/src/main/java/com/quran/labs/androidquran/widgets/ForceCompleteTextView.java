@@ -53,4 +53,16 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     }
   }
 
+  /**
+   * Sets the listener that will be notified when the user clicks an item in the drop down list,
+   * user leaves without clicking, or when this view is attached to window. The two latter cases you
+   * use to force the completion, the listener will be called with position argument set to -1 and
+   * view argument set to null.
+   *
+   * @param l the item click listener
+   */
+  @Override
+  public void setOnItemClickListener(AdapterView.OnItemClickListener l) {
+    super.setOnItemClickListener(l);
+  }
 }
