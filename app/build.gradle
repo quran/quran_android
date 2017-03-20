@@ -50,6 +50,12 @@ android {
       versionCode 1071
       versionName "1.0.7-p1"
     }
+
+    warsh {
+      applicationId "com.quran.labs.androidquran.warsh"
+      versionCode 1071
+      versionName "1.0.7-p1"
+    }
   }
 
   buildTypes {
