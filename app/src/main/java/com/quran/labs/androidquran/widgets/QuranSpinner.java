@@ -3,7 +3,9 @@ package com.quran.labs.androidquran.widgets;
 import android.content.Context;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.SpinnerAdapter;
 
 /**
@@ -18,17 +20,23 @@ public class QuranSpinner extends AppCompatSpinner {
 
   private SpinnerAdapter adapter;
 
+  private Context context;
+
   public QuranSpinner(Context context) {
     super(context);
+    this.context=context;
   }
 
   public QuranSpinner(Context context, AttributeSet attrs) {
     super(context, attrs);
+    this.context=context;
   }
 
   public QuranSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
+    this.context=context;
   }
+
 
   @Override
   public void setAdapter(SpinnerAdapter adapter) {
@@ -58,34 +66,40 @@ public class QuranSpinner extends AppCompatSpinner {
       return 0;
     }
 
-    int width = 0;
-    View itemView = null;
-    int itemType = 0;
-    final int widthMeasureSpec =
-        MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.UNSPECIFIED);
-    final int heightMeasureSpec =
-        MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.UNSPECIFIED);
+    DisplayMetrics displayMetrics = new DisplayMetrics();
+    WindowManager wm  = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    wm.getDefaultDisplay().getMetrics(displayMetrics);
+//      int height = displayMetrics.heightPixels;
+    int width = displayMetrics.widthPixels/2;
 
-    // Make sure the number of items we'll measure is capped. If it's a huge data set
-    // with wildly varying sizes, oh well.
-    final int end = adapter.getCount();
-    int start = Math.max(end - MAX_ITEMS_MEASURED, 0);
-    for (int i = start; i < end; i++) {
-      final int positionType = adapter.getItemViewType(i);
-      if (positionType != itemType) {
-        itemType = positionType;
-        itemView = null;
-      }
-      itemView = adapter.getView(i, itemView, this);
-      if (itemView.getLayoutParams() == null) {
-        itemView.setLayoutParams(new LayoutParams(
-            LayoutParams.WRAP_CONTENT,
-            LayoutParams.WRAP_CONTENT));
-      }
-      itemView.measure(widthMeasureSpec, heightMeasureSpec);
-      width = Math.max(width, itemView.getMeasuredWidth());
-    }
-    width *= WIDTH_MULTIPLIER; // add some extra spacing
+//    int width = 0;
+//    View itemView = null;
+//    int itemType = 0;
+//    final int widthMeasureSpec =
+//        MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.UNSPECIFIED);
+//    final int heightMeasureSpec =
+//        MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.UNSPECIFIED);
+//
+//    // Make sure the number of items we'll measure is capped. If it's a huge data set
+//    // with wildly varying sizes, oh well.
+//    final int end = adapter.getCount();
+//    int start = Math.max(end - MAX_ITEMS_MEASURED, 0);
+//    for (int i = start; i < end; i++) {
+//      final int positionType = adapter.getItemViewType(i);
+//      if (positionType != itemType) {
+//        itemType = positionType;
+//        itemView = null;
+//      }
+//      itemView = adapter.getView(i, itemView, this);
+//      if (itemView.getLayoutParams() == null) {
+//        itemView.setLayoutParams(new LayoutParams(
+//            LayoutParams.WRAP_CONTENT,
+//            LayoutParams.WRAP_CONTENT));
+//      }
+//      itemView.measure(widthMeasureSpec, heightMeasureSpec);
+//      width = Math.max(width, itemView.getMeasuredWidth());
+//    }
+//    width *= WIDTH_MULTIPLIER; // add some extra spacing
     return width;
   }
 }
