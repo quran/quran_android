@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,7 +42,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.LayoutInflater;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.HelpActivity;
@@ -159,6 +159,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private int ayahToolBarTotalHeight;
   private boolean shouldOverridePlaying = false;
   private DefaultDownloadReceiver downloadReceiver;
+  private BroadcastReceiver noisyAudioStreamReceiver;
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
   private AyahToolBar ayahToolBar;
@@ -467,6 +468,11 @@ public class PagerActivity extends QuranActionBarActivity implements
         downloadReceiver,
         new IntentFilter(action));
     downloadReceiver.setListener(this);
+
+    noisyAudioStreamReceiver = new NoisyAudioStreamReceiver();
+    registerReceiver(
+        noisyAudioStreamReceiver,
+        new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
   }
 
   public Observable<Integer> getViewPagerObservable() {
@@ -841,6 +847,8 @@ public class PagerActivity extends QuranActionBarActivity implements
           .unregisterReceiver(downloadReceiver);
       downloadReceiver = null;
     }
+
+    unregisterReceiver(noisyAudioStreamReceiver);
 
     compositeDisposable.dispose();
     handler.removeCallbacksAndMessages(null);
@@ -2130,6 +2138,16 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     @Override
     public void onPanelAnchored(View panel) {
+    }
+  }
+
+  private class NoisyAudioStreamReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+        // pause audio when headphones are unplugged
+        onPausePressed();
+      }
     }
   }
 }
