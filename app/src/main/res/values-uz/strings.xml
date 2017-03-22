@@ -178,6 +178,8 @@
   <string name="prefs_category_advanced_summary">Xatchoʻplarni import/eksport qilish, maʼlumotlar jildini tanlash va h.k.</string>
   <string name="prefs_export_title">Eksport</string>
   <string name="prefs_export_summary">Xatchoʻp va teglarni eksport qilish</string>
+  <string name="prefs_import_title">Import</string>
+  <string name="prefs_import_summary">Xatchoʻp va teglarni import qilish</string>
 
   <string name="import_data_permissions_error">Ruxsat xatoliklari tufayli zaxira faylini oʻqib boʻlmadi.</string>
   <string name="import_data_error">Yaroqsiz zaxira fayl (yoxud zaxira faylni oʻqib boʻlmadi).</string>
@@ -323,4 +325,6 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Audio menejer</string>
+
+  <string name="more_translations">Yana tarjimalar</string>
 </resources>
