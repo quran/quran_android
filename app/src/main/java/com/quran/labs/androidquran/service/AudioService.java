@@ -23,9 +23,11 @@ package com.quran.labs.androidquran.service;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -196,6 +198,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private NotificationCompat.Builder mPausedNotificationBuilder;
 
   private LocalBroadcastManager mBroadcastManager = null;
+  private BroadcastReceiver noisyAudioStreamReceiver;
   private MediaSessionCompat mMediaSession;
 
   private int mGaplessSura = 0;
@@ -277,6 +280,10 @@ public class AudioService extends Service implements OnCompletionListener,
     mAudioFocusHelper = new AudioFocusHelper(appContext, this);
 
     mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
+    noisyAudioStreamReceiver = new NoisyAudioStreamReceiver();
+    registerReceiver(
+        noisyAudioStreamReceiver,
+        new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
 
     ComponentName receiver = new ComponentName(this, MediaButtonReceiver.class);
     mMediaSession = new MediaSessionCompat(appContext, "QuranMediaSession", receiver, null);
@@ -1247,6 +1254,7 @@ public class AudioService extends Service implements OnCompletionListener,
   public void onDestroy() {
     // Service is being killed, so make sure we release our resources
     mHandler.removeCallbacksAndMessages(null);
+    unregisterReceiver(noisyAudioStreamReceiver);
     mState = State.Stopped;
     relaxResources(true, true);
     giveUpAudioFocus();
@@ -1257,5 +1265,15 @@ public class AudioService extends Service implements OnCompletionListener,
   @Override
   public IBinder onBind(Intent arg0) {
     return null;
+  }
+
+  private class NoisyAudioStreamReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+        // pause audio when headphones are unplugged
+        processPauseRequest();
+      }
+    }
   }
 }
