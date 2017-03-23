@@ -2144,8 +2144,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private class NoisyAudioStreamReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-        // pause audio when headphones are unplugged
+      if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())
+          && audioStatusBar.getCurrentMode() == AudioStatusBar.PLAYING_MODE) {
+        // pause audio when headphones are unplugged and audio is playing
         onPausePressed();
       }
     }
