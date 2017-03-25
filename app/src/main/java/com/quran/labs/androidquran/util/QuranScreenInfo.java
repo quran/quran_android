@@ -69,8 +69,7 @@ public class QuranScreenInfo {
   }
 
   public boolean isTablet(Context context) {
-    return context != null && mMaxWidth > 800 && context.getResources()
-        .getBoolean(R.bool.is_tablet);
+    return context != null && mMaxWidth > 800;
   }
 
   public static class DefaultPageProvider implements PageProvider {

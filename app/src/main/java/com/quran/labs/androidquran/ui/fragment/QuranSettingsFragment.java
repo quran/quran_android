@@ -36,15 +36,6 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     // field injection
     ((QuranApplication) mAppContext).getApplicationComponent().inject(this);
 
-    // remove the tablet mode preference if it doesn't exist
-    if (!QuranScreenInfo.getOrMakeInstance(context).isTablet(context)) {
-      Preference tabletModePreference =
-          findPreference(Constants.PREF_TABLET_ENABLED);
-      PreferenceCategory category =
-          (PreferenceCategory) findPreference(Constants.PREF_DISPLAY_CATEGORY);
-      category.removePreference(tabletModePreference);
-    }
-
     // handle translation manager click
     final Preference translationPref = findPreference(Constants.PREF_TRANSLATION_MANAGER);
     translationPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
