@@ -528,16 +528,10 @@ public class QuranDataActivity extends Activity implements
     mPromptForDownloadDialog.show();
   }
 
-  protected void runListView(boolean showTranslations) {
+  protected void runListView() {
     Intent i = new Intent(this, QuranActivity.class);
-    if (showTranslations) {
-      i.putExtra(QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, true);
-    }
+    i.putExtra(QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, mQuranSettings.haveUpdatedTranslations());
     startActivity(i);
     finish();
-  }
-
-  protected void runListView() {
-    runListView(mQuranSettings.haveUpdatedTranslations());
   }
 }

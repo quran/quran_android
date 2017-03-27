@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="quran_readers_name">
+    </string-array>
+
+    <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
+    </integer-array>
+
+    <string-array translatable="false" name="quran_readers_path">
+    </string-array>
+
+    <string-array translatable="false" name="quran_readers_db_name">
+    </string-array>
+
+    <string-array translatable="false" name="quran_readers_urls">
+    </string-array>
+
+    <!-- actual qari names -->
+</resources>
