@@ -96,7 +96,7 @@ public class TranslationsDBAdapter {
           values.put(TranslationsTable.TRANSLATOR, item.translation.translator);
           values.put(TranslationsTable.TRANSLATOR_FOREIGN,
               item.translation.translatorNameLocalized);
-          values.put(TranslationsTable.FILENAME, item.translation.filename);
+          values.put(TranslationsTable.FILENAME, item.translation.fileName);
           values.put(TranslationsTable.URL, item.translation.fileUrl);
           values.put(TranslationsTable.VERSION, item.localVersion);
 
