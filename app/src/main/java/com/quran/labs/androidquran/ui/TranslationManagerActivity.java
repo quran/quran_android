@@ -130,7 +130,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       if (downloadingItem.exists()) {
         try {
           File f = new File(databaseDirectory,
-              downloadingItem.translation.filename + UPGRADING_EXTENSION);
+              downloadingItem.translation.fileName + UPGRADING_EXTENSION);
           if (f.exists()) {
             f.delete();
           }
@@ -151,8 +151,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     if (downloadingItem != null && downloadingItem.exists()) {
       try {
         File f = new File(databaseDirectory,
-            downloadingItem.translation.filename + UPGRADING_EXTENSION);
-        File destFile = new File(databaseDirectory, downloadingItem.translation.filename);
+            downloadingItem.translation.fileName + UPGRADING_EXTENSION);
+        File destFile = new File(databaseDirectory, downloadingItem.translation.fileName);
         if (f.exists() && !destFile.exists()) {
           f.renameTo(destFile);
         } else {
@@ -265,10 +265,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
     if (selectedItem.exists()) {
       try {
-        File f = new File(destination, selectedItem.translation.filename);
+        File f = new File(destination, selectedItem.translation.fileName);
         if (f.exists()) {
           File newPath = new File(destination,
-              selectedItem.translation.filename + UPGRADING_EXTENSION);
+              selectedItem.translation.fileName + UPGRADING_EXTENSION);
           if (newPath.exists()) {
             newPath.delete();
           }
@@ -284,7 +284,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
         destination, notificationTitle, TRANSLATION_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
-    String filename = selectedItem.translation.filename;
+    String filename = selectedItem.translation.fileName;
     if (url.endsWith("zip")) {
       filename += ".zip";
     }
@@ -306,11 +306,11 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         .setPositiveButton(R.string.remove_button,
             (dialog, id) -> {
               QuranFileUtils.removeTranslation(TranslationManagerActivity.this,
-                  selectedItem.translation.filename);
+                  selectedItem.translation.fileName);
               TranslationItem updatedItem = selectedItem.withTranslationRemoved();
               updateTranslationItem(updatedItem);
               String current = quranSettings.getActiveTranslation();
-              if (current.equals(selectedItem.translation.filename)) {
+              if (current.equals(selectedItem.translation.fileName)) {
                 quranSettings.removeActiveTranslation();
               }
               generateListItems();

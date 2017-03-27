@@ -43,8 +43,8 @@ import timber.log.Timber;
 
 @Singleton
 public class TranslationManagerPresenter implements Presenter<TranslationManagerActivity> {
-  private static final String WEB_SERVICE_ENDPOINT = "data/translations.php?v=3";
-  private static final String CACHED_RESPONSE_FILE_NAME = "translations.cache";
+  private static final String WEB_SERVICE_ENDPOINT = "data/translations.php?v=4";
+  private static final String CACHED_RESPONSE_FILE_NAME = "translations.v4.cache";
 
   private final Context appContext;
   private final OkHttpClient okHttpClient;
@@ -203,12 +203,12 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       Translation translation = serverTranslations.get(i);
       LocalTranslation local = localTranslations.get(translation.id);
 
-      File dbFile = new File(databaseDir, translation.filename);
+      File dbFile = new File(databaseDir, translation.fileName);
       boolean exists = dbFile.exists();
 
       TranslationItem item;
       if (exists) {
-        int version = local == null ? getVersionFromDatabase(translation.filename) : local.version;
+        int version = local == null ? getVersionFromDatabase(translation.fileName) : local.version;
         item = new TranslationItem(translation, version);
       } else {
         item = new TranslationItem(translation);
