@@ -385,6 +385,8 @@
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
+  <string name="appwidget_text">Quran BookMarks</string>
+  <string name="add_widget">Add widget</string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>

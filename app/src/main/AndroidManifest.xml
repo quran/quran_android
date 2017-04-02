@@ -159,6 +159,21 @@
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>
     </service>
+    <service
+        android:name=".widgets.WidgetService"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+    <receiver android:name=".BookMarksWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
+
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/book_marks_widget_info" />
+    </receiver>
 
     <!-- override WorkManager initialization -->
     <provider
@@ -166,4 +181,4 @@
         android:authorities="${applicationId}.workmanager-init"
         tools:node="remove" />
   </application>
-</manifest> 
+</manifest>
