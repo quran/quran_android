@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.database;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
+import com.quran.labs.androidquran.BookMarksWidget;
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
@@ -30,10 +34,12 @@ public class BookmarksDBAdapter {
   private static final int SORT_ALPHABETICAL = 2;
 
   private SQLiteDatabase mDb;
+  Context context;
 
   public BookmarksDBAdapter(Context context) {
     BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context);
     mDb = dbHelper.getWritableDatabase();
+    this.context = context;
   }
 
   @NonNull
@@ -233,12 +239,22 @@ public class BookmarksDBAdapter {
     } finally {
       mDb.endTransaction();
     }
+    updateBookMarkWidget();
+  }
+
+  private void updateBookMarkWidget() {
+    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+    ComponentName thisWidget = new ComponentName(context, BookMarksWidget.class);
+    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
+
   }
 
   public long addBookmarkIfNotExists(Integer sura, Integer ayah, int page) {
     long bookmarkId = getBookmarkId(sura, ayah, page);
     if (bookmarkId < 0) {
       bookmarkId = addBookmark(sura, ayah, page);
+
     }
     return bookmarkId;
   }
@@ -248,12 +264,15 @@ public class BookmarksDBAdapter {
     values.put(BookmarksTable.SURA, sura);
     values.put(BookmarksTable.AYAH, ayah);
     values.put(BookmarksTable.PAGE, page);
+    updateBookMarkWidget();
     return mDb.insert(BookmarksTable.TABLE_NAME, null, values);
   }
+
 
   public boolean removeBookmark(long bookmarkId) {
     mDb.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
+    updateBookMarkWidget();
     return mDb.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null) == 1;
   }
@@ -400,7 +419,7 @@ public class BookmarksDBAdapter {
     } finally {
       mDb.endTransaction();
     }
-
+    updateBookMarkWidget();
     return result;
   }
 }
