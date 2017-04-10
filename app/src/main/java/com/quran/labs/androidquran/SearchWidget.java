@@ -1,17 +1,12 @@
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-import com.quran.labs.androidquran.BookMarksWidget;
-import com.quran.labs.androidquran.QuranDataActivity;
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 
@@ -19,17 +14,6 @@ import com.quran.labs.androidquran.ui.PagerActivity;
  * Implementation of App Widget functionality.
  */
 public class SearchWidget extends AppWidgetProvider {
-
-  static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                              int appWidgetId) {
-
-    //CharSequence widgetText = context.getString(R.string.search_appwidget_text);
-
-    //RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.search_widget);
-    //views.setTextViewText(R.id, widgetText);
-
-    //appWidgetManager.updateAppWidget(appWidgetId, views);
-  }
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -52,8 +36,11 @@ public class SearchWidget extends AppWidgetProvider {
       widget.setOnClickPendingIntent(R.id.SearchWidgetBtnGoToQuran, pendingIntent);
 
 
-      updateAppWidget(context, appWidgetManager, appWidgetId);
+      appWidgetManager.updateAppWidget(appWidgetId, widget);
+
     }
+    super.onUpdate(context, appWidgetManager, appWidgetIds);
+
   }
 
   @Override
@@ -74,9 +61,6 @@ public class SearchWidget extends AppWidgetProvider {
   }
 
   public static void updateWidget(Context context) {
-    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-    int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, BookMarksWidget.class));
-    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds,R.id.listViewWidget);
 
   }
 }

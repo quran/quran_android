@@ -91,8 +91,11 @@ populateListItem();
     final RemoteViews remoteView = new RemoteViews(
         context.getPackageName(), R.layout.list_row);
     ItemList item = listItemList.get(position);
-    remoteView.setTextViewText(R.id.widget_item, item.sura+"-"+item.page);
 
+//    remoteView.setTextViewText(R.id.widget_item, item.sura+"-"+item.page);
+    remoteView.setTextViewText(R.id.Suratitle, item.sura+"");
+    remoteView.setTextViewText(R.id.Surametadata, context.getResources().getText(R.string.quran_page)+" "+item.page);
+    remoteView.setImageViewResource(R.id.WidgetFavIcon, R.drawable.ic_favorite);
     Bundle extras = new Bundle();
     extras.putInt("page", item.page);
 

@@ -4,7 +4,7 @@
     android:initialLayout="@layout/book_marks_widget"
     android:minHeight="110dp"
     android:minWidth="180dp"
-    android:previewImage="@drawable/example_appwidget_bookmarks"
+    android:previewImage="@drawable/bookmarks_appwidget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="5000"
     android:widgetCategory="home_screen"></appwidget-provider>

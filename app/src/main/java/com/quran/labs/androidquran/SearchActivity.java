@@ -12,9 +12,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -63,15 +65,18 @@ public class SearchActivity extends QuranActionBarActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search);
     searchEditText = (EditText) findViewById(R.id.searchEditText);
-    submitSearch = (ImageView) findViewById(R.id.searchSubmit);
-    submitSearch.setOnClickListener(new OnClickListener() {
+    searchEditText.addTextChangedListener(new TextWatcher() {
       @Override
-      public void onClick(View v) {
-        String query = searchEditText.getText().toString();
-        showResults(query);
-
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+      if(count>2 )
+        showResults(s.toString());
       }
+      @Override
+      public void afterTextChanged(Editable s) {}
     });
+
     messageView = (TextView) findViewById(R.id.search_area);
     warningView = (TextView) findViewById(R.id.search_warning);
     buttonGetTranslations = (Button) findViewById(R.id.btnGetTranslations);

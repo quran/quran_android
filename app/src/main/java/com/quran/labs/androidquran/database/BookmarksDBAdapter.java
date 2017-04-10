@@ -149,6 +149,8 @@ public class BookmarksDBAdapter {
   }
 
   public boolean addRecentPage(int page) {
+
+     BookMarksWidget.updateWidget(context);
     return addRecentPage(page, true);
   }
 
@@ -239,16 +241,9 @@ public class BookmarksDBAdapter {
     } finally {
       mDb.endTransaction();
     }
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
   }
 
-  private void updateBookMarkWidget() {
-    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-    ComponentName thisWidget = new ComponentName(context, BookMarksWidget.class);
-    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
-
-  }
 
   public long addBookmarkIfNotExists(Integer sura, Integer ayah, int page) {
     long bookmarkId = getBookmarkId(sura, ayah, page);
@@ -264,7 +259,7 @@ public class BookmarksDBAdapter {
     values.put(BookmarksTable.SURA, sura);
     values.put(BookmarksTable.AYAH, ayah);
     values.put(BookmarksTable.PAGE, page);
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
     return mDb.insert(BookmarksTable.TABLE_NAME, null, values);
   }
 
@@ -272,7 +267,7 @@ public class BookmarksDBAdapter {
   public boolean removeBookmark(long bookmarkId) {
     mDb.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
     return mDb.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null) == 1;
   }
@@ -419,7 +414,7 @@ public class BookmarksDBAdapter {
     } finally {
       mDb.endTransaction();
     }
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
     return result;
   }
 }

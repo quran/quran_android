@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,6 +45,7 @@ import android.view.WindowManager;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
+import com.quran.labs.androidquran.BookMarksWidget;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -853,6 +855,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (lastAudioDownloadRequest != null) {
       state.putParcelable(LAST_AUDIO_DL_REQUEST, lastAudioDownloadRequest);
     }
+
     int lastPage = QuranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
     state.putInt(LAST_READ_PAGE, lastPage);
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, showingTranslation);
@@ -865,6 +868,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (lastAudioRequest != null) {
       state.putParcelable(LAST_AUDIO_REQUEST, lastAudioRequest);
     }
+
     super.onSaveInstanceState(state);
   }
 
