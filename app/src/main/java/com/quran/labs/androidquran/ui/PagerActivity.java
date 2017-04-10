@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -31,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.BookMarksWidget;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;

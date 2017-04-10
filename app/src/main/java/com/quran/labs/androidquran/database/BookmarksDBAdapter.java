@@ -149,6 +149,7 @@ public class BookmarksDBAdapter {
   }
 
   public void addRecentPage(int page) {
+    BookMarksWidget.updateWidget(context);
     addRecentPage(page, true);
   }
 
@@ -237,16 +238,9 @@ public class BookmarksDBAdapter {
     } finally {
       db.endTransaction();
     }
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
   }
 
-  private void updateBookMarkWidget() {
-    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-    ComponentName thisWidget = new ComponentName(context, BookMarksWidget.class);
-    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
-
-  }
 
   public long addBookmarkIfNotExists(Integer sura, Integer ayah, int page) {
     long bookmarkId = getBookmarkId(sura, ayah, page);
@@ -261,14 +255,14 @@ public class BookmarksDBAdapter {
     values.put(BookmarksTable.SURA, sura);
     values.put(BookmarksTable.AYAH, ayah);
     values.put(BookmarksTable.PAGE, page);
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
     return db.insert(BookmarksTable.TABLE_NAME, null, values);
   }
 
   public void removeBookmark(long bookmarkId) {
     db.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
     db.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null);
   }
@@ -444,7 +438,7 @@ public class BookmarksDBAdapter {
     } finally {
       db.endTransaction();
     }
-    updateBookMarkWidget();
+    BookMarksWidget.updateWidget(context);
     return result;
   }
 }
