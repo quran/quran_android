@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/black" >
+
+  <!-- ListView to be shown on widget -->
+
+  <TextView
+      android:id="@+id/textView"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:text="@string/menu_bookmarks" />
+
+  <ListView
+      android:id="@+id/listViewWidget"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
+  <!-- Empty view is show if list items are empty -->
+  <TextView
+      android:id="@+id/empty_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:text="Bookmarks"
+      android:textColor="#ffffff"
+      android:textSize="20sp"
+      android:visibility="gone" />
+
+</LinearLayout>
