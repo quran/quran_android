@@ -6,30 +6,29 @@
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <ImageButton
-        android:id="@+id/SearchWidgetIconButton"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/translation_verse_text_color"
-        android:src="@drawable/icon" />
+  <ImageButton
+      android:id="@+id/SearchWidgetIconButton"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@color/translation_verse_text_color"
+      android:src="@drawable/icon" />
 
-    <ImageButton
-        android:id="@+id/SearchWidgetBtnSearch"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/translation_verse_text_color"
-        android:src="@drawable/ic_ab_search" />
+  <ImageButton
+      android:id="@+id/SearchWidgetBtnSearch"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@color/translation_verse_text_color"
+      android:src="@drawable/ic_ab_search" />
 
-    <ImageButton
-        android:id="@+id/SearchWidgetBtnGoToQuran"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@color/translation_verse_text_color"
-        android:src="@drawable/ic_goto_quran" />
-
+  <ImageButton
+      android:id="@+id/SearchWidgetBtnGoToQuran"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@color/translation_verse_text_color"
+      android:src="@drawable/ic_goto_quran" />
 
 
 </LinearLayout>

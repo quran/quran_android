@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.database;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,8 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
-import com.quran.labs.androidquran.BookMarksWidget;
-import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.BookmarksWidget;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
@@ -150,7 +147,7 @@ public class BookmarksDBAdapter {
 
   public boolean addRecentPage(int page) {
 
-     BookMarksWidget.updateWidget(context);
+     BookmarksWidget.updateWidget(context);
     return addRecentPage(page, true);
   }
 
@@ -241,7 +238,7 @@ public class BookmarksDBAdapter {
     } finally {
       mDb.endTransaction();
     }
-    BookMarksWidget.updateWidget(context);
+    BookmarksWidget.updateWidget(context);
   }
 
 
@@ -249,7 +246,6 @@ public class BookmarksDBAdapter {
     long bookmarkId = getBookmarkId(sura, ayah, page);
     if (bookmarkId < 0) {
       bookmarkId = addBookmark(sura, ayah, page);
-
     }
     return bookmarkId;
   }
@@ -259,15 +255,14 @@ public class BookmarksDBAdapter {
     values.put(BookmarksTable.SURA, sura);
     values.put(BookmarksTable.AYAH, ayah);
     values.put(BookmarksTable.PAGE, page);
-    BookMarksWidget.updateWidget(context);
+    BookmarksWidget.updateWidget(context);
     return mDb.insert(BookmarksTable.TABLE_NAME, null, values);
   }
-
 
   public boolean removeBookmark(long bookmarkId) {
     mDb.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
-    BookMarksWidget.updateWidget(context);
+    BookmarksWidget.updateWidget(context);
     return mDb.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null) == 1;
   }
@@ -414,7 +409,7 @@ public class BookmarksDBAdapter {
     } finally {
       mDb.endTransaction();
     }
-    BookMarksWidget.updateWidget(context);
+    BookmarksWidget.updateWidget(context);
     return result;
   }
 }

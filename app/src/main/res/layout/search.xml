@@ -17,21 +17,13 @@
       android:layout_height="wrap_content"
       android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/searchSubmit"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:src="@drawable/ic_ab_search"
-        android:text="" />
-
     <EditText
         android:id="@+id/searchEditText"
         android:layout_width="328dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/search_hint"
-        android:inputType="textPersonName"
+        android:inputType="text"
         android:text="" />
 
   </LinearLayout>
