@@ -53,13 +53,13 @@
       android:background="@color/transparent_actionbar_color" />
 
 
-  <!-- Empty view is show if list items are empty -->
+  <!-- Empty view is shown if list items are empty -->
   <TextView
       android:id="@+id/empty_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:gravity="center"
-      android:text="Bookmarks"
+      android:text="@string/menu_bookmarks"
       android:textColor="#ffffff"
       android:textSize="20sp"
       android:visibility="gone" />

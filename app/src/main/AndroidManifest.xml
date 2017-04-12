@@ -163,7 +163,7 @@
         android:name=".widgets.WidgetService"
         android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-    <receiver android:name=".BookMarksWidget">
+    <receiver android:name=".BookmarksWidget">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
         <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
@@ -172,7 +172,7 @@
 
       <meta-data
           android:name="android.appwidget.provider"
-          android:resource="@xml/book_marks_widget_info" />
+          android:resource="@xml/bookmarks_widget_info" />
     </receiver>
     <receiver android:name=".SearchWidget">
       <intent-filter>
