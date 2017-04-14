@@ -175,9 +175,9 @@
   <string name="prefs_no_enough_space_to_move_files">Файлдарды көшіруге бос орын жетпейді</string>
   <string name="prefs_megabytes_int">%1$d Mб</string>
   <string name="prefs_megabytes_str">%s Mб</string>
-  <string name="prefs_tablet_mode_title">Планшет режимі</string>
-  <string name="prefs_tablet_mode_enabled">Көлденең режимде екі бет қатарынан көрсетіледі.</string>
-  <string name="prefs_tablet_mode_disabled">Көлденең режимде тек бір бет көрсетіледі.</string>
+  <string name="prefs_dual_page_mode_title">Планшет режимі</string>
+  <string name="prefs_dual_page_mode_enabled">Көлденең режимде екі бет қатарынан көрсетіледі.</string>
+  <string name="prefs_dual_page_mode_disabled">Көлденең режимде тек бір бет көрсетіледі.</string>
   <string name="prefs_category_advanced">Қосымша</string>
   <string name="prefs_export_title">Экспорт</string>
   <string name="prefs_export_summary">Бетбелгілерді экспорттау</string>

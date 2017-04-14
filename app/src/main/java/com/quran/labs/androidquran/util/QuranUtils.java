@@ -99,12 +99,12 @@ public class QuranUtils {
   public static boolean isDualPages(Context context, QuranScreenInfo qsi) {
     if (context != null && qsi != null) {
       final Resources resources = context.getResources();
-      if (qsi.isTablet(context) &&
+      if (qsi.isDualPageMode(context) &&
           resources.getConfiguration().orientation ==
               Configuration.ORIENTATION_LANDSCAPE) {
         final SharedPreferences prefs =
             PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(Constants.PREF_TABLET_ENABLED,
+        return prefs.getBoolean(Constants.PREF_DUAL_PAGE_ENABLED,
             resources.getBoolean(R.bool.use_tablet_interface_by_default));
       }
     }
@@ -120,11 +120,11 @@ public class QuranUtils {
    */
   public static boolean isDualPagesInLandscape(
       @NonNull Context context, @NonNull QuranScreenInfo qsi) {
-    if (qsi.isTablet(context)) {
+    if (qsi.isDualPageMode(context)) {
       final SharedPreferences prefs =
           PreferenceManager.getDefaultSharedPreferences(context);
       final Resources resources = context.getResources();
-      return prefs.getBoolean(Constants.PREF_TABLET_ENABLED,
+      return prefs.getBoolean(Constants.PREF_DUAL_PAGE_ENABLED,
           resources.getBoolean(R.bool.use_tablet_interface_by_default));
     }
     return false;
@@ -156,7 +156,7 @@ public class QuranUtils {
     QuranScreenInfo info = QuranScreenInfo.getInstance();
     if (info != null){
       builder.append("\nDisplay: ").append(info.getWidthParam());
-      if (info.isTablet(context)){
+      if (info.isDualPageMode(context)){
         builder.append(", tablet width: ").append(info.getWidthParam());
       }
       builder.append("\n");

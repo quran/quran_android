@@ -130,9 +130,9 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_copying_app_files">Copiando arquivos do App</string>
   <string name="prefs_err_moving_app_files">Não foi possível mover os arquivos do App</string>
   <string name="prefs_no_enough_space_to_move_files">Espaço Insufficiente para mover arquivos do App</string>
-  <string name="prefs_tablet_mode_title">Modo de Tablet</string>
-  <string name="prefs_tablet_mode_enabled">Em Paisagem, duas páginas aparecerão lado ao lado</string>
-  <string name="prefs_tablet_mode_disabled">Em Paisagem, somente uma página aprecerá</string>
+  <string name="prefs_dual_page_mode_title">Modo de Tablet</string>
+  <string name="prefs_dual_page_mode_enabled">Em Paisagem, duas páginas aparecerão lado ao lado</string>
+  <string name="prefs_dual_page_mode_disabled">Em Paisagem, somente uma página aprecerá</string>
   <!-- Preferences End -->
 
   <!-- translation updates -->

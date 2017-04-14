@@ -93,9 +93,9 @@
   <string name="prefs_copying_app_files">Copiando archivos de la aplicación</string>
   <string name="prefs_err_moving_app_files">Error al mover los archivos de la aplicación</string>
   <string name="prefs_no_enough_space_to_move_files">Espacio insuficiente para mover archivos de la aplicación</string>
-  <string name="prefs_tablet_mode_title">Modo Tableta</string>
-  <string name="prefs_tablet_mode_enabled">En modo horizontal, aparecerán dos páginas una al lado de la otra.</string>
-  <string name="prefs_tablet_mode_disabled">En modo horizontal, se mostrará solo una página.</string>
+  <string name="prefs_dual_page_mode_title">Modo Tableta</string>
+  <string name="prefs_dual_page_mode_enabled">En modo horizontal, aparecerán dos páginas una al lado de la otra.</string>
+  <string name="prefs_dual_page_mode_disabled">En modo horizontal, se mostrará solo una página.</string>
   <string name="warning">Advertencia</string>
   <string name="kitkat_external_message">Debido a las limitaciones de Android, si decide almacenar los datos de la aplicación en su sdcard externa y luego desinstalar, los datos de la aplicación dejarán de ser útilies. Las páginas y audios de Android serán eliminados y usted tendrá que volver a descargarlos. ¿Está seguro que quiere usar la sdcard externa?</string>
   <!--Preferences End-->
