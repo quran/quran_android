@@ -54,7 +54,8 @@
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
-    <item quantity="one">%2$d نتیجه از جستجوی «%1$s» به دست آمد:</item>
+    <!-- For Persian, "one" is used for 0, 1.  So we cannot really specialize it for "one".
+    It might be better to not include an item for "one" to avoid future confusion. -->
     <item quantity="other">%2$d نتیجه از جستجوی «%1$s» به دست آمد:</item>
   </plurals>
 
@@ -155,7 +156,6 @@
   <string name="makki">مکی</string>
   <string name="madani">مدنی</string>
   <plurals name="verses">
-    <item quantity="one">%s آیه</item>
     <item quantity="other">%s آیه</item>
   </plurals>
 
@@ -272,12 +272,10 @@
   <string name="storage_permission_please_restart">برنامه را از نو آغاز کنید تا تغییرات اثر کند.</string>
 
   <plurals name="files_downloaded">
-    <item quantity="zero">هیچ سوره‌ای بارگذاری نشده است</item>
     <item quantity="other">%1$d سوره بارگذاری شده است</item>
   </plurals>
 
   <plurals name="bookmark_tag_deleted">
-    <item quantity="zero">هیچ برچسبی حذف نشد</item>
     <item quantity="other">%d برچسب حذف شد</item>
   </plurals>
 
