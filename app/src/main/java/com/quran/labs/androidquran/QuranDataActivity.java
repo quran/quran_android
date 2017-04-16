@@ -344,7 +344,7 @@ public class QuranDataActivity extends Activity implements
       }
 
       final String width = qsi.getWidthParam();
-      if (qsi.isTablet(mAppContext)) {
+      if (qsi.isDualPageMode(mAppContext)) {
         final String tabletWidth = qsi.getTabletWidthParam();
         boolean haveLandscape = QuranFileUtils.haveAllImages(mAppContext, tabletWidth);
         boolean havePortrait = QuranFileUtils.haveAllImages(mAppContext, width);
@@ -491,7 +491,7 @@ public class QuranDataActivity extends Activity implements
 
   private void promptForDownload() {
     int message = R.string.downloadPrompt;
-    if (QuranScreenInfo.getInstance().isTablet(this) &&
+    if (QuranScreenInfo.getInstance().isDualPageMode(this) &&
         (mNeedPortraitImages != mNeedLandscapeImages)) {
       message = R.string.downloadTabletPrompt;
     }

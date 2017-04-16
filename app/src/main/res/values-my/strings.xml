@@ -112,9 +112,9 @@
   <string name="prefs_copying_app_files">Menyalin fail aplikasi</string>
   <string name="prefs_err_moving_app_files">Gagal memindahkan fail aplikasi</string>
   <string name="prefs_no_enough_space_to_move_files">Tidak cukup ruang untuk memindahkan fail aplikasi</string>
-  <string name="prefs_tablet_mode_title">Mod Tablet</string>
-  <string name="prefs_tablet_mode_enabled">Dalam mod landscape, dua halaman akan muncul bersebelahan.</string>
-  <string name="prefs_tablet_mode_disabled">Dalam mod landscape, hanya paparkan satu halaman.</string>
+  <string name="prefs_dual_page_mode_title">Mod Tablet</string>
+  <string name="prefs_dual_page_mode_enabled">Dalam mod landscape, dua halaman akan muncul bersebelahan.</string>
+  <string name="prefs_dual_page_mode_disabled">Dalam mod landscape, hanya paparkan satu halaman.</string>
   <!-- Preferences End -->
 
   <!-- translation updates -->

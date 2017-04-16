@@ -88,9 +88,9 @@
   <string name="prefs_copying_app_files">ئەپ ھۆججەتلىرىنى كۆچۈرۈۋاتىدۇ</string>
   <string name="prefs_err_moving_app_files">ئەپ ھۆججەتلىرىنى يۆتكىيەلمىدى</string>
   <string name="prefs_no_enough_space_to_move_files">ئەپ ھۆججەتلىرىنى يۆتكەشكە يېتەرلىك بوشلۇق يوق</string>
-  <string name="prefs_tablet_mode_title">تاختا كومپيۇتېر ھالىتى</string>
-  <string name="prefs_tablet_mode_enabled">توغرىسىغا ھالەتتە، ئىككى بەت يانمۇيان كۆرۈنىدۇ.</string>
-  <string name="prefs_tablet_mode_disabled">توغرىسىغا ھالەتتە، بىرلا بەتنى كۆرسىتىدۇ.</string>
+  <string name="prefs_dual_page_mode_title">تاختا كومپيۇتېر ھالىتى</string>
+  <string name="prefs_dual_page_mode_enabled">توغرىسىغا ھالەتتە، ئىككى بەت يانمۇيان كۆرۈنىدۇ.</string>
+  <string name="prefs_dual_page_mode_disabled">توغرىسىغا ھالەتتە، بىرلا بەتنى كۆرسىتىدۇ.</string>
   <!-- Preferences End -->
 
   <!-- translation updates -->

@@ -68,7 +68,7 @@ public class QuranScreenInfo {
     return "_" + mPageProvider.getTabletWidthParameter();
   }
 
-  public boolean isTablet(Context context) {
+  public boolean isDualPageMode(Context context) {
     return context != null && mMaxWidth > 800;
   }
 

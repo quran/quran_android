@@ -63,7 +63,7 @@ public class Constants {
   public static final String PREF_GROUP_BOOKMARKS_BY_TAG = "groupBookmarksByTag";
   public static final String PREF_SHOW_RECENTS = "showRecents";
   public static final String PREF_DISPLAY_CATEGORY = "displayCategoryKey";
-  public static final String PREF_TABLET_ENABLED = "useTabletMode";
+  public static final String PREF_DUAL_PAGE_ENABLED = "useDualPageMode";
   public static final String PREF_VERSION = "version";
   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
   public static final String PREF_TRANSLATION_MANAGER = "translationManagerKey";
