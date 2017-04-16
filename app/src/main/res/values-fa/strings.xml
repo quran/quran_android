@@ -252,9 +252,9 @@
   <string name="prefs_overlay_page_info_title">نمایش اطلاعات صفحه</string>
   <string name="prefs_sdcard_external">حافظه خارجی %1Sd</string>
   <string name="prefs_sdcard_internal">حافظه داخلی</string>
-  <string name="prefs_tablet_mode_disabled">تنها یک صفحه در حالت افقی</string>
-  <string name="prefs_tablet_mode_enabled">نمایش دو صحفه در حالت افقی</string>
-  <string name="prefs_tablet_mode_title">حالت مخصوص رایانه دستی</string>
+  <string name="prefs_dual_page_mode_disabled">تنها یک صفحه در حالت افقی</string>
+  <string name="prefs_dual_page_mode_enabled">نمایش دو صحفه در حالت افقی</string>
+  <string name="prefs_dual_page_mode_title">حالت مخصوص رایانه دستی</string>
   <string name="prefs_volume_key_navigation_summary">استفاده از دکمه‌های صدا برای ورق زدن</string>
   <string name="prefs_volume_key_navigation_title">ورق زدن با دکمه‌های صدا</string>
   <string name="quran_ayah_details">%1$s - آیه %2$s، جزء %3$s</string>
