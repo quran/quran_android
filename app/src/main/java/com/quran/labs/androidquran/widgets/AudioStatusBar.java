@@ -56,7 +56,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private int currentRepeat = 0;
   @DrawableRes private int itemBackground;
   private boolean isRtl;
-  private boolean isTablet;
+  private boolean isDualPageMode;
   private boolean hasErrorText;
   private boolean haveCriticalError = false;
   private SharedPreferences sharedPreferences;
@@ -111,7 +111,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     // only flip the layout when the language is rtl and we're on api 17+
     isRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
         (QuranSettings.getInstance(this.context).isArabicNames() || QuranUtils.isRtl());
-    isTablet = QuranScreenInfo.getOrMakeInstance(this.context).isTablet(this.context);
+    isDualPageMode = QuranScreenInfo.getOrMakeInstance(this.context).isDualPageMode(this.context);
     sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(context.getApplicationContext());
     currentQari = sharedPreferences.getInt(Constants.PREF_DEFAULT_QARI, 0);
@@ -397,7 +397,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private void showPlayingMode(boolean isPaused) {
     removeAllViews();
 
-    final boolean withWeight = !isTablet;
+    final boolean withWeight = !isDualPageMode;
 
     int button;
     if (isPaused) {

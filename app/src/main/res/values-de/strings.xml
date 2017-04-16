@@ -186,11 +186,11 @@
     Dateien zu verschieben.
   </string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_tablet_mode_title">Tablet-Modus</string>
-  <string name="prefs_tablet_mode_enabled">Im Querformat werden zwei Seiten nebeneinander
+  <string name="prefs_dual_page_mode_title">Tablet-Modus</string>
+  <string name="prefs_dual_page_mode_enabled">Im Querformat werden zwei Seiten nebeneinander
     dargestellt.
   </string>
-  <string name="prefs_tablet_mode_disabled">Im Querformat wird nur eine Seite dargestellt.</string>
+  <string name="prefs_dual_page_mode_disabled">Im Querformat wird nur eine Seite dargestellt.</string>
 
   <string name="warning">Achtung</string>
   <string name="kitkat_external_message">Aufgrund von Systemeinschränkungen durch Android, werden im

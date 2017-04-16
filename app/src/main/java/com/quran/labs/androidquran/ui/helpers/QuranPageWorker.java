@@ -44,7 +44,7 @@ public class QuranPageWorker {
     if (response == null ||
         (response.getBitmap() == null &&
             response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND)){
-      if (QuranScreenInfo.getInstance().isTablet(appContext)){
+      if (QuranScreenInfo.getInstance().isDualPageMode(appContext)){
         Crashlytics.log(Log.WARN, TAG, "tablet got bitmap null, trying alternate width...");
         String param = QuranScreenInfo.getInstance().getWidthParam();
         if (param.equals(imageWidth)){

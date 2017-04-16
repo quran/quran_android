@@ -164,9 +164,9 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_no_enough_space_to_move_files">Onvoldoende ruimte om app bestanden te verplaatsen</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
   <string name="prefs_megabytes_str">%s MB</string>
-  <string name="prefs_tablet_mode_title">Tablet Mode</string>
-  <string name="prefs_tablet_mode_enabled">In landscape, worden twee pagina\'s naast elkaar weergegeven.</string>
-  <string name="prefs_tablet_mode_disabled">In landscape, zal slechts één pagina verschijnen.</string>
+  <string name="prefs_dual_page_mode_title">Tablet Mode</string>
+  <string name="prefs_dual_page_mode_enabled">In landscape, worden twee pagina\'s naast elkaar weergegeven.</string>
+  <string name="prefs_dual_page_mode_disabled">In landscape, zal slechts één pagina verschijnen.</string>
   <string name="prefs_category_advanced">Geavanceerde opties</string>
   <string name="prefs_export_title">Exporteren</string>
   <string name="prefs_export_summary">Exporteer een kopie van bladwijzers en labels</string>

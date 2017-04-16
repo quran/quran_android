@@ -126,9 +126,9 @@
   <string name="process_progress"> %1$d / %2$d dosya işleniyor</string>
   <string name="prefs_translations_summary">Meâli indir ve ayarla</string>
   <string name="prefs_translations">Meâller</string>
-  <string name="prefs_tablet_mode_title">Tablet modu</string>
-  <string name="prefs_tablet_mode_enabled">Yatık modda iki sayfa birlikte görüntülenir</string>
-  <string name="prefs_tablet_mode_disabled">Yatık modda tek sayfa  görüntülenir</string>
+  <string name="prefs_dual_page_mode_title">Tablet modu</string>
+  <string name="prefs_dual_page_mode_enabled">Yatık modda iki sayfa birlikte görüntülenir</string>
+  <string name="prefs_dual_page_mode_disabled">Yatık modda tek sayfa  görüntülenir</string>
   <string name="prefs_category_advanced">Gelişmiş seçenekler</string>
   <string name="prefs_category_advanced_summary">İşaretleri içe/dışa aktar, uygulama konumunu ayarla, vb.</string>
   <string name="prefs_import_title">İçe aktar</string>
