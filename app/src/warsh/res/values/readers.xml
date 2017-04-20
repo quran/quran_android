@@ -5,11 +5,11 @@
   </string-array>
 
   <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
-    <item>0</item>
+    <item>0</item> <!-- ibrahim aldosary -->
   </integer-array>
 
   <string-array translatable="false" name="quran_readers_path">
-    <item>0</item>
+    <item>0</item> <!-- ibrahim aldosary -->
   </string-array>
 
   <string-array translatable="false" name="quran_readers_db_name">
