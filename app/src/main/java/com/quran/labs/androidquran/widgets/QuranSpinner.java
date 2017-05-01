@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.SpinnerAdapter;
 public class QuranSpinner extends AppCompatSpinner {
   private static final int MAX_ITEMS_MEASURED = 15;
   private static final float WIDTH_MULTIPLIER = 1.1f;
+  private static final Rect PADDING_RECT = new Rect();
 
   private SpinnerAdapter adapter;
 
@@ -43,10 +46,17 @@ public class QuranSpinner extends AppCompatSpinner {
       int calculatedWidth = calculateWidth();
       int measuredWidth = getMeasuredWidth();
       if (calculatedWidth > measuredWidth) {
-        setMeasuredDimension(
-            Math.min(calculatedWidth, MeasureSpec.getSize(widthMeasureSpec)),
-            getMeasuredHeight());
+        int width = Math.min(calculatedWidth, MeasureSpec.getSize(widthMeasureSpec));
+        setMeasuredDimension(width, getMeasuredHeight());
         setDropDownWidth(calculatedWidth);
+
+        // hack to fix an odd bug with Farsi - see quran/quran_android#849
+        // because we get incorrect width for Farsi, set the actual spinner width to the overall
+        // desired width. this causes all subsequent children added to use the width of the
+        // spinner to measure themselves instead of "wrap_content". Leaving this hack here for
+        // non-Farsi languages as well, since it has a nice sub-benefit of causing the Spinner
+        // to not change width when the selected item is changed to a longer/shorter item.
+        getLayoutParams().width = width;
       } else {
         setDropDownWidth(measuredWidth);
       }
@@ -84,6 +94,13 @@ public class QuranSpinner extends AppCompatSpinner {
       }
       itemView.measure(widthMeasureSpec, heightMeasureSpec);
       width = Math.max(width, itemView.getMeasuredWidth());
+    }
+
+    // make sure to take the background padding into account
+    Drawable drawable = getBackground();
+    if (drawable != null) {
+      drawable.getPadding(PADDING_RECT);
+      width += PADDING_RECT.left + PADDING_RECT.right;
     }
     width *= WIDTH_MULTIPLIER; // add some extra spacing
     return width;
