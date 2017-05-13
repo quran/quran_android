@@ -29,7 +29,7 @@
   <string name="menu_sort_date">Date Added</string>
   <string name="menu_sort_location">Location in Quran</string>
   <string name="menu_sort_group_by_tags">Group by Tags</string>
-  <string name="menu_show_recents">@string/recent_pages</string>
+  <string name="menu_show_recents" translatable="false">@string/recent_pages</string>
   <string name="menu_translation">Show Translation</string>
   <string name="menu_back_to_page">Show Quran</string>
   <string name="menu_help">Help</string>
@@ -211,7 +211,7 @@
   <string name="prefs_export_title">Export</string>
   <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
 
-  <string name="translations">@string/prefs_translations</string>
+  <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">More Translations</string>
   <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
   <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
