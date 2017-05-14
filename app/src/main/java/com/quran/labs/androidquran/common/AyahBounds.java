@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.common;
 
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 public class AyahBounds {
@@ -19,6 +20,10 @@ public class AyahBounds {
 
   public RectF getBounds() {
     return new RectF(bounds);
+  }
+
+  public Rect getBoundsAsRect() {
+    return new Rect((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom);
   }
 
   public int getLine() {
