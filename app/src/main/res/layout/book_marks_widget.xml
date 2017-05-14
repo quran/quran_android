@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/translation_verse_text_color">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="2dp"
+
+      android:layout_marginTop="2dp"
+      android:background="@drawable/quran_row_background"
+      android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/WidgetIconButton"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/translation_verse_text_color"
+        android:src="@drawable/icon" />
+
+    <ImageButton
+        android:id="@+id/WidgetBtnSearch"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/translation_verse_text_color"
+        android:src="@drawable/ic_ab_search" />
+
+    <ImageButton
+        android:id="@+id/WidgetBtnGoToQuran"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/translation_verse_text_color"
+        android:src="@drawable/ic_goto_quran" />
+
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="2px"
+      android:background="@color/ayah_bookmark_color" />
+
+  <ListView
+      android:id="@+id/listViewWidget"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/transparent_actionbar_color" />
+
+
+  <!-- Empty view is show if list items are empty -->
+  <TextView
+      android:id="@+id/empty_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:text="Bookmarks"
+      android:textColor="#ffffff"
+      android:textSize="20sp"
+      android:visibility="gone" />
+
+</LinearLayout>

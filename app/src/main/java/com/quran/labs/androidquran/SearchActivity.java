@@ -12,9 +12,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -53,11 +57,26 @@ public class SearchActivity extends QuranActionBarActivity
   private String query;
   private ResultAdapter adapter;
   private DefaultDownloadReceiver downloadReceiver;
+  private EditText searchEditText;
+  private ImageView submitSearch;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search);
+    searchEditText = (EditText) findViewById(R.id.searchEditText);
+    searchEditText.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+      if(count>2 )
+        showResults(s.toString());
+      }
+      @Override
+      public void afterTextChanged(Editable s) {}
+    });
+
     messageView = (TextView) findViewById(R.id.search_area);
     warningView = (TextView) findViewById(R.id.search_warning);
     buttonGetTranslations = (Button) findViewById(R.id.btnGetTranslations);
@@ -217,10 +236,12 @@ public class SearchActivity extends QuranActionBarActivity
     }
     if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
       String query = intent.getStringExtra(SearchManager.QUERY);
+      searchEditText.setText(query);
       showResults(query);
     } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
       Uri intentData = intent.getData();
       String query = intent.getStringExtra(SearchManager.USER_QUERY);
+      searchEditText.setText(query);
       if (query == null) {
         Bundle extras = intent.getExtras();
         if (extras != null) {

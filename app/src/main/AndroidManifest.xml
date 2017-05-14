@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.quran.labs.androidquran"
-          android:installLocation="auto">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.quran.labs.androidquran"
+    android:installLocation="auto">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -32,11 +32,11 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
       <meta-data android:name="android.app.shortcuts"
-                 android:resource="@xml/shortcuts" />
+          android:resource="@xml/shortcuts" />
     </activity>
 
     <activity android:name=".ShortcutsActivity"
-              android:exported="true" />
+        android:exported="true" />
     <activity
         android:name=".ui.QuranActivity"
         android:theme="@style/QuranToolBar"/>
@@ -152,5 +152,28 @@
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>
     </service>
+    <service
+        android:name=".widgets.WidgetService"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+    <receiver android:name=".BookMarksWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/book_marks_widget_info" />
+    </receiver>
+    <receiver android:name=".SearchWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/search_widget_info" />
+    </receiver>
   </application>
-</manifest> 
+</manifest>
