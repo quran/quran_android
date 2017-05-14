@@ -284,6 +284,9 @@ public class QuranActivity extends QuranActionBarActivity
   }
 
   private void showTranslationsUpgradeDialog() {
+    if (upgradeDialog != null && upgradeDialog.isShowing()) {
+      return;
+    }
     showedTranslationUpgradeDialog = true;
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(R.string.translation_updates_available);
