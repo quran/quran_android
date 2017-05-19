@@ -6,6 +6,7 @@ import android.database.DefaultDatabaseErrorHandler;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
+import android.database.sqlite.SQLiteException;
 import android.provider.BaseColumns;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -235,7 +236,75 @@ public class DatabaseHandler {
   public Cursor search(String query, boolean withSnippets) {
     return search(query, VERSE_TABLE, withSnippets);
   }
+  public Cursor searchAdvanced(String[] query) {
+    return searchAdvanced(query, VERSE_TABLE);
+  }
+  public Cursor searchAdvanced(String [] q, String table) {
+    if (!validDatabase()) {
+      return null;
+    }
 
+    String query = q[0];
+    String operator = " like ";
+    String whatTextToSelect = COL_TEXT;
+
+    boolean useFullTextIndex = (schemaVersion > 1);
+//    if (useFullTextIndex) {
+//      operator = " MATCH ";
+//      query = query + "*";
+//    } else {
+      query = COL_TEXT +" Like '%" + query + "%' ";
+//    }
+    if(!q[1].equals(""))
+      query+= " AND "+ COL_TEXT+" LIKE '%"+q[1]+"%' ";
+
+    if(!q[2].equals(""))
+      query+= " OR "+COL_TEXT+"  LIKE '%"+q[2]+"%' ";
+
+    if(!q[3].equals(""))
+      query+= " AND "+COL_TEXT+" NOT LIKE '%"+q[3]+"%' ";
+
+    int pos = 0;
+    int found = 0;
+    boolean done = false;
+    while (!done) {
+      int quote = query.indexOf("\"", pos);
+      if (quote > -1) {
+        found++;
+        pos = quote + 1;
+      } else {
+        done = true;
+      }
+    }
+
+    if (found % 2 != 0) {
+      query = query.replaceAll("\"", "");
+    }
+//
+//    if (useFullTextIndex && true) {
+//      whatTextToSelect = "snippet(" + table + ", '" +
+//          matchString + "', '" + MATCH_END +
+//          "', '" + ELLIPSES + "', -1, 64)";
+//    }
+
+    String qtext = "select rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH +" ,"+COL_TEXT+
+         " from " + table + " where " + query ; //limit 150
+    Crashlytics.log("search query: " + qtext + ", query: " + query);
+
+    try {
+      return database.rawQuery(qtext, null);
+
+//      return database.rawQuery(qtext, new String[]{ query });
+    } catch (SQLiteException sq){
+      Crashlytics.logException(sq);
+      return null;
+
+    }
+    catch (Exception e){
+      Crashlytics.logException(e);
+      return null;
+    }
+  }
   public Cursor search(String q, String table, boolean withSnippets) {
     if (!validDatabase()) {
         return null;
@@ -278,10 +347,11 @@ public class DatabaseHandler {
 
     String qtext = "select rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH +
         ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
-        operator + " ? " + " limit 150";
+        operator + " ? " + "  "; //limit 150
     Crashlytics.log("search query: " + qtext + ", query: " + query);
 
     try {
+
       return database.rawQuery(qtext, new String[]{ query });
     } catch (Exception e){
       Crashlytics.logException(e);

@@ -2,7 +2,119 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <TextView android:id="@+id/search_warning"
+
+  <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+      <TextView android:id="@+id/search_area"
+              android:textColor="?android:textColorPrimary"
+              android:textSize="17sp"
+              android:text="@string/search_key"
+              android:background="@android:drawable/title_bar"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+          android:layout_weight="1" />
+
+      <CheckBox
+          android:text="Advanced Search"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:id="@+id/chkBoxAdvSearch"
+          android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/HLAdvSearch">
+
+      <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <CheckBox
+            android:text="AND"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBoxAnd" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editTextAnd"
+            android:layout_weight="1"
+            android:hint="add and query" />
+      </LinearLayout>
+
+      <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <CheckBox
+            android:text="OR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBoxOr" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editTextOr"
+            android:layout_weight="1"
+            android:hint="add or query" />
+      </LinearLayout>
+
+      <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <CheckBox
+            android:text="NOT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBoxNot" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editTextNot"
+            android:layout_weight="1"
+            android:hint="add not query" />
+      </LinearLayout>
+
+      <Button
+          android:text="Submit"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/buttonAdvanceSearch" />
+
+    </LinearLayout>
+
+  </LinearLayout>
+
+
+
+  <TextView android:id="@+id/search_warning"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@android:drawable/title_bar"
@@ -11,14 +123,8 @@
               android:textColor="?android:textColorPrimary" />
     <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations" 
     	android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone"/>
-    <TextView android:id="@+id/search_area"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="17sp"
-            android:text="@string/search_key"
-            android:background="@android:drawable/title_bar"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-    <ListView
+
+  <ListView
             android:id="@+id/results_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"

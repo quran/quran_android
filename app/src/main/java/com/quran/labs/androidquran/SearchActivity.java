@@ -21,7 +21,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -53,6 +57,9 @@ public class SearchActivity extends QuranActionBarActivity
   private String query;
   private ResultAdapter adapter;
   private DefaultDownloadReceiver downloadReceiver;
+  private CheckBox chkBoxAdvanceSearch;
+  private boolean isAdvancedSearch;
+  private Button submitAdvancedSearch;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +68,47 @@ public class SearchActivity extends QuranActionBarActivity
     messageView = (TextView) findViewById(R.id.search_area);
     warningView = (TextView) findViewById(R.id.search_warning);
     buttonGetTranslations = (Button) findViewById(R.id.btnGetTranslations);
+    chkBoxAdvanceSearch = (CheckBox) findViewById(R.id.chkBoxAdvSearch);
+    submitAdvancedSearch = (Button) findViewById(R.id.buttonAdvanceSearch);
+
+    chkBoxAdvanceSearch.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if(isAdvancedSearch)
+        showHideAdvanceSearchLayout(View.VISIBLE);
+
+      }
+    });
+    chkBoxAdvanceSearch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(isChecked) {
+          isAdvancedSearch = true;
+          showHideAdvanceSearchLayout(View.VISIBLE);
+        }
+        else{
+          isAdvancedSearch = false;
+          showHideAdvanceSearchLayout(View.GONE);
+        }
+
+      }
+    });
+
+    submitAdvancedSearch.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        String query = getIntent().getStringExtra(SearchManager.QUERY);
+        EditText andEditText  = (EditText) findViewById(R.id.editTextAnd);
+        EditText orEditText  = (EditText) findViewById(R.id.editTextOr);
+        EditText notEditText  = (EditText) findViewById(R.id.editTextNot);
+        String q1 = andEditText.getText().toString();
+        String q2 = orEditText.getText().toString();
+        String q3 = notEditText.getText().toString();
+        String [] queries = {query,q1,q2,q3};
+        showAdvancedResults(queries);
+      }
+    });
+
     buttonGetTranslations.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
         Intent intent;
@@ -76,6 +124,14 @@ public class SearchActivity extends QuranActionBarActivity
       }
     });
     handleIntent(getIntent());
+  }
+
+
+
+  private void showHideAdvanceSearchLayout(int visiblity) {
+    LinearLayout advSearchLayout = (LinearLayout) findViewById(R.id.HLAdvSearch);
+    advSearchLayout.setVisibility(visiblity);
+
   }
 
   @Override
@@ -131,6 +187,15 @@ public class SearchActivity extends QuranActionBarActivity
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     String query = args.getString(EXTRA_QUERY);
     this.query = query;
+  if(id==3)
+  {
+    String queryAnd = args.getString("AND");
+    String queryOr = args.getString("OR");
+    String queryNot = args.getString("NOT");
+
+    return new CursorLoader(this, QuranDataProvider.SEARCH_ADVANCED_URI,
+      null, null, new String[]{query,queryAnd,queryOr,queryNot}, null);
+  }
     return new CursorLoader(this, QuranDataProvider.SEARCH_URI,
         null, null, new String[]{query}, null);
   }
@@ -295,7 +360,14 @@ public class SearchActivity extends QuranActionBarActivity
     args.putString(EXTRA_QUERY, query);
     getSupportLoaderManager().restartLoader(0, args, this);
   }
-
+  private void showAdvancedResults(String [] queries) {
+    Bundle args = new Bundle();
+    args.putString(EXTRA_QUERY, queries[0]);
+    args.putString("AND", queries[1]);
+    args.putString("OR", queries[2]);
+    args.putString("NOT", queries[3]);
+    getSupportLoaderManager().restartLoader(3, args, this);
+  }
   private static class ResultAdapter extends CursorAdapter {
     private LayoutInflater mInflater;
     private Context mContext;

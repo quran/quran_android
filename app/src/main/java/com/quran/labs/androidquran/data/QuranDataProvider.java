@@ -36,6 +36,7 @@ public class QuranDataProvider extends ContentProvider {
 
   public static String AUTHORITY = BuildConfig.APPLICATION_ID + ".data.QuranDataProvider";
   public static final Uri SEARCH_URI = Uri.parse("content://" + AUTHORITY + "/quran/search");
+  public static final Uri SEARCH_ADVANCED_URI = Uri.parse("content://" + AUTHORITY + "/quran/searchAdvanced");
 
   public static final String VERSES_MIME_TYPE =
       ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.quran.labs.androidquran";
@@ -47,6 +48,7 @@ public class QuranDataProvider extends ContentProvider {
   private static final int SEARCH_VERSES = 0;
   private static final int GET_VERSE = 1;
   private static final int SEARCH_SUGGEST = 2;
+  private static final int SEARCH_ADVANCED = 3;
   private static final UriMatcher uriMatcher = buildUriMatcher();
 
   private boolean didInject;
@@ -60,6 +62,7 @@ public class QuranDataProvider extends ContentProvider {
     matcher.addURI(AUTHORITY, "quran/search/*/*", SEARCH_VERSES);
     matcher.addURI(AUTHORITY, "quran/verse/#/#", GET_VERSE);
     matcher.addURI(AUTHORITY, "quran/verse/*/#/#", GET_VERSE);
+    matcher.addURI(AUTHORITY, "quran/searchAdvanced", SEARCH_ADVANCED);
     matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY,
         SEARCH_SUGGEST);
     matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*",
@@ -112,6 +115,16 @@ public class QuranDataProvider extends ContentProvider {
       case GET_VERSE: {
         return getVerse(uri);
       }
+      case SEARCH_ADVANCED: {
+        if (selectionArgs == null) {
+          throw new IllegalArgumentException(
+              "selectionArgs must be provided for the Uri: " + uri);
+        }
+
+        if (selectionArgs.length >= 1) {
+          return searchAdvanced(selectionArgs);
+        }
+      }
       default: {
         throw new IllegalArgumentException("Unknown Uri: " + uri);
       }
@@ -134,6 +147,24 @@ public class QuranDataProvider extends ContentProvider {
     return search(query, active, true);
   }
 
+  private Cursor searchAdvanced(String[] query) {
+    if (QuranUtils.doesStringContainArabic(query[0]) &&
+        QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE)) {
+     // Cursor c = search(query, QURAN_ARABIC_DATABASE, true);
+      final DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(getContext(), QURAN_ARABIC_DATABASE);
+      return handler.searchAdvanced(query);
+
+//      if (c != null) {
+//        return c;
+//      }
+    }
+return null;
+//    String active = getActiveTranslation();
+//    if (TextUtils.isEmpty(active)) {
+//      return null;
+//    }
+//    return search(query, active, true);
+  }
   private String getActiveTranslation() {
     String db = quranSettings.getActiveTranslation();
     if (!TextUtils.isEmpty(db)) {
