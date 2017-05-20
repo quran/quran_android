@@ -61,8 +61,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">Dijumpai dalam Surah %1$s, Ayat %2$d</string>
   <string name="no_results">Tidak dijumpai \"%s\"</string>
-  <string name="no_active_translation">Anda belum menetapkan terjemahan yang aktif. Ubah sesuai terjemahan pada menu tetapan, kemudian ulangi pencarian.</string>
-  <string name="translation_settings">Tetapan Terjemahan</string>
   <string name="no_arabic_search_available">Anda belum memuat turun paket pencarian Arab. Sila muat turun dan ulangi pencarian</string>
   <string name="get_arabic_search_db">Dapatkan Database Pencarian Arab</string>
 

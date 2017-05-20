@@ -79,8 +79,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <!-- Search messages -->
   <string name="found_in_sura">Encontrado em Sura %1$s, Ayah %2$d</string>
   <string name="no_results">Nenhum resultado encontrado para \"%s\"</string>
-  <string name="no_active_translation">Voce não tem uma tradução ativa. Por favor ative uma tradução primeiro e tente novamente.</string>
-  <string name="translation_settings">Definições de Tradução</string>
   <string name="no_arabic_search_available">Voce ainda não fez o download do pacote de pesquisa em Àrabe. Por favor faça o download primeiro e tente novamente.</string>
   <string name="get_arabic_search_db">Obter a base de pesquisa em Árabe</string>
 

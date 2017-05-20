@@ -109,8 +109,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">Ditemukan dalam Surat %1$s, Ayat %2$d</string>
   <string name="no_results">Tak ada hasil pencarian untuk \"%s\"</string>
-  <string name="no_active_translation">Anda belum memiliki terjemahan aktif. Aktifkan salah satu terjemahan dulu kemudian ulangi pencarian.</string>
-  <string name="translation_settings">Setelan Terjemahan</string>
   <string name="no_arabic_search_available">Anda belum mengunduh paket pencarian bahasa Arab. Harap unduh dulu dan ulangi pencarian anda.</string>
   <string name="get_arabic_search_db">Dapatkan Basis Data Pencarian Bahasa Arab</string>
 

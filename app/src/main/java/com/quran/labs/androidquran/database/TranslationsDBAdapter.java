@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.util.SparseArray;
 
 import com.quran.labs.androidquran.common.LocalTranslation;
@@ -46,6 +47,7 @@ public class TranslationsDBAdapter {
     return result;
   }
 
+  @WorkerThread
   @NonNull
   public List<LocalTranslation> getTranslations() {
     // intentional, since cachedTranslations can be replaced by another thread, causing the check

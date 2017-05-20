@@ -66,7 +66,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">Sure de bulundu %1$s, %2$d.âyet</string>
   <string name="no_results">Bir sonuç bulunamadı \"%s\"</string>
-  <string name="no_active_translation">Aktif bir meâl set edilmedi. Lütfen bir meâl aktif yapıp daha sonra arama yapın</string>
   <string name="no_arabic_search_available">Arapça arama paketi indirilmedi. Lütfen indirip daha sonra tekrar deneyin</string>
   <string name="get_arabic_search_db">Arapça arama veritabanını indirin</string>
   <!-- Quran Preference Activity -->
@@ -104,7 +103,6 @@
   <string name="via_string">Kur\'an-ı Kerîm</string>
   <string name="update_available">Güncelleme var</string>
   <string name="translation_updates_available">Meâller için güncelleme mevcut. Meâl indirme sayfasını ziyaret etmek istermisiniz?</string>
-  <string name="translation_settings">Meâl için ayarlar</string>
   <string name="translation_ayah">Âyet meâli</string>
   <string name="translation_dialog_later">Sonra</string>
   <string name="translation_dialog_yes">Evet</string>

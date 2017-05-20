@@ -81,8 +81,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">Trouvée dans la sourate %1$s Aya %2$d</string>
   <string name="no_results">Aucun resultats pour \"%s\"</string>
-  <string name="no_active_translation">Vous n\'avez aucune traduction active définie. S\'il vous plaît définissez une traduction active tout d\'abord, puis recherchez à nouveau.</string>
-  <string name="translation_settings">Paramètres de traduction</string>
   <string name="no_arabic_search_available">Vous n\'avez pas téléchargé le pack de recherche arabe.  S\'il vous plaît veuillez le télécharger et recommencez votre recherche.</string>
   <string name="get_arabic_search_db">Télécharger la base de données de recherche arabe</string>
 
