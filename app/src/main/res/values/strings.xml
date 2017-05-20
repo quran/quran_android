@@ -142,8 +142,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">Found in Sura %1$s, Ayah %2$d</string>
   <string name="no_results">No results found for \"%s\"</string>
-  <string name="no_active_translation">You have no active translation set. Please set an active translation first and then search again.</string>
-  <string name="translation_settings">Translation Settings</string>
   <string name="no_arabic_search_available">You have not downloaded the Arabic search pack. Please download it and try your search again.</string>
   <string name="get_arabic_search_db">Get Arabic Search Database</string>
 

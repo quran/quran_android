@@ -106,10 +106,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">Gefunden in Sure %1$s, Vers %2$d</string>
   <string name="no_results">Es wurden keine Resultate für \"%s\" gefunden.</string>
-  <string name="no_active_translation">Sie haben keine Übersetzung ausgewählt. Bitte wählen Sie
-    zuerst eine Übersetzung aus und suchen Sie danach erneut.
-  </string>
-  <string name="translation_settings">Übersetzungsoptionen</string>
   <string name="no_arabic_search_available">Sie haben das arabische Such-Paket noch nicht
     heruntergeladen. Bitte laden Sie dieses herunter und versuchen Sie es danach erneut.
   </string>

@@ -37,8 +37,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">سۈرىدە بايقالدى %1$s, ئايەت %2$d</string>
   <string name="no_results">"%s" نىڭ نەتىجىلىرى تېپىلمىدى</string>
-  <string name="no_active_translation">ھېچقانداق ئاكتىپ تەرجىمە تەڭشەلمىدىڭىز، ئالدى بىلەن بىر ئاكتىپ تەرجىمىنى تەڭشەڭ، ئاندىن قايتا ئىزدەڭ.</string>
-  <string name="translation_settings">تەرجىمە تەڭشەكلىرى</string>
   <string name="no_arabic_search_available">سىز ئەرەبچە ئىزدەش بوغچىسىنى چۈشۈرمىگەن. ئۇنى چۈشۈرۈپ ئاندىن قايتا ئىزدەڭ.</string>
   <string name="get_arabic_search_db">ئەرەبچە ئىزدەش ساندانىغا ئېرىش</string>
 

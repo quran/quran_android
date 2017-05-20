@@ -7,19 +7,15 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Html;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -35,7 +31,6 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.QuranActionBarActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 public class SearchActivity extends QuranActionBarActivity
@@ -61,19 +56,16 @@ public class SearchActivity extends QuranActionBarActivity
     messageView = (TextView) findViewById(R.id.search_area);
     warningView = (TextView) findViewById(R.id.search_warning);
     buttonGetTranslations = (Button) findViewById(R.id.btnGetTranslations);
-    buttonGetTranslations.setOnClickListener(new OnClickListener() {
-      public void onClick(View v) {
-        Intent intent;
-        if (downloadArabicSearchDb) {
-          downloadArabicSearchDb();
-          return;
-        } else {
-          intent = new Intent(getApplicationContext(),
-              TranslationManagerActivity.class);
-        }
-        startActivity(intent);
-        finish();
+    buttonGetTranslations.setOnClickListener(v -> {
+      Intent intent;
+      if (downloadArabicSearchDb) {
+        downloadArabicSearchDb();
+        return;
+      } else {
+        intent = new Intent(getApplicationContext(), TranslationManagerActivity.class);
       }
+      startActivity(intent);
+      finish();
     });
     handleIntent(getIntent());
   }
@@ -82,8 +74,7 @@ public class SearchActivity extends QuranActionBarActivity
   public void onPause() {
     if (downloadReceiver != null) {
       downloadReceiver.setListener(null);
-      LocalBroadcastManager.getInstance(this)
-          .unregisterReceiver(downloadReceiver);
+      LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadReceiver);
       downloadReceiver = null;
     }
     super.onPause();
@@ -94,8 +85,7 @@ public class SearchActivity extends QuranActionBarActivity
       downloadReceiver = new DefaultDownloadReceiver(this,
           QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
       LocalBroadcastManager.getInstance(this).registerReceiver(
-          downloadReceiver, new IntentFilter(
-              QuranDownloadNotifier.ProgressIntent.INTENT_NAME));
+          downloadReceiver, new IntentFilter(QuranDownloadNotifier.ProgressIntent.INTENT_NAME));
     }
     downloadReceiver.setListener(this);
 
@@ -132,7 +122,7 @@ public class SearchActivity extends QuranActionBarActivity
     String query = args.getString(EXTRA_QUERY);
     this.query = query;
     return new CursorLoader(this, QuranDataProvider.SEARCH_URI,
-        null, null, new String[]{query}, null);
+        null, null, new String[]{ query }, null);
   }
 
   @Override
@@ -145,30 +135,15 @@ public class SearchActivity extends QuranActionBarActivity
     }
 
     if (cursor == null) {
-      String active = QuranSettings.getInstance(getApplicationContext()).getActiveTranslation();
-      if (TextUtils.isEmpty(active)) {
-        @StringRes int resource = R.string.no_active_translation;
-        @StringRes int buttonResource = R.string.translation_settings;
-        if (showArabicWarning) {
-          resource = R.string.no_arabic_search_available;
-          downloadArabicSearchDb = true;
-          buttonResource = R.string.get_arabic_search_db;
-        }
-        messageView.setText(resource);
-        buttonGetTranslations.setText(getString(buttonResource));
+      if (showArabicWarning) {
+        warningView.setText(
+            getString(R.string.no_arabic_search_available));
+        warningView.setVisibility(View.VISIBLE);
+        buttonGetTranslations.setText(
+            getString(R.string.get_arabic_search_db));
         buttonGetTranslations.setVisibility(View.VISIBLE);
-      } else {
-        if (showArabicWarning) {
-          warningView.setText(
-              getString(R.string.no_arabic_search_available));
-          warningView.setVisibility(View.VISIBLE);
-          buttonGetTranslations.setText(
-              getString(R.string.get_arabic_search_db));
-          buttonGetTranslations.setVisibility(View.VISIBLE);
-        }
-        messageView.setText(getString(R.string.no_results,
-            new Object[]{ query }));
       }
+      messageView.setText(getString(R.string.no_results, new Object[]{ query }));
     } else {
       if (showArabicWarning) {
         warningView.setText(R.string.no_arabic_search_available);
@@ -189,14 +164,10 @@ public class SearchActivity extends QuranActionBarActivity
       if (adapter == null) {
         adapter = new ResultAdapter(this, cursor);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view,
-              int position, long id) {
-            ListView p = (ListView) parent;
-            final Cursor currentCursor = (Cursor) p.getAdapter().getItem(position);
-            jumpToResult(currentCursor.getInt(1), currentCursor.getInt(2));
-          }
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+          ListView p = (ListView) parent;
+          final Cursor currentCursor = (Cursor) p.getAdapter().getItem(position);
+          jumpToResult(currentCursor.getInt(1), currentCursor.getInt(2));
         });
       } else {
         adapter.changeCursor(cursor);
@@ -297,18 +268,18 @@ public class SearchActivity extends QuranActionBarActivity
   }
 
   private static class ResultAdapter extends CursorAdapter {
-    private LayoutInflater mInflater;
-    private Context mContext;
+    private Context context;
+    private LayoutInflater inflater;
 
     ResultAdapter(Context context, Cursor cursor) {
       super(context, cursor, 0);
-      mInflater = LayoutInflater.from(context);
-      mContext = context;
+      inflater = LayoutInflater.from(context);
+      this.context = context;
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-      final View view = mInflater.inflate(R.layout.search_result, parent, false);
+      final View view = inflater.inflate(R.layout.search_result, parent, false);
       ViewHolder holder = new ViewHolder();
       holder.text = (TextView) view.findViewById(R.id.verseText);
       holder.metadata = (TextView) view.findViewById(R.id.verseLocation);
@@ -322,9 +293,9 @@ public class SearchActivity extends QuranActionBarActivity
       int sura = cursor.getInt(1);
       int ayah = cursor.getInt(2);
       String text = cursor.getString(3);
-      String suraName = QuranInfo.getSuraName(mContext, sura, false);
+      String suraName = QuranInfo.getSuraName(this.context, sura, false);
       holder.text.setText(Html.fromHtml(text));
-      holder.metadata.setText(mContext.getString(R.string.found_in_sura, suraName, ayah));
+      holder.metadata.setText(this.context.getString(R.string.found_in_sura, suraName, ayah));
     }
 
     static class ViewHolder {

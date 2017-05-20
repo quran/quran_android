@@ -105,8 +105,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <!-- Search messages -->
   <string name="found_in_sura">Gevonden in Soera %1$s, Ayah %2$d</string>
   <string name="no_results">Geen resultaten gevonden voor \"%s\"</string>
-  <string name="no_active_translation">U heeft geen actieve vertaling set. Stel een actieve vertaling in en probeer uw zoekopdracht opnieuw.</string>
-  <string name="translation_settings">Vertaling Instellingen</string>
   <string name="no_arabic_search_available">Je hebt \"Arabisch Zoeken\" niet gedownload. Download het en probeer uw zoekopdracht opnieuw.</string>
   <string name="get_arabic_search_db">Verkrijg "Arabisch Zoeken" Database</string>
 

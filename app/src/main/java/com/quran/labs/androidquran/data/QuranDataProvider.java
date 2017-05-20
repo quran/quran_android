@@ -8,10 +8,10 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;
@@ -24,7 +24,6 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.util.TranslationUtils;
 
 import java.util.List;
 
@@ -39,14 +38,11 @@ public class QuranDataProvider extends ContentProvider {
 
   public static final String VERSES_MIME_TYPE =
       ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.quran.labs.androidquran";
-  public static final String AYAH_MIME_TYPE =
-      ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.quran.labs.androidquran";
   public static final String QURAN_ARABIC_DATABASE = QuranFileConstants.ARABIC_DATABASE;
 
   // UriMatcher stuff
   private static final int SEARCH_VERSES = 0;
-  private static final int GET_VERSE = 1;
-  private static final int SEARCH_SUGGEST = 2;
+  private static final int SEARCH_SUGGEST = 1;
   private static final UriMatcher uriMatcher = buildUriMatcher();
 
   private boolean didInject;
@@ -57,13 +53,8 @@ public class QuranDataProvider extends ContentProvider {
     UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
     matcher.addURI(AUTHORITY, "quran/search", SEARCH_VERSES);
     matcher.addURI(AUTHORITY, "quran/search/*", SEARCH_VERSES);
-    matcher.addURI(AUTHORITY, "quran/search/*/*", SEARCH_VERSES);
-    matcher.addURI(AUTHORITY, "quran/verse/#/#", GET_VERSE);
-    matcher.addURI(AUTHORITY, "quran/verse/*/#/#", GET_VERSE);
-    matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY,
-        SEARCH_SUGGEST);
-    matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*",
-        SEARCH_SUGGEST);
+    matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST);
+    matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST);
     return matcher;
   }
 
@@ -103,14 +94,7 @@ public class QuranDataProvider extends ContentProvider {
               "selectionArgs must be provided for the Uri: " + uri);
         }
 
-        if (selectionArgs.length == 1) {
-          return search(selectionArgs[0]);
-        } else {
-          return search(selectionArgs[0], selectionArgs[1], true);
-        }
-      }
-      case GET_VERSE: {
-        return getVerse(uri);
+        return search(selectionArgs[0]);
       }
       default: {
         throw new IllegalArgumentException("Unknown Uri: " + uri);
@@ -119,41 +103,11 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   private Cursor search(String query) {
-    if (QuranUtils.doesStringContainArabic(query) &&
-        QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE)) {
-      Cursor c = search(query, QURAN_ARABIC_DATABASE, true);
-      if (c != null) {
-        return c;
-      }
-    }
-
-    String active = getActiveTranslation();
-    if (TextUtils.isEmpty(active)) {
-      return null;
-    }
-    return search(query, active, true);
+    return search(query, getAvailableTranslations());
   }
 
-  private String getActiveTranslation() {
-    String db = quranSettings.getActiveTranslation();
-    if (!TextUtils.isEmpty(db)) {
-      if (QuranFileUtils.hasTranslation(getContext(), db)) {
-        return db;
-      }
-      // our active database no longer exists, remove the pref
-      quranSettings.removeActiveTranslation();
-    }
-
-    try {
-      Crashlytics.log("couldn't find database, searching for another..");
-      List<LocalTranslation> items = translationsDBAdapter.getTranslations();
-      if (items != null && items.size() > 0) {
-        return TranslationUtils.getDefaultTranslation(getContext(), items);
-      }
-    } catch (Exception e) {
-      Crashlytics.logException(e);
-    }
-    return null;
+  private List<LocalTranslation> getAvailableTranslations() {
+    return translationsDBAdapter.getTranslations();
   }
 
   private Cursor getSuggestions(String query) {
@@ -161,30 +115,24 @@ public class QuranDataProvider extends ContentProvider {
       return null;
     }
 
-    boolean haveArabic = false;
-    if (QuranUtils.doesStringContainArabic(query) &&
-        QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE)) {
-      haveArabic = true;
-    }
+    final boolean queryIsArabic = QuranUtils.doesStringContainArabic(query);
+    final boolean haveArabic = queryIsArabic &&
+        QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE);
 
-    boolean haveTranslation = false;
-    String active = getActiveTranslation();
-    if (!TextUtils.isEmpty(active)) {
-      haveTranslation = true;
-    }
-
-    int numItems = (haveArabic ? 1 : 0) + (haveTranslation ? 1 : 0);
-    if (numItems == 0) {
+    List<LocalTranslation> translations = getAvailableTranslations();
+    if (translations.size() == 0 && (queryIsArabic && !haveArabic)) {
       return null;
     }
 
-    String[] items = new String[numItems];
+    int index = 0;
+    String[] items = new String[translations.size() + (haveArabic ? 1 : 0)];
     if (haveArabic) {
-      items[0] = QURAN_ARABIC_DATABASE;
+      items[index++] = QURAN_ARABIC_DATABASE;
     }
 
-    if (haveTranslation) {
-      items[numItems - 1] = active;
+    for (int i = 0, size = translations.size(); i < size; i++) {
+      LocalTranslation translation = translations.get(i);
+      items[index++] = translation.filename;
     }
 
     String[] cols = new String[] { BaseColumns._ID,
@@ -229,32 +177,38 @@ public class QuranDataProvider extends ContentProvider {
     return mc;
   }
 
-  private Cursor search(String query, String language, boolean wantSnippets) {
-    Timber.d("q: %s, l: %s", query, language);
-    if (language == null) {
+  private Cursor search(String query, List<LocalTranslation> translations) {
+    Timber.d("query: %s", query);
+
+    final Context context = getContext();
+    final boolean queryIsArabic = QuranUtils.doesStringContainArabic(query);
+    final boolean haveArabic = queryIsArabic &&
+        QuranFileUtils.hasTranslation(context, QURAN_ARABIC_DATABASE);
+    if (translations.size() == 0 || (queryIsArabic && !haveArabic)) {
       return null;
     }
 
-    final DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(getContext(), language);
-    return handler.search(query, wantSnippets);
+    int index = 0;
+    String[] databaseNames = new String[translations.size() + (haveArabic ? 1 : 0)];
+    if (haveArabic) {
+      databaseNames[index++] = QURAN_ARABIC_DATABASE;
+    }
+
+    for (int i = 0, size = translations.size(); i < size; i++) {
+      databaseNames[index++] = translations.get(i).filename;
+    }
+
+    Cursor[] cursors = new Cursor[databaseNames.length];
+    for (int i = 0; i < databaseNames.length; i++) {
+      cursors[i] = search(query, databaseNames[i], true);
+    }
+
+    return new MergeCursor(cursors);
   }
 
-  private Cursor getVerse(Uri uri) {
-    int sura = 1;
-    int ayah = 1;
-    String langType = getActiveTranslation();
-    String lang = (TextUtils.isEmpty(langType)) ? null : langType;
-    if (lang == null) {
-      return null;
-    }
-
-    List<String> parts = uri.getPathSegments();
-    for (String s : parts) {
-      Timber.d("uri part: %s", s);
-    }
-
-    final DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(getContext(), lang);
-    return handler.getVerse(sura, ayah);
+  private Cursor search(String query, String databaseName, boolean wantSnippets) {
+    final DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(getContext(), databaseName);
+    return handler.search(query, wantSnippets);
   }
 
   @Override
@@ -262,9 +216,6 @@ public class QuranDataProvider extends ContentProvider {
     switch (uriMatcher.match(uri)) {
       case SEARCH_VERSES: {
         return VERSES_MIME_TYPE;
-      }
-      case GET_VERSE: {
-        return AYAH_MIME_TYPE;
       }
       case SEARCH_SUGGEST: {
         return SearchManager.SUGGEST_MIME_TYPE;

@@ -134,10 +134,6 @@
   <!-- Search messages -->
   <string name="found_in_sura">Найдено в суре %1$s, Аят %2$d</string>
   <string name="no_results">Результатов для \"%s\" не найдено</string>
-  <string name="no_active_translation">Вы не выбрали активный перевод. Сначала выберите активный
-        перевод и воспользуйтесь поиском снова.
-    </string>
-  <string name="translation_settings">Настройки перевода</string>
   <string name="no_arabic_search_available">Вы не скачали пакет данных для арабского поиска.
         Пожалуйста, сначала скачайте его и воспользуйтесь поиском снова.
     </string>
