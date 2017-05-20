@@ -69,11 +69,12 @@ public class TranslationsDBAdapter {
         String translatorForeign = cursor.getString(3);
         String filename = cursor.getString(4);
         String url = cursor.getString(5);
-        int version = cursor.getInt(6);
+        String languageCode = cursor.getString(6);
+        int version = cursor.getInt(7);
 
         if (QuranFileUtils.hasTranslation(context, filename)) {
           items.add(new LocalTranslation(id, filename, name, translator,
-              translatorForeign, url, version));
+              translatorForeign, url, languageCode, version));
         }
       }
       cursor.close();
@@ -100,6 +101,7 @@ public class TranslationsDBAdapter {
               item.translation.translatorNameLocalized);
           values.put(TranslationsTable.FILENAME, item.translation.fileName);
           values.put(TranslationsTable.URL, item.translation.fileUrl);
+          values.put(TranslationsTable.LANGUAGE_CODE, item.translation.languageCode);
           values.put(TranslationsTable.VERSION, item.localVersion);
 
           db.replace(TranslationsTable.TABLE_NAME, null, values);

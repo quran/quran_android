@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 class TranslationsDBHelper extends SQLiteOpenHelper {
 
   private static final String DB_NAME = "translations.db";
-  private static final int DB_VERSION = 2;
+  private static final int DB_VERSION = 3;
   private static final String CREATE_TRANSLATIONS_TABLE =
       "CREATE TABLE " + TranslationsTable.TABLE_NAME + "(" +
           TranslationsTable.ID + " integer primary key, " +
@@ -20,6 +20,7 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
           TranslationsTable.TRANSLATOR_FOREIGN + " varchar, " +
           TranslationsTable.FILENAME + " varchar not null, " +
           TranslationsTable.URL + " varchar, " +
+          TranslationsTable.LANGUAGE_CODE + " varchar, " +
           TranslationsTable.VERSION + " integer not null default 0);";
 
   @Inject
@@ -34,7 +35,7 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
 
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    if (oldVersion < 2) {
+    if (oldVersion < 3) {
       // a new column is added and columns are re-arranged
       final String BACKUP_TABLE = TranslationsTable.TABLE_NAME + "_backup";
       db.beginTransaction();
@@ -71,6 +72,7 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
     static final String TRANSLATOR_FOREIGN = "translator_foreign";
     static final String FILENAME = "filename";
     static final String URL = "url";
+    static final String LANGUAGE_CODE = "languageCode";
     static final String VERSION = "version";
   }
 }
