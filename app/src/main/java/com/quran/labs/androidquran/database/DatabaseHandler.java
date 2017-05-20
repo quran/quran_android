@@ -241,6 +241,8 @@ public class DatabaseHandler {
         return null;
     }
 
+    final String limit = withSnippets ? "" : "LIMIT 25";
+
     String query = q;
     String operator = " like ";
     String whatTextToSelect = COL_TEXT;
@@ -278,7 +280,7 @@ public class DatabaseHandler {
 
     String qtext = "select rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH +
         ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
-        operator + " ? " + " limit 150";
+        operator + " ? " + " " + limit;
     Crashlytics.log("search query: " + qtext + ", query: " + query);
 
     try {
