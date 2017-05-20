@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -124,16 +125,8 @@ public class QuranDataProvider extends ContentProvider {
       return null;
     }
 
-    int index = 0;
-    String[] items = new String[translations.size() + (haveArabic ? 1 : 0)];
-    if (haveArabic) {
-      items[index++] = QURAN_ARABIC_DATABASE;
-    }
-
-    for (int i = 0, size = translations.size(); i < size; i++) {
-      LocalTranslation translation = translations.get(i);
-      items[index++] = translation.filename;
-    }
+    int total = translations.size() + (haveArabic ? 1 : 0);
+    int start = haveArabic ? -1 : 0;
 
     String[] cols = new String[] { BaseColumns._ID,
         SearchManager.SUGGEST_COLUMN_TEXT_1,
@@ -143,14 +136,31 @@ public class QuranDataProvider extends ContentProvider {
 
     Context context = getContext();
     boolean gotResults = false;
-    for (String item : items) {
+    for (int i = start; i < total; i++) {
       if (gotResults) {
         continue;
       }
 
+      String database;
+      if (i < 0) {
+        database = QURAN_ARABIC_DATABASE;
+      } else {
+        LocalTranslation translation = translations.get(i);
+        // skip non-arabic databases if the query is in arabic
+        if (queryIsArabic &&
+            translation.languageCode != null &&
+            !"ar".equals(translation.languageCode)) {
+          continue;
+        } else if (!queryIsArabic && "ar".equals(translation.languageCode)) {
+          // skip arabic databases when the query isn't arabic
+          continue;
+        }
+        database = translation.filename;
+      }
+
       Cursor suggestions = null;
       try {
-        suggestions = search(query, item, false);
+        suggestions = search(query, database, false);
         if (suggestions != null && suggestions.moveToFirst()) {
           do {
             int sura = suggestions.getInt(1);
@@ -188,21 +198,38 @@ public class QuranDataProvider extends ContentProvider {
       return null;
     }
 
-    int index = 0;
-    String[] databaseNames = new String[translations.size() + (haveArabic ? 1 : 0)];
-    if (haveArabic) {
-      databaseNames[index++] = QURAN_ARABIC_DATABASE;
+    int start = haveArabic ? -1 : 0;
+    int total = translations.size() + (haveArabic ? 1 : 0);
+
+    List<Cursor> cursorList = new ArrayList<>();
+    for (int i = start; i < total; i++) {
+      String databaseName;
+      if (i < 0) {
+        databaseName = QURAN_ARABIC_DATABASE;
+      } else {
+        LocalTranslation translation = translations.get(i);
+        // skip non-arabic databases if the query is in arabic
+        if (queryIsArabic &&
+            translation.languageCode != null &&
+            !"ar".equals(translation.languageCode)) {
+          continue;
+        } else if (!queryIsArabic && "ar".equals(translation.languageCode)) {
+          // skip arabic databases when the query isn't arabic
+          continue;
+        }
+        databaseName = translation.filename;
+      }
+
+      Cursor cursor = search(query, databaseName, true);
+      if (cursor != null) {
+        cursorList.add(cursor);
+      }
     }
 
-    for (int i = 0, size = translations.size(); i < size; i++) {
-      databaseNames[index++] = translations.get(i).filename;
+    Cursor[] cursors = new Cursor[cursorList.size()];
+    for (int i = 0, size = cursorList.size(); i < size; i++) {
+      cursors[i] = cursorList.get(i);
     }
-
-    Cursor[] cursors = new Cursor[databaseNames.length];
-    for (int i = 0; i < databaseNames.length; i++) {
-      cursors[i] = search(query, databaseNames[i], true);
-    }
-
     return new MergeCursor(cursors);
   }
 
