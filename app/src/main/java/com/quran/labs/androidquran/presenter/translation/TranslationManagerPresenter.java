@@ -23,13 +23,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -51,7 +49,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   private final QuranSettings quranSettings;
   private final TranslationsDBAdapter translationsDBAdapter;
 
-  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE) String host;
+  @VisibleForTesting String host;
   private TranslationManagerActivity currentActivity;
 
   @Inject
@@ -121,27 +119,24 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   Observable<TranslationList> getCachedTranslationListObservable(final boolean forceDownload) {
-    return Observable.defer(new Callable<ObservableSource<? extends TranslationList>>() {
-      @Override
-      public ObservableSource<TranslationList> call() throws Exception {
-        boolean isCacheStale = System.currentTimeMillis() -
-            quranSettings.getLastUpdatedTranslationDate() > Constants.MIN_TRANSLATION_REFRESH_TIME;
-        if (forceDownload || isCacheStale) {
-          return Observable.empty();
-        }
-
-        try {
-          File cachedFile = getCachedFile();
-          if (cachedFile.exists()) {
-            Moshi moshi = new Moshi.Builder().build();
-            JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
-            return Observable.just(jsonAdapter.fromJson(Okio.buffer(Okio.source(cachedFile))));
-          }
-        } catch (Exception e) {
-          Crashlytics.logException(e);
-        }
+    return Observable.defer(() -> {
+      boolean isCacheStale = System.currentTimeMillis() -
+          quranSettings.getLastUpdatedTranslationDate() > Constants.MIN_TRANSLATION_REFRESH_TIME;
+      if (forceDownload || isCacheStale) {
         return Observable.empty();
       }
+
+      try {
+        File cachedFile = getCachedFile();
+        if (cachedFile.exists()) {
+          Moshi moshi = new Moshi.Builder().build();
+          JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
+          return Observable.just(jsonAdapter.fromJson(Okio.buffer(Okio.source(cachedFile))));
+        }
+      } catch (Exception e) {
+        Crashlytics.logException(e);
+      }
+      return Observable.empty();
     });
   }
 
@@ -222,6 +217,9 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       }
 
       if ((local == null && exists) || (local != null && !exists)) {
+        updates.add(item);
+      } else if (local != null && local.languageCode == null) {
+        // older items don't have a language code
         updates.add(item);
       }
       results.add(item);
