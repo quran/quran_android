@@ -309,10 +309,6 @@ public class TranslationManagerActivity extends QuranActionBarActivity
                   selectedItem.translation.fileName);
               TranslationItem updatedItem = selectedItem.withTranslationRemoved();
               updateTranslationItem(updatedItem);
-              String current = quranSettings.getActiveTranslation();
-              if (current.equals(selectedItem.translation.fileName)) {
-                quranSettings.removeActiveTranslation();
-              }
               generateListItems();
             })
         .setNegativeButton(R.string.cancel,
