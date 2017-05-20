@@ -41,7 +41,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.LayoutInflater;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.HelpActivity;
@@ -92,7 +91,6 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ShareUtil;
-import com.quran.labs.androidquran.util.TranslationUtils;
 import com.quran.labs.androidquran.widgets.AudioStatusBar;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.IconPageIndicator;
@@ -1001,8 +999,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (isInAyahMode) {
       endAyahMode();
     }
-    String activeDatabase = TranslationUtils.getDefaultTranslation(this, translations);
-    if (activeDatabase == null) {
+
+    if (translations.size() == 0) {
       startTranslationManager();
     } else {
       pagerAdapter.setTranslationMode();

@@ -162,10 +162,6 @@ public class QuranSettings {
                 prefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0));
           }
 
-          if (prefs.contains(Constants.PREF_ACTIVE_TRANSLATION)) {
-            setActiveTranslation(prefs.getString(Constants.PREF_ACTIVE_TRANSLATION, null));
-          }
-
           prefs.edit()
               .remove(Constants.PREF_VERSION)
               .remove(Constants.PREF_APP_LOCATION)
@@ -223,20 +219,6 @@ public class QuranSettings {
 
   private boolean isAppLocationSet() {
     return perInstallationPrefs.getString(Constants.PREF_APP_LOCATION, null) != null;
-  }
-
-  @Deprecated
-  public String getActiveTranslation() {
-    return perInstallationPrefs.getString(Constants.PREF_ACTIVE_TRANSLATION, "");
-  }
-
-  @Deprecated
-  public void setActiveTranslation(String translation) {
-    perInstallationPrefs.edit().putString(Constants.PREF_ACTIVE_TRANSLATION, translation).apply();
-  }
-
-  public void removeActiveTranslation() {
-    perInstallationPrefs.edit().remove(Constants.PREF_ACTIVE_TRANSLATION).apply();
   }
 
   public void setActiveTranslations(Set<String> activeTranslations) {
