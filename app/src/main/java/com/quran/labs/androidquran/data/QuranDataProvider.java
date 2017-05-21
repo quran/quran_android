@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.database.MergeCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
@@ -25,7 +24,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -201,7 +199,6 @@ public class QuranDataProvider extends ContentProvider {
     int start = haveArabic ? -1 : 0;
     int total = translations.size() + (haveArabic ? 1 : 0);
 
-    List<Cursor> cursorList = new ArrayList<>();
     for (int i = start; i < total; i++) {
       String databaseName;
       if (i < 0) {
@@ -221,16 +218,11 @@ public class QuranDataProvider extends ContentProvider {
       }
 
       Cursor cursor = search(query, databaseName, true);
-      if (cursor != null) {
-        cursorList.add(cursor);
+      if (cursor != null && cursor.getCount() > 0) {
+        return cursor;
       }
     }
-
-    Cursor[] cursors = new Cursor[cursorList.size()];
-    for (int i = 0, size = cursorList.size(); i < size; i++) {
-      cursors[i] = cursorList.get(i);
-    }
-    return new MergeCursor(cursors);
+    return null;
   }
 
   private Cursor search(String query, String databaseName, boolean wantSnippets) {
