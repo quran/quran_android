@@ -38,6 +38,7 @@
   <string name="menu_jump">Jump</string>
   <string name="gotoPage">Go to page</string>
   <string name="cancel">Cancel</string>
+  <string name="copy">Copy</string>
 
   <!-- about -->
   <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>

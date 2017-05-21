@@ -29,6 +29,8 @@
     <attr name="nightBackgroundColor" format="color" />
     <attr name="verseBoxWidth" format="dimension" />
     <attr name="verseBoxHeight" format="dimension" />
+    <attr name="boxPadding" format="dimension" />
+    <attr name="actionFontSize" format="dimension" />
   </declare-styleable>
 
   <declare-styleable name="DividerView">
