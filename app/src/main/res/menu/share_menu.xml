@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:id="@+id/cab_share_ayah_link"
+      android:icon="@drawable/ic_link"
+      android:title="@string/share_ayah"
+      />
+  <item
+      android:id="@+id/cab_share_ayah_text"
+      android:icon="@drawable/ic_share"
+      android:title="@string/share_ayah_text"
+      />
+  <item
+      android:id="@+id/cab_copy_ayah"
+      android:icon="@drawable/ic_copy"
+      android:title="@string/copy_ayah"
+      />
+</menu>

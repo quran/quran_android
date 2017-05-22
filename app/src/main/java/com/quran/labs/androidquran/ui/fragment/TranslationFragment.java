@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
+import com.quran.labs.androidquran.ui.translation.OnTranslationActionListener;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
@@ -27,7 +28,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class TranslationFragment extends Fragment implements
-    AyahTrackerPresenter.AyahInteractionHandler, QuranPage, TranslationPresenter.TranslationScreen {
+    AyahTrackerPresenter.AyahInteractionHandler, QuranPage,
+    TranslationPresenter.TranslationScreen,
+    OnTranslationActionListener {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
@@ -78,11 +81,12 @@ public class TranslationFragment extends Fragment implements
     translationView = mainView.getTranslationView();
     translationView.setTranslationClickedListener(v -> {
       final Activity activity = getActivity();
-      if (activity != null && activity instanceof PagerActivity) {
+      if (activity instanceof PagerActivity) {
         ((PagerActivity) getActivity()).toggleActionBar();
       }
     });
 
+    translationView.setOnTranslationActionListener(this);
     return mainView;
   }
 
@@ -96,6 +100,15 @@ public class TranslationFragment extends Fragment implements
         .withQuranPageModule(new QuranPageModule(pageNumber))
         .build()
         .inject(this);
+  }
+
+  @Override
+  public void onTranslationAction(QuranAyahInfo ayah, String[] translationNames, int actionId) {
+    Activity activity = getActivity();
+    if (activity instanceof PagerActivity) {
+      presenter.onTranslationAction((PagerActivity) activity, ayah, translationNames, actionId);
+    }
+    translationView.unhighlightAyat();
   }
 
   @Override

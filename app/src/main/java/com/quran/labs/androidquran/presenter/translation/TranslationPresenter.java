@@ -2,12 +2,16 @@ package com.quran.labs.androidquran.presenter.translation;
 
 import android.support.annotation.NonNull;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.model.translation.TranslationModel;
+import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.ShareUtil;
 
 import java.util.List;
 
@@ -60,6 +64,29 @@ public class TranslationPresenter extends
           public void onComplete() {
           }
         });
+  }
+
+  public void onTranslationAction(PagerActivity activity,
+                                  QuranAyahInfo ayah,
+                                  String[] translationNames,
+                                  int actionId) {
+    switch (actionId) {
+      case R.id.cab_share_ayah_link: {
+        SuraAyah bounds = new SuraAyah(ayah.sura, ayah.ayah);
+        activity.shareAyahLink(bounds, bounds);
+        break;
+      }
+      case R.id.cab_share_ayah_text:
+      case R.id.cab_copy_ayah: {
+        String shareText = ShareUtil.getShareText(activity, ayah, translationNames);
+        if (actionId == R.id.cab_share_ayah_text) {
+          ShareUtil.shareViaIntent(activity, shareText, R.string.share_ayah_text);
+        } else {
+          ShareUtil.copyToClipboard(activity, shareText);
+        }
+        break;
+      }
+    }
   }
 
   private int getPage(List<QuranAyahInfo> result) {

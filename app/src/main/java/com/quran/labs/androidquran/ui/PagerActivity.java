@@ -2039,7 +2039,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             }));
   }
 
-  private void shareAyahLink(SuraAyah start, SuraAyah end) {
+  public void shareAyahLink(SuraAyah start, SuraAyah end) {
     showProgressDialog();
     compositeDisposable.add(
         QuranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
