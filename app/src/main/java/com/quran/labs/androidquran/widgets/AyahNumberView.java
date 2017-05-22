@@ -71,6 +71,14 @@ public class AyahNumberView extends View {
     }
   }
 
+  public int getBoxCenterX() {
+    return padding + (boxWidth / 2);
+  }
+
+  public int getBoxBottomY() {
+    return padding + boxHeight;
+  }
+
   public void setTextColor(int textColor) {
     textPaint.setColor(textColor);
   }

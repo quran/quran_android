@@ -42,6 +42,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   private final RecyclerView recyclerView;
   private final List<TranslationViewRow> data;
   private View.OnClickListener onClickListener;
+  private OnVerseSelectedListener onVerseSelectedListener;
 
   private int fontSize;
   private int textColor;
@@ -55,20 +56,24 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
   private int highlightedRowCount;
   private int highlightedStartPosition;
 
-  private View.OnClickListener defaultClickListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-      if (onClickListener != null) {
-        onClickListener.onClick(v);
-      }
+  private View.OnClickListener defaultClickListener = v -> {
+    if (onClickListener != null) {
+      onClickListener.onClick(v);
     }
   };
 
-  TranslationAdapter(Context context, RecyclerView recyclerView) {
+  private View.OnLongClickListener defaultLongClickListener = this::selectVerseRows;
+
+  TranslationAdapter(Context context,
+                     RecyclerView recyclerView,
+                     View.OnClickListener onClickListener,
+                     OnVerseSelectedListener verseSelectedListener) {
     this.context = context;
     this.data = new ArrayList<>();
     this.recyclerView = recyclerView;
     this.inflater = LayoutInflater.from(context);
+    this.onClickListener = onClickListener;
+    this.onVerseSelectedListener = verseSelectedListener;
   }
 
   void setData(List<TranslationViewRow> data) {
@@ -138,10 +143,6 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     highlightedStartPosition = -1;
   }
 
-  void setOnTranslationClickedListener(View.OnClickListener listener) {
-    this.onClickListener = listener;
-  }
-
   void refresh(QuranSettings quranSettings) {
     this.fontSize = quranSettings.getTranslationTextSize();
     isNightMode = quranSettings.isNightMode();
@@ -165,6 +166,42 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     if (!this.data.isEmpty()) {
       notifyDataSetChanged();
     }
+  }
+
+  private boolean selectVerseRows(View view) {
+    int position = recyclerView.getChildAdapterPosition(view);
+    if (position != RecyclerView.NO_POSITION && onVerseSelectedListener != null) {
+      QuranAyahInfo ayahInfo = data.get(position).ayahInfo;
+      highlightAyah(ayahInfo.ayahId, true);
+      onVerseSelectedListener.onVerseSelected(ayahInfo);
+      return true;
+    }
+    return false;
+  }
+
+  int[] getSelectedVersePopupPosition() {
+    int[] result = null;
+    if (highlightedStartPosition > -1) {
+      int versePosition = -1;
+      int highlightedEndPosition = highlightedStartPosition + highlightedRowCount;
+      for (int i = highlightedStartPosition; i < highlightedEndPosition; i++) {
+        if (data.get(i).type == TranslationViewRow.Type.VERSE_NUMBER) {
+          versePosition = i;
+          break;
+        }
+      }
+
+      if (versePosition > -1) {
+        RowViewHolder viewHolder =
+            (RowViewHolder) recyclerView.findViewHolderForAdapterPosition(versePosition);
+        if (viewHolder != null && viewHolder.ayahNumber != null) {
+          result = new int[2];
+          result[0] += viewHolder.ayahNumber.getLeft() + viewHolder.ayahNumber.getBoxCenterX();
+          result[1] += viewHolder.ayahNumber.getTop() + viewHolder.ayahNumber.getBoxBottomY();
+        }
+      }
+    }
+    return result;
   }
 
   @Override
@@ -290,6 +327,11 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
       this.wrapperView = itemView;
       ButterKnife.bind(this, itemView);
       itemView.setOnClickListener(defaultClickListener);
+      itemView.setOnLongClickListener(defaultLongClickListener);
     }
+  }
+
+  interface OnVerseSelectedListener {
+    void onVerseSelected(QuranAyahInfo ayahInfo);
   }
 }

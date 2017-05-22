@@ -18,7 +18,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -27,16 +26,14 @@ import timber.log.Timber;
 public class QuranAppUtils {
 
   public static Single<String> getQuranAppUrlObservable(final String key,
-      final SuraAyah start, final SuraAyah end) {
-    return Single.fromCallable(new Callable<String>() {
-      @Override
-      public String call() throws Exception {
-        int sura = start.sura;
-        int startAyah = start.ayah;
-        // quranapp only supports sharing within a sura
-        int endAyah = end.sura == start.sura ? end.ayah : QuranInfo.getNumAyahs(start.sura);
-        return QuranAppUtils.getQuranAppUrl(key, sura, startAyah, endAyah);
-      }
+                                                        final SuraAyah start,
+                                                        final SuraAyah end) {
+    return Single.fromCallable(() -> {
+      int sura = start.sura;
+      int startAyah = start.ayah;
+      // quranapp only supports sharing within a sura
+      int endAyah = end.sura == start.sura ? end.ayah : QuranInfo.getNumAyahs(start.sura);
+      return QuranAppUtils.getQuranAppUrl(key, sura, startAyah, endAyah);
     }).subscribeOn(Schedulers.io());
   }
 
@@ -44,7 +41,7 @@ public class QuranAppUtils {
     String url = null;
     String fallbackUrl = null;
     try {
-      Map<String, String> params = new HashMap<String, String>();
+      Map<String, String> params = new HashMap<>();
       params.put("surah", sura + "");
       fallbackUrl = Constants.QURAN_APP_BASE + sura;
       if (startAyah != null) {

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.annotation.MenuRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.util.AttributeSet;
@@ -30,6 +31,7 @@ public class AyahToolBar extends ViewGroup implements
   private int pipHeight;
   private boolean isShowing;
   private float pipOffset;
+  private int ayahMenu = R.menu.ayah_menu;
   private LinearLayout menuLayout;
   private AyahToolBarPip toolBarPip;
   private PipPosition pipPosition;
@@ -46,6 +48,12 @@ public class AyahToolBar extends ViewGroup implements
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public AyahToolBar(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    init(context);
+  }
+
+  public AyahToolBar(Context context, @MenuRes int menuId) {
+    super(context);
+    ayahMenu = menuId;
     init(context);
   }
 
@@ -73,7 +81,7 @@ public class AyahToolBar extends ViewGroup implements
     // get that menu and do whatever we want with it.
     menu = new PopupMenu(this.context, this).getMenu();
     final MenuInflater inflater = new MenuInflater(this.context);
-    inflater.inflate(R.menu.ayah_menu, menu);
+    inflater.inflate(ayahMenu, menu);
     showMenu(menu);
   }
 
@@ -157,6 +165,12 @@ public class AyahToolBar extends ViewGroup implements
     if (bookmarkButton != null) {
       bookmarkButton.setImageDrawable(bookmarkItem.getIcon());
     }
+  }
+
+  public void updatePositionRelative(AyahToolBarPosition position) {
+    position.x -= (pipWidth / 2);
+    position.y++;
+    updatePosition(position);
   }
 
   public void updatePosition(AyahToolBarPosition position) {

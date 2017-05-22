@@ -9,6 +9,7 @@ import android.support.annotation.StringRes;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranInfo;
 
@@ -18,6 +19,10 @@ public class ShareUtil {
 
   public static void copyVerses(Activity activity, List<QuranText> verses) {
     String text = getShareText(activity, verses);
+    copyToClipboard(activity, text);
+  }
+
+  public static void copyToClipboard(Activity activity, String text) {
     ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
     ClipData clip = ClipData.newPlainText(activity.getString(R.string.app_name), text);
     cm.setPrimaryClip(clip);
@@ -35,6 +40,29 @@ public class ShareUtil {
     intent.setType("text/plain");
     intent.putExtra(Intent.EXTRA_TEXT, text);
     activity.startActivity(Intent.createChooser(intent, activity.getString(titleResId)));
+  }
+
+  public static String getShareText(Context context,
+                                    QuranAyahInfo ayahInfo,
+                                    String[] translationNames) {
+    final StringBuilder sb = new StringBuilder();
+    if (ayahInfo.arabicText != null) {
+      sb.append(ayahInfo.arabicText)
+        .append("\n\n");
+    }
+
+    for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
+      if (i < translationNames.length) {
+        sb.append(translationNames[i])
+          .append('\n');
+      }
+      sb.append(ayahInfo.texts.get(i))
+        .append("\n\n");
+    }
+    sb.append('-')
+      .append(QuranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
+
+    return sb.toString();
   }
 
   private static String getShareText(Activity activity, List<QuranText> verses) {

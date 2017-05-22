@@ -7,17 +7,28 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.widgets.AyahToolBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TranslationView extends ViewGroup {
-  private final RecyclerView translationRecycler;
+public class TranslationView extends FrameLayout implements View.OnClickListener,
+    TranslationAdapter.OnVerseSelectedListener,
+    MenuItem.OnMenuItemClickListener {
   private final TranslationAdapter translationAdapter;
+  private final AyahToolBar ayahToolBar;
+
+  private String[] translations;
+  private QuranAyahInfo selectedAyah;
+  private OnClickListener onClickListener;
+  private OnTranslationActionListener onTranslationActionListener;
 
   public TranslationView(Context context) {
     this(context, null);
@@ -29,30 +40,33 @@ public class TranslationView extends ViewGroup {
 
   public TranslationView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    translationRecycler = new RecyclerView(context);
+    RecyclerView translationRecycler = new RecyclerView(context);
     translationRecycler.setLayoutManager(new LinearLayoutManager(context));
     translationRecycler.setItemAnimator(new DefaultItemAnimator());
-    translationAdapter = new TranslationAdapter(context, translationRecycler);
+    translationAdapter = new TranslationAdapter(context, translationRecycler, this, this);
     translationRecycler.setAdapter(translationAdapter);
     addView(translationRecycler, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-  }
+    translationRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+      @Override
+      public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+        if (selectedAyah != null) {
+          updateAyahToolBarPosition();
+        }
+      }
+    });
 
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    translationRecycler.measure(widthMeasureSpec, heightMeasureSpec);
-  }
-
-  @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    int width = translationRecycler.getMeasuredWidth();
-    int x = ((r - l) - width) / 2;
-    translationRecycler.layout(x, 0, x + width, getMeasuredHeight());
+    ayahToolBar = new AyahToolBar(context, R.menu.share_menu);
+    ayahToolBar.setOnItemSelectedListener(this);
+    ayahToolBar.setVisibility(View.GONE);
+    addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
+        context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
   }
 
   public void setVerses(@NonNull String[] translations, @NonNull List<QuranAyahInfo> verses) {
-    List<TranslationViewRow> rows = new ArrayList<>();
+    this.translations = translations;
 
+    List<TranslationViewRow> rows = new ArrayList<>();
     int currentSura = -1;
     boolean wantTranslationHeaders = translations.length > 1;
     for (int i = 0, size = verses.size(); i < size; i++) {
@@ -98,7 +112,11 @@ public class TranslationView extends ViewGroup {
   }
 
   public void setTranslationClickedListener(OnClickListener listener) {
-    translationAdapter.setOnTranslationClickedListener(listener);
+    onClickListener = listener;
+  }
+
+  public void setOnTranslationActionListener(OnTranslationActionListener listener) {
+    onTranslationActionListener = listener;
   }
 
   public void highlightAyah(int ayahId) {
@@ -106,6 +124,56 @@ public class TranslationView extends ViewGroup {
   }
 
   public void unhighlightAyat() {
+    if (selectedAyah != null) {
+      selectedAyah = null;
+      ayahToolBar.hideMenu();
+    }
     translationAdapter.unhighlight();
+  }
+
+  @Override
+  public boolean onMenuItemClick(MenuItem item) {
+    if (onTranslationActionListener != null && selectedAyah != null) {
+      onTranslationActionListener.onTranslationAction(selectedAyah, translations, item.getItemId());
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void onClick(View v) {
+    if (selectedAyah != null) {
+      ayahToolBar.hideMenu();
+      unhighlightAyat();
+      selectedAyah = null;
+    }
+
+    if (onClickListener != null) {
+      onClickListener.onClick(v);
+    }
+  }
+
+  private void updateAyahToolBarPosition() {
+    int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
+    if (versePopupPosition != null) {
+      AyahToolBar.AyahToolBarPosition position = new AyahToolBar.AyahToolBarPosition();
+      if (versePopupPosition[1] > getHeight() || versePopupPosition[1] < 0) {
+        unhighlightAyat();
+      } else {
+        position.x = versePopupPosition[0];
+        position.y = versePopupPosition[1];
+        position.pipPosition = AyahToolBar.PipPosition.UP;
+        if (!ayahToolBar.isShowing()) {
+          ayahToolBar.showMenu();
+        }
+        ayahToolBar.updatePositionRelative(position);
+      }
+    }
+  }
+
+  @Override
+  public void onVerseSelected(QuranAyahInfo ayahInfo) {
+    selectedAyah = ayahInfo;
+    updateAyahToolBarPosition();
   }
 }
