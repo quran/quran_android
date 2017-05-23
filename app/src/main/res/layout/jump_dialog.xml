@@ -16,7 +16,7 @@
       android:id="@+id/page_number"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:imeOptions="actionGo"
+      android:imeOptions="actionGo|flagNoExtractUi"
       android:inputType="number"
       android:maxLength="3"/>
 
@@ -38,17 +38,17 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:inputType="text|textAutoComplete"
+        android:imeOptions="flagNoExtractUi"
         android:selectAllOnFocus="true"/>
 
-    <!-- 'minWidth' is in 'sp' because we actually need that width only
-     to accommodate ayah numbers and avoid horizontal jiggering -->
     <EditText
         android:id="@+id/ayah_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:minWidth="64sp"
+        android:minWidth="64dp"
         android:inputType="number"
+        android:imeOptions="flagNoExtractUi"
         android:selectAllOnFocus="true"/>
   </LinearLayout>
 </LinearLayout>
