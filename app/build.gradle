@@ -14,8 +14,8 @@ android {
   defaultConfig {
     minSdkVersion 14
     targetSdkVersion 25
-    versionCode 2741
-    versionName "2.7.4-p1"
+    versionCode 2750
+    versionName "2.7.5"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
@@ -35,26 +35,26 @@ android {
 
     qaloon {
       applicationId "com.quran.labs.androidquran.qaloon"
-      versionCode 1071
-      versionName "1.0.7-p1"
+      versionCode 1080
+      versionName "1.0.8"
     }
 
     naskh {
       applicationId "com.quran.labs.androidquran.naskh"
-      versionCode 1071
-      versionName "1.0.7-p1"
+      versionCode 1080
+      versionName "1.0.8"
     }
 
     shemerly {
       applicationId "com.quran.labs.androidquran.shemerly"
-      versionCode 1071
-      versionName "1.0.7-p1"
+      versionCode 1080
+      versionName "1.0.8"
     }
 
     warsh {
       applicationId "com.quran.labs.androidquran.warsh"
-      versionCode 1071
-      versionName "1.0.7-p1"
+      versionCode 1080
+      versionName "1.0.8"
     }
   }
 
