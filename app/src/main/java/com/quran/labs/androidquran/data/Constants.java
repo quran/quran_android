@@ -75,4 +75,5 @@ public class Constants {
       "didPresentStoragePermissionDialog";
   public static final String PREF_WAS_SHOWING_TRANSLATION = "wasShowingTranslation";
   public static final String PREF_QURAN_SETTINGS = "quranSettings";
+  public static final String PREF_DID_DOWNLOAD_PAGES = "didDownloadPages";
 }

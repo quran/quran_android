@@ -375,6 +375,18 @@ public class QuranDataActivity extends Activity implements
       }
 
       if (!result) {
+        // we need to download pages in this case
+
+        // if we downloaded pages once before
+        if (quranSettings.didDownloadPages()) {
+          // log an event to Answers - this should help figure out why people are complaining that
+          // they are always prompted to re-download images, even after they did.
+          Answers.getInstance()
+              .logCustom(new CustomEvent("imagesDisappeared")
+                .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation()));
+          quranSettings.setDownloadedPages(false);
+        }
+
         if (storageNotAvailable) {
           // no storage mounted, nothing we can do...
           runListView();
@@ -394,6 +406,7 @@ public class QuranDataActivity extends Activity implements
           promptForDownload();
         }
       } else {
+        quranSettings.setDownloadedPages(true);
         if (!TextUtils.isEmpty(patchParam)) {
           Timber.d("checkPages: have pages, but need patch %s", patchParam);
           patchUrl = QuranFileUtils.getPatchFileUrl(patchParam, LATEST_IMAGE_VERSION);

@@ -260,6 +260,14 @@ public class QuranSettings {
     perInstallationPrefs.edit().remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
   }
 
+  public void setDownloadedPages(boolean didDownload) {
+    perInstallationPrefs.edit().putBoolean(Constants.PREF_DID_DOWNLOAD_PAGES, didDownload).apply();
+  }
+
+  public boolean didDownloadPages() {
+    return perInstallationPrefs.getBoolean(Constants.PREF_DID_DOWNLOAD_PAGES, false);
+  }
+
   public boolean haveUpdatedTranslations() {
     return perInstallationPrefs.getBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false);
   }
