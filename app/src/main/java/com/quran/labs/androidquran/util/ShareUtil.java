@@ -53,8 +53,9 @@ public class ShareUtil {
 
     for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
       if (i < translationNames.length) {
-        sb.append(translationNames[i])
-          .append('\n');
+        sb.append('(')
+          .append(translationNames[i])
+          .append(")\n");
       }
       sb.append(ayahInfo.texts.get(i))
         .append("\n\n");
