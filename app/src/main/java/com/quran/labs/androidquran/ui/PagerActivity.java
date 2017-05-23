@@ -1078,7 +1078,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     String sura = QuranInfo.getSuraNameFromPage(this, page, true);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
-      translationsSpinner.setVisibility(View.GONE);
       actionBar.setDisplayShowTitleEnabled(true);
       actionBar.setTitle(sura);
       String desc = QuranInfo.getPageSubtitle(this, page);
