@@ -800,6 +800,31 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
+  public void jumpTo(int page) {
+    Intent i = new Intent(this, PagerActivity.class);
+    i.putExtra("page", page);
+    onNewIntent(i);
+  }
+
+  public void jumpToAndHighlight(int page, int sura, int ayah) {
+    Intent i = new Intent(this, PagerActivity.class);
+    i.putExtra("page", page);
+    i.putExtra(EXTRA_HIGHLIGHT_SURA, sura);
+    i.putExtra(EXTRA_HIGHLIGHT_AYAH, ayah);
+    onNewIntent(i);
+  }
+
+  @Override
+  public void onPause() {
+    if (promptDialog != null) {
+      promptDialog.dismiss();
+      promptDialog = null;
+    }
+    recentPagePresenter.unbind(this);
+    quranSettings.setWasShowingTranslation(pagerAdapter.getIsShowingTranslation());
+    super.onPause();
+  }
+
   @Override
   protected void onDestroy() {
     Timber.d("onDestroy()");
