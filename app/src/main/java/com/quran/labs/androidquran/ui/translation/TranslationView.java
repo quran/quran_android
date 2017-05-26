@@ -50,6 +50,10 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       @Override
       public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
+
+        // do not modify the RecyclerView from this method or any method called from
+        // the onScrolled listener, since most modification methods cannot be called
+        // while the RecyclerView is computing layout or scrolling
         if (selectedAyah != null) {
           updateAyahToolBarPosition();
         }
@@ -153,12 +157,18 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     }
   }
 
+  /**
+   * This method updates the toolbar position when an ayah is selected
+   * This method is called from the onScroll listener, and as thus must make sure not to ask
+   * the RecyclerView to change anything (otherwise, it will result in a crash, as methods to
+   * update the RecyclerView cannot be called amidst scrolling or computing of a layout).
+   */
   private void updateAyahToolBarPosition() {
     int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
     if (versePopupPosition != null) {
       AyahToolBar.AyahToolBarPosition position = new AyahToolBar.AyahToolBarPosition();
       if (versePopupPosition[1] > getHeight() || versePopupPosition[1] < 0) {
-        unhighlightAyat();
+        ayahToolBar.hideMenu();
       } else {
         position.x = versePopupPosition[0];
         position.y = versePopupPosition[1];
