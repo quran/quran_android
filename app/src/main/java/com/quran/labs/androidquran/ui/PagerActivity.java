@@ -32,6 +32,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
@@ -1135,6 +1136,11 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (actionBar != null) {
       actionBar.setDisplayShowTitleEnabled(false);
       translationsSpinner.setVisibility(View.VISIBLE);
+      DisplayMetrics displayMetrics = new DisplayMetrics();
+      getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+//      int height = displayMetrics.heightPixels;
+      int width = displayMetrics.widthPixels;
+      translationsSpinner.setMinimumWidth(width/2);
     }
   }
 
