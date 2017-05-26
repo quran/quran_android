@@ -21,7 +21,6 @@ import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.List;
@@ -45,7 +44,6 @@ public class QuranDataProvider extends ContentProvider {
   private static final UriMatcher uriMatcher = buildUriMatcher();
 
   private boolean didInject;
-  @Inject QuranSettings quranSettings;
   @Inject TranslationsDBAdapter translationsDBAdapter;
 
   private static UriMatcher buildUriMatcher() {
@@ -123,7 +121,7 @@ public class QuranDataProvider extends ContentProvider {
       return null;
     }
 
-    int total = translations.size() + (haveArabic ? 1 : 0);
+    int total = translations.size();
     int start = haveArabic ? -1 : 0;
 
     String[] cols = new String[] { BaseColumns._ID,
@@ -197,7 +195,7 @@ public class QuranDataProvider extends ContentProvider {
     }
 
     int start = haveArabic ? -1 : 0;
-    int total = translations.size() + (haveArabic ? 1 : 0);
+    int total = translations.size();
 
     for (int i = start; i < total; i++) {
       String databaseName;
