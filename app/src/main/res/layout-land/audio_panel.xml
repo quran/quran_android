@@ -6,79 +6,105 @@
              android:paddingLeft="12dp"
              android:paddingRight="12dp"
     >
+
+  <Button
+      android:id="@+id/apply"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/play_apply"
+      android:layout_gravity="end|bottom"
+      android:layout_marginEnd="12dp"
+      android:layout_marginRight="12dp"
+      />
+
   <ScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:fadeScrollbars="false"
       >
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
+        android:orientation="vertical"
         >
+
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
           android:orientation="horizontal"
           >
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginBottom="4dp"
+            android:layout_weight="1"
             android:text="@string/play_from"
             android:textAppearance="@style/PanelLabel"
             />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginBottom="4dp"
+            android:layout_weight="1"
             android:text="@string/play_to"
             android:textAppearance="@style/PanelLabel"
             />
       </LinearLayout>
+
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginBottom="8dp"
-          android:orientation="horizontal"
           android:baselineAligned="false"
+          android:orientation="horizontal"
           >
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal"
             >
+
           <com.quran.labs.androidquran.widgets.QuranSpinner
               android:id="@+id/start_sura_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_weight="1"
               />
+
           <com.quran.labs.androidquran.widgets.QuranSpinner
               android:id="@+id/start_ayah_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_weight="1"
               />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal"
             >
+
           <com.quran.labs.androidquran.widgets.QuranSpinner
               android:id="@+id/end_sura_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_weight="1"
               />
+
           <com.quran.labs.androidquran.widgets.QuranSpinner
               android:id="@+id/end_ayah_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_weight="1"
               />
         </LinearLayout>
       </LinearLayout>
@@ -89,6 +115,7 @@
           android:layout_marginBottom="12dp"
           android:orientation="horizontal"
           >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,6 +123,7 @@
             android:text="@string/play_verses_range"
             android:textAppearance="@style/PanelLabel"
             />
+
         <com.quran.labs.androidquran.widgets.QuranSpinner
             android:id="@+id/repeat_range_spinner"
             android:layout_width="wrap_content"
@@ -109,6 +137,7 @@
           android:layout_marginBottom="12dp"
           android:orientation="horizontal"
           >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -116,6 +145,7 @@
             android:text="@string/play_each_verse"
             android:textAppearance="@style/PanelLabel"
             />
+
         <com.quran.labs.androidquran.widgets.QuranSpinner
             android:id="@+id/repeat_verse_spinner"
             android:layout_width="wrap_content"
@@ -131,14 +161,4 @@
           />
     </LinearLayout>
   </ScrollView>
-
-  <Button
-      android:id="@+id/apply"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/play_apply"
-      android:layout_gravity="end|bottom"
-      android:layout_marginEnd="12dp"
-      android:layout_marginRight="12dp"
-      />
 </FrameLayout>

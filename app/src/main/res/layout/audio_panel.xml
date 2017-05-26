@@ -29,11 +29,13 @@
           android:id="@+id/start_sura_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_weight="1"
           />
       <com.quran.labs.androidquran.widgets.QuranSpinner
           android:id="@+id/start_ayah_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_weight="1"
           />
     </LinearLayout>
     <TextView
@@ -49,15 +51,19 @@
         android:layout_marginBottom="12dp"
         android:orientation="horizontal"
         >
+
       <com.quran.labs.androidquran.widgets.QuranSpinner
           android:id="@+id/end_sura_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_weight="1"
           />
+
       <com.quran.labs.androidquran.widgets.QuranSpinner
           android:id="@+id/end_ayah_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_weight="1"
           />
     </LinearLayout>
 
