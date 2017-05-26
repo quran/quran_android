@@ -364,4 +364,6 @@
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
+  <string name="appwidget_text">Quran Search</string>
+  <string name="add_widget">Add widget</string>
 </resources>

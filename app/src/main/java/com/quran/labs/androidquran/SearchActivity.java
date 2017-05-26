@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -48,11 +50,23 @@ public class SearchActivity extends QuranActionBarActivity
   private String query;
   private ResultAdapter adapter;
   private DefaultDownloadReceiver downloadReceiver;
+  private EditText searchEditText;
+  private ImageView submitSearch;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.search);
+    searchEditText = (EditText) findViewById(R.id.searchEditText);
+    submitSearch = (ImageView) findViewById(R.id.searchSubmit);
+    submitSearch.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        String query = searchEditText.getText().toString();
+        showResults(query);
+
+      }
+    });
     messageView = (TextView) findViewById(R.id.search_area);
     warningView = (TextView) findViewById(R.id.search_warning);
     buttonGetTranslations = (Button) findViewById(R.id.btnGetTranslations);
@@ -188,10 +202,12 @@ public class SearchActivity extends QuranActionBarActivity
     }
     if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
       String query = intent.getStringExtra(SearchManager.QUERY);
+      searchEditText.setText(query);
       showResults(query);
     } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
       Uri intentData = intent.getData();
       String query = intent.getStringExtra(SearchManager.USER_QUERY);
+      searchEditText.setText(query);
       if (query == null) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
