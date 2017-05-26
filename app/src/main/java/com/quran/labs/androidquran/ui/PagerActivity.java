@@ -2006,6 +2006,9 @@ public class PagerActivity extends QuranActionBarActivity implements
         case R.id.cab_share_ayah_text:
           shareAyah(start, end, false);
           break;
+        case R.id.cab_share_ayah_image:
+          shareAyah(start, end, false);  // to be changed to shareAyah(start, end, false, image = true)
+          break;
         case R.id.cab_copy_ayah:
           shareAyah(start, end, true);
           break;
@@ -2048,7 +2051,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             .subscribeWith(new DisposableSingleObserver<String>() {
               @Override
               public void onSuccess(String url) {
-                ShareUtil.shareViaIntent(PagerActivity.this, url, R.string.share_ayah);
+                ShareUtil.shareTextViaIntent(PagerActivity.this, url, R.string.share_ayah);
                 dismissProgressDialog();
               }
 
