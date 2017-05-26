@@ -768,7 +768,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     Bundle extras = intent.getExtras();
     if (extras != null) {
       int page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
-      updateActionBarTitle(PAGES_LAST - page);
 
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
@@ -778,8 +777,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (showingTranslation != currentValue) {
         if (showingTranslation) {
           pagerAdapter.setTranslationMode();
+          updateActionBarSpinner();
         } else {
           pagerAdapter.setQuranMode();
+          updateActionBarTitle(PAGES_LAST - page);
         }
 
         supportInvalidateOptionsMenu();
@@ -797,31 +798,6 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       setIntent(intent);
     }
-  }
-
-  public void jumpTo(int page) {
-    Intent i = new Intent(this, PagerActivity.class);
-    i.putExtra("page", page);
-    onNewIntent(i);
-  }
-
-  public void jumpToAndHighlight(int page, int sura, int ayah) {
-    Intent i = new Intent(this, PagerActivity.class);
-    i.putExtra("page", page);
-    i.putExtra(EXTRA_HIGHLIGHT_SURA, sura);
-    i.putExtra(EXTRA_HIGHLIGHT_AYAH, ayah);
-    onNewIntent(i);
-  }
-
-  @Override
-  public void onPause() {
-    if (promptDialog != null) {
-      promptDialog.dismiss();
-      promptDialog = null;
-    }
-    recentPagePresenter.unbind(this);
-    quranSettings.setWasShowingTranslation(pagerAdapter.getIsShowingTranslation());
-    super.onPause();
   }
 
   @Override
@@ -1078,6 +1054,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     String sura = QuranInfo.getSuraNameFromPage(this, page, true);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
+      translationsSpinner.setVisibility(View.GONE);
       actionBar.setDisplayShowTitleEnabled(true);
       actionBar.setTitle(sura);
       String desc = QuranInfo.getPageSubtitle(this, page);
