@@ -6,9 +6,9 @@
         <item>آل عمران</item>
         <item>النساء</item>
         <item>المائدة</item>
-        <item>اﻷنعام</item>
-        <item>اﻷعراف</item>
-        <item>اﻷنفال</item>
+        <item>الأنعام</item>
+        <item>الأعراف</item>
+        <item>الأنفال</item>
         <item>التوبة</item>
         <item>يونس</item>
         <item>هود</item>
@@ -17,11 +17,11 @@
         <item>إبراهيم</item>
         <item>الحجر</item>
         <item>النحل</item>
-        <item>اﻹسراء</item>
+        <item>الإسراء</item>
         <item>الكهف</item>
         <item>مريم</item>
         <item>طه</item>
-        <item>اﻷنبياء</item>
+        <item>الأنبياء</item>
         <item>الحج</item>
         <item>المؤمنون</item>
         <item>النور</item>
@@ -33,7 +33,7 @@
         <item>الروم</item>
         <item>لقمان</item>
         <item>السجدة</item>
-        <item>اﻷحزاب</item>
+        <item>الأحزاب</item>
         <item>سبأ</item>
         <item>فاطر</item>
         <item>يس</item>
@@ -46,7 +46,7 @@
         <item>الزخرف</item>
         <item>الدخان</item>
         <item>الجاثية</item>
-        <item>اﻷحقاف</item>
+        <item>الأحقاف</item>
         <item>محمد</item>
         <item>الفتح</item>
         <item>الحجرات</item>
@@ -76,18 +76,18 @@
         <item>المزمل</item>
         <item>المدثر</item>
         <item>القيامة</item>
-        <item>اﻹنسان</item>
+        <item>الإنسان</item>
         <item>المرسلات</item>
         <item>النبأ</item>
         <item>النازعات</item>
         <item>عبس</item>
         <item>التكوير</item>
-        <item>الانفطار</item>
+        <item>الإنفطار</item>
         <item>المطففين</item>
-        <item>الانشقاق</item>
+        <item>الإنشقاق</item>
         <item>البروج</item>
         <item>الطارق</item>
-        <item>اﻷعلى</item>
+        <item>الأعلى</item>
         <item>الغاشية</item>
         <item>الفجر</item>
         <item>البلد</item>
@@ -112,7 +112,7 @@
         <item>الكافرون</item>
         <item>النصر</item>
         <item>المسد</item>
-        <item>اﻹخلاص</item>
+        <item>الإخلاص</item>
         <item>الفلق</item>
         <item>الناس</item>
     </string-array>
