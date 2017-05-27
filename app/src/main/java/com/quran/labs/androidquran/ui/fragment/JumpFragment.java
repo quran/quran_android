@@ -84,7 +84,7 @@ public class JumpFragment extends DialogFragment {
       return handled;
     });
 
-    suraInput.setOnItemClickListener((parent, view, position, rowId) -> {
+    suraInput.setOnForceCompleteListener((v, position, rowId) -> {
       List<String> suraList = Arrays.asList(suras);
       String enteredText = suraInput.getText().toString();
 
