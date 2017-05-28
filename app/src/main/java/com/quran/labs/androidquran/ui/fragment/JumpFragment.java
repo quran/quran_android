@@ -26,8 +26,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.helpers.JumpDestination;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.ForceCompleteTextView;
 
@@ -156,10 +155,8 @@ public class JumpFragment extends DialogFragment {
           int selectedSura = (int) suraInput.getTag();
           int selectedAyah = (int) ayahInput.getTag();
 
-          if (activity instanceof QuranActivity) {
-            ((QuranActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
-          } else if (activity instanceof PagerActivity) {
-            ((PagerActivity) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
+          if (activity instanceof JumpDestination) {
+            ((JumpDestination) activity).jumpToAndHighlight(page, selectedSura, selectedAyah);
           }
         } else {
           goToPage(pageStr);
@@ -197,10 +194,8 @@ public class JumpFragment extends DialogFragment {
     }
 
     Activity activity = getActivity();
-    if (activity instanceof QuranActivity) {
-      ((QuranActivity) activity).jumpTo(page);
-    } else if (activity instanceof PagerActivity) {
-      ((PagerActivity) activity).jumpTo(page);
+    if (activity instanceof JumpDestination) {
+      ((JumpDestination) activity).jumpTo(page);
     }
   }
 

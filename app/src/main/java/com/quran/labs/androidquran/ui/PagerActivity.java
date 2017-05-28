@@ -78,6 +78,7 @@ import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.JumpDestination;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
@@ -125,7 +126,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     AudioStatusBar.AudioBarListener,
     DefaultDownloadReceiver.DownloadListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
-    AyahSelectedListener {
+    AyahSelectedListener,
+    JumpDestination {
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
   private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
   private static final String LAST_READ_PAGE = "LAST_READ_PAGE";
@@ -799,12 +801,14 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
+  @Override
   public void jumpTo(int page) {
     Intent i = new Intent(this, PagerActivity.class);
     i.putExtra("page", page);
     onNewIntent(i);
   }
 
+  @Override
   public void jumpToAndHighlight(int page, int sura, int ayah) {
     Intent i = new Intent(this, PagerActivity.class);
     i.putExtra("page", page);

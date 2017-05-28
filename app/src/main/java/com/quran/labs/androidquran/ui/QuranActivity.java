@@ -41,6 +41,7 @@ import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
+import com.quran.labs.androidquran.ui.helpers.JumpDestination;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -54,7 +55,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
 
 public class QuranActivity extends QuranActionBarActivity
-    implements TagBookmarkDialog.OnBookmarkTagsUpdateListener {
+    implements TagBookmarkDialog.OnBookmarkTagsUpdateListener, JumpDestination {
 
   private static int[] TITLES = new int[]{
       R.string.quran_sura,
@@ -314,6 +315,7 @@ public class QuranActivity extends QuranActionBarActivity
     startActivity(i);
   }
 
+  @Override
   public void jumpTo(int page) {
     Intent i = new Intent(this, PagerActivity.class);
     i.putExtra("page", page);
@@ -321,6 +323,7 @@ public class QuranActivity extends QuranActionBarActivity
     startActivity(i);
   }
 
+  @Override
   public void jumpToAndHighlight(int page, int sura, int ayah) {
     Intent i = new Intent(this, PagerActivity.class);
     i.putExtra("page", page);
