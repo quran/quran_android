@@ -69,6 +69,12 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     });
   }
 
+  /**
+   * Do not call this method, use {@link #setOnForceCompleteListener(OnForceCompleteListener)}
+   * instead.
+   *
+   * @throws UnsupportedOperationException if called
+   */
   @Override
   public void setOnItemClickListener(AdapterView.OnItemClickListener l) {
     throw new UnsupportedOperationException("Call setOnForceCompleteListener instead");
