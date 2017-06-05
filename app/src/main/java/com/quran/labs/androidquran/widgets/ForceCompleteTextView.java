@@ -52,7 +52,7 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     if (focused) {
       performFiltering(getText(), 0);
     } else {
-      onForceComplete(-1, AdapterView.INVALID_ROW_ID);
+      onForceComplete(AdapterView.INVALID_POSITION, AdapterView.INVALID_ROW_ID);
     }
   }
 
@@ -64,7 +64,7 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     this.onForceCompleteListener = l;
     post(() -> {
       if (!isFocused()) {
-        onForceComplete(-2, AdapterView.INVALID_ROW_ID);
+        onForceComplete(AdapterView.INVALID_POSITION, AdapterView.INVALID_ROW_ID);
       }
     });
   }
