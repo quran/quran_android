@@ -34,4 +34,8 @@
   <string name="qari_ahmad_nauina_gapless">أحمد نعينع (متصل)</string>
   <string name="qari_akram_al_alaqmi">اكرم العلقمي (متصل) </string>
   <string name="qari_ali_hajjaj_alsouasi_gapless">علي حجاج السويسي (متصل)</string>
+  <string name="qari_saad_al_ghamidi_gapless">سعد الغامدي (متصل)</string>
+  <string name="qari_bandar_baleela_gapless">بندر بليلة (متصل)</string>
+  <string name="qari_mahmoud_ali_albana_gapless">محمود علي البنا (متصل)</string>
+  <string name="qari_abdulrahman_alshahat_gapless">عبد الرحمن الشحات (متصل)</string>
 </resources>

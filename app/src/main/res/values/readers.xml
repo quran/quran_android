@@ -35,6 +35,10 @@
     <item>@string/qari_ahmad_nauina_gapless</item>
     <item>@string/qari_akram_al_alaqmi</item>
     <item>@string/qari_ali_hajjaj_alsouasi_gapless</item>
+    <item>@string/qari_saad_al_ghamidi_gapless</item>
+    <item>@string/qari_bandar_baleela_gapless</item>
+    <item>@string/qari_mahmoud_ali_albana_gapless</item>
+    <item>@string/qari_abdulrahman_alshahat_gapless</item>
   </string-array>
 
   <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
@@ -48,7 +52,7 @@
     <item>1</item> <!-- abdurrahman as sudais -->
     <item>1</item> <!-- abu bakr al shatiri -->
     <item>0</item> <!-- mishaari al3afasy -->
-    <item>0</item> <!-- sa3d alghamdi -->
+    <item>1</item> <!-- sa3d alghamdi -->
     <item>0</item> <!-- ibrahim walk -->
     <item>0</item> <!-- hani ar-rifa3i -->
     <item>0</item> <!-- husary mujawwad -->
@@ -72,6 +76,10 @@
     <item>0</item>
     <item>0</item>
     <item>0</item>
+    <item>0</item> <!-- sa3d al ghamidi -->
+    <item>0</item> <!-- bandar baleela -->
+    <item>0</item> <!-- mahmoud ali al bana -->
+    <item>0</item> <!-- abdulrahman al shahat -->
   </integer-array>
 
   <string-array translatable="false" name="quran_readers_path">
@@ -109,6 +117,10 @@
     <item>ahmad_nauina</item>
     <item>akram_al_alaqmi</item>
     <item>ali_hajjaj_alsouasi</item>
+    <item>sa3d_alghamidi</item>
+    <item>bandar_baleela</item>
+    <item>mahmoud_ali_albana</item>
+    <item>abdurlrahman_alshahat</item>
   </string-array>
 
   <string-array translatable="false" name="quran_readers_db_name">
@@ -146,6 +158,10 @@
     <item>ahmad_nauina</item>
     <item>akram_al_alaqmi</item>
     <item>ali_hajjaj_alsouasi</item>
+    <item>sa3d_alghamidi</item>
+    <item>bandar_baleela</item>
+    <item>mahmoud_ali_albana</item>
+    <item>abdulrahman_alshahat</item>
   </string-array>
 
   <string-array translatable="false" name="quran_readers_urls">
@@ -183,6 +199,10 @@
     <item>http://download.quranicaudio.com/quran/ahmad_nauina/</item>
     <item>http://download.quranicaudio.com/quran/akram_al_alaqmi/</item>
     <item>http://download.quranicaudio.com/quran/ali_hajjaj_alsouasi/</item>
+    <item>http://download.quranicaudio.com/quran/sa3d_al-ghaamidi/complete/128kbps/</item>
+    <item>http://download.quranicaudio.com/quran/bandar_baleela/complete/</item>
+    <item>http://download.quranicaudio.com/quran/mahmood_ali_albana/</item>
+    <item>http://download.quranicaudio.com/quran/abdulrahman_al_shahat/</item>
   </string-array>
 
   <!-- actual qari names -->
@@ -220,4 +240,8 @@
   <string name="qari_ahmad_nauina_gapless">Ahmad Nauina (gapless)</string>
   <string name="qari_akram_al_alaqmi">Akram Al-Alaqmi (gapless)</string>
   <string name="qari_ali_hajjaj_alsouasi_gapless">Ali Hajjaj Alsouasi (gapless)</string>
+  <string name="qari_saad_al_ghamidi_gapless">Saad Al-Ghamdi (gapless)</string>
+  <string name="qari_bandar_baleela_gapless">Bandar Baleela (gapless)</string>
+  <string name="qari_mahmoud_ali_albana_gapless">Mahmoud Ali al Bana (gapless)</string>
+  <string name="qari_abdulrahman_alshahat_gapless">Abdulrahman Al-Shahat (gapless)</string>
 </resources>
