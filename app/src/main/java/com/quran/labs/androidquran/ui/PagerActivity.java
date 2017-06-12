@@ -946,8 +946,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       SharedPreferences.Editor prefsEditor = prefs.edit();
       final boolean isNightMode = !item.isChecked();
       prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).apply();
-      item.setIcon(isNightMode ?
-          R.drawable.ic_night_mode : R.drawable.ic_day_mode);
+      item.setIcon(isNightMode ? R.drawable.ic_night_mode : R.drawable.ic_day_mode);
       item.setChecked(isNightMode);
       refreshQuranPages();
       return true;
@@ -1025,8 +1024,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public void startTranslationManager() {
-    Intent i = new Intent(this, TranslationManagerActivity.class);
-    startActivity(i);
+    startActivity(new Intent(this, TranslationManagerActivity.class));
   }
 
   private TranslationsSpinnerAdapter.OnSelectionChangedListener translationItemChangedListener =
