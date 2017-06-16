@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="vChoice">Say the required command</string>
+  <string-array name="voiceCommandsList">
+    <item>settings</item>
+    <item>last page</item>
+    <item>help</item>
+    <item>about us</item>
+  </string-array>
+</resources>

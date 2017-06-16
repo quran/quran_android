@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,7 +22,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+/////////////////////////////////////////////
+//voice commands imports
+import android.speech.RecognizerIntent;
+import java.util.List;
+import com.quran.labs.androidquran.util.VoiceCommandsUtil;
+////////////////////////////////////////////
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.AboutUsActivity;
@@ -64,6 +70,12 @@ public class QuranActivity extends QuranActionBarActivity
       R.string.menu_bookmarks,
       R.string.quran_juz2,
       R.string.quran_sura };
+
+  ///////////////////////////////////////////////////
+  //Used for Voice Commands
+  private static final int SPEECH_REQUEST_CODE = 0;
+  private VoiceCommandsUtil voiceCom;
+  ///////////////////////////////////////////////////
 
   public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
   private static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
@@ -117,6 +129,11 @@ public class QuranActivity extends QuranActionBarActivity
     final SlidingTabLayout indicator =
         (SlidingTabLayout) findViewById(R.id.indicator);
     indicator.setViewPager(pager);
+
+    ///////////////////////////////////////////////////
+    //Used for Voice Commands
+    voiceCom = new VoiceCommandsUtil(QuranActivity.this);
+    ///////////////////////////////////////////////////
 
     if (isRtl) {
       pager.setCurrentItem(TITLES.length - 1);
@@ -200,6 +217,13 @@ public class QuranActivity extends QuranActionBarActivity
         startActivity(i);
         return true;
       }
+      /////////////////////////////////////
+      //Used for Voice Commands
+      case R.id.voice_command: {
+        startVoiceRecognition();
+        return true;
+      }
+      ////////////////////////////////////
       case R.id.last_page: {
         jumpToLastPage();
         return true;
@@ -265,7 +289,39 @@ public class QuranActivity extends QuranActionBarActivity
     super.onSaveInstanceState(outState);
   }
 
-  private void jumpToLastPage() {
+  ////////////////////////////////////////////////////////////////////////
+  //Voice Commands function
+  /////////////////////////////////////////////
+  public void startVoiceRecognition() {
+    final String language = QuranSettings.getInstance(this).isArabicNames() ? "ar-SA" : "en-US";
+    String choice = getText(R.string.vChoice).toString();
+    // Create an intent that can start the Speech Recognizer activity
+    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+          RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
+ //   intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toString());
+    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, choice);
+    // Start the activity, the intent will be populated with the speech text
+    startActivityForResult(intent, SPEECH_REQUEST_CODE);
+  }
+  // This callback is invoked when the Speech Recognizer returns.
+  // This is where you process the intent and extract the speech text from the intent.
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode,
+                                  Intent data) {
+    if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+      List<String> results = data.getStringArrayListExtra(
+          RecognizerIntent.EXTRA_RESULTS);
+      String spokenText = results.get(0);
+      // Do something with spokenText
+      voiceCom.findCommand(spokenText, QuranActivity.this);
+    }
+    super.onActivityResult(requestCode, resultCode, data);
+  }
+//////////////////////////////////////////////////////////////////////
+
+  public void jumpToLastPage() {
     compositeDisposable.add(recentPages
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(recentPage -> jumpTo(recentPage == Constants.NO_PAGE ? 1 : recentPage)));

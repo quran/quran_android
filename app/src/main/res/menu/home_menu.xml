@@ -35,6 +35,11 @@
     </menu>
   </item>
   <item
+      android:id="@+id/voice_command"
+      android:icon="@drawable/ic_microphone"
+      android:title="@string/menu_voice"
+      app:showAsAction="ifRoom" />
+  <item
       android:id="@+id/last_page"
       android:icon="@drawable/ic_goto_quran"
       android:title="@string/menu_jump_last_page"
