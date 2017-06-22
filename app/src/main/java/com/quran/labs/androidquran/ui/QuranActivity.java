@@ -22,12 +22,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-/////////////////////////////////////////////
-//voice commands imports
+
 import android.speech.RecognizerIntent;
 import java.util.List;
 import com.quran.labs.androidquran.util.VoiceCommandsUtil;
-////////////////////////////////////////////
+
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.AboutUsActivity;
@@ -71,11 +70,9 @@ public class QuranActivity extends QuranActionBarActivity
       R.string.quran_juz2,
       R.string.quran_sura };
 
-  ///////////////////////////////////////////////////
-  //Used for Voice Commands
   private static final int SPEECH_REQUEST_CODE = 0;
   private VoiceCommandsUtil voiceCom;
-  ///////////////////////////////////////////////////
+
 
   public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
   private static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
@@ -130,10 +127,9 @@ public class QuranActivity extends QuranActionBarActivity
         (SlidingTabLayout) findViewById(R.id.indicator);
     indicator.setViewPager(pager);
 
-    ///////////////////////////////////////////////////
-    //Used for Voice Commands
+
     voiceCom = new VoiceCommandsUtil(QuranActivity.this);
-    ///////////////////////////////////////////////////
+
 
     if (isRtl) {
       pager.setCurrentItem(TITLES.length - 1);
@@ -217,13 +213,11 @@ public class QuranActivity extends QuranActionBarActivity
         startActivity(i);
         return true;
       }
-      /////////////////////////////////////
-      //Used for Voice Commands
+
       case R.id.voice_command: {
         startVoiceRecognition();
         return true;
       }
-      ////////////////////////////////////
       case R.id.last_page: {
         jumpToLastPage();
         return true;
@@ -289,9 +283,6 @@ public class QuranActivity extends QuranActionBarActivity
     super.onSaveInstanceState(outState);
   }
 
-  ////////////////////////////////////////////////////////////////////////
-  //Voice Commands function
-  /////////////////////////////////////////////
   public void startVoiceRecognition() {
     final String language = QuranSettings.getInstance(this).isArabicNames() ? "ar-SA" : "en-US";
     String choice = getText(R.string.vChoice).toString();
@@ -300,7 +291,6 @@ public class QuranActivity extends QuranActionBarActivity
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
           RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
- //   intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toString());
     intent.putExtra(RecognizerIntent.EXTRA_PROMPT, choice);
     // Start the activity, the intent will be populated with the speech text
     startActivityForResult(intent, SPEECH_REQUEST_CODE);
@@ -319,7 +309,6 @@ public class QuranActivity extends QuranActionBarActivity
     }
     super.onActivityResult(requestCode, resultCode, data);
   }
-//////////////////////////////////////////////////////////////////////
 
   public void jumpToLastPage() {
     compositeDisposable.add(recentPages

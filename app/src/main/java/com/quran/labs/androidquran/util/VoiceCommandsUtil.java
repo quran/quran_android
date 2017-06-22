@@ -84,10 +84,8 @@ public  class VoiceCommandsUtil {
     //Command cannot be found
     else {
       CharSequence text = "";
-      if(language.equals("ar-SA"))
-        text = " لا يوجد الامر " + S + " الرجاء الاعادة ";
-      else
-        text = "The command " + S + " does not exist. Try again ";
+      String notFound = myContext.getText(R.string.commandNotFound).toString();
+      text = notFound + S;
       int duration = Toast.LENGTH_LONG;
       Toast toast = Toast.makeText(myContext.getApplicationContext(), text, duration);
       toast.show();
