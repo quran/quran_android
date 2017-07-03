@@ -5,9 +5,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,10 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-import android.speech.RecognizerIntent;
-import java.util.List;
-import com.quran.labs.androidquran.util.VoiceCommandsUtil;
+import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
@@ -49,8 +46,10 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.VoiceCommandsUtil;
 import com.quran.labs.androidquran.widgets.SlidingTabLayout;
 
+import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
@@ -72,7 +71,6 @@ public class QuranActivity extends QuranActionBarActivity
 
   private static final int SPEECH_REQUEST_CODE = 0;
   private VoiceCommandsUtil voiceCom;
-
 
   public static final String EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp";
   private static final String SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog";
@@ -127,9 +125,7 @@ public class QuranActivity extends QuranActionBarActivity
         (SlidingTabLayout) findViewById(R.id.indicator);
     indicator.setViewPager(pager);
 
-
     voiceCom = new VoiceCommandsUtil(QuranActivity.this);
-
 
     if (isRtl) {
       pager.setCurrentItem(TITLES.length - 1);
@@ -283,15 +279,19 @@ public class QuranActivity extends QuranActionBarActivity
     super.onSaveInstanceState(outState);
   }
 
+  //This function will start when the microphone button is clicked in the main screen
+  //It will open the dialogue box to record the voice command then compare it to available list
   public void startVoiceRecognition() {
-    final String language = QuranSettings.getInstance(this).isArabicNames() ? "ar-SA" : "en-US";
-    String choice = getText(R.string.vChoice).toString();
+    int voiceLanguage = settings.getPreferredVoiceLanguage();
+    final String language = voiceCom.findLanguageCode(voiceLanguage);
+    String choice = getText(R.string.voice_Dialogue_Title).toString();
     // Create an intent that can start the Speech Recognizer activity
     Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-          RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+          RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
     intent.putExtra(RecognizerIntent.EXTRA_PROMPT, choice);
+    intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 10);
     // Start the activity, the intent will be populated with the speech text
     startActivityForResult(intent, SPEECH_REQUEST_CODE);
   }
@@ -303,9 +303,14 @@ public class QuranActivity extends QuranActionBarActivity
     if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
       List<String> results = data.getStringArrayListExtra(
           RecognizerIntent.EXTRA_RESULTS);
-      String spokenText = results.get(0);
-      // Do something with spokenText
-      voiceCom.findCommand(spokenText, QuranActivity.this);
+      List<String> spokenText = results;
+      //Find the command and take action. If the function is false then show a message
+      if(!voiceCom.findCommand(results, QuranActivity.this)){
+        String notExecuted = this.getText(R.string.command_Not_Executed).toString();
+        int duration = Toast.LENGTH_LONG;
+        Toast toast = Toast.makeText(this.getApplicationContext(), notExecuted, duration);
+        toast.show();
+      }
     }
     super.onActivityResult(requestCode, resultCode, data);
   }

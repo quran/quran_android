@@ -137,6 +137,15 @@
         android:summary="@string/prefs_download_amount_summary"
         android:title="@string/prefs_download_amount_title"/>
 
+    <com.quran.labs.androidquran.ui.preference.QuranListPreference
+        android:defaultValue="1"
+        android:dialogTitle="@string/prefs_voice_language_title"
+        android:entries="@array/voice_language_preference"
+        android:entryValues="@array/voice_language_preference_values"
+        android:key="@string/prefs_voice_language"
+        android:summary="@string/prefs_voice_language_summary"
+        android:title="@string/prefs_voice_language_title"/>
+
     <com.quran.labs.androidquran.ui.preference.QuranPreference
         android:key="@string/prefs_audio_manager_key"
         android:title="@string/prefs_audio_manager"

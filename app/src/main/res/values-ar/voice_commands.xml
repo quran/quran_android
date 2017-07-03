@@ -1,12 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="vChoice">اذكر الامر المطلوب</string>
-  <string-array name="voiceCommandsList">
-    <item>الاعدادات</item>
-    <item>الصفحه الاخيره</item>
-    <item>مساعده</item>
-    <item>عنا</item>
-    <item>الذهاب الى البقره</item>
-    <item>الذهاب الى الناس</item>
-  </string-array>
+  <string name="voice_Dialogue_Title">اذكر الامر المطلوب</string>
 </resources>

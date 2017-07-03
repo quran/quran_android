@@ -366,6 +366,11 @@
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
 
   <!-- voice Commands strings -->
-  <string name="commandNotFound">Try Again. The following command does not exist = </string>
+  <string name="command_Not_Found">Try Again. The following command does not exist = </string>
+  <string name="command_Not_Executed">The command could not be executed</string>
   <string name="menu_voice">Voice Commands</string>
+  <string name="prefs_voice_language_title">Voice Commands Language</string>
+  <string name="prefs_voice_language_summary">Preferred language for voice commands</string>
+  <string name="voice_english">English</string>
+  <string name="voice_arabic">Arabic</string>
 </resources>
