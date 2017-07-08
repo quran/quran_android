@@ -768,7 +768,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     Bundle extras = intent.getExtras();
     if (extras != null) {
       int page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
-      updateActionBarTitle(PAGES_LAST - page);
 
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
@@ -778,8 +777,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (showingTranslation != currentValue) {
         if (showingTranslation) {
           pagerAdapter.setTranslationMode();
+          updateActionBarSpinner();
         } else {
           pagerAdapter.setQuranMode();
+          updateActionBarTitle(PAGES_LAST - page);
         }
 
         supportInvalidateOptionsMenu();
