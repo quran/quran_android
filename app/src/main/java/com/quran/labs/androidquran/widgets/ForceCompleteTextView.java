@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
 import android.widget.AdapterView;
@@ -12,26 +13,31 @@ import android.widget.AdapterView;
 public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
   /* Thanks to those in http://stackoverflow.com/q/15544943/1197317 for inspiration */
 
+  private @Nullable OnForceCompleteListener onForceCompleteListener;
+
   public ForceCompleteTextView(Context context) {
     super(context);
+    init();
   }
 
   public ForceCompleteTextView(Context context, AttributeSet attrs) {
     super(context, attrs);
+    init();
   }
 
   public ForceCompleteTextView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
+    init();
   }
 
-  @Override
-  protected void onAttachedToWindow() {
-    super.onAttachedToWindow();
+  private void init() {
+    super.setOnItemClickListener((parent, view, position, id) -> onForceComplete(position, id));
+  }
 
-    // TODO create relevant listener name, such as onSelectChoice
-    AdapterView.OnItemClickListener listener = getOnItemClickListener();
-    if (listener != null)
-      listener.onItemClick(null, null, -1, -1);
+  protected void onForceComplete(int position, long rowId) {
+    if (onForceCompleteListener != null) {
+      onForceCompleteListener.onForceComplete(this, position, rowId);
+    }
   }
 
   @Override
@@ -46,23 +52,39 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     if (focused) {
       performFiltering(getText(), 0);
     } else {
-      // TODO create relevant listener name, such as onSelectChoice
-      AdapterView.OnItemClickListener listener = getOnItemClickListener();
-      if (listener != null)
-        listener.onItemClick(null, null, -1, -1);
+      onForceComplete(AdapterView.INVALID_POSITION, AdapterView.INVALID_ROW_ID);
     }
   }
 
   /**
-   * Sets the listener that will be notified when the user clicks an item in the drop down list,
-   * user leaves without clicking, or when this view is attached to window. The two latter cases you
-   * use to force the completion, the listener will be called with position argument set to -1 and
-   * view argument set to null.
+   * Sets the listener that will be called to do force completion ({@link #onForceComplete(int,
+   * long)}).
+   */
+  public void setOnForceCompleteListener(@Nullable OnForceCompleteListener l) {
+    this.onForceCompleteListener = l;
+    post(() -> {
+      if (!isFocused()) {
+        onForceComplete(AdapterView.INVALID_POSITION, AdapterView.INVALID_ROW_ID);
+      }
+    });
+  }
+
+  /**
+   * Do not call this method, use {@link #setOnForceCompleteListener(OnForceCompleteListener)}
+   * instead.
    *
-   * @param l the item click listener
+   * @throws UnsupportedOperationException if called
    */
   @Override
   public void setOnItemClickListener(AdapterView.OnItemClickListener l) {
-    super.setOnItemClickListener(l);
+    throw new UnsupportedOperationException("Call setOnForceCompleteListener instead");
+  }
+
+  public interface OnForceCompleteListener {
+    /**
+     * @param position position the user selects or a negative value if nothing is selected
+     * @param rowId    corresponding item's ID of the position
+     */
+    void onForceComplete(ForceCompleteTextView view, int position, long rowId);
   }
 }
