@@ -29,6 +29,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   private QuranAyahInfo selectedAyah;
   private OnClickListener onClickListener;
   private OnTranslationActionListener onTranslationActionListener;
+  private LinearLayoutManager mLayoutManager;
 
   public TranslationView(Context context) {
     this(context, null);
@@ -41,7 +42,8 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   public TranslationView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     RecyclerView translationRecycler = new RecyclerView(context);
-    translationRecycler.setLayoutManager(new LinearLayoutManager(context));
+    mLayoutManager = new LinearLayoutManager(context);
+    translationRecycler.setLayoutManager(mLayoutManager);
     translationRecycler.setItemAnimator(new DefaultItemAnimator());
     translationAdapter = new TranslationAdapter(context, translationRecycler, this, this);
     translationRecycler.setAdapter(translationAdapter);
@@ -185,5 +187,13 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   public void onVerseSelected(QuranAyahInfo ayahInfo) {
     selectedAyah = ayahInfo;
     updateAyahToolBarPosition();
+  }
+
+  public int findFirstCompletelyVisibleItemPosition() {
+    return mLayoutManager.findFirstCompletelyVisibleItemPosition();
+  }
+
+  public void setScrollPosition(int position) {
+    mLayoutManager.scrollToPosition(position);
   }
 }
