@@ -63,7 +63,6 @@ public class TabletFragment extends Fragment
   private static final String SI_RIGHT_TRANSLATION_SCROLL_POSITION
       = "SI_RIGHT_TRANSLATION_SCROLL_POSITION";
 
-
   public static class Mode {
     public static final int ARABIC = 1;
     public static final int TRANSLATION = 2;
