@@ -53,6 +53,7 @@ public class TranslationPresenter extends
             if (translationScreen != null && result.ayahInformation.size() > 0) {
               translationScreen.setVerses(
                   getPage(result.ayahInformation), result.translations, result.ayahInformation);
+              translationScreen.updateScrollPosition();
             }
           }
 
@@ -102,5 +103,6 @@ public class TranslationPresenter extends
 
   public interface TranslationScreen {
     void setVerses(int page, @NonNull String[] translations, @NonNull List<QuranAyahInfo> verses);
+    void updateScrollPosition();
   }
 }
