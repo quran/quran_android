@@ -35,9 +35,12 @@ public class TranslationFragment extends Fragment implements
 
   private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
   private static final String SI_HIGHLIGHTED_AYAH = "SI_HIGHLIGHTED_AYAH";
+  private static final String SI_SCROLL_POSITION = "SI_SCROLL_POSITION";
 
   private int pageNumber;
   private int highlightedAyah;
+  private int scrollPosition;
+
   private TranslationView translationView;
   private QuranTranslationPageLayout mainView;
   private AyahTrackerItem[] ayahTrackerItems;
@@ -67,6 +70,7 @@ public class TranslationFragment extends Fragment implements
           this.highlightedAyah = highlightedAyah;
         }
       }
+      scrollPosition = savedInstanceState.getInt(SI_SCROLL_POSITION);
     }
     setHasOptionsMenu(true);
   }
@@ -134,6 +138,22 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ayahTrackerPresenter.bind(this);
+    presenter.bind(this);
+    updateView();
+  }
+
+  @Override
+  public void onPause() {
+    scrollPosition = translationView.findFirstCompletelyVisibleItemPosition();
+    ayahTrackerPresenter.unbind(this);
+    presenter.unbind(this);
+    super.onPause();
+  }
+
+  @Override
   public void setVerses(int page,
                         @NonNull String[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
@@ -144,18 +164,8 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
-    ayahTrackerPresenter.bind(this);
-    presenter.bind(this);
-    updateView();
-  }
-
-  @Override
-  public void onPause() {
-    ayahTrackerPresenter.unbind(this);
-    presenter.unbind(this);
-    super.onPause();
+  public void updateScrollPosition() {
+    translationView.setScrollPosition(scrollPosition);
   }
 
   public void refresh() {
@@ -167,6 +177,7 @@ public class TranslationFragment extends Fragment implements
     if (highlightedAyah > 0) {
       outState.putInt(SI_HIGHLIGHTED_AYAH, highlightedAyah);
     }
+    outState.putInt(SI_SCROLL_POSITION, translationView.findFirstCompletelyVisibleItemPosition());
     super.onSaveInstanceState(outState);
   }
 }

@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -57,6 +58,11 @@ public class TabletFragment extends Fragment
     OnTranslationActionListener {
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
+  private static final String SI_LEFT_TRANSLATION_SCROLL_POSITION
+      = "SI_LEFT_TRANSLATION_SCROLL_POSITION";
+  private static final String SI_RIGHT_TRANSLATION_SCROLL_POSITION
+      = "SI_RIGHT_TRANSLATION_SCROLL_POSITION";
+
 
   public static class Mode {
     public static final int ARABIC = 1;
@@ -65,7 +71,10 @@ public class TabletFragment extends Fragment
 
   private int mode;
   private int pageNumber;
+  private int leftTranslationScrollPosition;
+  private int rightTranslationScrollPositon;
   private boolean ayahCoordinatesError;
+
   private TabletView mainView;
   private TranslationView leftTranslation;
   private TranslationView rightTranslation;
@@ -87,6 +96,16 @@ public class TabletFragment extends Fragment
     args.putInt(MODE_EXTRA, mode);
     f.setArguments(args);
     return f;
+  }
+
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (savedInstanceState != null) {
+      leftTranslationScrollPosition = savedInstanceState.getInt(SI_LEFT_TRANSLATION_SCROLL_POSITION);
+      rightTranslationScrollPositon = savedInstanceState.getInt(
+          SI_RIGHT_TRANSLATION_SCROLL_POSITION);
+    }
   }
 
   @Override
@@ -129,6 +148,15 @@ public class TabletFragment extends Fragment
   }
 
   @Override
+  public void onPause() {
+    if (mode == Mode.TRANSLATION) {
+      leftTranslationScrollPosition = leftTranslation.findFirstCompletelyVisibleItemPosition();
+      rightTranslationScrollPositon = rightTranslation.findFirstCompletelyVisibleItemPosition();
+    }
+    super.onPause();
+  }
+
+  @Override
   public void onStop() {
     ayahTrackerPresenter.unbind(this);
     if (mode == Mode.ARABIC) {
@@ -147,6 +175,17 @@ public class TabletFragment extends Fragment
       rightTranslation.refresh(quranSettings);
       leftTranslation.refresh(quranSettings);
     }
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    if (mode == Mode.TRANSLATION) {
+      outState.putInt(SI_LEFT_TRANSLATION_SCROLL_POSITION,
+          leftTranslation.findFirstCompletelyVisibleItemPosition());
+      outState.putInt(SI_RIGHT_TRANSLATION_SCROLL_POSITION,
+          rightTranslation.findFirstCompletelyVisibleItemPosition());
+    }
+    super.onSaveInstanceState(outState);
   }
 
   @Override
@@ -250,6 +289,12 @@ public class TabletFragment extends Fragment
     } else if (page == pageNumber - 1) {
       rightTranslation.setVerses(translations, verses);
     }
+  }
+
+  @Override
+  public void updateScrollPosition() {
+    leftTranslation.setScrollPosition(leftTranslationScrollPosition);
+    rightTranslation.setScrollPosition(rightTranslationScrollPositon);
   }
 
   public void refresh() {
