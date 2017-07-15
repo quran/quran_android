@@ -145,11 +145,11 @@
   <!-- This array contains all the ARABIC commands that can be used in the app -->
   <string-array name="voice_Commands_List_AR">
     <item>الاعدادات</item>
-    <item>الصفحه</item>
+    <item>صفح</item>
     <item>مساعده</item>
     <item>عنا</item>
-    <item>اذهب</item>
-    <item>اللغه</item>
+    <item>ذهب</item>
+    <item>لغه</item>
   </string-array>
   <!-- This array contains all the ARABIC suras that can be used in the app -->
   <string-array name="sura_List_AR">

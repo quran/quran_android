@@ -209,7 +209,6 @@ public class QuranActivity extends QuranActionBarActivity
         startActivity(i);
         return true;
       }
-
       case R.id.voice_command: {
         startVoiceRecognition();
         return true;
@@ -303,10 +302,9 @@ public class QuranActivity extends QuranActionBarActivity
     if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
       List<String> results = data.getStringArrayListExtra(
           RecognizerIntent.EXTRA_RESULTS);
-      List<String> spokenText = results;
       //Find the command and take action. If the function is false then show a message
       if(!voiceCom.findCommand(results, QuranActivity.this)){
-        String notExecuted = this.getText(R.string.command_Not_Executed).toString();
+        String notExecuted = this.getText(R.string.command_Not_Executed).toString()+ ": " + results.get(0);
         int duration = Toast.LENGTH_LONG;
         Toast toast = Toast.makeText(this.getApplicationContext(), notExecuted, duration);
         toast.show();

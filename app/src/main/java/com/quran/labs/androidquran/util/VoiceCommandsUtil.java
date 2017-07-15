@@ -86,13 +86,35 @@ public  class VoiceCommandsUtil {
     String[] separatedText = spokenText[0].split(" ");
     //Function to find an exact command from the array list of commands
     while (n != commandsList.length){
-      if(separatedText[0].compareTo(commandsList[n]) == 0) {
+      //For arabic language: This function tries to find the root word to give
+      //the user more flexibility in giving commands
+      if (languageCode.substring(0,2).compareTo("ar")== 0){
+        int j = 0;
+        int x = 0;
+        boolean root = false;
+        while (j != separatedText[0].length()) {
+          if (separatedText[0].substring(j, j+1)
+              .compareTo(commandsList[n].substring(x, x+1)) == 0) {
+            x++;
+            if (x == commandsList[n].length()){
+              root = true;
+              break;
+            }
+          }
+          j++;
+        }
+        if (root){
+          check = true;
+          break;
+        }
+      } else if(separatedText[0].compareTo(commandsList[n]) == 0) {
+        check = true;
         break;
       }
       n++;
     }
     //This jumps to the selected page
-    if(n == 1){
+/*    if(n == 1){
       separatedText = spokenText[0].split(" ");
       try {
         int myNum = Integer.parseInt(separatedText[separatedText.length - 1]);
@@ -100,9 +122,9 @@ public  class VoiceCommandsUtil {
         check = true;
       } catch(NumberFormatException nfe) {
       }
-    }
+    }*/
     //This searches for the required Surah
-    if(n == 4){
+/*    if(n == 4){
       int m = 0;
       int j = 0;
       while (j != spokenText.length) {
@@ -140,9 +162,9 @@ public  class VoiceCommandsUtil {
       }
       if (m == suratList.length && j == spokenText.length)
         check = false;
-    }
+    }*/
     //This searches for the required language
-    if(n == 5){
+/*    if(n == 5){
       int m = 0;
       while (m != languageList.length){
         if(separatedText[1].compareTo(languageList[m]) == 0) {
@@ -154,7 +176,7 @@ public  class VoiceCommandsUtil {
       }
       if (m == languageList.length)
         check = false;
-    }
+    }*/
     //Do something with the command. This can be expanded to add additional features to voice commands
     //by adding the commands to voice_commands.xml
     //The order of the cases is as per the order the of array in the voice_commands.xml file
@@ -169,6 +191,12 @@ public  class VoiceCommandsUtil {
           return true;
         //Command "Page number..." -> Jump to selected page
         case 1:
+          try {
+            int myNum = Integer.parseInt(separatedText[separatedText.length - 1]);
+            page = myNum;
+          } catch(NumberFormatException nfe) {
+            return false;
+          }
           quranActivity.jumpTo(page);
           return true;
         //Command "help" -> Open help page
@@ -183,6 +211,44 @@ public  class VoiceCommandsUtil {
           return true;
         //Command "go to surah..." -> Open first page of required Sura
         case 4:
+          int m = 0;
+          int j = 0;
+          boolean sura_check = false;
+          while (j != spokenText.length) {
+            separatedText = spokenText[j].split(" ");
+            while (m != suratList.length){
+              if (separatedText[separatedText.length - 1].compareTo(suratList[m]) == 0) {
+                sura_check = true;
+                sura = m + 1;
+                //Special cases for english language due to similar last word sura names
+                //First case is for "Those who set the Ranks" and "The Ranks"
+                //Second case is for "The Enshrouded One" and "The Cloaked One"
+                if (language == 1){
+                  if (m == 36){
+                    if ((separatedText[separatedText.length - 3]).compareTo("set") == 0){
+                      sura = 37;
+                    } else {
+                      sura = 61;
+                    }
+                  } else if (m == 72){
+                    if ((separatedText[separatedText.length - 3]).compareTo("cloaked") == 0){
+                      sura = 74;
+                    } else {
+                      sura = 73;
+                    }
+                  }
+                }
+                break;
+              }
+              m++;
+            }
+            m = 0;
+            j++;
+            if(sura_check)
+              break;
+          }
+          if (!sura_check)
+            return false;
           page = QuranInfo.getPageFromSuraAyah(sura, ayah);
           i = new Intent(myContext, PagerActivity.class);
           i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura);
@@ -192,6 +258,17 @@ public  class VoiceCommandsUtil {
           return true;
         //Command "language..." -> changes voice commands language in settings to required language
         case 5:
+          int z = 0;
+          while (z != languageList.length){
+            if(separatedText[1].compareTo(languageList[z]) == 0) {
+              check = true;
+              language = z+1;
+              break;
+            }
+            z++;
+          }
+          if (z == languageList.length)
+            return false;
           return mQuranSettings.setPreferredVoiceLanguage(language);
         default:
           return false;
