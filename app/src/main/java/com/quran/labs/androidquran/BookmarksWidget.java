@@ -16,8 +16,8 @@ public class BookmarksWidget extends AppWidgetProvider {
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-    final int N = appWidgetIds.length;
-    for (int i = 0; i < N; ++i) {
+    final int numWidgets = appWidgetIds.length;
+    for (int i = 0; i < numWidgets; ++i) {
       Intent serviceIntent = new Intent(context, WidgetService.class);
       serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
       serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -25,22 +25,22 @@ public class BookmarksWidget extends AppWidgetProvider {
           R.layout.bookmarks_widget);
       Intent intent = new Intent(context, QuranDataActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-      widget.setOnClickPendingIntent(R.id.WidgetIconButton, pendingIntent);
+      widget.setOnClickPendingIntent(R.id.widget_icon_button, pendingIntent);
       intent = new Intent(context, SearchActivity.class);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-      widget.setOnClickPendingIntent(R.id.WidgetBtnSearch, pendingIntent);
+      widget.setOnClickPendingIntent(R.id.widget_btn_search, pendingIntent);
       intent = new Intent(context, PagerActivity.class);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-      widget.setOnClickPendingIntent(R.id.WidgetBtnGoToQuran, pendingIntent);
-      widget.setRemoteAdapter(appWidgetIds[i], R.id.listViewWidget,
+      widget.setOnClickPendingIntent(R.id.widget_btn_go_to_quran, pendingIntent);
+      widget.setRemoteAdapter(appWidgetIds[i], R.id.list_view_widget,
           serviceIntent);
       Intent clickIntent = new Intent(context, PagerActivity.class);
-      PendingIntent clickPI = PendingIntent
+      PendingIntent clickPendingIntent = PendingIntent
           .getActivity(context, 0,
               clickIntent,
               PendingIntent.FLAG_UPDATE_CURRENT);
-      widget.setPendingIntentTemplate(R.id.listViewWidget, clickPI);
-      widget.setEmptyView(R.id.listViewWidget, R.id.empty_view);
+      widget.setPendingIntentTemplate(R.id.list_view_widget, clickPendingIntent);
+      widget.setEmptyView(R.id.list_view_widget, R.id.empty_view);
       appWidgetManager.updateAppWidget(appWidgetIds[i], widget);
 
 
@@ -58,8 +58,7 @@ public class BookmarksWidget extends AppWidgetProvider {
   public static void updateWidget(Context context) {
     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
     int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, BookmarksWidget.class));
-    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
-
+    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_widget);
   }
 }
 

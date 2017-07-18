@@ -10,7 +10,7 @@
     android:orientation="horizontal">
 
   <ImageView
-      android:id="@+id/WidgetFavIcon"
+      android:id="@+id/widget_favorite_icon"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
@@ -24,7 +24,7 @@
       android:orientation="vertical">
 
     <TextView
-        android:id="@+id/Suratitle"
+        android:id="@+id/sura_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -32,7 +32,7 @@
         tools:text="" />
 
     <TextView
-        android:id="@+id/Surametadata"
+        android:id="@+id/sura_meta_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/sura_details_color"

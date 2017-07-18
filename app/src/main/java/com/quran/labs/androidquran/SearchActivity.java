@@ -7,13 +7,16 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -52,7 +55,8 @@ public class SearchActivity extends QuranActionBarActivity
   private String query;
   private ResultAdapter adapter;
   private DefaultDownloadReceiver downloadReceiver;
-  
+  private EditText searchEditText;
+
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
 
@@ -62,6 +66,23 @@ public class SearchActivity extends QuranActionBarActivity
     ((QuranApplication) getApplication())
         .getApplicationComponent().inject(this);
     setContentView(R.layout.search);
+    searchEditText = findViewById(R.id.searchEditText);
+    searchEditText.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      }
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (count > 2) {
+          showResults(s.toString());
+        }
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {
+      }
+    });
     messageView = findViewById(R.id.search_area);
     warningView = findViewById(R.id.search_warning);
     buttonGetTranslations = findViewById(R.id.btnGetTranslations);

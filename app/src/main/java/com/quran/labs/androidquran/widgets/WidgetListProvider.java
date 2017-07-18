@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
-  private ArrayList<ItemList> listItemList = new ArrayList();
+  private ArrayList<SuraPageItem> suraPageItemList = new ArrayList();
   private Context context = null;
   private int appWidgetId;
 
@@ -28,16 +28,17 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
   }
 
   public void populateListItem() {
+    int dateAdded = 0;
     Context appContext = context.getApplicationContext();
-    BookmarksDBAdapter a = new BookmarksDBAdapter(appContext);
-    List<Bookmark> bookmarksList = a.getBookmarks(0);// 0 = date added
-    listItemList = new ArrayList();
+    BookmarksDBAdapter mBookmarksDBAdapter = new BookmarksDBAdapter(appContext);
+    List<Bookmark> bookmarksList = mBookmarksDBAdapter.getBookmarks(dateAdded);// 0 = date added
+    suraPageItemList = new ArrayList();
     for (int i = 0; i < bookmarksList.size(); i++) {
       Bookmark bm = bookmarksList.get(i);
-      ItemList item = new ItemList();
+      SuraPageItem item = new SuraPageItem();
       item.sura = QuranInfo.getSuraNameFromPage(appContext, bm.page);
       item.page = bm.page;
-      listItemList.add(item);
+      suraPageItemList.add(item);
     }
 
 
@@ -59,7 +60,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
   @Override
   public int getCount() {
-    return listItemList.size();
+    return suraPageItemList.size();
   }
 
   @Override
@@ -81,10 +82,10 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
   public RemoteViews getViewAt(int position) {
     final RemoteViews remoteView = new RemoteViews(
         context.getPackageName(), R.layout.bookmarks_widget_list_row);
-    ItemList item = listItemList.get(position);
-    remoteView.setTextViewText(R.id.Suratitle, item.sura + "");
-    remoteView.setTextViewText(R.id.Surametadata, context.getResources().getText(R.string.quran_page) + " " + item.page);
-    remoteView.setImageViewResource(R.id.WidgetFavIcon, R.drawable.ic_favorite);
+    SuraPageItem item = suraPageItemList.get(position);
+    remoteView.setTextViewText(R.id.sura_title, item.sura + "");
+    remoteView.setTextViewText(R.id.sura_meta_data, context.getResources().getText(R.string.quran_page) + " " + item.page);
+    remoteView.setImageViewResource(R.id.widget_favorite_icon, R.drawable.ic_favorite);
     Bundle extras = new Bundle();
     extras.putInt("page", item.page);
     Intent fillInIntent = new Intent();
@@ -103,17 +104,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
     return 1;
   }
 
-
-  static class BookmarksTable {
-    static final String TABLE_NAME = "bookmarks";
-    static final String ID = "_ID";
-    static final String SURA = "sura";
-    static final String AYAH = "ayah";
-    static final String PAGE = "page";
-    static final String ADDED_DATE = "added_date";
-  }
-
-  static class ItemList {
+  static class SuraPageItem {
     public String sura;
     public int page;
   }
