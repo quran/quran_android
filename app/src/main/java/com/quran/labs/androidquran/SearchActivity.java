@@ -67,16 +67,20 @@ public class SearchActivity extends QuranActionBarActivity
     searchEditText = (EditText) findViewById(R.id.searchEditText);
     searchEditText.addTextChangedListener(new TextWatcher() {
       @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      }
+
       @Override
       public void onTextChanged(CharSequence s, int start, int before, int count) {
-      if(count>2 )
-        showResults(s.toString());
+        if (count > 2) {
+          showResults(s.toString());
+        }
       }
-      @Override
-      public void afterTextChanged(Editable s) {}
-    });
 
+      @Override
+      public void afterTextChanged(Editable s) {
+      }
+    });
     messageView = (TextView) findViewById(R.id.search_area);
     warningView = (TextView) findViewById(R.id.search_warning);
     buttonGetTranslations = (Button) findViewById(R.id.btnGetTranslations);
@@ -117,7 +121,6 @@ public class SearchActivity extends QuranActionBarActivity
               QuranDownloadNotifier.ProgressIntent.INTENT_NAME));
     }
     downloadReceiver.setListener(this);
-
     String url = QuranFileUtils.getArabicSearchDatabaseUrl();
     String notificationTitle = getString(R.string.search_data);
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
@@ -162,7 +165,6 @@ public class SearchActivity extends QuranActionBarActivity
     if (showArabicWarning) {
       isArabicSearch = false;
     }
-
     if (cursor == null) {
       String active = QuranSettings.getInstance(getApplicationContext()).getActiveTranslation();
       if (TextUtils.isEmpty(active)) {
@@ -186,7 +188,7 @@ public class SearchActivity extends QuranActionBarActivity
           buttonGetTranslations.setVisibility(View.VISIBLE);
         }
         messageView.setText(getString(R.string.no_results,
-            new Object[]{ query }));
+            new Object[]{query}));
       }
     } else {
       if (showArabicWarning) {
@@ -197,13 +199,11 @@ public class SearchActivity extends QuranActionBarActivity
         buttonGetTranslations.setVisibility(View.VISIBLE);
         downloadArabicSearchDb = true;
       }
-
       // Display the number of results
       int count = cursor.getCount();
       String countString = getResources().getQuantityString(
           R.plurals.search_results, count, query, count);
       messageView.setText(countString);
-
       ListView listView = (ListView) findViewById(R.id.results_list);
       if (adapter == null) {
         adapter = new ResultAdapter(this, cursor);
@@ -211,7 +211,7 @@ public class SearchActivity extends QuranActionBarActivity
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
           @Override
           public void onItemClick(AdapterView<?> parent, View view,
-              int position, long id) {
+                                  int position, long id) {
             ListView p = (ListView) parent;
             final Cursor currentCursor = (Cursor) p.getAdapter().getItem(position);
             jumpToResult(currentCursor.getInt(1), currentCursor.getInt(2));
@@ -253,11 +253,9 @@ public class SearchActivity extends QuranActionBarActivity
           }
         }
       }
-
       if (QuranUtils.doesStringContainArabic(query)) {
         isArabicSearch = true;
       }
-
       if (isArabicSearch) {
         // if we come from muyassar and don't have arabic db, we set
         // arabic search to false so we jump to the translation.
@@ -265,7 +263,6 @@ public class SearchActivity extends QuranActionBarActivity
           isArabicSearch = false;
         }
       }
-
       Integer id = null;
       try {
         id = intentData.getLastPathSegment() != null ?
@@ -273,7 +270,6 @@ public class SearchActivity extends QuranActionBarActivity
       } catch (NumberFormatException e) {
         // no op
       }
-
       if (id != null) {
         int sura = 1;
         int total = id;
@@ -287,12 +283,10 @@ public class SearchActivity extends QuranActionBarActivity
             break;
           }
         }
-
-        if (total == 0){
+        if (total == 0) {
           sura--;
           total = QuranInfo.getNumAyahs(sura);
         }
-
         jumpToResult(sura, total);
         finish();
       }

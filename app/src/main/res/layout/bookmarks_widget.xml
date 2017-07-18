@@ -10,13 +10,12 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="2dp"
-
       android:layout_marginTop="2dp"
       android:background="@drawable/quran_row_background"
       android:orientation="horizontal">
 
     <ImageButton
-        android:id="@+id/WidgetIconButton"
+        android:id="@+id/widget_icon_button"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -24,7 +23,7 @@
         android:src="@drawable/icon" />
 
     <ImageButton
-        android:id="@+id/WidgetBtnSearch"
+        android:id="@+id/widget_btn_search"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -32,7 +31,7 @@
         android:src="@drawable/ic_ab_search" />
 
     <ImageButton
-        android:id="@+id/WidgetBtnGoToQuran"
+        android:id="@+id/widget_btn_go_to_quran"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -47,7 +46,7 @@
       android:background="@color/ayah_bookmark_color" />
 
   <ListView
-      android:id="@+id/listViewWidget"
+      android:id="@+id/list_view_widget"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@color/transparent_actionbar_color" />
