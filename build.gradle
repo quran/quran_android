@@ -5,9 +5,9 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.0'
-    classpath 'io.fabric.tools:gradle:1.22.1'
-    classpath 'me.tatarka:gradle-retrolambda:3.4.0'
+    classpath 'com.android.tools.build:gradle:2.3.3'
+    classpath 'io.fabric.tools:gradle:1.23.0'
+    classpath 'me.tatarka:gradle-retrolambda:3.5.0'
     classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
   }
 
@@ -19,5 +19,6 @@ allprojects {
   repositories {
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://maven.google.com" }
   }
 }
