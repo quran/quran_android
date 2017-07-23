@@ -147,7 +147,6 @@ public class TranslationFragment extends Fragment implements
 
   @Override
   public void onPause() {
-    scrollPosition = translationView.findFirstCompletelyVisibleItemPosition();
     ayahTrackerPresenter.unbind(this);
     presenter.unbind(this);
     super.onPause();
@@ -177,7 +176,8 @@ public class TranslationFragment extends Fragment implements
     if (highlightedAyah > 0) {
       outState.putInt(SI_HIGHLIGHTED_AYAH, highlightedAyah);
     }
-    outState.putInt(SI_SCROLL_POSITION, translationView.findFirstCompletelyVisibleItemPosition());
+    scrollPosition = translationView.findFirstCompletelyVisibleItemPosition();
+    outState.putInt(SI_SCROLL_POSITION, scrollPosition);
     super.onSaveInstanceState(outState);
   }
 }
