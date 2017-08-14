@@ -58,8 +58,6 @@ public class TabletFragment extends Fragment
     OnTranslationActionListener {
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
-  private static final String SI_LEFT_TRANSLATION_SCROLL_POSITION
-      = "SI_LEFT_TRANSLATION_SCROLL_POSITION";
   private static final String SI_RIGHT_TRANSLATION_SCROLL_POSITION
       = "SI_RIGHT_TRANSLATION_SCROLL_POSITION";
 
@@ -70,8 +68,7 @@ public class TabletFragment extends Fragment
 
   private int mode;
   private int pageNumber;
-  private int leftTranslationScrollPosition;
-  private int rightTranslationScrollPositon;
+  private int rightPageTranslationScrollPositon;
   private boolean ayahCoordinatesError;
 
   private TabletView mainView;
@@ -101,8 +98,7 @@ public class TabletFragment extends Fragment
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (savedInstanceState != null) {
-      leftTranslationScrollPosition = savedInstanceState.getInt(SI_LEFT_TRANSLATION_SCROLL_POSITION);
-      rightTranslationScrollPositon = savedInstanceState.getInt(
+      rightPageTranslationScrollPositon = savedInstanceState.getInt(
           SI_RIGHT_TRANSLATION_SCROLL_POSITION);
     }
   }
@@ -149,8 +145,7 @@ public class TabletFragment extends Fragment
   @Override
   public void onPause() {
     if (mode == Mode.TRANSLATION) {
-      leftTranslationScrollPosition = leftTranslation.findFirstCompletelyVisibleItemPosition();
-      rightTranslationScrollPositon = rightTranslation.findFirstCompletelyVisibleItemPosition();
+      rightPageTranslationScrollPositon = rightTranslation.findFirstCompletelyVisibleItemPosition();
     }
     super.onPause();
   }
@@ -179,8 +174,6 @@ public class TabletFragment extends Fragment
   @Override
   public void onSaveInstanceState(Bundle outState) {
     if (mode == Mode.TRANSLATION) {
-      outState.putInt(SI_LEFT_TRANSLATION_SCROLL_POSITION,
-          leftTranslation.findFirstCompletelyVisibleItemPosition());
       outState.putInt(SI_RIGHT_TRANSLATION_SCROLL_POSITION,
           rightTranslation.findFirstCompletelyVisibleItemPosition());
     }
@@ -292,8 +285,7 @@ public class TabletFragment extends Fragment
 
   @Override
   public void updateScrollPosition() {
-    leftTranslation.setScrollPosition(leftTranslationScrollPosition);
-    rightTranslation.setScrollPosition(rightTranslationScrollPositon);
+    rightTranslation.setScrollPosition(rightPageTranslationScrollPositon);
   }
 
   public void refresh() {
