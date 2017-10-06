@@ -119,6 +119,7 @@ public class QuranDataActivity extends Activity implements
         //show permission rationale dialog
         permissionsDialog = new AlertDialog.Builder(this)
             .setMessage(R.string.storage_permission_rationale)
+            .setCancelable(false)
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {
               dialog.dismiss();
               permissionsDialog = null;
