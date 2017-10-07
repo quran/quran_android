@@ -41,7 +41,7 @@ public class QuranImportPresenterTest {
   public void testParseExternalFile() throws FileNotFoundException {
     InputStream is = new ByteArrayInputStream(new byte[32]);
     ContentResolver resolver = mock(ContentResolver.class);
-    when(resolver.openInputStream(any(Uri.class))).thenReturn(is);
+    when(resolver.openInputStream(any())).thenReturn(is);
     when(appContext.getContentResolver()).thenReturn(resolver);
 
     TestObserver<BufferedSource> observer = new TestObserver<>();
@@ -93,7 +93,7 @@ public class QuranImportPresenterTest {
     when(pfd.getFd()).thenReturn(-1);
 
     ContentResolver resolver = mock(ContentResolver.class);
-    when(resolver.openFileDescriptor(any(Uri.class), anyString())).thenReturn(pfd);
+    when(resolver.openFileDescriptor(any(), anyString())).thenReturn(pfd);
     when(appContext.getContentResolver()).thenReturn(resolver);
 
     TestObserver<BufferedSource> observer = new TestObserver<>();
