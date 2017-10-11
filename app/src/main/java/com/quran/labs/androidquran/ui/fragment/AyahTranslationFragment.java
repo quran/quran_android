@@ -106,7 +106,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     final Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
       PagerActivity pagerActivity = (PagerActivity) activity;
-      if (translations == null) {
+      if (translations == null || translations.size() == 0) {
         translations = pagerActivity.getTranslations();
       }
 
