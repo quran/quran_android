@@ -20,16 +20,13 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Maybe;
-import io.reactivex.MaybeSource;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
 import okio.BufferedSource;
@@ -176,43 +173,33 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
 
   private Maybe<BookmarkData> getBookmarkDataObservable(Maybe<BufferedSource> source) {
     return source
-        .flatMap(new Function<BufferedSource, MaybeSource<BookmarkData>>() {
-          @Override
-          public MaybeSource<BookmarkData> apply(BufferedSource bufferedSource) throws Exception {
-            return mBookmarkImportExportModel.readBookmarks(bufferedSource).toMaybe();
-          }
-        })
+        .flatMap(
+            bufferedSource -> mBookmarkImportExportModel.readBookmarks(bufferedSource).toMaybe())
         .subscribeOn(Schedulers.io());
   }
 
   @NonNull
-  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+  @VisibleForTesting
   Maybe<BufferedSource> parseUri(final Uri uri) {
-    return Maybe.defer(new Callable<MaybeSource<BufferedSource>>() {
-      @Override
-      public MaybeSource<BufferedSource> call() throws Exception {
-        ParcelFileDescriptor pfd = mAppContext.getContentResolver().openFileDescriptor(uri, "r");
-        if (pfd != null) {
-          FileDescriptor fd = pfd.getFileDescriptor();
-          return Maybe.just(Okio.buffer(Okio.source(new FileInputStream(fd))));
-        }
-        return Maybe.empty();
+    return Maybe.defer(() -> {
+      ParcelFileDescriptor pfd = mAppContext.getContentResolver().openFileDescriptor(uri, "r");
+      if (pfd != null) {
+        FileDescriptor fd = pfd.getFileDescriptor();
+        return Maybe.just(Okio.buffer(Okio.source(new FileInputStream(fd))));
       }
+      return Maybe.empty();
     });
   }
 
   @NonNull
-  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+  @VisibleForTesting
   Maybe<BufferedSource> parseExternalFile(final Uri uri) {
-    return Maybe.defer(new Callable<MaybeSource<BufferedSource>>() {
-      @Override
-      public MaybeSource<BufferedSource> call() throws Exception {
-        InputStream stream = mAppContext.getContentResolver().openInputStream(uri);
-        if (stream != null) {
-          return Maybe.just(Okio.buffer(Okio.source(stream)));
-        }
-        return Maybe.empty();
+    return Maybe.defer(() -> {
+      InputStream stream = mAppContext.getContentResolver().openInputStream(uri);
+      if (stream != null) {
+        return Maybe.just(Okio.buffer(Okio.source(stream)));
       }
+      return Maybe.empty();
     });
   }
 
