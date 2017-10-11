@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -44,9 +45,25 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
   Single<ResultHolder> getVerses(boolean getArabic,
                                  List<String> translations,
                                  VerseRange verseRange) {
+    // get all the translations for these verses, using a source of either the list
+    // of active translations, or a set of all translations if there are no active
+    // translations selected.
+    Observable<String> source = !translations.isEmpty()
+        ? Observable.fromIterable(translations)
+        : getTranslationMapSingle()
+            .toObservable()
+            .map(t -> {
+              List<String> result = new ArrayList<>();
+              Set<String> keys = t.keySet();
+              for (String key : keys) {
+                result.add(t.get(key).filename);
+              }
+              return result;
+            })
+            .flatMap(Observable::fromIterable);
+
     Single<List<List<QuranText>>> translationsObservable =
-        Observable.fromIterable(translations)
-            .concatMapEager(db ->
+        source.concatMapEager(db ->
                 translationModel.getTranslationFromDatabase(verseRange, db)
                     .map(texts -> ensureProperTranslations(verseRange, texts))
                     .onErrorReturnItem(new ArrayList<>())
@@ -77,6 +94,18 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
       String translation = translations.get(i);
       LocalTranslation localTranslation = translationMap.get(translation);
       result[i] = localTranslation == null ? translation : localTranslation.getTranslatorName();
+    }
+
+    // fallback to all translations when the map is empty
+    if (translationCount == 0) {
+      Set<String> keys = translationMap.keySet();
+      int mapSize = keys.size();
+      result = new String[mapSize];
+
+      int i = 0;
+      for (String key : keys) {
+        result[i++] = translationMap.get(key).filename;
+      }
     }
     return result;
   }
