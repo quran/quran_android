@@ -286,4 +286,12 @@
   </plurals>
   <string name="undo">تراجع</string>
 
+  <!-- voice Commands strings -->
+  <string name="command_Not_Found">جرب مرة أخرى. الأمر التالي غير موجود = </string>
+  <string name="command_Not_Executed">لا يمكن تنفيذ الأمر</string>
+  <string name="menu_voice">الأوامر الصوتية</string>
+  <string name="prefs_voice_language_title">لغة الأوامر الصوتية</string>
+  <string name="prefs_voice_language_summary">اللغة المطلوبة للأوامر الصوتية</string>
+  <string name="voice_english">الإنجليزية</string>
+  <string name="voice_arabic">العربية</string>
 </resources>

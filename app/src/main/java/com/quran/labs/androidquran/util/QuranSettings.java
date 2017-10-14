@@ -106,6 +106,35 @@ public class QuranSettings {
     return val;
   }
 
+  //Get voice commands language preference value
+  public int getPreferredVoiceLanguage() {
+    String str = prefs.getString(Constants.PREF_VOICE_LANGUAGE,
+        "" + + VoiceCommandsUtil.LookAheadLanguage.ENGLISH);
+    int val = VoiceCommandsUtil.LookAheadLanguage.ENGLISH;
+    try {
+      val = Integer.parseInt(str);
+    } catch (Exception e) {
+      // no op
+    }
+
+    if (val > VoiceCommandsUtil.LookAheadLanguage.MAX ||
+        val < VoiceCommandsUtil.LookAheadLanguage.MIN) {
+      return VoiceCommandsUtil.LookAheadLanguage.ENGLISH;
+    }
+    return val;
+  }
+
+  //Get voice commands language preference value
+  public boolean setPreferredVoiceLanguage(int language) {
+    if (language > VoiceCommandsUtil.LookAheadLanguage.MAX ||
+        language < VoiceCommandsUtil.LookAheadLanguage.MIN) {
+      return false;
+    }
+    prefs.edit().putString(Constants.PREF_VOICE_LANGUAGE,
+        Integer.toString(language)).apply();
+      return true;
+  }
+
   public int getTranslationTextSize() {
     return prefs.getInt(Constants.PREF_TRANSLATION_TEXT_SIZE,
         Constants.DEFAULT_TEXT_SIZE);

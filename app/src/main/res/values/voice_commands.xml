@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="voice_Dialogue_Title">Say the required command</string>
+  <string name="english_code">en-US</string>
+  <string name="arabic_code">ar-SA</string>
+  <!-- This array contains the languages that can be used -->
+  <string-array name="voice_language_preference" translatable="false">
+    <item>@string/voice_english</item>
+    <item>@string/voice_arabic</item>
+  </string-array>
+  <string-array name="voice_language_preference_values" translatable="false">
+    <item>1</item>
+    <item>2</item>
+  </string-array>
+  <!-- This array contains all the ENGLISH commands that can be used in the app -->
+  <string-array name="voice_Commands_List_EN">
+    <item>settings</item>
+    <item>page</item>
+    <item>help</item>
+    <item>about</item>
+    <item>go</item>
+    <item>language</item>
+  </string-array>
+  <string-array name="sura_List_Translated_EN">
+    <item>opener</item>
+    <item>cow</item>
+    <item>imran</item>
+    <item>women</item>
+    <item>table</item>
+    <item>cattle</item>
+    <item>heights</item>
+    <item>war</item>
+    <item>repentance</item>
+    <item>jonah</item>
+    <item>hud</item>
+    <item>joseph</item>
+    <item>thunder</item>
+    <item>ibrahim</item>
+    <item>tract</item>
+    <item>bee</item>
+    <item>journey</item>
+    <item>cave</item>
+    <item>mary</item>
+    <item>taha</item>
+    <item>prophets</item>
+    <item>pilgrimage</item>
+    <item>believers</item>
+    <item>light</item>
+    <item>criterion</item>
+    <item>poets</item>
+    <item>ant</item>
+    <item>stories</item>
+    <item>spider</item>
+    <item>romans</item>
+    <item>luqman</item>
+    <item>prostration</item>
+    <item>forces</item>
+    <item>sheba</item>
+    <item>originator</item>
+    <item>yasin</item>
+    <item>ranks</item>  <!-- those who set the ranks -->
+    <item>saad</item>
+    <item>troops</item>
+    <item>forgiver</item>
+    <item>detail</item>
+    <item>consultation</item>
+    <item>gold</item>
+    <item>smoke</item>
+    <item>crouching</item>
+    <item>sandhills</item>
+    <item>muhammad</item>
+    <item>victory</item>
+    <item>rooms</item>
+    <item>qaf</item> <!-- not working -->
+    <item>winds</item>
+    <item>mount</item>
+    <item>star</item>
+    <item>moon</item>
+    <item>beneficent</item>
+    <item>inevitable</item>
+    <item>iron</item>
+    <item>Woman</item>
+    <item>exile</item>
+    <item>examined</item>
+    <item>ranks</item> <!-- the ranks -->
+    <item>friday</item>
+    <item>hypocrites</item>
+    <item>disillusion</item>
+    <item>divorce</item>
+    <item>prohibition</item>
+    <item>sovereignty</item>
+    <item>pen</item>
+    <item>reality</item>
+    <item>stairways</item>
+    <item>noah</item>
+    <item>jinn</item> <!-- not working -->
+    <item>one</item>  <!-- the enshrouded one -->
+    <item>one</item> <!-- the cloaked one -->
+    <item>resurrection</item>
+    <item>man</item>
+    <item>emissaries</item>
+    <item>tidings</item>
+    <item>forth</item>
+    <item>frowned</item>
+    <item>overthrowing</item>
+    <item>cleaving</item>
+    <item>defrauding</item>
+    <item>sundering</item>
+    <item>stars</item>
+    <item>nightcommer</item>
+    <item>high</item>
+    <item>overwhelming</item>
+    <item>dawn</item>
+    <item>city</item>
+    <item>sun</item>
+    <item>night</item>
+    <item>hours</item>
+    <item>relief</item>
+    <item>fig</item>
+    <item>clot</item>
+    <item>power</item>
+    <item>proof</item>
+    <item>earthquake</item>
+    <item>courser</item>
+    <item>calamity</item>
+    <item>increase</item>
+    <item>Day</item>
+    <item>traducer</item>
+    <item>elephant</item>
+    <item>quraish</item>
+    <item>kindnesses</item>
+    <item>abundance</item>
+    <item>disbelievers</item>
+    <item>support</item>
+    <item>Flame</item>
+    <item>sincerity</item>
+    <item>daybreak</item>
+    <item>mankind</item>
+  </string-array>
+  <!-- This array contains all the ENGLISH languages that can be used in the app -->
+  <string-array name="language_List_EN">
+    <item>english</item>
+    <item>arabic</item>
+  </string-array>
+  <!-- This array contains all the ARABIC commands that can be used in the app -->
+  <string-array name="voice_Commands_List_AR">
+    <item>الاعدادات</item>
+    <item>صفح</item>
+    <item>مساعده</item>
+    <item>عنا</item>
+    <item>ذهب</item>
+    <item>لغه</item>
+  </string-array>
+  <!-- This array contains all the ARABIC suras that can be used in the app -->
+  <string-array name="sura_List_AR">
+    <item>الفاتحه</item>
+    <item>البقره</item>
+    <item>العمران</item>
+    <item>النساء</item>
+    <item>المائده</item>
+    <item>الانعام</item>
+    <item>الاعراف</item>
+    <item>الانفال</item>
+    <item>التوبه</item>
+    <item>يونس</item>
+    <item>هود</item>
+    <item>يوسف</item>
+    <item>الرعد</item>
+    <item>ابراهيم</item>
+    <item>الحجر</item>
+    <item>النحل</item>
+    <item>الاسراء</item>
+    <item>الكهف</item>
+    <item>مريم</item>
+    <item>طه</item>
+    <item>الانبياء</item>
+    <item>الحج</item>
+    <item>المؤمنون</item>
+    <item>النور</item>
+    <item>الفرقان</item>
+    <item>الشعراء</item>
+    <item>النمل</item>
+    <item>القصص</item>
+    <item>العنكبوت</item>
+    <item>الروم</item>
+    <item>لقمان</item>
+    <item>السجده</item>
+    <item>الاحزاب</item>
+    <item>سبا</item>
+    <item>فاطر</item>
+    <item>يس</item>
+    <item>الصافات</item>
+    <item>صاد</item>
+    <item>الزمر</item>
+    <item>غافر</item>
+    <item>فصلت</item>
+    <item>الشورى</item>
+    <item>الزخرف</item>
+    <item>الدخان</item>
+    <item>الجاثيه</item>
+    <item>الاحقاف</item>
+    <item>محمد</item>
+    <item>الفتح</item>
+    <item>الحجرات</item>
+    <item>قاف</item>
+    <item>الذاريات</item>
+    <item>الطور</item>
+    <item>النجم</item>
+    <item>القمر</item>
+    <item>الرحمن</item>
+    <item>الواقعه</item>
+    <item>الحديد</item>
+    <item>المجادله</item>
+    <item>الحشر</item>
+    <item>الممتحنه</item>
+    <item>الصف</item>
+    <item>الجمعه</item>
+    <item>المنافقون</item>
+    <item>التغابن</item>
+    <item>الطلاق</item>
+    <item>التحريم</item>
+    <item>الملك</item>
+    <item>القلم</item>
+    <item>الحاقه</item>
+    <item>المعارج</item>
+    <item>نوح</item>
+    <item>الجن</item>
+    <item>المزمل</item>
+    <item>المدثر</item>
+    <item>القيامه</item>
+    <item>الانسان</item>
+    <item>المرسلات</item>
+    <item>النبا</item>
+    <item>النازعات</item>
+    <item>عبس</item>
+    <item>التكوير</item>
+    <item>الانفطار</item>
+    <item>المطففين</item>
+    <item>الانشقاق</item>
+    <item>البروج</item>
+    <item>الطارق</item>
+    <item>الاعلى</item>
+    <item>الغاشيه</item>
+    <item>الفجر</item>
+    <item>البلد</item>
+    <item>الشمس</item>
+    <item>الليل</item>
+    <item>الضحى</item>
+    <item>الشرح</item>
+    <item>التين</item>
+    <item>العلق</item>
+    <item>القدر</item>
+    <item>البينه</item>
+    <item>الزلزله</item>
+    <item>العاديات</item>
+    <item>القارعه</item>
+    <item>التكاثر</item>
+    <item>العصر</item>
+    <item>الهمزه</item>
+    <item>الفيل</item>
+    <item>قريش</item>
+    <item>الماعون</item>
+    <item>الكوثر</item>
+    <item>الكافرون</item>
+    <item>النصر</item>
+    <item>المسد</item>
+    <item>الاخلاص</item>
+    <item>الفلق</item>
+    <item>الناس</item>
+  </string-array>
+  <!-- This array contains all the ARABIC languages that can be used in the app -->
+  <string-array name="language_List_AR">
+    <item>الانجليزيه</item>
+    <item>العربيه</item>
+  </string-array>
+</resources>
