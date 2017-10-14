@@ -316,6 +316,12 @@ public class TranslationManagerActivity extends QuranActionBarActivity
                   selectedItem.translation.fileName);
               TranslationItem updatedItem = selectedItem.withTranslationRemoved();
               updateTranslationItem(updatedItem);
+
+              // remove from active translations
+              QuranSettings settings = QuranSettings.getInstance(this);
+              Set<String> activeTranslations = settings.getActiveTranslations();
+              activeTranslations.remove(selectedItem.translation.fileName);
+              settings.setActiveTranslations(activeTranslations);
               generateListItems();
             })
         .setNegativeButton(R.string.cancel,
