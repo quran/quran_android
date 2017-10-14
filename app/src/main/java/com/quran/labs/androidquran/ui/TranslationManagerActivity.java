@@ -30,6 +30,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -141,6 +142,12 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       TranslationItem updated = downloadingItem.withTranslationVersion(
           downloadingItem.translation.currentVersion);
       updateTranslationItem(updated);
+
+      // update active translations and add this item to it
+      QuranSettings settings = QuranSettings.getInstance(this);
+      Set<String> activeTranslations = settings.getActiveTranslations();
+      activeTranslations.add(downloadingItem.translation.fileName);
+      settings.setActiveTranslations(activeTranslations);
     }
     downloadingItem = null;
     generateListItems();
