@@ -79,30 +79,30 @@ public class QuranDownloadNotifier {
     }
   }
 
-  private Context mAppContext;
-  private NotificationManager mNotificationManager;
-  private LocalBroadcastManager mBroadcastManager;
-  private int mNotificationColor;
-  private int mLastProgress;
-  private int mLastMaximum;
+  private Context appContext;
+  private NotificationManager notificationManager;
+  private LocalBroadcastManager broadcastManager;
+  private int notificationColor;
+  private int lastProgress;
+  private int lastMaximum;
 
   public QuranDownloadNotifier(Context context) {
-    mAppContext = context.getApplicationContext();
-    mNotificationManager = (NotificationManager) mAppContext
+    appContext = context.getApplicationContext();
+    notificationManager = (NotificationManager) appContext
         .getSystemService(Context.NOTIFICATION_SERVICE);
-    mBroadcastManager = LocalBroadcastManager.getInstance(mAppContext);
-    mNotificationColor = ContextCompat.getColor(mAppContext, R.color.notification_color);
-    mLastProgress = -1;
-    mLastMaximum = -1;
+    broadcastManager = LocalBroadcastManager.getInstance(appContext);
+    notificationColor = ContextCompat.getColor(appContext, R.color.notification_color);
+    lastProgress = -1;
+    lastMaximum = -1;
   }
 
   public void resetNotifications() {
     // hide any previous errors, canceled, etc
-    mLastMaximum = -1;
-    mLastProgress = -1;
-    mNotificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
-    mNotificationManager.cancel(DOWNLOADING_COMPLETE_NOTIFICATION);
-    mNotificationManager.cancel(DOWNLOADING_PROCESSING_NOTIFICATION);
+    lastMaximum = -1;
+    lastProgress = -1;
+    notificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
+    notificationManager.cancel(DOWNLOADING_COMPLETE_NOTIFICATION);
+    notificationManager.cancel(DOWNLOADING_PROCESSING_NOTIFICATION);
   }
 
   public Intent notifyProgress(NotificationDetails details,
@@ -137,7 +137,7 @@ public class QuranDownloadNotifier {
     }
 
     showNotification(details.title,
-        mAppContext.getString(R.string.downloading_title),
+        appContext.getString(R.string.downloading_title),
         DOWNLOADING_NOTIFICATION, true, max, progress, isIndeterminate);
 
     // send broadcast
@@ -158,15 +158,15 @@ public class QuranDownloadNotifier {
       progressIntent.putExtra(ProgressIntent.TOTAL_SIZE, totalSize);
       progressIntent.putExtra(ProgressIntent.PROGRESS, progress);
     }
-    mBroadcastManager.sendBroadcast(progressIntent);
+    broadcastManager.sendBroadcast(progressIntent);
     return progressIntent;
   }
 
   public Intent notifyDownloadProcessing(
       NotificationDetails details, int done, int total){
     String processingString =
-        mAppContext.getString(R.string.download_processing);
-    mNotificationManager.cancel(DOWNLOADING_NOTIFICATION);
+        appContext.getString(R.string.download_processing);
+    notificationManager.cancel(DOWNLOADING_NOTIFICATION);
     showNotification(details.title, processingString,
         DOWNLOADING_PROCESSING_NOTIFICATION, true);
 
@@ -185,17 +185,17 @@ public class QuranDownloadNotifier {
       progressIntent.putExtra(ProgressIntent.TOTAL_FILES, total);
     }
 
-    mBroadcastManager.sendBroadcast(progressIntent);
+    broadcastManager.sendBroadcast(progressIntent);
     return progressIntent;
   }
 
   public Intent notifyDownloadSuccessful(NotificationDetails details){
-    String successString = mAppContext.getString(R.string.download_successful);
-    mNotificationManager.cancel(DOWNLOADING_NOTIFICATION);
-    mNotificationManager.cancel(DOWNLOADING_PROCESSING_NOTIFICATION);
-    mNotificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
-    mLastMaximum = -1;
-    mLastProgress = -1;
+    String successString = appContext.getString(R.string.download_successful);
+    notificationManager.cancel(DOWNLOADING_NOTIFICATION);
+    notificationManager.cancel(DOWNLOADING_PROCESSING_NOTIFICATION);
+    notificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
+    lastMaximum = -1;
+    lastProgress = -1;
     showNotification(details.title, successString,
         DOWNLOADING_COMPLETE_NOTIFICATION, false);
     return broadcastDownloadSuccessful(details);
@@ -209,7 +209,7 @@ public class QuranDownloadNotifier {
         ProgressIntent.STATE_SUCCESS);
     progressIntent.putExtra(ProgressIntent.DOWNLOAD_KEY, details.key);
     progressIntent.putExtra(ProgressIntent.DOWNLOAD_TYPE, details.type);
-    mBroadcastManager.sendBroadcast(progressIntent);
+    broadcastManager.sendBroadcast(progressIntent);
     return progressIntent;
   }
 
@@ -241,8 +241,8 @@ public class QuranDownloadNotifier {
         break;
     }
 
-    String errorString = mAppContext.getString(errorId);
-    mNotificationManager.cancel(DOWNLOADING_NOTIFICATION);
+    String errorString = appContext.getString(errorId);
+    notificationManager.cancel(DOWNLOADING_NOTIFICATION);
     showNotification(details.title, errorString,
         DOWNLOADING_ERROR_NOTIFICATION, false);
 
@@ -256,7 +256,7 @@ public class QuranDownloadNotifier {
     progressIntent.putExtra(ProgressIntent.DOWNLOAD_TYPE, details.type);
     progressIntent.putExtra(ProgressIntent.STATE, state);
     progressIntent.putExtra(ProgressIntent.ERROR_CODE, errorCode);
-    mBroadcastManager.sendBroadcast(progressIntent);
+    broadcastManager.sendBroadcast(progressIntent);
     return progressIntent;
   }
 
@@ -271,9 +271,9 @@ public class QuranDownloadNotifier {
       int maximum, int progress, boolean isIndeterminate){
 
     NotificationCompat.Builder builder =
-        new NotificationCompat.Builder(mAppContext);
+        new NotificationCompat.Builder(appContext);
     builder.setSmallIcon(R.drawable.ic_notification)
-        .setColor(mNotificationColor)
+        .setColor(notificationColor)
         .setAutoCancel(true)
         .setOngoing(isOnGoing)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -281,24 +281,23 @@ public class QuranDownloadNotifier {
         .setContentText(statusString);
 
     boolean wantProgress = maximum > 0 && maximum >= progress;
-    if (mLastProgress == progress && mLastMaximum == maximum) {
+    if (lastProgress == progress && lastMaximum == maximum) {
       // don't keep sending repeat notifications
       return;
     }
-    mLastProgress = progress;
-    mLastMaximum = maximum;
+    lastProgress = progress;
+    lastMaximum = maximum;
 
     if (wantProgress) {
       builder.setProgress(maximum, progress, isIndeterminate);
     }
 
-    Intent notificationIntent = new Intent(mAppContext, QuranDataActivity.class);
-    PendingIntent contentIntent = PendingIntent.getActivity(
-        mAppContext, 0, notificationIntent, 0);
+    Intent notificationIntent = new Intent(appContext, QuranDataActivity.class);
+    PendingIntent contentIntent = PendingIntent.getActivity(appContext, 0, notificationIntent, 0);
     builder.setContentIntent(contentIntent);
 
     try {
-      mNotificationManager.notify(notificationId, builder.build());
+      notificationManager.notify(notificationId, builder.build());
     } catch (SecurityException se) {
       Crashlytics.logException(se);
     }
