@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.widgets.InlineTranslationView;
 import com.quran.labs.androidquran.widgets.QuranSpinner;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -118,11 +119,16 @@ public class AyahTranslationFragment extends AyahActionFragment
       }
 
       if (translationAdapter == null) {
+        Set<String> activeTranslations = pagerActivity.getActiveTranslations();
+        if (activeTranslations == null) {
+          activeTranslations = quranSettings.getActiveTranslations();
+        }
+
         translationAdapter = new TranslationsSpinnerAdapter(activity,
             R.layout.translation_ab_spinner_item,
             pagerActivity.getTranslationNames(),
             translations,
-            quranSettings.getActiveTranslations(),
+            activeTranslations,
             selectedItems -> {
               quranSettings.setActiveTranslations(selectedItems);
               refreshView();

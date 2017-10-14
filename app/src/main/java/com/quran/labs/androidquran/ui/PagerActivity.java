@@ -1054,6 +1054,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     return translationItems;
   }
 
+  public Set<String> getActiveTranslations() {
+    return activeTranslations;
+  }
+
   @Override
   public void onAddTagSelected() {
     FragmentManager fm = getSupportFragmentManager();
@@ -1310,8 +1314,6 @@ public class PagerActivity extends QuranActionBarActivity implements
           .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {
             @Override
             public void onSuccess(List<LocalTranslation> translationList) {
-              int before = activeTranslations == null ? 0 : activeTranslations.size();
-
               int items = translationList.size();
               String[] titles = new String[items];
               for (int i = 0; i < items; i++) {
@@ -1345,9 +1347,7 @@ public class PagerActivity extends QuranActionBarActivity implements
                 updateActionBarSpinner();
               }
 
-              if (before != currentActiveTranslations.size()) {
-                refreshPages();
-              }
+              refreshPages();
             }
 
             @Override
