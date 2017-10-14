@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="qari_minshawi_murattal_gapless">مىنشاۋى مۇراتتال (يوچۇقسىز)</string>
+   <string name="qari_husary_gapless">ھۇسارى (يوچۇقسىز)</string>
+   <string name="qari_sudais_gapless">ئابدۇرراھمان ئەلسۇدەيس (يوچۇقسىز)</string>
+   <string name="qari_qatami_gapless">Nasser Al Qatami (gapless)</string>
+   <string name="qari_abdulbaset">ئابدۇلباسىت ئابدۇلسەمەد</string>
+   <string name="qari_abdulbaset_mujawwad">ئابدۇلباسىت ئادۇلسەمەد مۇجاۋۋاد</string>
+   <string name="qari_basfar">ئابدۇللاھ باسفار</string>
+   <string name="qari_suadis">ئابدۇرراھمان ئەلسۇدەيس</string>
+   <string name="qari_shatri">ئەبۇ بەكىر ئەششاتىرى</string>
+   <string name="qari_afasy">مىشارى بىن راشىد ئافاسى</string>
+   <string name="qari_saad_al_ghamdi">سەئەد غامدى</string>
+   <string name="qari_walk">ئىبراھىم ۋالىك (ئىنگلىزچە تەرجىمە)</string>
+   <string name="qari_hani_rifai">ھانى رىفائى</string>
+   <string name="qari_husary_mujawwad">ھۇسارى مۇجاۋۋاد</string>
+   <string name="qari_hudhayfi">ئالى ھۇدەيفى</string>
+   <string name="qari_muaiqly">ماھەر ئال مۇئائىقلى</string>
+   <string name="qari_minshawi_mujawwad">مىنشاۋى مۇجاۋۋاد</string>
+   <string name="qari_tablawy">مۇھەممەد ئال تابلاۋى</string>
+   <string name="qari_ayyoub">مۇھەممەد ئەييۇب</string>
+   <string name="qari_jibreel">مۇھەممەد جىبرىل</string>
+   <string name="qari_shuraym">سەئود ئەششۇرايىم</string>
+   <string name="qari_dussary">ياسر الدوسري</string>
+</resources>

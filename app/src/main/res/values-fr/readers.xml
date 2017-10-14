@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="qari_minshawi_murattal_gapless">Minshawi Murattal (non espacé)</string>
+   <string name="qari_husary_gapless">Husary (non espacé)</string>
+   <string name="qari_sudais_gapless">Abdurrahman As-Sudais (non espacé)</string>
+   <string name="qari_qatami_gapless">Nasser Al Qatami (non espacé)</string>
+   <string name="qari_abdulbaset">Abd Al-Basit</string>
+   <string name="qari_abdulbaset_mujawwad">Abd Al-Basit Mujawwad</string>
+   <string name="qari_basfar">Abdullah Basfar</string>
+   <string name="qari_suadis">Abdurrahmaan As-Sudais</string>
+   <string name="qari_shatri">Abu Bakr Ash-Shatri</string>
+   <string name="qari_afasy">Mishary Al-Afasy</string>
+   <string name="qari_saad_al_ghamdi">Saad Al-Ghamdi</string>
+   <string name="qari_walk">Ibrahim Walk (Trad. Anglaise)</string>
+   <string name="qari_hani_rifai">Hani Ar-Rifai</string>
+   <string name="qari_husary_mujawwad">Husary Mujawwad</string>
+   <string name="qari_hudhayfi">Ali Al-Hudhaify</string>
+   <string name="qari_muaiqly">Maher Al Muaiqly</string>
+   <string name="qari_minshawi_mujawwad">Minshawy Mujawwad</string>
+   <string name="qari_tablawy">Mohammad al Tablaway</string>
+   <string name="qari_ayyoub">Muhammad Ayyoub</string>
+   <string name="qari_jibreel">Muhammad Jibreel</string>
+   <string name="qari_shuraym">Saood Ash-Shuraym</string>
+   <string name="qari_dussary">Yasser Ad-Dussary</string>
+   <string name="qari_abdulbaset_gapless">Abd Al-Basit (non espacé)</string>
+   <string name="qari_abdulbaset_mujawwad_gapless">Abd Al-Basit Mujawwad (non espacé)</string>
+   <string name="qari_aziz_alili_gapless">Aziz Alili (non espacé)</string>
+   <string name="qari_salah_budair_gapless">Salah Budair (non espacé)</string>
+   <string name="qari_shuraym_gapless">Saood Ash-Shuraym (non espacé)</string>
+   <string name="qari_yasser_dussary_gapless">Yasser Ad-Dussary (non espacé)</string>
+   <string name="qari_mohammad_altablawi_gapless">Mohammad al Tablawy (non espacé)</string>
+   <string name="qari_sahl_yaseen_gapless">Sahl Yaseen (non espacé)</string>
+   <string name="qari_shatri_gapless">Abu Bakr Ash-Shatri (non espacé)</string>
+   <string name="qari_ahmad_nauina_gapless">Ahmad Nauina (non espacé)</string>
+   <string name="qari_akram_al_alaqmi">Akram Al-Alaqmi (non espacé)</string>
+   <string name="qari_ali_hajjaj_alsouasi_gapless">Ali Hajjaj Alsouasi (non espacé)</string>
+</resources>

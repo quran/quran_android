@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="qari_minshawi_murattal_gapless">Мухаммад Сиддик аль-Миншави (безинтервальное)</string>
+   <string name="qari_husary_gapless">Махмуд Халиль аль-Хусари (безинтервальное)</string>
+   <string name="qari_sudais_gapless">Абдуррахман ас-Судайс (безинтервальное)</string>
+   <string name="qari_qatami_gapless">Насер Аль Катами (безинтервальное)</string>
+   <string name="qari_abdulbaset">Абдуль-Басит Абдус-Самад</string>
+   <string name="qari_abdulbaset_mujawwad">Абдуль-Басит Абдус-Самад (муджаввад)</string>
+   <string name="qari_basfar">Абдуллах Басфар</string>
+   <string name="qari_suadis">Абдуррахман ас-Судайс</string>
+   <string name="qari_shatri">Абу Бакр аш-Шатри</string>
+   <string name="qari_afasy">Мишари Рашид Аль-Афаси</string>
+   <string name="qari_saad_al_ghamdi">Саид аль Гамиди</string>
+   <string name="qari_walk">Ibrahim Walk (English Trans.)</string>
+   <string name="qari_hani_rifai">Хани ар-Рифаи</string>
+   <string name="qari_husary_mujawwad">Махмуд Халиль аль-Хусари (муджаввад)</string>
+   <string name="qari_hudhayfi">Али Аль-Хузайфи</string>
+   <string name="qari_muaiqly">Махир Аль-Му\'айкли</string>
+   <string name="qari_minshawi_mujawwad">Мухаммад Сиддик аль-Миншави (муджаввад)</string>
+   <string name="qari_tablawy">Мухаммад Аль Таблауи</string>
+   <string name="qari_ayyoub">Мухаммад Аюб</string>
+   <string name="qari_jibreel">Мухаммад Джибриль</string>
+   <string name="qari_shuraym">Сауд аш-Шурайм</string>
+   <string name="qari_dussary">Ясир Ад-Даусари</string>
+</resources>

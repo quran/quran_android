@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="qari_minshawi_murattal_gapless">المنشاوي (بی‌وقفه)</string>
+   <string name="qari_husary_gapless">الحصري (بی‌وقفه)</string>
+   <string name="qari_sudais_gapless">عبدالرحمن السديس (بی‌وقفه)</string>
+   <string name="qari_qatami_gapless">ناصر القطامي (بی‌وقفه)</string>
+   <string name="qari_abdulbaset">عبدالباسط عبدالصمد</string>
+   <string name="qari_abdulbaset_mujawwad">عبدالباسط عبدالصمد مجود</string>
+   <string name="qari_basfar">عبدالله بصفر</string>
+   <string name="qari_suadis">عبدالرحمن السديس</string>
+   <string name="qari_shatri">أبوبكر الشاطري</string>
+   <string name="qari_afasy">مشاري بن راشد العفاسي</string>
+   <string name="qari_saad_al_ghamdi">سعد الغامدي</string>
+   <string name="qari_walk">إبراهيم والك (ترجمه انگلیسی)</string>
+   <string name="qari_hani_rifai">هاني الرفاعي</string>
+   <string name="qari_husary_mujawwad">الحصري مجود</string>
+   <string name="qari_hudhayfi">الحذيفي</string>
+   <string name="qari_muaiqly">ماهر المعيلقي</string>
+   <string name="qari_minshawi_mujawwad">المنشاوي مجود</string>
+   <string name="qari_tablawy">محمد الطبلاوي</string>
+   <string name="qari_ayyoub">محمد أيوب</string>
+   <string name="qari_jibreel">محمد جبريل</string>
+   <string name="qari_shuraym">سعود الشريم</string>
+   <string name="qari_dussary">ياسر الدوسري</string>
+    <string name="qari_abdulbaset_gapless">عبدالباسط (بی‌وقفه)</string>
+    <string name="qari_abdulbaset_mujawwad_gapless">عبدالباسط مجود (بی‌وقفه)</string>
+    <string name="qari_aziz_alili_gapless">عزيز عليلي (بی‌وقفه)</string>
+    <string name="qari_salah_budair_gapless">صلاح بدير (بی‌وقفه)</string>
+    <string name="qari_shuraym_gapless">سعود الشريم (بی‌وقفه)</string>
+    <string name="qari_yasser_dussary_gapless">ياسر الدوسري (بی‌وقفه)</string>
+    <string name="qari_mohammad_altablawi_gapless">محمد الطبلاوي (بی‌وقفه)</string>
+    <string name="qari_sahl_yaseen_gapless">سهل ياسين (بی‌وقفه)</string>
+    <string name="qari_shatri_gapless">أبوبكر الشاطري (بی‌وقفه)</string>
+    <string name="qari_ahmad_nauina_gapless">أحمد نعينع (بی‌وقفه)</string>
+    <string name="qari_akram_al_alaqmi">أكرم العلقمي (بی‌وقفه)</string>
+    <string name="qari_ali_hajjaj_alsouasi_gapless">علي حجاج السويسي (بی‌وقفه)</string>
+</resources>

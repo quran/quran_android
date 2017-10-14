@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="qari_minshawi_murattal_gapless">Minshawi Murattal (lückenlos)</string>
+   <string name="qari_husary_gapless">Husary (lückenlos)</string>
+   <string name="qari_sudais_gapless">Abdurrahman As-Sudais (lückenlos)</string>
+   <string name="qari_qatami_gapless">Nasser Al Qatami (lückenlos)</string>
+   <string name="qari_abdulbaset">Abd Al-Basit</string>
+   <string name="qari_abdulbaset_mujawwad">Abd Al-Basit Mujawwad</string>
+   <string name="qari_basfar">Abdullah Basfar</string>
+   <string name="qari_suadis">Abdurrahmaan As-Sudais</string>
+   <string name="qari_shatri">Abu Bakr Ash-Shatri</string>
+   <string name="qari_afasy">Mishary Al-Afasy</string>
+   <string name="qari_saad_al_ghamdi">Saad Al-Ghamdi</string>
+   <string name="qari_walk">Ibrahim Walk (Englische Übersetzung)</string>
+   <string name="qari_hani_rifai">Hani Ar-Rifai</string>
+   <string name="qari_husary_mujawwad">Husary Mujawwad</string>
+   <string name="qari_hudhayfi">Ali Al-Hudhaify</string>
+   <string name="qari_muaiqly">Maher Al Muaiqly</string>
+   <string name="qari_minshawi_mujawwad">Minshawy Mujawwad</string>
+   <string name="qari_tablawy">Mohammad al Tablaway</string>
+   <string name="qari_ayyoub">Muhammad Ayyoub</string>
+   <string name="qari_jibreel">Muhammad Jibreel</string>
+   <string name="qari_shuraym">Saood Ash-Shuraym</string>
+   <string name="qari_dussary">Yasser Ad-Dussary</string>
+</resources>
