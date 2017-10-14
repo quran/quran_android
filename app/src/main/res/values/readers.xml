@@ -15,6 +15,11 @@
     <item>husary</item>
   </string-array>
 
+  <string-array translatable="false" name="quran_readers_db_name">
+    <item>minshawi_murattal</item>
+    <item>husary</item>
+  </string-array>
+
   <string-array translatable="false" name="quran_readers_urls">
     <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
     <item>http://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
