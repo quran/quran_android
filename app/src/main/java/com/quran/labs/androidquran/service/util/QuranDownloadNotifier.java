@@ -1,9 +1,12 @@
 package com.quran.labs.androidquran.service.util;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,6 +29,8 @@ public class QuranDownloadNotifier {
   public static final int DOWNLOADING_COMPLETE_NOTIFICATION = 2;
   private static final int DOWNLOADING_ERROR_NOTIFICATION = 3;
   private static final int DOWNLOADING_PROCESSING_NOTIFICATION = 4;
+
+  private static final String NOTIFICATION_CHANNEL_ID = "quran_download";
 
   public static class ProgressIntent {
     public static final String INTENT_NAME =
@@ -94,6 +99,11 @@ public class QuranDownloadNotifier {
     notificationColor = ContextCompat.getColor(appContext, R.color.notification_color);
     lastProgress = -1;
     lastMaximum = -1;
+
+    // setup Android O notification channels
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      setupNotificationChannel();
+    }
   }
 
   public void resetNotifications() {
@@ -268,10 +278,9 @@ public class QuranDownloadNotifier {
 
   private void showNotification(String titleString,
       String statusString, int notificationId, boolean isOnGoing,
-      int maximum, int progress, boolean isIndeterminate){
-
+      int maximum, int progress, boolean isIndeterminate) {
     NotificationCompat.Builder builder =
-        new NotificationCompat.Builder(appContext);
+        new NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID);
     builder.setSmallIcon(R.drawable.ic_notification)
         .setColor(notificationColor)
         .setAutoCancel(true)
@@ -300,6 +309,16 @@ public class QuranDownloadNotifier {
       notificationManager.notify(notificationId, builder.build());
     } catch (SecurityException se) {
       Crashlytics.logException(se);
+    }
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.O)
+  private void setupNotificationChannel() {
+    final String channelName = appContext.getString(R.string.notification_channel_download);
+    NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+        channelName, NotificationManager.IMPORTANCE_DEFAULT);
+    if (notificationManager.getNotificationChannel(channelName) == null) {
+      notificationManager.createNotificationChannel(channel);
     }
   }
 }

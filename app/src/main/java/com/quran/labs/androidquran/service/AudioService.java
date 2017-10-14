@@ -20,6 +20,7 @@
 
 package com.quran.labs.androidquran.service;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -49,13 +50,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
 import android.util.SparseIntArray;
 
 import com.crashlytics.android.Crashlytics;
@@ -190,6 +193,7 @@ public class AudioService extends Service implements OnCompletionListener,
   // at the notification area at the top of the screen as an icon -- and
   // as text as well if the user expands the notification area).
   final int NOTIFICATION_ID = 4;
+  private static final String NOTIFICATION_CHANNEL_ID = "quran_audio";
 
   private NotificationManager notificationManager;
 
@@ -290,6 +294,10 @@ public class AudioService extends Service implements OnCompletionListener,
     mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
         MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
     mediaSession.setCallback(new MediaSessionCallback());
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      setupNotificationChannel();
+    }
 
     notificationColor = ContextCompat.getColor(this, R.color.audio_notification_color);
     try {
@@ -1169,7 +1177,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
     String audioTitle = audioRequest.getTitle(getApplicationContext());
     if (notificationBuilder == null) {
-      notificationBuilder = new NotificationCompat.Builder(appContext);
+      notificationBuilder = new NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID);
       notificationBuilder
           .setSmallIcon(R.drawable.ic_notification)
           .setColor(notificationColor)
@@ -1184,7 +1192,7 @@ public class AudioService extends Service implements OnCompletionListener,
           .setWhen(0) // older platforms seem to ignore setShowWhen(false)
           .setLargeIcon(notificationIcon)
           .setStyle(
-              new NotificationCompat.MediaStyle()
+              new MediaStyle()
                   .setShowActionsInCompactView(0, 1, 2)
                   .setMediaSession(mediaSession.getSessionToken()));
     }
@@ -1193,7 +1201,8 @@ public class AudioService extends Service implements OnCompletionListener,
     notificationBuilder.setContentText(audioTitle);
 
     if (pausedNotificationBuilder == null) {
-      pausedNotificationBuilder = new NotificationCompat.Builder(appContext);
+      pausedNotificationBuilder =
+          new NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID);
       pausedNotificationBuilder
           .setSmallIcon(R.drawable.ic_notification)
           .setColor(notificationColor)
@@ -1207,7 +1216,7 @@ public class AudioService extends Service implements OnCompletionListener,
           .setWhen(0)
           .setLargeIcon(notificationIcon)
           .setStyle(
-              new NotificationCompat.MediaStyle()
+              new MediaStyle()
                   .setShowActionsInCompactView(0, 1)
                   .setMediaSession(mediaSession.getSessionToken()));
     }
@@ -1247,6 +1256,16 @@ public class AudioService extends Service implements OnCompletionListener,
     // start/restart/pause media player with new focus settings
     if (player != null && player.isPlaying()) {
       configAndStartMediaPlayer(false);
+    }
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.O)
+  private void setupNotificationChannel() {
+    final String channelName = getString(R.string.notification_channel_audio);
+    NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+        channelName, NotificationManager.IMPORTANCE_DEFAULT);
+    if (notificationManager.getNotificationChannel(channelName) == null) {
+      notificationManager.createNotificationChannel(channel);
     }
   }
 
