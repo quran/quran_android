@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.ui.preference;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.StorageUtils;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +15,10 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.StorageUtils;
 
 import java.util.List;
 
@@ -97,7 +97,7 @@ public class DataListPreference extends QuranListPreference {
     public CheckedTextView checkedTextView;
   }
 
-  public class StorageArrayAdapter extends ArrayAdapter<CharSequence> {
+  public static class StorageArrayAdapter extends ArrayAdapter<CharSequence> {
     private int mSelectedIndex = 0;
     private CharSequence[] mFreeSpaces;
 

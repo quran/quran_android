@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
 import com.quran.labs.androidquran.R;
@@ -35,14 +36,14 @@ public class HighlightType implements Comparable<HighlightType> {
   }
 
   @Override
-  public int compareTo(HighlightType another) {
+  public int compareTo(@NonNull HighlightType another) {
     return mId.compareTo(another.mId);
   }
 
   @Override
   public boolean equals(Object o) {
-    return this == o || o != null && o.getClass() == HighlightType.class &&
-        mId.equals(((HighlightType) o).mId);
+    return this == o ||
+        (o != null && o.getClass() == HighlightType.class && mId.equals(((HighlightType) o).mId));
   }
 
   @Override

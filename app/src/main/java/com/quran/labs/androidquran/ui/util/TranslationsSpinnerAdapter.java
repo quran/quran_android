@@ -130,6 +130,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     return convertView;
   }
 
+  @Override
   public int getItemViewType(int position) {
     if (position == translationNames.length - 1) {
       return 1; // Last item in spinner should be text "More Translations"

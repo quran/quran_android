@@ -64,7 +64,7 @@ public class AyahTrackerPresenter implements AyahTracker,
     boolean handled = false;
     int page = items.length == 1 ? items[0].page : QuranInfo.getPageFromSuraAyah(sura, ayah);
     for (AyahTrackerItem item : items) {
-      handled = handled | item.onHighlightAyah(page, sura, ayah, type, scrollToAyah);
+      handled = handled || item.onHighlightAyah(page, sura, ayah, type, scrollToAyah);
     }
 
     if (!handled) {

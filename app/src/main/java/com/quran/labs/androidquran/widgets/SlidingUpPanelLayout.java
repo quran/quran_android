@@ -1217,7 +1217,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
           top += mSlideRange;
         } else if (yvel == 0 && mSlideOffset < (1f+anchorOffset)/2
             && mSlideOffset >= anchorOffset/2) {
-          top += mSlideRange * mAnchorPoint;
+          top = (int) (top + mSlideRange * mAnchorPoint);
         }
 
       } else if (yvel > 0 || (yvel == 0 && mSlideOffset > 0.5f)) {

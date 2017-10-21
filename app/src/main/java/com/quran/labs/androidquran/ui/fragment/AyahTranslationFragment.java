@@ -101,6 +101,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     }
   };
 
+  @Override
   public void refreshView() {
     if (start == null || end == null) { return; }
 

@@ -16,8 +16,10 @@ public abstract class QuranActionBarActivity extends AppCompatActivity {
       Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN &&
           "LGE".equalsIgnoreCase(Build.BRAND);
 
+  @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
-    return keyCode == KeyEvent.KEYCODE_MENU && sBuggyMenuVersion || super.onKeyDown(keyCode, event);
+    return (keyCode == KeyEvent.KEYCODE_MENU && sBuggyMenuVersion) ||
+        super.onKeyDown(keyCode, event);
   }
 
   @Override

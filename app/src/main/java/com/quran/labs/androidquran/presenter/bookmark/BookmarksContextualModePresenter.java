@@ -92,7 +92,7 @@ public class BookmarksContextualModePresenter implements Presenter<BookmarksFrag
 
   @Override
   public void unbind(BookmarksFragment fragment) {
-    if (fragment == this.fragment) {
+    if (fragment.equals(this.fragment)) {
       this.fragment = null;
       activity = null;
     }

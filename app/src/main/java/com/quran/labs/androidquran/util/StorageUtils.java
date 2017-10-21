@@ -165,7 +165,7 @@ public class StorageUtils {
       File mountFile = new File("/proc/mounts");
       if (mountFile.exists()) {
         Timber.d("mounts file exists");
-        Scanner scanner = new Scanner(mountFile);
+        Scanner scanner = new Scanner(mountFile, "US-ASCII");
         while (scanner.hasNext()) {
           String line = scanner.nextLine();
           Timber.d("line: %s", line);
@@ -207,7 +207,7 @@ public class StorageUtils {
       File voldFile = new File("/system/etc/vold.fstab");
       if (voldFile.exists()) {
         Timber.d("reading volds file begin");
-        Scanner scanner = new Scanner(voldFile);
+        Scanner scanner = new Scanner(voldFile, "US-ASCII");
         while (scanner.hasNext()) {
           String line = scanner.nextLine();
           Timber.d("line: %s", line);

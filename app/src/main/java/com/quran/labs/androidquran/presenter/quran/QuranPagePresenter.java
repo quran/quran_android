@@ -137,7 +137,8 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
   public void downloadImages() {
     screen.hidePageDownloadError();
-    quranPageWorker.loadPages(pages)
+    compositeDisposable.add(
+        quranPageWorker.loadPages(pages)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableObserver<Response>() {
           @Override
@@ -173,7 +174,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
           @Override
           public void onComplete() {
           }
-        });
+        }));
   }
 
   public void refresh() {
@@ -195,6 +196,6 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
   @Override
   public void unbind(QuranPageScreen screen) {
     this.screen = null;
-    compositeDisposable.dispose();
+    compositeDisposable.clear();
   }
 }

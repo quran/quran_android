@@ -35,9 +35,14 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   private boolean shouldRefreshTags;
   private Bookmark potentialAyahBookmark;
 
+
+  @SuppressWarnings("CheckReturnValue")
   @Inject
   TagBookmarkPresenter(BookmarkModel bookmarkModel) {
     this.bookmarkModel = bookmarkModel;
+
+    // this is unrelated to which views are attached, so it should be run
+    // and we don't need to worry about disposing it.
     this.bookmarkModel.tagsObservable()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(tag -> {
@@ -68,7 +73,10 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
     refresh();
   }
 
+  @SuppressWarnings("CheckReturnValue")
   void refresh() {
+    // even though this is called from the presenter, we'll cache the result even if the
+    // view ends up detaching.
     Single.zip(getTagsObservable(), getBookmarkTagIdsObservable(), Pair::new)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(this::onRefreshedData);
@@ -105,15 +113,14 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
     }
   }
 
+  @SuppressWarnings("CheckReturnValue")
   public void saveChanges() {
     if (madeChanges) {
       getBookmarkIdsObservable()
           .flatMap(bookmarkIds ->
               bookmarkModel.updateBookmarkTags(bookmarkIds, checkedTags, bookmarkIds.length == 1))
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(aBoolean -> {
-            onSaveChangesDone();
-          });
+          .subscribe(ignored -> onSaveChangesDone());
     } else {
       onSaveChangesDone();
     }
@@ -190,7 +197,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
 
   @Override
   public void unbind(TagBookmarkDialog dialog) {
-    if (dialog == this.dialog) {
+    if (dialog.equals(this.dialog)) {
       this.dialog = null;
     }
   }

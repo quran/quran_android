@@ -197,7 +197,7 @@ public class QuranFileUtils {
     }
 
     File directory = new File(path);
-    return directory.exists() && directory.isDirectory() || directory.mkdirs();
+    return (directory.exists() && directory.isDirectory()) || directory.mkdirs();
   }
 
   private static boolean makeQuranDatabaseDirectory(Context context) {

@@ -74,6 +74,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     subscribeToChanges();
   }
 
+  @SuppressWarnings("CheckReturnValue")
   void subscribeToChanges() {
     Observable.merge(bookmarkModel.tagsObservable(),
         bookmarkModel.bookmarksObservable(), bookmarkModel.recentPagesUpdatedObservable())
@@ -264,6 +265,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .subscribeOn(Schedulers.io());
   }
 
+  @SuppressWarnings("CheckReturnValue")
   private void getBookmarks(final int sortOrder, final boolean groupByTags) {
     getBookmarksListObservable(sortOrder, groupByTags)
         .observeOn(AndroidSchedulers.mainThread())
@@ -421,7 +423,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   @Override
   public void unbind(BookmarksFragment fragment) {
-    if (fragment == this.fragment) {
+    if (fragment.equals(this.fragment)) {
       this.fragment = null;
     }
   }

@@ -90,7 +90,7 @@ public class QuranAppUtils {
 
     String result = "";
     String body = builder.toString();
-    byte[] bytes = body.getBytes();
+    byte[] bytes = body.getBytes("UTF-8");
     HttpURLConnection conn = null;
     try {
       // TODO: use OkHttp

@@ -46,6 +46,7 @@ public class QuranListAdapter extends
     this.isEditable = isEditable;
   }
 
+  @Override
   public long getItemId(int position) {
     return position;
   }

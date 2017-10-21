@@ -32,10 +32,12 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
 
   public static final Parcelable.Creator<SuraAyah> CREATOR =
       new Parcelable.Creator<SuraAyah>() {
+        @Override
         public SuraAyah createFromParcel(Parcel in) {
           return new SuraAyah(in);
         }
 
+        @Override
         public SuraAyah[] newArray(int size) {
           return new SuraAyah[size];
         }

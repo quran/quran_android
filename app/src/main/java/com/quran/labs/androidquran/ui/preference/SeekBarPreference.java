@@ -114,9 +114,11 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     mCurrentValue = value;
   }
 
+  @Override
   public void onStartTrackingTouch(SeekBar seek) {
   }
 
+  @Override
   public void onStopTrackingTouch(SeekBar seek) {
     if (shouldPersist()) {
       persistInt(mCurrentValue);

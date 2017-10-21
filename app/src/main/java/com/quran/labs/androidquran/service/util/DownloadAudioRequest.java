@@ -52,10 +52,12 @@ public class DownloadAudioRequest extends AudioRequest {
   }
 
   public static final Creator<DownloadAudioRequest> CREATOR = new Creator<DownloadAudioRequest>() {
+    @Override
     public DownloadAudioRequest createFromParcel(Parcel source) {
       return new DownloadAudioRequest(source);
     }
 
+    @Override
     public DownloadAudioRequest[] newArray(int size) {
       return new DownloadAudioRequest[size];
     }

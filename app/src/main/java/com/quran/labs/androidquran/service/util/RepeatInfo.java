@@ -66,10 +66,12 @@ public class RepeatInfo implements Parcelable {
 
   public static final Parcelable.Creator<RepeatInfo> CREATOR
       = new Parcelable.Creator<RepeatInfo>() {
+    @Override
     public RepeatInfo createFromParcel(Parcel source) {
       return new RepeatInfo(source);
     }
 
+    @Override
     public RepeatInfo[] newArray(int size) {
       return new RepeatInfo[size];
     }

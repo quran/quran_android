@@ -1257,7 +1257,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public void highlightAyah(int sura, int ayah, HighlightType type) {
-    if (type == HighlightType.AUDIO) {
+    if (HighlightType.AUDIO.equals(type)) {
         lastPlayingSura = sura;
         lastPlayingAyah = ayah;
     }
@@ -1294,7 +1294,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void unHighlightAyahs(HighlightType type) {
-    if (type == HighlightType.AUDIO) {
+    if (HighlightType.AUDIO.equals(type)) {
         lastPlayingSura = null;
         lastPlayingAyah = null;
     }
@@ -1762,7 +1762,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public boolean isListeningForAyahSelection(EventType eventType) {
     return eventType == EventType.LONG_PRESS ||
-        eventType == EventType.SINGLE_TAP && isInAyahMode;
+        (eventType == EventType.SINGLE_TAP && isInAyahMode);
   }
 
   @Override

@@ -74,10 +74,12 @@ public class QariItem implements Parcelable {
 
   public static final Parcelable.Creator<QariItem> CREATOR =
       new Parcelable.Creator<QariItem>() {
+    @Override
     public QariItem createFromParcel(Parcel source) {
       return new QariItem(source);
     }
 
+    @Override
     public QariItem[] newArray(int size) {
       return new QariItem[size];
     }

@@ -138,9 +138,9 @@ public class CoordinatesModel {
       // anything in common (i.e. any part of them intersects)
       if (lastRect.left < firstRect.right) {
         RectF middleBounds = new RectF(lastRect.left,
-            firstRect.bottom,
+            /* top= */ firstRect.bottom,
             firstRect.right,
-            lastRect.top);
+            /* bottom= */ lastRect.top);
         middle = new AyahBounds(top.getLine(), top.getPosition(), middleBounds);
       }
     }

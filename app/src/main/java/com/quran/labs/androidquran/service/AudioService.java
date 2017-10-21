@@ -338,6 +338,7 @@ public class AudioService extends Service implements OnCompletionListener,
     }
   }
 
+  @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent == null) {
       // handle a crash that occurs where intent comes in as null
@@ -1232,6 +1233,7 @@ public class AudioService extends Service implements OnCompletionListener,
    * player goes to the Error state. We warn the user about the error and
    * reset the media player.
    */
+  @Override
   public boolean onError(MediaPlayer mp, int what, int extra) {
     Timber.e("Error: what=%s, extra=%s", String.valueOf(what), String.valueOf(extra));
 
@@ -1241,6 +1243,7 @@ public class AudioService extends Service implements OnCompletionListener,
     return true; // true indicates we handled the error
   }
 
+  @Override
   public void onGainedAudioFocus() {
     audioFocus = AudioFocus.Focused;
 
@@ -1250,6 +1253,7 @@ public class AudioService extends Service implements OnCompletionListener,
     }
   }
 
+  @Override
   public void onLostAudioFocus(boolean canDuck) {
     audioFocus = canDuck ? AudioFocus.NoFocusCanDuck : AudioFocus.NoFocusNoDuck;
 

@@ -1,13 +1,14 @@
 package com.quran.labs.androidquran;
 
-import com.quran.labs.androidquran.ui.QuranActionBarActivity;
-
 import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.quran.labs.androidquran.ui.QuranActionBarActivity;
+
 public class HelpActivity extends QuranActionBarActivity {
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 

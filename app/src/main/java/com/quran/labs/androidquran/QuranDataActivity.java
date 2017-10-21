@@ -105,7 +105,7 @@ public class QuranDataActivity extends Activity implements
     final File fallbackFile = getExternalFilesDir(null);
 
     boolean usesExternalFileDir = path != null && path.contains("com.quran");
-    if (path == null || usesExternalFileDir && fallbackFile == null) {
+    if (path == null || (usesExternalFileDir && fallbackFile == null)) {
       // suggests that we're on m+ and getExternalFilesDir returned null at some point
       runListView();
       return;
@@ -129,7 +129,7 @@ public class QuranDataActivity extends Activity implements
               // request permissions
               requestExternalSdcardPermission();
             })
-            .setNegativeButton(android.R.string.no, (dialog, which) -> {
+            .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
               // dismiss the dialog
               dialog.dismiss();
               permissionsDialog = null;

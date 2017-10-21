@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableMaybeObserver;
 import io.reactivex.schedulers.Schedulers;
 import okio.BufferedSource;
@@ -40,6 +41,7 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private final Context mAppContext;
   private final BookmarkModel mBookmarkModel;
   private final BookmarkImportExportModel mBookmarkImportExportModel;
+  private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
   private boolean mRequestingPermissions;
   private Observable<Boolean> mImportObservable;
@@ -91,14 +93,15 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   }
 
   private void subscribeToImportData() {
-    mImportObservable
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(aBoolean -> {
-          if (mCurrentActivity != null) {
-            mCurrentActivity.showImportComplete();
-            mImportObservable = null;
-          }
-        });
+    compositeDisposable.add(
+        mImportObservable
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(ignored -> {
+              if (mCurrentActivity != null) {
+                mCurrentActivity.showImportComplete();
+                mImportObservable = null;
+              }
+            }));
   }
 
   private void parseIntentUri(final Uri uri) {
@@ -215,6 +218,7 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   public void unbind(QuranImportActivity activity) {
     if (activity == mCurrentActivity) {
       mCurrentActivity = null;
+      compositeDisposable.clear();
     }
   }
 }

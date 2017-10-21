@@ -102,7 +102,7 @@ public class QuranSpinner extends AppCompatSpinner {
       drawable.getPadding(PADDING_RECT);
       width += PADDING_RECT.left + PADDING_RECT.right;
     }
-    width *= WIDTH_MULTIPLIER; // add some extra spacing
+    width = (int) ( width * WIDTH_MULTIPLIER); // add some extra spacing
     return width;
   }
 }

@@ -14,6 +14,7 @@ public class StreamingAudioRequest extends AudioRequest {
     super(in);
   }
 
+  @Override
   public boolean haveSuraAyah(int sura, int ayah) {
     // for streaming, we (theoretically) always "have" the sura and ayah
     return true;
@@ -31,10 +32,12 @@ public class StreamingAudioRequest extends AudioRequest {
 
   public static final Creator<StreamingAudioRequest> CREATOR
       = new Creator<StreamingAudioRequest>() {
+    @Override
     public StreamingAudioRequest createFromParcel(Parcel source) {
       return new StreamingAudioRequest(source);
     }
 
+    @Override
     public StreamingAudioRequest[] newArray(int size) {
       return new StreamingAudioRequest[size];
     }
