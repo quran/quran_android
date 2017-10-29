@@ -193,7 +193,7 @@ public class AudioService extends Service implements OnCompletionListener,
   // at the notification area at the top of the screen as an icon -- and
   // as text as well if the user expands the notification area).
   final int NOTIFICATION_ID = 4;
-  private static final String NOTIFICATION_CHANNEL_ID = "quran_audio";
+  private static final String NOTIFICATION_CHANNEL_ID = "quran_audio_playback";
 
   private NotificationManager notificationManager;
 
@@ -1267,7 +1267,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private void setupNotificationChannel() {
     final String channelName = getString(R.string.notification_channel_audio);
     NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-        channelName, NotificationManager.IMPORTANCE_DEFAULT);
+        channelName, NotificationManager.IMPORTANCE_LOW);
     if (notificationManager.getNotificationChannel(channelName) == null) {
       notificationManager.createNotificationChannel(channel);
     }

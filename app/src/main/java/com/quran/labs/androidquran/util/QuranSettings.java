@@ -1,10 +1,13 @@
 package com.quran.labs.androidquran.util;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
 
 import com.quran.labs.androidquran.BuildConfig;
@@ -20,6 +23,8 @@ public class QuranSettings {
   private static final String PREFS_FILE = "com.quran.labs.androidquran.per_installation";
 
   private static QuranSettings instance;
+
+  private Context appContext;
   private SharedPreferences prefs;
   private SharedPreferences perInstallationPrefs;
 
@@ -36,6 +41,7 @@ public class QuranSettings {
   }
 
   private QuranSettings(@NonNull Context appContext) {
+    this.appContext = appContext;
     prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
     perInstallationPrefs = appContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
   }
@@ -186,6 +192,11 @@ public class QuranSettings {
           } catch (Exception e) {
             clearLastDownloadError();
           }
+        } else if (version == 2800) {
+          // upgrading from 2800, need to remove notification channels
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            deleteOldNotificationChannels();
+          }
         }
       }
 
@@ -196,6 +207,16 @@ public class QuranSettings {
 
       // make sure that the version code now says that we're up to date.
       setVersion(BuildConfig.VERSION_CODE);
+    }
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.O)
+  private void deleteOldNotificationChannels() {
+    NotificationManager notificationManager =
+        (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    if (notificationManager != null) {
+      notificationManager.deleteNotificationChannel("quran_audio");
+      notificationManager.deleteNotificationChannel("quran_download");
     }
   }
 

@@ -30,7 +30,7 @@ public class QuranDownloadNotifier {
   private static final int DOWNLOADING_ERROR_NOTIFICATION = 3;
   private static final int DOWNLOADING_PROCESSING_NOTIFICATION = 4;
 
-  private static final String NOTIFICATION_CHANNEL_ID = "quran_download";
+  private static final String NOTIFICATION_CHANNEL_ID = "quran_download_progress";
 
   public static class ProgressIntent {
     public static final String INTENT_NAME =
@@ -316,7 +316,7 @@ public class QuranDownloadNotifier {
   private void setupNotificationChannel() {
     final String channelName = appContext.getString(R.string.notification_channel_download);
     NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-        channelName, NotificationManager.IMPORTANCE_DEFAULT);
+        channelName, NotificationManager.IMPORTANCE_LOW);
     if (notificationManager.getNotificationChannel(channelName) == null) {
       notificationManager.createNotificationChannel(channel);
     }
