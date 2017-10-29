@@ -190,7 +190,7 @@ public class QuranDataProvider extends ContentProvider {
     final boolean queryIsArabic = QuranUtils.doesStringContainArabic(query);
     final boolean haveArabic = queryIsArabic &&
         QuranFileUtils.hasTranslation(context, QURAN_ARABIC_DATABASE);
-    if (translations.size() == 0 || (queryIsArabic && !haveArabic)) {
+    if (translations.size() == 0 && (queryIsArabic && !haveArabic)) {
       return null;
     }
 
