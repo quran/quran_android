@@ -19,7 +19,7 @@ public class TranslationItem implements TranslationRowData {
 
   @Override
   public String name() {
-    return this.translation.displayName;
+    return this.translation.getDisplayName();
   }
 
   @Override
@@ -29,7 +29,7 @@ public class TranslationItem implements TranslationRowData {
 
   @Override
   public boolean needsUpgrade() {
-    return localVersion > 0 && this.translation.currentVersion > this.localVersion;
+    return localVersion > 0 && this.translation.getCurrentVersion() > this.localVersion;
   }
 
   public TranslationItem withTranslationRemoved() {

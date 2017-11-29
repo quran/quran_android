@@ -71,10 +71,10 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   public void getTranslationsList(boolean forceDownload) {
     Observable.concat(
         getCachedTranslationListObservable(forceDownload), getRemoteTranslationListObservable())
-        .filter(translationList -> translationList.translations != null)
+        .filter(translationList -> translationList.getTranslations() != null)
         .firstElement()
-        .filter(translationList -> !translationList.translations.isEmpty())
-        .map(translationList -> mergeWithServerTranslations(translationList.translations))
+        .filter(translationList -> !translationList.getTranslations().isEmpty())
+        .map(translationList -> mergeWithServerTranslations(translationList.getTranslations()))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new DisposableMaybeObserver<List<TranslationItem>>() {
@@ -155,7 +155,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       responseBody.close();
       return result;
     }).doOnNext(translationList -> {
-      if (translationList.translations != null && !translationList.translations.isEmpty()) {
+      if (translationList.getTranslations() != null && !translationList.getTranslations().isEmpty()) {
         writeTranslationList(translationList);
       }
     });
@@ -196,14 +196,14 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
     List<TranslationItem> updates = new ArrayList<>();
     for (int i = 0, count = serverTranslations.size(); i < count; i++) {
       Translation translation = serverTranslations.get(i);
-      LocalTranslation local = localTranslations.get(translation.id);
+      LocalTranslation local = localTranslations.get(translation.getId());
 
-      File dbFile = new File(databaseDir, translation.fileName);
+      File dbFile = new File(databaseDir, translation.getFileName());
       boolean exists = dbFile.exists();
 
       TranslationItem item;
       if (exists) {
-        int version = local == null ? getVersionFromDatabase(translation.fileName) : local.version;
+        int version = local == null ? getVersionFromDatabase(translation.getFileName()) : local.version;
         item = new TranslationItem(translation, version);
       } else {
         item = new TranslationItem(translation);

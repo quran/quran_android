@@ -93,7 +93,7 @@ public class BookmarkModel {
 
   public Completable updateTag(final Tag tag) {
     return Completable.fromCallable(() -> {
-      boolean result = bookmarksDBAdapter.updateTag(tag.id, tag.name);
+      boolean result = bookmarksDBAdapter.updateTag(tag.getId(), tag.getName());
       if (result) {
         tagPublishSubject.onNext(tag);
       }

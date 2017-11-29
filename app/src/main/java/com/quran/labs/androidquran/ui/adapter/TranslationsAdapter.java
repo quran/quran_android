@@ -47,10 +47,10 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       case R.layout.translation_row:
         TranslationItem item = (TranslationItem) rowItem;
         holder.getTranslationTitle().setText(item.name());
-        if (TextUtils.isEmpty(item.translation.translatorNameLocalized)) {
-          holder.getTranslationInfo().setText(item.translation.translator);
+        if (TextUtils.isEmpty(item.translation.getTranslatorNameLocalized())) {
+          holder.getTranslationInfo().setText(item.translation.getTranslator());
         } else {
-          holder.getTranslationInfo().setText(item.translation.translatorNameLocalized);
+          holder.getTranslationInfo().setText(item.translation.getTranslatorNameLocalized());
         }
 
         ImageView leftImage = holder.getLeftImage();

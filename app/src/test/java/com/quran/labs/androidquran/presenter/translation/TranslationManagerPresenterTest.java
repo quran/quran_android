@@ -79,7 +79,7 @@ public class TranslationManagerPresenterTest {
     testObserver.assertValueCount(1);
     testObserver.assertNoErrors();
     TranslationList list = testObserver.values().get(0);
-    assertThat(list.translations).hasSize(50);
+    assertThat(list.getTranslations()).hasSize(50);
   }
 
   @Test

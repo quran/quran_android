@@ -94,20 +94,20 @@ public class TranslationsDBAdapter {
         TranslationItem item = updates.get(i);
         if (item.exists()) {
           ContentValues values = new ContentValues();
-          values.put(TranslationsTable.ID, item.translation.id);
-          values.put(TranslationsTable.NAME, item.translation.displayName);
-          values.put(TranslationsTable.TRANSLATOR, item.translation.translator);
+          values.put(TranslationsTable.ID, item.translation.getId());
+          values.put(TranslationsTable.NAME, item.translation.getDisplayName());
+          values.put(TranslationsTable.TRANSLATOR, item.translation.getTranslator());
           values.put(TranslationsTable.TRANSLATOR_FOREIGN,
-              item.translation.translatorNameLocalized);
-          values.put(TranslationsTable.FILENAME, item.translation.fileName);
-          values.put(TranslationsTable.URL, item.translation.fileUrl);
-          values.put(TranslationsTable.LANGUAGE_CODE, item.translation.languageCode);
+              item.translation.getTranslatorNameLocalized());
+          values.put(TranslationsTable.FILENAME, item.translation.getFileName());
+          values.put(TranslationsTable.URL, item.translation.getFileUrl());
+          values.put(TranslationsTable.LANGUAGE_CODE, item.translation.getLanguageCode());
           values.put(TranslationsTable.VERSION, item.localVersion);
 
           db.replace(TranslationsTable.TABLE_NAME, null, values);
         } else {
           db.delete(TranslationsTable.TABLE_NAME,
-              TranslationsTable.ID + " = " + item.translation.id, null);
+              TranslationsTable.ID + " = " + item.translation.getId(), null);
         }
       }
       db.setTransactionSuccessful();

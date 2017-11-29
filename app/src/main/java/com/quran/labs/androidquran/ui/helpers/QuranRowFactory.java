@@ -83,8 +83,8 @@ public class QuranRowFactory {
   public static QuranRow fromTag(Tag tag) {
     return new QuranRow.Builder()
         .withType(QuranRow.BOOKMARK_HEADER)
-        .withText(tag.name)
-        .withTagId(tag.id)
+        .withText(tag.getName())
+        .withTagId(tag.getId())
         .build();
   }
 

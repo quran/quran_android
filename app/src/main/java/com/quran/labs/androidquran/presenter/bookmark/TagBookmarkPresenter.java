@@ -50,7 +50,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
           if (tags != null && dialog != null) {
             // change this if we support updating tags from outside of QuranActivity
             tags.add(tags.size() - 1, tag);
-            checkedTags.add(tag.id);
+            checkedTags.add(tag.getId());
             dialog.setData(tags, checkedTags);
             setMadeChanges();
           }
@@ -85,7 +85,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   void onRefreshedData(Pair<List<Tag>, List<Long>> data) {
     List<Tag> tags1 = data.first;
     int numberOfTags = tags1.size();
-    if (numberOfTags == 0 || tags1.get(numberOfTags - 1).id != -1) {
+    if (numberOfTags == 0 || tags1.get(numberOfTags - 1).getId() != -1) {
       tags1.add(new Tag(-1, ""));
     }
 
@@ -93,8 +93,8 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
     checkedTags.clear();
     for (int i = 0, tagsSize = tags1.size(); i < tagsSize; i++) {
       Tag tag = tags1.get(i);
-      if (bookmarkTags.contains(tag.id)) {
-        checkedTags.add(tag.id);
+      if (bookmarkTags.contains(tag.getId())) {
+        checkedTags.add(tag.getId());
       }
     }
     madeChanges = false;

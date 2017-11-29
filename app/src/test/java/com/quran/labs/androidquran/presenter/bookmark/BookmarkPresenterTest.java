@@ -124,9 +124,9 @@ public class BookmarkPresenterTest {
 
     BookmarkPresenter presenter = makeBookmarkPresenter(model);
     BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, false);
-    assertThat(result.tagMap).isEmpty();
+    assertThat(result.getTagMap()).isEmpty();
     // 1 for the header, plus one row per item
-    assertThat(result.rows).hasSize(AYAH_BOOKMARKS_LIST.size() + 1);
+    assertThat(result.getRows()).hasSize(AYAH_BOOKMARKS_LIST.size() + 1);
   }
 
   @Test
@@ -145,9 +145,9 @@ public class BookmarkPresenterTest {
 
     BookmarkPresenter presenter = makeBookmarkPresenter(model);
     BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, false);
-    assertThat(result.tagMap).isEmpty();
+    assertThat(result.getTagMap()).isEmpty();
     // 1 for "page bookmarks" and 1 for "ayah bookmarks"
-    assertThat(result.rows).hasSize(MIXED_BOOKMARKS_LIST.size() + 2);
+    assertThat(result.getRows()).hasSize(MIXED_BOOKMARKS_LIST.size() + 2);
   }
 
   @Test
@@ -168,9 +168,9 @@ public class BookmarkPresenterTest {
 
     BookmarkPresenter presenter = makeBookmarkPresenter(model);
     BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, false);
-    assertThat(result.tagMap).hasSize(2);
+    assertThat(result.getTagMap()).hasSize(2);
     // 2 for "current page", 1 for "page bookmarks" and 1 for "ayah bookmarks"
-    assertThat(result.rows).hasSize(MIXED_BOOKMARKS_LIST.size() + 4);
+    assertThat(result.getRows()).hasSize(MIXED_BOOKMARKS_LIST.size() + 4);
   }
 
   @Test
@@ -189,10 +189,10 @@ public class BookmarkPresenterTest {
 
     BookmarkPresenter presenter = makeBookmarkPresenter(model);
     BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, true);
-    assertThat(result.tagMap).hasSize(2);
+    assertThat(result.getTagMap()).hasSize(2);
 
     // number of tags (or 1) for each bookmark, plus number of tags (headers), plus unsorted
-    assertThat(result.rows).hasSize(
+    assertThat(result.getRows()).hasSize(
         AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG + TAG_LIST.size() + 1);
   }
 
@@ -212,10 +212,10 @@ public class BookmarkPresenterTest {
 
     BookmarkPresenter presenter = makeBookmarkPresenter(model);
     BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, true);
-    assertThat(result.tagMap).hasSize(2);
+    assertThat(result.getTagMap()).hasSize(2);
 
     // number of tags (or 1) for each bookmark, plus number of tags (headers), plus unsorted
-    assertThat(result.rows).hasSize(
+    assertThat(result.getRows()).hasSize(
         MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG + TAG_LIST.size() + 1);
   }
 
@@ -235,11 +235,11 @@ public class BookmarkPresenterTest {
 
     BookmarkPresenter presenter = makeBookmarkPresenter(model);
     BookmarkResult result = getBookmarkResultByDateAndValidate(presenter, true);
-    assertThat(result.tagMap).hasSize(2);
+    assertThat(result.getTagMap()).hasSize(2);
 
     // number of tags (or 1) for each bookmark, plus number of tags (headers), plus unsorted, plus
     // current page header, plus current page
-    assertThat(result.rows).hasSize(
+    assertThat(result.getRows()).hasSize(
         MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG + TAG_LIST.size() + 1 + 2);
   }
 

@@ -138,7 +138,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   public void onNewData(BookmarkResult items) {
     bookmarksAdapter.setShowTags(bookmarkPresenter.shouldShowInlineTags());
     bookmarksAdapter.setElements(
-        items.rows.toArray(new QuranRow[items.rows.size()]), items.tagMap);
+        items.getRows().toArray(new QuranRow[items.getRows().size()]), items.getTagMap());
     bookmarksAdapter.notifyDataSetChanged();
   }
 

@@ -53,7 +53,7 @@ public class BookmarkModelTest {
     testObserver.assertNoErrors();
     testObserver.assertComplete();
 
-    verify(bookmarksAdapter, times(1)).updateTag(tag.id, tag.name);
+    verify(bookmarksAdapter, times(1)).updateTag(tag.getId(), tag.getName());
   }
 
   @Test

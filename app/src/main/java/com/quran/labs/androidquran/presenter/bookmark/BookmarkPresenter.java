@@ -195,8 +195,8 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   private BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
     if (cachedData != null) {
-      List<QuranRow> placeholder = new ArrayList<>(cachedData.rows.size() - remove.size());
-      List<QuranRow> rows = cachedData.rows;
+      List<QuranRow> placeholder = new ArrayList<>(cachedData.getRows().size() - remove.size());
+      List<QuranRow> rows = cachedData.getRows();
       List<Long> removedTags = new ArrayList<>();
       for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {
         QuranRow row = rows.get(i);
@@ -214,9 +214,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
       Map<Long, Tag> tagMap;
       if (removedTags.isEmpty()) {
-        tagMap = cachedData.tagMap;
+        tagMap = cachedData.getTagMap();
       } else {
-        tagMap = new HashMap<>(cachedData.tagMap);
+        tagMap = new HashMap<>(cachedData.getTagMap());
         for (int i = 0, removedTagsSize = removedTags.size(); i < removedTagsSize; i++) {
           Long tagId = removedTags.get(i);
           tagMap.remove(tagId);
@@ -304,7 +304,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       }
       rows.add(0, QuranRowFactory.fromRecentPageHeader(appContext, size));
       for (int i = 0; i < size; i++) {
-        int page = recentPages.get(i).page;
+        int page = recentPages.get(i).getPage();
         if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
           page = 1;
         }
@@ -322,9 +322,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
       Tag tag = tags.get(i);
       rows.add(QuranRowFactory.fromTag(tag));
-      List<Bookmark> tagBookmarks = tagsMapping.get(tag.id);
+      List<Bookmark> tagBookmarks = tagsMapping.get(tag.getId());
       for (int j = 0, tagBookmarksSize = tagBookmarks.size(); j < tagBookmarksSize; j++) {
-        rows.add(QuranRowFactory.fromBookmark(appContext, tagBookmarks.get(j), tag.id));
+        rows.add(QuranRowFactory.fromBookmark(appContext, tagBookmarks.get(j), tag.getId()));
       }
     }
 
@@ -374,7 +374,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     Set<Long> seenBookmarks = new HashSet<>();
     Map<Long, List<Bookmark>> tagMappings = new HashMap<>();
     for (int i = 0, tagSize = tags.size(); i < tagSize; i++) {
-      long id = tags.get(i).id;
+      long id = tags.get(i).getId();
       List<Bookmark> matchingBookmarks = new ArrayList<>();
       for (int j = 0, bookmarkSize = bookmarks.size(); j < bookmarkSize; j++) {
         Bookmark bookmark = bookmarks.get(j);
@@ -402,7 +402,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     Map<Long, Tag> tagMap = new HashMap<>(tags.size());
     for (int i = 0, size = tags.size(); i < size; i++) {
       Tag tag = tags.get(i);
-      tagMap.put(tag.id, tag);
+      tagMap.put(tag.getId(), tag);
     }
     return tagMap;
   }

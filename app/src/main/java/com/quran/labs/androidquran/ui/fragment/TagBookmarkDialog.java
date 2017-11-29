@@ -87,7 +87,7 @@ public class TagBookmarkDialog extends DialogFragment {
     listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     listview.setOnItemClickListener((parent, view, position, id) -> {
       Tag tag = (Tag) mAdapter.getItem(position);
-      boolean isChecked = mTagBookmarkPresenter.toggleTag(tag.id);
+      boolean isChecked = mTagBookmarkPresenter.toggleTag(tag.getId());
 
       Object viewTag = view.getTag();
       if (viewTag instanceof ViewHolder) {
@@ -186,7 +186,7 @@ public class TagBookmarkDialog extends DialogFragment {
 
     @Override
     public long getItemId(int position) {
-      return mTags.get(position).id;
+      return mTags.get(position).getId();
     }
 
     @Override
@@ -207,16 +207,16 @@ public class TagBookmarkDialog extends DialogFragment {
       }
       final Tag tag = (Tag) getItem(position);
       holder = (ViewHolder) convertView.getTag();
-      if (tag.id == -1) {
+      if (tag.getId() == -1) {
         holder.addImage.setVisibility(View.VISIBLE);
         holder.checkBox.setVisibility(View.GONE);
         holder.tagName.setText(mNewTagString);
       } else {
         holder.addImage.setVisibility(View.GONE);
         holder.checkBox.setVisibility(View.VISIBLE);
-        holder.checkBox.setChecked(mCheckedTags.contains(tag.id));
-        holder.tagName.setText(tag.name);
-        holder.checkBox.setOnClickListener(v -> mTagBookmarkPresenter.toggleTag(tag.id));
+        holder.checkBox.setChecked(mCheckedTags.contains(tag.getId()));
+        holder.tagName.setText(tag.getName());
+        holder.checkBox.setOnClickListener(v -> mTagBookmarkPresenter.toggleTag(tag.getId()));
       }
       return convertView;
     }

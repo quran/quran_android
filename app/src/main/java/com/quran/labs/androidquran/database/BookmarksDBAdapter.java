@@ -363,8 +363,8 @@ public class BookmarksDBAdapter {
       for (int i = 0; i < tagSize; i++) {
         Tag tag = tags.get(i);
         values.clear();
-        values.put(TagsTable.NAME, tag.name);
-        values.put(TagsTable.ID, tag.id);
+        values.put(TagsTable.NAME, tag.getName());
+        values.put(TagsTable.ID, tag.getId());
         mDb.insert(TagsTable.TABLE_NAME, null, values);
       }
 

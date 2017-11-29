@@ -75,7 +75,7 @@ public class TagsViewGroup extends LinearLayout {
       setLeftRightMargin(params, i, Math.min(tagsSize, MAX_TAGS) - 1);
 
       TextView tv = new TextView(mContext);
-      tv.setText(tag.name);
+      tv.setText(tag.getName());
       tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTagsTextSize);
       tv.setBackgroundColor(mDefaultTagBackgroundColor);
       tv.setGravity(Gravity.CENTER);

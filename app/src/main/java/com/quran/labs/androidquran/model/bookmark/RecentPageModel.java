@@ -59,7 +59,7 @@ public class RecentPageModel {
         .subscribeWith(new DisposableSingleObserver<List<RecentPage>>() {
           @Override
           public void onSuccess(List<RecentPage> recentPages) {
-            int page = recentPages.size() > 0 ? recentPages.get(0).page : Constants.NO_PAGE;
+            int page = recentPages.size() > 0 ? recentPages.get(0).getPage() : Constants.NO_PAGE;
             lastPageSubject.onNext(page);
             initialDataSubscription = null;
           }
