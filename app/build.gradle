@@ -115,18 +115,19 @@ ext {
   supportLibVersion = '26.1.0'
   espressoVersion = '2.2.2'
   okhttpVersion = '3.9.0'
+  daggerVersion = '2.13'
 }
 
 dependencies {
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.android.support:support-v4:${supportLibVersion}"
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"
   implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
   implementation "com.android.support:design:${supportLibVersion}"
   implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
-  implementation 'com.google.dagger:dagger:2.12'
+  annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+  implementation "com.google.dagger:dagger:${daggerVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation 'com.squareup.moshi:moshi:1.5.0'
   implementation 'com.jakewharton.timber:timber:4.5.1'
