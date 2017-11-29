@@ -26,6 +26,7 @@ import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.android.plugins.RxAndroidPlugins;
+import io.reactivex.functions.Function3;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -118,7 +119,8 @@ public class BookmarkPresenterTest {
             Single.just(new ArrayList<>()),
             Single.just(AYAH_BOOKMARKS_LIST),
             Single.just(new ArrayList<>()),
-            BookmarkData::new);
+            (Function3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>)
+                BookmarkData::new);
       }
     };
 
@@ -139,7 +141,8 @@ public class BookmarkPresenterTest {
             Single.just(new ArrayList<>()),
             Single.just(MIXED_BOOKMARKS_LIST),
             Single.just(new ArrayList<>()),
-            BookmarkData::new);
+            (Function3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>)
+                BookmarkData::new);
       }
     };
 
@@ -183,7 +186,8 @@ public class BookmarkPresenterTest {
             Single.just(TAG_LIST),
             Single.just(AYAH_BOOKMARKS_LIST),
             Single.just(new ArrayList<>()),
-            BookmarkData::new);
+            (Function3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>)
+                BookmarkData::new);
       }
     };
 
@@ -206,7 +210,8 @@ public class BookmarkPresenterTest {
             Single.just(TAG_LIST),
             Single.just(MIXED_BOOKMARKS_LIST),
             Single.just(new ArrayList<>()),
-            BookmarkData::new);
+            (Function3<List<Tag>, List<Bookmark>, List<RecentPage>, BookmarkData>)
+                BookmarkData::new);
       }
     };
 

@@ -14,11 +14,7 @@ public class ZipUtilsTest {
 
   private String destinationDirectory;
 
-  private ZipUtils.ZipListener<Object> listener = new ZipUtils.ZipListener<Object>() {
-    @Override
-    public void onProcessingProgress(Object obj, int processed, int total) {
-    }
-  };
+  private ZipUtils.ZipListener<Object> listener = (obj, processed, total) -> {};
 
   @Before
   public void setup() {
