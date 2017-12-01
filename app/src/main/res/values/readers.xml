@@ -64,4 +64,8 @@
   <string name="qari_bandar_baleela_gapless">Bandar Baleela (gapless)</string>
   <string name="qari_mahmoud_ali_albana_gapless">Mahmoud Ali al Bana (gapless)</string>
   <string name="qari_abdulrahman_alshahat_gapless">Abdulrahman Al-Shahat (gapless)</string>
+  <string name="qari_abdurrashid_sufi_gapless">Abdur-Rashid Sufi (gapless)</string>
+  <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel (gapless)</string>
+  <string name="qari_husary_iza3a_gapless">Husary Broadcast (gapless)</string>
+  <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (gapless)</string>
 </resources>

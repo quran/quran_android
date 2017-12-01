@@ -38,4 +38,8 @@
   <string name="qari_bandar_baleela_gapless">بندر بليلة (متصل)</string>
   <string name="qari_mahmoud_ali_albana_gapless">محمود علي البنا (متصل)</string>
   <string name="qari_abdulrahman_alshahat_gapless">عبد الرحمن الشحات (متصل)</string>
+  <string name="qari_abdurrashid_sufi_gapless">عبد الرشيد صوفي (متصل)</string>
+  <string name="qari_mostafa_ismaeel_gapless">مصطفي إسماعيل (متصل)</string>
+  <string name="qari_husary_iza3a_gapless">الحصري تسجيل الإذاعة (متصل)</string>
+  <string name="qari_abdulaziz_zahrani_gapless">عبد العزيز بن صالح الزهراني (متصل)</string>
 </resources>
