@@ -19,25 +19,32 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import dagger.Reusable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
+@Reusable
 public class QuranAppUtils {
 
-  public static Single<String> getQuranAppUrlObservable(final String key,
-                                                        final SuraAyah start,
-                                                        final SuraAyah end) {
+  @Inject
+  QuranAppUtils() {}
+
+  public Single<String> getQuranAppUrlObservable(final String key,
+                                                 final SuraAyah start,
+                                                 final SuraAyah end) {
     return Single.fromCallable(() -> {
       int sura = start.sura;
       int startAyah = start.ayah;
       // quranapp only supports sharing within a sura
       int endAyah = end.sura == start.sura ? end.ayah : QuranInfo.getNumAyahs(start.sura);
-      return QuranAppUtils.getQuranAppUrl(key, sura, startAyah, endAyah);
+      return getQuranAppUrl(key, sura, startAyah, endAyah);
     }).subscribeOn(Schedulers.io());
   }
 
-  private static String getQuranAppUrl(String key, int sura, Integer startAyah, Integer endAyah) {
+  private String getQuranAppUrl(String key, int sura, Integer startAyah, Integer endAyah) {
     String url = null;
     String fallbackUrl = null;
     try {

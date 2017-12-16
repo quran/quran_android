@@ -204,6 +204,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject ArabicDatabaseUtils arabicDatabaseUtils;
   @Inject TranslationsDBAdapter translationsDBAdapter;
+  @Inject QuranAppUtils quranAppUtils;
   @Inject ShareUtil shareUtil;
 
   private CompositeDisposable compositeDisposable;
@@ -2062,7 +2063,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void shareAyahLink(SuraAyah start, SuraAyah end) {
     showProgressDialog();
     compositeDisposable.add(
-        QuranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
+        quranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<String>() {
               @Override
