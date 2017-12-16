@@ -17,8 +17,6 @@ import com.quran.labs.androidquran.dao.translation.TranslationRowData;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.subjects.UnicastSubject;
 
@@ -111,29 +109,19 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
 
   class TranslationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    @Nullable
-    @BindView(R.id.translation_title)
-    TextView translationTitle;
-
-    @Nullable
-    @BindView(R.id.translation_info)
-    TextView translationInfo;
-
-    @Nullable
-    @BindView(R.id.left_image)
-    ImageView leftImage;
-
-    @Nullable
-    @BindView(R.id.right_image)
-    ImageView rightImage;
-
-    @Nullable
-    @BindView(R.id.separator_txt)
-    TextView separatorText;
+    @Nullable TextView translationTitle;
+    @Nullable TextView translationInfo;
+    @Nullable ImageView leftImage;
+    @Nullable ImageView rightImage;
+    @Nullable TextView separatorText;
 
     TranslationViewHolder(View itemView, int viewType) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
+      translationTitle = itemView.findViewById(R.id.translation_title);
+      translationInfo = itemView.findViewById(R.id.translation_info);
+      leftImage = itemView.findViewById(R.id.left_image);
+      rightImage = itemView.findViewById(R.id.right_image);
+      separatorText = itemView.findViewById(R.id.separator_txt);
       if (viewType == R.layout.translation_row) {
         itemView.setOnClickListener(this);
       }

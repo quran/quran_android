@@ -34,8 +34,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
@@ -60,10 +58,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   @Inject
   TranslationManagerPresenter presenter;
 
-  @BindView(R.id.translation_swipe_refresh)
   SwipeRefreshLayout translationSwipeRefresh;
-
-  @BindView(R.id.translation_recycler)
   RecyclerView translationRecycler;
 
   @Override
@@ -71,7 +66,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     super.onCreate(savedInstanceState);
     ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
     setContentView(R.layout.translation_manager);
-    ButterKnife.bind(this);
+    translationSwipeRefresh = findViewById(R.id.translation_swipe_refresh);
+    translationRecycler = findViewById(R.id.translation_recycler);
 
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     translationRecycler.setLayoutManager(mLayoutManager);

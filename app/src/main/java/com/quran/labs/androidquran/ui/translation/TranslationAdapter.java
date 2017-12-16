@@ -27,9 +27,6 @@ import com.quran.labs.androidquran.widgets.DividerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowViewHolder> {
   private static final boolean USE_UTHMANI_SPAN =
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
@@ -318,14 +315,16 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
 
   class RowViewHolder extends RecyclerView.ViewHolder {
     @NonNull View wrapperView;
-    @BindView(R.id.text) @Nullable TextView text;
-    @BindView(R.id.divider) @Nullable DividerView divider;
-    @BindView(R.id.ayah_number) @Nullable AyahNumberView ayahNumber;
+    @Nullable TextView text;
+    @Nullable DividerView divider;
+    @Nullable AyahNumberView ayahNumber;
 
     RowViewHolder(@NonNull View itemView) {
       super(itemView);
       this.wrapperView = itemView;
-      ButterKnife.bind(this, itemView);
+      this.text = itemView.findViewById(R.id.text);
+      this.divider = itemView.findViewById(R.id.divider);
+      this.ayahNumber = itemView.findViewById(R.id.ayah_number);
       itemView.setOnClickListener(defaultClickListener);
       itemView.setOnLongClickListener(defaultLongClickListener);
     }

@@ -41,4 +41,3 @@ Choose "Import Project," and choose the `build.gradle` file from the top level d
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [moshi](https://github.com/square/moshi)
 * [dagger2](http://google.github.io/dagger/)
-* [butterknife](http://jakewharton.github.io/butterknife/)
