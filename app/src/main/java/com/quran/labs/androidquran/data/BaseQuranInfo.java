@@ -16,14 +16,14 @@ import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 
 public class BaseQuranInfo {
-  public static int[] SURA_PAGE_START = QuranData.SURA_PAGE_START;
-  public static int[] PAGE_SURA_START = QuranData.PAGE_SURA_START;
-  public static int[] PAGE_AYAH_START = QuranData.PAGE_AYAH_START;
-  public static int[] JUZ_PAGE_START = QuranData.JUZ_PAGE_START;
-  public static int[] PAGE_RUB3_START = QuranData.PAGE_RUB3_START;
-  public static int[] SURA_NUM_AYAHS = QuranData.SURA_NUM_AYAHS;
-  public static boolean[] SURA_IS_MAKKI = QuranData.SURA_IS_MAKKI;
-  public static int[][] QUARTERS = QuranData.QUARTERS;
+  static int[] SURA_PAGE_START = QuranData.SURA_PAGE_START;
+  static int[] PAGE_SURA_START = QuranData.PAGE_SURA_START;
+  static int[] PAGE_AYAH_START = QuranData.PAGE_AYAH_START;
+  static int[] JUZ_PAGE_START = QuranData.JUZ_PAGE_START;
+  static int[] PAGE_RUB3_START = QuranData.PAGE_RUB3_START;
+  static int[] SURA_NUM_AYAHS = QuranData.SURA_NUM_AYAHS;
+  static boolean[] SURA_IS_MAKKI = QuranData.SURA_IS_MAKKI;
+  static int[][] QUARTERS = QuranData.QUARTERS;
 
   /**
    * Get localized sura name from resources
@@ -71,6 +71,14 @@ public class BaseQuranInfo {
     }
 
     return builder.toString();
+  }
+
+  public static int getStartingPageForJuz(int juz) {
+    return JUZ_PAGE_START[juz - 1];
+  }
+
+  public static int getPageNumberForSura(int sura) {
+    return SURA_PAGE_START[sura - 1];
   }
 
   public static int getSuraNumberFromPage(int page) {
@@ -168,6 +176,10 @@ public class BaseQuranInfo {
   public static VerseRange getVerseRangeForPage(int page) {
     int[] result = getPageBounds(page);
     return new VerseRange(result[0], result[1], result[2], result[3]);
+  }
+
+  public static int getFirstAyahOnPage(int page) {
+    return QuranInfo.PAGE_AYAH_START[page - 1];
   }
 
   @NonNull
@@ -304,6 +316,11 @@ public class BaseQuranInfo {
 
   public static String getSuraNameString(Context context, int page) {
     return context.getString(R.string.quran_sura_title, getSuraNameFromPage(context, page));
+  }
+
+  // not ideal, should change this later
+  public static int[] getQuarterByIndex(int quarter) {
+    return QUARTERS[quarter];
   }
 
   public static Set<String> getAyahKeysOnPage(int page, SuraAyah lowerBound, SuraAyah upperBound) {

@@ -1417,7 +1417,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     int startSura = QuranInfo.safelyGetSuraOnPage(page);
-    int startAyah = QuranInfo.PAGE_AYAH_START[page - 1];
+    int startAyah = QuranInfo.getFirstAyahOnPage(page);
     playFromAyah(page, startSura, startAyah, false);
   }
 

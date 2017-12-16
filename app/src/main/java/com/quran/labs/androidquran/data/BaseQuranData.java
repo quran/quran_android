@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.data;
 
-public class BaseQuranData {
-  public static int[] SURA_PAGE_START = {
+class BaseQuranData {
+  static int[] SURA_PAGE_START = {
         1,   2,  50,  77, 106, 128, 151, 177, 187, 208, 221, 235, 249, 255,
       262, 267, 282, 293, 305, 312, 322, 332, 342, 350, 359, 367, 377, 385,
       396, 404, 411, 415, 418, 428, 434, 440, 446, 453, 458, 467, 477, 483,
@@ -13,7 +13,7 @@ public class BaseQuranData {
       604, 604
   };
 
-  public static int[] PAGE_SURA_START = {
+  static int[] PAGE_SURA_START = {
         1,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,
         2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,
         2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,   2,
@@ -60,7 +60,7 @@ public class BaseQuranData {
       109, 112
   };
 
-  public static int[] PAGE_AYAH_START = {
+  static int[] PAGE_AYAH_START = {
         1,   1,   6,  17,  25,  30,  38,  49,  58,  62,  70,  77,  84,  89,
        94, 102, 106, 113, 120, 127, 135, 142, 146, 154, 164, 170, 177, 182,
       187, 191, 197, 203, 211, 216, 220, 225, 231, 234, 238, 246, 249, 253,
@@ -107,13 +107,13 @@ public class BaseQuranData {
         1,   1
   };
 
-  public static int[] JUZ_PAGE_START = {
+  static int[] JUZ_PAGE_START = {
         1,  22,  42,  62,  82, 102, 121, 142, 162, 182,
       201, 222, 242, 262, 282, 302, 322, 342, 362, 382,
       402, 422, 442, 462, 482, 502, 522, 542, 562, 582
   };
 
-  public static int[] PAGE_RUB3_START = {
+  static int[] PAGE_RUB3_START = {
        -1,  -1,  -1,  -1,   1,  -1,   2,  -1,   3,  -1,   4,  -1,  -1,   5,
        -1,  -1,   6,  -1,   7,  -1,  -1,   8,  -1,   9,  -1,  -1,  10,  -1,
        11,  -1,  -1,  12,  -1,  13,  -1,  -1,  14,  -1,  15,  -1,  -1,  16,
@@ -160,7 +160,7 @@ public class BaseQuranData {
        -1,  -1
   };
 
-  public static int[] SURA_NUM_AYAHS = {
+  static int[] SURA_NUM_AYAHS = {
         7, 286, 200, 176, 120, 165, 206,  75, 129, 109, 123, 111,  43,  52,
        99, 128, 111, 110,  98, 135, 112,  78, 118,  64,  77, 227,  93,  88,
        69,  60,  34,  30,  73,  54,  45,  83, 182,  88,  75,  85,  54,  53,
@@ -172,7 +172,7 @@ public class BaseQuranData {
         5,   6
   };
 
-  public static boolean[] SURA_IS_MAKKI = {
+  static boolean[] SURA_IS_MAKKI = {
       /*   1 -  10 */  true, false, false, false, false, true, true, false, false, true,
       /*  11 -  20 */  true, true, false, true, true, true, true, true, true, true,
       /*  21 -  30 */  true, false, true, false, true, true, true, true, true, true,
@@ -187,7 +187,7 @@ public class BaseQuranData {
       /* 111 - 114 */  true, true, true, true
   };
 
-  public static int[][] QUARTERS = new int[][]{
+  static int[][] QUARTERS = new int[][]{
       /* hizb 1  */  { 1,   1}, { 2,  26}, { 2,  44}, {  2,  60},
       /* hizb 2  */  { 2,  75}, { 2,  92}, { 2, 106}, {  2, 124},
       /* hizb 3  */  { 2, 142}, { 2, 158}, { 2, 177}, {  2, 189},

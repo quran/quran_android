@@ -78,7 +78,7 @@ public class AudioManagerUtils {
         .map(sura -> new SuraFileName(sura, new File(basePath, String.valueOf(sura))))
         .filter(suraFile -> suraFile.file.exists())
         .map(sf -> new Pair<>(sf.sura,
-            sf.file.listFiles().length >= QuranInfo.SURA_NUM_AYAHS[sf.sura - 1]))
+            sf.file.listFiles().length >= QuranInfo.getNumAyahs(sf.sura)))
         .toList()
         .map(downloaded -> QariDownloadInfo.withPartials(qariItem, downloaded));
   }

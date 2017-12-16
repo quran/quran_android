@@ -109,7 +109,7 @@ public class JuzListFragment extends Fragment {
 
     int ctr = 0;
     for (int i = 0; i < (8 * JUZ2_COUNT); i++) {
-      int[] pos = QuranInfo.QUARTERS[i];
+      int[] pos = QuranInfo.getQuarterByIndex(i);
       int page = QuranInfo.getPageFromSuraAyah(pos[0], pos[1]);
 
       if (i % 8 == 0) {
@@ -119,7 +119,7 @@ public class JuzListFragment extends Fragment {
         final QuranRow.Builder builder = new QuranRow.Builder()
             .withType(QuranRow.HEADER)
             .withText(juzTitle)
-            .withPage(QuranInfo.JUZ_PAGE_START[juz - 1]);
+            .withPage(QuranInfo.getStartingPageForJuz(juz));
         elements[ctr++] = builder.build();
       }
 

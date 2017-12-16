@@ -141,8 +141,8 @@ public class AudioUtils {
     }
     if (page < PAGES_LAST) {
       int nextPageSura = QuranInfo.safelyGetSuraOnPage(page);
-      // not using [page-1] as an index because we literally want the next page
-      int nextPageAyah = QuranInfo.PAGE_AYAH_START[page];
+      // using [page+1] as an index because we literally want the next page
+      int nextPageAyah = QuranInfo.getFirstAyahOnPage(page + 1);
 
       pageLastSura = nextPageSura;
       pageLastAyah = nextPageAyah - 1;
@@ -173,14 +173,14 @@ public class AudioUtils {
       if (juz == 30) {
         return new SuraAyah(114, 6);
       } else if (juz >= 1 && juz < 30) {
-        int[] endJuz = QuranInfo.QUARTERS[juz * 8];
+        int[] endJuz = QuranInfo.getQuarterByIndex(juz * 8);
         if (pageLastSura > endJuz[0]) {
           // ex between jathiya and a7qaf
-          endJuz = QuranInfo.QUARTERS[(juz + 1) * 8];
+          endJuz = QuranInfo.getQuarterByIndex((juz + 1) * 8);
         } else if (pageLastSura == endJuz[0] &&
             pageLastAyah > endJuz[1]) {
           // ex surat al anfal
-          endJuz = QuranInfo.QUARTERS[(juz + 1) * 8];
+          endJuz = QuranInfo.getQuarterByIndex((juz + 1) * 8);
         }
 
         return new SuraAyah(endJuz[0], endJuz[1]);

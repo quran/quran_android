@@ -113,18 +113,17 @@ public class SuraListFragment extends Fragment {
       final QuranRow.Builder headerBuilder = new QuranRow.Builder()
           .withType(QuranRow.HEADER)
           .withText(headerTitle)
-          .withPage(QuranInfo.JUZ_PAGE_START[juz - 1]);
+          .withPage(QuranInfo.getStartingPageForJuz(juz));
       elements[pos++] = headerBuilder.build();
       next = (juz == JUZ2_COUNT) ? PAGES_LAST + 1 :
-          QuranInfo.JUZ_PAGE_START[juz];
+          QuranInfo.getStartingPageForJuz(juz + 1);
 
-      while ((sura <= SURAS_COUNT) &&
-          (QuranInfo.SURA_PAGE_START[sura - 1] < next)) {
+      while ((sura <= SURAS_COUNT) && (QuranInfo.getPageNumberForSura(sura) < next)) {
         final QuranRow.Builder builder = new QuranRow.Builder()
             .withText(QuranInfo.getSuraName(activity, sura, wantPrefix, wantTranslation))
             .withMetadata(QuranInfo.getSuraListMetaString(activity, sura))
             .withSura(sura)
-            .withPage(QuranInfo.SURA_PAGE_START[sura - 1]);
+            .withPage(QuranInfo.getPageNumberForSura(sura));
         elements[pos++] = builder.build();
         sura++;
       }

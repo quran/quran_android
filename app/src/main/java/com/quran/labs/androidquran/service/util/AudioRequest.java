@@ -52,7 +52,7 @@ public abstract class AudioRequest implements Parcelable {
 
     currentSura = startSura;
     currentAyah = startAyah;
-    ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
+    ayahsInThisSura = QuranInfo.getNumAyahs(currentSura);
 
     repeatInfo = new RepeatInfo(0);
     repeatInfo.setCurrentVerse(currentSura, currentAyah);
@@ -149,7 +149,7 @@ public abstract class AudioRequest implements Parcelable {
       }
 
       if (currentSura >= 1 && currentSura <= 114) {
-        ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
+        ayahsInThisSura = QuranInfo.getNumAyahs(currentSura);
       }
       repeatInfo.setCurrentVerse(currentSura, currentAyah);
     }
@@ -258,7 +258,7 @@ public abstract class AudioRequest implements Parcelable {
       currentAyah = 1;
       currentSura++;
       if (currentSura <= 114) {
-        ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
+        ayahsInThisSura = QuranInfo.getNumAyahs(currentSura);
         repeatInfo.setCurrentVerse(currentSura, currentAyah);
       }
     } else {
@@ -272,7 +272,7 @@ public abstract class AudioRequest implements Parcelable {
     if (currentAyah < 1) {
       currentSura--;
       if (currentSura > 0) {
-        ayahsInThisSura = QuranInfo.SURA_NUM_AYAHS[currentSura - 1];
+        ayahsInThisSura = QuranInfo.getNumAyahs(currentSura);
         currentAyah = ayahsInThisSura;
       }
     } else if (currentAyah == 1 && !isGapless()) {
