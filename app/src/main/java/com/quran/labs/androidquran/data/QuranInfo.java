@@ -15,15 +15,15 @@ import static com.quran.labs.androidquran.data.Constants.PAGES_FIRST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 
-public class BaseQuranInfo {
-  static int[] SURA_PAGE_START = QuranData.SURA_PAGE_START;
-  static int[] PAGE_SURA_START = QuranData.PAGE_SURA_START;
-  static int[] PAGE_AYAH_START = QuranData.PAGE_AYAH_START;
-  static int[] JUZ_PAGE_START = QuranData.JUZ_PAGE_START;
-  static int[] PAGE_RUB3_START = QuranData.PAGE_RUB3_START;
-  static int[] SURA_NUM_AYAHS = QuranData.SURA_NUM_AYAHS;
-  static boolean[] SURA_IS_MAKKI = QuranData.SURA_IS_MAKKI;
-  static int[][] QUARTERS = QuranData.QUARTERS;
+public class QuranInfo {
+  private static int[] SURA_PAGE_START = QuranData.SURA_PAGE_START;
+  private static int[] PAGE_SURA_START = QuranData.PAGE_SURA_START;
+  private static int[] PAGE_AYAH_START = QuranData.PAGE_AYAH_START;
+  private static int[] JUZ_PAGE_START = QuranData.JUZ_PAGE_START;
+  private static int[] PAGE_RUB3_START = QuranData.PAGE_RUB3_START;
+  private static int[] SURA_NUM_AYAHS = QuranData.SURA_NUM_AYAHS;
+  private static boolean[] SURA_IS_MAKKI = QuranData.SURA_IS_MAKKI;
+  private static int[][] QUARTERS = QuranData.QUARTERS;
 
   /**
    * Get localized sura name from resources
