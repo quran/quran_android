@@ -4,7 +4,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'net.ltgt.errorprone'
 
 android {
-  compileSdkVersion 26
+  compileSdkVersion 27
   buildToolsVersion '26.0.2'
 
   lintOptions {
@@ -14,7 +14,7 @@ android {
 
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 26
+    targetSdkVersion 27
     versionCode 2801
     versionName "2.8.0-p1"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -112,7 +112,7 @@ android {
 }
 
 ext {
-  supportLibVersion = '26.1.0'
+  supportLibVersion = '27.0.2'
   espressoVersion = '2.2.2'
   okhttpVersion = '3.9.0'
   daggerVersion = '2.13'
@@ -124,7 +124,7 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"
   implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
   implementation "com.android.support:design:${supportLibVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
   annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
   implementation "com.google.dagger:dagger:${daggerVersion}"
