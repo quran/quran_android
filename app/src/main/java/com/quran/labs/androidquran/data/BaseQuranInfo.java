@@ -234,8 +234,12 @@ public class BaseQuranInfo {
   }
 
   public static int getJuzFromPage(int page) {
-    int juz = ((page - 2) / 20) + 1;
-    return juz > 30 ? 30 : juz < 1 ? 1 : juz;
+    for (int i = 0; i < JUZ_PAGE_START.length; i++) {
+      if (JUZ_PAGE_START[i] >= page) {
+        return i + 1;
+      }
+    }
+    return 30;
   }
 
   public static int getRub3FromPage(int page) {
