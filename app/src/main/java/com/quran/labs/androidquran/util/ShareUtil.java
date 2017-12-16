@@ -15,14 +15,22 @@ import com.quran.labs.androidquran.data.QuranInfo;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Reusable;
+
+@Reusable
 public class ShareUtil {
 
-  public static void copyVerses(Activity activity, List<QuranText> verses) {
+  @Inject
+  ShareUtil() {}
+
+  public void copyVerses(Activity activity, List<QuranText> verses) {
     String text = getShareText(activity, verses);
     copyToClipboard(activity, text);
   }
 
-  public static void copyToClipboard(Activity activity, String text) {
+  public void copyToClipboard(Activity activity, String text) {
     ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
     ClipData clip = ClipData.newPlainText(activity.getString(R.string.app_name), text);
     cm.setPrimaryClip(clip);
@@ -30,19 +38,19 @@ public class ShareUtil {
         Toast.LENGTH_SHORT).show();
   }
 
-  public static void shareVerses(Activity activity, List<QuranText> verses) {
+  public void shareVerses(Activity activity, List<QuranText> verses) {
     String text = getShareText(activity, verses);
     shareViaIntent(activity, text, R.string.share_ayah_text);
   }
 
-  public static void shareViaIntent(Activity activity, String text, @StringRes int titleResId) {
+  public void shareViaIntent(Activity activity, String text, @StringRes int titleResId) {
     final Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setType("text/plain");
     intent.putExtra(Intent.EXTRA_TEXT, text);
     activity.startActivity(Intent.createChooser(intent, activity.getString(titleResId)));
   }
 
-  public static String getShareText(Context context,
+  public String getShareText(Context context,
                                     QuranAyahInfo ayahInfo,
                                     String[] translationNames) {
     final StringBuilder sb = new StringBuilder();
@@ -66,7 +74,7 @@ public class ShareUtil {
     return sb.toString();
   }
 
-  private static String getShareText(Activity activity, List<QuranText> verses) {
+  private String getShareText(Activity activity, List<QuranText> verses) {
     final int size = verses.size();
 
     StringBuilder sb = new StringBuilder("(");

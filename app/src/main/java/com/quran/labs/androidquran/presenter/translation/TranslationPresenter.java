@@ -25,15 +25,18 @@ import io.reactivex.observers.DisposableObserver;
 public class TranslationPresenter extends
     BaseTranslationPresenter<TranslationPresenter.TranslationScreen> {
   private final Integer[] pages;
+  private final ShareUtil shareUtil;
   private final QuranSettings quranSettings;
 
   @Inject
   TranslationPresenter(TranslationModel translationModel,
                        QuranSettings quranSettings,
                        TranslationsDBAdapter translationsAdapter,
+                       ShareUtil shareUtil,
                        Integer... pages) {
     super(translationModel, translationsAdapter);
     this.pages = pages;
+    this.shareUtil = shareUtil;
     this.quranSettings = quranSettings;
   }
 
@@ -79,11 +82,11 @@ public class TranslationPresenter extends
       }
       case R.id.cab_share_ayah_text:
       case R.id.cab_copy_ayah: {
-        String shareText = ShareUtil.getShareText(activity, ayah, translationNames);
+        String shareText = shareUtil.getShareText(activity, ayah, translationNames);
         if (actionId == R.id.cab_share_ayah_text) {
-          ShareUtil.shareViaIntent(activity, shareText, R.string.share_ayah_text);
+          shareUtil.shareViaIntent(activity, shareText, R.string.share_ayah_text);
         } else {
-          ShareUtil.copyToClipboard(activity, shareText);
+          shareUtil.copyToClipboard(activity, shareText);
         }
         break;
       }

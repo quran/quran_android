@@ -204,6 +204,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject ArabicDatabaseUtils arabicDatabaseUtils;
   @Inject TranslationsDBAdapter translationsDBAdapter;
+  @Inject ShareUtil shareUtil;
 
   private CompositeDisposable compositeDisposable;
 
@@ -2051,9 +2052,9 @@ public class PagerActivity extends QuranActionBarActivity implements
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(quranAyahs -> {
               if (isCopy) {
-                ShareUtil.copyVerses(PagerActivity.this, quranAyahs);
+                shareUtil.copyVerses(PagerActivity.this, quranAyahs);
               } else {
-                ShareUtil.shareVerses(PagerActivity.this, quranAyahs);
+                shareUtil.shareVerses(PagerActivity.this, quranAyahs);
               }
             }));
   }
@@ -2066,7 +2067,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             .subscribeWith(new DisposableSingleObserver<String>() {
               @Override
               public void onSuccess(String url) {
-                ShareUtil.shareViaIntent(PagerActivity.this, url, R.string.share_ayah);
+                shareUtil.shareViaIntent(PagerActivity.this, url, R.string.share_ayah);
                 dismissProgressDialog();
               }
 
