@@ -73,9 +73,6 @@
   <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
   <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
   <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
-  <string name="about_retrolambda" translatable="false">Retrolambda</string>
-  <string name="about_retrolambda_desc" translatable="false">orfjackal/retrolambda and evant/gradle-retrolambda</string>
-  <string name="about_retrolambda_url" translatable="false">https://github.com/orfjackal/retrolambda</string>
   <string name="about_others">Others</string>
   <string name="about_contributors">Contributors</string>
   <string name="about_contributors_summary">A list of people who contributed to the development of Quran for Android</string>
