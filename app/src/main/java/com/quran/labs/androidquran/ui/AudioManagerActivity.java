@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -50,9 +52,12 @@ public class AudioManagerActivity extends QuranActionBarActivity
   private String basePath;
   private List<QariItem> qariItems;
 
+  @Inject AudioUtils audioUtils;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     QuranApplication quranApp = (QuranApplication) getApplication();
+    quranApp.getApplicationComponent().inject(this);
     quranApp.refreshLocale(this, false);
 
     super.onCreate(savedInstanceState);
@@ -69,7 +74,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-    qariItems = AudioUtils.getQariList(this);
+    qariItems = audioUtils.getQariList(this);
     shuyookhAdapter = new ShuyookhAdapter(qariItems);
     recyclerView.setAdapter(shuyookhAdapter);
 
@@ -145,7 +150,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
     String sheikhName = qariItem.getName();
     Intent intent = ServiceIntentHelper.getDownloadIntent(this,
-        AudioUtils.getQariUrl(qariItem),
+        audioUtils.getQariUrl(qariItem),
         baseUri, sheikhName, AUDIO_DOWNLOAD_KEY, QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
     intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, new SuraAyah(1, 1));
     intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, new SuraAyah(114, 6));

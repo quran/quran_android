@@ -20,10 +20,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import dagger.Reusable;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 
+@Reusable
 public class AudioUtils {
 
   public static final String AUDIO_EXTENSION = ".mp3";
@@ -41,6 +45,10 @@ public class AudioUtils {
     static final int MAX = 3;
   }
 
+  @Inject
+  public AudioUtils() {
+  }
+
   /**
    * Get a list of QariItem representing the qaris to show
    *
@@ -50,7 +58,7 @@ public class AudioUtils {
    * @param context the current context
    * @return a list of QariItem representing the qaris to show.
    */
-  public static List<QariItem> getQariList(@NonNull Context context) {
+  public List<QariItem> getQariList(@NonNull Context context) {
     final Resources resources = context.getResources();
     final String[] shuyookh = resources.getStringArray(R.array.quran_readers_name);
     final String[] paths = resources.getStringArray(R.array.quran_readers_path);
@@ -75,7 +83,7 @@ public class AudioUtils {
     return items;
   }
 
-  public static String getQariUrl(@NonNull QariItem item) {
+  public String getQariUrl(@NonNull QariItem item) {
     String url = item.getUrl();
     if (item.isGapless()) {
       url += "%03d" + AudioUtils.AUDIO_EXTENSION;
@@ -85,12 +93,12 @@ public class AudioUtils {
     return url;
   }
 
-  public static String getLocalQariUrl(@NonNull Context context, @NonNull QariItem item) {
+  public String getLocalQariUrl(@NonNull Context context, @NonNull QariItem item) {
     String rootDirectory = QuranFileUtils.getQuranAudioDirectory(context);
     return rootDirectory == null ? null : rootDirectory + item.getPath();
   }
 
-  public static String getQariDatabasePathIfGapless(
+  public String getQariDatabasePathIfGapless(
       @NonNull Context context, @NonNull QariItem item) {
     String databaseName = item.getDatabaseName();
     if (databaseName != null) {
@@ -102,7 +110,7 @@ public class AudioUtils {
     return databaseName;
   }
 
-  public static boolean shouldDownloadGaplessDatabase(DownloadAudioRequest request) {
+  public boolean shouldDownloadGaplessDatabase(DownloadAudioRequest request) {
     if (!request.isGapless()) {
       return false;
     }
@@ -115,7 +123,7 @@ public class AudioUtils {
     return !f.exists();
   }
 
-  public static String getGaplessDatabaseUrl(DownloadAudioRequest request) {
+  public String getGaplessDatabaseUrl(DownloadAudioRequest request) {
     if (!request.isGapless()) {
       return null;
     }
@@ -125,7 +133,7 @@ public class AudioUtils {
     return QuranFileUtils.getGaplessDatabaseRootUrl() + "/" + dbname;
   }
 
-  public static SuraAyah getLastAyahToPlay(SuraAyah startAyah,
+  public SuraAyah getLastAyahToPlay(SuraAyah startAyah,
       int page, int mode, boolean isDualPages) {
     if (isDualPages && mode == LookAheadAmount.PAGE && (page % 2 == 1)) {
       // if we download page by page and we are currently in tablet mode
@@ -191,7 +199,7 @@ public class AudioUtils {
     return new SuraAyah(pageLastSura, pageLastAyah);
   }
 
-  public static boolean shouldDownloadBasmallah(DownloadAudioRequest request) {
+  public boolean shouldDownloadBasmallah(DownloadAudioRequest request) {
     if (request.isGapless()) {
       return false;
     }
@@ -220,7 +228,7 @@ public class AudioUtils {
     return f.exists();
   }
 
-  private static boolean doesRequireBasmallah(AudioRequest request) {
+  private boolean doesRequireBasmallah(AudioRequest request) {
     SuraAyah minAyah = request.getMinAyah();
     int startSura = minAyah.sura;
     int startAyah = minAyah.ayah;
@@ -253,13 +261,13 @@ public class AudioUtils {
     return false;
   }
 
-  private static boolean haveAnyFiles(Context context, String path) {
+  private boolean haveAnyFiles(Context context, String path) {
     final String basePath = QuranFileUtils.getQuranAudioDirectory(context);
     final File file = new File(basePath, path);
     return file.isDirectory() && file.list().length > 0;
   }
 
-  public static boolean haveAllFiles(DownloadAudioRequest request) {
+  public boolean haveAllFiles(DownloadAudioRequest request) {
     String baseDirectory = request.getLocalPath();
     if (TextUtils.isEmpty(baseDirectory)) {
       return false;
@@ -317,7 +325,7 @@ public class AudioUtils {
     return true;
   }
 
-  public static Intent getAudioIntent(Context context, String action) {
+  public Intent getAudioIntent(Context context, String action) {
     final Intent intent = new Intent(context, AudioService.class);
     intent.setAction(action);
     return intent;

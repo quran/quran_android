@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -123,9 +122,9 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
           itemBackground);
       ta.recycle();
     }
+  }
 
-    List<QariItem> qariList = AudioUtils.getQariList(this.context);
-
+  public void setQariList(List<QariItem> qariList) {
     // TODO: optimize - PREF_DEFAULT_QARI is the qari id, should introduce a helper pref for pos
     final int qaris = qariList.size();
     if (currentQari >= qaris || qariList.get(currentQari).getId() != currentQari) {

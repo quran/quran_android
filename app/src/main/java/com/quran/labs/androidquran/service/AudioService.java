@@ -62,6 +62,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.SparseIntArray;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -78,6 +79,8 @@ import com.quran.labs.androidquran.util.AudioUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
@@ -212,6 +215,8 @@ public class AudioService extends Service implements OnCompletionListener,
   private SparseIntArray gaplessSuraData = null;
   private AsyncTask<Integer, Void, SparseIntArray> timingTask = null;
 
+  @Inject AudioUtils audioUtils;
+
   public static final int MSG_START_AUDIO = 1;
   public static final int MSG_UPDATE_AUDIO_POS = 2;
 
@@ -276,6 +281,7 @@ public class AudioService extends Service implements OnCompletionListener,
     handler = new ServiceHandler(this);
 
     final Context appContext = getApplicationContext();
+    ((QuranApplication) appContext).getApplicationComponent().inject(this);
     wifiLock = ((WifiManager) appContext.getSystemService(Context.WIFI_SERVICE))
         .createWifiLock(WifiManager.WIFI_MODE_FULL, "QuranAudioLock");
     notificationManager = (NotificationManager) appContext.getSystemService(NOTIFICATION_SERVICE);
@@ -1140,19 +1146,19 @@ public class AudioService extends Service implements OnCompletionListener,
         PendingIntent.FLAG_UPDATE_CURRENT);
 
     final PendingIntent previousIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_PREVIOUS, AudioUtils.getAudioIntent(this, ACTION_REWIND),
+        appContext, REQUEST_CODE_PREVIOUS, audioUtils.getAudioIntent(this, ACTION_REWIND),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent nextIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_SKIP, AudioUtils.getAudioIntent(this, ACTION_SKIP),
+        appContext, REQUEST_CODE_SKIP, audioUtils.getAudioIntent(this, ACTION_SKIP),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent pauseIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_PAUSE, AudioUtils.getAudioIntent(this, ACTION_PAUSE),
+        appContext, REQUEST_CODE_PAUSE, audioUtils.getAudioIntent(this, ACTION_PAUSE),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent resumeIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_RESUME, AudioUtils.getAudioIntent(this, ACTION_PLAYBACK),
+        appContext, REQUEST_CODE_RESUME, audioUtils.getAudioIntent(this, ACTION_PLAYBACK),
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent stopIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_STOP, AudioUtils.getAudioIntent(this, ACTION_STOP),
+        appContext, REQUEST_CODE_STOP, audioUtils.getAudioIntent(this, ACTION_STOP),
         PendingIntent.FLAG_UPDATE_CURRENT);
 
     // if the notification icon is null, let's try to build it
