@@ -135,8 +135,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         // different range or not playing, so make a new request
         updatedRange = true;
         if (this.start != null) {
-          final int origPage = decidedStart == null ?
-              this.start.getPage() : decidedStart.getPage();
+          final SuraAyah starting = decidedStart == null ? this.start : decidedStart;
+          final int origPage = QuranInfo.getPageFromSuraAyah(starting.sura, starting.ayah);
           if (page != origPage) {
             pagerActivity.highlightAyah(currentStart.sura,
                 currentStart.ayah, HighlightType.AUDIO);
@@ -270,7 +270,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       } else {
         start = this.start;
         if (this.start.equals(end)) {
-          final int[] pageBounds = QuranInfo.getPageBounds(start.getPage());
+          final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+          final int[] pageBounds = QuranInfo.getPageBounds(startPage);
           ending = new SuraAyah(pageBounds[2], pageBounds[3]);
           shouldEnforce = false;
         } else {
