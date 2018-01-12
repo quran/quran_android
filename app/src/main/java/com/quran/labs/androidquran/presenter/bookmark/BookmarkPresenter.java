@@ -47,6 +47,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private final Context appContext;
   private final BookmarkModel bookmarkModel;
   private final QuranSettings quranSettings;
+  private final QuranRowFactory quranRowFactory;
 
   private int sortOrder;
   private boolean groupByTags;
@@ -63,11 +64,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   BookmarkPresenter(Context appContext,
                     BookmarkModel bookmarkModel,
                     QuranSettings quranSettings,
-                    ArabicDatabaseUtils arabicDatabaseUtils) {
+                    ArabicDatabaseUtils arabicDatabaseUtils,
+                    QuranRowFactory quranRowFactory) {
     this.appContext = appContext;
     this.quranSettings = quranSettings;
     this.bookmarkModel = bookmarkModel;
     this.arabicDatabaseUtils = arabicDatabaseUtils;
+    this.quranRowFactory = quranRowFactory;
+
     sortOrder = quranSettings.getBookmarksSortOrder();
     groupByTags = quranSettings.getBookmarksGroupedByTags();
     showRecents = quranSettings.getShowRecents();
@@ -302,13 +306,13 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         // only show the last bookmark if show recents is off
         size = 1;
       }
-      rows.add(0, QuranRowFactory.fromRecentPageHeader(appContext, size));
+      rows.add(0, quranRowFactory.fromRecentPageHeader(appContext, size));
       for (int i = 0; i < size; i++) {
         int page = recentPages.get(i).getPage();
         if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
           page = 1;
         }
-        rows.add(i + 1, QuranRowFactory.fromCurrentPage(appContext, page));
+        rows.add(i + 1, quranRowFactory.fromCurrentPage(appContext, page));
       }
     }
 
@@ -321,19 +325,19 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     Map<Long, List<Bookmark>> tagsMapping = generateTagsMapping(tags, bookmarks);
     for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
       Tag tag = tags.get(i);
-      rows.add(QuranRowFactory.fromTag(tag));
+      rows.add(quranRowFactory.fromTag(tag));
       List<Bookmark> tagBookmarks = tagsMapping.get(tag.getId());
       for (int j = 0, tagBookmarksSize = tagBookmarks.size(); j < tagBookmarksSize; j++) {
-        rows.add(QuranRowFactory.fromBookmark(appContext, tagBookmarks.get(j), tag.getId()));
+        rows.add(quranRowFactory.fromBookmark(appContext, tagBookmarks.get(j), tag.getId()));
       }
     }
 
     // add untagged bookmarks
     List<Bookmark> untagged = tagsMapping.get(BOOKMARKS_WITHOUT_TAGS_ID);
     if (untagged.size() > 0) {
-      rows.add(QuranRowFactory.fromNotTaggedHeader(appContext));
+      rows.add(quranRowFactory.fromNotTaggedHeader(appContext));
       for (int i = 0, untaggedSize = untagged.size(); i < untaggedSize; i++) {
-        rows.add(QuranRowFactory.fromBookmark(appContext, untagged.get(i)));
+        rows.add(quranRowFactory.fromBookmark(appContext, untagged.get(i)));
       }
     }
     return rows;
@@ -347,7 +351,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
       if (bookmark.isPageBookmark()) {
-        rows.add(QuranRowFactory.fromBookmark(appContext, bookmark));
+        rows.add(quranRowFactory.fromBookmark(appContext, bookmark));
       } else {
         ayahBookmarks.add(bookmark);
       }
@@ -355,14 +359,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
     // add page bookmarks header if needed
     if (rows.size() > 0) {
-      rows.add(0, QuranRowFactory.fromPageBookmarksHeader(appContext));
+      rows.add(0, quranRowFactory.fromPageBookmarksHeader(appContext));
     }
 
     // add ayah bookmarks if any
     if (ayahBookmarks.size() > 0) {
-      rows.add(QuranRowFactory.fromAyahBookmarksHeader(appContext));
+      rows.add(quranRowFactory.fromAyahBookmarksHeader(appContext));
       for (int i = 0, ayahBookmarksSize = ayahBookmarks.size(); i < ayahBookmarksSize; i++) {
-        rows.add(QuranRowFactory.fromBookmark(appContext, ayahBookmarks.get(i)));
+        rows.add(quranRowFactory.fromBookmark(appContext, ayahBookmarks.get(i)));
       }
     }
 

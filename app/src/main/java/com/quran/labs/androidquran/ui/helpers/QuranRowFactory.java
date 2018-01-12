@@ -8,28 +8,37 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.QuranInfo;
 
+import javax.inject.Inject;
+
+import dagger.Reusable;
+
+@Reusable
 public class QuranRowFactory {
 
-  public static QuranRow fromRecentPageHeader(Context context, int count) {
+  @Inject
+  QuranRowFactory() {
+  }
+
+  public QuranRow fromRecentPageHeader(Context context, int count) {
     return new QuranRow.Builder()
         .withText(context.getResources().getQuantityString(R.plurals.plural_recent_pages, count))
         .withType(QuranRow.HEADER)
         .build();
   }
 
-  public static QuranRow fromPageBookmarksHeader(Context context) {
+  public QuranRow fromPageBookmarksHeader(Context context) {
     return new QuranRow.Builder()
         .withText(context.getString(R.string.menu_bookmarks_page))
         .withType(QuranRow.HEADER).build();
   }
 
-  public static QuranRow fromAyahBookmarksHeader(Context context) {
+  public QuranRow fromAyahBookmarksHeader(Context context) {
     return new QuranRow.Builder()
         .withText(context.getString(R.string.menu_bookmarks_ayah))
         .withType(QuranRow.HEADER).build();
   }
 
-  public static QuranRow fromCurrentPage(Context context, int page) {
+  public QuranRow fromCurrentPage(Context context, int page) {
     return new QuranRow.Builder()
         .withText(QuranInfo.getSuraNameString(context, page))
         .withMetadata(QuranInfo.getPageSubtitle(context, page))
@@ -38,11 +47,11 @@ public class QuranRowFactory {
         .withImageResource(R.drawable.bookmark_currentpage).build();
   }
 
-  public static QuranRow fromBookmark(Context context, Bookmark bookmark) {
+  public QuranRow fromBookmark(Context context, Bookmark bookmark) {
     return fromBookmark(context, bookmark, null);
   }
 
-  public static QuranRow fromBookmark(Context context, Bookmark bookmark, Long tagId) {
+  public QuranRow fromBookmark(Context context, Bookmark bookmark, Long tagId) {
     final QuranRow.Builder builder = new QuranRow.Builder();
 
     if (bookmark.isPageBookmark()) {
@@ -80,7 +89,7 @@ public class QuranRowFactory {
     return builder.build();
   }
 
-  public static QuranRow fromTag(Tag tag) {
+  public QuranRow fromTag(Tag tag) {
     return new QuranRow.Builder()
         .withType(QuranRow.BOOKMARK_HEADER)
         .withText(tag.getName())
