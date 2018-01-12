@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -21,6 +22,8 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.JuzView;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -35,6 +38,8 @@ public class JuzListFragment extends Fragment {
 
   private RecyclerView mRecyclerView;
   private Disposable disposable;
+
+  @Inject QuranInfo quranInfo;
 
   public static JuzListFragment newInstance() {
     return new JuzListFragment();
@@ -58,6 +63,12 @@ public class JuzListFragment extends Fragment {
   }
 
   @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
+  }
+
+  @Override
   public void onPause() {
     if (disposable != null) {
       disposable.dispose();
@@ -77,7 +88,7 @@ public class JuzListFragment extends Fragment {
             @Override
             public void onSuccess(Integer recentPage) {
               if (recentPage != Constants.NO_PAGE) {
-                int juz = QuranInfo.getJuzFromPage(recentPage);
+                int juz = quranInfo.getJuzFromPage(recentPage);
                 int position = (juz - 1) * 9;
                 mRecyclerView.scrollToPosition(position);
               }
@@ -109,8 +120,8 @@ public class JuzListFragment extends Fragment {
 
     int ctr = 0;
     for (int i = 0; i < (8 * JUZ2_COUNT); i++) {
-      int[] pos = QuranInfo.getQuarterByIndex(i);
-      int page = QuranInfo.getPageFromSuraAyah(pos[0], pos[1]);
+      int[] pos = quranInfo.getQuarterByIndex(i);
+      int page = quranInfo.getPageFromSuraAyah(pos[0], pos[1]);
 
       if (i % 8 == 0) {
         int juz = 1 + (i / 8);
@@ -119,12 +130,12 @@ public class JuzListFragment extends Fragment {
         final QuranRow.Builder builder = new QuranRow.Builder()
             .withType(QuranRow.HEADER)
             .withText(juzTitle)
-            .withPage(QuranInfo.getStartingPageForJuz(juz));
+            .withPage(quranInfo.getStartingPageForJuz(juz));
         elements[ctr++] = builder.build();
       }
 
       final String metadata = getString(R.string.sura_ayah_notification_str, 
-          QuranInfo.getSuraName(activity, pos[0], false), pos[1]);
+          quranInfo.getSuraName(activity, pos[0], false), pos[1]);
       final QuranRow.Builder builder = new QuranRow.Builder()
           .withText(quarters[i])
           .withMetadata(metadata)

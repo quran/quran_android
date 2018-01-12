@@ -28,9 +28,12 @@ import timber.log.Timber;
 
 @Reusable
 public class QuranAppUtils {
+  private final QuranInfo quranInfo;
 
   @Inject
-  QuranAppUtils() {}
+  QuranAppUtils(QuranInfo quranInfo) {
+    this.quranInfo = quranInfo;
+  }
 
   public Single<String> getQuranAppUrlObservable(final String key,
                                                  final SuraAyah start,
@@ -39,7 +42,7 @@ public class QuranAppUtils {
       int sura = start.sura;
       int startAyah = start.ayah;
       // quranapp only supports sharing within a sura
-      int endAyah = end.sura == start.sura ? end.ayah : QuranInfo.getNumAyahs(start.sura);
+      int endAyah = end.sura == start.sura ? end.ayah : quranInfo.getNumAyahs(start.sura);
       return getQuranAppUrl(key, sura, startAyah, endAyah);
     }).subscribeOn(Schedulers.io());
   }

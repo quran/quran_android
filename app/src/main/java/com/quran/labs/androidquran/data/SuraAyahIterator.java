@@ -9,7 +9,11 @@ public class SuraAyahIterator {
   private int curSura;
   private int curAyah;
 
-  public SuraAyahIterator(SuraAyah start, SuraAyah end) {
+  private final QuranInfo quranInfo;
+
+  public SuraAyahIterator(QuranInfo quranInfo, SuraAyah start, SuraAyah end) {
+    this.quranInfo = quranInfo;
+
     // Sanity check
     if (start.compareTo(end) <= 0) {
       this.start = start;
@@ -45,7 +49,7 @@ public class SuraAyahIterator {
     } else if (!hasNext()) {
       return false;
     }
-    if (curAyah < QuranInfo.getNumAyahs(curSura)) {
+    if (curAyah < quranInfo.getNumAyahs(curSura)) {
       curAyah++;
     } else {
       curAyah = 1;

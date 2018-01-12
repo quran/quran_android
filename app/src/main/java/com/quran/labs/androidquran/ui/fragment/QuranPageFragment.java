@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
@@ -48,6 +49,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   private int pageNumber;
   private AyahTrackerItem[] ayahTrackerItems;
 
+  @Inject QuranInfo quranInfo;
   @Inject QuranSettings quranSettings;
   @Inject QuranPagePresenter quranPagePresenter;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
@@ -108,8 +110,8 @@ public class QuranPageFragment extends Fragment implements PageController,
     if (ayahTrackerItems == null) {
       ayahTrackerItems = new AyahTrackerItem[]{
         quranPageLayout.canScroll() ?
-            new AyahScrollableImageTrackerItem(pageNumber, quranPageLayout, imageView) :
-            new AyahImageTrackerItem(pageNumber, imageView)
+            new AyahScrollableImageTrackerItem(pageNumber, quranInfo, quranPageLayout, imageView) :
+            new AyahImageTrackerItem(pageNumber, quranInfo, imageView)
       };
     }
     return ayahTrackerItems;

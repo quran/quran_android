@@ -7,11 +7,15 @@ import android.os.Bundle;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
+import javax.inject.Inject;
+
 public class QuranForwarderActivity extends Activity {
+  @Inject QuranInfo quranInfo;
 
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+      ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
 
       // handle urls of type quran://sura/ayah
       Intent intent = getIntent();
@@ -33,7 +37,7 @@ public class QuranForwarderActivity extends Activity {
             }
 
             if (sura != null){
-               int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+               int page = quranInfo.getPageFromSuraAyah(sura, ayah);
                Intent showSuraIntent = new Intent(this, PagerActivity.class);
                showSuraIntent.putExtra("page", page);
                showSuraIntent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura);

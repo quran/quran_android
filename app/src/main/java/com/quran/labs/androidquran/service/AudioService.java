@@ -215,6 +215,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private SparseIntArray gaplessSuraData = null;
   private AsyncTask<Integer, Void, SparseIntArray> timingTask = null;
 
+  @Inject QuranInfo quranInfo;
   @Inject AudioUtils audioUtils;
 
   public static final int MSG_START_AUDIO = 1;
@@ -519,7 +520,7 @@ public class AudioService extends Service implements OnCompletionListener,
       int ayah = audioRequest.getCurrentAyah();
 
       int updatedAyah = ayah;
-      int maxAyahs = QuranInfo.getNumAyahs(sura);
+      int maxAyahs = quranInfo.getNumAyahs(sura);
 
       if (sura != gaplessSura) {
         return;
@@ -565,7 +566,7 @@ public class AudioService extends Service implements OnCompletionListener,
           return;
         }
 
-        SuraAyah nextAyah = audioRequest.setCurrentAyah(sura, updatedAyah);
+        SuraAyah nextAyah = audioRequest.setCurrentAyah(quranInfo, sura, updatedAyah);
         if (nextAyah == null) {
           processStopRequest();
           return;
@@ -599,7 +600,7 @@ public class AudioService extends Service implements OnCompletionListener,
         // line, switch the sura.
         ayahTime = gaplessSuraData.get(999);
         if (ayahTime > 0 && pos >= ayahTime) {
-          SuraAyah repeat = audioRequest.setCurrentAyah(sura + 1, 1);
+          SuraAyah repeat = audioRequest.setCurrentAyah(quranInfo, sura + 1, 1);
           if (repeat != null && repeat.sura == sura) {
             // remove any messages currently in the queue
             handler.removeCallbacksAndMessages(null);
@@ -713,7 +714,7 @@ public class AudioService extends Service implements OnCompletionListener,
       } else {
         tryToGetAudioFocus();
         int sura = audioRequest.getCurrentSura();
-        audioRequest.gotoPreviousAyah();
+        audioRequest.gotoPreviousAyah(quranInfo);
         if (audioRequest.isGapless() && sura == audioRequest.getCurrentSura()) {
           int timing = getSeekPosition(true);
           if (timing > -1) {
@@ -740,7 +741,7 @@ public class AudioService extends Service implements OnCompletionListener,
       } else {
         final int sura = audioRequest.getCurrentSura();
         tryToGetAudioFocus();
-        audioRequest.gotoNextAyah(true);
+        audioRequest.gotoNextAyah(quranInfo, true);
         if (audioRequest.isGapless() && sura == audioRequest.getCurrentSura()) {
           int timing = getSeekPosition(false);
           if (timing > -1) {
@@ -798,7 +799,8 @@ public class AudioService extends Service implements OnCompletionListener,
       broadcastManager.sendBroadcast(updateIntent);
 
       MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
-          .putString(MediaMetadataCompat.METADATA_KEY_TITLE, audioRequest.getTitle(this));
+          .putString(MediaMetadataCompat.METADATA_KEY_TITLE,
+              audioRequest.getTitle(this, quranInfo));
       if (player.isPlaying()) {
         metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, player.getDuration());
       }
@@ -1075,7 +1077,7 @@ public class AudioService extends Service implements OnCompletionListener,
     } else {
       boolean flag = false;
       final int beforeSura = audioRequest.getCurrentSura();
-      if (audioRequest.gotoNextAyah(false)) {
+      if (audioRequest.gotoNextAyah(quranInfo, false)) {
         // we actually switched to a different ayah - so if the
         // sura changed, then play the basmala if the ayah is
         // not the first one (or if we're in sura tawba).
@@ -1121,12 +1123,13 @@ public class AudioService extends Service implements OnCompletionListener,
 
   /** Updates the notification. */
   void updateNotification() {
-    notificationBuilder.setContentText(audioRequest.getTitle(getApplicationContext()));
+    notificationBuilder.setContentText(audioRequest.getTitle(getApplicationContext(), quranInfo));
     notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
   }
 
   void pauseNotification() {
-    pausedNotificationBuilder.setContentText(audioRequest.getTitle(getApplicationContext()));
+    pausedNotificationBuilder.setContentText(
+        audioRequest.getTitle(getApplicationContext(), quranInfo));
     notificationManager.notify(NOTIFICATION_ID, pausedNotificationBuilder.build());
   }
 
@@ -1182,7 +1185,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
     }
 
-    String audioTitle = audioRequest.getTitle(getApplicationContext());
+    String audioTitle = audioRequest.getTitle(getApplicationContext(), quranInfo);
     if (notificationBuilder == null) {
       notificationBuilder = new NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID);
       notificationBuilder

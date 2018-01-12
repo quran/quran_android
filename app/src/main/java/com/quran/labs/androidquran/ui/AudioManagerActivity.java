@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -53,6 +54,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
   private List<QariItem> qariItems;
 
   @Inject AudioUtils audioUtils;
+  @Inject QuranInfo quranInfo;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +90,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
     if (disposable != null) {
       disposable.dispose();
     }
-    disposable = AudioManagerUtils.shuyookhDownloadObservable(basePath, qariItems)
+    disposable = AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(mOnDownloadInfo);
   }

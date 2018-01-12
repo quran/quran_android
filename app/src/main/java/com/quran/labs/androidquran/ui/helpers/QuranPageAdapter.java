@@ -19,10 +19,13 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   private boolean mIsShowingTranslation = false;
   private boolean mIsDualPages = false;
+  private final QuranInfo quranInfo;
 
   public QuranPageAdapter(FragmentManager fm, boolean dualPages,
-                          boolean isShowingTranslation) {
+                          boolean isShowingTranslation,
+                          QuranInfo quranInfo) {
     super(fm, dualPages ? "dualPages" : "singlePage");
+    this.quranInfo = quranInfo;
     mIsDualPages = dualPages;
     mIsShowingTranslation = isShowingTranslation;
   }
@@ -71,7 +74,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   @Override
   public Fragment getItem(int position) {
-    int page = QuranInfo.getPageFromPos(position, mIsDualPages);
+    int page = quranInfo.getPageFromPos(position, mIsDualPages);
     Timber.d("getting page: %d", page);
     if (mIsDualPages) {
       return TabletFragment.newInstance(page,
@@ -105,7 +108,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     if (page < Constants.PAGES_FIRST || PAGES_LAST < page) {
       return null;
     }
-    int position = QuranInfo.getPosFromPage(page, mIsDualPages);
+    int position = quranInfo.getPosFromPage(page, mIsDualPages);
     Fragment fragment = getFragmentIfExists(position);
     return fragment instanceof QuranPage && fragment.isAdded() ? (QuranPage) fragment : null;
   }

@@ -13,8 +13,8 @@ public class DownloadAudioRequest extends AudioRequest {
   private String localDirectoryPath = null;
 
   public DownloadAudioRequest(String baseUrl, SuraAyah verse,
-      @NonNull QariItem qariItem, String localPath) {
-    super(baseUrl, verse);
+      @NonNull QariItem qariItem, String localPath, int versesInThisSura) {
+    super(baseUrl, verse, versesInThisSura);
     this.qariItem = qariItem;
     localDirectoryPath = localPath;
   }

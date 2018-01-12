@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.data.SuraAyahIterator;
 import com.quran.labs.androidquran.data.VerseRange;
@@ -31,15 +32,18 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
   private final TranslationModel translationModel;
   private final TranslationsDBAdapter translationsAdapter;
   private final Map<String, LocalTranslation> translationMap;
+  private final QuranInfo quranInfo;
 
   @Nullable T translationScreen;
   Disposable disposable;
 
   BaseTranslationPresenter(TranslationModel translationModel,
-                           TranslationsDBAdapter translationsAdapter) {
+                           TranslationsDBAdapter translationsAdapter,
+                           QuranInfo quranInfo) {
     this.translationMap = new HashMap<>();
     this.translationModel = translationModel;
     this.translationsAdapter = translationsAdapter;
+    this.quranInfo = quranInfo;
   }
 
   Single<ResultHolder> getVerses(boolean getArabic,
@@ -137,14 +141,16 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
         if (element != null) {
           String arabicText = arabicSize == 0 ? null : arabic.get(i).text;
           result.add(
-              new QuranAyahInfo(element.sura, element.ayah, arabicText, ayahTranslations));
+              new QuranAyahInfo(element.sura, element.ayah, arabicText, ayahTranslations,
+                  quranInfo.getAyahId(element.sura, element.ayah)));
         }
       }
     } else if (arabicSize > 0) {
       for (int i = 0; i < arabicSize; i++) {
         QuranText arabicItem = arabic.get(i);
         result.add(new QuranAyahInfo(arabicItem.sura, arabicItem.ayah,
-            arabicItem.text, Collections.emptyList()));
+            arabicItem.text, Collections.emptyList(),
+            quranInfo.getAyahId(arabicItem.sura, arabicItem.ayah)));
       }
     }
     return result;
@@ -174,7 +180,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
     // ex. ibn katheer is missing 3 records, 1 in each of suras 5, 17, and 87.
     SuraAyah start = new SuraAyah(verseRange.startSura, verseRange.startAyah);
     SuraAyah end = new SuraAyah(verseRange.endingSura, verseRange.endingAyah);
-    SuraAyahIterator iterator = new SuraAyahIterator(start, end);
+    SuraAyahIterator iterator = new SuraAyahIterator(quranInfo, start, end);
 
     int i = 0;
     while (iterator.next()) {

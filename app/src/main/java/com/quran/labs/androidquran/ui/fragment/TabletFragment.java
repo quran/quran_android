@@ -84,6 +84,7 @@ public class TabletFragment extends Fragment
   @Inject Lazy<QuranPagePresenter> quranPagePresenter;
   @Inject Lazy<TranslationPresenter> translationPresenter;
   @Inject AyahSelectedListener ayahSelectedListener;
+  @Inject QuranInfo quranInfo;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
     final TabletFragment f = new TabletFragment();
@@ -198,11 +199,11 @@ public class TabletFragment extends Fragment
       AyahTrackerItem left;
       AyahTrackerItem right;
       if (mode == Mode.ARABIC) {
-        left = new AyahImageTrackerItem(pageNumber, false, leftImageView);
-        right = new AyahImageTrackerItem(pageNumber - 1, true, rightImageView);
+        left = new AyahImageTrackerItem(pageNumber, quranInfo,false, leftImageView);
+        right = new AyahImageTrackerItem(pageNumber - 1, quranInfo, true, rightImageView);
       } else if (mode == Mode.TRANSLATION) {
-        left = new AyahTranslationTrackerItem(pageNumber, leftTranslation);
-        right = new AyahTranslationTrackerItem(pageNumber - 1, rightTranslation);
+        left = new AyahTranslationTrackerItem(pageNumber, quranInfo, leftTranslation);
+        right = new AyahTranslationTrackerItem(pageNumber - 1, quranInfo, rightTranslation);
       } else {
         return new AyahTrackerItem[0];
       }
@@ -240,7 +241,7 @@ public class TabletFragment extends Fragment
           .onTranslationAction((PagerActivity) activity, ayah, translationNames, actionId);
     }
 
-    int page = QuranInfo.getPageFromSuraAyah(ayah.sura, ayah.ayah);
+    int page = quranInfo.getPageFromSuraAyah(ayah.sura, ayah.ayah);
     TranslationView translationView = page == pageNumber ? leftTranslation : rightTranslation;
     translationView.unhighlightAyat();
   }
@@ -277,9 +278,9 @@ public class TabletFragment extends Fragment
                         @NonNull String[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     if (page == pageNumber) {
-      leftTranslation.setVerses(translations, verses);
+      leftTranslation.setVerses(quranInfo, translations, verses);
     } else if (page == pageNumber - 1) {
-      rightTranslation.setVerses(translations, verses);
+      rightTranslation.setVerses(quranInfo, translations, verses);
     }
   }
 

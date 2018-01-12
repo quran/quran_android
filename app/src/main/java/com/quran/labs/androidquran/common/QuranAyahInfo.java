@@ -3,8 +3,6 @@ package com.quran.labs.androidquran.common;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.quran.labs.androidquran.data.QuranInfo;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -23,11 +21,12 @@ public class QuranAyahInfo {
   public QuranAyahInfo(int sura,
                        int ayah,
                        @Nullable String arabicText,
-                       @NonNull List<String> texts) {
+                       @NonNull List<String> texts,
+                       int ayahId) {
     this.sura = sura;
     this.ayah = ayah;
     this.arabicText = arabicText;
     this.texts = Collections.unmodifiableList(texts);
-    this.ayahId = QuranInfo.getAyahId(sura, ayah);
+    this.ayahId = ayahId;
   }
 }

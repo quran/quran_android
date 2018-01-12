@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -19,6 +20,8 @@ import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -32,6 +35,8 @@ public class SuraListFragment extends Fragment {
 
   private RecyclerView mRecyclerView;
   private Disposable disposable;
+
+  @Inject QuranInfo quranInfo;
 
   public static SuraListFragment newInstance() {
     return new SuraListFragment();
@@ -55,6 +60,12 @@ public class SuraListFragment extends Fragment {
   }
 
   @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
+  }
+
+  @Override
   public void onPause() {
     if (disposable != null) {
       disposable.dispose();
@@ -74,8 +85,8 @@ public class SuraListFragment extends Fragment {
             @Override
             public void onSuccess(Integer recentPage) {
               if (recentPage != Constants.NO_PAGE) {
-                int sura = QuranInfo.safelyGetSuraOnPage(recentPage);
-                int juz = QuranInfo.getJuzFromPage(recentPage);
+                int sura = quranInfo.safelyGetSuraOnPage(recentPage);
+                int juz = quranInfo.getJuzFromPage(recentPage);
                 int position = sura + juz - 1;
                 mRecyclerView.scrollToPosition(position);
               }
@@ -113,17 +124,17 @@ public class SuraListFragment extends Fragment {
       final QuranRow.Builder headerBuilder = new QuranRow.Builder()
           .withType(QuranRow.HEADER)
           .withText(headerTitle)
-          .withPage(QuranInfo.getStartingPageForJuz(juz));
+          .withPage(quranInfo.getStartingPageForJuz(juz));
       elements[pos++] = headerBuilder.build();
       next = (juz == JUZ2_COUNT) ? PAGES_LAST + 1 :
-          QuranInfo.getStartingPageForJuz(juz + 1);
+          quranInfo.getStartingPageForJuz(juz + 1);
 
-      while ((sura <= SURAS_COUNT) && (QuranInfo.getPageNumberForSura(sura) < next)) {
+      while ((sura <= SURAS_COUNT) && (quranInfo.getPageNumberForSura(sura) < next)) {
         final QuranRow.Builder builder = new QuranRow.Builder()
-            .withText(QuranInfo.getSuraName(activity, sura, wantPrefix, wantTranslation))
-            .withMetadata(QuranInfo.getSuraListMetaString(activity, sura))
+            .withText(quranInfo.getSuraName(activity, sura, wantPrefix, wantTranslation))
+            .withMetadata(quranInfo.getSuraListMetaString(activity, sura))
             .withSura(sura)
-            .withPage(QuranInfo.getPageNumberForSura(sura));
+            .withPage(quranInfo.getPageNumberForSura(sura));
         elements[pos++] = builder.build();
         sura++;
       }

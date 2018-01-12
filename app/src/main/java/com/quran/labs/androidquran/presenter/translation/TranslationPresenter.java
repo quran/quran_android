@@ -27,15 +27,18 @@ public class TranslationPresenter extends
   private final Integer[] pages;
   private final ShareUtil shareUtil;
   private final QuranSettings quranSettings;
+  private final QuranInfo quranInfo;
 
   @Inject
   TranslationPresenter(TranslationModel translationModel,
                        QuranSettings quranSettings,
                        TranslationsDBAdapter translationsAdapter,
                        ShareUtil shareUtil,
+                       QuranInfo quranInfo,
                        Integer... pages) {
-    super(translationModel, translationsAdapter);
+    super(translationModel, translationsAdapter, quranInfo);
     this.pages = pages;
+    this.quranInfo = quranInfo;
     this.shareUtil = shareUtil;
     this.quranSettings = quranSettings;
   }
@@ -47,7 +50,7 @@ public class TranslationPresenter extends
 
     disposable = Observable.fromArray(pages)
         .flatMap(page -> getVerses(quranSettings.wantArabicInTranslationView(),
-            getTranslations(quranSettings), QuranInfo.getVerseRangeForPage(page))
+            getTranslations(quranSettings), quranInfo.getVerseRangeForPage(page))
             .toObservable())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableObserver<ResultHolder>() {
@@ -99,7 +102,7 @@ public class TranslationPresenter extends
       page = pages[0];
     } else {
       QuranAyahInfo ayahInfo = result.get(0);
-      page = QuranInfo.getPageFromSuraAyah(ayahInfo.sura, ayahInfo.ayah);
+      page = quranInfo.getPageFromSuraAyah(ayahInfo.sura, ayahInfo.ayah);
     }
     return page;
   }

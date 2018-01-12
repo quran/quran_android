@@ -22,16 +22,22 @@ import java.util.Map;
 import java.util.Set;
 
 public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView> {
+  private final QuranInfo quranInfo;
   private final boolean isPageOnRightSide;
   @Nullable Map<String, List<AyahBounds>> coordinates;
 
-  public AyahImageTrackerItem(int page, @NonNull HighlightingImageView highlightingImageView) {
-    this(page, false, highlightingImageView);
+  public AyahImageTrackerItem(int page,
+                              QuranInfo quranInfo,
+                              @NonNull HighlightingImageView highlightingImageView) {
+    this(page, quranInfo, false, highlightingImageView);
   }
 
-  public AyahImageTrackerItem(int page, boolean isPageOnTheRight,
+  public AyahImageTrackerItem(int page,
+                              QuranInfo quranInfo,
+                              boolean isPageOnTheRight,
                               @NonNull HighlightingImageView highlightingImageView) {
     super(page, highlightingImageView);
+    this.quranInfo = quranInfo;
     this.isPageOnRightSide = isPageOnTheRight;
   }
 
@@ -41,10 +47,10 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
       // this is only called if overlayText is set
       ayahView.setPageBounds(bounds);
       Context context = ayahView.getContext();
-      String suraText = QuranInfo.getSuraNameFromPage(context, page, true);
-      String juzText = QuranInfo.getJuzString(context, page);
+      String suraText = quranInfo.getSuraNameFromPage(context, page, true);
+      String juzText = quranInfo.getJuzString(context, page);
       String pageText = QuranUtils.getLocalizedNumber(context, page);
-      String rub3Text = QuranDisplayHelper.displayRub3(context, page);
+      String rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page);
       ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);
     }
   }

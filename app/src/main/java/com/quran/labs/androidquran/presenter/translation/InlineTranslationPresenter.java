@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.translation;
 import android.support.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.translation.TranslationModel;
@@ -22,8 +23,9 @@ public class InlineTranslationPresenter extends
   @Inject
   InlineTranslationPresenter(TranslationModel translationModel,
                              TranslationsDBAdapter dbAdapter,
-                             QuranSettings quranSettings) {
-    super(translationModel, dbAdapter);
+                             QuranSettings quranSettings,
+                             QuranInfo quranInfo) {
+    super(translationModel, dbAdapter, quranInfo);
     this.quranSettings = quranSettings;
   }
 

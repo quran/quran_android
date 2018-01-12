@@ -36,6 +36,7 @@ public class TagBookmarkDialog extends DialogFragment {
   private static final String EXTRA_BOOKMARK_IDS = "bookmark_ids";
 
   private TagsAdapter mAdapter;
+  @Inject QuranInfo quranInfo;
   @Inject TagBookmarkPresenter mTagBookmarkPresenter;
 
 
@@ -61,7 +62,7 @@ public class TagBookmarkDialog extends DialogFragment {
   }
 
   public void updateAyah(@NonNull SuraAyah suraAyah) {
-    final int page = QuranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah);
+    final int page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah);
     mTagBookmarkPresenter.setAyahBookmarkMode(suraAyah.sura, suraAyah.ayah, page);
   }
 

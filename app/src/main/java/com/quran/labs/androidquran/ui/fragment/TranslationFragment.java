@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
@@ -45,6 +46,7 @@ public class TranslationFragment extends Fragment implements
   private QuranTranslationPageLayout mainView;
   private AyahTrackerItem[] ayahTrackerItems;
 
+  @Inject QuranInfo quranInfo;
   @Inject QuranSettings quranSettings;
   @Inject TranslationPresenter presenter;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
@@ -132,7 +134,7 @@ public class TranslationFragment extends Fragment implements
   public AyahTrackerItem[] getAyahTrackerItems() {
     if (ayahTrackerItems == null) {
       ayahTrackerItems = new AyahTrackerItem[] {
-          new AyahTranslationTrackerItem(pageNumber, translationView) };
+          new AyahTranslationTrackerItem(pageNumber, quranInfo, translationView) };
     }
     return ayahTrackerItems;
   }
@@ -156,7 +158,7 @@ public class TranslationFragment extends Fragment implements
   public void setVerses(int page,
                         @NonNull String[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
-    translationView.setVerses(translations, verses);
+    translationView.setVerses(quranInfo, translations, verses);
     if (highlightedAyah > 0) {
       translationView.highlightAyah(highlightedAyah);
     }

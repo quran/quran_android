@@ -38,6 +38,7 @@ public class AyahTranslationFragment extends AyahActionFragment
   private TranslationsSpinnerAdapter translationAdapter;
   private List<LocalTranslation> translations;
 
+  @Inject QuranInfo quranInfo;
   @Inject QuranSettings quranSettings;
   @Inject InlineTranslationPresenter translationPresenter;
 
@@ -145,7 +146,7 @@ public class AyahTranslationFragment extends AyahActionFragment
       }
 
       final int verses = 1 + Math.abs(
-          QuranInfo.getAyahId(start.sura, start.ayah) - QuranInfo.getAyahId(end.sura, end.ayah));
+          quranInfo.getAyahId(start.sura, start.ayah) - quranInfo.getAyahId(end.sura, end.ayah));
       VerseRange verseRange = new VerseRange(start.sura, start.ayah, end.sura, end.ayah, verses);
       translationPresenter.refresh(verseRange);
     }

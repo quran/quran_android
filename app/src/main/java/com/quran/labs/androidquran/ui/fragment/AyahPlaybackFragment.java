@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -19,6 +20,8 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.QuranSpinner;
+
+import javax.inject.Inject;
 
 public class AyahPlaybackFragment extends AyahActionFragment {
   private static final int REPEAT_MAX = 3;
@@ -41,6 +44,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private CheckBox restrictToRange;
   private ArrayAdapter<CharSequence> startAyahAdapter;
   private ArrayAdapter<CharSequence> endingAyahAdapter;
+  
+  @Inject QuranInfo quranInfo;
 
   @Override
   public View onCreateView(LayoutInflater inflater,
@@ -90,6 +95,12 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     return view;
   }
 
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
+  }
+
   private View.OnClickListener mOnClickListener = v -> {
     switch (v.getId()) {
       case R.id.apply: {
@@ -120,8 +131,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         currentEnding = start;
       }
 
-      final int page = QuranInfo.getPageFromSuraAyah(
-          currentStart.sura, currentStart.ayah);
+      final int page = quranInfo.getPageFromSuraAyah(currentStart.sura, currentStart.ayah);
       final int verseRepeat = positionToRepeat(
           repeatVerseSpinner.getSelectedItemPosition());
       final int rangeRepeat = positionToRepeat(
@@ -136,7 +146,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         updatedRange = true;
         if (this.start != null) {
           final SuraAyah starting = decidedStart == null ? this.start : decidedStart;
-          final int origPage = QuranInfo.getPageFromSuraAyah(starting.sura, starting.ayah);
+          final int origPage = quranInfo.getPageFromSuraAyah(starting.sura, starting.ayah);
           if (page != origPage) {
             pagerActivity.highlightAyah(currentStart.sura,
                 currentStart.ayah, HighlightType.AUDIO);
@@ -180,7 +190,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           @Override
           public void onItemSelected(AdapterView<?> parent, View view, int position, long rowId) {
             int sura = position + 1;
-            int ayahCount = QuranInfo.getNumAyahs(sura);
+            int ayahCount = quranInfo.getNumAyahs(sura);
             CharSequence[] ayahs = new String[ayahCount];
             for (int i = 0; i < ayahCount; i++){
               ayahs[i] = QuranUtils.getLocalizedNumber(context, (i + 1));
@@ -270,8 +280,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       } else {
         start = this.start;
         if (this.start.equals(end)) {
-          final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
-          final int[] pageBounds = QuranInfo.getPageBounds(startPage);
+          final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+          final int[] pageBounds = quranInfo.getPageBounds(startPage);
           ending = new SuraAyah(pageBounds[2], pageBounds[3]);
           shouldEnforce = false;
         } else {
@@ -285,14 +295,14 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         applyButton.setText(R.string.play_apply_and_play);
       }
 
-      final int maxAyat = QuranInfo.getNumAyahs(start.sura);
+      final int maxAyat = quranInfo.getNumAyahs(start.sura);
       if (maxAyat == -1) {
         return;
       }
 
       updateAyahSpinner(startAyahSpinner, startAyahAdapter, maxAyat, start.ayah);
       final int endAyat = (ending.sura == start.sura) ? maxAyat :
-          QuranInfo.getNumAyahs(ending.sura);
+          quranInfo.getNumAyahs(ending.sura);
       updateAyahSpinner(endingAyahSpinner, endingAyahAdapter,
           endAyat, ending.ayah);
       startSuraSpinner.setSelection(start.sura - 1);
