@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
@@ -143,7 +144,9 @@ public class AyahTranslationFragment extends AyahActionFragment
         translationControls.setVisibility(View.GONE);
       }
 
-      VerseRange verseRange = new VerseRange(start.sura, start.ayah, end.sura, end.ayah);
+      final int verses = 1 + Math.abs(
+          QuranInfo.getAyahId(start.sura, start.ayah) - QuranInfo.getAyahId(end.sura, end.ayah));
+      VerseRange verseRange = new VerseRange(start.sura, start.ayah, end.sura, end.ayah, verses);
       translationPresenter.refresh(verseRange);
     }
   }
