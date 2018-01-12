@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranText;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -141,7 +142,9 @@ public class DatabaseHandler {
    */
   public Cursor getVerses(int minSura, int minAyah, int maxSura,
                           int maxAyah, String table) {
-    return getVersesInternal(new VerseRange(minSura, minAyah, maxSura, maxAyah), table);
+    final int verseCount = 1 + Math.abs(
+        QuranInfo.getAyahId(minSura, minAyah) - QuranInfo.getAyahId(maxSura, maxAyah));
+    return getVersesInternal(new VerseRange(minSura, minAyah, maxSura, maxAyah, verseCount), table);
   }
 
   public List<QuranText> getVerses(VerseRange verses, @TextType int textType) {

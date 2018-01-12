@@ -175,7 +175,9 @@ public class QuranInfo {
 
   public static VerseRange getVerseRangeForPage(int page) {
     int[] result = getPageBounds(page);
-    return new VerseRange(result[0], result[1], result[2], result[3]);
+    final int versesInRange = 1 + Math.abs(QuranInfo.getAyahId(result[0], result[1]) -
+                                           QuranInfo.getAyahId(result[2], result[3]));
+    return new VerseRange(result[0], result[1], result[2], result[3], versesInRange);
   }
 
   public static int getFirstAyahOnPage(int page) {

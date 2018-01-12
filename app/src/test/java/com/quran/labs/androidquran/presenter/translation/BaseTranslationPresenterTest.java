@@ -54,7 +54,7 @@ public class BaseTranslationPresenterTest {
 
   @Test
   public void testCombineAyahDataOneVerse() throws Exception {
-    VerseRange verseRange = new VerseRange(1, 1, 1, 1);
+    VerseRange verseRange = new VerseRange(1, 1, 1, 1, 1);
     List<QuranText> arabic = Collections.singletonList(new QuranText(1, 1, "first ayah"));
     List<QuranAyahInfo> info = presenter.combineAyahData(verseRange, arabic,
         Collections.singletonList(Collections.singletonList(new QuranText(1, 1, "translation"))));
@@ -70,7 +70,7 @@ public class BaseTranslationPresenterTest {
 
   @Test
   public void testCombineAyahDataOneVerseEmpty() throws Exception {
-    VerseRange verseRange = new VerseRange(1, 1, 1, 1);
+    VerseRange verseRange = new VerseRange(1, 1, 1, 1, 1);
     List<QuranText> arabic = Collections.emptyList();
     List<QuranAyahInfo> info =
         presenter.combineAyahData(verseRange, arabic, Collections.emptyList());
@@ -79,7 +79,7 @@ public class BaseTranslationPresenterTest {
 
   @Test
   public void testCombineAyahDataOneVerseNoArabic() throws Exception {
-    VerseRange verseRange = new VerseRange(1, 1, 1, 1);
+    VerseRange verseRange = new VerseRange(1, 1, 1, 1, 1);
     List<QuranText> arabic = Collections.emptyList();
     List<QuranAyahInfo> info = presenter.combineAyahData(verseRange, arabic,
         Collections.singletonList(Collections.singletonList(new QuranText(1, 1, "translation"))));
@@ -95,7 +95,7 @@ public class BaseTranslationPresenterTest {
 
   @Test
   public void testCombineAyahDataArabicEmptyTranslations() throws Exception {
-    VerseRange verseRange = new VerseRange(1, 1, 1, 2);
+    VerseRange verseRange = new VerseRange(1, 1, 1, 2, 2);
     List<QuranText> arabic = Arrays.asList(
         new QuranText(1, 1, "first ayah"),
         new QuranText(1, 2, "second ayah")
@@ -114,7 +114,7 @@ public class BaseTranslationPresenterTest {
 
   @Test
   public void testEnsureProperTranslations() {
-    VerseRange verseRange = new VerseRange(1, 1, 1, 2);
+    VerseRange verseRange = new VerseRange(1, 1, 1, 2, 2);
 
     List<QuranText> text = new ArrayList<>();
     text.add(new QuranText(1, 1, "bismillah"));
