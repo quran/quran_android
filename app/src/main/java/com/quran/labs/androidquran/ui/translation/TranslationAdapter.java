@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -234,7 +233,7 @@ class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowView
     if (holder.text != null) {
       final CharSequence text;
       if (row.type == TranslationViewRow.Type.SURA_HEADER) {
-        text = QuranInfo.getSuraName(context, row.ayahInfo.sura, true);
+        text = row.data;
         holder.text.setBackgroundColor(suraHeaderColor);
       } else if (row.type == TranslationViewRow.Type.BASMALLAH ||
           row.type == TranslationViewRow.Type.QURAN_TEXT) {

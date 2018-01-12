@@ -15,8 +15,11 @@ import dagger.Reusable;
 @Reusable
 public class QuranRowFactory {
 
+  private final QuranInfo quranInfo;
+  
   @Inject
-  QuranRowFactory() {
+  QuranRowFactory(QuranInfo quranInfo) {
+    this.quranInfo = quranInfo;
   }
 
   public QuranRow fromRecentPageHeader(Context context, int count) {
@@ -40,9 +43,9 @@ public class QuranRowFactory {
 
   public QuranRow fromCurrentPage(Context context, int page) {
     return new QuranRow.Builder()
-        .withText(QuranInfo.getSuraNameString(context, page))
-        .withMetadata(QuranInfo.getPageSubtitle(context, page))
-        .withSura(QuranInfo.safelyGetSuraOnPage(page))
+        .withText(quranInfo.getSuraNameString(context, page))
+        .withMetadata(quranInfo.getPageSubtitle(context, page))
+        .withSura(quranInfo.safelyGetSuraOnPage(page))
         .withPage(page)
         .withImageResource(R.drawable.bookmark_currentpage).build();
   }
@@ -55,9 +58,9 @@ public class QuranRowFactory {
     final QuranRow.Builder builder = new QuranRow.Builder();
 
     if (bookmark.isPageBookmark()) {
-      final int sura = QuranInfo.getSuraNumberFromPage(bookmark.page);
-      builder.withText(QuranInfo.getSuraNameString(context, bookmark.page))
-          .withMetadata(QuranInfo.getPageSubtitle(context, bookmark.page))
+      final int sura = quranInfo.getSuraNumberFromPage(bookmark.page);
+      builder.withText(quranInfo.getSuraNameString(context, bookmark.page))
+          .withMetadata(quranInfo.getPageSubtitle(context, bookmark.page))
           .withType(QuranRow.PAGE_BOOKMARK)
           .withBookmark(bookmark)
           .withSura(sura)
@@ -68,11 +71,11 @@ public class QuranRowFactory {
       final String title;
       final String metadata;
       if (ayahText == null) {
-        title = QuranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
-        metadata = QuranInfo.getPageSubtitle(context, bookmark.page);
+        title = quranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
+        metadata = quranInfo.getPageSubtitle(context, bookmark.page);
       } else {
         title = ayahText;
-        metadata = QuranInfo.getAyahMetadata(bookmark.sura, bookmark.ayah, bookmark.page, context);
+        metadata = quranInfo.getAyahMetadata(bookmark.sura, bookmark.ayah, bookmark.page, context);
       }
 
       builder.withText(title)

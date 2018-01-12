@@ -39,7 +39,7 @@ public class AudioManagerUtils {
 
   @NonNull
   public static Single<List<QariDownloadInfo>> shuyookhDownloadObservable(
-      final String basePath, List<QariItem> qariItems) {
+      QuranInfo quranInfo,  String basePath, List<QariItem> qariItems) {
     return Observable.fromIterable(qariItems)
         .flatMap(new Function<QariItem, ObservableSource<QariDownloadInfo>>() {
           @Override
@@ -52,7 +52,7 @@ public class AudioManagerUtils {
             File baseFile = new File(basePath, item.getPath());
             return !baseFile.exists() ? Observable.just(new QariDownloadInfo(item)) :
                 item.isGapless() ? getGaplessSheikhObservable(baseFile, item).toObservable() :
-                    getGappedSheikhObservable(baseFile, item).toObservable();
+                    getGappedSheikhObservable(quranInfo, baseFile, item).toObservable();
           }
         })
         .doOnNext(qariDownloadInfo -> sCache.put(qariDownloadInfo.qariItem, qariDownloadInfo))
@@ -73,12 +73,12 @@ public class AudioManagerUtils {
 
   @NonNull
   private static Single<QariDownloadInfo> getGappedSheikhObservable(
-      final File basePath, final QariItem qariItem) {
+      final QuranInfo quranInfo, final File basePath, final QariItem qariItem) {
     return Observable.range(1, 114)
         .map(sura -> new SuraFileName(sura, new File(basePath, String.valueOf(sura))))
         .filter(suraFile -> suraFile.file.exists())
         .map(sf -> new Pair<>(sf.sura,
-            sf.file.listFiles().length >= QuranInfo.getNumAyahs(sf.sura)))
+            sf.file.listFiles().length >= quranInfo.getNumAyahs(sf.sura)))
         .toList()
         .map(downloaded -> QariDownloadInfo.withPartials(qariItem, downloaded));
   }

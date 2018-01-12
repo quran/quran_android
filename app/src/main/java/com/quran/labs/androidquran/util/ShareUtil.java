@@ -21,9 +21,12 @@ import dagger.Reusable;
 
 @Reusable
 public class ShareUtil {
+  private final QuranInfo quranInfo;
 
   @Inject
-  ShareUtil() {}
+  ShareUtil(QuranInfo quranInfo) {
+    this.quranInfo = quranInfo;
+  }
 
   public void copyVerses(Activity activity, List<QuranText> verses) {
     String text = getShareText(activity, verses);
@@ -69,7 +72,7 @@ public class ShareUtil {
         .append("\n\n");
     }
     sb.append('-')
-      .append(QuranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
+      .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
 
     return sb.toString();
   }
@@ -91,14 +94,14 @@ public class ShareUtil {
     sb.append("[");
 
     final QuranText firstAyah = verses.get(0);
-    sb.append(QuranInfo.getSuraName(activity, firstAyah.sura, true));
+    sb.append(quranInfo.getSuraName(activity, firstAyah.sura, true));
     sb.append(" ");
     sb.append(firstAyah.ayah);
     if (size > 1) {
       final QuranText lastAyah = verses.get(size - 1);
       sb.append(" - ");
       if (firstAyah.sura != lastAyah.sura) {
-        sb.append(QuranInfo.getSuraName(activity, lastAyah.sura, true));
+        sb.append(quranInfo.getSuraName(activity, lastAyah.sura, true));
         sb.append(" ");
       }
       sb.append(lastAyah.ayah);

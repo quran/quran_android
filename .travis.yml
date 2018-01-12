@@ -7,11 +7,14 @@ android:
    components:
       - tools
       - platform-tools
-      - build-tools-26.0.2
+      - build-tools-27.0.1
       - android-27
       - android-22 # required for emulator below
       - extra-android-m2repository
       - sys-img-armeabi-v7a-android-22
+
+before_install:
+  - yes | sdkmanager "platforms;android-27"
 
 before_script:
   # Create and start emulator

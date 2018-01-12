@@ -30,11 +30,13 @@ public class ArabicDatabaseUtils {
   @VisibleForTesting static final int NUMBER_OF_WORDS = 4;
 
   private final Context appContext;
+  private final QuranInfo quranInfo;
   private DatabaseHandler arabicDatabaseHandler;
 
   @Inject
-  ArabicDatabaseUtils(Context context) {
+  ArabicDatabaseUtils(Context context, QuranInfo quranInfo) {
     this.appContext = context;
+    this.quranInfo = quranInfo;
     arabicDatabaseHandler = getArabicDatabaseHandler();
   }
 
@@ -78,7 +80,7 @@ public class ArabicDatabaseUtils {
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
       if (!bookmark.isPageBookmark()) {
-        ayahIds.add(QuranInfo.getAyahId(bookmark.sura, bookmark.ayah));
+        ayahIds.add(quranInfo.getAyahId(bookmark.sura, bookmark.ayah));
       }
     }
 
@@ -120,7 +122,7 @@ public class ArabicDatabaseUtils {
         if (bookmark.isPageBookmark()) {
           toAdd = bookmark;
         } else {
-          String ayahText = ayahMap.get(QuranInfo.getAyahId(bookmark.sura, bookmark.ayah));
+          String ayahText = ayahMap.get(quranInfo.getAyahId(bookmark.sura, bookmark.ayah));
           toAdd = ayahText == null ? bookmark : bookmark.withAyahText(ayahText);
         }
         result.add(toAdd);

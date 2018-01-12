@@ -23,6 +23,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -34,10 +35,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class JumpFragment extends DialogFragment {
   public static final String TAG = "JumpFragment";
+  
+  @Inject QuranInfo quranInfo;
 
   public JumpFragment() {
   }
@@ -127,9 +132,9 @@ public class JumpFragment extends DialogFragment {
         Object suraTag = suraInput.getTag();
         if (suraTag != null) {
           int sura = (int) suraTag;
-          int ayahCount = QuranInfo.getNumAyahs(sura);
+          int ayahCount = quranInfo.getNumAyahs(sura);
           ayah = Math.max(1, Math.min(ayahCount, ayah)); // ensure in 1..ayahCount
-          int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+          int page = quranInfo.getPageFromSuraAyah(sura, ayah);
           pageInput.setHint(QuranUtils.getLocalizedNumber(context, page));
           pageInput.setText(null);
         }
@@ -167,6 +172,12 @@ public class JumpFragment extends DialogFragment {
     });
 
     return builder.create();
+  }
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
   }
 
   @Override

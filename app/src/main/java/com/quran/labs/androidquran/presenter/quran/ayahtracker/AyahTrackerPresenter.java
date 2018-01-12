@@ -30,10 +30,12 @@ public class AyahTrackerPresenter implements AyahTracker,
     Presenter<AyahTrackerPresenter.AyahInteractionHandler> {
   private AyahTrackerItem[] items;
   private HighlightInfo pendingHighlightInfo;
+  private final QuranInfo quranInfo;
 
   @Inject
-  public AyahTrackerPresenter() {
+  public AyahTrackerPresenter(QuranInfo quranInfo) {
     this.items = new AyahTrackerItem[0];
+    this.quranInfo = quranInfo;
   }
 
   public void setPageBounds(int page, RectF bounds) {
@@ -62,7 +64,7 @@ public class AyahTrackerPresenter implements AyahTracker,
   @Override
   public void highlightAyah(int sura, int ayah, HighlightType type, boolean scrollToAyah) {
     boolean handled = false;
-    int page = items.length == 1 ? items[0].page : QuranInfo.getPageFromSuraAyah(sura, ayah);
+    int page = items.length == 1 ? items[0].page : quranInfo.getPageFromSuraAyah(sura, ayah);
     for (AyahTrackerItem item : items) {
       handled = handled || item.onHighlightAyah(page, sura, ayah, type, scrollToAyah);
     }
@@ -83,7 +85,7 @@ public class AyahTrackerPresenter implements AyahTracker,
 
   @Override
   public void unHighlightAyah(int sura, int ayah, HighlightType type) {
-    int page = items.length == 1 ? items[0].page : QuranInfo.getPageFromSuraAyah(sura, ayah);
+    int page = items.length == 1 ? items[0].page : quranInfo.getPageFromSuraAyah(sura, ayah);
     for (AyahTrackerItem item : items) {
       item.onUnHighlightAyah(page, sura, ayah, type);
     }
@@ -99,7 +101,7 @@ public class AyahTrackerPresenter implements AyahTracker,
   @Override
   public AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
                                                             int toolBarWidth, int toolBarHeight) {
-    int page = items.length == 1 ? items[0].page : QuranInfo.getPageFromSuraAyah(sura, ayah);
+    int page = items.length == 1 ? items[0].page : quranInfo.getPageFromSuraAyah(sura, ayah);
     for (AyahTrackerItem item : items) {
       AyahToolBar.AyahToolBarPosition position =
           item.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight);

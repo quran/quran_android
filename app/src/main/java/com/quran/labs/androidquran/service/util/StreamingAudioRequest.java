@@ -6,8 +6,8 @@ import com.quran.labs.androidquran.data.SuraAyah;
 
 public class StreamingAudioRequest extends AudioRequest {
 
-  public StreamingAudioRequest(String baseUrl, SuraAyah verse) {
-    super(baseUrl, verse);
+  public StreamingAudioRequest(String baseUrl, SuraAyah verse, int versesInThisSura) {
+    super(baseUrl, verse, versesInThisSura);
   }
 
   protected StreamingAudioRequest(Parcel in) {

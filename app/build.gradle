@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
   compileSdkVersion 27
-  buildToolsVersion '26.0.2'
+  buildToolsVersion '27.0.1'
 
   lintOptions {
     checkReleaseBuilds true
@@ -114,7 +114,7 @@ android {
 
 ext {
   supportLibVersion = '27.0.2'
-  espressoVersion = '2.2.2'
+  espressoVersion = '3.0.1'
   okhttpVersion = '3.9.0'
   daggerVersion = '2.13'
 }
@@ -141,7 +141,6 @@ dependencies {
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
-  androidTestImplementation "com.android.support:support-annotations:${supportLibVersion}"
   implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
     transitive = true
   }

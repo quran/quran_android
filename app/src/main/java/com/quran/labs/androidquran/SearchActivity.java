@@ -33,6 +33,8 @@ import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import javax.inject.Inject;
+
 public class SearchActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {
@@ -48,10 +50,14 @@ public class SearchActivity extends QuranActionBarActivity
   private String query;
   private ResultAdapter adapter;
   private DefaultDownloadReceiver downloadReceiver;
+  
+  @Inject QuranInfo quranInfo;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    ((QuranApplication) getApplication())
+        .getApplicationComponent().inject(this);
     setContentView(R.layout.search);
     messageView = (TextView) findViewById(R.id.search_area);
     warningView = (TextView) findViewById(R.id.search_warning);
@@ -162,7 +168,7 @@ public class SearchActivity extends QuranActionBarActivity
 
       ListView listView = (ListView) findViewById(R.id.results_list);
       if (adapter == null) {
-        adapter = new ResultAdapter(this, cursor);
+        adapter = new ResultAdapter(this, cursor, quranInfo);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> {
           ListView p = (ListView) parent;
@@ -228,7 +234,7 @@ public class SearchActivity extends QuranActionBarActivity
         int sura = 1;
         int total = id;
         for (int j = 1; j <= 114; j++) {
-          int cnt = QuranInfo.getNumAyahs(j);
+          int cnt = quranInfo.getNumAyahs(j);
           total -= cnt;
           if (total >= 0)
             sura++;
@@ -240,7 +246,7 @@ public class SearchActivity extends QuranActionBarActivity
 
         if (total == 0){
           sura--;
-          total = QuranInfo.getNumAyahs(sura);
+          total = quranInfo.getNumAyahs(sura);
         }
 
         jumpToResult(sura, total);
@@ -250,7 +256,7 @@ public class SearchActivity extends QuranActionBarActivity
   }
 
   private void jumpToResult(int sura, int ayah) {
-    int page = QuranInfo.getPageFromSuraAyah(sura, ayah);
+    int page = quranInfo.getPageFromSuraAyah(sura, ayah);
     Intent intent = new Intent(this, PagerActivity.class);
     intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura);
     intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah);
@@ -270,11 +276,13 @@ public class SearchActivity extends QuranActionBarActivity
   private static class ResultAdapter extends CursorAdapter {
     private Context context;
     private LayoutInflater inflater;
+    private QuranInfo quranInfo;
 
-    ResultAdapter(Context context, Cursor cursor) {
+    ResultAdapter(Context context, Cursor cursor, QuranInfo quranInfo) {
       super(context, cursor, 0);
       inflater = LayoutInflater.from(context);
       this.context = context;
+      this.quranInfo = quranInfo;
     }
 
     @Override
@@ -293,7 +301,7 @@ public class SearchActivity extends QuranActionBarActivity
       int sura = cursor.getInt(1);
       int ayah = cursor.getInt(2);
       String text = cursor.getString(3);
-      String suraName = QuranInfo.getSuraName(this.context, sura, false);
+      String suraName = quranInfo.getSuraName(this.context, sura, false);
       holder.text.setText(Html.fromHtml(text));
       holder.metadata.setText(this.context.getString(R.string.found_in_sura, suraName, ayah));
     }

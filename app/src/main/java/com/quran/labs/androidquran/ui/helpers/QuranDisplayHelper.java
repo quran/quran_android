@@ -41,12 +41,14 @@ public class QuranDisplayHelper {
     return response;
   }
 
-  public static long displayMarkerPopup(Context context, int page,
-      long lastPopupTime) {
+  public static long displayMarkerPopup(Context context,
+                                        QuranInfo quranInfo,
+                                        int page,
+                                        long lastPopupTime) {
     if (System.currentTimeMillis() - lastPopupTime < 3000) {
       return lastPopupTime;
     }
-    int rub3 = QuranInfo.getRub3FromPage(page);
+    int rub3 = quranInfo.getRub3FromPage(page);
     if (rub3 == -1) {
       return lastPopupTime;
     }
@@ -76,8 +78,8 @@ public class QuranDisplayHelper {
   }
 
   // same logic used in displayMarkerPopup method
-  public static String displayRub3(Context context, int page){
-    int rub3 = QuranInfo.getRub3FromPage(page);
+  public static String displayRub3(Context context, QuranInfo quranInfo, int page){
+    int rub3 = quranInfo.getRub3FromPage(page);
     if (rub3 == -1) {
       return "";
     }

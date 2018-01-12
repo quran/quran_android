@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 
@@ -69,7 +70,9 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
         context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
   }
 
-  public void setVerses(@NonNull String[] translations, @NonNull List<QuranAyahInfo> verses) {
+  public void setVerses(@NonNull QuranInfo quranInfo,
+                        @NonNull String[] translations,
+                        @NonNull List<QuranAyahInfo> verses) {
     this.translations = translations;
 
     List<TranslationViewRow> rows = new ArrayList<>();
@@ -79,7 +82,8 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       QuranAyahInfo verse = verses.get(i);
       int sura = verse.sura;
       if (sura != currentSura) {
-        rows.add(new TranslationViewRow(TranslationViewRow.Type.SURA_HEADER, verse));
+        rows.add(new TranslationViewRow(TranslationViewRow.Type.SURA_HEADER, verse,
+            quranInfo.getSuraName(getContext(), sura, true)));
         currentSura = sura;
       }
 

@@ -108,6 +108,7 @@ public class QuranDownloadService extends Service implements
   private Map<String, Boolean> mSuccessfulZippedDownloads = null;
   private Map<String, Intent> mRecentlyFailedDownloads = null;
 
+  @Inject QuranInfo quranInfo;
   @Inject OkHttpClient mOkHttpClient;
 
   private final class ServiceHandler extends Handler {
@@ -350,11 +351,11 @@ public class QuranDownloadService extends Service implements
       } else {
         // add the number ayahs from suras in between start and end
         for (int i = startSura + 1; i < endSura; i++) {
-          totalAyahs += QuranInfo.getNumAyahs(i);
+          totalAyahs += quranInfo.getNumAyahs(i);
         }
 
         // add the number of ayahs from the start sura
-        totalAyahs += QuranInfo.getNumAyahs(startSura) - startAyah + 1;
+        totalAyahs += quranInfo.getNumAyahs(startSura) - startAyah + 1;
 
         // add the number of ayahs from the last sura
         totalAyahs += endAyah;
@@ -375,7 +376,7 @@ public class QuranDownloadService extends Service implements
 
     boolean result;
     for (int i = startSura; i <= endSura; i++) {
-      int lastAyah = QuranInfo.getNumAyahs(i);
+      int lastAyah = quranInfo.getNumAyahs(i);
       if (i == endSura) {
         lastAyah = endAyah;
       }

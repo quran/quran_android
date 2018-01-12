@@ -45,8 +45,11 @@ public class AudioUtils {
     static final int MAX = 3;
   }
 
+  private final QuranInfo quranInfo;
+
   @Inject
-  public AudioUtils() {
+  public AudioUtils(QuranInfo quranInfo) {
+    this.quranInfo = quranInfo;
   }
 
   /**
@@ -148,9 +151,9 @@ public class AudioUtils {
       return null;
     }
     if (page < PAGES_LAST) {
-      int nextPageSura = QuranInfo.safelyGetSuraOnPage(page);
+      int nextPageSura = quranInfo.safelyGetSuraOnPage(page);
       // using [page+1] as an index because we literally want the next page
-      int nextPageAyah = QuranInfo.getFirstAyahOnPage(page + 1);
+      int nextPageAyah = quranInfo.getFirstAyahOnPage(page + 1);
 
       pageLastSura = nextPageSura;
       pageLastAyah = nextPageAyah - 1;
@@ -159,13 +162,13 @@ public class AudioUtils {
         if (pageLastSura < 1) {
           pageLastSura = 1;
         }
-        pageLastAyah = QuranInfo.getNumAyahs(pageLastSura);
+        pageLastAyah = quranInfo.getNumAyahs(pageLastSura);
       }
     }
 
     if (mode == LookAheadAmount.SURA) {
       int sura = startAyah.sura;
-      int lastAyah = QuranInfo.getNumAyahs(sura);
+      int lastAyah = quranInfo.getNumAyahs(sura);
       if (lastAyah == -1) {
         return null;
       }
@@ -173,22 +176,22 @@ public class AudioUtils {
       // if we start playback between two suras, download both suras
       if (pageLastSura > sura) {
         sura = pageLastSura;
-        lastAyah = QuranInfo.getNumAyahs(sura);
+        lastAyah = quranInfo.getNumAyahs(sura);
       }
       return new SuraAyah(sura, lastAyah);
     } else if (mode == LookAheadAmount.JUZ) {
-      int juz = QuranInfo.getJuzFromPage(page);
+      int juz = quranInfo.getJuzFromPage(page);
       if (juz == 30) {
         return new SuraAyah(114, 6);
       } else if (juz >= 1 && juz < 30) {
-        int[] endJuz = QuranInfo.getQuarterByIndex(juz * 8);
+        int[] endJuz = quranInfo.getQuarterByIndex(juz * 8);
         if (pageLastSura > endJuz[0]) {
           // ex between jathiya and a7qaf
-          endJuz = QuranInfo.getQuarterByIndex((juz + 1) * 8);
+          endJuz = quranInfo.getQuarterByIndex((juz + 1) * 8);
         } else if (pageLastSura == endJuz[0] &&
             pageLastAyah > endJuz[1]) {
           // ex surat al anfal
-          endJuz = QuranInfo.getQuarterByIndex((juz + 1) * 8);
+          endJuz = quranInfo.getQuarterByIndex((juz + 1) * 8);
         }
 
         return new SuraAyah(endJuz[0], endJuz[1]);
@@ -240,7 +243,7 @@ public class AudioUtils {
     Timber.d("seeing if need basmalla...");
 
     for (int i = startSura; i <= endSura; i++) {
-      int lastAyah = QuranInfo.getNumAyahs(i);
+      int lastAyah = quranInfo.getNumAyahs(i);
       if (i == endSura) {
         lastAyah = endAyah;
       }
@@ -289,7 +292,7 @@ public class AudioUtils {
     int endAyah = maxAyah.ayah;
 
     for (int i = startSura; i <= endSura; i++) {
-      int lastAyah = QuranInfo.getNumAyahs(i);
+      int lastAyah = quranInfo.getNumAyahs(i);
       if (i == endSura) {
         lastAyah = endAyah;
       }

@@ -4,6 +4,7 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -15,9 +16,10 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   @NonNull private QuranPageLayout quranPageLayout;
 
   public AyahScrollableImageTrackerItem(int page,
+                                        QuranInfo quranInfo,
                                         @NonNull QuranPageLayout quranPageLayout,
                                         @NonNull HighlightingImageView highlightingImageView) {
-    super(page, highlightingImageView);
+    super(page, quranInfo, highlightingImageView);
     this.quranPageLayout = quranPageLayout;
   }
 
