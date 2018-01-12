@@ -6,7 +6,9 @@ import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.module.application.ApplicationModule;
 import com.quran.labs.androidquran.module.application.DatabaseModule;
 import com.quran.labs.androidquran.module.application.NetworkModule;
+import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.ui.AudioManagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
@@ -29,11 +31,13 @@ public interface ApplicationComponent {
   void inject(QuranDataProvider quranDataProvider);
 
   // services
+  void inject(AudioService audioService);
   void inject(QuranDownloadService quranDownloadService);
 
   // activities
   void inject(QuranActivity quranActivity);
   void inject(QuranImportActivity quranImportActivity);
+  void inject(AudioManagerActivity audioManagerActivity);
 
   // fragments
   void inject(BookmarksFragment bookmarksFragment);

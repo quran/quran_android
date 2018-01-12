@@ -85,6 +85,7 @@ public class QuranActivity extends QuranActionBarActivity
   private QuranSettings settings;
   private Observable<Integer> recentPages;
 
+  @Inject AudioUtils audioUtils;
   @Inject RecentPageModel recentPageModel;
   @Inject TranslationManagerPresenter translationManagerPresenter;
 
@@ -159,7 +160,7 @@ public class QuranActivity extends QuranActionBarActivity
       finish();
       startActivity(i);
     } else {
-      startService(AudioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
+      startService(audioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
     }
     isPaused = false;
   }
