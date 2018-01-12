@@ -354,7 +354,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       public void onPageScrolled(int position, float positionOffset,
                                  int positionOffsetPixels) {
         if (ayahToolBar.isShowing() && ayahToolBarPos != null) {
-          int barPos = QuranInfo.getPosFromPage(start.getPage(), isDualPages);
+          final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+          int barPos = QuranInfo.getPosFromPage(startPage, isDualPages);
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
             ayahToolBarPos.xScroll = 0 - positionOffsetPixels;
@@ -406,7 +407,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
         // If we're more than 1 page away from ayah selection end ayah mode
         if (isInAyahMode) {
-          int ayahPos = QuranInfo.getPosFromPage(start.getPage(), isDualPages);
+          final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+          int ayahPos = QuranInfo.getPosFromPage(startPage, isDualPages);
           if (Math.abs(ayahPos - position) > 1) {
             endAyahMode();
           }
@@ -1069,8 +1071,9 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void onBookmarksChanged() {
     if (isInAyahMode) {
+      final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
       compositeDisposable.add(
-          bookmarkModel.getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
+          bookmarkModel.getIsBookmarkedObservable(start.sura, start.ayah, startPage)
               .observeOn(AndroidSchedulers.mainThread())
               .subscribeWith(new DisposableSingleObserver<Boolean>() {
                 @Override
@@ -1870,7 +1873,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void selectAyah(SuraAyah s) {
-    final int page = s.getPage();
+    final int page = QuranInfo.getPageFromSuraAyah(s.sura, s.ayah);
     final int position = QuranInfo.getPosFromPage(page, isDualPages);
     Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f instanceof QuranPage && f.isVisible()) {
@@ -1915,8 +1918,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   //endregion
 
   private void updateToolbarPosition(final SuraAyah start, AyahTracker tracker) {
+    final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
     compositeDisposable.add(bookmarkModel
-        .getIsBookmarkedObservable(start.sura, start.ayah, start.getPage())
+        .getIsBookmarkedObservable(start.sura, start.ayah, startPage)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableSingleObserver<Boolean>() {
           @Override
@@ -1969,8 +1973,10 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void showAyahModeRangeHighlights() {
     // Determine the start and end of the selection
-    int minPage = Math.min(start.getPage(), end.getPage());
-    int maxPage = Math.max(start.getPage(), end.getPage());
+    final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+    final int endingPage = QuranInfo.getPageFromSuraAyah(end.sura, end.ayah);
+    int minPage = Math.min(startPage, endingPage);
+    int maxPage = Math.max(startPage, endingPage);
     SuraAyah start = SuraAyah.min(this.start, end);
     SuraAyah end = SuraAyah.max(this.start, this.end);
     // Iterate from beginning to end
@@ -1990,7 +1996,9 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void clearAyahModeHighlights() {
     if (isInAyahMode) {
-      for (int i = start.getPage(); i <= end.getPage(); i++) {
+      final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+      final int endingPage = QuranInfo.getPageFromSuraAyah(end.sura, end.ayah);
+      for (int i = startPage; i <= endingPage; i++) {
         QuranPage fragment = pagerAdapter.getFragmentIfExistsForPage(i);
         if (fragment != null) {
           fragment.getAyahTracker().unHighlightAyahs(HighlightType.SELECTION);
@@ -2009,7 +2017,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       switch (item.getItemId()) {
         case R.id.cab_bookmark_ayah:
-          toggleBookmark(start.sura, start.ayah, start.getPage());
+          final int startPage = QuranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+          toggleBookmark(start.sura, start.ayah, startPage);
           break;
         case R.id.cab_tag_ayah:
           sliderPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);

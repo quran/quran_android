@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
   public final int sura;
   public final int ayah;
-  private int page = -1;
 
   public SuraAyah(int sura, int ayah) {
     this.sura = sura;
@@ -42,10 +41,6 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
           return new SuraAyah[size];
         }
       };
-
-  public int getPage() {
-    return page > 0 ? page : (page = QuranInfo.getPageFromSuraAyah(sura, ayah));
-  }
 
   @Override
   public int compareTo(@NonNull SuraAyah another) {
