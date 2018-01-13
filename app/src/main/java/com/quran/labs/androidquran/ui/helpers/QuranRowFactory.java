@@ -18,7 +18,7 @@ public class QuranRowFactory {
   private final QuranInfo quranInfo;
   
   @Inject
-  QuranRowFactory(QuranInfo quranInfo) {
+  public QuranRowFactory(QuranInfo quranInfo) {
     this.quranInfo = quranInfo;
   }
 

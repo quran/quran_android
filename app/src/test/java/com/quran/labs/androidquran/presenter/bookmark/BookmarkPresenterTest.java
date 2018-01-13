@@ -7,10 +7,12 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel;
+import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import org.junit.Before;
@@ -249,7 +251,8 @@ public class BookmarkPresenterTest {
   }
 
   private BookmarkPresenter makeBookmarkPresenter(BookmarkModel model) {
-    return new BookmarkPresenter(appContext, model, settings, null) {
+    return new BookmarkPresenter(
+        appContext, model, settings, null, new QuranRowFactory(new QuranInfo())) {
       @Override
       void subscribeToChanges() {
         // nothing
