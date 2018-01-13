@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.translation;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.presenter.Presenter;
 
@@ -23,7 +24,7 @@ public class BaseTranslationPresenterTest {
 
   @Before
   public void setupTest() {
-    presenter = new BaseTranslationPresenter<>(null, null);
+    presenter = new BaseTranslationPresenter<>(null, null, new QuranInfo());
   }
 
   @Test

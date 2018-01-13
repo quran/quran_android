@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkWithAyahText;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class ArabicDatabaseUtilsTest {
 
   @Test
   public void testHydrateAyahText() {
-    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context) {
+    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context, new QuranInfo()) {
 
       @Override
       DatabaseHandler getArabicDatabaseHandler() {
@@ -66,7 +67,7 @@ public class ArabicDatabaseUtilsTest {
 
   @Test
   public void testHydrateAyahTextEmpty() {
-    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context) {
+    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context, new QuranInfo()) {
       @Override
       DatabaseHandler getArabicDatabaseHandler() {
         return arabicHandler;
