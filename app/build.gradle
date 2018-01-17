@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
   compileSdkVersion 27
-  buildToolsVersion '27.0.1'
+  buildToolsVersion '27.0.3'
 
   lintOptions {
     checkReleaseBuilds true
@@ -137,7 +137,7 @@ dependencies {
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   testImplementation 'junit:junit:4.12'
   testImplementation 'com.google.truth:truth:0.36'
-  testImplementation "org.mockito:mockito-core:2.10.0"
+  testImplementation "org.mockito:mockito-core:2.13.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
