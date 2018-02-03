@@ -36,7 +36,9 @@ internal class DefaultPageProvider(display: Display) : PageProvider {
   }
 
   override fun setOverrideParameter(parameter: String) {
-    overrideParam = parameter
+    if (parameter.isNotBlank()) {
+      overrideParam = parameter
+    }
   }
 
   private fun getBestTabletLandscapeSizeMatch(width: Int): String {

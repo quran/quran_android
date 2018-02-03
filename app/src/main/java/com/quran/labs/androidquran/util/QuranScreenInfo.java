@@ -52,7 +52,9 @@ public class QuranScreenInfo {
   }
 
   public void setOverrideParam(String overrideParam) {
-    pageProvider.setOverrideParameter(overrideParam);
+    if (!overrideParam.isEmpty()) {
+      pageProvider.setOverrideParameter(overrideParam);
+    }
   }
 
   public int getHeight() {
