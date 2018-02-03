@@ -1,4 +1,4 @@
-package com.quran.data.source
+package com.quran.data.source.impl
 
 internal class NaskhDataSource : MadaniDataSource() {
 

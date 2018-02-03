@@ -1,4 +1,6 @@
-package com.quran.data.source
+package com.quran.data.source.impl
+
+import com.quran.data.source.QuranDataSource
 
 internal open class MadaniDataSource : QuranDataSource {
   override fun getNumberOfPages() = 604
