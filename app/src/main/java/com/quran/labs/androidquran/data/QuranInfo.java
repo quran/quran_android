@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.data.source.QuranDataSource;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranUtils;
 
@@ -21,17 +22,25 @@ import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 
 @Reusable
 public class QuranInfo {
-  private final int[] suraPageStart = QuranData.SURA_PAGE_START;
-  private final int[] pageSuraStart = QuranData.PAGE_SURA_START;
-  private final int[] pageAyahStart = QuranData.PAGE_AYAH_START;
-  private final int[] juzPageStart = QuranData.JUZ_PAGE_START;
-  private final int[] pageRub3Start = QuranData.PAGE_RUB3_START;
-  private final int[] suraNumAyahs = QuranData.SURA_NUM_AYAHS;
-  private final boolean[] suraIsMakki = QuranData.SURA_IS_MAKKI;
-  private final int[][] quarters = QuranData.QUARTERS;
+  private final int[] suraPageStart;
+  private final int[] pageSuraStart;
+  private final int[] pageAyahStart;
+  private final int[] juzPageStart;
+  private final int[] pageRub3Start;
+  private final int[] suraNumAyahs;
+  private final boolean[] suraIsMakki;
+  private final int[][] quarters;
 
   @Inject
-  public QuranInfo() {
+  public QuranInfo(QuranDataSource quranDataSource) {
+    suraPageStart = quranDataSource.getPageForSuraArray();
+    pageSuraStart = quranDataSource.getSuraForPageArray();
+    pageAyahStart = quranDataSource.getAyahForPageArray();
+    juzPageStart = quranDataSource.getPageForJuzArray();
+    pageRub3Start = quranDataSource.getQuarterStartByPage();
+    suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray();
+    suraIsMakki = quranDataSource.getIsMakkiBySuraArray();
+    quarters = quranDataSource.getQuartersArray();
   }
 
   /**
