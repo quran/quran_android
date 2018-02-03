@@ -3,44 +3,43 @@ package com.quran.labs.androidquran.util;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.QuranConstants;
+import com.quran.data.page.provider.PageProvider;
+import com.quran.labs.androidquran.data.QuranDataModule;
 
 import timber.log.Timber;
 
 public class QuranScreenInfo {
-  private static QuranScreenInfo sInstance = null;
-  private static int sOrientation;
+  private static QuranScreenInfo instance = null;
+  private static int orientation;
 
-  private int mHeight;
-  private int mMaxWidth;
-  private PageProvider mPageProvider;
+  private int height;
+  private int maxWidth;
+  private PageProvider pageProvider;
 
   private QuranScreenInfo(@NonNull Display display) {
     final Point point = new Point();
     display.getSize(point);
 
-    mHeight = point.y;
-    mMaxWidth = (point.x > point.y) ? point.x : point.y;
-    mPageProvider = QuranConstants.getPageProvider(display);
+    height = point.y;
+    maxWidth = (point.x > point.y) ? point.x : point.y;
+    pageProvider = QuranDataModule.provideQuranPageProvider(display);
     Timber.d("initializing with %d and %d", point.y, point.x);
   }
 
   public static QuranScreenInfo getInstance() {
-    return sInstance;
+    return instance;
   }
 
   public static QuranScreenInfo getOrMakeInstance(Context context) {
-    if (sInstance == null ||
-        sOrientation != context.getResources().getConfiguration().orientation) {
-      sInstance = initialize(context);
-      sOrientation = context.getResources().getConfiguration().orientation;
+    if (instance == null ||
+        orientation != context.getResources().getConfiguration().orientation) {
+      instance = initialize(context);
+      orientation = context.getResources().getConfiguration().orientation;
     }
-    return sInstance;
+    return instance;
   }
 
   private static QuranScreenInfo initialize(Context context) {
@@ -53,84 +52,22 @@ public class QuranScreenInfo {
   }
 
   public void setOverrideParam(String overrideParam) {
-    mPageProvider.setOverrideParameter(overrideParam);
+    pageProvider.setOverrideParameter(overrideParam);
   }
 
   public int getHeight() {
-    return mHeight;
+    return height;
   }
 
   public String getWidthParam() {
-    return "_" + mPageProvider.getWidthParameter();
+    return "_" + pageProvider.getWidthParameter();
   }
 
   public String getTabletWidthParam() {
-    return "_" + mPageProvider.getTabletWidthParameter();
+    return "_" + pageProvider.getTabletWidthParameter();
   }
 
   public boolean isDualPageMode(Context context) {
-    return context != null && mMaxWidth > 800;
-  }
-
-  public static class DefaultPageProvider implements PageProvider {
-
-    private final int mMaxWidth;
-    private String mOverrideParam;
-
-    public DefaultPageProvider(@NonNull Display display) {
-      final Point point = new Point();
-      display.getSize(point);
-
-      mMaxWidth = (point.x > point.y) ? point.x : point.y;
-    }
-
-    @Override
-    public String getWidthParameter() {
-      if (mMaxWidth <= 320) {
-        return "320";
-      } else if (mMaxWidth <= 480) {
-        return "480";
-      } else if (mMaxWidth <= 800) {
-        return "800";
-      } else if (mMaxWidth <= 1280) {
-        return "1024";
-      } else {
-        if (!TextUtils.isEmpty(mOverrideParam)) {
-          return mOverrideParam;
-        }
-        return "1260";
-      }
-    }
-
-    @Override
-    public String getTabletWidthParameter() {
-      if ("1260".equals(getWidthParameter())) {
-        // for tablet, if the width is more than 1280, use 1260
-        // images for both dimens (only applies to new installs)
-        return "1260";
-      } else {
-        int width = mMaxWidth / 2;
-        return getBestTabletLandscapeSizeMatch(width);
-      }
-    }
-
-    @Override
-    public void setOverrideParameter(String parameter) {
-      mOverrideParam = parameter;
-    }
-
-    private String getBestTabletLandscapeSizeMatch(int width) {
-      if (width <= 640) {
-        return "512";
-      } else {
-        return "1024";
-      }
-    }
-  }
-
-  public interface PageProvider {
-    String getWidthParameter();
-    String getTabletWidthParameter();
-    void setOverrideParameter(String parameter);
+    return context != null && maxWidth > 800;
   }
 }

@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.data
 
+import android.view.Display
+import com.quran.data.page.provider.QuranPageProvider
 import com.quran.data.source.QuranDataSourceProvider
 import dagger.Module
 import dagger.Provides
@@ -8,4 +10,7 @@ import dagger.Provides
 object QuranDataModule {
   @JvmStatic @Provides fun provideQuranDataSource() =
       QuranDataSourceProvider.provideQaloonDataSource()
+
+  @JvmStatic fun provideQuranPageProvider(display: Display) =
+      QuranPageProvider.provideQaloonPageProvider(display)
 }
