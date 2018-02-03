@@ -1,2 +1,2 @@
 include ':app'
-include ':data:quran'
+include ':common:data'
