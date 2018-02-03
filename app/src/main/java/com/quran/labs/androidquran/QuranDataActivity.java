@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.data.QuranFileConstants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
@@ -29,6 +30,8 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.io.File;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
@@ -53,9 +56,15 @@ public class QuranDataActivity extends Activity implements
   private boolean taskIsRunning;
   private String patchUrl;
 
+  @Inject QuranInfo quranInfo;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    QuranApplication quranApp = (QuranApplication) getApplication();
+    quranApp.getApplicationComponent().inject(this);
+
     QuranScreenInfo.getOrMakeInstance(this);
     quranSettings = QuranSettings.getInstance(this);
     quranSettings.upgradePreferences();
@@ -302,6 +311,7 @@ public class QuranDataActivity extends Activity implements
         return false;
       }
 
+      final int totalPages = quranInfo.getNumberOfPages();
       final QuranScreenInfo qsi = QuranScreenInfo.getInstance();
       if (!quranSettings.haveDefaultImagesDirectory()) {
            /* previously, we would send any screen widths greater than 1280
@@ -324,7 +334,7 @@ public class QuranDataActivity extends Activity implements
             * the new 1260 images.
             */
         final String fallback =
-            QuranFileUtils.getPotentialFallbackDirectory(appContext);
+            QuranFileUtils.getPotentialFallbackDirectory(appContext, totalPages);
         if (fallback != null) {
           quranSettings.setDefaultImagesDirectory(fallback);
           qsi.setOverrideParam(fallback);
@@ -334,8 +344,8 @@ public class QuranDataActivity extends Activity implements
       final String width = qsi.getWidthParam();
       if (qsi.isDualPageMode(appContext)) {
         final String tabletWidth = qsi.getTabletWidthParam();
-        boolean haveLandscape = QuranFileUtils.haveAllImages(appContext, tabletWidth);
-        boolean havePortrait = QuranFileUtils.haveAllImages(appContext, width);
+        boolean haveLandscape = QuranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
+        boolean havePortrait = QuranFileUtils.haveAllImages(appContext, width, totalPages);
         needPortraitImages = !havePortrait;
         needLandscapeImages = !haveLandscape;
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
@@ -354,7 +364,7 @@ public class QuranDataActivity extends Activity implements
         return haveLandscape && havePortrait;
       } else {
         boolean haveAll = QuranFileUtils.haveAllImages(appContext,
-            QuranScreenInfo.getInstance().getWidthParam());
+            QuranScreenInfo.getInstance().getWidthParam(), totalPages);
         Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
         needPortraitImages = !haveAll;
         needLandscapeImages = false;

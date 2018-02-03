@@ -16,10 +16,6 @@ import javax.inject.Inject;
 
 import dagger.Reusable;
 
-import static com.quran.labs.androidquran.data.Constants.PAGES_FIRST;
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
-
 @Reusable
 public class QuranInfo {
   private final int[] suraPageStart;
@@ -30,6 +26,8 @@ public class QuranInfo {
   private final int[] suraNumAyahs;
   private final boolean[] suraIsMakki;
   private final int[][] quarters;
+  private final int numberOfPages;
+  private final int numberOfPagesDual;
 
   @Inject
   public QuranInfo(QuranDataSource quranDataSource) {
@@ -41,6 +39,16 @@ public class QuranInfo {
     suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray();
     suraIsMakki = quranDataSource.getIsMakkiBySuraArray();
     quarters = quranDataSource.getQuartersArray();
+    numberOfPages = quranDataSource.getNumberOfPages();
+    numberOfPagesDual = numberOfPages / 2;
+  }
+
+  public int getNumberOfPages() {
+    return numberOfPages;
+  }
+
+  public int getNumberOfPagesDual() {
+    return numberOfPagesDual;
   }
 
   /**
@@ -201,14 +209,14 @@ public class QuranInfo {
 
   @NonNull
   public int[] getPageBounds(int page) {
-    if (page > PAGES_LAST)
-      page = PAGES_LAST;
+    if (page > numberOfPages)
+      page = numberOfPages;
     if (page < 1) page = 1;
 
     int[] bounds = new int[4];
     bounds[0] = pageSuraStart[page - 1];
     bounds[1] = pageAyahStart[page - 1];
-    if (page == PAGES_LAST) {
+    if (page == numberOfPages) {
       bounds[2] = Constants.SURA_LAST;
       bounds[3] = 6;
     } else {
@@ -232,7 +240,7 @@ public class QuranInfo {
   }
 
   public int safelyGetSuraOnPage(int page) {
-    if (page < PAGES_FIRST || page > PAGES_LAST) {
+    if (page < Constants.PAGES_FIRST || page > numberOfPages) {
       Crashlytics.logException(new IllegalArgumentException("got page: " + page));
       page = 1;
     }
@@ -260,7 +268,7 @@ public class QuranInfo {
   }
 
   public int getRub3FromPage(int page) {
-    if ((page > PAGES_LAST) || (page < 1)) return -1;
+    if ((page > numberOfPages) || (page < 1)) return -1;
     return pageRub3Start[page - 1];
   }
 
@@ -274,7 +282,7 @@ public class QuranInfo {
 
     // what page does the sura start on?
     int index = suraPageStart[sura - 1] - 1;
-    while (index < PAGES_LAST) {
+    while (index < numberOfPages) {
       // what's the first sura in that page?
       int ss = pageSuraStart[index];
 
@@ -307,20 +315,20 @@ public class QuranInfo {
   }
 
   public  int getPageFromPos(int position, boolean dual) {
-    int page = PAGES_LAST - position;
+    int page = numberOfPages - position;
     if (dual) {
-      page = (PAGES_LAST_DUAL - position) * 2;
+      page = (numberOfPagesDual - position) * 2;
     }
     return page;
   }
 
   public int getPosFromPage(int page, boolean dual) {
-    int position = PAGES_LAST - page;
+    int position = numberOfPages - page;
     if (dual) {
       if (page % 2 != 0) {
         page++;
       }
-      position = PAGES_LAST_DUAL - (page / 2);
+      position = numberOfPagesDual - (page / 2);
     }
     return position;
   }

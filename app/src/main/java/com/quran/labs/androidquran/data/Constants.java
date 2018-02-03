@@ -17,8 +17,6 @@ public class Constants {
 
   // Pages
   public static final int PAGES_FIRST = 1;
-  public static final int PAGES_LAST = QuranConstants.NUMBER_OF_PAGES;
-  public static final int PAGES_LAST_DUAL = PAGES_LAST / 2;
   public static final int SURA_FIRST = 1;
   public static final int SURA_LAST = 114;
   public static final int SURAS_COUNT = 114;

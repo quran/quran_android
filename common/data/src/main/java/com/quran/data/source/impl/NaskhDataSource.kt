@@ -1,6 +1,7 @@
 package com.quran.data.source.impl
 
 internal class NaskhDataSource : MadaniDataSource() {
+  override fun getNumberOfPages() = 612
 
   override fun getPageForSuraArray() = intArrayOf(
       2, 3, 51, 78, 107, 129, 152, 178, 188, 209, 222, 236, 250, 256,

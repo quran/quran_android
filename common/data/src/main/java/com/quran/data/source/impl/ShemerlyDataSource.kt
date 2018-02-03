@@ -1,6 +1,7 @@
 package com.quran.data.source.impl
 
 internal class ShemerlyDataSource : MadaniDataSource() {
+  override fun getNumberOfPages() = 521
 
   override fun getPageForSuraArray() = intArrayOf(
       1, 2, 41, 63, 86, 104, 122, 144, 152, 168, 180, 192, 204, 209,

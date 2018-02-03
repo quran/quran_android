@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.ViewGroup;
@@ -12,44 +13,45 @@ import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
 import timber.log.Timber;
 
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
-
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
-  private boolean mIsShowingTranslation = false;
-  private boolean mIsDualPages = false;
+  private boolean isShowingTranslation;
+  private boolean isDualPages;
   private final QuranInfo quranInfo;
+  private final int totalPages;
+  private final int totalPagesDual;
 
   public QuranPageAdapter(FragmentManager fm, boolean dualPages,
                           boolean isShowingTranslation,
                           QuranInfo quranInfo) {
     super(fm, dualPages ? "dualPages" : "singlePage");
     this.quranInfo = quranInfo;
-    mIsDualPages = dualPages;
-    mIsShowingTranslation = isShowingTranslation;
+    isDualPages = dualPages;
+    this.isShowingTranslation = isShowingTranslation;
+    totalPages = quranInfo.getNumberOfPages();
+    totalPagesDual = totalPages / 2;
   }
 
   public void setTranslationMode() {
-    if (!mIsShowingTranslation) {
-      mIsShowingTranslation = true;
+    if (!isShowingTranslation) {
+      isShowingTranslation = true;
       notifyDataSetChanged();
     }
   }
 
   public void setQuranMode() {
-    if (mIsShowingTranslation) {
-      mIsShowingTranslation = false;
+    if (isShowingTranslation) {
+      isShowingTranslation = false;
       notifyDataSetChanged();
     }
   }
 
   public boolean getIsShowingTranslation() {
-    return mIsShowingTranslation;
+    return isShowingTranslation;
   }
 
   @Override
-  public int getItemPosition(Object object) {
+  public int getItemPosition(@NonNull Object object) {
     /* when the ViewPager gets a notifyDataSetChanged (or invalidated),
      * it goes through its set of saved views and runs this method on
      * each one to figure out whether or not it should remove the view
@@ -69,18 +71,18 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   @Override
   public int getCount() {
-    return mIsDualPages ? PAGES_LAST_DUAL : PAGES_LAST;
+    return isDualPages ? totalPagesDual : totalPages;
   }
 
   @Override
   public Fragment getItem(int position) {
-    int page = quranInfo.getPageFromPos(position, mIsDualPages);
+    int page = quranInfo.getPageFromPos(position, isDualPages);
     Timber.d("getting page: %d", page);
-    if (mIsDualPages) {
+    if (isDualPages) {
       return TabletFragment.newInstance(page,
-          mIsShowingTranslation ? TabletFragment.Mode.TRANSLATION :
+          isShowingTranslation ? TabletFragment.Mode.TRANSLATION :
               TabletFragment.Mode.ARABIC);
-    } else if (mIsShowingTranslation) {
+    } else if (isShowingTranslation) {
       return TranslationFragment.newInstance(page);
     } else {
       return QuranPageFragment.newInstance(page);
@@ -105,10 +107,10 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
   }
 
   public QuranPage getFragmentIfExistsForPage(int page) {
-    if (page < Constants.PAGES_FIRST || PAGES_LAST < page) {
+    if (page < Constants.PAGES_FIRST || totalPages < page) {
       return null;
     }
-    int position = quranInfo.getPosFromPage(page, mIsDualPages);
+    int position = quranInfo.getPosFromPage(page, isDualPages);
     Fragment fragment = getFragmentIfExists(position);
     return fragment instanceof QuranPage && fragment.isAdded() ? (QuranPage) fragment : null;
   }

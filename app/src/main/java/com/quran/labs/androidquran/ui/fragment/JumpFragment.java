@@ -199,7 +199,7 @@ public class JumpFragment extends DialogFragment {
     // user has interacted with 'Go to page' field, so we
     // need to verify if the input number is within
     // the acceptable range
-    if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
+    if (page < Constants.PAGES_FIRST || page > quranInfo.getNumberOfPages()) {
       // maybe show a toast message?
       return;
     }

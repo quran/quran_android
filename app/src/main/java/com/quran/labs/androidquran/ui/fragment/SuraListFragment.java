@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +29,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
 import static com.quran.labs.androidquran.data.Constants.SURAS_COUNT;
 
 public class SuraListFragment extends Fragment {
@@ -37,14 +37,15 @@ public class SuraListFragment extends Fragment {
   private Disposable disposable;
 
   @Inject QuranInfo quranInfo;
+  private int numberOfPages;
 
   public static SuraListFragment newInstance() {
     return new SuraListFragment();
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater,
-      ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater,
+                           ViewGroup container, Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.quran_list, container, false);
 
     final Context context = getActivity();
@@ -63,6 +64,7 @@ public class SuraListFragment extends Fragment {
   public void onAttach(Context context) {
     super.onAttach(context);
     ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
+    numberOfPages = quranInfo.getNumberOfPages();
   }
 
   @Override
@@ -76,8 +78,8 @@ public class SuraListFragment extends Fragment {
   @Override
   public void onResume() {
     final Activity activity = getActivity();
-    QuranSettings settings = QuranSettings.getInstance(activity);
     if (activity instanceof QuranActivity) {
+      QuranSettings settings = QuranSettings.getInstance(activity);
       disposable = ((QuranActivity) activity).getLatestPageObservable()
           .first(Constants.NO_PAGE)
           .observeOn(AndroidSchedulers.mainThread())
@@ -96,10 +98,10 @@ public class SuraListFragment extends Fragment {
             public void onError(Throwable e) {
             }
           });
-    }
 
-    if (settings.isArabicNames()) {
-      updateScrollBarPositionHoneycomb();
+      if (settings.isArabicNames()) {
+        updateScrollBarPositionHoneycomb();
+      }
     }
 
     super.onResume();
@@ -126,7 +128,7 @@ public class SuraListFragment extends Fragment {
           .withText(headerTitle)
           .withPage(quranInfo.getStartingPageForJuz(juz));
       elements[pos++] = headerBuilder.build();
-      next = (juz == JUZ2_COUNT) ? PAGES_LAST + 1 :
+      next = (juz == JUZ2_COUNT) ? numberOfPages + 1 :
           quranInfo.getStartingPageForJuz(juz + 1);
 
       while ((sura <= SURAS_COUNT) && (quranInfo.getPageNumberForSura(sura) < next)) {

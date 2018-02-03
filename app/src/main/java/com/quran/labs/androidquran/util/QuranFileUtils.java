@@ -29,8 +29,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import timber.log.Timber;
 
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
-
 public class QuranFileUtils {
 
   // server urls
@@ -74,14 +72,14 @@ public class QuranFileUtils {
     }
   }
 
-  public static String getPotentialFallbackDirectory(Context context) {
+  public static String getPotentialFallbackDirectory(Context context, int totalPages) {
     final String state = Environment.getExternalStorageState();
     if (state.equals(Environment.MEDIA_MOUNTED)) {
-      if (haveAllImages(context, "_1920")) {
+      if (haveAllImages(context, "_1920", totalPages)) {
         return "1920";
-      } else if (haveAllImages(context, "_1280")) {
+      } else if (haveAllImages(context, "_1280", totalPages)) {
         return "1280";
-      } else if (haveAllImages(context, "_1024")) {
+      } else if (haveAllImages(context, "_1024", totalPages)) {
         return "1024";
       } else {
         return "";
@@ -90,7 +88,7 @@ public class QuranFileUtils {
     return null;
   }
 
-  public static boolean haveAllImages(Context context, String widthParam) {
+  public static boolean haveAllImages(Context context, String widthParam, int totalPages) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
     Timber.d("haveAllImages: for width %s, directory is: %s", widthParam, quranDirectory);
     if (quranDirectory == null) {
@@ -105,13 +103,13 @@ public class QuranFileUtils {
         String[] fileList = dir.list();
         if (fileList == null) {
           Timber.d("haveAllImages: null fileList, checking page by page...");
-          for (int i = 1; i <= PAGES_LAST; i++) {
+          for (int i = 1; i <= totalPages; i++) {
             if (!new File(dir, getPageFileName(i)).exists()) {
               Timber.d("haveAllImages: couldn't find page %d", i);
               return false;
             }
           }
-        } else if (fileList.length < PAGES_LAST) {
+        } else if (fileList.length < totalPages) {
           // ideally, we should loop for each page and ensure
           // all pages are there, but this will do for now.
           Timber.d("haveAllImages: found %d files instead of 604.", fileList.length);

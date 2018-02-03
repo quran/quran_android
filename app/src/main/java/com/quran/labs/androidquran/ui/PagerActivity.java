@@ -115,8 +115,6 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST_DUAL;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
@@ -194,6 +192,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private SuraAyah start;
   private SuraAyah end;
 
+  private int numberOfPages;
+  private int numberOfPagesDual;
+
   private PagerActivityComponent pagerActivityComponent;
 
   @Inject QuranPageWorker quranPageWorker;
@@ -252,6 +253,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     // that is used to generate preview windows).
     getWindow().setBackgroundDrawable(null);
 
+    numberOfPages = quranInfo.getNumberOfPages();
+    numberOfPagesDual = quranInfo.getNumberOfPagesDual();
+
     int page = -1;
     isActionBarHidden = true;
     if (savedInstanceState != null) {
@@ -264,7 +268,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
       if (page != -1) {
-        page = PAGES_LAST - page;
+        page = numberOfPages - page;
       }
       showingTranslation = savedInstanceState
           .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
@@ -282,7 +286,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = getIntent();
       Bundle extras = intent.getExtras();
       if (extras != null) {
-        page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
+        page = numberOfPages - extras.getInt("page", Constants.PAGES_FIRST);
         showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
         highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
         highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
@@ -336,7 +340,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (showingTranslation && translationItems != null) {
       updateActionBarSpinner();
     } else {
-      updateActionBarTitle(PAGES_LAST - page);
+      updateActionBarTitle(numberOfPages - page);
     }
 
     lastPopupTime = System.currentTimeMillis();
@@ -428,17 +432,17 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (shouldAdjustPageNumber) {
       // when going from two page per screen to one or vice versa, we adjust the page number,
       // such that the first page is always selected.
-      int curPage = PAGES_LAST - page;
+      int curPage = numberOfPages - page;
       if (isDualPages) {
         if (curPage % 2 != 0) {
           curPage++;
         }
-        curPage = PAGES_LAST_DUAL - (curPage / 2);
+        curPage = numberOfPagesDual - (curPage / 2);
       } else {
         if (curPage % 2 == 0) {
           curPage--;
         }
-        curPage = PAGES_LAST - curPage;
+        curPage = numberOfPages - curPage;
       }
       page = curPage;
     } else if (isDualPages) {
@@ -778,7 +782,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     recentPagePresenter.onJump();
     Bundle extras = intent.getExtras();
     if (extras != null) {
-      int page = PAGES_LAST - extras.getInt("page", Constants.PAGES_FIRST);
+      int page = numberOfPages - extras.getInt("page", Constants.PAGES_FIRST);
 
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
@@ -791,7 +795,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           updateActionBarSpinner();
         } else {
           pagerAdapter.setQuranMode();
-          updateActionBarTitle(PAGES_LAST - page);
+          updateActionBarTitle(numberOfPages - page);
         }
 
         supportInvalidateOptionsMenu();
@@ -1277,7 +1281,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     Timber.d("highlightAyah() - %s:%s", sura, ayah);
     int page = quranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST ||
-        PAGES_LAST < page) {
+        numberOfPages < page) {
       return;
     }
 
@@ -1419,9 +1423,9 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     int position = viewPager.getCurrentItem();
-    int page = PAGES_LAST - position;
+    int page = numberOfPages - position;
     if (isDualPages) {
-      page = ((PAGES_LAST_DUAL - position) * 2) - 1;
+      page = ((numberOfPagesDual - position) * 2) - 1;
     }
 
     int startSura = quranInfo.safelyGetSuraOnPage(page);

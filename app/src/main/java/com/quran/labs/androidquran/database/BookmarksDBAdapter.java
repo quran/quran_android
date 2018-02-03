@@ -31,8 +31,8 @@ public class BookmarksDBAdapter {
 
   private SQLiteDatabase mDb;
 
-  public BookmarksDBAdapter(Context context) {
-    BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context);
+  public BookmarksDBAdapter(Context context, int numberOfPages) {
+    BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context, numberOfPages);
     mDb = dbHelper.getWritableDatabase();
   }
 

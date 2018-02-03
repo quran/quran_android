@@ -25,8 +25,6 @@ import javax.inject.Inject;
 import dagger.Reusable;
 import timber.log.Timber;
 
-import static com.quran.labs.androidquran.data.Constants.PAGES_LAST;
-
 @Reusable
 public class AudioUtils {
 
@@ -45,11 +43,13 @@ public class AudioUtils {
     static final int MAX = 3;
   }
 
+  private final int totalPages;
   private final QuranInfo quranInfo;
 
   @Inject
   public AudioUtils(QuranInfo quranInfo) {
     this.quranInfo = quranInfo;
+    totalPages = quranInfo.getNumberOfPages();
   }
 
   /**
@@ -147,10 +147,10 @@ public class AudioUtils {
     int pageLastSura = 114;
     int pageLastAyah = 6;
     // page < 0 - intentional, because nextPageAyah looks up the ayah on the next page
-    if (page > PAGES_LAST || page < 0) {
+    if (page > totalPages || page < 0) {
       return null;
     }
-    if (page < PAGES_LAST) {
+    if (page < totalPages) {
       int nextPageSura = quranInfo.safelyGetSuraOnPage(page);
       // using [page+1] as an index because we literally want the next page
       int nextPageAyah = quranInfo.getFirstAyahOnPage(page + 1);

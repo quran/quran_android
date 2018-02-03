@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.component.application;
 
+import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.QuranForwarderActivity;
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.SearchActivity;
@@ -44,6 +45,7 @@ public interface ApplicationComponent {
 
   // activities
   void inject(QuranActivity quranActivity);
+  void inject(QuranDataActivity quranDataActivity);
   void inject(QuranImportActivity quranImportActivity);
   void inject(AudioManagerActivity audioManagerActivity);
   void inject(QuranForwarderActivity quranForwarderActivity);

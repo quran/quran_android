@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.Snackbar;
@@ -11,6 +12,7 @@ import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
@@ -60,12 +62,15 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private DisposableSingleObserver<BookmarkResult> pendingRemoval;
   private List<QuranRow> itemsToRemove;
 
+  private final int totalPages;
+
   @Inject
   BookmarkPresenter(Context appContext,
                     BookmarkModel bookmarkModel,
                     QuranSettings quranSettings,
                     ArabicDatabaseUtils arabicDatabaseUtils,
-                    QuranRowFactory quranRowFactory) {
+                    QuranRowFactory quranRowFactory,
+                    QuranInfo quranInfo) {
     this.appContext = appContext;
     this.quranSettings = quranSettings;
     this.bookmarkModel = bookmarkModel;
@@ -75,9 +80,11 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     sortOrder = quranSettings.getBookmarksSortOrder();
     groupByTags = quranSettings.getBookmarksGroupedByTags();
     showRecents = quranSettings.getShowRecents();
+    totalPages = quranInfo.getNumberOfPages();
     subscribeToChanges();
   }
 
+  @SuppressLint("CheckResult")
   @SuppressWarnings("CheckReturnValue")
   void subscribeToChanges() {
     Observable.merge(bookmarkModel.tagsObservable(),
@@ -269,6 +276,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .subscribeOn(Schedulers.io());
   }
 
+  @SuppressLint("CheckResult")
   @SuppressWarnings("CheckReturnValue")
   private void getBookmarks(final int sortOrder, final boolean groupByTags) {
     getBookmarksListObservable(sortOrder, groupByTags)
@@ -309,7 +317,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       rows.add(0, quranRowFactory.fromRecentPageHeader(appContext, size));
       for (int i = 0; i < size; i++) {
         int page = recentPages.get(i).getPage();
-        if (page < Constants.PAGES_FIRST || page > Constants.PAGES_LAST) {
+        if (page < Constants.PAGES_FIRST || page > totalPages) {
           page = 1;
         }
         rows.add(i + 1, quranRowFactory.fromCurrentPage(appContext, page));
