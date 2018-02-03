@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.QuranForwarderActivity;
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
+import com.quran.labs.androidquran.data.QuranDataModule;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.module.application.ApplicationModule;
 import com.quran.labs.androidquran.module.application.DatabaseModule;
@@ -28,7 +29,8 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = { ApplicationModule.class, DatabaseModule.class, NetworkModule.class } )
+@Component(modules = {
+    ApplicationModule.class, DatabaseModule.class, NetworkModule.class, QuranDataModule.class } )
 public interface ApplicationComponent {
   // subcomponents
   PagerActivityComponent.Builder pagerActivityComponentBuilder();

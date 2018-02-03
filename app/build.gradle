@@ -120,6 +120,7 @@ ext {
 }
 
 dependencies {
+  implementation project(path: ':data:quran')
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.android.support:support-v4:${supportLibVersion}"
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"
