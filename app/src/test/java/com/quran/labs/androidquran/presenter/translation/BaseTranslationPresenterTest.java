@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.presenter.translation;
 
+import com.quran.data.source.QuranDataSourceProvider;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
@@ -24,7 +25,8 @@ public class BaseTranslationPresenterTest {
 
   @Before
   public void setupTest() {
-    presenter = new BaseTranslationPresenter<>(null, null, new QuranInfo());
+    presenter = new BaseTranslationPresenter<>(null, null,
+        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource()));
   }
 
   @Test

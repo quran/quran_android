@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.model.translation;
 
 import android.content.Context;
 
+import com.quran.data.source.QuranDataSourceProvider;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkWithAyahText;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -30,7 +31,8 @@ public class ArabicDatabaseUtilsTest {
 
   @Test
   public void testHydrateAyahText() {
-    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context, new QuranInfo()) {
+    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context,
+        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource())) {
 
       @Override
       DatabaseHandler getArabicDatabaseHandler() {
@@ -67,7 +69,8 @@ public class ArabicDatabaseUtilsTest {
 
   @Test
   public void testHydrateAyahTextEmpty() {
-    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context, new QuranInfo()) {
+    ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context,
+        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource())) {
       @Override
       DatabaseHandler getArabicDatabaseHandler() {
         return arabicHandler;
