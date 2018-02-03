@@ -5,8 +5,8 @@ apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'kotlin-kapt'
 
 android {
-  compileSdkVersion 27
-  buildToolsVersion '27.0.3'
+  compileSdkVersion deps.android.build.compileSdkVersion
+  buildToolsVersion deps.android.build.buildToolsVersion
 
   lintOptions {
     checkReleaseBuilds true
@@ -14,8 +14,8 @@ android {
   }
 
   defaultConfig {
-    minSdkVersion 14
-    targetSdkVersion 27
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
     versionCode 2801
     versionName "2.8.0-p1"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
