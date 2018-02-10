@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.data.QuranFileConstants;
+import com.quran.data.page.provider.PageProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -40,8 +40,6 @@ public class QuranDataActivity extends Activity implements
     ActivityCompat.OnRequestPermissionsResultCallback {
 
   public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
-
-  private static final int LATEST_IMAGE_VERSION = QuranFileConstants.IMAGES_VERSION;
   private static final int REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1;
 
   private boolean isPaused = false;
@@ -59,6 +57,7 @@ public class QuranDataActivity extends Activity implements
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject QuranScreenInfo quranScreenInfo;
+  @Inject PageProvider quranPageProvider;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -341,6 +340,7 @@ public class QuranDataActivity extends Activity implements
         }
       }
 
+      final int latestImagesVersion = quranPageProvider.getImageVersion();
       final String width = quranScreenInfo.getWidthParam();
       if (quranScreenInfo.isDualPageMode()) {
         final String tabletWidth = quranScreenInfo.getTabletWidthParam();
@@ -352,8 +352,8 @@ public class QuranDataActivity extends Activity implements
             havePortrait ? "yes" : "no", haveLandscape ? "yes" : "no");
         if (haveLandscape && havePortrait) {
           // if we have the images, see if we need a patch set or not
-          if (!quranFileUtils.isVersion(appContext, width, LATEST_IMAGE_VERSION) ||
-              !quranFileUtils.isVersion(appContext, tabletWidth, LATEST_IMAGE_VERSION)) {
+          if (!quranFileUtils.isVersion(appContext, width, latestImagesVersion) ||
+              !quranFileUtils.isVersion(appContext, tabletWidth, latestImagesVersion)) {
             if (!width.equals(tabletWidth)) {
               patchParam = width + tabletWidth;
             } else {
@@ -368,7 +368,7 @@ public class QuranDataActivity extends Activity implements
         Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
         needPortraitImages = !haveAll;
         needLandscapeImages = false;
-        if (haveAll && !quranFileUtils.isVersion(appContext, width, LATEST_IMAGE_VERSION)) {
+        if (haveAll && !quranFileUtils.isVersion(appContext, width, latestImagesVersion)) {
           patchParam = width;
         }
         return haveAll;
@@ -420,7 +420,8 @@ public class QuranDataActivity extends Activity implements
         quranSettings.setDownloadedPages(true);
         if (!TextUtils.isEmpty(patchParam)) {
           Timber.d("checkPages: have pages, but need patch %s", patchParam);
-          patchUrl = quranFileUtils.getPatchFileUrl(patchParam, LATEST_IMAGE_VERSION);
+          patchUrl = quranFileUtils.getPatchFileUrl(patchParam,
+              quranPageProvider.getImageVersion());
           promptForDownload();
           return;
         }

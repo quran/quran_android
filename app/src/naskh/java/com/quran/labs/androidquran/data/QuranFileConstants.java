@@ -12,7 +12,4 @@ public class QuranFileConstants {
   public static final String ARABIC_DATABASE =
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1 ?
           "quran.ar_naskh.db" : "quran.ar.db";
-
-  // images version
-  public static final int IMAGES_VERSION = 1;
 }
