@@ -3,12 +3,12 @@ package com.quran.labs.androidquran.presenter.translation;
 import android.content.Context;
 
 import com.quran.labs.androidquran.dao.translation.TranslationList;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import okio.Buffer;
 import okio.Okio;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class TranslationManagerPresenterTest {
   private static final String CLI_ROOT_DIRECTORY = "src/test/resources";
@@ -30,12 +31,13 @@ public class TranslationManagerPresenterTest {
 
   @Before
   public void setup() {
-    Context mockAppContext = Mockito.mock(Context.class);
-    QuranSettings mockSettings = Mockito.mock(QuranSettings.class);
+    Context mockAppContext = mock(Context.class);
+    QuranSettings mockSettings = mock(QuranSettings.class);
     OkHttpClient mockOkHttp = new OkHttpClient.Builder().build();
     mockWebServer = new MockWebServer();
     translationManager = new TranslationManagerPresenter(
-        mockAppContext, mockOkHttp, mockSettings, null) {
+        mockAppContext, mockOkHttp, mockSettings, null,
+        mock(QuranFileUtils.class)) {
       @Override
       void writeTranslationList(TranslationList list) {
         // no op

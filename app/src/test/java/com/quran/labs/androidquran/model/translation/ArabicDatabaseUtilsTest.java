@@ -7,6 +7,7 @@ import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkWithAyahText;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.DatabaseHandler;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class ArabicDatabaseUtilsTest {
   @Mock Context context;
@@ -32,7 +34,8 @@ public class ArabicDatabaseUtilsTest {
   @Test
   public void testHydrateAyahText() {
     ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context,
-        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource())) {
+        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource()),
+        mock(QuranFileUtils.class)) {
 
       @Override
       DatabaseHandler getArabicDatabaseHandler() {
@@ -70,7 +73,8 @@ public class ArabicDatabaseUtilsTest {
   @Test
   public void testHydrateAyahTextEmpty() {
     ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context,
-        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource())) {
+        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource()),
+        mock(QuranFileUtils.class)) {
       @Override
       DatabaseHandler getArabicDatabaseHandler() {
         return arabicHandler;
