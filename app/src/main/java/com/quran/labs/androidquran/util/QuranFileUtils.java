@@ -51,8 +51,10 @@ public class QuranFileUtils {
   private final String AYAHINFO_DIRECTORY;
   private final String IMAGES_DIRECTORY;
 
+  private final QuranScreenInfo quranScreenInfo;
+
   @Inject
-  public QuranFileUtils(PageProvider pageProvider) {
+  public QuranFileUtils(PageProvider pageProvider, QuranScreenInfo quranScreenInfo) {
     IMG_BASE_URL = pageProvider.getImagesBaseUrl();
     IMG_ZIP_BASE_URL = pageProvider.getImagesZipBaseUrl();
     PATCH_ZIP_BASE_URL = pageProvider.getPatchBaseUrl();
@@ -63,6 +65,8 @@ public class QuranFileUtils {
     IMAGES_DIRECTORY = pageProvider.getImagesDirectoryName();
     DATABASE_BASE_URL = pageProvider.getDatabasesBaseUrl();
     AUDIO_DB_BASE_URL = pageProvider.getAudioDatabasesBaseUrl();
+
+    this.quranScreenInfo = quranScreenInfo;
   }
 
   // check if the images with the given width param have a version
@@ -234,13 +238,8 @@ public class QuranFileUtils {
   @NonNull
   private Response getImageFromWeb(OkHttpClient okHttpClient,
       Context context, String filename, boolean isRetry) {
-    QuranScreenInfo instance = QuranScreenInfo.getInstance();
-    if (instance == null) {
-      instance = QuranScreenInfo.getOrMakeInstance(context);
-    }
-
     String urlString = IMG_BASE_URL + "width"
-        + instance.getWidthParam() + File.separator
+        + quranScreenInfo.getWidthParam() + File.separator
         + filename;
     Timber.d("want to download: %s", urlString);
 
@@ -383,11 +382,7 @@ public class QuranFileUtils {
   }
 
   private String getQuranImagesDirectory(Context context) {
-    QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-    if (qsi == null) {
-      return null;
-    }
-    return getQuranImagesDirectory(context, qsi.getWidthParam());
+    return getQuranImagesDirectory(context, quranScreenInfo.getWidthParam());
   }
 
   private String getQuranImagesDirectory(Context context, String widthParam) {
@@ -397,11 +392,7 @@ public class QuranFileUtils {
   }
 
   public String getZipFileUrl() {
-    QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-    if (qsi == null) {
-      return null;
-    }
-    return getZipFileUrl(qsi.getWidthParam());
+    return getZipFileUrl(quranScreenInfo.getWidthParam());
   }
 
   public String getZipFileUrl(String widthParam) {
@@ -416,11 +407,7 @@ public class QuranFileUtils {
   }
 
   private String getAyaPositionFileName() {
-    QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-    if (qsi == null) {
-      return null;
-    }
-    return getAyaPositionFileName(qsi.getWidthParam());
+    return getAyaPositionFileName(quranScreenInfo.getWidthParam());
   }
 
   public String getAyaPositionFileName(String widthParam) {
@@ -428,11 +415,7 @@ public class QuranFileUtils {
   }
 
   public String getAyaPositionFileUrl() {
-    QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-    if (qsi == null) {
-      return null;
-    }
-    return getAyaPositionFileUrl(qsi.getWidthParam());
+    return getAyaPositionFileUrl(quranScreenInfo.getWidthParam());
   }
 
   public String getAyaPositionFileUrl(String widthParam) {
@@ -440,10 +423,6 @@ public class QuranFileUtils {
   }
 
   String getGaplessDatabaseRootUrl() {
-    QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-    if (qsi == null) {
-      return null;
-    }
     return AUDIO_DB_BASE_URL;
   }
 

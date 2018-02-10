@@ -5,9 +5,6 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.quran.labs.androidquran.util.QuranScreenInfo;
-import com.quran.labs.androidquran.util.QuranUtils;
-
 /**
  * NonRestoringViewPager is a hack to sometimes prevent ViewPager from restoring its
  * page in onRestoreInstanceState. This is done because in some cases, the ViewPager
@@ -29,18 +26,18 @@ import com.quran.labs.androidquran.util.QuranUtils;
  */
 public class NonRestoringViewPager extends ViewPager {
   private boolean isRestoring = false;
-  private final boolean useDefaultImplementation;
+  private boolean useDefaultImplementation;
 
   public NonRestoringViewPager(Context context) {
     super(context);
-    useDefaultImplementation =
-        !QuranUtils.isDualPagesInLandscape(context, QuranScreenInfo.getOrMakeInstance(context));
   }
 
   public NonRestoringViewPager(Context context, AttributeSet attrs) {
     super(context, attrs);
-    useDefaultImplementation =
-        !QuranUtils.isDualPagesInLandscape(context, QuranScreenInfo.getOrMakeInstance(context));
+  }
+
+  public void setIsDualPagesInLandscape(boolean isDualPagesInLandscape) {
+    useDefaultImplementation = !isDualPagesInLandscape;
   }
 
   @Override

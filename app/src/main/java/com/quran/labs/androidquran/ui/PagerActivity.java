@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.NonRestoringViewPager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -312,6 +313,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
     audioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
+    audioStatusBar.setIsDualPageMode(quranScreenInfo.isDualPageMode());
     audioStatusBar.setQariList(audioUtils.getQariList(this));
     audioStatusBar.setAudioBarListener(this);
     audioBarParams = (ViewGroup.MarginLayoutParams) audioStatusBar.getLayoutParams();
@@ -348,7 +350,12 @@ public class PagerActivity extends QuranActionBarActivity implements
     pagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), isDualPages, showingTranslation, quranInfo);
     ayahToolBar = (AyahToolBar) findViewById(R.id.ayah_toolbar);
-    viewPager = (ViewPager) findViewById(R.id.quran_pager);
+
+    final NonRestoringViewPager nonRestoringViewPager = findViewById(R.id.quran_pager);
+    nonRestoringViewPager.setIsDualPagesInLandscape(
+        QuranUtils.isDualPagesInLandscape(this, quranScreenInfo));
+
+    viewPager = nonRestoringViewPager;
     viewPager.setAdapter(pagerAdapter);
 
     ayahToolBar.setOnItemSelectedListener(new AyahMenuItemSelectionHandler());

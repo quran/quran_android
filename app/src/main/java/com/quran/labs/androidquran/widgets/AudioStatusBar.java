@@ -27,7 +27,6 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
@@ -110,7 +109,6 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     // only flip the layout when the language is rtl and we're on api 17+
     isRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
         (QuranSettings.getInstance(this.context).isArabicNames() || QuranUtils.isRtl());
-    isDualPageMode = QuranScreenInfo.getOrMakeInstance(this.context).isDualPageMode(this.context);
     sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(context.getApplicationContext());
     currentQari = sharedPreferences.getInt(Constants.PREF_DEFAULT_QARI, 0);
@@ -122,6 +120,10 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
           itemBackground);
       ta.recycle();
     }
+  }
+
+  public void setIsDualPageMode(boolean isDualPageMode) {
+    this.isDualPageMode = isDualPageMode;
   }
 
   public void setQariList(List<QariItem> qariList) {

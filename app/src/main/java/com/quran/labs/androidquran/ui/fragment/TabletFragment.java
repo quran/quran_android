@@ -35,6 +35,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.translation.OnTranslationActionListener;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.ui.util.PageController;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
@@ -84,6 +85,7 @@ public class TabletFragment extends Fragment
   @Inject Lazy<QuranPagePresenter> quranPagePresenter;
   @Inject Lazy<TranslationPresenter> translationPresenter;
   @Inject AyahSelectedListener ayahSelectedListener;
+  @Inject QuranScreenInfo quranScreenInfo;
   @Inject QuranInfo quranInfo;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
@@ -173,7 +175,7 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
+  public void onSaveInstanceState(@NonNull Bundle outState) {
     if (mode == Mode.TRANSLATION) {
       outState.putInt(SI_RIGHT_TRANSLATION_SCROLL_POSITION,
           rightTranslation.findFirstCompletelyVisibleItemPosition());
@@ -199,8 +201,10 @@ public class TabletFragment extends Fragment
       AyahTrackerItem left;
       AyahTrackerItem right;
       if (mode == Mode.ARABIC) {
-        left = new AyahImageTrackerItem(pageNumber, quranInfo,false, leftImageView);
-        right = new AyahImageTrackerItem(pageNumber - 1, quranInfo, true, rightImageView);
+        final int screenHeight = quranScreenInfo.getHeight();
+        left = new AyahImageTrackerItem(pageNumber, screenHeight, quranInfo,false, leftImageView);
+        right = new AyahImageTrackerItem(
+            pageNumber - 1, screenHeight, quranInfo, true, rightImageView);
       } else if (mode == Mode.TRANSLATION) {
         left = new AyahTranslationTrackerItem(pageNumber, quranInfo, leftTranslation);
         right = new AyahTranslationTrackerItem(pageNumber - 1, quranInfo, rightTranslation);

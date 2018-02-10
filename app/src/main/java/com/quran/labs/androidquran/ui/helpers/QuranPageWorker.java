@@ -22,16 +22,19 @@ public class QuranPageWorker {
   private final Context appContext;
   private final OkHttpClient okHttpClient;
   private final String imageWidth;
+  private final QuranScreenInfo quranScreenInfo;
   private final QuranFileUtils quranFileUtils;
 
   @Inject
   QuranPageWorker(Context context,
                   OkHttpClient okHttpClient,
                   String imageWidth,
+                  QuranScreenInfo quranScreenInfo,
                   QuranFileUtils quranFileUtils) {
     this.appContext = context;
     this.okHttpClient = okHttpClient;
     this.imageWidth = imageWidth;
+    this.quranScreenInfo = quranScreenInfo;
     this.quranFileUtils = quranFileUtils;
   }
 
@@ -51,11 +54,11 @@ public class QuranPageWorker {
     if (response == null ||
         (response.getBitmap() == null &&
             response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND)){
-      if (QuranScreenInfo.getInstance().isDualPageMode(appContext)){
+      if (quranScreenInfo.isDualPageMode()){
         Crashlytics.log(Log.WARN, TAG, "tablet got bitmap null, trying alternate width...");
-        String param = QuranScreenInfo.getInstance().getWidthParam();
+        String param = quranScreenInfo.getWidthParam();
         if (param.equals(imageWidth)){
-          param = QuranScreenInfo.getInstance().getTabletWidthParam();
+          param = quranScreenInfo.getTabletWidthParam();
         }
         response = QuranDisplayHelper.getQuranPage(
             okHttpClient, appContext, param, pageNumber, quranFileUtils);

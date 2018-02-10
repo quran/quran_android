@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import javax.inject.Singleton;
@@ -36,11 +35,5 @@ public class ApplicationModule {
   @Singleton
   QuranSettings provideQuranSettings() {
     return QuranSettings.getInstance(application);
-  }
-
-  @Provides
-  @Singleton
-  QuranScreenInfo provideQuranScreenInfo() {
-    return QuranScreenInfo.getOrMakeInstance(application);
   }
 }

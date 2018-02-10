@@ -29,6 +29,7 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.ui.preference.DataListPreference;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.RecordingLogTree;
@@ -66,6 +67,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
 
   @Inject BookmarkImportExportModel bookmarkImportExportModel;
   @Inject QuranFileUtils quranFileUtils;
+  @Inject QuranScreenInfo quranScreenInfo;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
               .filter(tree -> tree instanceof RecordingLogTree)
               .firstElement()
               .map(tree -> ((RecordingLogTree) tree).getLogs())
-              .map(logs -> QuranUtils.getDebugInfo(appContext) + "\n\n" + logs)
+              .map(logs -> QuranUtils.getDebugInfo(appContext, quranScreenInfo) + "\n\n" + logs)
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribeWith(new DisposableMaybeObserver<String>() {

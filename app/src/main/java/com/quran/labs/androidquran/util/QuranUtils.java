@@ -99,7 +99,7 @@ public class QuranUtils {
   public static boolean isDualPages(Context context, QuranScreenInfo qsi) {
     if (context != null && qsi != null) {
       final Resources resources = context.getResources();
-      if (qsi.isDualPageMode(context) &&
+      if (qsi.isDualPageMode() &&
           resources.getConfiguration().orientation ==
               Configuration.ORIENTATION_LANDSCAPE) {
         final SharedPreferences prefs =
@@ -120,7 +120,7 @@ public class QuranUtils {
    */
   public static boolean isDualPagesInLandscape(
       @NonNull Context context, @NonNull QuranScreenInfo qsi) {
-    if (qsi.isDualPageMode(context)) {
+    if (qsi.isDualPageMode()) {
       final SharedPreferences prefs =
           PreferenceManager.getDefaultSharedPreferences(context);
       final Resources resources = context.getResources();
@@ -131,7 +131,7 @@ public class QuranUtils {
   }
 
   @WorkerThread
-  public static String getDebugInfo(Context context){
+  public static String getDebugInfo(Context context, QuranScreenInfo quranScreenInfo){
     StringBuilder builder = new StringBuilder();
     builder.append("Android SDK Version: ").append(Build.VERSION.SDK_INT);
     String location = QuranSettings.getInstance(context).getAppCustomLocation();
@@ -153,11 +153,10 @@ public class QuranUtils {
           .append(e);
     }
 
-    QuranScreenInfo info = QuranScreenInfo.getInstance();
-    if (info != null){
-      builder.append("\nDisplay: ").append(info.getWidthParam());
-      if (info.isDualPageMode(context)){
-        builder.append(", tablet width: ").append(info.getWidthParam());
+    if (quranScreenInfo != null){
+      builder.append("\nDisplay: ").append(quranScreenInfo.getWidthParam());
+      if (quranScreenInfo.isDualPageMode()){
+        builder.append(", tablet width: ").append(quranScreenInfo.getWidthParam());
       }
       builder.append("\n");
     }

@@ -4,51 +4,40 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.view.Display;
-import android.view.WindowManager;
 
 import com.quran.data.page.provider.PageProvider;
-import com.quran.labs.androidquran.data.QuranDataModule;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import timber.log.Timber;
 
+@Singleton
 public class QuranScreenInfo {
-  private static QuranScreenInfo instance = null;
-  private static int orientation;
+  private final int height;
+  private final int altDimension;
+  private final int maxWidth;
+  private final int orientation;
+  private final Context context;
+  private final PageProvider pageProvider;
 
-  private int height;
-  private int maxWidth;
-  private PageProvider pageProvider;
-
-  private QuranScreenInfo(@NonNull Display display) {
+  @Inject
+  public QuranScreenInfo(@NonNull Context appContext,
+                         @NonNull Display display,
+                         @NonNull PageProvider pageProvider) {
     final Point point = new Point();
     display.getSize(point);
 
     height = point.y;
+    altDimension = point.x;
     maxWidth = (point.x > point.y) ? point.x : point.y;
-    pageProvider = QuranDataModule.legacyProvideQuranPageProvider(display);
+    orientation = appContext.getResources().getConfiguration().orientation;
+
+    this.context = appContext;
+    this.pageProvider = pageProvider;
     Timber.d("initializing with %d and %d", point.y, point.x);
-  }
 
-  public static QuranScreenInfo getInstance() {
-    return instance;
-  }
-
-  public static QuranScreenInfo getOrMakeInstance(Context context) {
-    if (instance == null ||
-        orientation != context.getResources().getConfiguration().orientation) {
-      instance = initialize(context);
-      orientation = context.getResources().getConfiguration().orientation;
-    }
-    return instance;
-  }
-
-  private static QuranScreenInfo initialize(Context context) {
-    final WindowManager w = (WindowManager) context
-        .getSystemService(Context.WINDOW_SERVICE);
-    final Display display = w.getDefaultDisplay();
-    QuranScreenInfo qsi = new QuranScreenInfo(display);
-    qsi.setOverrideParam(QuranSettings.getInstance(context).getDefaultImagesDirectory());
-    return qsi;
+    setOverrideParam(QuranSettings.getInstance(context).getDefaultImagesDirectory());
   }
 
   public void setOverrideParam(String overrideParam) {
@@ -58,7 +47,11 @@ public class QuranScreenInfo {
   }
 
   public int getHeight() {
-    return height;
+    if (orientation == context.getResources().getConfiguration().orientation) {
+      return height;
+    } else {
+      return altDimension;
+    }
   }
 
   public String getWidthParam() {
@@ -69,7 +62,7 @@ public class QuranScreenInfo {
     return "_" + pageProvider.getTabletWidthParameter();
   }
 
-  public boolean isDualPageMode(Context context) {
-    return context != null && maxWidth > 800;
+  public boolean isDualPageMode() {
+    return maxWidth > 800;
   }
 }

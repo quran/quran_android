@@ -58,6 +58,7 @@ public class QuranDataActivity extends Activity implements
 
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
+  @Inject QuranScreenInfo quranScreenInfo;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,6 @@ public class QuranDataActivity extends Activity implements
     QuranApplication quranApp = (QuranApplication) getApplication();
     quranApp.getApplicationComponent().inject(this);
 
-    QuranScreenInfo.getOrMakeInstance(this);
     quranSettings = QuranSettings.getInstance(this);
     quranSettings.upgradePreferences();
   }
@@ -300,7 +300,7 @@ public class QuranDataActivity extends Activity implements
     private String patchParam;
     private boolean storageNotAvailable;
 
-    public CheckPagesAsyncTask(Context context) {
+    CheckPagesAsyncTask(Context context) {
       appContext = context.getApplicationContext();
     }
 
@@ -313,7 +313,6 @@ public class QuranDataActivity extends Activity implements
       }
 
       final int totalPages = quranInfo.getNumberOfPages();
-      final QuranScreenInfo qsi = QuranScreenInfo.getInstance();
       if (!quranSettings.haveDefaultImagesDirectory()) {
            /* previously, we would send any screen widths greater than 1280
             * to get 1920 images. this was problematic for various reasons,
@@ -338,13 +337,13 @@ public class QuranDataActivity extends Activity implements
             quranFileUtils.getPotentialFallbackDirectory(appContext, totalPages);
         if (fallback != null) {
           quranSettings.setDefaultImagesDirectory(fallback);
-          qsi.setOverrideParam(fallback);
+          quranScreenInfo.setOverrideParam(fallback);
         }
       }
 
-      final String width = qsi.getWidthParam();
-      if (qsi.isDualPageMode(appContext)) {
-        final String tabletWidth = qsi.getTabletWidthParam();
+      final String width = quranScreenInfo.getWidthParam();
+      if (quranScreenInfo.isDualPageMode()) {
+        final String tabletWidth = quranScreenInfo.getTabletWidthParam();
         boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
         boolean havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages);
         needPortraitImages = !havePortrait;
@@ -365,7 +364,7 @@ public class QuranDataActivity extends Activity implements
         return haveLandscape && havePortrait;
       } else {
         boolean haveAll = quranFileUtils.haveAllImages(appContext,
-            QuranScreenInfo.getInstance().getWidthParam(), totalPages);
+            quranScreenInfo.getWidthParam(), totalPages);
         Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
         needPortraitImages = !haveAll;
         needLandscapeImages = false;
@@ -458,24 +457,22 @@ public class QuranDataActivity extends Activity implements
       return;
     }
 
-    QuranScreenInfo qsi = QuranScreenInfo.getInstance();
-
     String url;
     if (needPortraitImages && !needLandscapeImages) {
       // phone (and tablet when upgrading on some devices, ex n10)
       url = quranFileUtils.getZipFileUrl();
     } else if (needLandscapeImages && !needPortraitImages) {
       // tablet (when upgrading from pre-tablet on some devices, ex n7).
-      url = quranFileUtils.getZipFileUrl(qsi.getTabletWidthParam());
+      url = quranFileUtils.getZipFileUrl(quranScreenInfo.getTabletWidthParam());
     } else {
       // new tablet installation - if both image sets are the same
       // size, then just get the correct one only
-      if (qsi.getTabletWidthParam().equals(qsi.getWidthParam())) {
+      if (quranScreenInfo.getTabletWidthParam().equals(quranScreenInfo.getWidthParam())) {
         url = quranFileUtils.getZipFileUrl();
       } else {
         // otherwise download one zip with both image sets
-        String widthParam = qsi.getWidthParam() +
-            qsi.getTabletWidthParam();
+        String widthParam = quranScreenInfo.getWidthParam() +
+            quranScreenInfo.getTabletWidthParam();
         url = quranFileUtils.getZipFileUrl(widthParam);
       }
     }
@@ -503,7 +500,7 @@ public class QuranDataActivity extends Activity implements
 
   private void promptForDownload() {
     int message = R.string.downloadPrompt;
-    if (QuranScreenInfo.getInstance().isDualPageMode(this) &&
+    if (quranScreenInfo.isDualPageMode() &&
         (needPortraitImages != needLandscapeImages)) {
       message = R.string.downloadTabletPrompt;
     }

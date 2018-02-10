@@ -7,19 +7,21 @@ import android.support.annotation.NonNull;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranPageLayout;
 
 public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   @NonNull private QuranPageLayout quranPageLayout;
+  private final int screenHeight;
 
   public AyahScrollableImageTrackerItem(int page,
+                                        int screenHeight,
                                         QuranInfo quranInfo,
                                         @NonNull QuranPageLayout quranPageLayout,
                                         @NonNull HighlightingImageView highlightingImageView) {
-    super(page, quranInfo, highlightingImageView);
+    super(page, screenHeight, quranInfo, highlightingImageView);
+    this.screenHeight = screenHeight;
     this.quranPageLayout = quranPageLayout;
   }
 
@@ -28,8 +30,6 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
     if (this.page == page && scrollToAyah && coordinates != null) {
       final RectF highlightBounds = ImageAyahUtils.getYBoundsForHighlight(coordinates, sura, ayah);
       if (highlightBounds != null) {
-        int screenHeight = QuranScreenInfo.getInstance().getHeight();
-
         Matrix matrix = ayahView.getImageMatrix();
         matrix.mapRect(highlightBounds);
 
