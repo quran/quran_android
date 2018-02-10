@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.data
 
 import android.view.Display
 import com.quran.data.page.provider.QuranPageProvider
+import com.quran.data.page.provider.size.QuranPageSizeCalculatorProvider
 import com.quran.data.source.QuranDataSourceProvider
 import dagger.Module
 import dagger.Provides
@@ -11,10 +12,9 @@ object QuranDataModule {
   @JvmStatic @Provides fun provideQuranDataSource() =
       QuranDataSourceProvider.provideMadaniDataSource()
 
-  @Deprecated(message = "Use standard DI")
-  @JvmStatic fun legacyProvideQuranPageProvider(display: Display) =
-      QuranPageProvider.provideMadaniPageProvider(display)
+  @JvmStatic @Provides fun provideQuranPageProvider() =
+      QuranPageProvider.provideMadaniPageProvider()
 
-  @JvmStatic @Provides fun provideQuranPageProvider(display: Display) =
-      QuranPageProvider.provideMadaniPageProvider(display)
+  @JvmStatic @Provides fun provideQuranPageSizeCalculator(display: Display) =
+      QuranPageSizeCalculatorProvider.provideMadaniPageSizeCalculator(display)
 }

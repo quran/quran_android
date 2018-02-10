@@ -1,8 +1,6 @@
 package com.quran.data.page.provider.impl
 
-import android.view.Display
-
-internal class WarshPageProvider(display: Display) : DefaultPageProvider(display) {
+internal class WarshPageProvider : DefaultPageProvider() {
   private val baseUrl = "http://android.quran.com/data"
   private val warshBaseUrl = "$baseUrl/warsh"
 
@@ -27,8 +25,4 @@ internal class WarshPageProvider(display: Display) : DefaultPageProvider(display
   override fun getAyahInfoDirectoryName() = "warsh/" + getDatabaseDirectoryName()
 
   override fun getImagesDirectoryName() = "warsh"
-
-  override fun setOverrideParameter(parameter: String) {
-    // override parameter is irrelevant for warsh pages
-  }
 }

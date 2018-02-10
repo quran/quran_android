@@ -5,7 +5,7 @@ import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.view.Display;
 
-import com.quran.data.page.provider.PageProvider;
+import com.quran.data.page.provider.size.PageSizeCalculator;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,12 +19,12 @@ public class QuranScreenInfo {
   private final int maxWidth;
   private final int orientation;
   private final Context context;
-  private final PageProvider pageProvider;
+  private final PageSizeCalculator pageSizeCalculator;
 
   @Inject
   public QuranScreenInfo(@NonNull Context appContext,
                          @NonNull Display display,
-                         @NonNull PageProvider pageProvider) {
+                         @NonNull PageSizeCalculator pageSizeCalculator) {
     final Point point = new Point();
     display.getSize(point);
 
@@ -34,7 +34,7 @@ public class QuranScreenInfo {
     orientation = appContext.getResources().getConfiguration().orientation;
 
     this.context = appContext;
-    this.pageProvider = pageProvider;
+    this.pageSizeCalculator = pageSizeCalculator;
     Timber.d("initializing with %d and %d", point.y, point.x);
 
     setOverrideParam(QuranSettings.getInstance(context).getDefaultImagesDirectory());
@@ -42,7 +42,7 @@ public class QuranScreenInfo {
 
   public void setOverrideParam(String overrideParam) {
     if (!overrideParam.isEmpty()) {
-      pageProvider.setOverrideParameter(overrideParam);
+      pageSizeCalculator.setOverrideParameter(overrideParam);
     }
   }
 
@@ -55,11 +55,11 @@ public class QuranScreenInfo {
   }
 
   public String getWidthParam() {
-    return "_" + pageProvider.getWidthParameter();
+    return "_" + pageSizeCalculator.getWidthParameter();
   }
 
   public String getTabletWidthParam() {
-    return "_" + pageProvider.getTabletWidthParameter();
+    return "_" + pageSizeCalculator.getTabletWidthParameter();
   }
 
   public boolean isDualPageMode() {

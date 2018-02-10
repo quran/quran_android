@@ -11,6 +11,9 @@ object QuranDataModule {
   @JvmStatic @Provides fun provideQuranDataSource() =
       QuranDataSourceProvider.provideShemerlyDataSource()
 
-  @JvmStatic fun provideQuranPageProvider(display: Display) =
+  @JvmStatic @Provides fun provideQuranPageProvider() =
       QuranPageProvider.provideShemerlyPageProvider()
+
+  @JvmStatic @Provides fun provideQuranPageSizeCalculator(display: Display) =
+      QuranPageSizeCalculatorProvider.provideShemerlyPageSizeCalculator(display)
 }
