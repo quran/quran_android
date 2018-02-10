@@ -28,12 +28,16 @@ public class TranslationsDBAdapter {
 
   private final Context context;
   private final SQLiteDatabase db;
+  private final QuranFileUtils quranFileUtils;
   private volatile List<LocalTranslation> cachedTranslations;
 
   @Inject
-  public TranslationsDBAdapter(Context context, TranslationsDBHelper adapter) {
+  public TranslationsDBAdapter(Context context,
+                               TranslationsDBHelper adapter,
+                               QuranFileUtils quranFileUtils) {
     this.context = context;
     this.db = adapter.getWritableDatabase();
+    this.quranFileUtils = quranFileUtils;
   }
 
   public SparseArray<LocalTranslation> getTranslationsHash() {
@@ -72,7 +76,7 @@ public class TranslationsDBAdapter {
         String languageCode = cursor.getString(6);
         int version = cursor.getInt(7);
 
-        if (QuranFileUtils.hasTranslation(context, filename)) {
+        if (quranFileUtils.hasTranslation(context, filename)) {
           items.add(new LocalTranslation(id, filename, name, translator,
               translatorForeign, url, languageCode, version));
         }

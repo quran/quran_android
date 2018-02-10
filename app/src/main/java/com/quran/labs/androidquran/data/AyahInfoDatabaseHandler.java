@@ -34,11 +34,12 @@ public class AyahInfoDatabaseHandler {
 
   private final SQLiteDatabase database;
 
-  static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(Context context, String databaseName) {
+  static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(
+      Context context, String databaseName, QuranFileUtils quranFileUtils) {
     AyahInfoDatabaseHandler handler = ayahInfoCache.get(databaseName);
     if (handler == null) {
       try {
-        AyahInfoDatabaseHandler db = new AyahInfoDatabaseHandler(context, databaseName);
+        AyahInfoDatabaseHandler db = new AyahInfoDatabaseHandler(context, databaseName, quranFileUtils);
         if (db.validDatabase()) {
           ayahInfoCache.put(databaseName, db);
           handler = db;
@@ -50,8 +51,10 @@ public class AyahInfoDatabaseHandler {
     return handler;
   }
 
-  private AyahInfoDatabaseHandler(Context context, String databaseName) throws SQLException {
-    String base = QuranFileUtils.getQuranAyahDatabaseDirectory(context);
+  private AyahInfoDatabaseHandler(Context context,
+                                  String databaseName,
+                                  QuranFileUtils quranFileUtils) throws SQLException {
+    String base = quranFileUtils.getQuranAyahDatabaseDirectory(context);
     if (base == null) {
       database = null;
     } else {

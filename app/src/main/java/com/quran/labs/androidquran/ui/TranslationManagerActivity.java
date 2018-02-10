@@ -55,8 +55,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private Disposable onClickDownloadDisposable;
   private Disposable onClickRemoveDisposable;
 
-  @Inject
-  TranslationManagerPresenter presenter;
+  @Inject TranslationManagerPresenter presenter;
+  @Inject QuranFileUtils quranFileUtils;
 
   SwipeRefreshLayout translationSwipeRefresh;
   RecyclerView translationRecycler;
@@ -75,7 +75,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     adapter = new TranslationsAdapter(this);
     translationRecycler.setAdapter(adapter);
 
-    databaseDirectory = QuranFileUtils.getQuranDatabaseDirectory(this);
+    databaseDirectory = quranFileUtils.getQuranDatabaseDirectory(this);
 
     final ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
@@ -308,7 +308,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         .setMessage(msg)
         .setPositiveButton(R.string.remove_button,
             (dialog, id) -> {
-              QuranFileUtils.removeTranslation(TranslationManagerActivity.this,
+              quranFileUtils.removeTranslation(TranslationManagerActivity.this,
                   selectedItem.translation.getFileName());
               TranslationItem updatedItem = selectedItem.withTranslationRemoved();
               updateTranslationItem(updatedItem);

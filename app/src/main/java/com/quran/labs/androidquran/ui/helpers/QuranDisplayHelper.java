@@ -26,16 +26,19 @@ public class QuranDisplayHelper {
 
   @NonNull
   static Response getQuranPage(OkHttpClient okHttpClient,
-                               Context context, String widthParam, int page) {
+                               Context context,
+                               String widthParam,
+                               int page,
+                               QuranFileUtils quranFileUtils) {
     Response response;
-    String filename = QuranFileUtils.getPageFileName(page);
-    response = QuranFileUtils.getImageFromSD(context, widthParam, filename);
+    String filename = quranFileUtils.getPageFileName(page);
+    response = quranFileUtils.getImageFromSD(context, widthParam, filename);
     if (!response.isSuccessful()) {
       // let's only try if an sdcard is found... otherwise, let's tell
       // the user to mount their sdcard and try again.
       if (response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND) {
         Timber.d("failed to get %d with name %s from sd...", page, filename);
-        response = QuranFileUtils.getImageFromWeb(okHttpClient, context, filename);
+        response = quranFileUtils.getImageFromWeb(okHttpClient, context, filename);
       }
     }
     return response;

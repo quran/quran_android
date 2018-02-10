@@ -6,6 +6,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.di.ActivityScope;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import javax.inject.Inject;
@@ -21,12 +22,17 @@ public class QuranPageWorker {
   private final Context appContext;
   private final OkHttpClient okHttpClient;
   private final String imageWidth;
+  private final QuranFileUtils quranFileUtils;
 
   @Inject
-  QuranPageWorker(Context context, OkHttpClient okHttpClient, String imageWidth) {
+  QuranPageWorker(Context context,
+                  OkHttpClient okHttpClient,
+                  String imageWidth,
+                  QuranFileUtils quranFileUtils) {
     this.appContext = context;
     this.okHttpClient = okHttpClient;
     this.imageWidth = imageWidth;
+    this.quranFileUtils = quranFileUtils;
   }
 
   private Response downloadImage(int pageNumber) {
@@ -34,7 +40,8 @@ public class QuranPageWorker {
     OutOfMemoryError oom = null;
 
     try {
-      response = QuranDisplayHelper.getQuranPage(okHttpClient, appContext, imageWidth, pageNumber);
+      response = QuranDisplayHelper.getQuranPage(
+          okHttpClient, appContext, imageWidth, pageNumber, quranFileUtils);
     } catch (OutOfMemoryError me){
       Crashlytics.log(Log.WARN, TAG,
           "out of memory exception loading page " + pageNumber + ", " + imageWidth);
@@ -50,7 +57,8 @@ public class QuranPageWorker {
         if (param.equals(imageWidth)){
           param = QuranScreenInfo.getInstance().getTabletWidthParam();
         }
-        response = QuranDisplayHelper.getQuranPage(okHttpClient, appContext, param, pageNumber);
+        response = QuranDisplayHelper.getQuranPage(
+            okHttpClient, appContext, param, pageNumber, quranFileUtils);
         if (response.getBitmap() == null){
           Crashlytics.log(Log.WARN, TAG,
               "bitmap still null, giving up... [" + response.getErrorCode() + "]");

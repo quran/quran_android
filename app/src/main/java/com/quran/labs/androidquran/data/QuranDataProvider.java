@@ -46,6 +46,7 @@ public class QuranDataProvider extends ContentProvider {
   private boolean didInject;
   @Inject QuranInfo quranInfo;
   @Inject TranslationsDBAdapter translationsDBAdapter;
+  @Inject QuranFileUtils quranFileUtils;
 
   private static UriMatcher buildUriMatcher() {
     UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -115,7 +116,7 @@ public class QuranDataProvider extends ContentProvider {
 
     final boolean queryIsArabic = QuranUtils.doesStringContainArabic(query);
     final boolean haveArabic = queryIsArabic &&
-        QuranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE);
+        quranFileUtils.hasTranslation(getContext(), QURAN_ARABIC_DATABASE);
 
     List<LocalTranslation> translations = getAvailableTranslations();
     if (translations.size() == 0 && (queryIsArabic && !haveArabic)) {
@@ -190,7 +191,7 @@ public class QuranDataProvider extends ContentProvider {
     final Context context = getContext();
     final boolean queryIsArabic = QuranUtils.doesStringContainArabic(query);
     final boolean haveArabic = queryIsArabic &&
-        QuranFileUtils.hasTranslation(context, QURAN_ARABIC_DATABASE);
+        quranFileUtils.hasTranslation(context, QURAN_ARABIC_DATABASE);
     if (translations.size() == 0 && (queryIsArabic && !haveArabic)) {
       return null;
     }
@@ -225,7 +226,8 @@ public class QuranDataProvider extends ContentProvider {
   }
 
   private Cursor search(String query, String databaseName, boolean wantSnippets) {
-    final DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(getContext(), databaseName);
+    final DatabaseHandler handler =
+        DatabaseHandler.getDatabaseHandler(getContext(), databaseName, quranFileUtils);
     return handler.search(query, wantSnippets);
   }
 

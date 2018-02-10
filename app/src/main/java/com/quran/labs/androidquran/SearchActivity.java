@@ -52,6 +52,7 @@ public class SearchActivity extends QuranActionBarActivity
   private DefaultDownloadReceiver downloadReceiver;
   
   @Inject QuranInfo quranInfo;
+  @Inject QuranFileUtils quranFileUtils;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -95,10 +96,10 @@ public class SearchActivity extends QuranActionBarActivity
     }
     downloadReceiver.setListener(this);
 
-    String url = QuranFileUtils.getArabicSearchDatabaseUrl();
+    String url = quranFileUtils.getArabicSearchDatabaseUrl();
     String notificationTitle = getString(R.string.search_data);
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-        QuranFileUtils.getQuranDatabaseDirectory(this),
+        quranFileUtils.getQuranDatabaseDirectory(this),
         notificationTitle, SEARCH_INFO_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
     intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
@@ -135,7 +136,7 @@ public class SearchActivity extends QuranActionBarActivity
   public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
     isArabicSearch = QuranUtils.doesStringContainArabic(query);
     boolean showArabicWarning = (isArabicSearch &&
-        !QuranFileUtils.hasArabicSearchDatabase(this));
+        !quranFileUtils.hasArabicSearchDatabase(this));
     if (showArabicWarning) {
       isArabicSearch = false;
     }
@@ -217,7 +218,7 @@ public class SearchActivity extends QuranActionBarActivity
       if (isArabicSearch) {
         // if we come from muyassar and don't have arabic db, we set
         // arabic search to false so we jump to the translation.
-        if (!QuranFileUtils.hasArabicSearchDatabase(this)) {
+        if (!quranFileUtils.hasArabicSearchDatabase(this)) {
           isArabicSearch = false;
         }
       }

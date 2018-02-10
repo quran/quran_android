@@ -56,17 +56,19 @@ public class DatabaseHandler {
   }
 
   public static synchronized DatabaseHandler getDatabaseHandler(
-      Context context, String databaseName) {
+      Context context, String databaseName, QuranFileUtils quranFileUtils) {
     DatabaseHandler handler = databaseMap.get(databaseName);
     if (handler == null) {
-      handler = new DatabaseHandler(context.getApplicationContext(), databaseName);
+      handler = new DatabaseHandler(context.getApplicationContext(), databaseName, quranFileUtils);
       databaseMap.put(databaseName, handler);
     }
     return handler;
   }
 
-  private DatabaseHandler(Context context, String databaseName) throws SQLException {
-    String base = QuranFileUtils.getQuranDatabaseDirectory(context);
+  private DatabaseHandler(Context context,
+                          String databaseName,
+                          QuranFileUtils quranFileUtils) throws SQLException {
+    String base = quranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
     String path = base + File.separator + databaseName;
     Crashlytics.log("opening database file: " + path);

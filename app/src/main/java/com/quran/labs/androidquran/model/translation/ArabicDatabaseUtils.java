@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,20 +32,22 @@ public class ArabicDatabaseUtils {
 
   private final Context appContext;
   private final QuranInfo quranInfo;
+  private final QuranFileUtils quranFileUtils;
   private DatabaseHandler arabicDatabaseHandler;
 
   @Inject
-  ArabicDatabaseUtils(Context context, QuranInfo quranInfo) {
+  ArabicDatabaseUtils(Context context, QuranInfo quranInfo, QuranFileUtils quranFileUtils) {
     this.appContext = context;
     this.quranInfo = quranInfo;
     arabicDatabaseHandler = getArabicDatabaseHandler();
+    this.quranFileUtils = quranFileUtils;
   }
 
   DatabaseHandler getArabicDatabaseHandler() {
     if (arabicDatabaseHandler == null) {
       try {
         arabicDatabaseHandler = DatabaseHandler.getDatabaseHandler(
-            appContext.getApplicationContext(), QuranDataProvider.QURAN_ARABIC_DATABASE);
+            appContext.getApplicationContext(), QuranDataProvider.QURAN_ARABIC_DATABASE, quranFileUtils);
       } catch (Exception e) {
         // ignore
       }

@@ -45,10 +45,12 @@ public class AudioUtils {
 
   private final int totalPages;
   private final QuranInfo quranInfo;
+  private final QuranFileUtils quranFileUtils;
 
   @Inject
-  public AudioUtils(QuranInfo quranInfo) {
+  public AudioUtils(QuranInfo quranInfo, QuranFileUtils quranFileUtils) {
     this.quranInfo = quranInfo;
+    this.quranFileUtils = quranFileUtils;
     totalPages = quranInfo.getNumberOfPages();
   }
 
@@ -97,7 +99,7 @@ public class AudioUtils {
   }
 
   public String getLocalQariUrl(@NonNull Context context, @NonNull QariItem item) {
-    String rootDirectory = QuranFileUtils.getQuranAudioDirectory(context);
+    String rootDirectory = quranFileUtils.getQuranAudioDirectory(context);
     return rootDirectory == null ? null : rootDirectory + item.getPath();
   }
 
@@ -133,7 +135,7 @@ public class AudioUtils {
 
     QariItem item = request.getQariItem();
     String dbname = item.getDatabaseName() + ZIP_EXTENSION;
-    return QuranFileUtils.getGaplessDatabaseRootUrl() + "/" + dbname;
+    return quranFileUtils.getGaplessDatabaseRootUrl() + "/" + dbname;
   }
 
   public SuraAyah getLastAyahToPlay(SuraAyah startAyah,
@@ -265,7 +267,7 @@ public class AudioUtils {
   }
 
   private boolean haveAnyFiles(Context context, String path) {
-    final String basePath = QuranFileUtils.getQuranAudioDirectory(context);
+    final String basePath = quranFileUtils.getQuranAudioDirectory(context);
     final File file = new File(basePath, path);
     return file.isDirectory() && file.list().length > 0;
   }

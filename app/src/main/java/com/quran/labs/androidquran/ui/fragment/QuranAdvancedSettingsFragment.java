@@ -65,6 +65,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   private Disposable logsSubscription;
 
   @Inject BookmarkImportExportModel bookmarkImportExportModel;
+  @Inject QuranFileUtils quranFileUtils;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -189,7 +190,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
       Timber.d("removing advanced settings from preferences");
       hideStorageListPref();
     } else {
-      loadStorageOptionsTask = new LoadStorageOptionsTask(context);
+      loadStorageOptionsTask = new LoadStorageOptionsTask(context, quranFileUtils);
       loadStorageOptionsTask.execute();
     }
   }
@@ -334,7 +335,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   }
 
   public void moveFiles(String newLocation) {
-    noveFilesTask = new MoveFilesAsyncTask(getActivity(), newLocation);
+    noveFilesTask = new MoveFilesAsyncTask(getActivity(), newLocation, quranFileUtils);
     noveFilesTask.execute();
   }
 
@@ -353,13 +354,15 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
 
   private class MoveFilesAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
-    private String newLocation;
+    private final String newLocation;
     private ProgressDialog dialog;
-    private Context appContext;
+    private final Context appContext;
+    private final QuranFileUtils quranFileUtils;
 
-    private MoveFilesAsyncTask(Context context, String newLocation) {
+    private MoveFilesAsyncTask(Context context, String newLocation, QuranFileUtils quranFileUtils) {
       this.newLocation = newLocation;
       this.appContext = context.getApplicationContext();
+      this.quranFileUtils = quranFileUtils;
     }
 
     @Override
@@ -372,7 +375,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-      return QuranFileUtils.moveAppFiles(appContext, newLocation);
+      return quranFileUtils.moveAppFiles(appContext, newLocation);
     }
 
     @Override
@@ -397,10 +400,12 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
 
   private class LoadStorageOptionsTask extends AsyncTask<Void, Void, Void> {
 
-    private Context appContext;
+    private final Context appContext;
+    private final QuranFileUtils quranFileUtils;
 
-    LoadStorageOptionsTask(Context context) {
+    LoadStorageOptionsTask(Context context, QuranFileUtils quranFileUtils) {
       this.appContext = context.getApplicationContext();
+      this.quranFileUtils = quranFileUtils;
     }
 
     @Override
@@ -410,7 +415,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
 
     @Override
     protected Void doInBackground(Void... voids) {
-      appSize = QuranFileUtils.getAppUsedSpace(appContext);
+      appSize = quranFileUtils.getAppUsedSpace(appContext);
       return null;
     }
 

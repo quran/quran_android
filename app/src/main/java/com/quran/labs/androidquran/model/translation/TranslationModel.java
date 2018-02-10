@@ -7,6 +7,7 @@ import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.di.ActivityScope;
+import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.List;
 
@@ -16,11 +17,13 @@ import io.reactivex.Single;
 
 @ActivityScope
 public class TranslationModel {
-  private Context appContext;
+  private final Context appContext;
+  private final QuranFileUtils quranFileUtils;
 
   @Inject
-  TranslationModel(Context appContext) {
+  TranslationModel(Context appContext, QuranFileUtils quranFileUtils) {
     this.appContext = appContext;
+    this.quranFileUtils = quranFileUtils;
   }
 
   public Single<List<QuranText>> getArabicFromDatabase(VerseRange verses) {
@@ -36,7 +39,8 @@ public class TranslationModel {
                                                         String database,
                                                         @DatabaseHandler.TextType int type) {
     return Single.fromCallable(() -> {
-      DatabaseHandler databaseHandler = DatabaseHandler.getDatabaseHandler(appContext, database);
+      DatabaseHandler databaseHandler =
+          DatabaseHandler.getDatabaseHandler(appContext, database, quranFileUtils);
       return databaseHandler.getVerses(verses, type);
     });
   }

@@ -57,6 +57,7 @@ public class QuranDataActivity extends Activity implements
   private String patchUrl;
 
   @Inject QuranInfo quranInfo;
+  @Inject QuranFileUtils quranFileUtils;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -232,10 +233,10 @@ public class QuranDataActivity extends Activity implements
   }
 
   private boolean canWriteSdcardAfterPermissions() {
-    String location = QuranFileUtils.getQuranBaseDirectory(this);
+    String location = quranFileUtils.getQuranBaseDirectory(this);
     if (location != null) {
       try {
-        if (new File(location).exists() || QuranFileUtils.makeQuranDirectory(this)) {
+        if (new File(location).exists() || quranFileUtils.makeQuranDirectory(this)) {
           File f = new File(location, "" + System.currentTimeMillis());
           if (f.createNewFile()) {
             f.delete();
@@ -305,7 +306,7 @@ public class QuranDataActivity extends Activity implements
 
     @Override
     protected Boolean doInBackground(Void... params) {
-      final String baseDir = QuranFileUtils.getQuranBaseDirectory(appContext);
+      final String baseDir = quranFileUtils.getQuranBaseDirectory(appContext);
       if (baseDir == null) {
         storageNotAvailable = true;
         return false;
@@ -334,7 +335,7 @@ public class QuranDataActivity extends Activity implements
             * the new 1260 images.
             */
         final String fallback =
-            QuranFileUtils.getPotentialFallbackDirectory(appContext, totalPages);
+            quranFileUtils.getPotentialFallbackDirectory(appContext, totalPages);
         if (fallback != null) {
           quranSettings.setDefaultImagesDirectory(fallback);
           qsi.setOverrideParam(fallback);
@@ -344,16 +345,16 @@ public class QuranDataActivity extends Activity implements
       final String width = qsi.getWidthParam();
       if (qsi.isDualPageMode(appContext)) {
         final String tabletWidth = qsi.getTabletWidthParam();
-        boolean haveLandscape = QuranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
-        boolean havePortrait = QuranFileUtils.haveAllImages(appContext, width, totalPages);
+        boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
+        boolean havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages);
         needPortraitImages = !havePortrait;
         needLandscapeImages = !haveLandscape;
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
             havePortrait ? "yes" : "no", haveLandscape ? "yes" : "no");
         if (haveLandscape && havePortrait) {
           // if we have the images, see if we need a patch set or not
-          if (!QuranFileUtils.isVersion(appContext, width, LATEST_IMAGE_VERSION) ||
-              !QuranFileUtils.isVersion(appContext, tabletWidth, LATEST_IMAGE_VERSION)) {
+          if (!quranFileUtils.isVersion(appContext, width, LATEST_IMAGE_VERSION) ||
+              !quranFileUtils.isVersion(appContext, tabletWidth, LATEST_IMAGE_VERSION)) {
             if (!width.equals(tabletWidth)) {
               patchParam = width + tabletWidth;
             } else {
@@ -363,12 +364,12 @@ public class QuranDataActivity extends Activity implements
         }
         return haveLandscape && havePortrait;
       } else {
-        boolean haveAll = QuranFileUtils.haveAllImages(appContext,
+        boolean haveAll = quranFileUtils.haveAllImages(appContext,
             QuranScreenInfo.getInstance().getWidthParam(), totalPages);
         Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
         needPortraitImages = !haveAll;
         needLandscapeImages = false;
-        if (haveAll && !QuranFileUtils.isVersion(appContext, width, LATEST_IMAGE_VERSION)) {
+        if (haveAll && !quranFileUtils.isVersion(appContext, width, LATEST_IMAGE_VERSION)) {
           patchParam = width;
         }
         return haveAll;
@@ -420,7 +421,7 @@ public class QuranDataActivity extends Activity implements
         quranSettings.setDownloadedPages(true);
         if (!TextUtils.isEmpty(patchParam)) {
           Timber.d("checkPages: have pages, but need patch %s", patchParam);
-          patchUrl = QuranFileUtils.getPatchFileUrl(patchParam, LATEST_IMAGE_VERSION);
+          patchUrl = quranFileUtils.getPatchFileUrl(patchParam, LATEST_IMAGE_VERSION);
           promptForDownload();
           return;
         }
@@ -462,20 +463,20 @@ public class QuranDataActivity extends Activity implements
     String url;
     if (needPortraitImages && !needLandscapeImages) {
       // phone (and tablet when upgrading on some devices, ex n10)
-      url = QuranFileUtils.getZipFileUrl();
+      url = quranFileUtils.getZipFileUrl();
     } else if (needLandscapeImages && !needPortraitImages) {
       // tablet (when upgrading from pre-tablet on some devices, ex n7).
-      url = QuranFileUtils.getZipFileUrl(qsi.getTabletWidthParam());
+      url = quranFileUtils.getZipFileUrl(qsi.getTabletWidthParam());
     } else {
       // new tablet installation - if both image sets are the same
       // size, then just get the correct one only
       if (qsi.getTabletWidthParam().equals(qsi.getWidthParam())) {
-        url = QuranFileUtils.getZipFileUrl();
+        url = quranFileUtils.getZipFileUrl();
       } else {
         // otherwise download one zip with both image sets
         String widthParam = qsi.getWidthParam() +
             qsi.getTabletWidthParam();
-        url = QuranFileUtils.getZipFileUrl(widthParam);
+        url = quranFileUtils.getZipFileUrl(widthParam);
       }
     }
 
@@ -484,7 +485,7 @@ public class QuranDataActivity extends Activity implements
       url = patchUrl;
     }
 
-    String destination = QuranFileUtils.getQuranImagesBaseDirectory(QuranDataActivity.this);
+    String destination = quranFileUtils.getQuranImagesBaseDirectory(QuranDataActivity.this);
 
     // start service
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,

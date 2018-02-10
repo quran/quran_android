@@ -55,6 +55,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
   @Inject AudioUtils audioUtils;
   @Inject QuranInfo quranInfo;
+  @Inject QuranFileUtils quranFileUtils;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
     progressBar = (ProgressBar) findViewById(R.id.progress);
 
-    basePath = QuranFileUtils.getQuranAudioDirectory(this);
+    basePath = quranFileUtils.getQuranAudioDirectory(this);
     getShuyookhData();
   }
 

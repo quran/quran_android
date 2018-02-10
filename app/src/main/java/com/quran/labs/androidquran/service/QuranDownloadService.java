@@ -18,10 +18,10 @@ import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.extension.CloseableExtensionKt;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
-import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ZipUtils;
@@ -594,7 +594,7 @@ public class QuranDownloadService extends Service implements
           }
           sink.flush();
         }
-        QuranFileUtils.closeQuietly(sink);
+        CloseableExtensionKt.closeQuietly(sink);
 
         if (mIsDownloadCanceled) {
           return QuranDownloadNotifier.ERROR_CANCELLED;
@@ -613,7 +613,7 @@ public class QuranDownloadService extends Service implements
     } catch (SecurityException se) {
       Timber.e(se, "Security exception while downloading file");
     } finally {
-      QuranFileUtils.closeQuietly(source);
+      CloseableExtensionKt.closeQuietly(source);
     }
 
     return (call != null && call.isCanceled()) ?

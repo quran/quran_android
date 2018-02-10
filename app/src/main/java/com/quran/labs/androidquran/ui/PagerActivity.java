@@ -209,6 +209,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject ShareUtil shareUtil;
   @Inject AudioUtils audioUtils;
   @Inject QuranInfo quranInfo;
+  @Inject QuranFileUtils quranFileUtils;
 
   private CompositeDisposable compositeDisposable;
 
@@ -731,13 +732,13 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     boolean haveDownload = false;
-    if (!QuranFileUtils.haveAyaPositionFile(this)) {
-      String url = QuranFileUtils.getAyaPositionFileUrl();
+    if (!quranFileUtils.haveAyaPositionFile(this)) {
+      String url = quranFileUtils.getAyaPositionFileUrl();
       if (QuranUtils.isDualPages(this, quranScreenInfo)) {
-        url = QuranFileUtils.getAyaPositionFileUrl(
+        url = quranFileUtils.getAyaPositionFileUrl(
             quranScreenInfo.getTabletWidthParam());
       }
-      String destination = QuranFileUtils.getQuranAyahDatabaseDirectory(this);
+      String destination = quranFileUtils.getQuranAyahDatabaseDirectory(this);
       // start the download
       String notificationTitle = getString(R.string.highlighting_database);
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
@@ -748,8 +749,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       haveDownload = true;
     }
 
-    if (!QuranFileUtils.hasArabicSearchDatabase(this)) {
-      String url = QuranFileUtils.getArabicSearchDatabaseUrl();
+    if (!quranFileUtils.hasArabicSearchDatabase(this)) {
+      String url = quranFileUtils.getArabicSearchDatabaseUrl();
 
       // show "downloading required files" unless we already showed that for
       // highlighting database, in which case show "downloading search data"
@@ -759,7 +760,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
 
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-          QuranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
+          quranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
           QuranDataProvider.QURAN_ARABIC_DATABASE);
@@ -1030,7 +1031,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     }
 
-    if (!QuranFileUtils.hasArabicSearchDatabase(this) && !promptedForExtraDownload) {
+    if (!quranFileUtils.hasArabicSearchDatabase(this) && !promptedForExtraDownload) {
       promptedForExtraDownload = true;
       showGetRequiredFilesDialog();
     }
@@ -1543,7 +1544,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
 
     Timber.d("seeing if we can play audio request...");
-    if (!QuranFileUtils.haveAyaPositionFile(this)) {
+    if (!quranFileUtils.haveAyaPositionFile(this)) {
       if (needsPermission) {
         audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
         return;
@@ -1553,8 +1554,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         toggleActionBar();
       }
       audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      String url = QuranFileUtils.getAyaPositionFileUrl();
-      String destination = QuranFileUtils.getQuranDatabaseDirectory(this);
+      String url = quranFileUtils.getAyaPositionFileUrl();
+      String destination = quranFileUtils.getQuranDatabaseDirectory(this);
       // start the download
       String notificationTitle = getString(R.string.highlighting_database);
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,

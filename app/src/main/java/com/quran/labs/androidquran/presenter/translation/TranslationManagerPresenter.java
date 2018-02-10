@@ -47,6 +47,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   private final Context appContext;
   private final OkHttpClient okHttpClient;
   private final QuranSettings quranSettings;
+  private final QuranFileUtils quranFileUtils;
   private final TranslationsDBAdapter translationsDBAdapter;
 
   @VisibleForTesting String host;
@@ -56,11 +57,13 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   TranslationManagerPresenter(Context appContext,
                               OkHttpClient okHttpClient,
                               QuranSettings quranSettings,
-                              TranslationsDBAdapter dbAdapter) {
+                              TranslationsDBAdapter dbAdapter,
+                              QuranFileUtils quranFileUtils) {
     this.host = Constants.HOST;
     this.appContext = appContext;
     this.okHttpClient = okHttpClient;
     this.quranSettings = quranSettings;
+    this.quranFileUtils = quranFileUtils;
     this.translationsDBAdapter = dbAdapter;
   }
 
@@ -184,14 +187,14 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   private File getCachedFile() {
-    String dir = QuranFileUtils.getQuranDatabaseDirectory(appContext);
+    String dir = quranFileUtils.getQuranDatabaseDirectory(appContext);
     return new File(dir + File.separator + CACHED_RESPONSE_FILE_NAME);
   }
 
   private List<TranslationItem> mergeWithServerTranslations(List<Translation> serverTranslations) {
     List<TranslationItem> results = new ArrayList<>(serverTranslations.size());
     SparseArray<LocalTranslation> localTranslations = translationsDBAdapter.getTranslationsHash();
-    String databaseDir = QuranFileUtils.getQuranDatabaseDirectory(appContext);
+    String databaseDir = quranFileUtils.getQuranDatabaseDirectory(appContext);
 
     List<TranslationItem> updates = new ArrayList<>();
     for (int i = 0, count = serverTranslations.size(); i < count; i++) {
@@ -233,7 +236,8 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
   private int getVersionFromDatabase(String filename) {
     try {
-      DatabaseHandler handler = DatabaseHandler.getDatabaseHandler(appContext, filename);
+      DatabaseHandler handler =
+          DatabaseHandler.getDatabaseHandler(appContext, filename, quranFileUtils);
       if (handler.validDatabase()) {
         return handler.getTextVersion();
       }

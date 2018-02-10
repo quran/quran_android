@@ -31,11 +31,13 @@ public class AyahTrackerPresenter implements AyahTracker,
   private AyahTrackerItem[] items;
   private HighlightInfo pendingHighlightInfo;
   private final QuranInfo quranInfo;
+  private final QuranFileUtils quranFileUtils;
 
   @Inject
-  public AyahTrackerPresenter(QuranInfo quranInfo) {
+  public AyahTrackerPresenter(QuranInfo quranInfo, QuranFileUtils quranFileUtils) {
     this.items = new AyahTrackerItem[0];
     this.quranInfo = quranInfo;
+    this.quranFileUtils = quranFileUtils;
   }
 
   public void setPageBounds(int page, RectF bounds) {
@@ -150,8 +152,8 @@ public class AyahTrackerPresenter implements AyahTracker,
 
   private void checkCoordinateData(Activity activity) {
     if (activity instanceof PagerActivity &&
-        (!QuranFileUtils.haveAyaPositionFile(activity) ||
-            !QuranFileUtils.hasArabicSearchDatabase(activity))) {
+        (!quranFileUtils.haveAyaPositionFile(activity) ||
+            !quranFileUtils.hasArabicSearchDatabase(activity))) {
       PagerActivity pagerActivity = (PagerActivity) activity;
       pagerActivity.showGetRequiredFilesDialog();
     }
