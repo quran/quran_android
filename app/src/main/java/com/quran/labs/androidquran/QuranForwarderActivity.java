@@ -23,7 +23,7 @@ public class QuranForwarderActivity extends Activity {
          Uri data = intent.getData();
          if (data != null){
             String urlString = data.toString();
-            String[] pieces = urlString.split("/");
+            String[] pieces = urlString.split("/", -1);
 
             Integer sura = null;
             int ayah = 1;

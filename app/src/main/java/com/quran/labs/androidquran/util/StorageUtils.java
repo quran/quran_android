@@ -170,7 +170,7 @@ public class StorageUtils {
           String line = scanner.nextLine();
           Timber.d("line: %s", line);
           if (line.startsWith("/dev/block/vold/")) {
-            String[] lineElements = line.split(" ");
+            String[] lineElements = line.split(" ", -1);
             String element = lineElements[1];
             Timber.d("mount element is: %s", element);
             if (!sdcardPath.equals(element)) {
@@ -212,7 +212,7 @@ public class StorageUtils {
           String line = scanner.nextLine();
           Timber.d("line: %s", line);
           if (line.startsWith("dev_mount")) {
-            String[] lineElements = line.split(" ");
+            String[] lineElements = line.split(" ", -1);
             String element = lineElements[2];
             Timber.d("volds element is: %s", element);
 

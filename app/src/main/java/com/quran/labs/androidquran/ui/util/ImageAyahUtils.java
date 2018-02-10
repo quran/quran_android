@@ -21,7 +21,7 @@ import timber.log.Timber;
 public class ImageAyahUtils {
 
    private static SuraAyah getAyahFromKey(String key){
-      String[] parts = key.split(":");
+      String[] parts = key.split(":", -1);
      SuraAyah result = null;
       if (parts.length == 2){
          try {
