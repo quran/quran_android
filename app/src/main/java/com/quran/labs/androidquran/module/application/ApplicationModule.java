@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.module.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -22,6 +24,12 @@ public class ApplicationModule {
   @Provides
   Context provideApplicationContext() {
     return this.application;
+  }
+
+  @Provides
+  Display provideDisplay(Context appContext) {
+    final WindowManager w = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
+    return w.getDefaultDisplay();
   }
 
   @Provides

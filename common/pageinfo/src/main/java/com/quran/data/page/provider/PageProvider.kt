@@ -7,10 +7,12 @@ interface PageProvider {
 
   fun getImageVersion(): Int
 
-  fun getImageUrl(): String
-  fun getImageZipUrl(): String
+  fun getImagesBaseUrl(): String
+  fun getImagesZipBaseUrl(): String
   fun getPatchBaseUrl(): String
-  fun getAyahInfoUrl(): String
+  fun getAyahInfoBaseUrl(): String
+  fun getDatabasesBaseUrl(): String
+  fun getAudioDatabasesBaseUrl(): String
 
   fun getAudioDirectoryName(): String
   fun getDatabaseDirectoryName(): String

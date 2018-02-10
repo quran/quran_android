@@ -3,17 +3,22 @@ package com.quran.data.page.provider.impl
 import com.quran.data.page.provider.PageProvider
 
 internal class ShemerlyPageProvider : PageProvider {
-  private val baseUrl = "http://android.quran.com/data/shemerly"
+  private val baseUrl = "http://android.quran.com/data"
+  private val shemerlyBaseUrl = "$baseUrl/shemerly"
 
   override fun getImageVersion() = 1
 
-  override fun getImageUrl() = "$baseUrl/"
+  override fun getImagesBaseUrl() = "$shemerlyBaseUrl/"
 
-  override fun getImageZipUrl() = "$baseUrl/zips/"
+  override fun getImagesZipBaseUrl() = "$shemerlyBaseUrl/zips/"
 
-  override fun getPatchBaseUrl() = "$baseUrl/patches/v"
+  override fun getPatchBaseUrl() = "$shemerlyBaseUrl/patches/v"
 
-  override fun getAyahInfoUrl() = "$baseUrl/databases/ayahinfo/"
+  override fun getAyahInfoBaseUrl() = "$shemerlyBaseUrl/databases/ayahinfo/"
+
+  override fun getDatabasesBaseUrl() = "$baseUrl/databases/"
+
+  override fun getAudioDatabasesBaseUrl() =  getDatabasesBaseUrl() + "/audio/"
 
   override fun getAudioDirectoryName() = "audio"
 

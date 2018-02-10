@@ -25,7 +25,7 @@ public class QuranScreenInfo {
 
     height = point.y;
     maxWidth = (point.x > point.y) ? point.x : point.y;
-    pageProvider = QuranDataModule.provideQuranPageProvider(display);
+    pageProvider = QuranDataModule.legacyProvideQuranPageProvider(display);
     Timber.d("initializing with %d and %d", point.y, point.x);
   }
 

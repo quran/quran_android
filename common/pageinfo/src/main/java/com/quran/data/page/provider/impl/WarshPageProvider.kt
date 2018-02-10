@@ -3,17 +3,22 @@ package com.quran.data.page.provider.impl
 import android.view.Display
 
 internal class WarshPageProvider(display: Display) : DefaultPageProvider(display) {
-  private val baseUrl = "http://android.quran.com/data/warsh"
+  private val baseUrl = "http://android.quran.com/data"
+  private val warshBaseUrl = "$baseUrl/warsh"
 
   override fun getImageVersion() = 2
 
-  override fun getImageUrl() = "$baseUrl/"
+  override fun getImagesBaseUrl() = "$warshBaseUrl/"
 
-  override fun getImageZipUrl() = "$baseUrl/zips/"
+  override fun getImagesZipBaseUrl() = "$warshBaseUrl/zips/"
 
-  override fun getPatchBaseUrl() = "$baseUrl/patches/v"
+  override fun getPatchBaseUrl() = "$warshBaseUrl/patches/v"
 
-  override fun getAyahInfoUrl() = "$baseUrl/databases/ayahinfo/"
+  override fun getAyahInfoBaseUrl() = "$warshBaseUrl/databases/ayahinfo/"
+
+  override fun getDatabasesBaseUrl() = "$baseUrl/databases/"
+
+  override fun getAudioDatabasesBaseUrl() =  "$warshBaseUrl/audio/"
 
   override fun getAudioDirectoryName() = "warsh/audio"
 

@@ -3,17 +3,22 @@ package com.quran.data.page.provider.impl
 import android.view.Display
 
 internal class QaloonPageProvider(display: Display) : DefaultPageProvider(display) {
-  private val baseUrl = "http://android.quran.com/data/qaloon"
+  private val baseUrl = "http://android.quran.com/data"
+  private val qaloonBaseUrl = "$baseUrl/qaloon"
 
   override fun getImageVersion() = 2
 
-  override fun getImageUrl() = "$baseUrl/"
+  override fun getImagesBaseUrl() = "$qaloonBaseUrl/"
 
-  override fun getImageZipUrl() = "$baseUrl/zips/"
+  override fun getImagesZipBaseUrl() = "$qaloonBaseUrl/zips/"
 
-  override fun getPatchBaseUrl() = "$baseUrl/patches/v"
+  override fun getPatchBaseUrl() = "$qaloonBaseUrl/patches/v"
 
-  override fun getAyahInfoUrl() = "$baseUrl/databases/ayahinfo/"
+  override fun getAyahInfoBaseUrl() = "$qaloonBaseUrl/databases/ayahinfo/"
+
+  override fun getDatabasesBaseUrl() = "$baseUrl/databases/"
+
+  override fun getAudioDatabasesBaseUrl() =  "$qaloonBaseUrl/audio/"
 
   override fun getAudioDirectoryName() = "qaloon/audio"
 

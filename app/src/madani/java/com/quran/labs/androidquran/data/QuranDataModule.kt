@@ -11,6 +11,10 @@ object QuranDataModule {
   @JvmStatic @Provides fun provideQuranDataSource() =
       QuranDataSourceProvider.provideMadaniDataSource()
 
-  @JvmStatic fun provideQuranPageProvider(display: Display) =
+  @Deprecated(message = "Use standard DI")
+  @JvmStatic fun legacyProvideQuranPageProvider(display: Display) =
+      QuranPageProvider.provideMadaniPageProvider(display)
+
+  @JvmStatic @Provides fun provideQuranPageProvider(display: Display) =
       QuranPageProvider.provideMadaniPageProvider(display)
 }

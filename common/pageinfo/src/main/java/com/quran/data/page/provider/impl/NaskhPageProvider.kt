@@ -6,7 +6,8 @@ import android.view.Display
 import com.quran.data.page.provider.PageProvider
 
 internal class NaskhPageProvider(display: Display) : PageProvider {
-  private val baseUrl = "http://android.quran.com/data/naskh"
+  private val baseUrl = "http://android.quran.com/data"
+  private val baseNakshUrl = "$baseUrl/naskh"
   private val screenRatios = doubleArrayOf(4.0 / 3.0, 16.0 / 10.0, 5.0 / 3.0, 16.0 / 9.0)
 
   private val ratioIndex: Int
@@ -28,13 +29,17 @@ internal class NaskhPageProvider(display: Display) : PageProvider {
 
   override fun getImageVersion() = 1
 
-  override fun getImageUrl() = "$baseUrl/"
+  override fun getImagesBaseUrl() = "$baseNakshUrl/"
 
-  override fun getImageZipUrl() = "$baseUrl/zips/"
+  override fun getImagesZipBaseUrl() = "$baseNakshUrl/zips/"
 
-  override fun getPatchBaseUrl() = "$baseUrl/patches/v"
+  override fun getPatchBaseUrl() = "$baseNakshUrl/patches/v"
 
-  override fun getAyahInfoUrl() = "$baseUrl/databases/ayahinfo/"
+  override fun getAyahInfoBaseUrl() = "$baseNakshUrl/databases/ayahinfo/"
+
+  override fun getDatabasesBaseUrl() = "$baseUrl/databases/"
+
+  override fun getAudioDatabasesBaseUrl() = getDatabasesBaseUrl() + "audio/"
 
   override fun getAudioDirectoryName() = "audio"
 

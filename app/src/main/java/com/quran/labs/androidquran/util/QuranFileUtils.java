@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.quran.data.page.provider.PageProvider;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -34,24 +35,34 @@ import timber.log.Timber;
 
 @Singleton
 public class QuranFileUtils {
+  private static final String QURAN_BASE = QuranFileConstants.QURAN_BASE;
 
   // server urls
-  private final String IMG_BASE_URL = QuranFileConstants.IMG_BASE_URL;
-  private final String IMG_ZIP_BASE_URL = QuranFileConstants.IMG_ZIP_BASE_URL;
-  private final String PATCH_ZIP_BASE_URL = QuranFileConstants.PATCH_ZIP_BASE_URL;
-  private final String DATABASE_BASE_URL = QuranFileConstants.DATABASE_BASE_URL;
-  private final String AYAHINFO_BASE_URL = QuranFileConstants.AYAHINFO_BASE_URL;
-  private final String AUDIO_DB_BASE_URL = QuranFileConstants.AUDIO_DB_BASE_URL;
+  private final String IMG_BASE_URL;
+  private final String IMG_ZIP_BASE_URL;
+  private final String PATCH_ZIP_BASE_URL;
+  private final String DATABASE_BASE_URL;
+  private final String AYAHINFO_BASE_URL;
+  private final String AUDIO_DB_BASE_URL;
 
   // local paths
-  private final String QURAN_BASE = QuranFileConstants.QURAN_BASE;
-  private final String DATABASE_DIRECTORY = QuranFileConstants.DATABASE_DIRECTORY;
-  private final String AUDIO_DIRECTORY = QuranFileConstants.AUDIO_DIRECTORY;
-  private final String AYAHINFO_DIRECTORY = QuranFileConstants.AYAHINFO_DIRECTORY;
-  private final String IMAGES_DIRECTORY = QuranFileConstants.IMAGES_DIRECTORY;
+  private final String DATABASE_DIRECTORY;
+  private final String AUDIO_DIRECTORY;
+  private final String AYAHINFO_DIRECTORY;
+  private final String IMAGES_DIRECTORY;
 
   @Inject
-  public QuranFileUtils() {
+  public QuranFileUtils(PageProvider pageProvider) {
+    IMG_BASE_URL = pageProvider.getImagesBaseUrl();
+    IMG_ZIP_BASE_URL = pageProvider.getImagesZipBaseUrl();
+    PATCH_ZIP_BASE_URL = pageProvider.getPatchBaseUrl();
+    AYAHINFO_BASE_URL = pageProvider.getAyahInfoBaseUrl();
+    DATABASE_DIRECTORY = pageProvider.getDatabaseDirectoryName();
+    AUDIO_DIRECTORY = pageProvider.getAudioDirectoryName();
+    AYAHINFO_DIRECTORY = pageProvider.getAyahInfoDirectoryName();
+    IMAGES_DIRECTORY = pageProvider.getImagesDirectoryName();
+    DATABASE_BASE_URL = pageProvider.getDatabasesBaseUrl();
+    AUDIO_DB_BASE_URL = pageProvider.getAudioDatabasesBaseUrl();
   }
 
   // check if the images with the given width param have a version
