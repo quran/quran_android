@@ -4,16 +4,35 @@ import android.graphics.Point
 import android.view.Display
 import com.quran.data.page.provider.PageProvider
 
-internal class DefaultPageProvider(display: Display) : PageProvider {
+internal open class DefaultPageProvider(display: Display) : PageProvider {
 
   private val maxWidth: Int
   private var overrideParam: String? = null
+  private val baseUrl = "http://android.quran.com/data"
 
   init {
     val point = Point()
     display.getSize(point)
     maxWidth = if (point.x > point.y) point.x else point.y
   }
+
+  override fun getImageVersion() = 5
+
+  override fun getImageUrl() = "$baseUrl/"
+
+  override fun getImageZipUrl() = "$baseUrl/zips"
+
+  override fun getPatchBaseUrl() = "$baseUrl/patches/v"
+
+  override fun getAyahInfoUrl() = "$baseUrl/databases/ayahinfo/"
+
+  override fun getAudioDirectoryName() = "audio"
+
+  override fun getDatabaseDirectoryName() = "databases"
+
+  override fun getAyahInfoDirectoryName() = getDatabaseDirectoryName()
+
+  override fun getImagesDirectoryName() = ""
 
   override fun getWidthParameter(): String {
     return when {

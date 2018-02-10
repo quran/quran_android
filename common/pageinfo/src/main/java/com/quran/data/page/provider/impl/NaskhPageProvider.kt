@@ -6,6 +6,7 @@ import android.view.Display
 import com.quran.data.page.provider.PageProvider
 
 internal class NaskhPageProvider(display: Display) : PageProvider {
+  private val baseUrl = "http://android.quran.com/data/naskh"
   private val screenRatios = doubleArrayOf(4.0 / 3.0, 16.0 / 10.0, 5.0 / 3.0, 16.0 / 9.0)
 
   private val ratioIndex: Int
@@ -24,6 +25,24 @@ internal class NaskhPageProvider(display: Display) : PageProvider {
     }
     ratioIndex = getScreenRatioIndex(point.x, point.y)
   }
+
+  override fun getImageVersion() = 1
+
+  override fun getImageUrl() = "$baseUrl/"
+
+  override fun getImageZipUrl() = "$baseUrl/zips/"
+
+  override fun getPatchBaseUrl() = "$baseUrl/patches/v"
+
+  override fun getAyahInfoUrl() = "$baseUrl/databases/ayahinfo/"
+
+  override fun getAudioDirectoryName() = "audio"
+
+  override fun getDatabaseDirectoryName() = "databases"
+
+  override fun getAyahInfoDirectoryName() = "naskh/" + getDatabaseDirectoryName()
+
+  override fun getImagesDirectoryName() = "naskh"
 
   private fun getScreenRatioIndex(width: Int, height: Int): Int {
     var aspectRatio = height.toDouble() / width
