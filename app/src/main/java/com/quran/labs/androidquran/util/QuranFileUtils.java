@@ -11,7 +11,6 @@ import com.quran.data.page.provider.PageProvider;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;
-import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.extension.CloseableExtensionKt;
 
 import java.io.File;
@@ -35,7 +34,7 @@ import timber.log.Timber;
 
 @Singleton
 public class QuranFileUtils {
-  private static final String QURAN_BASE = QuranFileConstants.QURAN_BASE;
+  private static final String QURAN_BASE = "quran_android/";
 
   // server urls
   private final String IMG_BASE_URL;
