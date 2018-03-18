@@ -1,9 +1,12 @@
 package com.quran.data.page.provider.impl
 
 import com.quran.data.page.provider.PageProvider
+import com.quran.data.source.QuranDataSourceProvider
 
 internal open class DefaultPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
+
+  override fun getDataSource() = QuranDataSourceProvider.provideMadaniDataSource()
 
   override fun getImageVersion() = 5
 

@@ -1,10 +1,13 @@
 package com.quran.data.page.provider.impl
 
 import com.quran.data.page.provider.PageProvider
+import com.quran.data.source.QuranDataSourceProvider
 
 internal class NaskhPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
   private val baseNakshUrl = "$baseUrl/naskh"
+
+  override fun getDataSource() = QuranDataSourceProvider.provideNaskhDataSource()
 
   override fun getImageVersion() = 1
 

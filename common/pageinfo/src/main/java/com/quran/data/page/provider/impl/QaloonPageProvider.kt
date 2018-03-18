@@ -1,8 +1,12 @@
 package com.quran.data.page.provider.impl
 
+import com.quran.data.source.QuranDataSourceProvider
+
 internal class QaloonPageProvider : DefaultPageProvider() {
   private val baseUrl = "http://android.quran.com/data"
   private val qaloonBaseUrl = "$baseUrl/qaloon"
+
+  override fun getDataSource() = QuranDataSourceProvider.provideQaloonDataSource()
 
   override fun getImageVersion() = 2
 

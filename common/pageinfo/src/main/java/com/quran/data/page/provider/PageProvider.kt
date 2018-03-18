@@ -1,6 +1,10 @@
 package com.quran.data.page.provider
 
+import com.quran.data.source.QuranDataSource
+
 interface PageProvider {
+  fun getDataSource(): QuranDataSource
+
   fun getImageVersion(): Int
 
   fun getImagesBaseUrl(): String

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.data.page.provider.PageProvider;
 import com.quran.data.source.QuranDataSource;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -30,7 +31,9 @@ public class QuranInfo {
   private final int numberOfPagesDual;
 
   @Inject
-  public QuranInfo(QuranDataSource quranDataSource) {
+  public QuranInfo(PageProvider pageProvider) {
+    final QuranDataSource quranDataSource = pageProvider.getDataSource();
+
     suraPageStart = quranDataSource.getPageForSuraArray();
     pageSuraStart = quranDataSource.getSuraForPageArray();
     pageAyahStart = quranDataSource.getAyahForPageArray();

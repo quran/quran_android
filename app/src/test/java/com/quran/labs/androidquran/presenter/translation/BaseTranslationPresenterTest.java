@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.presenter.translation;
 
-import com.quran.data.source.QuranDataSourceProvider;
+import com.quran.data.page.provider.QuranPageProvider;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
@@ -26,7 +26,7 @@ public class BaseTranslationPresenterTest {
   @Before
   public void setupTest() {
     presenter = new BaseTranslationPresenter<>(null, null,
-        new QuranInfo(QuranDataSourceProvider.INSTANCE.provideMadaniDataSource()));
+        new QuranInfo(QuranPageProvider.INSTANCE.provideMadaniPageProvider()));
   }
 
   @Test
@@ -56,7 +56,7 @@ public class BaseTranslationPresenterTest {
   }
 
   @Test
-  public void testCombineAyahDataOneVerse() throws Exception {
+  public void testCombineAyahDataOneVerse() {
     VerseRange verseRange = new VerseRange(1, 1, 1, 1, 1);
     List<QuranText> arabic = Collections.singletonList(new QuranText(1, 1, "first ayah"));
     List<QuranAyahInfo> info = presenter.combineAyahData(verseRange, arabic,
@@ -72,7 +72,7 @@ public class BaseTranslationPresenterTest {
   }
 
   @Test
-  public void testCombineAyahDataOneVerseEmpty() throws Exception {
+  public void testCombineAyahDataOneVerseEmpty() {
     VerseRange verseRange = new VerseRange(1, 1, 1, 1, 1);
     List<QuranText> arabic = Collections.emptyList();
     List<QuranAyahInfo> info =
@@ -81,7 +81,7 @@ public class BaseTranslationPresenterTest {
   }
 
   @Test
-  public void testCombineAyahDataOneVerseNoArabic() throws Exception {
+  public void testCombineAyahDataOneVerseNoArabic() {
     VerseRange verseRange = new VerseRange(1, 1, 1, 1, 1);
     List<QuranText> arabic = Collections.emptyList();
     List<QuranAyahInfo> info = presenter.combineAyahData(verseRange, arabic,
@@ -97,7 +97,7 @@ public class BaseTranslationPresenterTest {
   }
 
   @Test
-  public void testCombineAyahDataArabicEmptyTranslations() throws Exception {
+  public void testCombineAyahDataArabicEmptyTranslations() {
     VerseRange verseRange = new VerseRange(1, 1, 1, 2, 2);
     List<QuranText> arabic = Arrays.asList(
         new QuranText(1, 1, "first ayah"),

@@ -1,10 +1,13 @@
 package com.quran.data.page.provider.impl
 
 import com.quran.data.page.provider.PageProvider
+import com.quran.data.source.QuranDataSourceProvider
 
 internal class ShemerlyPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
   private val shemerlyBaseUrl = "$baseUrl/shemerly"
+
+  override fun getDataSource() = QuranDataSourceProvider.provideShemerlyDataSource()
 
   override fun getImageVersion() = 1
 

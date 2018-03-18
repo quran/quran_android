@@ -1,8 +1,12 @@
 package com.quran.data.page.provider.impl
 
+import com.quran.data.source.QuranDataSourceProvider
+
 internal class WarshPageProvider : DefaultPageProvider() {
   private val baseUrl = "http://android.quran.com/data"
   private val warshBaseUrl = "$baseUrl/warsh"
+
+  override fun getDataSource() = QuranDataSourceProvider.provideWarshDataSource()
 
   override fun getImageVersion() = 2
 

@@ -18,5 +18,6 @@ android {
 }
 
 dependencies {
+  implementation project(path: ':common:data')
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
