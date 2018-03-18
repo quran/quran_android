@@ -113,7 +113,7 @@ android {
 }
 
 ext {
-  supportLibVersion = '27.0.2'
+  supportLibVersion = '27.1.0'
   espressoVersion = '3.0.1'
   okhttpVersion = '3.9.0'
   daggerVersion = '2.13'
@@ -127,19 +127,19 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"
   implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
   implementation "com.android.support:design:${supportLibVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
-  implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+  implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
   kapt "com.google.dagger:dagger-compiler:${daggerVersion}"
   implementation "com.google.dagger:dagger:${daggerVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation 'com.squareup.moshi:moshi:1.5.0'
-  implementation 'com.jakewharton.timber:timber:4.5.1'
+  implementation 'com.jakewharton.timber:timber:4.6.1'
   debugImplementation 'com.facebook.stetho:stetho:1.5.0'
   debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   testImplementation 'junit:junit:4.12'
   testImplementation 'com.google.truth:truth:0.36'
-  testImplementation "org.mockito:mockito-core:2.13.0"
+  testImplementation "org.mockito:mockito-core:2.15.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
