@@ -8,7 +8,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.0-alpha06'
+    classpath 'com.android.tools.build:gradle:3.2.0-alpha07'
     classpath "io.fabric.tools:gradle:1.24.5"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
