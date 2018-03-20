@@ -1,21 +1,4 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
-android {
-  compileSdkVersion deps.android.build.compileSdkVersion
-  buildToolsVersion deps.android.build.buildToolsVersion
-
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 1
-    versionName "1.0"
-  }
-
-  buildTypes {
-    beta {}
-  }
-}
+apply plugin: 'kotlin'
 
 dependencies {
   implementation project(path: ':common:data')
