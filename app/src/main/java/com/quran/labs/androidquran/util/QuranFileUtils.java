@@ -7,7 +7,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.quran.data.page.provider.PageProvider;
+import com.quran.data.source.PageProvider;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.data.QuranDataProvider;

@@ -1,7 +1,7 @@
-package com.quran.data.page.provider.impl
+package com.quran.data.page.provider.naskh
 
-import com.quran.data.page.provider.PageProvider
-import com.quran.data.source.QuranDataSourceProvider
+import com.quran.data.page.provider.QuranDataSourceProvider
+import com.quran.data.source.PageProvider
 
 internal class NaskhPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"

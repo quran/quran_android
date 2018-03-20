@@ -1,6 +1,7 @@
-package com.quran.data.page.provider.impl
+package com.quran.data.page.provider.qaloon
 
-import com.quran.data.source.QuranDataSourceProvider
+import com.quran.data.page.provider.QuranDataSourceProvider
+import com.quran.data.page.provider.common.DefaultPageProvider
 
 internal class QaloonPageProvider : DefaultPageProvider() {
   private val baseUrl = "http://android.quran.com/data"

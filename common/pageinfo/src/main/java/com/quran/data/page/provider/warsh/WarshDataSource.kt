@@ -1,4 +1,6 @@
-package com.quran.data.source.impl
+package com.quran.data.page.provider.warsh
+
+import com.quran.data.page.provider.madani.MadaniDataSource
 
 internal class WarshDataSource : MadaniDataSource() {
 

@@ -1,10 +1,8 @@
-package com.quran.data.page.provider.size
+package com.quran.data.page.provider.common
 
 import android.view.Display
-import com.quran.data.page.provider.size.impl.DefaultPageSizeCalculator
-import com.quran.data.page.provider.size.impl.NaskhPageSizeCalculator
-import com.quran.data.page.provider.size.impl.NoOverridePageSizeCalculator
-import com.quran.data.page.provider.size.impl.ShemerlyPageSizeCalculator
+import com.quran.data.page.provider.naskh.NaskhPageSizeCalculator
+import com.quran.data.page.provider.shemerly.ShemerlyPageSizeCalculator
 
 object QuranPageSizeCalculatorProvider {
   fun provideMadaniPageSizeCalculator(display: Display): PageSizeCalculator =

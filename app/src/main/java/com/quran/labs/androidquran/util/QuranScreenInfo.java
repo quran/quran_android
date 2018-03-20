@@ -5,7 +5,7 @@ import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.view.Display;
 
-import com.quran.data.page.provider.size.PageSizeCalculator;
+import com.quran.data.page.provider.common.PageSizeCalculator;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

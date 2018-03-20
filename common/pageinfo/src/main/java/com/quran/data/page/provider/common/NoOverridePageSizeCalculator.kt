@@ -1,4 +1,4 @@
-package com.quran.data.page.provider.size.impl
+package com.quran.data.page.provider.common
 
 import android.view.Display
 

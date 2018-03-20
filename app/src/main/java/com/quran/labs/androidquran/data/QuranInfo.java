@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
-import com.quran.data.page.provider.PageProvider;
+import com.quran.data.source.PageProvider;
 import com.quran.data.source.QuranDataSource;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranUtils;

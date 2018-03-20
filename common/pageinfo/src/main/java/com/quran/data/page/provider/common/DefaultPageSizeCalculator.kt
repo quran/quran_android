@@ -1,8 +1,7 @@
-package com.quran.data.page.provider.size.impl
+package com.quran.data.page.provider.common
 
 import android.graphics.Point
 import android.view.Display
-import com.quran.data.page.provider.size.PageSizeCalculator
 
 internal open class DefaultPageSizeCalculator(display: Display) : PageSizeCalculator {
   private val maxWidth: Int

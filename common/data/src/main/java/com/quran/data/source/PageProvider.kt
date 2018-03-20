@@ -1,4 +1,4 @@
-package com.quran.data.page.provider
+package com.quran.data.source
 
 import com.quran.data.source.QuranDataSource
 
