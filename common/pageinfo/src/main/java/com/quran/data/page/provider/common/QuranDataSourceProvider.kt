@@ -1,4 +1,4 @@
-package com.quran.data.page.provider
+package com.quran.data.page.provider.common
 
 import com.quran.data.page.provider.madani.MadaniDataSource
 import com.quran.data.page.provider.naskh.NaskhDataSource

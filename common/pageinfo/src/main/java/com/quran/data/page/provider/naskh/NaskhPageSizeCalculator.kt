@@ -3,7 +3,7 @@ package com.quran.data.page.provider.naskh
 import android.graphics.Point
 import android.os.Build
 import android.view.Display
-import com.quran.data.page.provider.common.PageSizeCalculator
+import com.quran.data.source.PageSizeCalculator
 
 internal class NaskhPageSizeCalculator(display: Display) : PageSizeCalculator {
   private val screenRatios = doubleArrayOf(4.0 / 3.0, 16.0 / 10.0, 5.0 / 3.0, 16.0 / 9.0)

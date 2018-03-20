@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.model.translation;
 
 import android.content.Context;
 
-import com.quran.data.page.provider.QuranPageProvider;
+import com.quran.data.page.provider.common.QuranPageProvider;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkWithAyahText;
 import com.quran.labs.androidquran.data.QuranInfo;

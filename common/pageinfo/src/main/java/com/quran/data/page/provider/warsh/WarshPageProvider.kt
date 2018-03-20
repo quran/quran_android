@@ -1,9 +1,9 @@
 package com.quran.data.page.provider.warsh
 
-import com.quran.data.page.provider.common.DefaultPageProvider
-import com.quran.data.page.provider.QuranDataSourceProvider
+import com.quran.data.page.provider.common.QuranDataSourceProvider
+import com.quran.data.source.PageProvider
 
-internal class WarshPageProvider : DefaultPageProvider() {
+internal class WarshPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
   private val warshBaseUrl = "$baseUrl/warsh"
 

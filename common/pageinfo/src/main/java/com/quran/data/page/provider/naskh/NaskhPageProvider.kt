@@ -1,6 +1,6 @@
 package com.quran.data.page.provider.naskh
 
-import com.quran.data.page.provider.QuranDataSourceProvider
+import com.quran.data.page.provider.common.QuranDataSourceProvider
 import com.quran.data.source.PageProvider
 
 internal class NaskhPageProvider : PageProvider {

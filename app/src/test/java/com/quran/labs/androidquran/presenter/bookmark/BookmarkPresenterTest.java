@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.presenter.bookmark;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.quran.data.page.provider.QuranPageProvider;
+import com.quran.data.page.provider.common.QuranPageProvider;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;

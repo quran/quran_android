@@ -1,6 +1,6 @@
 package com.quran.data.page.provider.shemerly
 
-import com.quran.data.page.provider.QuranDataSourceProvider
+import com.quran.data.page.provider.common.QuranDataSourceProvider
 import com.quran.data.source.PageProvider
 
 internal class ShemerlyPageProvider : PageProvider {

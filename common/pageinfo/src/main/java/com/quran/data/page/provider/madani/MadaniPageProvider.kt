@@ -1,9 +1,9 @@
-package com.quran.data.page.provider.common
+package com.quran.data.page.provider.madani
 
-import com.quran.data.page.provider.QuranDataSourceProvider
+import com.quran.data.page.provider.common.QuranDataSourceProvider
 import com.quran.data.source.PageProvider
 
-internal open class DefaultPageProvider : PageProvider {
+class MadaniPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
 
   override fun getDataSource() = QuranDataSourceProvider.provideMadaniDataSource()

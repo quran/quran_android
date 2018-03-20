@@ -1,14 +1,14 @@
-package com.quran.data.page.provider
+package com.quran.data.page.provider.common
 
-import com.quran.data.page.provider.common.DefaultPageProvider
+import com.quran.data.page.provider.madani.MadaniPageProvider
 import com.quran.data.page.provider.naskh.NaskhPageProvider
 import com.quran.data.page.provider.shemerly.ShemerlyPageProvider
 import com.quran.data.source.PageProvider
 
 object QuranPageProvider {
-  fun provideMadaniPageProvider(): PageProvider = DefaultPageProvider()
+  fun provideMadaniPageProvider(): PageProvider = MadaniPageProvider()
   fun provideNaskhPageProvider(): PageProvider = NaskhPageProvider()
-  fun provideQaloonPageProvider(): PageProvider = DefaultPageProvider()
+  fun provideQaloonPageProvider(): PageProvider = MadaniPageProvider()
   fun provideShemerlyPageProvider(): PageProvider = ShemerlyPageProvider()
-  fun provideWarshPageProvider(): PageProvider = DefaultPageProvider()
+  fun provideWarshPageProvider(): PageProvider = MadaniPageProvider()
 }

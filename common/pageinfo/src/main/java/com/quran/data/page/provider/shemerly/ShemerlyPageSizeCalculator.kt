@@ -1,6 +1,6 @@
 package com.quran.data.page.provider.shemerly
 
-import com.quran.data.page.provider.common.PageSizeCalculator
+import com.quran.data.source.PageSizeCalculator
 
 internal class ShemerlyPageSizeCalculator : PageSizeCalculator {
 

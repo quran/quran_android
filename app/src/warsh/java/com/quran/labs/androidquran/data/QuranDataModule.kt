@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.data
 
 import android.view.Display
-import com.quran.data.page.provider.QuranPageProvider
-import com.quran.data.page.provider.common.QuranPageSizeCalculatorProvider
+import com.quran.data.page.provider.common.QuranPageProvider
+import com.quran.data.page.provider.common.size.QuranPageSizeCalculatorProvider
 import dagger.Module
 import dagger.Provides
 

@@ -1,4 +1,4 @@
-package com.quran.data.page.provider.common
+package com.quran.data.source
 
 interface PageSizeCalculator {
   fun getWidthParameter(): String
