@@ -1,22 +1,22 @@
 package com.quran.data.page.provider.common.size
 
-import android.view.Display
 import com.quran.data.page.provider.naskh.NaskhPageSizeCalculator
 import com.quran.data.page.provider.shemerly.ShemerlyPageSizeCalculator
+import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageSizeCalculator
 
 object QuranPageSizeCalculatorProvider {
-  fun provideMadaniPageSizeCalculator(display: Display): PageSizeCalculator =
-      DefaultPageSizeCalculator(display)
+  fun provideMadaniPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
+      DefaultPageSizeCalculator(displaySize)
 
-  fun provideNaskhPageSizeCalculator(display: Display): PageSizeCalculator =
-      NaskhPageSizeCalculator(display)
+  fun provideNaskhPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
+      NaskhPageSizeCalculator(displaySize)
 
-  fun provideQaloonPageSizeCalculator(display: Display): PageSizeCalculator =
-      NoOverridePageSizeCalculator(display)
+  fun provideQaloonPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
+      NoOverridePageSizeCalculator(displaySize)
 
   fun provideShemerlyPageSizeCalculator(): PageSizeCalculator = ShemerlyPageSizeCalculator()
 
-  fun provideWarshPageSizeCalculator(display: Display): PageSizeCalculator =
-      NoOverridePageSizeCalculator(display)
+  fun provideWarshPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
+      NoOverridePageSizeCalculator(displaySize)
 }

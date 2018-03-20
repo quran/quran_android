@@ -1,18 +1,11 @@
 package com.quran.data.page.provider.common.size
 
-import android.graphics.Point
-import android.view.Display
+import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageSizeCalculator
 
-internal open class DefaultPageSizeCalculator(display: Display) : PageSizeCalculator {
-  private val maxWidth: Int
+internal open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalculator {
+  private val maxWidth: Int = if (displaySize.x > displaySize.y) displaySize.x else displaySize.y
   private var overrideParam: String? = null
-
-  init {
-    val point = Point()
-    display.getSize(point)
-    maxWidth = if (point.x > point.y) point.x else point.y
-  }
 
   override fun getWidthParameter(): String {
     return when {

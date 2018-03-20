@@ -1,29 +1,11 @@
 package com.quran.data.page.provider.naskh
 
-import android.graphics.Point
-import android.os.Build
-import android.view.Display
+import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageSizeCalculator
 
-internal class NaskhPageSizeCalculator(display: Display) : PageSizeCalculator {
+internal class NaskhPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalculator {
   private val screenRatios = doubleArrayOf(4.0 / 3.0, 16.0 / 10.0, 5.0 / 3.0, 16.0 / 9.0)
-
-  private val ratioIndex: Int
-
-  init {
-    val point = Point()
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      display.getRealSize(point)
-    } else {
-      try {
-        // getRealSize was actually present since 4.0, but was annotated @hide.
-        Display::class.java.getMethod("getRealSize", Point::class.java).invoke(display, point)
-      } catch (e: Exception) {
-        display.getSize(point)
-      }
-    }
-    ratioIndex = getScreenRatioIndex(point.x, point.y)
-  }
+  private val ratioIndex = getScreenRatioIndex(displaySize.x, displaySize.y)
 
   private fun getScreenRatioIndex(width: Int, height: Int): Int {
     var aspectRatio = height.toDouble() / width

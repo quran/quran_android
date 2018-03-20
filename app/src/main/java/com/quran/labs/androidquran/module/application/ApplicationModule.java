@@ -2,9 +2,12 @@ package com.quran.labs.androidquran.module.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Point;
+import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.quran.data.source.DisplaySize;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import javax.inject.Singleton;
@@ -29,6 +32,17 @@ public class ApplicationModule {
   Display provideDisplay(Context appContext) {
     final WindowManager w = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
     return w.getDefaultDisplay();
+  }
+
+  @Provides
+  DisplaySize provideDisplaySize(Display display) {
+    final Point point = new Point();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      display.getRealSize(point);
+    } else {
+      display.getSize(point);
+    }
+    return new DisplaySize(point.x, point.y);
   }
 
   @Provides
