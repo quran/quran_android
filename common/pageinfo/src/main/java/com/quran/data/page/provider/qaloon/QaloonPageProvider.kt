@@ -1,13 +1,19 @@
 package com.quran.data.page.provider.qaloon
 
 import com.quran.data.page.provider.common.QuranDataSourceProvider
+import com.quran.data.page.provider.common.size.NoOverridePageSizeCalculator
+import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
+import com.quran.data.source.PageSizeCalculator
 
 internal class QaloonPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
   private val qaloonBaseUrl = "$baseUrl/qaloon"
 
   override fun getDataSource() = QuranDataSourceProvider.provideQaloonDataSource()
+
+  override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
+      NoOverridePageSizeCalculator(displaySize)
 
   override fun getImageVersion() = 2
 

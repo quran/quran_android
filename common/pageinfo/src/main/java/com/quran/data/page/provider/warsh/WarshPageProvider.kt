@@ -1,13 +1,19 @@
 package com.quran.data.page.provider.warsh
 
 import com.quran.data.page.provider.common.QuranDataSourceProvider
+import com.quran.data.page.provider.common.size.NoOverridePageSizeCalculator
+import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
+import com.quran.data.source.PageSizeCalculator
 
 internal class WarshPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
   private val warshBaseUrl = "$baseUrl/warsh"
 
   override fun getDataSource() = QuranDataSourceProvider.provideWarshDataSource()
+
+  override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
+      NoOverridePageSizeCalculator(displaySize)
 
   override fun getImageVersion() = 2
 

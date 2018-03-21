@@ -8,6 +8,8 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.quran.data.source.DisplaySize;
+import com.quran.data.source.PageProvider;
+import com.quran.data.source.PageSizeCalculator;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import javax.inject.Singleton;
@@ -43,6 +45,12 @@ public class ApplicationModule {
       display.getSize(point);
     }
     return new DisplaySize(point.x, point.y);
+  }
+
+  @Provides
+  PageSizeCalculator provideQuranPageSizeCalculator(PageProvider pageProvider,
+                                                    DisplaySize displaySize) {
+    return pageProvider.getPageSizeCalculator(displaySize);
   }
 
   @Provides

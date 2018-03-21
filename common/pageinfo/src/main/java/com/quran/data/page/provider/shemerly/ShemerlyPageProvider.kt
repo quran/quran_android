@@ -1,13 +1,18 @@
 package com.quran.data.page.provider.shemerly
 
 import com.quran.data.page.provider.common.QuranDataSourceProvider
+import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
+import com.quran.data.source.PageSizeCalculator
 
 internal class ShemerlyPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
   private val shemerlyBaseUrl = "$baseUrl/shemerly"
 
   override fun getDataSource() = QuranDataSourceProvider.provideShemerlyDataSource()
+
+  override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
+      ShemerlyPageSizeCalculator()
 
   override fun getImageVersion() = 1
 

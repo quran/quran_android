@@ -2,6 +2,7 @@ package com.quran.data.source
 
 interface PageProvider {
   fun getDataSource(): QuranDataSource
+  fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator
 
   fun getImageVersion(): Int
 
