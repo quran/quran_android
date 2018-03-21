@@ -6,9 +6,9 @@ import com.quran.data.page.provider.shemerly.ShemerlyPageProvider
 import com.quran.data.source.PageProvider
 
 object QuranPageProvider {
-  fun provideMadaniPageProvider(): PageProvider = MadaniPageProvider()
-  fun provideNaskhPageProvider(): PageProvider = NaskhPageProvider()
-  fun provideQaloonPageProvider(): PageProvider = MadaniPageProvider()
-  fun provideShemerlyPageProvider(): PageProvider = ShemerlyPageProvider()
-  fun provideWarshPageProvider(): PageProvider = MadaniPageProvider()
+  @JvmStatic fun provideMadaniPageProvider(): PageProvider = MadaniPageProvider()
+  @JvmStatic fun provideNaskhPageProvider(): PageProvider = NaskhPageProvider()
+  @JvmStatic fun provideQaloonPageProvider(): PageProvider = MadaniPageProvider()
+  @JvmStatic fun provideShemerlyPageProvider(): PageProvider = ShemerlyPageProvider()
+  @JvmStatic fun provideWarshPageProvider(): PageProvider = MadaniPageProvider()
 }
