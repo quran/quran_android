@@ -1,6 +1,5 @@
 package com.quran.data.page.provider.naskh
 
-import com.quran.data.page.provider.common.QuranDataSourceProvider
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
@@ -8,8 +7,9 @@ import com.quran.data.source.PageSizeCalculator
 internal class NaskhPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
   private val baseNakshUrl = "$baseUrl/naskh"
+  private val dataSource = NaskhDataSource()
 
-  override fun getDataSource() = QuranDataSourceProvider.provideNaskhDataSource()
+  override fun getDataSource() = dataSource
 
   override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
       NaskhPageSizeCalculator(displaySize)
