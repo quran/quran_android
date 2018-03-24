@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.component.application;
 
+import com.quran.data.page.provider.QuranPageModule;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.QuranForwarderActivity;
 import com.quran.labs.androidquran.QuranImportActivity;
@@ -31,7 +32,11 @@ import dagger.Component;
 
 @Singleton
 @Component(modules = {
-    ApplicationModule.class, DatabaseModule.class, NetworkModule.class, QuranDataModule.class } )
+    ApplicationModule.class,
+    DatabaseModule.class,
+    NetworkModule.class,
+    QuranDataModule.class,
+    QuranPageModule.class } )
 public interface ApplicationComponent {
   // subcomponents
   PagerActivityComponent.Builder pagerActivityComponentBuilder();

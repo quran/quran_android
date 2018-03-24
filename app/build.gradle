@@ -35,30 +35,6 @@ android {
     madani {
       applicationId "com.quran.labs.androidquran"
     }
-
-    qaloon {
-      applicationId "com.quran.labs.androidquran.qaloon"
-      versionCode 1100
-      versionName "1.1.0"
-    }
-
-    naskh {
-      applicationId "com.quran.labs.androidquran.naskh"
-      versionCode 1100
-      versionName "1.1.0"
-    }
-
-    shemerly {
-      applicationId "com.quran.labs.androidquran.shemerly"
-      versionCode 1100
-      versionName "1.1.0"
-    }
-
-    warsh {
-      applicationId "com.quran.labs.androidquran.warsh"
-      versionCode 1100
-      versionName "1.1.0"
-    }
   }
 
   buildTypes {
@@ -119,9 +95,17 @@ ext {
   daggerVersion = '2.13'
 }
 
+
+extras = new File(rootDir, 'extras/extras.gradle')
+if (extras.exists()) {
+   apply from: extras
+} else {
+   apply from: 'pluggable.gradle'
+}
+
 dependencies {
   implementation project(path: ':common:data')
-  implementation project(path: ':common:pageinfo')
+
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.android.support:support-v4:${supportLibVersion}"
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"

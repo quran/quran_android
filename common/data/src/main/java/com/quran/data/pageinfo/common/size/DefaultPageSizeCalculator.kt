@@ -1,9 +1,9 @@
-package com.quran.data.page.provider.common.size
+package com.quran.data.pageinfo.common.size
 
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageSizeCalculator
 
-internal open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalculator {
+open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalculator {
   private val maxWidth: Int = if (displaySize.x > displaySize.y) displaySize.x else displaySize.y
   private var overrideParam: String? = null
 

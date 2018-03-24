@@ -1,16 +1,17 @@
 package com.quran.labs.androidquran.data;
 
-import com.quran.data.page.provider.common.QuranPageProvider;
 import com.quran.data.source.PageProvider;
+
+import java.util.Map;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module
-public abstract class QuranDataModule {
+public class QuranDataModule {
 
   @Provides
-  public static PageProvider provideQuranPageProvider() {
-    return QuranPageProvider.provideWarshPageProvider();
+  static PageProvider provideQuranPageProvider(Map<String, PageProvider> providers) {
+    return providers.get("warsh");
   }
 }

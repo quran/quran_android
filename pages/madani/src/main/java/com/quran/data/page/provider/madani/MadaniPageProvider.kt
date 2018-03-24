@@ -1,7 +1,7 @@
 package com.quran.data.page.provider.madani
 
-import com.quran.data.page.provider.common.MadaniDataSource
-import com.quran.data.page.provider.common.size.DefaultPageSizeCalculator
+import com.quran.data.pageinfo.common.MadaniDataSource
+import com.quran.data.pageinfo.common.size.DefaultPageSizeCalculator
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator

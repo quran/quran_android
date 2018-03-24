@@ -1,8 +1,8 @@
-package com.quran.data.page.provider.common.size
+package com.quran.data.pageinfo.common.size
 
 import com.quran.data.source.DisplaySize
 
-internal class NoOverridePageSizeCalculator(displaySize: DisplaySize) :
+class NoOverridePageSizeCalculator(displaySize: DisplaySize) :
     DefaultPageSizeCalculator(displaySize) {
 
   override fun setOverrideParameter(parameter: String) {

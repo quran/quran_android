@@ -3,4 +3,7 @@ apply plugin: 'kotlin'
 dependencies {
   implementation project(path: ':common:data')
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+  kapt "com.google.dagger:dagger-compiler:2.13"
+  implementation "com.google.dagger:dagger:2.13"
 }
