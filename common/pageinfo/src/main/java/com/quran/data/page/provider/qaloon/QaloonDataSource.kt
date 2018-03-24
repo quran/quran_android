@@ -1,6 +1,6 @@
 package com.quran.data.page.provider.qaloon
 
-import com.quran.data.page.provider.madani.MadaniDataSource
+import com.quran.data.page.provider.common.MadaniDataSource
 
 internal class QaloonDataSource : MadaniDataSource() {
 

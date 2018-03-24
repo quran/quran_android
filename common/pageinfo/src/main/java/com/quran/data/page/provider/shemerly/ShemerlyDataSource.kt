@@ -1,6 +1,6 @@
 package com.quran.data.page.provider.shemerly
 
-import com.quran.data.page.provider.madani.MadaniDataSource
+import com.quran.data.page.provider.common.MadaniDataSource
 
 internal class ShemerlyDataSource : MadaniDataSource() {
   override fun getNumberOfPages() = 521

@@ -1,6 +1,5 @@
 package com.quran.data.page.provider.common
 
-import com.quran.data.page.provider.madani.MadaniDataSource
 import com.quran.data.page.provider.naskh.NaskhDataSource
 import com.quran.data.page.provider.qaloon.QaloonDataSource
 import com.quran.data.page.provider.shemerly.ShemerlyDataSource

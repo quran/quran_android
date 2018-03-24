@@ -1,6 +1,6 @@
 package com.quran.data.page.provider.naskh
 
-import com.quran.data.page.provider.madani.MadaniDataSource
+import com.quran.data.page.provider.common.MadaniDataSource
 
 internal class NaskhDataSource : MadaniDataSource() {
   override fun getNumberOfPages() = 612
