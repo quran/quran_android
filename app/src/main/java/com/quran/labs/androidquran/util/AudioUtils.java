@@ -153,17 +153,15 @@ public class AudioUtils {
       return null;
     }
     if (page < totalPages) {
-      int nextPageSura = quranInfo.safelyGetSuraOnPage(page);
+      int nextPage = page + 1;
+      int nextPageSura = quranInfo.safelyGetSuraOnPage(nextPage);
       // using [page+1] as an index because we literally want the next page
-      int nextPageAyah = quranInfo.getFirstAyahOnPage(page + 1);
+      int nextPageAyah = quranInfo.getFirstAyahOnPage(nextPage);
 
       pageLastSura = nextPageSura;
       pageLastAyah = nextPageAyah - 1;
       if (pageLastAyah < 1) {
         pageLastSura--;
-        if (pageLastSura < 1) {
-          pageLastSura = 1;
-        }
         pageLastAyah = quranInfo.getNumAyahs(pageLastSura);
       }
     }
@@ -292,6 +290,9 @@ public class AudioUtils {
     SuraAyah maxAyah = request.getMaxAyah();
     int endSura = maxAyah.sura;
     int endAyah = maxAyah.ayah;
+
+    if(endSura < startAyah || (endSura == startSura && endAyah < startAyah))
+      throw new IllegalStateException("End isn't larger than the start");
 
     for (int i = startSura; i <= endSura; i++) {
       int lastAyah = quranInfo.getNumAyahs(i);
