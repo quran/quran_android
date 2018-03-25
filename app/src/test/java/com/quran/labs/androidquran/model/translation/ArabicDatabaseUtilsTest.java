@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.model.translation;
 
 import android.content.Context;
 
-import com.quran.data.page.provider.common.QuranPageProvider;
+import com.quran.data.page.provider.madani.MadaniPageProvider;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkWithAyahText;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -34,7 +34,7 @@ public class ArabicDatabaseUtilsTest {
   @Test
   public void testHydrateAyahText() {
     ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context,
-        new QuranInfo(QuranPageProvider.INSTANCE.provideMadaniPageProvider()),
+        new QuranInfo(new MadaniPageProvider()),
         mock(QuranFileUtils.class)) {
 
       @Override
@@ -73,7 +73,7 @@ public class ArabicDatabaseUtilsTest {
   @Test
   public void testHydrateAyahTextEmpty() {
     ArabicDatabaseUtils arabicDatabaseUtils = new ArabicDatabaseUtils(context,
-        new QuranInfo(QuranPageProvider.INSTANCE.provideMadaniPageProvider()),
+        new QuranInfo(new MadaniPageProvider()),
         mock(QuranFileUtils.class)) {
       @Override
       DatabaseHandler getArabicDatabaseHandler() {

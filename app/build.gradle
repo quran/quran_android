@@ -96,9 +96,8 @@ ext {
 }
 
 
-extras = new File(rootDir, 'extras/extras.gradle')
-if (extras.exists()) {
-   apply from: extras
+if (new File(rootDir, 'extras/extras.gradle').exists()) {
+   apply from: new File(rootDir, 'extras/extras.gradle')
 } else {
    apply from: 'pluggable.gradle'
 }
