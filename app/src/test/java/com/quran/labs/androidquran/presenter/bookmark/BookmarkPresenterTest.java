@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.presenter.bookmark;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.quran.data.page.provider.common.QuranPageProvider;
+import com.quran.data.page.provider.madani.MadaniPageProvider;
 import com.quran.labs.androidquran.dao.Bookmark;
 import com.quran.labs.androidquran.dao.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
@@ -252,8 +252,7 @@ public class BookmarkPresenterTest {
   }
 
   private BookmarkPresenter makeBookmarkPresenter(BookmarkModel model) {
-    final QuranInfo quranInfo =
-        new QuranInfo(QuranPageProvider.INSTANCE.provideMadaniPageProvider());
+    final QuranInfo quranInfo = new QuranInfo(new MadaniPageProvider());
     return new BookmarkPresenter(
         appContext,
         model,
