@@ -291,7 +291,7 @@ public class AudioUtils {
     int endSura = maxAyah.sura;
     int endAyah = maxAyah.ayah;
 
-    if(endSura < startAyah || (endSura == startSura && endAyah < startAyah))
+    if (endSura < startAyah || (endSura == startSura && endAyah < startAyah))
       throw new IllegalStateException("End isn't larger than the start");
 
     for (int i = startSura; i <= endSura; i++) {
