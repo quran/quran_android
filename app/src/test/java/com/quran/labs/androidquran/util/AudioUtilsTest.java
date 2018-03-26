@@ -1,7 +1,8 @@
 package com.quran.labs.androidquran.util;
 
-import com.quran.data.pageinfo.common.MadaniDataSource;
 import com.quran.data.source.PageProvider;
+import com.quran.data.pageinfo.common.MadaniDataSource;
+
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 
