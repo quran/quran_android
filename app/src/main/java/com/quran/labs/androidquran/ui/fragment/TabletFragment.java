@@ -238,11 +238,11 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onTranslationAction(QuranAyahInfo ayah, String[] translationNames, int actionId) {
+  public void onTranslationAction(QuranAyahInfo ayah, String[] translationNames,String selectedTranslation, int actionId) {
     Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
       translationPresenter.get()
-          .onTranslationAction((PagerActivity) activity, ayah, translationNames, actionId);
+          .onTranslationAction((PagerActivity) activity, ayah, translationNames,selectedTranslation, actionId);
     }
 
     int page = quranInfo.getPageFromSuraAyah(ayah.sura, ayah.ayah);

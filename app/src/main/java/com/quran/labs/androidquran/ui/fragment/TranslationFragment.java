@@ -109,10 +109,10 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void onTranslationAction(QuranAyahInfo ayah, String[] translationNames, int actionId) {
+  public void onTranslationAction(QuranAyahInfo ayah, String[] translationNames,String selectedTranslation, int actionId) {
     Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
-      presenter.onTranslationAction((PagerActivity) activity, ayah, translationNames, actionId);
+      presenter.onTranslationAction((PagerActivity) activity, ayah,translationNames,selectedTranslation, actionId);
     }
     translationView.unhighlightAyat();
   }

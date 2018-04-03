@@ -53,16 +53,14 @@ public class ShareUtil {
     activity.startActivity(Intent.createChooser(intent, activity.getString(titleResId)));
   }
 
-  public String getShareText(Context context,
+  public String getShareTextperTranslation(Context context,
                                     QuranAyahInfo ayahInfo,
-                                    String[] translationNames,Boolean AddArabic) {
+                                    String[] translationNames,String selectedTranslation) {
     final StringBuilder sb = new StringBuilder();
-    if (ayahInfo.arabicText != null) {
-      sb.append(ayahInfo.arabicText)
-        .append("\n\n");
-    }
 
     for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
+      if(selectedTranslation ==translationNames[i])
+      {
       if (i < translationNames.length) {
         sb.append('(')
           .append(translationNames[i])
@@ -70,12 +68,36 @@ public class ShareUtil {
       }
       sb.append(ayahInfo.texts.get(i))
         .append("\n\n");
-    }
+    }}
     sb.append('-')
       .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
 
     return sb.toString();
   }
+  public String getShareText(Context context,
+                             QuranAyahInfo ayahInfo,
+                             String[] translationNames) {
+    final StringBuilder sb = new StringBuilder();
+    if (ayahInfo.arabicText != null) {
+      sb.append(ayahInfo.arabicText)
+          .append("\n\n");
+    }
+
+    for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
+      if (i < translationNames.length) {
+        sb.append('(')
+            .append(translationNames[i])
+            .append(")\n");
+      }
+      sb.append(ayahInfo.texts.get(i))
+          .append("\n\n");
+    }
+    sb.append('-')
+        .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
+
+    return sb.toString();
+  }
+
 
   private String getShareText(Activity activity, List<QuranText> verses) {
     final int size = verses.size();

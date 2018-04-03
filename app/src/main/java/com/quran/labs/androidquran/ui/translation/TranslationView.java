@@ -101,12 +101,9 @@ private List<LocalTranslation> translationList;
 
             if (onTranslationActionListener != null && selectedAyah != null) {
               int id=item.getItemId();
-              String translationName=(String)item.getTitle();
+              String selectedTranslation=(String)item.getTitle();
 
-              String[] translation = new String[1];
-              translation[0]=translationName;
-
-              onTranslationActionListener.onTranslationAction(selectedAyah, translation,R.id.cab_copy_ayah_text_menu);
+              onTranslationActionListener.onTranslationAction(selectedAyah, translations,selectedTranslation,R.id.cab_copy_ayah_text_menu);
               return true;
 
             }
@@ -197,7 +194,7 @@ private List<LocalTranslation> translationList;
     int id=item.getItemId();
     if (onTranslationActionListener != null && selectedAyah != null) {
 
-      onTranslationActionListener.onTranslationAction(selectedAyah, translations, item.getItemId());
+      onTranslationActionListener.onTranslationAction(selectedAyah, translations,"", item.getItemId());
       return true;
     }
     return false;
