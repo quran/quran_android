@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
   <item
+      android:id="@+id/cab_copy_ayah_text_menu"
+      android:icon="@drawable/ic_action_expand"
+      android:title="@string/share_ayah"
+      />
+  <item
       android:id="@+id/cab_share_ayah_link"
       android:icon="@drawable/ic_link"
       android:title="@string/share_ayah"

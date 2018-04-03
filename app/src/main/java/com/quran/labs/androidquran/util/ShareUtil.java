@@ -55,7 +55,7 @@ public class ShareUtil {
 
   public String getShareText(Context context,
                                     QuranAyahInfo ayahInfo,
-                                    String[] translationNames) {
+                                    String[] translationNames,Boolean AddArabic) {
     final StringBuilder sb = new StringBuilder();
     if (ayahInfo.arabicText != null) {
       sb.append(ayahInfo.arabicText)
