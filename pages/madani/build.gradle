@@ -3,8 +3,8 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
   implementation project(path: ':common:data')
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation deps.kotlin.stdlib
 
-  kapt "com.google.dagger:dagger-compiler:2.13"
-  implementation "com.google.dagger:dagger:2.13"
+  kapt deps.dagger.apt
+  implementation deps.dagger.runtime
 }

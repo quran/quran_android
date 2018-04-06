@@ -15,6 +15,11 @@ buildscript {
   }
 }
 
+ext.versions = [
+  kotlinVersion: ext.kotlin_version,
+  daggerVersion: '2.14.1'
+]
+
 ext.deps = [
     android: [
         build: [
@@ -24,6 +29,13 @@ ext.deps = [
             compileSdkVersion: 27
         ]
     ],
+    kotlin: [
+        stdlib: "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlinVersion}"
+    ],
+    dagger: [
+        apt: "com.google.dagger:dagger-compiler:${versions.daggerVersion}",
+        runtime: "com.google.dagger:dagger:${versions.daggerVersion}"
+    ]
 ]
 
 allprojects {

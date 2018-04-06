@@ -92,7 +92,6 @@ ext {
   supportLibVersion = '27.1.1'
   espressoVersion = '3.0.1'
   okhttpVersion = '3.9.0'
-  daggerVersion = '2.13'
 }
 
 
@@ -105,15 +104,15 @@ if (new File(rootDir, 'extras/extras.gradle').exists()) {
 dependencies {
   implementation project(path: ':common:data')
 
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation deps.kotlin.stdlib
   implementation "com.android.support:support-v4:${supportLibVersion}"
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"
   implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
   implementation "com.android.support:design:${supportLibVersion}"
   implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-  kapt "com.google.dagger:dagger-compiler:${daggerVersion}"
-  implementation "com.google.dagger:dagger:${daggerVersion}"
+  kapt deps.dagger.apt
+  implementation deps.dagger.runtime
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation 'com.squareup.moshi:moshi:1.5.0'
   implementation 'com.jakewharton.timber:timber:4.6.1'
