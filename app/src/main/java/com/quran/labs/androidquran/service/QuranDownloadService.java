@@ -94,26 +94,26 @@ public class QuranDownloadService extends Service implements
   // download method return values
   private static final int DOWNLOAD_SUCCESS = 0;
 
-  private Looper mServiceLooper;
-  private ServiceHandler mServiceHandler;
-  private QuranDownloadNotifier mNotifier;
+  private Looper serviceLooper;
+  private ServiceHandler serviceHandler;
+  private QuranDownloadNotifier notifier;
 
   // written from ui thread and read by download thread
-  private volatile boolean mIsDownloadCanceled;
-  private LocalBroadcastManager mBroadcastManager;
-  private QuranSettings mQuranSettings;
-  private WifiLock mWifiLock;
+  private volatile boolean isDownloadCanceled;
+  private LocalBroadcastManager broadcastManager;
+  private QuranSettings quranSettings;
+  private WifiLock wifiLock;
 
-  private Intent mLastSentIntent = null;
-  private Map<String, Boolean> mSuccessfulZippedDownloads = null;
-  private Map<String, Intent> mRecentlyFailedDownloads = null;
+  private Intent lastSentIntent = null;
+  private Map<String, Boolean> successfulZippedDownloads = null;
+  private Map<String, Intent> recentlyFailedDownloads = null;
 
   @Inject QuranInfo quranInfo;
-  @Inject OkHttpClient mOkHttpClient;
+  @Inject OkHttpClient okHttpClient;
 
   private final class ServiceHandler extends Handler {
 
-    public ServiceHandler(Looper looper) {
+    ServiceHandler(Looper looper) {
       super(looper);
     }
 
@@ -133,58 +133,58 @@ public class QuranDownloadService extends Service implements
     thread.start();
 
     Context appContext = getApplicationContext();
-    mNotifier = new QuranDownloadNotifier(this);
-    mWifiLock = ((WifiManager) appContext.getSystemService(Context.WIFI_SERVICE))
+    notifier = new QuranDownloadNotifier(this);
+    wifiLock = ((WifiManager) appContext.getSystemService(Context.WIFI_SERVICE))
         .createWifiLock(WifiManager.WIFI_MODE_FULL, "downloadLock");
 
-    mServiceLooper = thread.getLooper();
-    mServiceHandler = new ServiceHandler(mServiceLooper);
-    mIsDownloadCanceled = false;
-    mSuccessfulZippedDownloads = new HashMap<>();
-    mRecentlyFailedDownloads = new HashMap<>();
-    mQuranSettings = QuranSettings.getInstance(this);
+    serviceLooper = thread.getLooper();
+    serviceHandler = new ServiceHandler(serviceLooper);
+    isDownloadCanceled = false;
+    successfulZippedDownloads = new HashMap<>();
+    recentlyFailedDownloads = new HashMap<>();
+    quranSettings = QuranSettings.getInstance(this);
 
     ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
-    mBroadcastManager = LocalBroadcastManager.getInstance(appContext);
+    broadcastManager = LocalBroadcastManager.getInstance(appContext);
   }
 
   private void handleOnStartCommand(Intent intent, int startId) {
     if (intent != null) {
       if (ACTION_CANCEL_DOWNLOADS.equals(intent.getAction())) {
-        mServiceHandler.removeCallbacksAndMessages(null);
-        mIsDownloadCanceled = true;
+        serviceHandler.removeCallbacksAndMessages(null);
+        isDownloadCanceled = true;
         sendNoOpMessage(startId);
       } else if (ACTION_RECONNECT.equals(intent.getAction())) {
         int type = intent.getIntExtra(EXTRA_DOWNLOAD_TYPE,
             DOWNLOAD_TYPE_UNDEF);
-        Intent currentLast = mLastSentIntent;
+        Intent currentLast = lastSentIntent;
         int lastType = currentLast == null ? -1 :
             currentLast.getIntExtra(EXTRA_DOWNLOAD_TYPE,
                 DOWNLOAD_TYPE_UNDEF);
 
         if (type == lastType) {
           if (currentLast != null) {
-            mBroadcastManager.sendBroadcast(currentLast);
+            broadcastManager.sendBroadcast(currentLast);
           }
-        } else if (mServiceHandler.hasMessages(type)) {
+        } else if (serviceHandler.hasMessages(type)) {
           Intent progressIntent = new Intent(ProgressIntent.INTENT_NAME);
           progressIntent.putExtra(ProgressIntent.DOWNLOAD_TYPE, type);
           progressIntent.putExtra(ProgressIntent.STATE,
               ProgressIntent.STATE_DOWNLOADING);
-          mBroadcastManager.sendBroadcast(progressIntent);
+          broadcastManager.sendBroadcast(progressIntent);
         }
         sendNoOpMessage(startId);
       } else {
         // if we are currently downloading, resend the last broadcast
         // and don't queue anything
         String download = intent.getStringExtra(EXTRA_DOWNLOAD_KEY);
-        Intent currentLast = mLastSentIntent;
+        Intent currentLast = lastSentIntent;
         String currentDownload = currentLast == null ? null :
             currentLast.getStringExtra(ProgressIntent.DOWNLOAD_KEY);
         if (download != null && currentDownload != null &&
             download.equals(currentDownload)) {
           Timber.d("resending last broadcast...");
-          mBroadcastManager.sendBroadcast(currentLast);
+          broadcastManager.sendBroadcast(currentLast);
 
           String state = currentLast.getStringExtra(ProgressIntent.STATE);
           if (!ProgressIntent.STATE_SUCCESS.equals(state) &&
@@ -202,11 +202,11 @@ public class QuranDownloadService extends Service implements
             DOWNLOAD_TYPE_UNDEF);
 
         // put the message in the queue
-        Message msg = mServiceHandler.obtainMessage();
+        Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
         msg.obj = intent;
         msg.what = what;
-        mServiceHandler.sendMessage(msg);
+        serviceHandler.sendMessage(msg);
       }
     }
   }
@@ -218,11 +218,11 @@ public class QuranDownloadService extends Service implements
    * @param id the start id
    */
   private void sendNoOpMessage(int id) {
-    Message msg = mServiceHandler.obtainMessage();
+    Message msg = serviceHandler.obtainMessage();
     msg.arg1 = id;
     msg.obj = null;
     msg.what = NO_OP;
-    mServiceHandler.sendMessage(msg);
+    serviceHandler.sendMessage(msg);
   }
 
   @Override
@@ -233,10 +233,10 @@ public class QuranDownloadService extends Service implements
 
   @Override
   public void onDestroy() {
-    if (mWifiLock.isHeld()) {
-      mWifiLock.release();
+    if (wifiLock.isHeld()) {
+      wifiLock.release();
     }
-    mServiceLooper.quit();
+    serviceLooper.quit();
   }
 
   @Override
@@ -256,25 +256,25 @@ public class QuranDownloadService extends Service implements
           new NotificationDetails(notificationTitle, key, type);
       // check if already downloaded, and if so, send broadcast
       boolean isZipFile = url.endsWith(".zip");
-      if (isZipFile && mSuccessfulZippedDownloads.containsKey(url)) {
-        mLastSentIntent = mNotifier.broadcastDownloadSuccessful(details);
+      if (isZipFile && successfulZippedDownloads.containsKey(url)) {
+        lastSentIntent = notifier.broadcastDownloadSuccessful(details);
         return;
-      } else if (mRecentlyFailedDownloads.containsKey(url)) {
+      } else if (recentlyFailedDownloads.containsKey(url)) {
         // if recently failed and we want to repeat the last error...
         if (intent.getBooleanExtra(EXTRA_REPEAT_LAST_ERROR, false)) {
-          Intent failedIntent = mRecentlyFailedDownloads.get(url);
+          Intent failedIntent = recentlyFailedDownloads.get(url);
           if (failedIntent != null) {
             // re-broadcast and leave - just in case of race condition
-            mBroadcastManager.sendBroadcast(failedIntent);
+            broadcastManager.sendBroadcast(failedIntent);
             return;
           }
         }
         // otherwise, remove the fact it was an error and retry
         else {
-          mRecentlyFailedDownloads.remove(url);
+          recentlyFailedDownloads.remove(url);
         }
       }
-      mNotifier.resetNotifications();
+      notifier.resetNotifications();
 
       // get the start/end ayah info if it's a ranged download
       SuraAyah startAyah = intent.getParcelableExtra(EXTRA_START_VERSE);
@@ -286,7 +286,7 @@ public class QuranDownloadService extends Service implements
         outputFile = getFilenameFromUrl(url);
       }
       String destination = intent.getStringExtra(EXTRA_DESTINATION);
-      mLastSentIntent = null;
+      lastSentIntent = null;
 
       if (destination == null) {
         return;
@@ -299,11 +299,11 @@ public class QuranDownloadService extends Service implements
         result = download(url, destination, outputFile, details);
       }
       if (result && isZipFile) {
-        mSuccessfulZippedDownloads.put(url, true);
+        successfulZippedDownloads.put(url, true);
       } else if (!result) {
-        mRecentlyFailedDownloads.put(url, mLastSentIntent);
+        recentlyFailedDownloads.put(url, lastSentIntent);
       }
-      mLastSentIntent = null;
+      lastSentIntent = null;
     }
   }
 
@@ -317,10 +317,10 @@ public class QuranDownloadService extends Service implements
     details.setFileStatus(1, 1);
 
     // notify download starting
-    mLastSentIntent = mNotifier.notifyProgress(details, 0, 0);
+    lastSentIntent = notifier.notifyProgress(details, 0, 0);
     boolean result = downloadFileWrapper(urlString, destination, outputFile, details);
     if (result) {
-      mLastSentIntent = mNotifier.notifyDownloadSuccessful(details);
+      lastSentIntent = notifier.notifyDownloadSuccessful(details);
     }
     return result;
   }
@@ -366,7 +366,7 @@ public class QuranDownloadService extends Service implements
         totalAyahs, startSura, startAyah, endSura, endAyah, isGapless ? "true" : "false");
 
     details.setFileStatus(1, totalAyahs);
-    mLastSentIntent = mNotifier.notifyProgress(details, 0, 0);
+    lastSentIntent = notifier.notifyProgress(details, 0, 0);
 
     // extension and filename template don't change
     final String singleFileName =
@@ -439,7 +439,7 @@ public class QuranDownloadService extends Service implements
       }
     }
 
-    mLastSentIntent = mNotifier.notifyDownloadSuccessful(details);
+    lastSentIntent = notifier.notifyDownloadSuccessful(details);
 
     return true;
   }
@@ -450,7 +450,7 @@ public class QuranDownloadService extends Service implements
 
     int res = DOWNLOAD_SUCCESS;
     for (int i = 0; i < RETRY_COUNT; i++) {
-      if (mIsDownloadCanceled) {
+      if (isDownloadCanceled) {
         break;
       }
 
@@ -461,13 +461,13 @@ public class QuranDownloadService extends Service implements
         } catch (InterruptedException exception) {
           // no op
         }
-        mNotifier.resetNotifications();
+        notifier.resetNotifications();
       }
 
-      mWifiLock.acquire();
+      wifiLock.acquire();
       res = startDownload(urlString, destination, outputFile, details);
-      if (mWifiLock.isHeld()) {
-        mWifiLock.release();
+      if (wifiLock.isHeld()) {
+        wifiLock.release();
       }
 
       if (res == DOWNLOAD_SUCCESS) {
@@ -475,7 +475,7 @@ public class QuranDownloadService extends Service implements
       } else if (res == QuranDownloadNotifier.ERROR_DISK_SPACE ||
           res == QuranDownloadNotifier.ERROR_PERMISSIONS) {
         // critical errors
-        mNotifier.notifyError(res, true, details);
+        notifier.notifyError(res, true, details);
         return false;
       } else if (res == QuranDownloadNotifier.ERROR_INVALID_DOWNLOAD) {
         // corrupted download
@@ -492,7 +492,7 @@ public class QuranDownloadService extends Service implements
       }
     }
 
-    if (mIsDownloadCanceled) {
+    if (isDownloadCanceled) {
       res = QuranDownloadNotifier.ERROR_CANCELLED;
     }
     notifyError(res, true, details);
@@ -544,7 +544,7 @@ public class QuranDownloadService extends Service implements
     BufferedSource source = null;
     try {
       final Request request = builder.build();
-      call = mOkHttpClient.newCall(request);
+      call = okHttpClient.newCall(request);
       final Response response = call.execute();
       if (response.isSuccessful()) {
         Crashlytics.log("successful response: " + response.code() + " - " + downloadedAmount);
@@ -568,35 +568,17 @@ public class QuranDownloadService extends Service implements
         int loops = 0;
         long totalRead = downloadedAmount;
 
-        /* Temporarily log information to try to understand the root cause for the okio exception.
-         * The exception would happen as a result of an empty buffer, which one would not expect
-         * here since we would have just gotten a (successful) result back from the web server.
-         *
-         * TODO - insha'Allah remove in the next version.
-         */
-        if (!mIsDownloadCanceled && source.exhausted()) {
-          Crashlytics.log("rc: " + response.code() +
-              " -- downloaded: " + downloadedAmount + " -- fn: " + filename);
-          if (partialFile.exists()) {
-            Crashlytics.log("length of partial file: " + partialFile.length());
-          }
-          Crashlytics.log("request headers=" + request.headers().toString());
-          Crashlytics.log("hdrs=" + response.headers().toString());
-          final Exception exception = new IllegalStateException("http source exhausted");
-          Crashlytics.logException(exception);
-        }
-
-        while (!mIsDownloadCanceled && !source.exhausted() &&
+        while (!isDownloadCanceled && !source.exhausted() &&
             ((read = source.read(sink.buffer(), BUFFER_SIZE)) > 0)) {
           totalRead += read;
           if (loops++ % 5 == 0) {
-            mLastSentIntent = mNotifier.notifyProgress(notificationInfo, totalRead, size);
+            lastSentIntent = notifier.notifyProgress(notificationInfo, totalRead, size);
           }
           sink.flush();
         }
         CloseableExtensionKt.closeQuietly(sink);
 
-        if (mIsDownloadCanceled) {
+        if (isDownloadCanceled) {
           return QuranDownloadNotifier.ERROR_CANCELLED;
         } else if (!partialFile.renameTo(actualFile)) {
           return notifyError(QuranDownloadNotifier.ERROR_PERMISSIONS, true, notificationInfo);
@@ -626,18 +608,18 @@ public class QuranDownloadService extends Service implements
   public void onProcessingProgress(
       NotificationDetails details, int processed, int total) {
     if (details.totalFiles == 1) {
-      mLastSentIntent = mNotifier.notifyDownloadProcessing(
+      lastSentIntent = notifier.notifyDownloadProcessing(
           details, processed, total);
     }
   }
 
   private int notifyError(int errorCode, boolean isFatal,
       NotificationDetails details) {
-    mLastSentIntent = mNotifier.notifyError(errorCode, isFatal, details);
+    lastSentIntent = notifier.notifyError(errorCode, isFatal, details);
 
     if (isFatal) {
       // write last error in prefs
-      mQuranSettings.setLastDownloadError(details.key, errorCode);
+      quranSettings.setLastDownloadError(details.key, errorCode);
     }
     return errorCode;
   }
