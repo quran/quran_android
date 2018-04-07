@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -108,6 +109,9 @@ public class QuranDownloadService extends Service implements
   private Map<String, Boolean> successfulZippedDownloads = null;
   private Map<String, Intent> recentlyFailedDownloads = null;
 
+  // incremented from ui thread and decremented by download thread
+  private AtomicInteger currentOperations = new AtomicInteger(0);
+
   @Inject QuranInfo quranInfo;
   @Inject OkHttpClient okHttpClient;
 
@@ -121,6 +125,9 @@ public class QuranDownloadService extends Service implements
     public void handleMessage(Message msg) {
       if (msg.obj != null) {
         onHandleIntent((Intent) msg.obj);
+        if (0 == currentOperations.decrementAndGet()) {
+          notifier.stopForeground();
+        }
       }
       stopSelf(msg.arg1);
     }
@@ -133,7 +140,7 @@ public class QuranDownloadService extends Service implements
     thread.start();
 
     Context appContext = getApplicationContext();
-    notifier = new QuranDownloadNotifier(this);
+    notifier = new QuranDownloadNotifier(this, this);
     wifiLock = ((WifiManager) appContext.getSystemService(Context.WIFI_SERVICE))
         .createWifiLock(WifiManager.WIFI_MODE_FULL, "downloadLock");
 
@@ -159,8 +166,7 @@ public class QuranDownloadService extends Service implements
             DOWNLOAD_TYPE_UNDEF);
         Intent currentLast = lastSentIntent;
         int lastType = currentLast == null ? -1 :
-            currentLast.getIntExtra(EXTRA_DOWNLOAD_TYPE,
-                DOWNLOAD_TYPE_UNDEF);
+            currentLast.getIntExtra(EXTRA_DOWNLOAD_TYPE, DOWNLOAD_TYPE_UNDEF);
 
         if (type == lastType) {
           if (currentLast != null) {
@@ -200,7 +206,7 @@ public class QuranDownloadService extends Service implements
 
         int what = intent.getIntExtra(EXTRA_DOWNLOAD_TYPE,
             DOWNLOAD_TYPE_UNDEF);
-
+        currentOperations.incrementAndGet();
         // put the message in the queue
         Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
@@ -605,16 +611,14 @@ public class QuranDownloadService extends Service implements
   }
 
   @Override
-  public void onProcessingProgress(
-      NotificationDetails details, int processed, int total) {
+  public void onProcessingProgress(NotificationDetails details, int processed, int total) {
     if (details.totalFiles == 1) {
       lastSentIntent = notifier.notifyDownloadProcessing(
           details, processed, total);
     }
   }
 
-  private int notifyError(int errorCode, boolean isFatal,
-      NotificationDetails details) {
+  private int notifyError(int errorCode, boolean isFatal, NotificationDetails details) {
     lastSentIntent = notifier.notifyError(errorCode, isFatal, details);
 
     if (isFatal) {
