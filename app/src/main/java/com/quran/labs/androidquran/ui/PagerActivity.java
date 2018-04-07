@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
@@ -751,7 +752,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           downloadType);
-      startService(intent);
+      ContextCompat.startForegroundService(this, intent);
 
       haveDownload = true;
     }
@@ -771,7 +772,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
           QuranDataProvider.QURAN_ARABIC_DATABASE);
-      startService(intent);
+      ContextCompat.startForegroundService(this, intent);
     }
 
     if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO) {
@@ -1272,10 +1273,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  public QuranPageWorker getQuranPageWorker() {
-    return quranPageWorker;
-  }
-
   public void highlightAyah(int sura, int ayah, HighlightType type) {
     if (HighlightType.AUDIO.equals(type)) {
         lastPlayingSura = sura;
@@ -1519,10 +1516,10 @@ public class PagerActivity extends QuranActionBarActivity implements
     String fileUrl;
     if (TextUtils.isEmpty(dbFile)) {
       fileUrl = baseUri + File.separator + "%d" + File.separator +
-          "%d" + audioUtils.AUDIO_EXTENSION;
+          "%d" + AudioUtils.AUDIO_EXTENSION;
     } else {
       fileUrl = baseUri + File.separator + "%03d" +
-          audioUtils.AUDIO_EXTENSION;
+          AudioUtils.AUDIO_EXTENSION;
     }
 
     DownloadAudioRequest request = new DownloadAudioRequest(
@@ -1568,7 +1565,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-      startService(intent);
+      ContextCompat.startForegroundService(this, intent);
     } else if (audioUtils.shouldDownloadGaplessDatabase(request)) {
       Timber.d("need to download gapless database...");
       if (needsPermission) {
@@ -1587,7 +1584,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-      startService(intent);
+      ContextCompat.startForegroundService(this, intent);
     } else if (audioUtils.haveAllFiles(request)) {
       if (!audioUtils.shouldDownloadBasmallah(request)) {
         Timber.d("have all files, playing!");
@@ -1615,7 +1612,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
         intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, firstAyah);
         intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, firstAyah);
-        startService(intent);
+        ContextCompat.startForegroundService(this, intent);
       }
     } else {
       if (needsPermission) {
@@ -1643,7 +1640,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           request.getMaxAyah());
       intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS,
           request.isGapless());
-      startService(intent);
+      ContextCompat.startForegroundService(this, intent);
     }
   }
 
@@ -1667,7 +1664,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     else {
       i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);
     }
-    startService(i);
+    ContextCompat.startForegroundService(this, i);
   }
 
   @Override
