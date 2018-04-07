@@ -1,6 +1,6 @@
 quran android contributors
 ==========================
-TEST2
+
 ### code
 
 * [Ahmed El-Helw](https://twitter.com/ahmedre)
@@ -18,6 +18,7 @@ TEST2
 * [Ahmed Essam](http://twitter.com/neo_4583)
 * [Hosain Al Ahmad](https://github.com/hosainnet)
 * [Ahmed Abdelaal](https://github.com/Ahmed9914)
+* [HelpForSoftware](https://github.com/HelpForSoftware)
 
 ### ui and design
 * [Somaia Gabr](http://twitter.com/somaiagabr).
