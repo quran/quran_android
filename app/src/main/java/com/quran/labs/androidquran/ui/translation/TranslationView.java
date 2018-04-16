@@ -74,48 +74,38 @@ private List<LocalTranslation> translationList;
     ayahToolBar = new AyahToolBar(context, R.menu.share_menu);
     ayahToolBar.setOnItemSelectedListener(this);
     ayahToolBar.setVisibility(View.GONE);
-    addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
-        context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
+    addView(ayahToolBar, LayoutParams.WRAP_CONTENT, context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
 
     ImageButton copyButton = (ImageButton) ayahToolBar.findViewById(R.id.cab_copy_ayah_text_menu);
-    PopupMenu popup = new PopupMenu(context,copyButton);
-
     copyButton.setOnClickListener(new View.OnClickListener() {
-      @Override
 
+      @Override
       public void onClick(View v) {
-        PopupMenu popmenu;
-        popmenu = new PopupMenu(context, v);
-          int items = translations.length;
-          String[] titles = new String[items];
+        PopupMenu popmenu = new PopupMenu(context, v);
+        int items = translations.length;
+        String[] titles = new String[items];
+
         for (int i = 0; i < items; i++) {
           popmenu.getMenu().add(Menu.NONE, i, 1, translations[i]);
         }
 
-
         popmenu.show();
-
         popmenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
           @Override
           public boolean onMenuItemClick(MenuItem item) {
-
-            if (onTranslationActionListener != null && selectedAyah != null) {
+            if (onTranslationActionListener != null && selectedAyah != null)
+            {
               int id=item.getItemId();
               String selectedTranslation=(String)item.getTitle();
-
               onTranslationActionListener.onTranslationAction(selectedAyah, translations,selectedTranslation,R.id.cab_copy_ayah_text_menu);
               return true;
-
             }
-              return false;
+            return false;
           }
-
-
         });
       }
     });
-
-
   }
 
   public void setVerses(@NonNull QuranInfo quranInfo,
