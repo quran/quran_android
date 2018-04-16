@@ -86,7 +86,7 @@ public class TranslationPresenter extends
       }
       case R.id.cab_share_ayah_text:
       case R.id.cab_copy_ayah: {
-        String shareText = shareUtil.getShareText(activity, ayah,translationNames);
+        String shareText = shareUtil.getShareText(activity, ayah, translationNames);
         if (actionId == R.id.cab_share_ayah_text) {
           shareUtil.shareViaIntent(activity, shareText, R.string.share_ayah_text);
         } else {
@@ -95,7 +95,7 @@ public class TranslationPresenter extends
         break;
       }
       case R.id.cab_copy_ayah_text_menu: {
-        String shareText = shareUtil.getShareTextperTranslation(activity, ayah, translationNames,selectedTranslation);
+        String shareText = shareUtil.getShareTextperTranslation(activity, ayah, translationNames, selectedTranslation);
         shareUtil.copyToClipboard(activity, shareText);
         break;
     }
