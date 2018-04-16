@@ -1,5 +1,29 @@
 buildscript {
-  ext.kotlin_version = '1.2.31'
+  ext {
+    kotlinVersion = '1.2.31'
+    daggerVersion = '2.15'
+    supportLibVersion = '27.1.1'
+    espressoVersion = '3.0.1'
+    okhttpVersion = '3.10.0'
+
+    deps = [
+        android: [
+            build: [
+                minSdkVersion    : 14,
+                targetSdkVersion : 27,
+                compileSdkVersion: 27
+            ]
+        ],
+        kotlin: [
+            stdlib: "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+        ],
+        dagger: [
+            apt: "com.google.dagger:dagger-compiler:${daggerVersion}",
+            runtime: "com.google.dagger:dagger:${daggerVersion}"
+        ]
+    ]
+  }
+
   repositories {
     google()
     jcenter()
@@ -8,35 +32,12 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.0-alpha09'
-    classpath "io.fabric.tools:gradle:1.24.5"
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath 'com.android.tools.build:gradle:3.2.0-alpha10'
+    classpath "io.fabric.tools:gradle:1.25.2"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
   }
 }
-
-ext.versions = [
-  kotlinVersion: ext.kotlin_version,
-  daggerVersion: '2.14.1'
-]
-
-ext.deps = [
-    android: [
-        build: [
-            buildToolsVersion: '27.0.3',
-            minSdkVersion    : 14,
-            targetSdkVersion : 27,
-            compileSdkVersion: 27
-        ]
-    ],
-    kotlin: [
-        stdlib: "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlinVersion}"
-    ],
-    dagger: [
-        apt: "com.google.dagger:dagger-compiler:${versions.daggerVersion}",
-        runtime: "com.google.dagger:dagger:${versions.daggerVersion}"
-    ]
-]
 
 allprojects {
   repositories {

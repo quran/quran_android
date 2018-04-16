@@ -6,7 +6,6 @@ apply plugin: 'kotlin-kapt'
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
-  buildToolsVersion deps.android.build.buildToolsVersion
 
   lintOptions {
     checkReleaseBuilds true
@@ -87,13 +86,6 @@ android {
     }
   }
 }
-
-ext {
-  supportLibVersion = '27.1.1'
-  espressoVersion = '3.0.1'
-  okhttpVersion = '3.9.0'
-}
-
 
 if (new File(rootDir, 'extras/extras.gradle').exists()) {
    apply from: new File(rootDir, 'extras/extras.gradle')
