@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    kotlinVersion = '1.2.31'
+    kotlinVersion = '1.2.40'
     daggerVersion = '2.15'
     supportLibVersion = '27.1.1'
     espressoVersion = '3.0.1'
@@ -32,7 +32,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.0-alpha10'
+    classpath 'com.android.tools.build:gradle:3.2.0-alpha12'
     classpath "io.fabric.tools:gradle:1.25.2"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
