@@ -54,7 +54,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   private static final int REQUEST_CODE_IMPORT = 1;
 
   private DataListPreference listStoragePref;
-  private MoveFilesAsyncTask noveFilesTask;
+  private MoveFilesAsyncTask moveFilesAsyncTask;
   private List<StorageUtils.Storage> storageList;
   private LoadStorageOptionsTask loadStorageOptionsTask;
   private int appSize;
@@ -337,8 +337,8 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   }
 
   public void moveFiles(String newLocation) {
-    noveFilesTask = new MoveFilesAsyncTask(getActivity(), newLocation, quranFileUtils);
-    noveFilesTask.execute();
+    moveFilesAsyncTask = new MoveFilesAsyncTask(getActivity(), newLocation, quranFileUtils);
+    moveFilesAsyncTask.execute();
   }
 
   @Override
@@ -395,7 +395,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
               Toast.LENGTH_LONG).show();
         }
         dialog = null;
-        noveFilesTask = null;
+        moveFilesAsyncTask = null;
       }
     }
   }

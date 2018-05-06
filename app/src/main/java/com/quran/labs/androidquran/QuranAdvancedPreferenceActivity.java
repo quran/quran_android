@@ -23,7 +23,7 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
   private static final String SI_LOCATION_TO_WRITE = "SI_LOCATION_TO_WRITE";
   private static final int REQUEST_WRITE_TO_SDCARD_PERMISSION = 1;
 
-  private String mLocationToWrite;
+  private String locationToWrite;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.preferences);
 
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    final Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setTitle(R.string.prefs_category_advanced);
     setSupportActionBar(toolbar);
     final ActionBar ab = getSupportActionBar();
@@ -42,7 +42,7 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
     AudioManagerUtils.clearCache();
 
     if (savedInstanceState != null) {
-      mLocationToWrite = savedInstanceState.getString(SI_LOCATION_TO_WRITE);
+      locationToWrite = savedInstanceState.getString(SI_LOCATION_TO_WRITE);
     }
 
     final FragmentManager fm = getFragmentManager();
@@ -56,8 +56,8 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
 
   @Override
   protected void onSaveInstanceState(Bundle outState) {
-    if (mLocationToWrite != null) {
-      outState.putString(SI_LOCATION_TO_WRITE, mLocationToWrite);
+    if (locationToWrite != null) {
+      outState.putString(SI_LOCATION_TO_WRITE, locationToWrite);
     }
     super.onSaveInstanceState(outState);
   }
@@ -75,7 +75,7 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
     if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
       QuranSettings.getInstance(this).setSdcardPermissionsDialogPresented();
 
-      mLocationToWrite = newLocation;
+      locationToWrite = newLocation;
       ActivityCompat.requestPermissions(this,
           new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE },
           REQUEST_WRITE_TO_SDCARD_PERMISSION);
@@ -90,15 +90,15 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
       @NonNull int[] grantResults) {
     if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSION) {
       if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        if (mLocationToWrite != null) {
+        if (locationToWrite != null) {
           Fragment fragment = getFragmentManager().findFragmentById(R.id.content);
           if (fragment instanceof QuranAdvancedSettingsFragment) {
-            ((QuranAdvancedSettingsFragment) fragment).moveFiles(mLocationToWrite);
+            ((QuranAdvancedSettingsFragment) fragment).moveFiles(locationToWrite);
           }
 
         }
       }
-      mLocationToWrite = null;
+      locationToWrite = null;
     }
   }
 }

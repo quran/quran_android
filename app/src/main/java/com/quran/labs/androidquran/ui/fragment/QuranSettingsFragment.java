@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
@@ -17,7 +16,6 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.ui.AudioManagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
-import com.quran.labs.androidquran.util.QuranScreenInfo;
 
 import javax.inject.Inject;
 
@@ -31,29 +29,23 @@ public class QuranSettingsFragment extends PreferenceFragment implements
     addPreferencesFromResource(R.xml.quran_preferences);
 
     final Context context = getActivity();
-    Context mAppContext = context.getApplicationContext();
+    Context appContext = context.getApplicationContext();
 
     // field injection
-    ((QuranApplication) mAppContext).getApplicationComponent().inject(this);
+    ((QuranApplication) appContext).getApplicationComponent().inject(this);
 
     // handle translation manager click
     final Preference translationPref = findPreference(Constants.PREF_TRANSLATION_MANAGER);
-    translationPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        startActivity(new Intent(getActivity(), TranslationManagerActivity.class));
-        return true;
-      }
+    translationPref.setOnPreferenceClickListener(preference -> {
+      startActivity(new Intent(getActivity(), TranslationManagerActivity.class));
+      return true;
     });
 
     // handle audio manager click
     final Preference audioManagerPref = findPreference(Constants.PREF_AUDIO_MANAGER);
-    audioManagerPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-      @Override
-      public boolean onPreferenceClick(Preference preference) {
-        startActivity(new Intent(getActivity(), AudioManagerActivity.class));
-        return true;
-      }
+    audioManagerPref.setOnPreferenceClickListener(preference -> {
+      startActivity(new Intent(getActivity(), AudioManagerActivity.class));
+      return true;
     });
 
   }
