@@ -142,6 +142,7 @@
             android:host="*"/>
       </intent-filter>
     </activity>
+    <activity android:name=".pageselect.PageSelectActivity"/>
 
     <service
         android:enabled="true"

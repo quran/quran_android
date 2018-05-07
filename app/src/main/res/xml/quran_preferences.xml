@@ -63,7 +63,13 @@
   </PreferenceCategory>
 
   <PreferenceCategory
+      android:key="@string/prefs_reading_category_key"
       android:title="@string/prefs_category_reading">
+
+    <com.quran.labs.androidquran.ui.preference.QuranPreference
+        android:key="@string/prefs_page_type"
+        android:summary="@string/prefs_page_type_summary"
+        android:title="@string/prefs_page_type_title" />
 
     <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="true"

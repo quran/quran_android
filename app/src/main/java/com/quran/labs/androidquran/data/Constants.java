@@ -66,6 +66,7 @@ public class Constants {
   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
   public static final String PREF_TRANSLATION_MANAGER = "translationManagerKey";
   public static final String PREF_AUDIO_MANAGER = "audioManagerKey";
+  public static final String PREF_PAGE_TYPE = "pageTypeKey";
   public static final String PREF_IMPORT = "importKey";
   public static final String PREF_EXPORT = "exportKey";
   public static final String PREF_LOGS = "sendLogsKey";
@@ -74,4 +75,5 @@ public class Constants {
   public static final String PREF_WAS_SHOWING_TRANSLATION = "wasShowingTranslation";
   public static final String PREF_QURAN_SETTINGS = "quranSettings";
   public static final String PREF_DID_DOWNLOAD_PAGES = "didDownloadPages";
+  public static final String PREF_READING_CATEGORY = "readingCategoryKey";
 }

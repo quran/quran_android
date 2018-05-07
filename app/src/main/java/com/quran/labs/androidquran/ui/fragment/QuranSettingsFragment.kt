@@ -5,7 +5,9 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
+import android.preference.PreferenceGroup
 import android.preference.PreferenceScreen
+import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranPreferenceActivity
@@ -13,9 +15,12 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.ui.AudioManagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
+import javax.inject.Inject
 
 class QuranSettingsFragment : PreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
+  @Inject lateinit var pageTypes :
+      Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -41,6 +46,11 @@ class QuranSettingsFragment : PreferenceFragment(),
       true
     }
 
+    val pageChangePref = findPreference(Constants.PREF_PAGE_TYPE)
+    if (pageTypes.size < 2) {
+      val readingPrefs = findPreference(Constants.PREF_READING_CATEGORY)
+      (readingPrefs as PreferenceGroup).removePreference(pageChangePref)
+    }
   }
 
   override fun onResume() {
@@ -70,6 +80,8 @@ class QuranSettingsFragment : PreferenceFragment(),
     if ("key_prefs_advanced" == key) {
       val intent = Intent(activity, QuranAdvancedPreferenceActivity::class.java)
       startActivity(intent)
+      return true
+    } else if (Constants.PREF_PAGE_TYPE == key) {
       return true
     }
 
