@@ -1,5 +1,10 @@
-apply plugin: 'kotlin'
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+}
 
 dependencies {
   implementation project(path: ':common:data')
