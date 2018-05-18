@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.module.application.ApplicationModule;
 import com.quran.labs.androidquran.module.application.DatabaseModule;
 import com.quran.labs.androidquran.module.application.NetworkModule;
+import com.quran.labs.androidquran.pageselect.PageSelectActivity;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.ui.AudioManagerActivity;
@@ -55,6 +56,7 @@ public interface ApplicationComponent {
   void inject(AudioManagerActivity audioManagerActivity);
   void inject(QuranForwarderActivity quranForwarderActivity);
   void inject(SearchActivity searchActivity);
+  void inject(PageSelectActivity pageSelectActivity);
 
   // fragments
   void inject(BookmarksFragment bookmarksFragment);

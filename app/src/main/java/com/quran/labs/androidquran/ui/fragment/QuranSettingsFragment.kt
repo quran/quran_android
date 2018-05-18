@@ -13,6 +13,7 @@ import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranPreferenceActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
+import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.AudioManagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import javax.inject.Inject
@@ -82,6 +83,8 @@ class QuranSettingsFragment : PreferenceFragment(),
       startActivity(intent)
       return true
     } else if (Constants.PREF_PAGE_TYPE == key) {
+      val intent = Intent(activity, PageSelectActivity::class.java)
+      startActivity(intent)
       return true
     }
 

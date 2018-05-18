@@ -4,9 +4,10 @@ import android.support.v4.view.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.quran.labs.androidquran.R
 
-internal class PageSelectAdapter(val inflater: LayoutInflater) : PagerAdapter() {
+class PageSelectAdapter(val inflater: LayoutInflater) : PagerAdapter() {
   private val items : MutableList<PageTypeItem> = mutableListOf()
 
   fun replaceItems(updates: List<PageTypeItem>) {
@@ -22,6 +23,10 @@ internal class PageSelectAdapter(val inflater: LayoutInflater) : PagerAdapter() 
   }
 
   override fun instantiateItem(container: ViewGroup, position: Int): Any {
-    return inflater.inflate(R.layout.page_select_page, container, true)
+    val view = inflater.inflate(R.layout.page_select_page, container, false)
+    view.findViewById<TextView>(R.id.title).setText(items[position].title)
+    view.findViewById<TextView>(R.id.description).setText(items[position].description)
+    container.addView(view)
+    return view
   }
 }

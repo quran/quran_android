@@ -12,8 +12,17 @@ class PageSelectPresenter @Inject
     Presenter<PageSelectActivity> {
   private var currentView: PageSelectActivity? = null
 
+  fun generateData() {
+    val data = pageTypes.map {
+      val provider = it.value
+      PageTypeItem(it.key, "", provider.getPreviewTitle(), provider.getPreviewDescription())
+    }
+    currentView?.onUpdatedData(data)
+  }
+
   override fun bind(what: PageSelectActivity) {
     currentView = what
+    generateData()
   }
 
   override fun unbind(what: PageSelectActivity?) {
