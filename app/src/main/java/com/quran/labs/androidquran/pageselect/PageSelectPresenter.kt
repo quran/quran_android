@@ -7,9 +7,10 @@ import javax.inject.Inject
 
 @Reusable
 class PageSelectPresenter @Inject
-    constructor(pageTypes: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>) :
+    constructor(private val pageTypes:
+                Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>) :
     Presenter<PageSelectActivity> {
-  var currentView: PageSelectActivity? = null
+  private var currentView: PageSelectActivity? = null
 
   override fun bind(what: PageSelectActivity) {
     currentView = what

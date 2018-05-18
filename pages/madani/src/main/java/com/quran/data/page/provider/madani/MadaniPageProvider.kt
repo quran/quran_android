@@ -5,6 +5,7 @@ import com.quran.data.pageinfo.common.size.DefaultPageSizeCalculator
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
+import com.quran.labs.androidquran.pages.madani.R
 
 class MadaniPageProvider : PageProvider {
   private val baseUrl = "http://android.quran.com/data"
@@ -36,4 +37,8 @@ class MadaniPageProvider : PageProvider {
   override fun getAudioDatabasesBaseUrl() = getDatabasesBaseUrl() + "audio/"
 
   override fun getImagesDirectoryName() = ""
+
+  override fun getPreviewTitle() = R.string.madani_title
+
+  override fun getPreviewDescription() = R.string.madani_description
 }

@@ -1,5 +1,7 @@
 package com.quran.data.source
 
+import android.support.annotation.StringRes
+
 interface PageProvider {
   fun getDataSource(): QuranDataSource
   fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator
@@ -17,4 +19,7 @@ interface PageProvider {
   fun getDatabaseDirectoryName(): String
   fun getAyahInfoDirectoryName(): String
   fun getImagesDirectoryName(): String
+
+  @StringRes fun getPreviewTitle(): Int
+  @StringRes fun getPreviewDescription(): Int
 }
