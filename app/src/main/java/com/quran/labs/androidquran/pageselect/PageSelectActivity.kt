@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
+import android.widget.Toast
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
@@ -26,7 +27,9 @@ class PageSelectActivity : AppCompatActivity() {
       QuranDisplayHelper.getWidthKitKat(display)
     else display.width
 
-    adapter = PageSelectAdapter(LayoutInflater.from(this), width)
+    adapter = PageSelectAdapter(LayoutInflater.from(this), width) {
+      onPageTypeSelected(it)
+    }
 
     viewPager = findViewById(R.id.pager)
     viewPager.adapter = adapter
@@ -56,5 +59,9 @@ class PageSelectActivity : AppCompatActivity() {
 
   fun onUpdatedData(data: List<PageTypeItem>) {
     adapter.replaceItems(data, viewPager)
+  }
+
+  private fun onPageTypeSelected(type: String) {
+    Toast.makeText(this, type, Toast.LENGTH_SHORT).show()
   }
 }

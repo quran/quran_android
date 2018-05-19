@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.pageselect
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
@@ -17,9 +18,18 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.lang.ref.WeakReference
 
-class PageSelectAdapter(val inflater: LayoutInflater, val width: Int) : PagerAdapter() {
+class PageSelectAdapter(val inflater: LayoutInflater,
+                        val width: Int,
+                        private val selectionHandler: (String) -> Unit) : PagerAdapter() {
   private val items : MutableList<PageTypeItem> = mutableListOf()
   private val compositeDisposable = CompositeDisposable()
+
+  private val listener = View.OnClickListener { v ->
+    val tag = (v.parent as View).tag
+    if (tag != null) {
+      selectionHandler(tag.toString())
+    }
+  }
 
   fun replaceItems(updates: List<PageTypeItem>, pager: ViewPager) {
     items.clear()
@@ -42,6 +52,7 @@ class PageSelectAdapter(val inflater: LayoutInflater, val width: Int) : PagerAda
   private fun updateView(view: View, data: PageTypeItem) {
     view.findViewById<TextView>(R.id.title).setText(data.title)
     view.findViewById<TextView>(R.id.description).setText(data.description)
+    view.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener(listener)
 
     val image = view.findViewById<ImageView>(R.id.preview)
     if (data.previewImage != null) {
