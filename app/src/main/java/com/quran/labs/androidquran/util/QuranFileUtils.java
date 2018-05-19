@@ -51,9 +51,10 @@ public class QuranFileUtils {
   private final String IMAGES_DIRECTORY;
 
   private final QuranScreenInfo quranScreenInfo;
+  private final Context appContext;
 
   @Inject
-  public QuranFileUtils(PageProvider pageProvider, QuranScreenInfo quranScreenInfo) {
+  public QuranFileUtils(Context context, PageProvider pageProvider, QuranScreenInfo quranScreenInfo) {
     IMG_BASE_URL = pageProvider.getImagesBaseUrl();
     IMG_ZIP_BASE_URL = pageProvider.getImagesZipBaseUrl();
     PATCH_ZIP_BASE_URL = pageProvider.getPatchBaseUrl();
@@ -66,6 +67,7 @@ public class QuranFileUtils {
     AUDIO_DB_BASE_URL = pageProvider.getAudioDatabasesBaseUrl();
 
     this.quranScreenInfo = quranScreenInfo;
+    this.appContext = context.getApplicationContext();
   }
 
   // check if the images with the given width param have a version
@@ -297,6 +299,11 @@ public class QuranFileUtils {
       }
     }
     return false;
+  }
+
+  @Nullable
+  public String getQuranBaseDirectory() {
+    return getQuranBaseDirectory(appContext);
   }
 
   @Nullable

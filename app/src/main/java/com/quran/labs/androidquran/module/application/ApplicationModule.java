@@ -16,6 +16,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 @Module
 public class ApplicationModule {
@@ -57,5 +59,10 @@ public class ApplicationModule {
   @Singleton
   QuranSettings provideQuranSettings() {
     return QuranSettings.getInstance(application);
+  }
+
+  @Provides
+  Scheduler provideMainThreadScheduler() {
+    return AndroidSchedulers.mainThread();
   }
 }

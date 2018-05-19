@@ -1,9 +1,10 @@
 package com.quran.labs.androidquran.pageselect
 
 import android.support.annotation.StringRes
+import java.io.File
 
 data class PageTypeItem(val pageType: String,
-                        val previewUrl: String,
+                        val previewImage: File?,
                         @StringRes val title: Int,
                         @StringRes val description: Int,
                         val isSelected: Boolean = false)

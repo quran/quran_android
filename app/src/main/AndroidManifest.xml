@@ -142,7 +142,8 @@
             android:host="*"/>
       </intent-filter>
     </activity>
-    <activity android:name=".pageselect.PageSelectActivity"/>
+    <activity android:name=".pageselect.PageSelectActivity"
+        android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
     <service
         android:enabled="true"

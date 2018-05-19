@@ -36,4 +36,7 @@
   <dimen name="tag_width">50dp</dimen>
   <dimen name="tag_margin">6dp</dimen>
   <dimen name="tag_text_size">10sp</dimen>
+
+  <!-- page selector -->
+  <dimen name="page_margin">6dp</dimen>
 </resources>
