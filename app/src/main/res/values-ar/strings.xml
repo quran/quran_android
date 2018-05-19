@@ -268,6 +268,8 @@
   <string name="prefs_category_advanced_summary">استيراد وتصدير المرجعيات وإعدادات أخرى</string>
   <string name="prefs_export_title">تصدير</string>
   <string name="prefs_export_summary">تصدير نسخة من المرجعيات و التصنيفات.</string>
+  <string name="prefs_page_type_title">نوع طباعة المصحف (تجريبي )</string>
+  <string name="prefs_page_type_summary">أختر نوع الصفحات</string>
 
   <string name="import_data">استيراد البيانات</string>
   <string name="import_data_and_override">"اذا قمت باستيراد هذا الملف، سيتم استبدال المرجعيات ب  %1$d مرجعيات و %2$d تصنيفات. استيراد؟"</string>
