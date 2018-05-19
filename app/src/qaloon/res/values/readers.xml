@@ -21,8 +21,8 @@
   </string-array>
 
   <string-array translatable="false" name="quran_readers_urls">
-    <item>http://mirrors.quranicaudio.com/tvquran/ahmad_khidr_attarabolsi_qaloon/</item>
-    <item>http://mirrors.quranicaudio.com/everyayah/qaloon_hudhayfi_96kbps/</item>
+    <item>https://mirrors.quranicaudio.com/tvquran/ahmad_khidr_attarabolsi_qaloon/</item>
+    <item>https://mirrors.quranicaudio.com/everyayah/qaloon_hudhayfi_96kbps/</item>
   </string-array>
 
   <!-- actual qari names -->

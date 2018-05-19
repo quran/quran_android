@@ -17,7 +17,7 @@
   </string-array>
 
   <string-array translatable="false" name="quran_readers_urls">
-    <item>http://mirrors.quranicaudio.com/everyayah/warsh_ibrahim_aldosary_96kbps/</item>
+    <item>https://mirrors.quranicaudio.com/everyayah/warsh_ibrahim_aldosary_96kbps/</item>
   </string-array>
 
   <!-- actual qari names -->

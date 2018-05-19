@@ -8,7 +8,7 @@ import com.quran.data.source.PageSizeCalculator
 import com.quran.labs.androidquran.pages.madani.R
 
 class MadaniPageProvider : PageProvider {
-  private val baseUrl = "http://android.quran.com/data"
+  private val baseUrl = "https://android.quran.com/data"
   private val dataSource = MadaniDataSource()
 
   override fun getDataSource() = dataSource

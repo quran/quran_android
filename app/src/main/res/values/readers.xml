@@ -21,8 +21,8 @@
   </string-array>
 
   <string-array translatable="false" name="quran_readers_urls">
-    <item>http://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
-    <item>http://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
+    <item>https://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
+    <item>https://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
   </string-array>
 
   <!-- actual qari names -->
