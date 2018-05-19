@@ -1,18 +1,22 @@
 package com.quran.labs.androidquran.pageselect
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
-import android.widget.Toast
 import com.quran.labs.androidquran.QuranApplication
+import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
+import com.quran.labs.androidquran.util.QuranSettings
 import javax.inject.Inject
 
 class PageSelectActivity : AppCompatActivity() {
   @Inject lateinit var presenter : PageSelectPresenter
+  @Inject lateinit var quranSettings: QuranSettings
+
   private lateinit var adapter : PageSelectAdapter
   private lateinit var viewPager: ViewPager
 
@@ -62,6 +66,15 @@ class PageSelectActivity : AppCompatActivity() {
   }
 
   private fun onPageTypeSelected(type: String) {
-    Toast.makeText(this, type, Toast.LENGTH_SHORT).show()
+    val pageType = quranSettings.pageType
+    if (pageType != type) {
+      quranSettings.pageType = type
+
+      val intent = Intent(this, QuranDataActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+      }
+      startActivity(intent)
+    }
+    finish()
   }
 }

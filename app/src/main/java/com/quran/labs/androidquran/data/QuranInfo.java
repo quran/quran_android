@@ -15,9 +15,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import dagger.Reusable;
-
-@Reusable
 public class QuranInfo {
   private final int[] suraPageStart;
   private final int[] pageSuraStart;

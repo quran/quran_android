@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AyahInfoDatabaseHandler {
 
@@ -31,11 +32,19 @@ public class AyahInfoDatabaseHandler {
   private static final String GLYPHS_TABLE = "glyphs";
 
   private static Map<String, AyahInfoDatabaseHandler> ayahInfoCache = new HashMap<>();
+  private static String quranDatabaseDirectory = "";
 
   private final SQLiteDatabase database;
 
   static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(
       Context context, String databaseName, QuranFileUtils quranFileUtils) {
+    final String currentAyahDatabaseDirectory = quranFileUtils.getQuranAyahDatabaseDirectory();
+    if (currentAyahDatabaseDirectory != null &&
+        !currentAyahDatabaseDirectory.equals(quranDatabaseDirectory)) {
+      quranDatabaseDirectory = currentAyahDatabaseDirectory;
+      clearAyahInfoCache();
+    }
+
     AyahInfoDatabaseHandler handler = ayahInfoCache.get(databaseName);
     if (handler == null) {
       try {
@@ -49,6 +58,19 @@ public class AyahInfoDatabaseHandler {
       }
     }
     return handler;
+  }
+
+  private static void clearAyahInfoCache() {
+    final Set<String> keys = ayahInfoCache.keySet();
+    for (String key : keys) {
+      final AyahInfoDatabaseHandler handler = ayahInfoCache.get(key);
+      try {
+        handler.database.close();
+      } catch (Exception e) {
+        // ignore
+      }
+    }
+    ayahInfoCache.clear();
   }
 
   private AyahInfoDatabaseHandler(Context context,

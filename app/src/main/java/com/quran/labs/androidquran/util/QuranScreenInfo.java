@@ -8,11 +8,9 @@ import android.view.Display;
 import com.quran.data.source.PageSizeCalculator;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import timber.log.Timber;
 
-@Singleton
 public class QuranScreenInfo {
   private final int height;
   private final int altDimension;

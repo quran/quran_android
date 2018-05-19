@@ -25,14 +25,12 @@ import java.util.Collections;
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import timber.log.Timber;
 
-@Singleton
 public class QuranFileUtils {
   private static final String QURAN_BASE = "quran_android/";
 
@@ -359,6 +357,10 @@ public class QuranFileUtils {
   public String getQuranDatabaseDirectory(Context context) {
     String base = getQuranBaseDirectory(context);
     return (base == null) ? null : base + DATABASE_DIRECTORY;
+  }
+
+  public String getQuranAyahDatabaseDirectory() {
+    return getQuranAyahDatabaseDirectory(appContext);
   }
 
   public String getQuranAyahDatabaseDirectory(Context context) {

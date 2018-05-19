@@ -137,6 +137,15 @@ public class QuranSettings {
     prefs.edit().putBoolean(Constants.PREF_GROUP_BOOKMARKS_BY_TAG, groupedByTags).apply();
   }
 
+  public String getPageType() {
+    return prefs.getString(Constants.PREF_PAGE_TYPE, null);
+  }
+
+  public void setPageType(String pageType) {
+    prefs.edit().putString(Constants.PREF_PAGE_TYPE, pageType).apply();
+    clearDefaultImagesDirectory();
+  }
+
   public boolean getShowRecents() {
     return prefs.getBoolean(Constants.PREF_SHOW_RECENTS, true);
   }
@@ -327,6 +336,10 @@ public class QuranSettings {
         .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
         .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
         .apply();
+  }
+
+  public void clearDefaultImagesDirectory() {
+    perInstallationPrefs.edit().remove(Constants.PREF_DEFAULT_IMAGES_DIR).apply();
   }
 
   public boolean haveDefaultImagesDirectory() {
