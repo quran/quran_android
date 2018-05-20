@@ -10,6 +10,7 @@ android {
   lintOptions {
     checkReleaseBuilds true
     lintConfig file("lint.xml")
+    enable "Interoperability"
   }
 
   defaultConfig {
