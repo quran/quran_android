@@ -52,7 +52,7 @@
   <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
   <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
-  <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project is the app\'s source of Arabic Tafaseer and translations for various languages. It is also the source for Dr. Ayman Suwaid's recitation</string>
+  <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project is the app\'s source of Arabic Tafaseer and translations for various languages. It is also the source for Dr. Ayman Suwaid\'s recitation</string>
   <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
   <string name="about_tanzil" translatable="false">Tanzil</string>
   <string name="about_tanzil_summary">Translations for many languages</string>
