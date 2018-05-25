@@ -13,8 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
@@ -35,7 +35,6 @@ import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -172,8 +171,8 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void setAyahCoordinatesData(int page, Map<String, List<AyahBounds>> coordinates) {
-    ayahTrackerPresenter.setAyahCoordinates(page, coordinates);
+  public void setAyahCoordinatesData(PageCoordinates pageCoordinates) {
+    ayahTrackerPresenter.setAyahCoordinates(pageCoordinates);
     ayahCoordinatesError = false;
   }
 

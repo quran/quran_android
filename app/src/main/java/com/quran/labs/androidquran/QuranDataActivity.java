@@ -311,6 +311,30 @@ public class QuranDataActivity extends Activity implements
         return false;
       }
 
+      // in 2.9.0, there was an initial release of the new madani images - since then, we
+      // moved to a new set of images that let us draw the ayah markers and sura headers
+      // (and are, consequently, much lighter). they also properly center in the pages,
+      // unlike the older ones. the number of people who get this update are very few, and
+      // so temporarily add some code to remove this directory for now. this code can be
+      // removed in a future version in sha' Allah. if this isn't removed, no harm is done,
+      // since the page size has changed anyway, and so only the new images will be used.
+      // the page sets are currently not compatible (since one doesn't have ayah markers
+      // and one does).
+      final File newMadani = new File(baseDir, "new_madani");
+      if (newMadani.exists() && newMadani.isDirectory()) {
+        final File oldWidth = new File(newMadani, "width_1260");
+        if (oldWidth.exists()) {
+          quranFileUtils.deleteFileOrDirectory(oldWidth);
+          final File databases = new File(newMadani, "databases");
+          if (databases.exists()) {
+            final File ayahinfo = new File(databases, "ayahinfo_1260.db");
+            if (ayahinfo.exists()) {
+              quranFileUtils.deleteFileOrDirectory(ayahinfo);
+            }
+          }
+        }
+      }
+
       final int totalPages = quranInfo.getNumberOfPages();
       if (!quranSettings.haveDefaultImagesDirectory()) {
            /* previously, we would send any screen widths greater than 1280

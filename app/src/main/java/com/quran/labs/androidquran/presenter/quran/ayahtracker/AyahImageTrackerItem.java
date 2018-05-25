@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -59,11 +60,11 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
   }
 
   @Override
-  void onSetAyahCoordinates(int page, @NonNull Map<String, List<AyahBounds>> coordinates) {
-    if (this.page == page) {
-      this.coordinates = coordinates;
+  void onSetAyahCoordinates(PageCoordinates pageCoordinates) {
+    if (this.page == pageCoordinates.getPage()) {
+      this.coordinates = pageCoordinates.getAyahCoordinates();
       if (!coordinates.isEmpty()) {
-        ayahView.setCoordinateData(coordinates);
+        ayahView.setPageData(pageCoordinates);
         ayahView.invalidate();
       }
     }

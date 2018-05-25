@@ -6,9 +6,9 @@ import android.graphics.RectF;
 import android.support.v4.util.Pair;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.data.PageCoordinates;
 import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
@@ -17,7 +17,6 @@ import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -113,11 +112,11 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
         Observable.fromArray(pages)
             .flatMap(coordinatesModel::getAyahCoordinates)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableObserver<Pair<Integer, Map<String, List<AyahBounds>>>>() {
+            .subscribeWith(new DisposableObserver<PageCoordinates>() {
               @Override
-              public void onNext(Pair<Integer, Map<String, List<AyahBounds>>> coordinates) {
+              public void onNext(PageCoordinates coordinates) {
                 if (screen != null) {
-                  screen.setAyahCoordinatesData(coordinates.first, coordinates.second);
+                  screen.setAyahCoordinatesData(coordinates);
                 }
               }
 

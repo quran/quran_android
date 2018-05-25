@@ -108,8 +108,8 @@ public class AyahInfoDatabaseHandler {
   }
 
   @NonNull
-  public Map<String, List<AyahBounds>> getVersesBoundsForPage(int page) {
-    Map<String, List<AyahBounds>> result = new HashMap<>();
+  public PageCoordinates getVersesBoundsForPage(int page) {
+    Map<String, List<AyahBounds>> ayahBounds = new HashMap<>();
     Cursor cursor = null;
     try {
       cursor = getVersesBoundsCursorForPage(page);
@@ -117,7 +117,7 @@ public class AyahInfoDatabaseHandler {
         int sura = cursor.getInt(2);
         int ayah = cursor.getInt(3);
         String key = sura + ":" + ayah;
-        List<AyahBounds> bounds = result.get(key);
+        List<AyahBounds> bounds = ayahBounds.get(key);
         if (bounds == null) {
           bounds = new ArrayList<>();
         }
@@ -136,13 +136,74 @@ public class AyahInfoDatabaseHandler {
         } else {
           bounds.add(bound);
         }
-        result.put(key, bounds);
+        ayahBounds.put(key, bounds);
       }
     } finally {
       DatabaseUtils.closeCursor(cursor);
     }
 
-    return result;
+    if (haveVerseMarkerData()) {
+      return new PageCoordinates(page,
+          ayahBounds,
+          getSuraHeadersForPage(page),
+          getVerseMarkersForPage(page));
+    } else {
+      return new PageCoordinates(page, ayahBounds, new ArrayList<>(), new ArrayList<>());
+    }
+  }
+
+  private boolean haveVerseMarkerData() {
+    Cursor cursor = null;
+    try {
+      cursor = database.rawQuery("SELECT count(1) from sqlite_master WHERE name = ?",
+          new String[] { "ayah_markers" });
+      return cursor.moveToFirst() && cursor.getInt(0) > 0;
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+  }
+
+  private List<AyahMarkerLocation> getVerseMarkersForPage(int page) {
+    final List<AyahMarkerLocation> markers = new ArrayList<>();
+    Cursor cursor = null;
+    try {
+      cursor = database.query("ayah_markers",
+          new String[] { "sura_number", "ayah_number", "x", "y" },
+          "page_number = ?", new String[] { String.valueOf(page) }, null,
+          null, "sura_number, ayah_number ASC");
+      while (cursor.moveToNext()) {
+        final int sura = cursor.getInt(0);
+        final int ayah = cursor.getInt(1);
+        final int x = cursor.getInt(2);
+        final int y = cursor.getInt(3);
+        markers.add(new AyahMarkerLocation(sura, ayah, x, y));
+      }
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+    return markers;
+  }
+
+  private List<SuraHeaderLocation> getSuraHeadersForPage(int page) {
+    final List<SuraHeaderLocation> headers = new ArrayList<>();
+    Cursor cursor = null;
+    try {
+      cursor = database.query("sura_headers",
+          new String[] { "sura_number", "x", "y", "width", "height" },
+          "page_number = ?", new String[] { String.valueOf(page) }, null,
+          null, "sura_number ASC");
+      while (cursor.moveToNext()) {
+        final int sura = cursor.getInt(0);
+        final int x = cursor.getInt(1);
+        final int y = cursor.getInt(2);
+        final int width = cursor.getInt(3);
+        final int height = cursor.getInt(4);
+        headers.add(new SuraHeaderLocation(sura, x, y, width, height));
+      }
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+    return headers;
   }
 
   private Cursor getVersesBoundsCursorForPage(int page) {

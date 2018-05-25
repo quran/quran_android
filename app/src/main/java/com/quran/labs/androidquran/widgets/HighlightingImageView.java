@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.data.PageCoordinates;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 
 import java.util.HashSet;
@@ -55,7 +56,7 @@ public class HighlightingImageView extends ImageView {
   private OverlayParams overlayParams = null;
   private RectF pageBounds = null;
   private boolean didDraw = false;
-  private Map<String, List<AyahBounds>> coordinatesData;
+  private PageCoordinates pageCoordinates;
 
   public HighlightingImageView(Context context) {
     this(context, null);
@@ -103,8 +104,8 @@ public class HighlightingImageView extends ImageView {
     }
   }
 
-  public void setCoordinateData(Map<String, List<AyahBounds>> data) {
-    coordinatesData = data;
+  public void setPageData(PageCoordinates pageCoordinates) {
+    this.pageCoordinates = pageCoordinates;
   }
 
   public void setNightMode(boolean isNightMode, int textBrightness) {
@@ -293,6 +294,8 @@ public class HighlightingImageView extends ImageView {
     }
 
     // Draw each ayah highlight
+    final Map<String, List<AyahBounds>> coordinatesData = pageCoordinates == null ? null :
+        pageCoordinates.getAyahCoordinates();
     if (coordinatesData != null && !currentHighlights.isEmpty()) {
       alreadyHighlighted.clear();
       for (Map.Entry<HighlightType, Set<String>> entry : currentHighlights.entrySet()) {

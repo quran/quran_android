@@ -7,6 +7,7 @@ import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
+import com.quran.labs.androidquran.data.PageCoordinates;
 import com.quran.labs.androidquran.di.ActivityScope;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class CoordinatesModel {
         .subscribeOn(Schedulers.computation());
   }
 
-  public Observable<Pair<Integer, Map<String, List<AyahBounds>>>> getAyahCoordinates(
+  public Observable<PageCoordinates> getAyahCoordinates(
       Integer... pages) {
     AyahInfoDatabaseHandler database = ayahInfoDatabaseProvider.getAyahInfoHandler();
     if (database == null) {
@@ -52,19 +53,23 @@ public class CoordinatesModel {
     }
 
     return Observable.fromArray(pages)
-        .map(page -> new Pair<>(page, database.getVersesBoundsForPage(page)))
-        .map(pair -> new Pair<>(pair.first, normalizeMap(pair.second)))
+        .map(database::getVersesBoundsForPage)
+        .map(this::normalizePageAyahs)
         .subscribeOn(Schedulers.computation());
   }
 
-  private Map<String, List<AyahBounds>> normalizeMap(Map<String, List<AyahBounds>> original) {
+  private PageCoordinates normalizePageAyahs(PageCoordinates pageCoordinates) {
+    final Map<String, List<AyahBounds>> original = pageCoordinates.getAyahCoordinates();
     Map<String, List<AyahBounds>> normalizedMap = new HashMap<>();
     final Set<String> keys = original.keySet();
     for (String key : keys) {
       List<AyahBounds> normalBounds = original.get(key);
       normalizedMap.put(key, normalizeAyahBounds(key, normalBounds));
     }
-    return normalizedMap;
+    return new PageCoordinates(pageCoordinates.getPage(),
+                               normalizedMap,
+                               pageCoordinates.getSuraHeaders(),
+                               pageCoordinates.getAyahMarkers());
   }
 
   private List<AyahBounds> normalizeAyahBounds(String key, List<AyahBounds> ayahBounds) {

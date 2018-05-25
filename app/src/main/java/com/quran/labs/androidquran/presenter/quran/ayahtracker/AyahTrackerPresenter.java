@@ -5,9 +5,9 @@ import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 
-import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.common.HighlightInfo;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.di.QuranPageScope;
@@ -20,7 +20,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -46,12 +45,12 @@ public class AyahTrackerPresenter implements AyahTracker,
     }
   }
 
-  public void setAyahCoordinates(int page, Map<String, List<AyahBounds>> coordinates) {
+  public void setAyahCoordinates(PageCoordinates pageCoordinates) {
     for (AyahTrackerItem item : items) {
-      item.onSetAyahCoordinates(page, coordinates);
+      item.onSetAyahCoordinates(pageCoordinates);
     }
 
-    if (pendingHighlightInfo != null && !coordinates.isEmpty()) {
+    if (pendingHighlightInfo != null && !pageCoordinates.getAyahCoordinates().isEmpty()) {
       highlightAyah(pendingHighlightInfo.sura, pendingHighlightInfo.ayah,
           pendingHighlightInfo.highlightType, pendingHighlightInfo.scrollToAyah);
     }

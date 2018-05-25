@@ -1,0 +1,3 @@
+package com.quran.labs.androidquran.data
+
+data class AyahMarkerLocation(val sura: Int, val ayah: Int, val x: Int, val y: Int)

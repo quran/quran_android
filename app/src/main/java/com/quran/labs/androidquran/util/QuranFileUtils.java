@@ -525,7 +525,7 @@ public class QuranFileUtils {
     return false;
   }
 
-  private void deleteFileOrDirectory(File file) {
+  public void deleteFileOrDirectory(File file) {
     if (file.isDirectory()) {
       File[] subFiles = file.listFiles();
       // subFiles is null on some devices, despite this being a directory
