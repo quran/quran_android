@@ -10,6 +10,9 @@ import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranPageLayout;
+import com.quran.page.common.draw.ImageDrawHelper;
+
+import java.util.Set;
 
 public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   @NonNull private QuranPageLayout quranPageLayout;
@@ -19,8 +22,9 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
                                         int screenHeight,
                                         QuranInfo quranInfo,
                                         @NonNull QuranPageLayout quranPageLayout,
+                                        @NonNull Set<ImageDrawHelper> imageDrawHelpers,
                                         @NonNull HighlightingImageView highlightingImageView) {
-    super(page, screenHeight, quranInfo, highlightingImageView);
+    super(page, screenHeight, quranInfo, imageDrawHelpers, highlightingImageView);
     this.screenHeight = screenHeight;
     this.quranPageLayout = quranPageLayout;
   }

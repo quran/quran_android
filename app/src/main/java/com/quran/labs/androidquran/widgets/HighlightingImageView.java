@@ -22,6 +22,7 @@ import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.page.common.draw.ImageDrawHelper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +58,7 @@ public class HighlightingImageView extends ImageView {
   private RectF pageBounds = null;
   private boolean didDraw = false;
   private PageCoordinates pageCoordinates;
+  private Set<ImageDrawHelper> imageDrawHelpers;
 
   public HighlightingImageView(Context context) {
     this(context, null);
@@ -104,7 +106,8 @@ public class HighlightingImageView extends ImageView {
     }
   }
 
-  public void setPageData(PageCoordinates pageCoordinates) {
+  public void setPageData(PageCoordinates pageCoordinates, Set<ImageDrawHelper> imageDrawHelpers) {
+    this.imageDrawHelpers = imageDrawHelpers;
     this.pageCoordinates = pageCoordinates;
   }
 
@@ -312,6 +315,13 @@ public class HighlightingImageView extends ImageView {
              alreadyHighlighted.add(ayah);
            }
         }
+      }
+    }
+
+    // run additional image draw helpers if any
+    if (imageDrawHelpers != null && pageCoordinates != null) {
+      for (ImageDrawHelper imageDrawHelper : imageDrawHelpers) {
+        imageDrawHelper.draw(pageCoordinates, canvas, this);
       }
     }
   }

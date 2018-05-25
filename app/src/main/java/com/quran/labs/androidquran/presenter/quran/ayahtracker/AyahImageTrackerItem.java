@@ -16,6 +16,7 @@ import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.page.common.draw.ImageDrawHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -25,23 +26,27 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
   private final QuranInfo quranInfo;
   private final boolean isPageOnRightSide;
   private final int screenHeight;
+  private final Set<ImageDrawHelper> imageDrawHelpers;
   @Nullable Map<String, List<AyahBounds>> coordinates;
 
   public AyahImageTrackerItem(int page,
                               int screenHeight,
                               QuranInfo quranInfo,
+                              @NonNull Set<ImageDrawHelper> imageDrawHelpers,
                               @NonNull HighlightingImageView highlightingImageView) {
-    this(page, screenHeight, quranInfo, false, highlightingImageView);
+    this(page, screenHeight, quranInfo, false, imageDrawHelpers, highlightingImageView);
   }
 
   public AyahImageTrackerItem(int page,
                               int screenHeight,
                               QuranInfo quranInfo,
                               boolean isPageOnTheRight,
+                              @NonNull Set<ImageDrawHelper> imageDrawHelpers,
                               @NonNull HighlightingImageView highlightingImageView) {
     super(page, highlightingImageView);
     this.quranInfo = quranInfo;
     this.screenHeight = screenHeight;
+    this.imageDrawHelpers = imageDrawHelpers;
     this.isPageOnRightSide = isPageOnTheRight;
   }
 
@@ -64,7 +69,7 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
     if (this.page == pageCoordinates.getPage()) {
       this.coordinates = pageCoordinates.getAyahCoordinates();
       if (!coordinates.isEmpty()) {
-        ayahView.setPageData(pageCoordinates);
+        ayahView.setPageData(pageCoordinates, imageDrawHelpers);
         ayahView.invalidate();
       }
     }

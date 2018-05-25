@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
@@ -33,8 +32,11 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
+import com.quran.page.common.data.PageCoordinates;
+import com.quran.page.common.draw.ImageDrawHelper;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -55,6 +57,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
   @Inject AyahSelectedListener ayahSelectedListener;
   @Inject QuranScreenInfo quranScreenInfo;
+  @Inject Set<ImageDrawHelper> imageDrawHelpers;
 
   private HighlightingImageView imageView;
   private QuranImagePageLayout quranPageLayout;
@@ -113,8 +116,8 @@ public class QuranPageFragment extends Fragment implements PageController,
       ayahTrackerItems = new AyahTrackerItem[]{
         quranPageLayout.canScroll() ?
             new AyahScrollableImageTrackerItem(pageNumber, height,
-                quranInfo, quranPageLayout, imageView) :
-            new AyahImageTrackerItem(pageNumber, height, quranInfo, imageView)
+                quranInfo, quranPageLayout, imageDrawHelpers, imageView) :
+            new AyahImageTrackerItem(pageNumber, height, quranInfo, imageDrawHelpers, imageView)
       };
     }
     return ayahTrackerItems;
