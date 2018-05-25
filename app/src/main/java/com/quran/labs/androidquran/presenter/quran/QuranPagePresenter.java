@@ -8,7 +8,7 @@ import android.support.v4.util.Pair;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.data.PageCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;

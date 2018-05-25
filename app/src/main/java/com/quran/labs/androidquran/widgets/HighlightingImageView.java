@@ -18,9 +18,9 @@ import android.util.SparseArray;
 import android.widget.ImageView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.PageCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 
 import java.util.HashSet;

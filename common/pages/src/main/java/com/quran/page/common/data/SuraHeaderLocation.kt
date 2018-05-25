@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.data
+package com.quran.page.common.data
 
 data class SuraHeaderLocation(val sura: Int,
                               val x: Int,

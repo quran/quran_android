@@ -7,9 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 
-import com.quran.labs.androidquran.common.AyahBounds;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.page.common.data.AyahBounds;
+import com.quran.page.common.data.AyahMarkerLocation;
+import com.quran.page.common.data.PageCoordinates;
+import com.quran.page.common.data.SuraHeaderLocation;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -5,9 +5,9 @@ import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.data.PageCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;

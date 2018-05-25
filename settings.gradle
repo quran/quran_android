@@ -1,5 +1,6 @@
 include ':app'
 include ':common:data'
+include ':common:pages'
 include ':pages:madani'
 
 if (new File(rootDir, 'extras/settings-extra.gradle').exists()) {

@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 
 import com.quran.labs.androidquran.common.HighlightInfo;
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.data.PageCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.di.QuranPageScope;

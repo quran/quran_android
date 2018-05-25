@@ -4,10 +4,10 @@ import android.graphics.RectF;
 import android.support.v4.util.Pair;
 
 import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.common.AyahBounds;
+import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
-import com.quran.labs.androidquran.data.PageCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.di.ActivityScope;
 
 import java.util.ArrayList;

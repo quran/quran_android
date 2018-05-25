@@ -97,6 +97,7 @@ if (new File(rootDir, 'extras/extras.gradle').exists()) {
 
 dependencies {
   implementation project(path: ':common:data')
+  implementation project(path: ':common:pages')
 
   implementation deps.kotlin.stdlib
   implementation "com.android.support:support-v4:${supportLibVersion}"

@@ -1,6 +1,4 @@
-package com.quran.labs.androidquran.data
-
-import com.quran.labs.androidquran.common.AyahBounds
+package com.quran.page.common.data
 
 data class PageCoordinates(val page: Int,
                            val ayahCoordinates: Map<String, List<AyahBounds>>,
