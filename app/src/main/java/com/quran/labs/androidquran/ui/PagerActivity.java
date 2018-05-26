@@ -307,7 +307,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             }));
 
     final Resources resources = getResources();
-    isImmersiveInPortrait = resources.getBoolean(R.bool.immersive_in_portrait);
+    isImmersiveInPortrait = quranSettings.isImmersiveInPortrait();
     isLandscape = resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
     ayahToolBarTotalHeight = resources

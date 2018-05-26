@@ -11,6 +11,7 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
 
 import com.quran.labs.androidquran.BuildConfig;
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
@@ -85,6 +86,11 @@ public class QuranSettings {
 
   public boolean shouldDisplayMarkerPopup() {
     return prefs.getBoolean(Constants.PREF_DISPLAY_MARKER_POPUP, true);
+  }
+
+  public boolean isImmersiveInPortrait() {
+    return prefs.getBoolean(Constants.PREF_IMMERSIVE_IN_PORTRAIT,
+        appContext.getResources().getBoolean(R.bool.immersive_in_portrait));
   }
 
   public boolean shouldHighlightBookmarks() {

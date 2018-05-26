@@ -148,6 +148,9 @@
   <string name="prefs_use_arabic_title">Arabic mode</string>
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
   <string name="prefs_new_background_title">New background</string>
+  <string name="prefs_immersive_in_portrait_title">Fullscreen in portrait mode</string>
+  <string name="prefs_immersive_in_portrait_summary_enabled">All portrait images are full screen.</string>
+  <string name="prefs_immersive_in_portrait_summary_disabled">Only landscape images are full screen.</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>
   <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
   <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
