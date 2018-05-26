@@ -4,7 +4,6 @@ import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.ImageUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
-import com.quran.labs.androidquran.util.QuranScreenInfo
 import dagger.Reusable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -16,29 +15,30 @@ import javax.inject.Inject
 class PageSelectPresenter @Inject
     constructor(private val imageUtil: ImageUtil,
                 private val quranFileUtils: QuranFileUtils,
-                private val quranScreenInfo: QuranScreenInfo,
                 private val mainThreadScheduler: Scheduler,
                 private val pageTypes:
                 Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>) :
     Presenter<PageSelectActivity> {
+  private val baseUrl = "https://android.quran.com/data/pagetypes"
   private val compositeDisposable = CompositeDisposable()
   private var currentView: PageSelectActivity? = null
 
   private fun generateData() {
     val base = quranFileUtils.quranBaseDirectory
     if (base != null) {
-      val outputPath = File(base, "pagetype")
+      val outputPath = File(base, "pagetypes")
       if (!outputPath.exists()) {
         outputPath.mkdirs()
+        File(outputPath, ".nomedia").createNewFile()
       }
 
       val data = pageTypes.map {
         val provider = it.value
-        val previewImage = File(outputPath, "${it.key}_604.png")
+        val previewImage = File(outputPath, "${it.key}.png")
         val downloadedImage = if (previewImage.exists()) {
           previewImage
         } else {
-          val url = provider.getImagesBaseUrl() + "width${quranScreenInfo.widthParam}/page604.png"
+          val url = "$baseUrl/${it.key}.png"
           compositeDisposable.add(
               imageUtil.downloadImage(url, previewImage)
                   .subscribeOn(Schedulers.io())

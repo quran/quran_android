@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -84,7 +83,6 @@ class PageSelectAdapter(val inflater: LayoutInflater,
     updateView(view, item)
     view.tag = item.pageType
 
-    view.setBackgroundDrawable(QuranDisplayHelper.getPaintDrawable(0, width))
     container.addView(view)
     return view
   }

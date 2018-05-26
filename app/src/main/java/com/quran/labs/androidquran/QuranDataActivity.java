@@ -335,6 +335,11 @@ public class QuranDataActivity extends Activity implements
         }
       }
 
+      final File pageType = new File(baseDir, "pageType");
+      if (pageType.exists()) {
+        quranFileUtils.deleteFileOrDirectory(pageType);
+      }
+
       final int totalPages = quranInfo.getNumberOfPages();
       if (!quranSettings.haveDefaultImagesDirectory()) {
            /* previously, we would send any screen widths greater than 1280
