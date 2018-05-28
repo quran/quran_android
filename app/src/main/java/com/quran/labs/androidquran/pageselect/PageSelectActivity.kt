@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
+import com.crashlytics.android.answers.Answers
+import com.crashlytics.android.answers.CustomEvent
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
@@ -23,6 +25,8 @@ class PageSelectActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     (application as QuranApplication).applicationComponent.inject(this)
+
+    Answers.getInstance().logCustom(CustomEvent("pageSelectionActivityVisited"))
 
     setContentView(R.layout.page_select)
 
@@ -69,7 +73,8 @@ class PageSelectActivity : AppCompatActivity() {
     val pageType = quranSettings.pageType
     if (pageType != type) {
       quranSettings.pageType = type
-
+      Answers.getInstance().logCustom(
+          CustomEvent("pageTypeChanged").putCustomAttribute("pageType", type))
       val intent = Intent(this, QuranDataActivity::class.java).apply {
         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
       }
