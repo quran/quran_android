@@ -21,6 +21,7 @@ class PageSelectPresenter @Inject
     Presenter<PageSelectActivity> {
   private val baseUrl = "https://android.quran.com/data/pagetypes"
   private val compositeDisposable = CompositeDisposable()
+  private val downloadingSet = mutableSetOf<String>()
   private var currentView: PageSelectActivity? = null
 
   private fun generateData() {
@@ -37,7 +38,8 @@ class PageSelectPresenter @Inject
         val previewImage = File(outputPath, "${it.key}.png")
         val downloadedImage = if (previewImage.exists()) {
           previewImage
-        } else {
+        } else if (!downloadingSet.contains(it.key)){
+          downloadingSet.add(it.key)
           val url = "$baseUrl/${it.key}.png"
           compositeDisposable.add(
               imageUtil.downloadImage(url, previewImage)
@@ -45,6 +47,9 @@ class PageSelectPresenter @Inject
                   .observeOn(mainThreadScheduler)
                   .subscribe { generateData() }
           )
+          null
+        } else {
+          // already downloading
           null
         }
         PageTypeItem(it.key,
@@ -64,7 +69,7 @@ class PageSelectPresenter @Inject
   override fun unbind(what: PageSelectActivity?) {
     if (currentView === what) {
       currentView = null
-      compositeDisposable.clear()
+      // not clearing the composite disposable to avoid interrupting the download
     }
   }
 }

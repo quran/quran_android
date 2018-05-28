@@ -14,6 +14,7 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
   fun downloadImage(url: String, outputPath: File): Maybe<File> {
     return Maybe.fromCallable {
       if (!outputPath.exists()) {
+        val destination = File(outputPath.path + ".tmp")
         val request = Request.Builder()
             .url(url)
             .build()
@@ -21,13 +22,15 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
         val response = call.execute()
 
         var source: Source? = null
-        val sink = Okio.buffer(Okio.sink(outputPath))
+        val sink = Okio.buffer(Okio.sink(destination))
         try {
           if (response.isSuccessful) {
             source = response.body()?.source()
             if (source != null) {
               sink.writeAll(source)
             }
+            destination.copyTo(outputPath)
+            destination.delete()
           }
         } finally {
           sink.closeQuietly()
