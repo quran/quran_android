@@ -42,7 +42,9 @@
   <string name="about_qaloon_images">\"Quran - Qaloon\" ilovasi uchun rasmlar \"Nous Memes Editions Et Diffusion (Tunisia)\" ruhsati bilan olindi</string>
   <string name="about_quranicaudio_summary">Muttasil mp3 Qurʼon tilovatlari</string>
   <string name="about_quran_ksu">Elektron Musʼhaf proyekti</string>
-  <string name="about_quran_ksu_summary">Arabcha tafsir hamda baʼzi tarjimalar Podshoh Saud Universiteti qoshidagi Elektron Musʼhaf proyektidan olindi</string>
+  <string name="about_quran_ksu_summary">Arabcha tafsir hamda baʼzi tarjimalar Podshoh Saud Universiteti qoshidagi Elektron Musʼhaf proyektidan olindi.
+    Shuningdek doktor Ayman Suvayd qiroati ham ushbu proyektdan olingan.
+  </string>
   <string name="about_tanzil_summary">Koʻplab tillardagi Qurʼon maʼnolari tarjimalari</string>
   <string name="about_noorhidayat_summary">\"Noorehira\" shrifti hamda Mufti Taqi Usmoniy tarjimasi</string>
   <string name="about_open_source">Ochiq kodli proyektlar</string>
@@ -122,6 +124,9 @@
   <string name="prefs_use_arabic_title">Arabcha rejim</string>
   <string name="prefs_use_arabic_summary_on">Ilova arab tilida ishlaydi </string>
   <string name="prefs_new_background_title">Yangi fon</string>
+  <string name="prefs_immersive_in_portrait_title">Landshaft rejimda toʻliq ekrandan foydalanish</string>
+  <string name="prefs_immersive_in_portrait_summary_enabled">Ham landshaft, ham planshet rejimda toʻliq ekrandan foydalanish</string>
+  <string name="prefs_immersive_in_portrait_summary_disabled">Faqat planshet rejimda toʻliq ekrandan foydalanish</string>
   <string name="prefs_lock_orientation_title">Ekran oriyentatsiyasini qulflash</string>
   <string name="prefs_lock_orientation_summary_on">Qurʼon sahifalari doim belgilangan oriyentatsiyada boʻladi</string>
   <string name="prefs_lock_orientation_summary_off">Joriy oriyentatsiyadan foydalaniladi</string>
@@ -176,6 +181,8 @@
   <string name="prefs_export_summary">Xatchoʻp va teglarni eksport qilish</string>
   <string name="prefs_import_title">Import</string>
   <string name="prefs_import_summary">Xatchoʻp va teglarni import qilish</string>
+  <string name="prefs_page_type_title">Sahifa turi (eksperimental)</string>
+  <string name="prefs_page_type_summary">Qurʼon sahifalari turini tanlash</string>
 
   <string name="import_data_permissions_error">Ruxsat xatoliklari tufayli zaxira faylini oʻqib boʻlmadi.</string>
   <string name="import_data_error">Yaroqsiz zaxira fayl (yoxud zaxira faylni oʻqib boʻlmadi).</string>
@@ -323,4 +330,8 @@
   <string name="audio_manager">Audio menejer</string>
 
   <string name="more_translations">Yana tarjimalar</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Qurʼon yuklamalari</string>
+  <string name="notification_channel_audio">Qurʼon qiroati</string>
 </resources>
