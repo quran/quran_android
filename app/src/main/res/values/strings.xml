@@ -52,7 +52,7 @@
   <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
   <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
-  <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project is the app\'s source of Arabic Tafaseer and translations for various languages. It is also the source for Dr. Ayman Suwaid\'s recitation</string>
+  <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project is the app\'s source of Arabic Tafaseer and translations for various languages. It is also the source for Dr. Ayman Suwaid\'s recitation.</string>
   <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
   <string name="about_tanzil" translatable="false">Tanzil</string>
   <string name="about_tanzil_summary">Translations for many languages</string>
@@ -149,8 +149,8 @@
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
   <string name="prefs_new_background_title">New background</string>
   <string name="prefs_immersive_in_portrait_title">Fullscreen in portrait mode</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">All portrait images are full screen.</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Only landscape images are full screen.</string>
+  <string name="prefs_immersive_in_portrait_summary_enabled">Both portrait and landscape images are displayed  in full screen</string>
+  <string name="prefs_immersive_in_portrait_summary_disabled">Only landscape images are displayed in full screen</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>
   <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
   <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
@@ -206,7 +206,7 @@
   <string name="prefs_export_title">Export</string>
   <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
   <string name="prefs_page_type_title">Page Type (experimental)</string>
-  <string name="prefs_page_type_summary">Select the type of reading pages.</string>
+  <string name="prefs_page_type_summary">Select the type of reading pages</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">More Translations</string>
@@ -364,7 +364,7 @@
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
 
-  <!-- notification channels -->
+  <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
-  <string name="notification_channel_audio">Audio Playback</string>
+  <string name="notification_channel_audio">Quran Recitation</string>
 </resources>
