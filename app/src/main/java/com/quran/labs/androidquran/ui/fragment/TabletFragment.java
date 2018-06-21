@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +39,7 @@ import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
 import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import com.quran.labs.androidquran.widgets.TabletView;
+import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
@@ -323,8 +323,8 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void setPageCoordinates(int page, RectF pageCoordinates) {
-    ayahTrackerPresenter.setPageBounds(page, pageCoordinates);
+  public void setPageCoordinates(PageCoordinates pageCoordinates) {
+    ayahTrackerPresenter.setPageBounds(pageCoordinates);
   }
 
   @Override
@@ -333,8 +333,8 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void setAyahCoordinatesData(PageCoordinates pageCoordinates) {
-    ayahTrackerPresenter.setAyahCoordinates(pageCoordinates);
+  public void setAyahCoordinatesData(AyahCoordinates ayahCoordinates) {
+    ayahTrackerPresenter.setAyahCoordinates(ayahCoordinates);
   }
 
   @Override

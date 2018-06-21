@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,6 +31,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
+import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
@@ -84,8 +84,9 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater,
-                           ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater,
+                           ViewGroup container,
+                           Bundle savedInstanceState) {
     final Context context = getActivity();
     quranPageLayout = new QuranImagePageLayout(context);
     quranPageLayout.setPageController(this, pageNumber);
@@ -164,8 +165,8 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void setPageCoordinates(int page, RectF pageCoordinates) {
-    ayahTrackerPresenter.setPageBounds(page, pageCoordinates);
+  public void setPageCoordinates(PageCoordinates pageCoordinates) {
+    ayahTrackerPresenter.setPageBounds(pageCoordinates);
   }
 
   @Override
@@ -174,8 +175,8 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void setAyahCoordinatesData(PageCoordinates pageCoordinates) {
-    ayahTrackerPresenter.setAyahCoordinates(pageCoordinates);
+  public void setAyahCoordinatesData(AyahCoordinates ayahCoordinates) {
+    ayahTrackerPresenter.setAyahCoordinates(ayahCoordinates);
     ayahCoordinatesError = false;
   }
 

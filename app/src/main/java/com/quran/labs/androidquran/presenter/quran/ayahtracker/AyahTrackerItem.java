@@ -1,14 +1,14 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
-import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.page.common.data.AyahCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 
 import java.util.List;
 import java.util.Set;
@@ -22,10 +22,10 @@ public class AyahTrackerItem<T> {
     this.ayahView = ayahView;
   }
 
-  void onSetPageBounds(int page, @NonNull RectF bounds) {
+  void onSetPageBounds(PageCoordinates pageCoordinates) {
   }
 
-  void onSetAyahCoordinates(PageCoordinates pageCoordinates) {
+  void onSetAyahCoordinates(AyahCoordinates ayahCoordinates) {
   }
 
   void onSetAyahBookmarks(@NonNull List<Bookmark> bookmarks) {

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.page.common.data.AyahBounds;
+import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.AyahMarkerLocation;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.data.SuraHeaderLocation;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class AyahInfoDatabaseHandler {
-
+  private static final RectF EMPTY_BOUNDS = new RectF();
   private static final String COL_PAGE = "page_number";
   private static final String COL_LINE = "line_number";
   private static final String COL_SURA = "sura_number";
@@ -93,6 +94,19 @@ public class AyahInfoDatabaseHandler {
   }
 
   @NonNull
+  public PageCoordinates getPageInfo(int page, boolean wantBounds) {
+    final RectF bounds = wantBounds ? getPageBounds(page) : EMPTY_BOUNDS;
+    if (haveVerseMarkerData()) {
+      return new PageCoordinates(page,
+          bounds,
+          getSuraHeadersForPage(page),
+          getVerseMarkersForPage(page));
+    } else {
+      return new PageCoordinates(page, bounds, new ArrayList<>(), new ArrayList<>());
+    }
+  }
+
+  @NonNull
   public RectF getPageBounds(int page) {
     Cursor c = null;
     try {
@@ -111,7 +125,7 @@ public class AyahInfoDatabaseHandler {
   }
 
   @NonNull
-  public PageCoordinates getVersesBoundsForPage(int page) {
+  public AyahCoordinates getVersesBoundsForPage(int page) {
     Map<String, List<AyahBounds>> ayahBounds = new HashMap<>();
     Cursor cursor = null;
     try {
@@ -145,14 +159,7 @@ public class AyahInfoDatabaseHandler {
       DatabaseUtils.closeCursor(cursor);
     }
 
-    if (haveVerseMarkerData()) {
-      return new PageCoordinates(page,
-          ayahBounds,
-          getSuraHeadersForPage(page),
-          getVerseMarkersForPage(page));
-    } else {
-      return new PageCoordinates(page, ayahBounds, new ArrayList<>(), new ArrayList<>());
-    }
+    return new AyahCoordinates(page, ayahBounds);
   }
 
   private boolean haveVerseMarkerData() {

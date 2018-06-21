@@ -1,14 +1,14 @@
 package com.quran.labs.androidquran.model.quran;
 
 import android.graphics.RectF;
-import android.support.v4.util.Pair;
 
 import com.crashlytics.android.Crashlytics;
-import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
-import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.di.ActivityScope;
+import com.quran.page.common.data.AyahBounds;
+import com.quran.page.common.data.AyahCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,18 +34,18 @@ public class CoordinatesModel {
     this.ayahInfoDatabaseProvider = ayahInfoDatabaseProvider;
   }
 
-  public Observable<Pair<Integer, RectF>> getPageCoordinates(Integer... pages) {
+  public Observable<PageCoordinates> getPageCoordinates(boolean wantPageBounds, Integer... pages) {
     AyahInfoDatabaseHandler database = ayahInfoDatabaseProvider.getAyahInfoHandler();
     if (database == null) {
       return Observable.error(new NoSuchElementException("No AyahInfoDatabaseHandler found!"));
     }
 
     return Observable.fromArray(pages)
-        .map(page -> new Pair<>(page, database.getPageBounds(page)))
+        .map(page -> database.getPageInfo(page, wantPageBounds))
         .subscribeOn(Schedulers.computation());
   }
 
-  public Observable<PageCoordinates> getAyahCoordinates(
+  public Observable<AyahCoordinates> getAyahCoordinates(
       Integer... pages) {
     AyahInfoDatabaseHandler database = ayahInfoDatabaseProvider.getAyahInfoHandler();
     if (database == null) {
@@ -58,18 +58,15 @@ public class CoordinatesModel {
         .subscribeOn(Schedulers.computation());
   }
 
-  private PageCoordinates normalizePageAyahs(PageCoordinates pageCoordinates) {
-    final Map<String, List<AyahBounds>> original = pageCoordinates.getAyahCoordinates();
+  private AyahCoordinates normalizePageAyahs(AyahCoordinates ayahCoordinates) {
+    final Map<String, List<AyahBounds>> original = ayahCoordinates.getAyahCoordinates();
     Map<String, List<AyahBounds>> normalizedMap = new HashMap<>();
     final Set<String> keys = original.keySet();
     for (String key : keys) {
       List<AyahBounds> normalBounds = original.get(key);
       normalizedMap.put(key, normalizeAyahBounds(key, normalBounds));
     }
-    return new PageCoordinates(pageCoordinates.getPage(),
-                               normalizedMap,
-                               pageCoordinates.getSuraHeaders(),
-                               pageCoordinates.getAyahMarkers());
+    return new AyahCoordinates(ayahCoordinates.getPage(), normalizedMap);
   }
 
   private List<AyahBounds> normalizeAyahBounds(String key, List<AyahBounds> ayahBounds) {

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -51,25 +52,29 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
   }
 
   @Override
-  void onSetPageBounds(int page, @NonNull RectF bounds) {
-    if (this.page == page) {
+  void onSetPageBounds(PageCoordinates pageCoordinates) {
+    if (this.page == pageCoordinates.getPage()) {
       // this is only called if overlayText is set
-      ayahView.setPageBounds(bounds);
-      Context context = ayahView.getContext();
-      String suraText = quranInfo.getSuraNameFromPage(context, page, true);
-      String juzText = quranInfo.getJuzString(context, page);
-      String pageText = QuranUtils.getLocalizedNumber(context, page);
-      String rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page);
-      ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);
+      final RectF pageBounds = pageCoordinates.getPageBounds();
+      if (!pageBounds.isEmpty()) {
+        ayahView.setPageBounds(pageBounds);
+        Context context = ayahView.getContext();
+        String suraText = quranInfo.getSuraNameFromPage(context, page, true);
+        String juzText = quranInfo.getJuzString(context, page);
+        String pageText = QuranUtils.getLocalizedNumber(context, page);
+        String rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page);
+        ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);
+      }
+      ayahView.setPageData(pageCoordinates, imageDrawHelpers);
     }
   }
 
   @Override
-  void onSetAyahCoordinates(PageCoordinates pageCoordinates) {
-    if (this.page == pageCoordinates.getPage()) {
-      this.coordinates = pageCoordinates.getAyahCoordinates();
+  void onSetAyahCoordinates(AyahCoordinates ayahCoordinates) {
+    if (this.page == ayahCoordinates.getPage()) {
+      this.coordinates = ayahCoordinates.getAyahCoordinates();
       if (!coordinates.isEmpty()) {
-        ayahView.setPageData(pageCoordinates, imageDrawHelpers);
+        ayahView.setAyahData(ayahCoordinates);
         ayahView.invalidate();
       }
     }

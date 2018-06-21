@@ -2,19 +2,18 @@ package com.quran.labs.androidquran.presenter.quran;
 
 
 import android.graphics.Bitmap;
-import android.graphics.RectF;
-import android.support.v4.util.Pair;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.page.common.data.AyahCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -57,15 +56,13 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
   private void getPageCoordinates(Integer... pages) {
     compositeDisposable.add(
-        Completable.timer(500, TimeUnit.MILLISECONDS)
-            .andThen(quranSettings.shouldOverlayPageInfo() ?
-                coordinatesModel.getPageCoordinates(pages) : Observable.empty())
+        coordinatesModel.getPageCoordinates(quranSettings.shouldOverlayPageInfo(), pages)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableObserver<Pair<Integer, RectF>>() {
+            .subscribeWith(new DisposableObserver<PageCoordinates>() {
               @Override
-              public void onNext(Pair<Integer, RectF> pageBounds) {
+              public void onNext(PageCoordinates pageCoordinates) {
                 if (screen != null) {
-                  screen.setPageCoordinates(pageBounds.first, pageBounds.second);
+                  screen.setPageCoordinates(pageCoordinates);
                 }
               }
 
@@ -109,12 +106,13 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
 
   private void getAyahCoordinates(Integer... pages) {
     compositeDisposable.add(
-        Observable.fromArray(pages)
+        Completable.timer(500, TimeUnit.MILLISECONDS)
+            .andThen(Observable.fromArray(pages))
             .flatMap(coordinatesModel::getAyahCoordinates)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableObserver<PageCoordinates>() {
+            .subscribeWith(new DisposableObserver<AyahCoordinates>() {
               @Override
-              public void onNext(PageCoordinates coordinates) {
+              public void onNext(AyahCoordinates coordinates) {
                 if (screen != null) {
                   screen.setAyahCoordinatesData(coordinates);
                 }
