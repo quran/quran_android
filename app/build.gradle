@@ -104,7 +104,7 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${supportLibVersion}"
   implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
   implementation "com.android.support:design:${supportLibVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
@@ -115,10 +115,10 @@ dependencies {
   debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   testImplementation 'junit:junit:4.12'
-  testImplementation 'com.google.truth:truth:0.36'
-  testImplementation "org.mockito:mockito-core:2.15.0"
+  testImplementation 'com.google.truth:truth:0.41'
+  testImplementation "org.mockito:mockito-core:2.19.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
-  implementation('com.crashlytics.sdk.android:crashlytics:2.9.1')
+  implementation('com.crashlytics.sdk.android:crashlytics:2.9.4')
 }
