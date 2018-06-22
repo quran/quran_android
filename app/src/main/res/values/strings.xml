@@ -354,6 +354,7 @@
   <!-- tag dialog -->
   <string name="tag_dlg_title">Tag</string>
   <string name="tag_name">Name</string>
+  <string name="tag_blank_tag_error">Tag names cannot be blank!</string>
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">No Bookmarks</string>

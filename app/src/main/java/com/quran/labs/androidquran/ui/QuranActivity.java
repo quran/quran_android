@@ -352,7 +352,7 @@ public class QuranActivity extends QuranActionBarActivity
   public void editTag(long id, String name) {
     if (!isPaused) {
       FragmentManager fm = getSupportFragmentManager();
-      AddTagDialog addTagDialog = AddTagDialog.newInstance(id, name);
+      AddTagDialog addTagDialog = AddTagDialog.Companion.newInstance(id, name);
       addTagDialog.show(fm, AddTagDialog.TAG);
     }
   }
