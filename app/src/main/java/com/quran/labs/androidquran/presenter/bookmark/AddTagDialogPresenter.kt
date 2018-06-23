@@ -10,27 +10,34 @@ import javax.inject.Inject
 class AddTagDialogPresenter @Inject
 internal constructor(private val bookmarkModel: BookmarkModel) : Presenter<AddTagDialog> {
   private var dialog: AddTagDialog? = null
+  private var tags: List<Tag> = emptyList()
 
-  fun addTag(tagName: String): Boolean {
-    return if (tagName.isBlank()) {
-      dialog?.onBlankTagName()
-      false
-    } else {
-      bookmarkModel.addTagObservable(tagName)
-          .subscribe()
-      true
-    }
+  init {
+    bookmarkModel.tagsObservable
+        .subscribe { it -> this.tags = it }
   }
 
-  fun updateTag(tag: Tag): Boolean {
-    return if (tag.name.isBlank()) {
+  fun validate(tagName: String, tagId: Long): Boolean {
+    if (tagName.isBlank()) {
       dialog?.onBlankTagName()
-      false
+      return false
     } else {
-      bookmarkModel.updateTag(tag)
-          .subscribe()
-      true
+      if (tags.any { it.name == tagName && it.id != tagId }) {
+        dialog?.onDuplicateTagName()
+        return false
+      }
     }
+    return true
+  }
+
+  fun addTag(tagName: String) {
+    bookmarkModel.addTagObservable(tagName)
+        .subscribe()
+  }
+
+  fun updateTag(tag: Tag) {
+    bookmarkModel.updateTag(tag)
+        .subscribe()
   }
 
   override fun bind(dialog: AddTagDialog) {

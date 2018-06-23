@@ -85,7 +85,7 @@ public class BookmarkModel {
 
   public Observable<Long> addTagObservable(final String title) {
     return Observable.fromCallable(() -> {
-      Long result = bookmarksDBAdapter.addTag(title);
+      long result = bookmarksDBAdapter.addTag(title);
       tagPublishSubject.onNext(new Tag(result, title));
       return result;
     }).subscribeOn(Schedulers.io());

@@ -29,11 +29,11 @@ public class BookmarksDBAdapter {
   public static final int SORT_LOCATION = 1;
   private static final int SORT_ALPHABETICAL = 2;
 
-  private SQLiteDatabase mDb;
+  private SQLiteDatabase db;
 
   public BookmarksDBAdapter(Context context, int numberOfPages) {
     BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context, numberOfPages);
-    mDb = dbHelper.getWritableDatabase();
+    db = dbHelper.getWritableDatabase();
   }
 
   @NonNull
@@ -72,7 +72,7 @@ public class BookmarksDBAdapter {
 
     Cursor cursor = null;
     try {
-      cursor = mDb.rawQuery(queryBuilder.toString(), null);
+      cursor = db.rawQuery(queryBuilder.toString(), null);
       if (cursor != null) {
         long lastId = -1;
         Bookmark lastBookmark = null;
@@ -120,7 +120,7 @@ public class BookmarksDBAdapter {
     List<RecentPage> recents = new ArrayList<>();
     Cursor cursor = null;
     try {
-      cursor = mDb.query(LastPagesTable.TABLE_NAME, null, null, null, null, null,
+      cursor = db.query(LastPagesTable.TABLE_NAME, null, null, null, null, null,
           LastPagesTable.ADDED_DATE + " DESC");
       if (cursor != null) {
         while (cursor.moveToNext()) {
@@ -134,7 +134,7 @@ public class BookmarksDBAdapter {
   }
 
   public boolean replaceRecentRangeWithPage(int deleteRangeStart, int deleteRangeEnd, int page) {
-    int count = mDb.delete(LastPagesTable.TABLE_NAME,
+    int count = db.delete(LastPagesTable.TABLE_NAME,
         LastPagesTable.PAGE + " >= ? AND " + LastPagesTable.PAGE + " <= ?",
         new String[] { String.valueOf(deleteRangeStart), String.valueOf(deleteRangeEnd) });
     // avoid doing a delete if this delete caused us to remove any rows
@@ -149,8 +149,8 @@ public class BookmarksDBAdapter {
   private boolean addRecentPage(int page, boolean shouldDelete) {
     ContentValues contentValues = new ContentValues();
     contentValues.put(LastPagesTable.PAGE, page);
-    if (mDb.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1 && shouldDelete) {
-      mDb.execSQL("DELETE FROM " + LastPagesTable.TABLE_NAME + " WHERE " +
+    if (db.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1 && shouldDelete) {
+      db.execSQL("DELETE FROM " + LastPagesTable.TABLE_NAME + " WHERE " +
           LastPagesTable.ID + " NOT IN( SELECT " + LastPagesTable.ID + " FROM " +
           LastPagesTable.TABLE_NAME + " ORDER BY " + LastPagesTable.ADDED_DATE + " DESC LIMIT ? )",
           new Object[] { Constants.MAX_RECENT_PAGES });
@@ -164,7 +164,7 @@ public class BookmarksDBAdapter {
     List<Long> bookmarkTags = new ArrayList<>();
     Cursor cursor = null;
     try {
-      cursor = mDb.query(BookmarkTagTable.TABLE_NAME,
+      cursor = db.query(BookmarkTagTable.TABLE_NAME,
           new String[]{BookmarkTagTable.TAG_ID},
           BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
           null, null, null, BookmarkTagTable.TAG_ID + " ASC");
@@ -182,7 +182,7 @@ public class BookmarksDBAdapter {
   public long getBookmarkId(Integer sura, Integer ayah, int page) {
     Cursor cursor = null;
     try {
-      cursor = mDb.query(BookmarksTable.TABLE_NAME,
+      cursor = db.query(BookmarksTable.TABLE_NAME,
           null, BookmarksTable.PAGE + "=" + page + " AND " +
               BookmarksTable.SURA + (sura == null ? " IS NULL" : "=" + sura) +
               " AND " + BookmarksTable.AYAH +
@@ -199,7 +199,7 @@ public class BookmarksDBAdapter {
   }
 
   public void bulkDelete(List<Long> tagIds, List<Long> bookmarkIds, List<Pair<Long, Long>> untag) {
-    mDb.beginTransaction();
+    db.beginTransaction();
     try {
       // cache and re-use for tags and bookmarks
       String[] param = new String[1];
@@ -208,16 +208,16 @@ public class BookmarksDBAdapter {
       for (int i = 0, tagIdsSize = tagIds.size(); i < tagIdsSize; i++) {
         long tagId = tagIds.get(i);
         param[0] = String.valueOf(tagId);
-        mDb.delete(TagsTable.TABLE_NAME, TagsTable.ID + " = ?", param);
-        mDb.delete(BookmarkTagTable.TABLE_NAME, BookmarkTagTable.TAG_ID + " = ?", param);
+        db.delete(TagsTable.TABLE_NAME, TagsTable.ID + " = ?", param);
+        db.delete(BookmarkTagTable.TABLE_NAME, BookmarkTagTable.TAG_ID + " = ?", param);
       }
 
       // remove bookmarks
       for (int i = 0, bookmarkIdsSize = bookmarkIds.size(); i < bookmarkIdsSize; i++) {
         long bookmarkId = bookmarkIds.get(i);
         param[0] = String.valueOf(bookmarkId);
-        mDb.delete(BookmarksTable.TABLE_NAME, BookmarksTable.ID + " = ?", param);
-        mDb.delete(BookmarkTagTable.TABLE_NAME, BookmarkTagTable.BOOKMARK_ID + " = ?", param);
+        db.delete(BookmarksTable.TABLE_NAME, BookmarksTable.ID + " = ?", param);
+        db.delete(BookmarkTagTable.TABLE_NAME, BookmarkTagTable.BOOKMARK_ID + " = ?", param);
       }
 
       // untag whatever is being untagged
@@ -226,12 +226,12 @@ public class BookmarksDBAdapter {
         Pair<Long, Long> item = untag.get(i);
         params[0] = String.valueOf(item.first);
         params[1] = String.valueOf(item.second);
-        mDb.delete(BookmarkTagTable.TABLE_NAME,
+        db.delete(BookmarkTagTable.TABLE_NAME,
             BookmarkTagTable.BOOKMARK_ID + " = ? AND " + BookmarkTagTable.TAG_ID + " = ?", params);
       }
-      mDb.setTransactionSuccessful();
+      db.setTransactionSuccessful();
     } finally {
-      mDb.endTransaction();
+      db.endTransaction();
     }
   }
 
@@ -248,13 +248,13 @@ public class BookmarksDBAdapter {
     values.put(BookmarksTable.SURA, sura);
     values.put(BookmarksTable.AYAH, ayah);
     values.put(BookmarksTable.PAGE, page);
-    return mDb.insert(BookmarksTable.TABLE_NAME, null, values);
+    return db.insert(BookmarksTable.TABLE_NAME, null, values);
   }
 
   public boolean removeBookmark(long bookmarkId) {
-    mDb.delete(BookmarkTagTable.TABLE_NAME,
+    db.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
-    return mDb.delete(BookmarksTable.TABLE_NAME,
+    return db.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null) == 1;
   }
 
@@ -278,7 +278,7 @@ public class BookmarksDBAdapter {
     List<Tag> tags = new ArrayList<>();
     Cursor cursor = null;
     try {
-      cursor = mDb.query(TagsTable.TABLE_NAME,
+      cursor = db.query(TagsTable.TABLE_NAME,
           null, null, null, null, null, orderBy);
       if (cursor != null) {
         while (cursor.moveToNext()) {
@@ -295,17 +295,46 @@ public class BookmarksDBAdapter {
   }
 
   public long addTag(String name) {
-    ContentValues values = new ContentValues();
-    values.put(TagsTable.NAME, name);
-    return mDb.insert(TagsTable.TABLE_NAME, null, values);
+    final long existingTag = haveMatchingTag(name);
+    if (existingTag == -1) {
+      ContentValues values = new ContentValues();
+      values.put(TagsTable.NAME, name);
+      return db.insert(TagsTable.TABLE_NAME, null, values);
+    } else {
+      return existingTag;
+    }
+  }
+
+  private long haveMatchingTag(String name) {
+    Cursor cursor = null;
+    try {
+      cursor = db.query(TagsTable.TABLE_NAME, new String[]{ TagsTable.ID },
+          TagsTable.NAME + " = ?",
+          new String[]{ name },
+          null,
+          null,
+          null,
+          "1");
+      if (cursor != null && cursor.moveToNext()) {
+        return cursor.getLong(0);
+      }
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+    return -1;
   }
 
   public boolean updateTag(long id, String newName) {
-    ContentValues values = new ContentValues();
-    values.put(TagsTable.ID, id);
-    values.put(TagsTable.NAME, newName);
-    return 1 == mDb.update(TagsTable.TABLE_NAME, values,
-        TagsTable.ID + "=" + id, null);
+    final long existingTag = haveMatchingTag(newName);
+    if (existingTag == -1) {
+      ContentValues values = new ContentValues();
+      values.put(TagsTable.ID, id);
+      values.put(TagsTable.NAME, newName);
+      return 1 == db.update(TagsTable.TABLE_NAME, values,
+          TagsTable.ID + "=" + id, null);
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -317,13 +346,13 @@ public class BookmarksDBAdapter {
    * @return a boolean denoting success
    */
   public boolean tagBookmarks(long[] bookmarkIds, Set<Long> tagIds, boolean deleteNonTagged) {
-    mDb.beginTransaction();
+    db.beginTransaction();
     try {
       // if we're literally replacing the tags such that only tagIds are tagged, then we need to
       // remove all tags from the various bookmarks first.
       if (deleteNonTagged) {
         for (long bookmarkId : bookmarkIds) {
-          mDb.delete(BookmarkTagTable.TABLE_NAME,
+          db.delete(BookmarkTagTable.TABLE_NAME,
               BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
         }
       }
@@ -333,26 +362,26 @@ public class BookmarksDBAdapter {
           ContentValues values = new ContentValues();
           values.put(BookmarkTagTable.BOOKMARK_ID, bookmarkId);
           values.put(BookmarkTagTable.TAG_ID, tagId);
-          mDb.replace(BookmarkTagTable.TABLE_NAME, null, values);
+          db.replace(BookmarkTagTable.TABLE_NAME, null, values);
         }
       }
-      mDb.setTransactionSuccessful();
+      db.setTransactionSuccessful();
       return true;
     } catch (Exception e) {
       Timber.d(e, "exception in tagBookmark");
       return false;
     } finally {
-      mDb.endTransaction();
+      db.endTransaction();
     }
   }
 
   public boolean importBookmarks(BookmarkData data) {
     boolean result = true;
-    mDb.beginTransaction();
+    db.beginTransaction();
     try {
-      mDb.delete(BookmarksTable.TABLE_NAME, null, null);
-      mDb.delete(BookmarkTagTable.TABLE_NAME, null, null);
-      mDb.delete(TagsTable.TABLE_NAME, null, null);
+      db.delete(BookmarksTable.TABLE_NAME, null, null);
+      db.delete(BookmarkTagTable.TABLE_NAME, null, null);
+      db.delete(TagsTable.TABLE_NAME, null, null);
 
       ContentValues values = new ContentValues();
 
@@ -365,7 +394,7 @@ public class BookmarksDBAdapter {
         values.clear();
         values.put(TagsTable.NAME, tag.getName());
         values.put(TagsTable.ID, tag.getId());
-        mDb.insert(TagsTable.TABLE_NAME, null, values);
+        db.insert(TagsTable.TABLE_NAME, null, values);
       }
 
       List<Bookmark> bookmarks = data.getBookmarks();
@@ -381,24 +410,24 @@ public class BookmarksDBAdapter {
         values.put(BookmarksTable.AYAH, bookmark.ayah);
         values.put(BookmarksTable.PAGE, bookmark.page);
         values.put(BookmarksTable.ADDED_DATE, bookmark.timestamp);
-        mDb.insert(BookmarksTable.TABLE_NAME, null, values);
+        db.insert(BookmarksTable.TABLE_NAME, null, values);
 
         List<Long> tagIds = bookmark.tags;
         for (int t = 0; t < tagIds.size(); t++) {
           values.clear();
           values.put(BookmarkTagTable.BOOKMARK_ID, bookmark.id);
           values.put(BookmarkTagTable.TAG_ID, tagIds.get(t));
-          mDb.insert(BookmarkTagTable.TABLE_NAME, null, values);
+          db.insert(BookmarkTagTable.TABLE_NAME, null, values);
         }
       }
 
       Timber.d("import successful!");
-      mDb.setTransactionSuccessful();
+      db.setTransactionSuccessful();
     } catch (Exception e) {
       Timber.e(e, "Failed to import data");
       result = false;
     } finally {
-      mDb.endTransaction();
+      db.endTransaction();
     }
 
     return result;

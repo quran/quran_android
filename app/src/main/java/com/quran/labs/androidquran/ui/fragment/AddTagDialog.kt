@@ -42,13 +42,13 @@ class AddTagDialog : DialogFragment() {
           .setOnClickListener {
             val id = arguments?.getLong(EXTRA_ID, -1) ?: -1
             val name = textInputEditText?.text.toString()
-            val success = if (id > 0) {
-              addTagDialogPresenter.updateTag(Tag(id, name))
-            } else {
-              addTagDialogPresenter.addTag(name)
-            }
-
+            val success = addTagDialogPresenter.validate(name, id)
             if (success) {
+              if (id > -1) {
+                addTagDialogPresenter.updateTag(Tag(id, name))
+              } else {
+                addTagDialogPresenter.addTag(name)
+              }
               dismiss()
             }
           }
@@ -85,6 +85,10 @@ class AddTagDialog : DialogFragment() {
 
   fun onBlankTagName() {
     textInputEditText?.error = activity?.getString(R.string.tag_blank_tag_error)
+  }
+
+  fun onDuplicateTagName() {
+    textInputEditText?.error = activity?.getString(R.string.tag_duplicate_tag_error)
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
