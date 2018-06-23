@@ -116,9 +116,6 @@ public class AudioUtils {
   }
 
   public boolean shouldDownloadGaplessDatabase(DownloadAudioRequest request) {
-    if (!request.isGapless()) {
-      return false;
-    }
     String dbPath = request.getGaplessDatabaseFilePath();
     if (TextUtils.isEmpty(dbPath)) {
       return false;

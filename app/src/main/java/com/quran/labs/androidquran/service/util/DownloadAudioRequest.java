@@ -19,7 +19,7 @@ public class DownloadAudioRequest extends AudioRequest {
     localDirectoryPath = localPath;
   }
 
-  private DownloadAudioRequest(Parcel in) {
+  DownloadAudioRequest(Parcel in) {
     super(in);
     this.qariItem = in.readParcelable(QariItem.class.getClassLoader());
     this.localDirectoryPath = in.readString();

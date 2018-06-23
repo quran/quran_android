@@ -105,6 +105,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -1230,7 +1231,11 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void handleDownloadSuccess() {
     refreshQuranPages();
-    playAudioRequest(lastAudioDownloadRequest);
+    if (lastAudioDownloadRequest instanceof StreamingAudioRequest) {
+      playStreamingHelper((StreamingAudioRequest) lastAudioDownloadRequest);
+    } else {
+      playAudioRequest(lastAudioDownloadRequest);
+    }
   }
 
   @Override
@@ -1466,14 +1471,6 @@ public class PagerActivity extends QuranActionBarActivity implements
                             int page, QariItem item, int verseRepeat,
                             int rangeRepeat, boolean enforceRange) {
     String qariUrl = audioUtils.getQariUrl(item);
-    String dbFile = audioUtils.getQariDatabasePathIfGapless(this, item);
-    if (!TextUtils.isEmpty(dbFile)) {
-      // gapless audio is "download only"
-      lastAudioDownloadRequest = getAudioDownloadRequest(ayah, end, page, item,
-          verseRepeat, rangeRepeat, enforceRange);
-      playAudioRequest(lastAudioDownloadRequest);
-      return;
-    }
 
     final SuraAyah ending;
     if (end != null) {
@@ -1484,16 +1481,57 @@ public class PagerActivity extends QuranActionBarActivity implements
       ending = audioUtils.getLastAyahToPlay(ayah, page,
           quranSettings.getPreferredDownloadAmount(), isDualPages);
     }
-    AudioRequest request = new StreamingAudioRequest(
-        qariUrl, ayah, quranInfo.getNumAyahs(ayah.sura));
+
+    String dbFile = audioUtils.getQariDatabasePathIfGapless(this, item);
+    String path = audioUtils.getLocalQariUrl(this, item);
+    StreamingAudioRequest request = new StreamingAudioRequest(
+        qariUrl, ayah, item, path, quranInfo.getNumAyahs(ayah.sura));
     request.setPlayBounds(ayah, ending);
     request.setEnforceBounds(enforceRange);
     request.setRangeRepeatCount(rangeRepeat);
     request.setVerseRepeatCount(verseRepeat);
-    play(request);
+    request.setGaplessDatabaseFilePath(dbFile);
+    playStreamingHelper(request);
+  }
 
+  private void playStreamingHelper(StreamingAudioRequest request) {
+    String dbFile = audioUtils.getQariDatabasePathIfGapless(this, request.getQariItem());
+    lastAudioDownloadRequest = request;
+
+    if (!TextUtils.isEmpty(dbFile)) {
+      // gapless audio is "download only"
+      if (!quranFileUtils.haveAyaPositionFile(this)) {
+        audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+        String url = quranFileUtils.getAyaPositionFileUrl();
+        String destination = quranFileUtils.getQuranDatabaseDirectory(this);
+        // start the download
+        String notificationTitle = getString(R.string.highlighting_database);
+        Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
+            destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
+            QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+        ContextCompat.startForegroundService(this, intent);
+        return;
+      } else if (audioUtils.shouldDownloadGaplessDatabase(request)) {
+        Timber.d("need to download gapless database...");
+        if (isActionBarHidden) {
+          toggleActionBar();
+        }
+        audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+        String url = audioUtils.getGaplessDatabaseUrl(request);
+        String destination = request.getLocalPath();
+        // start the download
+        String notificationTitle = getString(R.string.timing_database);
+        Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
+            destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
+            QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+        ContextCompat.startForegroundService(this, intent);
+        return;
+      }
+    }
+
+    play(request);
     audioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
-    audioStatusBar.setRepeatCount(verseRepeat);
+    audioStatusBar.setRepeatCount(request.getVerseRepeatCount());
   }
 
   @Nullable

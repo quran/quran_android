@@ -1,16 +1,19 @@
 package com.quran.labs.androidquran.service.util;
 
 import android.os.Parcel;
+import android.support.annotation.NonNull;
 
+import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.SuraAyah;
 
-public class StreamingAudioRequest extends AudioRequest {
+public class StreamingAudioRequest extends DownloadAudioRequest {
 
-  public StreamingAudioRequest(String baseUrl, SuraAyah verse, int versesInThisSura) {
-    super(baseUrl, verse, versesInThisSura);
+  public StreamingAudioRequest(String baseUrl, SuraAyah verse, @NonNull
+      QariItem qariItem, String localPath, int versesInThisSura) {
+    super(baseUrl, verse, qariItem, localPath, versesInThisSura);
   }
 
-  protected StreamingAudioRequest(Parcel in) {
+  private StreamingAudioRequest(Parcel in) {
     super(in);
   }
 
