@@ -52,8 +52,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
   @Override
   protected View onCreateView(ViewGroup parent) {
     View view = super.onCreateView(parent);
-    mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
-    mValueText = (TextView) view.findViewById(R.id.value);
+    mSeekBar = view.findViewById(R.id.seekbar);
+    mValueText = view.findViewById(R.id.value);
     mSeekBar.setOnSeekBarChangeListener(this);
     styleSeekBar();
     return view;
@@ -87,7 +87,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
   protected void onBindView(@NonNull View view) {
     super.onBindView(view);
     if (isEnabled()) {
-      final TextView tv = (TextView) view.findViewById(android.R.id.title);
+      final TextView tv = view.findViewById(android.R.id.title);
       if (tv != null) {
         tv.setTextColor(Color.WHITE);
       }

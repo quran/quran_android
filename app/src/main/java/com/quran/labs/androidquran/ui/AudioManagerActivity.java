@@ -72,7 +72,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
     setContentView(R.layout.audio_manager);
 
-    recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+    recyclerView = findViewById(R.id.recycler_view);
     recyclerView.setHasFixedSize(true);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -81,7 +81,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
     shuyookhAdapter = new ShuyookhAdapter(qariItems);
     recyclerView.setAdapter(shuyookhAdapter);
 
-    progressBar = (ProgressBar) findViewById(R.id.progress);
+    progressBar = findViewById(R.id.progress);
 
     basePath = quranFileUtils.getQuranAudioDirectory(this);
     getShuyookhData();
@@ -232,10 +232,10 @@ public class AudioManagerActivity extends QuranActionBarActivity
 
     SheikhViewHolder(View itemView) {
       super(itemView);
-      name = (TextView) itemView.findViewById(R.id.name);
-      quantity = (TextView) itemView.findViewById(R.id.quantity);
+      name = itemView.findViewById(R.id.name);
+      quantity = itemView.findViewById(R.id.quantity);
 
-      image = (ImageView) itemView.findViewById(R.id.image);
+      image = itemView.findViewById(R.id.image);
       itemView.setOnClickListener(mOnClickListener);
     }
   }

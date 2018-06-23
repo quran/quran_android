@@ -236,8 +236,8 @@ public class QuranListAdapter extends
     HeaderHolder(View itemView) {
       super(itemView);
       view = itemView;
-      title = (TextView) itemView.findViewById(R.id.title);
-      pageNumber = (TextView) itemView.findViewById(R.id.pageNumber);
+      title = itemView.findViewById(R.id.title);
+      pageNumber = itemView.findViewById(R.id.pageNumber);
     }
 
     void setEnabled(boolean enabled) {
@@ -260,10 +260,10 @@ public class QuranListAdapter extends
 
     ViewHolder(View itemView) {
       super(itemView);
-      metadata = (TextView) itemView.findViewById(R.id.metadata);
-      number = (TextView) itemView.findViewById(R.id.suraNumber);
-      image = (ImageView) itemView.findViewById(R.id.rowIcon);
-      tags = (TagsViewGroup) itemView.findViewById(R.id.tags);
+      metadata = itemView.findViewById(R.id.metadata);
+      number = itemView.findViewById(R.id.suraNumber);
+      image = itemView.findViewById(R.id.rowIcon);
+      tags = itemView.findViewById(R.id.tags);
     }
   }
 

@@ -71,8 +71,8 @@ public abstract class QuranPageWrapperLayout extends ViewGroup {
     errorLayout = inflater.inflate(R.layout.page_load_error, this, false);
     LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     addView(errorLayout, lp);
-    errorText = (TextView) errorLayout.findViewById(R.id.reason_text);
-    final Button button = (Button) errorLayout.findViewById(R.id.retry_button);
+    errorText = errorLayout.findViewById(R.id.reason_text);
+    final Button button = errorLayout.findViewById(R.id.retry_button);
     updateErrorTextColor();
     button.setOnClickListener(v -> {
       errorLayout.setVisibility(GONE);

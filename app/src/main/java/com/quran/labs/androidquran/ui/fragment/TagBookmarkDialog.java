@@ -203,9 +203,9 @@ public class TagBookmarkDialog extends DialogFragment {
       if (convertView == null) {
         convertView = mInflater.inflate(R.layout.tag_row, parent, false);
         holder = new ViewHolder();
-        holder.checkBox = (CheckBox) convertView.findViewById(R.id.tag_checkbox);
-        holder.tagName = (TextView) convertView.findViewById(R.id.tag_name);
-        holder.addImage = (ImageView) convertView.findViewById(R.id.tag_add_image);
+        holder.checkBox = convertView.findViewById(R.id.tag_checkbox);
+        holder.tagName = convertView.findViewById(R.id.tag_name);
+        holder.addImage = convertView.findViewById(R.id.tag_add_image);
         convertView.setTag(holder);
       }
       final Tag tag = (Tag) getItem(position);

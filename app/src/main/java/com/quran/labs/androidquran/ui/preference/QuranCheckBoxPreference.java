@@ -35,7 +35,7 @@ public class QuranCheckBoxPreference extends CheckBoxPreference {
   protected void onBindView(@NonNull View view) {
     super.onBindView(view);
     if (isEnabled()) {
-      final TextView tv = (TextView) view.findViewById(android.R.id.title);
+      final TextView tv = view.findViewById(android.R.id.title);
       if (tv != null) {
         tv.setTextColor(Color.WHITE);
       }

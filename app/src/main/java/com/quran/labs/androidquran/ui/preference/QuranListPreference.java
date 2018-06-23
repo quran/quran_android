@@ -36,7 +36,7 @@ public class QuranListPreference extends ListPreference {
   protected void onBindView(@NonNull View view) {
     super.onBindView(view);
     if (isEnabled()) {
-      final TextView title = (TextView) view.findViewById(android.R.id.title);
+      final TextView title = view.findViewById(android.R.id.title);
       if (title != null) {
         title.setTextColor(Color.WHITE);
       }

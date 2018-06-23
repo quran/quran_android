@@ -54,14 +54,14 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     final View view = inflater.inflate(R.layout.audio_panel, container, false);
     view.setOnClickListener(mOnClickListener);
 
-    startSuraSpinner = (QuranSpinner) view.findViewById(R.id.start_sura_spinner);
-    startAyahSpinner = (QuranSpinner) view.findViewById(R.id.start_ayah_spinner);
-    endingSuraSpinner = (QuranSpinner) view.findViewById(R.id.end_sura_spinner);
-    endingAyahSpinner = (QuranSpinner) view.findViewById(R.id.end_ayah_spinner);
-    repeatVerseSpinner = (QuranSpinner) view.findViewById(R.id.repeat_verse_spinner);
-    repeatRangeSpinner = (QuranSpinner) view.findViewById(R.id.repeat_range_spinner);
-    restrictToRange = (CheckBox) view.findViewById(R.id.restrict_to_range);
-    applyButton = (Button) view.findViewById(R.id.apply);
+    startSuraSpinner = view.findViewById(R.id.start_sura_spinner);
+    startAyahSpinner = view.findViewById(R.id.start_ayah_spinner);
+    endingSuraSpinner = view.findViewById(R.id.end_sura_spinner);
+    endingAyahSpinner = view.findViewById(R.id.end_ayah_spinner);
+    repeatVerseSpinner = view.findViewById(R.id.repeat_verse_spinner);
+    repeatRangeSpinner = view.findViewById(R.id.repeat_range_spinner);
+    restrictToRange = view.findViewById(R.id.restrict_to_range);
+    applyButton = view.findViewById(R.id.apply);
     applyButton.setOnClickListener(mOnClickListener);
 
     final Context context = getActivity();

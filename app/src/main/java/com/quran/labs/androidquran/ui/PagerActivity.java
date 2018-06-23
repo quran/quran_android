@@ -313,20 +313,20 @@ public class PagerActivity extends QuranActionBarActivity implements
     ayahToolBarTotalHeight = resources
         .getDimensionPixelSize(R.dimen.toolbar_total_height);
     setContentView(R.layout.quran_page_activity_slider);
-    audioStatusBar = (AudioStatusBar) findViewById(R.id.audio_area);
+    audioStatusBar = findViewById(R.id.audio_area);
     audioStatusBar.setIsDualPageMode(quranScreenInfo.isDualPageMode());
     audioStatusBar.setQariList(audioUtils.getQariList(this));
     audioStatusBar.setAudioBarListener(this);
     audioBarParams = (ViewGroup.MarginLayoutParams) audioStatusBar.getLayoutParams();
 
     toolBarArea = findViewById(R.id.toolbar_area);
-    translationsSpinner = (QuranSpinner) findViewById(R.id.spinner);
+    translationsSpinner = findViewById(R.id.spinner);
 
     // this is the colored view behind the status bar on kitkat and above
     final View statusBarBackground = findViewById(R.id.status_bg);
     statusBarBackground.getLayoutParams().height = getStatusBarHeight();
 
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    final Toolbar toolbar = findViewById(R.id.toolbar);
     if (quranSettings.isArabicNames() || QuranUtils.isRtl()) {
       // remove when we remove LTR from quran_page_activity's root
       ViewCompat.setLayoutDirection(toolbar, ViewCompat.LAYOUT_DIRECTION_RTL);
@@ -350,7 +350,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     lastPopupTime = System.currentTimeMillis();
     pagerAdapter = new QuranPageAdapter(
         getSupportFragmentManager(), isDualPages, showingTranslation, quranInfo);
-    ayahToolBar = (AyahToolBar) findViewById(R.id.ayah_toolbar);
+    ayahToolBar = findViewById(R.id.ayah_toolbar);
 
     final NonRestoringViewPager nonRestoringViewPager = findViewById(R.id.quran_pager);
     nonRestoringViewPager.setIsDualPagesInLandscape(
@@ -522,13 +522,13 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void initAyahActionPanel() {
-    slidingPanel = (SlidingUpPanelLayout) findViewById(R.id.sliding_panel);
+    slidingPanel = findViewById(R.id.sliding_panel);
     final ViewGroup slidingLayout =
-        (ViewGroup) slidingPanel.findViewById(R.id.sliding_layout);
-    slidingPager = (ViewPager) slidingPanel
+        slidingPanel.findViewById(R.id.sliding_layout);
+    slidingPager = slidingPanel
         .findViewById(R.id.sliding_layout_pager);
     final IconPageIndicator slidingPageIndicator =
-        (IconPageIndicator) slidingPanel
+        slidingPanel
             .findViewById(R.id.sliding_pager_indicator);
 
     // Find close button and set listener

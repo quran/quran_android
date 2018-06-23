@@ -54,9 +54,9 @@ public class AyahTranslationFragment extends AyahActionFragment
     final View view = inflater.inflate(
         R.layout.translation_panel, container, false);
 
-    translator = (QuranSpinner) view.findViewById(R.id.translator);
-    translationView = (InlineTranslationView) view.findViewById(R.id.translation_view);
-    progressBar = (ProgressBar) view.findViewById(R.id.progress);
+    translator = view.findViewById(R.id.translator);
+    translationView = view.findViewById(R.id.translation_view);
+    progressBar = view.findViewById(R.id.progress);
     emptyState = view.findViewById(R.id.empty_state);
     translationControls = view.findViewById(R.id.controls);
     final View next = translationControls.findViewById(R.id.next_ayah);
@@ -66,7 +66,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     prev.setOnClickListener(onClickListener);
 
     final Button getTranslations =
-        (Button) view.findViewById(R.id.get_translations_button);
+        view.findViewById(R.id.get_translations_button);
     getTranslations.setOnClickListener(onClickListener);
     return view;
   }

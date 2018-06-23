@@ -51,7 +51,7 @@ public class JuzListFragment extends Fragment {
     View view = inflater.inflate(R.layout.quran_list, container, false);
 
     final Context context = getActivity();
-    mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+    mRecyclerView = view.findViewById(R.id.recycler_view);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
     mRecyclerView.setItemAnimator(new DefaultItemAnimator());

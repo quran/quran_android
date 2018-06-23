@@ -103,7 +103,7 @@ public class QuranActivity extends QuranActionBarActivity
     settings = QuranSettings.getInstance(this);
     isRtl = isRtl();
 
-    final Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+    final Toolbar tb = findViewById(R.id.toolbar);
     setSupportActionBar(tb);
 
     final ActionBar ab = getSupportActionBar();
@@ -111,13 +111,13 @@ public class QuranActivity extends QuranActionBarActivity
       ab.setTitle(R.string.app_name);
     }
 
-    final ViewPager pager = (ViewPager) findViewById(R.id.index_pager);
+    final ViewPager pager = findViewById(R.id.index_pager);
     pager.setOffscreenPageLimit(3);
     PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager());
     pager.setAdapter(pagerAdapter);
 
     final SlidingTabLayout indicator =
-        (SlidingTabLayout) findViewById(R.id.indicator);
+        findViewById(R.id.indicator);
     indicator.setViewPager(pager);
 
     if (isRtl) {

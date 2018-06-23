@@ -60,9 +60,9 @@ public class SearchActivity extends QuranActionBarActivity
     ((QuranApplication) getApplication())
         .getApplicationComponent().inject(this);
     setContentView(R.layout.search);
-    messageView = (TextView) findViewById(R.id.search_area);
-    warningView = (TextView) findViewById(R.id.search_warning);
-    buttonGetTranslations = (Button) findViewById(R.id.btnGetTranslations);
+    messageView = findViewById(R.id.search_area);
+    warningView = findViewById(R.id.search_warning);
+    buttonGetTranslations = findViewById(R.id.btnGetTranslations);
     buttonGetTranslations.setOnClickListener(v -> {
       Intent intent;
       if (downloadArabicSearchDb) {
@@ -167,7 +167,7 @@ public class SearchActivity extends QuranActionBarActivity
           R.plurals.search_results, count, query, count);
       messageView.setText(countString);
 
-      ListView listView = (ListView) findViewById(R.id.results_list);
+      ListView listView = findViewById(R.id.results_list);
       if (adapter == null) {
         adapter = new ResultAdapter(this, cursor, quranInfo);
         listView.setAdapter(adapter);
@@ -290,8 +290,8 @@ public class SearchActivity extends QuranActionBarActivity
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
       final View view = inflater.inflate(R.layout.search_result, parent, false);
       ViewHolder holder = new ViewHolder();
-      holder.text = (TextView) view.findViewById(R.id.verseText);
-      holder.metadata = (TextView) view.findViewById(R.id.verseLocation);
+      holder.text = view.findViewById(R.id.verseText);
+      holder.metadata = view.findViewById(R.id.verseLocation);
       view.setTag(holder);
       return view;
     }

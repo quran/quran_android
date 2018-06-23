@@ -58,7 +58,7 @@ public class JumpFragment extends DialogFragment {
     builder.setTitle(activity.getString(R.string.menu_jump));
 
     // Sura chooser
-    final ForceCompleteTextView suraInput = (ForceCompleteTextView) layout.findViewById(
+    final ForceCompleteTextView suraInput = layout.findViewById(
         R.id.sura_spinner);
     final String[] suras = activity.getResources().getStringArray(R.array.sura_names);
     StringBuilder sb = new StringBuilder();
@@ -74,10 +74,10 @@ public class JumpFragment extends DialogFragment {
     suraInput.setAdapter(suraAdapter);
 
     // Ayah chooser
-    final EditText ayahInput = (EditText) layout.findViewById(R.id.ayah_spinner);
+    final EditText ayahInput = layout.findViewById(R.id.ayah_spinner);
 
     // Page chooser
-    final EditText pageInput = (EditText) layout.findViewById(R.id.page_number);
+    final EditText pageInput = layout.findViewById(R.id.page_number);
     pageInput.setOnEditorActionListener((v, actionId, event) -> {
       boolean handled = false;
       if (actionId == EditorInfo.IME_ACTION_GO) {

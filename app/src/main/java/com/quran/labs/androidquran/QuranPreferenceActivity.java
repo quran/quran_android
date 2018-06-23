@@ -20,7 +20,7 @@ public class QuranPreferenceActivity extends QuranActionBarActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.preferences);
 
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    final Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setTitle(R.string.menu_settings);
     setSupportActionBar(toolbar);
     final ActionBar ab = getSupportActionBar();

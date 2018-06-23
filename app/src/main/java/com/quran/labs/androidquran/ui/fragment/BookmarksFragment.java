@@ -59,7 +59,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
     final Context context = getActivity();
 
-    recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+    recyclerView = view.findViewById(R.id.recycler_view);
     recyclerView.setLayoutManager(new LinearLayoutManager(context));
     recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -138,7 +138,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   public void onNewData(BookmarkResult items) {
     bookmarksAdapter.setShowTags(bookmarkPresenter.shouldShowInlineTags());
     bookmarksAdapter.setElements(
-        items.getRows().toArray(new QuranRow[items.getRows().size()]), items.getTagMap());
+        items.getRows().toArray(new QuranRow[0]), items.getTagMap());
     bookmarksAdapter.notifyDataSetChanged();
   }
 

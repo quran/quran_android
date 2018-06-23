@@ -18,7 +18,7 @@ public class AboutUsActivity extends QuranActionBarActivity {
 
     setContentView(R.layout.about_us);
 
-    final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    final Toolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setTitle(R.string.menu_about);
     setSupportActionBar(toolbar);
     final ActionBar ab = getSupportActionBar();

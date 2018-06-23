@@ -90,8 +90,8 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     if (convertView == null) {
       holder = new SpinnerHolder();
       convertView = layoutInflater.inflate(R.layout.translation_ab_spinner_selected, parent, false);
-      holder.title = (TextView) convertView.findViewById(R.id.title);
-      holder.subtitle = (TextView) convertView.findViewById(R.id.subtitle);
+      holder.title = convertView.findViewById(R.id.title);
+      holder.subtitle = convertView.findViewById(R.id.subtitle);
       convertView.setTag(holder);
     }
     holder = (SpinnerHolder) convertView.getTag();
@@ -157,8 +157,8 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     int position;
 
     CheckBoxHolder(View view) {
-      this.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-      this.textView = (TextView) view.findViewById(R.id.text);
+      this.checkBox = view.findViewById(R.id.checkbox);
+      this.textView = view.findViewById(R.id.text);
     }
   }
 
