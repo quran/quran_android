@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.MotionEvent;
 
 import com.quran.labs.androidquran.common.HighlightInfo;

@@ -12,7 +12,6 @@ gen-external-apklibs
 classes
 ApiKeys.java
 .gradle
-gradle.properties
 app/src/beta
 app/src/release
 app/seed.txt

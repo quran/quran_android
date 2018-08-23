@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.data;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.util.QuranFileUtils;

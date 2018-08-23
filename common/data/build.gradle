@@ -2,5 +2,5 @@ apply plugin: 'kotlin'
 
 dependencies {
   compile deps.kotlin.stdlib
-  implementation "com.android.support:support-annotations:${supportLibVersion}"
+  implementation "androidx.annotation:annotation:${supportLibVersion}"
 }

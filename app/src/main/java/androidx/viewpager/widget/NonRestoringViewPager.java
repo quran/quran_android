@@ -1,9 +1,11 @@
-package android.support.v4.view;
+package androidx.viewpager.widget;
 
 import android.content.Context;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * NonRestoringViewPager is a hack to sometimes prevent ViewPager from restoring its

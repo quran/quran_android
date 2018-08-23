@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.ui.translation;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 

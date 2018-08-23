@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import androidx.appcompat.app.ActionBar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;

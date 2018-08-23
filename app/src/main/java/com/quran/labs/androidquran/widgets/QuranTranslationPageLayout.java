@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 
 import com.quran.labs.androidquran.R;

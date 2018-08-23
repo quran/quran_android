@@ -7,9 +7,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.provider.BaseColumns;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;

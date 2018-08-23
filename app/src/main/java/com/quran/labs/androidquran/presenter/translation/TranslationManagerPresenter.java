@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.translation;
 
 import android.content.Context;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 import android.util.SparseArray;
 
 import com.crashlytics.android.Crashlytics;

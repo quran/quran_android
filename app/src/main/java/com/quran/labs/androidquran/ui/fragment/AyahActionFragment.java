@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;

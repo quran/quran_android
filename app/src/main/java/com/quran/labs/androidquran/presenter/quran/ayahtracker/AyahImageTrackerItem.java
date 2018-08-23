@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import android.content.Context;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;

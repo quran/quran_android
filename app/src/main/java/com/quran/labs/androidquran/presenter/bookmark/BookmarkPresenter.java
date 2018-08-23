@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.VisibleForTesting;
-import android.support.design.widget.Snackbar;
+import androidx.annotation.VisibleForTesting;
+import com.google.android.material.snackbar.Snackbar;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;

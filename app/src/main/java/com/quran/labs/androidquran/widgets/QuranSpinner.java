@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.widgets;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatSpinner;
+import androidx.appcompat.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SpinnerAdapter;

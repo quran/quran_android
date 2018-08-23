@@ -16,7 +16,7 @@
     <item android:id="@+id/search"
           android:icon="@drawable/ic_ab_search"
           android:title="@string/menu_search"
-          app:actionViewClass="android.support.v7.widget.SearchView"
+          app:actionViewClass="androidx.appcompat.widget.SearchView"
           app:showAsAction="ifRoom|collapseActionView" />
     <item android:id="@+id/night_mode"
         android:checkable="true"

@@ -3,8 +3,8 @@ package com.quran.labs.androidquran.pageselect
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
@@ -20,7 +20,7 @@ class PageSelectActivity : AppCompatActivity() {
   @Inject lateinit var quranSettings: QuranSettings
 
   private lateinit var adapter : PageSelectAdapter
-  private lateinit var viewPager: ViewPager
+  private lateinit var viewPager: androidx.viewpager.widget.ViewPager
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

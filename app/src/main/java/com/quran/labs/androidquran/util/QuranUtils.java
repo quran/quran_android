@@ -9,10 +9,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
-import android.support.v4.text.TextUtilsCompat;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.core.text.TextUtilsCompat;
+import androidx.core.view.ViewCompat;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;

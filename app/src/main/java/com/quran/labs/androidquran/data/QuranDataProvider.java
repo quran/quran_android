@@ -10,7 +10,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;

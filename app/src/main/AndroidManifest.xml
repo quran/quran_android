@@ -96,7 +96,7 @@
         android:authorities="@string/authority"/>
 
     <provider
-        android:name="android.support.v4.content.FileProvider"
+        android:name="androidx.core.content.FileProvider"
         android:authorities="@string/file_authority"
         android:grantUriPermissions="true"
         android:exported="false">
@@ -105,7 +105,7 @@
           android:resource="@xml/file_paths"/>
     </provider>
 
-    <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+    <receiver android:name="androidx.media.session.MediaButtonReceiver">
       <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>

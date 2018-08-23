@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.model.translation;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;

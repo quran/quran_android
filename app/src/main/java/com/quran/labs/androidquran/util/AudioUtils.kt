@@ -2,22 +2,17 @@ package com.quran.labs.androidquran.util
 
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.VisibleForTesting
-
+import androidx.annotation.VisibleForTesting
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QariItem
-import com.quran.labs.androidquran.dao.audio.DownloadLegacyAudioRequest
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.SuraAyah
 import com.quran.labs.androidquran.service.AudioService
-
-import java.io.File
-import java.util.Locale
-
-import javax.inject.Inject
-
 import dagger.Reusable
 import timber.log.Timber
+import java.io.File
+import java.util.Locale
+import javax.inject.Inject
 
 @Reusable
 class AudioUtils @Inject

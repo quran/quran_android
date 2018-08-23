@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.page.common.data.AyahCoordinates;

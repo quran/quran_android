@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.util;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.Display;
 
 import com.quran.data.source.PageSizeCalculator;

@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.dao.audio;
 
 import android.os.Parcel;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.SuraAyah;

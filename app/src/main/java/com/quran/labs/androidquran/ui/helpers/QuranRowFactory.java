@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;

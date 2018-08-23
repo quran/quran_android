@@ -2,9 +2,9 @@ package com.quran.labs.androidquran;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.InstrumentationRegistry;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
+import androidx.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
 import org.junit.runner.RunWith;
