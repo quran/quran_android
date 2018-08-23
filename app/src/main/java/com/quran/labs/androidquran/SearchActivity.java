@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -124,6 +125,7 @@ public class SearchActivity extends QuranActionBarActivity
     handleIntent(intent);
   }
 
+  @NonNull
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
     String query = args.getString(EXTRA_QUERY);
@@ -133,7 +135,7 @@ public class SearchActivity extends QuranActionBarActivity
   }
 
   @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+  public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
     isArabicSearch = QuranUtils.doesStringContainArabic(query);
     boolean showArabicWarning = (isArabicSearch &&
         !quranFileUtils.hasArabicSearchDatabase(this));
@@ -150,7 +152,7 @@ public class SearchActivity extends QuranActionBarActivity
             getString(R.string.get_arabic_search_db));
         buttonGetTranslations.setVisibility(View.VISIBLE);
       }
-      messageView.setText(getString(R.string.no_results, new Object[]{ query }));
+      messageView.setText(getString(R.string.no_results, query));
     } else {
       if (showArabicWarning) {
         warningView.setText(R.string.no_arabic_search_available);
@@ -183,7 +185,7 @@ public class SearchActivity extends QuranActionBarActivity
   }
 
   @Override
-  public void onLoaderReset(Loader<Cursor> loader) {
+  public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     if (adapter != null) {
       adapter.changeCursor(null);
     }
@@ -205,7 +207,7 @@ public class SearchActivity extends QuranActionBarActivity
           // bug on ics where the above returns null
           // http://code.google.com/p/android/issues/detail?id=22978
           Object q = extras.get(SearchManager.USER_QUERY);
-          if (q != null && q instanceof SpannableString) {
+          if (q instanceof SpannableString) {
             query = q.toString();
           }
         }
@@ -225,8 +227,10 @@ public class SearchActivity extends QuranActionBarActivity
 
       Integer id = null;
       try {
-        id = intentData.getLastPathSegment() != null ?
-            Integer.valueOf(intentData.getLastPathSegment()) : null;
+        if (intentData != null) {
+          id = intentData.getLastPathSegment() != null ?
+              Integer.valueOf(intentData.getLastPathSegment()) : null;
+        }
       } catch (NumberFormatException e) {
         // no op
       }

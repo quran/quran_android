@@ -69,7 +69,9 @@ public class AyahInfoDatabaseHandler {
     for (String key : keys) {
       final AyahInfoDatabaseHandler handler = ayahInfoCache.get(key);
       try {
-        handler.database.close();
+        if (handler != null) {
+          handler.database.close();
+        }
       } catch (Exception e) {
         // ignore
       }
@@ -107,7 +109,7 @@ public class AyahInfoDatabaseHandler {
   }
 
   @NonNull
-  public RectF getPageBounds(int page) {
+  private RectF getPageBounds(int page) {
     Cursor c = null;
     try {
       String[] colNames = new String[]{

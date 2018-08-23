@@ -197,7 +197,7 @@ public class QuranDataActivity extends Activity implements
       @NonNull int[] grantResults) {
     if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSIONS) {
       if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        /**
+        /*
          * taking a risk here. on nexus 6, the permission is granted automatically. on the emulator,
          * a restart is required. on reddit, someone with a nexus 9 said they also didn't need to
          * restart for the permission to take effect.

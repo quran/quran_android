@@ -133,20 +133,20 @@ public class BookmarksDBAdapter {
     return recents;
   }
 
-  public boolean replaceRecentRangeWithPage(int deleteRangeStart, int deleteRangeEnd, int page) {
+  public void replaceRecentRangeWithPage(int deleteRangeStart, int deleteRangeEnd, int page) {
     int count = db.delete(LastPagesTable.TABLE_NAME,
         LastPagesTable.PAGE + " >= ? AND " + LastPagesTable.PAGE + " <= ?",
         new String[] { String.valueOf(deleteRangeStart), String.valueOf(deleteRangeEnd) });
     // avoid doing a delete if this delete caused us to remove any rows
     boolean shouldDelete = count == 0;
-    return addRecentPage(page, shouldDelete);
+    addRecentPage(page, shouldDelete);
   }
 
-  public boolean addRecentPage(int page) {
-    return addRecentPage(page, true);
+  public void addRecentPage(int page) {
+    addRecentPage(page, true);
   }
 
-  private boolean addRecentPage(int page, boolean shouldDelete) {
+  private void addRecentPage(int page, boolean shouldDelete) {
     ContentValues contentValues = new ContentValues();
     contentValues.put(LastPagesTable.PAGE, page);
     if (db.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1 && shouldDelete) {
@@ -154,9 +154,7 @@ public class BookmarksDBAdapter {
           LastPagesTable.ID + " NOT IN( SELECT " + LastPagesTable.ID + " FROM " +
           LastPagesTable.TABLE_NAME + " ORDER BY " + LastPagesTable.ADDED_DATE + " DESC LIMIT ? )",
           new Object[] { Constants.MAX_RECENT_PAGES });
-      return true;
     }
-    return false;
   }
 
   @NonNull
@@ -251,11 +249,11 @@ public class BookmarksDBAdapter {
     return db.insert(BookmarksTable.TABLE_NAME, null, values);
   }
 
-  public boolean removeBookmark(long bookmarkId) {
+  public void removeBookmark(long bookmarkId) {
     db.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
-    return db.delete(BookmarksTable.TABLE_NAME,
-        BookmarksTable.ID + "=" + bookmarkId, null) == 1;
+    db.delete(BookmarksTable.TABLE_NAME,
+        BookmarksTable.ID + "=" + bookmarkId, null);
   }
 
   @NonNull

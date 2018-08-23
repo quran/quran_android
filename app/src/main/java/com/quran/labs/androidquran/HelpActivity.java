@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -12,8 +13,11 @@ public class HelpActivity extends QuranActionBarActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    getSupportActionBar().setDisplayShowHomeEnabled(true);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    final ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayShowHomeEnabled(true);
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
     setContentView(R.layout.help);
 
