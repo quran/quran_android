@@ -159,7 +159,7 @@ public class QuranDataProvider extends ContentProvider {
       Cursor suggestions = null;
       try {
         suggestions = search(query, database, false);
-        if (suggestions != null && suggestions.moveToFirst()) {
+        if (context != null && suggestions != null && suggestions.moveToFirst()) {
           do {
             int sura = suggestions.getInt(1);
             int ayah = suggestions.getInt(2);

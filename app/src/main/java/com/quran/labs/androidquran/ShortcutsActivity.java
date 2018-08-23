@@ -36,6 +36,8 @@ public class ShortcutsActivity extends AppCompatActivity {
   @TargetApi(Build.VERSION_CODES.N_MR1)
   private void recordShortcutUsage(String shortcut) {
     ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-    shortcutManager.reportShortcutUsed(shortcut);
+    if (shortcutManager != null) {
+      shortcutManager.reportShortcutUsed(shortcut);
+    }
   }
 }

@@ -33,7 +33,9 @@ public class QuranForwarderActivity extends Activity {
                   if (sura == null){ sura = i; }
                   else { ayah = i; break; }
                }
-               catch (Exception e){}
+               catch (NumberFormatException nfe){
+                 // leave it as null
+               }
             }
 
             if (sura != null){

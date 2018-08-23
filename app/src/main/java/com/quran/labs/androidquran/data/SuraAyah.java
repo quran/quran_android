@@ -64,6 +64,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
     return 31 * sura + ayah;
   }
 
+  @NonNull
   @Override
   public String toString() {
     return "(" + sura + ":" + ayah + ")";

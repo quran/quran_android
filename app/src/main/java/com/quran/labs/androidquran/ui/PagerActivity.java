@@ -53,7 +53,6 @@ import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
-import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -84,7 +83,6 @@ import com.quran.labs.androidquran.ui.helpers.JumpDestination;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
-import com.quran.labs.androidquran.ui.helpers.QuranPageWorker;
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.AudioUtils;
@@ -105,7 +103,6 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -200,10 +197,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private PagerActivityComponent pagerActivityComponent;
 
-  @Inject QuranPageWorker quranPageWorker;
   @Inject BookmarkModel bookmarkModel;
   @Inject RecentPagePresenter recentPagePresenter;
-  @Inject AyahInfoDatabaseProvider ayahInfoDatabaseProvider;
   @Inject QuranSettings quranSettings;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject ArabicDatabaseUtils arabicDatabaseUtils;
@@ -303,9 +298,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     compositeDisposable.add(
         bookmarkModel.bookmarksObservable()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(ignore -> {
-              onBookmarksChanged();
-            }));
+            .subscribe(ignore -> onBookmarksChanged()));
 
     final Resources resources = getResources();
     isImmersiveInPortrait = quranSettings.isImmersiveInPortrait();
@@ -1499,7 +1492,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     lastAudioDownloadRequest = request;
 
     if (!TextUtils.isEmpty(dbFile)) {
-      // gapless audio is "download only"
       if (!quranFileUtils.haveAyaPositionFile(this)) {
         audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
         String url = quranFileUtils.getAyaPositionFileUrl();
