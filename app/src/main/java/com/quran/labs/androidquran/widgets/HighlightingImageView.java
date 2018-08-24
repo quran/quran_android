@@ -13,16 +13,16 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.widget.ImageView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.page.common.draw.ImageDrawHelper;
 
 import java.util.HashSet;
@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class HighlightingImageView extends ImageView {
+public class HighlightingImageView extends AppCompatImageView {
 
   private static final SparseArray<Paint> SPARSE_PAINT_ARRAY = new SparseArray<>();
 

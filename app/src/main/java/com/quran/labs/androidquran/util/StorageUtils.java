@@ -61,7 +61,7 @@ public class StorageUtils {
       List<Storage> result = new ArrayList<>();
       int limit = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 1 : 2;
       final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
-      if (mountPoints != null && mountPoints.length >= limit) {
+      if (mountPoints.length >= limit) {
         int typeId;
         if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
           typeId = R.string.prefs_sdcard_internal;
@@ -243,7 +243,7 @@ public class StorageUtils {
     private final String mountPoint;
     private final boolean requiresPermission;
 
-    private int freeSpace;
+    private long freeSpace;
 
     Storage(String label, String mountPoint) {
       this(label, mountPoint, false);
@@ -266,7 +266,7 @@ public class StorageUtils {
         bytesAvailable = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
       }
       // Convert total bytes to megabytes
-      freeSpace = Math.round(bytesAvailable / (1024 * 1024));
+      freeSpace = bytesAvailable / (1024 * 1024);
     }
 
     public String getLabel() {
@@ -280,7 +280,7 @@ public class StorageUtils {
     /**
      * @return available free size in Megabytes
      */
-    public int getFreeSpace() {
+    public long getFreeSpace() {
       return freeSpace;
     }
 
