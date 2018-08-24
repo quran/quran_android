@@ -121,4 +121,6 @@ dependencies {
   androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
   implementation('com.crashlytics.sdk.android:crashlytics:2.9.4')
+
+  errorprone 'com.google.errorprone:error_prone_core:2.3.1'
 }
