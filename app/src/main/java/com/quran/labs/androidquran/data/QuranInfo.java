@@ -259,6 +259,11 @@ public class QuranInfo {
   }
 
   public int getJuzFromPage(int page) {
+    if (page == 121) {
+      return 6;
+    } else if (page == 201) {
+      return 10;
+    }
     for (int i = 0; i < juzPageStart.length; i++) {
       if (juzPageStart[i] > page) {
         return i;
