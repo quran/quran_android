@@ -21,7 +21,7 @@
       android:background="?attr/selectableItemBackground"
       android:ellipsize="marquee"
       android:marqueeRepeatLimit="marquee_forever"
-      android:maxLines="1"
+      android:singleLine="true"
       android:paddingEnd="2dp"
       android:paddingLeft="2dp"
       android:paddingStart="2dp" />

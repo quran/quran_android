@@ -55,7 +55,9 @@
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <!-- For Persian, "one" is used for 0, 1.  So we cannot really specialize it for "one".
-    It might be better to not include an item for "one" to avoid future confusion. -->
+    It might be better to not include an item for "one" to avoid future confusion.
+    Included it as a copy of other to stop lint from complaining though. -->
+    <item quantity="one">%2$d نتیجه از جستجوی «%1$s» به دست آمد:</item>
     <item quantity="other">%2$d نتیجه از جستجوی «%1$s» به دست آمد:</item>
   </plurals>
 
@@ -154,6 +156,7 @@
   <string name="makki">مکی</string>
   <string name="madani">مدنی</string>
   <plurals name="verses">
+    <item quantity="one">%s آیه</item>
     <item quantity="other">%s آیه</item>
   </plurals>
 
@@ -248,7 +251,7 @@
   <string name="prefs_no_enough_space_to_move_files">فضای کافی برای جابجایی فایل‌های برنامه وجود ندارد</string>
   <string name="prefs_overlay_page_info_summary">نمایش شماره صفحه، نام سوره و شماره جزء هنگام خواندن</string>
   <string name="prefs_overlay_page_info_title">نمایش اطلاعات صفحه</string>
-  <string name="prefs_sdcard_external">حافظه خارجی %1Sd</string>
+  <string name="prefs_sdcard_external">حافظه خارجی %1d</string>
   <string name="prefs_sdcard_internal">حافظه داخلی</string>
   <string name="prefs_dual_page_mode_disabled">تنها یک صفحه در حالت افقی</string>
   <string name="prefs_dual_page_mode_enabled">نمایش دو صحفه در حالت افقی</string>
@@ -270,10 +273,12 @@
   <string name="storage_permission_please_restart">برنامه را از نو آغاز کنید تا تغییرات اثر کند.</string>
 
   <plurals name="files_downloaded">
+    <item quantity="one">%1$d سوره بارگذاری شده است</item>
     <item quantity="other">%1$d سوره بارگذاری شده است</item>
   </plurals>
 
   <plurals name="bookmark_tag_deleted">
+    <item quantity="one">%d برچسب حذف شد</item>
     <item quantity="other">%d برچسب حذف شد</item>
   </plurals>
 
