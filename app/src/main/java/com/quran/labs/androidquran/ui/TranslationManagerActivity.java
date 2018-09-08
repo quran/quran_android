@@ -127,7 +127,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       if (downloadingItem.exists()) {
         try {
           File f = new File(databaseDirectory,
-              downloadingItem.translation.getFileName() + UPGRADING_EXTENSION);
+              downloadingItem.getTranslation().getFileName() + UPGRADING_EXTENSION);
           if (f.exists()) {
             f.delete();
           }
@@ -136,13 +136,13 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         }
       }
       TranslationItem updated = downloadingItem.withTranslationVersion(
-          downloadingItem.translation.getCurrentVersion());
+          downloadingItem.getTranslation().getCurrentVersion());
       updateTranslationItem(updated);
 
       // update active translations and add this item to it
       QuranSettings settings = QuranSettings.getInstance(this);
       Set<String> activeTranslations = settings.getActiveTranslations();
-      activeTranslations.add(downloadingItem.translation.getFileName());
+      activeTranslations.add(downloadingItem.getTranslation().getFileName());
       settings.setActiveTranslations(activeTranslations);
     }
     downloadingItem = null;
@@ -154,8 +154,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     if (downloadingItem != null && downloadingItem.exists()) {
       try {
         File f = new File(databaseDirectory,
-            downloadingItem.translation.getFileName() + UPGRADING_EXTENSION);
-        File destFile = new File(databaseDirectory, downloadingItem.translation.getFileName());
+            downloadingItem.getTranslation().getFileName() + UPGRADING_EXTENSION);
+        File destFile = new File(databaseDirectory, downloadingItem.getTranslation().getFileName());
         if (f.exists() && !destFile.exists()) {
           f.renameTo(destFile);
         } else {
@@ -173,7 +173,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   }
 
   private void updateTranslationItem(TranslationItem updated) {
-    int id = updated.translation.getId();
+    int id = updated.getTranslation().getId();
     int allItemsIndex = translationPositions.get(id);
     if (allItems != null && allItems.size() > allItemsIndex) {
       allItems.remove(allItemsIndex);
@@ -194,7 +194,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     SparseIntArray itemsSparseArray = new SparseIntArray(items.size());
     for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
       TranslationItem item = items.get(i);
-      itemsSparseArray.put(item.translation.getId(), i);
+      itemsSparseArray.put(item.getTranslation().getId(), i);
     }
     allItems = items;
     translationPositions = itemsSparseArray;
@@ -259,8 +259,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     mDownloadReceiver.setListener(this);
 
     // actually start the download
-    String url = selectedItem.translation.getFileUrl();
-    if (selectedItem.translation.getFileUrl() == null) {
+    String url = selectedItem.getTranslation().getFileUrl();
+    if (selectedItem.getTranslation().getFileUrl() == null) {
       return;
     }
     String destination = databaseDirectory;
@@ -268,10 +268,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
     if (selectedItem.exists()) {
       try {
-        File f = new File(destination, selectedItem.translation.getFileName());
+        File f = new File(destination, selectedItem.getTranslation().getFileName());
         if (f.exists()) {
           File newPath = new File(destination,
-              selectedItem.translation.getFileName() + UPGRADING_EXTENSION);
+              selectedItem.getTranslation().getFileName() + UPGRADING_EXTENSION);
           if (newPath.exists()) {
             newPath.delete();
           }
@@ -287,7 +287,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
         destination, notificationTitle, TRANSLATION_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
-    String filename = selectedItem.translation.getFileName();
+    String filename = selectedItem.getTranslation().getFileName();
     if (url.endsWith("zip")) {
       filename += ".zip";
     }
@@ -309,14 +309,14 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         .setPositiveButton(R.string.remove_button,
             (dialog, id) -> {
               quranFileUtils.removeTranslation(TranslationManagerActivity.this,
-                  selectedItem.translation.getFileName());
+                  selectedItem.getTranslation().getFileName());
               TranslationItem updatedItem = selectedItem.withTranslationRemoved();
               updateTranslationItem(updatedItem);
 
               // remove from active translations
               QuranSettings settings = QuranSettings.getInstance(this);
               Set<String> activeTranslations = settings.getActiveTranslations();
-              activeTranslations.remove(selectedItem.translation.getFileName());
+              activeTranslations.remove(selectedItem.getTranslation().getFileName());
               settings.setActiveTranslations(activeTranslations);
               generateListItems();
             })
