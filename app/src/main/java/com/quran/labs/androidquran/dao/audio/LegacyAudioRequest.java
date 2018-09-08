@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public abstract class AudioRequest implements Parcelable {
+public abstract class LegacyAudioRequest implements Parcelable {
 
   private String baseUrl = null;
   private String gaplessDatabasePath = null;
@@ -41,7 +41,7 @@ public abstract class AudioRequest implements Parcelable {
 
   public abstract boolean haveSuraAyah(int sura, int ayah);
 
-  AudioRequest(String baseUrl, SuraAyah verse, int verseCountInSura) {
+  LegacyAudioRequest(String baseUrl, SuraAyah verse, int verseCountInSura) {
     this.baseUrl = baseUrl;
     final int startSura = verse.sura;
     final int startAyah = verse.ayah;
@@ -59,7 +59,7 @@ public abstract class AudioRequest implements Parcelable {
     rangeRepeatInfo = new RepeatInfo(0);
   }
 
-  AudioRequest(Parcel in) {
+  LegacyAudioRequest(Parcel in) {
     this.baseUrl = in.readString();
     this.gaplessDatabasePath = in.readString();
     this.ayahsInThisSura = in.readInt();

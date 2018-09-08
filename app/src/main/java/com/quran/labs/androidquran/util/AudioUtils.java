@@ -8,11 +8,11 @@ import android.text.TextUtils;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
+import com.quran.labs.androidquran.dao.audio.DownloadLegacyAudioRequest;
+import com.quran.labs.androidquran.dao.audio.LegacyAudioRequest;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.dao.audio.AudioRequest;
-import com.quran.labs.androidquran.dao.audio.DownloadAudioRequest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -115,7 +115,7 @@ public class AudioUtils {
     return databaseName;
   }
 
-  public boolean shouldDownloadGaplessDatabase(DownloadAudioRequest request) {
+  public boolean shouldDownloadGaplessDatabase(DownloadLegacyAudioRequest request) {
     String dbPath = request.getGaplessDatabaseFilePath();
     if (TextUtils.isEmpty(dbPath)) {
       return false;
@@ -125,7 +125,7 @@ public class AudioUtils {
     return !f.exists();
   }
 
-  public String getGaplessDatabaseUrl(DownloadAudioRequest request) {
+  public String getGaplessDatabaseUrl(DownloadLegacyAudioRequest request) {
     if (!request.isGapless()) {
       return null;
     }
@@ -199,7 +199,7 @@ public class AudioUtils {
     return new SuraAyah(pageLastSura, pageLastAyah);
   }
 
-  public boolean shouldDownloadBasmallah(DownloadAudioRequest request) {
+  public boolean shouldDownloadBasmallah(DownloadLegacyAudioRequest request) {
     if (request.isGapless()) {
       return false;
     }
@@ -228,7 +228,7 @@ public class AudioUtils {
     return f.exists();
   }
 
-  private boolean doesRequireBasmallah(AudioRequest request) {
+  private boolean doesRequireBasmallah(LegacyAudioRequest request) {
     SuraAyah minAyah = request.getMinAyah();
     int startSura = minAyah.sura;
     int startAyah = minAyah.ayah;
@@ -267,7 +267,7 @@ public class AudioUtils {
     return file.isDirectory() && file.list().length > 0;
   }
 
-  public boolean haveAllFiles(DownloadAudioRequest request) {
+  public boolean haveAllFiles(DownloadLegacyAudioRequest request) {
     String baseDirectory = request.getLocalPath();
     if (TextUtils.isEmpty(baseDirectory)) {
       return false;
