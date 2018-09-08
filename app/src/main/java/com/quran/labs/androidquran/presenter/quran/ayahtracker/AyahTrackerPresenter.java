@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 
 import com.quran.labs.androidquran.common.HighlightInfo;
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.di.QuranPageScope;

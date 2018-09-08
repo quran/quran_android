@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.dao;
+package com.quran.labs.androidquran.dao.bookmark;
 
 import java.util.ArrayList;
 import java.util.Collections;

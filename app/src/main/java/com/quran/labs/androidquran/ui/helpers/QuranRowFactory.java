@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.QuranInfo;
 

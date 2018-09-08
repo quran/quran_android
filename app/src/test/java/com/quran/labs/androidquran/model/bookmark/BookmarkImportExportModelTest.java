@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import android.content.Context;
 
-import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 
 import org.junit.Before;
 import org.junit.Test;

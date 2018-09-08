@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.presenter.QuranImportPresenter;
 
 import javax.inject.Inject;

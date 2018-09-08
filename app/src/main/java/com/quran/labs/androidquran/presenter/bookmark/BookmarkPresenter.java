@@ -7,14 +7,14 @@ import android.support.design.widget.Snackbar;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;

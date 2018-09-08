@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
-import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter;
 import com.quran.labs.androidquran.ui.QuranActivity;

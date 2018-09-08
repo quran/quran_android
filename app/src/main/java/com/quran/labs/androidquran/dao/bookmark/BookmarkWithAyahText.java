@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.dao;
+package com.quran.labs.androidquran.dao.bookmark;
 
 public class BookmarkWithAyahText extends Bookmark {
   public final String ayahText;

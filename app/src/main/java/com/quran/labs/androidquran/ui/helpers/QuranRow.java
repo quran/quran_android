@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 
 public class QuranRow {
 

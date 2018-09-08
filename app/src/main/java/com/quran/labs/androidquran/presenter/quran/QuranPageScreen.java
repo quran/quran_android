@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 

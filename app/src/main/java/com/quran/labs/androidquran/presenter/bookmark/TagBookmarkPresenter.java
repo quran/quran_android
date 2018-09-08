@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.support.v4.util.Pair;
 
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.presenter.Presenter;

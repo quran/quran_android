@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
