@@ -58,9 +58,9 @@ public class QuranRowFactory {
     final QuranRow.Builder builder = new QuranRow.Builder();
 
     if (bookmark.isPageBookmark()) {
-      final int sura = quranInfo.getSuraNumberFromPage(bookmark.page);
-      builder.withText(quranInfo.getSuraNameString(context, bookmark.page))
-          .withMetadata(quranInfo.getPageSubtitle(context, bookmark.page))
+      final int sura = quranInfo.getSuraNumberFromPage(bookmark.getPage());
+      builder.withText(quranInfo.getSuraNameString(context, bookmark.getPage()))
+          .withMetadata(quranInfo.getPageSubtitle(context, bookmark.getPage()))
           .withType(QuranRow.PAGE_BOOKMARK)
           .withBookmark(bookmark)
           .withSura(sura)
@@ -71,11 +71,12 @@ public class QuranRowFactory {
       final String title;
       final String metadata;
       if (ayahText == null) {
-        title = quranInfo.getAyahString(bookmark.sura, bookmark.ayah, context);
-        metadata = quranInfo.getPageSubtitle(context, bookmark.page);
+        title = quranInfo.getAyahString(bookmark.getSura(), bookmark.getAyah(), context);
+        metadata = quranInfo.getPageSubtitle(context, bookmark.getPage());
       } else {
         title = ayahText;
-        metadata = quranInfo.getAyahMetadata(bookmark.sura, bookmark.ayah, bookmark.page, context);
+        metadata = quranInfo.getAyahMetadata(bookmark.getSura(), bookmark.getAyah(),
+            bookmark.getPage(), context);
       }
 
       builder.withText(title)

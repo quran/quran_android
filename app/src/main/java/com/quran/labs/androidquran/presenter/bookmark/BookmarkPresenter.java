@@ -390,9 +390,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       List<Bookmark> matchingBookmarks = new ArrayList<>();
       for (int j = 0, bookmarkSize = bookmarks.size(); j < bookmarkSize; j++) {
         Bookmark bookmark = bookmarks.get(j);
-        if (bookmark.tags.contains(id)) {
+        if (bookmark.getTags().contains(id)) {
           matchingBookmarks.add(bookmark);
-          seenBookmarks.add(bookmark.id);
+          seenBookmarks.add(bookmark.getId());
         }
       }
       tagMappings.put(id, matchingBookmarks);
@@ -401,7 +401,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     List<Bookmark> untaggedBookmarks = new ArrayList<>();
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
-      if (!seenBookmarks.contains(bookmark.id)) {
+      if (!seenBookmarks.contains(bookmark.getId())) {
         untaggedBookmarks.add(bookmark);
       }
     }

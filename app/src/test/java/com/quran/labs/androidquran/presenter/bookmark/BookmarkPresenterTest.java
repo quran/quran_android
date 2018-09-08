@@ -77,14 +77,14 @@ public class BookmarkPresenterTest {
     // the max between number of tags and 1 for each bookmark.
     int total = 0;
     for (Bookmark bookmark : AYAH_BOOKMARKS_LIST) {
-      int tags = bookmark.tags.size();
+      int tags = bookmark.getTags().size();
       total += Math.max(tags, 1);
     }
     AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total;
 
     total = 0;
     for (Bookmark bookmark : MIXED_BOOKMARKS_LIST) {
-      int tags = bookmark.tags.size();
+      int tags = bookmark.getTags().size();
       total += Math.max(tags, 1);
     }
     MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total;

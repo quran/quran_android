@@ -403,17 +403,17 @@ public class BookmarksDBAdapter {
         Bookmark bookmark = bookmarks.get(i);
 
         values.clear();
-        values.put(BookmarksTable.ID, bookmark.id);
-        values.put(BookmarksTable.SURA, bookmark.sura);
-        values.put(BookmarksTable.AYAH, bookmark.ayah);
-        values.put(BookmarksTable.PAGE, bookmark.page);
-        values.put(BookmarksTable.ADDED_DATE, bookmark.timestamp);
+        values.put(BookmarksTable.ID, bookmark.getId());
+        values.put(BookmarksTable.SURA, bookmark.getSura());
+        values.put(BookmarksTable.AYAH, bookmark.getAyah());
+        values.put(BookmarksTable.PAGE, bookmark.getPage());
+        values.put(BookmarksTable.ADDED_DATE, bookmark.getTimestamp());
         db.insert(BookmarksTable.TABLE_NAME, null, values);
 
-        List<Long> tagIds = bookmark.tags;
+        List<Long> tagIds = bookmark.getTags();
         for (int t = 0; t < tagIds.size(); t++) {
           values.clear();
-          values.put(BookmarkTagTable.BOOKMARK_ID, bookmark.id);
+          values.put(BookmarkTagTable.BOOKMARK_ID, bookmark.getId());
           values.put(BookmarkTagTable.TAG_ID, tagIds.get(t));
           db.insert(BookmarkTagTable.TABLE_NAME, null, values);
         }

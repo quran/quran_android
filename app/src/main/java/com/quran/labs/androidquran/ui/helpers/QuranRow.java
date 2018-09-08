@@ -60,12 +60,12 @@ public class QuranRow {
 
     public Builder withBookmark(Bookmark bookmark) {
       if (!bookmark.isPageBookmark()) {
-        mSura = bookmark.sura;
-        mAyah = bookmark.ayah;
+        mSura = bookmark.getSura();
+        mAyah = bookmark.getAyah();
       }
-      mPage = bookmark.page;
+      mPage = bookmark.getPage();
       mBookmark = bookmark;
-      mBookmarkId = bookmark.id;
+      mBookmarkId = bookmark.getId();
       return this;
     }
 
