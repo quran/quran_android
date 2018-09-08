@@ -70,9 +70,9 @@ import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.service.util.AudioFocusHelper;
 import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.dao.audio.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.AudioUtils;
 

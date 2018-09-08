@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.service.util;
+package com.quran.labs.androidquran.dao.audio;
 
 import android.os.Parcel;
 import android.support.annotation.NonNull;

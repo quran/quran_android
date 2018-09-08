@@ -15,7 +15,7 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.service.util.AudioRequest;
+import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;

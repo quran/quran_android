@@ -11,8 +11,8 @@ import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.service.AudioService;
-import com.quran.labs.androidquran.service.util.AudioRequest;
-import com.quran.labs.androidquran.service.util.DownloadAudioRequest;
+import com.quran.labs.androidquran.dao.audio.AudioRequest;
+import com.quran.labs.androidquran.dao.audio.DownloadAudioRequest;
 
 import java.io.File;
 import java.util.ArrayList;
