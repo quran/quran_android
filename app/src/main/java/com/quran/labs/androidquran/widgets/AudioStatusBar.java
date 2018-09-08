@@ -226,29 +226,29 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   }
 
   private static class QariAdapter extends BaseAdapter {
-    @NonNull LayoutInflater mInflater;
-    @NonNull private final List<QariItem> mItems;
-    @LayoutRes private final int mLayoutViewId;
-    @LayoutRes private final int mDropDownViewId;
+    @NonNull LayoutInflater inflater;
+    @NonNull private final List<QariItem> items;
+    @LayoutRes private final int layoutViewId;
+    @LayoutRes private final int dropDownViewId;
 
     QariAdapter(@NonNull Context context,
                 @NonNull List<QariItem> items,
                 @LayoutRes int layoutViewId,
                 @LayoutRes int dropDownViewId) {
-      mItems = items;
-      mLayoutViewId = layoutViewId;
-      mDropDownViewId = dropDownViewId;
-      mInflater = LayoutInflater.from(context);
+      this.items = items;
+      this.layoutViewId = layoutViewId;
+      this.dropDownViewId = dropDownViewId;
+      inflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-      return mItems.size();
+      return items.size();
     }
 
     @Override
     public QariItem getItem(int position) {
-      return mItems.get(position);
+      return items.get(position);
     }
 
     @Override
@@ -258,19 +258,19 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, mLayoutViewId);
+      return getViewInternal(position, convertView, parent, layoutViewId);
     }
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, mDropDownViewId);
+      return getViewInternal(position, convertView, parent, dropDownViewId);
     }
 
     private View getViewInternal(int position, View convertView,
         ViewGroup parent, @LayoutRes int resource) {
       TextView textView;
       if (convertView == null) {
-        textView = (TextView) mInflater.inflate(resource, parent, false);
+        textView = (TextView) inflater.inflate(resource, parent, false);
       } else {
         textView = (TextView) convertView;
       }
