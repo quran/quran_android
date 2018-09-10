@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.service.util;
+package com.quran.labs.androidquran.dao.audio;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-public abstract class AudioRequest implements Parcelable {
+public abstract class LegacyAudioRequest implements Parcelable {
 
   private String baseUrl = null;
   private String gaplessDatabasePath = null;
@@ -41,7 +41,7 @@ public abstract class AudioRequest implements Parcelable {
 
   public abstract boolean haveSuraAyah(int sura, int ayah);
 
-  AudioRequest(String baseUrl, SuraAyah verse, int verseCountInSura) {
+  LegacyAudioRequest(String baseUrl, SuraAyah verse, int verseCountInSura) {
     this.baseUrl = baseUrl;
     final int startSura = verse.sura;
     final int startAyah = verse.ayah;
@@ -54,13 +54,12 @@ public abstract class AudioRequest implements Parcelable {
     currentAyah = startAyah;
     ayahsInThisSura = verseCountInSura;
 
-    repeatInfo = new RepeatInfo(0);
-    repeatInfo.setCurrentVerse(currentSura, currentAyah);
+    repeatInfo = new RepeatInfo(0).setCurrentVerse(currentSura, currentAyah);
 
     rangeRepeatInfo = new RepeatInfo(0);
   }
 
-  AudioRequest(Parcel in) {
+  LegacyAudioRequest(Parcel in) {
     this.baseUrl = in.readString();
     this.gaplessDatabasePath = in.readString();
     this.ayahsInThisSura = in.readInt();
@@ -94,7 +93,7 @@ public abstract class AudioRequest implements Parcelable {
   }
 
   public void setVerseRepeatCount(int count) {
-    repeatInfo.setRepeatCount(count);
+    repeatInfo = repeatInfo.setRepeatCount(count);
   }
 
   public int getVerseRepeatCount() {
@@ -102,7 +101,7 @@ public abstract class AudioRequest implements Parcelable {
   }
 
   public void setRangeRepeatCount(int rangeRepeatCount) {
-    rangeRepeatInfo.setRepeatCount(rangeRepeatCount);
+    repeatInfo = rangeRepeatInfo.setRepeatCount(rangeRepeatCount);
   }
 
   public void setEnforceBounds(boolean enforceBounds) {
@@ -132,7 +131,7 @@ public abstract class AudioRequest implements Parcelable {
   public SuraAyah setCurrentAyah(QuranInfo quranInfo, int sura, int ayah) {
     Timber.d("got setCurrentAyah of: %d:%d", sura, ayah);
     if (repeatInfo.shouldRepeat()) {
-      repeatInfo.incrementRepeat();
+      repeatInfo = repeatInfo.incrementRepeat();
     } else {
       currentSura = sura;
       currentAyah = ayah;
@@ -140,7 +139,7 @@ public abstract class AudioRequest implements Parcelable {
           ((currentSura == maxSura && currentAyah > maxAyah) ||
               (currentSura > maxSura))) {
         if (rangeRepeatInfo.shouldRepeat()) {
-          rangeRepeatInfo.incrementRepeat();
+          rangeRepeatInfo = rangeRepeatInfo.incrementRepeat();
           currentSura = minSura;
           currentAyah = minAyah;
         } else {
@@ -151,7 +150,7 @@ public abstract class AudioRequest implements Parcelable {
       if (currentSura >= 1 && currentSura <= 114) {
         ayahsInThisSura = quranInfo.getNumAyahs(currentSura);
       }
-      repeatInfo.setCurrentVerse(currentSura, currentAyah);
+      repeatInfo = repeatInfo.setCurrentVerse(currentSura, currentAyah);
     }
     return repeatInfo.getCurrentAyah();
   }
@@ -235,7 +234,7 @@ public abstract class AudioRequest implements Parcelable {
       return false;
     }
     if (!force && repeatInfo.shouldRepeat()) {
-      repeatInfo.incrementRepeat();
+      repeatInfo = repeatInfo.incrementRepeat();
       if (currentAyah == 1 && currentSura != 1 && currentSura != 9) {
         justPlayedBasmallah = true;
       }
@@ -245,10 +244,10 @@ public abstract class AudioRequest implements Parcelable {
     if (enforceBounds && ((currentSura > maxSura) ||
         (currentAyah >= maxAyah && currentSura == maxSura))) {
       if (rangeRepeatInfo.shouldRepeat()) {
-        rangeRepeatInfo.incrementRepeat();
+        rangeRepeatInfo = rangeRepeatInfo.incrementRepeat();
         currentSura = minSura;
         currentAyah = minAyah;
-        repeatInfo.setCurrentVerse(currentSura, currentAyah);
+        repeatInfo = repeatInfo.setCurrentVerse(currentSura, currentAyah);
         return true;
       }
     }
@@ -259,10 +258,10 @@ public abstract class AudioRequest implements Parcelable {
       currentSura++;
       if (currentSura <= 114) {
         ayahsInThisSura = quranInfo.getNumAyahs(currentSura);
-        repeatInfo.setCurrentVerse(currentSura, currentAyah);
+        repeatInfo = repeatInfo.setCurrentVerse(currentSura, currentAyah);
       }
     } else {
-      repeatInfo.setCurrentVerse(currentSura, currentAyah);
+      repeatInfo = repeatInfo.setCurrentVerse(currentSura, currentAyah);
     }
     return true;
   }
@@ -280,7 +279,7 @@ public abstract class AudioRequest implements Parcelable {
     }
 
     if (currentSura > 0 && currentAyah > 0) {
-      repeatInfo.setCurrentVerse(currentSura, currentAyah);
+      repeatInfo = repeatInfo.setCurrentVerse(currentSura, currentAyah);
     }
   }
 

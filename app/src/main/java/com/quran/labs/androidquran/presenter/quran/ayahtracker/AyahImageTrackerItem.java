@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.quran.page.common.data.AyahBounds;
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -85,9 +85,9 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
     int highlighted = 0;
     for (int i = 0, size = bookmarks.size(); i < size; i++) {
       Bookmark bookmark = bookmarks.get(i);
-      if (bookmark.page == page) {
+      if (bookmark.getPage() == page) {
         highlighted++;
-        ayahView.highlightAyah(bookmark.sura, bookmark.ayah, HighlightType.BOOKMARK);
+        ayahView.highlightAyah(bookmark.getSura(), bookmark.getAyah(), HighlightType.BOOKMARK);
       }
     }
 

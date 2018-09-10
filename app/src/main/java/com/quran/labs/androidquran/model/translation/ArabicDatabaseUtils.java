@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.quran.labs.androidquran.common.QuranText;
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -83,7 +83,7 @@ public class ArabicDatabaseUtils {
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
       if (!bookmark.isPageBookmark()) {
-        ayahIds.add(quranInfo.getAyahId(bookmark.sura, bookmark.ayah));
+        ayahIds.add(quranInfo.getAyahId(bookmark.getSura(), bookmark.getAyah()));
       }
     }
 
@@ -125,7 +125,7 @@ public class ArabicDatabaseUtils {
         if (bookmark.isPageBookmark()) {
           toAdd = bookmark;
         } else {
-          String ayahText = ayahMap.get(quranInfo.getAyahId(bookmark.sura, bookmark.ayah));
+          String ayahText = ayahMap.get(quranInfo.getAyahId(bookmark.getSura(), bookmark.getAyah()));
           toAdd = ayahText == null ? bookmark : bookmark.withAyahText(ayahText);
         }
         result.add(toAdd);

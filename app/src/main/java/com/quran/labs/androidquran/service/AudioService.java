@@ -64,15 +64,15 @@ import android.util.SparseIntArray;
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.audio.LegacyAudioRequest;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.service.util.AudioFocusHelper;
 import com.quran.labs.androidquran.service.util.AudioFocusable;
-import com.quran.labs.androidquran.service.util.AudioRequest;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.service.util.RepeatInfo;
+import com.quran.labs.androidquran.dao.audio.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.AudioUtils;
 
@@ -144,9 +144,9 @@ public class AudioService extends Service implements OnCompletionListener,
   private AudioFocusHelper audioFocusHelper = null;
 
   // object representing the current playing request
-  private AudioRequest audioRequest = null;
+  private LegacyAudioRequest audioRequest = null;
 
-  // so user can pass in a serializable AudioRequest to the intent
+  // so user can pass in a serializable LegacyAudioRequest to the intent
   public static final String EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO";
 
   // ignore the passed in play info if we're already playing
@@ -389,7 +389,7 @@ public class AudioService extends Service implements OnCompletionListener,
         broadcastManager.sendBroadcast(updateIntent);
       }
     } else if (ACTION_PLAYBACK.equals(action)) {
-      AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
+      LegacyAudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
       if (playInfo != null) {
         if (State.Stopped == state ||
             !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {

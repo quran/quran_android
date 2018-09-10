@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.support.v4.util.Pair;
 
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.presenter.Presenter;
@@ -142,8 +142,8 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
       observable = Observable.just(bookmarkIds);
     } else {
       // if we don't have a bookmark id, we'll add the bookmark and use its id
-      observable = bookmarkModel.safeAddBookmark(potentialAyahBookmark.sura,
-          potentialAyahBookmark.ayah, potentialAyahBookmark.page)
+      observable = bookmarkModel.safeAddBookmark(potentialAyahBookmark.getSura(),
+          potentialAyahBookmark.getAyah(), potentialAyahBookmark.getPage())
           .map(bookmarkId -> new long[]{ bookmarkId });
     }
     return observable;
@@ -175,8 +175,8 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   private Single<List<Long>> getBookmarkTagIdsObservable() {
     Single<Long> bookmarkId;
     if (potentialAyahBookmark != null) {
-      bookmarkId = bookmarkModel.getBookmarkId(potentialAyahBookmark.sura,
-          potentialAyahBookmark.ayah, potentialAyahBookmark.page);
+      bookmarkId = bookmarkModel.getBookmarkId(potentialAyahBookmark.getSura(),
+          potentialAyahBookmark.getAyah(), potentialAyahBookmark.getPage());
     } else {
       bookmarkId = Single.just(
           bookmarkIds != null && bookmarkIds.length == 1 ? bookmarkIds[0] : 0);

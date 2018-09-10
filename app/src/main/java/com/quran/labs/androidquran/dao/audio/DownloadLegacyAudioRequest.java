@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.service.util;
+package com.quran.labs.androidquran.dao.audio;
 
 import android.os.Parcel;
 import android.support.annotation.NonNull;
@@ -7,19 +7,19 @@ import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.util.AudioUtils;
 
-public class DownloadAudioRequest extends AudioRequest {
+public class DownloadLegacyAudioRequest extends LegacyAudioRequest {
 
   @NonNull private final QariItem qariItem;
   private String localDirectoryPath = null;
 
-  public DownloadAudioRequest(String baseUrl, SuraAyah verse,
-      @NonNull QariItem qariItem, String localPath, int versesInThisSura) {
+  public DownloadLegacyAudioRequest(String baseUrl, SuraAyah verse,
+                                    @NonNull QariItem qariItem, String localPath, int versesInThisSura) {
     super(baseUrl, verse, versesInThisSura);
     this.qariItem = qariItem;
     localDirectoryPath = localPath;
   }
 
-  DownloadAudioRequest(Parcel in) {
+  DownloadLegacyAudioRequest(Parcel in) {
     super(in);
     this.qariItem = in.readParcelable(QariItem.class.getClassLoader());
     this.localDirectoryPath = in.readString();
@@ -51,15 +51,15 @@ public class DownloadAudioRequest extends AudioRequest {
     dest.writeString(this.localDirectoryPath);
   }
 
-  public static final Creator<DownloadAudioRequest> CREATOR = new Creator<DownloadAudioRequest>() {
+  public static final Creator<DownloadLegacyAudioRequest> CREATOR = new Creator<DownloadLegacyAudioRequest>() {
     @Override
-    public DownloadAudioRequest createFromParcel(Parcel source) {
-      return new DownloadAudioRequest(source);
+    public DownloadLegacyAudioRequest createFromParcel(Parcel source) {
+      return new DownloadLegacyAudioRequest(source);
     }
 
     @Override
-    public DownloadAudioRequest[] newArray(int size) {
-      return new DownloadAudioRequest[size];
+    public DownloadLegacyAudioRequest[] newArray(int size) {
+      return new DownloadLegacyAudioRequest[size];
     }
   };
 }

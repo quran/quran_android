@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.service.util;
+package com.quran.labs.androidquran.dao.audio;
 
 import android.os.Parcel;
 import android.support.annotation.NonNull;
@@ -6,14 +6,14 @@ import android.support.annotation.NonNull;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.data.SuraAyah;
 
-public class StreamingAudioRequest extends DownloadAudioRequest {
+public class StreamingLegacyAudioRequest extends DownloadLegacyAudioRequest {
 
-  public StreamingAudioRequest(String baseUrl, SuraAyah verse, @NonNull
+  public StreamingLegacyAudioRequest(String baseUrl, SuraAyah verse, @NonNull
       QariItem qariItem, String localPath, int versesInThisSura) {
     super(baseUrl, verse, qariItem, localPath, versesInThisSura);
   }
 
-  private StreamingAudioRequest(Parcel in) {
+  private StreamingLegacyAudioRequest(Parcel in) {
     super(in);
   }
 
@@ -33,16 +33,16 @@ public class StreamingAudioRequest extends DownloadAudioRequest {
     super.writeToParcel(dest, flags);
   }
 
-  public static final Creator<StreamingAudioRequest> CREATOR
-      = new Creator<StreamingAudioRequest>() {
+  public static final Creator<StreamingLegacyAudioRequest> CREATOR
+      = new Creator<StreamingLegacyAudioRequest>() {
     @Override
-    public StreamingAudioRequest createFromParcel(Parcel source) {
-      return new StreamingAudioRequest(source);
+    public StreamingLegacyAudioRequest createFromParcel(Parcel source) {
+      return new StreamingLegacyAudioRequest(source);
     }
 
     @Override
-    public StreamingAudioRequest[] newArray(int size) {
-      return new StreamingAudioRequest[size];
+    public StreamingLegacyAudioRequest[] newArray(int size) {
+      return new StreamingLegacyAudioRequest[size];
     }
   };
 }

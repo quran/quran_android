@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.service.util;
+package com.quran.labs.androidquran.dao.audio;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,14 +6,20 @@ import android.os.Parcelable;
 import com.quran.labs.androidquran.data.SuraAyah;
 
 public class RepeatInfo implements Parcelable {
-
-  private int repeatCount;
-  private int currentAyah;
-  private int currentSura;
-  private int currentPlayCount;
+  private final int repeatCount;
+  private final int currentAyah;
+  private final int currentSura;
+  private final int currentPlayCount;
 
   RepeatInfo(int repeatCount) {
+    this(repeatCount, 0, 0, 0);
+  }
+
+  private RepeatInfo(int repeatCount, int currentSura, int currentAyah, int currentPlayCount) {
     this.repeatCount = repeatCount;
+    this.currentSura = currentSura;
+    this.currentAyah = currentAyah;
+    this.currentPlayCount = currentPlayCount;
   }
 
   private RepeatInfo(Parcel in) {
@@ -23,28 +29,27 @@ public class RepeatInfo implements Parcelable {
     this.currentPlayCount = in.readInt();
   }
 
-  void setCurrentVerse(int sura, int ayah) {
+  RepeatInfo setCurrentVerse(int sura, int ayah) {
     if (sura != currentSura || ayah != currentAyah) {
-      currentSura = sura;
-      currentAyah = ayah;
-      currentPlayCount = 0;
+      return new RepeatInfo(repeatCount, sura, ayah, 0);
     }
+    return this;
   }
 
   public int getRepeatCount() {
     return repeatCount;
   }
 
-  void setRepeatCount(int repeatCount) {
-    this.repeatCount = repeatCount;
+  RepeatInfo setRepeatCount(int repeatCount) {
+    return new RepeatInfo(repeatCount, currentSura, currentAyah, currentPlayCount);
   }
 
   boolean shouldRepeat() {
     return repeatCount == -1 || (currentPlayCount < repeatCount);
   }
 
-  void incrementRepeat() {
-    currentPlayCount++;
+  RepeatInfo incrementRepeat() {
+    return new RepeatInfo(repeatCount, currentSura, currentAyah, currentPlayCount + 1);
   }
 
   SuraAyah getCurrentAyah() {

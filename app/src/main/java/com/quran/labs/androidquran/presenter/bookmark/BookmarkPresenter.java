@@ -7,14 +7,14 @@ import android.support.design.widget.Snackbar;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
-import com.quran.labs.androidquran.dao.Bookmark;
-import com.quran.labs.androidquran.dao.BookmarkData;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.model.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
@@ -390,9 +390,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       List<Bookmark> matchingBookmarks = new ArrayList<>();
       for (int j = 0, bookmarkSize = bookmarks.size(); j < bookmarkSize; j++) {
         Bookmark bookmark = bookmarks.get(j);
-        if (bookmark.tags.contains(id)) {
+        if (bookmark.getTags().contains(id)) {
           matchingBookmarks.add(bookmark);
-          seenBookmarks.add(bookmark.id);
+          seenBookmarks.add(bookmark.getId());
         }
       }
       tagMappings.put(id, matchingBookmarks);
@@ -401,7 +401,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     List<Bookmark> untaggedBookmarks = new ArrayList<>();
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
-      if (!seenBookmarks.contains(bookmark.id)) {
+      if (!seenBookmarks.contains(bookmark.getId())) {
         untaggedBookmarks.add(bookmark);
       }
     }

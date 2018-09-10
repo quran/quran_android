@@ -98,20 +98,20 @@ public class TranslationsDBAdapter {
         TranslationItem item = updates.get(i);
         if (item.exists()) {
           ContentValues values = new ContentValues();
-          values.put(TranslationsTable.ID, item.translation.getId());
-          values.put(TranslationsTable.NAME, item.translation.getDisplayName());
-          values.put(TranslationsTable.TRANSLATOR, item.translation.getTranslator());
+          values.put(TranslationsTable.ID, item.getTranslation().getId());
+          values.put(TranslationsTable.NAME, item.getTranslation().getDisplayName());
+          values.put(TranslationsTable.TRANSLATOR, item.getTranslation().getTranslator());
           values.put(TranslationsTable.TRANSLATOR_FOREIGN,
-              item.translation.getTranslatorNameLocalized());
-          values.put(TranslationsTable.FILENAME, item.translation.getFileName());
-          values.put(TranslationsTable.URL, item.translation.getFileUrl());
-          values.put(TranslationsTable.LANGUAGE_CODE, item.translation.getLanguageCode());
-          values.put(TranslationsTable.VERSION, item.localVersion);
+              item.getTranslation().getTranslatorNameLocalized());
+          values.put(TranslationsTable.FILENAME, item.getTranslation().getFileName());
+          values.put(TranslationsTable.URL, item.getTranslation().getFileUrl());
+          values.put(TranslationsTable.LANGUAGE_CODE, item.getTranslation().getLanguageCode());
+          values.put(TranslationsTable.VERSION, item.getLocalVersion());
 
           db.replace(TranslationsTable.TABLE_NAME, null, values);
         } else {
           db.delete(TranslationsTable.TABLE_NAME,
-              TranslationsTable.ID + " = " + item.translation.getId(), null);
+              TranslationsTable.ID + " = " + item.getTranslation().getId(), null);
         }
       }
       db.setTransactionSuccessful();

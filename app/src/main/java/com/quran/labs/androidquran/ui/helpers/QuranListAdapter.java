@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -130,9 +130,9 @@ public class QuranListAdapter extends
 
       List<Tag> tags = new ArrayList<>();
       Bookmark bookmark = item.bookmark;
-      if (bookmark != null && !bookmark.tags.isEmpty() && showTags) {
-        for (int i = 0, bookmarkTags = bookmark.tags.size(); i < bookmarkTags; i++) {
-          Long tagId = bookmark.tags.get(i);
+      if (bookmark != null && !bookmark.getTags().isEmpty() && showTags) {
+        for (int i = 0, bookmarkTags = bookmark.getTags().size(); i < bookmarkTags; i++) {
+          Long tagId = bookmark.getTags().get(i);
           Tag tag = tagMap.get(tagId);
           if (tag != null) {
             tags.add(tag);
