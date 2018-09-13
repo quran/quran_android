@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
 import com.quran.labs.androidquran.R;
@@ -218,7 +219,9 @@ public class AudioUtils {
       }
     }
 
-    return doesRequireBasmallah(request);
+    final SuraAyah minAyah = request.getMinAyah();
+    final SuraAyah maxAyah = request.getMaxAyah();
+    return doesRequireBasmallah(minAyah, maxAyah);
   }
 
   public static boolean haveSuraAyahForQari(String baseDir, int sura, int ayah) {
@@ -228,33 +231,20 @@ public class AudioUtils {
     return f.exists();
   }
 
-  private boolean doesRequireBasmallah(LegacyAudioRequest request) {
-    SuraAyah minAyah = request.getMinAyah();
-    int startSura = minAyah.sura;
-    int startAyah = minAyah.ayah;
-
-    SuraAyah maxAyah = request.getMaxAyah();
-    int endSura = maxAyah.sura;
-    int endAyah = maxAyah.ayah;
-
+  @VisibleForTesting
+  boolean doesRequireBasmallah(SuraAyah minAyah, SuraAyah maxAyah) {
     Timber.d("seeing if need basmalla...");
 
-    for (int i = startSura; i <= endSura; i++) {
-      int lastAyah = quranInfo.getNumAyahs(i);
-      if (i == endSura) {
-        lastAyah = endAyah;
-      }
-      int firstAyah = 1;
-      if (i == startSura) {
-        firstAyah = startAyah;
+    for (int i = minAyah.sura; i <= maxAyah.sura; i++) {
+      final int firstAyah;
+      if (i == minAyah.sura) {
+        firstAyah = minAyah.ayah;
+      } else {
+         firstAyah = 1;
       }
 
-      for (int j = firstAyah; j < lastAyah; j++) {
-        if (j == 1 && i != 1 && i != 9) {
-          Timber.d("need basmalla for %d:%d", i, j);
-
-          return true;
-        }
+      if (firstAyah == 1 && i != 1 && i != 9) {
+        return true;
       }
     }
 
