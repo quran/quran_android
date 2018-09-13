@@ -36,7 +36,7 @@ public class DownloadLegacyAudioRequest extends LegacyAudioRequest {
 
   @Override
   public boolean haveSuraAyah(int sura, int ayah) {
-    return AudioUtils.haveSuraAyahForQari(localDirectoryPath, sura, ayah);
+    return AudioUtils.Companion.haveSuraAyahForQari(localDirectoryPath, sura, ayah);
   }
 
   @Override

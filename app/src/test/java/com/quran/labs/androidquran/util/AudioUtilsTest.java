@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,8 +26,10 @@ public class AudioUtilsTest {
 
     QuranInfo quranInfoMock = new QuranInfo(pageProviderMock);
 
-    AudioUtils audioUtils = new AudioUtils(quranInfoMock, null);
+    AudioUtils audioUtils = new AudioUtils(quranInfoMock, mock(QuranFileUtils.class));
     SuraAyah lastAyah = audioUtils.getLastAyahToPlay(new SuraAyah(109, 1), 603, 1, false);
+
+    assertNotNull(lastAyah);
     assertEquals(5, lastAyah.ayah);
     assertEquals(111, lastAyah.sura);
   }
