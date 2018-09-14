@@ -13,11 +13,11 @@ import timber.log.Timber;
 
 public abstract class LegacyAudioRequest implements Parcelable {
 
-  private String baseUrl = null;
+  private String baseUrl;
   private String gaplessDatabasePath = null;
 
   // where we started from
-  private int ayahsInThisSura = 0;
+  private int ayahsInThisSura;
 
   // min and max sura/ayah
   private int minSura;
@@ -26,15 +26,15 @@ public abstract class LegacyAudioRequest implements Parcelable {
   private int maxAyah;
 
   // what we're currently playing
-  private int currentSura = 0;
-  private int currentAyah = 0;
+  private int currentSura;
+  private int currentAyah;
 
   // range repeat info
   private RepeatInfo rangeRepeatInfo;
   private boolean enforceBounds;
 
   // did we just play the basmallah?
-  private boolean justPlayedBasmallah = false;
+  private boolean justPlayedBasmallah;
 
   // repeat information
   private RepeatInfo repeatInfo;
@@ -155,23 +155,11 @@ public abstract class LegacyAudioRequest implements Parcelable {
     return repeatInfo.getCurrentAyah();
   }
 
-  public String getBaseUrl() {
-    return baseUrl;
-  }
-
   public void setPlayBounds(SuraAyah minVerse, SuraAyah maxVerse) {
     minSura = minVerse.sura;
     minAyah = minVerse.ayah;
     maxSura = maxVerse.sura;
     maxAyah = maxVerse.ayah;
-  }
-
-  public SuraAyah getMinAyah() {
-    return new SuraAyah(minSura, minAyah);
-  }
-
-  public SuraAyah getMaxAyah() {
-    return new SuraAyah(maxSura, maxAyah);
   }
 
   public String getUrl() {

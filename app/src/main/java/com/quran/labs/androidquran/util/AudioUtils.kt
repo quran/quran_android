@@ -12,7 +12,6 @@ import com.quran.labs.androidquran.data.SuraAyah
 import com.quran.labs.androidquran.service.AudioService
 
 import java.io.File
-import java.util.ArrayList
 import java.util.Locale
 
 import javax.inject.Inject
@@ -92,22 +91,12 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     return databaseName
   }
 
-  fun shouldDownloadGaplessDatabase(request: DownloadLegacyAudioRequest): Boolean {
-    val dbPath = request.gaplessDatabaseFilePath
-    if (dbPath.isNullOrEmpty()) {
-      return false
-    }
-
-    return !File(dbPath).exists()
-  }
-
-  fun getGaplessDatabaseUrl(request: DownloadLegacyAudioRequest): String? {
-    if (!request.isGapless || request.qariItem.databaseName == null) {
+  fun getGaplessDatabaseUrl(qari: QariItem): String? {
+    if (!qari.isGapless || qari.databaseName == null) {
       return null
     }
 
-    val item = request.qariItem
-    val dbName = item.databaseName + ZIP_EXTENSION
+    val dbName = qari.databaseName + ZIP_EXTENSION
     return quranFileUtils.gaplessDatabaseRootUrl + "/" + dbName
   }
 
@@ -178,11 +167,14 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     return SuraAyah(pageLastSura, pageLastAyah)
   }
 
-  fun shouldDownloadBasmallah(request: DownloadLegacyAudioRequest): Boolean {
-    if (request.isGapless) {
+  fun shouldDownloadBasmallah(baseDirectory: String,
+                              start: SuraAyah,
+                              end: SuraAyah,
+                              isGapless: Boolean) : Boolean {
+    if (isGapless) {
       return false
     }
-    val baseDirectory = request.localPath
+
     if (baseDirectory.isNotEmpty()) {
       var f = File(baseDirectory)
       if (f.exists()) {
@@ -197,9 +189,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
       }
     }
 
-    val minAyah = request.minAyah
-    val maxAyah = request.maxAyah
-    return doesRequireBasmallah(minAyah, maxAyah)
+    return doesRequireBasmallah(start, end)
   }
 
   @VisibleForTesting
@@ -222,26 +212,26 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     return file.isDirectory && file.list().isNotEmpty()
   }
 
-  fun haveAllFiles(request: DownloadLegacyAudioRequest): Boolean {
-    val baseDirectory = request.localPath
-    if (baseDirectory.isNullOrEmpty()) {
+  fun haveAllFiles(baseUrl: String,
+                   path: String,
+                   start: SuraAyah,
+                   end: SuraAyah,
+                   isGapless: Boolean): Boolean {
+    if (path.isEmpty()) {
       return false
     }
 
-    val isGapless = request.isGapless
-    var f = File(baseDirectory)
+    var f = File(path)
     if (!f.exists()) {
       f.mkdirs()
       return false
     }
 
-    val minAyah = request.minAyah
-    val startSura = minAyah.sura
-    val startAyah = minAyah.ayah
+    val startSura = start.sura
+    val startAyah = start.ayah
 
-    val maxAyah = request.maxAyah
-    val endSura = maxAyah.sura
-    val endAyah = maxAyah.ayah
+    val endSura = end.sura
+    val endAyah = end.ayah
 
     if (endSura < startSura || endSura == startSura && endAyah < startAyah) {
       throw IllegalStateException("End isn't larger than the start")
@@ -255,8 +245,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
         if (i == endSura && endAyah == 0) {
           continue
         }
-        val p = request.baseUrl
-        val fileName = String.format(Locale.US, p, i)
+        val fileName = String.format(Locale.US, baseUrl, i)
         Timber.d("gapless, checking if we have %s", fileName)
         f = File(fileName)
         if (!f.exists()) {
@@ -268,7 +257,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
       Timber.d("not gapless, checking each ayah...")
       for (j in firstAyah..lastAyah) {
         val filename = i.toString() + File.separator + j + AUDIO_EXTENSION
-        f = File(baseDirectory + File.separator + filename)
+        f = File(path + File.separator + filename)
         if (!f.exists()) {
           return false
         }

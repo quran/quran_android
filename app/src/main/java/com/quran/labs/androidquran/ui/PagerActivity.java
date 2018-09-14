@@ -53,6 +53,7 @@ import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QariItem;
 import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
+import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.dao.audio.DownloadLegacyAudioRequest;
 import com.quran.labs.androidquran.dao.audio.StreamingLegacyAudioRequest;
 import com.quran.labs.androidquran.data.Constants;
@@ -63,6 +64,7 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.module.activity.PagerActivityModule;
+import com.quran.labs.androidquran.presenter.audio.AudioPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.RecentPagePresenter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -128,7 +130,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     AyahSelectedListener,
     JumpDestination {
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
-  private static final String LAST_AUDIO_DL_REQUEST = "LAST_AUDIO_DL_REQUEST";
   private static final String LAST_READ_PAGE = "LAST_READ_PAGE";
   private static final String LAST_READING_MODE_IS_TRANSLATION =
       "LAST_READING_MODE_IS_TRANSLATION";
@@ -151,7 +152,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private QuranPageAdapter pagerAdapter = null;
   private boolean shouldReconnect = false;
   private SparseBooleanArray bookmarksCache = null;
-  private DownloadLegacyAudioRequest lastAudioDownloadRequest = null;
   private boolean showingTranslation = false;
   private int highlightedSura = -1;
   private int highlightedAyah = -1;
@@ -208,6 +208,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject AudioUtils audioUtils;
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
+  @Inject AudioPresenter audioPresenter;
 
   private CompositeDisposable compositeDisposable;
 
@@ -259,12 +260,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     isActionBarHidden = true;
     if (savedInstanceState != null) {
       Timber.d("non-null saved instance state!");
-      DownloadLegacyAudioRequest lastAudioRequest =
-          savedInstanceState.getParcelable(LAST_AUDIO_DL_REQUEST);
-      if (lastAudioRequest != null) {
-        Timber.d("restoring request from saved instance!");
-        lastAudioDownloadRequest = lastAudioRequest;
-      }
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
       if (page != -1) {
         page = numberOfPages - page;
@@ -668,6 +663,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void onResume() {
     super.onResume();
 
+    audioPresenter.bind(this);
     recentPagePresenter.bind(this);
     isInMultiWindowMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode();
 
@@ -840,6 +836,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       promptDialog.dismiss();
       promptDialog = null;
     }
+    audioPresenter.unbind(this);
     recentPagePresenter.unbind(this);
     quranSettings.setWasShowingTranslation(pagerAdapter.getIsShowingTranslation());
     super.onPause();
@@ -869,9 +866,6 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onSaveInstanceState(Bundle state) {
-    if (lastAudioDownloadRequest != null) {
-      state.putParcelable(LAST_AUDIO_DL_REQUEST, lastAudioDownloadRequest);
-    }
     int lastPage = quranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
     state.putInt(LAST_READ_PAGE, lastPage);
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, showingTranslation);
@@ -1224,11 +1218,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void handleDownloadSuccess() {
     refreshQuranPages();
-    if (lastAudioDownloadRequest instanceof StreamingLegacyAudioRequest) {
-      playStreamingHelper((StreamingLegacyAudioRequest) lastAudioDownloadRequest);
-    } else {
-      playAudioRequest(lastAudioDownloadRequest);
-    }
+    audioPresenter.onDownloadSuccess();
   }
 
   @Override
@@ -1433,142 +1423,38 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     int startSura = quranInfo.safelyGetSuraOnPage(page);
     int startAyah = quranInfo.getFirstAyahOnPage(page);
-    playFromAyah(page, startSura, startAyah, false);
+    playFromAyah(page, startSura, startAyah);
   }
 
-  private void playFromAyah(int page, int startSura,
-                            int startAyah, boolean force) {
+  private void playFromAyah(int page, int startSura, int startAyah) {
     final SuraAyah start = new SuraAyah(startSura, startAyah);
-    playFromAyah(start, null, page, 0, 0, false, force);
+    playFromAyah(start, null, page, 0, 0, false, false);
   }
 
-  public void playFromAyah(SuraAyah start, SuraAyah end,
-                            int page, int verseRepeat, int rangeRepeat,
-                            boolean enforceRange, boolean force) {
+  public void playFromAyah(SuraAyah start,
+                           SuraAyah end,
+                           int page,
+                           int verseRepeat,
+                           int rangeRepeat,
+                           boolean enforceRange,
+                           boolean force) {
     if (force) {
       shouldOverridePlaying = true;
     }
 
-    QariItem item = audioStatusBar.getAudioInfo();
-    lastAudioDownloadRequest = getAudioDownloadRequest(start, end, page, item,
-        verseRepeat, rangeRepeat, enforceRange);
-    if (quranSettings.shouldStream() && lastAudioDownloadRequest != null &&
-        !audioUtils.haveAllFiles(lastAudioDownloadRequest)) {
-      playStreaming(start, end, page, item, verseRepeat, rangeRepeat, enforceRange);
-    } else {
-      playAudioRequest(lastAudioDownloadRequest);
-    }
-  }
+    final SuraAyah ending = end != null ? end :
+        audioUtils.getLastAyahToPlay(start, page,
+            quranSettings.getPreferredDownloadAmount(), isDualPages);
 
-  private void playStreaming(SuraAyah ayah, SuraAyah end,
-                            int page, QariItem item, int verseRepeat,
-                            int rangeRepeat, boolean enforceRange) {
-    String qariUrl = audioUtils.getQariUrl(item);
-
-    final SuraAyah ending;
-    if (end != null) {
-      ending = end;
-    } else {
-      // this won't be enforced unless the user sets a range
-      // repeat, but we set it to a sane default anyway.
-      ending = audioUtils.getLastAyahToPlay(ayah, page,
-          quranSettings.getPreferredDownloadAmount(), isDualPages);
-    }
-
-    String dbFile = audioUtils.getQariDatabasePathIfGapless(this, item);
-    String path = audioUtils.getLocalQariUrl(this, item);
-    StreamingLegacyAudioRequest request = new StreamingLegacyAudioRequest(
-        qariUrl, ayah, item, path, quranInfo.getNumAyahs(ayah.sura));
-    request.setPlayBounds(ayah, ending);
-    request.setEnforceBounds(enforceRange);
-    request.setRangeRepeatCount(rangeRepeat);
-    request.setVerseRepeatCount(verseRepeat);
-    request.setGaplessDatabaseFilePath(dbFile);
-    playStreamingHelper(request);
-  }
-
-  private void playStreamingHelper(StreamingLegacyAudioRequest request) {
-    String dbFile = audioUtils.getQariDatabasePathIfGapless(this, request.getQariItem());
-    lastAudioDownloadRequest = request;
-
-    if (!TextUtils.isEmpty(dbFile)) {
-      if (!quranFileUtils.haveAyaPositionFile(this)) {
-        audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-        String url = quranFileUtils.getAyaPositionFileUrl();
-        String destination = quranFileUtils.getQuranDatabaseDirectory(this);
-        // start the download
-        String notificationTitle = getString(R.string.highlighting_database);
-        Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-            destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
-            QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-        ContextCompat.startForegroundService(this, intent);
-        return;
-      } else if (audioUtils.shouldDownloadGaplessDatabase(request)) {
-        Timber.d("need to download gapless database...");
-        if (isActionBarHidden) {
-          toggleActionBar();
-        }
-        audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-        String url = audioUtils.getGaplessDatabaseUrl(request);
-        String destination = request.getLocalPath();
-        // start the download
-        String notificationTitle = getString(R.string.timing_database);
-        Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-            destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
-            QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-        ContextCompat.startForegroundService(this, intent);
-        return;
-      }
-    }
-
-    play(request);
-    audioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
-    audioStatusBar.setRepeatCount(request.getVerseRepeatCount());
-  }
-
-  @Nullable
-  private DownloadLegacyAudioRequest getAudioDownloadRequest(SuraAyah ayah, SuraAyah ending,
-                                                             int page, @NonNull QariItem item, int verseRepeat,
-                                                             int rangeRepeat, boolean enforceBounds) {
-    final SuraAyah endAyah;
     if (ending != null) {
-      endAyah = ending;
-    } else {
-      endAyah = audioUtils.getLastAyahToPlay(ayah, page,
-          quranSettings.getPreferredDownloadAmount(), isDualPages);
+      final QariItem item = audioStatusBar.getAudioInfo();
+      final boolean shouldStream = quranSettings.shouldStream();
+      audioPresenter.play(
+          start, ending, item, verseRepeat, rangeRepeat, enforceRange, shouldStream);
     }
-    String baseUri = audioUtils.getLocalQariUrl(this, item);
-    if (endAyah == null || baseUri == null) {
-      return null;
-    }
-    String dbFile = audioUtils.getQariDatabasePathIfGapless(this, item);
-
-    String fileUrl;
-    if (TextUtils.isEmpty(dbFile)) {
-      fileUrl = baseUri + File.separator + "%d" + File.separator +
-          "%d" + AudioUtils.AUDIO_EXTENSION;
-    } else {
-      fileUrl = baseUri + File.separator + "%03d" +
-          AudioUtils.AUDIO_EXTENSION;
-    }
-
-    DownloadLegacyAudioRequest request = new DownloadLegacyAudioRequest(
-        fileUrl, ayah, item, baseUri, quranInfo.getNumAyahs(ayah.sura));
-    request.setGaplessDatabaseFilePath(dbFile);
-    request.setPlayBounds(ayah, endAyah);
-    request.setEnforceBounds(enforceBounds);
-    request.setRangeRepeatCount(rangeRepeat);
-    request.setVerseRepeatCount(verseRepeat);
-
-    return request;
   }
 
-  private void playAudioRequest(@Nullable DownloadLegacyAudioRequest request) {
-    if (request == null) {
-      audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-      return;
-    }
-
+  public void handleRequiredDownload(Intent downloadIntent) {
     boolean needsPermission = needsPermissionToDownloadOver3g;
     if (needsPermission) {
       if (QuranUtils.isOnWifiNetwork(this)) {
@@ -1577,104 +1463,60 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     }
 
-    Timber.d("seeing if we can play audio request...");
-    if (!quranFileUtils.haveAyaPositionFile(this)) {
-      if (needsPermission) {
-        audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
-        return;
-      }
-
-      if (isActionBarHidden) {
-        toggleActionBar();
-      }
-      audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      String url = quranFileUtils.getAyaPositionFileUrl();
-      String destination = quranFileUtils.getQuranDatabaseDirectory(this);
-      // start the download
-      String notificationTitle = getString(R.string.highlighting_database);
-      Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-          destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
-          QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-      ContextCompat.startForegroundService(this, intent);
-    } else if (audioUtils.shouldDownloadGaplessDatabase(request)) {
-      Timber.d("need to download gapless database...");
-      if (needsPermission) {
-        audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
-        return;
-      }
-
-      if (isActionBarHidden) {
-        toggleActionBar();
-      }
-      audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      String url = audioUtils.getGaplessDatabaseUrl(request);
-      String destination = request.getLocalPath();
-      // start the download
-      String notificationTitle = getString(R.string.timing_database);
-      Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-          destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
-          QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-      ContextCompat.startForegroundService(this, intent);
-    } else if (audioUtils.haveAllFiles(request)) {
-      if (!audioUtils.shouldDownloadBasmallah(request)) {
-        Timber.d("have all files, playing!");
-        play(request);
-        lastAudioDownloadRequest = null;
-      } else {
-        Timber.d("should download basmalla...");
-        if (needsPermission) {
-          audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
-          return;
-        }
-
-        SuraAyah firstAyah = new SuraAyah(1, 1);
-        String qariUrl = audioUtils.getQariUrl(request.getQariItem());
-        audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-
-        if (isActionBarHidden) {
-          toggleActionBar();
-        }
-        String notificationTitle = quranInfo.getNotificationTitle(
-            this, firstAyah, firstAyah, request.isGapless());
-        Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
-            request.getLocalPath(), notificationTitle,
-            AUDIO_DOWNLOAD_KEY,
-            QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-        intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, firstAyah);
-        intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, firstAyah);
-        ContextCompat.startForegroundService(this, intent);
-      }
+    if (needsPermission) {
+      audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
     } else {
-      if (needsPermission) {
-        audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
-        return;
-      }
-
       if (isActionBarHidden) {
         toggleActionBar();
       }
       audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-
-      String notificationTitle = quranInfo.getNotificationTitle(this,
-          request.getMinAyah(), request.getMaxAyah(), request.isGapless());
-      String qariUrl = audioUtils.getQariUrl(request.getQariItem());
-      Timber.d("need to start download: %s", qariUrl);
-
-      // start service
-      Intent intent = ServiceIntentHelper.getDownloadIntent(this, qariUrl,
-          request.getLocalPath(), notificationTitle, AUDIO_DOWNLOAD_KEY,
-          QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-      intent.putExtra(QuranDownloadService.EXTRA_START_VERSE,
-          request.getMinAyah());
-      intent.putExtra(QuranDownloadService.EXTRA_END_VERSE,
-          request.getMaxAyah());
-      intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS,
-          request.isGapless());
-      ContextCompat.startForegroundService(this, intent);
+      ContextCompat.startForegroundService(this, downloadIntent);
     }
   }
 
-  private void play(LegacyAudioRequest request) {
+  /**
+   * Audio playback still depends on a {@link LegacyAudioRequest} in order
+   * to play files. Until the {@link AudioService} is refactored, this method
+   * acts as an adapter to convert {@link AudioRequest}s into
+   * {@link LegacyAudioRequest} for playback by the service.
+   *
+   * In the future, this method should merge with the play method below.
+   *
+   * @param audioRequest the audio request to play
+   */
+  public void handlePlayback(@NonNull AudioRequest audioRequest) {
+    final QariItem qari = audioRequest.getQari();
+    final String localPath = audioUtils.getLocalQariUrl(this, qari);
+    final int verses = quranInfo.getNumAyahs(audioRequest.getStart().sura);
+
+    final LegacyAudioRequest legacyAudioRequest;
+    if (audioRequest.getShouldStream()) {
+      final String baseUrl = audioUtils.getQariUrl(qari);
+      legacyAudioRequest = new StreamingLegacyAudioRequest(
+          baseUrl, audioRequest.getStart(), audioRequest.getQari(), localPath, verses);
+    } else {
+      final String baseUrl;
+      if (qari.isGapless()) {
+        baseUrl = localPath + File.separator + "%03d" + AudioUtils.AUDIO_EXTENSION;
+      } else {
+        baseUrl = localPath + File.separator + "%d" + File.separator +
+            "%d" + AudioUtils.AUDIO_EXTENSION;
+      }
+      legacyAudioRequest = new DownloadLegacyAudioRequest(
+          baseUrl, audioRequest.getStart(), audioRequest.getQari(), localPath, verses);
+    }
+
+    final String dbFile = audioUtils.getQariDatabasePathIfGapless(this, qari  );
+    legacyAudioRequest.setGaplessDatabaseFilePath(dbFile);
+    legacyAudioRequest.setPlayBounds(audioRequest.getStart(), audioRequest.getEnd());
+    legacyAudioRequest.setEnforceBounds(audioRequest.getEnforceBounds());
+    legacyAudioRequest.setRangeRepeatCount(audioRequest.getRangeRepeatInfo());
+    legacyAudioRequest.setVerseRepeatCount(audioRequest.getRepeatInfo());
+
+    play(legacyAudioRequest);
+  }
+
+  private void play(@Nullable LegacyAudioRequest request) {
     needsPermissionToDownloadOver3g = true;
     Intent i = new Intent(this, AudioService.class);
     i.setAction(AudioService.ACTION_PLAYBACK);
@@ -1787,10 +1629,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onAcceptPressed() {
-    if (lastAudioDownloadRequest != null) {
-      needsPermissionToDownloadOver3g = false;
-      playAudioRequest(lastAudioDownloadRequest);
-    }
+    needsPermissionToDownloadOver3g = false;
+    audioPresenter.onDownloadPermissionGranted();
   }
 
   //endregion

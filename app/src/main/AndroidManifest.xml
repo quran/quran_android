@@ -9,6 +9,9 @@
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
+  <!-- foreground services need this when targeting Android 9+ (Api 28+) -->
+  <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE"/>
+
   <!-- support chromebooks without touch screen -->
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 

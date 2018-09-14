@@ -24,15 +24,6 @@ public class DownloadLegacyAudioRequest extends LegacyAudioRequest {
     this.qariItem = in.readParcelable(QariItem.class.getClassLoader());
     this.localDirectoryPath = in.readString();
   }
-  
-  @NonNull
-  public QariItem getQariItem() {
-    return qariItem;
-  }
-
-  public String getLocalPath() {
-    return localDirectoryPath;
-  }
 
   @Override
   public boolean haveSuraAyah(int sura, int ayah) {
