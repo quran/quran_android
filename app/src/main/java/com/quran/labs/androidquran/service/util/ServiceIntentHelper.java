@@ -7,6 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 
 public class ServiceIntentHelper {
+  private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
+
+  public static Intent getAudioDownloadIntent(Context context,
+                                              String url,
+                                              String destination,
+                                              String notificationTitle) {
+    return getDownloadIntent(context, url, destination, notificationTitle,
+        AUDIO_DOWNLOAD_KEY, QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
+  }
 
    public static Intent getDownloadIntent(Context context, String url,
                                           String destination,
