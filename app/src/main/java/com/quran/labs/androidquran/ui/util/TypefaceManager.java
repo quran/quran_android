@@ -4,7 +4,7 @@ import com.quran.labs.androidquran.data.QuranFileConstants;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class TypefaceManager {
   public static final int TYPE_UTHMANI_HAFS = 1;

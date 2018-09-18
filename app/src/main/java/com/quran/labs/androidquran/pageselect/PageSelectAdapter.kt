@@ -2,9 +2,9 @@ package com.quran.labs.androidquran.pageselect
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference
 
 class PageSelectAdapter(val inflater: LayoutInflater,
                         val width: Int,
-                        private val selectionHandler: (String) -> Unit) : PagerAdapter() {
+                        private val selectionHandler: (String) -> Unit) : androidx.viewpager.widget.PagerAdapter() {
   private val items : MutableList<PageTypeItem> = mutableListOf()
   private val compositeDisposable = CompositeDisposable()
 
@@ -30,7 +30,7 @@ class PageSelectAdapter(val inflater: LayoutInflater,
     }
   }
 
-  fun replaceItems(updates: List<PageTypeItem>, pager: ViewPager) {
+  fun replaceItems(updates: List<PageTypeItem>, pager: androidx.viewpager.widget.ViewPager) {
     items.clear()
     items.addAll(updates)
     items.forEach {

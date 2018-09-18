@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.common;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class QuranText {
   public final int sura;

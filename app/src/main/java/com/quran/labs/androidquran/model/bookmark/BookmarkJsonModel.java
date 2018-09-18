@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.squareup.moshi.JsonAdapter;

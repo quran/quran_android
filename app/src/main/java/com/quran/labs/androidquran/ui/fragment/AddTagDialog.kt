@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
-import android.support.v4.app.DialogFragment
-import android.support.v7.app.AlertDialog
+import com.google.android.material.textfield.TextInputEditText
+import androidx.fragment.app.DialogFragment
+import androidx.appcompat.app.AlertDialog
 import android.view.WindowManager
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -14,7 +14,7 @@ import com.quran.labs.androidquran.dao.Tag
 import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter
 import javax.inject.Inject
 
-class AddTagDialog : DialogFragment() {
+class AddTagDialog : androidx.fragment.app.DialogFragment() {
 
   @Inject
   internal lateinit var addTagDialogPresenter: AddTagDialogPresenter

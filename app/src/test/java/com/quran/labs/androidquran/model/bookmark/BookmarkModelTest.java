@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;

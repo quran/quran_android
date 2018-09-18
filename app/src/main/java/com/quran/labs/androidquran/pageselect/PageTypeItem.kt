@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.pageselect
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import java.io.File
 
 data class PageTypeItem(val pageType: String,

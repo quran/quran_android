@@ -1,6 +1,6 @@
 package com.quran.data.source
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 
 interface PageProvider {
   fun getDataSource(): QuranDataSource

@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.ui.util;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.SparseArray;
 import android.widget.ImageView;
 

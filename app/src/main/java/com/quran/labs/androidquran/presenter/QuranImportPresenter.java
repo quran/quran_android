@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.core.app.ActivityCompat;
 
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;

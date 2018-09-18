@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.presenter.translation;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranInfo;

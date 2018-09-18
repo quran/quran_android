@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
   public final int sura;

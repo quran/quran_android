@@ -7,12 +7,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatImageView;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 
 import com.quran.labs.androidquran.R;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 
 public class RepeatButton extends AppCompatImageView {
   @NonNull private String text;

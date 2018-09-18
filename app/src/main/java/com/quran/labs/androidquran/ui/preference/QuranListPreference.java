@@ -5,7 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.ListPreference;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
