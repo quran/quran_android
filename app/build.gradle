@@ -100,11 +100,11 @@ dependencies {
   implementation project(path: ':common:pages')
 
   implementation deps.kotlin.stdlib
-  implementation "androidx.legacy:legacy-support-v4:${supportLibVersion}"
   implementation "androidx.appcompat:appcompat:${supportLibVersion}"
+  implementation "androidx.media:media:${supportLibVersion}"
   implementation "androidx.recyclerview:recyclerview:${supportLibVersion}"
   implementation "com.google.android.material:material:${supportLibVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.1'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
@@ -116,11 +116,11 @@ dependencies {
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
   testImplementation 'junit:junit:4.12'
   testImplementation 'com.google.truth:truth:0.41'
-  testImplementation "org.mockito:mockito-core:2.19.0"
+  testImplementation "org.mockito:mockito-core:2.21.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
-  implementation('com.crashlytics.sdk.android:crashlytics:2.9.4')
+  implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
   errorprone 'com.google.errorprone:error_prone_core:2.3.1'
 }
