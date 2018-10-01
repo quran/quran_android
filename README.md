@@ -17,6 +17,8 @@ If you'd like to contribute, please take a look at the [PRs Welcome](https://git
 
 Use [`quran_android-code_style.xml`](https://github.com/quran/quran_android/blob/master/quran_android-code_style.xml) for Android Studio / IntelliJ code styles. Import it by copying it to the Android Studio/IntelliJ IDEA codestyles folder. For Android Studio, that folder is located at `~/.AndroidStudio[Version]/config/codestyles` (the root folder name may differ depending on the host machine and Android Studio version, but the rest of the path should be same). After copying the `quran_android-code_style.xml`, go to Code Style preferences screen and choose `quran_android-code_style` from Code Style Schemes.
 
+Please set your Android studio kotlin code style based on [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html). You can configure it from menu Settings | Editor | Code Style | Kotlin, click on "Set from…" link in the upper right corner, and select "Predefined style / Kotlin style guide" from the menu.
+
 Though very rarely, we do push beta versions in Play Store for early testing. If you would like to participate in beta program, please join our [Quran for Android](https://plus.google.com/communities/100110719319613677297) community in Google+.
 
 May Allah reward all the awesome [Contributors and Translators](https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md).
