@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QariItem
+import com.quran.labs.androidquran.dao.audio.AudioPathInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.SuraAyah
@@ -30,28 +31,38 @@ constructor(private val quranInfo: QuranInfo,
            rangeRepeat: Int,
            enforceRange: Boolean,
            shouldStream: Boolean) {
-    // override streaming if all the files are already downloaded
-    val stream = if (shouldStream) { !haveAllFiles(qari, start, end) } else { false }
+    val audioPathInfo = getLocalAudioPathInfo(qari)
+    if (audioPathInfo != null) {
+      // override streaming if all the files are already downloaded
+      val stream = if (shouldStream) {
+        !haveAllFiles(audioPathInfo, start, end)
+      } else {
+        false
+      }
 
-    val audioRequest = AudioRequest(
-        start, end, qari, verseRepeat, rangeRepeat, enforceRange, stream)
-    play(audioRequest)
+      // if we're still streaming, change the base qari format in audioPathInfo
+      // to a remote url format (instead of a path to a local directory)
+      val audioPath = if (stream) {
+        audioPathInfo.copy(urlFormat = audioUtil.getQariUrl(qari))
+      } else {
+        audioPathInfo
+      }
+
+      val audioRequest = AudioRequest(
+          start, end, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
+      play(audioRequest)
+    }
   }
 
   fun play(audioRequest: AudioRequest) {
     lastAudioRequest = audioRequest
     pagerActivity?.let {
-      val path = audioUtil.getLocalQariUrl(it, audioRequest.qari)
-      if (path != null) {
-        val downloadIntent = getDownloadIntent(it, path, audioRequest)
-        if (downloadIntent != null) {
-          it.handleRequiredDownload(downloadIntent)
-        } else {
-          // play the audio
-          it.handlePlayback(audioRequest)
-        }
+      val downloadIntent = getDownloadIntent(it, audioRequest)
+      if (downloadIntent != null) {
+        it.handleRequiredDownload(downloadIntent)
       } else {
-        // no mounted directory to put the files, can't download / play
+        // play the audio
+        it.handlePlayback(audioRequest)
       }
     }
   }
@@ -64,9 +75,11 @@ constructor(private val quranInfo: QuranInfo,
     lastAudioRequest?.let { play(it) }
   }
 
-  private fun getDownloadIntent(context: Context, path: String, request: AudioRequest): Intent? {
+  private fun getDownloadIntent(context: Context, request: AudioRequest): Intent? {
     val qari = request.qari
-    val gaplessDb = audioUtil.getQariDatabasePathIfGapless(context, qari)
+    val audioPathInfo = request.audioPathInfo
+    val path = audioPathInfo.localDirectory
+    val gaplessDb = audioPathInfo.gaplessDatabase
 
     return if (!quranFileUtils.haveAyaPositionFile(context)) {
       getDownloadIntent(context,
@@ -89,8 +102,7 @@ constructor(private val quranInfo: QuranInfo,
         putExtra(QuranDownloadService.EXTRA_START_VERSE, request.start)
         putExtra(QuranDownloadService.EXTRA_END_VERSE, request.start)
       }
-    } else if (!request.shouldStream &&
-        !haveAllFiles(qari, request.start, request.end)) {
+    } else if (!request.shouldStream && !haveAllFiles(audioPathInfo, request.start, request.end)) {
       val title = quranInfo.getNotificationTitle(
           context, request.start, request.end, qari.isGapless)
       getDownloadIntent(context, audioUtil.getQariUrl(qari), path, title).apply {
@@ -110,21 +122,26 @@ constructor(private val quranInfo: QuranInfo,
     return ServiceIntentHelper.getAudioDownloadIntent(context, url, destination, title)
   }
 
-  private fun haveAllFiles(qari: QariItem, start: SuraAyah, end: SuraAyah): Boolean {
+  private fun getLocalAudioPathInfo(qari: QariItem): AudioPathInfo? {
     pagerActivity?.let {
       val localPath = audioUtil.getLocalQariUrl(it, qari)
       if (localPath != null) {
         val databasePath = audioUtil.getQariDatabasePathIfGapless(it, qari)
-        val baseUrl = if (databasePath.isNullOrEmpty()) {
+        val urlFormat = if (databasePath.isNullOrEmpty()) {
           localPath + File.separator + "%d" + File.separator +
               "%d" + AudioUtils.AUDIO_EXTENSION
         } else {
           localPath + File.separator + "%03d" + AudioUtils.AUDIO_EXTENSION
         }
-        return audioUtil.haveAllFiles(baseUrl, localPath, start, end, qari.isGapless)
+        return AudioPathInfo(urlFormat, localPath, databasePath)
       }
     }
-    return false
+    return null
+  }
+
+  private fun haveAllFiles(audioPathInfo: AudioPathInfo, start: SuraAyah, end: SuraAyah): Boolean {
+    return audioUtil.haveAllFiles(audioPathInfo.urlFormat,
+        audioPathInfo.localDirectory, start, end, audioPathInfo.gaplessDatabase != null)
   }
 
   override fun bind(what: PagerActivity) {
