@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/quran/quran_android.svg?branch=master)](https://travis-ci.org/quran/quran_android)
+[![Build Status](https://travis-ci.org/quran/quran_android.svg?branch=master)](https://travis-ci.org/quran/quran_android)   
 
-# Quran for Android
-
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
+# Quran for Android 
 [<img align="right" src="https://raw.githubusercontent.com/quran/quran_android/master/app/src/madani/res/drawable-xxxhdpi/icon.png" />](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
 
 this is a simple (madani based) quran app for android.
