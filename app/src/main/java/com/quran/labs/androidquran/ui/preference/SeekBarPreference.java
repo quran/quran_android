@@ -7,23 +7,22 @@
 package com.quran.labs.androidquran.ui.preference;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
-import android.preference.Preference;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranUtils;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 
 public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarChangeListener {
 
@@ -50,13 +49,15 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
   }
 
   @Override
-  protected View onCreateView(ViewGroup parent) {
-    View view = super.onCreateView(parent);
-    mSeekBar = view.findViewById(R.id.seekbar);
-    mValueText = view.findViewById(R.id.value);
+  public void onBindViewHolder(PreferenceViewHolder holder) {
+    super.onBindViewHolder(holder);
+    mSeekBar = (SeekBar) holder.findViewById(R.id.seekbar);
+    mValueText = (TextView) holder.findViewById(R.id.value);
     mSeekBar.setOnSeekBarChangeListener(this);
     styleSeekBar();
-    return view;
+    mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
+    mSeekBar.setMax(mMax);
+    mSeekBar.setProgress(mValue);
   }
 
   private void styleSeekBar() {
@@ -84,27 +85,11 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
   }
 
   @Override
-  protected void onBindView(@NonNull View view) {
-    super.onBindView(view);
-    if (isEnabled()) {
-      final TextView tv = view.findViewById(android.R.id.title);
-      if (tv != null) {
-        tv.setTextColor(Color.WHITE);
-      }
-    }
-    mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
-    mSeekBar.setMax(mMax);
-    mSeekBar.setProgress(mValue);
-  }
-
-  @Override
-  protected void onSetInitialValue(boolean restore, Object defaultValue) {
-    super.onSetInitialValue(restore, defaultValue);
-    if (restore) {
-      mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
-    } else {
-      mValue = (Integer) defaultValue;
-    }
+  protected void onSetInitialValue(@Nullable Object defaultValue) {
+    super.onSetInitialValue(defaultValue);
+    mValue = shouldPersist()
+        ? getPersistedInt(mDefault)
+        : (defaultValue != null ? (Integer) defaultValue : 0);
   }
 
   @Override
