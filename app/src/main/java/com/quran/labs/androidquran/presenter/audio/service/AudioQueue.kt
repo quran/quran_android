@@ -14,8 +14,9 @@ import com.quran.labs.androidquran.data.SuraAyah
  * find it.
  */
 class AudioQueue(private val quranInfo: QuranInfo,
-                 private val audioRequest: AudioRequest) {
-  private var playbackInfo: AudioPlaybackInfo = AudioPlaybackInfo(audioRequest.start)
+                 private val audioRequest: AudioRequest,
+                 initialPlaybackInfo: AudioPlaybackInfo = AudioPlaybackInfo(audioRequest.start)) {
+  private var playbackInfo: AudioPlaybackInfo = initialPlaybackInfo
 
   fun playAt(sura: Int, ayah: Int, skipAyahRepeat: Boolean = false): Boolean {
     val updatedPlaybackInfo =
@@ -38,6 +39,9 @@ class AudioQueue(private val quranInfo: QuranInfo,
     return result
   }
 
+  fun getCurrentSura() = playbackInfo.currentAyah.sura
+  fun getCurrentAyah() = playbackInfo.currentAyah.ayah
+
   fun playNextAyah(skipAyahRepeat: Boolean = false): Boolean {
     val next = playbackInfo.currentAyah.nextAyah()
     return playAt(next.sura, next.ayah, skipAyahRepeat)
@@ -56,13 +60,20 @@ class AudioQueue(private val quranInfo: QuranInfo,
     return String.format(audioRequest.audioPathInfo.urlFormat, current.sura, current.ayah)
   }
 
-  private fun shouldRepeat(repeatValue: Int, currentPlaybacks: Int) =
-      repeatValue == -1 || (repeatValue > currentPlaybacks)
+  fun withUpdatedAudioRequest(audioRequest: AudioRequest): AudioQueue {
+    return AudioQueue(quranInfo, audioRequest, playbackInfo)
+  }
+
+  private fun shouldRepeat(repeatValue: Int, currentPlaybacks: Int): Boolean {
+    // subtract 1 from currentPlaybacks because currentPlaybacks starts at 1
+    // so repeating once requires having played twice.
+    return repeatValue == -1 || (repeatValue > currentPlaybacks - 1)
+  }
 
   private fun SuraAyah.nextAyah(): SuraAyah {
     return when {
       ayah + 1 <= quranInfo.getNumAyahs(sura) -> SuraAyah(sura, ayah + 1)
-      sura < 114 -> SuraAyah(sura + 1, ayah)
+      sura < 114 -> SuraAyah(sura + 1, 1)
       else -> SuraAyah(1, 1)
     }
   }

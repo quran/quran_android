@@ -50,13 +50,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.support.v4.media.MediaMetadataCompat;
-import androidx.media.app.NotificationCompat.MediaStyle;
-import androidx.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.SparseIntArray;
@@ -64,15 +58,15 @@ import android.util.SparseIntArray;
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.audio.LegacyAudioRequest;
+import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo;
+import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.presenter.audio.service.AudioQueue;
 import com.quran.labs.androidquran.service.util.AudioFocusHelper;
 import com.quran.labs.androidquran.service.util.AudioFocusable;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
-import com.quran.labs.androidquran.dao.audio.RepeatInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.AudioUtils;
 
@@ -82,6 +76,12 @@ import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.media.app.NotificationCompat.MediaStyle;
+import androidx.media.session.MediaButtonReceiver;
 import timber.log.Timber;
 
 /**
@@ -144,7 +144,10 @@ public class AudioService extends Service implements OnCompletionListener,
   private AudioFocusHelper audioFocusHelper = null;
 
   // object representing the current playing request
-  private LegacyAudioRequest audioRequest = null;
+  private AudioRequest audioRequest = null;
+
+  // the playback queue
+  private AudioQueue audioQueue = null;
 
   // so user can pass in a serializable LegacyAudioRequest to the intent
   public static final String EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO";
@@ -369,14 +372,11 @@ public class AudioService extends Service implements OnCompletionListener,
           state = AudioUpdateIntent.PAUSED;
         }
 
-        if (audioRequest != null) {
-          sura = audioRequest.getCurrentSura();
-          ayah = audioRequest.getCurrentAyah();
+        if (audioQueue != null && audioRequest != null) {
+          sura = audioQueue.getCurrentSura();
+          ayah = audioQueue.getCurrentAyah();
 
-          final RepeatInfo repeatInfo = audioRequest.getRepeatInfo();
-          if (repeatInfo != null) {
-            repeatCount = repeatInfo.getRepeatCount();
-          }
+          repeatCount = audioRequest.getRepeatInfo();
         }
 
         Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
@@ -389,11 +389,13 @@ public class AudioService extends Service implements OnCompletionListener,
         broadcastManager.sendBroadcast(updateIntent);
       }
     } else if (ACTION_PLAYBACK.equals(action)) {
-      LegacyAudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
+      AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
       if (playInfo != null) {
         if (State.Stopped == state ||
             !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {
           audioRequest = playInfo;
+          audioQueue = new AudioQueue(quranInfo, audioRequest,
+              new AudioPlaybackInfo(audioRequest.getStart(), 1, 1));
           Crashlytics.log("audio request has changed...");
         }
       }
@@ -418,22 +420,10 @@ public class AudioService extends Service implements OnCompletionListener,
     } else if (ACTION_REWIND.equals(action)) {
       processRewindRequest();
     } else if (ACTION_UPDATE_REPEAT.equals(action)) {
-      if (audioRequest != null) {
-        // set the repeat info if applicable
-        final int verseRepeatCount = intent
-            .getIntExtra(EXTRA_VERSE_REPEAT_COUNT, audioRequest.getVerseRepeatCount());
-        audioRequest.setVerseRepeatCount(verseRepeatCount);
-
-        // set the range repeat count
-        final int rangeRepeatCount = intent
-            .getIntExtra(EXTRA_RANGE_REPEAT_COUNT, audioRequest.getRangeRepeatCount());
-        audioRequest.setRangeRepeatCount(rangeRepeatCount);
-
-        // set the enforce range flag
-        if (intent.hasExtra(EXTRA_RANGE_RESTRICT)) {
-          final boolean enforceRange = intent.getBooleanExtra(EXTRA_RANGE_RESTRICT, false);
-          audioRequest.setEnforceBounds(enforceRange);
-        }
+      final AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
+      if (playInfo != null) {
+        audioQueue = audioQueue.withUpdatedAudioRequest(playInfo);
+        audioRequest = playInfo;
       }
     } else {
       MediaButtonReceiver.handleIntent(mediaSession, intent);
@@ -496,9 +486,9 @@ public class AudioService extends Service implements OnCompletionListener,
       return -1;
     }
 
-    if (gaplessSura == audioRequest.getCurrentSura()) {
+    if (gaplessSura == audioQueue.getCurrentSura()) {
       if (gaplessSuraData != null) {
-        int ayah = audioRequest.getCurrentAyah();
+        int ayah = audioQueue.getCurrentAyah();
         Integer time = gaplessSuraData.get(ayah);
         if (ayah == 1 && !isRepeating) {
           return gaplessSuraData.get(0);
@@ -516,8 +506,8 @@ public class AudioService extends Service implements OnCompletionListener,
       return;
     }
     if (player != null || gaplessSuraData == null) {
-      int sura = audioRequest.getCurrentSura();
-      int ayah = audioRequest.getCurrentAyah();
+      int sura = audioQueue.getCurrentSura();
+      int ayah = audioQueue.getCurrentAyah();
 
       int updatedAyah = ayah;
       int maxAyahs = quranInfo.getNumAyahs(sura);
@@ -566,20 +556,20 @@ public class AudioService extends Service implements OnCompletionListener,
           return;
         }
 
-        SuraAyah nextAyah = audioRequest.setCurrentAyah(quranInfo, sura, updatedAyah);
-        if (nextAyah == null) {
+        boolean success = audioQueue.playAt(sura, updatedAyah, false);
+        final int nextSura = audioQueue.getCurrentSura();
+        final int nextAyah = audioQueue.getCurrentAyah();
+        if (!success) {
           processStopRequest();
           return;
-        } else if (nextAyah.sura != sura ||
-            nextAyah.ayah != updatedAyah) {
+        } else if (nextSura != sura || nextAyah != updatedAyah) {
           // remove any messages currently in the queue
           handler.removeCallbacksAndMessages(null);
 
           // if the ayah hasn't changed, we're repeating the ayah,
           // otherwise, we're repeating a range. this variable is
           // what determines whether or not we replay the basmallah.
-          final boolean ayahRepeat =
-              (ayah == nextAyah.ayah && sura == nextAyah.sura);
+          final boolean ayahRepeat = (ayah == nextAyah && sura == nextSura);
 
           if (ayahRepeat) {
             // jump back to the ayah we should repeat and play it
@@ -587,7 +577,7 @@ public class AudioService extends Service implements OnCompletionListener,
             player.seekTo(pos);
           } else {
             // we're repeating into a different sura
-            final boolean flag = sura != audioRequest.getCurrentSura();
+            final boolean flag = sura != audioQueue.getCurrentSura();
             playAudio(flag);
           }
           return;
@@ -600,8 +590,8 @@ public class AudioService extends Service implements OnCompletionListener,
         // line, switch the sura.
         ayahTime = gaplessSuraData.get(999);
         if (ayahTime > 0 && pos >= ayahTime) {
-          SuraAyah repeat = audioRequest.setCurrentAyah(quranInfo, sura + 1, 1);
-          if (repeat != null && repeat.sura == sura) {
+          boolean success = audioQueue.playAt(sura + 1, 1, true);
+          if (success && audioQueue.getCurrentSura() == sura) {
             // remove any messages currently in the queue
             handler.removeCallbacksAndMessages(null);
 
@@ -618,8 +608,7 @@ public class AudioService extends Service implements OnCompletionListener,
       notifyAyahChanged();
 
       if (maxAyahs >= (updatedAyah + 1)) {
-        Integer t = gaplessSuraData.get(updatedAyah + 1);
-        t = t - player.getCurrentPosition();
+        int t = gaplessSuraData.get(updatedAyah + 1) - player.getCurrentPosition();
         Timber.d("updateAudioPlayPosition postingDelayed after: %d", t);
 
         if (t < 100) {
@@ -655,13 +644,13 @@ public class AudioService extends Service implements OnCompletionListener,
         if (timingTask != null) {
           timingTask.cancel(true);
         }
-        String dbPath = audioRequest.getGaplessDatabaseFilePath();
+        String dbPath = audioRequest.getAudioPathInfo().getGaplessDatabase();
         timingTask = new ReadGaplessDataTask(dbPath);
-        timingTask.execute(audioRequest.getCurrentSura());
+        timingTask.execute(audioQueue.getCurrentSura());
       }
 
       // If we're stopped, just go ahead to the next file and start playing
-      playAudio(audioRequest.getCurrentSura() == 9 && audioRequest.getCurrentAyah() == 1);
+      playAudio(audioQueue.getCurrentSura() == 9 && audioQueue.getCurrentAyah() == 1);
     } else if (State.Paused == state) {
       // If we're paused, just continue playback and restore the
       // 'foreground service' state.
@@ -713,9 +702,9 @@ public class AudioService extends Service implements OnCompletionListener,
         state = State.Playing; // in case we were paused
       } else {
         tryToGetAudioFocus();
-        int sura = audioRequest.getCurrentSura();
-        audioRequest.gotoPreviousAyah(quranInfo);
-        if (audioRequest.isGapless() && sura == audioRequest.getCurrentSura()) {
+        int sura = audioQueue.getCurrentSura();
+        audioQueue.playPreviousAyah(true);
+        if (audioRequest.isGapless() && sura == audioQueue.getCurrentSura()) {
           int timing = getSeekPosition(true);
           if (timing > -1) {
             player.seekTo(timing);
@@ -739,10 +728,10 @@ public class AudioService extends Service implements OnCompletionListener,
       if (playerOverride) {
         playAudio(false);
       } else {
-        final int sura = audioRequest.getCurrentSura();
+        final int sura = audioQueue.getCurrentSura();
         tryToGetAudioFocus();
-        audioRequest.gotoNextAyah(quranInfo, true);
-        if (audioRequest.isGapless() && sura == audioRequest.getCurrentSura()) {
+        audioQueue.playNextAyah(true);
+        if (audioRequest.isGapless() && sura == audioQueue.getCurrentSura()) {
           int timing = getSeekPosition(false);
           if (timing > -1) {
             player.seekTo(timing);
@@ -794,13 +783,12 @@ public class AudioService extends Service implements OnCompletionListener,
     if (audioRequest != null) {
       Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
       updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.PLAYING);
-      updateIntent.putExtra(AudioUpdateIntent.SURA, audioRequest.getCurrentSura());
-      updateIntent.putExtra(AudioUpdateIntent.AYAH, audioRequest.getCurrentAyah());
+      updateIntent.putExtra(AudioUpdateIntent.SURA, audioQueue.getCurrentSura());
+      updateIntent.putExtra(AudioUpdateIntent.AYAH, audioQueue.getCurrentAyah());
       broadcastManager.sendBroadcast(updateIntent);
 
       MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
-          .putString(MediaMetadataCompat.METADATA_KEY_TITLE,
-              audioRequest.getTitle(this, quranInfo));
+          .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getTitle());
       if (player.isPlaying()) {
         metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, player.getDuration());
       }
@@ -927,6 +915,10 @@ public class AudioService extends Service implements OnCompletionListener,
     }
   }
 
+  private String getTitle() {
+    return quranInfo.getSuraAyahString(this, audioQueue.getCurrentSura(), audioQueue.getCurrentAyah());
+  }
+
   /**
    * Starts playing the next file.
    */
@@ -940,7 +932,7 @@ public class AudioService extends Service implements OnCompletionListener,
     playerOverride = false;
 
     try {
-      String url = audioRequest == null ? null : audioRequest.getUrl();
+      String url = audioQueue == null ? null : audioQueue.getUrl();
       if (audioRequest == null || url == null) {
         Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
         updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.STOPPED);
@@ -966,8 +958,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
       int overrideResource = 0;
       if (playRepeatSeparator) {
-        final int sura = audioRequest.getCurrentSura();
-        final int ayah = audioRequest.getCurrentAyah();
+        final int sura = audioQueue.getCurrentSura();
+        final int ayah = audioQueue.getCurrentAyah();
         if (sura != 9 && ayah > 1) {
           overrideResource = R.raw.bismillah;
         } else if (sura == 9 &&
@@ -1076,12 +1068,12 @@ public class AudioService extends Service implements OnCompletionListener,
       playAudio(false);
     } else {
       boolean flag = false;
-      final int beforeSura = audioRequest.getCurrentSura();
-      if (audioRequest.gotoNextAyah(quranInfo, false)) {
+      final int beforeSura = audioQueue.getCurrentSura();
+      if (audioQueue.playNextAyah(false)) {
         // we actually switched to a different ayah - so if the
         // sura changed, then play the basmala if the ayah is
         // not the first one (or if we're in sura tawba).
-        flag = beforeSura != audioRequest.getCurrentSura();
+        flag = beforeSura != audioQueue.getCurrentSura();
       }
       playAudio(flag);
     }
@@ -1102,14 +1094,14 @@ public class AudioService extends Service implements OnCompletionListener,
 
     // if gapless and sura changed, get the new data
     if (audioRequest.isGapless()) {
-      if (gaplessSura != audioRequest.getCurrentSura()) {
+      if (gaplessSura != audioQueue.getCurrentSura()) {
         if (timingTask != null) {
           timingTask.cancel(true);
         }
 
-        String dbPath = audioRequest.getGaplessDatabaseFilePath();
+        String dbPath = audioRequest.getAudioPathInfo().getGaplessDatabase();
         timingTask = new ReadGaplessDataTask(dbPath);
-        timingTask.execute(audioRequest.getCurrentSura());
+        timingTask.execute(audioQueue.getCurrentSura());
       }
     }
 
@@ -1123,13 +1115,12 @@ public class AudioService extends Service implements OnCompletionListener,
 
   /** Updates the notification. */
   void updateNotification() {
-    notificationBuilder.setContentText(audioRequest.getTitle(getApplicationContext(), quranInfo));
+    notificationBuilder.setContentText(getTitle());
     notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
   }
 
   void pauseNotification() {
-    pausedNotificationBuilder.setContentText(
-        audioRequest.getTitle(getApplicationContext(), quranInfo));
+    pausedNotificationBuilder.setContentText(getTitle());
     notificationManager.notify(NOTIFICATION_ID, pausedNotificationBuilder.build());
   }
 
@@ -1185,7 +1176,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
     }
 
-    String audioTitle = audioRequest.getTitle(getApplicationContext(), quranInfo);
+    String audioTitle = getTitle();
     if (notificationBuilder == null) {
       notificationBuilder = new NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID);
       notificationBuilder
