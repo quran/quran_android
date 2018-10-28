@@ -13,9 +13,9 @@ import android.widget.CheckBox;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
-import com.quran.labs.androidquran.dao.audio.LegacyAudioRequest;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
@@ -264,16 +264,16 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   protected void refreshView() {
     final Context context = getActivity();
     if (context instanceof PagerActivity && start != null && end != null) {
-      final LegacyAudioRequest lastRequest =
+      final AudioRequest lastRequest =
           ((PagerActivity) context).getLastAudioRequest();
       final SuraAyah start;
       final SuraAyah ending;
       if (lastRequest != null) {
-        start = lastRequest.getRangeStart();
-        ending = lastRequest.getRangeEnd();
-        verseRepeatCount = lastRequest.getRepeatInfo().getRepeatCount();
-        rangeRepeatCount = lastRequest.getRangeRepeatCount();
-        shouldEnforce = lastRequest.shouldEnforceBounds();
+        start = lastRequest.getStart();
+        ending = lastRequest.getEnd();
+        verseRepeatCount = lastRequest.getRepeatInfo();
+        rangeRepeatCount = lastRequest.getRangeRepeatInfo();
+        shouldEnforce = lastRequest.getEnforceBounds();
         decidedStart = start;
         decidedEnd = ending;
         applyButton.setText(R.string.play_apply);
