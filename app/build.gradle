@@ -92,6 +92,9 @@ android {
       exceptionFormat "full"
     }
   }
+  androidExtensions {
+    experimental = true
+  }
 }
 
 if (new File(rootDir, 'extras/extras.gradle').exists()) {
