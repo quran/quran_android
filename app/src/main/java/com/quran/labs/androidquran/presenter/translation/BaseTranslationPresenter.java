@@ -60,7 +60,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
               List<String> result = new ArrayList<>();
               Set<String> keys = t.keySet();
               for (String key : keys) {
-                result.add(t.get(key).filename);
+                result.add(t.get(key).getFilename());
               }
               return result;
             })
@@ -85,9 +85,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
   }
 
   List<String> getTranslations(QuranSettings quranSettings) {
-    List<String> results = new ArrayList<>();
-    results.addAll(quranSettings.getActiveTranslations());
-    return results;
+    return new ArrayList<>(quranSettings.getActiveTranslations());
   }
 
   String[] getTranslationNames(@NonNull List<String> translations,
@@ -108,7 +106,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
 
       int i = 0;
       for (String key : keys) {
-        result[i++] = translationMap.get(key).filename;
+        result[i++] = translationMap.get(key).getFilename();
       }
     }
     return result;
@@ -203,7 +201,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
             Map<String, LocalTranslation> map = new HashMap<>();
             for (int i = 0, size = translations.size(); i < size; i++) {
               LocalTranslation translation = translations.get(i);
-              map.put(translation.filename, translation);
+              map.put(translation.getFilename(), translation);
             }
             return map;
           })
