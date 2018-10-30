@@ -82,7 +82,7 @@ public class ShareUtil {
 
     StringBuilder sb = new StringBuilder("(");
     for (int i = 0; i < size; i++) {
-      sb.append(verses.get(i).text);
+      sb.append(verses.get(i).getText());
       if (i + 1 < size) {
         sb.append(" * ");
       }
@@ -94,17 +94,17 @@ public class ShareUtil {
     sb.append("[");
 
     final QuranText firstAyah = verses.get(0);
-    sb.append(quranInfo.getSuraName(activity, firstAyah.sura, true));
+    sb.append(quranInfo.getSuraName(activity, firstAyah.getSura(), true));
     sb.append(" ");
-    sb.append(firstAyah.ayah);
+    sb.append(firstAyah.getAyah());
     if (size > 1) {
       final QuranText lastAyah = verses.get(size - 1);
       sb.append(" - ");
-      if (firstAyah.sura != lastAyah.sura) {
-        sb.append(quranInfo.getSuraName(activity, lastAyah.sura, true));
+      if (firstAyah.getSura() != lastAyah.getSura()) {
+        sb.append(quranInfo.getSuraName(activity, lastAyah.getSura(), true));
         sb.append(" ");
       }
-      sb.append(lastAyah.ayah);
+      sb.append(lastAyah.getAyah());
     }
     // close sura label and append two new lines
     sb.append("]\n\n");

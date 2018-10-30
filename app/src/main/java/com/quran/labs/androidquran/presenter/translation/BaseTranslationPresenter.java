@@ -129,7 +129,7 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
         for (int j = 0; j < translationCount; j++) {
           QuranText item = texts.get(j).size() > i ? texts.get(j).get(i) : null;
           if (item != null) {
-            ayahTranslations.add(texts.get(j).get(i).text);
+            ayahTranslations.add(texts.get(j).get(i).getText());
             element = item;
           } else {
             // this keeps the translations aligned with their translators
@@ -139,18 +139,18 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
         }
 
         if (element != null) {
-          String arabicText = arabicSize == 0 ? null : arabic.get(i).text;
+          String arabicText = arabicSize == 0 ? null : arabic.get(i).getText();
           result.add(
-              new QuranAyahInfo(element.sura, element.ayah, arabicText, ayahTranslations,
-                  quranInfo.getAyahId(element.sura, element.ayah)));
+              new QuranAyahInfo(element.getSura(), element.getAyah(), arabicText, ayahTranslations,
+                  quranInfo.getAyahId(element.getSura(), element.getAyah())));
         }
       }
     } else if (arabicSize > 0) {
       for (int i = 0; i < arabicSize; i++) {
         QuranText arabicItem = arabic.get(i);
-        result.add(new QuranAyahInfo(arabicItem.sura, arabicItem.ayah,
-            arabicItem.text, Collections.emptyList(),
-            quranInfo.getAyahId(arabicItem.sura, arabicItem.ayah)));
+        result.add(new QuranAyahInfo(arabicItem.getSura(), arabicItem.getAyah(),
+            arabicItem.getText(), Collections.emptyList(),
+            quranInfo.getAyahId(arabicItem.getSura(), arabicItem.getAyah())));
       }
     }
     return result;
@@ -186,8 +186,8 @@ class BaseTranslationPresenter<T> implements Presenter<T> {
     while (iterator.next()) {
       QuranText item = texts.size() > i ? texts.get(i) : null;
       if (item == null ||
-          item.sura != iterator.getSura() ||
-          item.ayah != iterator.getAyah()) {
+          item.getSura() != iterator.getSura() ||
+          item.getAyah() != iterator.getAyah()) {
         texts.add(i, new QuranText(iterator.getSura(), iterator.getAyah(), ""));
       }
       i++;

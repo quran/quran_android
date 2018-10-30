@@ -126,14 +126,14 @@ public class BaseTranslationPresenterTest {
     assertThat(text).hasSize(2);
 
     QuranText first = text.get(0);
-    assertThat(first.sura).isEqualTo(1);
-    assertThat(first.ayah).isEqualTo(1);
-    assertThat(first.text).isEqualTo("bismillah");
+    assertThat(first.getSura()).isEqualTo(1);
+    assertThat(first.getAyah()).isEqualTo(1);
+    assertThat(first.getText()).isEqualTo("bismillah");
 
     QuranText second = text.get(1);
-    assertThat(second.sura).isEqualTo(1);
-    assertThat(second.ayah).isEqualTo(2);
-    assertThat(second.text).isEmpty();
+    assertThat(second.getSura()).isEqualTo(1);
+    assertThat(second.getAyah()).isEqualTo(2);
+    assertThat(second.getText()).isEmpty();
   }
 
   private static class TestPresenter implements Presenter {
