@@ -51,8 +51,8 @@ public class AyahTrackerPresenter implements AyahTracker,
     }
 
     if (pendingHighlightInfo != null && !ayahCoordinates.getAyahCoordinates().isEmpty()) {
-      highlightAyah(pendingHighlightInfo.sura, pendingHighlightInfo.ayah,
-          pendingHighlightInfo.highlightType, pendingHighlightInfo.scrollToAyah);
+      highlightAyah(pendingHighlightInfo.getSura(), pendingHighlightInfo.getAyah(),
+          pendingHighlightInfo.getHighlightType(), pendingHighlightInfo.getScrollToAyah());
     }
   }
 
