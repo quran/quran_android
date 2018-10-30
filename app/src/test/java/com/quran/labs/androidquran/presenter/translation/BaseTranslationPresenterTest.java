@@ -33,9 +33,9 @@ public class BaseTranslationPresenterTest {
   public void testGetTranslationNames() {
     final List<String> databases = Arrays.asList("one.db", "two.db");
     Map<String, LocalTranslation> map = new HashMap<String, LocalTranslation>() {{
-      put("one.db", new LocalTranslation(1, "one.db", "One", "First", null, null, null, 1));
-      put("two.db", new LocalTranslation(2, "two.db", "Two", "Second", null, null, null, 1));
-      put("three.db", new LocalTranslation(2, "three.db", "Three", "Third", null, null, null, 1));
+      put("one.db", new LocalTranslation(1, "one.db", "One", "First", null, "", null, 1));
+      put("two.db", new LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1));
+      put("three.db", new LocalTranslation(2, "three.db", "Three", "Third", null, "", null, 1));
     }};
 
     String[] translations = presenter.getTranslationNames(databases, map);
