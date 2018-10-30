@@ -1313,12 +1313,12 @@ public class PagerActivity extends QuranActionBarActivity implements
               String[] titles = new String[items];
               for (int i = 0; i < items; i++) {
                 LocalTranslation item = translationList.get(i);
-                if (!TextUtils.isEmpty(item.translatorForeign)) {
-                  titles[i] = item.translatorForeign;
-                } else if (!TextUtils.isEmpty(item.translator)) {
-                  titles[i] = item.translator;
+                if (!TextUtils.isEmpty(item.getTranslatorForeign())) {
+                  titles[i] = item.getTranslatorForeign();
+                } else if (!TextUtils.isEmpty(item.getTranslator())) {
+                  titles[i] = item.getTranslator();
                 } else {
-                  titles[i] = item.name;
+                  titles[i] = item.getName();
                 }
               }
 
@@ -1326,7 +1326,7 @@ public class PagerActivity extends QuranActionBarActivity implements
               if (currentActiveTranslations.isEmpty() && items > 0) {
                 currentActiveTranslations = new HashSet<>();
                 for (int i = 0; i < items; i++) {
-                  currentActiveTranslations.add(translationList.get(i).filename);
+                  currentActiveTranslations.add(translationList.get(i).getFilename());
                 }
               }
               activeTranslations = currentActiveTranslations;

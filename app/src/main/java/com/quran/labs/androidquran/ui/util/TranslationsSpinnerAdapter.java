@@ -54,15 +54,15 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     LocalTranslation localTranslation = translations.get(holder.position);
 
     boolean updated = true;
-    if (selectedItems.contains(localTranslation.filename)) {
+    if (selectedItems.contains(localTranslation.getFilename())) {
       if (selectedItems.size() > 1) {
-        selectedItems.remove(localTranslation.filename);
+        selectedItems.remove(localTranslation.getFilename());
       } else {
         updated = false;
         holder.checkBox.setChecked(true);
       }
     } else {
-      selectedItems.add(localTranslation.filename);
+      selectedItems.add(localTranslation.getFilename());
     }
 
     if (updated && listener != null) {
@@ -122,7 +122,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
       holder.textView.setText(R.string.more_translations);
     } else {
       holder.checkBox.setVisibility(View.VISIBLE);
-      holder.checkBox.setChecked(selectedItems.contains(translations.get(position).filename));
+      holder.checkBox.setChecked(selectedItems.contains(translations.get(position).getFilename()));
       holder.checkBox.setOnClickListener(onCheckedChangeListener);
       holder.textView.setText(translationNames[position]);
     }

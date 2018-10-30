@@ -146,14 +146,14 @@ public class QuranDataProvider extends ContentProvider {
         LocalTranslation translation = translations.get(i);
         // skip non-arabic databases if the query is in arabic
         if (queryIsArabic &&
-            translation.languageCode != null &&
-            !"ar".equals(translation.languageCode)) {
+            translation.getLanguageCode() != null &&
+            !"ar".equals(translation.getLanguageCode())) {
           continue;
-        } else if (!queryIsArabic && "ar".equals(translation.languageCode)) {
+        } else if (!queryIsArabic && "ar".equals(translation.getLanguageCode())) {
           // skip arabic databases when the query isn't arabic
           continue;
         }
-        database = translation.filename;
+        database = translation.getFilename();
       }
 
       Cursor suggestions = null;
@@ -207,14 +207,14 @@ public class QuranDataProvider extends ContentProvider {
         LocalTranslation translation = translations.get(i);
         // skip non-arabic databases if the query is in arabic
         if (queryIsArabic &&
-            translation.languageCode != null &&
-            !"ar".equals(translation.languageCode)) {
+            translation.getLanguageCode() != null &&
+            !"ar".equals(translation.getLanguageCode())) {
           continue;
-        } else if (!queryIsArabic && "ar".equals(translation.languageCode)) {
+        } else if (!queryIsArabic && "ar".equals(translation.getLanguageCode())) {
           // skip arabic databases when the query isn't arabic
           continue;
         }
-        databaseName = translation.filename;
+        databaseName = translation.getFilename();
       }
 
       Cursor cursor = search(query, databaseName, true);

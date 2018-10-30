@@ -206,7 +206,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
       TranslationItem item;
       if (exists) {
-        int version = local == null ? getVersionFromDatabase(translation.getFileName()) : local.version;
+        int version = local == null ? getVersionFromDatabase(translation.getFileName()) : local.getVersion();
         item = new TranslationItem(translation, version);
       } else {
         item = new TranslationItem(translation);
@@ -221,7 +221,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
       if ((local == null && exists) || (local != null && !exists)) {
         updates.add(item);
-      } else if (local != null && local.languageCode == null) {
+      } else if (local != null && local.getLanguageCode() == null) {
         // older items don't have a language code
         updates.add(item);
       }

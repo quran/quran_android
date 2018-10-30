@@ -46,7 +46,7 @@ public class TranslationsDBAdapter {
     SparseArray<LocalTranslation> result = new SparseArray<>();
     for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
       LocalTranslation item = items.get(i);
-      result.put(item.id, item);
+      result.put(item.getId(), item);
     }
     return result;
   }
