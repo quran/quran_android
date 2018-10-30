@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'kotlin-kapt'
@@ -86,6 +87,9 @@ android {
       showStandardStreams true
       exceptionFormat "full"
     }
+  }
+  androidExtensions {
+    experimental = true
   }
 }
 
