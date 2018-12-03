@@ -8,10 +8,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -33,6 +29,10 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 public class QuranDataActivity extends Activity implements
@@ -374,7 +374,8 @@ public class QuranDataActivity extends Activity implements
       if (quranScreenInfo.isDualPageMode()) {
         final String tabletWidth = quranScreenInfo.getTabletWidthParam();
         boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
-        boolean havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages);
+        boolean havePortrait = tabletWidth.equals(width) ? haveLandscape :
+            quranFileUtils.haveAllImages(appContext, width, totalPages);
         needPortraitImages = !havePortrait;
         needLandscapeImages = !haveLandscape;
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
