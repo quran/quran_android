@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.annotation.VisibleForTesting;
 
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
@@ -18,6 +15,10 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
 
 
 public class QuranSettings {
