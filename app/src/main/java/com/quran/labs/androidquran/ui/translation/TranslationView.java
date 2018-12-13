@@ -7,9 +7,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
+import com.quran.labs.androidquran.util.ShareUtil;
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
@@ -25,12 +32,13 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     MenuItem.OnMenuItemClickListener {
   private final TranslationAdapter translationAdapter;
   private final AyahToolBar ayahToolBar;
-
+private List<LocalTranslation> translationList;
   private String[] translations;
   private QuranAyahInfo selectedAyah;
   private OnClickListener onClickListener;
   private OnTranslationActionListener onTranslationActionListener;
   private LinearLayoutManager layoutManager;
+  private TranslationsDBAdapter translationsDBAdapter;
 
   public TranslationView(Context context) {
     this(context, null);
@@ -66,8 +74,38 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     ayahToolBar = new AyahToolBar(context, R.menu.share_menu);
     ayahToolBar.setOnItemSelectedListener(this);
     ayahToolBar.setVisibility(View.GONE);
-    addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
-        context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
+    addView(ayahToolBar, LayoutParams.WRAP_CONTENT, context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
+
+    ImageButton copyButton = (ImageButton) ayahToolBar.findViewById(R.id.cab_copy_ayah_text_menu);
+    copyButton.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        PopupMenu popmenu = new PopupMenu(context, v);
+        int items = translations.length;
+        String[] titles = new String[items];
+
+        for (int i = 0; i < items; i++) {
+          popmenu.getMenu().add(Menu.NONE, i, 1, translations[i]);
+        }
+
+        popmenu.show();
+        popmenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+          @Override
+          public boolean onMenuItemClick(MenuItem item) {
+            if (onTranslationActionListener != null && selectedAyah != null)
+            {
+              int id=item.getItemId();
+              String selectedTranslation=(String)item.getTitle();
+              onTranslationActionListener.onTranslationAction(selectedAyah, translations,selectedTranslation,R.id.cab_copy_ayah_text_menu);
+              return true;
+            }
+            return false;
+          }
+        });
+      }
+    });
   }
 
   public void setVerses(@NonNull QuranInfo quranInfo,
@@ -143,8 +181,10 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
+    int id=item.getItemId();
     if (onTranslationActionListener != null && selectedAyah != null) {
-      onTranslationActionListener.onTranslationAction(selectedAyah, translations, item.getItemId());
+
+      onTranslationActionListener.onTranslationAction(selectedAyah, translations,"", item.getItemId());
       return true;
     }
     return false;

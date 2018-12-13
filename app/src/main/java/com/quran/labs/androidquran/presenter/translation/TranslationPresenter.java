@@ -76,6 +76,7 @@ public class TranslationPresenter extends
   public void onTranslationAction(PagerActivity activity,
                                   QuranAyahInfo ayah,
                                   String[] translationNames,
+                                  String selectedTranslation,
                                   int actionId) {
     switch (actionId) {
       case R.id.cab_share_ayah_link: {
@@ -93,7 +94,12 @@ public class TranslationPresenter extends
         }
         break;
       }
+      case R.id.cab_copy_ayah_text_menu: {
+        String shareText = shareUtil.getShareTextperTranslation(activity, ayah, translationNames, selectedTranslation);
+        shareUtil.copyToClipboard(activity, shareText);
+        break;
     }
+  }
   }
 
   private int getPage(List<QuranAyahInfo> result) {
