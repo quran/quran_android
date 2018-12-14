@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.labs.androidquran.extension.requiresBasmallah
 
 /**
  * This class maintains a virtual audio queue for playback.
@@ -21,17 +22,27 @@ class AudioQueue(private val quranInfo: QuranInfo,
   fun playAt(sura: Int, ayah: Int, skipAyahRepeat: Boolean = false): Boolean {
     val updatedPlaybackInfo =
         if (!skipAyahRepeat && shouldRepeat(audioRequest.repeatInfo, playbackInfo.timesPlayed)) {
-          playbackInfo.copy(timesPlayed = playbackInfo.timesPlayed + 1)
+          playbackInfo.copy(timesPlayed = playbackInfo.timesPlayed + 1, shouldPlayBasmallah = false)
         } else {
           if (audioRequest.enforceBounds && isOutOfBounds(audioRequest, sura, ayah)) {
             if (shouldRepeat(audioRequest.rangeRepeatInfo, playbackInfo.rangePlayedTimes)) {
-              AudioPlaybackInfo(currentAyah = audioRequest.start,
-                  rangePlayedTimes = playbackInfo.rangePlayedTimes + 1)
+              val start = audioRequest.start
+              playbackInfo.copy(currentAyah = start,
+                  timesPlayed = 1,
+                  rangePlayedTimes = playbackInfo.rangePlayedTimes + 1,
+                  shouldPlayBasmallah = (!audioRequest.isGapless() && start.requiresBasmallah()))
             } else {
               playbackInfo
             }
           } else {
-            AudioPlaybackInfo(SuraAyah(sura, ayah))
+            val currentAyah = playbackInfo.currentAyah
+            val updatedAyah = SuraAyah(sura, ayah)
+            val playBasmallahFlag = (!audioRequest.isGapless() &&
+                currentAyah != updatedAyah &&
+                updatedAyah.requiresBasmallah())
+            playbackInfo.copy(currentAyah = SuraAyah(sura, ayah),
+                timesPlayed = 1,
+                shouldPlayBasmallah = playBasmallahFlag)
           }
         }
     val result = updatedPlaybackInfo !== playbackInfo
@@ -43,21 +54,32 @@ class AudioQueue(private val quranInfo: QuranInfo,
   fun getCurrentAyah() = playbackInfo.currentAyah.ayah
 
   fun playNextAyah(skipAyahRepeat: Boolean = false): Boolean {
+    if (playbackInfo.shouldPlayBasmallah) {
+      playbackInfo = playbackInfo.copy(shouldPlayBasmallah = false)
+      return true
+    }
     val next = playbackInfo.currentAyah.nextAyah()
     return playAt(next.sura, next.ayah, skipAyahRepeat)
   }
 
   fun playPreviousAyah(skipAyahRepeat: Boolean = false): Boolean {
     val previous = playbackInfo.currentAyah.previousAyah()
-    return playAt(previous.sura, previous.ayah, skipAyahRepeat)
+    val result = playAt(previous.sura, previous.ayah, skipAyahRepeat)
+    if (playbackInfo.shouldPlayBasmallah) {
+      playbackInfo = playbackInfo.copy(shouldPlayBasmallah = false)
+    }
+    return result
   }
 
   fun getUrl(): String? {
     val current = playbackInfo.currentAyah
-    if (audioRequest.enforceBounds && isOutOfBounds(audioRequest, current.sura, current.ayah)) {
+    val (currentSura, currentAyah) = current.sura to current.ayah
+    if (audioRequest.enforceBounds && isOutOfBounds(audioRequest, currentSura, currentAyah)) {
       return null
     }
-    return String.format(audioRequest.audioPathInfo.urlFormat, current.sura, current.ayah)
+
+    val (sura, ayah) = if (playbackInfo.shouldPlayBasmallah) 1 to 1 else currentSura to currentAyah
+    return String.format(audioRequest.audioPathInfo.urlFormat, sura, ayah)
   }
 
   fun withUpdatedAudioRequest(audioRequest: AudioRequest): AudioQueue {
@@ -89,7 +111,7 @@ class AudioQueue(private val quranInfo: QuranInfo,
   private fun isOutOfBounds(audioRequest: AudioRequest, sura: Int, ayah: Int): Boolean {
     val start = audioRequest.start
     val end = audioRequest.end
-    return (sura > end.sura || (end.sura == sura && ayah >= end.ayah) ||
+    return (sura > end.sura || (end.sura == sura && ayah > end.ayah) ||
             sura < start.sura || (start.sura == sura && ayah < start.ayah))
   }
 }
