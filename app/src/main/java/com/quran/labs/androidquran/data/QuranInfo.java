@@ -10,7 +10,9 @@ import com.quran.data.source.QuranDataSource;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -119,6 +121,16 @@ public class QuranInfo {
     }
 
     return sura;
+  }
+
+  public List<Integer> getListOfSurahWithStartingOnPage(int page) {
+    List<Integer> result = new ArrayList<>();
+    for (int i = 0; i < Constants.SURAS_COUNT; i++) {
+      if(suraPageStart[i] == page) {
+        result.add(i + 1);
+      }
+    }
+    return result;
   }
 
   public String getSuraNameFromPage(Context context, int page,
