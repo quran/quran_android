@@ -25,13 +25,14 @@ class AudioQueue(private val quranInfo: QuranInfo,
         } else {
           if (audioRequest.enforceBounds && isOutOfBounds(audioRequest, sura, ayah)) {
             if (shouldRepeat(audioRequest.rangeRepeatInfo, playbackInfo.rangePlayedTimes)) {
-              AudioPlaybackInfo(currentAyah = audioRequest.start,
+              playbackInfo.copy(currentAyah = audioRequest.start,
+                  timesPlayed = 1,
                   rangePlayedTimes = playbackInfo.rangePlayedTimes + 1)
             } else {
               playbackInfo
             }
           } else {
-            AudioPlaybackInfo(SuraAyah(sura, ayah))
+            playbackInfo.copy(currentAyah = SuraAyah(sura, ayah), timesPlayed = 1)
           }
         }
     val result = updatedPlaybackInfo !== playbackInfo
@@ -89,7 +90,7 @@ class AudioQueue(private val quranInfo: QuranInfo,
   private fun isOutOfBounds(audioRequest: AudioRequest, sura: Int, ayah: Int): Boolean {
     val start = audioRequest.start
     val end = audioRequest.end
-    return (sura > end.sura || (end.sura == sura && ayah >= end.ayah) ||
+    return (sura > end.sura || (end.sura == sura && ayah > end.ayah) ||
             sura < start.sura || (start.sura == sura && ayah < start.ayah))
   }
 }

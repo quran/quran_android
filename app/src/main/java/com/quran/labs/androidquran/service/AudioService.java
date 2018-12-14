@@ -1067,15 +1067,16 @@ public class AudioService extends Service implements OnCompletionListener,
     if (playerOverride) {
       playAudio(false);
     } else {
-      boolean flag = false;
       final int beforeSura = audioQueue.getCurrentSura();
       if (audioQueue.playNextAyah(false)) {
         // we actually switched to a different ayah - so if the
         // sura changed, then play the basmala if the ayah is
         // not the first one (or if we're in sura tawba).
-        flag = beforeSura != audioQueue.getCurrentSura();
+        boolean flag = beforeSura != audioQueue.getCurrentSura();
+        playAudio(flag);
+      } else {
+        processStopRequest(true);
       }
-      playAudio(flag);
     }
   }
 
