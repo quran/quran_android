@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranPageChecker;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -58,6 +59,7 @@ public class QuranDataActivity extends Activity implements
   @Inject QuranFileUtils quranFileUtils;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject PageProvider quranPageProvider;
+  @Inject QuranPageChecker quranPageChecker;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -373,6 +375,7 @@ public class QuranDataActivity extends Activity implements
       final String width = quranScreenInfo.getWidthParam();
       if (quranScreenInfo.isDualPageMode()) {
         final String tabletWidth = quranScreenInfo.getTabletWidthParam();
+        quranPageChecker.checkPages(latestImagesVersion, totalPages, width, tabletWidth);
         boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
         boolean havePortrait = tabletWidth.equals(width) ? haveLandscape :
             quranFileUtils.haveAllImages(appContext, width, totalPages);
@@ -393,6 +396,7 @@ public class QuranDataActivity extends Activity implements
         }
         return haveLandscape && havePortrait;
       } else {
+        quranPageChecker.checkPages(latestImagesVersion, totalPages, width, width);
         boolean haveAll = quranFileUtils.haveAllImages(appContext,
             quranScreenInfo.getWidthParam(), totalPages);
         Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");

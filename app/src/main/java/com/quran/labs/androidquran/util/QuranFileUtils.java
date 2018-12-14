@@ -77,16 +77,20 @@ public class QuranFileUtils {
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
   public boolean isVersion(Context context, String widthParam, int version) {
+    // version 1 or below are true as long as you have images
+    if (version <= 1) {
+      return true;
+    }
+
+    return hasVersionFile(context, widthParam, version);
+  }
+
+  public boolean hasVersionFile(Context context, String widthParam, int version) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
     Timber.d("isVersion: checking if version %d exists for width %s at %s",
         version, widthParam, quranDirectory);
     if (quranDirectory == null) {
       return false;
-    }
-
-    // version 1 or below are true as long as you have images
-    if (version <= 1) {
-      return true;
     }
 
     // check the version code
@@ -410,7 +414,7 @@ public class QuranFileUtils {
     return getQuranImagesDirectory(context, quranScreenInfo.getWidthParam());
   }
 
-  private String getQuranImagesDirectory(Context context, String widthParam) {
+  public String getQuranImagesDirectory(Context context, String widthParam) {
     String base = getQuranBaseDirectory(context);
     return (base == null) ? null : base +
         (IMAGES_DIRECTORY.isEmpty() ? "" : IMAGES_DIRECTORY + File.separator) + "width" + widthParam;

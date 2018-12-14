@@ -77,4 +77,5 @@ public class Constants {
   public static final String PREF_QURAN_SETTINGS = "quranSettings";
   public static final String PREF_DID_DOWNLOAD_PAGES = "didDownloadPages";
   public static final String PREF_READING_CATEGORY = "readingCategoryKey";
+  public static final String PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages";
 }
