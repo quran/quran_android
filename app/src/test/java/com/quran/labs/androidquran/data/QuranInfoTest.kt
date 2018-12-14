@@ -49,4 +49,15 @@ class QuranInfoTest {
     }
   }
 
+  @Test
+  fun testDisplayJuz() {
+    val quranInfo = QuranInfo(MadaniPageProvider())
+    // make sure that juz' 7 starts on page 121, but the display juz' is 6
+    assertThat(quranInfo.getJuzForDisplayFromPage(121)).isEqualTo(6)
+    assertThat(quranInfo.getJuzFromPage(121)).isEqualTo(7)
+
+    // make sure that juz' 11 starts on page 201, but the display juz' is 10
+    assertThat(quranInfo.getJuzForDisplayFromPage(201)).isEqualTo(10)
+    assertThat(quranInfo.getJuzFromPage(201)).isEqualTo(11)
+  }
 }

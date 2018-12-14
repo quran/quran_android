@@ -2,13 +2,8 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import android.content.Context;
 import android.graphics.RectF;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.quran.page.common.data.AyahBounds;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.page.common.data.AyahCoordinates;
-import com.quran.page.common.data.PageCoordinates;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -17,11 +12,17 @@ import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.page.common.data.AyahBounds;
+import com.quran.page.common.data.AyahCoordinates;
+import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView> {
   private final QuranInfo quranInfo;
@@ -60,7 +61,7 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
         ayahView.setPageBounds(pageBounds);
         Context context = ayahView.getContext();
         String suraText = quranInfo.getSuraNameFromPage(context, page, true);
-        String juzText = quranInfo.getJuzString(context, page);
+        String juzText = quranInfo.getJuzDisplayStringForPage(context, page);
         String pageText = QuranUtils.getLocalizedNumber(context, page);
         String rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page);
         ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);
