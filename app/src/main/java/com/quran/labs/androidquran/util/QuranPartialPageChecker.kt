@@ -6,9 +6,9 @@ import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
-class QuranPageChecker @Inject constructor(val appContext: Context,
-                                           val quranSettings: QuranSettings,
-                                           val quranFileUtils: QuranFileUtils) {
+class QuranPartialPageChecker @Inject constructor(val appContext: Context,
+                                                  val quranSettings: QuranSettings,
+                                                  val quranFileUtils: QuranFileUtils) {
 
   /**
    * Checks all the pages to find and delete partially downloaded images.
