@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.data;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
@@ -13,15 +12,20 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 public class QuranInfo {
   private final int[] suraPageStart;
   private final int[] pageSuraStart;
   private final int[] pageAyahStart;
   private final int[] juzPageStart;
+  private final Map<Integer, Integer> juzPageOverride;
   private final int[] pageRub3Start;
   private final int[] suraNumAyahs;
   private final boolean[] suraIsMakki;
@@ -37,6 +41,7 @@ public class QuranInfo {
     pageSuraStart = quranDataSource.getSuraForPageArray();
     pageAyahStart = quranDataSource.getAyahForPageArray();
     juzPageStart = quranDataSource.getPageForJuzArray();
+    juzPageOverride = quranDataSource.getJuzDisplayPageArrayOverride();
     pageRub3Start = quranDataSource.getQuarterStartByPage();
     suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray();
     suraIsMakki = quranDataSource.getIsMakkiBySuraArray();
@@ -146,9 +151,10 @@ public class QuranInfo {
         QuranUtils.getLocalizedNumber(context, getJuzFromPage(page)));
   }
 
-  public String getJuzString(Context context, int page) {
+  public String getJuzDisplayStringForPage(Context context, int page) {
     String description = context.getString(R.string.juz2_description);
-    return String.format(description, QuranUtils.getLocalizedNumber(context, getJuzFromPage(page)));
+    return String.format(description, QuranUtils.getLocalizedNumber(context,
+        getJuzForDisplayFromPage(page)));
   }
 
   public String getSuraAyahString(Context context, int sura, int ayah) {
@@ -268,6 +274,21 @@ public class QuranInfo {
       }
     }
     return "";
+  }
+
+  /**
+   * Gets the juz' that should be printed at the top of the page
+   * This may be different than the actual juz' for the page (for example, juz' 7 starts at page
+   * 121, but despite this, the title of the page is juz' 6).
+   *
+   * @param page the page
+   * @return the display juz' display string for the page
+   */
+  @VisibleForTesting
+  int getJuzForDisplayFromPage(int page) {
+    final int actualJuz = getJuzFromPage(page);
+    final Integer overriddenJuz = juzPageOverride.get(page);
+    return overriddenJuz == null ? actualJuz : overriddenJuz;
   }
 
   public int getJuzFromPage(int page) {
