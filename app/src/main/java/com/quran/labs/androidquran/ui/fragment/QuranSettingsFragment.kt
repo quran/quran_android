@@ -1,12 +1,14 @@
 package com.quran.labs.androidquran.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.PreferenceGroup
-import android.preference.PreferenceScreen
+import android.view.View
+import android.view.ViewGroup
+import androidx.preference.*
+import androidx.recyclerview.widget.RecyclerView
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity
 import com.quran.labs.androidquran.QuranApplication
@@ -18,17 +20,17 @@ import com.quran.labs.androidquran.ui.AudioManagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import javax.inject.Inject
 
-class QuranSettingsFragment : PreferenceFragment(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
-  @Inject lateinit var pageTypes :
+class QuranSettingsFragment : PreferenceFragmentCompat(),
+  SharedPreferences.OnSharedPreferenceChangeListener {
+
+  @Inject
+  lateinit var pageTypes:
       Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.quran_preferences)
 
-    val context = activity
-    val appContext = context.applicationContext
+    val appContext = requireContext().applicationContext
 
     // field injection
     (appContext as QuranApplication).applicationComponent.inject(this)
@@ -54,20 +56,33 @@ class QuranSettingsFragment : PreferenceFragment(),
     }
   }
 
+  // TODO: remove this function when issue https://issuetracker.google.com/issues/111662669 solved/released
+  override fun onCreateAdapter(preferenceScreen: PreferenceScreen?): RecyclerView.Adapter<*> {
+    return object : PreferenceGroupAdapter(preferenceScreen) {
+      @SuppressLint("RestrictedApi")
+      override fun onBindViewHolder(holder: PreferenceViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+        val preference = getItem(position)
+        if (preference is PreferenceCategory) {
+          holder.itemView.setZeroPaddingToLayoutChildren()
+        }
+      }
+    }
+  }
+
   override fun onResume() {
     super.onResume()
     preferenceScreen.sharedPreferences
-        .registerOnSharedPreferenceChangeListener(this)
+      .registerOnSharedPreferenceChangeListener(this)
   }
 
   override fun onPause() {
     preferenceScreen.sharedPreferences
-        .unregisterOnSharedPreferenceChangeListener(this)
+      .unregisterOnSharedPreferenceChangeListener(this)
     super.onPause()
   }
 
-  override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
-                                         key: String) {
+  override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
     if (key == Constants.PREF_USE_ARABIC_NAMES) {
       val context = activity
       if (context is QuranPreferenceActivity) {
@@ -76,7 +91,7 @@ class QuranSettingsFragment : PreferenceFragment(),
     }
   }
 
-  override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen, preference: Preference): Boolean {
+  override fun onPreferenceTreeClick(preference: Preference): Boolean {
     val key = preference.key
     if ("key_prefs_advanced" == key) {
       val intent = Intent(activity, QuranAdvancedPreferenceActivity::class.java)
@@ -88,6 +103,19 @@ class QuranSettingsFragment : PreferenceFragment(),
       return true
     }
 
-    return super.onPreferenceTreeClick(preferenceScreen, preference)
+    return super.onPreferenceTreeClick(preference)
+  }
+
+  private fun View.setZeroPaddingToLayoutChildren() {
+    if (this !is ViewGroup) return
+
+    for (i in 0 until childCount) {
+      getChildAt(i).setZeroPaddingToLayoutChildren()
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        setPaddingRelative(0, paddingTop, paddingEnd, paddingBottom)
+      } else {
+        setPadding(0, paddingTop, paddingRight, paddingBottom)
+      }
+    }
   }
 }
