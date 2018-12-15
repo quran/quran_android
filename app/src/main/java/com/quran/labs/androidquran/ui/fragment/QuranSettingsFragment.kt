@@ -3,10 +3,9 @@ package com.quran.labs.androidquran.ui.fragment
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.PreferenceGroup
-import android.preference.PreferenceScreen
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceGroup
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity
 import com.quran.labs.androidquran.QuranApplication
@@ -18,17 +17,17 @@ import com.quran.labs.androidquran.ui.AudioManagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import javax.inject.Inject
 
-class QuranSettingsFragment : PreferenceFragment(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
-  @Inject lateinit var pageTypes :
+class QuranSettingsFragment : PreferenceFragmentCompat(),
+  SharedPreferences.OnSharedPreferenceChangeListener {
+
+  @Inject
+  lateinit var pageTypes:
       Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.quran_preferences)
 
-    val context = activity
-    val appContext = context.applicationContext
+    val appContext = requireContext().applicationContext
 
     // field injection
     (appContext as QuranApplication).applicationComponent.inject(this)
@@ -57,17 +56,16 @@ class QuranSettingsFragment : PreferenceFragment(),
   override fun onResume() {
     super.onResume()
     preferenceScreen.sharedPreferences
-        .registerOnSharedPreferenceChangeListener(this)
+      .registerOnSharedPreferenceChangeListener(this)
   }
 
   override fun onPause() {
     preferenceScreen.sharedPreferences
-        .unregisterOnSharedPreferenceChangeListener(this)
+      .unregisterOnSharedPreferenceChangeListener(this)
     super.onPause()
   }
 
-  override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences,
-                                         key: String) {
+  override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
     if (key == Constants.PREF_USE_ARABIC_NAMES) {
       val context = activity
       if (context is QuranPreferenceActivity) {
@@ -76,7 +74,7 @@ class QuranSettingsFragment : PreferenceFragment(),
     }
   }
 
-  override fun onPreferenceTreeClick(preferenceScreen: PreferenceScreen, preference: Preference): Boolean {
+  override fun onPreferenceTreeClick(preference: Preference): Boolean {
     val key = preference.key
     if ("key_prefs_advanced" == key) {
       val intent = Intent(activity, QuranAdvancedPreferenceActivity::class.java)
@@ -88,6 +86,6 @@ class QuranSettingsFragment : PreferenceFragment(),
       return true
     }
 
-    return super.onPreferenceTreeClick(preferenceScreen, preference)
+    return super.onPreferenceTreeClick(preference)
   }
 }

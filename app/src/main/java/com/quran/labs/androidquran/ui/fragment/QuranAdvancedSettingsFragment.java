@@ -10,10 +10,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -42,6 +38,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -50,7 +50,7 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class QuranAdvancedSettingsFragment extends PreferenceFragment {
+public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
   private static final int REQUEST_CODE_IMPORT = 1;
 
   private DataListPreference listStoragePref;
@@ -70,11 +70,10 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   @Inject QuranScreenInfo quranScreenInfo;
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
     addPreferencesFromResource(R.xml.quran_advanced_preferences);
 
-    final Context context = getActivity();
+    final Context context = requireActivity();
     appContext = context.getApplicationContext();
 
     // field injection
@@ -126,7 +125,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
       Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
       intent.setType("*/*");
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        String[] mimeTypes = new String[]{ "application/*", "text/*" };
+        String[] mimeTypes = new String[]{"application/*", "text/*"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
       }
       startActivityForResult(intent, REQUEST_CODE_IMPORT);
@@ -173,8 +172,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
       return true;
     });
 
-    internalSdcardLocation =
-        Environment.getExternalStorageDirectory().getAbsolutePath();
+    internalSdcardLocation = Environment.getExternalStorageDirectory().getAbsolutePath();
 
     listStoragePref = (DataListPreference) findPreference(getString(R.string.prefs_app_location));
     listStoragePref.setEnabled(false);
@@ -229,8 +227,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragment {
   private void removeAdvancePreference(Preference preference) {
     // these null checks are to fix a crash due to an NPE on 4.4.4
     if (preference != null) {
-      PreferenceGroup group =
-          (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
+      PreferenceGroup group = (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
       if (group != null) {
         group.removePreference(preference);
       }

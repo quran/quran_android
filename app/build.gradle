@@ -110,6 +110,7 @@ dependencies {
   implementation deps.kotlin.stdlib
   implementation "androidx.appcompat:appcompat:${appcompatAndroidXVersion}"
   implementation "androidx.media:media:${androidxVersion}"
+  implementation 'androidx.preference:preference:1.1.0-alpha01'
   implementation "androidx.recyclerview:recyclerview:${androidxVersion}"
   implementation "com.google.android.material:material:${androidxVersion}"
   implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
