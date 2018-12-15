@@ -16,7 +16,7 @@ class AboutUsActivity : QuranActionBarActivity() {
     val toolbar = findViewById<Toolbar>(R.id.toolbar)
     toolbar.setTitle(R.string.menu_about)
     setSupportActionBar(toolbar)
-    supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     val fragmentManager = supportFragmentManager
     val fragment = fragmentManager.findFragmentById(R.id.content)

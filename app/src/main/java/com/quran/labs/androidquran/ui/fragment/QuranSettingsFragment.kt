@@ -1,14 +1,11 @@
 package com.quran.labs.androidquran.ui.fragment
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
-import androidx.preference.*
-import androidx.recyclerview.widget.RecyclerView
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceGroup
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity
 import com.quran.labs.androidquran.QuranApplication
@@ -56,20 +53,6 @@ class QuranSettingsFragment : PreferenceFragmentCompat(),
     }
   }
 
-  // TODO: remove this function when issue https://issuetracker.google.com/issues/111662669 solved/released
-  override fun onCreateAdapter(preferenceScreen: PreferenceScreen?): RecyclerView.Adapter<*> {
-    return object : PreferenceGroupAdapter(preferenceScreen) {
-      @SuppressLint("RestrictedApi")
-      override fun onBindViewHolder(holder: PreferenceViewHolder, position: Int) {
-        super.onBindViewHolder(holder, position)
-        val preference = getItem(position)
-        if (preference is PreferenceCategory) {
-          holder.itemView.setZeroPaddingToLayoutChildren()
-        }
-      }
-    }
-  }
-
   override fun onResume() {
     super.onResume()
     preferenceScreen.sharedPreferences
@@ -104,18 +87,5 @@ class QuranSettingsFragment : PreferenceFragmentCompat(),
     }
 
     return super.onPreferenceTreeClick(preference)
-  }
-
-  private fun View.setZeroPaddingToLayoutChildren() {
-    if (this !is ViewGroup) return
-
-    for (i in 0 until childCount) {
-      getChildAt(i).setZeroPaddingToLayoutChildren()
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        setPaddingRelative(0, paddingTop, paddingEnd, paddingBottom)
-      } else {
-        setPadding(0, paddingTop, paddingRight, paddingBottom)
-      }
-    }
   }
 }

@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -39,6 +38,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
@@ -97,7 +97,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
                   Intent intent = new Intent(Intent.ACTION_SEND);
                   intent.setType("message/rfc822");
                   intent.putExtra(Intent.EXTRA_EMAIL,
-                      new String[]{appContext.getString(R.string.logs_email)});
+                      new String[]{ appContext.getString(R.string.logs_email) });
                   intent.putExtra(Intent.EXTRA_TEXT, logs);
                   intent.putExtra(Intent.EXTRA_SUBJECT, "Logs");
                   startActivity(Intent.createChooser(intent,
