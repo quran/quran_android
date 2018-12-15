@@ -1,16 +1,13 @@
 package com.quran.labs.androidquran.ui.translation;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -19,6 +16,11 @@ import com.quran.labs.androidquran.widgets.AyahToolBar;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
     TranslationAdapter.OnVerseSelectedListener,
@@ -66,8 +68,12 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     ayahToolBar = new AyahToolBar(context, R.menu.share_menu);
     ayahToolBar.setOnItemSelectedListener(this);
     ayahToolBar.setVisibility(View.GONE);
-    addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
-        context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
+
+    //noinspection ConstantConditions
+    if (!BuildConfig.FLAVOR.equals("warsh") && !BuildConfig.FLAVOR.equals("qaloon")) {
+      addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
+          context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
+    }
   }
 
   public void setVerses(@NonNull QuranInfo quranInfo,

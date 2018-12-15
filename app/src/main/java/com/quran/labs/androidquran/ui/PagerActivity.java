@@ -1212,6 +1212,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void handleDownloadSuccess() {
     refreshQuranPages();
     audioPresenter.onDownloadSuccess();
+    audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
   }
 
   @Override
