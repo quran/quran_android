@@ -1999,12 +1999,12 @@ public class PagerActivity extends QuranActionBarActivity implements
       adapter.add(suraName);
     }
     if(startSura != startingSuraList.get(0)) {
-      adapter.insert("Beginning of Page", 0);
+      adapter.insert(getString(R.string.starting_page_label), 0);
       startingSuraList.add(0, startSura);
     }
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this)
-        .setTitle("Where do you want to listen from?")
+        .setTitle(getString(R.string.playback_prompt_title))
         .setAdapter(adapter, (dialog, i) -> {
           if (i == 0) {
             playFromAyah(page, startSura, startAyah);
