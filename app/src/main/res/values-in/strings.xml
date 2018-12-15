@@ -281,6 +281,9 @@
     <item>berulang-ulang</item>
   </string-array>
 
+  <string name="playback_prompt_title">Memulai bacaan dari:</string>
+  <string name="starting_page_label">Awal Halaman</string>
+
   <!-- long press -->
   <string name="bookmark_ayah">Tandai ayat ini</string>
   <string name="tag_ayah">Label ayat ini</string>

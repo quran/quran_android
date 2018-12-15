@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.HelpActivity;
@@ -82,6 +84,7 @@ import com.quran.labs.androidquran.widgets.QuranSpinner;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -1413,7 +1416,13 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     int startSura = quranInfo.safelyGetSuraOnPage(page);
     int startAyah = quranInfo.getFirstAyahOnPage(page);
-    playFromAyah(page, startSura, startAyah);
+    List<Integer> startingSuraList = quranInfo.getListOfSurahWithStartingOnPage(page);
+    if (startingSuraList.size() == 0 ||
+        (startingSuraList.size() == 1 && startingSuraList.get(0) == startSura)) {
+      playFromAyah(page, startSura, startAyah);
+    } else {
+      promptForMultipleChoicePlay(page, startSura, startAyah, startingSuraList);
+    }
   }
 
   private void playFromAyah(int page, int startSura, int startAyah) {
@@ -1981,6 +1990,32 @@ public class PagerActivity extends QuranActionBarActivity implements
         unHighlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
       }
     }
+  }
+
+  private void promptForMultipleChoicePlay(int page, int startSura, int startAyah, List<Integer> startingSuraList) {
+    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item);
+    for (Integer integer : startingSuraList) {
+      String suraName = quranInfo.getSuraName(this, integer, false);
+      adapter.add(suraName);
+    }
+    if(startSura != startingSuraList.get(0)) {
+      adapter.insert(getString(R.string.starting_page_label), 0);
+      startingSuraList.add(0, startSura);
+    }
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        .setTitle(getString(R.string.playback_prompt_title))
+        .setAdapter(adapter, (dialog, i) -> {
+          if (i == 0) {
+            playFromAyah(page, startSura, startAyah);
+          } else {
+            playFromAyah(page, startingSuraList.get(i), 1);
+          }
+          dialog.dismiss();
+          promptDialog = null;
+        });
+    promptDialog = builder.create();
+    promptDialog.show();
   }
 
   private class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {
