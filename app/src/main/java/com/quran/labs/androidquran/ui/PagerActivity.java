@@ -2002,16 +2002,17 @@ public class PagerActivity extends QuranActionBarActivity implements
       adapter.insert("Beginning of Page", 0);
       startingSuraList.add(0, startSura);
     }
-    new AlertDialog.Builder(this)
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this)
         .setTitle("Where do you want to listen from?")
-        .setAdapter(adapter, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            if(i == 0) playFromAyah(page, startSura, startAyah);
-            else playFromAyah(page, startingSuraList.get(i), 1);
-          }
-        })
-        .create().show();
+        .setAdapter(adapter, (dialog, i) -> {
+          if(i == 0) playFromAyah(page, startSura, startAyah);
+          else playFromAyah(page, startingSuraList.get(i), 1);
+          dialog.dismiss();
+          promptDialog = null;
+        });
+    promptDialog = builder.create();
+    promptDialog.show();
   }
 
   private class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {
