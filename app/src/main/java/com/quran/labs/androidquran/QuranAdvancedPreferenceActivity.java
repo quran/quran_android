@@ -1,15 +1,14 @@
 package com.quran.labs.androidquran;
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -46,7 +45,7 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
       locationToWrite = savedInstanceState.getString(SI_LOCATION_TO_WRITE);
     }
 
-    final FragmentManager fm = getSupportFragmentManager();
+    final FragmentManager fm = getFragmentManager();
     final Fragment fragment = fm.findFragmentById(R.id.content);
     if (fragment == null) {
       fm.beginTransaction()
@@ -92,10 +91,11 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
     if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSION) {
       if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         if (locationToWrite != null) {
-          Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
+          Fragment fragment = getFragmentManager().findFragmentById(R.id.content);
           if (fragment instanceof QuranAdvancedSettingsFragment) {
             ((QuranAdvancedSettingsFragment) fragment).moveFiles(locationToWrite);
           }
+
         }
       }
       locationToWrite = null;
