@@ -4,10 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputEditText
-import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AlertDialog
 import android.view.WindowManager
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.textfield.TextInputEditText
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.dao.Tag
@@ -93,7 +92,7 @@ class AddTagDialog : androidx.fragment.app.DialogFragment() {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    dialog.window!!.setSoftInputMode(
+    dialog?.window!!.setSoftInputMode(
         WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE or
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
   }
