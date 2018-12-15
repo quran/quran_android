@@ -124,11 +124,12 @@ public class QuranInfo {
   }
 
   public List<Integer> getListOfSurahWithStartingOnPage(int page) {
+    int startIndex = pageSuraStart[page - 1];
     List<Integer> result = new ArrayList<>();
-    for (int i = 0; i < Constants.SURAS_COUNT; i++) {
-      if(suraPageStart[i] == page) {
+    for (int i = startIndex; i < Constants.SURAS_COUNT; i++) {
+      if (suraPageStart[i] == page) {
         result.add(i + 1);
-      }
+      } else if (suraPageStart[i] > page) break;
     }
     return result;
   }
