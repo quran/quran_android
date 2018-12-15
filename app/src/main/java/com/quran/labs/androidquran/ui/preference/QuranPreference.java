@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.ui.preference;
 
-import com.quran.labs.androidquran.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
@@ -12,33 +10,24 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-public class QuranHeaderPreference extends Preference {
+public class QuranPreference extends Preference {
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public QuranHeaderPreference(Context context, AttributeSet attrs,
+  public QuranPreference(Context context, AttributeSet attrs,
       int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
-    init();
   }
 
-  public QuranHeaderPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+  public QuranPreference(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    init();
   }
 
-  public QuranHeaderPreference(Context context, AttributeSet attrs) {
+  public QuranPreference(Context context, AttributeSet attrs) {
     super(context, attrs);
-    init();
   }
 
-  public QuranHeaderPreference(Context context) {
+  public QuranPreference(Context context) {
     super(context);
-    init();
-  }
-
-  private void init() {
-    setLayoutResource(R.layout.about_header);
-    setSelectable(false);
   }
 
   @Override

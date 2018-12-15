@@ -2,48 +2,37 @@ package com.quran.labs.androidquran;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.quran.labs.androidquran.ui.QuranActionBarActivity;
-import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
-import com.quran.labs.androidquran.util.AudioManagerUtils;
+import com.quran.labs.androidquran.ui.fragment.AboutFragment;
 
-public class QuranPreferenceActivity extends QuranActionBarActivity {
+public class AboutUsActivity extends QuranActionBarActivity {
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    ((QuranApplication) getApplication()).refreshLocale(this, false);
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.preferences);
+
+    setContentView(R.layout.about_us);
 
     final Toolbar toolbar = findViewById(R.id.toolbar);
-    toolbar.setTitle(R.string.menu_settings);
+    toolbar.setTitle(R.string.menu_about);
     setSupportActionBar(toolbar);
     final ActionBar ab = getSupportActionBar();
     if (ab != null) {
       ab.setDisplayHomeAsUpEnabled(true);
     }
 
-    AudioManagerUtils.clearCache();
-
-
     final FragmentManager fm = getFragmentManager();
     final Fragment fragment = fm.findFragmentById(R.id.content);
     if (fragment == null) {
       fm.beginTransaction()
-          .replace(R.id.content, new QuranSettingsFragment())
+          .replace(R.id.content, new AboutFragment())
           .commit();
     }
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-
-    super.onSaveInstanceState(outState);
   }
 
   @Override
@@ -52,14 +41,6 @@ public class QuranPreferenceActivity extends QuranActionBarActivity {
       finish();
       return true;
     }
-    return super.onOptionsItemSelected(item);
+    return false;
   }
-
-  public void restartActivity() {
-    ((QuranApplication) getApplication()).refreshLocale(this, true);
-    Intent intent = getIntent();
-    finish();
-    startActivity(intent);
-  }
-
 }

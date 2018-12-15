@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto"
-                  android:key="@string/prefs_path"
-                  android:title="@string/prefs_category_advanced"
-    >
-  <Preference
+    android:key="@string/prefs_path"
+    android:title="@string/prefs_category_advanced">
+  <com.quran.labs.androidquran.ui.preference.QuranPreference
       android:key="@string/prefs_import"
       android:summary="@string/prefs_import_summary"
-      android:title="@string/prefs_import_title"
-      app:iconSpaceReserved="false"/>
+      android:title="@string/prefs_import_title" />
 
-  <Preference
+  <com.quran.labs.androidquran.ui.preference.QuranPreference
       android:key="@string/prefs_export"
       android:summary="@string/prefs_export_summary"
-      android:title="@string/prefs_export_title"
-      app:iconSpaceReserved="false"/>
+      android:title="@string/prefs_export_title" />
 
   <com.quran.labs.androidquran.ui.preference.DataListPreference
       android:key="@string/prefs_app_location"
       android:summary="@string/prefs_app_location_summary"
-      android:title="@string/prefs_app_location_title"
-      app:iconSpaceReserved="false"/>
+      android:title="@string/prefs_app_location_title" />
 
-  <Preference
+  <com.quran.labs.androidquran.ui.preference.QuranPreference
       android:key="@string/prefs_send_logs"
       android:summary="@string/prefs_send_logs_summary"
-      android:title="@string/prefs_send_logs_title"
-      app:iconSpaceReserved="false"/>
+      android:title="@string/prefs_send_logs_title" />
 </PreferenceScreen>

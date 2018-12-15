@@ -1,77 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto"
                   android:key="@string/prefs_path"
                   android:title="@string/menu_settings">
 
   <PreferenceCategory
       android:key="@string/prefs_display_category_key"
-      android:title="@string/prefs_category_display_settings"
-      app:iconSpaceReserved="false">
+      android:title="@string/prefs_category_display_settings">
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="false"
         android:disableDependentsState="false"
         android:key="@string/prefs_use_arabic_names"
         android:persistent="true"
         android:summary="@string/prefs_use_arabic_summary_on"
-        android:title="@string/prefs_use_arabic_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_use_arabic_title"/>
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="@string/prefs_new_background"
-        android:persistent="true"
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:title="@string/prefs_new_background_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
-        android:defaultValue="@bool/immersive_in_portrait"
-        android:key="@string/prefs_immersive_in_portrait"
         android:persistent="true"
-        android:summaryOff="@string/prefs_immersive_in_portrait_summary_disabled"
-        android:summaryOn="@string/prefs_immersive_in_portrait_summary_enabled"
+        android:defaultValue="true"
+        android:key="@string/prefs_new_background"/>
+
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:title="@string/prefs_immersive_in_portrait_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
-        android:defaultValue="@bool/use_tablet_interface_by_default"
-        android:key="@string/prefs_dual_page_enabled"
+        android:summaryOn="@string/prefs_immersive_in_portrait_summary_enabled"
+        android:summaryOff="@string/prefs_immersive_in_portrait_summary_disabled"
         android:persistent="true"
-        android:summaryOff="@string/prefs_dual_page_mode_disabled"
-        android:summaryOn="@string/prefs_dual_page_mode_enabled"
-        android:title="@string/prefs_dual_page_mode_title"
-        app:iconSpaceReserved="false"/>
+        android:defaultValue="@bool/immersive_in_portrait"
+        android:key="@string/prefs_immersive_in_portrait"/>
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
+        android:title="@string/prefs_dual_page_mode_title"
+        android:summaryOn="@string/prefs_dual_page_mode_enabled"
+        android:summaryOff="@string/prefs_dual_page_mode_disabled"
+        android:persistent="true"
+        android:defaultValue="@bool/use_tablet_interface_by_default"
+        android:key="@string/prefs_dual_page_enabled"/>
+
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="false"
         android:disableDependentsState="false"
         android:key="@string/prefs_lock_orientation"
         android:persistent="true"
         android:summaryOff="@string/prefs_lock_orientation_summary_off"
         android:summaryOn="@string/prefs_lock_orientation_summary_on"
-        android:title="@string/prefs_lock_orientation_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_lock_orientation_title"/>
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:dependency="@string/prefs_lock_orientation"
         android:key="@string/prefs_landscape_orientation"
         android:persistent="true"
         android:summaryOff="@string/prefs_landscape_orientation_summary_off"
         android:summaryOn="@string/prefs_landscape_orientation_summary_on"
-        android:title="@string/prefs_landscape_orientation_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_landscape_orientation_title"/>
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:key="@string/prefs_night_mode"
         android:persistent="true"
         android:summary="@string/prefs_night_mode_summary"
-        android:title="@string/prefs_night_mode_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_night_mode_title"/>
 
     <com.quran.labs.androidquran.ui.preference.SeekBarPreference
-        android:defaultValue="255"
         android:dependency="@string/prefs_night_mode"
+        android:defaultValue="255"
         android:key="@string/prefs_night_mode_text_brightness"
         android:max="255"
         android:persistent="true"
@@ -81,65 +72,56 @@
 
   <PreferenceCategory
       android:key="@string/prefs_reading_category_key"
-      android:title="@string/prefs_category_reading"
-      app:iconSpaceReserved="false">
+      android:title="@string/prefs_category_reading">
 
-    <Preference
+    <com.quran.labs.androidquran.ui.preference.QuranPreference
         android:key="@string/prefs_page_type"
         android:summary="@string/prefs_page_type_summary"
-        android:title="@string/prefs_page_type_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_page_type_title" />
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/prefs_overlay_page_info"
         android:persistent="true"
         android:summary="@string/prefs_overlay_page_info_summary"
-        android:title="@string/prefs_overlay_page_info_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_overlay_page_info_title"/>
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/prefs_display_marker_popup"
         android:persistent="true"
         android:summary="@string/prefs_display_marker_summary"
-        android:title="@string/prefs_display_marker_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_display_marker_title"/>
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="true"
         android:key="@string/prefs_highlight_bookmarks"
         android:persistent="true"
         android:summary="@string/prefs_highlight_bookmarks_summary"
-        android:title="@string/prefs_highlight_bookmarks_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_highlight_bookmarks_title"/>
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="false"
         android:key="@string/prefs_volume_key_navigation"
         android:persistent="true"
         android:summary="@string/prefs_volume_key_navigation_summary"
-        android:title="@string/prefs_volume_key_navigation_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_volume_key_navigation_title"/>
   </PreferenceCategory>
 
   <PreferenceCategory
-      android:title="@string/prefs_category_translation"
-      app:iconSpaceReserved="false">
+      android:title="@string/prefs_category_translation">
 
-    <Preference
+    <com.quran.labs.androidquran.ui.preference.QuranPreference
         android:key="@string/prefs_translation_manager_key"
-        android:summary="@string/prefs_translations_summary"
         android:title="@string/prefs_translations"
-        app:iconSpaceReserved="false"/>
+        android:summary="@string/prefs_translations_summary"/>
 
-    <CheckBoxPreference
-        android:defaultValue="true"
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:key="@string/prefs_ayah_before_translation"
         android:persistent="true"
+        android:defaultValue="true"
         android:summary="@string/prefs_ayah_before_translation_summary"
-        android:title="@string/prefs_ayah_before_translation_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_ayah_before_translation_title"/>
 
     <com.quran.labs.androidquran.ui.preference.SeekBarPreference
         android:defaultValue="15"
@@ -151,43 +133,37 @@
 
   <PreferenceCategory
       android:key="@string/prefs_download_category_key"
-      android:title="@string/prefs_category_download"
-      app:iconSpaceReserved="false">
+      android:title="@string/prefs_category_download">
 
-    <CheckBoxPreference
+    <com.quran.labs.androidquran.ui.preference.QuranCheckBoxPreference
         android:defaultValue="false"
         android:key="@string/prefs_prefer_streaming"
         android:persistent="true"
         android:summary="@string/prefs_streaming_summary"
-        android:title="@string/prefs_streaming_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_streaming_title"/>
 
-    <ListPreference
+    <com.quran.labs.androidquran.ui.preference.QuranListPreference
         android:defaultValue="1"
         android:dialogTitle="@string/prefs_download_amount_title"
         android:entries="@array/download_amount_preference"
         android:entryValues="@array/download_amount_preference_values"
         android:key="@string/prefs_download_amount"
         android:summary="@string/prefs_download_amount_summary"
-        android:title="@string/prefs_download_amount_title"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_download_amount_title"/>
 
-    <Preference
+    <com.quran.labs.androidquran.ui.preference.QuranPreference
         android:key="@string/prefs_audio_manager_key"
-        android:summary="@string/prefs_audio_manager_summary"
         android:title="@string/prefs_audio_manager"
-        app:iconSpaceReserved="false"/>
+        android:summary="@string/prefs_audio_manager_summary"/>
   </PreferenceCategory>
 
   <PreferenceCategory
       android:key="@string/prefs_path"
-      android:title="@string/prefs_category_advanced"
-      app:iconSpaceReserved="false">
+      android:title="@string/prefs_category_advanced">
 
-    <Preference
+    <com.quran.labs.androidquran.ui.preference.QuranPreference
         android:key="key_prefs_advanced"
         android:summary="@string/prefs_category_advanced_summary"
-        android:title="@string/prefs_category_advanced"
-        app:iconSpaceReserved="false"/>
+        android:title="@string/prefs_category_advanced" />
   </PreferenceCategory>
 </PreferenceScreen>
