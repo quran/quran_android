@@ -2006,8 +2006,11 @@ public class PagerActivity extends QuranActionBarActivity implements
     AlertDialog.Builder builder = new AlertDialog.Builder(this)
         .setTitle("Where do you want to listen from?")
         .setAdapter(adapter, (dialog, i) -> {
-          if(i == 0) playFromAyah(page, startSura, startAyah);
-          else playFromAyah(page, startingSuraList.get(i), 1);
+          if (i == 0) {
+            playFromAyah(page, startSura, startAyah);
+          } else {
+            playFromAyah(page, startingSuraList.get(i), 1);
+          }
           dialog.dismiss();
           promptDialog = null;
         });
