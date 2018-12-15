@@ -4,9 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
-import androidx.annotation.MenuRes;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.PopupMenu;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +14,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
+
+import androidx.annotation.MenuRes;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.ContextCompat;
 
 public class AyahToolBar extends ViewGroup implements
     View.OnClickListener, View.OnLongClickListener {
@@ -125,6 +127,15 @@ public class AyahToolBar extends ViewGroup implements
     if (currentMenu == menu) {
       // no need to re-draw
       return;
+    }
+
+    // disable sharing for warsh and qaloon
+    MenuItem menuItem = menu.findItem(R.id.cab_share_ayah);
+    //noinspection ConstantConditions
+    if (menuItem != null &&
+        (BuildConfig.FLAVOR.equals("warsh") ||
+            BuildConfig.FLAVOR.equals("qaloon"))) {
+      menuItem.setVisible(false);
     }
 
     menuLayout.removeAllViews();

@@ -61,8 +61,10 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.extension.SuraAyahExtensionKt;
 import com.quran.labs.androidquran.presenter.audio.service.AudioQueue;
 import com.quran.labs.androidquran.service.util.AudioFocusHelper;
 import com.quran.labs.androidquran.service.util.AudioFocusable;
@@ -394,8 +396,12 @@ public class AudioService extends Service implements OnCompletionListener,
         if (State.Stopped == state ||
             !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {
           audioRequest = playInfo;
+
+          final SuraAyah start = audioRequest.getStart();
+          final boolean basmallah = !playInfo.isGapless() &&
+              SuraAyahExtensionKt.requiresBasmallah(start);
           audioQueue = new AudioQueue(quranInfo, audioRequest,
-              new AudioPlaybackInfo(audioRequest.getStart(), 1, 1));
+              new AudioPlaybackInfo(start, 1, 1, basmallah));
           Crashlytics.log("audio request has changed...");
         }
       }
@@ -1067,15 +1073,16 @@ public class AudioService extends Service implements OnCompletionListener,
     if (playerOverride) {
       playAudio(false);
     } else {
-      boolean flag = false;
       final int beforeSura = audioQueue.getCurrentSura();
       if (audioQueue.playNextAyah(false)) {
         // we actually switched to a different ayah - so if the
         // sura changed, then play the basmala if the ayah is
         // not the first one (or if we're in sura tawba).
-        flag = beforeSura != audioQueue.getCurrentSura();
+        boolean flag = beforeSura != audioQueue.getCurrentSura();
+        playAudio(flag);
+      } else {
+        processStopRequest(true);
       }
-      playAudio(flag);
     }
   }
 

@@ -99,6 +99,8 @@ open class MadaniDataSource : QuranDataSource {
       /* 11 - 20 */ 201, 222, 242, 262, 282, 302, 322, 342, 362, 382,
       /* 21 - 30 */ 402, 422, 442, 462, 482, 502, 522, 542, 562, 582)
 
+  override fun getJuzDisplayPageArrayOverride() = mapOf(121 to 6, 201 to 10)
+
   override fun getNumberOfAyahsForSuraArray() = intArrayOf(
       /*  1 -  14 */ 7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111, 43, 52,
       /* 15 -  28 */ 99, 128, 111, 110, 98, 135, 112, 78, 118, 64, 77, 227, 93, 88,

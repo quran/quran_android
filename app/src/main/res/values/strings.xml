@@ -321,6 +321,9 @@
     <item>loop</item>
   </string-array>
 
+  <string name="playback_prompt_title">Start playback from:</string>
+  <string name="starting_page_label">Beginning of Page</string>
+
   <!-- long press -->
   <string name="bookmark_ayah">Bookmark this Ayah</string>
   <string name="tag_ayah">Tag this Ayah</string>

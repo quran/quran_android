@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.quran.data.source.PageProvider;
 import com.quran.labs.androidquran.BuildConfig;
@@ -26,9 +24,17 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
+import okio.ForwardingSource;
+import okio.Okio;
+import okio.Source;
 import timber.log.Timber;
 
 public class QuranFileUtils {
@@ -71,16 +77,20 @@ public class QuranFileUtils {
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
   public boolean isVersion(Context context, String widthParam, int version) {
+    // version 1 or below are true as long as you have images
+    if (version <= 1) {
+      return true;
+    }
+
+    return hasVersionFile(context, widthParam, version);
+  }
+
+  public boolean hasVersionFile(Context context, String widthParam, int version) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
     Timber.d("isVersion: checking if version %d exists for width %s at %s",
         version, widthParam, quranDirectory);
     if (quranDirectory == null) {
       return false;
-    }
-
-    // version 1 or below are true as long as you have images
-    if (version <= 1) {
-      return true;
     }
 
     // check the version code
@@ -247,26 +257,37 @@ public class QuranFileUtils {
         .build();
     final Call call = okHttpClient.newCall(request);
 
-    InputStream stream = null;
+    ResponseBody responseBody = null;
     try {
       final okhttp3.Response response = call.execute();
       if (response.isSuccessful()) {
-        stream = response.body().byteStream();
-        final Bitmap bitmap = decodeBitmapStream(stream);
-        if (bitmap != null) {
-          String path = getQuranImagesDirectory(context);
-          int warning = Response.WARN_SD_CARD_NOT_FOUND;
-          if (path != null && makeQuranDirectory(context)) {
-            path += File.separator + filename;
-            warning = tryToSaveBitmap(bitmap, path) ? 0 : Response.WARN_COULD_NOT_SAVE_FILE;
+        responseBody = response.body();
+        if (responseBody != null) {
+          // handling for BitmapFactory.decodeStream not throwing an error
+          // when the download is interrupted or an exception occurs. This
+          // is taken from both Glide (see ExceptionHandlingInputStream) and
+          // Picasso (see BitmapFactory).
+          final ExceptionCatchingSource exceptionCatchingSource =
+              new ExceptionCatchingSource(responseBody.source());
+          final BufferedSource bufferedSource = Okio.buffer(exceptionCatchingSource);
+          final Bitmap bitmap = decodeBitmapStream(bufferedSource.inputStream());
+          // throw if an error occurred while decoding the stream
+          exceptionCatchingSource.throwIfCaught();
+          if (bitmap != null) {
+            String path = getQuranImagesDirectory(context);
+            int warning = Response.WARN_SD_CARD_NOT_FOUND;
+            if (path != null && makeQuranDirectory(context)) {
+              path += File.separator + filename;
+              warning = tryToSaveBitmap(bitmap, path) ? 0 : Response.WARN_COULD_NOT_SAVE_FILE;
+            }
+            return new Response(bitmap, warning);
           }
-          return new Response(bitmap, warning);
         }
       }
     } catch (IOException ioe) {
       Timber.e(ioe, "exception downloading file");
     } finally {
-      CloseableExtensionKt.closeQuietly(stream);
+      CloseableExtensionKt.closeQuietly(responseBody);
     }
 
     return isRetry ? new Response(Response.ERROR_DOWNLOADING_ERROR) :
@@ -393,7 +414,7 @@ public class QuranFileUtils {
     return getQuranImagesDirectory(context, quranScreenInfo.getWidthParam());
   }
 
-  private String getQuranImagesDirectory(Context context, String widthParam) {
+  public String getQuranImagesDirectory(Context context, String widthParam) {
     String base = getQuranBaseDirectory(context);
     return (base == null) ? null : base +
         (IMAGES_DIRECTORY.isEmpty() ? "" : IMAGES_DIRECTORY + File.separator) + "width" + widthParam;
@@ -573,5 +594,31 @@ public class QuranFileUtils {
     out.flush();
     out.close();
     in.close();
+  }
+
+  // taken from Picasso's BitmapUtils class
+  // also Glide's ExceptionHandlingInputSource
+  static class ExceptionCatchingSource extends ForwardingSource {
+    @Nullable IOException ioException;
+
+    ExceptionCatchingSource(Source delegate) {
+      super(delegate);
+    }
+
+    @Override
+    public long read(@NonNull Buffer sink, long byteCount) throws IOException {
+      try {
+        return super.read(sink, byteCount);
+      } catch (IOException ioe) {
+        ioException = ioe;
+        throw ioException;
+      }
+    }
+
+    void throwIfCaught() throws IOException {
+      if (ioException != null) {
+        throw ioException;
+      }
+    }
   }
 }

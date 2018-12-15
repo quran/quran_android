@@ -6,6 +6,7 @@ interface QuranDataSource {
   fun getSuraForPageArray() : IntArray
   fun getAyahForPageArray() : IntArray
   fun getPageForJuzArray() : IntArray
+  fun getJuzDisplayPageArrayOverride(): Map<Int, Int>
   fun getNumberOfAyahsForSuraArray() : IntArray
   fun getIsMakkiBySuraArray() : BooleanArray
   fun getQuarterStartByPage() : IntArray
