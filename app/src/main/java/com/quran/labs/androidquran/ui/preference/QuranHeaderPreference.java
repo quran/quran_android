@@ -6,10 +6,10 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.preference.Preference;
-import androidx.annotation.NonNull;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
+
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TextView;
 
 public class QuranHeaderPreference extends Preference {
@@ -36,19 +36,19 @@ public class QuranHeaderPreference extends Preference {
     init();
   }
 
-  private void init() {
-    setLayoutResource(R.layout.about_header);
-    setSelectable(false);
-  }
-
   @Override
-  protected void onBindView(@NonNull View view) {
-    super.onBindView(view);
+  public void onBindViewHolder(PreferenceViewHolder holder) {
+    super.onBindViewHolder(holder);
     if (isEnabled()) {
-      final TextView tv = view.findViewById(android.R.id.title);
+      final TextView tv = (TextView) holder.findViewById(android.R.id.title);
       if (tv != null) {
         tv.setTextColor(Color.WHITE);
       }
     }
+  }
+
+  private void init() {
+    setLayoutResource(R.layout.about_header);
+    setSelectable(false);
   }
 }

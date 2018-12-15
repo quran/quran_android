@@ -1,11 +1,12 @@
 package com.quran.labs.androidquran;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import android.view.MenuItem;
 
 import com.quran.labs.androidquran.ui.QuranActionBarActivity;
@@ -30,20 +31,13 @@ public class QuranPreferenceActivity extends QuranActionBarActivity {
 
     AudioManagerUtils.clearCache();
 
-
-    final FragmentManager fm = getFragmentManager();
+    final FragmentManager fm = getSupportFragmentManager();
     final Fragment fragment = fm.findFragmentById(R.id.content);
     if (fragment == null) {
       fm.beginTransaction()
           .replace(R.id.content, new QuranSettingsFragment())
           .commit();
     }
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-
-    super.onSaveInstanceState(outState);
   }
 
   @Override
