@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.data;
 
+import android.os.Build;
+
 import com.quran.labs.androidquran.ui.util.TypefaceManager;
 
 public class QuranFileConstants {
@@ -7,5 +9,6 @@ public class QuranFileConstants {
   public static final int FONT_TYPE = TypefaceManager.TYPE_UTHMANI_HAFS;
 
   // arabic database
-  public static final String ARABIC_DATABASE = "quran.ar.db";
+  public static final String ARABIC_DATABASE =
+      Build.VERSION.SDK_INT >= 21 ? "quran.ar.uthmani.db" : "quran.ar.uthmani_simple.db";
 }
