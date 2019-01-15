@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.util.TypefaceManager;
 
 public class QuranFileConstants {
@@ -8,4 +9,5 @@ public class QuranFileConstants {
 
   // arabic database
   public static final String ARABIC_DATABASE = "quran.ar.db";
+  public static final String ARABIC_SHARE_TABLE = DatabaseHandler.ARABIC_TEXT_TABLE;
 }
