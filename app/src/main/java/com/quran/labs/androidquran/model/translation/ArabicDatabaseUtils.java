@@ -2,12 +2,11 @@ package com.quran.labs.androidquran.model.translation;
 
 import android.content.Context;
 import android.database.Cursor;
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
+import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
@@ -22,6 +21,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
@@ -64,7 +65,7 @@ public class ArabicDatabaseUtils {
       try {
         DatabaseHandler arabicDatabaseHandler = getArabicDatabaseHandler();
         cursor = arabicDatabaseHandler.getVerses(start.sura, start.ayah,
-            end.sura, end.ayah, DatabaseHandler.ARABIC_TEXT_TABLE);
+            end.sura, end.ayah, QuranFileConstants.ARABIC_SHARE_TABLE);
         while (cursor.moveToNext()) {
           QuranText verse = new QuranText(cursor.getInt(1), cursor.getInt(2), cursor.getString(3));
           verses.add(verse);

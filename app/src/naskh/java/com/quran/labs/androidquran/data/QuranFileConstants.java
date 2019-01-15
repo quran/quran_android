@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.util.TypefaceManager;
 
 import android.os.Build;
@@ -12,4 +13,5 @@ public class QuranFileConstants {
   public static final String ARABIC_DATABASE =
       Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1 ?
           "quran.ar_naskh.db" : "quran.ar.db";
+  public static final String ARABIC_SHARE_TABLE = DatabaseHandler.ARABIC_TEXT_TABLE;
 }
