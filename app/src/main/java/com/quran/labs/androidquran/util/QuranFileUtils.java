@@ -518,7 +518,7 @@ public class QuranFileUtils {
   }
 
   public String getArabicSearchDatabaseUrl() {
-    return DATABASE_BASE_URL + QuranDataProvider.QURAN_ARABIC_DATABASE;
+    return DATABASE_BASE_URL + QuranDataProvider.QURAN_ARABIC_DATABASE + ".zip";
   }
 
   public boolean moveAppFiles(Context context, String newLocation) {

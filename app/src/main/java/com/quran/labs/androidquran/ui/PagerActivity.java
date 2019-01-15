@@ -6,7 +6,6 @@ import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -84,7 +83,6 @@ import com.quran.labs.androidquran.widgets.QuranSpinner;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -755,11 +753,12 @@ public class PagerActivity extends QuranActionBarActivity implements
         notificationTitle = getString(R.string.search_data);
       }
 
+      final String extension = url.endsWith(".zip") ? ".zip" : "";
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           quranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
-          QuranDataProvider.QURAN_ARABIC_DATABASE);
+          QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
       ContextCompat.startForegroundService(this, intent);
     }
 

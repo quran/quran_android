@@ -3,11 +3,6 @@ package com.quran.labs.androidquran.ui.translation;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -26,9 +21,15 @@ import com.quran.labs.androidquran.widgets.DividerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 class TranslationAdapter extends RecyclerView.Adapter<TranslationAdapter.RowViewHolder> {
   private static final boolean USE_UTHMANI_SPAN =
-      Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1;
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
   private static final float ARABIC_MULTIPLIER = 1.4f;
 
   private static final int HIGHLIGHT_CHANGE = 1;
