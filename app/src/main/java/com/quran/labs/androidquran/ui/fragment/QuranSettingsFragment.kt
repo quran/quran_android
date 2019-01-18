@@ -33,22 +33,22 @@ class QuranSettingsFragment : PreferenceFragmentCompat(),
     (appContext as QuranApplication).applicationComponent.inject(this)
 
     // handle translation manager click
-    val translationPref = findPreference(Constants.PREF_TRANSLATION_MANAGER)
+    val translationPref: Preference = findPreference(Constants.PREF_TRANSLATION_MANAGER)
     translationPref.setOnPreferenceClickListener {
       startActivity(Intent(activity, TranslationManagerActivity::class.java))
       true
     }
 
     // handle audio manager click
-    val audioManagerPref = findPreference(Constants.PREF_AUDIO_MANAGER)
+    val audioManagerPref: Preference = findPreference(Constants.PREF_AUDIO_MANAGER)
     audioManagerPref.setOnPreferenceClickListener {
       startActivity(Intent(activity, AudioManagerActivity::class.java))
       true
     }
 
-    val pageChangePref = findPreference(Constants.PREF_PAGE_TYPE)
+    val pageChangePref: Preference = findPreference(Constants.PREF_PAGE_TYPE)
     if (pageTypes.size < 2) {
-      val readingPrefs = findPreference(Constants.PREF_READING_CATEGORY)
+      val readingPrefs: Preference = findPreference(Constants.PREF_READING_CATEGORY)
       (readingPrefs as PreferenceGroup).removePreference(pageChangePref)
     }
   }
