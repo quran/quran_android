@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.data.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
+import com.quran.labs.androidquran.util.TranslationUtil
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -24,6 +25,7 @@ class BaseTranslationPresenterTest {
     presenter = BaseTranslationPresenter(
         Mockito.mock(TranslationModel::class.java),
         Mockito.mock(TranslationsDBAdapter::class.java),
+        TranslationUtil(0),
         QuranInfo(MadaniPageProvider()))
   }
 
@@ -38,7 +40,7 @@ class BaseTranslationPresenterTest {
       }
     }
 
-    val translations = presenter!!.getTranslationNames(databases, map)
+    val translations = presenter.getTranslationNames(databases, map)
     assertThat(translations).hasLength(2)
     assertThat(translations[0]).isEqualTo("First")
     assertThat(translations[1]).isEqualTo("Second")
@@ -49,7 +51,7 @@ class BaseTranslationPresenterTest {
     val databases = Arrays.asList("one.db", "two.db")
     val map = HashMap<String, LocalTranslation>()
 
-    val translations = presenter!!.getTranslationNames(databases, map)
+    val translations = presenter.getTranslationNames(databases, map)
     assertThat(translations).hasLength(2)
     assertThat(translations[0]).isEqualTo(databases[0])
     assertThat(translations[1]).isEqualTo(databases[1])
@@ -59,7 +61,7 @@ class BaseTranslationPresenterTest {
   fun testCombineAyahDataOneVerse() {
     val verseRange = VerseRange(1, 1, 1, 1, 1)
     val arabic = listOf(QuranText(1, 1, "first ayah"))
-    val info = presenter!!.combineAyahData(verseRange, arabic,
+    val info = presenter.combineAyahData(verseRange, arabic,
         listOf(listOf(QuranText(1, 1, "translation"))))
 
     assertThat(info).hasSize(1)
@@ -75,7 +77,7 @@ class BaseTranslationPresenterTest {
   fun testCombineAyahDataOneVerseEmpty() {
     val verseRange = VerseRange(1, 1, 1, 1, 1)
     val arabic = emptyList<QuranText>()
-    val info = presenter!!.combineAyahData(verseRange, arabic, emptyList())
+    val info = presenter.combineAyahData(verseRange, arabic, emptyList())
     assertThat(info).hasSize(0)
   }
 
@@ -83,7 +85,7 @@ class BaseTranslationPresenterTest {
   fun testCombineAyahDataOneVerseNoArabic() {
     val verseRange = VerseRange(1, 1, 1, 1, 1)
     val arabic = emptyList<QuranText>()
-    val info = presenter!!.combineAyahData(verseRange, arabic,
+    val info = presenter.combineAyahData(verseRange, arabic,
         listOf(listOf(QuranText(1, 1, "translation"))))
 
     assertThat(info).hasSize(1)
@@ -102,7 +104,7 @@ class BaseTranslationPresenterTest {
         QuranText(1, 1, "first ayah"),
         QuranText(1, 2, "second ayah")
     )
-    val info = presenter!!.combineAyahData(verseRange, arabic, ArrayList())
+    val info = presenter.combineAyahData(verseRange, arabic, ArrayList())
     assertThat(info).hasSize(2)
     assertThat(info[0].sura).isEqualTo(1)
     assertThat(info[0].ayah).isEqualTo(1)

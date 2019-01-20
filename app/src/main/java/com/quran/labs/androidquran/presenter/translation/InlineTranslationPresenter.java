@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.translation.TranslationModel;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.labs.androidquran.util.TranslationUtil;
 
 import java.util.List;
 
@@ -22,9 +23,10 @@ public class InlineTranslationPresenter extends
   @Inject
   InlineTranslationPresenter(TranslationModel translationModel,
                              TranslationsDBAdapter dbAdapter,
+                             TranslationUtil translationUtil,
                              QuranSettings quranSettings,
                              QuranInfo quranInfo) {
-    super(translationModel, dbAdapter, quranInfo);
+    super(translationModel, dbAdapter, translationUtil, quranInfo);
     this.quranSettings = quranSettings;
   }
 
