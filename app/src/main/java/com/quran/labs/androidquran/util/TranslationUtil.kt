@@ -9,12 +9,12 @@ import com.quran.labs.androidquran.common.TranslationMetadata
 import dagger.Reusable
 
 @Reusable
-class TranslationUtil(@ColorInt private val color: Int) {
+open class TranslationUtil(@ColorInt private val color: Int) {
   val ayahRegex = """([«{﴿][\s\S]*?[﴾}»])""".toRegex()
   val footerRegex = """\[\[[\s\S]*?]]""".toRegex()
 
 
-  fun parseTranslationText(quranText: QuranText): TranslationMetadata {
+  open fun parseTranslationText(quranText: QuranText): TranslationMetadata {
     val text = quranText.text
     val withoutFooters = footerRegex.replace(text, "")
     val spannable = SpannableString(withoutFooters)
