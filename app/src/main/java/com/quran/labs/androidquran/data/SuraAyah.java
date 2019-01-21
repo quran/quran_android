@@ -55,8 +55,11 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
 
   @Override
   public boolean equals(Object o) {
-    return o != null && o.getClass() == SuraAyah.class &&
-        ((SuraAyah) o).sura == sura && ((SuraAyah) o).ayah == ayah;
+    if (this == o) { return true; }
+    if (o == null || getClass() != o.getClass()) { return false; }
+    SuraAyah suraAyah = (SuraAyah) o;
+    return sura == suraAyah.sura &&
+        ayah == suraAyah.ayah;
   }
 
   @Override

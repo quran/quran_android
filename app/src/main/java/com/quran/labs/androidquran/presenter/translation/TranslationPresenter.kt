@@ -10,6 +10,7 @@ import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.ShareUtil
+import com.quran.labs.androidquran.util.TranslationUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
@@ -19,11 +20,12 @@ import javax.inject.Inject
 internal class TranslationPresenter @Inject internal constructor(translationModel: TranslationModel,
                      private val quranSettings: QuranSettings,
                      translationsAdapter: TranslationsDBAdapter,
+                     translationUtil: TranslationUtil,
                      private val shareUtil: ShareUtil,
                      private val quranInfo: QuranInfo,
                      private val pages: Array<Int?>) :
     BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
-        translationModel, translationsAdapter, quranInfo) {
+        translationModel, translationsAdapter, translationUtil, quranInfo) {
 
   fun refresh() {
     disposable?.dispose()

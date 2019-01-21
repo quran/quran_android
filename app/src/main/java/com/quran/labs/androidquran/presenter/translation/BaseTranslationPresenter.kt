@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.TranslationUtil
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,6 +24,7 @@ import java.util.HashMap
 internal open class BaseTranslationPresenter<T> internal constructor(
     private val translationModel: TranslationModel,
     private val translationsAdapter: TranslationsDBAdapter,
+    private val translationUtil: TranslationUtil,
     private val quranInfo: QuranInfo) : Presenter<T> {
   private val translationMap: MutableMap<String, LocalTranslation> = HashMap()
 
@@ -94,13 +96,16 @@ internal open class BaseTranslationPresenter<T> internal constructor(
         val verses = if (arabicSize == 0) verseRange.versesInRange else arabicSize
         for (i in 0 until verses) {
           val quranTexts = texts.map { if (it.size > i) it[i] else null }
-          // replace with "" when a translation doesn't load to keep translations aligned
-          val ayahTranslations = quranTexts.map { it?.text ?: "" }
-
           val arabicQuranText = if (arabicSize == 0) null else arabic[i]
           val element = quranTexts.findLast { it != null } ?: arabicQuranText
 
           if (element != null) {
+            // replace with "" when a translation doesn't load to keep translations aligned
+            val ayahTranslations = quranTexts.map {
+              val quranText = it ?: QuranText(element.sura, element.ayah, "")
+              translationUtil.parseTranslationText(quranText)
+            }
+
             result.add(
                 QuranAyahInfo(element.sura, element.ayah, arabicQuranText?.text, ayahTranslations,
                     quranInfo.getAyahId(element.sura, element.ayah)))

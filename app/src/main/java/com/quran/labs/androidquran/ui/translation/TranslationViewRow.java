@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.ui.translation;
 
+import com.quran.labs.androidquran.common.QuranAyahInfo;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.quran.labs.androidquran.common.QuranAyahInfo;
 
 class TranslationViewRow {
 
@@ -22,13 +22,13 @@ class TranslationViewRow {
 
   @Type final int type;
   @NonNull final QuranAyahInfo ayahInfo;
-  @Nullable final String data;
+  @Nullable final CharSequence data;
 
   TranslationViewRow(int type, @NonNull QuranAyahInfo ayahInfo) {
     this(type, ayahInfo, null);
   }
 
-  TranslationViewRow(int type, @NonNull QuranAyahInfo ayahInfo, @Nullable String data) {
+  TranslationViewRow(int type, @NonNull QuranAyahInfo ayahInfo, @Nullable CharSequence data) {
     this.type = type;
     this.ayahInfo = ayahInfo;
     this.data = data;

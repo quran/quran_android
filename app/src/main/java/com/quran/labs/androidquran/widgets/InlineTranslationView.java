@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import androidx.annotation.StyleRes;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -17,9 +16,12 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
+
+import androidx.annotation.StyleRes;
 
 public class InlineTranslationView extends ScrollView {
   private Context context;
@@ -120,7 +122,8 @@ public class InlineTranslationView extends ScrollView {
     boolean showHeader = translations.length > 1;
     SpannableStringBuilder builder = new SpannableStringBuilder();
     for (int i = 0; i < translations.length; i++) {
-      String translationText = ayah.texts.get(i);
+      final TranslationMetadata translationMetadata = ayah.texts.get(i);
+      final CharSequence translationText = translationMetadata.getText();
       if (!TextUtils.isEmpty(translationText)) {
         if (showHeader) {
           if (i > 0) {

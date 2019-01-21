@@ -14,6 +14,8 @@ import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     addView(translationRecycler, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     translationRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
       @Override
-      public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+      public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
         // do not modify the RecyclerView from this method or any method called from
@@ -106,7 +108,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       // added this to guard against a crash that happened when verse.texts was empty
       int verseTexts = verse.texts.size();
       for (int j = 0; j < translations.length; j++) {
-        String text = verseTexts > j ? verse.texts.get(j) : "";
+        CharSequence text = verseTexts > j ? verse.texts.get(j).getText() : "";
         if (!TextUtils.isEmpty(text)) {
           if (wantTranslationHeaders) {
             rows.add(
