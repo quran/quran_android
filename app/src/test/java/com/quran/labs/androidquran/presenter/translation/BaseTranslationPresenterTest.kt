@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.page.provider.madani.MadaniPageProvider
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranText
+import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
@@ -25,7 +26,11 @@ class BaseTranslationPresenterTest {
     presenter = BaseTranslationPresenter(
         Mockito.mock(TranslationModel::class.java),
         Mockito.mock(TranslationsDBAdapter::class.java),
-        TranslationUtil(0),
+        object : TranslationUtil(0) {
+          override fun parseTranslationText(quranText: QuranText): TranslationMetadata {
+            return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text)
+          }
+        },
         QuranInfo(MadaniPageProvider()))
   }
 
@@ -70,7 +75,7 @@ class BaseTranslationPresenterTest {
     assertThat(first.ayah).isEqualTo(1)
     assertThat(first.texts).hasSize(1)
     assertThat(first.arabicText).isEqualTo("first ayah")
-    assertThat(first.texts[0]).isEqualTo("translation")
+    assertThat(first.texts[0].text).isEqualTo("translation")
   }
 
   @Test
@@ -94,7 +99,7 @@ class BaseTranslationPresenterTest {
     assertThat(first.ayah).isEqualTo(1)
     assertThat(first.texts).hasSize(1)
     assertThat(first.arabicText).isNull()
-    assertThat(first.texts[0]).isEqualTo("translation")
+    assertThat(first.texts[0].text).isEqualTo("translation")
   }
 
   @Test
