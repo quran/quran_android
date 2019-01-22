@@ -137,8 +137,11 @@
   <string name="remove_button">احذف</string>
   <string name="dialog_ok">موافق</string>
 
-  <!-- translation updates -->
+  <!-- tafaseer -->
   <string name="more">المزيد…</string>
+  <string name="see_tafseer_of_verse">انظر تفسير الآية %d.</string>
+
+  <!-- translation updates -->
   <string name="update_available">هناك تحديثات</string>
   <string name="translation_updates_available">هناك تحديثات للتراجم والتفاسير. هل ترغب في تحميلها الآن؟</string>
   <string name="translation_dialog_yes">نعم</string>

@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.data.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
@@ -223,10 +224,16 @@ internal class TranslationAdapter(private val context: Context,
             text = row.data
           } else {
             // translation
-            val rowText = row.data
-            text = if (rowText != null) {
-              truncateTextIfNeeded(rowText, row.ayahInfo.ayahId, row.translationIndex)
-            } else { rowText }
+            text = row.data?.let { rowText ->
+              val length = rowText.length
+              when {
+                row.link != null -> getAyahLink(row.link)
+                length > MAX_TAFSEER_LENGTH ->
+                  truncateTextIfNeeded(rowText, row.ayahInfo.ayahId, row.translationIndex)
+                else -> rowText
+              }
+            }
+
             holder.text.movementMethod = LinkMovementMethod.getInstance()
             holder.text.setTextColor(textColor)
             holder.text.textSize = fontSize.toFloat()
@@ -257,6 +264,10 @@ internal class TranslationAdapter(private val context: Context,
       }
     }
     updateHighlight(row, holder)
+  }
+
+  private fun getAyahLink(link: SuraAyah): CharSequence {
+    return context.getString(R.string.see_tafseer_of_verse, link.ayah)
   }
 
   private fun truncateTextIfNeeded(text: CharSequence,

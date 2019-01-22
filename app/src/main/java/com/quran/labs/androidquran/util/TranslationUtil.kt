@@ -6,16 +6,26 @@ import android.text.style.ForegroundColorSpan
 import androidx.annotation.ColorInt
 import com.quran.labs.androidquran.common.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
+import com.quran.labs.androidquran.data.QuranInfo
 import dagger.Reusable
 
 @Reusable
-open class TranslationUtil(@ColorInt private val color: Int) {
+open class TranslationUtil(@ColorInt private val color: Int,
+                           private val quranInfo: QuranInfo) {
   val ayahRegex = """([«{﴿][\s\S]*?[﴾}»])""".toRegex()
   val footerRegex = """\[\[[\s\S]*?]]""".toRegex()
 
 
   open fun parseTranslationText(quranText: QuranText): TranslationMetadata {
     val text = quranText.text
+    if (text.length < 5) {
+      val ayahId = text.toIntOrNull()
+      if (ayahId != null) {
+        val suraAyah = quranInfo.getSuraAyahFromAyahId(ayahId)
+        return TranslationMetadata(quranText.sura, quranText.ayah, text, suraAyah)
+      }
+    }
+
     val withoutFooters = footerRegex.replace(text, "")
     val spannable = SpannableString(withoutFooters)
 

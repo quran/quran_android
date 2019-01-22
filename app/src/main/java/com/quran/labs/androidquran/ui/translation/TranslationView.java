@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
@@ -108,14 +109,16 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       // added this to guard against a crash that happened when verse.texts was empty
       int verseTexts = verse.texts.size();
       for (int j = 0; j < translations.length; j++) {
-        CharSequence text = verseTexts > j ? verse.texts.get(j).getText() : "";
+        final TranslationMetadata metadata = verseTexts > j ? verse.texts.get(j) : null;
+        CharSequence text = metadata != null ? metadata.getText() : "";
         if (!TextUtils.isEmpty(text)) {
           if (wantTranslationHeaders) {
             rows.add(
                 new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR, verse, translations[j]));
           }
           rows.add(new TranslationViewRow(
-              TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j));
+              TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j,
+              metadata == null ? null : metadata.getLink()));
         }
       }
 

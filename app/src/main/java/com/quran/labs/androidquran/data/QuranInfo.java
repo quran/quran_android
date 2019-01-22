@@ -345,6 +345,15 @@ public class QuranInfo {
     return ayahId;
   }
 
+  public SuraAyah getSuraAyahFromAyahId(int ayahId) {
+    int sura = 0;
+    int ayahIdentifier = ayahId;
+    while (ayahIdentifier > suraNumAyahs[sura]) {
+      ayahIdentifier -= suraNumAyahs[sura++];
+    }
+    return new SuraAyah(sura + 1, ayahIdentifier);
+  }
+
   public int getNumAyahs(int sura) {
     if ((sura < 1) || (sura > Constants.SURAS_COUNT)) return -1;
     return suraNumAyahs[sura - 1];
