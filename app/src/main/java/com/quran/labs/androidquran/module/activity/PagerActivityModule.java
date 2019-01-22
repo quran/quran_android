@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.module.activity;
 import android.content.Context;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
@@ -35,7 +36,9 @@ public class PagerActivityModule {
 
   @Provides
   @ActivityScope
-  TranslationUtil provideTranslationUtil(Context context) {
-    return new TranslationUtil(context.getResources().getColor(R.color.translation_translator_color));
+  TranslationUtil provideTranslationUtil(Context context, QuranInfo quranInfo) {
+    return new TranslationUtil(
+        context.getResources().getColor(R.color.translation_translator_color),
+        quranInfo);
   }
 }
