@@ -114,7 +114,8 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
             rows.add(
                 new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR, verse, translations[j]));
           }
-          rows.add(new TranslationViewRow(TranslationViewRow.Type.TRANSLATION_TEXT, verse, text));
+          rows.add(new TranslationViewRow(
+              TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j));
         }
       }
 
