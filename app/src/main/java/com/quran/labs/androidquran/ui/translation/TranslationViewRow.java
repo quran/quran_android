@@ -23,14 +23,23 @@ class TranslationViewRow {
   @Type final int type;
   @NonNull final QuranAyahInfo ayahInfo;
   @Nullable final CharSequence data;
+  final int translationIndex;
 
   TranslationViewRow(int type, @NonNull QuranAyahInfo ayahInfo) {
     this(type, ayahInfo, null);
   }
 
   TranslationViewRow(int type, @NonNull QuranAyahInfo ayahInfo, @Nullable CharSequence data) {
+    this(type, ayahInfo, data, -1);
+  }
+
+  TranslationViewRow(int type,
+                     @NonNull QuranAyahInfo ayahInfo,
+                     @Nullable CharSequence data,
+                     int translationIndex) {
     this.type = type;
     this.ayahInfo = ayahInfo;
     this.data = data;
+    this.translationIndex = translationIndex;
   }
 }

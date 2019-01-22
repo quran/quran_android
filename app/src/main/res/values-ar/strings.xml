@@ -138,6 +138,7 @@
   <string name="dialog_ok">موافق</string>
 
   <!-- translation updates -->
+  <string name="more">المزيد…</string>
   <string name="update_available">هناك تحديثات</string>
   <string name="translation_updates_available">هناك تحديثات للتراجم والتفاسير. هل ترغب في تحميلها الآن؟</string>
   <string name="translation_dialog_yes">نعم</string>

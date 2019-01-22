@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
+import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.widgets.AyahNumberView
@@ -40,9 +42,11 @@ internal class TranslationAdapter(private val context: Context,
   private var highlightedRowCount: Int = 0
   private var highlightedStartPosition: Int = 0
 
-  private val defaultClickListener = View.OnClickListener { v -> onClickListener.onClick(v) }
+  private val expandedTafaseerAyahs = mutableSetOf<Pair<Int, Int>>()
 
+  private val defaultClickListener = View.OnClickListener { v -> onClickListener.onClick(v) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
+  private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
 
   fun getSelectedVersePopupPosition(): IntArray? {
     return if (highlightedStartPosition > -1) {
@@ -159,6 +163,20 @@ internal class TranslationAdapter(private val context: Context,
     return false
   }
 
+  private fun toggleExpandTafseer(view: View) {
+    val position = recyclerView.getChildAdapterPosition(view)
+    if (position != RecyclerView.NO_POSITION) {
+      val data = data[position]
+      val what = data.ayahInfo.ayahId to data.translationIndex
+      if (expandedTafaseerAyahs.contains(what)) {
+        expandedTafaseerAyahs.remove(what)
+      } else {
+        expandedTafaseerAyahs.add(what)
+      }
+      notifyItemChanged(position)
+    }
+  }
+
   override fun getItemViewType(position: Int): Int {
     return data[position].type
   }
@@ -205,7 +223,11 @@ internal class TranslationAdapter(private val context: Context,
             text = row.data
           } else {
             // translation
-            text = row.data
+            val rowText = row.data
+            text = if (rowText != null) {
+              truncateTextIfNeeded(rowText, row.ayahInfo.ayahId, row.translationIndex)
+            } else { rowText }
+            holder.text.movementMethod = LinkMovementMethod.getInstance()
             holder.text.setTextColor(textColor)
             holder.text.textSize = fontSize.toFloat()
           }
@@ -235,6 +257,27 @@ internal class TranslationAdapter(private val context: Context,
       }
     }
     updateHighlight(row, holder)
+  }
+
+  private fun truncateTextIfNeeded(text: CharSequence,
+                                   ayahId: Int,
+                                   translationIndex: Int): CharSequence {
+    if (text.length > MAX_TAFSEER_LENGTH &&
+        !expandedTafaseerAyahs.contains(ayahId to translationIndex)) {
+      // let's truncate
+      val lastSpace = text.indexOf(' ', MAX_TAFSEER_LENGTH)
+      if (lastSpace != -1) {
+        val builder = StringBuilder(text.substring(0, lastSpace + 1))
+        builder.append(context.getString(R.string.more))
+        val ss = SpannableString(builder)
+        ss.setSpan(ExpandTafseerSpan(expandClickListener),
+            lastSpace + 1,
+            ss.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return ss
+      }
+    }
+    return text
   }
 
   override fun onBindViewHolder(holder: RowViewHolder, position: Int, payloads: List<Any>) {
@@ -287,6 +330,7 @@ internal class TranslationAdapter(private val context: Context,
   companion object {
     private val USE_UTHMANI_SPAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
     private const val ARABIC_MULTIPLIER = 1.4f
+    private const val MAX_TAFSEER_LENGTH = 750
     private const val HIGHLIGHT_CHANGE = 1
   }
 }
