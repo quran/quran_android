@@ -39,9 +39,9 @@ class BaseTranslationPresenterTest {
     val databases = Arrays.asList("one.db", "two.db")
     val map = object : HashMap<String, LocalTranslation>() {
       init {
-        put("one.db", LocalTranslation(1, "one.db", "One", "First", null, "", null, 1))
-        put("two.db", LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1))
-        put("three.db", LocalTranslation(2, "three.db", "Three", "Third", null, "", null, 1))
+        put("one.db", LocalTranslation(1, "one.db", "One", "First", null, "", null, 1, 2))
+        put("two.db", LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1, 2))
+        put("three.db", LocalTranslation(2, "three.db", "Three", "Third", null, "", null, 1, 2))
       }
     }
 

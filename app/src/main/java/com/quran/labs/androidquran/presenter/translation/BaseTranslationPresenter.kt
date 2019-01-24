@@ -43,7 +43,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
       getTranslationMapSingle()
           .toObservable()
           .map<List<String>> { map -> map.map { it.value.filename }.toList() }
-          .flatMap<String> { it -> Observable.fromIterable(it) }
+          .flatMap<String> { Observable.fromIterable(it) }
 
     val translationsObservable =
         source.concatMapEager { db ->

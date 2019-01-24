@@ -8,7 +8,8 @@ class LocalTranslation(
   val translatorForeign: String?,
   val url: String,
   val languageCode: String?,
-  val version: Int
+  val version: Int,
+  val minimumVersion: Int
 ) {
 
   val translatorName: String
