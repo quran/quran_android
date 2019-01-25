@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.translation;
 
 import android.content.Context;
-import androidx.annotation.VisibleForTesting;
+import android.util.Pair;
 import android.util.SparseArray;
 
 import com.crashlytics.android.Crashlytics;
@@ -27,6 +27,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.annotation.VisibleForTesting;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableMaybeObserver;
@@ -74,7 +75,6 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   public void getTranslationsList(boolean forceDownload) {
     Observable.concat(
         getCachedTranslationListObservable(forceDownload), getRemoteTranslationListObservable())
-        .filter(translationList -> translationList.getTranslations() != null)
         .firstElement()
         .filter(translationList -> !translationList.getTranslations().isEmpty())
         .map(translationList -> mergeWithServerTranslations(translationList.getTranslations()))
@@ -158,7 +158,8 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       responseBody.close();
       return result;
     }).doOnNext(translationList -> {
-      if (translationList.getTranslations() != null && !translationList.getTranslations().isEmpty()) {
+      translationList.getTranslations();
+      if (!translationList.getTranslations().isEmpty()) {
         writeTranslationList(translationList);
       }
     });
@@ -206,8 +207,12 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
       TranslationItem item;
       if (exists) {
-        int version = local == null ? getVersionFromDatabase(translation.getFileName()) : local.getVersion();
-        item = new TranslationItem(translation, version);
+        if (local == null) {
+          final Pair<Integer, Integer> versions = getVersionFromDatabase(translation.getFileName());
+          item = new TranslationItem(translation.withSchema(versions.second), versions.first);
+        } else {
+          item = new TranslationItem(translation, local.getVersion());
+        }
       } else {
         item = new TranslationItem(translation);
       }
@@ -234,17 +239,17 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
     return results;
   }
 
-  private int getVersionFromDatabase(String filename) {
+  private Pair<Integer, Integer> getVersionFromDatabase(String filename) {
     try {
       DatabaseHandler handler =
           DatabaseHandler.getDatabaseHandler(appContext, filename, quranFileUtils);
       if (handler.validDatabase()) {
-        return handler.getTextVersion();
+        return new Pair<>(handler.getTextVersion(), handler.getSchemaVersion());
       }
     } catch (Exception e) {
       Timber.d(e, "exception opening database: %s", filename);
     }
-    return 0;
+    return new Pair<>(0, 0);
   }
 
 
