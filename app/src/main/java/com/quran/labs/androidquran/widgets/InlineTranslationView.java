@@ -15,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -32,7 +33,7 @@ public class InlineTranslationView extends ScrollView {
   private int fontSize;
   private int footerSpacerHeight;
 
-  private String[] translations;
+  private LocalTranslation[] translations;
   private List<QuranAyahInfo> ayat;
 
   private LinearLayout linearLayout;
@@ -79,7 +80,7 @@ public class InlineTranslationView extends ScrollView {
     }
   }
 
-  public void setAyahs(String[] translations, List<QuranAyahInfo> ayat) {
+  public void setAyahs(LocalTranslation[] translations, List<QuranAyahInfo> ayat) {
     linearLayout.removeAllViews();
     if (ayat.size() > 0 && ayat.get(0).texts.size() > 0) {
       this.ayat = ayat;
@@ -99,7 +100,7 @@ public class InlineTranslationView extends ScrollView {
     linearLayout.addView(view, params);
   }
 
-  private void addTextForAyah(String[] translations, QuranAyahInfo ayah) {
+  private void addTextForAyah(LocalTranslation[] translations, QuranAyahInfo ayah) {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
         LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     params.setMargins(leftRightMargin, topBottomMargin, leftRightMargin, topBottomMargin);
@@ -130,7 +131,7 @@ public class InlineTranslationView extends ScrollView {
             builder.append("\n\n");
           }
           int start = builder.length();
-          builder.append(translations[i]);
+          builder.append(translations[i].getTranslatorName());
           builder.setSpan(new StyleSpan(Typeface.BOLD),
               start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
           builder.append("\n\n");

@@ -3,12 +3,11 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.module.fragment.QuranPageModule;
@@ -27,6 +26,9 @@ import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 public class TranslationFragment extends Fragment implements
     AyahTrackerPresenter.AyahInteractionHandler, QuranPage,
@@ -109,10 +111,12 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void onTranslationAction(QuranAyahInfo ayah, String[] translationNames, int actionId) {
+  public void onTranslationAction(QuranAyahInfo ayah,
+                                  LocalTranslation[] translations,
+                                  int actionId) {
     Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
-      presenter.onTranslationAction((PagerActivity) activity, ayah, translationNames, actionId);
+      presenter.onTranslationAction((PagerActivity) activity, ayah, translations, actionId);
     }
     translationView.unhighlightAyat();
   }
@@ -156,7 +160,7 @@ public class TranslationFragment extends Fragment implements
 
   @Override
   public void setVerses(int page,
-                        @NonNull String[] translations,
+                        @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     translationView.setVerses(quranInfo, translations, verses);
     if (highlightedAyah > 0) {
