@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import androidx.annotation.VisibleForTesting;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableMaybeObserver;
@@ -117,6 +118,13 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   public void updateItem(final TranslationItem item) {
     Observable.fromCallable(() ->
         translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item))
+    ).subscribeOn(Schedulers.io())
+        .subscribe();
+  }
+
+  public void removeByFilename(final String filename) {
+    Completable.fromAction(() ->
+        translationsDBAdapter.deleteTranslationByFile(filename)
     ).subscribeOn(Schedulers.io())
         .subscribe();
   }
