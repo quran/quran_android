@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+
+import androidx.annotation.NonNull;
 
 public class AyahTranslationFragment extends AyahActionFragment
     implements InlineTranslationPresenter.TranslationScreen {
@@ -153,7 +154,7 @@ public class AyahTranslationFragment extends AyahActionFragment
   }
 
   @Override
-  public void setVerses(@NonNull String[] translations, @NonNull List<QuranAyahInfo> verses) {
+  public void setVerses(@NonNull LocalTranslation[] translations, @NonNull List<QuranAyahInfo> verses) {
     progressBar.setVisibility(View.GONE);
     if (verses.size() > 0) {
       emptyState.setVisibility(View.GONE);

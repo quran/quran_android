@@ -5,16 +5,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -48,6 +45,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
 import dagger.Lazy;
 import io.reactivex.disposables.CompositeDisposable;
 import timber.log.Timber;
@@ -245,11 +246,13 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onTranslationAction(QuranAyahInfo ayah, String[] translationNames, int actionId) {
+  public void onTranslationAction(QuranAyahInfo ayah,
+                                  LocalTranslation[] translations,
+                                  int actionId) {
     Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
       translationPresenter.get()
-          .onTranslationAction((PagerActivity) activity, ayah, translationNames, actionId);
+          .onTranslationAction((PagerActivity) activity, ayah, translations, actionId);
     }
 
     int page = quranInfo.getPageFromSuraAyah(ayah.sura, ayah.ayah);
@@ -286,7 +289,7 @@ public class TabletFragment extends Fragment
 
   @Override
   public void setVerses(int page,
-                        @NonNull String[] translations,
+                        @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     if (page == pageNumber) {
       leftTranslation.setVerses(quranInfo, translations, verses);

@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.translation
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.QuranText
+import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.SuraAyah
 import com.quran.labs.androidquran.data.SuraAyahIterator
@@ -61,9 +62,9 @@ internal open class BaseTranslationPresenter<T> internal constructor(
         Function3 { arabic: List<QuranText>,
                     texts: List<List<QuranText>>,
                     map: Map<String, LocalTranslation> ->
-          val ayahInfo = combineAyahData(verseRange, arabic, texts)
-          val translationNames = getTranslationNames(translations, map)
-          ResultHolder(translationNames, ayahInfo)
+          val translationInfos = getTranslations(translations, map)
+          val ayahInfo = combineAyahData(verseRange, arabic, texts, translationInfos)
+          ResultHolder(translationInfos, ayahInfo)
         })
         .subscribeOn(Schedulers.io())
   }
@@ -72,21 +73,22 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     return ArrayList(quranSettings.activeTranslations)
   }
 
-  fun getTranslationNames(translations: List<String>,
-                          translationMap: Map<String, LocalTranslation>): Array<String> {
+  fun getTranslations(translations: List<String>,
+                      translationMap: Map<String, LocalTranslation>): Array<LocalTranslation> {
     val translationCount = translations.size
 
     return if (translationCount == 0) {
       // fallback to all translations when the map is empty
-      translationMap.map { it.value.filename }.toTypedArray()
+      translationMap.map { it.value }.toTypedArray()
     } else {
-      translations.map { translationMap[it]?.translatorName ?: it }.toTypedArray()
+      translations.map { translationMap[it] ?: LocalTranslation(filename = it) }.toTypedArray()
     }
   }
 
   fun combineAyahData(verseRange: VerseRange,
                       arabic: List<QuranText>,
-                      texts: List<List<QuranText>>): List<QuranAyahInfo> {
+                      texts: List<List<QuranText>>,
+                      translationInfo: Array<LocalTranslation>): List<QuranAyahInfo> {
     val arabicSize = arabic.size
     val translationCount = texts.size
 
@@ -101,9 +103,16 @@ internal open class BaseTranslationPresenter<T> internal constructor(
 
           if (element != null) {
             // replace with "" when a translation doesn't load to keep translations aligned
-            val ayahTranslations = quranTexts.map {
-              val quranText = it ?: QuranText(element.sura, element.ayah, "")
-              translationUtil.parseTranslationText(quranText)
+            val ayahTranslations = quranTexts.mapIndexed { index: Int, quranText: QuranText? ->
+              val translationMinVersion = translationInfo.getOrNull(index)?.minimumVersion ?: 0
+              val shouldProcess =
+                  translationMinVersion >= TranslationUtil.MINIMUM_PROCESSING_VERSION
+              val text = quranText ?: QuranText(element.sura, element.ayah, "")
+              if (shouldProcess) {
+                translationUtil.parseTranslationText(text)
+              } else {
+                TranslationMetadata(element.sura, element.ayah, text.text)
+              }
             }
 
             result.add(
@@ -175,7 +184,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     }
   }
 
-  internal class ResultHolder(val translations: Array<String>,
+  internal class ResultHolder(val translations: Array<LocalTranslation>,
                               val ayahInformation: List<QuranAyahInfo>)
 
   override fun bind(what: T) {

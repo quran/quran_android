@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -31,7 +32,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   private final TranslationAdapter translationAdapter;
   private final AyahToolBar ayahToolBar;
 
-  private String[] translations;
+  private LocalTranslation[] translations;
   private QuranAyahInfo selectedAyah;
   private OnClickListener onClickListener;
   private OnTranslationActionListener onTranslationActionListener;
@@ -80,7 +81,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void setVerses(@NonNull QuranInfo quranInfo,
-                        @NonNull String[] translations,
+                        @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     this.translations = translations;
 
@@ -114,7 +115,9 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
         if (!TextUtils.isEmpty(text)) {
           if (wantTranslationHeaders) {
             rows.add(
-                new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR, verse, translations[j]));
+                new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR,
+                    verse,
+                    translations[j].getTranslatorName()));
           }
           rows.add(new TranslationViewRow(
               TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j,
@@ -156,7 +159,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   @Override
   public boolean onMenuItemClick(MenuItem item) {
     if (onTranslationActionListener != null && selectedAyah != null) {
-      onTranslationActionListener.onTranslationAction(selectedAyah, translations, item.getItemId());
+      onTranslationActionListener.onTranslationAction(selectedAyah,translations, item.getItemId());
       return true;
     }
     return false;

@@ -12,9 +12,6 @@ import dagger.Reusable
 @Reusable
 open class TranslationUtil(@ColorInt private val color: Int,
                            private val quranInfo: QuranInfo) {
-  val ayahRegex = """([«{﴿][\s\S]*?[﴾}»])""".toRegex()
-  val footerRegex = """\[\[[\s\S]*?]]""".toRegex()
-
 
   open fun parseTranslationText(quranText: QuranText): TranslationMetadata {
     val text = quranText.text
@@ -36,5 +33,11 @@ open class TranslationUtil(@ColorInt private val color: Int,
           spannable.setSpan(span, range.start, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     return TranslationMetadata(quranText.sura, quranText.ayah, spannable)
+  }
+
+  companion object {
+    private val ayahRegex = """([«{﴿][\s\S]*?[﴾}»])""".toRegex()
+    private val footerRegex = """\[\[[\s\S]*?]]""".toRegex()
+    const val MINIMUM_PROCESSING_VERSION = 5
   }
 }
