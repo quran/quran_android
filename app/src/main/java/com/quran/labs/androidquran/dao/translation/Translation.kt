@@ -9,5 +9,8 @@ data class Translation(val id: Int,
                        val fileUrl: String,
                        val saveTo: String,
                        val languageCode: String,
-                       val translator: String,
-                       val translatorNameLocalized: String)
+                       val translator: String? = "",
+                       val translatorNameLocalized: String? = "") {
+
+  fun withSchema(schema: Int) = copy(minimumVersion = schema)
+}

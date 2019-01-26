@@ -121,7 +121,7 @@ public class DatabaseHandler {
     }
   }
 
-  private int getSchemaVersion() {
+  public int getSchemaVersion() {
     return getProperty("schema_version");
   }
 
