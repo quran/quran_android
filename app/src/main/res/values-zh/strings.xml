@@ -97,7 +97,7 @@
   <string name="prefs_ayah_before_translation_summary">在译文前显示阿拉伯语原文</string>
   <string name="prefs_category_download">下载选项</string>
   <string name="prefs_streaming_title">流式音频</string>
-  <string name="prefs_streaming_summary">优先使用流式音频（仅适用于non-gapless音频）。</string>
+  <string name="prefs_streaming_summary">优先使用流式音频</string>
   <string name="prefs_download_amount_title">下载方式</string>
   <string name="prefs_download_amount_summary">non-gapless音频的下载方式。</string>
   <string name="downloaded_translations">已经下载</string>

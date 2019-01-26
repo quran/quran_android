@@ -156,9 +156,7 @@
   </string>
   <string name="prefs_category_download">Downloadoptionen</string>
   <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Wenn möglich, Audio streamen (nicht unterbrechungsfreie
-    Wiedergabe).
-  </string>
+  <string name="prefs_streaming_summary">Wenn möglich, Audio streamen</string>
   <string name="prefs_download_amount_title">Downloadgröße</string>
   <string name="prefs_download_amount_summary">Bevorzugte Downloadgröße für nicht
     unterbrechungsfreie Wiedergabe.

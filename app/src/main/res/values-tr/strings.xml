@@ -134,7 +134,7 @@
   <string name="prefs_export_title">Dışa aktar</string>
   <string name="prefs_export_summary">İşaret ve etiketleri dışa aktar</string>
   <string name="prefs_streaming_title">Akıcı</string>
-  <string name="prefs_streaming_summary">Online olarak ses akışı sağla (ayrık olmayan ses dosyaları için)</string>
+  <string name="prefs_streaming_summary">Online olarak ses akışı sağla</string>
   <string name="prefs_sdcard_internal">Dahili hafıza</string>
   <string name="prefs_sdcard_external">Harici SD kartı %1$d</string>
   <string name="prefs_overlay_page_info_title">Sayfa bilgisini göster </string>

@@ -70,7 +70,7 @@
   <string name="prefs_ayah_before_translation_summary">تەرجىمىدىن ئىلگىرى ئەرەبچە ئەسلى تېكىستنى كۆرسىتىدۇ</string>
   <string name="prefs_category_download">چۈشۈرۈش تاللانمىلىرى</string>
   <string name="prefs_streaming_title">ئېقىم</string>
-  <string name="prefs_streaming_summary">مۇمكىن بولسا ئېقىم ئاۋازىنى ئىشلىتىدۇ (غەيرى يوچۇقسىز ئاۋازلا)</string>
+  <string name="prefs_streaming_summary">مۇمكىن بولسا ئېقىم ئاۋازىنى ئىشلىتىدۇ</string>
   <string name="prefs_download_amount_title">چۈشۈرۈش ئۇسۇلى</string>
   <string name="prefs_download_amount_summary">ئالدى بىلەن غەيرى يوچۇقسىز ئاۋازنى چۈشۈرىدۇ</string>
   <string name="downloaded_translations">چۈشۈرۈلدى</string>
