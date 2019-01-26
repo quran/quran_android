@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
@@ -278,14 +279,13 @@ internal class TranslationAdapter(private val context: Context,
       // let's truncate
       val lastSpace = text.indexOf(' ', MAX_TAFSEER_LENGTH)
       if (lastSpace != -1) {
-        val builder = StringBuilder(text.substring(0, lastSpace + 1))
+        val builder = SpannableStringBuilder(text.subSequence(0, lastSpace + 1))
         builder.append(context.getString(R.string.more))
-        val ss = SpannableString(builder)
-        ss.setSpan(ExpandTafseerSpan(expandClickListener),
+        builder.setSpan(ExpandTafseerSpan(expandClickListener),
             lastSpace + 1,
-            ss.length,
+            builder.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return ss
+        return builder
       }
     }
     return text
