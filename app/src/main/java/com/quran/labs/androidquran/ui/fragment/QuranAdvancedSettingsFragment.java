@@ -227,7 +227,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
   private void removeAdvancePreference(Preference preference) {
     // these null checks are to fix a crash due to an NPE on 4.4.4
     if (preference != null) {
-      PreferenceGroup group = (PreferenceGroup) findPreference(Constants.PREF_QURAN_SETTINGS);
+      PreferenceGroup group = findPreference(Constants.PREF_ADVANCED_QURAN_SETTINGS);
       if (group != null) {
         group.removePreference(preference);
       }
