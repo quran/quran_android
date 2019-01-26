@@ -4,11 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
 import android.util.SparseArray;
 
 import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -19,6 +18,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.database.TranslationsDBHelper.TranslationsTable;
@@ -75,10 +76,11 @@ public class TranslationsDBAdapter {
         String url = cursor.getString(5);
         String languageCode = cursor.getString(6);
         int version = cursor.getInt(7);
+        int minimumVersion = cursor.getInt(8);
 
         if (quranFileUtils.hasTranslation(context, filename)) {
           items.add(new LocalTranslation(id, filename, name, translator,
-              translatorForeign, url, languageCode, version));
+              translatorForeign, url, languageCode, version, minimumVersion));
         }
       }
       cursor.close();
@@ -97,16 +99,18 @@ public class TranslationsDBAdapter {
       for (int i = 0, updatesSize = updates.size(); i < updatesSize; i++) {
         TranslationItem item = updates.get(i);
         if (item.exists()) {
+          final Translation translation = item.getTranslation();
           ContentValues values = new ContentValues();
-          values.put(TranslationsTable.ID, item.getTranslation().getId());
-          values.put(TranslationsTable.NAME, item.getTranslation().getDisplayName());
-          values.put(TranslationsTable.TRANSLATOR, item.getTranslation().getTranslator());
+          values.put(TranslationsTable.ID, translation.getId());
+          values.put(TranslationsTable.NAME, translation.getDisplayName());
+          values.put(TranslationsTable.TRANSLATOR, translation.getTranslator());
           values.put(TranslationsTable.TRANSLATOR_FOREIGN,
-              item.getTranslation().getTranslatorNameLocalized());
-          values.put(TranslationsTable.FILENAME, item.getTranslation().getFileName());
-          values.put(TranslationsTable.URL, item.getTranslation().getFileUrl());
-          values.put(TranslationsTable.LANGUAGE_CODE, item.getTranslation().getLanguageCode());
+              translation.getTranslatorNameLocalized());
+          values.put(TranslationsTable.FILENAME, translation.getFileName());
+          values.put(TranslationsTable.URL, translation.getFileUrl());
+          values.put(TranslationsTable.LANGUAGE_CODE, translation.getLanguageCode());
           values.put(TranslationsTable.VERSION, item.getLocalVersion());
+          values.put(TranslationsTable.MINIMUM_REQUIRED_VERSION, translation.getMinimumVersion());
 
           db.replace(TranslationsTable.TABLE_NAME, null, values);
         } else {
