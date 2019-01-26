@@ -933,6 +933,10 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void playAudio(boolean playRepeatSeparator) {
+    if (!isSetupAsForeground) {
+      setUpAsForeground();
+    }
+
     state = State.Stopped;
     relaxResources(false, false); // release everything except MediaPlayer
     playerOverride = false;
@@ -1009,9 +1013,6 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       state = State.Preparing;
-      if (!isSetupAsForeground) {
-        setUpAsForeground();
-      }
 
       // starts preparing the media player in the background. When it's
       // done, it will call our OnPreparedListener (that is, the

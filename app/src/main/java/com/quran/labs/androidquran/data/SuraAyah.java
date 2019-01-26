@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
@@ -56,7 +57,7 @@ public class SuraAyah implements Comparable<SuraAyah>, Parcelable {
   @Override
   public boolean equals(Object o) {
     if (this == o) { return true; }
-    if (o == null || getClass() != o.getClass()) { return false; }
+    if (!(o instanceof SuraAyah)) {  return false; }
     SuraAyah suraAyah = (SuraAyah) o;
     return sura == suraAyah.sura &&
         ayah == suraAyah.ayah;

@@ -5,6 +5,7 @@ import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.SuraAyah
 import com.quran.labs.androidquran.extension.requiresBasmallah
+import java.util.Locale
 
 /**
  * This class maintains a virtual audio queue for playback.
@@ -79,7 +80,7 @@ class AudioQueue(private val quranInfo: QuranInfo,
     }
 
     val (sura, ayah) = if (playbackInfo.shouldPlayBasmallah) 1 to 1 else currentSura to currentAyah
-    return String.format(audioRequest.audioPathInfo.urlFormat, sura, ayah)
+    return String.format(Locale.US, audioRequest.audioPathInfo.urlFormat, sura, ayah)
   }
 
   fun withUpdatedAudioRequest(audioRequest: AudioRequest): AudioQueue {
