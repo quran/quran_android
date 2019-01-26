@@ -63,6 +63,16 @@
     </Preference>
 
     <Preference
+        android:summary="@string/about_furqan_summary"
+        android:title="@string/about_furqan"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_furqan_url"/>
+    </Preference>
+
+    <Preference
         android:summary="@string/about_tanzil_summary"
         android:title="@string/about_tanzil"
         app:iconSpaceReserved="false"
