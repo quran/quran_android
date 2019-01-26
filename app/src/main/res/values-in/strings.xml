@@ -144,7 +144,7 @@
   <string name="prefs_ayah_before_translation_summary">Tampilkan ayat berbahasa arab di atas terjemahan</string>
   <string name="prefs_category_download">Pilihan Pengunduhan</string>
   <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Alirkan audio jika memungkinkan (berlaku pada selain audio tanpa jeda)</string>
+  <string name="prefs_streaming_summary">Alirkan audio jika memungkinkan</string>
   <string name="prefs_download_amount_title">Jumlah unduhan</string>
   <string name="prefs_download_amount_summary">Besaran unduhan yang diinginkan bagi selain audio tanpa jeda</string>
   <string name="prefs_audio_manager">Pengelolaan audio (eksperimental)</string>

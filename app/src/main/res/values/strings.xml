@@ -177,7 +177,7 @@
   <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
   <string name="prefs_category_download">Download Options</string>
   <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only)</string>
+  <string name="prefs_streaming_summary">Stream audio instead of downloading</string>
   <string name="prefs_download_amount_title">Download amount</string>
   <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
   <string name="prefs_audio_manager">Audio manager (experimental)</string>

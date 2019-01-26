@@ -75,7 +75,7 @@
   <string name="prefs_ayah_before_translation_summary">Mostrar versículo en árabe sobre la traducción</string>
   <string name="prefs_category_download">Opciones de descarga</string>
   <string name="prefs_streaming_title">Transmisión</string>
-  <string name="prefs_streaming_summary">Transmitir el audio cuando sea posible (audio sin pausas).</string>
+  <string name="prefs_streaming_summary">Transmitir el audio cuando sea posible.</string>
   <string name="prefs_download_amount_title">Cantidad descargada</string>
   <string name="prefs_download_amount_summary">Cantidad preferente de descarga de audio sin pausas.</string>
   <string name="downloaded_translations">Descargado</string>

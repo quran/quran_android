@@ -112,7 +112,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_ayah_before_translation_summary">MOstrar ayah em Árabe em cima da tradução</string>
   <string name="prefs_category_download">Opções de Download</string>
   <string name="prefs_streaming_title">Estreaming</string>
-  <string name="prefs_streaming_summary">Fazer estreaming de audio quando possível (audio continuo somente).</string>
+  <string name="prefs_streaming_summary">Fazer estreaming de audio quando possível.</string>
   <string name="prefs_download_amount_title">Quantidade de download</string>
   <string name="prefs_download_amount_summary">Quantidade de download preferida para audio continuou.</string>
   <string name="downloaded_translations">Já foi baixado</string>
