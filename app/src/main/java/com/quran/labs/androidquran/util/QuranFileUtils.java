@@ -502,7 +502,7 @@ public class QuranFileUtils {
       if (ayahInfoFile.exists() && baseDir != null) {
         final File base = new File(baseDir);
         final File translationsFile = new File(base, QuranDataProvider.QURAN_ARABIC_DATABASE);
-        if (base.mkdir()) {
+        if (base.exists() || base.mkdir()) {
           try {
             copyFile(ayahInfoFile, translationsFile);
             return true;
