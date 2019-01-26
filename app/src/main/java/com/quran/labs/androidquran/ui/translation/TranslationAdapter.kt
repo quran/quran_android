@@ -280,7 +280,7 @@ internal class TranslationAdapter(private val context: Context,
       val lastSpace = text.indexOf(' ', MAX_TAFSEER_LENGTH)
       if (lastSpace != -1) {
         val builder = SpannableStringBuilder(text.subSequence(0, lastSpace + 1))
-        builder.append(context.getString(R.string.more))
+        builder.append(context.getString(R.string.more_arabic))
         builder.setSpan(ExpandTafseerSpan(expandClickListener),
             lastSpace + 1,
             builder.length,
