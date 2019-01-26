@@ -180,7 +180,7 @@
   </PreferenceCategory>
 
   <PreferenceCategory
-      android:key="@string/prefs_path"
+      android:key="@string/prefs_advanced_path"
       android:title="@string/prefs_category_advanced"
       app:iconSpaceReserved="false">
 
