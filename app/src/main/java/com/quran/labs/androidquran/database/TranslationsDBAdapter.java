@@ -92,6 +92,11 @@ public class TranslationsDBAdapter {
     return items;
   }
 
+  public void deleteTranslationByFile(String filename) {
+    db.execSQL("DELETE FROM " + TranslationsTable.TABLE_NAME + " WHERE " +
+        TranslationsTable.FILENAME + " = ?", new Object[] { filename });
+  }
+
   public boolean writeTranslationUpdates(List<TranslationItem> updates) {
     boolean result = true;
     db.beginTransaction();

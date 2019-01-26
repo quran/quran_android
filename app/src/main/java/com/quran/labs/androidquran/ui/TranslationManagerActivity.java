@@ -1,15 +1,10 @@
 package com.quran.labs.androidquran.ui;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseIntArray;
 import android.view.MenuItem;
 
@@ -34,6 +29,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
@@ -135,6 +136,13 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           Timber.d(e, "error removing old database file");
         }
       }
+
+      // for upgrades, remove the old file to stop the tafseer from showing up
+      // twice. this happens because old and new tafaseer (ex ibn kathir) have
+      // different ids when they target different schema versions, and so the
+      // old file needs to be removed from the database explicitly
+      presenter.removeByFilename(downloadingItem.getTranslation().getFileName());
+
       TranslationItem updated = downloadingItem.withTranslationVersion(
           downloadingItem.getTranslation().getCurrentVersion());
       updateTranslationItem(updated);
