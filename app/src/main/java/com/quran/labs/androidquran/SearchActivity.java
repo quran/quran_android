@@ -7,11 +7,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.Html;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
@@ -35,6 +30,12 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import javax.inject.Inject;
+
+import androidx.annotation.NonNull;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class SearchActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
@@ -103,8 +104,9 @@ public class SearchActivity extends QuranActionBarActivity
         quranFileUtils.getQuranDatabaseDirectory(this),
         notificationTitle, SEARCH_INFO_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
+    final String extension = url.endsWith(".zip") ? ".zip" : "";
     intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
-        QuranDataProvider.QURAN_ARABIC_DATABASE);
+        QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
     startService(intent);
   }
 
