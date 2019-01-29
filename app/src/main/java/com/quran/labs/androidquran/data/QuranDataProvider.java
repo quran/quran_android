@@ -148,12 +148,10 @@ public class QuranDataProvider extends ContentProvider {
       } else {
         LocalTranslation translation = translations.get(i);
         // skip non-arabic databases if the query is in arabic
-        if (queryIsArabic &&
-            translation.getLanguageCode() != null &&
-            !"ar".equals(translation.getLanguageCode())) {
-          continue;
-        } else if (!queryIsArabic && "ar".equals(translation.getLanguageCode())) {
-          // skip arabic databases when the query isn't arabic
+        if (queryIsArabic || "ar".equals(translation.getLanguageCode())) {
+          // skip arabic databases even when the query is in arabic since
+          // searching Arabic tafaseer causes a lot of noise on the search
+          // results and is confusing.
           continue;
         }
         database = translation.getFilename();
@@ -209,12 +207,9 @@ public class QuranDataProvider extends ContentProvider {
       } else {
         LocalTranslation translation = translations.get(i);
         // skip non-arabic databases if the query is in arabic
-        if (queryIsArabic &&
-            translation.getLanguageCode() != null &&
-            !"ar".equals(translation.getLanguageCode())) {
-          continue;
-        } else if (!queryIsArabic && "ar".equals(translation.getLanguageCode())) {
-          // skip arabic databases when the query isn't arabic
+        if (queryIsArabic || "ar".equals(translation.getLanguageCode())) {
+          // skip arabic databases always since it's confusing to people for now.
+          // in the future, can think of better ways to enable tafseer search.
           continue;
         }
         databaseName = translation.getFilename();
