@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;
@@ -27,6 +26,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class QuranDataProvider extends ContentProvider {
@@ -142,6 +142,9 @@ public class QuranDataProvider extends ContentProvider {
       String database;
       if (i < 0) {
         database = QURAN_ARABIC_DATABASE;
+        if (!quranFileUtils.hasArabicSearchDatabase(context)) {
+          continue;
+        }
       } else {
         LocalTranslation translation = translations.get(i);
         // skip non-arabic databases if the query is in arabic
