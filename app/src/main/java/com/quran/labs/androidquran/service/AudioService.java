@@ -386,12 +386,6 @@ public class AudioService extends Service implements OnCompletionListener,
         broadcastManager.sendBroadcast(updateIntent);
       }
     } else if (ACTION_PLAYBACK.equals(action)) {
-      // this is the only action called with startForegroundService, so go into the foreground
-      // as quickly as possible.
-      if (!isSetupAsForeground) {
-        setUpAsForeground();
-      }
-
       AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
       if (playInfo != null) {
         if (State.Stopped == state ||
@@ -405,6 +399,12 @@ public class AudioService extends Service implements OnCompletionListener,
               new AudioPlaybackInfo(start, 1, 1, basmallah));
           Crashlytics.log("audio request has changed...");
         }
+      }
+
+      // this is the only action called with startForegroundService, so go into the foreground
+      // as quickly as possible.
+      if (!isSetupAsForeground) {
+        setUpAsForeground();
       }
 
       if (intent.getBooleanExtra(EXTRA_STOP_IF_PLAYING, false)) {
@@ -927,6 +927,9 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private String getTitle() {
+    if (audioQueue == null) {
+      return "";
+    }
     return quranInfo.getSuraAyahString(this, audioQueue.getCurrentSura(), audioQueue.getCurrentAyah());
   }
 
