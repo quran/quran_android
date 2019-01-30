@@ -141,30 +141,19 @@ public class SearchActivity extends QuranActionBarActivity
     isArabicSearch = QuranUtils.doesStringContainArabic(query);
     boolean showArabicWarning = (isArabicSearch &&
         !quranFileUtils.hasArabicSearchDatabase(this));
+
     if (showArabicWarning) {
       isArabicSearch = false;
+      warningView.setText(getString(R.string.no_arabic_search_available));
+      warningView.setVisibility(View.VISIBLE);
+      buttonGetTranslations.setText(getString(R.string.get_arabic_search_db));
+      buttonGetTranslations.setVisibility(View.VISIBLE);
+      downloadArabicSearchDb = true;
     }
 
     if (cursor == null) {
-      if (showArabicWarning) {
-        warningView.setText(
-            getString(R.string.no_arabic_search_available));
-        warningView.setVisibility(View.VISIBLE);
-        buttonGetTranslations.setText(
-            getString(R.string.get_arabic_search_db));
-        buttonGetTranslations.setVisibility(View.VISIBLE);
-      }
       messageView.setText(getString(R.string.no_results, query));
     } else {
-      if (showArabicWarning) {
-        warningView.setText(R.string.no_arabic_search_available);
-        warningView.setVisibility(View.VISIBLE);
-        buttonGetTranslations.setText(
-            getString(R.string.get_arabic_search_db));
-        buttonGetTranslations.setVisibility(View.VISIBLE);
-        downloadArabicSearchDb = true;
-      }
-
       // Display the number of results
       int count = cursor.getCount();
       String countString = getResources().getQuantityString(
