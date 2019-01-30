@@ -55,8 +55,8 @@ public class ShareUtil {
   }
 
   public String getShareText(Context context,
-                                    QuranAyahInfo ayahInfo,
-                                    LocalTranslation[] translationNames) {
+                             QuranAyahInfo ayahInfo,
+                             LocalTranslation[] translationNames) {
     final StringBuilder sb = new StringBuilder();
     if (ayahInfo.arabicText != null) {
       sb.append(ayahInfo.arabicText)
@@ -69,7 +69,7 @@ public class ShareUtil {
           .append(translationNames[i].getTranslatorName())
           .append(")\n");
       }
-      sb.append(ayahInfo.texts.get(i))
+      sb.append(ayahInfo.texts.get(i).getText())
         .append("\n\n");
     }
     sb.append('-')
