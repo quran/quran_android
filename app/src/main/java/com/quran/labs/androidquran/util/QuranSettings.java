@@ -246,15 +246,18 @@ public class QuranSettings {
   }
 
   public String getAppCustomLocation() {
-    return perInstallationPrefs.getString(Constants.PREF_APP_LOCATION,
-        Environment.getExternalStorageDirectory().getAbsolutePath());
+    return perInstallationPrefs.getString(Constants.PREF_APP_LOCATION, getDefaultLocation());
+  }
+
+  public String getDefaultLocation() {
+    return Environment.getExternalStorageDirectory().getAbsolutePath();
   }
 
   public void setAppCustomLocation(String newLocation) {
     perInstallationPrefs.edit().putString(Constants.PREF_APP_LOCATION, newLocation).apply();
   }
 
-  private boolean isAppLocationSet() {
+  public boolean isAppLocationSet() {
     return perInstallationPrefs.getString(Constants.PREF_APP_LOCATION, null) != null;
   }
 

@@ -382,7 +382,9 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
       if (!isPaused) {
         dialog.dismiss();
         if (result) {
-          QuranSettings.getInstance(appContext).setAppCustomLocation(newLocation);
+          final QuranSettings quranSettings = QuranSettings.getInstance(appContext);
+          quranSettings.setAppCustomLocation(newLocation);
+          quranSettings.setDownloadedPages(false);
           if (listStoragePref != null) {
             listStoragePref.setValue(newLocation);
           }
