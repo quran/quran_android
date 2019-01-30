@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class QuranDataActivity extends Activity implements
   private DefaultDownloadReceiver downloadReceiver = null;
   private boolean needPortraitImages = false;
   private boolean needLandscapeImages = false;
+  private boolean havePermission = false;
   private boolean taskIsRunning;
   private String patchUrl;
 
@@ -70,6 +72,13 @@ public class QuranDataActivity extends Activity implements
 
     quranSettings = QuranSettings.getInstance(this);
     quranSettings.upgradePreferences();
+
+    // replace null app locations (especially those set to null due to failures
+    // of finding a suitable data directory) with the default value to allow
+    // retrying to find a suitable location on app startup.
+    if (!quranSettings.isAppLocationSet()) {
+      quranSettings.setAppCustomLocation(quranSettings.getDefaultLocation());
+    }
   }
 
   @Override
@@ -171,6 +180,7 @@ public class QuranDataActivity extends Activity implements
         }
       }
     } else {
+      havePermission = true;
       checkPages();
     }
   }
@@ -211,6 +221,7 @@ public class QuranDataActivity extends Activity implements
          * also see:
          * http://stackoverflow.com/questions/32471888/
          */
+        havePermission = true;
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionGranted"));
         if (!canWriteSdcardAfterPermissions()) {
           Answers.getInstance().logCustom(new CustomEvent("storagePermissionNeedsRestart"));
@@ -428,6 +439,8 @@ public class QuranDataActivity extends Activity implements
           // they are always prompted to re-download images, even after they did.
           Answers.getInstance()
               .logCustom(new CustomEvent("imagesDisappeared")
+                .putCustomAttribute("permissionGranted", havePermission ? "true" : "false")
+                .putCustomAttribute("osVersion", Build.VERSION.SDK_INT)
                 .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation()));
           quranSettings.setDownloadedPages(false);
         }
