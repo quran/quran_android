@@ -160,11 +160,6 @@ public class AudioService extends Service implements OnCompletionListener,
   // used to override what is playing now (stop then play)
   public static final String EXTRA_STOP_IF_PLAYING = "com.quran.labs.androidquran.STOP_IF_PLAYING";
 
-  // repeat info
-  public static final String EXTRA_VERSE_REPEAT_COUNT = "com.quran.labs.androidquran.VERSE_REPEAT_COUNT";
-  public static final String EXTRA_RANGE_REPEAT_COUNT = "com.quran.labs.androidquran.RANGE_REPEAT_COUNT";
-  public static final String EXTRA_RANGE_RESTRICT = "com.quran.labs.androidquran.RANGE_RESTRICT";
-
   // indicates the state our service:
   private enum State {
     Stopped,    // media player is stopped and not prepared to play
@@ -391,6 +386,12 @@ public class AudioService extends Service implements OnCompletionListener,
         broadcastManager.sendBroadcast(updateIntent);
       }
     } else if (ACTION_PLAYBACK.equals(action)) {
+      // this is the only action called with startForegroundService, so go into the foreground
+      // as quickly as possible.
+      if (!isSetupAsForeground) {
+        setUpAsForeground();
+      }
+
       AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
       if (playInfo != null) {
         if (State.Stopped == state ||
@@ -639,6 +640,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
   private void processPlayRequest() {
     if (audioRequest == null) {
+      // no audio request, what can we do?
+      relaxResources(true, true);
       return;
     }
     tryToGetAudioFocus();
@@ -661,7 +664,9 @@ public class AudioService extends Service implements OnCompletionListener,
       // If we're paused, just continue playback and restore the
       // 'foreground service' state.
       state = State.Playing;
-      setUpAsForeground();
+      if (!isSetupAsForeground) {
+        setUpAsForeground();
+      }
       configAndStartMediaPlayer(false);
       notifyAudioStatus(AudioUpdateIntent.PLAYING);
     }
