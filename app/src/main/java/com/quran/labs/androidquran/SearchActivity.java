@@ -138,21 +138,34 @@ public class SearchActivity extends QuranActionBarActivity
 
   @Override
   public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
-    isArabicSearch = QuranUtils.doesStringContainArabic(query);
+    final boolean containsArabic = QuranUtils.doesStringContainArabic(query);
+    isArabicSearch = containsArabic;
     boolean showArabicWarning = (isArabicSearch &&
         !quranFileUtils.hasArabicSearchDatabase(this));
 
     if (showArabicWarning) {
+      // overridden because if we search Arabic tafaseer, this tells us to go
+      // to the tafseer page instead of the Arabic page when we open the result.
       isArabicSearch = false;
+
       warningView.setText(getString(R.string.no_arabic_search_available));
       warningView.setVisibility(View.VISIBLE);
       buttonGetTranslations.setText(getString(R.string.get_arabic_search_db));
       buttonGetTranslations.setVisibility(View.VISIBLE);
       downloadArabicSearchDb = true;
+    } else {
+      downloadArabicSearchDb = false;
     }
 
     if (cursor == null) {
       messageView.setText(getString(R.string.no_results, query));
+      // cursor is null either when the query length is less than 3 characters or when
+      // there are no valid databases to search at all. in this case, if it's not an
+      // Arabic search, show the "get translations" button.
+      if (!containsArabic && query.length() > 2) {
+        buttonGetTranslations.setText(R.string.get_translations);
+        buttonGetTranslations.setVisibility(View.VISIBLE);
+      }
     } else {
       // Display the number of results
       int count = cursor.getCount();
