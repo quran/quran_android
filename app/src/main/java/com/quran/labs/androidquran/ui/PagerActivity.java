@@ -1923,6 +1923,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void shareAyah(SuraAyah start, SuraAyah end, final boolean isCopy) {
     if (start == null || end == null) {
       return;
+    } else if (!quranFileUtils.hasArabicSearchDatabase(this)) {
+      showGetRequiredFilesDialog();
+      return;
     }
 
     compositeDisposable.add(
