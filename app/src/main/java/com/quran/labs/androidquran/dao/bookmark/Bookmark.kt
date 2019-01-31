@@ -12,7 +12,7 @@ data class Bookmark @JvmOverloads constructor(val id: Long,
   fun isPageBookmark() = sura == null && ayah == null
 
   fun withTags(tagIds: List<Long>): Bookmark {
-    return this.copy(tags = tagIds)
+    return this.copy(tags = mutableListOf<Long>().apply { addAll(tagIds) })
   }
 
   fun withAyahText(ayahText: String): Bookmark {
