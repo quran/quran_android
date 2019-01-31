@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.source.PageProvider;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -22,6 +23,7 @@ import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.CopyDatabaseUtil;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranPartialPageChecker;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -32,6 +34,7 @@ import java.io.File;
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -61,6 +64,7 @@ public class QuranDataActivity extends Activity implements
   @Inject QuranFileUtils quranFileUtils;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject PageProvider quranPageProvider;
+  @Inject CopyDatabaseUtil copyDatabaseUtil;
   @Inject QuranPartialPageChecker quranPartialPageChecker;
 
   @Override
@@ -405,7 +409,12 @@ public class QuranDataActivity extends Activity implements
             }
           }
         }
-        return haveLandscape && havePortrait;
+
+        final boolean haveAll = haveLandscape && havePortrait;
+        if (haveAll) {
+          copyArabicDatabaseIfNecessary();
+        }
+        return haveAll;
       } else {
         quranPartialPageChecker.checkPages(latestImagesVersion, totalPages, width, width);
         boolean haveAll = quranFileUtils.haveAllImages(appContext,
@@ -415,6 +424,10 @@ public class QuranDataActivity extends Activity implements
         needLandscapeImages = false;
         if (haveAll && !quranFileUtils.isVersion(appContext, width, latestImagesVersion)) {
           patchParam = width;
+        }
+
+        if (haveAll) {
+          copyArabicDatabaseIfNecessary();
         }
         return haveAll;
       }
@@ -473,6 +486,29 @@ public class QuranDataActivity extends Activity implements
           return;
         }
         runListView();
+      }
+    }
+  }
+
+  @WorkerThread
+  private void copyArabicDatabaseIfNecessary() {
+    // in 2.9.1 and above, the Arabic databases were renamed. To make it easier for
+    // people to get them, the app will bundle them with the apk for a few releases.
+    // if the database doesn't exist, let's try to copy it if we can. Only check this
+    // if we have all the files, since if not, they come bundled with the full pages
+    // zip file anyway.
+    if (!quranFileUtils.hasArabicSearchDatabase(getApplicationContext())) {
+      final boolean success =
+          copyDatabaseUtil.copyArabicDatabaseFromAssets(QuranDataProvider.QURAN_ARABIC_DATABASE)
+              .blockingGet();
+      if (success) {
+        Answers.getInstance()
+            .logCustom(new CustomEvent("arabicDatabaseCopied")
+                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE));
+      } else {
+        Answers.getInstance()
+            .logCustom(new CustomEvent("arabicDatabaseCopyFailed")
+                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE));
       }
     }
   }
