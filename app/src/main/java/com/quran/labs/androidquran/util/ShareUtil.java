@@ -64,13 +64,16 @@ public class ShareUtil {
     }
 
     for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
-      if (i < translationNames.length) {
-        sb.append('(')
-          .append(translationNames[i].getTranslatorName())
-          .append(")\n");
+      final CharSequence text = ayahInfo.texts.get(i).getText();
+      if (text.length() > 0) {
+        if (i < translationNames.length) {
+          sb.append('(')
+              .append(translationNames[i].getTranslatorName())
+              .append(")\n");
+        }
+        sb.append(text)
+            .append("\n\n");
       }
-      sb.append(ayahInfo.texts.get(i).getText())
-        .append("\n\n");
     }
     sb.append('-')
       .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
