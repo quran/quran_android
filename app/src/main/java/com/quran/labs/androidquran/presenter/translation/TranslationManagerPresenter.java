@@ -116,13 +116,22 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   public void updateItem(final TranslationItem item) {
-    Observable.fromCallable(() ->
-        translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item))
+    Observable.fromCallable(() -> {
+          // for upgrades, remove the old file to stop the tafseer from showing up
+          // twice. this happens because old and new tafaseer (ex ibn kathir) have
+          // different ids when they target different schema versions, and so the
+          // old file needs to be removed from the database explicitly
+          final Translation translation = item.getTranslation();
+          if (translation.getMinimumVersion() >= 5) {
+            removeByFilename(translation.getFileName());
+          }
+          return translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item));
+        }
     ).subscribeOn(Schedulers.io())
         .subscribe();
   }
 
-  public void removeByFilename(final String filename) {
+  private void removeByFilename(final String filename) {
     Completable.fromAction(() ->
         translationsDBAdapter.deleteTranslationByFile(filename)
     ).subscribeOn(Schedulers.io())

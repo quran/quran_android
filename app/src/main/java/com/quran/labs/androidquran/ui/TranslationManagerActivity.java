@@ -137,12 +137,6 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         }
       }
 
-      // for upgrades, remove the old file to stop the tafseer from showing up
-      // twice. this happens because old and new tafaseer (ex ibn kathir) have
-      // different ids when they target different schema versions, and so the
-      // old file needs to be removed from the database explicitly
-      presenter.removeByFilename(downloadingItem.getTranslation().getFileName());
-
       TranslationItem updated = downloadingItem.withTranslationVersion(
           downloadingItem.getTranslation().getCurrentVersion());
       updateTranslationItem(updated);
