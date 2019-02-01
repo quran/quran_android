@@ -10,9 +10,11 @@ import android.view.MenuItem;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationHeader;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
 import com.quran.labs.androidquran.dao.translation.TranslationRowData;
+import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -251,6 +253,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     }
 
     downloadingItem = selectedItem;
+
+    final Translation translation = selectedItem.getTranslation();
+    DatabaseHandler.clearDatabaseHandlerIfExists(translation.getFileName());
     if (mDownloadReceiver == null) {
       mDownloadReceiver = new DefaultDownloadReceiver(this,
           QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
@@ -261,19 +266,16 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     mDownloadReceiver.setListener(this);
 
     // actually start the download
-    String url = selectedItem.getTranslation().getFileUrl();
-    if (selectedItem.getTranslation().getFileUrl() == null) {
-      return;
-    }
+    String url = translation.getFileUrl();
     String destination = databaseDirectory;
     Timber.d("downloading %s to %s", url, destination);
 
     if (selectedItem.exists()) {
       try {
-        File f = new File(destination, selectedItem.getTranslation().getFileName());
+        File f = new File(destination, translation.getFileName());
         if (f.exists()) {
           File newPath = new File(destination,
-              selectedItem.getTranslation().getFileName() + UPGRADING_EXTENSION);
+              translation.getFileName() + UPGRADING_EXTENSION);
           if (newPath.exists()) {
             newPath.delete();
           }

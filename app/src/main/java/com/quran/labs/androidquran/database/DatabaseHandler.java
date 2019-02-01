@@ -67,6 +67,17 @@ public class DatabaseHandler {
     return handler;
   }
 
+  public static synchronized void clearDatabaseHandlerIfExists(String databaseName) {
+    try {
+      DatabaseHandler handler = databaseMap.remove(databaseName);
+      if (handler != null) {
+        handler.database.close();
+      }
+    } catch (Exception e) {
+      Crashlytics.logException(e);
+    }
+  }
+
   private DatabaseHandler(Context context,
                           String databaseName,
                           QuranFileUtils quranFileUtils) throws SQLException {
