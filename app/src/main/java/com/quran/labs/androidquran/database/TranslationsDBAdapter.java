@@ -31,6 +31,7 @@ public class TranslationsDBAdapter {
   private final SQLiteDatabase db;
   private final QuranFileUtils quranFileUtils;
   private volatile List<LocalTranslation> cachedTranslations;
+  private long lastWriteTime = 0;
 
   @Inject
   public TranslationsDBAdapter(Context context,
@@ -50,6 +51,10 @@ public class TranslationsDBAdapter {
       result.put(item.getId(), item);
     }
     return result;
+  }
+
+  public long getLastWriteTime() {
+    return this.lastWriteTime;
   }
 
   @WorkerThread
@@ -125,6 +130,7 @@ public class TranslationsDBAdapter {
       }
       db.setTransactionSuccessful();
 
+      this.lastWriteTime = System.currentTimeMillis();
       // clear the cached translations
       this.cachedTranslations = null;
     } catch (Exception e) {
