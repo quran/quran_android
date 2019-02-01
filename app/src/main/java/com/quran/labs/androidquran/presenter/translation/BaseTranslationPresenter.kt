@@ -27,6 +27,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
     private val quranInfo: QuranInfo) : Presenter<T> {
+  private var lastCacheTime: Long = 0
   private val translationMap: MutableMap<String, LocalTranslation> = HashMap()
 
   var translationScreen: T? = null
@@ -168,7 +169,8 @@ internal open class BaseTranslationPresenter<T> internal constructor(
   }
 
   private fun getTranslationMapSingle(): Single<Map<String, LocalTranslation>> {
-    return if (this.translationMap.isEmpty()) {
+    return if (this.translationMap.isEmpty() ||
+        this.lastCacheTime != translationsAdapter.lastWriteTime) {
       Single.fromCallable<List<LocalTranslation>> { translationsAdapter.translations }
           .map<Map<String, LocalTranslation>> { translations ->
             translations.associateBy { it.filename }
@@ -176,6 +178,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .doOnSuccess { map ->
+            this.lastCacheTime = translationsAdapter.lastWriteTime
             this.translationMap.clear()
             this.translationMap.putAll(map)
           }

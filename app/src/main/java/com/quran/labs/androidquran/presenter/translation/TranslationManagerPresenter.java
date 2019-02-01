@@ -223,10 +223,15 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       boolean exists = dbFile.exists();
 
       TranslationItem item;
+      TranslationItem override = null;
       if (exists) {
         if (local == null) {
           final Pair<Integer, Integer> versions = getVersionFromDatabase(translation.getFileName());
-          item = new TranslationItem(translation.withSchema(versions.second), versions.first);
+          item = new TranslationItem(translation, versions.first);
+          if (versions.second != translation.getMinimumVersion()) {
+            // schema change, write downloaded schema version to the db and return server item
+            override = new TranslationItem(translation.withSchema(versions.second), versions.first);
+          }
         } else {
           item = new TranslationItem(translation, local.getVersion());
         }
@@ -242,7 +247,13 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       }
 
       if ((local == null && exists) || (local != null && !exists)) {
-        updates.add(item);
+        if (override != null && item.getTranslation().getMinimumVersion() >= 5) {
+          // certain schema changes, especially those going to v5, keep the same filename while
+          // changing the database entry id. this could cause duplicate entries in the database.
+          // work around it by removing the existing entries before doing the updates.
+          translationsDBAdapter.deleteTranslationByFile(override.getTranslation().getFileName());
+        }
+        updates.add(override == null ? item : override);
       } else if (local != null && local.getLanguageCode() == null) {
         // older items don't have a language code
         updates.add(item);
