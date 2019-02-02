@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.annotation.WorkerThread;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableMaybeObserver;
@@ -128,6 +130,13 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
         }
     ).subscribeOn(Schedulers.io())
         .subscribe();
+  }
+
+  @WorkerThread
+  public Observable<List<TranslationItem>> syncTranslationsWithCache() {
+    return getCachedTranslationListObservable(false)
+        .filter(translationList -> !translationList.getTranslations().isEmpty())
+        .map(translationList -> mergeWithServerTranslations(translationList.getTranslations()));
   }
 
   Observable<TranslationList> getCachedTranslationListObservable(final boolean forceDownload) {

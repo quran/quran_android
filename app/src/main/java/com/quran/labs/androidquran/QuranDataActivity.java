@@ -17,6 +17,7 @@ import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.source.PageProvider;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
@@ -59,6 +60,7 @@ public class QuranDataActivity extends Activity implements
   private boolean havePermission = false;
   private boolean taskIsRunning;
   private String patchUrl;
+  private int fromVersion;
 
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
@@ -66,6 +68,7 @@ public class QuranDataActivity extends Activity implements
   @Inject PageProvider quranPageProvider;
   @Inject CopyDatabaseUtil copyDatabaseUtil;
   @Inject QuranPartialPageChecker quranPartialPageChecker;
+  @Inject TranslationManagerPresenter translationManagerPresenter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,7 @@ public class QuranDataActivity extends Activity implements
     quranApp.getApplicationComponent().inject(this);
 
     quranSettings = QuranSettings.getInstance(this);
+    fromVersion = quranSettings.getVersion();
     quranSettings.upgradePreferences();
 
     // replace null app locations (especially those set to null due to failures
@@ -326,6 +330,15 @@ public class QuranDataActivity extends Activity implements
       if (baseDir == null) {
         storageNotAvailable = true;
         return false;
+      }
+
+      // there was a bug in 2.9.2 through 2.9.2-p2 where an upgraded tafseer could be
+      // downloaded while not retaining the record in the translations database. sync
+      // with the database to fix this in these cases.
+      if (fromVersion > 2920 && fromVersion < 2923) {
+        // subscribe on the current thread which is a background thread
+        translationManagerPresenter.syncTranslationsWithCache()
+            .subscribe();
       }
 
       // in 2.9.0, there was an initial release of the new madani images - since then, we
