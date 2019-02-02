@@ -28,7 +28,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import androidx.annotation.VisibleForTesting;
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableMaybeObserver;
@@ -123,17 +122,10 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
           // old file needs to be removed from the database explicitly
           final Translation translation = item.getTranslation();
           if (translation.getMinimumVersion() >= 5) {
-            removeByFilename(translation.getFileName());
+            translationsDBAdapter.deleteTranslationByFile(translation.getFileName());
           }
           return translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item));
         }
-    ).subscribeOn(Schedulers.io())
-        .subscribe();
-  }
-
-  private void removeByFilename(final String filename) {
-    Completable.fromAction(() ->
-        translationsDBAdapter.deleteTranslationByFile(filename)
     ).subscribeOn(Schedulers.io())
         .subscribe();
   }
