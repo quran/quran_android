@@ -75,8 +75,11 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
   }
 
   private fun getPage(result: List<QuranAyahInfo>): Int {
-    return pages.firstOrNull() ?: result[0].let { ayahInfo ->
-      quranInfo.getPageFromSuraAyah(ayahInfo.sura, ayahInfo.ayah)
+    val firstPage = pages.first()
+    return if (pages.size == 1 && firstPage != null) {
+      firstPage
+    } else {
+      quranInfo.getPageFromSuraAyah(result[0].sura, result[0].ayah)
     }
   }
 
