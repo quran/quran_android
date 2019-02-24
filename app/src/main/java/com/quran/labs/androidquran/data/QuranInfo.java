@@ -149,7 +149,7 @@ public class QuranInfo {
     String description = context.getString(R.string.page_description);
     return String.format(description,
         QuranUtils.getLocalizedNumber(context, page),
-        QuranUtils.getLocalizedNumber(context, getJuzFromPage(page)));
+        QuranUtils.getLocalizedNumber(context, getJuzForDisplayFromPage(page)));
   }
 
   public String getJuzDisplayStringForPage(Context context, int page) {
@@ -303,6 +303,22 @@ public class QuranInfo {
     return 30;
   }
 
+  private int getJuzFromSuraAyah(int sura, int ayah, int juz) {
+    if (juz == 30) {
+      return juz;
+    }
+
+    // get the starting point of the next juz'
+    final int[] lastQuarter = quarters[juz * 8];
+    // if we're after that starting point, return juz + 1
+    if (sura > lastQuarter[0] || (lastQuarter[0] == sura && ayah >= lastQuarter[1])) {
+      return juz + 1;
+    } else {
+       // otherwise just return this juz
+      return juz;
+    }
+  }
+
   public int getRub3FromPage(int page) {
     if ((page > numberOfPages) || (page < 1)) return -1;
     return pageRub3Start[page - 1];
@@ -383,9 +399,10 @@ public class QuranInfo {
   }
 
   public  String getAyahMetadata(int sura, int ayah, int page, Context context) {
-    int juz = getJuzFromPage(page);
+    int juz = getJuzForDisplayFromPage(page);
     return context.getString(R.string.quran_ayah_details, getSuraName(context, sura, true),
-        QuranUtils.getLocalizedNumber(context, ayah), QuranUtils.getLocalizedNumber(context, juz));
+        QuranUtils.getLocalizedNumber(context, ayah),
+        QuranUtils.getLocalizedNumber(context, getJuzFromSuraAyah(sura, ayah, juz)));
   }
 
   public  String getSuraNameString(Context context, int page) {
