@@ -34,10 +34,6 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     super.setOnItemClickListener((parent, view, position, id) -> onForceComplete(position, id));
   }
 
-  public void forceComplete() {
-    onForceComplete(AdapterView.INVALID_POSITION, AdapterView.INVALID_ROW_ID);
-  }
-
   protected void onForceComplete(int position, long rowId) {
     if (onForceCompleteListener != null) {
       onForceCompleteListener.onForceComplete(this, position, rowId);
@@ -56,7 +52,7 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     if (focused) {
       performFiltering(getText(), 0);
     } else {
-      forceComplete();
+      onForceComplete(AdapterView.INVALID_POSITION, AdapterView.INVALID_ROW_ID);
     }
   }
 
@@ -68,7 +64,7 @@ public class ForceCompleteTextView extends AppCompatAutoCompleteTextView {
     this.onForceCompleteListener = l;
     post(() -> {
       if (!isFocused()) {
-        forceComplete();
+        onForceComplete(AdapterView.INVALID_POSITION, AdapterView.INVALID_ROW_ID);
       }
     });
   }
