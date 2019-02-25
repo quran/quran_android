@@ -97,7 +97,7 @@
   <string name="prefs_ayah_before_translation_summary">پیشاندانی ئایەت بە عەرەبی لەسەرووی وەرگیڕان</string>
   <string name="prefs_category_download">ھەڵبژاردنەکانی داگرتن</string>
   <string name="prefs_streaming_title">شەپۆلی دەنگی سەرهێڵ</string>
-  <string name="prefs_streaming_summary">لێدانی دەنگ لەڕێی شەپۆلی ئینتەرنێتەوە لەکاتی شیاودا (تەنها ئەو دەنگانەی کە دانەگیراون).</string>
+  <string name="prefs_streaming_summary">لێدانی دەنگ لەڕێی شەپۆلی ئینتەرنێتەوە لەکاتی شیاودا.</string>
   <string name="prefs_download_amount_title">ڕێژەی داگرتن</string>
   <string name="prefs_download_amount_summary">ڕێژەی پەسەندی داگرتن بۆ دەنگە دانەگیراوەکان.</string>
   <string name="downloaded_translations">داگیرا</string>

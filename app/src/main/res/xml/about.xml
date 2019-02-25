@@ -1,129 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <com.quran.labs.androidquran.ui.preference.QuranHeaderPreference
-      android:title="@string/app_name"
-      android:summary="@string/about_description"/>
+      android:summary="@string/about_description"
+      android:title="@string/app_name"/>
 
   <PreferenceCategory
       android:key="aboutDataSources"
-      android:title="@string/about_data_sources">
+      android:title="@string/about_data_sources"
+      app:iconSpaceReserved="false">
 
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_images"
+    <Preference
         android:key="madaniImages"
-        android:summary="@string/about_madani_images">
+        android:summary="@string/about_madani_images"
+        android:title="@string/about_images"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_madani_images_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
+    </Preference>
 
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_images"
+    <Preference
         android:key="naskhImages"
-        android:summary="@string/about_naskh_images">
+        android:summary="@string/about_naskh_images"
+        android:title="@string/about_images"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_naskh_images_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
+    </Preference>
 
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_images"
+    <Preference
         android:key="qaloonImages"
-        android:summary="@string/about_qaloon_images"/>
+        android:summary="@string/about_qaloon_images"
+        android:title="@string/about_images"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true"
+        />
 
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
+    <Preference
+        android:summary="@string/about_quranicaudio_summary"
         android:title="@string/about_quranicaudio"
-        android:summary="@string/about_quranicaudio_summary">
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_quranicaudio_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
+    </Preference>
 
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
+    <Preference
+        android:summary="@string/about_quran_ksu_summary"
         android:title="@string/about_quran_ksu"
-        android:summary="@string/about_quran_ksu_summary">
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_quran_ksu_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
+    </Preference>
 
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
+    <Preference
+        android:summary="@string/about_furqan_summary"
+        android:title="@string/about_furqan"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_furqan_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_tanzil_summary"
         android:title="@string/about_tanzil"
-        android:summary="@string/about_tanzil_summary">
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_tanzil_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
+    </Preference>
 
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
+    <Preference
+        android:summary="@string/about_noorhidayat_summary"
         android:title="@string/about_noorhidayat"
-        android:summary="@string/about_noorhidayat_summary">
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_noorhidayat_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
-  </PreferenceCategory>
-
-  <PreferenceCategory android:title="@string/about_open_source">
-
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_dagger2"
-        android:summary="@string/about_dagger2_url">
-      <intent
-          android:action="android.intent.action.VIEW"
-          android:data="@string/about_dagger2_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
-
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_okhttp"
-        android:summary="@string/about_okhttp_url">
-      <intent
-          android:action="android.intent.action.VIEW"
-          android:data="@string/about_okhttp_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
-
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_rxjava"
-        android:summary="@string/about_rxjava_url">
-      <intent
-          android:action="android.intent.action.VIEW"
-          android:data="@string/about_rxjava_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
-
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_rxandroid"
-        android:summary="@string/about_rxandroid_url">
-      <intent
-          android:action="android.intent.action.VIEW"
-          android:data="@string/about_rxandroid_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
-
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_moshi"
-        android:summary="@string/about_moshi_url">
-      <intent
-          android:action="android.intent.action.VIEW"
-          android:data="@string/about_moshi_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
-
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
-        android:title="@string/about_sliding_panel"
-        android:summary="@string/about_sliding_panel_url">
-      <intent
-          android:action="android.intent.action.VIEW"
-          android:data="@string/about_sliding_panel_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
+    </Preference>
   </PreferenceCategory>
 
   <PreferenceCategory
-      android:title="@string/about_others">
-    <com.quran.labs.androidquran.ui.preference.QuranPreference
+      android:title="@string/about_open_source"
+      app:iconSpaceReserved="false">
+
+    <Preference
+        android:summary="@string/about_dagger2_url"
+        android:title="@string/about_dagger2"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_dagger2_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_okhttp_url"
+        android:title="@string/about_okhttp"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_okhttp_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_rxjava_url"
+        android:title="@string/about_rxjava"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_rxjava_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_rxandroid_url"
+        android:title="@string/about_rxandroid"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_rxandroid_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_moshi_url"
+        android:title="@string/about_moshi"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_moshi_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_sliding_panel_url"
+        android:title="@string/about_sliding_panel"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_sliding_panel_url"/>
+    </Preference>
+  </PreferenceCategory>
+
+  <PreferenceCategory
+      android:title="@string/about_others"
+      app:iconSpaceReserved="false">
+    <Preference
+        android:summary="@string/about_contributors_summary"
         android:title="@string/about_contributors"
-        android:summary="@string/about_contributors_summary">
+        app:iconSpaceReserved="false">
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_contributors_url"/>
-    </com.quran.labs.androidquran.ui.preference.QuranPreference>
+    </Preference>
   </PreferenceCategory>
 </PreferenceScreen>

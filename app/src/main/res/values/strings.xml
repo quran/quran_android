@@ -50,10 +50,13 @@
   <string name="about_qaloon_images">Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia)</string>
   <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
   <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
-  <string name="about_quranicaudio_url" translatable="false">http://quranicaudio.com</string>
+  <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
   <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project is the app\'s source of Arabic Tafaseer and translations for various languages. It is also the source for Dr. Ayman Suwaid\'s recitation.</string>
-  <string name="about_quran_ksu_url" translatable="false">http://quran.ksu.edu.sa</string>
+  <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
+  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
+  <string name="about_furqan_summary">Uthmani text and Arabic Tafaseer</string>
+  <string name="about_furqan_url" translatable="false">https://furqan.co</string>
   <string name="about_tanzil" translatable="false">Tanzil</string>
   <string name="about_tanzil_summary">Translations for many languages</string>
   <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
@@ -62,7 +65,7 @@
   <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
   <string name="about_open_source">Open Source Projects</string>
   <string name="about_dagger2" translatable="false">Dagger 2</string>
-  <string name="about_dagger2_url" translatable="false">http://google.github.io/dagger</string>
+  <string name="about_dagger2_url" translatable="false">https://google.github.io/dagger</string>
   <string name="about_okhttp" translatable="false">OkHttp</string>
   <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
   <string name="about_rxjava" translatable="false">RxJava</string>
@@ -174,7 +177,7 @@
   <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
   <string name="prefs_category_download">Download Options</string>
   <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Stream audio when possible (non-gapless audio only)</string>
+  <string name="prefs_streaming_summary">Stream audio instead of downloading</string>
   <string name="prefs_download_amount_title">Download amount</string>
   <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
   <string name="prefs_audio_manager">Audio manager (experimental)</string>
@@ -227,6 +230,10 @@
         sure you want to use the external SD card?</string>
   <string name="please_grant_permissions">Please grant permission in application settings.</string>
   <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="more_arabic" translatable="false">المزيد…</string>
+  <string name="see_tafseer_of_verse">See tafseer for ayah %d.</string>
 
   <!-- translation updates -->
   <string name="update_available">Update Available</string>
@@ -320,6 +327,9 @@
     <item>3 times</item>
     <item>loop</item>
   </string-array>
+
+  <string name="playback_prompt_title">Start playback from:</string>
+  <string name="starting_page_label">Beginning of Page</string>
 
   <!-- long press -->
   <string name="bookmark_ayah">Bookmark this Ayah</string>

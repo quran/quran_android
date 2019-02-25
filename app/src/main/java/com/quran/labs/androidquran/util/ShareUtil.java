@@ -5,10 +5,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.StringRes;
 import android.widget.Toast;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranInfo;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.StringRes;
 import dagger.Reusable;
 
 @Reusable
@@ -54,8 +55,8 @@ public class ShareUtil {
   }
 
   public String getShareText(Context context,
-                                    QuranAyahInfo ayahInfo,
-                                    String[] translationNames) {
+                             QuranAyahInfo ayahInfo,
+                             LocalTranslation[] translationNames) {
     final StringBuilder sb = new StringBuilder();
     if (ayahInfo.arabicText != null) {
       sb.append(ayahInfo.arabicText)
@@ -63,13 +64,16 @@ public class ShareUtil {
     }
 
     for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
-      if (i < translationNames.length) {
-        sb.append('(')
-          .append(translationNames[i])
-          .append(")\n");
+      final CharSequence text = ayahInfo.texts.get(i).getText();
+      if (text.length() > 0) {
+        if (i < translationNames.length) {
+          sb.append('(')
+              .append(translationNames[i].getTranslatorName())
+              .append(")\n");
+        }
+        sb.append(text)
+            .append("\n\n");
       }
-      sb.append(ayahInfo.texts.get(i))
-        .append("\n\n");
     }
     sb.append('-')
       .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));

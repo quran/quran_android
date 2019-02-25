@@ -116,7 +116,7 @@
   <string name="prefs_ayah_before_translation_summary">Voir l\'Aya en arabe au-dessus de la traduction</string>
   <string name="prefs_category_download">Options de téléchargement</string>
   <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Streaming lorsque cela est possible (audio espacé seulement).</string>
+  <string name="prefs_streaming_summary">Streaming lorsque cela est possible.</string>
   <string name="prefs_download_amount_title">Quantité de téléchargement</string>
   <string name="prefs_download_amount_summary">Quantité du téléchargement préféré pour l\'audio espacé.</string>
   <string name="prefs_audio_manager">Gestionnaire audio (expérimental)</string>

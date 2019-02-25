@@ -1,20 +1,22 @@
 package com.quran.labs.androidquran.common
 
-class LocalTranslation(
-  val id: Int,
+data class LocalTranslation(
+  val id: Int = -1,
   val filename: String,
-  val name: String,
-  val translator: String?,
-  val translatorForeign: String?,
-  val url: String,
-  val languageCode: String?,
-  val version: Int
-) {
+  val name: String = "",
+  val translator: String? = "",
+  val translatorForeign: String? = "",
+  val url: String = "",
+  val languageCode: String? = "",
+  val version: Int = 1,
+  val minimumVersion: Int = 2) {
 
-  val translatorName: String
-    get() = when {
+  fun getTranslatorName(): String {
+    return when {
       translatorForeign != null -> translatorForeign
       translator != null -> translator
-      else -> name
+      name.isNotEmpty() -> name
+      else -> filename
     }
+  }
 }

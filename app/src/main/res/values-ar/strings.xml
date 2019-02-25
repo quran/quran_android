@@ -109,7 +109,7 @@
   <string name="prefs_ayah_before_translation_summary">اختر لعرض الآية مع التفسير</string>
   <string name="prefs_category_download">خيارات التحميل</string>
   <string name="prefs_streaming_title">استماع عبر اﻻنترنت</string>
-  <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)، هذا الخيار متاح للتلاوات الغير متصلة فقط</string>
+  <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)</string>
   <string name="prefs_download_amount_title">كم التحميل</string>
   <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
   <string name="prefs_audio_manager">إدارة الصوتيات (تجريبي)</string>
@@ -136,6 +136,9 @@
   <string name="available_translations">الملفات المتاحة للتحميل</string>
   <string name="remove_button">احذف</string>
   <string name="dialog_ok">موافق</string>
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">انظر تفسير الآية %d.</string>
 
   <!-- translation updates -->
   <string name="update_available">هناك تحديثات</string>

@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.common;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.Collections;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * QuranAyahInfo
@@ -16,12 +16,12 @@ public class QuranAyahInfo {
   public final int ayah;
   public final int ayahId;
   @Nullable public final String arabicText;
-  @NonNull public final List<String> texts;
+  @NonNull public final List<TranslationMetadata> texts;
 
   public QuranAyahInfo(int sura,
                        int ayah,
                        @Nullable String arabicText,
-                       @NonNull List<String> texts,
+                       @NonNull List<TranslationMetadata> texts,
                        int ayahId) {
     this.sura = sura;
     this.ayah = ayah;

@@ -6,6 +6,7 @@
    -->
 
   <string translatable="false" name="prefs_path">quranSettings</string>
+  <string translatable="false" name="prefs_advanced_path">quranAdvancedSettings</string>
   <string translatable="false" name="prefs_use_arabic_names">useArabicNames</string>
   <string translatable="false" name="prefs_new_background">useNewBackground</string>
   <string translatable="false" name="prefs_dual_page_enabled">useDualPageMode</string>

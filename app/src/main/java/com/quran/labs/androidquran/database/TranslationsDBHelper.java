@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 class TranslationsDBHelper extends SQLiteOpenHelper {
 
   private static final String DB_NAME = "translations.db";
-  private static final int DB_VERSION = 3;
+  private static final int DB_VERSION = 4;
   private static final String CREATE_TRANSLATIONS_TABLE =
       "CREATE TABLE " + TranslationsTable.TABLE_NAME + "(" +
           TranslationsTable.ID + " integer primary key, " +
@@ -21,7 +21,8 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
           TranslationsTable.FILENAME + " varchar not null, " +
           TranslationsTable.URL + " varchar, " +
           TranslationsTable.LANGUAGE_CODE + " varchar, " +
-          TranslationsTable.VERSION + " integer not null default 0);";
+          TranslationsTable.VERSION + " integer not null default 0," +
+          TranslationsTable.MINIMUM_REQUIRED_VERSION + " integer not null default 0);";
 
   @Inject
   TranslationsDBHelper(Context context) {
@@ -35,7 +36,7 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
 
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    if (oldVersion < 3) {
+    if (oldVersion < 4) {
       // a new column is added and columns are re-arranged
       final String BACKUP_TABLE = TranslationsTable.TABLE_NAME + "_backup";
       db.beginTransaction();
@@ -46,17 +47,23 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
             TranslationsTable.ID + ", " +
             TranslationsTable.NAME + ", " +
             TranslationsTable.TRANSLATOR + ", " +
+            (oldVersion < 2 ? "" : (TranslationsTable.TRANSLATOR_FOREIGN + ", ")) +
             TranslationsTable.FILENAME + ", " +
             TranslationsTable.URL + ", " +
-            TranslationsTable.VERSION + ")" +
+            (oldVersion < 3 ? "" : (TranslationsTable.LANGUAGE_CODE + ",")) +
+            TranslationsTable.VERSION + ") " +
             "SELECT " + TranslationsTable.ID + ", " +
             TranslationsTable.NAME + ", " +
             TranslationsTable.TRANSLATOR + ", " +
+            (oldVersion < 2 ? "" : "translator_foreign, ") +
             TranslationsTable.FILENAME + ", " +
             TranslationsTable.URL + ", " +
+            (oldVersion < 3 ? "" : (TranslationsTable.LANGUAGE_CODE + ",")) +
             TranslationsTable.VERSION +
             " FROM " + BACKUP_TABLE);
         db.execSQL("DROP TABLE " + BACKUP_TABLE);
+        db.execSQL("UPDATE " + TranslationsTable.TABLE_NAME + " SET " +
+            TranslationsTable.MINIMUM_REQUIRED_VERSION + " = 2");
         db.setTransactionSuccessful();
       } finally {
         db.endTransaction();
@@ -69,10 +76,11 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
     static final String ID = "id";
     static final String NAME = "name";
     static final String TRANSLATOR = "translator";
-    static final String TRANSLATOR_FOREIGN = "translator_foreign";
+    static final String TRANSLATOR_FOREIGN = "translatorForeign";
     static final String FILENAME = "filename";
     static final String URL = "url";
     static final String LANGUAGE_CODE = "languageCode";
     static final String VERSION = "version";
+    static final String MINIMUM_REQUIRED_VERSION = "minimumRequiredVersion";
   }
 }

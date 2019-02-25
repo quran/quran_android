@@ -27,8 +27,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -85,6 +87,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -103,6 +106,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -206,6 +210,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject AudioPresenter audioPresenter;
 
   private CompositeDisposable compositeDisposable;
+  private CompositeDisposable foregroundDisposable = new CompositeDisposable();
 
   private final PagerHandler handler = new PagerHandler(this);
 
@@ -666,8 +671,13 @@ public class PagerActivity extends QuranActionBarActivity implements
     requestTranslationsList();
 
     if (shouldReconnect) {
-      startService(audioUtils.getAudioIntent(this, AudioService.ACTION_CONNECT));
-      shouldReconnect = false;
+      foregroundDisposable.add(Completable.timer(500, TimeUnit.MILLISECONDS)
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(() -> {
+                startService(
+                    audioUtils.getAudioIntent(PagerActivity.this, AudioService.ACTION_CONNECT));
+                shouldReconnect = false;
+              }));
     }
 
     if (highlightedSura > 0 && highlightedAyah > 0) {
@@ -737,6 +747,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           downloadType);
+      Crashlytics.log("starting foreground service to download ayah position file");
       ContextCompat.startForegroundService(this, intent);
 
       haveDownload = true;
@@ -752,11 +763,13 @@ public class PagerActivity extends QuranActionBarActivity implements
         notificationTitle = getString(R.string.search_data);
       }
 
+      final String extension = url.endsWith(".zip") ? ".zip" : "";
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           quranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
-          QuranDataProvider.QURAN_ARABIC_DATABASE);
+          QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
+      Crashlytics.log("starting foreground service to download arabic database");
       ContextCompat.startForegroundService(this, intent);
     }
 
@@ -827,6 +840,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onPause() {
+    foregroundDisposable.clear();
     if (promptDialog != null) {
       promptDialog.dismiss();
       promptDialog = null;
@@ -943,7 +957,9 @@ public class PagerActivity extends QuranActionBarActivity implements
       switchToQuran();
       return true;
     } else if (itemId == R.id.goto_translation) {
-      switchToTranslation();
+      if (translations != null) {
+        switchToTranslation();
+      }
       return true;
     } else if (itemId == R.id.night_mode) {
       SharedPreferences prefs = PreferenceManager
@@ -1209,6 +1225,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void handleDownloadSuccess() {
     refreshQuranPages();
     audioPresenter.onDownloadSuccess();
+    audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
   }
 
   @Override
@@ -1413,7 +1430,13 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     int startSura = quranInfo.safelyGetSuraOnPage(page);
     int startAyah = quranInfo.getFirstAyahOnPage(page);
-    playFromAyah(page, startSura, startAyah);
+    List<Integer> startingSuraList = quranInfo.getListOfSurahWithStartingOnPage(page);
+    if (startingSuraList.size() == 0 ||
+        (startingSuraList.size() == 1 && startingSuraList.get(0) == startSura)) {
+      playFromAyah(page, startSura, startAyah);
+    } else {
+      promptForMultipleChoicePlay(page, startSura, startAyah, startingSuraList);
+    }
   }
 
   private void playFromAyah(int page, int startSura, int startAyah) {
@@ -1460,6 +1483,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         toggleActionBar();
       }
       audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+      Crashlytics.log("starting foreground service in handleRequiredDownload");
       ContextCompat.startForegroundService(this, downloadIntent);
     }
   }
@@ -1484,6 +1508,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     else {
       i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);
     }
+    Crashlytics.log("starting foreground service for audio playback");
     ContextCompat.startForegroundService(this, i);
   }
 
@@ -1898,6 +1923,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void shareAyah(SuraAyah start, SuraAyah end, final boolean isCopy) {
     if (start == null || end == null) {
       return;
+    } else if (!quranFileUtils.hasArabicSearchDatabase(this)) {
+      showGetRequiredFilesDialog();
+      return;
     }
 
     compositeDisposable.add(
@@ -1981,6 +2009,32 @@ public class PagerActivity extends QuranActionBarActivity implements
         unHighlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
       }
     }
+  }
+
+  private void promptForMultipleChoicePlay(int page, int startSura, int startAyah, List<Integer> startingSuraList) {
+    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item);
+    for (Integer integer : startingSuraList) {
+      String suraName = quranInfo.getSuraName(this, integer, false);
+      adapter.add(suraName);
+    }
+    if(startSura != startingSuraList.get(0)) {
+      adapter.insert(getString(R.string.starting_page_label), 0);
+      startingSuraList.add(0, startSura);
+    }
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        .setTitle(getString(R.string.playback_prompt_title))
+        .setAdapter(adapter, (dialog, i) -> {
+          if (i == 0) {
+            playFromAyah(page, startSura, startAyah);
+          } else {
+            playFromAyah(page, startingSuraList.get(i), 1);
+          }
+          dialog.dismiss();
+          promptDialog = null;
+        });
+    promptDialog = builder.create();
+    promptDialog.show();
   }
 
   private class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {

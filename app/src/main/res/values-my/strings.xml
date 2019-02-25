@@ -94,7 +94,7 @@
   <string name="prefs_ayah_before_translation_summary">Papar ayat (dalam bahasa Arab) di atas terjemahan</string>
   <string name="prefs_category_download">Pilihan Muat Turun</string>
   <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Stream audio apabila boleh (hanya audio berjurang)</string>
+  <string name="prefs_streaming_summary">Stream audio apabila boleh</string>
   <string name="prefs_download_amount_title">Paket Muat Turun</string>
   <string name="prefs_download_amount_summary">Paket fail setiap muat turun untuk audio berjurang.</string>
   <string name="downloaded_translations">Telah dimuat turun</string>

@@ -7,11 +7,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.Html;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
@@ -35,6 +30,12 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import javax.inject.Inject;
+
+import androidx.annotation.NonNull;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class SearchActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
@@ -103,8 +104,9 @@ public class SearchActivity extends QuranActionBarActivity
         quranFileUtils.getQuranDatabaseDirectory(this),
         notificationTitle, SEARCH_INFO_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
+    final String extension = url.endsWith(".zip") ? ".zip" : "";
     intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
-        QuranDataProvider.QURAN_ARABIC_DATABASE);
+        QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
     startService(intent);
   }
 
@@ -136,33 +138,35 @@ public class SearchActivity extends QuranActionBarActivity
 
   @Override
   public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
-    isArabicSearch = QuranUtils.doesStringContainArabic(query);
+    final boolean containsArabic = QuranUtils.doesStringContainArabic(query);
+    isArabicSearch = containsArabic;
     boolean showArabicWarning = (isArabicSearch &&
         !quranFileUtils.hasArabicSearchDatabase(this));
+
     if (showArabicWarning) {
+      // overridden because if we search Arabic tafaseer, this tells us to go
+      // to the tafseer page instead of the Arabic page when we open the result.
       isArabicSearch = false;
+
+      warningView.setText(getString(R.string.no_arabic_search_available));
+      warningView.setVisibility(View.VISIBLE);
+      buttonGetTranslations.setText(getString(R.string.get_arabic_search_db));
+      buttonGetTranslations.setVisibility(View.VISIBLE);
+      downloadArabicSearchDb = true;
+    } else {
+      downloadArabicSearchDb = false;
     }
 
     if (cursor == null) {
-      if (showArabicWarning) {
-        warningView.setText(
-            getString(R.string.no_arabic_search_available));
-        warningView.setVisibility(View.VISIBLE);
-        buttonGetTranslations.setText(
-            getString(R.string.get_arabic_search_db));
-        buttonGetTranslations.setVisibility(View.VISIBLE);
-      }
       messageView.setText(getString(R.string.no_results, query));
-    } else {
-      if (showArabicWarning) {
-        warningView.setText(R.string.no_arabic_search_available);
-        warningView.setVisibility(View.VISIBLE);
-        buttonGetTranslations.setText(
-            getString(R.string.get_arabic_search_db));
+      // cursor is null either when the query length is less than 3 characters or when
+      // there are no valid databases to search at all. in this case, if it's not an
+      // Arabic search, show the "get translations" button.
+      if (!containsArabic && query.length() > 2) {
+        buttonGetTranslations.setText(R.string.get_translations);
         buttonGetTranslations.setVisibility(View.VISIBLE);
-        downloadArabicSearchDb = true;
       }
-
+    } else {
       // Display the number of results
       int count = cursor.getCount();
       String countString = getResources().getQuantityString(

@@ -61,8 +61,10 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
+import com.quran.labs.androidquran.extension.SuraAyahExtensionKt;
 import com.quran.labs.androidquran.presenter.audio.service.AudioQueue;
 import com.quran.labs.androidquran.service.util.AudioFocusHelper;
 import com.quran.labs.androidquran.service.util.AudioFocusable;
@@ -157,11 +159,6 @@ public class AudioService extends Service implements OnCompletionListener,
 
   // used to override what is playing now (stop then play)
   public static final String EXTRA_STOP_IF_PLAYING = "com.quran.labs.androidquran.STOP_IF_PLAYING";
-
-  // repeat info
-  public static final String EXTRA_VERSE_REPEAT_COUNT = "com.quran.labs.androidquran.VERSE_REPEAT_COUNT";
-  public static final String EXTRA_RANGE_REPEAT_COUNT = "com.quran.labs.androidquran.RANGE_REPEAT_COUNT";
-  public static final String EXTRA_RANGE_RESTRICT = "com.quran.labs.androidquran.RANGE_RESTRICT";
 
   // indicates the state our service:
   private enum State {
@@ -394,10 +391,20 @@ public class AudioService extends Service implements OnCompletionListener,
         if (State.Stopped == state ||
             !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {
           audioRequest = playInfo;
+
+          final SuraAyah start = audioRequest.getStart();
+          final boolean basmallah = !playInfo.isGapless() &&
+              SuraAyahExtensionKt.requiresBasmallah(start);
           audioQueue = new AudioQueue(quranInfo, audioRequest,
-              new AudioPlaybackInfo(audioRequest.getStart(), 1, 1));
+              new AudioPlaybackInfo(start, 1, 1, basmallah));
           Crashlytics.log("audio request has changed...");
         }
+      }
+
+      // this is the only action called with startForegroundService, so go into the foreground
+      // as quickly as possible.
+      if (!isSetupAsForeground) {
+        setUpAsForeground();
       }
 
       if (intent.getBooleanExtra(EXTRA_STOP_IF_PLAYING, false)) {
@@ -633,6 +640,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
   private void processPlayRequest() {
     if (audioRequest == null) {
+      // no audio request, what can we do?
+      relaxResources(true, true);
       return;
     }
     tryToGetAudioFocus();
@@ -655,7 +664,9 @@ public class AudioService extends Service implements OnCompletionListener,
       // If we're paused, just continue playback and restore the
       // 'foreground service' state.
       state = State.Playing;
-      setUpAsForeground();
+      if (!isSetupAsForeground) {
+        setUpAsForeground();
+      }
       configAndStartMediaPlayer(false);
       notifyAudioStatus(AudioUpdateIntent.PLAYING);
     }
@@ -916,6 +927,9 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private String getTitle() {
+    if (audioQueue == null) {
+      return "";
+    }
     return quranInfo.getSuraAyahString(this, audioQueue.getCurrentSura(), audioQueue.getCurrentAyah());
   }
 
@@ -927,6 +941,10 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   private void playAudio(boolean playRepeatSeparator) {
+    if (!isSetupAsForeground) {
+      setUpAsForeground();
+    }
+
     state = State.Stopped;
     relaxResources(false, false); // release everything except MediaPlayer
     playerOverride = false;
@@ -1003,9 +1021,6 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       state = State.Preparing;
-      if (!isSetupAsForeground) {
-        setUpAsForeground();
-      }
 
       // starts preparing the media player in the background. When it's
       // done, it will call our OnPreparedListener (that is, the
@@ -1067,15 +1082,16 @@ public class AudioService extends Service implements OnCompletionListener,
     if (playerOverride) {
       playAudio(false);
     } else {
-      boolean flag = false;
       final int beforeSura = audioQueue.getCurrentSura();
       if (audioQueue.playNextAyah(false)) {
         // we actually switched to a different ayah - so if the
         // sura changed, then play the basmala if the ayah is
         // not the first one (or if we're in sura tawba).
-        flag = beforeSura != audioQueue.getCurrentSura();
+        boolean flag = beforeSura != audioQueue.getCurrentSura();
+        playAudio(flag);
+      } else {
+        processStopRequest(true);
       }
-      playAudio(flag);
     }
   }
 

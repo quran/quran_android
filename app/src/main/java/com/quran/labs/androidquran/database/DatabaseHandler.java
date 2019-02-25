@@ -7,13 +7,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.provider.BaseColumns;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranText;
+import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -25,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import timber.log.Timber;
 
 
@@ -34,6 +35,7 @@ public class DatabaseHandler {
   private static final String COL_TEXT = "text";
   public static final String VERSE_TABLE = "verses";
   public static final String ARABIC_TEXT_TABLE = "arabic_text";
+  public static final String SHARE_TEXT_TABLE = "share_text";
 
   private static final String PROPERTIES_TABLE = "properties";
   private static final String COL_PROPERTY = "property";
@@ -63,6 +65,17 @@ public class DatabaseHandler {
       databaseMap.put(databaseName, handler);
     }
     return handler;
+  }
+
+  public static synchronized void clearDatabaseHandlerIfExists(String databaseName) {
+    try {
+      DatabaseHandler handler = databaseMap.remove(databaseName);
+      if (handler != null) {
+        handler.database.close();
+      }
+    } catch (Exception e) {
+      Crashlytics.logException(e);
+    }
   }
 
   private DatabaseHandler(Context context,
@@ -119,7 +132,7 @@ public class DatabaseHandler {
     }
   }
 
-  private int getSchemaVersion() {
+  public int getSchemaVersion() {
     return getProperty("schema_version");
   }
 
@@ -231,7 +244,8 @@ public class DatabaseHandler {
 
     Timber.d("querying verses by ids for tags...");
     final String sql = "SELECT rowid as _id, " + COL_SURA + ", " + COL_AYAH + ", " + COL_TEXT +
-        " FROM " + ARABIC_TEXT_TABLE + " WHERE rowid in(" + builder.toString() + ")";
+        " FROM " + QuranFileConstants.ARABIC_SHARE_TABLE +
+        " WHERE rowid in(" + builder.toString() + ")";
     return database.rawQuery(sql, null);
   }
 

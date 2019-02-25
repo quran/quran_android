@@ -150,7 +150,7 @@
   <string name="prefs_ayah_before_translation_summary">Arabcha oyatlarni tarjima matni ustida koʻrsatish</string>
   <string name="prefs_category_download">Saqlab olish</string>
   <string name="prefs_streaming_title">Striming</string>
-  <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish (faqat nomuttasil audio fayllar)</string>
+  <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish</string>
   <string name="prefs_download_amount_title">Hajm</string>
   <string name="prefs_download_amount_summary">Nomuttasil audio fayllarni saqlab olish hajmi</string>
   <string name="prefs_audio_manager">Audio Menejer (eksperimental)</string>

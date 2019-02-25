@@ -7,10 +7,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -31,6 +27,11 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.List;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 
 public class AudioStatusBar extends LeftToRightLinearLayout {
 
@@ -428,7 +429,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private void addButton(@NonNull ImageView button, int imageId, boolean withWeight) {
     button.setImageResource(imageId);
     button.setScaleType(ImageView.ScaleType.CENTER);
-    button.setOnClickListener(mOnClickListener);
+    button.setOnClickListener(onClickListener);
     button.setTag(imageId);
     button.setBackgroundResource(itemBackground);
     final LayoutParams params = new LayoutParams(
@@ -494,7 +495,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     audioBarListener = listener;
   }
 
-  OnClickListener mOnClickListener = new OnClickListener() {
+  OnClickListener onClickListener = new OnClickListener() {
     @Override
     public void onClick(View view) {
       if (audioBarListener != null) {

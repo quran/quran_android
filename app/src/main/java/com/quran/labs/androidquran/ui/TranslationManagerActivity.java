@@ -1,23 +1,20 @@
 package com.quran.labs.androidquran.ui;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseIntArray;
 import android.view.MenuItem;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationHeader;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
 import com.quran.labs.androidquran.dao.translation.TranslationRowData;
+import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -34,6 +31,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
@@ -135,6 +138,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           Timber.d(e, "error removing old database file");
         }
       }
+
       TranslationItem updated = downloadingItem.withTranslationVersion(
           downloadingItem.getTranslation().getCurrentVersion());
       updateTranslationItem(updated);
@@ -249,6 +253,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     }
 
     downloadingItem = selectedItem;
+
+    final Translation translation = selectedItem.getTranslation();
+    DatabaseHandler.clearDatabaseHandlerIfExists(translation.getFileName());
     if (mDownloadReceiver == null) {
       mDownloadReceiver = new DefaultDownloadReceiver(this,
           QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
@@ -259,19 +266,16 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     mDownloadReceiver.setListener(this);
 
     // actually start the download
-    String url = selectedItem.getTranslation().getFileUrl();
-    if (selectedItem.getTranslation().getFileUrl() == null) {
-      return;
-    }
+    String url = translation.getFileUrl();
     String destination = databaseDirectory;
     Timber.d("downloading %s to %s", url, destination);
 
     if (selectedItem.exists()) {
       try {
-        File f = new File(destination, selectedItem.getTranslation().getFileName());
+        File f = new File(destination, translation.getFileName());
         if (f.exists()) {
           File newPath = new File(destination,
-              selectedItem.getTranslation().getFileName() + UPGRADING_EXTENSION);
+              translation.getFileName() + UPGRADING_EXTENSION);
           if (newPath.exists()) {
             newPath.delete();
           }

@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.translation;
 
 import android.content.Context;
-import androidx.annotation.VisibleForTesting;
+import android.util.Pair;
 import android.util.SparseArray;
 
 import com.crashlytics.android.Crashlytics;
@@ -27,6 +27,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.annotation.VisibleForTesting;
+import androidx.annotation.WorkerThread;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableMaybeObserver;
@@ -41,8 +44,8 @@ import timber.log.Timber;
 
 @Singleton
 public class TranslationManagerPresenter implements Presenter<TranslationManagerActivity> {
-  private static final String WEB_SERVICE_ENDPOINT = "data/translations.php?v=4";
-  private static final String CACHED_RESPONSE_FILE_NAME = "translations.v4.cache";
+  private static final String WEB_SERVICE_ENDPOINT = "data/translations.php?v=5";
+  private static final String CACHED_RESPONSE_FILE_NAME = "translations.v5.cache";
 
   private final Context appContext;
   private final OkHttpClient okHttpClient;
@@ -74,7 +77,6 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   public void getTranslationsList(boolean forceDownload) {
     Observable.concat(
         getCachedTranslationListObservable(forceDownload), getRemoteTranslationListObservable())
-        .filter(translationList -> translationList.getTranslations() != null)
         .firstElement()
         .filter(translationList -> !translationList.getTranslations().isEmpty())
         .map(translationList -> mergeWithServerTranslations(translationList.getTranslations()))
@@ -115,10 +117,26 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   public void updateItem(final TranslationItem item) {
-    Observable.fromCallable(() ->
-        translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item))
+    Observable.fromCallable(() -> {
+          // for upgrades, remove the old file to stop the tafseer from showing up
+          // twice. this happens because old and new tafaseer (ex ibn kathir) have
+          // different ids when they target different schema versions, and so the
+          // old file needs to be removed from the database explicitly
+          final Translation translation = item.getTranslation();
+          if (translation.getMinimumVersion() >= 5) {
+            translationsDBAdapter.deleteTranslationByFile(translation.getFileName());
+          }
+          return translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item));
+        }
     ).subscribeOn(Schedulers.io())
         .subscribe();
+  }
+
+  @WorkerThread
+  public Observable<List<TranslationItem>> syncTranslationsWithCache() {
+    return getCachedTranslationListObservable(false)
+        .filter(translationList -> !translationList.getTranslations().isEmpty())
+        .map(translationList -> mergeWithServerTranslations(translationList.getTranslations()));
   }
 
   Observable<TranslationList> getCachedTranslationListObservable(final boolean forceDownload) {
@@ -158,7 +176,8 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       responseBody.close();
       return result;
     }).doOnNext(translationList -> {
-      if (translationList.getTranslations() != null && !translationList.getTranslations().isEmpty()) {
+      translationList.getTranslations();
+      if (!translationList.getTranslations().isEmpty()) {
         writeTranslationList(translationList);
       }
     });
@@ -205,9 +224,18 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       boolean exists = dbFile.exists();
 
       TranslationItem item;
+      TranslationItem override = null;
       if (exists) {
-        int version = local == null ? getVersionFromDatabase(translation.getFileName()) : local.getVersion();
-        item = new TranslationItem(translation, version);
+        if (local == null) {
+          final Pair<Integer, Integer> versions = getVersionFromDatabase(translation.getFileName());
+          item = new TranslationItem(translation, versions.first);
+          if (versions.second != translation.getMinimumVersion()) {
+            // schema change, write downloaded schema version to the db and return server item
+            override = new TranslationItem(translation.withSchema(versions.second), versions.first);
+          }
+        } else {
+          item = new TranslationItem(translation, local.getVersion());
+        }
       } else {
         item = new TranslationItem(translation);
       }
@@ -220,7 +248,13 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       }
 
       if ((local == null && exists) || (local != null && !exists)) {
-        updates.add(item);
+        if (override != null && item.getTranslation().getMinimumVersion() >= 5) {
+          // certain schema changes, especially those going to v5, keep the same filename while
+          // changing the database entry id. this could cause duplicate entries in the database.
+          // work around it by removing the existing entries before doing the updates.
+          translationsDBAdapter.deleteTranslationByFile(override.getTranslation().getFileName());
+        }
+        updates.add(override == null ? item : override);
       } else if (local != null && local.getLanguageCode() == null) {
         // older items don't have a language code
         updates.add(item);
@@ -234,17 +268,17 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
     return results;
   }
 
-  private int getVersionFromDatabase(String filename) {
+  private Pair<Integer, Integer> getVersionFromDatabase(String filename) {
     try {
       DatabaseHandler handler =
           DatabaseHandler.getDatabaseHandler(appContext, filename, quranFileUtils);
       if (handler.validDatabase()) {
-        return handler.getTextVersion();
+        return new Pair<>(handler.getTextVersion(), handler.getSchemaVersion());
       }
     } catch (Exception e) {
       Timber.d(e, "exception opening database: %s", filename);
     }
-    return 0;
+    return new Pair<>(0, 0);
   }
 
 

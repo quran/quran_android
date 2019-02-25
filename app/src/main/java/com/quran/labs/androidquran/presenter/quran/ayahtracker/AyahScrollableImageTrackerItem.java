@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import androidx.annotation.NonNull;
 
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -13,6 +12,8 @@ import com.quran.labs.androidquran.widgets.QuranPageLayout;
 import com.quran.page.common.draw.ImageDrawHelper;
 
 import java.util.Set;
+
+import androidx.annotation.NonNull;
 
 public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   @NonNull private QuranPageLayout quranPageLayout;
@@ -42,8 +43,20 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
             highlightBounds.top < currentScrollY + screenHeight;
         final boolean bottomOnScreen = highlightBounds.bottom > currentScrollY &&
             highlightBounds.bottom < currentScrollY + screenHeight;
+        final boolean encompassesScreen = highlightBounds.top < currentScrollY &&
+            highlightBounds.bottom > currentScrollY + screenHeight;
 
-        if (!topOnScreen || !bottomOnScreen) {
+        final boolean canEntireAyahBeVisible = highlightBounds.height() < screenHeight;
+
+        // scroll when:
+        // 1. the entire ayah fits on the screen, but the top or bottom aren't on the screen
+        // 2. the entire ayah won't fit on the screen and neither the top is on the screen,
+        //    nor is the bottom on the screen, nor is the current ayah greater than the visible
+        //    viewport of the ayah (i.e. you're not in the middle of the ayah right now).
+        final boolean scroll = (canEntireAyahBeVisible && (!topOnScreen || !bottomOnScreen)) ||
+            (!canEntireAyahBeVisible && !topOnScreen && !bottomOnScreen && !encompassesScreen);
+
+        if (scroll) {
           int y = (int) highlightBounds.top - (int) (0.05 * screenHeight);
           quranPageLayout.smoothScrollLayoutTo(y);
         }

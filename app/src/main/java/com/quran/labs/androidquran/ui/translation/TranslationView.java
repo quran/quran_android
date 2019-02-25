@@ -1,24 +1,30 @@
 package com.quran.labs.androidquran.ui.translation;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
     TranslationAdapter.OnVerseSelectedListener,
@@ -26,7 +32,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   private final TranslationAdapter translationAdapter;
   private final AyahToolBar ayahToolBar;
 
-  private String[] translations;
+  private LocalTranslation[] translations;
   private QuranAyahInfo selectedAyah;
   private OnClickListener onClickListener;
   private OnTranslationActionListener onTranslationActionListener;
@@ -51,7 +57,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     addView(translationRecycler, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     translationRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
       @Override
-      public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+      public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
         // do not modify the RecyclerView from this method or any method called from
@@ -66,12 +72,16 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     ayahToolBar = new AyahToolBar(context, R.menu.share_menu);
     ayahToolBar.setOnItemSelectedListener(this);
     ayahToolBar.setVisibility(View.GONE);
-    addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
-        context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
+
+    //noinspection ConstantConditions
+    if (!BuildConfig.FLAVOR.equals("warsh") && !BuildConfig.FLAVOR.equals("qaloon")) {
+      addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
+          context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
+    }
   }
 
   public void setVerses(@NonNull QuranInfo quranInfo,
-                        @NonNull String[] translations,
+                        @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     this.translations = translations;
 
@@ -100,13 +110,18 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       // added this to guard against a crash that happened when verse.texts was empty
       int verseTexts = verse.texts.size();
       for (int j = 0; j < translations.length; j++) {
-        String text = verseTexts > j ? verse.texts.get(j) : "";
+        final TranslationMetadata metadata = verseTexts > j ? verse.texts.get(j) : null;
+        CharSequence text = metadata != null ? metadata.getText() : "";
         if (!TextUtils.isEmpty(text)) {
           if (wantTranslationHeaders) {
             rows.add(
-                new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR, verse, translations[j]));
+                new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR,
+                    verse,
+                    translations[j].getTranslatorName()));
           }
-          rows.add(new TranslationViewRow(TranslationViewRow.Type.TRANSLATION_TEXT, verse, text));
+          rows.add(new TranslationViewRow(
+              TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j,
+              metadata == null ? null : metadata.getLink()));
         }
       }
 
@@ -144,7 +159,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   @Override
   public boolean onMenuItemClick(MenuItem item) {
     if (onTranslationActionListener != null && selectedAyah != null) {
-      onTranslationActionListener.onTranslationAction(selectedAyah, translations, item.getItemId());
+      onTranslationActionListener.onTranslationAction(selectedAyah,translations, item.getItemId());
       return true;
     }
     return false;

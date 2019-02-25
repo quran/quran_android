@@ -7,25 +7,26 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.source.PageProvider;
+import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.CopyDatabaseUtil;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.QuranPartialPageChecker;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -33,6 +34,11 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import timber.log.Timber;
 
 public class QuranDataActivity extends Activity implements
@@ -51,13 +57,18 @@ public class QuranDataActivity extends Activity implements
   private DefaultDownloadReceiver downloadReceiver = null;
   private boolean needPortraitImages = false;
   private boolean needLandscapeImages = false;
+  private boolean havePermission = false;
   private boolean taskIsRunning;
   private String patchUrl;
+  private int fromVersion;
 
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject PageProvider quranPageProvider;
+  @Inject CopyDatabaseUtil copyDatabaseUtil;
+  @Inject QuranPartialPageChecker quranPartialPageChecker;
+  @Inject TranslationManagerPresenter translationManagerPresenter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -67,7 +78,15 @@ public class QuranDataActivity extends Activity implements
     quranApp.getApplicationComponent().inject(this);
 
     quranSettings = QuranSettings.getInstance(this);
+    fromVersion = quranSettings.getVersion();
     quranSettings.upgradePreferences();
+
+    // replace null app locations (especially those set to null due to failures
+    // of finding a suitable data directory) with the default value to allow
+    // retrying to find a suitable location on app startup.
+    if (!quranSettings.isAppLocationSet()) {
+      quranSettings.setAppCustomLocation(quranSettings.getDefaultLocation());
+    }
   }
 
   @Override
@@ -169,6 +188,7 @@ public class QuranDataActivity extends Activity implements
         }
       }
     } else {
+      havePermission = true;
       checkPages();
     }
   }
@@ -209,6 +229,7 @@ public class QuranDataActivity extends Activity implements
          * also see:
          * http://stackoverflow.com/questions/32471888/
          */
+        havePermission = true;
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionGranted"));
         if (!canWriteSdcardAfterPermissions()) {
           Answers.getInstance().logCustom(new CustomEvent("storagePermissionNeedsRestart"));
@@ -311,6 +332,15 @@ public class QuranDataActivity extends Activity implements
         return false;
       }
 
+      // there was a bug in 2.9.2 through 2.9.2-p2 where an upgraded tafseer could be
+      // downloaded while not retaining the record in the translations database. sync
+      // with the database to fix this in these cases.
+      if (fromVersion > 2920 && fromVersion < 2923) {
+        // subscribe on the current thread which is a background thread
+        translationManagerPresenter.syncTranslationsWithCache()
+            .subscribe();
+      }
+
       // in 2.9.0, there was an initial release of the new madani images - since then, we
       // moved to a new set of images that let us draw the ayah markers and sura headers
       // (and are, consequently, much lighter). they also properly center in the pages,
@@ -373,8 +403,10 @@ public class QuranDataActivity extends Activity implements
       final String width = quranScreenInfo.getWidthParam();
       if (quranScreenInfo.isDualPageMode()) {
         final String tabletWidth = quranScreenInfo.getTabletWidthParam();
+        quranPartialPageChecker.checkPages(latestImagesVersion, totalPages, width, tabletWidth);
         boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
-        boolean havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages);
+        boolean havePortrait = tabletWidth.equals(width) ? haveLandscape :
+            quranFileUtils.haveAllImages(appContext, width, totalPages);
         needPortraitImages = !havePortrait;
         needLandscapeImages = !haveLandscape;
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
@@ -390,8 +422,14 @@ public class QuranDataActivity extends Activity implements
             }
           }
         }
-        return haveLandscape && havePortrait;
+
+        final boolean haveAll = haveLandscape && havePortrait;
+        if (haveAll) {
+          copyArabicDatabaseIfNecessary();
+        }
+        return haveAll;
       } else {
+        quranPartialPageChecker.checkPages(latestImagesVersion, totalPages, width, width);
         boolean haveAll = quranFileUtils.haveAllImages(appContext,
             quranScreenInfo.getWidthParam(), totalPages);
         Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
@@ -399,6 +437,10 @@ public class QuranDataActivity extends Activity implements
         needLandscapeImages = false;
         if (haveAll && !quranFileUtils.isVersion(appContext, width, latestImagesVersion)) {
           patchParam = width;
+        }
+
+        if (haveAll) {
+          copyArabicDatabaseIfNecessary();
         }
         return haveAll;
       }
@@ -423,6 +465,8 @@ public class QuranDataActivity extends Activity implements
           // they are always prompted to re-download images, even after they did.
           Answers.getInstance()
               .logCustom(new CustomEvent("imagesDisappeared")
+                .putCustomAttribute("permissionGranted", havePermission ? "true" : "false")
+                .putCustomAttribute("osVersion", Build.VERSION.SDK_INT)
                 .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation()));
           quranSettings.setDownloadedPages(false);
         }
@@ -455,6 +499,29 @@ public class QuranDataActivity extends Activity implements
           return;
         }
         runListView();
+      }
+    }
+  }
+
+  @WorkerThread
+  private void copyArabicDatabaseIfNecessary() {
+    // in 2.9.1 and above, the Arabic databases were renamed. To make it easier for
+    // people to get them, the app will bundle them with the apk for a few releases.
+    // if the database doesn't exist, let's try to copy it if we can. Only check this
+    // if we have all the files, since if not, they come bundled with the full pages
+    // zip file anyway.
+    if (!quranFileUtils.hasArabicSearchDatabase(getApplicationContext())) {
+      final boolean success =
+          copyDatabaseUtil.copyArabicDatabaseFromAssets(QuranDataProvider.QURAN_ARABIC_DATABASE)
+              .blockingGet();
+      if (success) {
+        Answers.getInstance()
+            .logCustom(new CustomEvent("arabicDatabaseCopied")
+                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE));
+      } else {
+        Answers.getInstance()
+            .logCustom(new CustomEvent("arabicDatabaseCopyFailed")
+                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE));
       }
     }
   }

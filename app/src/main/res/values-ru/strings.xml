@@ -171,7 +171,7 @@
   <string name="prefs_ayah_before_translation_summary">Показывать аят на арабском раньше перевода</string>
   <string name="prefs_category_download">Настройки загрузки</string>
   <string name="prefs_streaming_title">Потоковое</string>
-  <string name="prefs_streaming_summary">При возможности потоковое аудио (только прерывистое аудио)</string>
+  <string name="prefs_streaming_summary">При возможности потоковое аудио</string>
   <string name="prefs_download_amount_title">Объем скачивания</string>
   <string name="prefs_download_amount_summary">Предпочтительный объем загрузки для прерывистого аудио</string>
   <string name="prefs_audio_manager">Аудио менеджер (экспериментальный)</string>

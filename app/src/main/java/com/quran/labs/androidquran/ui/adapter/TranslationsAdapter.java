@@ -1,8 +1,6 @@
 package com.quran.labs.androidquran.ui.adapter;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +12,13 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
 import com.quran.labs.androidquran.dao.translation.TranslationRowData;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.subjects.UnicastSubject;
 
@@ -32,14 +34,15 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     this.context = context;
   }
 
+  @NotNull
   @Override
-  public TranslationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public TranslationViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
     return new TranslationViewHolder(view, viewType);
   }
 
   @Override
-  public void onBindViewHolder(TranslationViewHolder holder, int position) {
+  public void onBindViewHolder(@NotNull TranslationViewHolder holder, int position) {
     TranslationRowData rowItem = translations.get(position);
     switch (holder.getItemViewType()) {
       case R.layout.translation_row:
@@ -63,11 +66,13 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
             leftImage.setVisibility(View.GONE);
           }
           rightImage.setImageResource(R.drawable.ic_cancel);
+          rightImage.setOnClickListener(holder.removeListener);
           rightImage.setVisibility(View.VISIBLE);
           rightImage.setContentDescription(context.getString(R.string.remove_button));
         } else {
           leftImage.setVisibility(View.GONE);
           rightImage.setImageResource(R.drawable.ic_download);
+          rightImage.setOnClickListener(null);
           rightImage.setVisibility(View.VISIBLE);
           rightImage.setOnClickListener(null);
           rightImage.setClickable(false);
@@ -147,10 +152,15 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       return rightImage;
     }
 
+    final View.OnClickListener removeListener = v -> {
+      TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
+      onClickRemoveSubject.onNext(item);
+    };
+
     @Override
     public void onClick(View v) {
       TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
-      if (item.exists()) {
+      if (item.exists() && !item.needsUpgrade()) {
         onClickRemoveSubject.onNext(item);
       } else {
         onClickDownloadSubject.onNext(item);
