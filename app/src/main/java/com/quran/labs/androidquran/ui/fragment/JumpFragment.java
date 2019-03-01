@@ -152,7 +152,9 @@ public class JumpFragment extends DialogFragment {
     builder.setView(layout);
     builder.setPositiveButton(getString(R.string.dialog_ok), (dialog, which) -> {
       try {
+        layout.requestFocus(); // trigger sura completion
         dismiss();
+
         String pageStr = pageInput.getText().toString();
         if (TextUtils.isEmpty(pageStr)) {
           pageStr = pageInput.getHint().toString();
