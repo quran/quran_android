@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.model.quran;
 
 import android.graphics.RectF;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
 import com.quran.labs.androidquran.di.ActivityScope;
@@ -25,7 +24,7 @@ import io.reactivex.schedulers.Schedulers;
 
 @ActivityScope
 public class CoordinatesModel {
-  private static final int PIXEL_THRESHOLD = 10;
+  private static final float THRESHOLD_PERCENTAGE = 0.015f;
 
   private final AyahInfoDatabaseProvider ayahInfoDatabaseProvider;
 
@@ -45,8 +44,7 @@ public class CoordinatesModel {
         .subscribeOn(Schedulers.computation());
   }
 
-  public Observable<AyahCoordinates> getAyahCoordinates(
-      Integer... pages) {
+  public Observable<AyahCoordinates> getAyahCoordinates(Integer... pages) {
     AyahInfoDatabaseHandler database = ayahInfoDatabaseProvider.getAyahInfoHandler();
     if (database == null) {
       return Observable.error(new NoSuchElementException("No AyahInfoDatabaseHandler found!"));
@@ -64,12 +62,14 @@ public class CoordinatesModel {
     final Set<String> keys = original.keySet();
     for (String key : keys) {
       List<AyahBounds> normalBounds = original.get(key);
-      normalizedMap.put(key, normalizeAyahBounds(key, normalBounds));
+      if (normalBounds != null) {
+        normalizedMap.put(key, normalizeAyahBounds(normalBounds));
+      }
     }
     return new AyahCoordinates(ayahCoordinates.getPage(), normalizedMap);
   }
 
-  private List<AyahBounds> normalizeAyahBounds(String key, List<AyahBounds> ayahBounds) {
+  private List<AyahBounds> normalizeAyahBounds(List<AyahBounds> ayahBounds) {
     final int total = ayahBounds.size();
     if (total < 2) {
       return ayahBounds;
@@ -90,10 +90,40 @@ public class CoordinatesModel {
       if (topSize == 1) {
         return bottom;
       } else if (topSize + bottom.size() > 4) {
-        Crashlytics.log("current verse: " + key);
-        Crashlytics.logException(new IllegalStateException("Lines not properly joined for verse"));
-        result.addAll(top);
-        result.addAll(bottom);
+        // this happens when a verse spans 3 incomplete lines (i.e. starts towards the end of
+        // one line, takes one or more whole lines, and ends early on in the line). in this case,
+        // just remove the duplicates.
+
+        // add the first parts of top
+        for (int i = 0; i < topSize - 1; i++) {
+          result.add(top.get(i));
+        }
+
+        // resolve the middle part which may overlap with bottom
+        final AyahBounds lastTop = top.get(topSize - 1);
+        final AyahBounds firstBottom = bottom.get(0);
+        if (lastTop.equals(firstBottom)) {
+          // only add one if they're both the same
+          result.add(lastTop);
+        } else {
+          // if one contains the other, add the larger one
+          final RectF topRect = lastTop.getBounds();
+          final RectF bottomRect = firstBottom.getBounds();
+          if (topRect.contains(bottomRect)) {
+            result.add(lastTop);
+          } else if (bottomRect.contains(topRect)) {
+            result.add(firstBottom);
+          } else {
+            // otherwise add both
+            result.add(lastTop);
+            result.add(firstBottom);
+          }
+        }
+
+        // add everything except the first bottom entry
+        for (int i = 1, size = bottom.size(); i < size; i++) {
+          result.add(bottom.get(i));
+        }
         return result;
       } else {
         // re-consolidate top and middle again, since middle may have changed
@@ -114,8 +144,11 @@ public class CoordinatesModel {
     AyahBounds middle = null;
 
     // only 2 lines - let's see if any of them are full lines
-    boolean firstIsFullLine = Math.abs(firstRect.right - lastRect.right) < PIXEL_THRESHOLD;
-    boolean secondIsFullLine = Math.abs(firstRect.left - lastRect.left) < PIXEL_THRESHOLD;
+    final int pageWidth = ayahInfoDatabaseProvider.getPageWidth();
+    int threshold = (int) (THRESHOLD_PERCENTAGE * pageWidth);
+
+    boolean firstIsFullLine = Math.abs(firstRect.right - lastRect.right) < threshold;
+    boolean secondIsFullLine = Math.abs(firstRect.left - lastRect.left) < threshold;
     if (firstIsFullLine && secondIsFullLine) {
       top.engulf(bottom);
       return Collections.singletonList(top);
@@ -141,7 +174,7 @@ public class CoordinatesModel {
       if (lastRect.left < firstRect.right) {
         RectF middleBounds = new RectF(lastRect.left,
             /* top= */ firstRect.bottom,
-            firstRect.right,
+            Math.min(firstRect.right, lastRect.right),
             /* bottom= */ lastRect.top);
         middle = new AyahBounds(top.getLine(), top.getPosition(), middleBounds);
       }

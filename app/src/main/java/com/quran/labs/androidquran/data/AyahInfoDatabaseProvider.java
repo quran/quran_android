@@ -1,12 +1,13 @@
 package com.quran.labs.androidquran.data;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 
 import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import javax.inject.Inject;
+
+import androidx.annotation.Nullable;
 
 @ActivityScope
 public class AyahInfoDatabaseProvider {
@@ -30,5 +31,9 @@ public class AyahInfoDatabaseProvider {
           AyahInfoDatabaseHandler.getAyahInfoDatabaseHandler(context, filename, quranFileUtils);
     }
     return databaseHandler;
+  }
+
+  public int getPageWidth() {
+    return Integer.valueOf(widthParameter.substring(1));
   }
 }
