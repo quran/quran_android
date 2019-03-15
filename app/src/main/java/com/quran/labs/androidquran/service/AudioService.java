@@ -357,6 +357,12 @@ public class AudioService extends Service implements OnCompletionListener,
     }
 
     final String action = intent.getAction();
+    if (ACTION_PLAYBACK.equals(action)) {
+      // this is the only action with startForegroundService, so
+      // go to the foreground as quickly as possible.
+      setUpAsForeground();
+    }
+
     if (ACTION_CONNECT.equals(action)) {
       if (State.Stopped == state) {
         processStopRequest(true);
@@ -399,12 +405,6 @@ public class AudioService extends Service implements OnCompletionListener,
               new AudioPlaybackInfo(start, 1, 1, basmallah));
           Crashlytics.log("audio request has changed...");
         }
-      }
-
-      // this is the only action called with startForegroundService, so go into the foreground
-      // as quickly as possible.
-      if (!isSetupAsForeground) {
-        setUpAsForeground();
       }
 
       if (intent.getBooleanExtra(EXTRA_STOP_IF_PLAYING, false)) {
