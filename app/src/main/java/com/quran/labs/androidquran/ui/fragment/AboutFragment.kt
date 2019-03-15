@@ -12,9 +12,9 @@ class AboutFragment : PreferenceFragmentCompat() {
     addPreferencesFromResource(R.xml.about)
 
     val flavor = BuildConfig.FLAVOR + "Images"
-    val parent = findPreference("aboutDataSources") as PreferenceCategory
+    val parent = findPreference("aboutDataSources") as PreferenceCategory?
     imagePrefKeys.filter { it != flavor }.map {
-      parent.removePreference(findPreference(it))
+      parent?.removePreference(findPreference(it))
     }
   }
 

@@ -108,13 +108,13 @@ dependencies {
   implementation project(path: ':common:pages')
 
   implementation deps.kotlin.stdlib
-  implementation "androidx.appcompat:appcompat:${appcompatAndroidXVersion}"
-  implementation "androidx.media:media:${androidxVersion}"
-  implementation 'androidx.preference:preference:1.1.0-alpha02'
+  implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
+  implementation "androidx.media:media:${androidxMediaVersion}"
+  implementation "androidx.preference:preference:${androidxPreferencesVersion}"
   implementation "androidx.recyclerview:recyclerview:${androidxVersion}"
   implementation "com.google.android.material:material:${androidxVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.6'
-  implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
+  implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
@@ -129,7 +129,7 @@ dependencies {
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
-  implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
+  implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 
   errorprone 'com.google.errorprone:error_prone_core:2.3.2'
 }
