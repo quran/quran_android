@@ -467,7 +467,9 @@ public class QuranDataActivity extends Activity implements
               .logCustom(new CustomEvent("imagesDisappeared")
                 .putCustomAttribute("permissionGranted", havePermission ? "true" : "false")
                 .putCustomAttribute("osVersion", Build.VERSION.SDK_INT)
-                .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation()));
+                .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation())
+                .putCustomAttribute("storageNotAvailable", storageNotAvailable? "true" : "false"));
+          Timber.e(new IllegalStateException("Deleted Data"), "Unable to Download Pages");
           quranSettings.setDownloadedPages(false);
         }
 
