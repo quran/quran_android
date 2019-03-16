@@ -782,6 +782,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
     if (intent == null) {
       return;
     }

@@ -7,14 +7,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class QuranDownloadNotifier {
   // error messages
@@ -271,6 +272,16 @@ public class QuranDownloadNotifier {
     progressIntent.putExtra(ProgressIntent.ERROR_CODE, errorCode);
     broadcastManager.sendBroadcast(progressIntent);
     return progressIntent;
+  }
+
+  public void notifyDownloadStarting(){
+    String title = appContext.getString(R.string.downloading_title);
+    notificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
+
+    lastMaximum = -1;
+    lastProgress = -1;
+    showNotification(title, appContext.getString(R.string.downloading_message),
+        DOWNLOADING_NOTIFICATION, true, true);
   }
 
   public void stopForeground() {

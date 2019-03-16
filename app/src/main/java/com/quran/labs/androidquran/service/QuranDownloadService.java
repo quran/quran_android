@@ -12,7 +12,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.StatFs;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranApplication;
@@ -35,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -187,8 +187,7 @@ public class QuranDownloadService extends Service implements
         Intent currentLast = lastSentIntent;
         String currentDownload = currentLast == null ? null :
             currentLast.getStringExtra(ProgressIntent.DOWNLOAD_KEY);
-        if (download != null && currentDownload != null &&
-            download.equals(currentDownload)) {
+        if (download != null && download.equals(currentDownload)) {
           Timber.d("resending last broadcast...");
           broadcastManager.sendBroadcast(currentLast);
 
@@ -204,8 +203,7 @@ public class QuranDownloadService extends Service implements
           }
         }
 
-        int what = intent.getIntExtra(EXTRA_DOWNLOAD_TYPE,
-            DOWNLOAD_TYPE_UNDEF);
+        int what = intent.getIntExtra(EXTRA_DOWNLOAD_TYPE, DOWNLOAD_TYPE_UNDEF);
         currentOperations.incrementAndGet();
         // put the message in the queue
         Message msg = serviceHandler.obtainMessage();
@@ -233,6 +231,12 @@ public class QuranDownloadService extends Service implements
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
+    // if it's a download, it wants to be a foreground service.
+    // quickly start as foreground before actually enqueueing the request.
+    if (ACTION_DOWNLOAD_URL.equals(intent.getAction())) {
+      notifier.notifyDownloadStarting();
+    }
+
     handleOnStartCommand(intent, startId);
     return START_NOT_STICKY;
   }
