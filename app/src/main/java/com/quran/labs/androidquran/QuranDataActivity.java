@@ -511,8 +511,11 @@ public class QuranDataActivity extends Activity implements
     // people to get them, the app will bundle them with the apk for a few releases.
     // if the database doesn't exist, let's try to copy it if we can. Only check this
     // if we have all the files, since if not, they come bundled with the full pages
-    // zip file anyway.
-    if (!quranFileUtils.hasArabicSearchDatabase(getApplicationContext())) {
+    // zip file anyway. Note that, for now, this only applies for the madani app.
+
+    //noinspection ConstantConditions
+    if ("madani".equals(BuildConfig.FLAVOR) &&
+        !quranFileUtils.hasArabicSearchDatabase(getApplicationContext())) {
       final boolean success =
           copyDatabaseUtil.copyArabicDatabaseFromAssets(QuranDataProvider.QURAN_ARABIC_DATABASE)
               .blockingGet();

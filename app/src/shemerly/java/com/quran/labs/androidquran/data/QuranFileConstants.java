@@ -11,7 +11,7 @@ public class QuranFileConstants {
 
   // arabic database
   public static final String ARABIC_DATABASE =
-      Build.VERSION.SDK_INT >= 21 ? "quran.ar.uthmani.db" : "quran.ar.uthmani_simple.db";
+      Build.VERSION.SDK_INT >= 21 ? "quran.ar.uthmani.v2.db" : "quran.ar.uthmani_simple.db";
 
   public static final String ARABIC_SHARE_TABLE =
       Build.VERSION.SDK_INT >= 21 ?
