@@ -5,25 +5,23 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
-import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
-import com.quran.labs.androidquran.component.application.DaggerApplicationComponent;
 import com.quran.labs.androidquran.component.application.ApplicationComponent;
+import com.quran.labs.androidquran.component.application.DaggerApplicationComponent;
 import com.quran.labs.androidquran.module.application.ApplicationModule;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.RecordingLogTree;
 
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 public class QuranApplication extends Application {
   private ApplicationComponent applicationComponent;
-  private PagerActivityComponent pagerActivityComponent;
 
   @Override
   public void onCreate() {
@@ -76,9 +74,5 @@ public class QuranApplication extends Application {
       config.setLayoutDirection(config.locale);
     }
     resources.updateConfiguration(config, resources.getDisplayMetrics());
-  }
-
-  public PagerActivityComponent getPagerActivityComponent() {
-    return pagerActivityComponent;
   }
 }
