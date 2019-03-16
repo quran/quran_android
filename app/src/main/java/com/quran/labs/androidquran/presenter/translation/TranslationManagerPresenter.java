@@ -29,10 +29,9 @@ import javax.inject.Singleton;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableMaybeObserver;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -75,16 +74,25 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   }
 
   public void getTranslationsList(boolean forceDownload) {
-    Observable.concat(
-        getCachedTranslationListObservable(forceDownload), getRemoteTranslationListObservable())
-        .firstElement()
+    final boolean isCacheStale = System.currentTimeMillis() -
+        quranSettings.getLastUpdatedTranslationDate() > Constants.MIN_TRANSLATION_REFRESH_TIME;
+    final Observable<TranslationList> source =
+        Observable.concat(getCachedTranslationListObservable(), getRemoteTranslationListObservable());
+    final Observable<TranslationList> observableSource;
+    if (isCacheStale || forceDownload) {
+      observableSource = source;
+    } else {
+      observableSource = source.take(1);
+    }
+
+    observableSource
         .filter(translationList -> !translationList.getTranslations().isEmpty())
         .map(translationList -> mergeWithServerTranslations(translationList.getTranslations()))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new DisposableMaybeObserver<List<TranslationItem>>() {
+        .subscribe(new DisposableObserver<List<TranslationItem>>() {
           @Override
-          public void onSuccess(List<TranslationItem> translationItems) {
+          public void onNext(List<TranslationItem> translationItems) {
             if (currentActivity != null) {
               currentActivity.onTranslationsUpdated(translationItems);
             }
@@ -109,9 +117,6 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
           @Override
           public void onComplete() {
-            if (currentActivity != null) {
-              currentActivity.onErrorDownloadTranslations();
-            }
           }
         });
   }
@@ -134,25 +139,22 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
   @WorkerThread
   public Observable<List<TranslationItem>> syncTranslationsWithCache() {
-    return getCachedTranslationListObservable(false)
+    return getCachedTranslationListObservable()
         .filter(translationList -> !translationList.getTranslations().isEmpty())
         .map(translationList -> mergeWithServerTranslations(translationList.getTranslations()));
   }
 
-  Observable<TranslationList> getCachedTranslationListObservable(final boolean forceDownload) {
+  Observable<TranslationList> getCachedTranslationListObservable() {
     return Observable.defer(() -> {
-      boolean isCacheStale = System.currentTimeMillis() -
-          quranSettings.getLastUpdatedTranslationDate() > Constants.MIN_TRANSLATION_REFRESH_TIME;
-      if (forceDownload || isCacheStale) {
-        return Observable.empty();
-      }
-
       try {
         File cachedFile = getCachedFile();
         if (cachedFile.exists()) {
           Moshi moshi = new Moshi.Builder().build();
           JsonAdapter<TranslationList> jsonAdapter = moshi.adapter(TranslationList.class);
-          return Observable.just(jsonAdapter.fromJson(Okio.buffer(Okio.source(cachedFile))));
+          final TranslationList list = jsonAdapter.fromJson(Okio.buffer(Okio.source(cachedFile)));
+          if (list != null) {
+            return Observable.just(list);
+          }
         }
       } catch (Exception e) {
         Crashlytics.logException(e);
