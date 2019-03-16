@@ -79,7 +79,12 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
     final Observable<TranslationList> source =
         Observable.concat(getCachedTranslationListObservable(), getRemoteTranslationListObservable());
     final Observable<TranslationList> observableSource;
-    if (isCacheStale || forceDownload) {
+    if (forceDownload) {
+      // we only force if we pulled to refresh or are refreshing in the background,
+      // implying that we have data on the screen already (or don't need data in the
+      // background case), so just get remote data.
+      observableSource = getRemoteTranslationListObservable();
+    } else if (isCacheStale) {
       observableSource = source;
     } else {
       observableSource = source.take(1);
