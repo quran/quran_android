@@ -53,7 +53,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private TranslationItem downloadingItem;
   private String databaseDirectory;
   private QuranSettings quranSettings;
-  private DefaultDownloadReceiver mDownloadReceiver = null;
+  private DefaultDownloadReceiver downloadReceiver = null;
 
   private Disposable onClickDownloadDisposable;
   private Disposable onClickRemoveDisposable;
@@ -72,8 +72,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     translationSwipeRefresh = findViewById(R.id.translation_swipe_refresh);
     translationRecycler = findViewById(R.id.translation_recycler);
 
-    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-    translationRecycler.setLayoutManager(mLayoutManager);
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+    translationRecycler.setLayoutManager(layoutManager);
 
     adapter = new TranslationsAdapter(this);
     translationRecycler.setAdapter(adapter);
@@ -87,21 +87,22 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     }
 
     quranSettings = QuranSettings.getInstance(this);
-    presenter.bind(this);
-    presenter.getTranslationsList(false);
     onClickDownloadDisposable = adapter.getOnClickDownloadSubject().subscribe(this::downloadItem);
     onClickRemoveDisposable = adapter.getOnClickRemoveSubject().subscribe(this::removeItem);
 
     translationSwipeRefresh.setOnRefreshListener(this::onRefresh);
+    presenter.bind(this);
+    translationSwipeRefresh.setRefreshing(true);
+    presenter.getTranslationsList(false);
   }
 
   @Override
   public void onStop() {
-    if (mDownloadReceiver != null) {
-      mDownloadReceiver.setListener(null);
+    if (downloadReceiver != null) {
+      downloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this)
-          .unregisterReceiver(mDownloadReceiver);
-      mDownloadReceiver = null;
+          .unregisterReceiver(downloadReceiver);
+      downloadReceiver = null;
     }
     super.onStop();
   }
@@ -256,14 +257,14 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
     final Translation translation = selectedItem.getTranslation();
     DatabaseHandler.clearDatabaseHandlerIfExists(translation.getFileName());
-    if (mDownloadReceiver == null) {
-      mDownloadReceiver = new DefaultDownloadReceiver(this,
+    if (downloadReceiver == null) {
+      downloadReceiver = new DefaultDownloadReceiver(this,
           QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION);
       LocalBroadcastManager.getInstance(this).registerReceiver(
-          mDownloadReceiver, new IntentFilter(
+          downloadReceiver, new IntentFilter(
               QuranDownloadNotifier.ProgressIntent.INTENT_NAME));
     }
-    mDownloadReceiver.setListener(this);
+    downloadReceiver.setListener(this);
 
     // actually start the download
     String url = translation.getFileUrl();

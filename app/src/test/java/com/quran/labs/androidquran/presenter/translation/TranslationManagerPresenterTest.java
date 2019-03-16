@@ -58,7 +58,7 @@ public class TranslationManagerPresenterTest {
   @Test
   public void testGetCachedTranslationListObservable() {
     TestObserver<TranslationList> testObserver = new TestObserver<>();
-    this.translationManager.getCachedTranslationListObservable(true)
+    this.translationManager.getCachedTranslationListObservable()
         .subscribe(testObserver);
     testObserver.awaitTerminalEvent();
     testObserver.assertNoValues();
@@ -85,7 +85,7 @@ public class TranslationManagerPresenterTest {
   }
 
   @Test
-  public void getRemoteTranslationListObservableIssue() throws Exception {
+  public void getRemoteTranslationListObservableIssue() {
     MockResponse mockResponse = new MockResponse();
     mockResponse.setResponseCode(500);
     this.mockWebServer.enqueue(mockResponse);
