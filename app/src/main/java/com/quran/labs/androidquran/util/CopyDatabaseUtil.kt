@@ -15,9 +15,14 @@ class CopyDatabaseUtil @Inject constructor(val context: Context,
       val assets = context.assets
       val files = assets.list("")
       val filename = files?.firstOrNull { it.contains(name) }
-      if (filename != null) {
+      val destination = quranFileUtils.getQuranDatabaseDirectory(context)
+      if (filename != null && destination != null) {
+        val destinationFile = File(destination)
+        if (!destinationFile.isDirectory) {
+          destinationFile.mkdirs()
+        }
+
         // do the copy
-        val destination = quranFileUtils.getQuranDatabaseDirectory(context)
         Okio.source(assets.open(filename)).use { source ->
           Okio.buffer(Okio.sink(File(destination, filename))).use { destination ->
             destination.writeAll(source)
