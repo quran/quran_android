@@ -2,6 +2,10 @@ package com.quran.labs.androidquran.util;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -9,6 +13,8 @@ import timber.log.Timber;
 
 /**
  * A logging implementation which buffers the last 200 messages.
+ * It uploads them to Crashlytics upon the logging of an error.
+ *
  * Slightly modified version of Telecine's BugsnagTree.
  * https://github.com/JakeWharton/Telecine
  */
@@ -20,13 +26,18 @@ public class RecordingLogTree extends Timber.Tree {
   private final Deque<String> buffer = new ArrayDeque<>(BUFFER_SIZE + 1);
 
   @Override
-  protected void log(int priority, String tag, String message, Throwable t) {
+  protected void log(int priority, String tag, @NotNull String message, Throwable t) {
     message = System.currentTimeMillis() + " " + priorityToString(priority) + " " + message;
     synchronized (buffer) {
       buffer.addLast(message);
       if (buffer.size() > BUFFER_SIZE) {
         buffer.removeFirst();
       }
+    }
+
+    if (t != null && priority == Log.ERROR) {
+      Crashlytics.log(getLogs());
+      Crashlytics.logException(t);
     }
   }
 
