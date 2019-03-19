@@ -1145,8 +1145,8 @@ public class AudioService extends Service implements OnCompletionListener,
   }
 
   void pauseNotification() {
-    pausedNotificationBuilder.setContentText(getTitle());
-    notificationManager.notify(NOTIFICATION_ID, pausedNotificationBuilder.build());
+    final NotificationCompat.Builder builder = getPausedNotificationBuilder();
+    notificationManager.notify(NOTIFICATION_ID, builder.build());
   }
 
   /**
@@ -1160,9 +1160,7 @@ public class AudioService extends Service implements OnCompletionListener,
     notificationManager.cancel(QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION);
 
     final Context appContext = getApplicationContext();
-    final PendingIntent pi = PendingIntent.getActivity(
-        appContext, REQUEST_CODE_MAIN, new Intent(appContext, PagerActivity.class),
-        PendingIntent.FLAG_UPDATE_CURRENT);
+    final PendingIntent pi = getNotificationPendingIntent();
 
     final PendingIntent previousIntent = PendingIntent.getService(
         appContext, REQUEST_CODE_PREVIOUS, audioUtils.getAudioIntent(this, ACTION_REWIND),
@@ -1172,12 +1170,6 @@ public class AudioService extends Service implements OnCompletionListener,
         PendingIntent.FLAG_UPDATE_CURRENT);
     final PendingIntent pauseIntent = PendingIntent.getService(
         appContext, REQUEST_CODE_PAUSE, audioUtils.getAudioIntent(this, ACTION_PAUSE),
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    final PendingIntent resumeIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_RESUME, audioUtils.getAudioIntent(this, ACTION_PLAYBACK),
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    final PendingIntent stopIntent = PendingIntent.getService(
-        appContext, REQUEST_CODE_STOP, audioUtils.getAudioIntent(this, ACTION_STOP),
         PendingIntent.FLAG_UPDATE_CURRENT);
 
     // if the notification icon is null, let's try to build it
@@ -1226,6 +1218,20 @@ public class AudioService extends Service implements OnCompletionListener,
     notificationBuilder.setTicker(audioTitle);
     notificationBuilder.setContentText(audioTitle);
 
+    startForeground(NOTIFICATION_ID, notificationBuilder.build());
+    isSetupAsForeground = true;
+  }
+
+  private NotificationCompat.Builder getPausedNotificationBuilder() {
+    final Context appContext = getApplicationContext();
+    final PendingIntent resumeIntent = PendingIntent.getService(
+        appContext, REQUEST_CODE_RESUME, audioUtils.getAudioIntent(this, ACTION_PLAYBACK),
+        PendingIntent.FLAG_UPDATE_CURRENT);
+    final PendingIntent stopIntent = PendingIntent.getService(
+        appContext, REQUEST_CODE_STOP, audioUtils.getAudioIntent(this, ACTION_STOP),
+        PendingIntent.FLAG_UPDATE_CURRENT);
+    final PendingIntent pi = getNotificationPendingIntent();
+
     if (pausedNotificationBuilder == null) {
       pausedNotificationBuilder =
           new NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID);
@@ -1247,10 +1253,15 @@ public class AudioService extends Service implements OnCompletionListener,
                   .setMediaSession(mediaSession.getSessionToken()));
     }
 
-    pausedNotificationBuilder.setContentText(audioTitle);
+    pausedNotificationBuilder.setContentText(getTitle());
+    return pausedNotificationBuilder;
+  }
 
-    startForeground(NOTIFICATION_ID, notificationBuilder.build());
-    isSetupAsForeground = true;
+  private PendingIntent getNotificationPendingIntent() {
+    final Context appContext = getApplicationContext();
+    return PendingIntent.getActivity(
+        appContext, REQUEST_CODE_MAIN, new Intent(appContext, PagerActivity.class),
+        PendingIntent.FLAG_UPDATE_CURRENT);
   }
 
   /**
