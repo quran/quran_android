@@ -85,6 +85,9 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media.app.NotificationCompat.MediaStyle;
 import androidx.media.session.MediaButtonReceiver;
+import io.reactivex.Maybe;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -200,10 +203,9 @@ public class AudioService extends Service implements OnCompletionListener,
   private static final String NOTIFICATION_CHANNEL_ID = "quran_audio_playback";
 
   private NotificationManager notificationManager;
-
-  // TODO: Merge these builders into one
   private NotificationCompat.Builder notificationBuilder;
   private NotificationCompat.Builder pausedNotificationBuilder;
+  private boolean didSetNotificationIconOnNotificationBuilder;
 
   private LocalBroadcastManager broadcastManager = null;
   private BroadcastReceiver noisyAudioStreamReceiver;
@@ -211,10 +213,12 @@ public class AudioService extends Service implements OnCompletionListener,
 
   private int gaplessSura = 0;
   private int notificationColor;
-  private Bitmap notificationIcon;
+  // read by service thread, written on the I/O thread once
+  private volatile Bitmap notificationIcon;
   private Bitmap displayIcon;
   private SparseIntArray gaplessSuraData = null;
   private AsyncTask<Integer, Void, SparseIntArray> timingTask = null;
+  private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
   @Inject QuranInfo quranInfo;
   @Inject AudioUtils audioUtils;
@@ -321,6 +325,11 @@ public class AudioService extends Service implements OnCompletionListener,
     } catch (OutOfMemoryError oom) {
       Crashlytics.logException(oom);
     }
+
+    compositeDisposable.add(
+        Maybe.fromCallable(this::generateNotificationIcon)
+          .subscribeOn(Schedulers.io())
+          .subscribe(bitmap -> notificationIcon = bitmap));
   }
 
   private class MediaSessionCallback extends MediaSessionCompat.Callback {
@@ -1141,12 +1150,46 @@ public class AudioService extends Service implements OnCompletionListener,
   /** Updates the notification. */
   void updateNotification() {
     notificationBuilder.setContentText(getTitle());
+    if (!didSetNotificationIconOnNotificationBuilder && notificationIcon != null) {
+      notificationBuilder.setLargeIcon(notificationIcon);
+      didSetNotificationIconOnNotificationBuilder = true;
+    }
     notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
   }
 
   void pauseNotification() {
     final NotificationCompat.Builder builder = getPausedNotificationBuilder();
     notificationManager.notify(NOTIFICATION_ID, builder.build());
+  }
+
+  /**
+   * Generate the notification icon
+   * This might return null if the icon fails to initialize. This method should
+   * be called from a separate background thread (other than the one the service
+   * is running on).
+   *
+   * @return a bitmap of the notification icon
+   */
+  private Bitmap generateNotificationIcon() {
+    final Context appContext = getApplicationContext();
+    try {
+      Resources resources = appContext.getResources();
+      Bitmap logo = BitmapFactory.decodeResource(resources, R.drawable.icon);
+      int iconWidth = logo.getWidth();
+      int iconHeight = logo.getHeight();
+      ColorDrawable cd = new ColorDrawable(ContextCompat.getColor(appContext,
+          R.color.audio_notification_background_color));
+      Bitmap bitmap = Bitmap.createBitmap(iconWidth * 2, iconHeight * 2, Bitmap.Config.ARGB_8888);
+      Canvas canvas = new Canvas(bitmap);
+      cd.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+      cd.draw(canvas);
+      canvas.drawBitmap(logo, (int) (iconWidth / 2.0), (int) (iconHeight / 2.0), null);
+      return bitmap;
+    } catch (OutOfMemoryError oomError) {
+      // if this happens, we need to handle it gracefully, since it's not crash worthy.
+      Crashlytics.logException(oomError);
+      return null;
+    }
   }
 
   /**
@@ -1172,29 +1215,9 @@ public class AudioService extends Service implements OnCompletionListener,
         appContext, REQUEST_CODE_PAUSE, audioUtils.getAudioIntent(this, ACTION_PAUSE),
         PendingIntent.FLAG_UPDATE_CURRENT);
 
-    // if the notification icon is null, let's try to build it
-    if (notificationIcon == null) {
-      try {
-        Resources resources = appContext.getResources();
-        Bitmap logo = BitmapFactory.decodeResource(resources, R.drawable.icon);
-        int iconWidth = logo.getWidth();
-        int iconHeight = logo.getHeight();
-        ColorDrawable cd = new ColorDrawable(ContextCompat.getColor(appContext,
-                R.color.audio_notification_background_color));
-        Bitmap bitmap = Bitmap.createBitmap(iconWidth * 2, iconHeight * 2, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        cd.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        cd.draw(canvas);
-        canvas.drawBitmap(logo, iconWidth / 2, iconHeight / 2, null);
-        notificationIcon = bitmap;
-      } catch (OutOfMemoryError oomError) {
-        // if this happens, we need to handle it gracefully, since it's not crash worthy.
-        Crashlytics.logException(oomError);
-      }
-    }
-
     String audioTitle = getTitle();
     if (notificationBuilder == null) {
+      final Bitmap icon = notificationIcon;
       notificationBuilder = new NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID);
       notificationBuilder
           .setSmallIcon(R.drawable.ic_notification)
@@ -1208,11 +1231,12 @@ public class AudioService extends Service implements OnCompletionListener,
           .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
           .setShowWhen(false)
           .setWhen(0) // older platforms seem to ignore setShowWhen(false)
-          .setLargeIcon(notificationIcon)
+          .setLargeIcon(icon)
           .setStyle(
               new MediaStyle()
                   .setShowActionsInCompactView(0, 1, 2)
                   .setMediaSession(mediaSession.getSessionToken()));
+      didSetNotificationIconOnNotificationBuilder = icon != null;
     }
 
     notificationBuilder.setTicker(audioTitle);
@@ -1311,6 +1335,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
   @Override
   public void onDestroy() {
+    compositeDisposable.clear();
     // Service is being killed, so make sure we release our resources
     serviceHandler.removeCallbacksAndMessages(null);
     serviceLooper.quit();
