@@ -47,7 +47,9 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.support.v4.media.MediaMetadataCompat;
@@ -74,7 +76,6 @@ import com.quran.labs.androidquran.util.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -218,32 +219,31 @@ public class AudioService extends Service implements OnCompletionListener,
   @Inject QuranInfo quranInfo;
   @Inject AudioUtils audioUtils;
 
-  public static final int MSG_START_AUDIO = 1;
-  public static final int MSG_UPDATE_AUDIO_POS = 2;
+  private static final int MSG_INCOMING = 1;
+  private static final int MSG_START_AUDIO = 2;
+  private static final int MSG_UPDATE_AUDIO_POS = 3;
 
-  private static class ServiceHandler extends Handler {
+  private class ServiceHandler extends Handler {
 
-    private WeakReference<AudioService> serviceRef;
-
-    public ServiceHandler(AudioService service) {
-      serviceRef = new WeakReference<>(service);
+    ServiceHandler(Looper looper) {
+      super(looper);
     }
 
     @Override
     public void handleMessage(Message msg) {
-      final AudioService service = serviceRef.get();
-      if (service == null || msg == null) {
-        return;
-      }
-      if (msg.what == MSG_START_AUDIO) {
-        service.configAndStartMediaPlayer();
+      if (msg.what == MSG_INCOMING && msg.obj != null) {
+        Intent intent = (Intent) msg.obj;
+        handleIntent(intent);
+      } else if (msg.what == MSG_START_AUDIO) {
+        configAndStartMediaPlayer();
       } else if (msg.what == MSG_UPDATE_AUDIO_POS) {
-        service.updateAudioPlayPosition();
+        updateAudioPlayPosition();
       }
     }
   }
 
-  private Handler handler;
+  private Looper serviceLooper;
+  private ServiceHandler serviceHandler;
 
   /**
    * Makes sure the media player exists and has been reset. This will create
@@ -279,7 +279,13 @@ public class AudioService extends Service implements OnCompletionListener,
   @Override
   public void onCreate() {
     Timber.i("debug: Creating service");
-    handler = new ServiceHandler(this);
+    final HandlerThread thread = new HandlerThread("AyahAudioService",
+        android.os.Process.THREAD_PRIORITY_BACKGROUND);
+    thread.start();
+
+    // Get the HandlerThread's Looper and use it for our Handler
+    serviceLooper = thread.getLooper();
+    serviceHandler = new ServiceHandler(serviceLooper);
 
     final Context appContext = getApplicationContext();
     ((QuranApplication) appContext).getApplicationComponent().inject(this);
@@ -350,19 +356,25 @@ public class AudioService extends Service implements OnCompletionListener,
     if (intent == null) {
       // handle a crash that occurs where intent comes in as null
       if (State.Stopped == state) {
-        handler.removeCallbacksAndMessages(null);
+        serviceHandler.removeCallbacksAndMessages(null);
         stopSelf();
       }
-      return START_NOT_STICKY;
-    }
+    } else {
+      final String action = intent.getAction();
+      if (ACTION_PLAYBACK.equals(action)) {
+        // this is the only action with startForegroundService, so
+        // go to the foreground as quickly as possible.
+        setUpAsForeground();
+      }
 
+      final Message message = serviceHandler.obtainMessage(MSG_INCOMING, intent);
+      serviceHandler.sendMessage(message);
+    }
+    return START_NOT_STICKY;
+  }
+
+  private void handleIntent(Intent intent) {
     final String action = intent.getAction();
-    if (ACTION_PLAYBACK.equals(action)) {
-      // this is the only action with startForegroundService, so
-      // go to the foreground as quickly as possible.
-      setUpAsForeground();
-    }
-
     if (ACTION_CONNECT.equals(action)) {
       if (State.Stopped == state) {
         processStopRequest(true);
@@ -435,9 +447,6 @@ public class AudioService extends Service implements OnCompletionListener,
     } else {
       MediaButtonReceiver.handleIntent(mediaSession, intent);
     }
-
-    // we don't want the service to restart if killed
-    return START_NOT_STICKY;
   }
 
   private class ReadGaplessDataTask extends AsyncTask<Integer, Void, SparseIntArray> {
@@ -559,7 +568,7 @@ public class AudioService extends Service implements OnCompletionListener,
         ayahTime = gaplessSuraData.get(ayah);
         if (Math.abs(pos - ayahTime) < 150) {
           // shouldn't change ayahs if the delta is just 150ms...
-          handler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150);
+          serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150);
           return;
         }
 
@@ -571,7 +580,7 @@ public class AudioService extends Service implements OnCompletionListener,
           return;
         } else if (nextSura != sura || nextAyah != updatedAyah) {
           // remove any messages currently in the queue
-          handler.removeCallbacksAndMessages(null);
+          serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS);
 
           // if the ayah hasn't changed, we're repeating the ayah,
           // otherwise, we're repeating a range. this variable is
@@ -600,7 +609,7 @@ public class AudioService extends Service implements OnCompletionListener,
           boolean success = audioQueue.playAt(sura + 1, 1, true);
           if (success && audioQueue.getCurrentSura() == sura) {
             // remove any messages currently in the queue
-            handler.removeCallbacksAndMessages(null);
+            serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS);
 
             // jump back to the ayah we should repeat and play it
             pos = getSeekPosition(false);
@@ -623,7 +632,7 @@ public class AudioService extends Service implements OnCompletionListener,
         } else if (t > 10000) {
           t = 10000;
         }
-        handler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
+        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
       }
       // if we're on the last ayah, don't do anything - let the file
       // complete on its own to avoid getCurrentPosition() bugs.
@@ -676,7 +685,7 @@ public class AudioService extends Service implements OnCompletionListener,
     if (State.Playing == state) {
       // Pause media player and cancel the 'foreground service' state.
       state = State.Paused;
-      handler.removeCallbacksAndMessages(null);
+      serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS);
       player.pause();
       setState(PlaybackStateCompat.STATE_PAUSED);
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
@@ -762,7 +771,7 @@ public class AudioService extends Service implements OnCompletionListener,
 
   private void processStopRequest(boolean force) {
     setState(PlaybackStateCompat.STATE_STOPPED);
-    handler.removeCallbacksAndMessages(null);
+    serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS);
 
     if (State.Preparing == state) {
       shouldStop = true;
@@ -777,7 +786,7 @@ public class AudioService extends Service implements OnCompletionListener,
       giveUpAudioFocus();
 
       // service is no longer necessary. Will be started again if needed.
-      handler.removeCallbacksAndMessages(null);
+      serviceHandler.removeCallbacksAndMessages(null);
       stopSelf();
 
       // stop async task if it's running
@@ -908,11 +917,11 @@ public class AudioService extends Service implements OnCompletionListener,
         } else {
           Timber.d("no timing data yet, will try again...");
           // try to play again after 200 ms
-          handler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200);
+          serviceHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200);
           return;
         }
       } else if (audioRequest.isGapless()) {
-        handler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
+        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
       }
 
       player.start();
@@ -1071,7 +1080,7 @@ public class AudioService extends Service implements OnCompletionListener,
     Timber.d("seek complete! %d vs %d",
         mediaPlayer.getCurrentPosition(), player.getCurrentPosition());
     player.start();
-    handler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
+    serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
   }
 
   /** Called when media player is done playing current file. */
@@ -1292,7 +1301,8 @@ public class AudioService extends Service implements OnCompletionListener,
   @Override
   public void onDestroy() {
     // Service is being killed, so make sure we release our resources
-    handler.removeCallbacksAndMessages(null);
+    serviceHandler.removeCallbacksAndMessages(null);
+    serviceLooper.quit();
     unregisterReceiver(noisyAudioStreamReceiver);
     state = State.Stopped;
     relaxResources(true, true);
