@@ -107,18 +107,18 @@ public class QuranFileUtils {
   public String getPotentialFallbackDirectory(Context context, int totalPages) {
     final String state = Environment.getExternalStorageState();
     if (state.equals(Environment.MEDIA_MOUNTED)) {
-      if (haveAllImages(context, "_1920", totalPages)) {
+      if (haveAllImages(context, "_1920", totalPages, false)) {
         return "1920";
-      } else if (haveAllImages(context, "_1280", totalPages)) {
+      } else if (haveAllImages(context, "_1280", totalPages, false)) {
         return "1280";
-      } else if (haveAllImages(context, "_1024", totalPages)) {
+      } else if (haveAllImages(context, "_1024", totalPages, false)) {
         return "1024";
       }
     }
     return null;
   }
 
-  public boolean haveAllImages(Context context, String widthParam, int totalPages) {
+  public boolean haveAllImages(Context context, String widthParam, int totalPages, boolean makeDirectory) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
     Timber.d("haveAllImages: for width %s, directory is: %s", widthParam, quranDirectory);
     if (quranDirectory == null) {
@@ -147,8 +147,11 @@ public class QuranFileUtils {
         }
         return true;
       } else {
-        Timber.d("haveAllImages: couldn't find the directory, so making it instead");
-        makeQuranDirectory(context, widthParam);
+        Timber.d("haveAllImages: couldn't find the directory, so %s",
+            makeDirectory ? "making it instead." : "doing nothing.");
+        if (makeDirectory) {
+          makeQuranDirectory(context, widthParam);
+        }
       }
     }
     return false;
