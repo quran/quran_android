@@ -113,8 +113,6 @@ public class QuranFileUtils {
         return "1280";
       } else if (haveAllImages(context, "_1024", totalPages)) {
         return "1024";
-      } else {
-        return "";
       }
     }
     return null;
@@ -150,10 +148,7 @@ public class QuranFileUtils {
         return true;
       } else {
         Timber.d("haveAllImages: couldn't find the directory, so making it instead");
-        makeQuranDirectory(context);
-        if (!IMAGES_DIRECTORY.isEmpty()) {
-          makeQuranImagesDirectory(context);
-        }
+        makeQuranDirectory(context, widthParam);
       }
     }
     return false;
@@ -203,8 +198,8 @@ public class QuranFileUtils {
     }
   }
 
-  public boolean makeQuranDirectory(Context context) {
-    String path = getQuranImagesDirectory(context);
+  public boolean makeQuranDirectory(Context context, String widthParam) {
+    String path = getQuranImagesDirectory(context, widthParam);
     if (path == null) {
       return false;
     }
@@ -215,10 +210,6 @@ public class QuranFileUtils {
     } else {
       return directory.mkdirs() && writeNoMediaFile(path);
     }
-  }
-
-  private boolean makeQuranImagesDirectory(Context context) {
-    return makeDirectory(getQuranImagesDirectory(context));
   }
 
   private boolean makeDirectory(String path) {
@@ -247,8 +238,9 @@ public class QuranFileUtils {
   @NonNull
   private Response getImageFromWeb(OkHttpClient okHttpClient,
       Context context, String filename, boolean isRetry) {
+    final String widthParam = quranScreenInfo.getWidthParam();
     String urlString = IMG_BASE_URL + "width"
-        + quranScreenInfo.getWidthParam() + File.separator
+        + widthParam + File.separator
         + filename;
     Timber.d("want to download: %s", urlString);
 
@@ -274,9 +266,9 @@ public class QuranFileUtils {
           // throw if an error occurred while decoding the stream
           exceptionCatchingSource.throwIfCaught();
           if (bitmap != null) {
-            String path = getQuranImagesDirectory(context);
+            String path = getQuranImagesDirectory(context, widthParam);
             int warning = Response.WARN_SD_CARD_NOT_FOUND;
-            if (path != null && makeQuranDirectory(context)) {
+            if (path != null && makeQuranDirectory(context, widthParam)) {
               path += File.separator + filename;
               warning = tryToSaveBitmap(bitmap, path) ? 0 : Response.WARN_COULD_NOT_SAVE_FILE;
             }
@@ -537,6 +529,7 @@ public class QuranFileUtils {
     } else if (newDirectory.exists() || newDirectory.mkdirs()) {
       try {
         copyFileOrDirectory(currentDirectory, newDirectory);
+        Timber.d("Removing " + currentDirectory + " due to move to " + newDirectory);
         deleteFileOrDirectory(currentDirectory);
         return true;
       } catch (IOException e) {

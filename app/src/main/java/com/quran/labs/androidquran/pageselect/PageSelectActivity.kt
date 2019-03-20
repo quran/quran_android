@@ -3,9 +3,8 @@ package com.quran.labs.androidquran.pageselect
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
+import androidx.appcompat.app.AppCompatActivity
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.quran.labs.androidquran.QuranApplication
@@ -72,6 +71,7 @@ class PageSelectActivity : AppCompatActivity() {
   private fun onPageTypeSelected(type: String) {
     val pageType = quranSettings.pageType
     if (pageType != type) {
+      quranSettings.setDownloadedPages(false)
       quranSettings.pageType = type
       Answers.getInstance().logCustom(
           CustomEvent("pageTypeChanged").putCustomAttribute("pageType", type))
