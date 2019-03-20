@@ -382,9 +382,9 @@ public class QuranDataActivity extends Activity implements
       if (quranScreenInfo.isDualPageMode()) {
         final String tabletWidth = quranScreenInfo.getTabletWidthParam();
         quranPartialPageChecker.checkPages(latestImagesVersion, totalPages, width, tabletWidth);
-        boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages);
+        boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages, true);
         boolean havePortrait = tabletWidth.equals(width) ? haveLandscape :
-            quranFileUtils.haveAllImages(appContext, width, totalPages);
+            quranFileUtils.haveAllImages(appContext, width, totalPages, true);
         needPortraitImages = !havePortrait;
         needLandscapeImages = !haveLandscape;
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
@@ -409,7 +409,7 @@ public class QuranDataActivity extends Activity implements
       } else {
         quranPartialPageChecker.checkPages(latestImagesVersion, totalPages, width, width);
         boolean haveAll = quranFileUtils.haveAllImages(appContext,
-            quranScreenInfo.getWidthParam(), totalPages);
+            quranScreenInfo.getWidthParam(), totalPages, true);
         Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
         needPortraitImages = !haveAll;
         needLandscapeImages = false;
