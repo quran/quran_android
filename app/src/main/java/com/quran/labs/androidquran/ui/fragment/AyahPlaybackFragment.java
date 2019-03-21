@@ -153,7 +153,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           }
         }
         pagerActivity.playFromAyah(currentStart, currentEnding, page, verseRepeat,
-            rangeRepeat, enforceRange, true);
+            rangeRepeat, enforceRange);
       } else if (shouldEnforce != enforceRange ||
           rangeRepeatCount != rangeRepeat ||
           verseRepeatCount != verseRepeat) {
@@ -162,7 +162,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
             rangeRepeat, verseRepeat, enforceRange)) {
           // audio stopped in the process, let's start it
           pagerActivity.playFromAyah(currentStart, currentEnding, page, verseRepeat,
-              rangeRepeat, enforceRange, true);
+              rangeRepeat, enforceRange);
         }
       }
       pagerActivity.endAyahMode();

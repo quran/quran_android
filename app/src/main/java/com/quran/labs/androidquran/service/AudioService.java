@@ -158,12 +158,6 @@ public class AudioService extends Service implements OnCompletionListener,
   // so user can pass in a serializable LegacyAudioRequest to the intent
   public static final String EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO";
 
-  // ignore the passed in play info if we're already playing
-  public static final String EXTRA_IGNORE_IF_PLAYING = "com.quran.labs.androidquran.IGNORE_IF_PLAYING";
-
-  // used to override what is playing now (stop then play)
-  public static final String EXTRA_STOP_IF_PLAYING = "com.quran.labs.androidquran.STOP_IF_PLAYING";
-
   // indicates the state our service:
   private enum State {
     Stopped,    // media player is stopped and not prepared to play
@@ -415,20 +409,15 @@ public class AudioService extends Service implements OnCompletionListener,
     } else if (ACTION_PLAYBACK.equals(action)) {
       AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
       if (playInfo != null) {
-        if (State.Stopped == state ||
-            !intent.getBooleanExtra(EXTRA_IGNORE_IF_PLAYING, false)) {
-          audioRequest = playInfo;
+        audioRequest = playInfo;
 
-          final SuraAyah start = audioRequest.getStart();
-          final boolean basmallah = !playInfo.isGapless() &&
-              SuraAyahExtensionKt.requiresBasmallah(start);
-          audioQueue = new AudioQueue(quranInfo, audioRequest,
-              new AudioPlaybackInfo(start, 1, 1, basmallah));
-          Crashlytics.log("audio request has changed...");
-        }
-      }
+        final SuraAyah start = audioRequest.getStart();
+        final boolean basmallah = !playInfo.isGapless() &&
+            SuraAyahExtensionKt.requiresBasmallah(start);
+        audioQueue = new AudioQueue(quranInfo, audioRequest,
+            new AudioPlaybackInfo(start, 1, 1, basmallah));
+        Crashlytics.log("audio request has changed...");
 
-      if (intent.getBooleanExtra(EXTRA_STOP_IF_PLAYING, false)) {
         if (player != null) {
           player.stop();
         }
