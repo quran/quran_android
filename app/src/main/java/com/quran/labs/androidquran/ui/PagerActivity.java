@@ -1224,8 +1224,8 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   public void handleDownloadSuccess() {
     refreshQuranPages();
-    audioPresenter.onDownloadSuccess();
     audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+    audioPresenter.onDownloadSuccess();
   }
 
   @Override
@@ -1491,6 +1491,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
       lastAudioRequest = request;
       audioStatusBar.setRepeatCount(request.getRepeatInfo());
+      audioStatusBar.switchMode(AudioStatusBar.LOADING_MODE);
     }
 
     Crashlytics.log("starting foreground service for audio playback");
@@ -1595,6 +1596,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       startService(i);
     } else {
       audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
+      startService(audioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
     }
   }
 
