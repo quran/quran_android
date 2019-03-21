@@ -31,15 +31,17 @@ import java.util.List;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
 
 public class AudioStatusBar extends LeftToRightLinearLayout {
 
   public static final int STOPPED_MODE = 1;
   public static final int DOWNLOADING_MODE = 2;
-  public static final int PLAYING_MODE = 3;
-  public static final int PAUSED_MODE = 4;
-  public static final int PROMPT_DOWNLOAD_MODE = 5;
+  public static final int LOADING_MODE = 3;
+  public static final int PLAYING_MODE = 4;
+  public static final int PAUSED_MODE = 5;
+  public static final int PROMPT_DOWNLOAD_MODE = 6;
 
   private Context context;
   private int currentMode;
@@ -160,8 +162,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
       showStoppedMode();
     } else if (mode == PROMPT_DOWNLOAD_MODE) {
       showPromptForDownloadMode();
-    } else if (mode == DOWNLOADING_MODE) {
-      showDownloadingMode();
+    } else if (mode == DOWNLOADING_MODE || mode == LOADING_MODE) {
+      showProgress(mode);
     } else if (mode == PLAYING_MODE) {
       showPlayingMode(false);
     } else {
@@ -348,23 +350,24 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     addView(mPromptText, params);
   }
 
-  private void showDownloadingMode() {
-    currentMode = DOWNLOADING_MODE;
+  private void showProgress(int mode) {
+    currentMode = mode;
 
     removeAllViews();
 
+    final int text = mode == DOWNLOADING_MODE ? R.string.downloading_title : R.string.index_loading;
     if (isRtl) {
-      addDownloadProgress();
+      addDownloadProgress(text);
       addSeparator();
       addButton(R.drawable.ic_cancel, false);
     } else {
       addButton(R.drawable.ic_cancel, false);
       addSeparator();
-      addDownloadProgress();
+      addDownloadProgress(text);
     }
   }
 
-  private void addDownloadProgress() {
+  private void addDownloadProgress(@StringRes int text) {
     LinearLayout ll = new LinearLayout(context);
     ll.setOrientation(LinearLayout.VERTICAL);
 
@@ -380,7 +383,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     progressText.setTextColor(Color.WHITE);
     progressText.setGravity(Gravity.CENTER_VERTICAL);
     progressText.setTextSize(TypedValue.COMPLEX_UNIT_PX, textFontSize);
-    progressText.setText(R.string.downloading_title);
+    progressText.setText(text);
 
     ll.addView(progressText, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
@@ -525,7 +528,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
               haveCriticalError = false;
               switchMode(STOPPED_MODE);
             } else {
-              audioBarListener.onCancelPressed(currentMode != PROMPT_DOWNLOAD_MODE);
+              audioBarListener.onCancelPressed(currentMode == DOWNLOADING_MODE);
             }
             break;
           case R.drawable.ic_accept:
