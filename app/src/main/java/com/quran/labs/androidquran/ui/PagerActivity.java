@@ -155,7 +155,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private int highlightedSura = -1;
   private int highlightedAyah = -1;
   private int ayahToolBarTotalHeight;
-  private boolean shouldOverridePlaying = false;
   private DefaultDownloadReceiver downloadReceiver;
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
@@ -1442,7 +1441,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void playFromAyah(int page, int startSura, int startAyah) {
     final SuraAyah start = new SuraAyah(startSura, startAyah);
-    playFromAyah(start, null, page, 0, 0, false, false);
+    playFromAyah(start, null, page, 0, 0, false);
   }
 
   public void playFromAyah(SuraAyah start,
@@ -1450,12 +1449,7 @@ public class PagerActivity extends QuranActionBarActivity implements
                            int page,
                            int verseRepeat,
                            int rangeRepeat,
-                           boolean enforceRange,
-                           boolean force) {
-    if (force) {
-      shouldOverridePlaying = true;
-    }
-
+                           boolean enforceRange) {
     final SuraAyah ending = end != null ? end :
         audioUtils.getLastAyahToPlay(start, page,
             quranSettings.getPreferredDownloadAmount(), isDualPages);
@@ -1499,16 +1493,6 @@ public class PagerActivity extends QuranActionBarActivity implements
       audioStatusBar.setRepeatCount(request.getRepeatInfo());
     }
 
-    if (shouldOverridePlaying) {
-      // force the current audio to stop and start playing new request
-      i.putExtra(AudioService.EXTRA_STOP_IF_PLAYING, true);
-      shouldOverridePlaying = false;
-    }
-    // just a playback request, so tell audio service to just continue
-    // playing (and don't store new audio data) if it was already playing
-    else {
-      i.putExtra(AudioService.EXTRA_IGNORE_IF_PLAYING, true);
-    }
     Crashlytics.log("starting foreground service for audio playback");
     ContextCompat.startForegroundService(this, i);
   }
