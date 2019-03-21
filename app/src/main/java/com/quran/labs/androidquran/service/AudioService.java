@@ -787,7 +787,7 @@ public class AudioService extends Service implements OnCompletionListener,
       relaxResources(false, true);
     }
 
-    if (force || State.Playing == state || State.Paused == state) {
+    if (force || State.Stopped != state) {
       state = State.Stopped;
 
       // let go of all resources...
@@ -911,6 +911,7 @@ public class AudioService extends Service implements OnCompletionListener,
     if (playerOverride) {
       if (!player.isPlaying()) {
         player.start();
+        state = State.Playing;
       }
       return;
     }
@@ -934,6 +935,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       player.start();
+      state = State.Playing;
     }
   }
 
@@ -1089,6 +1091,7 @@ public class AudioService extends Service implements OnCompletionListener,
     Timber.d("seek complete! %d vs %d",
         mediaPlayer.getCurrentPosition(), player.getCurrentPosition());
     player.start();
+    state = State.Playing;
     serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
   }
 
@@ -1119,7 +1122,6 @@ public class AudioService extends Service implements OnCompletionListener,
     Timber.d("okay, prepared!");
 
     // The media player is done preparing. That means we can start playing!
-    state = State.Playing;
     if (shouldStop) {
       processStopRequest();
       shouldStop = false;
