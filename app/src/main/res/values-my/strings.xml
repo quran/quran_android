@@ -11,6 +11,7 @@
   <string name="downloading_message">Sila tunggu fail dimuat turun. (Boleh menyambung semula)</string>
   <string name="extracting_title">Sedang Proses&#8230;</string>
   <string name="menu_about">Tentang Kami</string>
+  <string name="menu_other_apps">Aplikasi lain</string>
   <string name="menu_settings">Tetapan</string>
   <string name="menu_jump_last_page">Halaman terakhir</string>
   <string name="menu_bookmarks">Penanda</string>
@@ -27,6 +28,49 @@
   <string name="menu_jump">Capaian cepat</string>
   <string name="gotoPage">Ke halaman</string>
   <string name="cancel">Batal</string>
+
+  <!-- about -->
+  <string name="about_description">Quran for Android adalah aplikasi Quran percuma. Sila panjangkan doa untuk para sukarela yang telah menyumbang.</string>
+  <string name="about_data_sources">Sumber data</string>
+  <string name="about_images">Gambar</string>
+  <string name="about_madani_images">Gambar Quran adalah berasaskan fon daripada King Fahd Quran Printing Complex</string>
+  <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
+  <string name="about_naskh_images">Gambar-gambar Quran untuk aplikasi Naskh adalah diambil (dengan kebenaran) daripada SHL Info Systems</string>
+  <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
+  <string name="about_qaloon_images">Gambar-gambar Qaloon adalah digunakan dengan kebenaran Nous Memes Editions Et Diffusion (Tunisia)</string>
+  <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
+  <string name="about_quranicaudio_summary">mp3 pembacaan tanpa jurang Quran</string>
+  <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
+  <string name="about_quran_ksu">Electronic Moshaf Project</string>
+  <string name="about_quran_ksu_summary">Projek King Saud University Electronic Moshaf adalah sumber terjemahan arab aplikasi ini dan beberapa bahasa lain. Ia juga adalah sumber bagi pembacaan Dr. Ayman Suwaid.</string>
+  <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
+  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
+  <string name="about_furqan_summary">Teks Uthmani dan terjemahan Arab</string>
+  <string name="about_furqan_url" translatable="false">https://furqan.co</string>
+  <string name="about_tanzil" translatable="false">Tanzil</string>
+  <string name="about_tanzil_summary">Terjemahan untuk pelbagai bahasa</string>
+  <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
+  <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
+  <string name="about_noorhidayat_summary">Fon terjemahan Noorehira dan Mufti Taqi</string>
+  <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
+  <string name="about_open_source">Projek Sumber Terbuka</string>
+  <string name="about_dagger2" translatable="false">Dagger 2</string>
+  <string name="about_dagger2_url" translatable="false">https://google.github.io/dagger</string>
+  <string name="about_okhttp" translatable="false">OkHttp</string>
+  <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
+  <string name="about_rxjava" translatable="false">RxJava</string>
+  <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
+  <string name="about_rxandroid" translatable="false">RxAndroid</string>
+  <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
+  <string name="about_moshi" translatable="false">Moshi</string>
+  <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
+  <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
+  <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
+  <string name="about_others">Lain-lain</string>
+  <string name="about_contributors">Senarai Penyumbang</string>
+  <string name="about_contributors_summary">Senarai para penyumbang untuk projek aplikasi Quran for Android</string>
+  <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
+
 
   <!-- help -->
   <string name="help_title">Soalan yang sering ditanya (FAQ)</string>
@@ -53,10 +97,22 @@
   <string name="search_hint">Cari dalam Quran</string>
   <string name="quranSearchType">Ayat Quran</string>
 
+  <plurals name="files_downloaded">
+    <item quantity="one">Satu surah telah dimuat turun</item>
+    <item quantity="other">%1$d surah telah dimuat turun</item>
+  </plurals>
+
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
+    <item quantity="one">Satu hasil carian untuk \"%1$s\": </item>
     <item quantity="other">%2$d hasil carian untuk \"%1$s\": </item>
   </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Quran perlukan kebenaran untuk menyimpan data dalam storan luaran.
+    Quran masih akan berfungsi tanpa kebenaran ini tetapi jika anda nyahpasang aplikasi, segala data surah, audio dan lain-lain yang dimuat turun akan hilang.
+    Beri kebenaran?</string>
+  <string name="storage_permission_please_restart">Sila keluar dan mulakan semula aplikasi untuk tetapan terkini.</string>
 
   <!-- Search messages -->
   <string name="found_in_sura">Dijumpai dalam Surah %1$s, Ayat %2$d</string>
@@ -73,6 +129,9 @@
   <string name="prefs_use_arabic_title">Mod Aplikasi Arab</string>
   <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab</string>
   <string name="prefs_new_background_title">Latar beakang baru</string>
+  <string name="prefs_immersive_in_portrait_title">Skrin penuh dalam mod potret</string>
+  <string name="prefs_immersive_in_portrait_summary_enabled">Kedua mod potret dan landskap akan memaparkan gambar dalam skrin penuh</string>
+  <string name="prefs_immersive_in_portrait_summary_disabled">Hanya mod landskap akan memaparkan gambar dalam skrin penuh</string>
   <string name="prefs_lock_orientation_title">Kunci orientasi layar</string>
   <string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mod orientasi tetap</string>
   <string name="prefs_lock_orientation_summary_off">Penyesuaian orientasi layar secara automatik</string>
@@ -87,6 +146,8 @@
   <string name="prefs_overlay_page_info_summary">Nombor halaman, nama surah dan nomor juz\' akan dipaparkan</string>
   <string name="prefs_display_marker_title">Paparkan popup penanda</string>
   <string name="prefs_display_marker_summary">Paparkan popup ketika mencapai pergantian juz\', hizb, dll</string>
+  <string name="prefs_highlight_bookmarks_title">Papar penanda</string>
+  <string name="prefs_highlight_bookmarks_summary">Papar penanda ketika membaca</string>
   <string name="prefs_translation_text_title">Saiz teks terjemahan</string>
   <string name="prefs_translations">Terjemahan</string>
   <string name="prefs_translations_summary">Muat turun dan penetapan terjemahan</string>
@@ -97,12 +158,16 @@
   <string name="prefs_streaming_summary">Stream audio apabila boleh</string>
   <string name="prefs_download_amount_title">Paket Muat Turun</string>
   <string name="prefs_download_amount_summary">Paket fail setiap muat turun untuk audio berjurang.</string>
+  <string name="prefs_audio_manager">Pengurus audio (dalam cubaan)</string>
+  <string name="prefs_audio_manager_summary">Urus dan muat turun audio Quran</string>
   <string name="downloaded_translations">Telah dimuat turun</string>
   <string name="available_translations">Boleh untuk dimuat turun</string>
   <string name="remove_button">Hapus</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Lokasi aplikasi</string>
   <string name="prefs_app_location_summary">Pilih lokasi untuk menyimpan fail</string>
+  <string name="prefs_send_logs_title">Hantar log</string>
+  <string name="prefs_send_logs_summary">Hantar log untuk membantu pemaju aplikasi</string>
   <string name="prefs_sdcard_internal">Simpanan Dalaman</string>
   <string name="prefs_sdcard_external">SD Card Luar %1$d</string>
   <string name="prefs_app_size">Saiz aplikasi</string>
@@ -110,10 +175,23 @@
   <string name="prefs_copying_app_files">Menyalin fail aplikasi</string>
   <string name="prefs_err_moving_app_files">Gagal memindahkan fail aplikasi</string>
   <string name="prefs_no_enough_space_to_move_files">Tidak cukup ruang untuk memindahkan fail aplikasi</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Mod Tablet</string>
   <string name="prefs_dual_page_mode_enabled">Dalam mod landscape, dua halaman akan muncul bersebelahan.</string>
   <string name="prefs_dual_page_mode_disabled">Dalam mod landscape, hanya paparkan satu halaman.</string>
+  <string name="prefs_category_advanced">Pilihan lanjutan</string>
+  <string name="prefs_category_advanced_summary">Import/export penanda, tetapkan direktori data Quran, dll.</string>
+  <string name="prefs_import_title">Import</string>
+  <string name="prefs_import_summary">Import penanda dan tag</string>
+  <string name="prefs_export_title">Export</string>
+  <string name="prefs_export_summary">Export salinan penanda dan tag</string>
+  <string name="prefs_page_type_title">Jenis mukasurat (dalam cubaan)</string>
+  <string name="prefs_page_type_summary">Pilih jenis mukasurat bacaan</string>
   <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Lihat terjemahan untuk ayat %d.</string>
 
   <!-- translation updates -->
   <string name="update_available">Kemaskini Ada</string>
@@ -176,8 +254,33 @@
   <string name="makki">Makkiyah</string>
   <string name="madani">Madaniyah</string>
   <plurals name="verses">
+    <item quantity="one">Satu ayat</item>
     <item quantity="other">%s ayat-ayat</item>
   </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_from">Dari</string>
+  <string name="play_to">Sehingga</string>
+  <string name="play_restrict_range">Hanya mainkan ayat di atas</string>
+  <string name="play_verses_range">Mainkan set ayat:</string>
+  <string name="play_each_verse">Mainkan setiap ayat:</string>
+  <string name="play_apply">Tetapkan</string>
+  <string name="play_apply_and_play">Tetapkan dan main</string>
+  <string name="previous">Sebelum</string>
+  <string name="play">Mainkan</string>
+  <string name="pause">Pause</string>
+  <string name="stop">Hentikan</string>
+  <string name="next">Seterus</string>
+
+  <string-array name="repeatValues">
+    <item>1 kali</item>
+    <item>2 kali</item>
+    <item>3 kali</item>
+    <item>Ulang</item>
+  </string-array>
+
+  <string name="playback_prompt_title">Main semula dari:</string>
+  <string name="starting_page_label">Mula muka surat</string>
 
   <!-- long press -->
   <string name="bookmark_ayah">Penanda ayat ini</string>
@@ -197,6 +300,13 @@
   <string name="edit_tag">Sunting Label</string>
   <string name="new_tag">Label Baru</string>
   <string name="not_tagged">Penanda tanpa Label</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Penanda dipadamkan</item>
+    <item quantity="other">%d penanda telah dipadam</item>
+  </plurals>
+  <string name="undo">Batalkan</string>
+
+  <string name="recent_pages">Muka surat terkini</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Label</string>
@@ -204,4 +314,11 @@
 
   <!-- penanda & tag list -->
   <string name="bookmarks_list_empty">Tidak ada Penanda</string>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Pengurus Audio</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Muat turun Quran</string>
+  <string name="notification_channel_audio">Pembacaan Quran</string>
 </resources>
