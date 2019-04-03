@@ -5,7 +5,7 @@ buildscript {
     androidxVersion = '1.0.0'
     androidxMediaVersion = '1.0.1'
     androidxPreferencesVersion = '1.1.0-alpha04'
-    androidxAppcompatVersion = '1.1.0-alpha03'
+    androidxAppcompatVersion = '1.1.0-alpha04'
     espressoVersion = '3.1.0-beta02'
     okhttpVersion = '3.12.1'
 
@@ -44,7 +44,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.4.0-rc02'
+    classpath 'com.android.tools.build:gradle:3.4.0-rc03'
     classpath "io.fabric.tools:gradle:1.27.1"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
