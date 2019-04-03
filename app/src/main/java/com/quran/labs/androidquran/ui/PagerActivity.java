@@ -1485,17 +1485,17 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void handlePlayback(AudioRequest request) {
     needsPermissionToDownloadOver3g = true;
-    Intent i = new Intent(this, AudioService.class);
-    i.setAction(AudioService.ACTION_PLAYBACK);
+    final Intent intent = new Intent(this, AudioService.class);
+    intent.setAction(AudioService.ACTION_PLAYBACK);
     if (request != null) {
-      i.putExtra(AudioService.EXTRA_PLAY_INFO, request);
+      intent.putExtra(AudioService.EXTRA_PLAY_INFO, request);
       lastAudioRequest = request;
       audioStatusBar.setRepeatCount(request.getRepeatInfo());
       audioStatusBar.switchMode(AudioStatusBar.LOADING_MODE);
     }
 
-    Crashlytics.log("starting foreground service for audio playback");
-    ContextCompat.startForegroundService(this, i);
+    Crashlytics.log("starting service for audio playback");
+    startService(intent);
   }
 
   @Override
