@@ -105,6 +105,7 @@ if (new File(rootDir, 'extras/extras.gradle').exists()) {
 
 dependencies {
   implementation project(path: ':common:data')
+  implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
 
   implementation deps.kotlin.stdlib
