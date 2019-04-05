@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.provider.BaseColumns;
+import android.util.SparseArray;
 
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.R;
@@ -14,14 +15,17 @@ import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.TranslationUtil;
 
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -163,19 +167,72 @@ public class DatabaseHandler {
   public List<QuranText> getVerses(VerseRange verses, @TextType int textType) {
     Cursor cursor = null;
     List<QuranText> results = new ArrayList<>();
+    final Set<Integer> toLookup = new HashSet<>();
+
+    String table = textType == TextType.ARABIC ? ARABIC_TEXT_TABLE : VERSE_TABLE;
     try {
-      String table = textType == TextType.ARABIC ? ARABIC_TEXT_TABLE : VERSE_TABLE;
       cursor = getVersesInternal(verses, table);
       while (cursor != null && cursor.moveToNext()) {
         int sura = cursor.getInt(1);
         int ayah = cursor.getInt(2);
         String text = cursor.getString(3);
-        results.add(new QuranText(sura, ayah, text));
+
+        final QuranText quranText = new QuranText(sura, ayah, text, null);
+        results.add(quranText);
+
+        final Integer hyperlinkId = TranslationUtil.getHyperlinkAyahId(quranText);
+        if (hyperlinkId != null) {
+          toLookup.add(hyperlinkId);
+        }
       }
     } finally {
       DatabaseUtils.closeCursor(cursor);
     }
+
+    boolean didWrite = false;
+    if (!toLookup.isEmpty()) {
+      final StringBuilder toExpandBuilder = new StringBuilder();
+      for (Integer id : toLookup) {
+        if (didWrite) {
+          toExpandBuilder.append(",");
+        } else {
+          didWrite = true;
+        }
+        toExpandBuilder.append(id);
+      }
+      return expandHyperlinks(table, results, toExpandBuilder.toString());
+    }
     return results;
+  }
+
+  private List<QuranText> expandHyperlinks(String table, List<QuranText> data, String rowIds) {
+    SparseArray<String> expansions = new SparseArray<>();
+
+    Cursor cursor = null;
+    try {
+      cursor = database.query(table, new String[]{ "rowid as _id", COL_TEXT },
+          "rowid in (" + rowIds + ")", null, null, null, "rowid");
+      while (cursor != null && cursor.moveToNext()) {
+        int id = cursor.getInt(0);
+        String text = cursor.getString(1);
+        expansions.put(id, text);
+      }
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+
+    List<QuranText> result = new ArrayList<>();
+    for (int i = 0, size = data.size(); i < size; i++) {
+      final QuranText ayah = data.get(i);
+      final Integer linkId = TranslationUtil.getHyperlinkAyahId(ayah);
+      if (linkId == null) {
+        result.add(ayah);
+      } else {
+        final String expandedText = expansions.get(linkId);
+        result.add(new QuranText(ayah.getSura(), ayah.getAyah(), ayah.getText(), expandedText));
+      }
+    }
+    return result;
   }
 
   private Cursor getVersesInternal(VerseRange verses, String table) {

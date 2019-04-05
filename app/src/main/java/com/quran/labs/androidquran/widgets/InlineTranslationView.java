@@ -18,7 +18,6 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
-import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
@@ -138,12 +137,8 @@ public class InlineTranslationView extends ScrollView {
           builder.append("\n\n");
         }
 
-        final SuraAyah link = translationMetadata.getLink();
-        if (link != null) {
-          builder.append(context.getString(R.string.see_tafseer_of_verse, link.ayah));
-        } else {
-          builder.append(translationText);
-        }
+        // irrespective of whether it's a link or not, show the text
+        builder.append(translationText);
       }
     }
     ayahView.append(builder);
