@@ -28,7 +28,7 @@ import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class ArabicDatabaseUtils {
-  public static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+  public static final String AR_BASMALLAH = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ";
   @VisibleForTesting static final int NUMBER_OF_WORDS = 4;
 
   private final Context appContext;
