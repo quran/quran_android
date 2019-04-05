@@ -12,6 +12,8 @@ import com.quran.data.source.PageProvider;
 import com.quran.data.source.PageSizeCalculator;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+import java.io.File;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -64,5 +66,10 @@ public class ApplicationModule {
   @Provides
   Scheduler provideMainThreadScheduler() {
     return AndroidSchedulers.mainThread();
+  }
+
+  @Provides
+  File provideCacheDirectory() {
+    return application.getCacheDir();
   }
 }
