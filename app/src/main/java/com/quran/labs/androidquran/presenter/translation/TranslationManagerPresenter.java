@@ -115,6 +115,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
           @Override
           public void onError(Throwable e) {
+            Timber.e(e, "error updating translations list");
             if (currentActivity != null) {
               currentActivity.onErrorDownloadTranslations();
             }

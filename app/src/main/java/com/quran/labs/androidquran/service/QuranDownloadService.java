@@ -26,6 +26,7 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ZipUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -535,6 +536,7 @@ public class QuranDownloadService extends Service implements
 
   private int downloadUrl(String url, String path, String filename,
       NotificationDetails notificationInfo) {
+    Timber.d("downloading %s", url);
     final Request.Builder builder = new Request.Builder()
         .url(url).tag(DEFAULT_TAG);
     final File partialFile = new File(path, filename + PARTIAL_EXT);
@@ -599,6 +601,8 @@ public class QuranDownloadService extends Service implements
           return QuranDownloadNotifier.ERROR_PERMISSIONS;
         }
         return downloadUrl(url, path, filename, notificationInfo);
+      } else {
+        Timber.e(new Exception("Unable to download file - code: " + response.code()));
       }
     } catch (IOException exception) {
       Timber.e(exception, "Failed to download file");
