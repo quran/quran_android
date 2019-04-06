@@ -45,10 +45,12 @@ internal class TranslationAdapter(private val context: Context,
   private var highlightedStartPosition: Int = 0
 
   private val expandedTafaseerAyahs = mutableSetOf<Pair<Int, Int>>()
+  private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
 
   private val defaultClickListener = View.OnClickListener { v -> onClickListener.onClick(v) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
   private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
+  private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandHyperlink(v) }
 
   fun getSelectedVersePopupPosition(): IntArray? {
     return if (highlightedStartPosition > -1) {
@@ -179,6 +181,20 @@ internal class TranslationAdapter(private val context: Context,
     }
   }
 
+  private fun toggleExpandHyperlink(view: View) {
+    val position = recyclerView.getChildAdapterPosition(view)
+    if (position != RecyclerView.NO_POSITION) {
+      val data = data[position]
+      val what = data.ayahInfo.ayahId to data.translationIndex
+      if (expandedHyperlinks.contains(what)) {
+        expandedHyperlinks.remove(what)
+      } else {
+        expandedHyperlinks.add(what)
+      }
+      notifyItemChanged(position)
+    }
+  }
+
   override fun getItemViewType(position: Int): Int {
     return data[position].type
   }
@@ -200,10 +216,12 @@ internal class TranslationAdapter(private val context: Context,
 
   override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
     val row = data[position]
-
     when {
       // a row with text
       holder.text != null -> {
+        // reset click listener on the text
+        holder.text.setOnClickListener(defaultClickListener)
+
         val text: CharSequence?
         if (row.type == TranslationViewRow.Type.SURA_HEADER) {
           text = row.data
@@ -227,8 +245,15 @@ internal class TranslationAdapter(private val context: Context,
             // translation
             text = row.data?.let { rowText ->
               val length = rowText.length
+              val expandHyperlink =
+                  expandedHyperlinks.contains(row.ayahInfo.ayahId to row.translationIndex)
+
+              if (row.link != null && !expandHyperlink) {
+                holder.text.setOnClickListener(expandHyperlinkClickListener)
+              }
+
               when {
-                row.link != null -> getAyahLink(row.link)
+                row.link != null && !expandHyperlink -> getAyahLink(row.link)
                 length > MAX_TAFSEER_LENGTH ->
                   truncateTextIfNeeded(rowText, row.ayahInfo.ayahId, row.translationIndex)
                 else -> rowText

@@ -109,7 +109,7 @@ public class ArabicDatabaseUtilsTest {
 
   @Test
   public void testGetAyahWithoutBasmallah() {
-    String basmallah = ArabicDatabaseUtils.AR_BASMALLAH;
+    String basmallah = ArabicDatabaseUtils.AR_BASMALLAH_IN_TEXT;
 
     String original = basmallah + " first ayah";
     assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(1, 1, original)).isSameAs(original);

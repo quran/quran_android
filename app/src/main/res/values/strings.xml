@@ -233,7 +233,7 @@
 
   <!-- tafaseer -->
   <string name="more_arabic" translatable="false">المزيد…</string>
-  <string name="see_tafseer_of_verse">See tafseer for ayah %d.</string>
+  <string name="see_tafseer_of_verse">This ayah\'s tafseer is included with the tafseer of ayah %d (Click to expand).</string>
 
   <!-- translation updates -->
   <string name="update_available">Update Available</string>
