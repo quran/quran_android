@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-  <string name="app_name">Kur'an</string>
+  <string name="app_name">Kur\'an</string>
   <string name="downloadPrompt_title">Preuzmite neophodne datoteke?</string>
-  <string name="downloadPrompt">Da bi Kur'an za Android radio ispravno,
+  <string name="downloadPrompt">Da bi Kur\'an za Android radio ispravno,
         potrebno je preuzeti neke datoteke. Ako ne preuzmete sada, aplikacija
         možda neće raditi pouzdano i zahtevati će internet konekciju za čitanje.
         Da li biste preuzeli neophodne datoteke sada?
@@ -10,7 +10,7 @@
   <string name="downloadTabletPrompt">Nedavno smo dodali poboljšane slike za
         tablete. Da li biste preuzeli ove slike sada?</string>
   <string name="downloadImportantPrompt">Moguće je malo, ali važno ažuriranje
-        za Kur'anske slike koje su moguće na vašem uređaju. Da li biste željeli da preuzmete ovo
+        za Kur\'anske slike koje su moguće na vašem uređaju. Da li biste željeli da preuzmete ovo
         poboljšanje sada?
     </string>
   <string name="downloadPrompt_ok">Da</string>
@@ -27,11 +27,11 @@
   <string name="menu_bookmarks_ayah">Zabeleženi ajeti</string>
   <string name="menu_sort">Sortiraj</string>
   <string name="menu_sort_date">Datum dodavanja</string>
-  <string name="menu_sort_location">Lokacija u Kur'anu</string>
+  <string name="menu_sort_location">Lokacija u Kur\'anu</string>
   <string name="menu_sort_group_by_tags">Grupiraj po oznakama</string>
   <string name="menu_show_recents" translatable="false">@string/recent_pages</string>
   <string name="menu_translation">Prikaži prevod stranice</string>
-  <string name="menu_back_to_page">Prikaži stranicu Kur'ana</string>
+  <string name="menu_back_to_page">Prikaži stranicu Kur\'ana</string>
   <string name="menu_help">Pomoć</string>
   <string name="menu_search">Pretraživanje</string>
   <string name="menu_get_translations">Preuzmi prevod(e)</string>
@@ -40,16 +40,16 @@
   <string name="cancel">Poništi</string>
 
   <!-- about -->
-  <string name="about_description">Kur'an za Android je besplatna aplikacija za Kur'an. Molimo vas da nas ne zaboravite u vašim dovama.</string>
+  <string name="about_description">Kur\'an za Android je besplatna aplikacija za Kur\'an. Molimo vas da nas ne zaboravite u vašim dovama.</string>
   <string name="about_data_sources">Izvori podataka</string>
   <string name="about_images">Slike</string>
-  <string name="about_madani_images">Slike stranica Kur'ana su bazirana na fontovima kompleksa kralja Fahda za štampanje Kur'ana</string>
+  <string name="about_madani_images">Slike stranica Kur\'ana su bazirana na fontovima kompleksa kralja Fahda za štampanje Kur\'ana</string>
   <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
-  <string name="about_naskh_images">Slike Kur'ana za Naskh aplikaciju su preuzete (sa dozvolom) od strane SHL info sistema.</string>
+  <string name="about_naskh_images">Slike Kur\'ana za Naskh aplikaciju su preuzete (sa dozvolom) od strane SHL info sistema.</string>
   <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
   <string name="about_qaloon_images">Kaloon slike se koriste sa permisijom od strane Nous Memes Editions Et Diffusion (Tunisia)</string>
   <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
-  <string name="about_quranicaudio_summary">Mp3 učenje Kur'ana bez prekida</string>
+  <string name="about_quranicaudio_summary">Mp3 učenje Kur\'ana bez prekida</string>
   <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
   <string name="about_quran_ksu">Elektronski Mushaf projekat</string>
   <string name="about_quran_ksu_summary">Projekt Univerziteta kralja Sauda elektronski Mushaf je izvor za Arapski tefsir i prevode mnogih jezika korištenih u aplikaciji. Također je izvor za učenje dr. Ejmena Suvejda.</string>
@@ -78,19 +78,19 @@
   <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
   <string name="about_others">Ostalo</string>
   <string name="about_contributors">Doprinosioci</string>
-  <string name="about_contributors_summary">Lista ljudi koji su doprineli razvoju aplikacije Kur'an za android</string>
+  <string name="about_contributors_summary">Lista ljudi koji su doprineli razvoju aplikacije Kur\'an za android</string>
   <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
 
   <!-- help -->
   <string name="help_title">Često postavljanja pitanja</string>
   <string name="help">
         &lt;b>Kako puštam učenja (zvuk)?&lt;/b>
-        &lt;br/>Otvorite bilo koju stranicu Kur'ana. Pritisnite na ekran jednom. Na dnu će te primetiti
+        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. Na dnu će te primetiti
         dugme za pokretanje i tekst imena učača. Pritisnite na ime učača
         da biste izabrali drugog učača. Pritisnite dugme za pokretanje da biste skinuli i pokrenuli trenutnu stranicu ili suru.
         &lt;br/>
         &lt;br/>&lt;b>Kako da vidim prevod?&lt;/b>
-        &lt;br/>Otvorite bilo koju stranicu Kur'ana. Pritisnite na ekran jednom. Na vrhu će te primetiti
+        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. Na vrhu će te primetiti
         ikonu globusa (ili ako ga ne vidite onda kliknite ikonu sa tri kvadratne tačke) - kliknite
         to i izaberite prevod da biste ga videli.
         &lt;br/>
@@ -99,7 +99,7 @@
         zatim se vratite unazad i kliknite ikonu globusa ponovo da biste videli prevod.
         &lt;br/>
         &lt;br/>&lt;b>Kako da zabeležim stranicu?&lt;/b>
-        &lt;br/>Otvorite bilo koju stranicu Kur'ana. Pritisnite na ekran jednom. U gornjem desnom uglu će te videti
+        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. U gornjem desnom uglu će te videti
         ikonu za zabeleške. Pritisnite ikonu zabeleški da biste zabeležili stranicu (ikona će se popuniti belom bojom). Kliknite ponovo ikonu za zabeleške
         da biste ukloniti zabielešku.
         &lt;br/>
@@ -115,8 +115,8 @@
         &lt;br/>Nažalost, verzije androida pre verzije 4.0 ne podržavaju ove fontove, i to je sve
         kako vam možemo pomoći u vezi s tim (ne možemo ništa uraditi).
     </string>
-  <string name="search_hint">Pretražite Kur'an</string>
-  <string name="quranSearchType">Ajeti Kur'ana</string>
+  <string name="search_hint">Pretražite Kur\'an</string>
+  <string name="quranSearchType">Ajeti Kur\'ana</string>
 
   <plurals name="files_downloaded">
     <item quantity="one">1 sura preuzeta</item>
@@ -130,7 +130,7 @@
   </plurals>
 
   <!-- m permissions stuff -->
-  <string name="storage_permission_rationale">Kur'an Android želi vaše dopuštenje da pohrani svoje podatke
+  <string name="storage_permission_rationale">Kur\'an Android želi vaše dopuštenje da pohrani svoje podatke
         na dodatnom skladištu. Aplikacija će raditi i bez ovih dozvola, ali ako očistite podatke aplikacije ili
         izbrišete aplikaciju, sve skinute stranice, učenja i podaci će biti obrisani. Dozvolite
         dozvolu za aplikaciju?</string>
@@ -181,13 +181,13 @@
   <string name="prefs_download_amount_title">Količina preuzimanja</string>
   <string name="prefs_download_amount_summary">Preferirana količina za preuzimanje zvuka svakog ajeta posebno</string>
   <string name="prefs_audio_manager">Upravitelj zvuka (eksperimentalno)</string>
-  <string name="prefs_audio_manager_summary">Upravljaj i preuzmi zvuk učenja Kur'ana</string>
+  <string name="prefs_audio_manager_summary">Upravljaj i preuzmi zvuk učenja Kur\'ana</string>
   <string name="downloaded_translations">Preuzeto</string>
   <string name="available_translations">Dostupno za preuzimanje</string>
   <string name="remove_button">Ukloni</string>
   <string name="dialog_ok">OK</string>
-  <string name="prefs_app_location_title">Direktoriji za podatke Kur'ana</string>
-  <string name="prefs_app_location_summary">Izaberite gdje želite spremiti datoteke za Kur'an</string>
+  <string name="prefs_app_location_title">Direktoriji za podatke Kur\'ana</string>
+  <string name="prefs_app_location_summary">Izaberite gdje želite spremiti datoteke za Kur\'an</string>
   <string name="prefs_send_logs_title">Šaljite logove</string>
   <string name="prefs_send_logs_summary">Šaljite logove za otklanjanje neispravnosti programerima</string>
   <string name="prefs_sdcard_internal">Interna memorija</string>
@@ -225,8 +225,8 @@
   <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">Upozorenje</string>
   <string name="kitkat_external_message">Zbog ograničenja sa androidom ako odlučite da vaše podatke aplikacije
-        stavite na SD karticu i kasnije izbrišete ili očiste  podatke za Kur'an Android aplikaciju, sve stranice
-        i zvuk za Kur'an android će biti izbrisane i morati će te ih preuzeti ponovo. Da li ste
+        stavite na SD karticu i kasnije izbrišete ili očiste  podatke za Kur\'an Android aplikaciju, sve stranice
+        i zvuk za Kur\'an android će biti izbrisane i morati će te ih preuzeti ponovo. Da li ste
         sigurni da želite koristiti vanjsku SD karticu?</string>
   <string name="please_grant_permissions">Molimo dodelite dozvole u postavkama aplikacije.</string>
   <!-- Preferences End -->
@@ -377,6 +377,6 @@
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
-  <string name="notification_channel_download">Skidanje Kur'ana</string>
-  <string name="notification_channel_audio">Skidanje učenja Kur'ana</string>
+  <string name="notification_channel_download">Skidanje Kur\'ana</string>
+  <string name="notification_channel_audio">Skidanje učenja Kur\'ana</string>
 </resources>
