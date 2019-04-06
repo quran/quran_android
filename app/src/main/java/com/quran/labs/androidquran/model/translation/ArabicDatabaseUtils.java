@@ -69,9 +69,18 @@ public class ArabicDatabaseUtils {
         cursor = arabicDatabaseHandler.getVerses(start.sura, start.ayah,
             end.sura, end.ayah, QuranFileConstants.ARABIC_SHARE_TABLE);
         while (cursor.moveToNext()) {
-          QuranText verse = new QuranText(cursor.getInt(1),
-              cursor.getInt(2),
-              cursor.getString(3),
+          final int sura = cursor.getInt(1);
+          final int ayah = cursor.getInt(2);
+          final String extra;
+          if ((!QuranFileConstants.ARABIC_SHARE_TEXT_HAS_BASMALLAH) &&
+              ayah == 1 && sura != 9 && sura != 1) {
+            extra = AR_BASMALLAH + " ";
+          } else {
+            extra = "";
+          }
+
+          QuranText verse = new QuranText(sura, ayah,
+              extra + cursor.getString(3),
               null);
           verses.add(verse);
         }
