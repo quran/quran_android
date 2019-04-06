@@ -163,8 +163,12 @@ public class ArabicDatabaseUtils {
     // note that ayahText.startsWith check is always true for now - but it's explicitly here so
     // that if we update quran.ar.db one day to fix this issue and older clients get a new copy of
     // the database, their code continues to work as before.
-    if (ayah == 1 && sura != 9 && sura != 1 && ayahText.startsWith(AR_BASMALLAH_IN_TEXT)) {
-      return ayahText.substring(AR_BASMALLAH_IN_TEXT.length() + 1);
+    if (ayah == 1 && sura != 9 && sura != 1) {
+      if (ayahText.startsWith(AR_BASMALLAH_IN_TEXT)) {
+        return ayahText.substring(AR_BASMALLAH_IN_TEXT.length() + 1);
+      } else if (ayahText.startsWith(AR_BASMALLAH)) {
+        return ayahText.substring(AR_BASMALLAH.length() + 1);
+      }
     }
     return ayahText;
   }
