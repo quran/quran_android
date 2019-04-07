@@ -4,7 +4,7 @@
   <string name="downloadPrompt_title">Preuzmite neophodne datoteke?</string>
   <string name="downloadPrompt">Da bi Kur\'an za Android radio ispravno,
         potrebno je preuzeti neke datoteke. Ako ne preuzmete sada, aplikacija
-        možda neće raditi pouzdano i zahtijevati će internet konekciju za čitanje.
+        možda neće raditi pouzdano i zahtevati će internet konekciju za čitanje.
         Da li biste preuzeli neophodne datoteke sada?
     </string>
   <string name="downloadTabletPrompt">Nedavno smo dodali poboljšane slike za
@@ -21,20 +21,20 @@
   <string name="menu_about">O nama</string>
   <string name="menu_other_apps">Druge aplikacije</string>
   <string name="menu_settings">Postavke</string>
-  <string name="menu_jump_last_page">Posljednja stranica</string>
-  <string name="menu_bookmarks">Bilješke</string>
-  <string name="menu_bookmarks_page">Zabilježene stranice</string>
-  <string name="menu_bookmarks_ayah">Zabilježeni ajeti</string>
+  <string name="menu_jump_last_page">Poslednja stranica</string>
+  <string name="menu_bookmarks">Beleške</string>
+  <string name="menu_bookmarks_page">Zabeležene stranice</string>
+  <string name="menu_bookmarks_ayah">Zabeleženi ajeti</string>
   <string name="menu_sort">Sortiraj</string>
   <string name="menu_sort_date">Datum dodavanja</string>
   <string name="menu_sort_location">Lokacija u Kur\'anu</string>
   <string name="menu_sort_group_by_tags">Grupiraj po oznakama</string>
   <string name="menu_show_recents" translatable="false">@string/recent_pages</string>
-  <string name="menu_translation">Prikaži prijevod stranice</string>
+  <string name="menu_translation">Prikaži prevod stranice</string>
   <string name="menu_back_to_page">Prikaži stranicu Kur\'ana</string>
   <string name="menu_help">Pomoć</string>
   <string name="menu_search">Pretraživanje</string>
-  <string name="menu_get_translations">Preuzmanje prijevoda</string>
+  <string name="menu_get_translations">Preuzmanje prevoda</string>
   <string name="menu_jump">Idi na</string>
   <string name="gotoPage">Idi na stranicu</string>
   <string name="cancel">Poništi</string>
@@ -52,16 +52,16 @@
   <string name="about_quranicaudio_summary">Mp3 učenje Kur\'ana bez prekida</string>
   <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
   <string name="about_quran_ksu">Elektronski Mushaf projekat</string>
-  <string name="about_quran_ksu_summary">Projekt Univerziteta kralja Sauda elektronski Mushaf je izvor za Arapski tefsir i prijevode mnogih jezika korištenih u aplikaciji. Također je izvor za učenje dr. Ejmena Suvejda.</string>
+  <string name="about_quran_ksu_summary">Projekt Univerziteta kralja Sauda elektronski Mushaf je izvor za Arapski tefsir i prevode mnogih jezika korištenih u aplikaciji. Također je izvor za učenje dr. Ejmena Suvejda.</string>
   <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
   <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
   <string name="about_furqan_summary">Osmanski tekst i Arapski tefsir</string>
   <string name="about_furqan_url" translatable="false">https://furqan.co</string>
   <string name="about_tanzil" translatable="false">Tanzil</string>
-  <string name="about_tanzil_summary">Prijevodi za mnoge jezike</string>
+  <string name="about_tanzil_summary">Prevodi za mnoge jezike</string>
   <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
   <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
-  <string name="about_noorhidayat_summary">Noorehira font i Mufti Taqi prijevod</string>
+  <string name="about_noorhidayat_summary">Noorehira font i Mufti Taqi prevod</string>
   <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
   <string name="about_open_source">Open Source projekti</string>
   <string name="about_dagger2" translatable="false">Dagger 2</string>
@@ -85,34 +85,34 @@
   <string name="help_title">Često postavljanja pitanja</string>
   <string name="help">
         &lt;b>Kako puštam učenja (zvuk)?&lt;/b>
-        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. Na dnu će te primijetiti
+        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. Na dnu će te primetiti
         dugme za pokretanje i tekst imena učača. Pritisnite na ime učača
         da biste izabrali drugog učača. Pritisnite dugme za pokretanje da biste skinuli i pokrenuli trenutnu stranicu ili suru.
         &lt;br/>
-        &lt;br/>&lt;b>Kako da vidim prijevod?&lt;/b>
-        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. Na vrhu će te primijetiti
+        &lt;br/>&lt;b>Kako da vidim prevod?&lt;/b>
+        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. Na vrhu će te primetiti
         ikonu globusa (ili ako ga ne vidite onda kliknite ikonu sa tri kvadratne tačke) - kliknite
-        to i izaberite prijevod da biste ga vidjeli.
+        to i izaberite prevod da biste ga videli.
         &lt;br/>
-        Ako nemate ni jedan prijevod skinut, onda će
-        vas odvesti na ekran gdje će te moći skinuti prijevode. Izaberite, a zatim skinite prijevod,
-        zatim se vratite unazad i kliknite ikonu globusa ponovo da biste vidjeli prijevod.
+        Ako nemate ni jedan prevod skinut, onda će
+        vas odvesti na ekran gde će te moći skinuti prevode. Izaberite, a zatim skinite prevod,
+        zatim se vratite unazad i kliknite ikonu globusa ponovo da biste videli prevod.
         &lt;br/>
-        &lt;br/>&lt;b>Kako da zabilježim stranicu?&lt;/b>
-        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. U gornjem desnom uglu će te vidjeti
-        ikonu za zabilješke. Pritisnite ikonu zabilješki da biste zabilježili stranicu (ikona će se popuniti bijelom bojom). Kliknite ponovo ikonu za zabilješke
-        da biste ukloniti zabilješku.
+        &lt;br/>&lt;b>Kako da zabeležim stranicu?&lt;/b>
+        &lt;br/>Otvorite bilo koju stranicu Kur\'ana. Pritisnite na ekran jednom. U gornjem desnom uglu će te videti
+        ikonu za zabeleške. Pritisnite ikonu zabeleški da biste zabeležili stranicu (ikona će se popuniti belom bojom). Kliknite ponovo ikonu za zabeleške
+        da biste ukloniti zabelešku.
         &lt;br/>
         &lt;br/>&lt;b>Kako da povećam tekst?&lt;/b>
         &lt;br/>Za stranice na arapskom okrenite telefon u horizontalni (pejzažni) položaj. Ovo će učiniti tekst većim.
-        Za prijevode otiđite na postavke i postavite veličinu teksta za prijevod.
+        Za prevode otiđite na postavke i postavite veličinu teksta za prevod.
         &lt;br/>
-        &lt;br/>&lt;b>Kako da podijelim ajet?&lt;/b>
-        &lt;br/>Ako ste na stranici sa arapskim tekstom onda držite bilo koji ajet da biste dobili meni gdje možete
-        da zabilježite, označite, podijelite ili da kopirate taj ajet u međuspremnik, da vidite prijevod,
+        &lt;br/>&lt;b>Kako da podelim ajet?&lt;/b>
+        &lt;br/>Ako ste na stranici sa arapskim tekstom onda držite bilo koji ajet da biste dobili meni gde možete
+        da zabeležite, označite, podelite ili da kopirate taj ajet u međuspremnik, da vidite prevod,
         ili da poslušate njegovo učenje.&lt;br/>
         &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu fontovi ne rade!&lt;/b>
-        &lt;br/>Nažalost, verzije androida prije verzije 4.0 ne podržavaju ove fontove, i to je sve
+        &lt;br/>Nažalost, verzije androida pre verzije 4.0 ne podržavaju ove fontove, i to je sve
         kako vam možemo pomoći u vezi s tim (ne možemo ništa uraditi).
     </string>
   <string name="search_hint">Pretražite Kur\'an</string>
@@ -143,7 +143,7 @@
   <string name="prefs_volume_key_navigation_title">Navigacija pomoću dugmadi za zvuk</string>
   <string name="prefs_volume_key_navigation_summary">Navigacija između stranica koristeći dugmadi za zvuk</string>
   <string name="prefs_category_reading">Preferencije vezane za stranice</string>
-  <string name="prefs_category_translation">Preferencije vezane za prijevod</string>
+  <string name="prefs_category_translation">Preferencije vezane za prevod</string>
   <string name="prefs_category_display_settings">Prikažite postavke</string>
   <string name="prefs_use_arabic_title">Arapski</string>
   <string name="prefs_use_arabic_summary_on">Koristite aplikaciju na arapskom</string>
@@ -152,29 +152,29 @@
   <string name="prefs_immersive_in_portrait_summary_enabled">I u vertikalnom i u horizontalnom položaju slike su prikazane u punom zaslonu</string>
   <string name="prefs_immersive_in_portrait_summary_disabled">Jedino su u horizontalnom položaju slike prikazane u punom zaslonu</string>
   <string name="prefs_lock_orientation_title">Zabranite rotaciju zaslona u aplikaciji</string>
-  <string name="prefs_lock_orientation_summary_on">Koristite fiksni način orijentacije</string>
-  <string name="prefs_lock_orientation_summary_off">Prilagodite trenutnom načinu orijentacije</string>
-  <string name="prefs_landscape_orientation_title">Horizontalna orijentacija</string>
-  <string name="prefs_landscape_orientation_summary_on">Uvijek koristi horizontalni način orijentacije</string>
-  <string name="prefs_landscape_orientation_summary_off">Uvijek koristi vertikalni način orijentacije</string>
+  <string name="prefs_lock_orientation_summary_on">Koristite fiksni način orentacije</string>
+  <string name="prefs_lock_orientation_summary_off">Prilagodite trenutnom načinu orentacije</string>
+  <string name="prefs_landscape_orientation_title">Horizontalna orentacija</string>
+  <string name="prefs_landscape_orientation_summary_on">Uvek koristi horizontalni način orentacije</string>
+  <string name="prefs_landscape_orientation_summary_off">Uvek koristi vertikalni način orentacije</string>
   <string name="prefs_night_mode_title">Noćni način </string>
-  <string name="prefs_night_mode_summary">Koristite tamnu podlogu i svjetle fontove</string>
-  <string name="prefs_night_mode_text_brightness_title">Osvijetljenost teksta</string>
-  <string name="prefs_night_mode_text_brightness_summary">Osvijetljenost teksta kada je noćni način uključen</string>
+  <string name="prefs_night_mode_summary">Koristite tamnu podlogu i svetle fontove</string>
+  <string name="prefs_night_mode_text_brightness_title">Osvetljenost teksta</string>
+  <string name="prefs_night_mode_text_brightness_summary">Osvetljenost teksta kada je noćni način uključen</string>
   <string name="prefs_overlay_page_info_title">Prikaži informacije o stranici</string>
   <string name="prefs_overlay_page_info_summary">Dodajte broj stranice, ime sure i broj džuza dok čitate</string>
   <string name="prefs_display_marker_title">Prikažite marker notifikaciju</string>
   <string name="prefs_display_marker_summary">Prikažite notifikaciju za dostizanje džuza, hizba, itd.</string>
-  <string name="prefs_highlight_bookmarks_title">Istaknite bilješke</string>
-  <string name="prefs_highlight_bookmarks_summary">Istaknite zabilježene ajete dok čitate</string>
-  <string name="prefs_translation_text_title">Veličina teksta prijevoda</string>
-  <string name="prefs_translations">Prijevodi</string>
-  <string name="prefs_translations_summary">Skinite i upravljajte sa prijevodima</string>
-  <string name="prefs_ayah_before_translation_title">Ajet prije prijevoda</string>
-  <string name="prefs_ayah_before_translation_summary">Prikažite ajet na arapskom iznad prijevoda</string>
+  <string name="prefs_highlight_bookmarks_title">Istaknite beleške</string>
+  <string name="prefs_highlight_bookmarks_summary">Istaknite zabeležene ajete dok čitate</string>
+  <string name="prefs_translation_text_title">Veličina teksta prevoda</string>
+  <string name="prefs_translations">Prevodi</string>
+  <string name="prefs_translations_summary">Skinite i upravljajte sa prevodima</string>
+  <string name="prefs_ayah_before_translation_title">Ajet pre prevoda</string>
+  <string name="prefs_ayah_before_translation_summary">Prikažite ajet na arapskom iznad prevoda</string>
   <string name="prefs_category_download">Opcije za preuzimanja</string>
   <string name="prefs_streaming_title">Stalni tok podataka</string>
-  <string name="prefs_streaming_summary">Tok (stream) zvuka umjesto preuzimanja</string>
+  <string name="prefs_streaming_summary">Tok (stream) zvuka umesto preuzimanja</string>
   <string name="prefs_download_amount_title">Količina preuzimanja</string>
   <string name="prefs_download_amount_summary">Preferirana količina za preuzimanje zvuka svakog ajeta posebno</string>
   <string name="prefs_audio_manager">Upravitelj zvuka (eksperimentalno)</string>
@@ -184,7 +184,7 @@
   <string name="remove_button">Ukloni</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Direktoriji za podatke Kur\'ana</string>
-  <string name="prefs_app_location_summary">Izaberite gdje želite spremiti datoteke za Kur\'an</string>
+  <string name="prefs_app_location_summary">Izaberite gde želite spremiti datoteke za Kur\'an</string>
   <string name="prefs_send_logs_title">Šaljite logove</string>
   <string name="prefs_send_logs_summary">Šaljite logove za otklanjanje neispravnosti programerima</string>
   <string name="prefs_sdcard_internal">Interna memorija</string>
@@ -192,30 +192,30 @@
   <string name="prefs_app_size">Trenutna količina podataka je</string>
   <string name="prefs_calculating_app_size">Izračunavam veličinu aplikacije</string>
   <string name="prefs_copying_app_files">Kopiram datoteke aplikacije</string>
-  <string name="prefs_err_moving_app_files">Premještanje datoteka aplikacije nije uspjelo</string>
-  <string name="prefs_no_enough_space_to_move_files">Nedovoljno prostora za pomjeranje datoteka aplikacije</string>
+  <string name="prefs_err_moving_app_files">Premeštanje datoteka aplikacije nije uspelo</string>
+  <string name="prefs_no_enough_space_to_move_files">Nedovoljno prostora za pomeranje datoteka aplikacije</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
   <string name="prefs_megabytes_str">%s MB</string>
-  <string name="prefs_dual_page_mode_title">Prikaz dvije stranica na zaslonu </string>
-  <string name="prefs_dual_page_mode_enabled">U horizontalnom položaju će biti prikazane dvije stranice jedna do druge.</string>
+  <string name="prefs_dual_page_mode_title">Prikaz dve stranica na zaslonu </string>
+  <string name="prefs_dual_page_mode_enabled">U horizontalnom položaju će biti prikazane dve stranice jedna do druge.</string>
   <string name="prefs_dual_page_mode_disabled">Horizontalno će se prikazivati samo jedna stranica.</string>
   <string name="prefs_category_advanced">Napredne opcije</string>
-  <string name="prefs_category_advanced_summary">Import/eksport bilješki, postavke direktoriji za datoteke aplikacije, itd.</string>
+  <string name="prefs_category_advanced_summary">Import/eksport beleški, postavke direktoriji za datoteke aplikacije, itd.</string>
   <string name="prefs_import_title">Uvoz</string>
-  <string name="prefs_import_summary">Uvezi zabilješke i oznake</string>
+  <string name="prefs_import_summary">Uvezi zabeleške i oznake</string>
   <string name="prefs_export_title">Izvoz</string>
-  <string name="prefs_export_summary">Izvezi kopije zabiljeških i oznaka</string>
+  <string name="prefs_export_summary">Izvezi kopije zabeleških i oznaka</string>
   <string name="prefs_page_type_title">Vrsta stranica (eksperimentalno)</string>
   <string name="prefs_page_type_summary">Izaberite način prikaza stranica za čitanje</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
-  <string name="more_translations">Više prijevoda</string>
+  <string name="more_translations">Više prevoda</string>
   <string name="import_data_permissions_error">Nije moguće pročitati backup datoteke zbog grešaka sa dozvolama.</string>
   <string name="import_data_error">Nevalidna backup datoteka (ili nije moguće da se pročita backup datoteka).</string>
   <string name="import_data">Uvezi podatke</string>
-  <string name="import_data_and_override">Ako uvezete ovu datoteku onda će ona zamijenite sve vaše \
-        zabilješke sa %1$d zabilješkama i %2$d oznakama. Ipak uvesti?</string>
-  <string name="import_successful">Uvoz uspješno završen</string>
+  <string name="import_data_and_override">Ako uvezete ovu datoteku onda će ona zamenite sve vaše \
+        zabeleške sa %1$d zabeleškama i %2$d oznakama. Ipak uvesti?</string>
+  <string name="import_successful">Uvoz uspešno završen</string>
   <string name="export_data_error">Problem izvoza podataka.</string>
   <string name="exported_data">Podaci izvezeni na %1$s.</string>
 
@@ -225,7 +225,7 @@
         stavite na SD karticu i kasnije izbrišete ili očiste  podatke za Kur\'an Android aplikaciju, sve stranice
         i zvuk za Kur\'an android će biti izbrisane i morati će te ih preuzeti ponovo. Da li ste
         sigurni da želite koristiti vanjsku SD karticu?</string>
-  <string name="please_grant_permissions">Molimo dodijelite dozvole u postavkama aplikacije.</string>
+  <string name="please_grant_permissions">Molimo dodelite dozvole u postavkama aplikacije.</string>
   <!-- Preferences End -->
 
   <!-- tafaseer -->
@@ -234,9 +234,9 @@
 
   <!-- translation updates -->
   <string name="update_available">Moguća su ažuriranja</string>
-  <string name="translation_updates_available">Moguća su ažuriranja za neka od vaših prijevoda. Idite na stranicu sa prijevodima sada?</string>
+  <string name="translation_updates_available">Moguća su ažuriranja za neka od vaših prevoda. Idite na stranicu sa prevodima sada?</string>
   <string name="translation_dialog_yes">Da</string>
-  <string name="translation_dialog_later">Poslije</string>
+  <string name="translation_dialog_later">Posle</string>
 
   <!-- End Number picker Strings -->
   <string name="quran_rob3">¼</string>
@@ -262,9 +262,9 @@
 
   <!-- download statuses and errors -->
   <string name="sdcard_error">SD karticu nije moguće pronaći. Stavite je i pokušajte ponovo.</string>
-  <string name="download_successful">Uspješno preuzimanje</string>
+  <string name="download_successful">Uspešno preuzimanje</string>
   <string name="download_processing">Procesiranje preuzetog&#8230;</string>
-  <string name="download_error_general">Skidanje nije uspjelo</string>
+  <string name="download_error_general">Skidanje nije uspelo</string>
   <string name="download_error_disk">Nedovoljno prostora na uređaju za preuzimanje</string>
   <string name="download_error_network">Trenutno nije moguće preuzeti zbog problema sa mrežom</string>
   <string name="download_error_perms">Trenutno nije moguće preuzeti zbog problema sa dopuštenjima</string>
@@ -281,15 +281,15 @@
   <string name="process_progress">Procesiranje datoteke %1$d / %2$d</string>
   <string name="download_retry">Ponovi</string>
   <string name="download_cancel">Otkaži</string>
-  <string name="download_extra_data">Moramo da preuzmemo jednu ili dvije datoteke da bismo omogućili dijeljenje i prijevod. Preuzmite ih sada?</string>
+  <string name="download_extra_data">Moramo da preuzmemo jednu ili dve datoteke da bismo omogućili dijeljenje i prevod. Preuzmite ih sada?</string>
 
   <!-- translation database stuff -->
-  <string name="remove_dlg_title">Uklonite prijevod?</string>
+  <string name="remove_dlg_title">Uklonite prevod?</string>
   <string name="remove_dlg_msg">Da li ste sigurni da želite da uklonite %1$s?</string>
-  <string name="error_getting_translation_list">Nije moguće preuzeti (ovu) listu prijevoda. Molimo vas pokušajte kasnije.</string>
+  <string name="error_getting_translation_list">Nije moguće preuzeti (ovu) listu prevoda. Molimo vas pokušajte kasnije.</string>
   <string name="search_data">Pretražite podatke</string>
-  <string name="need_translation">Nemate preuzetih prijevoda/tefsira do sada.</string>
-  <string name="get_translations">Preuzmite prijevode</string>
+  <string name="need_translation">Nemate preuzetih prevoda/tefsira do sada.</string>
+  <string name="get_translations">Preuzmite prevode</string>
 
   <!-- help -->
   <string name="email_us">Ako vaše pitanje nije odgovoreno iznad onda nam možete poslati email na quranandroid@gmail.com za podršku.
@@ -316,7 +316,7 @@
   <string name="play">Pokreni</string>
   <string name="pause">Pauziraj</string>
   <string name="stop">Stani</string>
-  <string name="next">Sljedeći</string>
+  <string name="next">Sledeći</string>
 
   <string-array name="repeatValues">
     <item>Jednom</item>
@@ -329,11 +329,11 @@
   <string name="starting_page_label">Početak stranice</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Zabilježi ovaj ajet</string>
+  <string name="bookmark_ayah">Zabeleži ovaj ajet</string>
   <string name="tag_ayah">Označi ovaj ajet</string>
-  <string name="share_ayah">Podijeli link ajeta</string>
-  <string name="share_ayah_text">Podijeli tekst ajeta</string>
-  <string name="translation_ayah">Prijevod/tefsir ajeta</string>
+  <string name="share_ayah">Podeli link ajeta</string>
+  <string name="share_ayah_text">Podeli tekst ajeta</string>
+  <string name="translation_ayah">Prevod/tefsir ajeta</string>
   <string name="play_from_here">Pusti odavde</string>
   <string name="via_string">koristeći aplikaciju @QuranAndroid</string>
   <string name="search_key">Pritisnite tipku za pretragu da potražite ajet</string>
@@ -341,7 +341,7 @@
   <string name="ayah_copied_popup">Ajet kopiran</string>
 
   <!-- bookmarks & tags contextual action bar -->
-  <string name="tag_bookmark">Označi zabilješku</string>
+  <string name="tag_bookmark">Označi zabelešku</string>
   <string name="delete_tag">Izbriši oznaku</string>
   <string name="edit_tag">Uredi oznaku</string>
   <string name="new_tag">Nova oznaka</string>
@@ -365,7 +365,7 @@
   <string name="tag_duplicate_tag_error">Ime za oznaku već postoji!</string>
 
   <!-- bookmark & tag list -->
-  <string name="bookmarks_list_empty">Bez zabiljeških</string>
+  <string name="bookmarks_list_empty">Bez zabeleških</string>
 
   <!-- audio manager -->
   <string name="audio_manager">Menadžer zvuka</string>
