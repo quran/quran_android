@@ -96,7 +96,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.core.view.MenuItemCompat;
 import androidx.core.view.ViewCompat;
@@ -746,8 +745,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           downloadType);
-      Crashlytics.log("starting foreground service to download ayah position file");
-      ContextCompat.startForegroundService(this, intent);
+      Crashlytics.log("starting service to download ayah position file");
+      startService(intent);
 
       haveDownload = true;
     }
@@ -768,8 +767,8 @@ public class PagerActivity extends QuranActionBarActivity implements
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
           QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
-      Crashlytics.log("starting foreground service to download arabic database");
-      ContextCompat.startForegroundService(this, intent);
+      Crashlytics.log("starting service to download arabic database");
+      startService(intent);
     }
 
     if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO) {
@@ -1478,8 +1477,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         toggleActionBar();
       }
       audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      Crashlytics.log("starting foreground service in handleRequiredDownload");
-      ContextCompat.startForegroundService(this, downloadIntent);
+      Crashlytics.log("starting service in handleRequiredDownload");
+      startService(downloadIntent);
     }
   }
 
