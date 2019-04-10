@@ -364,7 +364,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
     } else {
       final String action = intent.getAction();
-      if (ACTION_PLAYBACK.equals(action)) {
+      if (ACTION_PLAYBACK.equals(action) || Intent.ACTION_MEDIA_BUTTON.equals(action)) {
         // go to the foreground as quickly as possible.
         setUpAsForeground();
       }
