@@ -17,8 +17,8 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 2940
-    versionName "2.9.4"
+    versionCode 2941
+    versionName "2.9.4-p1"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
 
