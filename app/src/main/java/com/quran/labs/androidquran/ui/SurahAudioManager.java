@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -86,14 +87,23 @@ public class SurahAudioManager extends QuranActionBarActivity
         @Override
         public void onSuccess(List<QariDownloadInfo> downloadInfo) {
           progressBar.setVisibility(View.GONE);
-//          shuyookhAdapter.setDownloadInfo(downloadInfo);
-//          shuyookhAdapter.notifyDataSetChanged();
+          surahAdapter.setDownloadInfo(downloadInfo);
+          surahAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onError(Throwable e) {
         }
       };
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
 
   @Override
   public void handleDownloadSuccess() {
@@ -152,13 +162,14 @@ public class SurahAudioManager extends QuranActionBarActivity
 
     @Override
     public void onBindViewHolder(SurahAudioManager.SurahViewHolder holder, int position) {
-      holder.name.setText(mQariItems.get(position).getName());
+      holder.name.setText((position+1) + "");
 
-      QariDownloadInfo info = getSheikhInfoForPosition(position);
-      int fullyDownloaded = info.downloadedSuras.size();
-      holder.quantity.setText(
-          getResources().getQuantityString(R.plurals.files_downloaded,
-              fullyDownloaded, fullyDownloaded));
+      QariDownloadInfo info = getSheikhInfoForPosition(0);
+      if(info == null) {
+        return;
+      }
+      boolean fullyDownloaded = info.downloadedSuras.get(position + 1);
+      holder.quantity.setText(fullyDownloaded? "Downloaded" : "Not downloaded");
     }
 
     QariDownloadInfo getSheikhInfoForPosition(int position) {
@@ -167,7 +178,7 @@ public class SurahAudioManager extends QuranActionBarActivity
 
     @Override
     public int getItemCount() {
-      return mDownloadInfoMap.size() == 0 ? 0 : mQariItems.size();
+      return 114;
     }
   }
 
