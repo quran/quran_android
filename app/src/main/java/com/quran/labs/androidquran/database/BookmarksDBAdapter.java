@@ -84,7 +84,7 @@ public class BookmarksDBAdapter {
           int page = cursor.getInt(3);
           long time = cursor.getLong(4);
           long tagId = cursor.getLong(5);
-          
+
           if (sura == 0 || ayah == 0) {
             sura = null;
             ayah = null;
