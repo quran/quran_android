@@ -247,6 +247,7 @@
   <string name="quran_nos">½</string>
   <string name="quran_talt_arb3">¾</string>
   <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Juz\'</string>
   <string name="quran_page">Page</string>
   <string name="quran_sura">Surahs</string>
   <string name="quran_ayah">Ayah %1$d</string>
@@ -261,6 +262,7 @@
   <string name="page_description">page %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Required Files</string>
   <string name="timing_database">Required Files</string>
+  <string name="infinity" translatable="false">&#8734;</string>
 
   <!-- download statuses and errors -->
   <string name="sdcard_error">Could not find SD card. Please mount it and try again.</string>
@@ -378,5 +380,4 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
-  <string name="quran_juz2">Juz\'</string>
 </resources>
