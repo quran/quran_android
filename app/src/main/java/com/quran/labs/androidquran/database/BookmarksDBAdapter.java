@@ -84,7 +84,7 @@ public class BookmarksDBAdapter {
           int page = cursor.getInt(3);
           long time = cursor.getLong(4);
           long tagId = cursor.getLong(5);
-
+          
           if (sura == 0 || ayah == 0) {
             sura = null;
             ayah = null;
@@ -149,6 +149,7 @@ public class BookmarksDBAdapter {
   private void addRecentPage(int page, boolean shouldDelete) {
     ContentValues contentValues = new ContentValues();
     contentValues.put(LastPagesTable.PAGE, page);
+    contentValues.put(LastPagesTable.ADDED_DATE, System.currentTimeMillis() / 1000);
     if (db.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1 && shouldDelete) {
       db.execSQL("DELETE FROM " + LastPagesTable.TABLE_NAME + " WHERE " +
           LastPagesTable.ID + " NOT IN( SELECT " + LastPagesTable.ID + " FROM " +

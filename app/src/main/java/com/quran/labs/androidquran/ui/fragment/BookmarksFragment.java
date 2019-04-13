@@ -104,6 +104,10 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
       MenuItem showRecents = menu.findItem(R.id.show_recents);
       showRecents.setChecked(bookmarkPresenter.isShowingRecents());
+
+      MenuItem showDates = menu.findItem(R.id.show_date);
+      showDates.setChecked(bookmarkPresenter.isDateShowing());
+
     }
   }
 
@@ -130,6 +134,12 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
         item.setChecked(bookmarkPresenter.isShowingRecents());
         return true;
       }
+      case R.id.show_date: {
+        bookmarkPresenter.toogleShowDate();
+        bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing());
+        item.setChecked(bookmarkPresenter.isDateShowing());
+        return true;
+      }
     }
 
     return super.onOptionsItemSelected(item);
@@ -137,6 +147,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
   public void onNewData(BookmarkResult items) {
     bookmarksAdapter.setShowTags(bookmarkPresenter.shouldShowInlineTags());
+    bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing());
     bookmarksAdapter.setElements(
         items.getRows().toArray(new QuranRow[0]), items.getTagMap());
     bookmarksAdapter.notifyDataSetChanged();

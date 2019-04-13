@@ -472,7 +472,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     } else if (value > 0) {
       str = repeatValues[currentRepeat] + "";
     } else {
-      str = context.getString(R.string.infinity);
+      str = "hehe";
+//      str = context.getString(R.string.infinity);
     }
     repeatButton.setText(str);
   }
