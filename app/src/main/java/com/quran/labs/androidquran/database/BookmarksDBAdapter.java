@@ -120,7 +120,8 @@ public class BookmarksDBAdapter {
     List<RecentPage> recents = new ArrayList<>();
     Cursor cursor = null;
     try {
-      cursor = db.query(LastPagesTable.TABLE_NAME, null, null, null, null, null,
+      String[] tableColumns = new String[] { LastPagesTable.ID, LastPagesTable.PAGE, "strftime('%s', " + LastPagesTable.ADDED_DATE + ")" };
+      cursor = db.query(LastPagesTable.TABLE_NAME, tableColumns, null, null, null, null,
           LastPagesTable.ADDED_DATE + " DESC");
       if (cursor != null) {
         while (cursor.moveToNext()) {
@@ -149,7 +150,6 @@ public class BookmarksDBAdapter {
   private void addRecentPage(int page, boolean shouldDelete) {
     ContentValues contentValues = new ContentValues();
     contentValues.put(LastPagesTable.PAGE, page);
-    contentValues.put(LastPagesTable.ADDED_DATE, System.currentTimeMillis() / 1000);
     if (db.replace(LastPagesTable.TABLE_NAME, null, contentValues) != -1 && shouldDelete) {
       db.execSQL("DELETE FROM " + LastPagesTable.TABLE_NAME + " WHERE " +
           LastPagesTable.ID + " NOT IN( SELECT " + LastPagesTable.ID + " FROM " +

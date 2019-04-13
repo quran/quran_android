@@ -233,7 +233,7 @@
   <!-- Preferences End -->
 
   <!-- tafaseer -->
-  <string name="more_arabic">See more</string>
+  <string name="more_arabic" translatable="false">المزيد…</string>
   <string name="see_tafseer_of_verse">See tafseer for ayah %d.</string>
 
   <!-- translation updates -->
