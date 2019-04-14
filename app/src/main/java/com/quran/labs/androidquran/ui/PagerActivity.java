@@ -476,6 +476,14 @@ public class PagerActivity extends QuranActionBarActivity implements
         downloadReceiver,
         new IntentFilter(action));
     downloadReceiver.setListener(this);
+
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    final boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    if (isNightMode) {
+      if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        getWindow().setNavigationBarColor(getResources().getColor(R.color.navbar_night_color));
+      }
+    }
   }
 
   public Observable<Integer> getViewPagerObservable() {
