@@ -96,6 +96,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.core.view.MenuItemCompat;
 import androidx.core.view.ViewCompat;
@@ -191,6 +192,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private int numberOfPages;
   private int numberOfPagesDual;
+  private int defaultNavigationBarColor;
 
   private PagerActivityComponent pagerActivityComponent;
 
@@ -477,12 +479,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         new IntentFilter(action));
     downloadReceiver.setListener(this);
 
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    final boolean isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
-    if (isNightMode) {
-      if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        getWindow().setNavigationBarColor(getResources().getColor(R.color.navbar_night_color));
-      }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      defaultNavigationBarColor = getWindow().getNavigationBarColor();
     }
   }
 
@@ -678,17 +676,28 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (shouldReconnect) {
       foregroundDisposable.add(Completable.timer(500, TimeUnit.MILLISECONDS)
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(() -> {
-                startService(
-                    audioUtils.getAudioIntent(PagerActivity.this, AudioService.ACTION_CONNECT));
-                shouldReconnect = false;
-              }));
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(() -> {
+            startService(
+                audioUtils.getAudioIntent(PagerActivity.this, AudioService.ACTION_CONNECT));
+            shouldReconnect = false;
+          }));
     }
 
     if (highlightedSura > 0 && highlightedAyah > 0) {
       handler.postDelayed(() ->
           highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION), 750);
+    }
+
+    updateNavigationBar(quranSettings.isNightMode());
+  }
+
+  private void updateNavigationBar(boolean isNightMode) {
+    final int color =
+        isNightMode ? ContextCompat.getColor(this, R.color.navbar_night_color) :
+            defaultNavigationBarColor;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      getWindow().setNavigationBarColor(color);
     }
   }
 
@@ -977,6 +986,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       item.setIcon(isNightMode ? R.drawable.ic_night_mode : R.drawable.ic_day_mode);
       item.setChecked(isNightMode);
       refreshQuranPages();
+      updateNavigationBar(isNightMode);
       return true;
     } else if (itemId == R.id.settings) {
       Intent i = new Intent(this, QuranPreferenceActivity.class);
