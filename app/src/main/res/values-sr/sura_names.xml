@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>El-Fātiḥa</item>
+    <item>El-Bekare</item>
+    <item>Āli-ʿImrān</item>
+    <item>En-Nisāʾ</item>
+    <item>El-Māide</item>
+    <item>El-Enʿām</item>
+    <item>El-Aʿrāf</item>
+    <item>El-Enfāl</item>
+    <item>Et-Tevbe</item>
+    <item>Jūnus</item>
+    <item>Hūd</item>
+    <item>Jūsuf</item>
+    <item>Er-Raʿd</item>
+    <item>Ibrāhīm</item>
+    <item>El-Ḥidžr</item>
+    <item>En-Naḥl</item>
+    <item>El-Isrāʾ</item>
+    <item>El-Kehf</item>
+    <item>Merjem</item>
+    <item>Ṭāhā</item>
+    <item>El-Enbijāʾ</item>
+    <item>El-Ḥadždž</item>
+    <item>El-Muʾminūn</item>
+    <item>En-Nūr</item>
+    <item>El-Furkān</item>
+    <item>Eš-Šuʿarāʾ</item>
+    <item>En-Neml</item>
+    <item>El-Kaṣaṣ</item>
+    <item>El-ʿAnkebūt</item>
+    <item>Er-Rūm</item>
+    <item>Lukmān</item>
+    <item>Es-Sedžde</item>
+    <item>El-Aḥzāb</item>
+    <item>Sebeʾ</item>
+    <item>Fāṭir</item>
+    <item>Jā-sīn</item>
+    <item>Eṣ-Ṣāffāt</item>
+    <item>Ṣād</item>
+    <item>Ez-Zumer</item>
+    <item>El-Muʾmin</item>
+    <item>Fuṣṣilet</item>
+    <item>Eš-Šūrā</item>
+    <item>Ez-Zuḫruf</item>
+    <item>Ed-Duḫān</item>
+    <item>El-Džāsije</item>
+    <item>El-Aḥkāf</item>
+    <item>Muḥammed</item>
+    <item>El-Fetḥ</item>
+    <item>El-Ḥudžurāt</item>
+    <item>Kāf</item>
+    <item>Ez-Zārijāt</item>
+    <item>Eṭ-Ṭūr</item>
+    <item>En-Nedžm</item>
+    <item>El-Kamer</item>
+    <item>Er-Raḥmān</item>
+    <item>El-Vākiʿa</item>
+    <item>El-Ḥadīd</item>
+    <item>El-Mudžādele</item>
+    <item>El-Ḥašr</item>
+    <item>El-Mumteḥine</item>
+    <item>Eṣ-Ṣaff</item>
+    <item>El-Džumuʿa</item>
+    <item>El-Munāfikūn</item>
+    <item>Et-Tegābun</item>
+    <item>Eṭ-Ṭalāk</item>
+    <item>Et-Taḥrīm</item>
+    <item>El-Mulk</item>
+    <item>El-Kalem</item>
+    <item>El-Ḥākka</item>
+    <item>El-Meʿāridž</item>
+    <item>Nūḥ</item>
+    <item>El-Džinn</item>
+    <item>El-Muzzemmil</item>
+    <item>El-Muddessir</item>
+    <item>El-Kijāme</item>
+    <item>El-Insān</item>
+    <item>El-Murselāt</item>
+    <item>En-Nebeʾ</item>
+    <item>En-Nāziʿāt</item>
+    <item>ʿAbese</item>
+    <item>Et-Tekvīr</item>
+    <item>El-Infiṭār</item>
+    <item>El-Muṭaffifīn</item>
+    <item>El-Inšikāk</item>
+    <item>El-Burūdž</item>
+    <item>Eṭ-Ṭārik</item>
+    <item>El-Eʿlā</item>
+    <item>El-Gāšije</item>
+    <item>El-Fedžr</item>
+    <item>El-Beled</item>
+    <item>Eš-Šems</item>
+    <item>El-Lejl</item>
+    <item>Eḍ-Ḍuḥā</item>
+    <item>El-Inširāḥ</item>
+    <item>Et-Tīn</item>
+    <item>El-ʿAlek</item>
+    <item>El-Kadr</item>
+    <item>El-Bejjine</item>
+    <item>Ez-Zelzele</item>
+    <item>El-ʿĀdijāt</item>
+    <item>El-Kāriʿa</item>
+    <item>Et-Tekāsur</item>
+    <item>El-ʿAṣr</item>
+    <item>El-Humeze</item>
+    <item>El-Fīl</item>
+    <item>Kurejš</item>
+    <item>El-Māʿūn</item>
+    <item>El-Kevser</item>
+    <item>El-Kāfirūn</item>
+    <item>En-Naṣr</item>
+    <item>El-Leheb</item>
+    <item>El-Iḫlāṣ</item>
+    <item>El-Felek</item>
+    <item>En-Nās</item>
+  </string-array>
+
+  <string-array name="sura_names_translation">
+    <item>Uvodnica</item>
+    <item>Krava</item>
+    <item>Imranova porodica</item>
+    <item>Žene</item>
+    <item>Trpeza</item>
+    <item>Stoka</item>
+    <item>Vrhovi zida</item>
+    <item>Ratni plen</item>
+    <item>Pokajanje</item>
+    <item>Jūnus</item>
+    <item>Hūd</item>
+    <item>Jūsuf</item>
+    <item>Grmljavina</item>
+    <item>Ibrāhīm</item>
+    <item>Hidžr</item>
+    <item>Pčele</item>
+    <item>Noćno putovanje</item>
+    <item>Pećina</item>
+    <item>Merjema</item>
+    <item>Taha</item>
+    <item>Verovjesnici</item>
+    <item>Hadždž</item>
+    <item>Vernici</item>
+    <item>Svetlost</item>
+    <item>Furkān</item>
+    <item>Pesnici</item>
+    <item>Mravi</item>
+    <item>Kazivanja</item>
+    <item>Pauk</item>
+    <item>Bizantinci</item>
+    <item>Lukmān</item>
+    <item>Sedžda</item>
+    <item>Saveznici</item>
+    <item>Saba</item>
+    <item>Onaj Koji stvara bez prethodnog primera</item>
+    <item>Jasin</item>
+    <item>Poredani u redove</item>
+    <item>Ṣād</item>
+    <item>Skupine</item>
+    <item>Vernik</item>
+    <item>Detaljno objašnjenje</item>
+    <item>Dogovaranje</item>
+    <item>Ukras</item>
+    <item>Dim</item>
+    <item>Oni koji kleče</item>
+    <item>Ahkāf</item>
+    <item>Muḥammed</item>
+    <item>Pobeda</item>
+    <item>Sobe</item>
+    <item>Kāf</item>
+    <item>Oni koji uzdižu prašinu</item>
+    <item>Gora</item>
+    <item>Zvezda</item>
+    <item>Mesec</item>
+    <item>Svemilosni</item>
+    <item>Neizbežni događaj</item>
+    <item>Gvožđe</item>
+    <item>Rasprava</item>
+    <item>Progonstvo</item>
+    <item>Proverena</item>
+    <item>Bojni red</item>
+    <item>Petak</item>
+    <item>Licemeri</item>
+    <item>Međusobna obmana</item>
+    <item>Razvod braka</item>
+    <item>Zabrana</item>
+    <item>Vlast</item>
+    <item>Pero</item>
+    <item>Čas obistinjenja</item>
+    <item>Usponišta i deredže</item>
+    <item>Nūḥ</item>
+    <item>Džinni</item>
+    <item>Umotani</item>
+    <item>Pokriveni</item>
+    <item>Kijametski dan</item>
+    <item>Čovek</item>
+    <item>Oni koji se jedan za drugim šalju</item>
+    <item>Vest</item>
+    <item>Oni koji čupaju grubo</item>
+    <item>Namrštio se</item>
+    <item>Skupljanje krajeva</item>
+    <item>Rascepljenje</item>
+    <item>Oni koji pri merenju zakidaju</item>
+    <item>Cepanje</item>
+    <item>Velike zvezde</item>
+    <item>Noćni posetilac</item>
+    <item>Svevišnji</item>
+    <item>Opća nevolja</item>
+    <item>Zora</item>
+    <item>Grad</item>
+    <item>Sunce</item>
+    <item>Noć</item>
+    <item>Jutro</item>
+    <item>Širokogrudnost</item>
+    <item>Smokva</item>
+    <item>Zakvačak</item>
+    <item>Odredba</item>
+    <item>Dokaz jasni</item>
+    <item>Zemljotres</item>
+    <item>Oni koji dahćući jure</item>
+    <item>Udar zastrašujući</item>
+    <item>Zgrtanje imovine</item>
+    <item>Vreme</item>
+    <item>Klevetnik</item>
+    <item>Slon</item>
+    <item>Kurejšije</item>
+    <item>Potrepštine koje se daju na posudbu</item>
+    <item>Kevser</item>
+    <item>Nevernici</item>
+    <item>Pomoć</item>
+    <item>Plamen</item>
+    <item>Čisto verovanje</item>
+    <item>Svitanje</item>
+    <item>Ljudi</item>
+  </string-array>
+</resources>
