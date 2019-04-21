@@ -32,6 +32,11 @@
           android:checkable="true"
           android:title="@string/menu_show_recents"
           app:showAsAction="withText" />
+      <item
+          android:id="@+id/show_date"
+          android:checkable="true"
+          android:title="@string/menu_show_date"
+          app:showAsAction="withText" />
     </menu>
   </item>
   <item

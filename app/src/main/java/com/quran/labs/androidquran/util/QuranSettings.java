@@ -161,6 +161,12 @@ public class QuranSettings {
     prefs.edit().putBoolean(Constants.PREF_SHOW_RECENTS, minimizeRecents).apply();
   }
 
+  public boolean getShowDate() { return prefs.getBoolean(Constants.PREF_SHOW_DATE, false);  }
+
+  public void setShowDate(boolean isDateShown) {
+    prefs.edit().putBoolean(Constants.PREF_SHOW_DATE, isDateShown).apply();
+  }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences() {
     int version = getVersion();

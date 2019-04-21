@@ -2,6 +2,10 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class QuranRow {
 
   // Row Types
@@ -21,6 +25,7 @@ public class QuranRow {
   public Integer imageFilterColor;
   public Integer juzType;
   public String juzOverlayText;
+  public String dateAdded;
 
   // For Bookmarks
   public long tagId;
@@ -40,6 +45,7 @@ public class QuranRow {
     private long mTagId = -1;
     private long mBookmarkId = -1;
     private String mJuzOverlayText;
+    private String mDateAdded;
     private Integer mImageFilterColor;
     private Bookmark mBookmark;
 
@@ -104,16 +110,22 @@ public class QuranRow {
       return this;
     }
 
+    public Builder withDate(long timeStamp) {
+      mDateAdded = (new SimpleDateFormat("MMM dd, HH:mm")).format(new Date(timeStamp * 1000));
+      return this;
+    }
+
     public QuranRow build() {
       return new QuranRow(mText, mMetadata, mRowType, mSura,
           mAyah, mPage, mImageResource, mImageFilterColor, mJuzType,
-          mJuzOverlayText, mBookmarkId, mTagId, mBookmark);
+          mJuzOverlayText, mBookmarkId, mTagId, mBookmark, mDateAdded);
     }
   }
 
   private QuranRow(String text, String metadata, int rowType,
       int sura, int ayah, int page, Integer imageResource, Integer filterColor,
-      Integer juzType, String juzOverlayText, long bookmarkId, long tagId, Bookmark bookmark) {
+      Integer juzType, String juzOverlayText, long bookmarkId, long tagId, Bookmark bookmark,
+                   String dateAdded) {
     this.text = text;
     this.rowType = rowType;
     this.sura = sura;
@@ -127,6 +139,7 @@ public class QuranRow {
     this.tagId = tagId;
     this.bookmarkId = bookmarkId;
     this.bookmark = bookmark;
+    this.dateAdded = dateAdded;
   }
 
   public boolean isHeader() {

@@ -41,12 +41,13 @@ public class QuranRowFactory {
         .withType(QuranRow.HEADER).build();
   }
 
-  public QuranRow fromCurrentPage(Context context, int page) {
+  public QuranRow fromCurrentPage(Context context, int page, long timeStamp) {
     return new QuranRow.Builder()
         .withText(quranInfo.getSuraNameString(context, page))
         .withMetadata(quranInfo.getPageSubtitle(context, page))
         .withSura(quranInfo.safelyGetSuraOnPage(page))
         .withPage(page)
+        .withDate(timeStamp)
         .withImageResource(R.drawable.bookmark_currentpage).build();
   }
 
@@ -63,6 +64,7 @@ public class QuranRowFactory {
           .withMetadata(quranInfo.getPageSubtitle(context, bookmark.getPage()))
           .withType(QuranRow.PAGE_BOOKMARK)
           .withBookmark(bookmark)
+          .withDate(bookmark.getTimestamp())
           .withSura(sura)
           .withImageResource(R.drawable.ic_favorite);
     } else {
@@ -83,6 +85,7 @@ public class QuranRowFactory {
           .withMetadata(metadata)
           .withType(QuranRow.AYAH_BOOKMARK)
           .withBookmark(bookmark)
+          .withDate(bookmark.getTimestamp())
           .withImageResource(R.drawable.ic_favorite)
           .withImageOverlayColor(ContextCompat.getColor(context, R.color.ayah_bookmark_color));
     }

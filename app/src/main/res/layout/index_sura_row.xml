@@ -62,8 +62,7 @@
         android:gravity="start"
         android:textColor="@color/sura_details_color"
         android:textSize="14sp"
-        tools:text="Makki - 286 Verses"
-        />
+        tools:text="Makki - 286 Verses - Jan 01, 08:00" />
 
     <com.quran.labs.androidquran.widgets.TagsViewGroup
         android:id="@+id/tags"
