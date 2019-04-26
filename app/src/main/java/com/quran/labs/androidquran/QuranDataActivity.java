@@ -371,7 +371,6 @@ public class QuranDataActivity extends Activity implements
         if (fallback != null) {
           Timber.d("setting fallback pages to %s", fallback);
           quranSettings.setDefaultImagesDirectory(fallback);
-          quranScreenInfo.setOverrideParam(fallback);
         }
       }
 
