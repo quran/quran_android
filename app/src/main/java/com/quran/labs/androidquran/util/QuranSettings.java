@@ -354,7 +354,7 @@ public class QuranSettings {
         .apply();
   }
 
-  public void clearDefaultImagesDirectory() {
+  private void clearDefaultImagesDirectory() {
     perInstallationPrefs.edit().remove(Constants.PREF_DEFAULT_IMAGES_DIR).apply();
   }
 

@@ -330,8 +330,11 @@ public class QuranDataActivity extends Activity implements
       }
 
       final int totalPages = quranInfo.getNumberOfPages();
-      if (!quranSettings.haveDefaultImagesDirectory()) {
-           /* previously, we would send any screen widths greater than 1280
+      if (!quranSettings.haveDefaultImagesDirectory() &&
+          "madani".equals(quranSettings.getPageType())) {
+           /* this code is only valid for the legacy madani pages.
+            *
+            * previously, we would send any screen widths greater than 1280
             * to get 1920 images. this was problematic for various reasons,
             * including:
             * a. a texture limit for the maximum size of a bitmap that could
@@ -346,15 +349,20 @@ public class QuranDataActivity extends Activity implements
             * minor loss in quality.
             *
             * this code checks and sees, if the user already has a complete
-            * folder of images - 1920, then 1280, then 1024 - and in any of
-            * those cases, sets that in the pref so we load those instead of
-            * the new 1260 images.
+            * folder of 1920 images, in which case it sets that in the pref
+            * so we load those instead of 1260s.
             */
         final String fallback =
             quranFileUtils.getPotentialFallbackDirectory(appContext, totalPages);
         if (fallback != null) {
           Timber.d("setting fallback pages to %s", fallback);
           quranSettings.setDefaultImagesDirectory(fallback);
+        } else {
+          // stop doing this check every launch if the images don't exist.
+          // since the method checks for the key being missing (and since
+          // override parameter ignores the empty string), empty string is
+          // fine here.
+          quranSettings.setDefaultImagesDirectory("");
         }
       }
 

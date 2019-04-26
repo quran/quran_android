@@ -85,7 +85,7 @@ public class QuranFileUtils {
     return hasVersionFile(context, widthParam, version);
   }
 
-  public boolean hasVersionFile(Context context, String widthParam, int version) {
+  private boolean hasVersionFile(Context context, String widthParam, int version) {
     String quranDirectory = getQuranImagesDirectory(context, widthParam);
     Timber.d("isVersion: checking if version %d exists for width %s at %s",
         version, widthParam, quranDirectory);
@@ -109,10 +109,6 @@ public class QuranFileUtils {
     if (state.equals(Environment.MEDIA_MOUNTED)) {
       if (haveAllImages(context, "_1920", totalPages, false)) {
         return "1920";
-      } else if (haveAllImages(context, "_1280", totalPages, false)) {
-        return "1280";
-      } else if (haveAllImages(context, "_1024", totalPages, false)) {
-        return "1024";
       }
     }
     return null;
