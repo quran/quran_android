@@ -18,12 +18,10 @@ open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalcula
   }
 
   override fun getTabletWidthParameter(): String {
-    return if ("1260" == getWidthParameter()) {
-      // for tablet, if the width is more than 1280, use 1260
-      // images for both dimens (only applies to new installs)
-      "1260"
+    return if ("1920" == overrideParam) {
+      "1024"
     } else {
-      getBestTabletLandscapeSizeMatch(maxWidth / 2)
+      getWidthParameter()
     }
   }
 
@@ -32,14 +30,6 @@ open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalcula
       overrideParam = parameter
     } else {
       overrideParam = null
-    }
-  }
-
-  private fun getBestTabletLandscapeSizeMatch(width: Int): String {
-    return if (width <= 640) {
-      "512"
-    } else {
-      "1024"
     }
   }
 }

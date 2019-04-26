@@ -57,6 +57,6 @@ public class QuranScreenInfo {
   }
 
   public boolean isDualPageMode() {
-    return maxWidth > 800;
+    return maxWidth > 960;
   }
 }
