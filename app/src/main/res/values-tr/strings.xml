@@ -100,7 +100,6 @@
   <string name="quran_sura">Sureler</string>
   <string name="quran_ayah">%1$d.âyet</string>
   <string name="notification_download_canceled">İndirme iptal edildi</string>
-  <string name="via_string">Kur\'an-ı Kerîm</string>
   <string name="update_available">Güncelleme var</string>
   <string name="translation_updates_available">Meâller için güncelleme mevcut. Meâl indirme sayfasını ziyaret etmek istermisiniz?</string>
   <string name="translation_ayah">Âyet meâli</string>
