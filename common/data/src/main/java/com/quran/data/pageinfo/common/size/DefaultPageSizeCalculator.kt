@@ -5,6 +5,9 @@ import com.quran.data.source.PageSizeCalculator
 
 open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalculator {
   private val maxWidth: Int = if (displaySize.x > displaySize.y) displaySize.x else displaySize.y
+
+  // override parameter can be null or 1920
+  // (a few upgrade scenarios may also see this set at 1024)
   private var overrideParam: String? = null
 
   override fun getWidthParameter(): String {
