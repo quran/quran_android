@@ -22,6 +22,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 class QuranDataPresenter @Inject internal constructor(
@@ -36,6 +37,8 @@ class QuranDataPresenter @Inject internal constructor(
   private var checkPagesDisposable: Disposable? = null
   private var cachedPageType: String? = null
   private var lastCachedResult: QuranDataStatus? = null
+
+  private var debugLog: String? = null
 
   private val quranSettings = QuranSettings.getInstance(appContext)
 
@@ -55,6 +58,8 @@ class QuranDataPresenter @Inject internal constructor(
               .doOnSuccess {
                 if (it.havePages()) {
                   copyArabicDatabaseIfNecessary()
+                } else {
+                  generateDebugLog()
                 }
               }
               .subscribeOn(Schedulers.io())
@@ -70,6 +75,43 @@ class QuranDataPresenter @Inject internal constructor(
                 activity?.onPagesChecked(it)
                 checkPagesDisposable = null
               })
+    }
+  }
+
+  fun getDebugLog(): String = debugLog ?: ""
+
+  private fun generateDebugLog() {
+    val directory = quranFileUtils.quranBaseDirectory
+    directory?.let {
+      val log = StringBuilder()
+
+      val quranImagesDirectory = quranFileUtils.getQuranImagesBaseDirectory(appContext)
+      val imageSubdirectories = File(quranImagesDirectory).listFiles()
+          .filter { it.name.contains("width_") }
+      imageSubdirectories.map {
+        log.append("image directory: ")
+           .append(it.name)
+           .append(" - ")
+        val imageFiles = it.listFiles()
+        val fileCount = imageFiles.size
+        log.append(fileCount)
+
+        if (fileCount == 1) {
+          log.append(" [")
+              .append(imageFiles[0].name)
+             .append("]")
+        }
+        log.append("\n")
+      }
+
+      val audioDirectory = quranFileUtils.getQuranAudioDirectory(appContext)
+      log.append("audio files in audio root: ")
+         .append(File(audioDirectory).listFiles().size)
+      debugLog = log.toString()
+    }
+
+    if (directory == null) {
+      debugLog = "can't find quranBaseDirectory"
     }
   }
 
