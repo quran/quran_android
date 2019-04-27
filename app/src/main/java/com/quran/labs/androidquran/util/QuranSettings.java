@@ -220,6 +220,10 @@ public class QuranSettings {
             deleteOldNotificationChannels();
           }
         }
+
+        if (version < 2943) {
+          prefs.edit().remove("didDownloadPages").apply();
+        }
       }
 
       // no matter which version we're upgrading from, make sure the app location is set
@@ -306,12 +310,36 @@ public class QuranSettings {
     perInstallationPrefs.edit().remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
   }
 
-  public void setDownloadedPages(boolean didDownload) {
-    perInstallationPrefs.edit().putBoolean(Constants.PREF_DID_DOWNLOAD_PAGES, didDownload).apply();
+  public void setDownloadedPages(long when, String path, String pageTypes) {
+    perInstallationPrefs.edit().putBoolean(Constants.DEBUG_DID_DOWNLOAD_PAGES, true)
+        .putString(Constants.DEBUG_PAGE_DOWNLOADED_PATH, path)
+        .putString(Constants.DEBUG_PAGES_DOWNLOADED, pageTypes)
+        .putLong(Constants.DEBUG_PAGES_DOWNLOADED_TIME, when)
+        .apply();
+  }
+
+  public void removeDidDownloadPages() {
+    perInstallationPrefs.edit().remove(Constants.DEBUG_DID_DOWNLOAD_PAGES)
+        .remove(Constants.DEBUG_PAGE_DOWNLOADED_PATH)
+        .remove(Constants.DEBUG_PAGES_DOWNLOADED_TIME)
+        .remove(Constants.DEBUG_PAGES_DOWNLOADED)
+        .apply();
   }
 
   public boolean didDownloadPages() {
-    return perInstallationPrefs.getBoolean(Constants.PREF_DID_DOWNLOAD_PAGES, false);
+    return perInstallationPrefs.getBoolean(Constants.DEBUG_DID_DOWNLOAD_PAGES, false);
+  }
+
+  public long getPreviouslyDownloadedTime() {
+    return perInstallationPrefs.getLong(Constants.DEBUG_PAGES_DOWNLOADED_TIME, 0);
+  }
+
+  public String getPreviouslyDownloadedPath() {
+    return perInstallationPrefs.getString(Constants.DEBUG_PAGE_DOWNLOADED_PATH, "");
+  }
+
+  public String getPreviouslyDownloadedPageTypes() {
+    return perInstallationPrefs.getString(Constants.DEBUG_PAGES_DOWNLOADED, "");
   }
 
   public boolean haveUpdatedTranslations() {

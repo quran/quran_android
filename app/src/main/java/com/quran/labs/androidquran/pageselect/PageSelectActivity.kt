@@ -72,7 +72,7 @@ class PageSelectActivity : AppCompatActivity() {
   private fun onPageTypeSelected(type: String) {
     val pageType = quranSettings.pageType
     if (pageType != type) {
-      quranSettings.setDownloadedPages(false)
+      quranSettings.removeDidDownloadPages()
       quranSettings.pageType = type
       Answers.getInstance().logCustom(
           CustomEvent("pageTypeChanged").putCustomAttribute("pageType", type))

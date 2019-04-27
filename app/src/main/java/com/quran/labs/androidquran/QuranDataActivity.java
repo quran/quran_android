@@ -5,11 +5,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.source.PageProvider;
@@ -27,6 +28,7 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -46,6 +48,8 @@ public class QuranDataActivity extends Activity implements
 
   public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
   private static final int REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1;
+  private static final String QURAN_DIRECTORY_MARKER_FILE = "q4a";
+  private static final String QURAN_HIDDEN_DIRECTORY_MARKER_FILE = ".q4a";
 
   private QuranSettings quranSettings;
   private AlertDialog errorDialog = null;
@@ -323,20 +327,17 @@ public class QuranDataActivity extends Activity implements
 
   public void onPagesChecked(QuranDataPresenter.QuranDataStatus quranDataStatus) {
     this.quranDataStatus = quranDataStatus;
-    if (!quranDataStatus.havePages()) {
-      // we need to download pages in this case
 
-      // if we downloaded pages once before
+    if (!quranDataStatus.havePages()) {
       if (quranSettings.didDownloadPages()) {
-        // log an event to Answers - this should help figure out why people are complaining that
-        // they are always prompted to re-download images, even after they did.
-        Answers.getInstance()
-            .logCustom(new CustomEvent("imagesDisappeared")
-                .putCustomAttribute("permissionGranted", havePermission ? "true" : "false")
-                .putCustomAttribute("osVersion", Build.VERSION.SDK_INT)
-                .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation()));
-        Timber.e(new IllegalStateException("Deleted Data"), "Unable to Download Pages");
-        quranSettings.setDownloadedPages(false);
+        // log if we downloaded pages once before
+        try {
+          onPagesLost();
+        } catch (Exception e) {
+          Crashlytics.logException(e);
+        }
+        // clear the "pages downloaded" flag
+        quranSettings.removeDidDownloadPages();
       }
 
       String lastErrorItem = quranSettings.getLastDownloadItemWithError();
@@ -352,7 +353,22 @@ public class QuranDataActivity extends Activity implements
         promptForDownload();
       }
     } else {
-      quranSettings.setDownloadedPages(true);
+      final String appLocation = quranSettings.getAppCustomLocation();
+      final String baseDirectory = quranFileUtils.getQuranBaseDirectory();
+      try {
+        // try to write a directory to distinguish between the entire Quran directory
+        // being removed versus just the images being somehow removed.
+
+        //noinspection ResultOfMethodCallIgnored
+        new File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile();
+        //noinspection ResultOfMethodCallIgnored
+        new File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile();
+        quranSettings.setDownloadedPages(System.currentTimeMillis(), appLocation,
+            quranDataStatus.getPortraitWidth() + "_" + quranDataStatus.getLandscapeWidth());
+      } catch (IOException ioe) {
+        Crashlytics.logException(ioe);
+      }
+
       final String patchParam = quranDataStatus.getPatchParam();
       if (!TextUtils.isEmpty(patchParam)) {
         Timber.d("checkPages: have pages, but need patch %s", patchParam);
@@ -361,6 +377,100 @@ public class QuranDataActivity extends Activity implements
         runListView();
       }
     }
+  }
+
+  private void onPagesLost() {
+    final String appLocation = quranSettings.getAppCustomLocation();
+    // check if appLocation matches either external files dir or the sdcard
+    final File appDir = getExternalFilesDir(null);
+    final File sdcard = Environment.getExternalStorageDirectory();
+    final boolean hasMatch =
+        appLocation.equals(appDir == null ? "" : appDir.getAbsolutePath())
+            || appLocation.equals(sdcard == null ? "" : sdcard.getAbsolutePath());
+
+    // see if the page path at the time of the first download hasn't changed
+    final String lastDownloadedPagePath = quranSettings.getPreviouslyDownloadedPath();
+    final boolean isPagePathTheSame = appLocation.equals(lastDownloadedPagePath);
+
+    // see if the last downloaded page types are the same as what we want to download now
+    final String lastDownloadedPages = quranSettings.getPreviouslyDownloadedPageTypes();
+    final String currentPagesToDownload = quranDataStatus.getPortraitWidth() + "_" +
+        quranDataStatus.getLandscapeWidth();
+    final boolean arePageSetsEquivalent = lastDownloadedPages.equals(currentPagesToDownload);
+
+    // check for the existence of a .q4a file in the base directory to distinguish
+    // the case in which the whole directory was wiped (nothing we can really do here?)
+    // and the case when just the images disappeared.
+    boolean didHiddenFileSurvive = false;
+    final String baseDirectory = quranFileUtils.getQuranBaseDirectory();
+    if (baseDirectory != null) {
+      try {
+        didHiddenFileSurvive =
+            new File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists();
+      } catch (Exception e) {
+        Crashlytics.logException(e);
+      }
+    }
+
+    // check for the existence of a q4a file in the base directory - this is the same as
+    // above, but is there to see if, perhaps, hidden files survive but non-hidden ones don't.
+    boolean didNormalFileSurvive = false;
+    if (baseDirectory != null) {
+      try {
+        didNormalFileSurvive =
+            new File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).exists();
+      } catch (Exception e) {
+        Crashlytics.logException(e);
+      }
+    }
+
+
+    // how recently did the files disappear?
+    final long downloadTime = quranSettings.getPreviouslyDownloadedTime();
+    String recencyOfRemoval;
+    if (downloadTime == 0) {
+      recencyOfRemoval = "no timestamp";
+    } else {
+      final long deltaInSeconds = (System.currentTimeMillis() - downloadTime) / 1000;
+      if (deltaInSeconds < (5 * 60)) {
+        recencyOfRemoval = "within 5 minutes";
+      } else if (deltaInSeconds < (10 * 60)) {
+        recencyOfRemoval = "within 10 minutes";
+      } else if (deltaInSeconds < (60 * 60)) {
+        recencyOfRemoval = "within an hour";
+      } else if (deltaInSeconds < (24 * 60 * 60)) {
+        recencyOfRemoval = "within a day";
+      } else {
+        recencyOfRemoval = "more than a day";
+      }
+    }
+
+    // log an event to Answers - this should help figure out why people are complaining that
+    // they are always prompted to re-download images, even after they did.
+    Answers.getInstance()
+        .logCustom(new CustomEvent("debugImagesDisappeared")
+            .putCustomAttribute("permissionGranted", havePermission ? "true" : "false")
+            .putCustomAttribute("storagePath", appLocation)
+            .putCustomAttribute("hasAndroidMatch", hasMatch ? "yes" : "no")
+            .putCustomAttribute("isPagePathTheSame", isPagePathTheSame ? "yes" : "no")
+            .putCustomAttribute("didNormalFileSurvive", didNormalFileSurvive ? "yes" : "no")
+            .putCustomAttribute("didHiddenFileSurvive", didHiddenFileSurvive ? "yes" : "no")
+            .putCustomAttribute("recencyOfRemoval", recencyOfRemoval)
+            .putCustomAttribute("arePagesToDownloadTheSame",
+                arePageSetsEquivalent ? "yes" : "no"));
+
+    // log an exception
+    Timber.w(quranDataStatus.toString());
+    Timber.w(quranDataPresenter.getDebugLog());
+    Timber.w("appLocation: %s", appLocation);
+    Timber.w("sdcard: %s, app dir: %s", sdcard, appDir);
+    Timber.w("didNormalFileSurvive: %s", didNormalFileSurvive);
+    Timber.w("didHiddenFileSurvive: %s", didHiddenFileSurvive);
+    Timber.w("seconds passed: %d, recency: %s",
+        (System.currentTimeMillis() - downloadTime) / 1000, recencyOfRemoval);
+    Timber.w("isPagePathTheSame: %s", isPagePathTheSame);
+    Timber.w("arePagesToDownloadTheSame: %s", arePageSetsEquivalent);
+    Timber.e(new IllegalStateException("Deleted Data"), "Unable to Download Pages");
   }
 
   /**
