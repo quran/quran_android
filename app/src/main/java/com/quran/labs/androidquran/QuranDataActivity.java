@@ -2,11 +2,9 @@ package com.quran.labs.androidquran;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,9 +13,8 @@ import android.widget.Toast;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.source.PageProvider;
-import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
+import com.quran.labs.androidquran.presenter.data.QuranDataPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
@@ -30,14 +27,17 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class QuranDataActivity extends Activity implements
@@ -47,25 +47,21 @@ public class QuranDataActivity extends Activity implements
   public static final String PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY";
   private static final int REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1;
 
-  private boolean isPaused = false;
-  private AsyncTask<Void, Void, Boolean> checkPagesTask;
   private QuranSettings quranSettings;
   private AlertDialog errorDialog = null;
   private AlertDialog promptForDownloadDialog = null;
   private AlertDialog permissionsDialog;
   private DefaultDownloadReceiver downloadReceiver = null;
-  private boolean needPortraitImages = false;
-  private boolean needLandscapeImages = false;
   private boolean havePermission = false;
-  private boolean taskIsRunning;
-  private String patchUrl;
+  private QuranDataPresenter.QuranDataStatus quranDataStatus;
+  private Disposable disposable;
 
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject PageProvider quranPageProvider;
   @Inject CopyDatabaseUtil copyDatabaseUtil;
-  @Inject TranslationManagerPresenter translationManagerPresenter;
+  @Inject QuranDataPresenter quranDataPresenter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -88,8 +84,8 @@ public class QuranDataActivity extends Activity implements
   @Override
   protected void onResume() {
     super.onResume();
+    quranDataPresenter.bind(this);
 
-    isPaused = false;
     downloadReceiver = new DefaultDownloadReceiver(this,
         QuranDownloadService.DOWNLOAD_TYPE_PAGES);
     downloadReceiver.setCanCancelDownload(true);
@@ -98,12 +94,29 @@ public class QuranDataActivity extends Activity implements
         downloadReceiver,
         new IntentFilter(action));
     downloadReceiver.setListener(this);
+
+    disposable = Single.timer(100, TimeUnit.MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(ignore -> {
+          // try to reconnect to the service - delayed since some devices consider
+          // onResume as part of the app being in the background for starting-service
+          // purposes.
+          final Intent reconnectIntent =
+              new Intent(QuranDataActivity.this, QuranDownloadService.class);
+          reconnectIntent.setAction(QuranDownloadService.ACTION_RECONNECT);
+          reconnectIntent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
+              QuranDownloadService.DOWNLOAD_TYPE_PAGES);
+          startService(reconnectIntent);
+        });
+
     checkPermissions();
   }
 
   @Override
   protected void onPause() {
-    isPaused = true;
+    disposable.dispose();
+
+    quranDataPresenter.unbind(this);
     if (downloadReceiver != null) {
       downloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this).
@@ -190,20 +203,12 @@ public class QuranDataActivity extends Activity implements
   }
 
   private void checkPages() {
-    if (taskIsRunning) {
-      return;
-    }
-
-    taskIsRunning = true;
-
-    // check whether or not we need to download
-    checkPagesTask = new CheckPagesAsyncTask(this);
-    checkPagesTask.execute();
+    quranDataPresenter.checkPages();
   }
 
   private void requestExternalSdcardPermission() {
     ActivityCompat.requestPermissions(this,
-        new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE },
+        new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
         REQUEST_WRITE_TO_SDCARD_PERMISSIONS);
     quranSettings.setSdcardPermissionsDialogPresented();
   }
@@ -311,185 +316,49 @@ public class QuranDataActivity extends Activity implements
     quranSettings.clearLastDownloadError();
   }
 
-  class CheckPagesAsyncTask extends AsyncTask<Void, Void, Boolean> {
-
-    private final Context appContext;
-    private String patchParam;
-    private boolean storageNotAvailable;
-
-    CheckPagesAsyncTask(Context context) {
-      appContext = context.getApplicationContext();
-
-      // reset variables in case it's a new task
-      needPortraitImages = false;
-      needLandscapeImages = false;
-      patchUrl = null;
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... params) {
-      final String baseDir = quranFileUtils.getQuranBaseDirectory(appContext);
-      if (baseDir == null) {
-        storageNotAvailable = true;
-        return false;
-      }
-
-      final int totalPages = quranInfo.getNumberOfPages();
-      if (!quranSettings.haveDefaultImagesDirectory() &&
-          "madani".equals(quranSettings.getPageType())) {
-           /* this code is only valid for the legacy madani pages.
-            *
-            * previously, we would send any screen widths greater than 1280
-            * to get 1920 images. this was problematic for various reasons,
-            * including:
-            * a. a texture limit for the maximum size of a bitmap that could
-            *    be loaded, which the 1920x3106 images exceeded on devices
-            *    with the minimum 2048 height capacity.
-            * b. slow to switch pages due to the massive size of the gl
-            *    texture loaded by android.
-            *
-            * consequently, in this new version, we make anything above 1024
-            * fallback to a 1260 bucket (height of 2038). this works around
-            * both problems (much faster page flipping now too) with a very
-            * minor loss in quality.
-            *
-            * this code checks and sees, if the user already has a complete
-            * folder of 1920 images, in which case it sets that in the pref
-            * so we load those instead of 1260s.
-            */
-        final String fallback =
-            quranFileUtils.getPotentialFallbackDirectory(appContext, totalPages);
-        if (fallback != null) {
-          Timber.d("setting fallback pages to %s", fallback);
-          quranSettings.setDefaultImagesDirectory(fallback);
-        } else {
-          // stop doing this check every launch if the images don't exist.
-          // since the method checks for the key being missing (and since
-          // override parameter ignores the empty string), empty string is
-          // fine here.
-          quranSettings.setDefaultImagesDirectory("");
-        }
-      }
-
-      final int latestImagesVersion = quranPageProvider.getImageVersion();
-      final String width = quranScreenInfo.getWidthParam();
-      boolean havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages, true);
-      needPortraitImages = !havePortrait;
-
-      final String tabletWidth = quranScreenInfo.getTabletWidthParam();
-      if (quranScreenInfo.isDualPageMode() && !width.equals(tabletWidth)) {
-        boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages, true);
-        needLandscapeImages = !haveLandscape;
-        Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
-            havePortrait ? "yes" : "no", haveLandscape ? "yes" : "no");
-      } else {
-        // either not dual screen mode or the widths are the same
-        Timber.d("checkPages: have all images: %s", havePortrait ? "yes" : "no");
-      }
-
-      final boolean haveAll = !needPortraitImages && !needLandscapeImages;
-      if (haveAll) {
-        copyArabicDatabaseIfNecessary();
-
-        final boolean needPortraitPatch =
-            !quranFileUtils.isVersion(appContext, width, latestImagesVersion);
-        if (needPortraitPatch) {
-          patchParam = width;
-        }
-
-        if (!width.equals(tabletWidth)) {
-          final boolean needLandscapePatch =
-              !quranFileUtils.isVersion(appContext, tabletWidth, latestImagesVersion);
-          if (needLandscapePatch) {
-            patchParam = width + tabletWidth;
-          }
-        }
-      }
-
-      return haveAll;
-    }
-
-    @Override
-    protected void onPostExecute(@NonNull Boolean result) {
-      checkPagesTask = null;
-      patchUrl = null;
-      taskIsRunning = false;
-
-      if (isPaused) {
-        return;
-      }
-
-      if (!result) {
-        // we need to download pages in this case
-
-        // if we downloaded pages once before
-        if (quranSettings.didDownloadPages()) {
-          // log an event to Answers - this should help figure out why people are complaining that
-          // they are always prompted to re-download images, even after they did.
-          Answers.getInstance()
-              .logCustom(new CustomEvent("imagesDisappeared")
-                .putCustomAttribute("permissionGranted", havePermission ? "true" : "false")
-                .putCustomAttribute("osVersion", Build.VERSION.SDK_INT)
-                .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation())
-                .putCustomAttribute("storageNotAvailable", storageNotAvailable? "true" : "false"));
-          Timber.e(new IllegalStateException("Deleted Data"), "Unable to Download Pages");
-          quranSettings.setDownloadedPages(false);
-        }
-
-        if (storageNotAvailable) {
-          // no storage mounted, nothing we can do...
-          runListView();
-          return;
-        }
-
-        String lastErrorItem = quranSettings.getLastDownloadItemWithError();
-        Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem);
-        if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)) {
-          int lastError = quranSettings.getLastDownloadErrorCode();
-          int errorId = ServiceIntentHelper
-              .getErrorResourceFromErrorCode(lastError, false);
-          showFatalErrorDialog(errorId);
-        } else if (quranSettings.shouldFetchPages()) {
-          downloadQuranImages(false);
-        } else {
-          promptForDownload();
-        }
-      } else {
-        quranSettings.setDownloadedPages(true);
-        if (!TextUtils.isEmpty(patchParam)) {
-          Timber.d("checkPages: have pages, but need patch %s", patchParam);
-          patchUrl = quranFileUtils.getPatchFileUrl(patchParam,
-              quranPageProvider.getImageVersion());
-          promptForDownload();
-          return;
-        }
-        runListView();
-      }
-    }
+  public void onStorageNotAvailable() {
+    // no storage mounted, nothing we can do...
+    runListView();
   }
 
-  @WorkerThread
-  private void copyArabicDatabaseIfNecessary() {
-    // in 2.9.1 and above, the Arabic databases were renamed. To make it easier for
-    // people to get them, the app will bundle them with the apk for a few releases.
-    // if the database doesn't exist, let's try to copy it if we can. Only check this
-    // if we have all the files, since if not, they come bundled with the full pages
-    // zip file anyway. Note that, for now, this only applies for the madani app.
+  public void onPagesChecked(QuranDataPresenter.QuranDataStatus quranDataStatus) {
+    this.quranDataStatus = quranDataStatus;
+    if (!quranDataStatus.havePages()) {
+      // we need to download pages in this case
 
-    //noinspection ConstantConditions
-    if ("madani".equals(BuildConfig.FLAVOR) &&
-        !quranFileUtils.hasArabicSearchDatabase(getApplicationContext())) {
-      final boolean success =
-          copyDatabaseUtil.copyArabicDatabaseFromAssets(QuranDataProvider.QURAN_ARABIC_DATABASE)
-              .blockingGet();
-      if (success) {
+      // if we downloaded pages once before
+      if (quranSettings.didDownloadPages()) {
+        // log an event to Answers - this should help figure out why people are complaining that
+        // they are always prompted to re-download images, even after they did.
         Answers.getInstance()
-            .logCustom(new CustomEvent("arabicDatabaseCopied")
-                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE));
+            .logCustom(new CustomEvent("imagesDisappeared")
+                .putCustomAttribute("permissionGranted", havePermission ? "true" : "false")
+                .putCustomAttribute("osVersion", Build.VERSION.SDK_INT)
+                .putCustomAttribute("storagePath", quranSettings.getAppCustomLocation()));
+        Timber.e(new IllegalStateException("Deleted Data"), "Unable to Download Pages");
+        quranSettings.setDownloadedPages(false);
+      }
+
+      String lastErrorItem = quranSettings.getLastDownloadItemWithError();
+      Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem);
+      if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)) {
+        int lastError = quranSettings.getLastDownloadErrorCode();
+        int errorId = ServiceIntentHelper
+            .getErrorResourceFromErrorCode(lastError, false);
+        showFatalErrorDialog(errorId);
+      } else if (quranSettings.shouldFetchPages()) {
+        downloadQuranImages(false);
       } else {
-        Answers.getInstance()
-            .logCustom(new CustomEvent("arabicDatabaseCopyFailed")
-                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE));
+        promptForDownload();
+      }
+    } else {
+      quranSettings.setDownloadedPages(true);
+      final String patchParam = quranDataStatus.getPatchParam();
+      if (!TextUtils.isEmpty(patchParam)) {
+        Timber.d("checkPages: have pages, but need patch %s", patchParam);
+        promptForDownload();
+      } else {
+        runListView();
       }
     }
   }
@@ -514,19 +383,17 @@ public class QuranDataActivity extends Activity implements
     // if any broadcasts were received, then we are already downloading
     // so unless we know what we are doing (via force), don't ask the
     // service to restart the download
-    if (downloadReceiver != null &&
-        downloadReceiver.didReceiveBroadcast() && !force) {
-      return;
-    }
-    if (isPaused) {
+    if (downloadReceiver != null && downloadReceiver.didReceiveBroadcast() && !force) {
       return;
     }
 
+    final QuranDataPresenter.QuranDataStatus dataStatus = quranDataStatus;
+
     String url;
-    if (needPortraitImages && !needLandscapeImages) {
+    if (dataStatus.needPortrait() && !dataStatus.needLandscape()) {
       // phone (and tablet when upgrading on some devices, ex n10)
       url = quranFileUtils.getZipFileUrl();
-    } else if (needLandscapeImages && !needPortraitImages) {
+    } else if (dataStatus.needLandscape() && !dataStatus.needPortrait()) {
       // tablet (when upgrading from pre-tablet on some devices, ex n7).
       url = quranFileUtils.getZipFileUrl(quranScreenInfo.getTabletWidthParam());
     } else {
@@ -543,8 +410,9 @@ public class QuranDataActivity extends Activity implements
     }
 
     // if we have a patch url, just use that
-    if (!TextUtils.isEmpty(patchUrl)) {
-      url = patchUrl;
+    final String patchParam = dataStatus.getPatchParam();
+    if (!TextUtils.isEmpty(patchParam)) {
+      url = quranFileUtils.getPatchFileUrl(patchParam, quranPageProvider.getImageVersion());
     }
 
     String destination = quranFileUtils.getQuranImagesBaseDirectory(QuranDataActivity.this);
@@ -564,13 +432,13 @@ public class QuranDataActivity extends Activity implements
   }
 
   private void promptForDownload() {
+    final QuranDataPresenter.QuranDataStatus dataStatus = quranDataStatus;
     int message = R.string.downloadPrompt;
-    if (quranScreenInfo.isDualPageMode() &&
-        (needPortraitImages != needLandscapeImages)) {
+    if (quranScreenInfo.isDualPageMode() && dataStatus.needLandscape()) {
       message = R.string.downloadTabletPrompt;
     }
 
-    if (!TextUtils.isEmpty(patchUrl)) {
+    if (!TextUtils.isEmpty(dataStatus.getPatchParam())) {
       // patch message if applicable
       message = R.string.downloadImportantPrompt;
     }
