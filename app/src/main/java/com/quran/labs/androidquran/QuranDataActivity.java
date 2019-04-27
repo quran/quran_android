@@ -319,6 +319,11 @@ public class QuranDataActivity extends Activity implements
 
     CheckPagesAsyncTask(Context context) {
       appContext = context.getApplicationContext();
+
+      // reset variables in case it's a new task
+      needPortraitImages = false;
+      needLandscapeImages = false;
+      patchUrl = null;
     }
 
     @Override
@@ -368,47 +373,40 @@ public class QuranDataActivity extends Activity implements
 
       final int latestImagesVersion = quranPageProvider.getImageVersion();
       final String width = quranScreenInfo.getWidthParam();
-      if (quranScreenInfo.isDualPageMode()) {
-        final String tabletWidth = quranScreenInfo.getTabletWidthParam();
+      boolean havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages, true);
+      needPortraitImages = !havePortrait;
+
+      final String tabletWidth = quranScreenInfo.getTabletWidthParam();
+      if (quranScreenInfo.isDualPageMode() && !width.equals(tabletWidth)) {
         boolean haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages, true);
-        boolean havePortrait = tabletWidth.equals(width) ? haveLandscape :
-            quranFileUtils.haveAllImages(appContext, width, totalPages, true);
-        needPortraitImages = !havePortrait;
         needLandscapeImages = !haveLandscape;
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
             havePortrait ? "yes" : "no", haveLandscape ? "yes" : "no");
-        if (haveLandscape && havePortrait) {
-          // if we have the images, see if we need a patch set or not
-          if (!quranFileUtils.isVersion(appContext, width, latestImagesVersion) ||
-              !quranFileUtils.isVersion(appContext, tabletWidth, latestImagesVersion)) {
-            if (!width.equals(tabletWidth)) {
-              patchParam = width + tabletWidth;
-            } else {
-              patchParam = width;
-            }
-          }
-        }
-
-        final boolean haveAll = haveLandscape && havePortrait;
-        if (haveAll) {
-          copyArabicDatabaseIfNecessary();
-        }
-        return haveAll;
       } else {
-        boolean haveAll = quranFileUtils.haveAllImages(appContext,
-            quranScreenInfo.getWidthParam(), totalPages, true);
-        Timber.d("checkPages: have all images: %s", haveAll ? "yes" : "no");
-        needPortraitImages = !haveAll;
-        needLandscapeImages = false;
-        if (haveAll && !quranFileUtils.isVersion(appContext, width, latestImagesVersion)) {
+        // either not dual screen mode or the widths are the same
+        Timber.d("checkPages: have all images: %s", havePortrait ? "yes" : "no");
+      }
+
+      final boolean haveAll = !needPortraitImages && !needLandscapeImages;
+      if (haveAll) {
+        copyArabicDatabaseIfNecessary();
+
+        final boolean needPortraitPatch =
+            !quranFileUtils.isVersion(appContext, width, latestImagesVersion);
+        if (needPortraitPatch) {
           patchParam = width;
         }
 
-        if (haveAll) {
-          copyArabicDatabaseIfNecessary();
+        if (!width.equals(tabletWidth)) {
+          final boolean needLandscapePatch =
+              !quranFileUtils.isVersion(appContext, tabletWidth, latestImagesVersion);
+          if (needLandscapePatch) {
+            patchParam = width + tabletWidth;
+          }
         }
-        return haveAll;
       }
+
+      return haveAll;
     }
 
     @Override
