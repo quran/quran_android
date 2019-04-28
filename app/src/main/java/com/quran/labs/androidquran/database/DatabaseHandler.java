@@ -10,6 +10,9 @@ import android.provider.BaseColumns;
 import android.util.SparseArray;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.common.search.ArabicSearcher;
+import com.quran.common.search.DefaultSearcher;
+import com.quran.common.search.Searcher;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranFileConstants;
@@ -37,7 +40,7 @@ public class DatabaseHandler {
   private static final String COL_SURA = "sura";
   private static final String COL_AYAH = "ayah";
   private static final String COL_TEXT = "text";
-  public static final String VERSE_TABLE = "verses";
+  private static final String VERSE_TABLE = "verses";
   public static final String ARABIC_TEXT_TABLE = "arabic_text";
   public static final String SHARE_TEXT_TABLE = "share_text";
 
@@ -51,8 +54,10 @@ public class DatabaseHandler {
   private static Map<String, DatabaseHandler> databaseMap = new HashMap<>();
 
   private int schemaVersion = 1;
-  private String matchString;
   private SQLiteDatabase database = null;
+
+  private final Searcher defaultSearcher;
+  private final Searcher arabicSearcher;
 
   @Retention(RetentionPolicy.SOURCE)
   @IntDef( { TextType.ARABIC, TextType.TRANSLATION } )
@@ -85,10 +90,21 @@ public class DatabaseHandler {
   private DatabaseHandler(Context context,
                           String databaseName,
                           QuranFileUtils quranFileUtils) throws SQLException {
+    // initialize the searchers first
+    final String matchString =
+        "<font color=\"" +
+            ContextCompat.getColor(context, R.color.translation_highlight) +
+            "\">";
+    defaultSearcher = new DefaultSearcher(matchString, MATCH_END, ELLIPSES);
+    arabicSearcher = new ArabicSearcher(defaultSearcher, matchString, MATCH_END);
+
+    // if there's no Quran base directory, there are no databases
     String base = quranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
+
     String path = base + File.separator + databaseName;
     Crashlytics.log("opening database file: " + path);
+
     try {
       database = SQLiteDatabase.openDatabase(path, null,
         SQLiteDatabase.NO_LOCALIZED_COLLATORS, new DefaultDatabaseErrorHandler());
@@ -102,9 +118,6 @@ public class DatabaseHandler {
     }
 
     schemaVersion = getSchemaVersion();
-    matchString = "<font color=\"" +
-        ContextCompat.getColor(context, R.color.translation_highlight) +
-        "\">";
   }
 
   public boolean validDatabase() {
@@ -306,34 +319,21 @@ public class DatabaseHandler {
     return database.rawQuery(sql, null);
   }
 
-  public Cursor search(String query, boolean withSnippets) {
-    return search(query, VERSE_TABLE, withSnippets);
+  public Cursor search(String query, boolean withSnippets, boolean isArabicDatabase) {
+    return search(query, VERSE_TABLE, withSnippets, isArabicDatabase);
   }
 
-  public Cursor search(String q, String table, boolean withSnippets) {
+  public Cursor search(String q, String table, boolean withSnippets, boolean isArabicDatabase) {
     if (!validDatabase()) {
         return null;
     }
 
-    final String limit = withSnippets ? "" : "LIMIT 25";
-
-    String query = q;
-    String operator = " like ";
-    String whatTextToSelect = COL_TEXT;
-
-    boolean useFullTextIndex = (schemaVersion > 1);
-    if (useFullTextIndex) {
-      operator = " MATCH ";
-      query = query + "*";
-    } else {
-      query = "%" + query + "%";
-    }
-
+    String searchText = q;
     int pos = 0;
     int found = 0;
     boolean done = false;
     while (!done) {
-      int quote = query.indexOf("\"", pos);
+      int quote = searchText.indexOf("\"", pos);
       if (quote > -1) {
         found++;
         pos = quote + 1;
@@ -343,23 +343,28 @@ public class DatabaseHandler {
     }
 
     if (found % 2 != 0) {
-      query = query.replaceAll("\"", "");
+      searchText = searchText.replaceAll("\"", "");
     }
 
-    if (useFullTextIndex && withSnippets) {
-      whatTextToSelect = "snippet(" + table + ", '" +
-          matchString + "', '" + MATCH_END +
-          "', '" + ELLIPSES + "', -1, 64)";
+    final Searcher searcher;
+    if (isArabicDatabase) {
+      searcher = arabicSearcher;
+    } else {
+      searcher = defaultSearcher;
     }
 
-    String qtext = "select rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH +
-        ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
-        operator + " ? " + " " + limit;
-    Crashlytics.log("search query: " + qtext + ", query: " + query);
 
+    final boolean useFullTextIndex = (schemaVersion > 1 && !isArabicDatabase);
+    String qtext = searcher.getQuery(withSnippets, useFullTextIndex, table,
+        "rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH, COL_TEXT) +
+        " " + searcher.getLimit(withSnippets);
+    searchText = searcher.processSearchText(searchText, useFullTextIndex);
+    Crashlytics.log("search query: " + qtext + ", query: " + searchText);
+
+    final String[] columns = new String[] { BaseColumns._ID, COL_SURA, COL_AYAH, COL_TEXT };
     try {
-      return database.rawQuery(qtext, new String[]{ query });
-    } catch (Exception e){
+      return searcher.runQuery(database, qtext, searchText, q, withSnippets, columns);
+    } catch (Exception e) {
       Crashlytics.logException(e);
       return null;
     }

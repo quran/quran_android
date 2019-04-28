@@ -107,6 +107,7 @@ dependencies {
   implementation project(path: ':common:data')
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
+  implementation project(path: ':common:search')
 
   implementation deps.kotlin.stdlib
   implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
