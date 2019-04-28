@@ -14,7 +14,7 @@ import okhttp3.OkHttpClient;
 @Module(includes = { DnsModule.class })
 public class NetworkModule {
   private static final int DEFAULT_READ_TIMEOUT_SECONDS = 20;
-  private static final int DEFAULT_CONNECT_TIMEOUT_SECONDS = 15;
+  private static final int DEFAULT_CONNECT_TIMEOUT_SECONDS = 20;
 
   @Provides
   @Singleton
