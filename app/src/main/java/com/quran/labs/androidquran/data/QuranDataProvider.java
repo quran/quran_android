@@ -226,7 +226,7 @@ public class QuranDataProvider extends ContentProvider {
   private Cursor search(String query, String databaseName, boolean wantSnippets) {
     final DatabaseHandler handler =
         DatabaseHandler.getDatabaseHandler(getContext(), databaseName, quranFileUtils);
-    return handler.search(query, wantSnippets);
+    return handler.search(query, wantSnippets, QURAN_ARABIC_DATABASE.equals(databaseName));
   }
 
   @Override
