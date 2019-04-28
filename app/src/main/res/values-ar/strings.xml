@@ -237,7 +237,6 @@
   <string name="share_ayah_text">شارك نص الآية</string>
   <string name="translation_ayah">تفسير/ترجمة الآية</string>
   <string name="play_from_here">بدء التلاوة من هذه الآية</string>
-  <string name="via_string">بواسطة @QuranAndroid</string>
   <string name="search_key">للبحث عن آية</string>
   <string name="copy_ayah">نسخ الآية</string>
   <string name="ayah_copied_popup">تم نسخ الآية</string>
