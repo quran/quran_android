@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>Al-Fatiha</item>
+    <item>Al-Baqarah</item>
+    <item>Al-Imrán</item>
+    <item>An-Nisza</item>
+    <item>Al-Maidah</item>
+    <item>Al-Anam</item>
+    <item>Al-Araf</item>
+    <item>Al-Anfal</item>
+    <item>At-Taubah</item>
+    <item>Júnusz</item>
+    <item>Húd</item>
+    <item>Juszuf</item>
+    <item>Ar-Rad</item>
+    <item>Ibrahim</item>
+    <item>Al-Hidzsr</item>
+    <item>An-Nahl</item>
+    <item>Al-Iszra</item>
+    <item>Al-Kahf</item>
+    <item>Marjam</item>
+    <item>Ta Ha</item>
+    <item>Al-Anbija</item>
+    <item>Al-Hadzs</item>
+    <item>Al-Mu\'minún</item>
+    <item>An-Núr</item>
+    <item>Al-Furqan</item>
+    <item>As-Suara</item>
+    <item>An-Naml</item>
+    <item>Al-Qaszasz</item>
+    <item>Al-Ankabút</item>
+    <item>Ar-Rúm</item>
+    <item>Luqman</item>
+    <item>Asz-Sadzsda</item>
+    <item>Al-Ahzab</item>
+    <item>Szaba</item>
+    <item>Al-Malaika</item>
+    <item>Já Szín</item>
+    <item>Asz-Szaffat</item>
+    <item>Szad</item>
+    <item>Az-Zumar</item>
+    <item>Al-Mu\'min</item>
+    <item>Fusszilat</item>
+    <item>As-Súra</item>
+    <item>Az-Zukhrúf</item>
+    <item>Ad-Dukhan</item>
+    <item>Al-Dzsáthije</item>
+    <item>Al-Ahqaf</item>
+    <item>Mohammed</item>
+    <item>Al-Fath</item>
+    <item>Al-Hudzsurat</item>
+    <item>Qaf</item>
+    <item>Adh-Dharijat</item>
+    <item>At-Túr</item>
+    <item>An-Nadzsm</item>
+    <item>Al-Qamar</item>
+    <item>Ar-Rahman</item>
+    <item>Al-Wákiah</item>
+    <item>Al-Hadíd</item>
+    <item>Al-Mudzsádilah</item>
+    <item>Al-Hasr</item>
+    <item>Al-Mumtahina</item>
+    <item>Asz-Szaff</item>
+    <item>Al-Dzsumah</item>
+    <item>Al-Munáfikún</item>
+    <item>At-Taghabun</item>
+    <item>At-Talaq</item>
+    <item>At-Tharim</item>
+    <item>Al-Mulk</item>
+    <item>Al-Kalam</item>
+    <item>Al-Haqqah</item>
+    <item>Al-Maaridzs</item>
+    <item>Núh</item>
+    <item>Al-Dzsinn</item>
+    <item>Al-Muzzammil</item>
+    <item>Al-Muddathir</item>
+    <item>Al-Qijamah</item>
+    <item>Al-Inszan</item>
+    <item>Al-Murszalat</item>
+    <item>An-Naba</item>
+    <item>An-Naziat</item>
+    <item>Abasza</item>
+    <item>At-Takwír</item>
+    <item>Al-Infitar</item>
+    <item>Al-Mutaffifín</item>
+    <item>Al-Insiqaq</item>
+    <item>Al-Burúdzs</item>
+    <item>At-Tariq</item>
+    <item>Al-Ala</item>
+    <item>Al-Ghasija</item>
+    <item>Al-Fadzsr</item>
+    <item>Al-Balad</item>
+    <item>As-Samsz</item>
+    <item>Al-Lajl</item>
+    <item>Ad-Duha</item>
+    <item>Al-Insirah</item>
+    <item>At-Tín</item>
+    <item>Al-Alaq</item>
+    <item>Al-Qadr</item>
+    <item>Al-Bajjinah</item>
+    <item>Az-Zalzalah</item>
+    <item>Al-Adijat</item>
+    <item>Al-Qarijah</item>
+    <item>At-Takáthur</item>
+    <item>Al-Aszr</item>
+    <item>Al-Humazah</item>
+    <item>Al-Fíl</item>
+    <item>Qurajs</item>
+    <item>Al-Maun</item>
+    <item>Al-Kauthar</item>
+    <item>Al-Káfirún</item>
+    <item>An-Naszr</item>
+    <item>Abu Lahab</item>
+    <item>Al-Ikhlasz</item>
+    <item>Al-Falaq</item>
+    <item>An-Nasz</item>
+  </string-array>
+
+  <!-- If sura name has no translation, please add empty double quotes to the
+       respective item body to keep Android Studio happy -->
+  <string-array name="sura_names_translation">
+    <item>A megnyitó</item>
+    <item>A tehén</item>
+    <item>Imrán családja</item>
+    <item>A nők</item>
+    <item>Az asztal</item>
+    <item>A jószágok</item>
+    <item>A magaslatok</item>
+    <item>A hadizsákmány</item>
+    <item>A bűnbánat</item>
+    <item>Jónás</item>
+    <item>Húd</item>
+    <item>Józseg</item>
+    <item>A mennydörgés</item>
+    <item>Ábrahám</item>
+    <item>Hidzsr</item>
+    <item>A méh</item>
+    <item>Az éjszakai utazás</item>
+    <item>A barlan</item>
+    <item>Mária</item>
+    <item>Ta Ha</item>
+    <item>A próféták</item>
+    <item>A zarándoklat</item>
+    <item>A hívők</item>
+    <item>A fény</item>
+    <item>A megkülönböztető</item>
+    <item>A költők</item>
+    <item>A hangyák</item>
+    <item>A történet</item>
+    <item>A pók</item>
+    <item>A rómaiak</item>
+    <item>Luqman</item>
+    <item>A leborulás</item>
+    <item>A szövetségesek</item>
+    <item>Szaba</item>
+    <item>Az angyalaok</item>
+    <item>Já Szín</item>
+    <item>A felsorakozottak</item>
+    <item>Szad</item>
+    <item>A csapatok</item>
+    <item>A hívő</item>
+    <item>A részletesen megmagyarázott</item>
+    <item>A tanácskozás</item>
+    <item>Az ékszerek</item>
+    <item>A füst</item>
+    <item>A térdelő</item>
+    <item>A homokdűnék</item>
+    <item>Mohammed</item>
+    <item>A győzelem</item>
+    <item>A szobák</item>
+    <item>Qaf</item>
+    <item>A szeleket támasztók</item>
+    <item>A hegy</item>
+    <item>A csillag</item>
+    <item>A Hold</item>
+    <item>A Kegyelmes</item>
+    <item>A Bekövetkező</item>
+    <item>A vas</item>
+    <item>A vitatkozó nő</item>
+    <item>Az összegyűjtés</item>
+    <item>A próbára tett nő</item>
+    <item>A sorok</item>
+    <item>A péntek</item>
+    <item>A képmutatók</item>
+    <item>A kölcsönös</item>
+    <item>A válás</item>
+    <item>A tiltás</item>
+    <item>Az uralom</item>
+    <item>A toll</item>
+    <item>Az elkerülhetetlen valóság</item>
+    <item>A felfelé vezető utak</item>
+    <item>Noé</item>
+    <item>A dzsinn</item>
+    <item>A beburkolódzó</item>
+    <item>A betakaródzó</item>
+    <item>A feltámadás</item>
+    <item>Az ember</item>
+    <item>Az elküldöttek</item>
+    <item>A hír</item>
+    <item>A kiszakítók</item>
+    <item>Összevonta a szemöldökét</item>
+    <item>A felgöngyölítés</item>
+    <item>A meghasadás</item>
+    <item>A hamisan mérők</item>
+    <item>A kettéhasadás</item>
+    <item>A csillagképek</item>
+    <item>Az éjszaka eljövő</item>
+    <item>A Legmagasztosabb</item>
+    <item>Az Elborító</item>
+    <item>A hajnal</item>
+    <item>A város</item>
+    <item>A Nap</item>
+    <item>Az éjszaka</item>
+    <item>A délelőtt</item>
+    <item>A kitárás</item>
+    <item>A füge</item>
+    <item>A megtapadt rög</item>
+    <item>Az Elrendelés</item>
+    <item>A nyilvánvaló</item>
+    <item>A földrengés</item>
+    <item>A vágtatók</item>
+    <item>A lesújtó katasztrófa</item>
+    <item>A kölcsönös versengés</item>
+    <item>A délután</item>
+    <item>A rágalmazó</item>
+    <item>Az elefánt</item>
+    <item>Kurajs</item>
+    <item>A szívességek</item>
+    <item>A Kauthar</item>
+    <item>A hitetlenek</item>
+    <item>A segítség</item>
+    <item>Abu Lahab</item>
+    <item>Az őszinte hit</item>
+    <item>A hajnalhasadás</item>
+    <item>Az emberek</item>
+  </string-array>
+</resources>
