@@ -46,7 +46,7 @@ class PageSelectPresenter @Inject
               imageUtil.downloadImage(url, previewImage)
                   .subscribeOn(Schedulers.io())
                   .observeOn(mainThreadScheduler)
-                  .subscribe({ generateData() }, { Crashlytics.logException(it) })
+                  .subscribe({ generateData() }, { e -> Crashlytics.logException(e) })
           )
           null
         } else {
