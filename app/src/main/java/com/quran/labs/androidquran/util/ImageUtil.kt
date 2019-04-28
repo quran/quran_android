@@ -7,6 +7,7 @@ import okhttp3.Request
 import okio.Okio
 import okio.Source
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
@@ -32,6 +33,8 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
             destination.copyTo(outputPath)
             destination.delete()
           }
+        } catch (exception: IOException) {
+          // ignore - socket was likely closed, etc.
         } finally {
           sink.closeQuietly()
           source.closeQuietly()
