@@ -19,14 +19,12 @@
     <string name="menu_about">Névjegy</string>
     <string name="menu_settings">Beállítások</string>
     <string name="menu_jump_last_page">Legutóbbi lap</string>
-    <string name="menu_tags">Címkék</string>
     <string name="menu_bookmarks">Könyvjelzők</string>
     <string name="menu_bookmarks_page">Oldal könyvjelzők</string>
     <string name="menu_bookmarks_ayah">Ája könyvjelzők</string>
     <string name="menu_sort">Rendezés</string>
     <string name="menu_sort_date">Hozzáadása ideje szerint</string>
     <string name="menu_sort_location">Koránban való hely szerint</string>
-    <string name="menu_sort_alphabetical">Névsor szerint</string>
     <string name="menu_translation">Fordítás megjelenítése</string>
     <string name="menu_back_to_page">Korán megjelenítése</string>
     <string name="menu_help">Súgó</string>
@@ -35,47 +33,6 @@
     <string name="menu_jump">Ugrás</string>
     <string name="gotoPage">Ugrás erre az oldalra:</string>
     <string name="cancel">Mégsem</string>
-    <string name="developedBy">La tansawna men saleh el doaa.</string>
-    <string name="copyRights">&#169; All Muslims</string>
-    <string name="credits">A képek a
-        &lt;a href="http://quran.com">quran.com&lt;/a>
-        projektből lettek felhasználva, a hangok az
-        &lt;a href="http://everyayah.com">everyayah.com&lt;/a>-ról,
-        a fordítások és az arab változat adatai a
-        &lt;a href="http://tanzil.net">tanzil.net&lt;/a>-ről és a
-        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>-ról származnak.</string>
-    <string name="aboutUs">A Korán Android egy ingyenes, nyílt forrású Korán
-        alkalmazás Androidra.  %1$s
-        &lt;br/>&lt;br/>&lt;b>A Korán Androidra hozzájárulói:&lt;/b>
-        &lt;br/>Ahmed El-Helw (&lt;a href="http://twitter.com/ahmedre">@ahmedre&lt;/a>)
-        &lt;br/>Hussein Maher (&lt;a href="http://twitter.com/husseinmaher">@husseinmaher&lt;/a>)
-        &lt;br/>Ahmed Farra (&lt;a href="https://github.com/afarra">github&lt;/a>)
-        &lt;br/>Wael Nafee (&lt;a href="http://twitter.com/wnafee">@wnafee&lt;/a>)
-        &lt;br/>Ahmed Fouad (&lt;a href="http://twitter.com/fo2ad">@fo2ad&lt;/a>)
-        &lt;br/>Somaia Gabr (&lt;a href="http://somaiagabr.com">web&lt;/a>)
-        &lt;br/>Mahmoud Hossam (&lt;a href="https://github.com/mahmoudhossam">github&lt;/a>)
-        &lt;br/>Rehab Mohamed (&lt;a href="http://twitter.com/hams_rrr">@hams_rrr&lt;/a>)
-        &lt;br/>Asim Mohiuddin - képek és munka a Naskh verzión
-        &lt;br/>g360230 - képek és munka a Qaloon verzión
-        &lt;br/>&lt;br/>&lt;b>Fordítók:&lt;/b>
-        &lt;br/>Mehmed Mahmudoglu, Shuhrat Dehkanov - török
-        &lt;br/>M. Jafar Nanakar - perzsa
-        &lt;br/>Rinat (Ринат) - orosz
-        &lt;br/>khajavi (github-on) - előző perzsa fordítás
-        &lt;br/>Yasser Kadddour - francia
-        &lt;br/>Bo Li (&lt;a href="http://twitter.com/liboat">@liboat&lt;/a>) - kínai
-        &lt;br/>Armin Šupuk - német
-        &lt;br/>Goran Gharib Karim - kurd
-        &lt;br/>Abduqadir Abliz - ujgur
-        &lt;br/>Saiful Khaliq (&lt;a href="http://twitter.com/saifious">@saifious&lt;/a>) - indonéz
-        &lt;br/>Ahmad Syazwan - maláj
-        &lt;br/>Alexander Salas - spanyol
-        &lt;br/>&lt;br/>&lt;b>Nyílt forrású projektek:&lt;/b>
-        &lt;br/>ActionBarSherlock (&lt;a href="http://abs.io">abs.io&lt;/a>)
-        &lt;br/>AndroidSlidingUpPanel (&lt;a href="https://github.com/umano/AndroidSlidingUpPanel">github&lt;/a>)
-        &lt;br/>&lt;br/>&lt;b>Külön köszönet:&lt;/b>
-        &lt;br/>Ahmed Essam (&lt;a href="http://twitter.com/neo_4583">@neo_4583&lt;/a>)
-        &lt;br/>Batoul Apps (&lt;a href="http://twitter.com/batoulapps">@batoulapps&lt;/a>)</string>
     <string name="help_title">Gyakran Ismételt Kérdések</string>
     <string name="help">
         &lt;b>Hogyan játszhatom le a hangot?&lt;/b>
@@ -124,15 +81,12 @@
     </plurals>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Találat itt: szúra</string>
+    <string name="found_in_sura">Találat itt: szúra %1$s, Ája %2$d</string>
     <string name="no_results">Nincs találat erre: \"%s\"</string>
-    <string name="no_active_translation">Nincs beállítva aktív fordítás. Kérem, először állítson be egy aktív fordítást és keressen újra.</string>
-    <string name="translation_settings">Fordítási beállítások</string>
     <string name="no_arabic_search_available">Nincs letöltve az arab keresési csomag. Kérem, töltse le és próbálja újra a keresést.</string>
     <string name="get_arabic_search_db">Arab keresési adatbázis letöltése</string>
 
     <!-- Quran Preference Activity -->
-    <string name="prefs_category_navigation">Navigálás</string>
     <string name="prefs_volume_key_navigation_title">Navigálás a hangerő gombbal</string>
     <string name="prefs_volume_key_navigation_summary">Navigálás az oldalak között a hangerő gombok használatával</string>
     <string name="prefs_category_reading">Olvasási beállítások</string>
@@ -182,12 +136,6 @@
     <string name="prefs_copying_app_files">App fájlok másolása</string>
     <string name="prefs_err_moving_app_files">Az app fájlok áthelyezése sikertelen</string>
     <string name="prefs_no_enough_space_to_move_files">Nincs elegendő hely az app fájlok áthelyezéséhez</string>
-    <string name="prefs_megabytes">%1$d MB</string>
-    <string name="prefs_tablet_mode_title">Tablet mód</string>
-    <string name="prefs_tablet_mode_enabled">Fekvő módban két oldal fog megjelenni egymás mellett.</string>
-    <string name="prefs_tablet_mode_disabled">Fekvő módban csak egy oldal fog megjelenni.</string>
-
-    <string name="kitkat_external_title">Figyelmeztetés</string>
     <string name="kitkat_external_message">Az Android korlátai miatt, ha azt választja, hogy a Korán
         adatait külső SD-kártyára helyezi és később eltávolítja a Korán Androidot vagy letörli az adatait, minden Korán
         Android oldal és hang le lesz törölve, és ismét le kell töltenie azokat. Biztos, hogy a külső SD-kártyát szeretné használni?</string>
@@ -211,7 +159,6 @@
     <string name="quran_sura_title">%1$s szúra</string>
     <string name="sura_ayah_notification_str">%1$s szúra, %2$d. ája</string>
 
-    <string name="bookmarks_current_page">Jelenlegi oldal</string>
     <string name="index_loading">Betöltés&#8230;</string>
 
     <string name="canceling">Megszakítás&#8230;</string>
@@ -269,15 +216,12 @@
     <string name="play_from">Innentől</string>
     <string name="play_to">Idáig</string>
     <string name="play_restrict_range">Csak a fenti versek lejátszása</string>
-    <string name="repeat_verses_range">Verscsoport ismétlése:</string>
-    <string name="repeat_each_verse">Minden vers ismétlése:</string>
     <string name="play_apply">Alkalmaz</string>
     <string name="play_apply_and_play">Alkalmaz és lejátszás</string>
     <string name="play">Lejátszás</string>
     <string name="stop">Leállítás</string>
 
     <string-array name="repeatValues">
-        <item>soha</item>
         <item>egyszer</item>
         <item>kétszer</item>
         <item>háromszor</item>
@@ -291,13 +235,11 @@
     <string name="share_ayah_text">Ája szöveg megosztása</string>
     <string name="translation_ayah">Ája fordítás/tafszír</string>
     <string name="play_from_here">Lejátszás innen</string>
-    <string name="via_string">via @QuranAndroid</string>
     <string name="search_key">Nyomja meg a keresés gombot egy vers kereséséhez</string>
     <string name="copy_ayah">Ája másolása</string>
     <string name="ayah_copied_popup">Ája kimásolva</string>
 
     <!-- bookmarks & tags contextual action bar -->
-    <string name="delete_bookmark">Könyvjelző törlése</string>
     <string name="tag_bookmark">Könyvelző címkézése</string>
     <string name="delete_tag">Címke törlése</string>
     <string name="edit_tag">Címke szerkesztése</string>
@@ -310,7 +252,6 @@
 
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Nincs könyvjelző</string>
-    <string name="tags_list_empty">Nincs címke</string>
 
     <!-- audio manager -->
     <string name="audio_manager">Hangkezelő</string>
