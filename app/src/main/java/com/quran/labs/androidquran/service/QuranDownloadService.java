@@ -14,6 +14,8 @@ import android.os.Message;
 import android.os.StatFs;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
@@ -26,7 +28,6 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ZipUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -465,7 +466,13 @@ public class QuranDownloadService extends Service implements
         break;
       }
 
+      String url = urlString;
       if (i > 0) {
+        // let's try http instead of https?
+        if (urlString.contains("quran.com") || urlString.contains("quranicaudio.com")) {
+          url = urlString.replace("https://", "http://");
+        }
+
         // want to wait before retrying again
         try {
           Thread.sleep(WAIT_TIME);
@@ -476,12 +483,15 @@ public class QuranDownloadService extends Service implements
       }
 
       wifiLock.acquire();
-      res = startDownload(urlString, destination, outputFile, details);
+      res = startDownload(url, destination, outputFile, details);
       if (wifiLock.isHeld()) {
         wifiLock.release();
       }
 
       if (res == DOWNLOAD_SUCCESS) {
+        if (i > 0 && !url.contains("https://")) {
+          Answers.getInstance().logCustom(new CustomEvent("httpFallbackSuccess"));
+        }
         return true;
       } else if (res == QuranDownloadNotifier.ERROR_DISK_SPACE ||
           res == QuranDownloadNotifier.ERROR_PERMISSIONS) {
