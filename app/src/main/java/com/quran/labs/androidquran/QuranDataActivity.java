@@ -237,7 +237,6 @@ public class QuranDataActivity extends Activity implements
         havePermission = true;
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionGranted"));
         if (!canWriteSdcardAfterPermissions()) {
-          Answers.getInstance().logCustom(new CustomEvent("storagePermissionNeedsRestart"));
           Toast.makeText(this,
               R.string.storage_permission_please_restart, Toast.LENGTH_LONG).show();
         }

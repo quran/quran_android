@@ -3,8 +3,6 @@ package com.quran.labs.androidquran.presenter.data
 import android.content.Context
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.QuranDataActivity
@@ -211,13 +209,9 @@ class QuranDataPresenter @Inject internal constructor(
       val success = copyDatabaseUtil.copyArabicDatabaseFromAssets(QuranDataProvider.QURAN_ARABIC_DATABASE)
           .blockingGet()
       if (success) {
-        Answers.getInstance()
-            .logCustom(CustomEvent("arabicDatabaseCopied")
-                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE))
+        Timber.d("copied Arabic database successfully")
       } else {
-        Answers.getInstance()
-            .logCustom(CustomEvent("arabicDatabaseCopyFailed")
-                .putCustomAttribute("database", QuranDataProvider.QURAN_ARABIC_DATABASE))
+        Timber.d("failed to copy Arabic database")
       }
     }
   }
