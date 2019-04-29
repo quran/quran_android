@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:padding="12dp"
+    android:padding="16dp"
     android:textColor="@color/translation_hdr_color"
     android:textSize="16sp"
     android:background="@color/translation_sura_header"

@@ -4,7 +4,7 @@
     android:id="@+id/text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:lineSpacingMultiplier="1.4"
-    android:lineSpacingExtra="1.4dp"
+    android:padding="16dp"
+    android:lineSpacingMultiplier="@dimen/arabic_text_line_spacing_multiplier"
+    android:lineSpacingExtra="@dimen/arabic_text_line_spacing_extra"
     />
