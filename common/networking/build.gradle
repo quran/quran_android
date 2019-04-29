@@ -5,5 +5,7 @@ dependencies {
   compile deps.kotlin.stdlib
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
+
+  implementation 'dnsjava:dnsjava:2.1.8'
   implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:${okhttpVersion}"
 }

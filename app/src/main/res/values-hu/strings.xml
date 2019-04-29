@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Korán</string>
+    <string name="downloadPrompt_title">Letöltse a szükséges fájlokat?</string>
+    <string name="downloadPrompt">A Korán Android megfelelő működéséhez
+        néhány fájlt le kell tölteni. Ha ezt most nem teszi meg, akkor az app
+        lehet, hogy nem fog megbízhatóan működni és Internet kapcsolatra lesz szükség az olvasáshoz.
+        Szeretné most letölteni a szükséges fájlokat?
+    </string>
+    <string name="downloadTabletPrompt">A minap szebb képeket adtunk hozzá a tabletekhez. Szeretné most letölteni ezeket a képeket?</string>
+    <string name="downloadImportantPrompt">Egy kicsi, de fontos frissítés érhető el az eszközén található Korán képekhez. Szeretné most letölteni ezt
+        a javítás?
+    </string>
+    <string name="downloadPrompt_ok">Igen</string>
+    <string name="downloadPrompt_no">Nem</string>
+    <string name="downloading_title">Letöltés&#8230;</string>
+    <string name="downloading_message">Kérem várjon, amíg a fájlok letöltődnek (a folytatás támogatott).</string>
+    <string name="extracting_title">Feldolgozás&#8230;</string>
+    <string name="menu_about">Névjegy</string>
+    <string name="menu_settings">Beállítások</string>
+    <string name="menu_jump_last_page">Legutóbbi lap</string>
+    <string name="menu_bookmarks">Könyvjelzők</string>
+    <string name="menu_bookmarks_page">Oldal könyvjelzők</string>
+    <string name="menu_bookmarks_ayah">Ája könyvjelzők</string>
+    <string name="menu_sort">Rendezés</string>
+    <string name="menu_sort_date">Hozzáadása ideje szerint</string>
+    <string name="menu_sort_location">Koránban való hely szerint</string>
+    <string name="menu_translation">Fordítás megjelenítése</string>
+    <string name="menu_back_to_page">Korán megjelenítése</string>
+    <string name="menu_help">Súgó</string>
+    <string name="menu_search">Keresés</string>
+    <string name="menu_get_translations">Fordítások letöltése</string>
+    <string name="menu_jump">Ugrás</string>
+    <string name="gotoPage">Ugrás erre az oldalra:</string>
+    <string name="cancel">Mégsem</string>
+    <string name="help_title">Gyakran Ismételt Kérdések</string>
+    <string name="help">
+        &lt;b>Hogyan játszhatom le a hangot?&lt;/b>
+        &lt;br/>Nyisson meg egy Korán oldalt. Érintse meg egyszer a képernyőt. Alul meg fog jelenni
+        egy lejátszás gomb és néhány szöveg a qari nevével. Érintse meg a qari nevét
+        másik quari kiválasztásához. Érintse meg a lejátszás gombot a jelenlegi oldal vagy szúra letöltéshez és lejátszásához.
+        &lt;br/>
+        &lt;br/>&lt;b>Hogyan tekinthetem meg a fordítást?&lt;/b>
+        &lt;br/>Nyisson meg egy Korán oldalt. Érintse meg egyszer a képernyőt. Felül meg fog jelenni
+        egy földgömb ikon (vagy ha nem látja, érintse meg a három pontot ábrázoló ikont) - érintse
+        meg és válassza ki a megtekintendő fordítást.
+        &lt;br/>
+        Ha még nem töltött le egyetlen fordítást sem, meg fog jelenni
+        egy képernyő, ahol letölthet fordításokat. Válasszon ki és töltsön le egy fordítást,
+        majd térjen vissza és érintse meg ismét a földgömb ikont a fordítás megtekintéséhez.
+        &lt;br/>
+        &lt;br/>&lt;b>Hogyan könyvjelzőzhetek egy oldalt?&lt;/b>
+        &lt;br/>Nyisson meg egy Korán oldalt. Érintse meg egyszer a képernyőt. Felül meg fog jelenni
+        egy könyvjelző ikon. Érintse meg a könyvjelző ikont az oldal könyvjelzőzéséhez (a színe teljesen fehérré válik). Érintse meg ismét a könyvjelző
+        ikont a könyvjelző eltávolításához.
+        &lt;br/>
+        &lt;br/>&lt;b>Hogyan növelhetem meg a szöveg méretét?&lt;/b>
+        &lt;br/>Az arab oldalak esetén tartsa a telefont álló módban. Ez megnöveli a szöveg méretét.
+        A fordítások esetén lépjen a beállítások menübe és állítsa be a fordítás szövegének méretét.
+        &lt;br/>
+        &lt;br/>&lt;b>Hogyan oszthatok meg egy áját?&lt;/b>
+        &lt;br/>Bármelyik arab oldalon érintsen meg hosszan egy áját a menü megnyitásához, ahol
+        kiválaszthatja a könyvjelzőzést, a címkézést, az ája megosztását vagy vágólapra másolását, a fordítás megtekintését,
+        vagy a recitálás meghallhatását.&lt;br/>
+        &lt;br/>&lt;b>A malayalm/tamil/bangla/urdu betűtípusok nem működnek!&lt;/b>
+        &lt;br/>Sajnos az Android 4.0 előtti verziók nem támogatják ezeket a betűtípusokat, és csak
+        keveset tehetünk, hogy segítsünk ezen.
+    </string>
+    <string name="search_hint">Keresés a Koránban</string>
+    <string name="quranSearchType">A Korán versei</string>
+
+    <plurals name="files_downloaded">
+        <item quantity="one">1 szúra letöltve</item>
+        <item quantity="other">%1$d szúra letöltve</item>
+    </plurals>
+
+    <!-- Shown above search results when we receive a search request. -->
+    <plurals name="search_results">
+        <item quantity="one">Egy találat erre: \"%1$s\": </item>
+        <item quantity="other">%2$d találat erre: \"%1$s\": </item>
+    </plurals>
+
+    <!-- Search messages -->
+    <string name="found_in_sura">Találat itt: szúra %1$s, Ája %2$d</string>
+    <string name="no_results">Nincs találat erre: \"%s\"</string>
+    <string name="no_arabic_search_available">Nincs letöltve az arab keresési csomag. Kérem, töltse le és próbálja újra a keresést.</string>
+    <string name="get_arabic_search_db">Arab keresési adatbázis letöltése</string>
+
+    <!-- Quran Preference Activity -->
+    <string name="prefs_volume_key_navigation_title">Navigálás a hangerő gombbal</string>
+    <string name="prefs_volume_key_navigation_summary">Navigálás az oldalak között a hangerő gombok használatával</string>
+    <string name="prefs_category_reading">Olvasási beállítások</string>
+    <string name="prefs_category_translation">Fordítási beállítások</string>
+    <string name="prefs_category_display_settings">Megjelenítési beállítások</string>
+    <string name="prefs_use_arabic_title">Arab mód</string>
+    <string name="prefs_use_arabic_summary_on">Az alkalmazás arab nyelvű lesz</string>
+    <string name="prefs_new_background_title">Új háttér</string>
+    <string name="prefs_lock_orientation_title">Képernyőtájolás zárolása</string>
+    <string name="prefs_lock_orientation_summary_on">A Korán oldal rögzített tájolási módban lesz</string>
+    <string name="prefs_lock_orientation_summary_off">Alkalmazkodás a jelenlegi tájolási módhoz</string>
+    <string name="prefs_landscape_orientation_title">Fekvő tájolás</string>
+    <string name="prefs_landscape_orientation_summary_on">Fekvő tájolás lesz használva</string>
+    <string name="prefs_landscape_orientation_summary_off">Álló tájolás lesz használva</string>
+    <string name="prefs_night_mode_title">Éjszakai mód</string>
+    <string name="prefs_night_mode_summary">Sötét háttér és világos betűk lesznek használva</string>
+    <string name="prefs_night_mode_text_brightness_title">Szöveg fényerőssége</string>
+    <string name="prefs_night_mode_text_brightness_summary">A szöveg fényerőssége éjszakai mód bekapcsolásánál</string>
+    <string name="prefs_overlay_page_info_title">Oldalinfó megjelenítése</string>
+    <string name="prefs_overlay_page_info_summary">Oldalszám, szúranév és dzsuzszám megjelenítése olvasás közben</string>
+    <string name="prefs_display_marker_title">Felugró jelzés megjelenítése</string>
+    <string name="prefs_display_marker_summary">Felugró megjelenítése dzsuz, hiz, stb. elérésekor</string>
+    <string name="prefs_highlight_bookmarks_title">Könyvjelzők kiemelése</string>
+    <string name="prefs_highlight_bookmarks_summary">A könyvjelzőzött áják kiemelése olvasás közben</string>
+    <string name="prefs_translation_text_title">Fordítás szövegének mérete</string>
+    <string name="prefs_translations">Fordítások</string>
+    <string name="prefs_translations_summary">Fordítások letöltése és kezelése</string>
+    <string name="prefs_ayah_before_translation_title">Ája a fordítás előtt</string>
+    <string name="prefs_ayah_before_translation_summary">Ája megjelenítése arabul a fordítás felett</string>
+    <string name="prefs_category_download">Letöltési beállítások</string>
+    <string name="prefs_streaming_title">Streamelés</string>
+    <string name="prefs_streaming_summary">Hang streamelése, ha lehetséges (csak nem szünetmentes hangnál).</string>
+    <string name="prefs_download_amount_title">Letöltése mennyiség</string>
+    <string name="prefs_download_amount_summary">Előnyben részesített letöltési mennyiség nem szünetmentes hangnál.</string>
+    <string name="prefs_audio_manager">Hangkezelő (kísérleti)</string>
+    <string name="prefs_audio_manager_summary">Korán hangok kezelése és letöltése.</string>
+    <string name="downloaded_translations">Letöltve</string>
+    <string name="available_translations">Elérhető letöltésre</string>
+    <string name="remove_button">Eltávolítás</string>
+    <string name="dialog_ok">OK</string>
+    <string name="prefs_app_location_title">Korán adatkönyvtár</string>
+    <string name="prefs_app_location_summary">Válassza ki, hogy hol legyenek eltárolva a Korán fájlok.</string>
+    <string name="prefs_sdcard_internal">Belső tárhely</string>
+    <string name="prefs_sdcard_external">%1$d. külső SD-kártya</string>
+    <string name="prefs_app_size">A jelenlegi adatméret</string>
+    <string name="prefs_calculating_app_size">App méret kiszámítása</string>
+    <string name="prefs_copying_app_files">App fájlok másolása</string>
+    <string name="prefs_err_moving_app_files">Az app fájlok áthelyezése sikertelen</string>
+    <string name="prefs_no_enough_space_to_move_files">Nincs elegendő hely az app fájlok áthelyezéséhez</string>
+    <string name="kitkat_external_message">Az Android korlátai miatt, ha azt választja, hogy a Korán
+        adatait külső SD-kártyára helyezi és később eltávolítja a Korán Androidot vagy letörli az adatait, minden Korán
+        Android oldal és hang le lesz törölve, és ismét le kell töltenie azokat. Biztos, hogy a külső SD-kártyát szeretné használni?</string>
+    <!-- Preferences End -->
+
+    <!-- translation updates -->
+    <string name="update_available">Frissítés érhető el</string>
+    <string name="translation_updates_available">Néhány fordításhoz frissítés érhető el. Meglátogatja most a fordítások képernyőt?</string>
+    <string name="translation_dialog_yes">Igen</string>
+    <string name="translation_dialog_later">Később</string>
+
+    <!-- End Number picker Strings -->
+    <string name="quran_rob3">¼</string>
+    <string name="quran_nos">½</string>
+    <string name="quran_talt_arb3">¾</string>
+    <string name="quran_hizb">Hizb</string>
+    <string name="quran_juz2">Dzsuz</string>
+    <string name="quran_page">Oldal</string>
+    <string name="quran_sura">Szúrák</string>
+    <string name="quran_ayah">Ája</string>
+    <string name="quran_sura_title">%1$s szúra</string>
+    <string name="sura_ayah_notification_str">%1$s szúra, %2$d. ája</string>
+
+    <string name="index_loading">Betöltés&#8230;</string>
+
+    <string name="canceling">Megszakítás&#8230;</string>
+    <string name="juz2_description">%1$s. dzsuz</string>
+    <string name="page_description">%1$s. oldal, %2$s. dzsuz</string>
+    <string name="highlighting_database">Szükséges fájlok</string>
+    <string name="timing_database">Szükséges fájlok</string>
+    <string name="infinity">&#8734;</string>
+
+    <!-- download statuses and errors -->
+    <string name="sdcard_error">Nem található SD-kártya. Kérem, csatlakoztassa és próbálja újra.</string>
+    <string name="download_successful">Sikeres letöltés</string>
+    <string name="download_processing">Letöltés feldolgozása&#8230;</string>
+    <string name="download_error_general">Sikertelen letöltés</string>
+    <string name="download_error_disk">Nincs elegendő hely a letöltéshez</string>
+    <string name="download_error_network">Nem lehet letölteni hálózati hiba miatt</string>
+    <string name="download_error_perms">Nem lehet letölteni engedélyezési hiba miatt</string>
+    <string name="download_error_invalid_download">A letöltött fájl sérült volt</string>
+    <string name="download_error_invalid_download_retry">Sérült fájl, kísérlet ismételt letöltésre</string>
+    <string name="download_error_network_retry">Hálózati hiba, kísérlet a folytatásra&#8230;</string>
+    <string name="notification_download_canceled">Letöltés megszakítva</string>
+    <string name="download_non_wifi_prompt">Nem használ Wi-Fi-t. Mindenképpen letölti az adatokat?</string>
+
+    <!-- downloading dialogs -->
+    <string name="download_progress">Letöltve %1$s / %2$s</string>
+    <string name="download_sura_progress">Letöltve %1$s / %2$s szúra %3$d</string>
+    <string name="download_sura_ayah_progress">%1$d. szúra %2$d. ája letöltése</string>
+    <string name="process_progress">Fájl feldolgozása %1$d / %2$d</string>
+    <string name="download_retry">Ismét</string>
+    <string name="download_cancel">Mégsem</string>
+    <string name="download_extra_data">Le kell tölteni egy-két kis fájlt a megosztás és a fordítás támogatásához. Letölti most?</string>
+
+    <!-- translation database stuff -->
+    <string name="remove_dlg_title">Eltávolítja a fordítást?</string>
+    <string name="remove_dlg_msg">Biztos, hogy eltávolítja ezt: %1$s?</string>
+    <string name="error_getting_translation_list">Nem lehet letölteni a fordítások listáját. Kérem, próbálja újra később.</string>
+    <string name="search_data">Adat keresése</string>
+    <string name="need_translation">Még nincs letöltve fordítás/tafszír.</string>
+    <string name="get_translations">Fordítások letöltése</string>
+
+    <!-- help -->
+    <string name="email_us">Ha a kérdése nem lett fent megválaszolva, támogatásért írhat e-mailt a quranandroid@gmail.com címre.
+        Megértését kérjük, mivel számtalan e-mailt kaptunk, és ezért lehet, hogy nem tudunk mindegyikre válaszolni.
+    </string>
+
+    <!-- sura metainfo -->
+    <string name="makki">Mekkai</string>
+    <string name="madani">Medinai</string>
+    <plurals name="verses">
+        <item quantity="one">Egy vers</item>
+        <item quantity="other">%s vers</item>
+    </plurals>
+
+    <!-- ayah action panel -->
+    <string name="play_from">Innentől</string>
+    <string name="play_to">Idáig</string>
+    <string name="play_restrict_range">Csak a fenti versek lejátszása</string>
+    <string name="play_apply">Alkalmaz</string>
+    <string name="play_apply_and_play">Alkalmaz és lejátszás</string>
+    <string name="play">Lejátszás</string>
+    <string name="stop">Leállítás</string>
+
+    <string-array name="repeatValues">
+        <item>egyszer</item>
+        <item>kétszer</item>
+        <item>háromszor</item>
+        <item>végtelenszer</item>
+    </string-array>
+
+    <!-- long press -->
+    <string name="bookmark_ayah">Ája könyvjelzőzése</string>
+    <string name="tag_ayah">Ája címkézése</string>
+    <string name="share_ayah">Ája hivatkozás megosztása</string>
+    <string name="share_ayah_text">Ája szöveg megosztása</string>
+    <string name="translation_ayah">Ája fordítás/tafszír</string>
+    <string name="play_from_here">Lejátszás innen</string>
+    <string name="search_key">Nyomja meg a keresés gombot egy vers kereséséhez</string>
+    <string name="copy_ayah">Ája másolása</string>
+    <string name="ayah_copied_popup">Ája kimásolva</string>
+
+    <!-- bookmarks & tags contextual action bar -->
+    <string name="tag_bookmark">Könyvelző címkézése</string>
+    <string name="delete_tag">Címke törlése</string>
+    <string name="edit_tag">Címke szerkesztése</string>
+    <string name="new_tag">Új címke</string>
+    <string name="not_tagged">Nincs címkézve</string>
+
+    <!-- tag dialog -->
+    <string name="tag_dlg_title">Címke</string>
+    <string name="tag_name">Név</string>
+
+    <!-- bookmark & tag list -->
+    <string name="bookmarks_list_empty">Nincs könyvjelző</string>
+
+    <!-- audio manager -->
+    <string name="audio_manager">Hangkezelő</string>
+</resources>

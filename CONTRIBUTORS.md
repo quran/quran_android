@@ -39,6 +39,10 @@ quran android contributors
 * Malaysian by [Ahmad Syazwan](https://github.com/asyazwan).
 * Spanish by [Alexander J. Salas B.](https://github.com/ajsb85).
 * Uzbek by [Shuhrat Dehkanov](https://github.com/ozbek").
+* Hungarian by [Dvornik László](mailto:laulicus@zoho.com)
+* Bosnian by [Amar Luckin](https://github.com/aluckin3)
+* Croatian by [Amar Luckin](https://github.com/aluckin3)
+* Serbian by [Amar Luckin](https://github.com/aluckin3)
 
 
 ### and many more

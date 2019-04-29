@@ -120,7 +120,8 @@ public class BookmarksDBAdapter {
     List<RecentPage> recents = new ArrayList<>();
     Cursor cursor = null;
     try {
-      cursor = db.query(LastPagesTable.TABLE_NAME, null, null, null, null, null,
+      String[] tableColumns = new String[] { LastPagesTable.ID, LastPagesTable.PAGE, "strftime('%s', " + LastPagesTable.ADDED_DATE + ")" };
+      cursor = db.query(LastPagesTable.TABLE_NAME, tableColumns, null, null, null, null,
           LastPagesTable.ADDED_DATE + " DESC");
       if (cursor != null) {
         while (cursor.moveToNext()) {

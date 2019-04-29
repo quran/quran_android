@@ -61,7 +61,7 @@ public class Constants {
   public static final String PREF_SORT_BOOKMARKS = "sortBookmarks";
   public static final String PREF_GROUP_BOOKMARKS_BY_TAG = "groupBookmarksByTag";
   public static final String PREF_SHOW_RECENTS = "showRecents";
-  public static final String PREF_DISPLAY_CATEGORY = "displayCategoryKey";
+  public static final String PREF_SHOW_DATE = "showDate";
   public static final String PREF_DUAL_PAGE_ENABLED = "useDualPageMode";
   public static final String PREF_VERSION = "version";
   public static final String PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir";
@@ -75,7 +75,9 @@ public class Constants {
       "didPresentStoragePermissionDialog";
   public static final String PREF_WAS_SHOWING_TRANSLATION = "wasShowingTranslation";
   public static final String PREF_ADVANCED_QURAN_SETTINGS = "quranAdvancedSettings";
-  public static final String PREF_DID_DOWNLOAD_PAGES = "didDownloadPages";
+  public static final String DEBUG_DID_DOWNLOAD_PAGES = "debugDidDownloadPages";
+  public static final String DEBUG_PAGE_DOWNLOADED_PATH = "debugPageDownloadedPath";
+  public static final String DEBUG_PAGES_DOWNLOADED_TIME = "debugPagesDownloadedTime";
+  public static final String DEBUG_PAGES_DOWNLOADED = "debugPagesDownloaded";
   public static final String PREF_READING_CATEGORY = "readingCategoryKey";
-  public static final String PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages";
 }

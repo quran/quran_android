@@ -88,7 +88,7 @@ public class ShareUtil {
     for (int i = 0; i < size; i++) {
       sb.append(verses.get(i).getText());
       if (i + 1 < size) {
-        sb.append(" * ");
+        sb.append(" \u06DD  ");
       }
     }
 
@@ -111,9 +111,7 @@ public class ShareUtil {
       sb.append(lastAyah.getAyah());
     }
     // close sura label and append two new lines
-    sb.append("]\n\n");
-
-    sb.append(activity.getString(R.string.via_string));
+    sb.append("]");
     return sb.toString();
   }
 }

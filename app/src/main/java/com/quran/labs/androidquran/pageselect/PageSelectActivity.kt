@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.quran.labs.androidquran.QuranApplication
@@ -19,7 +20,7 @@ class PageSelectActivity : AppCompatActivity() {
   @Inject lateinit var quranSettings: QuranSettings
 
   private lateinit var adapter : PageSelectAdapter
-  private lateinit var viewPager: androidx.viewpager.widget.ViewPager
+  private lateinit var viewPager: ViewPager
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -71,7 +72,7 @@ class PageSelectActivity : AppCompatActivity() {
   private fun onPageTypeSelected(type: String) {
     val pageType = quranSettings.pageType
     if (pageType != type) {
-      quranSettings.setDownloadedPages(false)
+      quranSettings.removeDidDownloadPages()
       quranSettings.pageType = type
       Answers.getInstance().logCustom(
           CustomEvent("pageTypeChanged").putCustomAttribute("pageType", type))

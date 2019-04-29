@@ -192,6 +192,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private int numberOfPages;
   private int numberOfPagesDual;
+  private int defaultNavigationBarColor;
 
   private PagerActivityComponent pagerActivityComponent;
 
@@ -477,6 +478,10 @@ public class PagerActivity extends QuranActionBarActivity implements
         downloadReceiver,
         new IntentFilter(action));
     downloadReceiver.setListener(this);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      defaultNavigationBarColor = getWindow().getNavigationBarColor();
+    }
   }
 
   public Observable<Integer> getViewPagerObservable() {
@@ -671,17 +676,28 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (shouldReconnect) {
       foregroundDisposable.add(Completable.timer(500, TimeUnit.MILLISECONDS)
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(() -> {
-                startService(
-                    audioUtils.getAudioIntent(PagerActivity.this, AudioService.ACTION_CONNECT));
-                shouldReconnect = false;
-              }));
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(() -> {
+            startService(
+                audioUtils.getAudioIntent(PagerActivity.this, AudioService.ACTION_CONNECT));
+            shouldReconnect = false;
+          }));
     }
 
     if (highlightedSura > 0 && highlightedAyah > 0) {
       handler.postDelayed(() ->
           highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION), 750);
+    }
+
+    updateNavigationBar(quranSettings.isNightMode());
+  }
+
+  private void updateNavigationBar(boolean isNightMode) {
+    final int color =
+        isNightMode ? ContextCompat.getColor(this, R.color.navbar_night_color) :
+            defaultNavigationBarColor;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      getWindow().setNavigationBarColor(color);
     }
   }
 
@@ -746,8 +762,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           downloadType);
-      Crashlytics.log("starting foreground service to download ayah position file");
-      ContextCompat.startForegroundService(this, intent);
+      Crashlytics.log("starting service to download ayah position file");
+      startService(intent);
 
       haveDownload = true;
     }
@@ -768,8 +784,8 @@ public class PagerActivity extends QuranActionBarActivity implements
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
           QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
-      Crashlytics.log("starting foreground service to download arabic database");
-      ContextCompat.startForegroundService(this, intent);
+      Crashlytics.log("starting service to download arabic database");
+      startService(intent);
     }
 
     if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO) {
@@ -970,6 +986,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       item.setIcon(isNightMode ? R.drawable.ic_night_mode : R.drawable.ic_day_mode);
       item.setChecked(isNightMode);
       refreshQuranPages();
+      updateNavigationBar(isNightMode);
       return true;
     } else if (itemId == R.id.settings) {
       Intent i = new Intent(this, QuranPreferenceActivity.class);
@@ -1478,8 +1495,8 @@ public class PagerActivity extends QuranActionBarActivity implements
         toggleActionBar();
       }
       audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      Crashlytics.log("starting foreground service in handleRequiredDownload");
-      ContextCompat.startForegroundService(this, downloadIntent);
+      Crashlytics.log("starting service in handleRequiredDownload");
+      startService(downloadIntent);
     }
   }
 

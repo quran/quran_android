@@ -123,6 +123,7 @@ public class SearchActivity extends QuranActionBarActivity
 
   @Override
   protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
     setIntent(intent);
     handleIntent(intent);
   }

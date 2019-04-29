@@ -28,7 +28,9 @@ import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class ArabicDatabaseUtils {
-  public static final String AR_BASMALLAH = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ";
+  public static final String AR_BASMALLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+  static final String AR_BASMALLAH_IN_TEXT = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ";
+
   @VisibleForTesting static final int NUMBER_OF_WORDS = 4;
 
   private final Context appContext;
@@ -67,7 +69,19 @@ public class ArabicDatabaseUtils {
         cursor = arabicDatabaseHandler.getVerses(start.sura, start.ayah,
             end.sura, end.ayah, QuranFileConstants.ARABIC_SHARE_TABLE);
         while (cursor.moveToNext()) {
-          QuranText verse = new QuranText(cursor.getInt(1), cursor.getInt(2), cursor.getString(3));
+          final int sura = cursor.getInt(1);
+          final int ayah = cursor.getInt(2);
+          final String extra;
+          if ((!QuranFileConstants.ARABIC_SHARE_TEXT_HAS_BASMALLAH) &&
+              ayah == 1 && sura != 9 && sura != 1) {
+            extra = AR_BASMALLAH + " ";
+          } else {
+            extra = "";
+          }
+
+          QuranText verse = new QuranText(sura, ayah,
+              extra + cursor.getString(3),
+              null);
           verses.add(verse);
         }
       } catch (Exception e) {
@@ -158,8 +172,12 @@ public class ArabicDatabaseUtils {
     // note that ayahText.startsWith check is always true for now - but it's explicitly here so
     // that if we update quran.ar.db one day to fix this issue and older clients get a new copy of
     // the database, their code continues to work as before.
-    if (ayah == 1 && sura != 9 && sura != 1 && ayahText.startsWith(AR_BASMALLAH)) {
-      return ayahText.substring(AR_BASMALLAH.length() + 1);
+    if (ayah == 1 && sura != 9 && sura != 1) {
+      if (ayahText.startsWith(AR_BASMALLAH_IN_TEXT)) {
+        return ayahText.substring(AR_BASMALLAH_IN_TEXT.length() + 1);
+      } else if (ayahText.startsWith(AR_BASMALLAH)) {
+        return ayahText.substring(AR_BASMALLAH.length() + 1);
+      }
     }
     return ayahText;
   }

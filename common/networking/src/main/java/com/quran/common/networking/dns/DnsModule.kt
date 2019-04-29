@@ -30,10 +30,13 @@ class DnsModule {
         .cache(dnsCache)
         .build()
 
+    // dns fallback tries the equivalent of Dns.SYSTEM first,
+    // so no need to explicitly add Dns.SYSTEM here.
+    val dnsFallback = DnsFallback()
     val googleDns = provideGoogleDns(bootstrapClient)
     return if (googleDns != null) {
-      listOf(Dns.SYSTEM, googleDns)
-    } else { listOf(Dns.SYSTEM) }
+      listOf(dnsFallback, googleDns)
+    } else { listOf(dnsFallback) }
   }
 
   private fun provideGoogleDns(bootstrapClient: OkHttpClient): Dns? {

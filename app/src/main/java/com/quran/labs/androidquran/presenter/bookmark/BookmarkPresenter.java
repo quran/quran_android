@@ -54,6 +54,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private int sortOrder;
   private boolean groupByTags;
   private boolean showRecents;
+  private boolean showDate;
   private BookmarkResult cachedData;
   private BookmarksFragment fragment;
   private ArabicDatabaseUtils arabicDatabaseUtils;
@@ -80,6 +81,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     sortOrder = quranSettings.getBookmarksSortOrder();
     groupByTags = quranSettings.getBookmarksGroupedByTags();
     showRecents = quranSettings.getShowRecents();
+    showDate = quranSettings.getShowDate();
     totalPages = quranInfo.getNumberOfPages();
     subscribeToChanges();
   }
@@ -125,8 +127,21 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         new CustomEvent(showRecents ? "showRecents" : "doNotMinimizeRecents"));
   }
 
+  public void toogleShowDate() {
+    showDate = !showDate;
+    quranSettings.setShowDate(showDate);
+    requestData(false);
+    Answers.getInstance().logCustom(
+        new CustomEvent(showDate ? "showDate" : "doNotShowDate")
+    );
+
+  }
   public boolean isShowingRecents() {
     return showRecents;
+  }
+
+  public boolean isDateShowing() {
+    return showDate;
   }
 
   public boolean shouldShowInlineTags() {
@@ -320,7 +335,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         if (page < Constants.PAGES_FIRST || page > totalPages) {
           page = 1;
         }
-        rows.add(i + 1, quranRowFactory.fromCurrentPage(appContext, page));
+        rows.add(i + 1, quranRowFactory.fromCurrentPage(appContext, page, recentPages.get(i).getTimestamp()));
       }
     }
 

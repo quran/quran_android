@@ -17,8 +17,8 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 2932
-    versionName "2.9.3-p2"
+    versionCode 2942
+    versionName "2.9.4-p2"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
 
@@ -107,6 +107,7 @@ dependencies {
   implementation project(path: ':common:data')
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
+  implementation project(path: ':common:search')
 
   implementation deps.kotlin.stdlib
   implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
@@ -116,13 +117,13 @@ dependencies {
   implementation "com.google.android.material:material:${androidxVersion}"
   implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
+
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation 'com.squareup.moshi:moshi:1.8.0'
   implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.facebook.stetho:stetho:1.5.0'
-  debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
   testImplementation 'junit:junit:4.12'
   testImplementation 'com.google.truth:truth:0.42'

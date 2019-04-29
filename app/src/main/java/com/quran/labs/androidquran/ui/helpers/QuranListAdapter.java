@@ -34,6 +34,7 @@ public class QuranListAdapter extends
   private QuranTouchListener touchListener;
   private Map<Long, Tag> tagMap;
   private boolean showTags;
+  private boolean showDate;
   private boolean isEditable;
 
   public QuranListAdapter(Context context, RecyclerView recyclerView,
@@ -97,6 +98,10 @@ public class QuranListAdapter extends
     this.showTags = showTags;
   }
 
+  public void setShowDate(boolean showDate) {
+    this.showDate = showDate;
+  }
+
   private void bindRow(HeaderHolder vh, int position) {
     ViewHolder holder = (ViewHolder) vh;
 
@@ -125,6 +130,11 @@ public class QuranListAdapter extends
         holder.image.setColorFilter(
             item.imageFilterColor, PorterDuff.Mode.SRC_ATOP);
       }
+
+      if (showDate) {
+        holder.metadata.setText(item.metadata + " - " + item.dateAdded);
+      }
+
       holder.image.setVisibility(View.VISIBLE);
       holder.number.setVisibility(View.GONE);
 
@@ -257,6 +267,7 @@ public class QuranListAdapter extends
     TextView metadata;
     ImageView image;
     TagsViewGroup tags;
+    TextView date;
 
     ViewHolder(View itemView) {
       super(itemView);
@@ -264,6 +275,7 @@ public class QuranListAdapter extends
       number = itemView.findViewById(R.id.suraNumber);
       image = itemView.findViewById(R.id.rowIcon);
       tags = itemView.findViewById(R.id.tags);
+      date = itemView.findViewById(R.id.show_date);
     }
   }
 

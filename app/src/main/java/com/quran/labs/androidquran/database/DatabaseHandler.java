@@ -7,21 +7,28 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.provider.BaseColumns;
+import android.util.SparseArray;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.common.search.ArabicSearcher;
+import com.quran.common.search.DefaultSearcher;
+import com.quran.common.search.Searcher;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.labs.androidquran.data.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.labs.androidquran.util.TranslationUtil;
 
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -33,7 +40,7 @@ public class DatabaseHandler {
   private static final String COL_SURA = "sura";
   private static final String COL_AYAH = "ayah";
   private static final String COL_TEXT = "text";
-  public static final String VERSE_TABLE = "verses";
+  private static final String VERSE_TABLE = "verses";
   public static final String ARABIC_TEXT_TABLE = "arabic_text";
   public static final String SHARE_TEXT_TABLE = "share_text";
 
@@ -47,8 +54,10 @@ public class DatabaseHandler {
   private static Map<String, DatabaseHandler> databaseMap = new HashMap<>();
 
   private int schemaVersion = 1;
-  private String matchString;
   private SQLiteDatabase database = null;
+
+  private final Searcher defaultSearcher;
+  private final Searcher arabicSearcher;
 
   @Retention(RetentionPolicy.SOURCE)
   @IntDef( { TextType.ARABIC, TextType.TRANSLATION } )
@@ -81,10 +90,21 @@ public class DatabaseHandler {
   private DatabaseHandler(Context context,
                           String databaseName,
                           QuranFileUtils quranFileUtils) throws SQLException {
+    // initialize the searchers first
+    final String matchString =
+        "<font color=\"" +
+            ContextCompat.getColor(context, R.color.translation_highlight) +
+            "\">";
+    defaultSearcher = new DefaultSearcher(matchString, MATCH_END, ELLIPSES);
+    arabicSearcher = new ArabicSearcher(defaultSearcher, matchString, MATCH_END);
+
+    // if there's no Quran base directory, there are no databases
     String base = quranFileUtils.getQuranDatabaseDirectory(context);
     if (base == null) return;
+
     String path = base + File.separator + databaseName;
     Crashlytics.log("opening database file: " + path);
+
     try {
       database = SQLiteDatabase.openDatabase(path, null,
         SQLiteDatabase.NO_LOCALIZED_COLLATORS, new DefaultDatabaseErrorHandler());
@@ -98,9 +118,6 @@ public class DatabaseHandler {
     }
 
     schemaVersion = getSchemaVersion();
-    matchString = "<font color=\"" +
-        ContextCompat.getColor(context, R.color.translation_highlight) +
-        "\">";
   }
 
   public boolean validDatabase() {
@@ -163,19 +180,72 @@ public class DatabaseHandler {
   public List<QuranText> getVerses(VerseRange verses, @TextType int textType) {
     Cursor cursor = null;
     List<QuranText> results = new ArrayList<>();
+    final Set<Integer> toLookup = new HashSet<>();
+
+    String table = textType == TextType.ARABIC ? ARABIC_TEXT_TABLE : VERSE_TABLE;
     try {
-      String table = textType == TextType.ARABIC ? ARABIC_TEXT_TABLE : VERSE_TABLE;
       cursor = getVersesInternal(verses, table);
       while (cursor != null && cursor.moveToNext()) {
         int sura = cursor.getInt(1);
         int ayah = cursor.getInt(2);
         String text = cursor.getString(3);
-        results.add(new QuranText(sura, ayah, text));
+
+        final QuranText quranText = new QuranText(sura, ayah, text, null);
+        results.add(quranText);
+
+        final Integer hyperlinkId = TranslationUtil.getHyperlinkAyahId(quranText);
+        if (hyperlinkId != null) {
+          toLookup.add(hyperlinkId);
+        }
       }
     } finally {
       DatabaseUtils.closeCursor(cursor);
     }
+
+    boolean didWrite = false;
+    if (!toLookup.isEmpty()) {
+      final StringBuilder toExpandBuilder = new StringBuilder();
+      for (Integer id : toLookup) {
+        if (didWrite) {
+          toExpandBuilder.append(",");
+        } else {
+          didWrite = true;
+        }
+        toExpandBuilder.append(id);
+      }
+      return expandHyperlinks(table, results, toExpandBuilder.toString());
+    }
     return results;
+  }
+
+  private List<QuranText> expandHyperlinks(String table, List<QuranText> data, String rowIds) {
+    SparseArray<String> expansions = new SparseArray<>();
+
+    Cursor cursor = null;
+    try {
+      cursor = database.query(table, new String[]{ "rowid as _id", COL_TEXT },
+          "rowid in (" + rowIds + ")", null, null, null, "rowid");
+      while (cursor != null && cursor.moveToNext()) {
+        int id = cursor.getInt(0);
+        String text = cursor.getString(1);
+        expansions.put(id, text);
+      }
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+
+    List<QuranText> result = new ArrayList<>();
+    for (int i = 0, size = data.size(); i < size; i++) {
+      final QuranText ayah = data.get(i);
+      final Integer linkId = TranslationUtil.getHyperlinkAyahId(ayah);
+      if (linkId == null) {
+        result.add(ayah);
+      } else {
+        final String expandedText = expansions.get(linkId);
+        result.add(new QuranText(ayah.getSura(), ayah.getAyah(), ayah.getText(), expandedText));
+      }
+    }
+    return result;
   }
 
   private Cursor getVersesInternal(VerseRange verses, String table) {
@@ -249,34 +319,21 @@ public class DatabaseHandler {
     return database.rawQuery(sql, null);
   }
 
-  public Cursor search(String query, boolean withSnippets) {
-    return search(query, VERSE_TABLE, withSnippets);
+  public Cursor search(String query, boolean withSnippets, boolean isArabicDatabase) {
+    return search(query, VERSE_TABLE, withSnippets, isArabicDatabase);
   }
 
-  public Cursor search(String q, String table, boolean withSnippets) {
+  public Cursor search(String q, String table, boolean withSnippets, boolean isArabicDatabase) {
     if (!validDatabase()) {
         return null;
     }
 
-    final String limit = withSnippets ? "" : "LIMIT 25";
-
-    String query = q;
-    String operator = " like ";
-    String whatTextToSelect = COL_TEXT;
-
-    boolean useFullTextIndex = (schemaVersion > 1);
-    if (useFullTextIndex) {
-      operator = " MATCH ";
-      query = query + "*";
-    } else {
-      query = "%" + query + "%";
-    }
-
+    String searchText = q;
     int pos = 0;
     int found = 0;
     boolean done = false;
     while (!done) {
-      int quote = query.indexOf("\"", pos);
+      int quote = searchText.indexOf("\"", pos);
       if (quote > -1) {
         found++;
         pos = quote + 1;
@@ -286,23 +343,28 @@ public class DatabaseHandler {
     }
 
     if (found % 2 != 0) {
-      query = query.replaceAll("\"", "");
+      searchText = searchText.replaceAll("\"", "");
     }
 
-    if (useFullTextIndex && withSnippets) {
-      whatTextToSelect = "snippet(" + table + ", '" +
-          matchString + "', '" + MATCH_END +
-          "', '" + ELLIPSES + "', -1, 64)";
+    final Searcher searcher;
+    if (isArabicDatabase) {
+      searcher = arabicSearcher;
+    } else {
+      searcher = defaultSearcher;
     }
 
-    String qtext = "select rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH +
-        ", " + whatTextToSelect + " from " + table + " where " + COL_TEXT +
-        operator + " ? " + " " + limit;
-    Crashlytics.log("search query: " + qtext + ", query: " + query);
 
+    final boolean useFullTextIndex = (schemaVersion > 1 && !isArabicDatabase);
+    String qtext = searcher.getQuery(withSnippets, useFullTextIndex, table,
+        "rowid as " + BaseColumns._ID + ", " + COL_SURA + ", " + COL_AYAH, COL_TEXT) +
+        " " + searcher.getLimit(withSnippets);
+    searchText = searcher.processSearchText(searchText, useFullTextIndex);
+    Crashlytics.log("search query: " + qtext + ", query: " + searchText);
+
+    final String[] columns = new String[] { BaseColumns._ID, COL_SURA, COL_AYAH, COL_TEXT };
     try {
-      return database.rawQuery(qtext, new String[]{ query });
-    } catch (Exception e){
+      return searcher.runQuery(database, qtext, searchText, q, withSnippets, columns);
+    } catch (Exception e) {
       Crashlytics.logException(e);
       return null;
     }

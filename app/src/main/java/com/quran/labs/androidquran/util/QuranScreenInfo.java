@@ -2,13 +2,13 @@ package com.quran.labs.androidquran.util;
 
 import android.content.Context;
 import android.graphics.Point;
-import androidx.annotation.NonNull;
 import android.view.Display;
 
 import com.quran.data.source.PageSizeCalculator;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class QuranScreenInfo {
@@ -34,14 +34,6 @@ public class QuranScreenInfo {
     this.context = appContext;
     this.pageSizeCalculator = pageSizeCalculator;
     Timber.d("initializing with %d and %d", point.y, point.x);
-
-    setOverrideParam(QuranSettings.getInstance(context).getDefaultImagesDirectory());
-  }
-
-  public void setOverrideParam(String overrideParam) {
-    if (!overrideParam.isEmpty()) {
-      pageSizeCalculator.setOverrideParameter(overrideParam);
-    }
   }
 
   public int getHeight() {
@@ -53,14 +45,18 @@ public class QuranScreenInfo {
   }
 
   public String getWidthParam() {
+    pageSizeCalculator.setOverrideParameter(
+        QuranSettings.getInstance(context).getDefaultImagesDirectory());
     return "_" + pageSizeCalculator.getWidthParameter();
   }
 
   public String getTabletWidthParam() {
+    pageSizeCalculator.setOverrideParameter(
+        QuranSettings.getInstance(context).getDefaultImagesDirectory());
     return "_" + pageSizeCalculator.getTabletWidthParameter();
   }
 
   public boolean isDualPageMode() {
-    return maxWidth > 800;
+    return maxWidth > 960;
   }
 }

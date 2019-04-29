@@ -2,14 +2,12 @@ package com.quran.labs.androidquran.pageselect
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.quran.labs.androidquran.R
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers

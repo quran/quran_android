@@ -5,6 +5,9 @@ import com.quran.data.source.PageSizeCalculator
 
 open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalculator {
   private val maxWidth: Int = if (displaySize.x > displaySize.y) displaySize.x else displaySize.y
+
+  // override parameter can be null or 1920
+  // (a few upgrade scenarios may also see this set at 1024)
   private var overrideParam: String? = null
 
   override fun getWidthParameter(): String {
@@ -18,26 +21,18 @@ open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalcula
   }
 
   override fun getTabletWidthParameter(): String {
-    return if ("1260" == getWidthParameter()) {
-      // for tablet, if the width is more than 1280, use 1260
-      // images for both dimens (only applies to new installs)
-      "1260"
+    return if ("1920" == overrideParam) {
+      "1024"
     } else {
-      getBestTabletLandscapeSizeMatch(maxWidth / 2)
+      getWidthParameter()
     }
   }
 
   override fun setOverrideParameter(parameter: String) {
     if (parameter.isNotBlank()) {
       overrideParam = parameter
-    }
-  }
-
-  private fun getBestTabletLandscapeSizeMatch(width: Int): String {
-    return if (width <= 640) {
-      "512"
     } else {
-      "1024"
+      overrideParam = null
     }
   }
 }

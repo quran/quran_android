@@ -30,6 +30,7 @@
   <string name="menu_sort_location">Location in Quran</string>
   <string name="menu_sort_group_by_tags">Group by Tags</string>
   <string name="menu_show_recents" translatable="false">@string/recent_pages</string>
+  <string name="menu_show_date">Show Date</string>
   <string name="menu_translation">Show Translation</string>
   <string name="menu_back_to_page">Show Quran</string>
   <string name="menu_help">Help</string>
@@ -233,7 +234,7 @@
 
   <!-- tafaseer -->
   <string name="more_arabic" translatable="false">المزيد…</string>
-  <string name="see_tafseer_of_verse">See tafseer for ayah %d.</string>
+  <string name="see_tafseer_of_verse">This ayah\'s tafseer is included with the tafseer of ayah %d (Click to expand).</string>
 
   <!-- translation updates -->
   <string name="update_available">Update Available</string>
@@ -338,7 +339,6 @@
   <string name="share_ayah_text">Share Ayah Text</string>
   <string name="translation_ayah">Ayah Translation/Tafseer</string>
   <string name="play_from_here">Play from Here</string>
-  <string name="via_string">via @QuranAndroid</string>
   <string name="search_key">Press the search key to look up a verse</string>
   <string name="copy_ayah">Copy Ayah</string>
   <string name="ayah_copied_popup">Ayah Copied</string>
