@@ -119,13 +119,15 @@
   <string name="quranSearchType">Ajeti Kur\'ana</string>
 
   <plurals name="files_downloaded">
-    <item quantity="one">1 sura preuzeta</item>
+    <item quantity="one">%1$d sura preuzeta</item>
+    <item quantity="few">%1$d sure preuzete</item>
     <item quantity="other">%1$d sura preuzeto</item>
   </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
-    <item quantity="one">Jedan rezultat za \"%1$s\": </item>
+    <item quantity="one">%2$d rezultat za \"%1$s\": </item>
+    <item quantity="few">%2$d rezultata za \"%1$s\": </item>
     <item quantity="other">%2$d rezultata za \"%1$s\": </item>
   </plurals>
 
@@ -300,7 +302,8 @@
   <string name="makki">Mekkanska</string>
   <string name="madani">Medinska</string>
   <plurals name="verses">
-    <item quantity="one">Jedan ajet</item>
+    <item quantity="one">%s ajet</item>
+    <item quantity="few">%s ajeta</item>
     <item quantity="other">%s ajeta</item>
   </plurals>
 
@@ -335,7 +338,6 @@
   <string name="share_ayah_text">Podijeli tekst ajeta</string>
   <string name="translation_ayah">Prijevod/tefsir ajeta</string>
   <string name="play_from_here">Pusti odavde</string>
-  <string name="via_string">koristeći aplikaciju @QuranAndroid</string>
   <string name="search_key">Pritisnite tipku za pretragu da potražite ajet</string>
   <string name="copy_ayah">Kopiraj ajet</string>
   <string name="ayah_copied_popup">Ajet kopiran</string>
@@ -347,16 +349,13 @@
   <string name="new_tag">Nova oznaka</string>
   <string name="not_tagged">Neoznačene</string>
   <plurals name="bookmark_tag_deleted">
-    <item quantity="one">Izbrisana jedna stavka</item>
-    <item quantity="other">Izbrisano %d stavke</item>
+    <item quantity="one">Izbrisana %d stavka</item>
+    <item quantity="few">Izbrisano %d stavke</item>
+    <item quantity="other">Izbrisano %d stavki</item>
   </plurals>
   <string name="undo">Poništi</string>
 
   <string name="recent_pages">Nedavno otvarane stranice</string>
-  <plurals name="plural_recent_pages" translatable="false">
-    <item quantity="one">@string/menu_jump_last_page</item>
-    <item quantity="other">@string/recent_pages</item>
-  </plurals>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Oznaka</string>
