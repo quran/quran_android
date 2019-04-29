@@ -20,7 +20,9 @@ import com.quran.labs.androidquran.data.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
+import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.widgets.AyahNumberView
 import com.quran.labs.androidquran.widgets.DividerView
 
@@ -258,6 +260,23 @@ internal class TranslationAdapter(private val context: Context,
                   truncateTextIfNeeded(rowText, row.ayahInfo.ayahId, row.translationIndex)
                 else -> rowText
               }
+            }
+
+            if (text != null && QuranUtils.doesStringContainArabic(text.toString())) {
+              // arabic tafseer, style it
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                holder.text.layoutDirection = View.LAYOUT_DIRECTION_RTL
+
+                // allow the tafseer font for api 19 because it's fine there and
+                // is much better than the stock font (this is more lenient than
+                // the api 21 restriction on the hafs font).
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                  holder.text.typeface = TypefaceManager.getTafseerTypeface(context)
+                }
+              }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+              holder.text.typeface = null
+              holder.text.layoutDirection = View.LAYOUT_DIRECTION_INHERIT
             }
 
             holder.text.movementMethod = LinkMovementMethod.getInstance()

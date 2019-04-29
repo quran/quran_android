@@ -12,6 +12,7 @@ public class TypefaceManager {
   public static final int TYPE_NOOR_HAYAH = 2;
 
   private static Typeface typeface;
+  private static Typeface arabicTafseerTypeface;
 
   public static Typeface getUthmaniTypeface(@NonNull Context context) {
     if (typeface == null) {
@@ -29,5 +30,12 @@ public class TypefaceManager {
       typeface = Typeface.createFromAsset(context.getAssets(), fontName);
     }
     return typeface;
+  }
+
+  public static Typeface getTafseerTypeface(@NonNull Context context) {
+    if (arabicTafseerTypeface == null) {
+      arabicTafseerTypeface = Typeface.createFromAsset(context.getAssets(), "kitab.ttf");
+    }
+    return arabicTafseerTypeface;
   }
 }

@@ -9,10 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
-import androidx.core.text.TextUtilsCompat;
-import androidx.core.view.ViewCompat;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -21,6 +17,11 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.core.text.TextUtilsCompat;
+import androidx.core.view.ViewCompat;
 
 public class QuranUtils {
 
@@ -50,7 +51,8 @@ public class QuranUtils {
       }
       // if the value is 42, it deserves another chance :p
       // (in reality, 42 is a * which is useful in searching sqlite)
-      else if (current != 42) {
+      // also whitelist () and []
+      else if (current != 42 && current != 40 && current != 41 && current != 91 && current != 93) {
         return false;
       }
     }
