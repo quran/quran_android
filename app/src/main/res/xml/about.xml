@@ -98,6 +98,24 @@
       app:iconSpaceReserved="false">
 
     <Preference
+        android:summary="@string/about_androidx_url"
+        android:title="@string/about_androidx"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_androidx_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_kotlin_url"
+        android:title="@string/about_kotlin"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_kotlin_url"/>
+    </Preference>
+
+    <Preference
         android:summary="@string/about_dagger2_url"
         android:title="@string/about_dagger2"
         app:iconSpaceReserved="false">
@@ -149,6 +167,33 @@
       <intent
           android:action="android.intent.action.VIEW"
           android:data="@string/about_sliding_panel_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_timber_url"
+        android:title="@string/about_timber"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_timber_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_material_components_url"
+        android:title="@string/about_material_components"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_material_components_url"/>
+    </Preference>
+
+    <Preference
+        android:summary="@string/about_dnsjava_url"
+        android:title="@string/about_dnsjava"
+        app:iconSpaceReserved="false">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_dnsjava_url"/>
     </Preference>
   </PreferenceCategory>
 

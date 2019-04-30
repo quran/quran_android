@@ -65,8 +65,18 @@
   <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
   <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
   <string name="about_open_source">Open Source Projects</string>
+  <string name="about_androidx" translatable="false">AndroidX</string>
+  <string name="about_androidx_url" translatable="false">https://developer.android.com/jetpack/androidx</string>
   <string name="about_dagger2" translatable="false">Dagger 2</string>
   <string name="about_dagger2_url" translatable="false">https://google.github.io/dagger</string>
+  <string name="about_dnsjava" translatable="false">dnsjava</string>
+  <string name="about_dnsjava_url" translatable="false">http://dnsjava.org</string>
+  <string name="about_material_components" translatable="false">Material Components for Android</string>
+  <string name="about_material_components_url" translatable="false">https://github.com/material-components/material-components-android</string>
+  <string name="about_timber" translatable="false">Timber</string>
+  <string name="about_timber_url" translatable="false">https://github.com/JakeWharton/timber</string>
+  <string name="about_kotlin" translatable="false">Kotlin</string>
+  <string name="about_kotlin_url" translatable="false">https://kotlinlang.org</string>
   <string name="about_okhttp" translatable="false">OkHttp</string>
   <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
   <string name="about_rxjava" translatable="false">RxJava</string>
