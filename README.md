@@ -45,10 +45,14 @@ Please keep use of this code for non-profit purposes only. Also, please note tha
 
 ## Open Source Projects Used
 
-* [Android Support Library](https://developer.android.com/topic/libraries/support-library/features.html)
+* [AndroidX](https://developer.android.com/jetpack/androidx/)
+* [Kotlin](https://kotlinlang.org)
+* [Material Design Components](https://github.com/material-components/material-components-android)
 * [AndroidSlidingUpPanel](https://github.com/umano/AndroidSlidingUpPanel)
 * [OkHttp](https://github.com/square/okhttp)
 * [RxJava 2](https://github.com/ReactiveX/RxJava)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
-* [moshi](https://github.com/square/moshi)
-* [dagger2](http://google.github.io/dagger/)
+* [Moshi](https://github.com/square/moshi)
+* [Dagger2](https://google.github.io/dagger/)
+* [Timber](https://github.com/JakeWharton/timber)
+* [dnsjava](http://dnsjava.org)
