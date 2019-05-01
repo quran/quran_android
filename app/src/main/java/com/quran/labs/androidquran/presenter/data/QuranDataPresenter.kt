@@ -88,8 +88,9 @@ class QuranDataPresenter @Inject internal constructor(
     directory?.let {
       val log = StringBuilder()
 
-      val quranImagesDirectory = quranFileUtils.getQuranImagesBaseDirectory(appContext)
-      val quranImagesDirectoryFiles = File(quranImagesDirectory).listFiles()
+      val quranImagesDirectoryName = quranFileUtils.getQuranImagesBaseDirectory(appContext)
+      val quranImagesDirectory = File(quranImagesDirectoryName)
+      val quranImagesDirectoryFiles = quranImagesDirectory.listFiles()
       quranImagesDirectoryFiles?.let { files ->
         val imageSubdirectories = files.filter { it.name.contains("width_") }
         imageSubdirectories.map {
@@ -110,13 +111,13 @@ class QuranDataPresenter @Inject internal constructor(
           log.append("\n")
 
           if (imageFiles == null) {
-            log.append("null image file list")
+            log.append("null image file list, $it - ${it.isDirectory}")
           }
         }
       }
 
       if (quranImagesDirectoryFiles == null) {
-        log.append("null list of files in images directory")
+        log.append("null list of files in images directory: $quranImagesDirectoryName - ${quranImagesDirectory.isDirectory}")
       }
 
       val audioDirectory = quranFileUtils.getQuranAudioDirectory(appContext)

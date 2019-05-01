@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -275,6 +276,8 @@ public class QuranFileUtils {
           }
         }
       }
+    } catch (InterruptedIOException iioe) {
+      // do nothing, this is expected if the job is canceled
     } catch (IOException ioe) {
       Timber.e(ioe, "exception downloading file");
     } finally {
