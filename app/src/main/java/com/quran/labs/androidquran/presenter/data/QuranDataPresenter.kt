@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.data
 import android.content.Context
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
+import com.crashlytics.android.Crashlytics
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.QuranDataActivity
@@ -57,7 +58,11 @@ class QuranDataPresenter @Inject internal constructor(
                 if (it.havePages()) {
                   copyArabicDatabaseIfNecessary()
                 } else {
-                  generateDebugLog()
+                  try {
+                    generateDebugLog()
+                  } catch (e: Exception) {
+                    Crashlytics.logException(e)
+                  }
                 }
               }
               .subscribeOn(Schedulers.io())
@@ -84,27 +89,39 @@ class QuranDataPresenter @Inject internal constructor(
       val log = StringBuilder()
 
       val quranImagesDirectory = quranFileUtils.getQuranImagesBaseDirectory(appContext)
-      val imageSubdirectories = File(quranImagesDirectory).listFiles()
-          .filter { it.name.contains("width_") }
-      imageSubdirectories.map {
-        log.append("image directory: ")
-           .append(it.name)
-           .append(" - ")
-        val imageFiles = it.listFiles()
-        val fileCount = imageFiles.size
-        log.append(fileCount)
+      val quranImagesDirectoryFiles = File(quranImagesDirectory).listFiles()
+      quranImagesDirectoryFiles?.let { files ->
+        val imageSubdirectories = files.filter { it.name.contains("width_") }
+        imageSubdirectories.map {
+          log.append("image directory: ")
+              .append(it.name)
+              .append(" - ")
+          val imageFiles = it.listFiles()
+          imageFiles?.let { images ->
+            val fileCount = images.size
+            log.append(fileCount)
 
-        if (fileCount == 1) {
-          log.append(" [")
-              .append(imageFiles[0].name)
-             .append("]")
+            if (fileCount == 1) {
+              log.append(" [")
+                  .append(images[0].name)
+                  .append("]")
+            }
+          }
+          log.append("\n")
+
+          if (imageFiles == null) {
+            log.append("null image file list")
+          }
         }
-        log.append("\n")
+      }
+
+      if (quranImagesDirectoryFiles == null) {
+        log.append("null list of files in images directory")
       }
 
       val audioDirectory = quranFileUtils.getQuranAudioDirectory(appContext)
       log.append("audio files in audio root: ")
-         .append(File(audioDirectory).listFiles().size)
+         .append(File(audioDirectory).listFiles()?.size ?: "null")
       debugLog = log.toString()
     }
 
