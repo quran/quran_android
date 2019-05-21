@@ -14,7 +14,6 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.source.PageProvider;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -22,7 +21,6 @@ import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
-import com.quran.labs.androidquran.util.CopyDatabaseUtil;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -60,11 +58,9 @@ public class QuranDataActivity extends Activity implements
   private QuranDataPresenter.QuranDataStatus quranDataStatus;
   private Disposable disposable;
 
-  @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject PageProvider quranPageProvider;
-  @Inject CopyDatabaseUtil copyDatabaseUtil;
   @Inject QuranDataPresenter quranDataPresenter;
 
   @Override
@@ -110,7 +106,18 @@ public class QuranDataActivity extends Activity implements
           reconnectIntent.setAction(QuranDownloadService.ACTION_RECONNECT);
           reconnectIntent.putExtra(QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
               QuranDownloadService.DOWNLOAD_TYPE_PAGES);
-          startService(reconnectIntent);
+          try {
+            // this should be perfectly valid - on some devices though, despite the 100ms
+            // delay (or a longer one), some devices still complain about not being in the
+            // foreground.
+            //
+            // since this isn't strictly necessary (since the download service should emit
+            // periodically on its own anyway, and should handle multiple download requests,
+            // etc), let's just drop it if it fails since this is expected to rarely occur.
+            startService(reconnectIntent);
+          } catch (IllegalStateException ise) {
+            Crashlytics.logException(ise);
+          }
         });
 
     checkPermissions();

@@ -121,8 +121,12 @@ class QuranDataPresenter @Inject internal constructor(
       }
 
       val audioDirectory = quranFileUtils.getQuranAudioDirectory(appContext)
-      log.append("audio files in audio root: ")
-         .append(File(audioDirectory).listFiles()?.size ?: "null")
+      if (audioDirectory != null) {
+        log.append("audio files in audio root: ")
+            .append(File(audioDirectory).listFiles()?.size ?: "null")
+      } else {
+        log.append("audio directory is null")
+      }
       debugLog = log.toString()
     }
 
