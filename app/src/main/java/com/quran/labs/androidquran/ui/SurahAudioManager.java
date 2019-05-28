@@ -1,16 +1,15 @@
 package com.quran.labs.androidquran.ui;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +48,8 @@ import io.reactivex.observers.DisposableSingleObserver;
 public class SurahAudioManager extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener{
 
+  public static final String EXTRA_SHEIKH_POSITION = "SheikhPosition";
+
   private static final String AUDIO_DOWNLOAD_KEY = "SurahAudioManager.DownloadKey";
 
   private ProgressBar progressBar;
@@ -84,7 +85,7 @@ public class SurahAudioManager extends QuranActionBarActivity
     setContentView(R.layout.activity_surah_audio_manager);
 
     Intent intent = getIntent();
-    sheikhPosition = intent.getIntExtra("Sheikh", -1);
+    sheikhPosition = intent.getIntExtra(EXTRA_SHEIKH_POSITION, -1);
 
     recyclerView = findViewById(R.id.recycler_view);
     recyclerView.setHasFixedSize(true);
@@ -94,7 +95,7 @@ public class SurahAudioManager extends QuranActionBarActivity
     progressBar = findViewById(R.id.progress);
     qariItems = audioUtils.getQariList(this);
     basePath = quranFileUtils.getQuranAudioDirectory(this);
-    surahAdapter = new SurahAdapter(qariItems);
+    surahAdapter = new SurahAdapter(qariItems, this);
     recyclerView.setAdapter(surahAdapter);
     getShuyookhData();
   }
@@ -123,19 +124,7 @@ public class SurahAudioManager extends QuranActionBarActivity
     super.onDestroy();
   }
 
-  private DisposableSingleObserver<List<QariDownloadInfo>> mOnDownloadInfo =
-      new DisposableSingleObserver<List<QariDownloadInfo>>() {
-        @Override
-        public void onSuccess(List<QariDownloadInfo> downloadInfo) {
-          progressBar.setVisibility(View.GONE);
-          surahAdapter.setDownloadInfo(downloadInfo);
-          surahAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-        }
-      };
+  private DisposableSingleObserver<List<QariDownloadInfo>> downloadInfoObserver;
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
@@ -149,23 +138,23 @@ public class SurahAudioManager extends QuranActionBarActivity
   private void getShuyookhData() {
     if (disposable != null) {
       disposable.dispose();
-      mOnDownloadInfo =
-          new DisposableSingleObserver<List<QariDownloadInfo>>() {
-            @Override
-            public void onSuccess(List<QariDownloadInfo> downloadInfo) {
-              progressBar.setVisibility(View.GONE);
-              surahAdapter.setDownloadInfo(downloadInfo);
-              surahAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-            }
-          };
     }
+    downloadInfoObserver =
+        new DisposableSingleObserver<List<QariDownloadInfo>>() {
+          @Override
+          public void onSuccess(List<QariDownloadInfo> downloadInfo) {
+            progressBar.setVisibility(View.GONE);
+            surahAdapter.setDownloadInfo(downloadInfo);
+            surahAdapter.notifyDataSetChanged();
+          }
+
+          @Override
+          public void onError(Throwable e) {
+          }
+        };
     disposable = AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(mOnDownloadInfo);
+        .subscribeWith(downloadInfoObserver);
   }
 
   private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -178,15 +167,10 @@ public class SurahAudioManager extends QuranActionBarActivity
         boolean downloaded = info.downloadedSuras.get(surah);
         if(downloaded) {
           // TODO: show a confirmation dialog before deleting
-          // delete it
           delete(surah);
         } else {
-          // download
           download(surah);
         }
-//        if (info.downloadedSuras.size() != 114) {
-//          download(qariItems.get(position));
-//        }
       }
     }
   };
@@ -199,11 +183,11 @@ public class SurahAudioManager extends QuranActionBarActivity
     File audioFile = new File(fileName);
     String resultString;
     if(audioFile.delete()) {
-      resultString = "Successfully deleted the file";
+      resultString = getString(R.string.audio_manager_delete_file_success);
       AudioManagerUtils.clearCacheKeyForSheikh(qariItem);
       getShuyookhData();
     } else {
-      resultString = "There was some error while deleting the file";
+      resultString = getString(R.string.audio_manager_delete_file_error);
     }
     Toast.makeText(this, resultString, Toast.LENGTH_SHORT).show();
   }
@@ -236,41 +220,44 @@ public class SurahAudioManager extends QuranActionBarActivity
   }
 
   private class SurahAdapter extends RecyclerView.Adapter<SurahAudioManager.SurahViewHolder> {
-    private final LayoutInflater mInflater;
-    private final List<QariItem> mQariItems;
-    private final Map<QariItem, QariDownloadInfo> mDownloadInfoMap;
+    private final LayoutInflater inflater;
+    private final List<QariItem> qariItemList;
+    private final Map<QariItem, QariDownloadInfo> downloadInfoMap;
+    private final Context context;
 
-    SurahAdapter(List<QariItem> items) {
-      mQariItems = items;
-      mDownloadInfoMap = new HashMap<>();
-      mInflater = LayoutInflater.from(SurahAudioManager.this);
+    SurahAdapter(List<QariItem> items, Context context) {
+      qariItemList = items;
+      downloadInfoMap = new HashMap<>();
+      inflater = LayoutInflater.from(SurahAudioManager.this);
+      this.context = context;
     }
 
     void setDownloadInfo(List<QariDownloadInfo> downloadInfo) {
       for (QariDownloadInfo info : downloadInfo) {
-        mDownloadInfoMap.put(info.qariItem, info);
+        downloadInfoMap.put(info.qariItem, info);
       }
     }
 
     @Override
     public SurahAudioManager.SurahViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      return new SurahAudioManager.SurahViewHolder(mInflater.inflate(R.layout.audio_manager_row, parent, false));
+      return new SurahAudioManager.SurahViewHolder(inflater.inflate(R.layout.audio_manager_row, parent, false));
     }
 
     @Override
     public void onBindViewHolder(SurahAudioManager.SurahViewHolder holder, int position) {
-      holder.name.setText((position+1) + "");
+      holder.name.setText(quranInfo.getSuraName(context, position+1, true));
 
       QariDownloadInfo info = getSheikhInfoForPosition(sheikhPosition);
       if(info == null) {
         return;
       }
       boolean fullyDownloaded = info.downloadedSuras.get(position + 1);
-      holder.quantity.setText(fullyDownloaded? "Downloaded" : "Not downloaded");
+      int fileAction = fullyDownloaded? R.string.audio_manager_file_delete : R.string.audio_manager_file_download;
+      holder.quantity.setText(getString(fileAction));
     }
 
     QariDownloadInfo getSheikhInfoForPosition(int position) {
-      return mDownloadInfoMap.get(mQariItems.get(position));
+      return downloadInfoMap.get(qariItemList.get(position));
     }
 
     @Override
