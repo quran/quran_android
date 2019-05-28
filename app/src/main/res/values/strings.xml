@@ -382,6 +382,11 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Audio Manager</string>
+  <string name="audio_manager_delete_file_success">Successfully deleted the file</string>
+  <string name="audio_manager_delete_file_error">There was an error while deleting the file</string>
+  <string name="audio_manager_file_download">Download file</string>
+  <string name="audio_manager_file_delete">Delete file</string>
+
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
