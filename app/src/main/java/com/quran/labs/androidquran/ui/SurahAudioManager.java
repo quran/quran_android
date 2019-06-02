@@ -179,15 +179,31 @@ public class SurahAudioManager extends QuranActionBarActivity
     QariItem qariItem = qariItems.get(sheikhPosition);
     String baseUri = basePath + qariItem.getPath();
     String fileUri = audioUtils.getLocalQariUri(this, qariItem);
-    String fileName = fileUri.format(Locale.US, fileUri, surah);
-    File audioFile = new File(fileName);
+
+    boolean deletionSuccessful = true;
+
+    if(qariItem.isGapless()) {
+      String fileName = String.format(Locale.US, fileUri, surah);
+      File audioFile = new File(fileName);
+      deletionSuccessful = audioFile.delete();
+    } else {
+      int numAyahs = quranInfo.getNumAyahs(surah);
+      for(int i=1; i<= numAyahs; ++i) {
+        String fileName = String.format(Locale.US, fileUri, surah, i);
+        File ayahAudioFile = new File(fileName);
+        if(ayahAudioFile.exists()) {
+          deletionSuccessful = deletionSuccessful && ayahAudioFile.delete();
+        }
+      }
+    }
+
     String resultString;
-    if(audioFile.delete()) {
-      resultString = getString(R.string.audio_manager_delete_file_success);
+    if(deletionSuccessful) {
+      resultString = getString(R.string.audio_manager_delete_surah_success);
       AudioManagerUtils.clearCacheKeyForSheikh(qariItem);
       getShuyookhData();
     } else {
-      resultString = getString(R.string.audio_manager_delete_file_error);
+      resultString = getString(R.string.audio_manager_delete_surah_error);
     }
     Toast.makeText(this, resultString, Toast.LENGTH_SHORT).show();
   }
@@ -252,7 +268,7 @@ public class SurahAudioManager extends QuranActionBarActivity
         return;
       }
       boolean fullyDownloaded = info.downloadedSuras.get(position + 1);
-      int fileAction = fullyDownloaded? R.string.audio_manager_file_delete : R.string.audio_manager_file_download;
+      int fileAction = fullyDownloaded? R.string.audio_manager_surah_delete : R.string.audio_manager_surah_download;
       holder.quantity.setText(getString(fileAction));
     }
 

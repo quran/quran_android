@@ -81,7 +81,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
       rootDirectory + item.path + File.separator + if (item.isGapless) {
       "%03d" + AudioUtils.AUDIO_EXTENSION
     } else {
-      "%03d%03d" + AudioUtils.AUDIO_EXTENSION
+      "%d" + File.separator + "%d" + AudioUtils.AUDIO_EXTENSION
     }
   }
 
