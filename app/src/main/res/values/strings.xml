@@ -382,10 +382,10 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Audio Manager</string>
-  <string name="audio_manager_delete_file_success">Successfully deleted the file</string>
-  <string name="audio_manager_delete_file_error">There was an error while deleting the file</string>
-  <string name="audio_manager_file_download">Download file</string>
-  <string name="audio_manager_file_delete">Delete file</string>
+  <string name="audio_manager_delete_surah_success">Successfully deleted the surah</string>
+  <string name="audio_manager_delete_surah_error">There was an error while deleting the surah</string>
+  <string name="audio_manager_surah_download">Download surah</string>
+  <string name="audio_manager_surah_delete">Delete surah</string>
 
 
   <!-- format strings -->
