@@ -91,6 +91,18 @@ public class AudioManagerActivity extends QuranActionBarActivity
     if (disposable != null) {
       disposable.dispose();
     }
+    mOnDownloadInfo = new DisposableSingleObserver<List<QariDownloadInfo>>() {
+      @Override
+      public void onSuccess(List<QariDownloadInfo> downloadInfo) {
+        progressBar.setVisibility(View.GONE);
+        shuyookhAdapter.setDownloadInfo(downloadInfo);
+        shuyookhAdapter.notifyDataSetChanged();
+      }
+
+      @Override
+      public void onError(Throwable e) {
+      }
+    };
     disposable = AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(mOnDownloadInfo);
@@ -120,19 +132,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
     super.onDestroy();
   }
 
-  private DisposableSingleObserver<List<QariDownloadInfo>> mOnDownloadInfo =
-      new DisposableSingleObserver<List<QariDownloadInfo>>() {
-        @Override
-        public void onSuccess(List<QariDownloadInfo> downloadInfo) {
-          progressBar.setVisibility(View.GONE);
-          shuyookhAdapter.setDownloadInfo(downloadInfo);
-          shuyookhAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-        }
-      };
+  private DisposableSingleObserver<List<QariDownloadInfo>> mOnDownloadInfo;
 
   private View.OnClickListener mOnClickListener = new View.OnClickListener() {
     @Override

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,10 +128,24 @@ public class SurahAudioManager extends QuranActionBarActivity
   private DisposableSingleObserver<List<QariDownloadInfo>> downloadInfoObserver;
 
   @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.surah_audio_manager_menu, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      finish();
-      return true;
+    int itemId = item.getItemId();
+    switch(itemId) {
+      case android.R.id.home:
+        finish();
+        return true;
+
+      case R.id.download_all:
+        QariDownloadInfo info = surahAdapter.getSheikhInfoForPosition(sheikhPosition);
+        if(info.downloadedSuras.size() != 114) {
+          download(1, 114);
+        }
     }
     return super.onOptionsItemSelected(item);
   }
@@ -169,7 +184,7 @@ public class SurahAudioManager extends QuranActionBarActivity
           // TODO: show a confirmation dialog before deleting
           delete(surah);
         } else {
-          download(surah);
+          download(surah, surah);
         }
       }
     }
@@ -208,7 +223,7 @@ public class SurahAudioManager extends QuranActionBarActivity
     Toast.makeText(this, resultString, Toast.LENGTH_SHORT).show();
   }
 
-  private void download(int surah) {
+  private void download(int startSurah, int endSurah) {
     QariItem qariItem = qariItems.get(sheikhPosition);
     String baseUri = basePath + qariItem.getPath();
     boolean isGapless = qariItem.isGapless();
@@ -217,8 +232,8 @@ public class SurahAudioManager extends QuranActionBarActivity
     Intent intent = ServiceIntentHelper.getDownloadIntent(this,
         audioUtils.getQariUrl(qariItem),
         baseUri, sheikhName, AUDIO_DOWNLOAD_KEY, QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, new SuraAyah(surah, 1));
-    intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, new SuraAyah(surah, quranInfo.getNumAyahs(surah)));
+    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, new SuraAyah(startSurah, 1));
+    intent.putExtra(QuranDownloadService.EXTRA_END_VERSE, new SuraAyah(endSurah, quranInfo.getNumAyahs(endSurah)));
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless);
     startService(intent);
 
