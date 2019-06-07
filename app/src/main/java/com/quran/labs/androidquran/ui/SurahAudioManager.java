@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.ActionMode;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,6 +63,7 @@ public class SurahAudioManager extends QuranActionBarActivity
   private List<QariItem> qariItems;
   private SurahAdapter surahAdapter;
   private int sheikhPosition = -1;
+  private ActionMode actionMode;
 
 
   @Inject
@@ -172,20 +175,88 @@ public class SurahAudioManager extends QuranActionBarActivity
         .subscribeWith(downloadInfoObserver);
   }
 
+  private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+      mode.getMenuInflater().inflate(R.menu.surah_audio_manager_contextual_menu, menu);
+      return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+      return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+      switch(item.getItemId()) {
+        case R.id.cab_download:
+          return true;
+
+        case R.id.cab_delete:
+          return true;
+      }
+      return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+      surahAdapter.uncheckAll();
+      actionMode = null;
+    }
+  };
+
+  private boolean isInActionMode() {
+    return actionMode != null;
+  }
+
+  private void finishActionMode() {
+    if(isInActionMode()) {
+      actionMode.finish();
+    }
+  }
+
+  private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+
+    @Override
+    public boolean onLongClick(View view) {
+      if(isInActionMode()) {
+        return false;
+      }
+
+      int position = recyclerView.getChildAdapterPosition(view);
+      if(position == RecyclerView.NO_POSITION) {
+        return false;
+      }
+
+      actionMode = startSupportActionMode(actionModeCallback);
+
+      surahAdapter.setItemChecked(position, true);
+      return true;
+    }
+  };
+
   private View.OnClickListener mOnClickListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
       int position = recyclerView.getChildAdapterPosition(v);
-      if (position != RecyclerView.NO_POSITION) {
-        QariDownloadInfo info = surahAdapter.getSheikhInfoForPosition(sheikhPosition);
-        int surah = position + 1;
-        boolean downloaded = info.downloadedSuras.get(surah);
-        if(downloaded) {
-          // TODO: show a confirmation dialog before deleting
-          delete(surah);
-        } else {
-          download(surah, surah);
-        }
+      if(position == RecyclerView.NO_POSITION) {
+        return;
+      }
+
+      if(isInActionMode()) {
+        surahAdapter.toggleItemChecked(position);
+        return;
+      }
+
+      QariDownloadInfo info = surahAdapter.getSheikhInfoForPosition(sheikhPosition);
+      int surah = position + 1;
+      boolean downloaded = info.downloadedSuras.get(surah);
+      if(downloaded) {
+        // TODO: show a confirmation dialog before deleting
+        delete(surah);
+      } else {
+        download(surah, surah);
       }
     }
   };
@@ -255,6 +326,7 @@ public class SurahAudioManager extends QuranActionBarActivity
     private final List<QariItem> qariItemList;
     private final Map<QariItem, QariDownloadInfo> downloadInfoMap;
     private final Context context;
+    private SparseBooleanArray checkedState = new SparseBooleanArray();
 
     SurahAdapter(List<QariItem> items, Context context) {
       qariItemList = items;
@@ -283,8 +355,18 @@ public class SurahAudioManager extends QuranActionBarActivity
         return;
       }
       boolean fullyDownloaded = info.downloadedSuras.get(position + 1);
-      int fileAction = fullyDownloaded? R.string.audio_manager_surah_delete : R.string.audio_manager_surah_download;
-      holder.quantity.setText(getString(fileAction));
+      int surahStatus, surahStatusImage;
+      if(fullyDownloaded) {
+        surahStatus = R.string.audio_manager_surah_delete;
+        surahStatusImage = R.drawable.ic_cancel;
+      } else {
+        surahStatus = R.string.audio_manager_surah_download;
+        surahStatusImage = R.drawable.ic_download;
+      }
+      holder.status.setText(getString(surahStatus));
+      holder.image.setImageResource(surahStatusImage);
+
+      holder.setChecked(isItemChecked(position));
     }
 
     QariDownloadInfo getSheikhInfoForPosition(int position) {
@@ -295,21 +377,48 @@ public class SurahAudioManager extends QuranActionBarActivity
     public int getItemCount() {
       return 114;
     }
+
+    public void toggleItemChecked(int position) {
+      boolean checked = isItemChecked(position);
+      setItemChecked(position, !checked);
+    }
+
+    public void setItemChecked(int position, boolean checked) {
+      checkedState.put(position, checked);
+      notifyItemChanged(position);
+    }
+
+    public boolean isItemChecked(int position) {
+      boolean checked = checkedState.get(position, false);
+      return checked;
+    }
+
+    public void uncheckAll() {
+      checkedState.clear();
+      notifyDataSetChanged();
+    }
   }
 
 
   private class SurahViewHolder extends RecyclerView.ViewHolder {
     public final TextView name;
-    public final TextView quantity;
+    public final TextView status;
     public final ImageView image;
+    public final View view;
 
     SurahViewHolder(View itemView) {
       super(itemView);
+      view = itemView;
       name = itemView.findViewById(R.id.name);
-      quantity = itemView.findViewById(R.id.quantity);
+      status = itemView.findViewById(R.id.quantity);
 
       image = itemView.findViewById(R.id.image);
       itemView.setOnClickListener(mOnClickListener);
+      itemView.setOnLongClickListener(onLongClickListener);
+    }
+
+    public void setChecked(boolean checked) {
+      view.setActivated(checked);
     }
   }
 }
