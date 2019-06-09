@@ -37,6 +37,7 @@ import com.quran.labs.androidquran.util.QariDownloadInfo;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -52,8 +53,9 @@ public class SurahAudioManager extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener{
 
   public static final String EXTRA_SHEIKH_POSITION = "SheikhPosition";
-
   private static final String AUDIO_DOWNLOAD_KEY = "SurahAudioManager.DownloadKey";
+  private static final int FULLY_DOWNLOADED_SURAH = 0;
+  private static final int NOT_FULLY_DOWNLOADED_SURAH = 1;
 
   private ProgressBar progressBar;
   private Disposable disposable;
@@ -184,7 +186,20 @@ public class SurahAudioManager extends QuranActionBarActivity
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-      return false;
+      int fullyDownloadedCount = surahAdapter.getFullyDownloadedCheckedSurahCount();
+      int notFullyDownloadedCount = surahAdapter.getNotFullyDownloadedCheckedSurahCount();
+      MenuItem deleteButton = menu.findItem(R.id.cab_delete), downloadButton = menu.findItem(R.id.cab_download);
+      if(fullyDownloadedCount > 0) {
+        deleteButton.setVisible(true);
+      } else {
+        deleteButton.setVisible(false);
+      }
+      if(notFullyDownloadedCount > 0) {
+        downloadButton.setVisible(true);
+      } else {
+        downloadButton.setVisible(false);
+      }
+      return true;
     }
 
     @Override
@@ -229,9 +244,9 @@ public class SurahAudioManager extends QuranActionBarActivity
         return false;
       }
 
+      surahAdapter.setItemChecked(position, true);
       actionMode = startSupportActionMode(actionModeCallback);
 
-      surahAdapter.setItemChecked(position, true);
       return true;
     }
   };
@@ -246,6 +261,7 @@ public class SurahAudioManager extends QuranActionBarActivity
 
       if(isInActionMode()) {
         surahAdapter.toggleItemChecked(position);
+        actionMode.invalidate();
         return;
       }
 
@@ -326,7 +342,8 @@ public class SurahAudioManager extends QuranActionBarActivity
     private final List<QariItem> qariItemList;
     private final Map<QariItem, QariDownloadInfo> downloadInfoMap;
     private final Context context;
-    private SparseBooleanArray checkedState = new SparseBooleanArray();
+    private SparseBooleanArray fullyDownloadedCheckedState = new SparseBooleanArray();
+    private SparseBooleanArray notFullyDownloadedCheckedState = new SparseBooleanArray();
 
     SurahAdapter(List<QariItem> items, Context context) {
       qariItemList = items;
@@ -350,13 +367,8 @@ public class SurahAudioManager extends QuranActionBarActivity
     public void onBindViewHolder(SurahAudioManager.SurahViewHolder holder, int position) {
       holder.name.setText(quranInfo.getSuraName(context, position+1, true));
 
-      QariDownloadInfo info = getSheikhInfoForPosition(sheikhPosition);
-      if(info == null) {
-        return;
-      }
-      boolean fullyDownloaded = info.downloadedSuras.get(position + 1);
       int surahStatus, surahStatusImage;
-      if(fullyDownloaded) {
+      if(isItemFullyDownloaded(position)) {
         surahStatus = R.string.audio_manager_surah_delete;
         surahStatusImage = R.drawable.ic_cancel;
       } else {
@@ -378,24 +390,67 @@ public class SurahAudioManager extends QuranActionBarActivity
       return 114;
     }
 
+    private boolean isItemFullyDownloaded(int position) {
+      QariDownloadInfo info = getSheikhInfoForPosition(sheikhPosition);
+      if(info == null) {
+        return false;
+      }
+      boolean fullyDownloaded = info.downloadedSuras.get(position + 1);
+      return fullyDownloaded;
+    }
+
     public void toggleItemChecked(int position) {
       boolean checked = isItemChecked(position);
       setItemChecked(position, !checked);
     }
 
     public void setItemChecked(int position, boolean checked) {
-      checkedState.put(position, checked);
+      boolean fullyDownloaded = isItemFullyDownloaded(position);
+      SparseBooleanArray checkedState = fullyDownloaded? fullyDownloadedCheckedState : notFullyDownloadedCheckedState;
+      if(checked) {
+        checkedState.put(position, true);
+      } else {
+        checkedState.delete(position);
+      }
       notifyItemChanged(position);
     }
 
     public boolean isItemChecked(int position) {
-      boolean checked = checkedState.get(position, false);
+      boolean checked =
+          fullyDownloadedCheckedState.get(position, false)
+          || notFullyDownloadedCheckedState.get(position, false);
       return checked;
     }
 
     public void uncheckAll() {
-      checkedState.clear();
+      fullyDownloadedCheckedState.clear();
+      notFullyDownloadedCheckedState.clear();
       notifyDataSetChanged();
+    }
+
+    public int getFullyDownloadedCheckedSurahCount() {
+      return  fullyDownloadedCheckedState.size();
+    }
+
+    public int getNotFullyDownloadedCheckedSurahCount() {
+      return  notFullyDownloadedCheckedState.size();
+    }
+
+    public List<Integer>[] getCheckedSurahs() {
+      List<Integer>[] result = new List[2];
+      List<Integer> fullyDownloaded = new ArrayList<>();
+      List<Integer> notFullyDownloaded = new ArrayList<>();
+      for(int i=0; i<fullyDownloadedCheckedState.size(); i++) {
+        int position = fullyDownloadedCheckedState.keyAt(i);
+        fullyDownloaded.add(position + 1);
+      }
+      for(int i=0; i<notFullyDownloadedCheckedState.size(); i++) {
+        int position = notFullyDownloadedCheckedState.keyAt(i);
+        notFullyDownloaded.add(position + 1);
+      }
+      result[FULLY_DOWNLOADED_SURAH] = fullyDownloaded;
+      result[NOT_FULLY_DOWNLOADED_SURAH] = notFullyDownloaded;
+      return result;
     }
   }
 
