@@ -38,6 +38,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -206,9 +207,13 @@ public class SurahAudioManager extends QuranActionBarActivity
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
       switch(item.getItemId()) {
         case R.id.cab_download:
+          downloadSelection();
           return true;
 
         case R.id.cab_delete:
+          List<Integer> checkedSurahs[] = surahAdapter.getCheckedSurahs();
+          List<Integer> toBeDeleted = checkedSurahs[FULLY_DOWNLOADED_SURAH];
+          deleteSelection(toBeDeleted);
           return true;
       }
       return false;
@@ -270,14 +275,14 @@ public class SurahAudioManager extends QuranActionBarActivity
       boolean downloaded = info.downloadedSuras.get(surah);
       if(downloaded) {
         // TODO: show a confirmation dialog before deleting
-        delete(surah);
+        deleteSelection(new ArrayList<>(Arrays.asList(surah)));
       } else {
         download(surah, surah);
       }
     }
   };
 
-  private void delete(int surah) {
+  private boolean deleteSurah(int surah) {
     QariItem qariItem = qariItems.get(sheikhPosition);
     String baseUri = basePath + qariItem.getPath();
     String fileUri = audioUtils.getLocalQariUri(this, qariItem);
@@ -298,17 +303,46 @@ public class SurahAudioManager extends QuranActionBarActivity
         }
       }
     }
+    return deletionSuccessful;
+  }
+
+  private void deleteSelection(List<Integer> toBeDeleted) {
+    int successCount = 0, failureCount = 0;
+    for (int surah : toBeDeleted) {
+      boolean deleted = deleteSurah(surah);
+      if (deleted) {
+        successCount++;
+      } else {
+        failureCount++;
+      }
+    }
 
     String resultString;
-    if(deletionSuccessful) {
-      resultString = getString(R.string.audio_manager_delete_surah_success);
-      AudioManagerUtils.clearCacheKeyForSheikh(qariItem);
-      getShuyookhData();
+    if (failureCount > 0) {
+      resultString = getResources().getQuantityString(R.plurals.audio_manager_delete_surah_error, failureCount, failureCount);
     } else {
-      resultString = getString(R.string.audio_manager_delete_surah_error);
+      resultString = getResources().getQuantityString(R.plurals.audio_manager_delete_surah_success, successCount, successCount);
     }
     Toast.makeText(this, resultString, Toast.LENGTH_SHORT).show();
+
+    if(successCount > 0) {
+      // refresh, if at least 1 file was deleted
+      QariItem qariItem = qariItems.get(sheikhPosition);
+      AudioManagerUtils.clearCacheKeyForSheikh(qariItem);
+      getShuyookhData();
+      finishActionMode();
+    }
   }
+
+  private void downloadSelection() {
+    List<Integer> checkedSurahs[] = surahAdapter.getCheckedSurahs();
+    List<Integer> toBeDownloaded = checkedSurahs[NOT_FULLY_DOWNLOADED_SURAH];
+    for(int surah: toBeDownloaded) {
+      download(surah, surah);
+    }
+    finishActionMode();
+  }
+
 
   private void download(int startSurah, int endSurah) {
     QariItem qariItem = qariItems.get(sheikhPosition);
