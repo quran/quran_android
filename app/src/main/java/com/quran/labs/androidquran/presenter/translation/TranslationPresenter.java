@@ -98,8 +98,8 @@ public class TranslationPresenter extends
         String shareText = shareUtil.getShareTextperTranslation(activity, ayah, translationNames, selectedTranslation);
         shareUtil.copyToClipboard(activity, shareText);
         break;
+      }
     }
-  }
   }
 
   private int getPage(List<QuranAyahInfo> result) {
@@ -115,6 +115,7 @@ public class TranslationPresenter extends
 
   public interface TranslationScreen {
     void setVerses(int page, @NonNull String[] translations, @NonNull List<QuranAyahInfo> verses);
+
     void updateScrollPosition();
   }
 }
