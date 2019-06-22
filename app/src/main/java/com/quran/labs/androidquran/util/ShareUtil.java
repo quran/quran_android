@@ -54,26 +54,27 @@ public class ShareUtil {
   }
 
   public String getShareTextperTranslation(Context context,
-                                    QuranAyahInfo ayahInfo,
-                                    String[] translationNames,String selectedTranslation) {
+                                           QuranAyahInfo ayahInfo,
+                                           String[] translationNames, String selectedTranslation) {
     final StringBuilder sb = new StringBuilder();
 
     for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
-      if(selectedTranslation ==translationNames[i])
-      {
-      if (i < translationNames.length) {
-        sb.append('(')
-          .append(translationNames[i])
-          .append(")\n");
+      if (selectedTranslation == translationNames[i]) {
+        if (i < translationNames.length) {
+          sb.append('(')
+              .append(translationNames[i])
+              .append(")\n");
+        }
+        sb.append(ayahInfo.texts.get(i))
+            .append("\n\n");
       }
-      sb.append(ayahInfo.texts.get(i))
-        .append("\n\n");
-    }}
+    }
     sb.append('-')
-      .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
+        .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
 
     return sb.toString();
   }
+
   public String getShareText(Context context,
                              QuranAyahInfo ayahInfo,
                              String[] translationNames) {
