@@ -115,7 +115,7 @@ dependencies {
   implementation "androidx.preference:preference:${androidxPreferencesVersion}"
   implementation "androidx.recyclerview:recyclerview:${androidxVersion}"
   implementation "com.google.android.material:material:${androidxVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
   kapt deps.dagger.apt
@@ -131,7 +131,7 @@ dependencies {
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
-  implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+  implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
   errorprone 'com.google.errorprone:error_prone_core:2.3.2'
 }
