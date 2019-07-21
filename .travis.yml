@@ -1,4 +1,5 @@
 language: android
+dist: trusty
 
 jdk:
 - oraclejdk8
@@ -7,19 +8,23 @@ android:
    components:
       - tools
       - platform-tools
-      - build-tools-27.0.3
+      - build-tools-28.0.3
       - android-28
       - android-22 # required for emulator below
       - extra-android-m2repository
       - sys-img-armeabi-v7a-android-22
-
-before_install:
-  - yes | sdkmanager "platforms;android-27"
+   licenses:
+      - 'android-sdk-preview-license-.+'
+      - 'android-sdk-license-.+'
+      - 'google-gdk-license-.+'
 
 before_script:
   # Create and start emulator
+  - echo "y" | android update sdk -a --no-ui --filter android-22
+  - echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-22
+  - android list targets | grep -E '^id:' | awk -F '"' '{$1=""; print $2}' # list all targets
   - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - emulator -avd test -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
