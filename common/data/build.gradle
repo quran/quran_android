@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
 dependencies {
-  compile deps.kotlin.stdlib
+  implementation deps.kotlin.stdlib
   implementation "androidx.annotation:annotation:${androidxVersion}"
 }
