@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="quran_readers_name">
+    <item>@string/qari_minshawi_murattal_gapless</item>
+    <item>@string/qari_husary_gapless</item>
+    <item>@string/qari_basfar</item>
+  </string-array>
+
+  <integer-array translatable="false" name="quran_readers_have_gapless_equivalents">
+    <item>0</item>
+    <item>0</item>
+    <item>0</item>
+  </integer-array>
+
+  <string-array translatable="false" name="quran_readers_path">
+    <item>minshawi_murattal</item>
+    <item>husary</item>
+    <item>2</item>  <!-- abdullah basfar -->
+  </string-array>
+
+  <string-array translatable="false" name="quran_readers_db_name">
+    <item>minshawi_murattal</item>
+    <item>husary</item>
+    <item></item> <!-- abdullah basfar -->
+  </string-array>
+
+  <string-array translatable="false" name="quran_readers_urls">
+    <item>https://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/</item>
+    <item>https://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/</item>
+    <item>https://mirrors.quranicaudio.com/everyayah/Abdullah_Basfar_192kbps/</item>
+  </string-array>
+</resources>

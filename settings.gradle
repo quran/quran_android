@@ -1,4 +1,5 @@
 include ':app'
+include ':common:audio'
 include ':common:data'
 include ':common:networking'
 include ':common:pages'
