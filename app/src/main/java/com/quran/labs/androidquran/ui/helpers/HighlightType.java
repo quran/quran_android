@@ -13,42 +13,41 @@ public class HighlightType implements Comparable<HighlightType> {
   public static final HighlightType NOTE =      new HighlightType(3, true,  R.color.note_highlight);
   public static final HighlightType BOOKMARK =  new HighlightType(4, true,  R.color.bookmark_highlight);
 
-  private Long mId;
-  private boolean mMultipleHighlightsAllowed;
-  private int mColorId;
-  private Integer mColor = null;
+  private Long id;
+  private boolean multipleHighlightsAllowed;
+  private int colorId;
+  private Integer color = null;
 
   private HighlightType(long id, boolean multipleHighlightsAllowed, int colorId) {
-    mId = id;
-    mMultipleHighlightsAllowed = multipleHighlightsAllowed;
-    mColorId = colorId;
+    this.id = id;
+    this.multipleHighlightsAllowed = multipleHighlightsAllowed;
+    this.colorId = colorId;
   }
 
   public boolean isMultipleHighlightsAllowed() {
-    return mMultipleHighlightsAllowed;
+    return multipleHighlightsAllowed;
   }
 
   public int getColor(Context context) {
-    if (mColor == null) {
-      mColor = ContextCompat.getColor(context, mColorId);
+    if (color == null) {
+      color = ContextCompat.getColor(context, colorId);
     }
-    return mColor;
+    return color;
   }
 
   @Override
   public int compareTo(@NonNull HighlightType another) {
-    return mId.compareTo(another.mId);
+    return id.compareTo(another.id);
   }
 
   @Override
   public boolean equals(Object o) {
-    return this == o ||
-        (o != null && o.getClass() == HighlightType.class && mId.equals(((HighlightType) o).mId));
+    return this == o || (o instanceof HighlightType && id.equals(((HighlightType) o).id));
   }
 
   @Override
   public int hashCode() {
-    return mId.hashCode();
+    return id.hashCode();
   }
 
 }

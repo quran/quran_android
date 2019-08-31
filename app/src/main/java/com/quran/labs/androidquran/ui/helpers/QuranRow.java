@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,92 +32,91 @@ public class QuranRow {
   public Bookmark bookmark;
 
   public static class Builder {
-
-    private String mText;
-    private String mMetadata;
-    private int mSura;
-    private int mAyah;
-    private int mPage;
-    private int mRowType = NONE;
-    private Integer mImageResource;
-    private Integer mJuzType;
-    private long mTagId = -1;
-    private long mBookmarkId = -1;
-    private String mJuzOverlayText;
-    private String mDateAdded;
-    private Integer mImageFilterColor;
-    private Bookmark mBookmark;
+    private String text;
+    private String metadata;
+    private int sura;
+    private int ayah;
+    private int page;
+    private int rowType = NONE;
+    private Integer imageResource;
+    private Integer juzType;
+    private long tagId = -1;
+    private long bookmarkId = -1;
+    private String juzOverlayText;
+    private String dateAdded;
+    private Integer imageFilterColor;
+    private Bookmark bookmark;
 
     public Builder withType(int type) {
-      mRowType = type;
+      rowType = type;
       return this;
     }
 
     public Builder withText(String text) {
-      mText = text;
+      this.text = text;
       return this;
     }
 
     public Builder withMetadata(String metadata) {
-      mMetadata = metadata;
+      this.metadata = metadata;
       return this;
     }
 
     public Builder withBookmark(Bookmark bookmark) {
       if (!bookmark.isPageBookmark()) {
-        mSura = bookmark.getSura();
-        mAyah = bookmark.getAyah();
+        sura = bookmark.getSura();
+        ayah = bookmark.getAyah();
       }
-      mPage = bookmark.getPage();
-      mBookmark = bookmark;
-      mBookmarkId = bookmark.getId();
+      page = bookmark.getPage();
+      this.bookmark = bookmark;
+      bookmarkId = bookmark.getId();
       return this;
     }
 
     public Builder withSura(int sura) {
-      mSura = sura;
+      this.sura = sura;
       return this;
     }
 
     public Builder withPage(int page) {
-      mPage = page;
+      this.page = page;
       return this;
     }
 
     public Builder withImageResource(int resId) {
-      mImageResource = resId;
+      imageResource = resId;
       return this;
     }
 
     public Builder withImageOverlayColor(int color) {
-      mImageFilterColor = color;
+      imageFilterColor = color;
       return this;
     }
 
     public Builder withJuzType(int juzType) {
-      mJuzType = juzType;
+      this.juzType = juzType;
       return this;
     }
 
     public Builder withJuzOverlayText(String text) {
-      mJuzOverlayText = text;
+      juzOverlayText = text;
       return this;
     }
 
     public Builder withTagId(long id) {
-      mTagId = id;
+      tagId = id;
       return this;
     }
 
     public Builder withDate(long timeStamp) {
-      mDateAdded = (new SimpleDateFormat("MMM dd, HH:mm")).format(new Date(timeStamp * 1000));
+      dateAdded = new SimpleDateFormat("MMM dd, HH:mm").format(new Date(timeStamp * 1000));
       return this;
     }
 
     public QuranRow build() {
-      return new QuranRow(mText, mMetadata, mRowType, mSura,
-          mAyah, mPage, mImageResource, mImageFilterColor, mJuzType,
-          mJuzOverlayText, mBookmarkId, mTagId, mBookmark, mDateAdded);
+      return new QuranRow(text, metadata, rowType, sura,
+          ayah, page, imageResource, imageFilterColor, juzType,
+          juzOverlayText, bookmarkId, tagId, bookmark, dateAdded);
     }
   }
 
