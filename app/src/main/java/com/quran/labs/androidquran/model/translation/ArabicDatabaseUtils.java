@@ -72,7 +72,7 @@ public class ArabicDatabaseUtils {
           final int sura = cursor.getInt(1);
           final int ayah = cursor.getInt(2);
           final String extra;
-          if ((!QuranFileConstants.ARABIC_SHARE_TEXT_HAS_BASMALLAH) &&
+          if (!QuranFileConstants.ARABIC_SHARE_TEXT_HAS_BASMALLAH &&
               ayah == 1 && sura != 9 && sura != 1) {
             extra = AR_BASMALLAH + " ";
           } else {
