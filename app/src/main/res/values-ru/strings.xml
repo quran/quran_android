@@ -3,7 +3,7 @@
   <string name="app_name">Коран</string>
   <string name="downloadPrompt_title">Загрузить необходимые файлы?</string>
   <string name="downloadPrompt">Для правильной работы приложения необходимо скачать некоторые
-        файлы. Если не сделать этого сейчас, загрузка каждой страницы будет занимать значительно
+        файлы. Если не сделать это сейчас, загрузка каждой страницы будет занимать значительно
         большее время. Вы хотите загрузить требуемые файлы сейчас?
     </string>
   <string name="downloadTabletPrompt">Недавно мы добавили улучшенные изображения текста Корана для
@@ -30,6 +30,7 @@
   <string name="menu_sort_date">По дате добавления</string>
   <string name="menu_sort_location">По расположению в Коране</string>
   <string name="menu_sort_group_by_tags">Группировать по меткам</string>
+  <string name="menu_show_date">Показать даты</string>
   <string name="menu_translation">Показать перевод</string>
   <string name="menu_back_to_page">Показать Коран</string>
   <string name="menu_help">Помощь</string>
@@ -59,6 +60,7 @@
   <string name="about_quran_ksu_summary">Проект Электронный Мусхаф Университета Короля Сауда
         служил источником арабского тафсира и переводов на нескольких языков
     </string>
+  <string name="about_furqan_summary">Текст на Османи и тафсиры на арабском</string>
   <string name="about_tanzil_summary">Перевод для многих языков</string>
   <string name="about_noorhidayat_summary">Шрифт Noorehira и перевод муфтия Мухаммада Таки Усмани</string>
   <string name="about_open_source">Проекты с открытыми исходниками</string>
@@ -77,21 +79,21 @@
         кнопку воспроизведения для скачивания и вопроизведения текущей страницы или суры.
         &lt;br/>
         &lt;br/>&lt;b>Как мне посмотреть перевод?&lt;/b>
-        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса 
-        (или, если ее нет, Вы увидете иконку с тремя квадратными точками) - нажмите на нее и выберите 
+        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху Вы заметите иконку глобуса
+        (или, если ее нет, Вы увидете иконку с тремя квадратными точками) - нажмите на нее и выберите
         перевод для просмотра.
         &lt;br/>
-        Если у Вас нет ранее загруженных переводов, Вас переместят на экран, где Вы сможете скачать перевод. 
-        Выберите и загрузите нужный Вам перевод, затем вернитесь обратно и вновь нажмите на иконку глобуса для просмотра 
+        Если у Вас нет ранее загруженных переводов, Вас переместят на экран, где Вы сможете скачать перевод.
+        Выберите и загрузите нужный Вам перевод, затем вернитесь обратно и вновь нажмите на иконку глобуса для просмотра
         перевода.
         &lt;br/>
         &lt;br/>&lt;b>Как мне сделать закладку страницы?&lt;/b>
-        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху справа Вы увидите 
+        &lt;br/>Откройте страницу Корана. Один раз дотроньтесь до экрана. Наверху справа Вы увидите
         иконку закладки. Для создания закладки нажмите на данную иконку (она закрасится белым цветом).
         Для удаления закладки снова нажмите на иконку закладки.
         &lt;br/>
         &lt;br/>&lt;b>Как мне увеличить текст?&lt;/b>
-        &lt;br/>Для арабского текста - держите Ваш телефон в альбомном режиме (горизонтально). Это сделает текст крупнее. 
+        &lt;br/>Для арабского текста - держите Ваш телефон в альбомном режиме (горизонтально). Это сделает текст крупнее.
         Для переводов - перейдите в настройки и выберите размер шрифта перевода.
         &lt;br/>
         &lt;br/>&lt;b> Как я могу поделиться аятом?&lt;/b>
@@ -148,12 +150,15 @@
   <string name="prefs_use_arabic_title">Режим арабского</string>
   <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык </string>
   <string name="prefs_new_background_title">Новый фон</string>
+  <string name="prefs_immersive_in_portrait_title">Полный экран в портретном режиме</string>
+  <string name="prefs_immersive_in_portrait_summary_enabled">Как портретные, так и альбомные изображения отображаются в полноэкранном режиме</string>
+  <string name="prefs_immersive_in_portrait_summary_disabled">В полноэкранном режиме отображаются только альбомные изображения</string>
   <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
   <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
   <string name="prefs_lock_orientation_summary_off">Адаптировать под текущую ориентацию</string>
   <string name="prefs_landscape_orientation_title">Альбомный режим</string>
   <string name="prefs_landscape_orientation_summary_on">Использовать альбомный режим</string>
-  <string name="prefs_landscape_orientation_summary_off">Использовать книжный режим</string>
+  <string name="prefs_landscape_orientation_summary_off">Использовать портретный режим</string>
   <string name="prefs_night_mode_title">Ночной режим</string>
   <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
   <string name="prefs_night_mode_text_brightness_title">Яркость текста</string>
@@ -194,8 +199,8 @@
   <string name="prefs_megabytes_int">%1$d Mб</string>
   <string name="prefs_megabytes_str">%s Mб</string>
   <string name="prefs_dual_page_mode_title">Режим планшета</string>
-  <string name="prefs_dual_page_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом.</string>
-  <string name="prefs_dual_page_mode_disabled">В альбомном режиме будет отображена только одна страницы.</string>
+  <string name="prefs_dual_page_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом</string>
+  <string name="prefs_dual_page_mode_disabled">В альбомном режиме будет отображена только одна страницы</string>
   <string name="prefs_category_advanced">Расширенные настройки</string>
   <string name="prefs_category_advanced_summary">Импорт/экспорт закладок, выбрать место хранения файлов и т.д.</string>
   <string name="prefs_import_title">Импорт</string>

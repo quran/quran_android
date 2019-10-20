@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Kur\'an</string>
-  <string name="downloadPrompt_title">Gerekli dosyalari yükleyeyim mi?</string>
-  <string name="downloadPrompt" tools:ignore="Typos">Daha iyi performans için bazı dosyalar SD karta kopyalanmalı.
-    Eğer şimdi bu işlemi gerçekleştirmezseniz sayfaların ayrı ayrı indirilmesi daha uzun sürebilir.
+  <string name="downloadPrompt_title">Gerekli dosyalari indirelim mi?</string>
+  <string name="downloadPrompt">Daha iyi performans için bazı dosyalar SD karta kopyalanmalı.
+    Eğer şimdi bu işlemi gerçekleştirmezseniz sayfaların ayrı-ayrı indirilmesi daha uzun sürebilir.
     Şimdi gerekli dosyaları indirmek istiyor musunuz?
   </string>
   <string name="downloadTabletPrompt">Daha gelişmiş resimler eklendi, indirmek istiyor musunuz?</string>
@@ -19,6 +19,8 @@
   <string name="menu_settings">Ayarlar</string>
   <string name="menu_jump_last_page">Son sayfa</string>
   <string name="menu_bookmarks">Sayfa işaretleri</string>
+  <string name="menu_sort_group_by_tags">Etikete göre grupla</string>
+  <string name="menu_show_date">Tarihleri göster</string>
   <string name="menu_translation">Mealini göster</string>
   <string name="menu_help">Yardım</string>
   <string name="menu_search">Ara</string>
@@ -124,8 +126,8 @@
   <string name="prefs_translations_summary">Meâli indir ve ayarla</string>
   <string name="prefs_translations">Meâller</string>
   <string name="prefs_dual_page_mode_title">Tablet modu</string>
-  <string name="prefs_dual_page_mode_enabled">Yatık modda iki sayfa birlikte görüntülenir</string>
-  <string name="prefs_dual_page_mode_disabled">Yatık modda tek sayfa  görüntülenir</string>
+  <string name="prefs_dual_page_mode_enabled">Yatay modda iki sayfa birlikte görüntülenir</string>
+  <string name="prefs_dual_page_mode_disabled">Yatay modda tek sayfa görüntülenir</string>
   <string name="prefs_category_advanced">Gelişmiş seçenekler</string>
   <string name="prefs_category_advanced_summary">İşaretleri içe/dışa aktar, uygulama konumunu ayarla, vb.</string>
   <string name="prefs_import_title">İçe aktar</string>
@@ -141,6 +143,9 @@
   <string name="prefs_night_mode_text_brightness_title">Metin parlaklığı</string>
   <string name="prefs_night_mode_text_brightness_summary">Gece modu açıkken metin parlaklığı</string>
   <string name="prefs_new_background_title">Yeni arkaplan</string>
+  <string name="prefs_immersive_in_portrait_title">Dikey modda tam ekrani kullan</string>
+  <string name="prefs_immersive_in_portrait_summary_enabled">Dikey ve yatay modda tam ekran kullanılacak</string>
+  <string name="prefs_immersive_in_portrait_summary_disabled">Sadece yatay modda tam ekran kullanılacak</string>
   <string name="prefs_download_amount_title">İndirme miktarı</string>
   <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
   <string name="prefs_audio_manager">Ses yöneticisi (deneysel)</string>

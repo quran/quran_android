@@ -24,6 +24,7 @@
   <string name="menu_sort_date">Sana</string>
   <string name="menu_sort_location">Qurʼondagi yeri</string>
   <string name="menu_sort_group_by_tags">Teglarga boʻlish</string>
+  <string name="menu_show_date">Sanalarni koʻrsatish</string>
   <string name="menu_translation">Tarjimalar</string>
   <string name="menu_back_to_page">Qurʼon</string>
   <string name="menu_help">Yordam</string>
@@ -45,6 +46,7 @@
   <string name="about_quran_ksu_summary">Arabcha tafsir hamda baʼzi tarjimalar Podshoh Saud Universiteti qoshidagi Elektron Musʼhaf proyektidan olindi.
     Shuningdek doktor Ayman Suvayd qiroati ham ushbu proyektdan olingan.
   </string>
+  <string name="about_furqan_summary">Usmoniy matn hamda arabcha tafsirlar</string>
   <string name="about_tanzil_summary">Koʻplab tillardagi Qurʼon maʼnolari tarjimalari</string>
   <string name="about_noorhidayat_summary">\"Noorehira\" shrifti hamda Mufti Taqi Usmoniy tarjimasi</string>
   <string name="about_open_source">Ochiq kodli proyektlar</string>
@@ -260,7 +262,7 @@
 
   <!-- help -->
   <string name="email_us">Agar savollaringizga yuqorida javob olmagan boʻlsangiz quranandroid@gmail.com adresiga maktub yoʻllashingiz mumkin.
-        Faqat, shuni yodda tutingki, biz juda ham koʻplab E-mail xabarlar olamiz va shu sababli barcha xatlarga javob yoza olmasligimiz mumkin.
+        Faqat, shuni yodda tutingki, biz juda ham koʻplab e-mail xabarlar olamiz va shu sababli barcha xatlarga javob yoza olmasligimiz mumkin.
         Iltimos, maktubni ingliz tilida yuborishni unutmang.
     </string>
 
@@ -316,7 +318,7 @@
   </plurals>
   <string name="undo">@string/cancel</string>
 
-  <string name="recent_pages">Soʻnggi oʻqilgan sahifalar</string>
+  <string name="recent_pages">Soʻnggi sahifalar</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Teg</string>
