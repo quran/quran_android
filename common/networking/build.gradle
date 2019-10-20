@@ -2,7 +2,7 @@ apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
 
 dependencies {
-  compile deps.kotlin.stdlib
+  implementation deps.kotlin.stdlib
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
 
