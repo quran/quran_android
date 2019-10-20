@@ -313,21 +313,31 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         .setMessage(msg)
         .setPositiveButton(R.string.remove_button,
             (dialog, id) -> {
-              quranFileUtils.removeTranslation(TranslationManagerActivity.this,
-                  selectedItem.getTranslation().getFileName());
-              TranslationItem updatedItem = selectedItem.withTranslationRemoved();
-              updateTranslationItem(updatedItem);
+              if (removeTranslation(selectedItem.getTranslation().getFileName())) {
+                TranslationItem updatedItem = selectedItem.withTranslationRemoved();
+                updateTranslationItem(updatedItem);
 
-              // remove from active translations
-              QuranSettings settings = QuranSettings.getInstance(this);
-              Set<String> activeTranslations = settings.getActiveTranslations();
-              activeTranslations.remove(selectedItem.getTranslation().getFileName());
-              settings.setActiveTranslations(activeTranslations);
-              generateListItems();
+                // remove from active translations
+                QuranSettings settings = QuranSettings.getInstance(this);
+                Set<String> activeTranslations = settings.getActiveTranslations();
+                activeTranslations.remove(selectedItem.getTranslation().getFileName());
+                settings.setActiveTranslations(activeTranslations);
+                generateListItems();
+              }
             })
         .setNegativeButton(R.string.cancel,
             (dialog, i) -> dialog.dismiss());
     builder.show();
+  }
+
+  private boolean removeTranslation(String fileName) {
+    String path = quranFileUtils.getQuranDatabaseDirectory(TranslationManagerActivity.this);
+    if (path != null) {
+      path += File.separator + fileName;
+      File f = new File(path);
+      return f.delete();
+    }
+    return false;
   }
 
 }

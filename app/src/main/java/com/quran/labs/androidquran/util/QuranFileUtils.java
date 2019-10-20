@@ -380,7 +380,7 @@ public class QuranFileUtils {
 
   public String getQuranAyahDatabaseDirectory(Context context) {
     String base = getQuranBaseDirectory(context);
-    return base == null ? null : base + File.separator + AYAHINFO_DIRECTORY;
+    return base == null ? null : base + AYAHINFO_DIRECTORY;
   }
 
   @Nullable
@@ -408,7 +408,7 @@ public class QuranFileUtils {
     return getQuranImagesDirectory(context, quranScreenInfo.getWidthParam());
   }
 
-  public String getQuranImagesDirectory(Context context, String widthParam) {
+  private String getQuranImagesDirectory(Context context, String widthParam) {
     String base = getQuranBaseDirectory(context);
     return (base == null) ? null : base +
         (IMAGES_DIRECTORY.isEmpty() ? "" : IMAGES_DIRECTORY + File.separator) + "width" + widthParam;
@@ -451,9 +451,10 @@ public class QuranFileUtils {
 
   public boolean haveAyaPositionFile(Context context) {
     String base = getQuranAyahDatabaseDirectory(context);
-    if (base == null) {
-      makeQuranAyahDatabaseDirectory(context);
+    if (base == null && !makeQuranAyahDatabaseDirectory(context)) {
+      return false;
     }
+
     String filename = getAyaPositionFileName();
     if (filename != null) {
       String ayaPositionDb = base + File.separator + filename;
@@ -469,16 +470,6 @@ public class QuranFileUtils {
     if (path != null) {
       path += File.separator + fileName;
       return new File(path).exists();
-    }
-    return false;
-  }
-
-  public boolean removeTranslation(Context context, String fileName) {
-    String path = getQuranDatabaseDirectory(context);
-    if (path != null) {
-      path += File.separator + fileName;
-      File f = new File(path);
-      return f.delete();
     }
     return false;
   }
@@ -541,7 +532,7 @@ public class QuranFileUtils {
     return false;
   }
 
-  public void deleteFileOrDirectory(File file) {
+  private void deleteFileOrDirectory(File file) {
     if (file.isDirectory()) {
       File[] subFiles = file.listFiles();
       // subFiles is null on some devices, despite this being a directory
