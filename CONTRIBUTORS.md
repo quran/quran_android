@@ -1,7 +1,7 @@
-quran android contributors
+Quran Android Contributors
 ==========================
 
-### code
+### Coders
 
 * [Ahmed El-Helw](https://twitter.com/ahmedre)
 * [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio
@@ -19,10 +19,10 @@ quran android contributors
 * [Hosain Al Ahmad](https://github.com/hosainnet)
 * [Ahmed Abdelaal](https://github.com/Ahmed9914)
 
-### ui and design
+### UI and Designer
 * [Somaia Gabr](http://twitter.com/somaiagabr).
 
-### translators
+### Translators
 
 * Farsi for version 2.0 by [M. Jafar Nakar](https://github.com/mjnanakar).
 * Farsi for version 1.6 by [khajavi](http://github.com/khajavi).
@@ -45,6 +45,6 @@ quran android contributors
 * Serbian by [Amar Luckin](https://github.com/aluckin3)
 
 
-### and many more
+### And many more
 * everyone we missed from the above lists - may Allah reward you!
 * everyone who notified us about any bugs, made du3a for us, or that shared the app with family and friends.
