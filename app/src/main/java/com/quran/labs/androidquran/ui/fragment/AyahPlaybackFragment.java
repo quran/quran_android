@@ -24,7 +24,7 @@ import com.quran.labs.androidquran.widgets.QuranSpinner;
 import javax.inject.Inject;
 
 public class AyahPlaybackFragment extends AyahActionFragment {
-  private static final int REPEAT_MAX = 3;
+  private static final int REPEAT_MAX = 8;
   private static final int ITEM_LAYOUT = R.layout.sherlock_spinner_item;
   private static final int ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item;
 
@@ -245,16 +245,29 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   }
 
   private int repeatToPosition(int repeat) {
-    if (repeat == -1) {
-      return REPEAT_MAX;
-    } else {
-      return repeat;
+    switch (repeat) {
+      case -1:
+        return REPEAT_MAX;
+      case 9:
+        return 5;
+      case 14:
+        return 6;
+      case 19:
+        return 7;
+      default:
+        return repeat;
     }
   }
 
   private int positionToRepeat(int position) {
     if (position >= REPEAT_MAX) {
       return -1;
+    } else if (position == 5){
+      return 9;
+    } else if (position == 6){
+      return 14;
+    } else if (position == 7){
+      return 19;
     } else {
       return position;
     }
