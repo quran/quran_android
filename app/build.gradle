@@ -123,7 +123,7 @@ dependencies {
 
   implementation "com.squareup.okio:okio:2.4.1"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-  implementation 'com.squareup.moshi:moshi:1.9.2'
+  implementation 'com.squareup.moshi:moshi:1.8.0'
   implementation 'com.jakewharton.timber:timber:4.7.1'
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
   testImplementation 'junit:junit:4.12'
