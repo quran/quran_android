@@ -4,6 +4,9 @@ import android.content.Context
 import com.crashlytics.android.Crashlytics
 import io.reactivex.Single
 import okio.Okio
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.File
 import javax.inject.Inject
 
@@ -23,10 +26,12 @@ class CopyDatabaseUtil @Inject constructor(val context: Context,
         }
 
         // do the copy
-        Okio.source(assets.open(filename)).use { source ->
-          Okio.buffer(Okio.sink(File(destination, filename))).use { destination ->
-            destination.writeAll(source)
-          }
+        assets.open(filename)
+            .source()
+            .use { source ->
+              File(destination, filename).sink()
+              .buffer()
+              .use { destination -> destination.writeAll(source) }
         }
 
         if (filename.endsWith(".zip")) {

@@ -115,19 +115,20 @@ dependencies {
   implementation "androidx.preference:preference:${androidxPreferencesVersion}"
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.13'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.14'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
 
+  implementation "com.squareup.okio:okio:2.4.1"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation 'com.squareup.moshi:moshi:1.8.0'
   implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
   testImplementation 'junit:junit:4.12'
-  testImplementation 'com.google.truth:truth:0.44'
-  testImplementation "org.mockito:mockito-core:3.0.0"
+  testImplementation 'com.google.truth:truth:1.0'
+  testImplementation "org.mockito:mockito-core:3.1.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"

@@ -46,7 +46,7 @@ public class ArabicDatabaseUtilsTest {
     assertThat(result.get(1).getAyahText()).isNull();
     assertThat(result.get(0).getAyahText()).isNotEmpty();
 
-    assertThat(result).isNotSameAs(bookmarks);
+    assertThat(result).isNotSameInstanceAs(bookmarks);
   }
 
   @Test
@@ -60,7 +60,7 @@ public class ArabicDatabaseUtilsTest {
     List<Bookmark> result = arabicDatabaseUtils.hydrateAyahText(bookmarks);
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getAyahText()).isNull();
-    assertThat(result).isSameAs(bookmarks);
+    assertThat(result).isSameInstanceAs(bookmarks);
   }
 
   private ArabicDatabaseUtils getArabicDatabaseUtils() {
@@ -88,7 +88,7 @@ public class ArabicDatabaseUtilsTest {
     int total = ArabicDatabaseUtils.NUMBER_OF_WORDS;
     for (int i = 1; i < total; i++) {
       String text = makeText(i);
-      assertThat(ArabicDatabaseUtils.getFirstFewWordsFromAyah(4, 1, text)).isSameAs(text);
+      assertThat(ArabicDatabaseUtils.getFirstFewWordsFromAyah(4, 1, text)).isSameInstanceAs(text);
     }
 
     String veryLongString = makeText(100);
@@ -112,9 +112,9 @@ public class ArabicDatabaseUtilsTest {
     String basmallah = ArabicDatabaseUtils.AR_BASMALLAH_IN_TEXT;
 
     String original = basmallah + " first ayah";
-    assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(1, 1, original)).isSameAs(original);
-    assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(9, 1, original)).isSameAs(original);
-    assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(4, 4, original)).isSameAs(original);
+    assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(1, 1, original)).isSameInstanceAs(original);
+    assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(9, 1, original)).isSameInstanceAs(original);
+    assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(4, 4, original)).isSameInstanceAs(original);
 
     assertThat(ArabicDatabaseUtils
         .getAyahWithoutBasmallah(4, 1, original)).isEqualTo("first ayah");
