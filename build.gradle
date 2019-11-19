@@ -8,7 +8,7 @@ buildscript {
     androidxAppcompatVersion = '1.1.0'
     androidxRecyclerViewVersion = '1.0.0'
     materialComponentsVersion = '1.0.0'
-    espressoVersion = '3.1.1'
+    espressoVersion = '3.2.0'
     // note - 3.13.x and above require minSdk 21
     okhttpVersion = '3.12.6'
 
@@ -41,7 +41,7 @@ buildscript {
     classpath 'com.android.tools.build:gradle:3.6.0-beta04'
     classpath "io.fabric.tools:gradle:1.31.0"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
+    classpath "net.ltgt.gradle:gradle-errorprone-plugin:1.1.1"
   }
 }
 

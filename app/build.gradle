@@ -97,6 +97,14 @@ android {
   }
 }
 
+// required so that Errorprone doesn't look at generated files
+afterEvaluate {
+  tasks.withType(JavaCompile).configureEach {
+    options.errorprone.excludedPaths = ".*/build/generated/.*"
+    options.errorprone.disableWarningsInGeneratedCode = true
+  }
+}
+
 if (new File(rootDir, 'extras/extras.gradle').exists()) {
    apply from: new File(rootDir, 'extras/extras.gradle')
 } else {
@@ -136,5 +144,7 @@ dependencies {
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
   implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
-  errorprone 'com.google.errorprone:error_prone_core:2.3.2'
+  errorprone 'com.google.errorprone:error_prone_core:2.3.3'
+  //noinspection GradleDynamicVersion
+  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
 }
