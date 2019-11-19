@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.dao.translation
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class Translation(val id: Int,
                        val minimumVersion: Int,
                        val currentVersion: Int,
