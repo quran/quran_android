@@ -19,7 +19,12 @@ quran android contributors
 * [Hosain Al Ahmad](https://github.com/hosainnet)
 * [Ahmed Abdelaal](https://github.com/Ahmed9914)
 
+### audio
+
+* [Anas Saiyed](https://github.com/anassaiyed) - scripts and support for migrating many shuyookh from gapped to gapless.
+
 ### ui and design
+
 * [Somaia Gabr](http://twitter.com/somaiagabr).
 
 ### translators

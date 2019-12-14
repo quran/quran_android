@@ -12,7 +12,7 @@
   <string name="qari_shatri">Abu Bakr Ash-Shatri</string>
   <string name="qari_afasy">Mishary Al-Afasy</string>
   <string name="qari_saad_al_ghamdi">Saad Al-Ghamdi</string>
-  <string name="qari_walk">Ibrahim Walk (English Trans.)</string>
+  <string name="qari_walk">Ibrahim Walk (English)</string>
   <string name="qari_hani_rifai">Hani Ar-Rifai</string>
   <string name="qari_husary_mujawwad">Husary Mujawwad</string>
   <string name="qari_hudhayfi">Ali Al-Hudhaify</string>
@@ -44,4 +44,8 @@
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (gapless)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (gapless)</string>
   <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
+  <string name="qari_afasy_gapless">Mishary Al-Afasy (gapless)</string>
+  <string name="qari_hani_rifai_gapless">Hani Ar-Rifai (gapless)</string>
+  <string name="qari_ayyoub_gapless">Muhammad Ayyoub (gapless)</string>
+  <string name="qari_mishari_walk_gapless">Mishari with Ibrahim Walk (English, gapless)</string>
 </resources>
