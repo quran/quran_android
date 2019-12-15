@@ -34,9 +34,24 @@ class DnsModule {
     // so no need to explicitly add Dns.SYSTEM here.
     val dnsFallback = DnsFallback()
     val googleDns = provideGoogleDns(bootstrapClient)
-    return if (googleDns != null) {
-      listOf(dnsFallback, googleDns)
-    } else { listOf(dnsFallback) }
+    val cloudflareDns = provideCloudflareDns(bootstrapClient)
+
+    val result = mutableListOf<Dns>()
+    if (cloudflareDns != null) result.add(cloudflareDns)
+    if (googleDns != null) result.add(googleDns)
+    result.add(dnsFallback)
+    return result
+  }
+
+  private fun provideCloudflareDns(bootstrapClient: OkHttpClient): Dns? {
+    return try {
+      DnsOverHttps.Builder()
+          .client(bootstrapClient)
+          .url(HttpUrl.get("https://1.1.1.1/dns-query"))
+          .build()
+    } catch (exception: UnknownHostException) {
+      null
+    }
   }
 
   private fun provideGoogleDns(bootstrapClient: OkHttpClient): Dns? {
