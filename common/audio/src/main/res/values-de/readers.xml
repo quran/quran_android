@@ -43,8 +43,9 @@
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (lückenlos)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (lückenlos)</string>
   <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
-  <string name="qari_afasy_gapless">Mishary Al-Afasy (gapless)</string>
-  <string name="qari_hani_rifai_gapless">Hani Ar-Rifai (gapless)</string>
-  <string name="qari_ayyoub_gapless">Muhammad Ayyoub (gapless)</string>
+  <string name="qari_afasy_gapless">Mishary Al-Afasy (lückenlos)</string>
+  <string name="qari_hani_rifai_gapless">Hani Ar-Rifai (lückenlos)</string>
+  <string name="qari_ayyoub_gapless">Muhammad Ayyoub (lückenlos)</string>
   <string name="qari_mishari_walk_gapless">Mishari &amp; Ibrahim Walk (Englische, lückenlos)</string>
+  <string name="qari_jibreel_gapless">Muhammad Jibreel (lückenlos)</string>
 </resources>
