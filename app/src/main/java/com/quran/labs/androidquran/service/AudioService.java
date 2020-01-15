@@ -304,7 +304,7 @@ public class AudioService extends Service implements OnCompletionListener,
     mediaSession = new MediaSessionCompat(appContext, "QuranMediaSession", receiver, null);
     mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
         MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-    mediaSession.setCallback(new MediaSessionCallback());
+    mediaSession.setCallback(new MediaSessionCallback(), serviceHandler);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       setupNotificationChannel();
