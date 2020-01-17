@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -42,6 +44,12 @@ public class QuranPageWorker {
     Response response = null;
     OutOfMemoryError oom = null;
 
+    if (!isNetworkAvailable()) {
+      final Response noNetworkResponse = new Response(Response.ERROR_NO_INTERNET);
+      noNetworkResponse.setPageData(pageNumber);
+      return noNetworkResponse;
+    }
+
     try {
       response = QuranDisplayHelper.getQuranPage(
           okHttpClient, appContext, imageWidth, pageNumber, quranFileUtils);
@@ -77,6 +85,13 @@ public class QuranPageWorker {
 
     response.setPageData(pageNumber);
     return response;
+  }
+
+  private boolean isNetworkAvailable() {
+    final ConnectivityManager connectivityManager =
+        (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+    final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+    return networkInfo != null && networkInfo.isConnected();
   }
 
   public Observable<Response> loadPages(Integer... pages) {

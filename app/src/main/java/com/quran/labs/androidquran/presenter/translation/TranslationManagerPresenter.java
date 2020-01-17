@@ -20,6 +20,9 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -115,7 +118,10 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
 
           @Override
           public void onError(Throwable e) {
-            Timber.e(e, "error updating translations list");
+            if (!(e instanceof IOException)) {
+              Timber.e(e, "error updating translations list");
+            }
+
             if (currentActivity != null) {
               currentActivity.onErrorDownloadTranslations();
             }

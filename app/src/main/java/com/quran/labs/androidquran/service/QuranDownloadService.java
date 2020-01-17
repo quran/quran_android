@@ -29,6 +29,8 @@ import com.quran.labs.androidquran.util.ZipUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -615,7 +617,7 @@ public class QuranDownloadService extends Service implements
         Timber.e(new Exception("Unable to download file - code: " + response.code()));
       }
     } catch (IOException exception) {
-      Timber.e(exception, "Failed to download file");
+      Timber.d(exception, "Failed to download file");
     } catch (SecurityException se) {
       Timber.e(se, "Security exception while downloading file");
     } finally {
