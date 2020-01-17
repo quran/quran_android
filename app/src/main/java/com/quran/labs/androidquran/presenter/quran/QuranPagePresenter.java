@@ -153,6 +153,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
                   case Response.ERROR_SD_CARD_NOT_FOUND:
                     errorRes = R.string.sdcard_error;
                     break;
+                  case Response.ERROR_NO_INTERNET:
                   case Response.ERROR_DOWNLOADING_ERROR:
                     errorRes = R.string.download_error_network;
                     break;

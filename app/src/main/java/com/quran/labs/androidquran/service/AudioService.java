@@ -437,7 +437,7 @@ public class AudioService extends Service implements OnCompletionListener,
       processRewindRequest();
     } else if (ACTION_UPDATE_REPEAT.equals(action)) {
       final AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
-      if (playInfo != null) {
+      if (playInfo != null && audioQueue != null) {
         audioQueue = audioQueue.withUpdatedAudioRequest(playInfo);
         audioRequest = playInfo;
       }
