@@ -29,6 +29,28 @@ public class QuranUtils {
   private static NumberFormat numberFormat;
   private static Locale lastLocale;
 
+  public static boolean isRtl(@NonNull String s) {
+    final char[] characters = s.toCharArray();
+    for (char character : characters) {
+      final int directionality = Character.getDirectionality(character);
+      if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
+          directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC) {
+        return true;
+      } else if (directionality == Character.DIRECTIONALITY_LEFT_TO_RIGHT) {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns a boolean indicating if this string contains Arabic
+   * Note that this returns true for non-Arabic languages that share
+   * Arabic characters (ex Urdu).
+   *
+   * @param s the string to check
+   * @return a boolean
+   */
   public static boolean doesStringContainArabic(String s) {
     if (s == null) {
       return false;

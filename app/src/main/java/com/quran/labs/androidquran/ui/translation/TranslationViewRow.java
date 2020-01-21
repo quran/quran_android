@@ -26,24 +26,27 @@ class TranslationViewRow {
   @Nullable final CharSequence data;
   final int translationIndex;
   @Nullable final SuraAyah link;
+  final boolean isArabic;
 
   TranslationViewRow(int type, @NonNull QuranAyahInfo ayahInfo) {
     this(type, ayahInfo, null);
   }
 
   TranslationViewRow(int type, @NonNull QuranAyahInfo ayahInfo, @Nullable CharSequence data) {
-    this(type, ayahInfo, data, -1, null);
+    this(type, ayahInfo, data, -1, null, false);
   }
 
   TranslationViewRow(int type,
                      @NonNull QuranAyahInfo ayahInfo,
                      @Nullable CharSequence data,
                      int translationIndex,
-                     @Nullable SuraAyah link) {
+                     @Nullable SuraAyah link,
+                     boolean isArabic) {
     this.type = type;
     this.ayahInfo = ayahInfo;
     this.data = data;
     this.translationIndex = translationIndex;
     this.link = link;
+    this.isArabic = isArabic;
   }
 }
