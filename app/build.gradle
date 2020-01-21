@@ -131,6 +131,8 @@ dependencies {
 
   implementation "com.squareup.okio:okio:2.4.3"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+
+  // remove metadata line from proguard.cfg upon updating to 1.9.3
   implementation 'com.squareup.moshi:moshi:1.9.2'
   kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
