@@ -80,4 +80,5 @@ public class Constants {
   public static final String DEBUG_PAGES_DOWNLOADED_TIME = "debugPagesDownloadedTime";
   public static final String DEBUG_PAGES_DOWNLOADED = "debugPagesDownloaded";
   public static final String PREF_READING_CATEGORY = "readingCategoryKey";
+  public static final String PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages";
 }

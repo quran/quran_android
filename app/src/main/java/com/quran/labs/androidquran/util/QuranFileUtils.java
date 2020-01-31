@@ -408,7 +408,7 @@ public class QuranFileUtils {
     return getQuranImagesDirectory(context, quranScreenInfo.getWidthParam());
   }
 
-  private String getQuranImagesDirectory(Context context, String widthParam) {
+  public String getQuranImagesDirectory(Context context, String widthParam) {
     String base = getQuranBaseDirectory(context);
     return (base == null) ? null : base +
         (IMAGES_DIRECTORY.isEmpty() ? "" : IMAGES_DIRECTORY + File.separator) + "width" + widthParam;
