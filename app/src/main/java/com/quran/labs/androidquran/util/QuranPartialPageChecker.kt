@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.util
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import com.crashlytics.android.answers.Answers
+import com.crashlytics.android.answers.CustomEvent
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -55,6 +57,7 @@ class QuranPartialPageChecker @Inject constructor(val appContext: Context,
       // optimization to avoid re-generating the pixel array every time
       var pixelArray: IntArray? = null
 
+      var deletedImages = 0
       // skip pages 1 and 2 since they're "special" (not full pages)
       for (page in 3..numberOfPages) {
         val filename = quranFileUtils.getPageFileName(page)
@@ -99,9 +102,18 @@ class QuranPartialPageChecker @Inject constructor(val appContext: Context,
 
           // if all are non-zero, assume the image is partially blank
           if (!foundPixel) {
+            deletedImages++
             File(directory, filename).delete()
           }
         }
+      }
+
+      if (deletedImages > 0) {
+        // ideally we should see this number reach 0 at some point
+        Answers.getInstance()
+            .logCustom(CustomEvent("partialPagesRemoved")
+            .putCustomAttribute("pagesRemoved", deletedImages)
+            .putCustomAttribute("width", width))
       }
     }
   }
