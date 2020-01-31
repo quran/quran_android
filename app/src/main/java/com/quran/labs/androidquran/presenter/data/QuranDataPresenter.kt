@@ -32,7 +32,7 @@ class QuranDataPresenter @Inject internal constructor(
     private val quranPageProvider: PageProvider,
     private val copyDatabaseUtil: CopyDatabaseUtil,
     val quranFileUtils: QuranFileUtils,
-    val quranPartialPageChecker: QuranPartialPageChecker) : Presenter<QuranDataActivity> {
+    private val quranPartialPageChecker: QuranPartialPageChecker) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null
   private var checkPagesDisposable: Disposable? = null

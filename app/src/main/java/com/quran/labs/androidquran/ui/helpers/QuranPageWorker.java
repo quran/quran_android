@@ -91,7 +91,7 @@ public class QuranPageWorker {
     final ConnectivityManager connectivityManager =
         (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
     final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-    return networkInfo != null && networkInfo.isConnected();
+    return networkInfo != null && networkInfo.isConnectedOrConnecting();
   }
 
   public Observable<Response> loadPages(Integer... pages) {

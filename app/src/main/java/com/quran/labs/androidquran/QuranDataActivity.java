@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -369,6 +370,13 @@ public class QuranDataActivity extends Activity implements
         new File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile();
         //noinspection ResultOfMethodCallIgnored
         new File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile();
+
+        // try writing a file to the app's internal no_backup directory
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          //noinspection ResultOfMethodCallIgnored
+          new File(getNoBackupFilesDir(), QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile();
+        }
+
         quranSettings.setDownloadedPages(System.currentTimeMillis(), appLocation,
             quranDataStatus.getPortraitWidth() + "_" + quranDataStatus.getLandscapeWidth());
       } catch (IOException ioe) {
@@ -430,6 +438,17 @@ public class QuranDataActivity extends Activity implements
       }
     }
 
+    // check for the existence of a .q4a file in the internal no_backup directory.
+    boolean didInternalFileSurvive = false;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      try {
+        didInternalFileSurvive =
+            new File(getNoBackupFilesDir(), QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists();
+      } catch (Exception e) {
+        Crashlytics.logException(e);
+      }
+    }
+
 
     // how recently did the files disappear?
     final long downloadTime = quranSettings.getPreviouslyDownloadedTime();
@@ -461,6 +480,7 @@ public class QuranDataActivity extends Activity implements
             .putCustomAttribute("isPagePathTheSame", isPagePathTheSame ? "yes" : "no")
             .putCustomAttribute("didNormalFileSurvive", didNormalFileSurvive ? "yes" : "no")
             .putCustomAttribute("didHiddenFileSurvive", didHiddenFileSurvive ? "yes" : "no")
+            .putCustomAttribute("didInternalFileSurvive", didInternalFileSurvive ? "yes" : "no")
             .putCustomAttribute("recencyOfRemoval", recencyOfRemoval)
             .putCustomAttribute("arePagesToDownloadTheSame",
                 arePageSetsEquivalent ? "yes" : "no"));
@@ -471,6 +491,7 @@ public class QuranDataActivity extends Activity implements
     Timber.w("appLocation: %s", appLocation);
     Timber.w("sdcard: %s, app dir: %s", sdcard, appDir);
     Timber.w("didNormalFileSurvive: %s", didNormalFileSurvive);
+    Timber.w("didInternalFileSurvive: %s", didInternalFileSurvive);
     Timber.w("didHiddenFileSurvive: %s", didHiddenFileSurvive);
     Timber.w("seconds passed: %d, recency: %s",
         (System.currentTimeMillis() - downloadTime) / 1000, recencyOfRemoval);
