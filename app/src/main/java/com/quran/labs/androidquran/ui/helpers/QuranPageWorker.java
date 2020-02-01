@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
+import com.quran.labs.androidquran.util.QuranUtils;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
@@ -44,7 +45,7 @@ public class QuranPageWorker {
     Response response = null;
     OutOfMemoryError oom = null;
 
-    if (!isNetworkAvailable()) {
+    if (!QuranUtils.haveInternet(appContext)) {
       final Response noNetworkResponse = new Response(Response.ERROR_NO_INTERNET);
       noNetworkResponse.setPageData(pageNumber);
       return noNetworkResponse;
@@ -85,13 +86,6 @@ public class QuranPageWorker {
 
     response.setPageData(pageNumber);
     return response;
-  }
-
-  private boolean isNetworkAvailable() {
-    final ConnectivityManager connectivityManager =
-        (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-    final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-    return networkInfo != null && networkInfo.isConnectedOrConnecting();
   }
 
   public Observable<Response> loadPages(Integer... pages) {
