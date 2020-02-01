@@ -1546,7 +1546,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       start = new SuraAyah(bounds[0], bounds[1]);
       end = start;
     }
-    showSlider(AUDIO_PAGE);
+    showSlider(slidingPagerAdapter.getPagePosition(AUDIO_PAGE));
   }
 
   public boolean updatePlayOptions(int rangeRepeat,

@@ -67,7 +67,7 @@ class PageSelectAdapter(val inflater: LayoutInflater,
         }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe( { imageRef.get()?.setImageBitmap(it) })
+        .subscribe { imageRef.get()?.setImageBitmap(it) }
     )
   }
 
