@@ -406,21 +406,4 @@ public class QuranSettings {
   public boolean getWasShowingTranslation() {
     return perInstallationPrefs.getBoolean(Constants.PREF_WAS_SHOWING_TRANSLATION, false);
   }
-
-  public boolean didCheckPartialImages() {
-    final Set<String> checkedSets =
-        perInstallationPrefs.getStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES,
-            Collections.emptySet());
-    return checkedSets != null && checkedSets.contains(getPageType());
-  }
-
-  public void setCheckedPartialImages() {
-    final Set<String> checkedSets =
-        perInstallationPrefs.getStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES,
-            Collections.emptySet());
-    final Set<String> setToSave = new HashSet<>(checkedSets);
-    setToSave.add(getPageType());
-    perInstallationPrefs.edit()
-        .putStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES, setToSave).apply();
-  }
 }
