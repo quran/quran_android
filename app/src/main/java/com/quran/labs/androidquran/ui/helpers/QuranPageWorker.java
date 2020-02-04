@@ -1,8 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -11,7 +9,6 @@ import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 
-import com.quran.labs.androidquran.util.QuranUtils;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
@@ -41,15 +38,9 @@ public class QuranPageWorker {
     this.quranFileUtils = quranFileUtils;
   }
 
-  private Response downloadImage(int pageNumber) {
+  private Response loadImage(int pageNumber) {
     Response response = null;
     OutOfMemoryError oom = null;
-
-    if (!QuranUtils.haveInternet(appContext)) {
-      final Response noNetworkResponse = new Response(Response.ERROR_NO_INTERNET);
-      noNetworkResponse.setPageData(pageNumber);
-      return noNetworkResponse;
-    }
 
     try {
       response = QuranDisplayHelper.getQuranPage(
@@ -90,7 +81,7 @@ public class QuranPageWorker {
 
   public Observable<Response> loadPages(Integer... pages) {
     return Observable.fromArray(pages)
-        .flatMap(page -> Observable.fromCallable(() -> downloadImage(page)))
+        .flatMap(page -> Observable.fromCallable(() -> loadImage(page)))
         .subscribeOn(Schedulers.io());
   }
 }
