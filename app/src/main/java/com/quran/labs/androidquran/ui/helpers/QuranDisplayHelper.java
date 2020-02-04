@@ -38,7 +38,14 @@ public class QuranDisplayHelper {
       // the user to mount their sdcard and try again.
       if (response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND) {
         Timber.d("failed to get %d with name %s from sd...", page, filename);
-        response = quranFileUtils.getImageFromWeb(okHttpClient, context, filename);
+
+        if (!QuranUtils.haveInternet(context)) {
+          final Response noNetworkResponse = new Response(Response.ERROR_NO_INTERNET);
+          noNetworkResponse.setPageData(page);
+          response = noNetworkResponse;
+        } else {
+          response = quranFileUtils.getImageFromWeb(okHttpClient, context, filename);
+        }
       }
     }
     return response;
