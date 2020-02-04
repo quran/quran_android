@@ -12,7 +12,6 @@ import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.CopyDatabaseUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
-import com.quran.labs.androidquran.util.QuranPartialPageChecker
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import io.reactivex.Completable
@@ -31,8 +30,7 @@ class QuranDataPresenter @Inject internal constructor(
     val quranScreenInfo: QuranScreenInfo,
     private val quranPageProvider: PageProvider,
     private val copyDatabaseUtil: CopyDatabaseUtil,
-    val quranFileUtils: QuranFileUtils,
-    private val quranPartialPageChecker: QuranPartialPageChecker) : Presenter<QuranDataActivity> {
+    val quranFileUtils: QuranFileUtils) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null
   private var checkPagesDisposable: Disposable? = null
@@ -178,10 +176,9 @@ class QuranDataPresenter @Inject internal constructor(
   private fun actuallyCheckPages(totalPages: Int): Single<QuranDataStatus> {
     return Single.fromCallable<QuranDataStatus> {
       val width = quranScreenInfo.widthParam
-      val tabletWidth = quranScreenInfo.tabletWidthParam
-      quranPartialPageChecker.checkPages(totalPages, width = width, secondWidth = tabletWidth)
-
       val havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages, true)
+
+      val tabletWidth = quranScreenInfo.tabletWidthParam
       val needLandscapeImages = if (quranScreenInfo.isDualPageMode && width != tabletWidth) {
         val haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages, true)
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
