@@ -44,7 +44,7 @@ public class QuranDisplayHelper {
           noNetworkResponse.setPageData(page);
           response = noNetworkResponse;
         } else {
-          response = quranFileUtils.getImageFromWeb(okHttpClient, context, filename);
+          response = quranFileUtils.getImageFromWeb(okHttpClient, context, widthParam, filename);
         }
       }
     }
