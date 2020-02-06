@@ -154,7 +154,7 @@ public class QuranFileUtils {
     return false;
   }
 
-  public String getPageFileName(int p) {
+  public static String getPageFileName(int p) {
     NumberFormat nf = NumberFormat.getInstance(Locale.US);
     nf.setMinimumIntegerDigits(3);
     return "page" + nf.format(p) + ".png";
