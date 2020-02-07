@@ -20,6 +20,7 @@ android {
     versionCode 2960
     versionName "2.9.6"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    multiDexEnabled true
   }
 
   signingConfigs {
@@ -84,6 +85,10 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+
   testOptions.unitTests.all {
     testLogging {
       events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
@@ -123,9 +128,13 @@ dependencies {
   implementation "androidx.preference:preference:${androidxPreferencesVersion}"
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
+  implementation "androidx.multidex:multidex:2.0.1"
+
+  // rx
   implementation 'io.reactivex.rxjava2:rxjava:2.2.16'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
+  // dagger
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
 

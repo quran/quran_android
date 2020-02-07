@@ -1,11 +1,11 @@
 package com.quran.labs.androidquran;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-
+import androidx.annotation.NonNull;
+import androidx.multidex.MultiDexApplication;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.quran.labs.androidquran.component.application.ApplicationComponent;
@@ -13,14 +13,11 @@ import com.quran.labs.androidquran.component.application.DaggerApplicationCompon
 import com.quran.labs.androidquran.module.application.ApplicationModule;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.RecordingLogTree;
-
-import java.util.Locale;
-
-import androidx.annotation.NonNull;
 import io.fabric.sdk.android.Fabric;
+import java.util.Locale;
 import timber.log.Timber;
 
-public class QuranApplication extends Application {
+public class QuranApplication extends MultiDexApplication {
   private ApplicationComponent applicationComponent;
 
   @Override
