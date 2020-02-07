@@ -59,15 +59,16 @@ class QuranPartialPageChecker @Inject constructor() {
         // this is an optimization to avoid allocating 8 * width of memory
         // for everything.
         val rowsToCheck =
-        // madani, 8 for 1920, 6 for 1280, 4 or less for smaller
-        //   a handful of pages in 1260 are slightly shorter, so 6
-        //   is a safer default.
-        // for naskh, 1 for everything
-        // for qaloon, 2 for largest size, 1 for smallest
+          // madani, 9 for 1920, 7 for 1280, 5 for 1260 and 1024, and
+          //   less for smaller images.
+          // for naskh, 1 for everything
+          // for qaloon, 2 for largest size, 1 for smallest
           // for warsh, 2 for everything
           when (width) {
-            "_1920" -> 8
-            else -> 6
+            "_1024", "_1260" -> 5
+            "_1280" -> 7
+            "_1920" -> 9
+            else -> 4
           }
 
         val bitmapWidth = bitmap.width
