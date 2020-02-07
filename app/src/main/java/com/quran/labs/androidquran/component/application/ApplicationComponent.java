@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.component.application;
 
 import com.quran.data.page.provider.QuranPageModule;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.QuranForwarderActivity;
 import com.quran.labs.androidquran.QuranImportActivity;
@@ -27,6 +28,7 @@ import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 
+import com.quran.labs.androidquran.core.worker.di.WorkerModule;
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -37,10 +39,15 @@ import dagger.Component;
     DatabaseModule.class,
     NetworkModule.class,
     QuranDataModule.class,
-    QuranPageModule.class } )
+    QuranPageModule.class,
+    WorkerModule.class
+} )
 public interface ApplicationComponent {
   // subcomponents
   PagerActivityComponent.Builder pagerActivityComponentBuilder();
+
+  // application
+  void inject(QuranApplication quranApplication);
 
   // content provider
   void inject(QuranDataProvider quranDataProvider);

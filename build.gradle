@@ -11,6 +11,7 @@ buildscript {
     espressoVersion = '3.2.0'
     // note - 3.13.x and above require minSdk 21
     okhttpVersion = '3.12.6'
+    workManagerVersion = '2.3.1'
 
     deps = [
         android: [

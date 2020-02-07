@@ -224,6 +224,12 @@ public class QuranSettings {
         if (version < 2943) {
           prefs.edit().remove("didDownloadPages").apply();
         }
+
+        if (version < 2961) {
+          // on 2.9.6 and below, remove the partial checked flag so we can
+          // check them again.
+          perInstallationPrefs.edit().remove(Constants.PREF_CHECKED_PARTIAL_IMAGES).apply();
+        }
       }
 
       // no matter which version we're upgrading from, make sure the app location is set
@@ -407,19 +413,19 @@ public class QuranSettings {
     return perInstallationPrefs.getBoolean(Constants.PREF_WAS_SHOWING_TRANSLATION, false);
   }
 
-  public boolean didCheckPartialImages() {
+  public boolean didCheckPartialImages(String pageType) {
     final Set<String> checkedSets =
         perInstallationPrefs.getStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES,
             Collections.emptySet());
-    return checkedSets != null && checkedSets.contains(getPageType());
+    return checkedSets != null && checkedSets.contains(pageType);
   }
 
-  public void setCheckedPartialImages() {
+  public void setCheckedPartialImages(String pageType) {
     final Set<String> checkedSets =
         perInstallationPrefs.getStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES,
             Collections.emptySet());
     final Set<String> setToSave = new HashSet<>(checkedSets);
-    setToSave.add(getPageType());
+    setToSave.add(pageType);
     perInstallationPrefs.edit()
         .putStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES, setToSave).apply();
   }
