@@ -138,6 +138,9 @@ dependencies {
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
 
+  // workmanager
+  implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
+
   implementation "com.squareup.okio:okio:2.4.3"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
 

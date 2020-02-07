@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
+import androidx.work.WorkManager;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.quran.labs.androidquran.component.application.ApplicationComponent;
@@ -13,12 +14,17 @@ import com.quran.labs.androidquran.component.application.DaggerApplicationCompon
 import com.quran.labs.androidquran.module.application.ApplicationModule;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.RecordingLogTree;
+import com.quran.labs.androidquran.core.worker.QuranWorkerFactory;
 import io.fabric.sdk.android.Fabric;
 import java.util.Locale;
+import javax.inject.Inject;
 import timber.log.Timber;
 
 public class QuranApplication extends MultiDexApplication {
   private ApplicationComponent applicationComponent;
+
+  @Inject
+  QuranWorkerFactory quranWorkerFactory;
 
   @Override
   public void onCreate() {
@@ -30,6 +36,13 @@ public class QuranApplication extends MultiDexApplication {
         .build());
     Timber.plant(new RecordingLogTree());
     this.applicationComponent = initializeInjector();
+    this.applicationComponent.inject(this);
+
+    WorkManager.initialize(this,
+        new androidx.work.Configuration.Builder()
+          .setWorkerFactory(quranWorkerFactory)
+          .build()
+    );
   }
 
   protected ApplicationComponent initializeInjector() {

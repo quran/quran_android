@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import androidx.work.WorkManager;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
@@ -26,6 +27,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+import com.quran.labs.androidquran.worker.WorkerConstants;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -285,6 +287,17 @@ public class QuranDataActivity extends Activity implements
 
   @Override
   public void handleDownloadSuccess() {
+    if (quranDataStatus != null && !quranDataStatus.havePages()) {
+      // didn't have pages before and the download succeeded, which means
+      // full zip download was done - let's mark partial pages checker as
+      // not needed since we already checked it.
+      final String pageType = quranSettings.getPageType();
+      quranSettings.setCheckedPartialImages(pageType);
+
+      // cancel any pending work
+      WorkManager.getInstance(getApplicationContext())
+          .cancelUniqueWork(WorkerConstants.CLEANUP_PREFIX + pageType);
+    }
     quranSettings.removeShouldFetchPages();
     runListView();
   }

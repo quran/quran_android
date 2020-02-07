@@ -3,6 +3,12 @@ package com.quran.labs.androidquran.presenter.data
 import android.content.Context
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy.KEEP
+import androidx.work.NetworkType.CONNECTED
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.crashlytics.android.Crashlytics
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
@@ -14,6 +20,9 @@ import com.quran.labs.androidquran.util.CopyDatabaseUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.worker.MissingPageDownloadWorker
+import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
+import com.quran.labs.androidquran.worker.WorkerConstants
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -169,6 +178,33 @@ class QuranDataPresenter @Inject internal constructor(
           // fine here.
           quranSettings.setDefaultImagesDirectory("")
         }
+      }
+
+      val pageType = quranSettings.pageType
+      if (!quranSettings.didCheckPartialImages(pageType)) {
+        Timber.d("enqueuing work for $pageType...")
+
+        // setup check pages task
+        val checkTasksInputData = workDataOf(WorkerConstants.PAGE_TYPE to pageType)
+        val checkPartialPagesTask = OneTimeWorkRequestBuilder<PartialPageCheckingWorker>()
+            .setInputData(checkTasksInputData)
+            .build()
+
+        // setup missing page task
+        val missingPageTaskConstraints = Constraints.Builder()
+            .setRequiredNetworkType(CONNECTED)
+            .build()
+        val missingPageDownloadTask = OneTimeWorkRequestBuilder<MissingPageDownloadWorker>()
+            .setConstraints(missingPageTaskConstraints)
+            .build()
+
+        // run check pages task
+        WorkManager.getInstance(appContext)
+            .beginUniqueWork("${WorkerConstants.CLEANUP_PREFIX}$pageType",
+                KEEP,
+                checkPartialPagesTask)
+            .then(missingPageDownloadTask)
+            .enqueue()
       }
     }
   }
