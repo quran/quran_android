@@ -43,7 +43,7 @@ class PartialPageCheckingWorker(private val context: Context,
       val width = quranScreenInfo.widthParam
       val pagesDirectory = quranFileUtils.getQuranImagesDirectory(context, width)
       val tabletWidth = quranScreenInfo.tabletWidthParam
-      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(context, width)
+      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(context, tabletWidth)
 
       // compute the partial page sets
       val partialPages =
@@ -57,7 +57,7 @@ class PartialPageCheckingWorker(private val context: Context,
         quranPartialPageChecker.checkPages(tabletPagesDirectory, numberOfPages, tabletWidth)
             .map { PartialPage(tabletWidth, it) }
       }
-      Timber.d("Found %d partial images for tablet width %s", tabletPartialPages.size, width)
+      Timber.d("Found %d partial images for tablet width %s", tabletPartialPages.size, tabletWidth)
 
       val allPartialPages = partialPages + tabletPartialPages
       if (allPartialPages.size > PARTIAL_PAGE_LIMIT) {
@@ -77,7 +77,7 @@ class PartialPageCheckingWorker(private val context: Context,
 
       val deletionSucceeded = try {
         // iterate through each one and delete the partial pages
-        partialPages.firstOrNull {
+        allPartialPages.firstOrNull {
           val path = if (it.width == width) pagesDirectory else tabletPagesDirectory
           !deletePage(path, it.page)
         } == null
