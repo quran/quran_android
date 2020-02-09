@@ -29,10 +29,10 @@ open class DefaultPageSizeCalculator(displaySize: DisplaySize) : PageSizeCalcula
   }
 
   override fun setOverrideParameter(parameter: String) {
-    if (parameter.isNotBlank()) {
-      overrideParam = parameter
+    overrideParam = if (parameter.isNotBlank()) {
+      parameter
     } else {
-      overrideParam = null
+      null
     }
   }
 }
