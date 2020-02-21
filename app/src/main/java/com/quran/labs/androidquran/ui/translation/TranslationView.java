@@ -69,7 +69,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       }
     });
 
-    ayahToolBar = new AyahToolBar(context, R.menu.share_menu);
+    ayahToolBar = new AyahToolBar(context, R.menu.translation_menu);
     ayahToolBar.setOnItemSelectedListener(this);
     ayahToolBar.setVisibility(View.GONE);
 

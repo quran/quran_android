@@ -71,6 +71,12 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
           shareUtil.copyToClipboard(activity, shareText)
         }
       }
+      R.id.cab_play_from_here -> {
+        val start = SuraAyah(ayah.sura, ayah.ayah)
+        activity.playFromAyah(start,
+            null, getPage(listOf(ayah)), 0, 0, false)
+        activity.toggleActionBarVisibility(true);
+      }
     }
   }
 

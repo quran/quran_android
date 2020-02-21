@@ -34,6 +34,6 @@ public class AyahInfoDatabaseProvider {
   }
 
   public int getPageWidth() {
-    return Integer.valueOf(widthParameter.substring(1));
+    return Integer.parseInt(widthParameter.substring(1));
   }
 }
