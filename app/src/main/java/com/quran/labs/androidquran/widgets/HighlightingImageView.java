@@ -266,6 +266,14 @@ public class HighlightingImageView extends AppCompatImageView {
     didDraw = true;
   }
 
+  @Override
+  public void invalidate() {
+    super.invalidate();
+    if (overlayParams != null) {
+      overlayParams.init = false;
+    }
+  }
+
   private Paint getPaintForHighlightType(HighlightType type) {
     int color = type.getColor(getContext());
     Paint paint = SPARSE_PAINT_ARRAY.get(color);
