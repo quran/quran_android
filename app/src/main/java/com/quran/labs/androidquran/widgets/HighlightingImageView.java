@@ -125,6 +125,8 @@ public class HighlightingImageView extends AppCompatImageView {
       // we need a new color filter now
       isColorFilterOn = false;
     }
+    // Re-init overlay params color based on the new night mode setting
+    initOverlayParamsColor();
     adjustNightMode();
   }
 
@@ -217,12 +219,7 @@ public class HighlightingImageView extends AppCompatImageView {
       return true;
     }
 
-    int overlayColor = overlayTextColor;
-    if (isNightMode) {
-      overlayColor = Color.rgb(nightModeTextBrightness,
-          nightModeTextBrightness, nightModeTextBrightness);
-    }
-    overlayParams.paint.setColor(overlayColor);
+    initOverlayParamsColor();
 
     // Use font metrics to calculate the maximum possible height of the text
     FontMetrics fm = overlayParams.paint.getFontMetrics();
@@ -243,6 +240,18 @@ public class HighlightingImageView extends AppCompatImageView {
 
     overlayParams.init = true;
     return true;
+  }
+
+  private void initOverlayParamsColor() {
+    if (overlayParams == null) {
+      return;
+    }
+    int overlayColor = overlayTextColor;
+    if (isNightMode) {
+      overlayColor = Color.rgb(nightModeTextBrightness,
+          nightModeTextBrightness, nightModeTextBrightness);
+    }
+    overlayParams.paint.setColor(overlayColor);
   }
 
   private void overlayText(Canvas canvas, Matrix matrix) {
