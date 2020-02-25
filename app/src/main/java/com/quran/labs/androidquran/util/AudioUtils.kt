@@ -204,7 +204,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
   private fun haveAnyFiles(context: Context, path: String): Boolean {
     val basePath = quranFileUtils.getQuranAudioDirectory(context)
     val file = File(basePath, path)
-    return file.isDirectory && file.list().isNotEmpty()
+    return file.isDirectory && file.list()?.isNotEmpty() ?: false
   }
 
   fun haveAllFiles(baseUrl: String,
