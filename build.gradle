@@ -10,8 +10,8 @@ buildscript {
     materialComponentsVersion = '1.0.0'
     espressoVersion = '3.2.0'
     // note - 3.13.x and above require minSdk 21
-    okhttpVersion = '3.12.6'
-    workManagerVersion = '2.3.1'
+    okhttpVersion = '3.12.9'
+    workManagerVersion = '2.3.2'
 
     deps = [
         android: [
@@ -39,7 +39,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.6.0-rc03'
+    classpath 'com.android.tools.build:gradle:3.6.0'
     classpath "io.fabric.tools:gradle:1.31.2"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:1.1.1"
