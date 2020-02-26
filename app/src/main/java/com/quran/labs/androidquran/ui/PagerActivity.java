@@ -1901,7 +1901,9 @@ public class PagerActivity extends QuranActionBarActivity implements
           sliderPage = slidingPagerAdapter.getPagePosition(TRANSLATION_PAGE);
           break;
         case R.id.cab_play_from_here:
-          sliderPage = slidingPagerAdapter.getPagePosition(AUDIO_PAGE);
+          playFromAyah(getCurrentPage(), start.sura, start.ayah);
+          toggleActionBarVisibility(true);
+          sliderPage = -1;
           break;
         case R.id.cab_share_ayah_link:
           shareAyahLink(start, end);
