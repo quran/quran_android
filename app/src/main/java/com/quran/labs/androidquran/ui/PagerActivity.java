@@ -122,6 +122,14 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAG
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
 
+/**
+ * Activity that displays the Quran (in Arabic or translation mode).
+ * <p>
+ * Essentially, this activity consists of a {@link ViewPager} of Quran pages
+ * (using {@link QuranPageAdapter}).
+ * {@link AudioService} is used to handle playing audio, and this is synced with the display of
+ * the Quran.
+ */
 public class PagerActivity extends QuranActionBarActivity implements
     AudioStatusBar.AudioBarListener,
     DefaultDownloadReceiver.DownloadListener,

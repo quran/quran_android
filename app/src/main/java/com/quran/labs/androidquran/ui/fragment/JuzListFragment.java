@@ -31,6 +31,12 @@ import io.reactivex.observers.DisposableSingleObserver;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 
+/**
+ * Fragment that displays a list of all Juz (using {@link QuranListAdapter}, each divided into
+ * 8 parts (with headings for each Juz).
+ * When a Juz part is selected (or a Juz heading), {@link QuranActivity#jumpTo(int)} is called to
+ * jump to that page.
+ */
 public class JuzListFragment extends Fragment {
   private static int[] sEntryTypes = {
       JuzView.TYPE_JUZ, JuzView.TYPE_QUARTER,

@@ -43,6 +43,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
+/**
+ * Launch {@link QuranActivity} after performing the following checks:
+ * <ul>
+ *   <li>Check that we have permission to write to external storage (if we need this permission)
+ *   and if not, ask the user for permission</li>
+ *   <li>Verify that we have the necessary Quran data downloaded on the device</li>
+ * </ul>
+ * The logic is split between {@link QuranDataActivity} and {@link QuranDataPresenter},
+ * and {@link QuranDownloadService} is (mostly) used to perform the actual downloading of
+ * any Quran data.
+ */
 public class QuranDataActivity extends Activity implements
     DefaultDownloadReceiver.SimpleDownloadListener,
     ActivityCompat.OnRequestPermissionsResultCallback {
