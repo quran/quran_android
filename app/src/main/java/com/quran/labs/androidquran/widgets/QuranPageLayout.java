@@ -27,6 +27,15 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+/**
+ * Generic layout class for a single page of the Quran.
+ * <p>
+ * The actual contents of the page are determined by the subclass, which specifies the view to
+ * display with {@link #generateContentView(Context, boolean)}. If the device is landscape and
+ * {@link #shouldWrapWithScrollView()} returns true, then the view is wrapped with an
+ * {@link ObservableScrollView}. Margins get displayed around the page, along with an appropriate
+ * background.
+ */
 public abstract class QuranPageLayout extends QuranPageWrapperLayout
     implements ObservableScrollView.OnScrollListener {
 

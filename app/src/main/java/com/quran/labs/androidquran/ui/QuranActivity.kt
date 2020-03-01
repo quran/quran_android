@@ -55,6 +55,20 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import kotlin.math.abs
 
+/**
+ * The home screen activity for the app. Displays a toolbar and 3 fragments:
+ *
+ *  * [SuraListFragment]
+ *  * [JuzListFragment]
+ *  * [BookmarksFragment]
+ *
+ * When this activity is created, it may run a background check to see if updated translations
+ * are available, and if so, show a dialog asking the user if they want to download them.
+ *
+ * This activity is called from several places:
+ *  * [com.quran.labs.androidquran.QuranDataActivity]
+ *  * [ShortcutsActivity]
+ */
 class QuranActivity : QuranActionBarActivity(),
     OnBookmarkTagsUpdateListener,
     JumpDestination {

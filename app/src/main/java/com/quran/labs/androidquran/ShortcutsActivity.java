@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.quran.labs.androidquran.ui.QuranActivity;
 
+/**
+ * Handle shortcuts by lauching the appropriate activity.
+ * Currently, there is only one shortcut to go to the last page.
+ */
 public class ShortcutsActivity extends AppCompatActivity {
   public static final String ACTION_JUMP_TO_LATEST = "com.quran.labs.androidquran.last_page";
 
