@@ -41,7 +41,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.io.File
 import java.util.ArrayList
-import java.util.Arrays
 import java.util.Locale
 import javax.inject.Inject
 
@@ -73,12 +72,8 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
         .inject(this)
     quranApp.refreshLocale(this, false)
     super.onCreate(savedInstanceState)
-    val ab = supportActionBar
-    if (ab != null) {
-      ab.setTitle(R.string.audio_manager)
-      ab.setDisplayHomeAsUpEnabled(true)
-    }
     setContentView(R.layout.activity_surah_audio_manager)
+
     val intent = intent
     val sheikh = intent.getParcelableExtra<QariItem>(EXTRA_SHEIKH)
     if (sheikh == null) {
@@ -86,6 +81,12 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
       return
     }
     qari = sheikh
+
+    val ab = supportActionBar
+    if (ab != null) {
+      ab.title = qari.name
+      ab.setDisplayHomeAsUpEnabled(true)
+    }
 
     recyclerView = findViewById(R.id.recycler_view)
     recyclerView.setHasFixedSize(true)
@@ -115,9 +116,12 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
   }
 
   override fun onPause() {
-    downloadReceiver!!.setListener(null)
-    LocalBroadcastManager.getInstance(this)
-        .unregisterReceiver(downloadReceiver!!)
+    downloadReceiver?.let {
+      it.setListener(null)
+      LocalBroadcastManager.getInstance(this)
+          .unregisterReceiver(it)
+    }
+    downloadReceiver = null
     super.onPause()
   }
 
@@ -372,9 +376,7 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
       holder.setChecked(isItemChecked(position))
     }
 
-    override fun getItemCount(): Int {
-      return 114
-    }
+    override fun getItemCount() = 114
 
     private fun isItemFullyDownloaded(position: Int): Boolean {
       val info = qariDownloadInfo ?: return false
