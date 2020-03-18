@@ -39,7 +39,7 @@ import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
-
+import org.jetbrains.annotations.NotNull;
 
 public class AudioManagerActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener {
@@ -91,21 +91,22 @@ public class AudioManagerActivity extends QuranActionBarActivity
     if (disposable != null) {
       disposable.dispose();
     }
-    mOnDownloadInfo = new DisposableSingleObserver<List<QariDownloadInfo>>() {
-      @Override
-      public void onSuccess(List<QariDownloadInfo> downloadInfo) {
-        progressBar.setVisibility(View.GONE);
-        shuyookhAdapter.setDownloadInfo(downloadInfo);
-        shuyookhAdapter.notifyDataSetChanged();
-      }
+    DisposableSingleObserver<List<QariDownloadInfo>> downloadInfo =
+        new DisposableSingleObserver<List<QariDownloadInfo>>() {
+          @Override
+          public void onSuccess(List<QariDownloadInfo> downloadInfo) {
+            progressBar.setVisibility(View.GONE);
+            shuyookhAdapter.setDownloadInfo(downloadInfo);
+            shuyookhAdapter.notifyDataSetChanged();
+          }
 
-      @Override
-      public void onError(Throwable e) {
-      }
-    };
+          @Override
+          public void onError(Throwable e) {
+          }
+        };
     disposable = AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(mOnDownloadInfo);
+        .subscribeWith(downloadInfo);
   }
 
   @Override
@@ -132,9 +133,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
     super.onDestroy();
   }
 
-  private DisposableSingleObserver<List<QariDownloadInfo>> mOnDownloadInfo;
-
-  private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+  private View.OnClickListener onClickListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
       int position = recyclerView.getChildAdapterPosition(v);
@@ -182,30 +181,31 @@ public class AudioManagerActivity extends QuranActionBarActivity
   }
 
   private class ShuyookhAdapter extends RecyclerView.Adapter<SheikhViewHolder> {
-    private final LayoutInflater mInflater;
-    private final List<QariItem> mQariItems;
-    private final Map<QariItem, QariDownloadInfo> mDownloadInfoMap;
+    private final LayoutInflater inflater;
+    private final List<QariItem> qariItems;
+    private final Map<QariItem, QariDownloadInfo> downloadInfoMap;
 
     ShuyookhAdapter(List<QariItem> items) {
-      mQariItems = items;
-      mDownloadInfoMap = new HashMap<>();
-      mInflater = LayoutInflater.from(AudioManagerActivity.this);
+      qariItems = items;
+      downloadInfoMap = new HashMap<>();
+      inflater = LayoutInflater.from(AudioManagerActivity.this);
     }
 
     void setDownloadInfo(List<QariDownloadInfo> downloadInfo) {
       for (QariDownloadInfo info : downloadInfo) {
-        mDownloadInfoMap.put(info.qariItem, info);
+        downloadInfoMap.put(info.qariItem, info);
       }
     }
 
+    @NotNull
     @Override
-    public SheikhViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      return new SheikhViewHolder(mInflater.inflate(R.layout.audio_manager_row, parent, false));
+    public SheikhViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+      return new SheikhViewHolder(inflater.inflate(R.layout.audio_manager_row, parent, false));
     }
 
     @Override
     public void onBindViewHolder(SheikhViewHolder holder, int position) {
-      holder.name.setText(mQariItems.get(position).getName());
+      holder.name.setText(qariItems.get(position).getName());
 
       QariDownloadInfo info = getSheikhInfoForPosition(position);
       int fullyDownloaded = info.downloadedSuras.size();
@@ -215,12 +215,12 @@ public class AudioManagerActivity extends QuranActionBarActivity
     }
 
     QariDownloadInfo getSheikhInfoForPosition(int position) {
-      return mDownloadInfoMap.get(mQariItems.get(position));
+      return downloadInfoMap.get(qariItems.get(position));
     }
 
     @Override
     public int getItemCount() {
-      return mDownloadInfoMap.size() == 0 ? 0 : mQariItems.size();
+      return downloadInfoMap.size() == 0 ? 0 : qariItems.size();
     }
   }
 
@@ -235,7 +235,7 @@ public class AudioManagerActivity extends QuranActionBarActivity
       quantity = itemView.findViewById(R.id.quantity);
 
       image = itemView.findViewById(R.id.image);
-      itemView.setOnClickListener(mOnClickListener);
+      itemView.setOnClickListener(onClickListener);
     }
   }
 }

@@ -128,8 +128,7 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    val itemId = item.itemId
-    when (itemId) {
+    when (item.itemId) {
       android.R.id.home -> {
         finish()
         return true
