@@ -41,19 +41,16 @@ public class AudioManagerUtils {
   public static Single<List<QariDownloadInfo>> shuyookhDownloadObservable(
       QuranInfo quranInfo,  String basePath, List<QariItem> qariItems) {
     return Observable.fromIterable(qariItems)
-        .flatMap(new Function<QariItem, ObservableSource<QariDownloadInfo>>() {
-          @Override
-          public ObservableSource<QariDownloadInfo> apply(QariItem item) throws Exception {
-            QariDownloadInfo cached = sCache.get(item);
-            if (cached != null) {
-              return Observable.just(cached);
-            }
-
-            File baseFile = new File(basePath, item.getPath());
-            return !baseFile.exists() ? Observable.just(new QariDownloadInfo(item)) :
-                item.isGapless() ? getGaplessSheikhObservable(baseFile, item).toObservable() :
-                    getGappedSheikhObservable(quranInfo, baseFile, item).toObservable();
+        .flatMap((Function<QariItem, ObservableSource<QariDownloadInfo>>) item -> {
+          QariDownloadInfo cached = sCache.get(item);
+          if (cached != null) {
+            return Observable.just(cached);
           }
+
+          File baseFile = new File(basePath, item.getPath());
+          return !baseFile.exists() ? Observable.just(new QariDownloadInfo(item)) :
+              item.isGapless() ? getGaplessSheikhObservable(baseFile, item).toObservable() :
+                  getGappedSheikhObservable(quranInfo, baseFile, item).toObservable();
         })
         .doOnNext(qariDownloadInfo -> sCache.put(qariDownloadInfo.qariItem, qariDownloadInfo))
         .toList()
