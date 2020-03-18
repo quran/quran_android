@@ -27,14 +27,14 @@ public class AudioManagerUtils {
             String.valueOf(number);
   }
 
-  private static Map<QariItem, QariDownloadInfo> sCache = new ConcurrentHashMap<>();
+  private static Map<QariItem, QariDownloadInfo> cache = new ConcurrentHashMap<>();
 
   public static void clearCache() {
-    sCache.clear();
+    cache.clear();
   }
 
   public static void clearCacheKeyForSheikh(QariItem qariItem) {
-    sCache.remove(qariItem);
+    cache.remove(qariItem);
   }
 
   @NonNull
@@ -42,7 +42,7 @@ public class AudioManagerUtils {
       QuranInfo quranInfo,  String basePath, List<QariItem> qariItems) {
     return Observable.fromIterable(qariItems)
         .flatMap((Function<QariItem, ObservableSource<QariDownloadInfo>>) item -> {
-          QariDownloadInfo cached = sCache.get(item);
+          QariDownloadInfo cached = cache.get(item);
           if (cached != null) {
             return Observable.just(cached);
           }
@@ -52,7 +52,7 @@ public class AudioManagerUtils {
               item.isGapless() ? getGaplessSheikhObservable(baseFile, item).toObservable() :
                   getGappedSheikhObservable(quranInfo, baseFile, item).toObservable();
         })
-        .doOnNext(qariDownloadInfo -> sCache.put(qariDownloadInfo.qariItem, qariDownloadInfo))
+        .doOnNext(qariDownloadInfo -> cache.put(qariDownloadInfo.qariItem, qariDownloadInfo))
         .toList()
         .subscribeOn(Schedulers.io());
   }
