@@ -1,12 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.ActionMode;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -21,7 +14,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.ActionMode;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QariItem;
@@ -35,7 +33,9 @@ import com.quran.labs.androidquran.util.AudioManagerUtils;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QariDownloadInfo;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,12 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.inject.Inject;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableSingleObserver;
+import org.jetbrains.annotations.NotNull;
 
 public class SurahAudioManager extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener{
@@ -58,8 +54,9 @@ public class SurahAudioManager extends QuranActionBarActivity
   private static final int FULLY_DOWNLOADED_SURAH = 0;
   private static final int NOT_FULLY_DOWNLOADED_SURAH = 1;
 
+  private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
   private ProgressBar progressBar;
-  private Disposable disposable;
   private RecyclerView recyclerView;
   private DefaultDownloadReceiver downloadReceiver;
   private String basePath;
@@ -127,7 +124,7 @@ public class SurahAudioManager extends QuranActionBarActivity
 
   @Override
   protected void onDestroy() {
-    disposable.dispose();
+    compositeDisposable.clear();
     super.onDestroy();
   }
 
@@ -157,9 +154,8 @@ public class SurahAudioManager extends QuranActionBarActivity
   }
 
   private void getShuyookhData() {
-    if (disposable != null) {
-      disposable.dispose();
-    }
+    compositeDisposable.clear();
+
     downloadInfoObserver =
         new DisposableSingleObserver<List<QariDownloadInfo>>() {
           @Override
@@ -173,9 +169,11 @@ public class SurahAudioManager extends QuranActionBarActivity
           public void onError(Throwable e) {
           }
         };
-    disposable = AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(downloadInfoObserver);
+
+    compositeDisposable.add(
+        AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(downloadInfoObserver));
   }
 
   private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -211,7 +209,7 @@ public class SurahAudioManager extends QuranActionBarActivity
           return true;
 
         case R.id.cab_delete:
-          List<Integer> checkedSurahs[] = surahAdapter.getCheckedSurahs();
+          List<Integer>[] checkedSurahs = surahAdapter.getCheckedSurahs();
           List<Integer> toBeDeleted = checkedSurahs[FULLY_DOWNLOADED_SURAH];
           deleteSelection(toBeDeleted);
           return true;
@@ -335,7 +333,7 @@ public class SurahAudioManager extends QuranActionBarActivity
   }
 
   private void downloadSelection() {
-    List<Integer> checkedSurahs[] = surahAdapter.getCheckedSurahs();
+    List<Integer>[] checkedSurahs = surahAdapter.getCheckedSurahs();
     List<Integer> toBeDownloaded = checkedSurahs[NOT_FULLY_DOWNLOADED_SURAH];
     for(int surah: toBeDownloaded) {
       download(surah, surah);
@@ -392,8 +390,9 @@ public class SurahAudioManager extends QuranActionBarActivity
       }
     }
 
+    @NotNull
     @Override
-    public SurahAudioManager.SurahViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SurahAudioManager.SurahViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
       return new SurahAudioManager.SurahViewHolder(inflater.inflate(R.layout.audio_manager_row, parent, false));
     }
 
@@ -429,8 +428,7 @@ public class SurahAudioManager extends QuranActionBarActivity
       if(info == null) {
         return false;
       }
-      boolean fullyDownloaded = info.downloadedSuras.get(position + 1);
-      return fullyDownloaded;
+      return info.downloadedSuras.get(position + 1);
     }
 
     public void toggleItemChecked(int position) {
@@ -450,10 +448,8 @@ public class SurahAudioManager extends QuranActionBarActivity
     }
 
     public boolean isItemChecked(int position) {
-      boolean checked =
-          fullyDownloadedCheckedState.get(position, false)
-          || notFullyDownloadedCheckedState.get(position, false);
-      return checked;
+      return fullyDownloadedCheckedState.get(position, false)
+      || notFullyDownloadedCheckedState.get(position, false);
     }
 
     public void uncheckAll() {
