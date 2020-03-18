@@ -25,11 +25,6 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.R.drawable
-import com.quran.labs.androidquran.R.id
-import com.quran.labs.androidquran.R.layout
-import com.quran.labs.androidquran.R.plurals
-import com.quran.labs.androidquran.R.string
 import com.quran.labs.androidquran.common.QariItem
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.SuraAyah
@@ -38,18 +33,15 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
-import com.quran.labs.androidquran.ui.SurahAudioManager
 import com.quran.labs.androidquran.util.AudioManagerUtils
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QariDownloadInfo
 import com.quran.labs.androidquran.util.QuranFileUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
 import java.io.File
 import java.util.ArrayList
 import java.util.Arrays
-import java.util.HashMap
 import java.util.Locale
 import javax.inject.Inject
 
@@ -84,17 +76,17 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
     super.onCreate(savedInstanceState)
     val ab = supportActionBar
     if (ab != null) {
-      ab.setTitle(string.audio_manager)
+      ab.setTitle(R.string.audio_manager)
       ab.setDisplayHomeAsUpEnabled(true)
     }
-    setContentView(layout.activity_surah_audio_manager)
+    setContentView(R.layout.activity_surah_audio_manager)
     val intent = intent
     sheikhPosition = intent.getIntExtra(EXTRA_SHEIKH_POSITION, -1)
-    recyclerView = findViewById(id.recycler_view)
+    recyclerView = findViewById(R.id.recycler_view)
     recyclerView.setHasFixedSize(true)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.itemAnimator = DefaultItemAnimator()
-    progressBar = findViewById(id.progress)
+    progressBar = findViewById(R.id.progress)
     qariItems = audioUtils.getQariList(this)
     basePath = quranFileUtils.getQuranAudioDirectory(this)
     surahAdapter = SurahAdapter(qariItems, this)
@@ -104,17 +96,18 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
 
   override fun onResume() {
     super.onResume()
-    downloadReceiver = DefaultDownloadReceiver(
+    val receiver = DefaultDownloadReceiver(
         this,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO
     )
-    downloadReceiver!!.setCanCancelDownload(true)
+    receiver.setCanCancelDownload(true)
     LocalBroadcastManager.getInstance(this)
         .registerReceiver(
-            downloadReceiver!!,
+            receiver,
             IntentFilter(ProgressIntent.INTENT_NAME)
         )
-    downloadReceiver!!.setListener(this)
+    receiver.setListener(this)
+    downloadReceiver = receiver
   }
 
   override fun onPause() {
@@ -141,8 +134,8 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
         finish()
         return true
       }
-      id.download_all -> {
-        val info = surahAdapter!!.getSheikhInfoForPosition(sheikhPosition)
+      R.id.download_all -> {
+        val info = surahAdapter.getSheikhInfoForPosition(sheikhPosition)
         if (info!!.downloadedSuras.size() != 114) {
           download(1, 114)
         }
@@ -177,8 +170,8 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
       ): Boolean {
         val fullyDownloadedCount = surahAdapter.fullyDownloadedCheckedSurahCount
         val notFullyDownloadedCount = surahAdapter.notFullyDownloadedCheckedSurahCount
-        val deleteButton = menu.findItem(id.cab_delete)
-        val downloadButton = menu.findItem(id.cab_download)
+        val deleteButton = menu.findItem(R.id.cab_delete)
+        val downloadButton = menu.findItem(R.id.cab_download)
         deleteButton.isVisible = fullyDownloadedCount > 0
         downloadButton.isVisible = notFullyDownloadedCount > 0
         return true
@@ -189,11 +182,11 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
         item: MenuItem
       ): Boolean {
         when (item.itemId) {
-          id.cab_download -> {
+          R.id.cab_download -> {
             downloadSelection()
             return true
           }
-          id.cab_delete -> {
+          R.id.cab_delete -> {
             val checkedSurahs = surahAdapter.checkedSurahs
             val toBeDeleted = checkedSurahs.first
             deleteSelection(toBeDeleted)
@@ -230,7 +223,8 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
     actionMode = startSupportActionMode(actionModeCallback)
     true
   }
-  private val mOnClickListener =
+
+  private val onClickListener =
     OnClickListener { v ->
       val position = recyclerView.getChildAdapterPosition(v)
       if (position == RecyclerView.NO_POSITION) {
@@ -254,7 +248,6 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
 
   private fun deleteSurah(surah: Int): Boolean {
     val qariItem = qariItems[sheikhPosition]
-    val baseUri = basePath + qariItem.path
     val fileUri = audioUtils.getLocalQariUri(this, qariItem)
     var deletionSuccessful = true
     if (qariItem.isGapless) {
@@ -288,11 +281,11 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
     val resultString: String
     resultString = if (failureCount > 0) {
       resources.getQuantityString(
-          plurals.audio_manager_delete_surah_error, failureCount, failureCount
+          R.plurals.audio_manager_delete_surah_error, failureCount, failureCount
       )
     } else {
       resources.getQuantityString(
-          plurals.audio_manager_delete_surah_success, successCount, successCount
+          R.plurals.audio_manager_delete_surah_success, successCount, successCount
       )
     }
     Toast.makeText(this, resultString, Toast.LENGTH_SHORT)
@@ -362,7 +355,7 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
       parent: ViewGroup,
       viewType: Int
     ): SurahViewHolder {
-      return SurahViewHolder(inflater.inflate(layout.audio_manager_row, parent, false))
+      return SurahViewHolder(inflater.inflate(R.layout.audio_manager_row, parent, false))
     }
 
     override fun onBindViewHolder(
@@ -373,11 +366,11 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
       val surahStatus: Int
       val surahStatusImage: Int
       if (isItemFullyDownloaded(position)) {
-        surahStatus = string.audio_manager_surah_delete
-        surahStatusImage = drawable.ic_cancel
+        surahStatus = R.string.audio_manager_surah_delete
+        surahStatusImage = R.drawable.ic_cancel
       } else {
-        surahStatus = string.audio_manager_surah_download
-        surahStatusImage = drawable.ic_download
+        surahStatus = R.string.audio_manager_surah_download
+        surahStatusImage = R.drawable.ic_download
       }
       holder.status.text = getString(surahStatus)
       holder.image.setImageResource(surahStatusImage)
@@ -450,12 +443,12 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
 
   private inner class SurahViewHolder internal constructor(val view: View) :
       ViewHolder(view) {
-    val name: TextView = view.findViewById(id.name)
-    val status: TextView = view.findViewById(id.quantity)
-    val image: ImageView = view.findViewById(id.image)
+    val name: TextView = view.findViewById(R.id.name)
+    val status: TextView = view.findViewById(R.id.quantity)
+    val image: ImageView = view.findViewById(R.id.image)
 
     init {
-      view.setOnClickListener(mOnClickListener)
+      view.setOnClickListener(onClickListener)
       view.setOnLongClickListener(onLongClickListener)
     }
 
