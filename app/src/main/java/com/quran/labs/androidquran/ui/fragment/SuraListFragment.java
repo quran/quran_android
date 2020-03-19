@@ -31,6 +31,12 @@ import io.reactivex.observers.DisposableSingleObserver;
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 import static com.quran.labs.androidquran.data.Constants.SURAS_COUNT;
 
+/**
+ * Fragment that displays a list of all Surahs (using {@link QuranListAdapter}, with headings
+ * indicating which Juz a Sura starts in.
+ * When a Sura is selected (or a Juz heading), {@link QuranActivity#jumpTo(int)} is called to jump
+ * to that page.
+ */
 public class SuraListFragment extends Fragment {
 
   private RecyclerView mRecyclerView;

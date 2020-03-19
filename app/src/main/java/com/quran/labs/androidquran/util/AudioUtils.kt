@@ -75,6 +75,16 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     return if (rootDirectory == null) null else rootDirectory + item.path
   }
 
+  fun getLocalQariUri(context: Context, item: QariItem): String? {
+    val rootDirectory = quranFileUtils.getQuranAudioDirectory(context)
+    return if (rootDirectory == null) null else
+      rootDirectory + item.path + File.separator + if (item.isGapless) {
+      "%03d" + AudioUtils.AUDIO_EXTENSION
+    } else {
+      "%d" + File.separator + "%d" + AudioUtils.AUDIO_EXTENSION
+    }
+  }
+
   fun getQariDatabasePathIfGapless(context: Context, item: QariItem): String? {
     var databaseName = item.databaseName
     if (databaseName != null) {
@@ -204,7 +214,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
   private fun haveAnyFiles(context: Context, path: String): Boolean {
     val basePath = quranFileUtils.getQuranAudioDirectory(context)
     val file = File(basePath, path)
-    return file.isDirectory && file.list().isNotEmpty()
+    return file.isDirectory && file.list()?.isNotEmpty() ?: false
   }
 
   fun haveAllFiles(baseUrl: String,

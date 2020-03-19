@@ -6,8 +6,9 @@ public class Response {
   public static final int ERROR_SD_CARD_NOT_FOUND = 1;
   public static final int ERROR_FILE_NOT_FOUND = 2;
   public static final int ERROR_DOWNLOADING_ERROR = 3;
-  public static final int WARN_SD_CARD_NOT_FOUND = 4;
-  public static final int WARN_COULD_NOT_SAVE_FILE = 5;
+  public static final int ERROR_NO_INTERNET = 4;
+  public static final int WARN_SD_CARD_NOT_FOUND = 5;
+  public static final int WARN_COULD_NOT_SAVE_FILE = 6;
 
   private Bitmap bitmap;
   private int errorCode;

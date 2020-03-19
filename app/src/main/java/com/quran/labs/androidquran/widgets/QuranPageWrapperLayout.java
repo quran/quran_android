@@ -13,6 +13,11 @@ import android.widget.TextView;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+/**
+ * Wrapper around {@link ViewGroup} that adds {@link #showError(int)} and {@link #hideError()}
+ * methods. These methods display/hide a given error message and a retry button.
+ * When the retry button is clicked, {@link #handleRetryClicked} is called.
+ */
 public abstract class QuranPageWrapperLayout extends ViewGroup {
 
   private View errorLayout;

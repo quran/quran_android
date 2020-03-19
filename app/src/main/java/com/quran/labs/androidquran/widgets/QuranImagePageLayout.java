@@ -10,6 +10,12 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+/**
+ * Layout class for a single Arabic page of the Quran, with margins/background.
+ * <p>
+ * Note that the image of the Quran page to be displayed is set by users of this class by calling
+ * {@link #getImageView()} and calling the appropriate methods on that view.
+ */
 public class QuranImagePageLayout extends QuranPageLayout {
   private HighlightingImageView imageView;
 

@@ -154,7 +154,7 @@ public class QuranFileUtils {
     return false;
   }
 
-  public String getPageFileName(int p) {
+  public static String getPageFileName(int p) {
     NumberFormat nf = NumberFormat.getInstance(Locale.US);
     nf.setMinimumIntegerDigits(3);
     return "page" + nf.format(p) + ".png";
@@ -231,14 +231,13 @@ public class QuranFileUtils {
   }
 
   public Response getImageFromWeb(OkHttpClient okHttpClient,
-      Context context, String filename) {
-    return getImageFromWeb(okHttpClient, context, filename, false);
+      Context context, String widthParam, String filename) {
+    return getImageFromWeb(okHttpClient, context, widthParam, filename, false);
   }
 
   @NonNull
   private Response getImageFromWeb(OkHttpClient okHttpClient,
-      Context context, String filename, boolean isRetry) {
-    final String widthParam = quranScreenInfo.getWidthParam();
+      Context context, String widthParam, String filename, boolean isRetry) {
     String urlString = IMG_BASE_URL + "width"
         + widthParam + File.separator
         + filename;
@@ -285,7 +284,7 @@ public class QuranFileUtils {
     }
 
     return isRetry ? new Response(Response.ERROR_DOWNLOADING_ERROR) :
-        getImageFromWeb(okHttpClient, context, filename, true);
+        getImageFromWeb(okHttpClient, context, filename, widthParam, true);
   }
 
   private Bitmap decodeBitmapStream(InputStream is) {
@@ -408,7 +407,7 @@ public class QuranFileUtils {
     return getQuranImagesDirectory(context, quranScreenInfo.getWidthParam());
   }
 
-  private String getQuranImagesDirectory(Context context, String widthParam) {
+  public String getQuranImagesDirectory(Context context, String widthParam) {
     String base = getQuranBaseDirectory(context);
     return (base == null) ? null : base +
         (IMAGES_DIRECTORY.isEmpty() ? "" : IMAGES_DIRECTORY + File.separator) + "width" + widthParam;

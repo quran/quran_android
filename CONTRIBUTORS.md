@@ -1,7 +1,7 @@
 Quran Android Contributors
 ==========================
 
-### Coders
+### Code
 
 * [Ahmed El-Helw](https://twitter.com/ahmedre)
 * [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio
@@ -19,8 +19,16 @@ Quran Android Contributors
 * [Hosain Al Ahmad](https://github.com/hosainnet)
 * [Ahmed Abdelaal](https://github.com/Ahmed9914)
 
+
+### Audio
+
+* [Anas Saiyed](https://github.com/anassaiyed) - scripts and support for migrating many shuyookh from gapped to gapless.
+
+
 ### UI and Designer
+
 * [Somaia Gabr](http://twitter.com/somaiagabr).
+
 
 ### Translators
 
@@ -45,6 +53,6 @@ Quran Android Contributors
 * Serbian by [Amar Luckin](https://github.com/aluckin3)
 
 
-### And many more
+### and many more
 * everyone we missed from the above lists - may Allah reward you!
 * everyone who notified us about any bugs, made du3a for us, or that shared the app with family and friends.

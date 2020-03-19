@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
+import androidx.core.text.TextDirectionHeuristicsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -262,20 +263,31 @@ internal class TranslationAdapter(private val context: Context,
               }
             }
 
-            if (text != null && QuranUtils.doesStringContainArabic(text.toString())) {
-              // arabic tafseer, style it
+            // determine text directionality
+            val isRtl = when {
+              row.isArabic -> true
+              text != null -> QuranUtils.isRtl(text.toString())
+              else -> false
+            }
+
+            // reset the typeface
+            holder.text.typeface = null
+
+            if (isRtl) {
+              // rtl tafseer, style it
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 holder.text.layoutDirection = View.LAYOUT_DIRECTION_RTL
 
                 // allow the tafseer font for api 19 because it's fine there and
                 // is much better than the stock font (this is more lenient than
-                // the api 21 restriction on the hafs font).
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // the api 21 restriction on the hafs font). only allow this for
+                // Arabic though since the Arabic font isn't compatible with other
+                // RTL languages that share some Arabic characters.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && row.isArabic) {
                   holder.text.typeface = TypefaceManager.getTafseerTypeface(context)
                 }
               }
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-              holder.text.typeface = null
               holder.text.layoutDirection = View.LAYOUT_DIRECTION_INHERIT
             }
 

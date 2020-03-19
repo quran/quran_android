@@ -8,7 +8,7 @@ class MultiDns(private val servers: List<Dns>) : Dns {
 
   override fun lookup(hostname: String): MutableList<InetAddress> {
     var lastException: Exception? = null
-    for (i in 0 until servers.size) {
+    for (i in servers.indices) {
       try {
         return servers[i].lookup(hostname)
       } catch (unknownHostException: UnknownHostException) {

@@ -31,14 +31,21 @@ public class QuranDisplayHelper {
                                int page,
                                QuranFileUtils quranFileUtils) {
     Response response;
-    String filename = quranFileUtils.getPageFileName(page);
+    String filename = QuranFileUtils.getPageFileName(page);
     response = quranFileUtils.getImageFromSD(context, widthParam, filename);
     if (!response.isSuccessful()) {
       // let's only try if an sdcard is found... otherwise, let's tell
       // the user to mount their sdcard and try again.
       if (response.getErrorCode() != Response.ERROR_SD_CARD_NOT_FOUND) {
         Timber.d("failed to get %d with name %s from sd...", page, filename);
-        response = quranFileUtils.getImageFromWeb(okHttpClient, context, filename);
+
+        if (!QuranUtils.haveInternet(context)) {
+          final Response noNetworkResponse = new Response(Response.ERROR_NO_INTERNET);
+          noNetworkResponse.setPageData(page);
+          response = noNetworkResponse;
+        } else {
+          response = quranFileUtils.getImageFromWeb(okHttpClient, context, widthParam, filename);
+        }
       }
     }
     return response;

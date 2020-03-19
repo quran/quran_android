@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.dao.bookmark
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class Bookmark @JvmOverloads constructor(val id: Long,
                                               // sura and ayah are nullable for page bookmarks
                                               val sura: Int?,

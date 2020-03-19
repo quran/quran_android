@@ -69,7 +69,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       }
     });
 
-    ayahToolBar = new AyahToolBar(context, R.menu.share_menu);
+    ayahToolBar = new AyahToolBar(context, R.menu.translation_menu);
     ayahToolBar.setOnItemSelectedListener(this);
     ayahToolBar.setVisibility(View.GONE);
 
@@ -121,7 +121,8 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
           }
           rows.add(new TranslationViewRow(
               TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j,
-              metadata == null ? null : metadata.getLink()));
+              metadata == null ? null : metadata.getLink(),
+              "ar".equals(translations[j].getLanguageCode())));
         }
       }
 

@@ -28,7 +28,7 @@ public class QuranScreenInfo {
 
     height = point.y;
     altDimension = point.x;
-    maxWidth = (point.x > point.y) ? point.x : point.y;
+    maxWidth = Math.max(point.x, point.y);
     orientation = appContext.getResources().getConfiguration().orientation;
 
     this.context = appContext;

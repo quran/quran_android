@@ -43,4 +43,11 @@
   <string name="qari_husary_iza3a_gapless">الحصري تسجيل الإذاعة (متصل)</string>
   <string name="qari_abdulaziz_zahrani_gapless">عبد العزيز بن صالح الزهراني (متصل)</string>
   <string name="qari_ayman_suwaid">د. أيمن سويد</string>
+  <string name="qari_afasy_gapless">مشاري بن راشد العفاسي (متصل)</string>
+  <string name="qari_hani_rifai_gapless">هاني الرفاعي (متصل)</string>
+  <string name="qari_ayyoub_gapless">محمد أيوب (متصل)</string>
+  <string name="qari_mishari_walk_gapless">مشاري و إبراهيم والك (ترجمة انجليزية, متصل)</string>
+  <string name="qari_jibreel_gapless">محمد جبريل (متصل)</string>
+  <string name="qari_basfar_gapless">عبد الله بصفر (متصل)</string>
+  <string name="qari_walk_gapless">إبراهيم والك (ترجمة انجليزية, متصل)</string>
 </resources>

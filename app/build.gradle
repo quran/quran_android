@@ -17,9 +17,10 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 2951
-    versionName "2.9.5-p1"
+    versionCode 2990
+    versionName "2.9.9"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    multiDexEnabled true
   }
 
   signingConfigs {
@@ -84,6 +85,10 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+
   testOptions.unitTests.all {
     testLogging {
       events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
@@ -94,6 +99,14 @@ android {
   }
   androidExtensions {
     experimental = true
+  }
+}
+
+// required so that Errorprone doesn't look at generated files
+afterEvaluate {
+  tasks.withType(JavaCompile).configureEach {
+    options.errorprone.excludedPaths = ".*/build/generated/.*"
+    options.errorprone.disableWarningsInGeneratedCode = true
   }
 }
 
@@ -112,26 +125,42 @@ dependencies {
   implementation deps.kotlin.stdlib
   implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
   implementation "androidx.media:media:${androidxMediaVersion}"
+  implementation "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastVersion}"
   implementation "androidx.preference:preference:${androidxPreferencesVersion}"
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.13'
+  implementation "androidx.swiperefreshlayout:swiperefreshlayout:${androidxSwipeRefreshVersion}"
+  implementation "androidx.multidex:multidex:2.0.1"
+
+  // rx
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.16'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
+  // dagger
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
 
+  // workmanager
+  implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
+
+  implementation "com.squareup.okio:okio:2.4.3"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-  implementation 'com.squareup.moshi:moshi:1.8.0'
+
+  // remove metadata line from proguard.cfg upon updating to 1.9.3
+  implementation 'com.squareup.moshi:moshi:1.9.2'
+  kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
+
   implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-  testImplementation 'junit:junit:4.12'
-  testImplementation 'com.google.truth:truth:0.44'
-  testImplementation "org.mockito:mockito-core:3.0.0"
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
+  testImplementation 'junit:junit:4.13'
+  testImplementation 'com.google.truth:truth:1.0'
+  testImplementation "org.mockito:mockito-core:3.2.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
   implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
-  errorprone 'com.google.errorprone:error_prone_core:2.3.2'
+  errorprone 'com.google.errorprone:error_prone_core:2.3.3'
+  //noinspection GradleDynamicVersion
+  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
 }

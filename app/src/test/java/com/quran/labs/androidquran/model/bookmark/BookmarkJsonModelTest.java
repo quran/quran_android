@@ -30,17 +30,13 @@ public class BookmarkJsonModelTest {
   }
 
   @Test
-  public void simpleTestToJson() throws IOException {
-    BookmarkData data = new BookmarkData(TAGS, new ArrayList<>(), new ArrayList<>());
+  public void simpleTestToFromJson() throws IOException {
+    BookmarkData inputData = new BookmarkData(TAGS, new ArrayList<>(), new ArrayList<>());
     Buffer output = new Buffer();
-    jsonModel.toJson(output, data);
+    jsonModel.toJson(output, inputData);
     String result = output.readUtf8();
-    assertThat(result).isEqualTo(TAGS_JSON);
-  }
 
-  @Test
-  public void simpleTestFromJson() throws IOException {
-    Buffer buffer = new Buffer().writeUtf8(TAGS_JSON);
+    Buffer buffer = new Buffer().writeUtf8(result);
     BookmarkData data = jsonModel.fromJson(buffer);
     assertThat(data).isNotNull();
     assertThat(data.getBookmarks()).isEmpty();

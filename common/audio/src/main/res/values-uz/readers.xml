@@ -43,4 +43,11 @@
   <string name="qari_husary_iza3a_gapless">Xusoriy (radio, muttasil)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahroniy (muttasil)</string>
   <string name="qari_ayman_suwaid">Doktor Ayman Suvayd</string>
+  <string name="qari_afasy_gapless">Mishariy Al-Afasiy (muttasil)</string>
+  <string name="qari_hani_rifai_gapless">Honiy Ar-Rifoiy (muttasil)</string>
+  <string name="qari_ayyoub_gapless">Muhammad Ayyub (muttasil)</string>
+  <string name="qari_mishari_walk_gapless">Mishariy &amp; Ibrohim Volk (inglizcha, muttasil)</string>
+  <string name="qari_jibreel_gapless">Muhammad Jibriyl (muttasil)</string>
+  <string name="qari_basfar_gapless">Abdulloh Basfar (muttasil)</string>
+  <string name="qari_walk_gapless">Ibrohim Volk (inglizcha, muttasil)</string>
 </resources>
