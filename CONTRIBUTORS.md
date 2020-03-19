@@ -1,7 +1,7 @@
-quran android contributors
+Quran Android Contributors
 ==========================
 
-### code
+### Code
 
 * [Ahmed El-Helw](https://twitter.com/ahmedre)
 * [Asim Mohiuddin](https://github.com/asimmohiuddin) - images, gapless audio
@@ -19,15 +19,18 @@ quran android contributors
 * [Hosain Al Ahmad](https://github.com/hosainnet)
 * [Ahmed Abdelaal](https://github.com/Ahmed9914)
 
-### audio
+
+### Audio
 
 * [Anas Saiyed](https://github.com/anassaiyed) - scripts and support for migrating many shuyookh from gapped to gapless.
 
-### ui and design
+
+### UI and Designer
 
 * [Somaia Gabr](http://twitter.com/somaiagabr).
 
-### translators
+
+### Translators
 
 * Farsi for version 2.0 by [M. Jafar Nakar](https://github.com/mjnanakar).
 * Farsi for version 1.6 by [khajavi](http://github.com/khajavi).
