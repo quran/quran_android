@@ -139,8 +139,8 @@ public class AudioManagerActivity extends QuranActionBarActivity
       int position = recyclerView.getChildAdapterPosition(v);
       if (position != RecyclerView.NO_POSITION) {
         final QariItem qariItem = shuyookhAdapter.qariItems.get(position);
-        Intent intent = new Intent(AudioManagerActivity.this, SurahAudioManager.class);
-        intent.putExtra(SurahAudioManager.EXTRA_SHEIKH, qariItem);
+        Intent intent = new Intent(AudioManagerActivity.this, SheikhAudioManagerActivity.class);
+        intent.putExtra(SheikhAudioManagerActivity.EXTRA_SHEIKH, qariItem);
         startActivity(intent);
       }
     }

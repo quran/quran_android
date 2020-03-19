@@ -44,7 +44,7 @@ import java.util.ArrayList
 import java.util.Locale
 import javax.inject.Inject
 
-class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
+class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListener {
   private val compositeDisposable = CompositeDisposable()
 
   @Inject
@@ -348,7 +348,7 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
     private val context: Context
   ) : Adapter<SurahViewHolder>() {
     var qariDownloadInfo: QariDownloadInfo? = null
-    private val inflater: LayoutInflater = LayoutInflater.from(this@SurahAudioManager)
+    private val inflater: LayoutInflater = LayoutInflater.from(this@SheikhAudioManagerActivity)
     private val fullyDownloadedCheckedState = SparseBooleanArray()
     private val notFullyDownloadedCheckedState = SparseBooleanArray()
 
@@ -411,11 +411,8 @@ class SurahAudioManager : QuranActionBarActivity(), SimpleDownloadListener {
       notifyDataSetChanged()
     }
 
-    val fullyDownloadedCheckedSurahCount: Int
-      get() = fullyDownloadedCheckedState.size()
-
-    val notFullyDownloadedCheckedSurahCount: Int
-      get() = notFullyDownloadedCheckedState.size()
+    val fullyDownloadedCheckedSurahCount = fullyDownloadedCheckedState.size()
+    val notFullyDownloadedCheckedSurahCount = notFullyDownloadedCheckedState.size()
 
     val checkedSurahs: Pair<List<Int>, List<Int>>
       get() {

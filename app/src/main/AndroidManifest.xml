@@ -28,7 +28,7 @@
       android:supportsRtl="true"
       android:theme="@style/Quran">
     <activity
-        android:name=".ui.SurahAudioManager"
+        android:name=".ui.SheikhAudioManagerActivity"
         android:theme="@style/Quran"
         ></activity>
     <activity
