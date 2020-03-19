@@ -88,14 +88,17 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       ab.setDisplayHomeAsUpEnabled(true)
     }
 
+    surahAdapter = SurahAdapter(this)
+
     recyclerView = findViewById(R.id.recycler_view)
     recyclerView.setHasFixedSize(true)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.itemAnimator = DefaultItemAnimator()
-    progressBar = findViewById(R.id.progress)
-    basePath = quranFileUtils.getQuranAudioDirectory(this)
-    surahAdapter = SurahAdapter(this)
     recyclerView.adapter = surahAdapter
+
+    progressBar = findViewById(R.id.progress)
+
+    basePath = quranFileUtils.getQuranAudioDirectory(this)
     readShuyookhData()
   }
 
@@ -171,10 +174,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
         return true
       }
 
-      override fun onPrepareActionMode(
-        mode: ActionMode,
-        menu: Menu
-      ): Boolean {
+      override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
         val fullyDownloadedCount = surahAdapter.fullyDownloadedCheckedSurahCount
         val notFullyDownloadedCount = surahAdapter.notFullyDownloadedCheckedSurahCount
         val deleteButton = menu.findItem(R.id.cab_delete)
@@ -184,10 +184,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
         return true
       }
 
-      override fun onActionItemClicked(
-        mode: ActionMode,
-        item: MenuItem
-      ): Boolean {
+      override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         when (item.itemId) {
           R.id.cab_download -> {
             downloadSelection()
@@ -209,65 +206,59 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       }
     }
 
-  private val isInActionMode: Boolean
-    get() = actionMode != null
-
   private fun finishActionMode() {
-    if (isInActionMode) {
-      actionMode!!.finish()
-    }
+    actionMode?.finish()
   }
 
   private val onLongClickListener = OnLongClickListener { view ->
-    if (isInActionMode) {
-      return@OnLongClickListener false
+    if (actionMode != null) {
+      false
+    } else {
+      val position = recyclerView.getChildAdapterPosition(view)
+      if (position == RecyclerView.NO_POSITION) {
+        false
+      } else {
+        surahAdapter.setItemChecked(position, true)
+        actionMode = startSupportActionMode(actionModeCallback)
+        true
+      }
     }
-    val position = recyclerView.getChildAdapterPosition(view)
-    if (position == RecyclerView.NO_POSITION) {
-      return@OnLongClickListener false
-    }
-    surahAdapter.setItemChecked(position, true)
-    actionMode = startSupportActionMode(actionModeCallback)
-    true
   }
 
   private val onClickListener =
     OnClickListener { v ->
       val position = recyclerView.getChildAdapterPosition(v)
-      if (position == RecyclerView.NO_POSITION) {
-        return@OnClickListener
-      }
-
-      if (isInActionMode) {
-        surahAdapter.toggleItemChecked(position)
-        actionMode!!.invalidate()
-        return@OnClickListener
-      }
-
-      val info = surahAdapter.qariDownloadInfo
-      if (info != null) {
-        val surah = position + 1
-        val downloaded = info.downloadedSuras[surah]
-        if (downloaded) {
-          // TODO: show a confirmation dialog before deleting
-          deleteSelection(ArrayList(listOf(surah)))
+      if (position != RecyclerView.NO_POSITION) {
+        if (actionMode != null) {
+          surahAdapter.toggleItemChecked(position)
+          actionMode!!.invalidate()
         } else {
-          download(surah, surah)
+          val info = surahAdapter.qariDownloadInfo
+          if (info != null) {
+            val surah = position + 1
+            val downloaded = info.downloadedSuras[surah]
+            if (downloaded) {
+              // TODO: show a confirmation dialog before deleting
+              deleteSelection(ArrayList(listOf(surah)))
+            } else {
+              download(surah, surah)
+            }
+          }
         }
       }
     }
 
   private fun deleteSurah(surah: Int): Boolean {
-    val fileUri = audioUtils.getLocalQariUri(this, qari)
+    val fileUri = audioUtils.getLocalQariUri(this, qari) ?: return false
     var deletionSuccessful = true
     if (qari.isGapless) {
-      val fileName = String.format(Locale.US, fileUri!!, surah)
+      val fileName = String.format(Locale.US, fileUri, surah)
       val audioFile = File(fileName)
       deletionSuccessful = audioFile.delete()
     } else {
       val numAyahs = quranInfo.getNumAyahs(surah)
       for (i in 1..numAyahs) {
-        val fileName = String.format(Locale.US, fileUri!!, surah, i)
+        val fileName = String.format(Locale.US, fileUri, surah, i)
         val ayahAudioFile = File(fileName)
         if (ayahAudioFile.exists()) {
           deletionSuccessful = deletionSuccessful && ayahAudioFile.delete()
@@ -288,8 +279,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
         failureCount++
       }
     }
-    val resultString: String
-    resultString = if (failureCount > 0) {
+    val resultString = if (failureCount > 0) {
       resources.getQuantityString(
           R.plurals.audio_manager_delete_surah_error, failureCount, failureCount
       )
@@ -298,8 +288,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
           R.plurals.audio_manager_delete_surah_success, successCount, successCount
       )
     }
-    Toast.makeText(this, resultString, Toast.LENGTH_SHORT)
-        .show()
+    Toast.makeText(this, resultString, Toast.LENGTH_SHORT).show()
     if (successCount > 0) {
       // refresh, if at least 1 file was deleted
       AudioManagerUtils.clearCacheKeyForSheikh(qari)
@@ -328,8 +317,8 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO
     )
     intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, SuraAyah(startSurah, 1))
-    intent.putExtra(
-        QuranDownloadService.EXTRA_END_VERSE, SuraAyah(endSurah, quranInfo.getNumAyahs(endSurah))
+    intent.putExtra(QuranDownloadService.EXTRA_END_VERSE,
+        SuraAyah(endSurah, quranInfo.getNumAyahs(endSurah))
     )
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
     startService(intent)
@@ -431,8 +420,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   }
 
-  private inner class SurahViewHolder internal constructor(val view: View) :
-      ViewHolder(view) {
+  private inner class SurahViewHolder internal constructor(val view: View) : ViewHolder(view) {
     val name: TextView = view.findViewById(R.id.name)
     val status: TextView = view.findViewById(R.id.quantity)
     val image: ImageView = view.findViewById(R.id.image)
