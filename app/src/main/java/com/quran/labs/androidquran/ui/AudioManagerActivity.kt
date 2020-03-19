@@ -74,21 +74,26 @@ class AudioManagerActivity : QuranActionBarActivity() {
 
     progressBar = findViewById(R.id.progress)
     basePath = quranFileUtils.getQuranAudioDirectory(this)
-    requestShuyookhData()
   }
 
   private fun requestShuyookhData() {
-      disposable.clear()
+    disposable.clear()
 
-      disposable.add(AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe({ downloadInfo ->
-            progressBar.visibility = View.GONE
-            shuyookhAdapter.setDownloadInfo(downloadInfo)
-            shuyookhAdapter.notifyDataSetChanged()
-          },{ })
-      )
-    }
+    disposable.add(
+        AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, qariItems)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ downloadInfo ->
+              progressBar.visibility = View.GONE
+              shuyookhAdapter.setDownloadInfo(downloadInfo)
+              shuyookhAdapter.notifyDataSetChanged()
+            }, { })
+    )
+  }
+
+  override fun onResume() {
+    super.onResume()
+    requestShuyookhData()
+  }
 
   override fun onDestroy() {
     disposable.dispose()
