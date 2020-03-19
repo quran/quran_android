@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.ui.AudioManagerActivity;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.SheikhAudioManagerActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment;
@@ -61,6 +62,7 @@ public interface ApplicationComponent {
   void inject(QuranDataActivity quranDataActivity);
   void inject(QuranImportActivity quranImportActivity);
   void inject(AudioManagerActivity audioManagerActivity);
+  void inject(SheikhAudioManagerActivity sheikhAudioManagerActivity);
   void inject(QuranForwarderActivity quranForwarderActivity);
   void inject(SearchActivity searchActivity);
   void inject(PageSelectActivity pageSelectActivity);

@@ -382,6 +382,20 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Audio Manager</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Successfully deleted the surah</item>
+    <item quantity="other">Successfully deleted %1$d suras</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">There was an error while deleting the surah</item>
+    <item quantity="other">There was an error while deleting %1$d suras</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Download surah</string>
+  <string name="audio_manager_surah_delete">Delete surah</string>
+  <string name="audio_manager_download_all">Download all</string>
+  <string name="audio_manager_download_selection">Download selection</string>
+  <string name="audio_manager_delete_selection">Delete selection</string>
+
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
