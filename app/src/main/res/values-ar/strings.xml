@@ -230,6 +230,9 @@
     <item>لانهائي</item>
   </string-array>
 
+  <string name="playback_prompt_title">ابداء التشغيل من:</string>
+  <string name="starting_page_label">أول الصفحه</string>
+
   <!-- long press -->
   <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
   <string name="tag_ayah">تصنيف الآية</string>
@@ -292,5 +295,19 @@
     <item quantity="many">تم حذف %d عنصر</item>
   </plurals>
   <string name="undo">تراجع</string>
+  <string name="notification_channel_download">"تحميل ملفات القران "</string>
+  <string name="notification_channel_audio">تلاوة القران</string>
+  <string name="audio_manager_delete_selection">حذف التحديد</string>
+  <string name="audio_manager_download_selection">تحميل التحديد</string>
+  <string name="audio_manager_download_all">تحميل الكل</string>
+  <string name="audio_manager_surah_delete">حذف السورة</string>
+  <string name="audio_manager_surah_download">تحميل السورة</string>
+  <string name="next">التالى</string>
+  <string name="previous">السابق</string>
+  <string name="tag_blank_tag_error">لا يمكن أن يكون اسم التصنيف فارغًا</string>
+  <string name="tag_duplicate_tag_error">التصنيف مكرر, اكتب تصنيف جديد</string>
+  <string name="more_translations">المزيد من الترجمات والتفاسير</string>
+  <string name="menu_show_date">إظهار تاريخ الإضافة</string>
+  <string name="pause">وقف مؤقت</string>
 
 </resources>
