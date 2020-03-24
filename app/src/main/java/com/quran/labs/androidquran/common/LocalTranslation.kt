@@ -13,8 +13,8 @@ data class LocalTranslation(
 
   fun getTranslatorName(): String {
     return when {
-      translatorForeign != null -> translatorForeign
-      translator != null -> translator
+      !translatorForeign.isNullOrEmpty() -> translatorForeign
+      !translator.isNullOrEmpty() -> translator
       name.isNotEmpty() -> name
       else -> filename
     }
