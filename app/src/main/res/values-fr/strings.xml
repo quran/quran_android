@@ -119,7 +119,6 @@
   <string name="prefs_streaming_summary">Streaming lorsque cela est possible.</string>
   <string name="prefs_download_amount_title">Quantité de téléchargement</string>
   <string name="prefs_download_amount_summary">Quantité du téléchargement préféré pour l\'audio espacé.</string>
-  <string name="prefs_audio_manager">Gestionnaire audio (expérimental)</string>
   <string name="prefs_audio_manager_summary">Gérer et télécharger les audios coraniques</string>
   <string name="downloaded_translations">Téléchargées</string>
   <string name="available_translations">Disponible en téléchargement</string>

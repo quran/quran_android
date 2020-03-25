@@ -121,7 +121,6 @@
     <string name="prefs_streaming_summary">Hang streamelése, ha lehetséges (csak nem szünetmentes hangnál).</string>
     <string name="prefs_download_amount_title">Letöltése mennyiség</string>
     <string name="prefs_download_amount_summary">Előnyben részesített letöltési mennyiség nem szünetmentes hangnál.</string>
-    <string name="prefs_audio_manager">Hangkezelő (kísérleti)</string>
     <string name="prefs_audio_manager_summary">Korán hangok kezelése és letöltése.</string>
     <string name="downloaded_translations">Letöltve</string>
     <string name="available_translations">Elérhető letöltésre</string>

@@ -161,7 +161,6 @@
   <string name="prefs_download_amount_summary">Bevorzugte Downloadgröße für nicht
     unterbrechungsfreie Wiedergabe.
   </string>
-  <string name="prefs_audio_manager">Audioverwaltung (experimentell)</string>
   <string name="prefs_audio_manager_summary">Verwalten Sie Ihre Audiodateien.</string>
   <string name="downloaded_translations">Heruntergeladen</string>
   <string name="available_translations">Zum Download verfügbar</string>
