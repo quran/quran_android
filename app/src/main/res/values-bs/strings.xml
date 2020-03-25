@@ -179,7 +179,6 @@
   <string name="prefs_streaming_summary">Tok (stream) zvuka umjesto preuzimanja</string>
   <string name="prefs_download_amount_title">Količina preuzimanja</string>
   <string name="prefs_download_amount_summary">Preferirana količina za preuzimanje zvuka svakog ajeta posebno</string>
-  <string name="prefs_audio_manager">Upravitelj zvuka (eksperimentalno)</string>
   <string name="prefs_audio_manager_summary">Upravljaj i preuzmi zvuk učenja Kur\'ana</string>
   <string name="downloaded_translations">Preuzeto</string>
   <string name="available_translations">Dostupno za preuzimanje</string>

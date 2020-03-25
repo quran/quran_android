@@ -112,7 +112,6 @@
   <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)</string>
   <string name="prefs_download_amount_title">كم التحميل</string>
   <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
-  <string name="prefs_audio_manager">إدارة الصوتيات (تجريبي)</string>
   <string name="prefs_audio_manager_summary">تحميل وإدارة الملفات الصوتية</string>
   <string name="prefs_app_location_title">مكان التطبيق</string>
   <string name="prefs_app_location_summary">اختر الذاكرة التي سيتم تخزين الملفات عليها</string>

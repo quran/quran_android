@@ -232,7 +232,6 @@
   <string name="prefs_app_location_summary">حافظه‌ای که تمایل دارید فایل‌ها روی آن ذخیره شود را انتخاب نمایید</string>
   <string name="prefs_app_location_title">پوشه داده‌های قرآن</string>
   <string name="prefs_app_size">حجم کنونی داده‌ها</string>
-  <string name="prefs_audio_manager">مدیریت فایل‌های صوتی (آزمایشی)</string>
   <string name="prefs_audio_manager_summary">بارگذاری و مدیریت فایل‌های صوتی</string>
   <string name="prefs_calculating_app_size">محاسبه حجم برنامه</string>
   <string name="prefs_category_advanced">گزینه‌های پیشرفته</string>
