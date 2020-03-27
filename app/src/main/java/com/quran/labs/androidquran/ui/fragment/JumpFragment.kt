@@ -28,23 +28,23 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.R.array
 import com.quran.labs.androidquran.R.layout
 import com.quran.labs.androidquran.R.string
-import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.widgets.ForceCompleteTextView
 import timber.log.Timber
-import java.util.ArrayList
-import java.util.Arrays
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.math.max
-import kotlin.math.min
 
 class JumpFragment : DialogFragment() {
 
   @Inject
   lateinit var quranInfo: QuranInfo
+  private var suppressJump: Boolean = false
+
+  private lateinit var suraInput: ForceCompleteTextView
+  private lateinit var ayahInput: EditText
+  private lateinit var pageInput: EditText
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val activity: Activity? = activity
@@ -57,16 +57,11 @@ class JumpFragment : DialogFragment() {
     builder.setTitle(activity.getString(string.menu_jump))
 
     // Sura chooser
-    val suraInput: ForceCompleteTextView = layout.findViewById(R.id.sura_spinner)
+    suraInput = layout.findViewById(R.id.sura_spinner)
     val suras = activity.resources.getStringArray(array.sura_names)
-    val sb = StringBuilder()
-    for (i in suras.indices) {
-      sb.append(QuranUtils.getLocalizedNumber(activity, i + 1))
-      sb.append(". ")
-      sb.append(suras[i])
-      suras[i] = sb.toString()
-      sb.setLength(0)
-    }
+        .mapIndexed { index: Int, sura: String? ->
+          QuranUtils.getLocalizedNumber(activity, index + 1) + ". " + sura
+        }
 
     val suraAdapter = InfixFilterArrayAdapter(
         activity,
@@ -75,35 +70,54 @@ class JumpFragment : DialogFragment() {
     suraInput.setAdapter(suraAdapter)
 
     // Ayah chooser
-    val ayahInput = layout.findViewById<EditText>(R.id.ayah_spinner)
+    ayahInput = layout.findViewById(R.id.ayah_spinner)
 
     // Page chooser
-    val pageInput = layout.findViewById<EditText>(R.id.page_number)
+    pageInput = layout.findViewById(R.id.page_number)
     pageInput.setOnEditorActionListener { _: TextView?, actionId: Int, _: KeyEvent? ->
       if (actionId == EditorInfo.IME_ACTION_GO) {
         dismiss()
-        goToPage(pageInput.text.toString())
+        onSubmit()
         true
       } else {
         false
       }
     }
-    suraInput.setOnForceCompleteListener { v: ForceCompleteTextView?, position: Int, rowId: Long ->
-      val suraList = listOf(*suras)
+
+    pageInput.addTextChangedListener(object : TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+      override fun afterTextChanged(s: Editable?) {
+        val number = s.toString().toIntOrNull() ?: return
+        val pageNumber = number.coerceIn(1..quranInfo.numberOfPages)
+        val sura = quranInfo.getSuraOnPage(pageNumber)
+        val ayah = quranInfo.getFirstAyahOnPage(pageNumber)
+
+        suppressJump = true
+        suraInput.setText(suras[sura - 1])
+        suraInput.tag = sura
+        ayahInput.setText(ayah.toString())
+        suppressJump = false
+      }
+    })
+
+    suraInput.setOnForceCompleteListener { _: ForceCompleteTextView?, position: Int, _: Long ->
       val enteredText = suraInput.text.toString()
       val suraName: String?
 
       suraName = when {
         // user selects
         position >= 0 -> { suraAdapter.getItem(position) }
-        suraList.contains(enteredText) -> { enteredText }
+        suras.contains(enteredText) -> { enteredText }
         // leave to the next code
         suraAdapter.isEmpty -> { null }
         // maybe first initialization or invalid input
         else -> { suraAdapter.getItem(0) }
       }
 
-      var sura = suraList.indexOf(suraName) + 1
+      var sura = suras.indexOf(suraName) + 1
       // default to al-Fatiha
       if (sura == 0) sura = 1
       suraInput.tag = sura
@@ -114,6 +128,7 @@ class JumpFragment : DialogFragment() {
       // space is intentional, to differentiate with value set by the user (delete/backspace)
       ayahInput.setText(if (ayahValue.isNotEmpty()) ayahValue else " ")
     }
+
     ayahInput.addTextChangedListener(object : TextWatcher {
       override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
@@ -123,47 +138,59 @@ class JumpFragment : DialogFragment() {
         val context: Context? = getActivity()
         val ayahString = s.toString()
         var ayah = ayahString.toIntOrNull() ?: 1
-        val suraTag = suraInput.tag
-        if (suraTag != null) {
-          val sura = suraTag as Int
-          val ayahCount = quranInfo.getNumAyahs(sura)
-          // ensure in 1..ayahCount
-          ayah = ayah.coerceIn(1..ayahCount)
-          val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-          pageInput.hint = QuranUtils.getLocalizedNumber(context, page)
-          pageInput.text = null
-        }
-        ayahInput.tag = ayah
-        // seems numeric IM always use western arabic (not localized)
-        val correctText = ayah.toString()
-        // empty input means the user clears the input, we don't force to fill it, let him type
-        if (s.isNotEmpty() && correctText != ayahString) {
-          s.replace(0, s.length, correctText)
+        if (suppressJump) {
+          ayahInput.tag = ayah
+        } else {
+          val suraTag = suraInput.tag
+          if (suraTag != null) {
+            val sura = suraTag as Int
+            val ayahCount = quranInfo.getNumAyahs(sura)
+            // ensure in 1..ayahCount
+            ayah = ayah.coerceIn(1..ayahCount)
+            val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+            pageInput.hint = QuranUtils.getLocalizedNumber(context, page)
+            pageInput.text = null
+          }
+          ayahInput.tag = ayah
+          // seems numeric IM always use western arabic (not localized)
+          val correctText = ayah.toString()
+          // empty input means the user clears the input, we don't force to fill it, let him type
+          if (s.isNotEmpty() && correctText != ayahString) {
+            s.replace(0, s.length, correctText)
+          }
         }
       }
     })
+
     builder.setView(layout)
     builder.setPositiveButton(
         getString(string.dialog_ok)
     ) { _: DialogInterface?, _: Int ->
-      try {
-        layout.requestFocus() // trigger sura completion
-        dismiss()
-        var pageStr = pageInput.text.toString()
-        if (TextUtils.isEmpty(pageStr)) {
-          pageStr = pageInput.hint.toString()
-          val page = pageStr.toInt()
-          val selectedSura = suraInput.tag as Int
-          val selectedAyah = ayahInput.tag as Int
-          (activity as? JumpDestination)?.jumpToAndHighlight(page, selectedSura, selectedAyah)
-        } else {
-          goToPage(pageStr)
-        }
-      } catch (e: Exception) {
-        Timber.d(e, "Could not jump, something went wrong...")
-      }
+      // trigger sura completion
+      layout.requestFocus()
+      dismiss()
+      onSubmit()
     }
     return builder.create()
+  }
+
+  private fun onSubmit() {
+    try {
+      val pageStr = pageInput.text.toString()
+      val page = if (pageStr.isEmpty()) {
+        pageInput.hint.toString().toIntOrNull()
+      } else {
+        pageStr.toIntOrNull()
+      }
+
+      if (page != null) {
+        val selectedSura = suraInput.tag as Int
+        val selectedAyah = ayahInput.tag as Int
+        (activity as? JumpDestination)?.jumpToAndHighlight(page, selectedSura, selectedAyah)
+      }
+    } catch (e: Exception) {
+      Timber.d(e, "Could not jump, something went wrong...")
+    }
   }
 
   override fun onAttach(context: Context) {
@@ -179,39 +206,21 @@ class JumpFragment : DialogFragment() {
     )
   }
 
-  private fun goToPage(text: String) {
-    val page = text.toIntOrNull() ?: return
-
-    // user has interacted with 'Go to page' field, so we
-    // need to verify if the input number is within
-    // the acceptable range
-    if (page < Constants.PAGES_FIRST || page > quranInfo.numberOfPages) {
-      // maybe show a toast message?
-      return
-    }
-    (activity as? JumpDestination)?.jumpTo(page)
-  }
-
   /**
    * ListAdapter that supports filtering by using case-insensitive infix (substring).
    */
   private class InfixFilterArrayAdapter internal constructor(
     context: Context,
-    @LayoutRes itemLayoutRes: Int,
-    items: Array<String>
+    @LayoutRes private val itemLayoutRes: Int,
+    private val originalItems: List<String>
   ) : BaseAdapter(), Filterable {
-    // May be extracted to other package
-    private val originalItems: List<String> = listOf(*items)
     private var items: List<String>
     private val inflater: LayoutInflater
-    private val itemLayoutRes: Int
     private val filter: Filter = ItemFilter()
-    private val lock = Any()
 
     init {
       this.items = originalItems
       inflater = LayoutInflater.from(context)
-      this.itemLayoutRes = itemLayoutRes
     }
 
     override fun getCount() = items.size
@@ -239,19 +248,16 @@ class JumpFragment : DialogFragment() {
         val results = FilterResults()
 
         // The items never change after construction, not sure if really needs to copy
-        var copy: ArrayList<String>
-        synchronized(lock) { copy = ArrayList(originalItems) }
         if (constraint == null || constraint.isEmpty()) {
-          results.values = copy
-          results.count = copy.size
+          results.values = originalItems
+          results.count = originalItems.size
         } else {
           val infix = constraint.toString().toLowerCase(Locale.getDefault())
-          val filteredCopy = mutableListOf<String>()
-          for (i in copy) {
-            val value = i.toLowerCase(Locale.getDefault())
-            if (value.contains(infix)) {
-              filteredCopy.add(i)
-            }
+          val filteredIndex = infix.toIntOrNull()?.toString()
+          val filteredCopy = originalItems.filterIndexed { index, sura ->
+            sura.toLowerCase(Locale.getDefault()).contains(infix) ||
+                // support English numbers in Arabic mode
+                filteredIndex != null && (index + 1).toString().contains(filteredIndex)
           }
           results.values = filteredCopy
           results.count = filteredCopy.size
