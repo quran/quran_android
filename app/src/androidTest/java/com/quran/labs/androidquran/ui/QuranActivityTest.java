@@ -34,13 +34,13 @@ public class QuranActivityTest extends BaseActivityTest {
         .check(matches(isDisplayed()));
 
     //when
-    onView(allOf(withText("Surat Al-Fatihah"), isCompletelyDisplayed()))
+    onView(allOf(withText("Surah Al-Fatihah"), isCompletelyDisplayed()))
         .perform(click());
 
     //then
     intended(hasComponent(PagerActivity.class.getName()));
 
-    onView(withText("Surat Al-Fatihah"))
+    onView(withText("Surah Al-Fatihah"))
         .check(matches(isDisplayed()));
   }
 }
