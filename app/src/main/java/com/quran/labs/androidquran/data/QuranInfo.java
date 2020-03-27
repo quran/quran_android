@@ -263,6 +263,10 @@ public class QuranInfo {
       Crashlytics.logException(new IllegalArgumentException("got page: " + page));
       page = 1;
     }
+    return getSuraOnPage(page);
+  }
+
+  public int getSuraOnPage(int page) {
     return pageSuraStart[page - 1];
   }
 
