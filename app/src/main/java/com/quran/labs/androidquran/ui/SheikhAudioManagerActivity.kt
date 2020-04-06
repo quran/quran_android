@@ -400,8 +400,10 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       notifyDataSetChanged()
     }
 
-    val fullyDownloadedCheckedSurahCount = fullyDownloadedCheckedState.size()
-    val notFullyDownloadedCheckedSurahCount = notFullyDownloadedCheckedState.size()
+    val fullyDownloadedCheckedSurahCount: Int
+        get() = fullyDownloadedCheckedState.size()
+    val notFullyDownloadedCheckedSurahCount: Int
+        get() = notFullyDownloadedCheckedState.size()
 
     val checkedSurahs: Pair<List<Int>, List<Int>>
       get() {
