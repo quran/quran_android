@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class QuranRow {
 
@@ -24,7 +25,7 @@ public class QuranRow {
   public Integer imageFilterColor;
   public Integer juzType;
   public String juzOverlayText;
-  public String dateAdded;
+  public long dateAddedInMillis;
 
   // For Bookmarks
   public long tagId;
@@ -43,7 +44,7 @@ public class QuranRow {
     private long tagId = -1;
     private long bookmarkId = -1;
     private String juzOverlayText;
-    private String dateAdded;
+    private long dateAddedInMillis;
     private Integer imageFilterColor;
     private Bookmark bookmark;
 
@@ -109,21 +110,21 @@ public class QuranRow {
     }
 
     public Builder withDate(long timeStamp) {
-      dateAdded = new SimpleDateFormat("MMM dd, HH:mm").format(new Date(timeStamp * 1000));
+      dateAddedInMillis = timeStamp * 1000;
       return this;
     }
 
     public QuranRow build() {
       return new QuranRow(text, metadata, rowType, sura,
           ayah, page, imageResource, imageFilterColor, juzType,
-          juzOverlayText, bookmarkId, tagId, bookmark, dateAdded);
+          juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis);
     }
   }
 
   private QuranRow(String text, String metadata, int rowType,
       int sura, int ayah, int page, Integer imageResource, Integer filterColor,
       Integer juzType, String juzOverlayText, long bookmarkId, long tagId, Bookmark bookmark,
-                   String dateAdded) {
+                   long dateAddedInMillis) {
     this.text = text;
     this.rowType = rowType;
     this.sura = sura;
@@ -137,7 +138,7 @@ public class QuranRow {
     this.tagId = tagId;
     this.bookmarkId = bookmarkId;
     this.bookmark = bookmark;
-    this.dateAdded = dateAdded;
+    this.dateAddedInMillis = dateAddedInMillis;
   }
 
   public boolean isHeader() {
