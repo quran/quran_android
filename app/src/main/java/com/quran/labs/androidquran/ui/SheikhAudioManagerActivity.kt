@@ -313,7 +313,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     val intent = ServiceIntentHelper.getDownloadIntent(
         this,
         audioUtils.getQariUrl(qari),
-        baseUri, sheikhName, AUDIO_DOWNLOAD_KEY,
+        baseUri, sheikhName, AUDIO_DOWNLOAD_KEY + qari.id + startSurah,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO
     )
     intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, SuraAyah(startSurah, 1))
@@ -322,14 +322,15 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     )
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
     startService(intent)
-    AudioManagerUtils.clearCacheKeyForSheikh(qari)
   }
 
   override fun handleDownloadSuccess() {
+    AudioManagerUtils.clearCacheKeyForSheikh(qari)
     readShuyookhData()
   }
 
   override fun handleDownloadFailure(errId: Int) {
+    AudioManagerUtils.clearCacheKeyForSheikh(qari)
     readShuyookhData()
   }
 
@@ -439,6 +440,6 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   companion object {
     const val EXTRA_SHEIKH = "SurahAudioManager.EXTRA_SHEIKH"
-    private const val AUDIO_DOWNLOAD_KEY = "SurahAudioManager.DownloadKey"
+    private const val AUDIO_DOWNLOAD_KEY = "SurahAudioManager.DownloadKey."
   }
 }
