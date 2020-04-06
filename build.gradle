@@ -12,7 +12,7 @@ buildscript {
     materialComponentsVersion = '1.1.0'
     espressoVersion = '3.2.0'
     // note - 3.13.x and above require minSdk 21
-    okhttpVersion = '3.12.9'
+    okhttpVersion = '3.12.10'
     workManagerVersion = '2.3.4'
 
     deps = [
