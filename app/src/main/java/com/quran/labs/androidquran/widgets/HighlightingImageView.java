@@ -168,44 +168,27 @@ public class HighlightingImageView extends AppCompatImageView {
       private void normalizeAyahBoundsList(List<AyahBounds> start, List<AyahBounds> end) {
         // this function takes two unequal length lists and tries to normalize them
 
-        // first take the easy case
         int startSize = start.size();
         int endSize = end.size();
         int minSize = Math.min(startSize, endSize);
         int maxSize = Math.max(startSize, endSize);
         List<AyahBounds> minList = startSize < endSize? start : end;
-        List<AyahBounds> maxList = startSize > endSize? start : end;
+        int diff = maxSize - minSize;
 
-        if(minSize == 1) {
-          RectF rectToBeDivided = minList.get(0).getBounds();
-          float oLeft = rectToBeDivided.left;
-          float oRight = rectToBeDivided.right;
-          float oTop = rectToBeDivided.top;
-          float oBottom = rectToBeDivided.bottom;
-          minList.clear();
-          float part = (float)(oRight-oLeft)/maxSize;
-          for(int i=0; i<maxSize; ++i) {
-            float left = oLeft + part*i;
-            float right = left + part;
-            RectF rect = new RectF(left, oTop, right, oBottom);
-            AyahBounds ayahBounds = new AyahBounds(0, 0, rect);
-            minList.add(ayahBounds);
-          }
-          return;
+        RectF rectToBeDivided = minList.get(minSize-1).getBounds();
+        float oLeft = rectToBeDivided.left;
+        float oRight = rectToBeDivided.right;
+        float oTop = rectToBeDivided.top;
+        float oBottom = rectToBeDivided.bottom;
+        minList.remove(minSize-1);
+        float part = (oRight-oLeft) /(diff+1);
+        for(int i=0; i<(diff+1); ++i) {
+          float left = oLeft + part*i;
+          float right = left + part;
+          RectF rect = new RectF(left, oTop, right, oBottom);
+          AyahBounds ayahBounds = new AyahBounds(0, 0, rect);
+          minList.add(ayahBounds);
         }
-
-        // the case where we have 2 <-> 3
-        // Fade in/out logic
-//        RectF unmapped = maxList.get(2).getBounds();
-//        RectF vanish = new RectF(unmapped.left, unmapped.top, unmapped.right, unmapped.top);
-//        minList.add(new AyahBounds(0, 0, vanish));
-
-        // divide last into two
-        RectF secondLast = minList.get(1).getBounds();
-        float part = (float)(secondLast.right-secondLast.left)/2.f;
-        RectF last = new RectF(secondLast.left + part, secondLast.top, secondLast.right, secondLast.bottom);
-        secondLast.right = secondLast.left + part;
-        minList.add(new AyahBounds(0, 0, last));
       }
 
       @Override
@@ -258,7 +241,8 @@ public class HighlightingImageView extends AppCompatImageView {
 
       @Override
       public void onAnimationCancel(Animator animation) {
-
+        floatableAyahCoordinates.remove(ayahTransition);
+        highlights.remove(ayahTransition);
       }
 
       @Override
