@@ -1,5 +1,10 @@
 package com.quran.labs.androidquran.widgets;
 
+import android.animation.Animator;
+import android.animation.RectEvaluator;
+import android.animation.TimeInterpolator;
+import android.animation.TypeEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -12,7 +17,10 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.BounceInterpolator;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -22,6 +30,8 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +72,8 @@ public class HighlightingImageView extends AppCompatImageView {
   private PageCoordinates pageCoordinates;
   private AyahCoordinates ayahCoordinates;
   private Set<ImageDrawHelper> imageDrawHelpers;
+  private Map<String, List<AyahBounds>>  floatableAyahCoordinates = new HashMap<>();
+  final static String TAG = "MMR";
 
   public HighlightingImageView(Context context) {
     this(context, null);
@@ -130,17 +142,137 @@ public class HighlightingImageView extends AppCompatImageView {
     adjustNightMode();
   }
 
+  private void highlightFloatableAyah(Set<String> highlights, String currentSurahAyah) {
+    Log.d(TAG, "Now setting up animation for "+currentSurahAyah);
+    String previousSurahAyah = currentSurahAyah;
+    for(String surahAyahs: highlights) {
+      previousSurahAyah = surahAyahs;
+    }
+    highlights.clear();
+    final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates == null ? null :
+        ayahCoordinates.getAyahCoordinates();
+    if(coordinatesData == null) {
+      // can't setup animation, if coordinates are not known beforehand
+      highlights.add(currentSurahAyah);
+      return;
+    }
+    final String ayahTransition = previousSurahAyah+"->"+currentSurahAyah;
+    Log.d(TAG, "Now setting up animation for "+ayahTransition);
+    List<AyahBounds> previousAyahBoundsList = coordinatesData.get(previousSurahAyah);
+    List<AyahBounds> currentAyahBoundsList = coordinatesData.get(currentSurahAyah);
+    highlights.add(ayahTransition);
+    // add animator
+    ValueAnimator animator = ValueAnimator.ofObject(new TypeEvaluator() {
+      @Override
+      public Object evaluate(float fraction, Object startObject, Object endObject) {
+        List<AyahBounds> start = (List<AyahBounds>)startObject;
+        int startSize = start.size();
+
+        List<AyahBounds> end = (List<AyahBounds>)endObject;
+        int endSize = end.size();
+
+        int maxSize = Math.max(startSize, endSize);
+        List<AyahBounds> result = new ArrayList<>(maxSize);
+
+        for(int i=0; i<maxSize; ++i) {
+          int startIndex = i%startSize;
+          int endIndex = i%endSize;
+          RectF startValue = start.get(startIndex).getBounds();
+          RectF endValue = end.get(endIndex).getBounds();
+          float left = startValue.left + (endValue.left - startValue.left) * fraction;
+          float top = startValue.top + (endValue.top - startValue.top) * fraction;
+          float right = startValue.right + (endValue.right - startValue.right) * fraction;
+          float bottom = startValue.bottom + (endValue.bottom - startValue.bottom) * fraction;
+          AyahBounds intermediateBounds = new AyahBounds(0,0, new RectF(left, top, right, bottom));
+          result.add(intermediateBounds);
+        }
+        return result;
+      }
+    }, previousAyahBoundsList, currentAyahBoundsList);
+    animator.setDuration(500);
+    String finalPreviousSurahAyah = previousSurahAyah;
+    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+      @Override
+      public void onAnimationUpdate(ValueAnimator animation) {
+        List<AyahBounds> value = (List<AyahBounds>) animation.getAnimatedValue();
+        floatableAyahCoordinates.put(ayahTransition, value);
+        invalidate();
+      }
+    });
+    animator.addListener(new Animator.AnimatorListener() {
+      @Override
+      public void onAnimationStart(Animator animation) {
+
+      }
+
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        floatableAyahCoordinates.remove(ayahTransition);
+        highlights.remove(ayahTransition);
+        highlights.add(currentSurahAyah);
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+
+      }
+
+      @Override
+      public void onAnimationRepeat(Animator animation) {
+
+      }
+    });
+    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+    animator.start();
+  }
+
+  private boolean shouldFloatHighlight(Set<String> highlights, HighlightType type, int sura, int ayah) {
+    // TODO: this should really be handled by HighlightType.HighlightAnimationConfig
+    // TODO: add more conditions, restricting float animation
+    Log.d("MMR", "Should float highlight "+sura + ":" +ayah);
+
+    // only animating AUDIO highlights, for now
+    if(!type.equals(HighlightType.AUDIO)) {
+      return false;
+    }
+
+    // can only animate from one ayah to another, for now
+    if(highlights.size() != 1) {
+      Log.d("MMR", "highlight size not 1 but"+highlights.size());
+      return false;
+    }
+
+    String currentSurahAyah = sura + ":" + ayah;
+    String previousSurahAyah = currentSurahAyah;
+    for(String surahAyahs: highlights) {
+      previousSurahAyah = surahAyahs;
+    }
+    if(currentSurahAyah.equals(previousSurahAyah)) {
+      // can't animate to the same location
+      return false;
+    }
+    // if ayah on different pages then return false (what about double pages?) (but the algorithm should work regardless)
+    // if ayah not consecutive, then also return false (but the algorithm should work regardless)
+    return true;
+  }
+
   public void highlightAyah(int sura, int ayah, HighlightType type) {
     Set<String> highlights = currentHighlights.get(type);
     if (highlights == null) {
       highlights = new HashSet<>();
       currentHighlights.put(type, highlights);
+      highlights.add(sura + ":" + ayah);
     } else if (!type.isMultipleHighlightsAllowed()) {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
-      highlights.clear();
+      // only if highlight type is floatable
+      if(shouldFloatHighlight(highlights, type, sura, ayah)) {
+        highlightFloatableAyah(highlights, sura + ":" + ayah);
+      } else {
+        highlights.clear();
+        highlights.add(sura + ":" + ayah);
+      }
     }
-    highlights.add(sura + ":" + ayah);
   }
 
   @Override
@@ -322,6 +454,9 @@ public class HighlightingImageView extends AppCompatImageView {
         for (String ayah : entry.getValue()) {
            if (alreadyHighlighted.contains(ayah)) continue;
            List<AyahBounds> rangesToDraw = coordinatesData.get(ayah);
+           if(rangesToDraw == null || rangesToDraw.isEmpty()) {
+             rangesToDraw = floatableAyahCoordinates.get(ayah);
+           }
            if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
              for (AyahBounds b : rangesToDraw) {
                matrix.mapRect(scaledRect, b.getBounds());

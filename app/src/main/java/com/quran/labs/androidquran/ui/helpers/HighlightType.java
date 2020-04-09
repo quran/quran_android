@@ -8,20 +8,30 @@ import com.quran.labs.androidquran.R;
 
 public class HighlightType implements Comparable<HighlightType> {
 
-  public static final HighlightType SELECTION = new HighlightType(1, false, R.color.selection_highlight);
-  public static final HighlightType AUDIO =     new HighlightType(2, false, R.color.audio_highlight);
-  public static final HighlightType NOTE =      new HighlightType(3, true,  R.color.note_highlight);
-  public static final HighlightType BOOKMARK =  new HighlightType(4, true,  R.color.bookmark_highlight);
+  public static final HighlightType SELECTION = new HighlightType(1, false, R.color.selection_highlight, false);
+  public static final HighlightType AUDIO =     new HighlightType(2, false, R.color.audio_highlight,     true);
+  public static final HighlightType NOTE =      new HighlightType(3, true,  R.color.note_highlight,      false);
+  public static final HighlightType BOOKMARK =  new HighlightType(4, true,  R.color.bookmark_highlight,  false);
 
   private Long id;
   private boolean multipleHighlightsAllowed;
   private int colorId;
   private Integer color = null;
+  private boolean floatable; 
+  // TODO: replace this with HighlightAnimationConfig
+  // which contains:
+  // 1. duration of animation
+  // 2. under what circumstances to animate, given ayahs
+  // 3. type of interpolator etc.
+  // 4. animation rule - The mapping of bounds (if ayah A has 3 bounds and B has 2 bounds, how to take care of the extra one?)
+  // I am not doing this right now because this seems
+  // over-engineering to me, given that animation takes place just for Audio and that too for consecutive ayahs
 
-  private HighlightType(long id, boolean multipleHighlightsAllowed, int colorId) {
+  private HighlightType(long id, boolean multipleHighlightsAllowed, int colorId, boolean floatable) {
     this.id = id;
     this.multipleHighlightsAllowed = multipleHighlightsAllowed;
     this.colorId = colorId;
+    this.floatable = floatable;
   }
 
   public boolean isMultipleHighlightsAllowed() {
@@ -33,6 +43,10 @@ public class HighlightType implements Comparable<HighlightType> {
       color = ContextCompat.getColor(context, colorId);
     }
     return color;
+  }
+
+  public boolean isFloatable() {
+    return this.floatable;
   }
 
   @Override
