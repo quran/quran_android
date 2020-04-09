@@ -158,27 +158,71 @@ public class HighlightingImageView extends AppCompatImageView {
     }
     final String ayahTransition = previousSurahAyah+"->"+currentSurahAyah;
     Log.d(TAG, "Now setting up animation for "+ayahTransition);
-    List<AyahBounds> previousAyahBoundsList = coordinatesData.get(previousSurahAyah);
-    List<AyahBounds> currentAyahBoundsList = coordinatesData.get(currentSurahAyah);
+    List<AyahBounds> previousAyahBoundsList = new ArrayList<>(coordinatesData.get(previousSurahAyah));
+    List<AyahBounds> currentAyahBoundsList = new ArrayList<>(coordinatesData.get(currentSurahAyah));
     highlights.add(ayahTransition);
+
     // add animator
     ValueAnimator animator = ValueAnimator.ofObject(new TypeEvaluator() {
+
+      private void normalizeAyahBoundsList(List<AyahBounds> start, List<AyahBounds> end) {
+        // this function takes two unequal length lists and tries to normalize them
+
+        // first take the easy case
+        int startSize = start.size();
+        int endSize = end.size();
+        int minSize = Math.min(startSize, endSize);
+        int maxSize = Math.max(startSize, endSize);
+        List<AyahBounds> minList = startSize < endSize? start : end;
+        List<AyahBounds> maxList = startSize > endSize? start : end;
+
+        if(minSize == 1) {
+          RectF rectToBeDivided = minList.get(0).getBounds();
+          float oLeft = rectToBeDivided.left;
+          float oRight = rectToBeDivided.right;
+          float oTop = rectToBeDivided.top;
+          float oBottom = rectToBeDivided.bottom;
+          minList.clear();
+          float part = (float)(oRight-oLeft)/maxSize;
+          for(int i=0; i<maxSize; ++i) {
+            float left = oLeft + part*i;
+            float right = left + part;
+            RectF rect = new RectF(left, oTop, right, oBottom);
+            AyahBounds ayahBounds = new AyahBounds(0, 0, rect);
+            minList.add(ayahBounds);
+          }
+          return;
+        }
+
+        // the case where we have 2 <-> 3
+        // Fade in/out logic
+//        RectF unmapped = maxList.get(2).getBounds();
+//        RectF vanish = new RectF(unmapped.left, unmapped.top, unmapped.right, unmapped.top);
+//        minList.add(new AyahBounds(0, 0, vanish));
+
+        // divide last into two
+        RectF secondLast = minList.get(1).getBounds();
+        float part = (float)(secondLast.right-secondLast.left)/2.f;
+        RectF last = new RectF(secondLast.left + part, secondLast.top, secondLast.right, secondLast.bottom);
+        secondLast.right = secondLast.left + part;
+        minList.add(new AyahBounds(0, 0, last));
+      }
+
       @Override
       public Object evaluate(float fraction, Object startObject, Object endObject) {
         List<AyahBounds> start = (List<AyahBounds>)startObject;
-        int startSize = start.size();
-
         List<AyahBounds> end = (List<AyahBounds>)endObject;
-        int endSize = end.size();
 
-        int maxSize = Math.max(startSize, endSize);
-        List<AyahBounds> result = new ArrayList<>(maxSize);
+        if(start.size() != end.size()) {
+          normalizeAyahBoundsList(start, end);
+        }
 
-        for(int i=0; i<maxSize; ++i) {
-          int startIndex = i%startSize;
-          int endIndex = i%endSize;
-          RectF startValue = start.get(startIndex).getBounds();
-          RectF endValue = end.get(endIndex).getBounds();
+        int size = start.size();
+        List<AyahBounds> result = new ArrayList<>(size);
+
+        for(int i=0; i<size; ++i) {
+          RectF startValue = start.get(i).getBounds();
+          RectF endValue = end.get(i).getBounds();
           float left = startValue.left + (endValue.left - startValue.left) * fraction;
           float top = startValue.top + (endValue.top - startValue.top) * fraction;
           float right = startValue.right + (endValue.right - startValue.right) * fraction;
@@ -190,7 +234,7 @@ public class HighlightingImageView extends AppCompatImageView {
       }
     }, previousAyahBoundsList, currentAyahBoundsList);
     animator.setDuration(500);
-    String finalPreviousSurahAyah = previousSurahAyah;
+
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override
       public void onAnimationUpdate(ValueAnimator animation) {
