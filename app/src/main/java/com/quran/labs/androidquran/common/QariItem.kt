@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.common
 
 import android.os.Parcelable
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -9,9 +10,11 @@ data class QariItem(
   val name: String,
   val url: String,
   val path: String,
-  val databaseName: String? = null
+  val db: String? = null
 ) : Parcelable {
+  @IgnoredOnParcel
+  val databaseName = if (db.isNullOrEmpty()) null else db
 
   val isGapless: Boolean
-    get() = !databaseName.isNullOrEmpty()
+    get() = databaseName != null
 }
