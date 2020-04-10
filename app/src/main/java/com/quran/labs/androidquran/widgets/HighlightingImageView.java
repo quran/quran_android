@@ -151,7 +151,9 @@ public class HighlightingImageView extends AppCompatImageView {
     highlights.clear();
     final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates == null ? null :
         ayahCoordinates.getAyahCoordinates();
-    if(coordinatesData == null) {
+    if(coordinatesData == null
+        || coordinatesData.get(previousSurahAyah) == null
+        || coordinatesData.get(currentSurahAyah) == null) {
       // can't setup animation, if coordinates are not known beforehand
       highlights.add(currentSurahAyah);
       return;
