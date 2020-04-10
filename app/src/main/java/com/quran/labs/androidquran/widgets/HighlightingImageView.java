@@ -73,6 +73,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private AyahCoordinates ayahCoordinates;
   private Set<ImageDrawHelper> imageDrawHelpers;
   private Map<String, List<AyahBounds>>  floatableAyahCoordinates = new HashMap<>();
+  private ValueAnimator animator;
   final static String TAG = "MMR";
 
   public HighlightingImageView(Context context) {
@@ -117,6 +118,16 @@ public class HighlightingImageView extends AppCompatImageView {
   public void unHighlight(HighlightType type) {
     if (!currentHighlights.isEmpty()) {
       currentHighlights.remove(type);
+      if(type.isFloatable()) {
+        //stop animation here
+        if(animator != null) {
+          // this check is essential because
+          // if playing first time and stopping
+          // before animation is setup
+          animator.cancel();
+        }
+        floatableAyahCoordinates.clear();
+      }
       invalidate();
     }
   }
@@ -144,28 +155,33 @@ public class HighlightingImageView extends AppCompatImageView {
 
   private void highlightFloatableAyah(Set<String> highlights, String currentSurahAyah) {
     Log.d(TAG, "Now setting up animation for "+currentSurahAyah);
+    final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates.getAyahCoordinates();
+
     String previousSurahAyah = currentSurahAyah;
     for(String surahAyahs: highlights) {
       previousSurahAyah = surahAyahs;
     }
-    highlights.clear();
-    final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates == null ? null :
-        ayahCoordinates.getAyahCoordinates();
-    if(coordinatesData == null
-        || coordinatesData.get(previousSurahAyah) == null
-        || coordinatesData.get(currentSurahAyah) == null) {
-      // can't setup animation, if coordinates are not known beforehand
-      highlights.add(currentSurahAyah);
-      return;
+    List<AyahBounds> startingBounds;
+    int arrowIndex = previousSurahAyah.indexOf("->");
+    if(arrowIndex != -1) {
+      // The ayah changed during animating
+      startingBounds = (List<AyahBounds>)animator.getAnimatedValue();
+      animator.cancel();
+      previousSurahAyah = previousSurahAyah.substring(arrowIndex + 2);
+    } else {
+      startingBounds = coordinatesData.get(previousSurahAyah);
     }
+
     final String ayahTransition = previousSurahAyah+"->"+currentSurahAyah;
     Log.d(TAG, "Now setting up animation for "+ayahTransition);
-    List<AyahBounds> previousAyahBoundsList = new ArrayList<>(coordinatesData.get(previousSurahAyah));
+    List<AyahBounds> previousAyahBoundsList = new ArrayList<>(startingBounds);
     List<AyahBounds> currentAyahBoundsList = new ArrayList<>(coordinatesData.get(currentSurahAyah));
+
+    highlights.clear();
     highlights.add(ayahTransition);
 
     // add animator
-    ValueAnimator animator = ValueAnimator.ofObject(new TypeEvaluator() {
+    animator = ValueAnimator.ofObject(new TypeEvaluator() {
 
       private void normalizeAyahBoundsList(List<AyahBounds> start, List<AyahBounds> end) {
         // this function takes two unequal length lists and tries to normalize them
@@ -218,7 +234,7 @@ public class HighlightingImageView extends AppCompatImageView {
         return result;
       }
     }, previousAyahBoundsList, currentAyahBoundsList);
-    animator.setDuration(500);
+    animator.setDuration(2500);
 
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override
@@ -262,7 +278,7 @@ public class HighlightingImageView extends AppCompatImageView {
     Log.d("MMR", "Should float highlight "+sura + ":" +ayah);
 
     // only animating AUDIO highlights, for now
-    if(!type.equals(HighlightType.AUDIO)) {
+    if(!type.isFloatable()) {
       return false;
     }
 
@@ -279,6 +295,12 @@ public class HighlightingImageView extends AppCompatImageView {
     }
     if(currentSurahAyah.equals(previousSurahAyah)) {
       // can't animate to the same location
+      return false;
+    }
+    final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates == null ? null :
+        ayahCoordinates.getAyahCoordinates();
+    if(coordinatesData == null) {
+      // can't setup animation, if coordinates are not known beforehand
       return false;
     }
     // if ayah on different pages then return false (what about double pages?) (but the algorithm should work regardless)
@@ -456,6 +478,28 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
+  private boolean alreadyHighlightedContains(String ayah) {
+    // ayah can either be like 89:7 or 89:7->89:8
+    if(alreadyHighlighted.contains(ayah)) {
+      return true;
+    }
+    int arrowIndex = ayah.indexOf("->");
+    if (arrowIndex == -1) {
+      return false;
+    }
+    String startAyah = ayah.substring(0, arrowIndex);
+    String endAyah = ayah.substring(arrowIndex + 2);
+    if(alreadyHighlighted.contains(startAyah)
+        // TODO: to show or not to show is the question!
+//        || // if x -> y, either x or y is already highlighted, then we don't show the highlight
+        && // if x -> y, if one of them is not highlighted, overlap highlights and show animation
+        alreadyHighlighted.contains(endAyah)) {
+      return true;
+    }
+    return false;
+
+  }
+
   @Override
   protected void onDraw(@NonNull Canvas canvas) {
     super.onDraw(canvas);
@@ -482,7 +526,7 @@ public class HighlightingImageView extends AppCompatImageView {
       for (Map.Entry<HighlightType, Set<String>> entry : currentHighlights.entrySet()) {
         Paint paint = getPaintForHighlightType(entry.getKey());
         for (String ayah : entry.getValue()) {
-           if (alreadyHighlighted.contains(ayah)) continue;
+           if (alreadyHighlightedContains(ayah)) continue;
            List<AyahBounds> rangesToDraw = coordinatesData.get(ayah);
            if(rangesToDraw == null || rangesToDraw.isEmpty()) {
              rangesToDraw = floatableAyahCoordinates.get(ayah);
