@@ -72,9 +72,8 @@ public class HighlightingImageView extends AppCompatImageView {
   private PageCoordinates pageCoordinates;
   private AyahCoordinates ayahCoordinates;
   private Set<ImageDrawHelper> imageDrawHelpers;
-  private Map<String, List<AyahBounds>>  floatableAyahCoordinates = new HashMap<>();
+  private Map<String, List<AyahBounds>> floatableAyahCoordinates = new HashMap<>();
   private ValueAnimator animator;
-  final static String TAG = "MMR";
 
   public HighlightingImageView(Context context) {
     this(context, null);
@@ -99,9 +98,9 @@ public class HighlightingImageView extends AppCompatImageView {
     fontSize = scrollable ? scrollableHeaderFooterFontSize : headerFooterFontSize;
   }
 
-  public void unHighlight(int sura, int ayah, HighlightType type) {
+  public void unHighlight(int surah, int ayah, HighlightType type) {
     Set<String> highlights = currentHighlights.get(type);
-    if (highlights != null && highlights.remove(sura + ":" + ayah)) {
+    if (highlights != null && highlights.remove(surah + ":" + ayah)) {
       invalidate();
     }
   }
@@ -154,7 +153,6 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   private void highlightFloatableAyah(Set<String> highlights, String currentSurahAyah) {
-    Log.d(TAG, "Now setting up animation for "+currentSurahAyah);
     final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates.getAyahCoordinates();
 
     String previousSurahAyah = currentSurahAyah;
@@ -173,18 +171,19 @@ public class HighlightingImageView extends AppCompatImageView {
     }
 
     final String ayahTransition = previousSurahAyah+"->"+currentSurahAyah;
-    Log.d(TAG, "Now setting up animation for "+ayahTransition);
+
+    // yes we make copies, because normalizing the bounds will change them
     List<AyahBounds> previousAyahBoundsList = new ArrayList<>(startingBounds);
     List<AyahBounds> currentAyahBoundsList = new ArrayList<>(coordinatesData.get(currentSurahAyah));
 
     highlights.clear();
     highlights.add(ayahTransition);
 
-    // add animator
+    // TODO: reason whether this TypeEvaluator should be anonymous or not
     animator = ValueAnimator.ofObject(new TypeEvaluator() {
 
       private void normalizeAyahBoundsList(List<AyahBounds> start, List<AyahBounds> end) {
-        // this function takes two unequal length lists and tries to normalize them
+        // this function takes two unequal length lists and normalizes them
 
         int startSize = start.size();
         int endSize = end.size();
@@ -219,6 +218,8 @@ public class HighlightingImageView extends AppCompatImageView {
         }
 
         int size = start.size();
+
+        //TODO: instead of creating result every time, modify in-place
         List<AyahBounds> result = new ArrayList<>(size);
 
         for(int i=0; i<size; ++i) {
@@ -234,7 +235,9 @@ public class HighlightingImageView extends AppCompatImageView {
         return result;
       }
     }, previousAyahBoundsList, currentAyahBoundsList);
-    animator.setDuration(2500);
+
+    // TODO: where should this constant live?
+    animator.setDuration(500);
 
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
       @Override
@@ -272,10 +275,9 @@ public class HighlightingImageView extends AppCompatImageView {
     animator.start();
   }
 
-  private boolean shouldFloatHighlight(Set<String> highlights, HighlightType type, int sura, int ayah) {
+  private boolean shouldFloatHighlight(Set<String> highlights, HighlightType type, int surah, int ayah) {
     // TODO: this should really be handled by HighlightType.HighlightAnimationConfig
     // TODO: add more conditions, restricting float animation
-    Log.d("MMR", "Should float highlight "+sura + ":" +ayah);
 
     // only animating AUDIO highlights, for now
     if(!type.isFloatable()) {
@@ -284,11 +286,10 @@ public class HighlightingImageView extends AppCompatImageView {
 
     // can only animate from one ayah to another, for now
     if(highlights.size() != 1) {
-      Log.d("MMR", "highlight size not 1 but"+highlights.size());
       return false;
     }
 
-    String currentSurahAyah = sura + ":" + ayah;
+    String currentSurahAyah = surah + ":" + ayah;
     String previousSurahAyah = currentSurahAyah;
     for(String surahAyahs: highlights) {
       previousSurahAyah = surahAyahs;
@@ -303,26 +304,24 @@ public class HighlightingImageView extends AppCompatImageView {
       // can't setup animation, if coordinates are not known beforehand
       return false;
     }
-    // if ayah on different pages then return false (what about double pages?) (but the algorithm should work regardless)
-    // if ayah not consecutive, then also return false (but the algorithm should work regardless)
     return true;
   }
 
-  public void highlightAyah(int sura, int ayah, HighlightType type) {
+  public void highlightAyah(int surah, int ayah, HighlightType type) {
     Set<String> highlights = currentHighlights.get(type);
     if (highlights == null) {
       highlights = new HashSet<>();
       currentHighlights.put(type, highlights);
-      highlights.add(sura + ":" + ayah);
+      highlights.add(surah + ":" + ayah);
     } else if (!type.isMultipleHighlightsAllowed()) {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
       // only if highlight type is floatable
-      if(shouldFloatHighlight(highlights, type, sura, ayah)) {
-        highlightFloatableAyah(highlights, sura + ":" + ayah);
+      if(shouldFloatHighlight(highlights, type, surah, ayah)) {
+        highlightFloatableAyah(highlights, surah + ":" + ayah);
       } else {
         highlights.clear();
-        highlights.add(sura + ":" + ayah);
+        highlights.add(surah + ":" + ayah);
       }
     }
   }
@@ -491,8 +490,8 @@ public class HighlightingImageView extends AppCompatImageView {
     String endAyah = ayah.substring(arrowIndex + 2);
     if(alreadyHighlighted.contains(startAyah)
         // TODO: to show or not to show is the question!
-//        || // if x -> y, either x or y is already highlighted, then we don't show the highlight
-        && // if x -> y, if one of them is not highlighted, overlap highlights and show animation
+        || // if x -> y, either x or y is already highlighted, then we don't show the highlight
+//        && // if x -> y, if one of them is not highlighted, overlap highlights and show animation
         alreadyHighlighted.contains(endAyah)) {
       return true;
     }
