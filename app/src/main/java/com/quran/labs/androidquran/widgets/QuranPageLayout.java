@@ -147,9 +147,9 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     if (drawable == lineDrawable)
       return lineDrawable.getIntrinsicWidth();
 
-    // convert 2mm to pixels
-    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM,
-        2f,
+    // enlarge the book side indicator to a sensible device-independent width
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        13f,
         getResources().getDisplayMetrics());
   }
 
