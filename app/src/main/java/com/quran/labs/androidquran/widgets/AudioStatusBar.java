@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.QariItem;
+import com.quran.labs.androidquran.common.audio.QariItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;

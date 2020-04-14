@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.presenter.audio
 import android.content.Context
 import android.content.Intent
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.QariItem
+import com.quran.labs.androidquran.common.audio.QariItem
 import com.quran.labs.androidquran.dao.audio.AudioPathInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.QuranInfo
