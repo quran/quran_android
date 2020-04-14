@@ -143,11 +143,11 @@ dependencies {
   // workmanager
   implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
 
-  implementation "com.squareup.okio:okio:2.4.3"
+  implementation "com.squareup.okio:okio:2.5.0"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
 
-  implementation 'com.squareup.moshi:moshi:1.9.2'
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
+  implementation "com.squareup.moshi:moshi:${moshiVersion}"
+  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 
   implementation 'com.jakewharton.timber:timber:4.7.1'
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
