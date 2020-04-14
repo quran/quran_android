@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.common
+package com.quran.labs.androidquran.common.audio
 
 import android.os.Parcelable
 import kotlinx.android.parcel.IgnoredOnParcel

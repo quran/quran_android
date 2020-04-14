@@ -37,7 +37,7 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.common.QariItem;
+import com.quran.labs.androidquran.common.audio.QariItem;
 import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
