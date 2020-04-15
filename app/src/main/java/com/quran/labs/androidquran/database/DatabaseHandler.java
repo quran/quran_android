@@ -81,6 +81,7 @@ public class DatabaseHandler {
       DatabaseHandler handler = databaseMap.remove(databaseName);
       if (handler != null) {
         handler.database.close();
+        databaseMap.remove(databaseName);
       }
     } catch (Exception e) {
       Crashlytics.logException(e);

@@ -30,5 +30,5 @@ before_script:
   - adb shell input keyevent 82 &
 
 script:
-   - ./gradlew clean testMadaniRelease -PdisableCrashlytics
+   - ./gradlew clean testMadaniRelease feature:audio:testDebug -PdisableCrashlytics
    - ./gradlew clean connectedMadaniDebugAndroidTest -PdisableCrashlytics

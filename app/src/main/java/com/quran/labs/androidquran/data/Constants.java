@@ -30,6 +30,20 @@ public class Constants {
   public static final String QURAN_APP_BASE = "http://quranapp.com/";
   public static final String QURAN_APP_ENDPOINT = "http://quranapp.com/note";
 
+  // Notification Ids
+  public static final int NOTIFICATION_ID_DOWNLOADING = 1;
+  public static final int NOTIFICATION_ID_DOWNLOADING_COMPLETE = 2;
+  public static final int NOTIFICATION_ID_DOWNLOADING_ERROR = 3;
+  public static final int NOTIFICATION_ID_AUDIO_PLAYBACK = 4;
+  public static final int NOTIFICATION_ID_AUDIO_UPDATE = 5;
+
+  // Notification channels
+  public static final String AUDIO_CHANNEL = "quran_audio_playback";
+  public static final String DOWNLOAD_CHANNEL = "quran_download_progress";
+
+  // Unique work names
+  public static final String AUDIO_UPDATE_UNIQUE_WORK = "audio_update_unique_work";
+
   // Settings Key (some of these have corresponding values in preference_keys.xml)
   public static final String PREF_APP_LOCATION = "appLocation";
   public static final String PREF_USE_ARABIC_NAMES = "useArabicNames";
@@ -81,4 +95,5 @@ public class Constants {
   public static final String DEBUG_PAGES_DOWNLOADED = "debugPagesDownloaded";
   public static final String PREF_READING_CATEGORY = "readingCategoryKey";
   public static final String PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages";
+  public static final String PREF_CURRENT_AUDIO_REVISION = "currentAudioRevision";
 }

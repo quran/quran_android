@@ -1,21 +1,18 @@
 package com.quran.labs.androidquran.service.util;
 
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-
-import com.crashlytics.android.Crashlytics;
-import com.quran.labs.androidquran.QuranDataActivity;
-import com.quran.labs.androidquran.R;
-
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import com.crashlytics.android.Crashlytics;
+import com.quran.labs.androidquran.QuranDataActivity;
+import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.NotificationChannelUtil;
 
 public class QuranDownloadNotifier {
   // error messages
@@ -27,11 +24,13 @@ public class QuranDownloadNotifier {
   public static final int ERROR_GENERAL = 6;
 
   // notification ids
-  private static final int DOWNLOADING_NOTIFICATION = 1;
-  public static final int DOWNLOADING_COMPLETE_NOTIFICATION = 2;
-  private static final int DOWNLOADING_ERROR_NOTIFICATION = 3;
+  private static final int DOWNLOADING_NOTIFICATION = Constants.NOTIFICATION_ID_DOWNLOADING;
+  public static final int DOWNLOADING_COMPLETE_NOTIFICATION
+      = Constants.NOTIFICATION_ID_DOWNLOADING_COMPLETE;
+  private static final int DOWNLOADING_ERROR_NOTIFICATION
+      = Constants.NOTIFICATION_ID_DOWNLOADING_ERROR;
 
-  private static final String NOTIFICATION_CHANNEL_ID = "quran_download_progress";
+  private static final String NOTIFICATION_CHANNEL_ID = Constants.DOWNLOAD_CHANNEL;
 
   public static class ProgressIntent {
     public static final String INTENT_NAME =
@@ -104,10 +103,9 @@ public class QuranDownloadNotifier {
     lastMaximum = -1;
     this.service = service;
 
-    // setup Android O notification channels
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      setupNotificationChannel();
-    }
+    final String channelName = appContext.getString(R.string.notification_channel_download);
+    NotificationChannelUtil.INSTANCE.setupNotificationChannel(
+        notificationManager, NOTIFICATION_CHANNEL_ID, channelName);
   }
 
   public void resetNotifications() {
@@ -337,16 +335,6 @@ public class QuranDownloadNotifier {
       }
     } catch (SecurityException se) {
       Crashlytics.logException(se);
-    }
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.O)
-  private void setupNotificationChannel() {
-    final String channelName = appContext.getString(R.string.notification_channel_download);
-    NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-        channelName, NotificationManager.IMPORTANCE_LOW);
-    if (notificationManager.getNotificationChannel(channelName) == null) {
-      notificationManager.createNotificationChannel(channel);
     }
   }
 }

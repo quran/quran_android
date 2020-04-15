@@ -20,7 +20,6 @@
 
 package com.quran.labs.androidquran.service;
 
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -56,12 +55,17 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.SparseIntArray;
-
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.media.app.NotificationCompat.MediaStyle;
+import androidx.media.session.MediaButtonReceiver;
 import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.data.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseUtils;
@@ -73,21 +77,13 @@ import com.quran.labs.androidquran.service.util.AudioFocusable;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.AudioUtils;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.inject.Inject;
-
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.media.app.NotificationCompat.MediaStyle;
-import androidx.media.session.MediaButtonReceiver;
+import com.quran.labs.androidquran.util.NotificationChannelUtil;
 import io.reactivex.Maybe;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import java.io.File;
+import java.io.IOException;
+import javax.inject.Inject;
 import timber.log.Timber;
 
 /**
@@ -193,8 +189,8 @@ public class AudioService extends Service implements OnCompletionListener,
   // The ID we use for the notification (the onscreen alert that appears
   // at the notification area at the top of the screen as an icon -- and
   // as text as well if the user expands the notification area).
-  final int NOTIFICATION_ID = 4;
-  private static final String NOTIFICATION_CHANNEL_ID = "quran_audio_playback";
+  private final int NOTIFICATION_ID = Constants.NOTIFICATION_ID_AUDIO_PLAYBACK;
+  private static final String NOTIFICATION_CHANNEL_ID = Constants.AUDIO_CHANNEL;
 
   private NotificationManager notificationManager;
   private NotificationCompat.Builder notificationBuilder;
@@ -306,9 +302,9 @@ public class AudioService extends Service implements OnCompletionListener,
         MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
     mediaSession.setCallback(new MediaSessionCallback(), serviceHandler);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      setupNotificationChannel();
-    }
+    final String channelName = getString(R.string.notification_channel_audio);
+    NotificationChannelUtil.INSTANCE.setupNotificationChannel(
+        notificationManager, NOTIFICATION_CHANNEL_ID, channelName);
 
     notificationColor = ContextCompat.getColor(this, R.color.audio_notification_color);
     try {
@@ -1310,16 +1306,6 @@ public class AudioService extends Service implements OnCompletionListener,
     // start/restart/pause media player with new focus settings
     if (player != null && player.isPlaying()) {
       configAndStartMediaPlayer(false);
-    }
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.O)
-  private void setupNotificationChannel() {
-    final String channelName = getString(R.string.notification_channel_audio);
-    NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-        channelName, NotificationManager.IMPORTANCE_LOW);
-    if (notificationManager.getNotificationChannel(channelName) == null) {
-      notificationManager.createNotificationChannel(channel);
     }
   }
 
