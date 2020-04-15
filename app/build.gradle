@@ -97,8 +97,13 @@ android {
       exceptionFormat "full"
     }
   }
+
   androidExtensions {
     experimental = true
+  }
+
+  packagingOptions {
+    exclude "META-INF/*.kotlin_module"
   }
 }
 
@@ -123,7 +128,15 @@ dependencies {
   implementation project(path: ':common:pages')
   implementation project(path: ':common:search')
 
+  implementation project(path: ':feature:audio')
+
   implementation deps.kotlin.stdlib
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+
+  implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+  implementation "com.squareup.retrofit2:converter-moshi:${retrofitVersion}"
+
   implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
   implementation "androidx.media:media:${androidxMediaVersion}"
   implementation "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastVersion}"
@@ -144,7 +157,7 @@ dependencies {
   // workmanager
   implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
 
-  implementation "com.squareup.okio:okio:2.5.0"
+  implementation "com.squareup.okio:okio:${okioVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
 
   implementation "com.squareup.moshi:moshi:${moshiVersion}"

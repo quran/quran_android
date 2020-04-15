@@ -252,6 +252,15 @@ public class QuranSettings {
     }
   }
 
+  public int getCurrentAudioRevision() {
+    return perInstallationPrefs.getInt(Constants.PREF_CURRENT_AUDIO_REVISION, 1);
+  }
+
+  public void setCurrentAudioRevision(int version) {
+    perInstallationPrefs.edit()
+        .putInt(Constants.PREF_CURRENT_AUDIO_REVISION, version).apply();
+  }
+
   public boolean didPresentSdcardPermissionsDialog() {
     return perInstallationPrefs.getBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, false);
   }

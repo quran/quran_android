@@ -22,15 +22,33 @@ public class SuraTimingDatabaseHandler {
     static final String COL_TIME = "time";
   }
 
-  private static Map<String, SuraTimingDatabaseHandler> sSuraDatabaseMap = new HashMap<>();
+  public static class PropertiesTable {
+    static final String TABLE_NAME = "properties";
+    static final String COL_PROPERTY = "property" ;
+    static final String COL_VALUE = "value" ;
+  }
+
+  private static Map<String, SuraTimingDatabaseHandler> databaseMap = new HashMap<>();
 
   public synchronized static SuraTimingDatabaseHandler getDatabaseHandler(String path) {
-    SuraTimingDatabaseHandler handler = sSuraDatabaseMap.get(path);
+    SuraTimingDatabaseHandler handler = databaseMap.get(path);
     if (handler == null) {
       handler = new SuraTimingDatabaseHandler(path);
-      sSuraDatabaseMap.put(path, handler);
+      databaseMap.put(path, handler);
     }
     return handler;
+  }
+
+  public static synchronized void clearDatabaseHandlerIfExists(String databasePath) {
+    try {
+      SuraTimingDatabaseHandler handler = databaseMap.remove(databasePath);
+      if (handler != null) {
+        handler.database.close();
+        databaseMap.remove(databasePath);
+      }
+    } catch (Exception e) {
+      Crashlytics.logException(e);
+    }
   }
 
   private SuraTimingDatabaseHandler(String path) throws SQLException {
@@ -63,6 +81,25 @@ public class SuraTimingDatabaseHandler {
           null, null, null, TimingsTable.COL_AYAH + " ASC");
     } catch (Exception e) {
       return null;
+    }
+  }
+
+  public int getVersion() {
+    if (!validDatabase()) { return -1; }
+
+    Cursor cursor = null;
+    try {
+      cursor = database.query(PropertiesTable.TABLE_NAME, new String[] { PropertiesTable.COL_VALUE },
+          PropertiesTable.COL_PROPERTY + "= 'version'", null, null, null, null);
+      if (cursor != null && cursor.moveToFirst()) {
+        return cursor.getInt(0);
+      } else {
+        return 1;
+      }
+    } catch (Exception e) {
+      return 1;
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
     }
   }
 }
