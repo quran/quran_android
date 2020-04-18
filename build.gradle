@@ -5,7 +5,7 @@ buildscript {
     daggerVersion = '2.27'
     androidxMediaVersion = '1.1.0'
     androidxAnnotationVersion = '1.1.0'
-    androidxPreferencesVersion = '1.1.0'
+    androidxPreferencesVersion = '1.1.1'
     androidxAppcompatVersion = '1.1.0'
     androidxLocalBroadcastVersion = '1.0.0'
     androidxSwipeRefreshVersion = '1.0.0'
