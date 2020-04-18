@@ -241,7 +241,8 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     val endAyah = end.ayah
 
     if (endSura < startSura || endSura == startSura && endAyah < startAyah) {
-      throw IllegalStateException("End isn't larger than the start")
+      throw IllegalStateException(
+          "End isn't larger than the start: $startSura:$startAyah to $endSura:$endAyah")
     }
 
     for (i in startSura..endSura) {
