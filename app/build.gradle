@@ -17,8 +17,8 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 3001
-    versionName "3.0.0-p1"
+    versionCode 3010
+    versionName "3.0.1"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     multiDexEnabled true
   }

@@ -12,6 +12,7 @@ android {
   buildTypes {
      beta {
        consumerProguardFiles 'proguard.cfg'
+       matchingFallbacks = ['debug']
      }
 
      release {
