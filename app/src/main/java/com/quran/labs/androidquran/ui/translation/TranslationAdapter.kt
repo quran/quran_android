@@ -80,6 +80,7 @@ internal class TranslationAdapter(private val context: Context,
 
   fun setData(data: List<TranslationViewRow>) {
     this.data.clear()
+    expandedTafaseerAyahs.clear();
     this.data.addAll(data)
     if (highlightedAyah > 0) {
       highlightAyah(highlightedAyah, false)
