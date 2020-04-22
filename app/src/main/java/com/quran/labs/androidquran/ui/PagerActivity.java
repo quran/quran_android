@@ -1480,7 +1480,8 @@ public class PagerActivity extends QuranActionBarActivity implements
             quranSettings.getPreferredDownloadAmount(), isDualPages);
 
     if (ending != null) {
-      Crashlytics.log("playFromAyah - " + ending + " - original: " + end + " -- " +
+      Crashlytics.log("playFromAyah - " + start + ", ending: " +
+          ending + " - original: " + end + " -- " +
           quranSettings.getPreferredDownloadAmount());
       final QariItem item = audioStatusBar.getAudioInfo();
       final boolean shouldStream = quranSettings.shouldStream();
