@@ -82,10 +82,11 @@ public class TranslationsDBAdapter {
         String languageCode = cursor.getString(6);
         int version = cursor.getInt(7);
         int minimumVersion = cursor.getInt(8);
+        int displayOrder = cursor.getInt(9);
 
         if (quranFileUtils.hasTranslation(context, filename)) {
           items.add(new LocalTranslation(id, filename, name, translator,
-              translatorForeign, url, languageCode, version, minimumVersion));
+              translatorForeign, url, languageCode, version, minimumVersion, displayOrder));
         }
       }
       cursor.close();
@@ -105,11 +106,31 @@ public class TranslationsDBAdapter {
   public boolean writeTranslationUpdates(List<TranslationItem> updates) {
     boolean result = true;
     db.beginTransaction();
+
     try {
       for (int i = 0, updatesSize = updates.size(); i < updatesSize; i++) {
         TranslationItem item = updates.get(i);
         if (item.exists()) {
+          int displayOrder = 0;
+
           final Translation translation = item.getTranslation();
+
+          if (item.getDisplayOrder() > -1) {
+            displayOrder = item.getDisplayOrder();
+          } else {
+            // get next highest display order
+            Cursor cursor = db.query(
+                TranslationsTable.TABLE_NAME,
+                new String[] {TranslationsTable.DISPLAY_ORDER},
+                null, null, null, null,
+                TranslationsTable.DISPLAY_ORDER + " DESC",
+                "1"
+            );
+            if (cursor != null && cursor.moveToNext()) {
+              displayOrder = cursor.getInt(0) + 1;
+            }
+          }
+
           ContentValues values = new ContentValues();
           values.put(TranslationsTable.ID, translation.getId());
           values.put(TranslationsTable.NAME, translation.getDisplayName());
@@ -121,6 +142,7 @@ public class TranslationsDBAdapter {
           values.put(TranslationsTable.LANGUAGE_CODE, translation.getLanguageCode());
           values.put(TranslationsTable.VERSION, item.getLocalVersion());
           values.put(TranslationsTable.MINIMUM_REQUIRED_VERSION, translation.getMinimumVersion());
+          values.put(TranslationsTable.DISPLAY_ORDER, displayOrder);
 
           db.replace(TranslationsTable.TABLE_NAME, null, values);
         } else {

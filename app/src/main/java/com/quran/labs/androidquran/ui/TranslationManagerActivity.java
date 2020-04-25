@@ -7,12 +7,14 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.SparseIntArray;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationHeader;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
+import com.quran.labs.androidquran.dao.translation.TranslationItemDiplaySort;
 import com.quran.labs.androidquran.dao.translation.TranslationRowData;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
@@ -26,6 +28,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -57,6 +60,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
   private Disposable onClickDownloadDisposable;
   private Disposable onClickRemoveDisposable;
+  private Disposable onClickRankUpDisposable;
+  private Disposable onClickRankDownDisposable;
 
   @Inject TranslationManagerPresenter presenter;
   @Inject QuranFileUtils quranFileUtils;
@@ -89,6 +94,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     quranSettings = QuranSettings.getInstance(this);
     onClickDownloadDisposable = adapter.getOnClickDownloadSubject().subscribe(this::downloadItem);
     onClickRemoveDisposable = adapter.getOnClickRemoveSubject().subscribe(this::removeItem);
+    onClickRankUpDisposable = adapter.getOnClickRankUpSubject().subscribe(this::rankUpItem);
+    onClickRankDownDisposable = adapter.getOnClickRankDownSubject().subscribe(this::rankDownItem);
 
     translationSwipeRefresh.setOnRefreshListener(this::onRefresh);
     presenter.bind(this);
@@ -112,6 +119,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     presenter.unbind(this);
     onClickDownloadDisposable.dispose();
     onClickRemoveDisposable.dispose();
+    onClickRankUpDisposable.dispose();
+    onClickRankDownDisposable.dispose();
     super.onDestroy();
   }
 
@@ -140,8 +149,13 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         }
       }
 
+      List<TranslationItem> sortedItems = sortedDownloadedItems();
+      int lastDisplayOrder = sortedItems.get(sortedItems.size() - 1).getDisplayOrder();
       TranslationItem updated = downloadingItem.withTranslationVersion(
-          downloadingItem.getTranslation().getCurrentVersion());
+          downloadingItem.getTranslation().getCurrentVersion()
+      ).withDisplayOrder(
+          lastDisplayOrder + 1
+      );
       updateTranslationItem(updated);
 
       // update active translations and add this item to it
@@ -228,9 +242,12 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       TranslationHeader hdr = new TranslationHeader(getString(R.string.downloaded_translations));
       result.add(hdr);
 
+      Collections.sort(downloaded, new TranslationItemDiplaySort());
+
       boolean needsUpgrade = false;
       for (TranslationItem item : downloaded) {
         result.add(item);
+        Timber.i("aaa translation " + item.name () + " order " + item.getDisplayOrder ());
         needsUpgrade = needsUpgrade || item.needsUpgrade();
       }
 
@@ -328,6 +345,81 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         .setNegativeButton(R.string.cancel,
             (dialog, i) -> dialog.dismiss());
     builder.show();
+  }
+
+  private List<TranslationItem> sortedDownloadedItems() {
+    final ArrayList<TranslationItem> result = new ArrayList<>();
+    for (TranslationItem item : allItems) {
+      if (item.exists()) result.add(item);
+    }
+    Collections.sort(result, new TranslationItemDiplaySort());
+    return result;
+  }
+
+  private void rankDownItem(TranslationRowData targetRow) {
+    TranslationItem targetItem = (TranslationItem) targetRow;
+    List<TranslationItem> sortedDownloads = sortedDownloadedItems();
+    if (sortedDownloads.indexOf(targetItem) + 1 < sortedDownloads.size()) { // ignore last item in list
+      TranslationItem updatedItem = targetItem.withDisplayOrder(targetItem.getDisplayOrder() + 1);
+      ArrayList<TranslationItem> toUpdate = new ArrayList<> ( );
+      toUpdate.add(updatedItem);
+      TranslationItem swapItem = null;
+      for ( TranslationItem translationItem : sortedDownloads ) {
+        if (translationItem.getDisplayOrder() == updatedItem.getDisplayOrder()) {
+          swapItem = translationItem;
+          break;
+        }
+      }
+      if (swapItem != null) { // swap item order
+        if (swapItem.getDisplayOrder() > 0) {
+          toUpdate.add(swapItem.withDisplayOrder(swapItem.getDisplayOrder() - 1));
+        }
+      } else { // shift item order for higher items
+        for (TranslationItem translationItem : sortedDownloads) {
+          if (translationItem.getDisplayOrder() > -1 && translationItem.getDisplayOrder() < updatedItem.getDisplayOrder()) {
+            toUpdate.add(translationItem.withDisplayOrder(translationItem.getDisplayOrder() + 1));
+          }
+        }
+      }
+      for ( TranslationItem toUpdateItem : toUpdate ) {
+        updateTranslationItem(toUpdateItem);
+      }
+      generateListItems();
+    }
+  }
+
+  private void rankUpItem(TranslationRowData targetRow) {
+    TranslationItem targetItem = (TranslationItem) targetRow;
+    List<TranslationItem> sortedDownloads = sortedDownloadedItems();
+    if (sortedDownloads.indexOf(targetItem) > 0) { // ignore first item in list
+      ArrayList<TranslationItem> toUpdate  = new ArrayList<>();
+      int updatedDisplayOrder = targetItem.getDisplayOrder();
+      if (updatedDisplayOrder > 0) {
+        TranslationItem updatedItem = targetItem.withDisplayOrder(--updatedDisplayOrder);
+        toUpdate.add(updatedItem);
+      }
+      TranslationItem swapItem = null;
+      for (TranslationItem translationItem : sortedDownloads) {
+        if (translationItem.getDisplayOrder() == updatedDisplayOrder) {
+          swapItem = translationItem;
+        }
+      }
+      if (swapItem != null) { // swap item order
+        toUpdate.add(swapItem.withDisplayOrder(swapItem.getDisplayOrder() + 1));
+      } else { // shift item order for lower items
+        for (TranslationItem translationItem : sortedDownloads) {
+          if (translationItem.getDisplayOrder() > updatedDisplayOrder) {
+            toUpdate.add(translationItem.withDisplayOrder(translationItem.getDisplayOrder() - 1));
+          }
+        }
+      }
+      if (!toUpdate.isEmpty()) {
+        for (TranslationItem toUpdateItem : toUpdate) {
+          updateTranslationItem(toUpdateItem);
+        }
+        generateListItems();
+      }
+    }
   }
 
   private boolean removeTranslation(String fileName) {

@@ -248,7 +248,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
             override = new TranslationItem(translation.withSchema(versions.second), versions.first);
           }
         } else {
-          item = new TranslationItem(translation, local.getVersion());
+          item = new TranslationItem(translation, local.getVersion(), local.getDisplayOrder());
         }
       } else {
         item = new TranslationItem(translation);

@@ -14,7 +14,8 @@ data class Translation(val id: Int,
                        val saveTo: String,
                        val languageCode: String,
                        val translator: String? = "",
-                       @Json(name = "translatorForeign") val translatorNameLocalized: String? = "") {
+                       @Json(name = "translatorForeign") val translatorNameLocalized: String? = "",
+                       val displayOrder: Int = -1) {
 
   fun withSchema(schema: Int) = copy(minimumVersion = schema)
 }

@@ -37,6 +37,7 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.common.LocalTransationDiplaySort;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.audio.QariItem;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
@@ -86,6 +87,8 @@ import com.quran.labs.androidquran.widgets.QuranSpinner;
 import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -1354,10 +1357,13 @@ public class PagerActivity extends QuranActionBarActivity implements
           .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {
             @Override
             public void onSuccess(List<LocalTranslation> translationList) {
-              int items = translationList.size();
+              final List<LocalTranslation> sortedTranslations = new ArrayList<>(translationList);
+              Collections.sort(sortedTranslations, new LocalTransationDiplaySort());
+
+              int items = sortedTranslations.size();
               String[] titles = new String[items];
               for (int i = 0; i < items; i++) {
-                LocalTranslation item = translationList.get(i);
+                LocalTranslation item = sortedTranslations.get(i);
                 if (!TextUtils.isEmpty(item.getTranslatorForeign())) {
                   titles[i] = item.getTranslatorForeign();
                 } else if (!TextUtils.isEmpty(item.getTranslator())) {
@@ -1371,16 +1377,16 @@ public class PagerActivity extends QuranActionBarActivity implements
               if (currentActiveTranslations.isEmpty() && items > 0) {
                 currentActiveTranslations = new HashSet<>();
                 for (int i = 0; i < items; i++) {
-                  currentActiveTranslations.add(translationList.get(i).getFilename());
+                  currentActiveTranslations.add(sortedTranslations.get(i).getFilename());
                 }
               }
               activeTranslations = currentActiveTranslations;
 
               if (translationsSpinnerAdapter != null) {
-                translationsSpinnerAdapter.updateItems(titles, translationList, activeTranslations);
+                translationsSpinnerAdapter.updateItems(titles, sortedTranslations, activeTranslations);
               }
               translationItems = titles;
-              translations = translationList;
+              translations = sortedTranslations;
 
               if (showingTranslation) {
                 // Since translation items have changed, need to

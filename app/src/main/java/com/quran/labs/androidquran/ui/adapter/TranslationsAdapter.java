@@ -1,8 +1,10 @@
 package com.quran.labs.androidquran.ui.adapter;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.subjects.UnicastSubject;
@@ -26,12 +30,23 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
 
   private final UnicastSubject<TranslationRowData> onClickDownloadSubject = UnicastSubject.create();
   private final UnicastSubject<TranslationRowData> onClickRemoveSubject = UnicastSubject.create();
+  private final UnicastSubject<TranslationRowData> onClickRankUpSubject = UnicastSubject.create();
+  private final UnicastSubject<TranslationRowData> onClickRankDownSubject = UnicastSubject.create();
+
+  private final AppCompatActivity activity;
+  private final TranslationSelectionListener selectionListener;
+  private final DownloadedItemActionListener downloadedItemActionListener;
 
   private List<TranslationRowData> translations = new ArrayList<>();
-  private Context context;
 
-  public TranslationsAdapter(Context context) {
-    this.context = context;
+  private ActionMode actionMode;
+
+  private TranslationItem selectedItem;
+
+  public TranslationsAdapter(AppCompatActivity anActivity) {
+    this.activity = anActivity;
+    this.selectionListener = new TranslationSelectionListener(this);
+    this.downloadedItemActionListener = new DownloadedItemActionListener();
   }
 
   @NotNull
@@ -47,6 +62,8 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     switch (holder.getItemViewType()) {
       case R.layout.translation_row:
         TranslationItem item = (TranslationItem) rowItem;
+        holder.setItem(item);
+        holder.itemView.setActivated(item.equals(selectedItem));
         holder.getTranslationTitle().setText(item.name());
         if (TextUtils.isEmpty(item.getTranslation().getTranslatorNameLocalized())) {
           holder.getTranslationInfo().setText(item.getTranslation().getTranslator());
@@ -58,6 +75,8 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
         ImageView rightImage = holder.getRightImage();
 
         if (item.exists()) {
+          rightImage.setVisibility(View.GONE);
+          holder.itemView.setOnLongClickListener(holder.actionMenuListener);
           if (item.needsUpgrade()) {
             leftImage.setImageResource(R.drawable.ic_download);
             leftImage.setVisibility(View.VISIBLE);
@@ -65,10 +84,6 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
           } else {
             leftImage.setVisibility(View.GONE);
           }
-          rightImage.setImageResource(R.drawable.ic_cancel);
-          rightImage.setOnClickListener(holder.removeListener);
-          rightImage.setVisibility(View.VISIBLE);
-          rightImage.setContentDescription(context.getString(R.string.remove_button));
         } else {
           leftImage.setVisibility(View.GONE);
           rightImage.setImageResource(R.drawable.ic_download);
@@ -80,6 +95,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
         }
         break;
       case R.layout.translation_sep:
+        holder.itemView.setActivated(false);
         holder.getSeparatorText().setText(rowItem.name());
         break;
     }
@@ -104,12 +120,58 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     return onClickRemoveSubject.hide();
   }
 
+  public Observable<TranslationRowData> getOnClickRankUpSubject() {
+    return onClickRankUpSubject.hide();
+  }
+
+  public Observable<TranslationRowData> getOnClickRankDownSubject() {
+    return onClickRankDownSubject.hide();
+  }
+
   public void setTranslations(List<TranslationRowData> data) {
     this.translations = data;
   }
 
   public List<TranslationRowData> getTranslations() {
     return translations;
+  }
+
+  public void setSelectedItem ( TranslationItem selectedItem ) {
+    this.selectedItem = selectedItem;
+    notifyDataSetChanged();
+  }
+
+  class TranslationSelectionListener {
+    private final TranslationsAdapter adapter;
+
+    TranslationSelectionListener(TranslationsAdapter anAdapter) {
+      adapter = anAdapter;
+    }
+
+    void handleSelection(TranslationItem item) {
+      adapter.setSelectedItem(item);
+    }
+
+    void clearSelection() {
+      adapter.setSelectedItem(null);
+    }
+  }
+
+  class DownloadedItemActionListener {
+    void handleDeleteItemAction() {
+      onClickRemoveSubject.onNext(selectedItem);
+      selectedItem = null;
+    }
+
+    void handleRankUpItemAction() {
+      onClickRankUpSubject.onNext(selectedItem);
+      selectedItem = null;
+    }
+
+    void handleRankDownItemAction() {
+      onClickRankDownSubject.onNext(selectedItem);
+      selectedItem = null;
+    }
   }
 
   class TranslationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -119,6 +181,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     @Nullable ImageView leftImage;
     @Nullable ImageView rightImage;
     @Nullable TextView separatorText;
+    @Nullable TranslationItem item;
 
     TranslationViewHolder(View itemView, int viewType) {
       super(itemView);
@@ -130,6 +193,10 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       if (viewType == R.layout.translation_row) {
         itemView.setOnClickListener(this);
       }
+    }
+
+    void setItem ( @Nullable TranslationItem item ) {
+      this.item = item;
     }
 
     TextView getSeparatorText() {
@@ -152,18 +219,74 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       return rightImage;
     }
 
-    final View.OnClickListener removeListener = v -> {
-      TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
-      onClickRemoveSubject.onNext(item);
+    final View.OnLongClickListener actionMenuListener = v -> {
+      if (actionMode != null) {
+        actionMode.finish();
+        selectionListener.clearSelection();
+      } else if (activity != null) {
+        selectionListener.handleSelection(item);
+        actionMode = activity.startSupportActionMode(new ModeCallback());
+      }
+      return true;
     };
 
     @Override
     public void onClick(View v) {
-      TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
-      if (item.exists() && !item.needsUpgrade()) {
-        onClickRemoveSubject.onNext(item);
-      } else {
+      if (actionMode != null) {
+        actionMode.finish();
+      }
+      selectionListener.clearSelection();
+      if (!item.exists() || item.needsUpgrade()) {
         onClickDownloadSubject.onNext(item);
+      }
+    }
+  }
+
+  private class ModeCallback implements ActionMode.Callback  {
+    @Override
+    public boolean onCreateActionMode ( ActionMode mode, Menu menu )
+    {
+      MenuInflater inflater = activity.getMenuInflater();
+      inflater.inflate(R.menu.downloaded_translation_menu, menu);
+      return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode ( ActionMode mode, Menu menu )
+    {
+      return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked ( ActionMode mode, MenuItem item )
+    {
+      switch(item.getItemId ()) {
+        case R.id.dtm_delete:
+          downloadedItemActionListener.handleDeleteItemAction();
+          endAction();
+          break;
+        case R.id.dtm_move_up:
+          downloadedItemActionListener.handleRankUpItemAction();
+          endAction();
+          break;
+        case R.id.dtm_move_down:
+          downloadedItemActionListener.handleRankDownItemAction();
+          endAction();
+          break;
+      }
+      return false;
+    }
+
+    @Override
+    public void onDestroyActionMode ( ActionMode mode )
+    {
+      if (mode == actionMode) actionMode = null;
+    }
+
+    private void endAction() {
+      if (actionMode != null) {
+        selectionListener.clearSelection();
+        actionMode.finish();
       }
     }
   }
