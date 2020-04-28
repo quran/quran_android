@@ -13,7 +13,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.VerseRange;
+import com.quran.data.model.VerseRange;
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;

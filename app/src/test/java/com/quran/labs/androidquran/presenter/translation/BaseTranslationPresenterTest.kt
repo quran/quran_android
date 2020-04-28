@@ -6,7 +6,7 @@ import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.VerseRange
+import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter

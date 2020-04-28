@@ -4,12 +4,12 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.data.model.VerseRange;
 import com.quran.data.source.PageProvider;
 import com.quran.data.source.QuranDataSource;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,27 +22,19 @@ import androidx.annotation.VisibleForTesting;
 
 public class QuranInfo {
   private final int[] suraPageStart;
-  private final int[] pageSuraStart;
-  private final int[] pageAyahStart;
-  private final int[] juzPageStart;
-  private final Map<Integer, Integer> juzPageOverride;
-  private final int[] pageRub3Start;
   private final int[] suraNumAyahs;
   private final boolean[] suraIsMakki;
   private final int[][] quarters;
   private final int numberOfPages;
   private final int numberOfPagesDual;
+  private final com.quran.data.core.QuranInfo quranInfo;
 
   @Inject
   public QuranInfo(PageProvider pageProvider) {
     final QuranDataSource quranDataSource = pageProvider.getDataSource();
+    quranInfo = new com.quran.data.core.QuranInfo(quranDataSource);
 
     suraPageStart = quranDataSource.getPageForSuraArray();
-    pageSuraStart = quranDataSource.getSuraForPageArray();
-    pageAyahStart = quranDataSource.getAyahForPageArray();
-    juzPageStart = quranDataSource.getPageForJuzArray();
-    juzPageOverride = quranDataSource.getJuzDisplayPageArrayOverride();
-    pageRub3Start = quranDataSource.getQuarterStartByPage();
     suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray();
     suraIsMakki = quranDataSource.getIsMakkiBySuraArray();
     quarters = quranDataSource.getQuartersArray();
@@ -106,37 +98,19 @@ public class QuranInfo {
   }
 
   public int getStartingPageForJuz(int juz) {
-    return juzPageStart[juz - 1];
+    return quranInfo.getStartingPageForJuz(juz);
   }
 
   public int getPageNumberForSura(int sura) {
-    return suraPageStart[sura - 1];
+    return quranInfo.getPageNumberForSura(sura);
   }
 
   public int getSuraNumberFromPage(int page) {
-    int sura = -1;
-    for (int i = 0; i < Constants.SURAS_COUNT; i++) {
-      if (suraPageStart[i] == page) {
-        sura = i + 1;
-        break;
-      } else if (suraPageStart[i] > page) {
-        sura = i;
-        break;
-      }
-    }
-
-    return sura;
+    return quranInfo.getSuraNumberFromPage(page);
   }
 
   public List<Integer> getListOfSurahWithStartingOnPage(int page) {
-    int startIndex = pageSuraStart[page - 1] - 1;
-    List<Integer> result = new ArrayList<>();
-    for (int i = startIndex; i < Constants.SURAS_COUNT; i++) {
-      if (suraPageStart[i] == page) {
-        result.add(i + 1);
-      } else if (suraPageStart[i] > page) break;
-    }
-    return result;
+    return quranInfo.getListOfSurahWithStartingOnPage(page);
   }
 
   public String getSuraNameFromPage(Context context, int page,
@@ -216,46 +190,16 @@ public class QuranInfo {
   }
 
   public VerseRange getVerseRangeForPage(int page) {
-    int[] result = getPageBounds(page);
-    final int versesInRange =
-        1 + Math.abs(getAyahId(result[0], result[1]) - getAyahId(result[2], result[3]));
-    return new VerseRange(result[0], result[1], result[2], result[3], versesInRange);
+    return quranInfo.getVerseRangeForPage(page);
   }
 
   public int getFirstAyahOnPage(int page) {
-    return pageAyahStart[page - 1];
+    return quranInfo.getFirstAyahOnPage(page);
   }
 
   @NonNull
   public int[] getPageBounds(int page) {
-    if (page > numberOfPages)
-      page = numberOfPages;
-    if (page < 1) page = 1;
-
-    int[] bounds = new int[4];
-    bounds[0] = pageSuraStart[page - 1];
-    bounds[1] = pageAyahStart[page - 1];
-    if (page == numberOfPages) {
-      bounds[2] = Constants.SURA_LAST;
-      bounds[3] = 6;
-    } else {
-      int nextPageSura = pageSuraStart[page];
-      int nextPageAyah = pageAyahStart[page];
-
-      if (nextPageSura == bounds[0]) {
-        bounds[2] = bounds[0];
-        bounds[3] = nextPageAyah - 1;
-      } else {
-        if (nextPageAyah > 1) {
-          bounds[2] = nextPageSura;
-          bounds[3] = nextPageAyah - 1;
-        } else {
-          bounds[2] = nextPageSura - 1;
-          bounds[3] = suraNumAyahs[bounds[2] - 1];
-        }
-      }
-    }
-    return bounds;
+    return quranInfo.getPageBounds(page);
   }
 
   public int safelyGetSuraOnPage(int page) {
@@ -267,7 +211,7 @@ public class QuranInfo {
   }
 
   public int getSuraOnPage(int page) {
-    return pageSuraStart[page - 1];
+    return quranInfo.getSuraOnPage(page);
   }
 
   private String getSuraNameFromPage(Context context, int page) {
@@ -291,20 +235,11 @@ public class QuranInfo {
    */
   @VisibleForTesting
   int getJuzForDisplayFromPage(int page) {
-    final int actualJuz = getJuzFromPage(page);
-    final Integer overriddenJuz = juzPageOverride.get(page);
-    return overriddenJuz == null ? actualJuz : overriddenJuz;
+    return quranInfo.getJuzForDisplayFromPage(page);
   }
 
   public int getJuzFromPage(int page) {
-    for (int i = 0; i < juzPageStart.length; i++) {
-      if (juzPageStart[i] > page) {
-        return i;
-      } else if (juzPageStart[i] == page) {
-        return i + 1;
-      }
-    }
-    return 30;
+    return quranInfo.getJuzFromPage(page);
   }
 
   private int getJuzFromSuraAyah(int sura, int ayah, int juz) {
@@ -324,45 +259,15 @@ public class QuranInfo {
   }
 
   public int getRub3FromPage(int page) {
-    if ((page > numberOfPages) || (page < 1)) return -1;
-    return pageRub3Start[page - 1];
+    return quranInfo.getRub3FromPage(page);
   }
 
   public int getPageFromSuraAyah(int sura, int ayah) {
-    // basic bounds checking
-    if (ayah == 0) ayah = 1;
-    if ((sura < 1) || (sura > Constants.SURAS_COUNT)
-        || (ayah < Constants.AYA_MIN) ||
-        (ayah > Constants.AYA_MAX))
-      return -1;
-
-    // what page does the sura start on?
-    int index = suraPageStart[sura - 1] - 1;
-    while (index < numberOfPages) {
-      // what's the first sura in that page?
-      int ss = pageSuraStart[index];
-
-      // if we've passed the sura, return the previous page
-      // or, if we're at the same sura and passed the ayah
-      if (ss > sura || ((ss == sura) &&
-          (pageAyahStart[index] > ayah))) {
-        break;
-      }
-
-      // otherwise, look at the next page
-      index++;
-    }
-
-    return index;
+    return quranInfo.getPageFromSuraAyah(sura, ayah);
   }
 
   public int getAyahId(int sura, int ayah) {
-    int ayahId = 0;
-    for (int i = 0; i < sura - 1; i++) {
-      ayahId += suraNumAyahs[i];
-    }
-    ayahId += ayah;
-    return ayahId;
+    return quranInfo.getAyahId(sura, ayah);
   }
 
   public SuraAyah getSuraAyahFromAyahId(int ayahId) {
@@ -375,27 +280,15 @@ public class QuranInfo {
   }
 
   public int getNumAyahs(int sura) {
-    if ((sura < 1) || (sura > Constants.SURAS_COUNT)) return -1;
-    return suraNumAyahs[sura - 1];
+    return quranInfo.getNumberOfAyahs(sura);
   }
 
   public  int getPageFromPos(int position, boolean dual) {
-    int page = numberOfPages - position;
-    if (dual) {
-      page = (numberOfPagesDual - position) * 2;
-    }
-    return page;
+    return quranInfo.getPageFromPosition(position, dual);
   }
 
   public int getPosFromPage(int page, boolean dual) {
-    int position = numberOfPages - page;
-    if (dual) {
-      if (page % 2 != 0) {
-        page++;
-      }
-      position = numberOfPagesDual - (page / 2);
-    }
-    return position;
+    return quranInfo.getPositionFromPage(page, dual);
   }
 
   public String getAyahString(int sura, int ayah, Context context) {

@@ -15,7 +15,7 @@ buildscript {
     moshiVersion = '1.9.2'
     // note - 3.13.x and above require minSdk 21
     okhttpVersion = '3.12.+'
-    okioVersion = '2.5.0'
+    okioVersion = '2.6.0'
     workManagerVersion = '2.3.4'
     // note - 2.7.x and above require minSdk 21
     retrofitVersion = '2.6.+'

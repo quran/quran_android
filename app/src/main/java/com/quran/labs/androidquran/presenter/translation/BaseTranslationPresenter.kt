@@ -7,7 +7,7 @@ import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.data.SuraAyah
 import com.quran.labs.androidquran.data.SuraAyahIterator
-import com.quran.labs.androidquran.data.VerseRange
+import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
@@ -35,7 +35,8 @@ internal open class BaseTranslationPresenter<T> internal constructor(
 
   fun getVerses(getArabic: Boolean,
                 translations: List<String>,
-                verseRange: VerseRange): Single<ResultHolder> {
+                verseRange: VerseRange
+  ): Single<ResultHolder> {
     // get all the translations for these verses, using a source of either the list
     // of active translations, or a set of all translations if there are no active
     // translations selected.
