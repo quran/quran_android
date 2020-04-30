@@ -382,6 +382,12 @@
   <string name="audio_manager_download_selection">Скачать выбранные</string>
   <string name="audio_manager_delete_selection">Удалить выбранные</string>
 
+  <!-- audio updates -->
+  <string name="audio_updated_title">Обновление аудио файлов</string>
+  <string name="audio_updated_text">Несколько аудио файлов были обновлены. Ваша копия этих файлов
+    была удалена, новые версии будут загружены при следующем воспроизведении.
+  </string>
+
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_audio">Рецитация Корана</string>
   <string name="notification_channel_download">Загрузки Корана</string>
