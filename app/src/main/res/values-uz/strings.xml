@@ -264,10 +264,11 @@
   <string name="get_translations">Tarjimalar saqlab olish</string>
 
   <!-- help -->
-  <string name="email_us">Agar savollaringizga yuqorida javob olmagan boʻlsangiz quranandroid@gmail.com adresiga maktub yoʻllashingiz mumkin.
-        Faqat, shuni yodda tutingki, biz juda ham koʻplab e-mail xabarlar olamiz va shu sababli barcha xatlarga javob yoza olmasligimiz mumkin.
-        Iltimos, maktubni ingliz tilida yuborishni unutmang.
-    </string>
+  <string name="email_us">Agar savollaringizga yuqorida javob olmagan boʻlsangiz quranandroid@gmail.com
+    adresiga maktub yoʻllashingiz mumkin. Faqat, shuni yodda tutingki, biz juda ham koʻplab e-mail
+    xabarlar olamiz va shu sababli barcha xatlarga javob yoza olmasligimiz mumkin.
+    Iltimos, maktubni ingliz tilida yuborishni unutmang.
+  </string>
 
   <!-- sura metainfo -->
   <string name="makki">Makkiy</string>
@@ -350,6 +351,12 @@
   <string name="audio_manager_download_all">Hammasini saqlash</string>
   <string name="audio_manager_download_selection">Tanlanganlarni saqlash</string>
   <string name="audio_manager_delete_selection">Tanlanganlarni oʻchirish</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Audio fayllar yangilandi</string>
+  <string name="audio_updated_text">Bir necha Qurʼon audio fayllar yangilandi. Qurilmangizdagi eski
+    versiyalar oʻchirildi, keyingi safar foydalanganingizda yangilangan versiyalari qayta saqlab olinadi.
+  </string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Qurʼon yuklamalari</string>
