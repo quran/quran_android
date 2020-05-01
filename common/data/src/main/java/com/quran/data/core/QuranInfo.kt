@@ -4,6 +4,7 @@ import com.quran.data.core.QuranConstants.LAST_SURA
 import com.quran.data.core.QuranConstants.MAX_AYAH
 import com.quran.data.core.QuranConstants.MIN_AYAH
 import com.quran.data.core.QuranConstants.NUMBER_OF_SURAS
+import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
 import com.quran.data.source.QuranDataSource
 import java.util.ArrayList
@@ -120,9 +121,10 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
 
   fun getPageFromSuraAyah(sura: Int, ayah: Int): Int {
     // basic bounds checking
-    var ayah = ayah
-    if (ayah == 0) ayah = 1
-    if (sura < 1 || sura > NUMBER_OF_SURAS || ayah < MIN_AYAH || ayah > MAX_AYAH) return -1
+    val currentAyah = if (ayah == 0) 1 else ayah
+    if (sura < 1 || sura > NUMBER_OF_SURAS ||currentAyah < MIN_AYAH || currentAyah > MAX_AYAH) {
+      return -1
+    }
 
     // what page does the sura start on?
     var index = suraPageStart[sura - 1] - 1
@@ -133,7 +135,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
       // if we've passed the sura, return the previous page
       // or, if we're at the same sura and passed the ayah
       if (ss > sura || ss == sura &&
-          pageAyahStart[index] > ayah
+          pageAyahStart[index] > currentAyah
       ) {
         break
       }
@@ -187,4 +189,33 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     val overriddenJuz = juzPageOverride[page]
     return overriddenJuz ?: actualJuz
   }
+
+  fun getSuraAyahFromAyahId(ayahId: Int): SuraAyah? {
+    var sura = 0
+    var ayahIdentifier = ayahId
+    while (ayahIdentifier > suraNumAyahs[sura]) {
+      ayahIdentifier -= suraNumAyahs[sura++]
+    }
+    return SuraAyah(sura + 1, ayahIdentifier)
+  }
+
+  fun getQuarterByIndex(quarter: Int) = quarters[quarter]
+
+  fun getJuzFromSuraAyah(sura: Int, ayah: Int, juz: Int): Int {
+    if (juz == 30) {
+      return juz
+    }
+
+    // get the starting point of the next juz'
+    val lastQuarter = quarters[juz * 8]
+    // if we're after that starting point, return juz + 1
+    return if (sura > lastQuarter[0] || lastQuarter[0] == sura && ayah >= lastQuarter[1]) {
+      juz + 1
+    } else {
+      // otherwise just return this juz
+      juz
+    }
+  }
+
+  fun isMakki(sura: Int) = suraIsMakki[sura - 1]
 }

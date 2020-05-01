@@ -21,33 +21,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
 public class QuranInfo {
-  private final int[] suraPageStart;
-  private final int[] suraNumAyahs;
-  private final boolean[] suraIsMakki;
-  private final int[][] quarters;
-  private final int numberOfPages;
-  private final int numberOfPagesDual;
   private final com.quran.data.core.QuranInfo quranInfo;
 
   @Inject
   public QuranInfo(PageProvider pageProvider) {
     final QuranDataSource quranDataSource = pageProvider.getDataSource();
     quranInfo = new com.quran.data.core.QuranInfo(quranDataSource);
-
-    suraPageStart = quranDataSource.getPageForSuraArray();
-    suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray();
-    suraIsMakki = quranDataSource.getIsMakkiBySuraArray();
-    quarters = quranDataSource.getQuartersArray();
-    numberOfPages = quranDataSource.getNumberOfPages();
-    numberOfPagesDual = numberOfPages / 2;
   }
 
   public int getNumberOfPages() {
-    return numberOfPages;
+    return quranInfo.getNumberOfPages();
   }
 
   public int getNumberOfPagesDual() {
-    return numberOfPagesDual;
+    return quranInfo.getNumberOfPagesDual();
   }
 
   /**
@@ -180,10 +167,10 @@ public class QuranInfo {
   }
 
   public String getSuraListMetaString(Context context, int sura) {
-    String info = context.getString(suraIsMakki[sura - 1]
+    String info = context.getString(quranInfo.isMakki(sura)
         ? R.string.makki : R.string.madani) + " - ";
 
-    int ayahs = suraNumAyahs[sura - 1];
+    int ayahs = quranInfo.getNumberOfAyahs(sura);
     info += context.getResources().getQuantityString(R.plurals.verses, ayahs,
         QuranUtils.getLocalizedNumber(context, ayahs));
     return info;
@@ -203,7 +190,7 @@ public class QuranInfo {
   }
 
   public int safelyGetSuraOnPage(int page) {
-    if (page < Constants.PAGES_FIRST || page > numberOfPages) {
+    if (page < Constants.PAGES_FIRST || page > quranInfo.getNumberOfPages()) {
       Crashlytics.logException(new IllegalArgumentException("got page: " + page));
       page = 1;
     }
@@ -215,14 +202,8 @@ public class QuranInfo {
   }
 
   private String getSuraNameFromPage(Context context, int page) {
-    for (int i = 0; i < Constants.SURAS_COUNT; i++) {
-      if (suraPageStart[i] == page) {
-        return getSuraName(context, i + 1, false, false);
-      } else if (suraPageStart[i] > page) {
-        return getSuraName(context, i, false, false);
-      }
-    }
-    return "";
+    final int suraNumber = quranInfo.getSuraNumberFromPage(page);
+    return getSuraName(context, suraNumber, false, false);
   }
 
   /**
@@ -242,22 +223,6 @@ public class QuranInfo {
     return quranInfo.getJuzFromPage(page);
   }
 
-  private int getJuzFromSuraAyah(int sura, int ayah, int juz) {
-    if (juz == 30) {
-      return juz;
-    }
-
-    // get the starting point of the next juz'
-    final int[] lastQuarter = quarters[juz * 8];
-    // if we're after that starting point, return juz + 1
-    if (sura > lastQuarter[0] || (lastQuarter[0] == sura && ayah >= lastQuarter[1])) {
-      return juz + 1;
-    } else {
-       // otherwise just return this juz
-      return juz;
-    }
-  }
-
   public int getRub3FromPage(int page) {
     return quranInfo.getRub3FromPage(page);
   }
@@ -271,12 +236,7 @@ public class QuranInfo {
   }
 
   public SuraAyah getSuraAyahFromAyahId(int ayahId) {
-    int sura = 0;
-    int ayahIdentifier = ayahId;
-    while (ayahIdentifier > suraNumAyahs[sura]) {
-      ayahIdentifier -= suraNumAyahs[sura++];
-    }
-    return new SuraAyah(sura + 1, ayahIdentifier);
+    return quranInfo.getSuraAyahFromAyahId(ayahId);
   }
 
   public int getNumAyahs(int sura) {
@@ -299,7 +259,7 @@ public class QuranInfo {
     int juz = getJuzForDisplayFromPage(page);
     return context.getString(R.string.quran_ayah_details, getSuraName(context, sura, true),
         QuranUtils.getLocalizedNumber(context, ayah),
-        QuranUtils.getLocalizedNumber(context, getJuzFromSuraAyah(sura, ayah, juz)));
+        QuranUtils.getLocalizedNumber(context, quranInfo.getJuzFromSuraAyah(sura, ayah, juz)));
   }
 
   public  String getSuraNameString(Context context, int page) {
@@ -308,7 +268,7 @@ public class QuranInfo {
 
   // not ideal, should change this later
   public  int[] getQuarterByIndex(int quarter) {
-    return quarters[quarter];
+    return quranInfo.getQuarterByIndex(quarter);
   }
 
   public Set<String> getAyahKeysOnPage(int page, SuraAyah lowerBound, SuraAyah upperBound) {
