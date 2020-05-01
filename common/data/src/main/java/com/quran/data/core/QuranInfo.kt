@@ -46,7 +46,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return sura
   }
 
-  fun getListOfSurahWithStartingOnPage(page: Int): List<Int>? {
+  fun getListOfSurahWithStartingOnPage(page: Int): List<Int> {
     val startIndex = pageSuraStart[page - 1] - 1
     val result: MutableList<Int> = ArrayList()
     for (i in startIndex until NUMBER_OF_SURAS) {
@@ -57,7 +57,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return result
   }
 
-  fun getVerseRangeForPage(page: Int): VerseRange? {
+  fun getVerseRangeForPage(page: Int): VerseRange {
     val result = getPageBounds(page)
     val versesInRange: Int = 1 + Math.abs(
         getAyahId(result[0], result[1]) - getAyahId(result[2], result[3])

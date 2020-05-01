@@ -31,6 +31,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -42,7 +43,7 @@ import com.quran.labs.androidquran.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
@@ -213,6 +214,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranAppUtils quranAppUtils;
   @Inject ShareUtil shareUtil;
   @Inject AudioUtils audioUtils;
+  @Inject QuranDisplayData quranDisplayData;
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
@@ -368,10 +370,10 @@ public class PagerActivity extends QuranActionBarActivity implements
                                  int positionOffsetPixels) {
         if (ayahToolBar.isShowing() && ayahToolBarPos != null) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
-          int barPos = quranInfo.getPosFromPage(startPage, isDualPages);
+          int barPos = quranInfo.getPositionFromPage(startPage, isDualPages);
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
-            ayahToolBarPos.xScroll = 0 - positionOffsetPixels;
+            ayahToolBarPos.xScroll = -positionOffsetPixels;
           } else if (position == barPos - 1) {
             // Swiping to prev ViewPager page (i.e. next quran page)
             ayahToolBarPos.xScroll = viewPager.getWidth() - positionOffsetPixels;
@@ -391,7 +393,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       @Override
       public void onPageSelected(int position) {
         Timber.d("onPageSelected(): %d", position);
-        final int page = quranInfo.getPageFromPos(position, isDualPages);
+        final int page = quranInfo.getPageFromPosition(position, isDualPages);
         if (quranSettings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
               PagerActivity.this, quranInfo, page, lastPopupTime);
@@ -421,7 +423,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         // If we're more than 1 page away from ayah selection end ayah mode
         if (isInAyahMode) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
-          int ayahPos = quranInfo.getPosFromPage(startPage, isDualPages);
+          int ayahPos = quranInfo.getPositionFromPage(startPage, isDualPages);
           if (Math.abs(ayahPos - position) > 1) {
             endAyahMode();
           }
@@ -498,7 +500,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
-          e.onNext(quranInfo.getPageFromPos(position, isDualPages));
+          e.onNext(quranInfo.getPageFromPosition(position, isDualPages));
         }
       };
 
@@ -899,7 +901,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void onSaveInstanceState(Bundle state) {
-    int lastPage = quranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
+    int lastPage = quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPages);
     state.putInt(LAST_READ_PAGE, lastPage);
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, showingTranslation);
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden);
@@ -933,7 +935,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     super.onPrepareOptionsMenu(menu);
     MenuItem item = menu.findItem(R.id.favorite_item);
     if (item != null) {
-      int page = quranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
+      int page = quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPages);
 
       boolean bookmarked = false;
       if (bookmarksCache.indexOfKey(page) >= 0) {
@@ -1129,13 +1131,13 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void updateActionBarTitle(int page) {
-    String sura = quranInfo.getSuraNameFromPage(this, page, true);
+    String sura = quranDisplayData.getSuraNameFromPage(this, page, true);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       translationsSpinner.setVisibility(View.GONE);
       actionBar.setDisplayShowTitleEnabled(true);
       actionBar.setTitle(sura);
-      String desc = quranInfo.getPageSubtitle(this, page);
+      String desc = quranDisplayData.getPageSubtitle(this, page);
       actionBar.setSubtitle(desc);
     }
   }
@@ -1149,7 +1151,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private int getCurrentPage() {
-    return quranInfo.getPageFromPos(viewPager.getCurrentItem(), isDualPages);
+    return quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPages);
   }
 
   private void updateActionBarSpinner() {
@@ -1173,9 +1175,9 @@ public class PagerActivity extends QuranActionBarActivity implements
             SpinnerHolder holder = (SpinnerHolder) convertView.getTag();
             int page = getCurrentPage();
 
-            String sura = quranInfo.getSuraNameFromPage(PagerActivity.this, page, true);
+            String sura = quranDisplayData.getSuraNameFromPage(PagerActivity.this, page, true);
             holder.title.setText(sura);
-            String desc = quranInfo.getPageSubtitle(PagerActivity.this, page);
+            String desc = quranDisplayData.getPageSubtitle(PagerActivity.this, page);
             holder.subtitle.setText(desc);
             holder.subtitle.setVisibility(View.VISIBLE);
           }
@@ -1310,7 +1312,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       return;
     }
 
-    int position = quranInfo.getPosFromPage(page, isDualPages);
+    int position = quranInfo.getPositionFromPage(page, isDualPages);
     if (position != viewPager.getCurrentItem() && force) {
       unHighlightAyahs(type);
       viewPager.setCurrentItem(position);
@@ -1453,7 +1455,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       page = ((numberOfPagesDual - position) * 2) - 1;
     }
 
-    int startSura = quranInfo.safelyGetSuraOnPage(page);
+    int startSura = quranDisplayData.safelyGetSuraOnPage(page);
     int startAyah = quranInfo.getFirstAyahOnPage(page);
     List<Integer> startingSuraList = quranInfo.getListOfSurahWithStartingOnPage(page);
     if (startingSuraList.size() == 0 ||
@@ -1729,7 +1731,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void nextAyah() {
     if (end != null) {
-      final int ayat = quranInfo.getNumAyahs(end.sura);
+      final int ayat = quranInfo.getNumberOfAyahs(end.sura);
 
       final SuraAyah s;
       if (end.ayah + 1 <= ayat) {
@@ -1749,7 +1751,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       if (end.ayah > 1) {
         s = new SuraAyah(end.sura, end.ayah - 1);
       } else if (end.sura > 1) {
-        s = new SuraAyah(end.sura - 1, quranInfo.getNumAyahs(end.sura - 1));
+        s = new SuraAyah(end.sura - 1, quranInfo.getNumberOfAyahs(end.sura - 1));
       } else {
         return;
       }
@@ -1759,7 +1761,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void selectAyah(SuraAyah s) {
     final int page = quranInfo.getPageFromSuraAyah(s.sura, s.ayah);
-    final int position = quranInfo.getPosFromPage(page, isDualPages);
+    final int position = quranInfo.getPositionFromPage(page, isDualPages);
     Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f instanceof QuranPage && f.isVisible()) {
       if (position != viewPager.getCurrentItem()) {
@@ -1868,7 +1870,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     for (int i = minPage; i <= maxPage; i++) {
       QuranPage fragment = pagerAdapter.getFragmentIfExistsForPage(i);
       if (fragment != null) {
-        Set<String> ayahKeys = quranInfo.getAyahKeysOnPage(i, start, end);
+        Set<String> ayahKeys = quranDisplayData.getAyahKeysOnPage(i, start, end);
         fragment.getAyahTracker().highlightAyat(i, ayahKeys, HighlightType.SELECTION);
       }
     }
@@ -2031,7 +2033,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void promptForMultipleChoicePlay(int page, int startSura, int startAyah, List<Integer> startingSuraList) {
     ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item);
     for (Integer integer : startingSuraList) {
-      String suraName = quranInfo.getSuraName(this, integer, false);
+      String suraName = quranDisplayData.getSuraName(this, integer, false);
       adapter.add(suraName);
     }
     if(startSura != startingSuraList.get(0)) {

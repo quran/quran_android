@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.presenter.translation
 
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
-import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.data.SuraAyahIterator
 import com.quran.data.model.VerseRange
@@ -26,7 +26,8 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     private val translationModel: TranslationModel,
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
-    private val quranInfo: QuranInfo) : Presenter<T> {
+    private val quranInfo: QuranInfo
+) : Presenter<T> {
   private var lastCacheTime: Long = 0
   private val translationMap: MutableMap<String, LocalTranslation> = HashMap()
 

@@ -16,9 +16,6 @@ import okio.Buffer;
 import static com.google.common.truth.Truth.assertThat;
 
 public class BookmarkJsonModelTest {
-  private static final String TAGS_JSON =
-      "{\"bookmarks\":[],\"recentPages\":[],\"tags\":[{\"id\":1,\"name\":\"First\"}," +
-      "{\"id\":2,\"name\":\"Second\"},{\"id\":3,\"name\":\"Third\"}]}";
   private static final List<Tag> TAGS =
       Arrays.asList(new Tag(1, "First"), new Tag(2, "Second"), new Tag(3, "Third"));
 

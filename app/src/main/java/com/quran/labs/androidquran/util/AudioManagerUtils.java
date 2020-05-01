@@ -4,8 +4,8 @@ package com.quran.labs.androidquran.util;
 import androidx.annotation.NonNull;
 import android.util.Pair;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.audio.QariItem;
-import com.quran.labs.androidquran.data.QuranInfo;
 
 import java.io.File;
 import java.util.List;
@@ -75,7 +75,7 @@ public class AudioManagerUtils {
         .map(sura -> new SuraFileName(sura, new File(basePath, String.valueOf(sura))))
         .filter(suraFile -> suraFile.file.exists())
         .map(sf -> new Pair<>(sf.sura,
-            sf.file.listFiles().length >= quranInfo.getNumAyahs(sf.sura)))
+            sf.file.listFiles().length >= quranInfo.getNumberOfAyahs(sf.sura)))
         .toList()
         .map(downloaded -> QariDownloadInfo.withPartials(qariItem, downloaded));
   }

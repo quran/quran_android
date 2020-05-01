@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.module.activity;
 
 import android.content.Context;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;

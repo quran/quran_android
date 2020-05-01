@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.presenter.audio.service
 
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
-import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.extension.requiresBasmallah
 import java.util.Locale
@@ -97,7 +97,7 @@ class AudioQueue(private val quranInfo: QuranInfo,
 
   private fun SuraAyah.nextAyah(): SuraAyah {
     return when {
-      ayah + 1 <= quranInfo.getNumAyahs(sura) -> SuraAyah(
+      ayah + 1 <= quranInfo.getNumberOfAyahs(sura) -> SuraAyah(
           sura, ayah + 1
       )
       sura < 114 -> SuraAyah(sura + 1, 1)
@@ -109,7 +109,7 @@ class AudioQueue(private val quranInfo: QuranInfo,
     return when {
       ayah - 1 > 0 -> SuraAyah(sura, ayah - 1)
       sura > 1 -> SuraAyah(
-          sura - 1, quranInfo.getNumAyahs(sura - 1)
+          sura - 1, quranInfo.getNumberOfAyahs(sura - 1)
       )
       else -> SuraAyah(114, 6)
     }
