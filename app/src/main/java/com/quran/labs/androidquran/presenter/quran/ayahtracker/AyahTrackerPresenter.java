@@ -4,10 +4,10 @@ import android.app.Activity;
 import androidx.annotation.Nullable;
 import android.view.MotionEvent;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.HighlightInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.PagerActivity;

@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.presenter.translation
 
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
-import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.model.translation.TranslationModel
@@ -38,8 +38,8 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
               .toObservable()
         }
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<BaseTranslationPresenter.ResultHolder>() {
-          override fun onNext(result: BaseTranslationPresenter.ResultHolder) {
+        .subscribeWith(object : DisposableObserver<ResultHolder>() {
+          override fun onNext(result: ResultHolder) {
             if (translationScreen != null && result.ayahInformation.isNotEmpty()) {
               translationScreen!!.setVerses(
                   getPage(result.ayahInformation), result.translations,

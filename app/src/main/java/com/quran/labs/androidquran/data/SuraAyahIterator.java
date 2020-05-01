@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.data.core.QuranInfo;
+import com.quran.data.model.SuraAyah;
+
 public class SuraAyahIterator {
 
   private SuraAyah start;
@@ -49,7 +52,7 @@ public class SuraAyahIterator {
     } else if (!hasNext()) {
       return false;
     }
-    if (curAyah < quranInfo.getNumAyahs(curSura)) {
+    if (curAyah < quranInfo.getNumberOfAyahs(curSura)) {
       curAyah++;
     } else {
       curAyah = 1;

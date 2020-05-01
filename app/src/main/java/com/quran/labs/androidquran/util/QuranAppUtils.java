@@ -2,9 +2,9 @@ package com.quran.labs.androidquran.util;
 
 import android.text.TextUtils;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 
 import org.json.JSONObject;
 
@@ -42,7 +42,7 @@ public class QuranAppUtils {
       int sura = start.sura;
       int startAyah = start.ayah;
       // quranapp only supports sharing within a sura
-      int endAyah = end.sura == start.sura ? end.ayah : quranInfo.getNumAyahs(start.sura);
+      int endAyah = end.sura == start.sura ? end.ayah : quranInfo.getNumberOfAyahs(start.sura);
       return getQuranAppUrl(key, sura, startAyah, endAyah);
     }).subscribeOn(Schedulers.io());
   }

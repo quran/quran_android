@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.ui.fragment;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 public abstract class AyahActionFragment extends Fragment {

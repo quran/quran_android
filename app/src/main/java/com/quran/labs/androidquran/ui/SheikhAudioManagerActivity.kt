@@ -23,11 +23,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.QariItem
-import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
@@ -49,6 +50,9 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   @Inject
   lateinit var quranInfo: QuranInfo
+
+  @Inject
+  lateinit var quranDisplayData: QuranDisplayData
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
@@ -256,7 +260,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       val audioFile = File(fileName)
       deletionSuccessful = audioFile.delete()
     } else {
-      val numAyahs = quranInfo.getNumAyahs(surah)
+      val numAyahs = quranInfo.getNumberOfAyahs(surah)
       for (i in 1..numAyahs) {
         val fileName = String.format(Locale.US, fileUri, surah, i)
         val ayahAudioFile = File(fileName)
@@ -316,9 +320,11 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
         baseUri, sheikhName, AUDIO_DOWNLOAD_KEY + qari.id + startSurah,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO
     )
-    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, SuraAyah(startSurah, 1))
+    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE,
+        SuraAyah(startSurah, 1)
+    )
     intent.putExtra(QuranDownloadService.EXTRA_END_VERSE,
-        SuraAyah(endSurah, quranInfo.getNumAyahs(endSurah))
+        SuraAyah(endSurah, quranInfo.getNumberOfAyahs(endSurah))
     )
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
     startService(intent)
@@ -351,7 +357,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     }
 
     override fun onBindViewHolder(holder: SurahViewHolder, position: Int) {
-      holder.name.text = quranInfo.getSuraName(context, position + 1, true)
+      holder.name.text = quranDisplayData.getSuraName(context, position + 1, true)
       val surahStatus: Int
       val surahStatusImage: Int
       if (isItemFullyDownloaded(position)) {

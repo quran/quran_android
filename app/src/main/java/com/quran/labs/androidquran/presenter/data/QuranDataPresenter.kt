@@ -12,12 +12,12 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.crashlytics.android.Crashlytics
+import com.quran.data.core.QuranInfo
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDataProvider
-import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.CopyDatabaseUtil
 import com.quran.labs.androidquran.util.QuranFileUtils

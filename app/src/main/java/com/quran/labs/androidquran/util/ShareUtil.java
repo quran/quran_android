@@ -11,7 +11,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 
 import java.util.List;
 
@@ -22,11 +22,11 @@ import dagger.Reusable;
 
 @Reusable
 public class ShareUtil {
-  private final QuranInfo quranInfo;
+  private final QuranDisplayData quranDisplayData;
 
   @Inject
-  ShareUtil(QuranInfo quranInfo) {
-    this.quranInfo = quranInfo;
+  ShareUtil(QuranDisplayData quranDisplayData) {
+    this.quranDisplayData = quranDisplayData;
   }
 
   public void copyVerses(Activity activity, List<QuranText> verses) {
@@ -76,7 +76,7 @@ public class ShareUtil {
       }
     }
     sb.append('-')
-      .append(quranInfo.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
+      .append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah));
 
     return sb.toString();
   }
@@ -98,14 +98,14 @@ public class ShareUtil {
     sb.append("[");
 
     final QuranText firstAyah = verses.get(0);
-    sb.append(quranInfo.getSuraName(activity, firstAyah.getSura(), true));
+    sb.append(quranDisplayData.getSuraName(activity, firstAyah.getSura(), true));
     sb.append(" ");
     sb.append(firstAyah.getAyah());
     if (size > 1) {
       final QuranText lastAyah = verses.get(size - 1);
       sb.append(" - ");
       if (firstAyah.getSura() != lastAyah.getSura()) {
-        sb.append(quranInfo.getSuraName(activity, lastAyah.getSura(), true));
+        sb.append(quranDisplayData.getSuraName(activity, lastAyah.getSura(), true));
         sb.append(" ");
       }
       sb.append(lastAyah.getAyah());

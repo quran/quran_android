@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.data.core.QuranConstants;
+
 public class Constants {
 
   // data domain
@@ -16,13 +18,13 @@ public class Constants {
   public static final int MIN_TRANSLATION_REFRESH_TIME = 60 * 60 * 1000;
 
   // Pages
-  public static final int PAGES_FIRST = 1;
-  public static final int SURA_FIRST = 1;
-  public static final int SURA_LAST = 114;
-  public static final int SURAS_COUNT = 114;
-  public static final int JUZ2_COUNT = 30;
-  public static final int AYA_MIN = 1;
-  public static final int AYA_MAX = 286;
+  public static final int PAGES_FIRST = QuranConstants.PAGES_FIRST;
+  public static final int SURA_FIRST = QuranConstants.FIRST_SURA;
+  public static final int SURA_LAST = QuranConstants.LAST_SURA;
+  public static final int SURAS_COUNT = QuranConstants.NUMBER_OF_SURAS;
+  public static final int JUZ2_COUNT = QuranConstants.JUZ2_COUNT;
+  public static final int AYA_MIN = QuranConstants.MIN_AYAH;
+  public static final int AYA_MAX = QuranConstants.MAX_AYAH;
   public static final int NO_PAGE = -1;
   public static final int MAX_RECENT_PAGES = 3;
 

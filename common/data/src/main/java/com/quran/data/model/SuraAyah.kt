@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.data
+package com.quran.data.model
 
 import java.io.Serializable
 

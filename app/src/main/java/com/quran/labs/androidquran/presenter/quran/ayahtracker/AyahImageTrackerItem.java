@@ -3,9 +3,10 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 import android.content.Context;
 import android.graphics.RectF;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
@@ -26,6 +27,7 @@ import androidx.annotation.Nullable;
 
 public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView> {
   private final QuranInfo quranInfo;
+  private final QuranDisplayData quranDisplayData;
   private final boolean isPageOnRightSide;
   private final int screenHeight;
   private final Set<ImageDrawHelper> imageDrawHelpers;
@@ -34,19 +36,22 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
   public AyahImageTrackerItem(int page,
                               int screenHeight,
                               QuranInfo quranInfo,
+                              QuranDisplayData quranDisplayData,
                               @NonNull Set<ImageDrawHelper> imageDrawHelpers,
                               @NonNull HighlightingImageView highlightingImageView) {
-    this(page, screenHeight, quranInfo, false, imageDrawHelpers, highlightingImageView);
+    this(page, screenHeight, quranInfo, quranDisplayData, false, imageDrawHelpers, highlightingImageView);
   }
 
   public AyahImageTrackerItem(int page,
                               int screenHeight,
                               QuranInfo quranInfo,
+                              QuranDisplayData quranDisplayData,
                               boolean isPageOnTheRight,
                               @NonNull Set<ImageDrawHelper> imageDrawHelpers,
                               @NonNull HighlightingImageView highlightingImageView) {
     super(page, highlightingImageView);
     this.quranInfo = quranInfo;
+    this.quranDisplayData = quranDisplayData;
     this.screenHeight = screenHeight;
     this.imageDrawHelpers = imageDrawHelpers;
     this.isPageOnRightSide = isPageOnTheRight;
@@ -60,8 +65,8 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
       if (!pageBounds.isEmpty()) {
         ayahView.setPageBounds(pageBounds);
         Context context = ayahView.getContext();
-        String suraText = quranInfo.getSuraNameFromPage(context, page, true);
-        String juzText = quranInfo.getJuzDisplayStringForPage(context, page);
+        String suraText = quranDisplayData.getSuraNameFromPage(context, page, true);
+        String juzText = quranDisplayData.getJuzDisplayStringForPage(context, page);
         String pageText = QuranUtils.getLocalizedNumber(context, page);
         String rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page);
         ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);

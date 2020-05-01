@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranDataProvider;
-import com.quran.labs.androidquran.data.VerseRange;
+import com.quran.data.model.VerseRange;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.di.ActivityScope;
 import com.quran.labs.androidquran.util.QuranFileUtils;

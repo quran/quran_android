@@ -17,11 +17,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter;
 
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 
 public class TagBookmarkDialog extends DialogFragment {
 
@@ -56,7 +57,7 @@ public class TagBookmarkDialog extends DialogFragment {
   }
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NotNull Context context) {
     super.onAttach(context);
     ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
   }

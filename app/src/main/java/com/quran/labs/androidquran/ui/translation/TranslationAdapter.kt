@@ -13,11 +13,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
-import androidx.core.text.TextDirectionHeuristicsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan

@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import androidx.annotation.NonNull;
 
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
 

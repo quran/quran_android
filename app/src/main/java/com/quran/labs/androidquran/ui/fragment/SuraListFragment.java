@@ -12,10 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
+import org.jetbrains.annotations.NotNull;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
 import static com.quran.labs.androidquran.data.Constants.SURAS_COUNT;
@@ -43,6 +45,7 @@ public class SuraListFragment extends Fragment {
   private Disposable disposable;
 
   @Inject QuranInfo quranInfo;
+  @Inject QuranDisplayData quranDisplayData;
   private int numberOfPages;
 
   public static SuraListFragment newInstance() {
@@ -67,7 +70,7 @@ public class SuraListFragment extends Fragment {
   }
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NotNull Context context) {
     super.onAttach(context);
     ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
     numberOfPages = quranInfo.getNumberOfPages();
@@ -93,7 +96,7 @@ public class SuraListFragment extends Fragment {
             @Override
             public void onSuccess(Integer recentPage) {
               if (recentPage != Constants.NO_PAGE) {
-                int sura = quranInfo.safelyGetSuraOnPage(recentPage);
+                int sura = quranDisplayData.safelyGetSuraOnPage(recentPage);
                 int juz = quranInfo.getJuzFromPage(recentPage);
                 int position = sura + juz - 1;
                 mRecyclerView.scrollToPosition(position);
@@ -139,8 +142,8 @@ public class SuraListFragment extends Fragment {
 
       while ((sura <= SURAS_COUNT) && (quranInfo.getPageNumberForSura(sura) < next)) {
         final QuranRow.Builder builder = new QuranRow.Builder()
-            .withText(quranInfo.getSuraName(activity, sura, wantPrefix, wantTranslation))
-            .withMetadata(quranInfo.getSuraListMetaString(activity, sura))
+            .withText(quranDisplayData.getSuraName(activity, sura, wantPrefix, wantTranslation))
+            .withMetadata(quranDisplayData.getSuraListMetaString(activity, sura))
             .withSura(sura)
             .withPage(quranInfo.getPageNumberForSura(sura));
         elements[pos++] = builder.build();

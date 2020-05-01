@@ -154,7 +154,7 @@
     <string name="quran_juz2">Dzsuz</string>
     <string name="quran_page">Oldal</string>
     <string name="quran_sura">Szúrák</string>
-    <string name="quran_ayah">Ája</string>
+    <string name="quran_ayah">Ája %1$d</string>
     <string name="quran_sura_title">%1$s szúra</string>
     <string name="sura_ayah_notification_str">%1$s szúra, %2$d. ája</string>
 

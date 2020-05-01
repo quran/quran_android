@@ -16,7 +16,7 @@ import com.quran.common.search.Searcher;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranFileConstants;
-import com.quran.labs.androidquran.data.VerseRange;
+import com.quran.data.model.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.TranslationUtil;
 

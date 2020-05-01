@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.ui.translation;
 
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
