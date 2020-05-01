@@ -281,8 +281,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       boolean lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, isDualPages);
       shouldAdjustPageNumber = (lastWasDualPages != isDualPages);
 
-      start = savedInstanceState.getParcelable(LAST_START_POINT);
-      end = savedInstanceState.getParcelable(LAST_ENDING_POINT);
+      start = (SuraAyah) savedInstanceState.getSerializable(LAST_START_POINT);
+      end = (SuraAyah) savedInstanceState.getSerializable(LAST_ENDING_POINT);
       this.lastAudioRequest = savedInstanceState.getParcelable(LAST_AUDIO_REQUEST);
     } else {
       Intent intent = getIntent();
@@ -905,8 +905,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden);
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages);
     if (start != null && end != null) {
-      state.putParcelable(LAST_START_POINT, start);
-      state.putParcelable(LAST_ENDING_POINT, end);
+      state.putSerializable(LAST_START_POINT, start);
+      state.putSerializable(LAST_ENDING_POINT, end);
     }
     if (lastAudioRequest != null) {
       state.putParcelable(LAST_AUDIO_REQUEST, lastAudioRequest);
