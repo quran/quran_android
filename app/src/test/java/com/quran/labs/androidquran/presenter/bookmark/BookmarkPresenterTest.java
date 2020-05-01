@@ -255,7 +255,7 @@ public class BookmarkPresenterTest {
 
   private BookmarkPresenter makeBookmarkPresenter(BookmarkModel model) {
     final QuranInfo quranInfo = new QuranInfo(new MadaniDataSource());
-    final QuranDisplayData quranDisplayData = new QuranDisplayData(new MadaniPageProvider());
+    final QuranDisplayData quranDisplayData = new QuranDisplayData(quranInfo);
     return new BookmarkPresenter(
         appContext,
         model,

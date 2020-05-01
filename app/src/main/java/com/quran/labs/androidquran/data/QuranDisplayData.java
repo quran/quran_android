@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.source.PageProvider;
 import com.quran.data.source.QuranDataSource;
@@ -16,12 +17,11 @@ import java.util.Set;
 import javax.inject.Inject;
 
 public class QuranDisplayData {
-  private final com.quran.data.core.QuranInfo quranInfo;
+  private final QuranInfo quranInfo;
 
   @Inject
-  public QuranDisplayData(PageProvider pageProvider) {
-    final QuranDataSource quranDataSource = pageProvider.getDataSource();
-    quranInfo = new com.quran.data.core.QuranInfo(quranDataSource);
+  public QuranDisplayData(QuranInfo quranInfo) {
+    this.quranInfo = quranInfo;
   }
 
   /**
