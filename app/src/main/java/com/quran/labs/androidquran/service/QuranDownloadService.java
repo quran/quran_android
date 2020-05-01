@@ -291,8 +291,8 @@ public class QuranDownloadService extends Service implements
       notifier.resetNotifications();
 
       // get the start/end ayah info if it's a ranged download
-      SuraAyah startAyah = intent.getParcelableExtra(EXTRA_START_VERSE);
-      SuraAyah endAyah = intent.getParcelableExtra(EXTRA_END_VERSE);
+      SuraAyah startAyah = (SuraAyah) intent.getSerializableExtra(EXTRA_START_VERSE);
+      SuraAyah endAyah = (SuraAyah) intent.getSerializableExtra(EXTRA_END_VERSE);
       boolean isGapless = intent.getBooleanExtra(EXTRA_IS_GAPLESS, false);
 
       String outputFile = intent.getStringExtra(EXTRA_OUTPUT_FILE_NAME);
