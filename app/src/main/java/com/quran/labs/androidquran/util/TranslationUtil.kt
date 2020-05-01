@@ -4,14 +4,15 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import androidx.annotation.ColorInt
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.common.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
-import com.quran.labs.androidquran.data.QuranInfo
 import dagger.Reusable
 
 @Reusable
 open class TranslationUtil(@ColorInt private val color: Int,
-                           private val quranInfo: QuranInfo) {
+                           private val quranInfo: QuranInfo
+) {
 
   open fun parseTranslationText(quranText: QuranText): TranslationMetadata {
     val text = quranText.text

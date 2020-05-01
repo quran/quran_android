@@ -235,10 +235,6 @@ public class QuranInfo {
     return quranInfo.getAyahId(sura, ayah);
   }
 
-  public SuraAyah getSuraAyahFromAyahId(int ayahId) {
-    return quranInfo.getSuraAyahFromAyahId(ayahId);
-  }
-
   public int getNumAyahs(int sura) {
     return quranInfo.getNumberOfAyahs(sura);
   }

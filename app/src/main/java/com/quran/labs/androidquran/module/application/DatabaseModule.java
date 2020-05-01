@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.module.application;
 
 import android.content.Context;
 
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import javax.inject.Singleton;
