@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 
 import org.json.JSONObject;
 

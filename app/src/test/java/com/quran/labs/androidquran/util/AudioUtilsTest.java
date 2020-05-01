@@ -4,10 +4,9 @@ import com.quran.data.source.PageProvider;
 import com.quran.data.pageinfo.common.MadaniDataSource;
 
 import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

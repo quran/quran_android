@@ -27,7 +27,7 @@ import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.QariItem
 import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
@@ -316,7 +316,9 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
         baseUri, sheikhName, AUDIO_DOWNLOAD_KEY + qari.id + startSurah,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO
     )
-    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE, SuraAyah(startSurah, 1))
+    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE,
+        SuraAyah(startSurah, 1)
+    )
     intent.putExtra(QuranDownloadService.EXTRA_END_VERSE,
         SuraAyah(endSurah, quranInfo.getNumAyahs(endSurah))
     )

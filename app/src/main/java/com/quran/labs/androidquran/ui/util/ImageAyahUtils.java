@@ -7,7 +7,7 @@ import android.util.SparseArray;
 import android.widget.ImageView;
 
 import com.quran.page.common.data.AyahBounds;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 

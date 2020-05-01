@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.quran.data.model.SuraAyah;
 import com.quran.data.model.VerseRange;
 import com.quran.data.source.PageProvider;
 import com.quran.data.source.QuranDataSource;
@@ -12,7 +13,6 @@ import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;

@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.data.model.SuraAyah;
+
 public class SuraAyahIterator {
 
   private SuraAyah start;

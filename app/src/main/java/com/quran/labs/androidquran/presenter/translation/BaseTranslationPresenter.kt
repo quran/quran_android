@@ -5,7 +5,7 @@ import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.data.SuraAyahIterator
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
@@ -154,8 +154,10 @@ internal open class BaseTranslationPresenter<T> internal constructor(
 
     // missing some entries for some ayat - this is a work around for bad data in some databases
     // ex. ibn katheer is missing 3 records, 1 in each of suras 5, 17, and 87.
-    val start = SuraAyah(verseRange.startSura, verseRange.startAyah)
-    val end = SuraAyah(verseRange.endingSura, verseRange.endingAyah)
+    val start =
+      SuraAyah(verseRange.startSura, verseRange.startAyah)
+    val end =
+      SuraAyah(verseRange.endingSura, verseRange.endingAyah)
     val iterator = SuraAyahIterator(quranInfo, start, end)
 
     var i = 0
