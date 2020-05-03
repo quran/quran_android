@@ -90,12 +90,10 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
     if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSION) {
-      if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        if (locationToWrite != null) {
-          Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
-          if (fragment instanceof QuranAdvancedSettingsFragment) {
-            ((QuranAdvancedSettingsFragment) fragment).moveFiles(locationToWrite);
-          }
+      if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && locationToWrite != null) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
+        if (fragment instanceof QuranAdvancedSettingsFragment) {
+          ((QuranAdvancedSettingsFragment) fragment).moveFiles(locationToWrite);
         }
       }
       locationToWrite = null;

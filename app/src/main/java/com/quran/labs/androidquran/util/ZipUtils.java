@@ -37,55 +37,52 @@ public class ZipUtils {
       File file = new File(zipFile);
       Timber.d("unzipping %s, size: %d", zipFile, file.length());
 
-      ZipFile zip = new ZipFile(file, ZipFile.OPEN_READ);
-      int numberOfFiles = zip.size();
-      Enumeration<? extends ZipEntry> entries = zip.entries();
+      try (ZipFile zip = new ZipFile(file, ZipFile.OPEN_READ)) {
+        int numberOfFiles = zip.size();
+        Enumeration<? extends ZipEntry> entries = zip.entries();
 
-      String canonicalPath = new File(destDirectory).getCanonicalPath();
+        String canonicalPath = new File(destDirectory).getCanonicalPath();
 
-      long total = 0;
-      int processedFiles = 0;
-      while (entries.hasMoreElements()) {
-        processedFiles++;
-        ZipEntry entry = entries.nextElement();
+        long total = 0;
+        int processedFiles = 0;
+        while (entries.hasMoreElements()) {
+          processedFiles++;
+          ZipEntry entry = entries.nextElement();
 
-        File currentEntryFile = new File(destDirectory, entry.getName());
-        if (currentEntryFile.getCanonicalPath().startsWith(canonicalPath)) {
-          if (entry.isDirectory()) {
-            if (!currentEntryFile.exists()) {
-              currentEntryFile.mkdirs();
+          File currentEntryFile = new File(destDirectory, entry.getName());
+          if (currentEntryFile.getCanonicalPath().startsWith(canonicalPath)) {
+            if (entry.isDirectory()) {
+              if (!currentEntryFile.exists()) {
+                currentEntryFile.mkdirs();
+              }
+              continue;
+            } else if (currentEntryFile.exists()) {
+              // delete files that already exist
+              currentEntryFile.delete();
             }
-            continue;
-          } else if (currentEntryFile.exists()) {
-            // delete files that already exist
-            currentEntryFile.delete();
-          }
 
-          InputStream is = zip.getInputStream(entry);
-          FileOutputStream ostream = new FileOutputStream(currentEntryFile);
+            try ( InputStream is = zip.getInputStream(entry);  FileOutputStream ostream = new FileOutputStream(currentEntryFile)) {
+              int size;
+              byte[] buf = new byte[BUFFER_SIZE];
+              while (total + BUFFER_SIZE <= MAX_UNZIPPED_SIZE && (size = is.read(buf)) > 0) {
+                ostream.write(buf, 0, size);
+                total += size;
+              }
+            }
 
-          int size;
-          byte[] buf = new byte[BUFFER_SIZE];
-          while (total + BUFFER_SIZE <= MAX_UNZIPPED_SIZE && (size = is.read(buf)) > 0) {
-            ostream.write(buf, 0, size);
-            total += size;
-          }
-          is.close();
-          ostream.close();
+            if (processedFiles >= MAX_FILES || total >= MAX_UNZIPPED_SIZE) {
+              throw new IllegalStateException("Invalid zip file.");
+            }
 
-          if (processedFiles >= MAX_FILES || total >= MAX_UNZIPPED_SIZE) {
+            if (listener != null) {
+              listener.onProcessingProgress(item, processedFiles, numberOfFiles);
+            }
+          } else {
             throw new IllegalStateException("Invalid zip file.");
           }
-
-          if (listener != null) {
-            listener.onProcessingProgress(item, processedFiles, numberOfFiles);
-          }
-        } else {
-          throw new IllegalStateException("Invalid zip file.");
         }
       }
 
-      zip.close();
       return true;
     }
     catch (IOException ioe) {

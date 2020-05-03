@@ -568,17 +568,13 @@ public class QuranFileUtils {
   }
 
   private void copyFile(File source, File destination) throws IOException {
-    InputStream in = new FileInputStream(source);
-    OutputStream out = new FileOutputStream(destination);
-
-    byte[] buffer = new byte[1024];
-    int length;
-    while ((length = in.read(buffer)) > 0) {
-      out.write(buffer, 0, length);
+    try ( InputStream in = new FileInputStream(source); OutputStream out = new FileOutputStream(destination)) {
+      byte[] buffer = new byte[1024];
+      int length;
+      while ((length = in.read(buffer)) > 0) {
+        out.write(buffer, 0, length);
+      }
     }
-    out.flush();
-    out.close();
-    in.close();
   }
 
   // taken from Picasso's BitmapUtils class
