@@ -77,6 +77,6 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   }
 
   companion object {
-    private val arabicRegex =  "[\u0627\u0623\u0621\u062a\u0629\u0647\u0649]".toRegex()
+    private val arabicRegex =  "[\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649]".toRegex()
   }
 }
