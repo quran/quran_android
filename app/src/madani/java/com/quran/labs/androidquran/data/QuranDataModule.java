@@ -21,7 +21,8 @@ public class QuranDataModule {
     return providers.get(key == null ? fallbackType : key);
   }
 
-  @Provides QuranDataSource provideQuranDataSource(PageProvider pageProvider) {
+  @Provides
+  static QuranDataSource provideQuranDataSource(PageProvider pageProvider) {
     return pageProvider.getDataSource();
   }
 }

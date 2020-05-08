@@ -14,4 +14,9 @@ public class QuranDataModule {
   static PageProvider provideQuranPageProvider(Map<String, PageProvider> providers) {
     return providers.get("shemerly");
   }
+
+  @Provides
+  static QuranDataSource provideQuranDataSource(PageProvider pageProvider) {
+    return pageProvider.getDataSource();
+  }
 }
