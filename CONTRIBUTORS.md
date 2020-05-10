@@ -24,6 +24,7 @@ Quran Android Contributors
 ### Audio
 
 * [Anas Saiyed](https://github.com/anassaiyed) - scripts and support for migrating many shuyookh from gapped to gapless.
+* [Nacer Tahri](https://github.com/nacer80)
 
 
 ### UI and Designer
