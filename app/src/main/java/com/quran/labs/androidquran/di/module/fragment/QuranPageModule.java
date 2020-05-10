@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.module.fragment;
+package com.quran.labs.androidquran.di.module.fragment;
 
 import dagger.Module;
 import dagger.Provides;

@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.core.worker.di
+package com.quran.labs.androidquran.di.module
 
 import com.quran.labs.androidquran.core.worker.WorkerKey
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory

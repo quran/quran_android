@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.core.worker.di
+package com.quran.labs.androidquran.di.module
 
 import com.quran.labs.androidquran.feature.audio.api.AudioUpdateService
 import dagger.Module

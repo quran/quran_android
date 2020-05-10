@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.module.activity;
+package com.quran.labs.androidquran.di.module.activity;
 
 import android.content.Context;
 

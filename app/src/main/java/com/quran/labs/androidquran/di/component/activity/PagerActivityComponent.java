@@ -1,8 +1,8 @@
-package com.quran.labs.androidquran.component.activity;
+package com.quran.labs.androidquran.di.component.activity;
 
-import com.quran.labs.androidquran.component.fragment.QuranPageComponent;
+import com.quran.labs.androidquran.di.component.fragment.QuranPageComponent;
 import com.quran.labs.androidquran.di.ActivityScope;
-import com.quran.labs.androidquran.module.activity.PagerActivityModule;
+import com.quran.labs.androidquran.di.module.activity.PagerActivityModule;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 
