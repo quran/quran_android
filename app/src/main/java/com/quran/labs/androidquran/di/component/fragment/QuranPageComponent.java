@@ -1,7 +1,7 @@
-package com.quran.labs.androidquran.component.fragment;
+package com.quran.labs.androidquran.di.component.fragment;
 
 import com.quran.labs.androidquran.di.QuranPageScope;
-import com.quran.labs.androidquran.module.fragment.QuranPageModule;
+import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;

@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.labs.androidquran.module.fragment.QuranPageModule;
+import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;

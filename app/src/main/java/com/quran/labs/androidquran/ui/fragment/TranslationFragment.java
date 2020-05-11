@@ -7,12 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.quran.data.core.QuranConstants;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.labs.androidquran.module.fragment.QuranPageModule;
+import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
