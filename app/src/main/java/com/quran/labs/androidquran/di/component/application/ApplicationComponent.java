@@ -29,7 +29,7 @@ import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 
-import com.quran.labs.androidquran.di.module.WorkerModule;
+import com.quran.labs.androidquran.core.worker.di.WorkerModule;
 import javax.inject.Singleton;
 
 import dagger.Component;
