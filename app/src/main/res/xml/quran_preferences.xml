@@ -63,6 +63,13 @@
         app:iconSpaceReserved="false"/>
 
     <CheckBoxPreference
+        android:key="@string/prefs_sura_translated_name"
+        android:persistent="true"
+        android:summary="@string/prefs_sura_translated_name_summary"
+        android:title="@string/prefs_sura_translated_name_summary"
+        app:iconSpaceReserved="false"/>
+
+    <CheckBoxPreference
         android:key="@string/prefs_night_mode"
         android:persistent="true"
         android:summary="@string/prefs_night_mode_summary"

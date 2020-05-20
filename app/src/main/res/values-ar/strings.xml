@@ -129,6 +129,8 @@
   <string name="prefs_import_summary">استيراد الاشارات المرجعية والعلامات</string>
   <string name="prefs_send_logs_title">إرسال السجلات</string>
   <string name="prefs_send_logs_summary">إرسال سجلات التصحيح للمطور</string>
+  <string name="prefs_sura_translated_name_summary">اظهار اسماء السور مترجمة</string>
+  <string name="prefs_sura_translated_name_title">ترجمة اسماء السور</string>
   <!-- Preferences End -->
 
   <string name="downloaded_translations">الملفات المحملة</string>

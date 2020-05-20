@@ -89,6 +89,7 @@ public class SuraListFragment extends Fragment {
     final Activity activity = getActivity();
     if (activity instanceof QuranActivity) {
       QuranSettings settings = QuranSettings.getInstance(activity);
+      ((QuranListAdapter) mRecyclerView.getAdapter()).showHideSuraTranslatedName(settings.isShowSuraTranslatedName());
       disposable = ((QuranActivity) activity).getLatestPageObservable()
           .first(Constants.NO_PAGE)
           .observeOn(AndroidSchedulers.mainThread())
@@ -128,7 +129,8 @@ public class SuraListFragment extends Fragment {
 
     Activity activity = getActivity();
     boolean wantPrefix = activity.getResources().getBoolean(R.bool.show_surat_prefix);
-    boolean wantTranslation = activity.getResources().getBoolean(R.bool.show_sura_names_translation);
+    QuranSettings settings = QuranSettings.getInstance(activity);
+    boolean wantTranslation = settings.isShowSuraTranslatedName();
     for (int juz = 1; juz <= JUZ2_COUNT; juz++) {
       final String headerTitle = activity.getString(R.string.juz2_description,
           QuranUtils.getLocalizedNumber(activity, juz));
