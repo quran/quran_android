@@ -249,33 +249,8 @@ public class QuranListAdapter extends
     return false;
   }
 
-  public void showHideSuraTranslatedName(boolean showSuraTranslatedName) {
-    if (showSuraTranslatedName && elements[1].text.indexOf("(") != -1) return;
-    if (!showSuraTranslatedName && elements[1].text.indexOf("(") == -1) return;
-    for (QuranRow row : elements) {
-      if (row.sura != 0) {
-        if (showSuraTranslatedName) {
-          addTranslatedNameToSuraName(row);
-        } else {
-          removeSuraTranslatedName(row);
-        }
-      }
-    }
-    notifyDataSetChanged();
-  }
-
-  private void removeSuraTranslatedName(QuranRow row) {
-    if (row.text.indexOf("(") != -1)
-      row.text = row.text.substring(0, row.text.indexOf("(") - 1);
-  }
-
-  private void addTranslatedNameToSuraName(QuranRow row) {
-    StringBuilder builder = new StringBuilder(row.text);
-    String translation = context.getResources().getStringArray(R.array.sura_names_translation)[row.sura - 1];
-    if (!TextUtils.isEmpty(translation)) {
-      builder.append(" (" + translation + ")");
-    }
-    row.text = builder.toString();
+  public QuranRow[] getElements() {
+    return elements;
   }
 
   class HeaderHolder extends RecyclerView.ViewHolder {

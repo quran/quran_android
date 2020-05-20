@@ -168,7 +168,7 @@ public class QuranSettings {
   }
 
   public boolean isShowSuraTranslatedName() {
-    return prefs.getBoolean(Constants.PREF_SURA_TRANSLATED_NAME, false);
+    return prefs.getBoolean(Constants.PREF_SURA_TRANSLATED_NAME, appContext.getResources().getBoolean(R.bool.show_sura_names_translation));
   }
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences() {
