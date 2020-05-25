@@ -73,6 +73,16 @@
     </Preference>
 
     <Preference
+        android:summary="@string/about_quran_enc_summary"
+        android:title="@string/about_quran_enc"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="true">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="@string/about_quran_enc_url"/>
+    </Preference>
+
+    <Preference
         android:summary="@string/about_tanzil_summary"
         android:title="@string/about_tanzil"
         app:iconSpaceReserved="false"

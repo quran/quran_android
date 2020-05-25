@@ -58,8 +58,11 @@
   <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
   <string name="about_furqan_summary">Uthmani text and Arabic Tafaseer</string>
   <string name="about_furqan_url" translatable="false">https://furqan.co</string>
+  <string name="about_quran_enc" translatable="false">Noble Quran Encyclopedia (QuranEnc)</string>
+  <string name="about_quran_enc_summary">Translations for many languages</string>
+  <string name="about_quran_enc_url" translatable="false">https://quranenc.com</string>
   <string name="about_tanzil" translatable="false">Tanzil</string>
-  <string name="about_tanzil_summary">Translations for many languages</string>
+  <string name="about_tanzil_summary">Translations for a few languages</string>
   <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
   <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
   <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
