@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.data;
 
 import com.quran.data.source.PageProvider;
 
+import com.quran.data.source.QuranDataSource;
 import java.util.Map;
 
 import dagger.Module;
