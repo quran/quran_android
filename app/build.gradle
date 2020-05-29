@@ -164,7 +164,7 @@ dependencies {
   kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 
   implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
   testImplementation 'junit:junit:4.13'
   testImplementation 'com.google.truth:truth:1.0.1'
   testImplementation "org.mockito:mockito-core:3.3.3"
