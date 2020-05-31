@@ -46,7 +46,7 @@ public class ToastCompat {
       toastView.setBackgroundDrawable(tintedBackground);
     }
 
-    TextView textView = toastView.findViewById(android.R.id.message);
+    TextView textView = toastView.findViewById(R.id.message);
     textView.setTextColor(getTextColor(context, nightMode));
     textView.setText(message);
     return toastView;
