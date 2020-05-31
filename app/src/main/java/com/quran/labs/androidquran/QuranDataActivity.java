@@ -23,6 +23,7 @@ import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.util.ToastCompat;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -258,7 +259,7 @@ public class QuranDataActivity extends Activity implements
         havePermission = true;
         Answers.getInstance().logCustom(new CustomEvent("storagePermissionGranted"));
         if (!canWriteSdcardAfterPermissions()) {
-          Toast.makeText(this,
+          ToastCompat.makeText(this,
               R.string.storage_permission_please_restart, Toast.LENGTH_LONG).show();
         }
         checkPages();

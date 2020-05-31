@@ -24,6 +24,7 @@ import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.ui.preference.DataListPreference;
+import com.quran.labs.androidquran.ui.util.ToastCompat;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -156,7 +157,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
                   File exportedPath = new File(appContext.getExternalFilesDir(null), "backups");
                   String exported = appContext.getString(
                       R.string.exported_data, exportedPath.toString());
-                  Toast.makeText(appContext, exported, Toast.LENGTH_LONG).show();
+                  ToastCompat.makeText(appContext, exported, Toast.LENGTH_LONG).show();
                 }
               }
 
@@ -164,7 +165,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
               public void onError(Throwable e) {
                 exportSubscription = null;
                 if (isAdded()) {
-                  Toast.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
+                  ToastCompat.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
                 }
               }
             });
@@ -282,7 +283,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
                 handleMove(newLocation);
               }
             } else {
-              Toast.makeText(context1,
+              ToastCompat.makeText(context1,
                   getString(
                       R.string.prefs_no_enough_space_to_move_files),
                   Toast.LENGTH_LONG).show();
@@ -389,7 +390,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
             listStoragePref.setValue(newLocation);
           }
         } else {
-          Toast.makeText(appContext,
+          ToastCompat.makeText(appContext,
               getString(R.string.prefs_err_moving_app_files),
               Toast.LENGTH_LONG).show();
         }

@@ -70,6 +70,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter;
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter;
+import com.quran.labs.androidquran.ui.util.ToastCompat;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.QuranAppUtils;
@@ -800,7 +801,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO) {
       // if audio is playing, just show a status notification
-      Toast.makeText(this, R.string.downloading_title,
+      ToastCompat.makeText(this, R.string.downloading_title,
           Toast.LENGTH_SHORT).show();
     }
   }

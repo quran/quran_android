@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.labs.androidquran.ui.util.ToastCompat;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class ShareUtil {
     ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
     ClipData clip = ClipData.newPlainText(activity.getString(R.string.app_name), text);
     cm.setPrimaryClip(clip);
-    Toast.makeText(activity, activity.getString(R.string.ayah_copied_popup),
+    ToastCompat.makeText(activity, activity.getString(R.string.ayah_copied_popup),
         Toast.LENGTH_SHORT).show();
   }
 
