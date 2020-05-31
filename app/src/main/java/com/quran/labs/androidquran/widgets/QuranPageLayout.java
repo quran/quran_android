@@ -130,12 +130,13 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     if (view != null) {
       int width = MeasureSpec.getSize(widthMeasureSpec);
       int height = MeasureSpec.getSize(heightMeasureSpec);
+      int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : getBorderWidth(leftPageBorder);
+      int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
+          0 : getBorderWidth(rightPageBorder);
+      width = width - (leftLineWidth + rightLineWidth);
       if (!isFullWidth) {
-        int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : getBorderWidth(leftPageBorder);
-        int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
-            0 : getBorderWidth(rightPageBorder);
         int headerFooterHeight = 0;
-        width = width - (leftLineWidth + rightLineWidth + viewPaddingSmall + viewPaddingLarge);
+        width = width - (viewPaddingSmall + viewPaddingLarge);
         height = height - 2 * headerFooterHeight;
       }
       view.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
