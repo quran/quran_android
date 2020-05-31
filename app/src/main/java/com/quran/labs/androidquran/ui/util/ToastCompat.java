@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -39,8 +38,8 @@ public class ToastCompat {
   private static View createToastView(Context context, CharSequence message) {
     View toastView = LayoutInflater.from(context).inflate(R.layout.toast, null, false);
 
-    QuranSettings settings = QuranSettings.getInstance(context);
-    Drawable tintedBackground = createTintedBackground(context, settings.isNightMode());
+    boolean nightMode = QuranSettings.getInstance(context).isNightMode();
+    Drawable tintedBackground = createTintedBackground(context, nightMode);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
       toastView.setBackground(tintedBackground);
     } else {
@@ -48,7 +47,7 @@ public class ToastCompat {
     }
 
     TextView textView = toastView.findViewById(android.R.id.message);
-    textView.setTextColor(getTextColor(context, settings));
+    textView.setTextColor(getTextColor(context, nightMode));
     textView.setText(message);
     return toastView;
   }
@@ -59,15 +58,9 @@ public class ToastCompat {
     return toastFrame;
   }
 
-  private static int getTextColor(Context context, QuranSettings settings) {
-    if (settings.isNightMode()) {
-      int textColorNight = ContextCompat.getColor(context, R.color.toast_text_color_night);
-      return Color.argb(
-          settings.getNightModeTextBrightness(),
-          Color.red(textColorNight),
-          Color.green(textColorNight),
-          Color.blue(textColorNight)
-      );
+  private static int getTextColor(Context context, boolean nightMode) {
+    if (nightMode) {
+      return ContextCompat.getColor(context, R.color.toast_text_color_night);
     } else {
       return ContextCompat.getColor(context, R.color.toast_text_color);
     }
