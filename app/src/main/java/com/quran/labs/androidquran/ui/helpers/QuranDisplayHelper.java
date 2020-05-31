@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
+import com.quran.labs.androidquran.ui.util.ToastCompat;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
@@ -83,7 +84,7 @@ public class QuranDisplayHelper {
     }
 
     String result = sb.toString();
-    Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+    ToastCompat.makeText(context, result, Toast.LENGTH_SHORT).show();
     return System.currentTimeMillis();
   }
 

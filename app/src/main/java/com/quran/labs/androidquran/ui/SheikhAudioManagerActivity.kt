@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
+import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.labs.androidquran.util.AudioManagerUtils
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QariDownloadInfo
@@ -292,7 +293,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
           R.plurals.audio_manager_delete_surah_success, successCount, successCount
       )
     }
-    Toast.makeText(this, resultString, Toast.LENGTH_SHORT).show()
+    ToastCompat.makeText(this, resultString, Toast.LENGTH_SHORT).show()
     if (successCount > 0) {
       // refresh, if at least 1 file was deleted
       AudioManagerUtils.clearCacheKeyForSheikh(qari)
