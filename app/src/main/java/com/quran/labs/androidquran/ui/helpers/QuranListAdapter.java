@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import androidx.recyclerview.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -246,6 +247,9 @@ public class QuranListAdapter extends
       }
     }
     return false;
+  }
+  public void setElements(QuranRow[] elements) {
+    this.elements = elements;
   }
 
   class HeaderHolder extends RecyclerView.ViewHolder {

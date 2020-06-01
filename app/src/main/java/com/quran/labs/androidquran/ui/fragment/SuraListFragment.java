@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
+
 import org.jetbrains.annotations.NotNull;
 
 import static com.quran.labs.androidquran.data.Constants.JUZ2_COUNT;
@@ -46,6 +48,8 @@ public class SuraListFragment extends Fragment {
 
   @Inject QuranInfo quranInfo;
   @Inject QuranDisplayData quranDisplayData;
+  @Inject QuranSettings quranSettings;
+  boolean showSuraTranslatedName = false;
   private int numberOfPages;
 
   public static SuraListFragment newInstance() {
@@ -88,7 +92,11 @@ public class SuraListFragment extends Fragment {
   public void onResume() {
     final Activity activity = getActivity();
     if (activity instanceof QuranActivity) {
-      QuranSettings settings = QuranSettings.getInstance(activity);
+      boolean newValueOfShowSuraTranslatedName = quranSettings.isShowSuraTranslatedName();
+      if (this.showSuraTranslatedName != newValueOfShowSuraTranslatedName) {
+        showHideSuraTranslatedName();
+        this.showSuraTranslatedName = newValueOfShowSuraTranslatedName;
+      }
       disposable = ((QuranActivity) activity).getLatestPageObservable()
           .first(Constants.NO_PAGE)
           .observeOn(AndroidSchedulers.mainThread())
@@ -108,7 +116,7 @@ public class SuraListFragment extends Fragment {
             }
           });
 
-      if (settings.isArabicNames()) {
+      if (quranSettings.isArabicNames()) {
         updateScrollBarPositionHoneycomb();
       }
     }
@@ -128,7 +136,7 @@ public class SuraListFragment extends Fragment {
 
     Activity activity = getActivity();
     boolean wantPrefix = activity.getResources().getBoolean(R.bool.show_surat_prefix);
-    boolean wantTranslation = activity.getResources().getBoolean(R.bool.show_sura_names_translation);
+    boolean wantTranslation = quranSettings.isShowSuraTranslatedName();
     for (int juz = 1; juz <= JUZ2_COUNT; juz++) {
       final String headerTitle = activity.getString(R.string.juz2_description,
           QuranUtils.getLocalizedNumber(activity, juz));
@@ -152,5 +160,11 @@ public class SuraListFragment extends Fragment {
     }
 
     return elements;
+  }
+
+  public void showHideSuraTranslatedName() {
+    QuranRow[] elements = getSuraList();
+    ((QuranListAdapter) mRecyclerView.getAdapter()).setElements(elements);
+    mRecyclerView.getAdapter().notifyDataSetChanged();
   }
 }
