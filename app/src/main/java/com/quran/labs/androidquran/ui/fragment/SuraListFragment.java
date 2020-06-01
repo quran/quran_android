@@ -94,7 +94,7 @@ public class SuraListFragment extends Fragment {
     if (activity instanceof QuranActivity) {
       boolean newValueOfShowSuraTranslatedName = quranSettings.isShowSuraTranslatedName();
       if (this.showSuraTranslatedName != newValueOfShowSuraTranslatedName) {
-        showHideSuraTranslatedName(newValueOfShowSuraTranslatedName);
+        showHideSuraTranslatedName();
         this.showSuraTranslatedName = newValueOfShowSuraTranslatedName;
       }
       disposable = ((QuranActivity) activity).getLatestPageObservable()
@@ -162,31 +162,9 @@ public class SuraListFragment extends Fragment {
     return elements;
   }
 
-  public void showHideSuraTranslatedName(boolean showSuraTranslatedName) {
-    QuranRow[] elements = ((QuranListAdapter) mRecyclerView.getAdapter()).getElements();
-    for (QuranRow row : elements) {
-      if (row.sura != 0) {
-        if (showSuraTranslatedName) {
-          addTranslatedNameToSuraName(row);
-        } else {
-          removeSuraTranslatedName(row);
-        }
-      }
-    }
+  public void showHideSuraTranslatedName() {
+    QuranRow[] elements = getSuraList();
+    ((QuranListAdapter) mRecyclerView.getAdapter()).setElements(elements);
     mRecyclerView.getAdapter().notifyDataSetChanged();
-  }
-
-  private void removeSuraTranslatedName(QuranRow row) {
-    if (row.text.indexOf("(") != -1)
-      row.text = row.text.substring(0, row.text.indexOf("(") - 1);
-  }
-
-  private void addTranslatedNameToSuraName(QuranRow row) {
-    StringBuilder builder = new StringBuilder(row.text);
-    String translation = getResources().getStringArray(R.array.sura_names_translation)[row.sura - 1];
-    if (!TextUtils.isEmpty(translation)) {
-      builder.append(" (" + translation + ")");
-    }
-    row.text = builder.toString();
   }
 }
