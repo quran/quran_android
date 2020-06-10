@@ -11,13 +11,32 @@
               android:textColor="?android:textColorPrimary" />
     <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations" 
     	android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone"/>
-    <TextView android:id="@+id/search_area"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="17sp"
-            android:text="@string/search_key"
-            android:background="@android:drawable/title_bar"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="328dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/search_hint"
+        android:inputType="text"
+        android:text="" />
+
+  </LinearLayout>
+
+  <TextView
+      android:id="@+id/search_area"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:background="@android:drawable/title_bar"
+      android:text="@string/search_key"
+      android:textColor="?android:textColorPrimary"
+      android:textSize="17sp" />
+
     <ListView
             android:id="@+id/results_list"
             android:layout_width="match_parent"
