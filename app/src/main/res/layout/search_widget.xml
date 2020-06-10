@@ -1,17 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/quran_row_background"
+    android:layout_height="wrap_content"
+    android:background="@drawable/search_widget_background"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="15dp">
 
   <ImageButton
       android:id="@+id/SearchWidgetIconButton"
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
-      android:background="@color/translation_verse_text_color"
+      android:background="@android:color/transparent"
       android:src="@drawable/icon" />
 
   <ImageButton
@@ -19,7 +19,7 @@
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
-      android:background="@color/translation_verse_text_color"
+      android:background="@android:color/transparent"
       android:src="@drawable/ic_ab_search" />
 
   <ImageButton
@@ -27,7 +27,7 @@
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
-      android:background="@color/translation_verse_text_color"
+      android:background="@android:color/transparent"
       android:src="@drawable/ic_goto_quran" />
 
 
