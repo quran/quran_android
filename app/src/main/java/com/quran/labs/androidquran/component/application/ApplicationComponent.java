@@ -29,6 +29,9 @@ import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 
 import com.quran.labs.androidquran.core.worker.di.WorkerModule;
+import com.quran.labs.androidquran.widgets.WidgetListProvider;
+import com.quran.labs.androidquran.widgets.WidgetService;
+
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -78,4 +81,7 @@ public interface ApplicationComponent {
   // dialogs
   void inject(TagBookmarkDialog tagBookmarkDialog);
   void inject(AddTagDialog addTagDialog);
+
+  // widgets
+  void inject(WidgetListProvider widgetListProvider);
 }

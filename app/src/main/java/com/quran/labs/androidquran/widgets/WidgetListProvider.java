@@ -7,30 +7,37 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Bookmark;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
   private ArrayList<SuraPageItem> suraPageItemList = new ArrayList();
   private Context context = null;
   private int appWidgetId;
 
+  @Inject
+  QuranInfo quranInfo;
+
   public WidgetListProvider(Context context, Intent intent) {
     this.context = context;
     appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
         AppWidgetManager.INVALID_APPWIDGET_ID);
+    ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
     populateListItem();
   }
 
   public void populateListItem() {
     int dateAdded = 0;
     Context appContext = context.getApplicationContext();
-    BookmarksDBAdapter mBookmarksDBAdapter = new BookmarksDBAdapter(appContext);
+    BookmarksDBAdapter mBookmarksDBAdapter = new BookmarksDBAdapter(appContext, quranInfo.getNumberOfPages());
     List<Bookmark> bookmarksList = mBookmarksDBAdapter.getBookmarks(dateAdded);// 0 = date added
     suraPageItemList = new ArrayList<>();
     for (int i = 0; i < bookmarksList.size(); i++) {
