@@ -32,7 +32,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
     Context appContext = context.getApplicationContext();
     BookmarksDBAdapter mBookmarksDBAdapter = new BookmarksDBAdapter(appContext);
     List<Bookmark> bookmarksList = mBookmarksDBAdapter.getBookmarks(dateAdded);// 0 = date added
-    suraPageItemList = new ArrayList();
+    suraPageItemList = new ArrayList<>();
     for (int i = 0; i < bookmarksList.size(); i++) {
       Bookmark bm = bookmarksList.get(i);
       SuraPageItem item = new SuraPageItem();
@@ -40,8 +40,6 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
       item.page = bm.page;
       suraPageItemList.add(item);
     }
-
-
   }
 
   @Override

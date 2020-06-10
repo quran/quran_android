@@ -22,11 +22,13 @@ public class BookmarksWidget extends AppWidgetProvider {
       Intent serviceIntent = new Intent(context, WidgetService.class);
       serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
       serviceIntent.setData(Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME)));
-      RemoteViews widget = new RemoteViews(context.getPackageName(),
-          R.layout.bookmarks_widget);
+
+      RemoteViews widget = new RemoteViews(context.getPackageName(), R.layout.bookmarks_widget);
+
       Intent intent = new Intent(context, QuranDataActivity.class);
       PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
       widget.setOnClickPendingIntent(R.id.widget_icon_button, pendingIntent);
+
       intent = new Intent(context, SearchActivity.class);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
       widget.setOnClickPendingIntent(R.id.widget_btn_search, pendingIntent);
@@ -35,8 +37,8 @@ public class BookmarksWidget extends AppWidgetProvider {
       intent.setAction(ShortcutsActivity.ACTION_JUMP_TO_LATEST);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
       widget.setOnClickPendingIntent(R.id.widget_btn_go_to_quran, pendingIntent);
-      widget.setRemoteAdapter(appWidgetIds[i], R.id.list_view_widget,
-          serviceIntent);
+
+      widget.setRemoteAdapter(R.id.list_view_widget, serviceIntent);
       Intent clickIntent = new Intent(context, PagerActivity.class);
       PendingIntent clickPendingIntent = PendingIntent
           .getActivity(context, 0,
@@ -44,9 +46,8 @@ public class BookmarksWidget extends AppWidgetProvider {
               PendingIntent.FLAG_UPDATE_CURRENT);
       widget.setPendingIntentTemplate(R.id.list_view_widget, clickPendingIntent);
       widget.setEmptyView(R.id.list_view_widget, R.id.empty_view);
+
       appWidgetManager.updateAppWidget(appWidgetIds[i], widget);
-
-
     }
     super.onUpdate(context, appWidgetManager, appWidgetIds);
   }
@@ -55,7 +56,6 @@ public class BookmarksWidget extends AppWidgetProvider {
   public void onReceive(Context context, Intent intent) {
     super.onReceive(context, intent);
     updateWidget(context);
-
   }
 
   public static void updateWidget(Context context) {
@@ -64,4 +64,3 @@ public class BookmarksWidget extends AppWidgetProvider {
     appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_widget);
   }
 }
-
