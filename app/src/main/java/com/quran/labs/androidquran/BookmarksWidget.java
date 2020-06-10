@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.widgets.WidgetService;
 
 public class BookmarksWidget extends AppWidgetProvider {
@@ -29,7 +30,9 @@ public class BookmarksWidget extends AppWidgetProvider {
       intent = new Intent(context, SearchActivity.class);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
       widget.setOnClickPendingIntent(R.id.widget_btn_search, pendingIntent);
-      intent = new Intent(context, PagerActivity.class);
+
+      intent = new Intent(context, QuranActivity.class);
+      intent.setAction(ShortcutsActivity.ACTION_JUMP_TO_LATEST);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
       widget.setOnClickPendingIntent(R.id.widget_btn_go_to_quran, pendingIntent);
       widget.setRemoteAdapter(appWidgetIds[i], R.id.list_view_widget,

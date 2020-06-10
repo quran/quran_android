@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.QuranActivity;
 
 public class SearchWidget extends AppWidgetProvider {
 
@@ -22,7 +23,9 @@ public class SearchWidget extends AppWidgetProvider {
       intent = new Intent(context, SearchActivity.class);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
       widget.setOnClickPendingIntent(R.id.SearchWidgetBtnSearch, pendingIntent);
-      intent = new Intent(context, PagerActivity.class);
+
+      intent = new Intent(context, QuranActivity.class);
+      intent.setAction(ShortcutsActivity.ACTION_JUMP_TO_LATEST);
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
       widget.setOnClickPendingIntent(R.id.SearchWidgetBtnGoToQuran, pendingIntent);
       appWidgetManager.updateAppWidget(appWidgetId, widget);
