@@ -6,8 +6,8 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
-import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranPartialPageChecker
 import com.quran.labs.androidquran.util.QuranScreenInfo

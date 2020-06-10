@@ -50,4 +50,8 @@
   <string name="qari_jibreel_gapless">Muhammad Jibreel (non espacé)</string>
   <string name="qari_basfar_gapless">Abdullah Basfar (non espacé)</string>
   <string name="qari_walk_gapless">Ibrahim Walk (Trad. Anglaise, non espacé)</string>
+  <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (Californie, non espacé)</string>
+  <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (non espacé)</string>
+  <string name="qari_ali_jaber_gapless">Ali Jaber (non espacé)</string>
+  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (non espacé)</string>
 </resources>

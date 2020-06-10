@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-  <string name="app_name">Kur\'an</string>
+  <string name="app_name">"Kur'an"</string>
   <string name="downloadPrompt_title">Gerekli dosyalari indirelim mi?</string>
   <string name="downloadPrompt">Daha iyi performans için bazı dosyalar SD karta kopyalanmalı.
     Eğer şimdi bu işlemi gerçekleştirmezseniz sayfaların ayrı-ayrı indirilmesi daha uzun sürebilir.
     Şimdi gerekli dosyaları indirmek istiyor musunuz?
   </string>
   <string name="downloadTabletPrompt">Daha gelişmiş resimler eklendi, indirmek istiyor musunuz?</string>
-  <string name="downloadImportantPrompt">Kur\'an resim dosyaları için küçük ama önemli bir güncelleme var. Bu güncellemeyi indirmek istiyor musunuz?</string>
+  <string name="downloadImportantPrompt">"Kur'an resim dosyaları için küçük ama önemli bir güncelleme var. Bu güncellemeyi indirmek istiyor musunuz?"</string>
   <string name="downloadPrompt_ok">Evet</string>
   <string name="downloadPrompt_no">Hayır</string>
   <string name="downloading_title">Yükleniyor&#8230;</string>
@@ -26,50 +26,75 @@
   <string name="menu_search">Ara</string>
   <string name="cancel">İptal</string>
 
+  <!-- about -->
+  <string name="about_description">"Quran for Android ücretsiz bir Kur'an uygulamasıdır. Lütfen dualarınızda katkıda bulunanları unutmayın."</string>
+  <string name="about_data_sources">Veri kaynakları</string>
+  <string name="about_images">Resim dosyaları</string>
+  <string name="about_madani_images">"Kur'an resim dosyaları, Kral Fahd Kuran Matbaası Kompleksinin yazı fontları temelinde üretilmiştir"</string>
+  <string name="about_naskh_images">"Nesih Kur'an resim dosyaları SHL Info Systems'ten alınmıştır (izinle)"</string>
+  <string name="about_qaloon_images">"Qaloon resim dosyaları Nous Memes Editions Et Diffusion (Tunus)'un izniyle kullanılmıştır"</string>
+  <string name="about_quranicaudio_summary">"Sürekli mp3 Kur'an okunması"</string>
+  <string name="about_quran_ksu">Electronic Moshaf Projesi</string>
+  <string name="about_quran_ksu_summary">Uygulamanın Arapça tefsir ve çeşitli diller için meâlleri kaynağı Kral Saud Üniversitesi Electronic Moshaf projesidir. Bu proje Dr. Ayman Suwayd okunmasınında kaynağıdır.</string>
+  <string name="about_furqan_summary">Osmanı metin ve Arapça tefsir</string>
+  <string name="about_tanzil_summary">Birçok dil meâlleri kaynağı</string>
+  <string name="about_noorhidayat_summary">Noorehira font ve Mufti Taqi meâli</string>
+  <string name="about_open_source">Açık kaynak projeler</string>
+  <string name="about_others">Diğerler</string>
+  <string name="about_contributors">Katkıda bulunanlar</string>
+  <string name="about_contributors_summary">"Quran for Android'un gelişimine katkıda bulunanlar listesi"</string>
+
   <!-- help -->
   <string name="help_title">Sıkça sorulan sorular</string>
-  <string name="help">
+  <string name="help">"
         &lt;b>Ses nasıl çalışılır?&lt;/b>
-        &lt;br/>Herhangi bir Kur\'an sayfasını açın ve ekrana bir kez dokunun. Aşağıda oynat düğmesi ve hâfız adını göreceksiniz.
+        &lt;br/>Herhangi bir Kur'an sayfasını açın ve ekrana bir kez dokunun. Aşağıda oynat düğmesi ve hâfız adını göreceksiniz.
         Hâfız adına dokunarak istediğiniz hâfızı seçebilirsiniz. Oynat düğmesine basarak okumakta olduğunuz sayfa veya sureyi dinleyebilirsiniz.
         &lt;br/>
         &lt;br/>&lt;b>Meâlleri nasıl görebilirim?&lt;/b>
-        &lt;br/>Herhangi bir Kur\'an sayfasını açın ve ekrana bir kez dokunun. Yukarda bir dünya simgesi göreceksiniz.
+        &lt;br/>Herhangi bir Kur'an sayfasını açın ve ekrana bir kez dokunun. Yukarda bir dünya simgesi göreceksiniz.
         Simgeye basarak meâlleri görebilirsiniz.
         &lt;br/>
         Eğer indirdiğiniz hiç bir meâl yoksa, meâl indirme sayfası açılacak. İstediğiniz meâlleri seçerek indirin.
-        Kur\'an sayfasına dönünce dünya simgesine tekrar basarak meâlleri okuyabilirsiniz.
+        Kur'an sayfasına dönünce dünya simgesine tekrar basarak meâlleri okuyabilirsiniz.
         &lt;br/>
         &lt;br/>&lt;b>Sayfaları nasıl işaretleyebilirim?&lt;/b>
-        &lt;br/>Herhangi bir Kur\'an sayfasını açın ve ekrana bir kez dokunun. Yukarda bir sayfa işaretleme simgesini göreceksiniz.
+        &lt;br/>Herhangi bir Kur'an sayfasını açın ve ekrana bir kez dokunun. Yukarda bir sayfa işaretleme simgesini göreceksiniz.
         Simgeye basarak sayfayı işaretleyin (simge beyaz renk oluverir). Simgeye bir kez daha basarak işareti silebilirsiniz.
         &lt;br/>
         &lt;br/>&lt;b>Metinleri nasıl büyük yapabilirim?&lt;/b>
         &lt;br/>Arapça sayfalar için ekranı yan yatırın. Meâller metin büyüklüğünü Ayarlar kısmından değiştirebilirsiniz.
         &lt;br/>
         &lt;br/>&lt;b>Âyeti nasıl paylaşabilirim?&lt;/b>
-        &lt;br/>Herhangi bir Kur\'an âyetine basarak tutunca yeni bir menü açılır.
-        Menüden âyeti işaretleyebilir, paylaşabilir, meâlini okuyabilir veya âyeti kopyalayabilirsiniz.
+        &lt;br/>Herhangi bir Kur'an âyetine basarak tutunca yeni bir menü açılır.
+        Menüden âyeti işaretleyebilir, paylaşabilir, meâlini okuyabilir veya âyeti kopyalayabilirsiniz."
     </string>
-  <string name="menu_get_translations">Meâlleri getir</string>
-  <string name="search_hint">Kur\'an da arama</string>
-  <string name="quranSearchType">Kur\'an-i Kerîm âyetlerinde arama</string>
+  <string name="search_hint">"Kur'an'da arama"</string>
+  <string name="quranSearchType">"Kur'an-i Kerîm âyetlerinde arama"</string>
+
+  <plurals name="files_downloaded">
+    <item quantity="one">1 sure indirildi</item>
+    <item quantity="other">%1$d sure indirildi</item>
+  </plurals>
+
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">\"%1$s\" için bir arama sonucu: </item>
     <item quantity="other">\"%1$s\" için %2$d arama sonuçları: </item>
   </plurals>
 
-  <!-- help -->
-  <string name="email_us">Sorunuz yukarıda yanıtlanmamış ise destek için quranandroid@gmail.com e-posta adresine mektup yollayabilirsiniz.
-        Lütfen unutmayın ki bize çok sayıda e-posta geliyor, bu yüzden aldığımız tüm e-postaları yanıtlamayabiliriz.
-    </string>
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">"Kur'an verilerini harici depolama alanında saklamak için izninizi istiyor.
+    Kur'an bu izin olmadan çalışabılır, ancak verileri temizlerseniz veya uygulamayı kaldırırsanız indirilen tüm sayfalar,
+    ses ve diğer veriler kaldırılır. Kur'an'a izin verir misiniz?"</string>
+  <string name="storage_permission_please_restart">Bu değişikliğin geçerli olması için lütfen uygulamayı yeniden başlatın</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Sure de bulundu %1$s, %2$d.âyet</string>
+  <string name="found_in_sura">%1$s suresi, %2$d.âyet</string>
   <string name="no_results">Bir sonuç bulunamadı \"%s\"</string>
   <string name="no_arabic_search_available">Arapça arama paketi indirilmedi. Lütfen indirip daha sonra tekrar deneyin</string>
   <string name="get_arabic_search_db">Arapça arama veritabanını indirin</string>
+
   <!-- Quran Preference Activity -->
   <string name="prefs_category_reading">Okuma seçenekleri</string>
   <string name="prefs_category_translation">Meâl seçenekleri</string>
@@ -77,52 +102,20 @@
   <string name="prefs_use_arabic_title">Arapça modu</string>
   <string name="prefs_use_arabic_summary_on">Uygulama Arapça olarak çalışacak</string>
   <string name="prefs_lock_orientation_title">Ekran döndürmeyi kapat</string>
-  <string name="prefs_lock_orientation_summary_on">Kur\'an sayfları döndürme özellikleri olmadan gösterilecek</string>
+  <string name="prefs_lock_orientation_summary_on">"Kur'an sayfları döndürme özellikleri olmadan gösterilecek"</string>
   <string name="prefs_lock_orientation_summary_off">Otomatik döndürme özellikleri çalışır vaziyette</string>
   <string name="prefs_landscape_orientation_title">Yatay düzen yönelimli</string>
   <string name="prefs_landscape_orientation_summary_on">Yatay yönelimi açık</string>
   <string name="prefs_landscape_orientation_summary_off">Dikey yönelimi açık</string>
   <string name="prefs_night_mode_title">Gece modu</string>
   <string name="prefs_night_mode_summary">Karanlık arkaplan ve parlak fontlar kullanılacak</string>
-  <string name="prefs_display_marker_title">Kur\'an kısımlarını gösteren uyarı göster</string>
+  <string name="prefs_display_marker_title">"Kur'an kısımlarını gösteren uyarı göster"</string>
   <string name="prefs_display_marker_summary">Ekranda cüz ve hizip bilgileri görüntüle</string>
   <string name="prefs_highlight_bookmarks_title">İşaretleri vurgulama</string>
-  <string name="prefs_highlight_bookmarks_summary">İşaretlenen âyetleri̇ vurgulayarak göster</string>
+  <string name="prefs_highlight_bookmarks_summary">İşaretlenen âyetleri vurgulayarak göster</string>
   <string name="prefs_translation_text_title">Meâllerin metin büyüklüğü</string>
-  <string name="downloaded_translations">Yüklendi</string>
-  <string name="available_translations">İndirmek için hazır</string>
-  <string name="remove_button">Kaldır</string>
-
-  <string name="quran_rob3">¼</string>
-  <string name="quran_nos">½</string>
-  <string name="quran_talt_arb3">¾</string>
-  <string name="quran_hizb">Hizb</string>
-  <string name="quran_juz2">Cüz</string>
-  <string name="quran_page">Sayfa</string>
-  <string name="quran_sura">Sureler</string>
-  <string name="quran_ayah">%1$d.âyet</string>
-  <string name="notification_download_canceled">İndirme iptal edildi</string>
-  <string name="update_available">Güncelleme var</string>
-  <string name="translation_updates_available">Meâller için güncelleme mevcut. Meâl indirme sayfasını ziyaret etmek istermisiniz?</string>
-  <string name="translation_ayah">Âyet meâli</string>
-  <string name="translation_dialog_later">Sonra</string>
-  <string name="translation_dialog_yes">Evet</string>
-  <string name="timing_database">Gerekli dosyalar</string>
-  <string name="tag_bookmark">Sayfa işareti etiketi</string>
-  <string name="tag_ayah">Bu âyeti işaretle</string>
-  <string name="tag_dlg_title">Etiket</string>
-  <string name="sura_ayah_notification_str">Sure %1$s, âyet %2$d</string>
-  <string name="tag_name">İsim</string>
-  <string name="share_ayah_text">Âyet meâlini paylaş</string>
-  <string name="share_ayah">Âyet kısayolu paylaş</string>
-  <string name="search_key">Kur\'anda arama yapmak için arama tuşuna bas</string>
-  <string name="search_data">Veri arama</string>
-  <string name="remove_dlg_title">Meâl kaldırılsın mı?</string>
-  <string name="remove_dlg_msg">\"%1$s\" meâlini kaldırmak istediğinize emin misiniz?</string>
-  <string name="quran_sura_title">%1$s suresi</string>
   <string name="prefs_volume_key_navigation_summary">Sayfalar arasında ses düğmelerini kullanarak dolaş</string>
   <string name="prefs_volume_key_navigation_title">Ses düğmesi ile dolaşma</string>
-  <string name="process_progress"> %1$d / %2$d dosya işleniyor</string>
   <string name="prefs_translations_summary">Meâli indir ve ayarla</string>
   <string name="prefs_translations">Meâller</string>
   <string name="prefs_dual_page_mode_title">Tablet modu</string>
@@ -148,10 +141,11 @@
   <string name="prefs_immersive_in_portrait_summary_disabled">Sadece yatay modda tam ekran kullanılacak</string>
   <string name="prefs_download_amount_title">İndirme miktarı</string>
   <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
-  <string name="prefs_audio_manager">Ses yöneticisi (deneysel)</string>
-  <string name="prefs_audio_manager_summary">Kur\'an seslerini yönetme ve indirme</string>
-  <string name="prefs_err_moving_app_files">Uygulama dosyalarını taşınamadı</string>
-  <string name="prefs_copying_app_files">Uygulama dosyaları kopyalanıyor</string>
+  <string name="prefs_audio_manager_summary">"Kur'an seslerini yönetme ve indirme"</string>
+  <string name="downloaded_translations">Yüklendi</string>
+  <string name="available_translations">İndirmek için hazır</string>
+  <string name="remove_button">Kaldır</string>
+  <string name="dialog_ok">Tamam</string>
   <string name="prefs_category_download">İndirme seçenekleri</string>
   <string name="prefs_calculating_app_size">Uygulama büyüklüğü hesaplanıyor</string>
   <string name="prefs_ayah_before_translation_title">Meâlden önce âyet</string>
@@ -161,57 +155,190 @@
   <string name="prefs_app_location_summary">Lütfen hangi SD karta kopyalanacağını seçin</string>
   <string name="prefs_send_logs_title">Günlükleri gönder</string>
   <string name="prefs_send_logs_summary">Hata ayıklama günlüklerini geliştiriciye gönder</string>
-  <string name="play_from_here">Buradan çalmaya başla</string>
-  <string name="page_description">sayfa  %1$s, cüz %2$s</string>
-  <string name="download_progress">%1$s / %2$s indirildi</string>
+  <string name="prefs_copying_app_files">Uygulama dosyaları kopyalanıyor</string>
+  <string name="prefs_err_moving_app_files">Uygulama dosyalarını taşınamadı</string>
+  <string name="prefs_no_enough_space_to_move_files">Uygulamayı taşımak için yeterli boş alan bulunamadı</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_megabytes_str">%s MB</string>
+  <string name="prefs_page_type_title">Sayfa türü (deneysel)</string>
+  <string name="prefs_page_type_summary">Okuma sayfası türünü seçin</string>
 
-  <string name="not_tagged">Etiketlenmedi</string>
-  <string name="new_tag">Yeni etiket</string>
-  <string name="need_translation">Hiçbir meâl indirilmedi</string>
+  <string name="more_translations">Daha fazla meâller</string>
+  <string name="import_data_permissions_error">İzinler hatası nedeniyle yedekleme dosyası okunamıyor</string>
+  <string name="import_data_error">Geçersiz yedekleme dosyası (veya yedekleme dosyası okunamıyor)</string>
+  <string name="import_data">Verileri içe aktar</string>
+  <string name="import_data_and_override">Bu dosyayı içe aktarırsanız, tüm işaretlerinizi %1$d işaret ve %2$d etiketle değiştirilir. Devam etmek istiyor musunuz?</string>
+  <string name="import_successful">İçe aktarma başarıyla tamamlandı</string>
+  <string name="export_data_error">Veriler dışa aktarılırken hata oluştu</string>
+  <string name="exported_data">"Veriler %1$s'e aktarıldı"</string>
+
+  <string name="warning">Uyarı</string>
+  <string name="kitkat_external_message">"Android sistem sınırlamaları nedeniyle, Kur'an verilerini harici SD kartınıza yerleştirmeyi ve
+    daha sonra uygulamayı silmeyi veya verilerini temizlemeyi seçerseniz, tüm Kur'an sayfaları ve sesleri silinir ve tekrar indirmeniz gerekir.
+    Harici SD kartı kullanmak istediğinizden emin misiniz?"</string>
+  <string name="please_grant_permissions">Lütfen uygulama ayarlarında izin verin</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Bu âyetin tefsiri %d.âyetin tefsiri ile birlikte gelir (gözetmek için tıklayın).</string>
+
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Cüz</string>
+  <string name="quran_page">Sayfa</string>
+  <string name="quran_sura">Sureler</string>
+  <string name="quran_ayah">%1$d.âyet</string>
+  <string name="quran_ayah_details">%1$s %2$s.âyet, %3$s.cüz</string>
+  <string name="quran_sura_title">%1$s suresi</string>
+  <string name="sura_ayah_notification_str">Sure %1$s, âyet %2$d</string>
+
+  <string name="index_loading">Yükleniyor&#8230;</string>
+
+  <string name="update_available">Güncelleme var</string>
+  <string name="translation_updates_available">Meâller için güncelleme mevcut. Meâl indirme sayfasını şimdi gözetmek istermisiniz?</string>
+  <string name="translation_dialog_later">Sonra</string>
+  <string name="translation_dialog_yes">Evet</string>
+  <string name="timing_database">Gerekli dosyalar</string>
+  <string name="page_description">sayfa  %1$s, cüz %2$s</string>
+
   <string name="menu_bookmarks_ayah">Âyet işaretleri</string>
   <string name="menu_bookmarks_page">Sayfa işaretleri</string>
   <string name="menu_sort_date">Eklendiği tarih</string>
-  <string name="menu_sort_location">Kur\'andaki yeri</string>
+  <string name="menu_sort_location">"Kur'an'daki yeri"</string>
   <string name="menu_sort">Sırala</string>
-  <string name="menu_back_to_page">Kur\'an göster</string>
-  <string name="makki">Mekkî</string>
-  <string name="madani">Medenî</string>
+  <string name="menu_back_to_page">"Kur'an'ı göster"</string>
   <string name="juz2_description">Cüz %1$s</string>
-  <string name="index_loading">Yükleniyor&#8230;</string>
   <string name="highlighting_database">Gerekli dosyalar</string>
-  <string name="prefs_no_enough_space_to_move_files">Uygulamayı taşımak için yeterli boş alan bulunamadı</string>
   <string name="gotoPage">Sayfaya git</string>
   <string name="get_translations">Meâlleri getir</string>
-  <string name="delete_tag">Etiketi kaldır</string>
-  <string name="copy_ayah">Âyet kopyala</string>
   <string name="canceling">İptal ediliyor</string>
-  <string name="bookmarks_list_empty">Sayfa işareti yok</string>
-  <string name="bookmark_ayah">Bu âyeti işaretle</string>
-  <string name="ayah_copied_popup">Âyet kopyalandı</string>
-  <string name="dialog_ok">Tamam</string>
-  <string name="download_cancel">İptal</string>
-  <string name="download_error_disk">Yeterli boş alan yok</string>
+
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">SD kart bulunamadı. Lütfen monte edip tekrar deneyin.</string>
+  <string name="download_successful">Başarıyla indirildi</string>
+  <string name="download_processing">İndirme devam ediyor&#8230;</string>
   <string name="download_error_general">İndirme başarısız</string>
+  <string name="download_error_disk">Yeterli boş alan yok</string>
+  <string name="download_error_network">Ağ problemi yüzünden indirilemedi</string>
+  <string name="download_error_perms">İzin verilmediği için indirilemedi</string>
   <string name="download_error_invalid_download">İndirilen dosya bozuk</string>
   <string name="download_error_invalid_download_retry">Bozuk dosya, tekrar deneniyor</string>
-  <string name="download_successful">Başarıyla indirildi</string>
-  <string name="download_error_network">Ağ problemi yüzünden indirilemedi</string>
-  <string name="download_non_wifi_prompt">Kablosuz bağlantı mevctu değil . Yine de indirmek istiyor musunuz?</string>
-  <string name="download_extra_data">Paylaşma ve meâl için bir veya iki küçük dosya indirilmesi gerekiyor. İzin veriyor musunuz?</string>
-  <string name="error_getting_translation_list">Meâller sayfası açılmıyor, lütfen daha sonra tekrar deneyiniz</string>
-  <string name="download_retry">Tekrar dene</string>
   <string name="download_error_network_retry">İnternet bağlantısı hatası, kurtarılmaya çalışılıyor</string>
-  <string name="download_processing">İndirme devam ediyor&#8230;</string>
-  <string name="edit_tag">Etiket güncelle</string>
-  <string name="download_error_perms">İzin verilmediği için indirilemedi</string>
+  <string name="notification_download_canceled">İndirme iptal edildi</string>
+  <string name="download_non_wifi_prompt">Kablosuz bağlantı mevctu değil. Yine de indirmek istiyor musunuz?</string>
+
+  <!-- downloading dialogs -->
+  <string name="download_progress">%1$s / %2$s indirildi</string>
+  <string name="download_sura_progress">%3$d suresinin %1$s / %2$s indirildi</string>
+  <string name="download_sura_ayah_progress">%1$d suresi %2$d. âyet indiriliyor</string>
+  <string name="process_progress"> %1$d / %2$d dosya işleniyor</string>
+  <string name="download_retry">Tekrar dene</string>
+  <string name="download_cancel">İptal</string>
+  <string name="download_extra_data">Paylaşma ve meâl için bir veya iki küçük dosya indirilmesi gerekiyor. İzin veriyor musunuz?</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Meâl kaldırılsın mı?</string>
+  <string name="remove_dlg_msg">\"%1$s\" meâlini kaldırmak istediğinize emin misiniz?</string>
+  <string name="error_getting_translation_list">Meâller sayfası açılmıyor, lütfen daha sonra tekrar deneyiniz</string>
+  <string name="search_data">Veri arama</string>
+  <string name="need_translation">Hiçbir meâl indirilmedi</string>
+  <string name="menu_get_translations">Meâlleri indir</string>
+
+  <!-- help -->
+  <string name="email_us">Sorunuz yukarıda yanıtlanmamış ise destek için quranandroid@gmail.com e-posta adresine mektup yollayabilirsiniz.
+        Lütfen unutmayın ki bize çok sayıda e-posta geliyor, bu yüzden aldığımız tüm e-postaları yanıtlamayabiliriz.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">Mekkî</string>
+  <string name="madani">Medenî</string>
   <plurals name="verses">
     <item quantity="one">1 âyet</item>
     <item quantity="other">%s âyet</item>
   </plurals>
-  <string name="recent_pages">Son sayfalar</string>
-  <string name="audio_manager">Ses yöneticisi</string>
-  <plurals name="files_downloaded">
-    <item quantity="one">1 sure i̇ndirildi</item>
-    <item quantity="other">%1$d sure i̇ndirildi</item>
+
+  <!-- ayah action panel -->
+  <string name="play_from">Başlangıç</string>
+  <string name="play_to">Son</string>
+  <string name="play_restrict_range">Sadece yukarıdaki âyetleri dinle</string>
+  <string name="play_verses_range">âyetler grubu:</string>
+  <string name="play_each_verse">Her âyeti</string>
+  <string name="play_apply">Uygula</string>
+  <string name="play_apply_and_play">Uygula ve dinle</string>
+  <string name="previous">Önceki</string>
+  <string name="play">Dinle</string>
+  <string name="pause">Duraklat</string>
+  <string name="stop">Durdur</string>
+  <string name="next">Sonraki</string>
+
+  <string-array name="repeatValues">
+    <item>1 kere</item>
+    <item>2 kere</item>
+    <item>3 kere</item>
+    <item>sürekli</item>
+  </string-array>
+
+  <string name="playback_prompt_title">Şuradan başlat:</string>
+  <string name="starting_page_label">Sayfa başlangıcı</string>
+
+  <!-- long press -->
+  <string name="bookmark_ayah">Bu âyeti işaretle</string>
+  <string name="tag_ayah">Bu âyeti işaretle</string>
+  <string name="share_ayah">Âyet kısayolu paylaş</string>
+  <string name="share_ayah_text">Âyet meâlini paylaş</string>
+  <string name="translation_ayah">Âyet meâli</string>
+  <string name="play_from_here">Buradan dinlemeye başla</string>
+  <string name="search_key">"Kur'an'da arama yapmak için arama tuşuna bas"</string>
+  <string name="copy_ayah">Âyet kopyala</string>
+  <string name="ayah_copied_popup">Âyet kopyalandı</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">Sayfa işareti etiketi</string>
+  <string name="delete_tag">Etiketi kaldır</string>
+  <string name="edit_tag">Etiket güncelle</string>
+  <string name="new_tag">Yeni etiket</string>
+  <string name="not_tagged">Etiketlenmedi</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Bir etiket silindi</item>
+    <item quantity="other">%d etiket silindi</item>
   </plurals>
+  <string name="undo">Geri alma</string>
+
+  <string name="recent_pages">Son sayfalar</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Etiket</string>
+  <string name="tag_name">İsim</string>
+  <string name="tag_blank_tag_error">Etiket adı boş bırakılamaz!</string>
+  <string name="tag_duplicate_tag_error">Etiket adı zaten var!</string>
+
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">Sayfa işareti yok</string>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Ses yöneticisi</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Sure silindi</item>
+    <item quantity="other">%1$d sure silindi</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Sure silinirken bir hata oluştu</item>
+    <item quantity="other">%1$d sure silinirken bir hata oluştu</item>
+  </plurals>
+  <string name="audio_manager_delete_selection">Seçimi sil</string>
+  <string name="audio_manager_download_selection">Seçimi indir</string>
+  <string name="audio_manager_download_all">Hepsini indir</string>
+  <string name="audio_manager_surah_delete">Sureyi sil</string>
+  <string name="audio_manager_surah_download">Sureyi indir</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Ses dosyaları güncellendi</string>
+  <string name="audio_updated_text">Birkaç ses dosyaları güncellendi. Güncellenen sürümün bir
+    sonraki oynatılmasında indirilebilmesi için bu dosyaların cihazınızdaki kopyası kaldırıldı.
+  </string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">"Kur'an indirme"</string>
+  <string name="notification_channel_audio">"Kur'an okunması"</string>
 </resources>

@@ -12,9 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.module.fragment.QuranPageModule;
+import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
@@ -52,6 +53,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   private AyahTrackerItem[] ayahTrackerItems;
 
   @Inject QuranInfo quranInfo;
+  @Inject QuranDisplayData quranDisplayData;
   @Inject QuranSettings quranSettings;
   @Inject QuranPagePresenter quranPagePresenter;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
@@ -117,8 +119,8 @@ public class QuranPageFragment extends Fragment implements PageController,
       ayahTrackerItems = new AyahTrackerItem[]{
         quranPageLayout.canScroll() ?
             new AyahScrollableImageTrackerItem(pageNumber, height,
-                quranInfo, quranPageLayout, imageDrawHelpers, imageView) :
-            new AyahImageTrackerItem(pageNumber, height, quranInfo, imageDrawHelpers, imageView)
+                quranInfo, quranDisplayData, quranPageLayout, imageDrawHelpers, imageView) :
+            new AyahImageTrackerItem(pageNumber, height, quranInfo, quranDisplayData, imageDrawHelpers, imageView)
       };
     }
     return ayahTrackerItems;

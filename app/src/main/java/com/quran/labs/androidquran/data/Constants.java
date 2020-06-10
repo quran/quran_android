@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.data;
 
+import com.quran.data.core.QuranConstants;
+
 public class Constants {
 
   // data domain
@@ -16,19 +18,33 @@ public class Constants {
   public static final int MIN_TRANSLATION_REFRESH_TIME = 60 * 60 * 1000;
 
   // Pages
-  public static final int PAGES_FIRST = 1;
-  public static final int SURA_FIRST = 1;
-  public static final int SURA_LAST = 114;
-  public static final int SURAS_COUNT = 114;
-  public static final int JUZ2_COUNT = 30;
-  public static final int AYA_MIN = 1;
-  public static final int AYA_MAX = 286;
+  public static final int PAGES_FIRST = QuranConstants.PAGES_FIRST;
+  public static final int SURA_FIRST = QuranConstants.FIRST_SURA;
+  public static final int SURA_LAST = QuranConstants.LAST_SURA;
+  public static final int SURAS_COUNT = QuranConstants.NUMBER_OF_SURAS;
+  public static final int JUZ2_COUNT = QuranConstants.JUZ2_COUNT;
+  public static final int AYA_MIN = QuranConstants.MIN_AYAH;
+  public static final int AYA_MAX = QuranConstants.MAX_AYAH;
   public static final int NO_PAGE = -1;
   public static final int MAX_RECENT_PAGES = 3;
 
   // quranapp
   public static final String QURAN_APP_BASE = "http://quranapp.com/";
   public static final String QURAN_APP_ENDPOINT = "http://quranapp.com/note";
+
+  // Notification Ids
+  public static final int NOTIFICATION_ID_DOWNLOADING = 1;
+  public static final int NOTIFICATION_ID_DOWNLOADING_COMPLETE = 2;
+  public static final int NOTIFICATION_ID_DOWNLOADING_ERROR = 3;
+  public static final int NOTIFICATION_ID_AUDIO_PLAYBACK = 4;
+  public static final int NOTIFICATION_ID_AUDIO_UPDATE = 5;
+
+  // Notification channels
+  public static final String AUDIO_CHANNEL = "quran_audio_playback";
+  public static final String DOWNLOAD_CHANNEL = "quran_download_progress";
+
+  // Unique work names
+  public static final String AUDIO_UPDATE_UNIQUE_WORK = "audio_update_unique_work";
 
   // Settings Key (some of these have corresponding values in preference_keys.xml)
   public static final String PREF_APP_LOCATION = "appLocation";
@@ -81,4 +97,6 @@ public class Constants {
   public static final String DEBUG_PAGES_DOWNLOADED = "debugPagesDownloaded";
   public static final String PREF_READING_CATEGORY = "readingCategoryKey";
   public static final String PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages";
+  public static final String PREF_CURRENT_AUDIO_REVISION = "currentAudioRevision";
+  public static final String PREF_SURA_TRANSLATED_NAME = "suraTranslatedName";
 }

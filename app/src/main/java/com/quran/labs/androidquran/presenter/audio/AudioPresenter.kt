@@ -2,12 +2,13 @@ package com.quran.labs.androidquran.presenter.audio
 
 import android.content.Context
 import android.content.Intent
+import com.crashlytics.android.Crashlytics
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.QariItem
+import com.quran.labs.androidquran.common.audio.QariItem
 import com.quran.labs.androidquran.dao.audio.AudioPathInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
-import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
@@ -15,10 +16,11 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import java.io.File
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class AudioPresenter @Inject
-constructor(private val quranInfo: QuranInfo,
+constructor(private val quranDisplayData: QuranDisplayData,
             private val audioUtil: AudioUtils,
             private val quranFileUtils: QuranFileUtils) : Presenter<PagerActivity> {
   private var pagerActivity: PagerActivity? = null
@@ -48,8 +50,13 @@ constructor(private val quranInfo: QuranInfo,
         audioPathInfo
       }
 
+      val (checkedStart, checkedEnd) = if (start < end) start to end else end to start
+      if (checkedStart != start) {
+        Crashlytics.logException(IllegalArgumentException("expected $start > $end, but wasn't."))
+      }
+
       val audioRequest = AudioRequest(
-          start, end, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
+          checkedStart, checkedEnd, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
       play(audioRequest)
     }
   }
@@ -96,14 +103,14 @@ constructor(private val quranInfo: QuranInfo,
             request.start,
             request.end,
             qari.isGapless)) {
-      val title = quranInfo.getNotificationTitle(
+      val title = quranDisplayData.getNotificationTitle(
           context, request.start, request.start, qari.isGapless)
       getDownloadIntent(context, audioUtil.getQariUrl(qari), path, title).apply {
         putExtra(QuranDownloadService.EXTRA_START_VERSE, request.start)
         putExtra(QuranDownloadService.EXTRA_END_VERSE, request.start)
       }
     } else if (!request.shouldStream && !haveAllFiles(audioPathInfo, request.start, request.end)) {
-      val title = quranInfo.getNotificationTitle(
+      val title = quranDisplayData.getNotificationTitle(
           context, request.start, request.end, qari.isGapless)
       getDownloadIntent(context, audioUtil.getQariUrl(qari), path, title).apply {
         putExtra(QuranDownloadService.EXTRA_START_VERSE, request.start)

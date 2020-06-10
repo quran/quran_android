@@ -119,7 +119,6 @@
   <string name="prefs_streaming_summary">Streaming lorsque cela est possible.</string>
   <string name="prefs_download_amount_title">Quantité de téléchargement</string>
   <string name="prefs_download_amount_summary">Quantité du téléchargement préféré pour l\'audio espacé.</string>
-  <string name="prefs_audio_manager">Gestionnaire audio (expérimental)</string>
   <string name="prefs_audio_manager_summary">Gérer et télécharger les audios coraniques</string>
   <string name="downloaded_translations">Téléchargées</string>
   <string name="available_translations">Disponible en téléchargement</string>
@@ -284,9 +283,35 @@
   <string name="undo">Annuler</string>
 
   <!-- m permissions stuff -->
-  <string name="storage_permission_rationale">Quran demande la permission de stocker ses données sur un stockage externe. Quran continuera de fonctionner sans cette permission, mais si vous effacez les données, ou désintallez l\'application, toutes les pages téléchargées, les audios, et les données seront supprimés. Accorder la permission à Quran ?</string>
-  <string name="storage_permission_please_restart">Redémarrez l\'application pour que les changements prennent effet.</string>
+  <string name="storage_permission_rationale">L\'application demande la permission de stocker ses données sur un stockage externe. Elle continuera de fonctionner sans cette permission, mais si vous effacez les données, ou désintallez l\'application, toutes les pages téléchargées, les audios, et les données seront supprimés. Accorder la permission à l\'application Coran ?</string>
+  <string name="storage_permission_please_restart">Redémarrez l\'application pour appliquer les changements.</string>
 
   <!-- audio manager -->
   <string name="audio_manager">Gestionnaire audio</string>
+  <string name="menu_show_date">" Afficher la date"</string>
+  <string name="about_furqan_summary">Police de caractères Ottoman et explication en arabe</string>
+  <string name="prefs_immersive_in_portrait_title">Plein écran en mode portrait</string>
+  <string name="prefs_immersive_in_portrait_summary_enabled">Les images sont affichées en plein écran en portrait et paysage</string>
+  <string name="prefs_immersive_in_portrait_summary_disabled">Les images sont affichées en plein écran uniquement en paysage</string>
+  <string name="prefs_category_advanced_summary">Importer/exporter des signets, définir le répertoire des données, etc.</string>
+  <string name="prefs_import_title">Importer</string>
+  <string name="prefs_import_summary">Importer des signets et des tags</string>
+  <string name="prefs_page_type_summary">Choisir le type d\'affichage pour la lecture</string>
+  <string name="more_translations">Autres traductions</string>
+  <string name="see_tafseer_of_verse">Les explications de ce verset sont inclus dans l\'explication du verset %d (Cliquez pour plus d\'info).</string>
+  <string name="playback_prompt_title">Lecture depuis :</string>
+  <string name="starting_page_label">Début de la page</string>
+  <string name="recent_pages">Pages récente</string>
+  <string name="tag_blank_tag_error">Le nom du tag ne peux pas être vide</string>
+  <string name="tag_duplicate_tag_error">Le nom du tag existant déjà!</string>
+  <string name="audio_manager_surah_download">Télécharger la sourate</string>
+  <string name="audio_manager_surah_delete">Supprimer la sourate</string>
+  <string name="audio_manager_download_all">Tout télécharger</string>
+  <string name="audio_manager_download_selection">Télécharger la sélection</string>
+  <string name="audio_manager_delete_selection">Supprimer la sélection</string>
+  <string name="audio_updated_title">Mise à jour des fichiers audio du Coran</string>
+  <string name="audio_updated_text">Des fichiers audio du Coran ont été mis à jour. Nous avons supprimé la copie local de ces fichiers afin de téléchargées la nouvelle version la prochaine fois que vous les écouterez.</string>
+  <string name="notification_channel_download">Coran : Téléchargements</string>
+  <string name="notification_channel_audio">Coran : Récitations</string>
+  <string name="prefs_page_type_title">Type d\'affichage (expérimental)</string>
 </resources>

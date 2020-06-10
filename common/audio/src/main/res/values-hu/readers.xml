@@ -50,4 +50,8 @@
   <string name="qari_jibreel_gapless">Muhammad Jibreel (szünetmentes)</string>
   <string name="qari_basfar_gapless">Abdullah Basfar (szünetmentes)</string>
   <string name="qari_walk_gapless">Ibrahim Walk (angol, szünetmentes)</string>
+  <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (Kalifornia, szünetmentes)</string>
+  <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (szünetmentes)</string>
+  <string name="qari_ali_jaber_gapless">Ali Jaber (szünetmentes)</string>
+  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (szünetmentes)</string>
 </resources>

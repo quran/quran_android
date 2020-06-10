@@ -29,7 +29,7 @@
   <string name="menu_sort">Сортировать</string>
   <string name="menu_sort_date">По дате добавления</string>
   <string name="menu_sort_location">По расположению в Коране</string>
-  <string name="menu_sort_group_by_tags">Группировать по меткам</string>
+  <string name="menu_sort_group_by_tags">Группировать по тегам</string>
   <string name="menu_show_date">Показать даты</string>
   <string name="menu_translation">Показать перевод</string>
   <string name="menu_back_to_page">Показать Коран</string>
@@ -179,7 +179,6 @@
   <string name="prefs_streaming_summary">При возможности потоковое аудио</string>
   <string name="prefs_download_amount_title">Объем скачивания</string>
   <string name="prefs_download_amount_summary">Предпочтительный объем загрузки для прерывистого аудио</string>
-  <string name="prefs_audio_manager">Аудио менеджер (экспериментальный)</string>
   <string name="prefs_audio_manager_summary">Управлять и скачать аудио рецитация Корана</string>
   <string name="downloaded_translations">Загруженные переводы</string>
   <string name="available_translations">Доступные для загрузки</string>
@@ -207,12 +206,15 @@
   <string name="prefs_import_summary">Импорт закладок и тегов</string>
   <string name="prefs_export_title">Экспорт</string>
   <string name="prefs_export_summary">Экспорт копию закладок и тегов</string>
+  <string name="prefs_page_type_title">Тип страниц (экспериментальный)</string>
+  <string name="prefs_page_type_summary">Выберите тип страниц</string>
 
+  <string name="more_translations">Ещё переводов</string>
   <string name="import_data_permissions_error">Не удается прочитать файл резервной копии из-за ошибки разрешения.</string>
   <string name="import_data_error">Неверный файл резервной копии (или не удалось открыть файл с резервной копией).</string>
   <string name="import_data">Импорт данных</string>
   <string name="import_data_and_override">Если вы будете импортировать этот файл, все ваши закладки будут заменены
-        с %1$d закладки и %2$d метки. Импортировать?</string>
+        с %1$d закладки и %2$d тегов. Импортировать?</string>
   <string name="import_successful">Данные успешно импортированы</string>
   <string name="export_data_error">Ошибка экспорта данных</string>
   <string name="exported_data">Данные экспортированы в %1$s</string>
@@ -224,6 +226,9 @@
         что хотите использовать внешнюю SD карту?</string>
   <string name="please_grant_permissions">Пожалуйста, предоставляйте разрешения в настройках приложения</string>
   <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Тафсир этого аята включено в тафсире аят %d (нажмите, чтобы развернуть).</string>
 
   <!-- translation updates -->
   <string name="update_available">Доступно обновление</string>
@@ -315,12 +320,15 @@
     <item>1 раз</item>
     <item>2 раза</item>
     <item>3 раза</item>
-    <item>бесконечно</item>
+    <item>непрерывно</item>
   </string-array>
+
+  <string name="playback_prompt_title">Начать воспроизведение с:</string>
+  <string name="starting_page_label">Начало страницы</string>
 
   <!-- long press -->
   <string name="bookmark_ayah">Создать закладку этого аята</string>
-  <string name="tag_ayah">Создать метку для этого аята</string>
+  <string name="tag_ayah">Создать тег для этого аята</string>
   <string name="share_ayah">Поделиться аятом</string>
   <string name="share_ayah_text">Поделиться текстом аята</string>
   <string name="translation_ayah">Перевод/тафсир аята</string>
@@ -331,10 +339,10 @@
 
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Отметить закладку</string>
-  <string name="delete_tag">Удалить метку</string>
-  <string name="edit_tag">Редактировать метку</string>
-  <string name="new_tag">Новая метка</string>
-  <string name="not_tagged">Без метки</string>
+  <string name="delete_tag">Удалить тег</string>
+  <string name="edit_tag">Редактировать тег</string>
+  <string name="new_tag">Новый тег</string>
+  <string name="not_tagged">Без тега</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Удалено %d элемент</item>
     <item quantity="few">Удалено %d элемента</item>
@@ -346,12 +354,41 @@
   <string name="recent_pages">Недавние страницы</string>
 
   <!-- tag dialog -->
-  <string name="tag_dlg_title">Метка</string>
+  <string name="tag_dlg_title">Тег</string>
   <string name="tag_name">Название</string>
+  <string name="tag_blank_tag_error">Имена тегов не могут быть пустыми!</string>
+  <string name="tag_duplicate_tag_error">Имя тега уже существует!</string>
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Закладки отсутствуют</string>
 
   <!-- audio manager -->
   <string name="audio_manager">Аудио менеджер</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Удалено %1$d сура</item>
+    <item quantity="few">Удалено %1$d суры</item>
+    <item quantity="many">Удалено %1$d сур</item>
+    <item quantity="other">Удалено %1$d сур</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Произошла ошибка при удалении %1$d сура</item>
+    <item quantity="few">Произошла ошибка при удалении %d суры</item>
+    <item quantity="many">Произошла ошибка при удалении %d сур</item>
+    <item quantity="other">Произошла ошибка при удалении %1$d сур</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Скачать суру</string>
+  <string name="audio_manager_surah_delete">Удалить суру</string>
+  <string name="audio_manager_download_all">Скачать все</string>
+  <string name="audio_manager_download_selection">Скачать выбранные</string>
+  <string name="audio_manager_delete_selection">Удалить выбранные</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Обновление аудио файлов</string>
+  <string name="audio_updated_text">Несколько аудио файлов были обновлены. Ваша копия этих файлов
+    была удалена, новые версии будут загружены при следующем воспроизведении.
+  </string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_audio">Рецитация Корана</string>
+  <string name="notification_channel_download">Загрузки Корана</string>
 </resources>

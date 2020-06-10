@@ -155,7 +155,6 @@
   <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish</string>
   <string name="prefs_download_amount_title">Hajm</string>
   <string name="prefs_download_amount_summary">Nomuttasil audio fayllarni saqlab olish hajmi</string>
-  <string name="prefs_audio_manager">Audio Menejer (eksperimental)</string>
   <string name="prefs_audio_manager_summary">Qurʼon audio fayllarini saqlab olish va boshqarish</string>
   <string name="downloaded_translations">Saqlab olingan</string>
   <string name="available_translations">Saqlab olish mumkin</string>
@@ -186,6 +185,7 @@
   <string name="prefs_page_type_title">Sahifa turi (eksperimental)</string>
   <string name="prefs_page_type_summary">Qurʼon sahifalari turini tanlash</string>
 
+  <string name="more_translations">Yana tarjimalar</string>
   <string name="import_data_permissions_error">Ruxsat xatoliklari tufayli zaxira faylini oʻqib boʻlmadi.</string>
   <string name="import_data_error">Yaroqsiz zaxira fayl (yoxud zaxira faylni oʻqib boʻlmadi).</string>
   <string name="import_data">Import</string>
@@ -201,6 +201,9 @@
         olishga toʻgʻri keladi. Baribir tashqi xotiradan foydalanmoqchimisiz?</string>
   <string name="please_grant_permissions">Iltimos, ilova sozlamalari orqali kerakli ruxsatlarni bering</string>
   <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Ushbu oyatning tafsiri %d-oyatning tafsirida mavjud (koʻrish uchun bosing).</string>
 
   <!-- translation updates -->
   <string name="update_available">Yangilanishlar mavjud</string>
@@ -261,10 +264,11 @@
   <string name="get_translations">Tarjimalar saqlab olish</string>
 
   <!-- help -->
-  <string name="email_us">Agar savollaringizga yuqorida javob olmagan boʻlsangiz quranandroid@gmail.com adresiga maktub yoʻllashingiz mumkin.
-        Faqat, shuni yodda tutingki, biz juda ham koʻplab e-mail xabarlar olamiz va shu sababli barcha xatlarga javob yoza olmasligimiz mumkin.
-        Iltimos, maktubni ingliz tilida yuborishni unutmang.
-    </string>
+  <string name="email_us">Agar savollaringizga yuqorida javob olmagan boʻlsangiz quranandroid@gmail.com
+    adresiga maktub yoʻllashingiz mumkin. Faqat, shuni yodda tutingki, biz juda ham koʻplab e-mail
+    xabarlar olamiz va shu sababli barcha xatlarga javob yoza olmasligimiz mumkin.
+    Iltimos, maktubni ingliz tilida yuborishni unutmang.
+  </string>
 
   <!-- sura metainfo -->
   <string name="makki">Makkiy</string>
@@ -295,6 +299,9 @@
     <item>davomiy</item>
   </string-array>
 
+  <string name="playback_prompt_title">Boshlash joyi:</string>
+  <string name="starting_page_label">Sahifa boshlanishi</string>
+
   <!-- long press -->
   <string name="bookmark_ayah">Oyatni xatchoʻplash</string>
   <string name="tag_ayah">Oyatni teglash</string>
@@ -323,14 +330,33 @@
   <!-- tag dialog -->
   <string name="tag_dlg_title">Teg</string>
   <string name="tag_name">Nom</string>
+  <string name="tag_blank_tag_error">Teg nomi boʻsh boʻlmasligi kerak!</string>
+  <string name="tag_duplicate_tag_error">Ushbu teg nom allaqachon mavjud!</string>
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Xatchoʻplar mavjud emas</string>
 
   <!-- audio manager -->
   <string name="audio_manager">Audio menejer</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Sura oʻchirildi</item>
+    <item quantity="other">%1$d ta sura oʻchirildi</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Surani oʻchirishda xatolik yuz berdi</item>
+    <item quantity="other">%1$d ta surani oʻchirishda xatolik yuz berdi</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Saqlab olish</string>
+  <string name="audio_manager_surah_delete">Oʻchirish</string>
+  <string name="audio_manager_download_all">Hammasini saqlash</string>
+  <string name="audio_manager_download_selection">Tanlanganlarni saqlash</string>
+  <string name="audio_manager_delete_selection">Tanlanganlarni oʻchirish</string>
 
-  <string name="more_translations">Yana tarjimalar</string>
+  <!-- audio updates -->
+  <string name="audio_updated_title">Audio fayllar yangilandi</string>
+  <string name="audio_updated_text">Bir necha Qurʼon audio fayllar yangilandi. Qurilmangizdagi eski
+    versiyalar oʻchirildi, keyingi safar foydalanganingizda yangilangan versiyalari qayta saqlab olinadi.
+  </string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Qurʼon yuklamalari</string>

@@ -121,7 +121,6 @@
     <string name="prefs_streaming_summary">Hang streamelése, ha lehetséges (csak nem szünetmentes hangnál).</string>
     <string name="prefs_download_amount_title">Letöltése mennyiség</string>
     <string name="prefs_download_amount_summary">Előnyben részesített letöltési mennyiség nem szünetmentes hangnál.</string>
-    <string name="prefs_audio_manager">Hangkezelő (kísérleti)</string>
     <string name="prefs_audio_manager_summary">Korán hangok kezelése és letöltése.</string>
     <string name="downloaded_translations">Letöltve</string>
     <string name="available_translations">Elérhető letöltésre</string>
@@ -155,7 +154,7 @@
     <string name="quran_juz2">Dzsuz</string>
     <string name="quran_page">Oldal</string>
     <string name="quran_sura">Szúrák</string>
-    <string name="quran_ayah">Ája</string>
+    <string name="quran_ayah">Ája %1$d</string>
     <string name="quran_sura_title">%1$s szúra</string>
     <string name="sura_ayah_notification_str">%1$s szúra, %2$d. ája</string>
 

@@ -7,10 +7,11 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
   @Inject
   QuranInfo quranInfo;
+
+  @Inject
+  QuranDisplayData quranDisplayData;
 
   public WidgetListProvider(Context context, Intent intent) {
     this.context = context;
@@ -43,7 +47,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
     for (int i = 0; i < bookmarksList.size(); i++) {
       Bookmark bm = bookmarksList.get(i);
       SuraPageItem item = new SuraPageItem();
-      item.sura = quranInfo.getSuraNameFromPage(appContext, bm.getPage());
+      item.sura = quranDisplayData.getSuraNameString(appContext, bm.getPage());
       item.page = bm.getPage();
       suraPageItemList.add(item);
     }

@@ -3,10 +3,11 @@ package com.quran.labs.androidquran.ui.helpers;
 import android.content.Context;
 import androidx.core.content.ContextCompat;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 
 import javax.inject.Inject;
 
@@ -14,12 +15,13 @@ import dagger.Reusable;
 
 @Reusable
 public class QuranRowFactory {
-
   private final QuranInfo quranInfo;
+  private final QuranDisplayData quranDisplayData;
   
   @Inject
-  public QuranRowFactory(QuranInfo quranInfo) {
+  public QuranRowFactory(QuranInfo quranInfo, QuranDisplayData quranDisplayData) {
     this.quranInfo = quranInfo;
+    this.quranDisplayData = quranDisplayData;
   }
 
   public QuranRow fromRecentPageHeader(Context context, int count) {
@@ -43,9 +45,9 @@ public class QuranRowFactory {
 
   public QuranRow fromCurrentPage(Context context, int page, long timeStamp) {
     return new QuranRow.Builder()
-        .withText(quranInfo.getSuraNameString(context, page))
-        .withMetadata(quranInfo.getPageSubtitle(context, page))
-        .withSura(quranInfo.safelyGetSuraOnPage(page))
+        .withText(quranDisplayData.getSuraNameString(context, page))
+        .withMetadata(quranDisplayData.getPageSubtitle(context, page))
+        .withSura(quranDisplayData.safelyGetSuraOnPage(page))
         .withPage(page)
         .withDate(timeStamp)
         .withImageResource(R.drawable.bookmark_currentpage).build();
@@ -60,8 +62,8 @@ public class QuranRowFactory {
 
     if (bookmark.isPageBookmark()) {
       final int sura = quranInfo.getSuraNumberFromPage(bookmark.getPage());
-      builder.withText(quranInfo.getSuraNameString(context, bookmark.getPage()))
-          .withMetadata(quranInfo.getPageSubtitle(context, bookmark.getPage()))
+      builder.withText(quranDisplayData.getSuraNameString(context, bookmark.getPage()))
+          .withMetadata(quranDisplayData.getPageSubtitle(context, bookmark.getPage()))
           .withType(QuranRow.PAGE_BOOKMARK)
           .withBookmark(bookmark)
           .withDate(bookmark.getTimestamp())
@@ -73,11 +75,11 @@ public class QuranRowFactory {
       final String title;
       final String metadata;
       if (ayahText == null) {
-        title = quranInfo.getAyahString(bookmark.getSura(), bookmark.getAyah(), context);
-        metadata = quranInfo.getPageSubtitle(context, bookmark.getPage());
+        title = quranDisplayData.getAyahString(bookmark.getSura(), bookmark.getAyah(), context);
+        metadata = quranDisplayData.getPageSubtitle(context, bookmark.getPage());
       } else {
         title = ayahText;
-        metadata = quranInfo.getAyahMetadata(bookmark.getSura(), bookmark.getAyah(),
+        metadata = quranDisplayData.getAyahMetadata(bookmark.getSura(), bookmark.getAyah(),
             bookmark.getPage(), context);
       }
 

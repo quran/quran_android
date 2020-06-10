@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.ui.QuranActionBarActivity;
 import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment;
+import com.quran.labs.androidquran.ui.util.ToastCompat;
 import com.quran.labs.androidquran.util.AudioManagerUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -82,7 +83,7 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
           REQUEST_WRITE_TO_SDCARD_PERMISSION);
     } else {
       // in the future, we should make this a direct link - perhaps using a Snackbar.
-      Toast.makeText(this, R.string.please_grant_permissions, Toast.LENGTH_SHORT).show();
+      ToastCompat.makeText(this, R.string.please_grant_permissions, Toast.LENGTH_SHORT).show();
     }
   }
 
@@ -90,12 +91,10 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
     if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSION) {
-      if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        if (locationToWrite != null) {
-          Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
-          if (fragment instanceof QuranAdvancedSettingsFragment) {
-            ((QuranAdvancedSettingsFragment) fragment).moveFiles(locationToWrite);
-          }
+      if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && locationToWrite != null) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
+        if (fragment instanceof QuranAdvancedSettingsFragment) {
+          ((QuranAdvancedSettingsFragment) fragment).moveFiles(locationToWrite);
         }
       }
       locationToWrite = null;

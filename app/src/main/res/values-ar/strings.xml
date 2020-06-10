@@ -112,7 +112,6 @@
   <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)</string>
   <string name="prefs_download_amount_title">كم التحميل</string>
   <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
-  <string name="prefs_audio_manager">إدارة الصوتيات (تجريبي)</string>
   <string name="prefs_audio_manager_summary">تحميل وإدارة الملفات الصوتية</string>
   <string name="prefs_app_location_title">مكان التطبيق</string>
   <string name="prefs_app_location_summary">اختر الذاكرة التي سيتم تخزين الملفات عليها</string>
@@ -130,6 +129,8 @@
   <string name="prefs_import_summary">استيراد الاشارات المرجعية والعلامات</string>
   <string name="prefs_send_logs_title">إرسال السجلات</string>
   <string name="prefs_send_logs_summary">إرسال سجلات التصحيح للمطور</string>
+  <string name="prefs_sura_translated_name_summary">اظهار اسماء السور مترجمة</string>
+  <string name="prefs_sura_translated_name_title">ترجمة اسماء السور</string>
   <!-- Preferences End -->
 
   <string name="downloaded_translations">الملفات المحملة</string>
@@ -230,6 +231,9 @@
     <item>لانهائي</item>
   </string-array>
 
+  <string name="playback_prompt_title">ابداء التشغيل من:</string>
+  <string name="starting_page_label">أول الصفحه</string>
+
   <!-- long press -->
   <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
   <string name="tag_ayah">تصنيف الآية</string>
@@ -292,5 +296,19 @@
     <item quantity="many">تم حذف %d عنصر</item>
   </plurals>
   <string name="undo">تراجع</string>
+  <string name="notification_channel_download">"تحميل ملفات القران "</string>
+  <string name="notification_channel_audio">تلاوة القران</string>
+  <string name="audio_manager_delete_selection">حذف التحديد</string>
+  <string name="audio_manager_download_selection">تحميل التحديد</string>
+  <string name="audio_manager_download_all">تحميل الكل</string>
+  <string name="audio_manager_surah_delete">حذف السورة</string>
+  <string name="audio_manager_surah_download">تحميل السورة</string>
+  <string name="next">التالى</string>
+  <string name="previous">السابق</string>
+  <string name="tag_blank_tag_error">لا يمكن أن يكون اسم التصنيف فارغًا</string>
+  <string name="tag_duplicate_tag_error">التصنيف مكرر, اكتب تصنيف جديد</string>
+  <string name="more_translations">المزيد من الترجمات والتفاسير</string>
+  <string name="menu_show_date">إظهار تاريخ الإضافة</string>
+  <string name="pause">وقف مؤقت</string>
 
 </resources>

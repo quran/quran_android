@@ -12,7 +12,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 
@@ -80,7 +80,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     }
   }
 
-  public void setVerses(@NonNull QuranInfo quranInfo,
+  public void setVerses(@NonNull QuranDisplayData quranDisplayData,
                         @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     this.translations = translations;
@@ -93,7 +93,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       int sura = verse.sura;
       if (sura != currentSura) {
         rows.add(new TranslationViewRow(TranslationViewRow.Type.SURA_HEADER, verse,
-            quranInfo.getSuraName(getContext(), sura, true)));
+            quranDisplayData.getSuraName(getContext(), sura, true)));
         currentSura = sura;
       }
 

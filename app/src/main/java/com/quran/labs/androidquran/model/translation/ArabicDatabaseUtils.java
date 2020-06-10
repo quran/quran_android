@@ -3,12 +3,12 @@ package com.quran.labs.androidquran.model.translation;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;

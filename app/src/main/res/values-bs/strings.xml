@@ -29,7 +29,6 @@
   <string name="menu_sort_date">Datum dodavanja</string>
   <string name="menu_sort_location">Lokacija u Kur\'anu</string>
   <string name="menu_sort_group_by_tags">Grupiraj po oznakama</string>
-  <string name="menu_show_recents" translatable="false">@string/recent_pages</string>
   <string name="menu_translation">Prikaži prijevod stranice</string>
   <string name="menu_back_to_page">Prikaži stranicu Kur\'ana</string>
   <string name="menu_help">Pomoć</string>
@@ -44,42 +43,18 @@
   <string name="about_data_sources">Izvori podataka</string>
   <string name="about_images">Slike</string>
   <string name="about_madani_images">Slike stranica Kur\'ana su bazirana na fontovima kompleksa kralja Fahda za štampanje Kur\'ana</string>
-  <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
   <string name="about_naskh_images">Slike Kur\'ana za Naskh aplikaciju su preuzete (sa dozvolom) od strane SHL info sistema.</string>
-  <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
   <string name="about_qaloon_images">Kaloon slike se koriste sa permisijom od strane Nous Memes Editions Et Diffusion (Tunisia)</string>
-  <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
   <string name="about_quranicaudio_summary">Mp3 učenje Kur\'ana bez prekida</string>
-  <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
   <string name="about_quran_ksu">Elektronski Mushaf projekat</string>
   <string name="about_quran_ksu_summary">Projekt Univerziteta kralja Sauda elektronski Mushaf je izvor za Arapski tefsir i prijevode mnogih jezika korištenih u aplikaciji. Također je izvor za učenje dr. Ejmena Suvejda.</string>
-  <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
-  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
   <string name="about_furqan_summary">Osmanski tekst i Arapski tefsir</string>
-  <string name="about_furqan_url" translatable="false">https://furqan.co</string>
-  <string name="about_tanzil" translatable="false">Tanzil</string>
   <string name="about_tanzil_summary">Prijevodi za mnoge jezike</string>
-  <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
-  <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
   <string name="about_noorhidayat_summary">Noorehira font i Mufti Taqi prijevod</string>
-  <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
   <string name="about_open_source">Open Source projekti</string>
-  <string name="about_dagger2" translatable="false">Dagger 2</string>
-  <string name="about_dagger2_url" translatable="false">https://google.github.io/dagger</string>
-  <string name="about_okhttp" translatable="false">OkHttp</string>
-  <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
-  <string name="about_rxjava" translatable="false">RxJava</string>
-  <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
-  <string name="about_rxandroid" translatable="false">RxAndroid</string>
-  <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
-  <string name="about_moshi" translatable="false">Moshi</string>
-  <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
-  <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
-  <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
   <string name="about_others">Ostalo</string>
   <string name="about_contributors">Doprinosioci</string>
   <string name="about_contributors_summary">Lista ljudi koji su doprinijeli razvoju aplikacije Kur\'an za android</string>
-  <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
 
   <!-- help -->
   <string name="help_title">Često postavljanja pitanja</string>
@@ -179,7 +154,6 @@
   <string name="prefs_streaming_summary">Tok (stream) zvuka umjesto preuzimanja</string>
   <string name="prefs_download_amount_title">Količina preuzimanja</string>
   <string name="prefs_download_amount_summary">Preferirana količina za preuzimanje zvuka svakog ajeta posebno</string>
-  <string name="prefs_audio_manager">Upravitelj zvuka (eksperimentalno)</string>
   <string name="prefs_audio_manager_summary">Upravljaj i preuzmi zvuk učenja Kur\'ana</string>
   <string name="downloaded_translations">Preuzeto</string>
   <string name="available_translations">Dostupno za preuzimanje</string>
@@ -210,7 +184,6 @@
   <string name="prefs_page_type_title">Vrsta stranica (eksperimentalno)</string>
   <string name="prefs_page_type_summary">Izaberite način prikaza stranica za čitanje</string>
 
-  <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">Više prijevoda</string>
   <string name="import_data_permissions_error">Nije moguće pročitati backup datoteke zbog grešaka sa dozvolama.</string>
   <string name="import_data_error">Nevalidna backup datoteka (ili nije moguće da se pročita backup datoteka).</string>
@@ -221,7 +194,6 @@
   <string name="export_data_error">Problem izvoza podataka.</string>
   <string name="exported_data">Podaci izvezeni na %1$s.</string>
 
-  <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">Upozorenje</string>
   <string name="kitkat_external_message">Zbog ograničenja sa androidom ako odlučite da vaše podatke aplikacije
         stavite na SD karticu i kasnije izbrišete ili očiste  podatke za Kur\'an Android aplikaciju, sve stranice
@@ -231,7 +203,6 @@
   <!-- Preferences End -->
 
   <!-- tafaseer -->
-  <string name="more_arabic" translatable="false">المزيد…</string>
   <string name="see_tafseer_of_verse">Pogledajte tefsir %d. ajeta</string>
 
   <!-- translation updates -->
@@ -260,7 +231,6 @@
   <string name="page_description">Stranica %1$s, Džuz %2$s</string>
   <string name="highlighting_database">Neophodne datoteke</string>
   <string name="timing_database">Neophodne datoteke</string>
-  <string name="infinity" translatable="false">&#8734;</string>
 
   <!-- download statuses and errors -->
   <string name="sdcard_error">SD karticu nije moguće pronaći. Stavite je i pokušajte ponovo.</string>
@@ -368,9 +338,6 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Menadžer zvuka</string>
-
-  <!-- format strings -->
-  <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Skidanje Kur\'ana</string>

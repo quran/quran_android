@@ -4,8 +4,8 @@ package com.quran.labs.androidquran.util;
 import androidx.annotation.NonNull;
 import android.util.Pair;
 
-import com.quran.labs.androidquran.common.QariItem;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.data.core.QuranInfo;
+import com.quran.labs.androidquran.common.audio.QariItem;
 
 import java.io.File;
 import java.util.List;
@@ -27,35 +27,32 @@ public class AudioManagerUtils {
             String.valueOf(number);
   }
 
-  private static Map<QariItem, QariDownloadInfo> sCache = new ConcurrentHashMap<>();
+  private static Map<QariItem, QariDownloadInfo> cache = new ConcurrentHashMap<>();
 
   public static void clearCache() {
-    sCache.clear();
+    cache.clear();
   }
 
   public static void clearCacheKeyForSheikh(QariItem qariItem) {
-    sCache.remove(qariItem);
+    cache.remove(qariItem);
   }
 
   @NonNull
   public static Single<List<QariDownloadInfo>> shuyookhDownloadObservable(
       QuranInfo quranInfo,  String basePath, List<QariItem> qariItems) {
     return Observable.fromIterable(qariItems)
-        .flatMap(new Function<QariItem, ObservableSource<QariDownloadInfo>>() {
-          @Override
-          public ObservableSource<QariDownloadInfo> apply(QariItem item) throws Exception {
-            QariDownloadInfo cached = sCache.get(item);
-            if (cached != null) {
-              return Observable.just(cached);
-            }
-
-            File baseFile = new File(basePath, item.getPath());
-            return !baseFile.exists() ? Observable.just(new QariDownloadInfo(item)) :
-                item.isGapless() ? getGaplessSheikhObservable(baseFile, item).toObservable() :
-                    getGappedSheikhObservable(quranInfo, baseFile, item).toObservable();
+        .flatMap((Function<QariItem, ObservableSource<QariDownloadInfo>>) item -> {
+          QariDownloadInfo cached = cache.get(item);
+          if (cached != null) {
+            return Observable.just(cached);
           }
+
+          File baseFile = new File(basePath, item.getPath());
+          return !baseFile.exists() ? Observable.just(new QariDownloadInfo(item)) :
+              item.isGapless() ? getGaplessSheikhObservable(baseFile, item).toObservable() :
+                  getGappedSheikhObservable(quranInfo, baseFile, item).toObservable();
         })
-        .doOnNext(qariDownloadInfo -> sCache.put(qariDownloadInfo.qariItem, qariDownloadInfo))
+        .doOnNext(qariDownloadInfo -> cache.put(qariDownloadInfo.qariItem, qariDownloadInfo))
         .toList()
         .subscribeOn(Schedulers.io());
   }
@@ -78,7 +75,7 @@ public class AudioManagerUtils {
         .map(sura -> new SuraFileName(sura, new File(basePath, String.valueOf(sura))))
         .filter(suraFile -> suraFile.file.exists())
         .map(sf -> new Pair<>(sf.sura,
-            sf.file.listFiles().length >= quranInfo.getNumAyahs(sf.sura)))
+            sf.file.listFiles().length >= quranInfo.getNumberOfAyahs(sf.sura)))
         .toList()
         .map(downloaded -> QariDownloadInfo.withPartials(qariItem, downloaded));
   }

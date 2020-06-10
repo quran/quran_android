@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.dao.audio
 
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.data.model.SuraAyah
 
 data class AudioPlaybackInfo(val currentAyah: SuraAyah,
                              val timesPlayed: Int = 1,

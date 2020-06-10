@@ -50,4 +50,8 @@
   <string name="qari_jibreel_gapless">محمد جبريل (متصل)</string>
   <string name="qari_basfar_gapless">عبد الله بصفر (متصل)</string>
   <string name="qari_walk_gapless">إبراهيم والك (ترجمة انجليزية, متصل)</string>
+  <string name="qari_afasy_cali_gapless">مشاري العفاسي (كاليفورنيا, متصل)</string>
+  <string name="qari_ajamy_gapless">أحمد بن علي العجمي (متصل)</string>
+  <string name="qari_ali_jaber_gapless">علي جابر (متصل)</string>
+  <string name="qari_muaiqly_gapless">ماهر المعيقلي (متصل)</string>
 </resources>

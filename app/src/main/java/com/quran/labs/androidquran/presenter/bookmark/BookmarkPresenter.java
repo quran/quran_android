@@ -7,12 +7,12 @@ import com.google.android.material.snackbar.Snackbar;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
@@ -350,15 +350,15 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       Tag tag = tags.get(i);
       rows.add(quranRowFactory.fromTag(tag));
       List<Bookmark> tagBookmarks = tagsMapping.get(tag.getId());
-      for (int j = 0, tagBookmarksSize = tagBookmarks.size(); j < tagBookmarksSize; j++) {
+      for (int j = 0, tagBookmarksSize = tagBookmarks == null ? 0 : tagBookmarks.size(); j < tagBookmarksSize; j++) {
         rows.add(quranRowFactory.fromBookmark(appContext, tagBookmarks.get(j), tag.getId()));
       }
     }
 
     // add untagged bookmarks
     List<Bookmark> untagged = tagsMapping.get(BOOKMARKS_WITHOUT_TAGS_ID);
-    if (untagged.size() > 0) {
-      rows.add(quranRowFactory.fromNotTaggedHeader(appContext));
+    if (untagged != null && untagged.size() > 0) {
+      rows.add(QuranRowFactory.fromNotTaggedHeader(appContext));
       for (int i = 0, untaggedSize = untagged.size(); i < untaggedSize; i++) {
         rows.add(quranRowFactory.fromBookmark(appContext, untagged.get(i)));
       }

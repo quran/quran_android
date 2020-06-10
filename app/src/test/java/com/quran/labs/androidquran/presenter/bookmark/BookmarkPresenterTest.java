@@ -3,12 +3,14 @@ package com.quran.labs.androidquran.presenter.bookmark;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.data.page.provider.madani.MadaniPageProvider;
+import com.quran.data.pageinfo.common.MadaniDataSource;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
 import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
@@ -252,13 +254,14 @@ public class BookmarkPresenterTest {
   }
 
   private BookmarkPresenter makeBookmarkPresenter(BookmarkModel model) {
-    final QuranInfo quranInfo = new QuranInfo(new MadaniPageProvider());
+    final QuranInfo quranInfo = new QuranInfo(new MadaniDataSource());
+    final QuranDisplayData quranDisplayData = new QuranDisplayData(quranInfo);
     return new BookmarkPresenter(
         appContext,
         model,
         settings,
         null,
-        new QuranRowFactory(quranInfo),
+        new QuranRowFactory(quranInfo, quranDisplayData),
         quranInfo) {
       @Override
       void subscribeToChanges() {

@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 
 public interface AyahSelectedListener {
 

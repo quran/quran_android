@@ -46,9 +46,9 @@
   <string name="about_images">Images</string>
   <string name="about_madani_images">The Quran images are based on the fonts from the King Fahd Quran Printing Complex</string>
   <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
-  <string name="about_naskh_images">The Quran images for the Naskh app were taken (with permission) from SHL Info Systems</string>
+  <string name="about_naskh_images">The Quran images for the Naskh app are taken (with permission) from SHL Info Systems</string>
   <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
-  <string name="about_qaloon_images">Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia)</string>
+  <string name="about_qaloon_images">Qaloon images are used with the permission of Nous Memes Editions Et Diffusion (Tunisia)</string>
   <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
   <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
   <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
@@ -58,8 +58,11 @@
   <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
   <string name="about_furqan_summary">Uthmani text and Arabic Tafaseer</string>
   <string name="about_furqan_url" translatable="false">https://furqan.co</string>
+  <string name="about_quran_enc" translatable="false">Noble Quran Encyclopedia (QuranEnc)</string>
+  <string name="about_quran_enc_summary">Translations for many languages</string>
+  <string name="about_quran_enc_url" translatable="false">https://quranenc.com</string>
   <string name="about_tanzil" translatable="false">Tanzil</string>
-  <string name="about_tanzil_summary">Translations for many languages</string>
+  <string name="about_tanzil_summary">Translations for a few languages</string>
   <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
   <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
   <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
@@ -130,8 +133,8 @@
   <string name="quranSearchType">Verses of the Quran</string>
 
   <plurals name="files_downloaded">
-    <item quantity="one">1 sura downloaded</item>
-    <item quantity="other">%1$d suras downloaded</item>
+    <item quantity="one">1 surah downloaded</item>
+    <item quantity="other">%1$d surahs downloaded</item>
   </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
@@ -148,7 +151,7 @@
   <string name="storage_permission_please_restart">Please restart the app for this to take effect.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Found in Sura %1$s, Ayah %2$d</string>
+  <string name="found_in_sura">Found in Surah %1$s, Ayah %2$d</string>
   <string name="no_results">No results found for \"%s\"</string>
   <string name="no_arabic_search_available">You have not downloaded the Arabic search pack. Please download it and try your search again.</string>
   <string name="get_arabic_search_db">Get Arabic Search Database</string>
@@ -176,7 +179,7 @@
   <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
   <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
   <string name="prefs_overlay_page_info_title">Show page info</string>
-  <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
+  <string name="prefs_overlay_page_info_summary">Overlay page number, surah name, and juz\' number while reading</string>
   <string name="prefs_display_marker_title">Display marker popups</string>
   <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
   <string name="prefs_highlight_bookmarks_title">Highlight bookmarks</string>
@@ -191,7 +194,7 @@
   <string name="prefs_streaming_summary">Stream audio instead of downloading</string>
   <string name="prefs_download_amount_title">Download amount</string>
   <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
-  <string name="prefs_audio_manager">Audio manager (experimental)</string>
+  <string name="prefs_audio_manager" translatable="false">@string/audio_manager</string>
   <string name="prefs_audio_manager_summary">Manage and download Quranic audio</string>
   <string name="downloaded_translations">Downloaded</string>
   <string name="available_translations">Available for download</string>
@@ -221,17 +224,18 @@
   <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
   <string name="prefs_page_type_title">Page Type (experimental)</string>
   <string name="prefs_page_type_summary">Select the type of reading pages</string>
+  <string name="prefs_sura_translated_name_summary">Show sura translated name</string>
+  <string name="prefs_sura_translated_name_title">Sura translated name</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">More Translations</string>
   <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
   <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
   <string name="import_data">Import Data</string>
-  <string name="import_data_and_override">If you import this file, it will replace all your \
-        bookmarks with %1$d bookmark(s) and %2$d tag(s). Import?</string>
+  <string name="import_data_and_override">If you import this file, it will replace all your bookmarks with %1$d bookmark(s) and %2$d tag(s). Import?</string>
   <string name="import_successful">Import Successful</string>
-  <string name="export_data_error">Error exporting data.</string>
-  <string name="exported_data">Data exported to %1$s.</string>
+  <string name="export_data_error">Error exporting data</string>
+  <string name="exported_data">Data exported to %1$s</string>
 
   <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">Warning</string>
@@ -239,7 +243,7 @@
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran
         Android pages and audio will be deleted and you will have to download them again. Are you
         sure you want to use the external SD card?</string>
-  <string name="please_grant_permissions">Please grant permission in application settings.</string>
+  <string name="please_grant_permissions">Please grant permission in application settings</string>
   <!-- Preferences End -->
 
   <!-- tafaseer -->
@@ -262,8 +266,8 @@
   <string name="quran_sura">Surahs</string>
   <string name="quran_ayah">Ayah %1$d</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
-  <string name="quran_sura_title">Surat %1$s</string>
-  <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
+  <string name="quran_sura_title">Surah %1$s</string>
+  <string name="sura_ayah_notification_str">Surah %1$s, Ayah %2$d</string>
 
   <string name="index_loading">Loading&#8230;</string>
 
@@ -290,8 +294,8 @@
 
   <!-- downloading dialogs -->
   <string name="download_progress">Downloaded %1$s / %2$s</string>
-  <string name="download_sura_progress">Downloaded %1$s / %2$s of sura %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Downloading sura %1$d ayah %2$d</string>
+  <string name="download_sura_progress">Downloaded %1$s / %2$s of surah %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Downloading surah %1$d ayah %2$d</string>
   <string name="process_progress">Processing file %1$d / %2$d</string>
   <string name="download_retry">Retry</string>
   <string name="download_cancel">Cancel</string>
@@ -307,8 +311,7 @@
 
   <!-- help -->
   <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.
-        Please note that we receive lots of emails, so we may not be able to reply to all of them.
-    </string>
+        Please note that we receive lots of emails, so we may not be able to reply to all of them.</string>
 
   <!-- sura metainfo -->
   <string name="makki">Makki</string>
@@ -382,6 +385,25 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Audio Manager</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Successfully deleted the surah</item>
+    <item quantity="other">Successfully deleted %1$d surahs</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">There was an error while deleting the surah</item>
+    <item quantity="other">There was an error while deleting %1$d surahs</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Download surah</string>
+  <string name="audio_manager_surah_delete">Delete surah</string>
+  <string name="audio_manager_download_all">Download all</string>
+  <string name="audio_manager_download_selection">Download selection</string>
+  <string name="audio_manager_delete_selection">Delete selection</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Quran Audio files Update</string>
+  <string name="audio_updated_text">Several Quran audio files have been updated. Quran has removed
+  your copy of these files so that the newest versions can be downloaded the next time you play them
+  back.</string>
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>

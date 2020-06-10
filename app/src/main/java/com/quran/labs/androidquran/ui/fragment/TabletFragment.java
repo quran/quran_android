@@ -11,11 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.module.fragment.QuranPageModule;
+import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
@@ -89,6 +90,7 @@ public class TabletFragment extends Fragment
   @Inject AyahSelectedListener ayahSelectedListener;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject QuranInfo quranInfo;
+  @Inject QuranDisplayData quranDisplayData;
   @Inject Set<ImageDrawHelper> imageDrawHelpers;
 
   public static TabletFragment newInstance(int firstPage, int mode) {
@@ -208,11 +210,12 @@ public class TabletFragment extends Fragment
         left = new AyahImageTrackerItem(pageNumber,
             screenHeight,
             quranInfo,
+            quranDisplayData,
             false,
             imageDrawHelpers,
             leftImageView);
         right = new AyahImageTrackerItem(
-            pageNumber - 1, screenHeight, quranInfo, true, imageDrawHelpers, rightImageView);
+            pageNumber - 1, screenHeight, quranInfo, quranDisplayData, true, imageDrawHelpers, rightImageView);
       } else if (mode == Mode.TRANSLATION) {
         left = new AyahTranslationTrackerItem(pageNumber, quranInfo, leftTranslation);
         right = new AyahTranslationTrackerItem(pageNumber - 1, quranInfo, rightTranslation);
@@ -292,9 +295,9 @@ public class TabletFragment extends Fragment
                         @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     if (page == pageNumber) {
-      leftTranslation.setVerses(quranInfo, translations, verses);
+      leftTranslation.setVerses(quranDisplayData, translations, verses);
     } else if (page == pageNumber - 1) {
-      rightTranslation.setVerses(quranInfo, translations, verses);
+      rightTranslation.setVerses(quranDisplayData, translations, verses);
     }
   }
 

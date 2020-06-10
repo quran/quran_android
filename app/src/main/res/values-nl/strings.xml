@@ -143,7 +143,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_streaming_summary">Audio streamen indien mogelijk</string>
   <string name="prefs_download_amount_title">Hoeveelheid te downloaden</string>
   <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
-  <string name="prefs_audio_manager">Audio manager (test fase)</string>
   <string name="prefs_audio_manager_summary">Beheer en download Koran audio</string>
   <string name="downloaded_translations">Gedownload</string>
   <string name="available_translations">Beschikbaar om te downloaden</string>

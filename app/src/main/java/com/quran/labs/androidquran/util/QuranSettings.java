@@ -167,6 +167,9 @@ public class QuranSettings {
     prefs.edit().putBoolean(Constants.PREF_SHOW_DATE, isDateShown).apply();
   }
 
+  public boolean isShowSuraTranslatedName() {
+    return prefs.getBoolean(Constants.PREF_SURA_TRANSLATED_NAME, appContext.getResources().getBoolean(R.bool.show_sura_names_translation));
+  }
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences() {
     int version = getVersion();
@@ -250,6 +253,15 @@ public class QuranSettings {
       notificationManager.deleteNotificationChannel("quran_audio");
       notificationManager.deleteNotificationChannel("quran_download");
     }
+  }
+
+  public int getCurrentAudioRevision() {
+    return perInstallationPrefs.getInt(Constants.PREF_CURRENT_AUDIO_REVISION, 1);
+  }
+
+  public void setCurrentAudioRevision(int version) {
+    perInstallationPrefs.edit()
+        .putInt(Constants.PREF_CURRENT_AUDIO_REVISION, version).apply();
   }
 
   public boolean didPresentSdcardPermissionsDialog() {

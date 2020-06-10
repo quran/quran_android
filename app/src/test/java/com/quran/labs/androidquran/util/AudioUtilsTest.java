@@ -1,13 +1,13 @@
 package com.quran.labs.androidquran.util;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.data.source.PageProvider;
 import com.quran.data.pageinfo.common.MadaniDataSource;
 
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.data.model.SuraAyah;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -24,9 +24,9 @@ public class AudioUtilsTest {
     when(pageProviderMock.getDataSource())
         .thenReturn(new MadaniDataSource());
 
-    QuranInfo quranInfoMock = new QuranInfo(pageProviderMock);
+    QuranInfo quranInfo = new QuranInfo(new MadaniDataSource());
 
-    AudioUtils audioUtils = new AudioUtils(quranInfoMock, mock(QuranFileUtils.class));
+    AudioUtils audioUtils = new AudioUtils(quranInfo, mock(QuranFileUtils.class));
     SuraAyah lastAyah = audioUtils.getLastAyahToPlay(new SuraAyah(109, 1), 603, 1, false);
 
     assertNotNull(lastAyah);
@@ -36,7 +36,8 @@ public class AudioUtilsTest {
 
   @Test
   public void testSuraTawbaDoesNotNeedBasmallah() {
-    AudioUtils audioUtils = new AudioUtils(mock(QuranInfo.class), mock(QuranFileUtils.class));
+    QuranInfo quranInfo = new QuranInfo(new MadaniDataSource());
+    AudioUtils audioUtils = new AudioUtils(quranInfo, mock(QuranFileUtils.class));
 
     // start after ayah 1 of sura anfal
     SuraAyah start = new SuraAyah(8, 2);
@@ -49,7 +50,8 @@ public class AudioUtilsTest {
 
   @Test
   public void testNeedBasmallahAcrossRange() {
-    AudioUtils audioUtils = new AudioUtils(mock(QuranInfo.class), mock(QuranFileUtils.class));
+    QuranInfo quranInfo = new QuranInfo(new MadaniDataSource());
+    AudioUtils audioUtils = new AudioUtils(quranInfo, mock(QuranFileUtils.class));
 
     SuraAyah start = new SuraAyah(8, 1);
     SuraAyah ending = new SuraAyah(10, 2);

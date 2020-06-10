@@ -16,7 +16,7 @@ import com.quran.common.search.Searcher;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.QuranText;
 import com.quran.labs.androidquran.data.QuranFileConstants;
-import com.quran.labs.androidquran.data.VerseRange;
+import com.quran.data.model.VerseRange;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.TranslationUtil;
 
@@ -81,6 +81,7 @@ public class DatabaseHandler {
       DatabaseHandler handler = databaseMap.remove(databaseName);
       if (handler != null) {
         handler.database.close();
+        databaseMap.remove(databaseName);
       }
     } catch (Exception e) {
       Crashlytics.logException(e);

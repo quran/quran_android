@@ -4,22 +4,26 @@ import android.content.Context
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy.KEEP
 import androidx.work.NetworkType.CONNECTED
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.crashlytics.android.Crashlytics
+import com.quran.data.core.QuranInfo
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDataProvider
-import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.CopyDatabaseUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.worker.AudioUpdateWorker
 import com.quran.labs.androidquran.worker.MissingPageDownloadWorker
 import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
 import com.quran.labs.androidquran.worker.WorkerConstants
@@ -31,6 +35,7 @@ import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
+import java.util.concurrent.TimeUnit.DAYS
 import javax.inject.Inject
 
 class QuranDataPresenter @Inject internal constructor(
@@ -87,7 +92,24 @@ class QuranDataPresenter @Inject internal constructor(
                 activity?.onPagesChecked(it)
                 checkPagesDisposable = null
               })
+      scheduleAudioUpdater()
     }
+  }
+
+  private fun scheduleAudioUpdater() {
+    val audioUpdaterTaskConstraints = Constraints.Builder()
+        .setRequiredNetworkType(CONNECTED)
+        .build()
+
+    // setup audio update task
+    val updateAudioTask = PeriodicWorkRequestBuilder<AudioUpdateWorker>(7, DAYS)
+        .setConstraints(audioUpdaterTaskConstraints)
+        .build()
+
+    // run audio update task once a week
+    WorkManager.getInstance(appContext)
+        .enqueueUniquePeriodicWork(Constants.AUDIO_UPDATE_UNIQUE_WORK,
+            ExistingPeriodicWorkPolicy.KEEP, updateAudioTask)
   }
 
   fun getDebugLog(): String = debugLog ?: ""

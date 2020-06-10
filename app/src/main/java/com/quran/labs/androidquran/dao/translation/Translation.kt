@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.dao.translation
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
@@ -13,7 +14,7 @@ data class Translation(val id: Int,
                        val saveTo: String,
                        val languageCode: String,
                        val translator: String? = "",
-                       val translatorNameLocalized: String? = "") {
+                       @Json(name = "translatorForeign") val translatorNameLocalized: String? = "") {
 
   fun withSchema(schema: Int) = copy(minimumVersion = schema)
 }

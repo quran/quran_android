@@ -148,7 +148,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="quran_page">Página</string>
   <string name="quran_sura">Sura</string>
   <string name="quran_ayah">Ayah %1$d</string>
-  <string name="quran_sura_title">Surat %1$s</string>
+  <string name="quran_sura_title">Sura %1$s</string>
   <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
 
   <string name="index_loading">Carregando…</string>

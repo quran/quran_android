@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- actual qari names -->
   <string name="qari_minshawi_murattal_gapless">Menshawi Morattal (sem intervalo)</string>
   <string name="qari_husary_gapless">Hosary (sem intervalo)</string>
   <string name="qari_sudais_gapless">Abdurrahman As-Sodais (sem intervalo)</string>
@@ -51,4 +50,8 @@
   <string name="qari_jibreel_gapless">Muhammad Jibreel (sem intervalo)</string>
   <string name="qari_basfar_gapless">Abdullah Basfar (sem intervalo)</string>
   <string name="qari_walk_gapless">Ibrahim Walk (Trad. Inglês, sem intervalo)</string>
+  <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (Califórnia, sem intervalo)</string>
+  <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (sem intervalo)</string>
+  <string name="qari_ali_jaber_gapless">Ali Jaber (sem intervalo)</string>
+  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (sem intervalo)</string>
 </resources>

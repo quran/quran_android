@@ -46,8 +46,12 @@
   <string name="qari_afasy_gapless">Мишәри Әфаси (тұтас)</string>
   <string name="qari_hani_rifai_gapless">Һәни Рифаи (тұтас)</string>
   <string name="qari_ayyoub_gapless">Мұхаммед Әйюб (тұтас)</string>
-  <string name="qari_mishari_walk_gapless">Мұхаммед Әйюб &amp; Ибрахим Уолк (ағылшынша, тұтас)</string>
+  <string name="qari_mishari_walk_gapless">Мишәри Әфаси &amp; Ибрахим Уолк (ағылшынша, тұтас)</string>
   <string name="qari_jibreel_gapless">Мұхаммед Жибрил (тұтас)</string>
   <string name="qari_basfar_gapless">Абдуллах Басфар (тұтас)</string>
   <string name="qari_walk_gapless">Ибрахим Уолк (ағылшынша, тұтас)</string>
+  <string name="qari_afasy_cali_gapless">Мишари Афаси (Калифорния, тұтас)</string>
+  <string name="qari_ajamy_gapless">Ахмед ибн Әли әл-Аджами (тұтас)</string>
+  <string name="qari_ali_jaber_gapless">Али Джабер (тұтас)</string>
+  <string name="qari_muaiqly_gapless">Мәһир Мұғайкли (тұтас)</string>
 </resources>

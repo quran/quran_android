@@ -1,8 +1,10 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import androidx.recyclerview.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +16,18 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.util.LocaleUtil;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.widgets.JuzView;
 import com.quran.labs.androidquran.widgets.TagsViewGroup;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public class QuranListAdapter extends
     RecyclerView.Adapter<QuranListAdapter.HeaderHolder>
@@ -36,6 +43,7 @@ public class QuranListAdapter extends
   private boolean showTags;
   private boolean showDate;
   private boolean isEditable;
+  private Locale locale;
 
   public QuranListAdapter(Context context, RecyclerView recyclerView,
                           QuranRow[] items, boolean isEditable) {
@@ -45,6 +53,7 @@ public class QuranListAdapter extends
     this.context = context;
     checkedState = new SparseBooleanArray();
     this.isEditable = isEditable;
+    this.locale = LocaleUtil.INSTANCE.getLocale(context);
   }
 
   @Override
@@ -132,7 +141,9 @@ public class QuranListAdapter extends
       }
 
       if (showDate) {
-        holder.metadata.setText(item.metadata + " - " + item.dateAdded);
+        final String date = new SimpleDateFormat("MMM dd, HH:mm", locale)
+            .format(new Date(item.dateAddedInMillis));
+        holder.metadata.setText(item.metadata + " - " + date);
       }
 
       holder.image.setVisibility(View.VISIBLE);
@@ -175,8 +186,9 @@ public class QuranListAdapter extends
     holder.setEnabled(enabled);
   }
 
+  @NotNull
   @Override
-  public HeaderHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public HeaderHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
     if (viewType == 0) {
       final View view = inflater.inflate(R.layout.index_header_row, parent, false);
       return new HeaderHolder(view);
@@ -187,7 +199,7 @@ public class QuranListAdapter extends
   }
 
   @Override
-  public void onBindViewHolder(HeaderHolder viewHolder, int position) {
+  public void onBindViewHolder(@NotNull HeaderHolder viewHolder, int position) {
     final int type = getItemViewType(position);
     if (type == 0) {
       bindHeader(viewHolder, position);
@@ -235,6 +247,9 @@ public class QuranListAdapter extends
       }
     }
     return false;
+  }
+  public void setElements(QuranRow[] elements) {
+    this.elements = elements;
   }
 
   class HeaderHolder extends RecyclerView.ViewHolder {

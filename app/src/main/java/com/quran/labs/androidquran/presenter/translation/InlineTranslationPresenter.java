@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.presenter.translation;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.data.QuranInfo;
-import com.quran.labs.androidquran.data.VerseRange;
+import com.quran.data.model.VerseRange;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.model.translation.TranslationModel;
 import com.quran.labs.androidquran.util.QuranSettings;

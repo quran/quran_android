@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.ui.PagerActivity;
 
 import javax.inject.Inject;

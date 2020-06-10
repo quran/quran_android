@@ -34,43 +34,18 @@
   <string name="about_data_sources">Sumber data</string>
   <string name="about_images">Gambar</string>
   <string name="about_madani_images">Gambar Quran adalah berasaskan fon daripada King Fahd Quran Printing Complex</string>
-  <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
   <string name="about_naskh_images">Gambar-gambar Quran untuk aplikasi Naskh adalah diambil (dengan kebenaran) daripada SHL Info Systems</string>
-  <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
   <string name="about_qaloon_images">Gambar-gambar Qaloon adalah digunakan dengan kebenaran Nous Memes Editions Et Diffusion (Tunisia)</string>
-  <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
   <string name="about_quranicaudio_summary">mp3 pembacaan tanpa jurang Quran</string>
-  <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
   <string name="about_quran_ksu_summary">Projek King Saud University Electronic Moshaf adalah sumber terjemahan arab aplikasi ini dan beberapa bahasa lain. Ia juga adalah sumber bagi pembacaan Dr. Ayman Suwaid.</string>
-  <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
-  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
   <string name="about_furqan_summary">Teks Uthmani dan terjemahan Arab</string>
-  <string name="about_furqan_url" translatable="false">https://furqan.co</string>
-  <string name="about_tanzil" translatable="false">Tanzil</string>
   <string name="about_tanzil_summary">Terjemahan untuk pelbagai bahasa</string>
-  <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
-  <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
   <string name="about_noorhidayat_summary">Fon terjemahan Noorehira dan Mufti Taqi</string>
-  <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
   <string name="about_open_source">Projek Sumber Terbuka</string>
-  <string name="about_dagger2" translatable="false">Dagger 2</string>
-  <string name="about_dagger2_url" translatable="false">https://google.github.io/dagger</string>
-  <string name="about_okhttp" translatable="false">OkHttp</string>
-  <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
-  <string name="about_rxjava" translatable="false">RxJava</string>
-  <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
-  <string name="about_rxandroid" translatable="false">RxAndroid</string>
-  <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
-  <string name="about_moshi" translatable="false">Moshi</string>
-  <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
-  <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
-  <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
   <string name="about_others">Lain-lain</string>
   <string name="about_contributors">Senarai Penyumbang</string>
   <string name="about_contributors_summary">Senarai para penyumbang untuk projek aplikasi Quran for Android</string>
-  <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
-
 
   <!-- help -->
   <string name="help_title">Soalan yang sering ditanya (FAQ)</string>
@@ -158,7 +133,6 @@
   <string name="prefs_streaming_summary">Stream audio apabila boleh</string>
   <string name="prefs_download_amount_title">Paket Muat Turun</string>
   <string name="prefs_download_amount_summary">Paket fail setiap muat turun untuk audio berjurang.</string>
-  <string name="prefs_audio_manager">Pengurus audio (dalam cubaan)</string>
   <string name="prefs_audio_manager_summary">Urus dan muat turun audio Quran</string>
   <string name="downloaded_translations">Telah dimuat turun</string>
   <string name="available_translations">Boleh untuk dimuat turun</string>

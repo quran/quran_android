@@ -154,7 +154,6 @@
   <string name="prefs_streaming_summary">Мүмкіндігінше ағындық аудио пайдалану</string>
   <string name="prefs_download_amount_title">Жүктеу мөлшері</string>
   <string name="prefs_download_amount_summary">Үзіктерге бөлінген аудио файлдарын жүктеу мөлшері</string>
-  <string name="prefs_audio_manager">Аудио менеджер (эксперименттік)</string>
   <string name="prefs_audio_manager_summary">Құран аудио файлдарын жүктеу және басқару</string>
   <string name="downloaded_translations">Жүктелгендер</string>
   <string name="available_translations">Жүктеуге болатындар</string>
