@@ -266,7 +266,7 @@ public class QuranInfo {
     return pageSuraStart[page - 1];
   }
 
-  private String getSuraNameFromPage(Context context, int page) {
+  public String getSuraNameFromPage(Context context, int page) {
     for (int i = 0; i < Constants.SURAS_COUNT; i++) {
       if (suraPageStart[i] == page) {
         return getSuraName(context, i + 1, false, false);

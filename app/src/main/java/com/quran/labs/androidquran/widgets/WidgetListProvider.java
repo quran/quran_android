@@ -36,8 +36,8 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
     for (int i = 0; i < bookmarksList.size(); i++) {
       Bookmark bm = bookmarksList.get(i);
       SuraPageItem item = new SuraPageItem();
-      item.sura = QuranInfo.getSuraNameFromPage(appContext, bm.page);
-      item.page = bm.page;
+      item.sura = quranInfo.getSuraNameFromPage(appContext, bm.getPage());
+      item.page = bm.getPage();
       suraPageItemList.add(item);
     }
   }
