@@ -40,11 +40,6 @@
 
   </LinearLayout>
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="2px"
-      android:background="@color/ayah_bookmark_color" />
-
   <ListView
       android:id="@+id/list_view_widget"
       android:layout_width="match_parent"
