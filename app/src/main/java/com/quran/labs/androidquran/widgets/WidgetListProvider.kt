@@ -31,7 +31,7 @@ class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
     val appContext = context.applicationContext
     val mBookmarksDBAdapter = BookmarksDBAdapter(appContext, quranInfo.numberOfPages)
     val bookmarksList = mBookmarksDBAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED)
-    suraPageItemList = bookmarksList.map {
+    suraPageItemList = bookmarksList.filter { it.isPageBookmark() }.map {
       SuraPageItem(sura = quranDisplayData.getSuraNameString(appContext, it.page), page = it.page)
     }
   }
