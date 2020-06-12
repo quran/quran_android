@@ -12,7 +12,7 @@ import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import javax.inject.Inject
 
-class WidgetListProvider(private val context: Context, intent: Intent) : RemoteViewsFactory {
+class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
 
   private var suraPageItemList: List<SuraPageItem> = listOf()
 
