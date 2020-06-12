@@ -7,16 +7,13 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableString;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,6 +33,7 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -56,7 +54,7 @@ public class SearchActivity extends QuranActionBarActivity
   private String query;
   private ResultAdapter adapter;
   private DefaultDownloadReceiver downloadReceiver;
-  private EditText searchEditText;
+  private SearchView searchView;
 
   @Inject QuranInfo quranInfo;
   @Inject QuranDisplayData quranDisplayData;
@@ -68,23 +66,9 @@ public class SearchActivity extends QuranActionBarActivity
     ((QuranApplication) getApplication())
         .getApplicationComponent().inject(this);
     setContentView(R.layout.search);
-    searchEditText = findViewById(R.id.searchEditText);
-    searchEditText.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-      }
-
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (count > 2) {
-          showResults(s.toString());
-        }
-      }
-
-      @Override
-      public void afterTextChanged(Editable s) {
-      }
-    });
+    searchView = findViewById(R.id.search_view);
+    SearchManager searchManager = ((SearchManager) getSystemService(Context.SEARCH_SERVICE));
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     messageView = findViewById(R.id.search_area);
     warningView = findViewById(R.id.search_warning);
     buttonGetTranslations = findViewById(R.id.btnGetTranslations);
@@ -190,6 +174,9 @@ public class SearchActivity extends QuranActionBarActivity
         buttonGetTranslations.setText(R.string.get_translations);
         buttonGetTranslations.setVisibility(View.VISIBLE);
       }
+      if (adapter != null) {
+        adapter.swapCursor(null);
+      }
     } else {
       // Display the number of results
       int count = cursor.getCount();
@@ -207,7 +194,7 @@ public class SearchActivity extends QuranActionBarActivity
           jumpToResult(currentCursor.getInt(1), currentCursor.getInt(2));
         });
       } else {
-        adapter.changeCursor(cursor);
+        adapter.swapCursor(cursor);
       }
     }
   }
@@ -215,7 +202,7 @@ public class SearchActivity extends QuranActionBarActivity
   @Override
   public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     if (adapter != null) {
-      adapter.changeCursor(null);
+      adapter.swapCursor(null);
     }
   }
 

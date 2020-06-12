@@ -9,24 +9,15 @@
               android:textSize="17sp"
               android:visibility="gone"
               android:textColor="?android:textColorPrimary" />
-    <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations" 
+    <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations"
     	android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone"/>
 
-  <LinearLayout
+  <androidx.appcompat.widget.SearchView
+      android:id="@+id/search_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="horizontal">
-
-    <EditText
-        android:id="@+id/searchEditText"
-        android:layout_width="328dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/search_hint"
-        android:inputType="text"
-        android:text="" />
-
-  </LinearLayout>
+      android:queryHint="@string/search_hint"
+      android:inputType="text" />
 
   <TextView
       android:id="@+id/search_area"
