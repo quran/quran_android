@@ -179,7 +179,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   public void updateSelectedItem() {
     if (spinner != null) {
-      spinner.setSelection(currentQari);
+      spinner.setSelection(currentQari, false);
     }
   }
 
