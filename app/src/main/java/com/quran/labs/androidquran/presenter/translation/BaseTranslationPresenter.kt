@@ -38,16 +38,8 @@ internal open class BaseTranslationPresenter<T> internal constructor(
                 translations: List<String>,
                 verseRange: VerseRange
   ): Single<ResultHolder> {
-    // get all the translations for these verses, using a source of either the list
-    // of active translations, or a set of all translations if there are no active
-    // translations selected.
-    val source = if (!translations.isEmpty())
-      Observable.fromIterable(translations)
-    else
-      getTranslationMapSingle()
-          .toObservable()
-          .map<List<String>> { map -> map.map { it.value.filename }.toList() }
-          .flatMap<String> { Observable.fromIterable(it) }
+    // get all the translations for these verses, using a source of the list of active translations
+    val source = Observable.fromIterable(translations)
 
     val translationsObservable =
         source.concatMapEager { db ->
