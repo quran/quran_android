@@ -53,19 +53,13 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     CheckBoxHolder holder = (CheckBoxHolder) ((View) buttonView.getParent()).getTag();
     LocalTranslation localTranslation = translations.get(holder.position);
 
-    boolean updated = true;
     if (selectedItems.contains(localTranslation.getFilename())) {
-      if (selectedItems.size() > 1) {
         selectedItems.remove(localTranslation.getFilename());
-      } else {
-        updated = false;
-        holder.checkBox.setChecked(true);
-      }
     } else {
       selectedItems.add(localTranslation.getFilename());
     }
 
-    if (updated && listener != null) {
+    if (listener != null) {
       listener.onSelectionChanged(selectedItems);
     }
 
