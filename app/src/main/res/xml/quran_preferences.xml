@@ -148,6 +148,24 @@
         android:title="@string/prefs_ayah_before_translation_title"
         app:iconSpaceReserved="false"/>
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/prefs_split_page_and_translation"
+        android:persistent="true"
+        android:summary="@string/prefs_split_page_and_translation_summary"
+        android:title="@string/prefs_split_page_and_translation_title"
+        app:iconSpaceReserved="false" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="@string/prefs_split_page_and_translation"
+        android:key="@string/prefs_quran_on_right"
+        android:persistent="true"
+        android:summaryOff="@string/prefs_quran_on_right_summary_off"
+        android:summaryOn="@string/prefs_quran_on_right_summary_on"
+        android:title="@string/prefs_quran_on_right_title"
+        app:iconSpaceReserved="false" />
+
     <com.quran.labs.androidquran.ui.preference.SeekBarPreference
         android:defaultValue="15"
         android:key="@string/prefs_translation_text_size"
