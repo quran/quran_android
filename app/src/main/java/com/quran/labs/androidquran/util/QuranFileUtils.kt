@@ -7,6 +7,7 @@ import android.graphics.Bitmap.Config.ALPHA_8
 import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
 import android.os.Environment
+import androidx.annotation.WorkerThread
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.common.Response
@@ -19,6 +20,8 @@ import okio.Buffer
 import okio.ForwardingSource
 import okio.Source
 import okio.buffer
+import okio.sink
+import okio.source
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -34,7 +37,7 @@ import javax.inject.Inject
 
 class QuranFileUtils @Inject constructor(
   context: Context,
-  pageProvider: PageProvider,
+  private val pageProvider: PageProvider,
   private val quranScreenInfo: QuranScreenInfo
 ) {
   // server urls
@@ -90,6 +93,28 @@ class QuranFileUtils @Inject constructor(
       }
     }
     return null
+  }
+
+  fun copyQuranDataFromAssets(context: Context, widthParam: String) {
+    val quranDirectory = getQuranImagesDirectory(context, widthParam) ?: return
+    for (page in 1..604) {
+      val filename = getPageFileName(page)
+      copyFromAssets("pages/$filename", filename, quranDirectory + File.separator)
+    }
+
+    for (patch in 1..pageProvider.getImageVersion()) {
+      File(quranDirectory, ".v$patch").createNewFile()
+    }
+
+    val base = getQuranBaseDirectory(context)
+    val databaseDestination = base + pageProvider.getAyahInfoDirectoryName()
+    val dbDirectory = File(databaseDestination)
+    if (!dbDirectory.exists()) {
+      dbDirectory.mkdir()
+    }
+    val filename = "ayahinfo$widthParam.zip"
+    copyFromAssets("databases${File.separator}$filename", filename, databaseDestination)
+    writeNoMediaFile(quranDirectory)
   }
 
   fun haveAllImages(context: Context,
@@ -193,6 +218,25 @@ class QuranFileUtils @Inject constructor(
   private fun makeQuranAyahDatabaseDirectory(context: Context): Boolean {
     return makeQuranDatabaseDirectory(context) &&
         makeDirectory(getQuranAyahDatabaseDirectory(context))
+  }
+
+  @WorkerThread
+  fun copyFromAssets(assetsFileName: String, filename: String, destination: String) {
+    val assets = appContext.assets
+    assets.open(assetsFileName)
+        .source()
+        .use { source ->
+          File(destination, filename).sink()
+              .buffer()
+              .use { destination -> destination.writeAll(source) }
+        }
+
+    if (filename.endsWith(".zip")) {
+      val zipFile = destination + File.separator + filename
+      ZipUtils.unzipFile(zipFile, destination, filename, null)
+      // delete the zip file, since there's no need to have it twice
+      File(zipFile).delete()
+    }
   }
 
   fun getImageFromWeb(
@@ -392,7 +436,7 @@ class QuranFileUtils @Inject constructor(
   }
 
   private val ayaPositionFileName: String
-    private get() = getAyaPositionFileName(quranScreenInfo.widthParam)
+    get() = getAyaPositionFileName(quranScreenInfo.widthParam)
 
   fun getAyaPositionFileName(widthParam: String): String {
     return "ayahinfo$widthParam.db"

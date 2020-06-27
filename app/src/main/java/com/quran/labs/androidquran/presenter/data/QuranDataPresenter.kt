@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDataProvider
+import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.CopyDatabaseUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
@@ -67,6 +68,7 @@ class QuranDataPresenter @Inject internal constructor(
       checkPagesDisposable =
           supportLegacyPages(pages)
               .andThen(actuallyCheckPages(pages))
+              .flatMap { copyLocalDataIfNecessary(it) }
               .map { checkPatchStatus(it) }
               .doOnSuccess {
                 if (it.havePages()) {
@@ -93,6 +95,17 @@ class QuranDataPresenter @Inject internal constructor(
                 checkPagesDisposable = null
               })
       scheduleAudioUpdater()
+    }
+  }
+
+  private fun copyLocalDataIfNecessary(status: QuranDataStatus): Single<QuranDataStatus> {
+    return Single.fromCallable {
+      if (!status.havePages() && QuranFileConstants.ARE_PAGES_BUNDLED) {
+        quranFileUtils.copyQuranDataFromAssets(appContext, status.portraitWidth)
+        status.copy(havePortrait = true, haveLandscape = true)
+      } else {
+        status
+      }
     }
   }
 
