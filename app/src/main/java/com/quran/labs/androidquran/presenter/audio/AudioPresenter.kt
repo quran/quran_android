@@ -86,7 +86,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
     return if (!quranFileUtils.haveAyaPositionFile(context)) {
       getDownloadIntent(context,
           quranFileUtils.ayaPositionFileUrl,
-          quranFileUtils.getQuranAyahDatabaseDirectory(context),
+          quranFileUtils.getQuranAyahDatabaseDirectory(context)!!,
           context.getString(R.string.highlighting_database))
     } else if (gaplessDb != null && !File(gaplessDb).exists()) {
       getDownloadIntent(context,

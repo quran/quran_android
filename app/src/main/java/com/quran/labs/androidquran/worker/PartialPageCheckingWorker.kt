@@ -41,9 +41,9 @@ class PartialPageCheckingWorker(private val context: Context,
 
       // prepare page widths and paths
       val width = quranScreenInfo.widthParam
-      val pagesDirectory = quranFileUtils.getQuranImagesDirectory(context, width)
+      val pagesDirectory = quranFileUtils.getQuranImagesDirectory(context, width)!!
       val tabletWidth = quranScreenInfo.tabletWidthParam
-      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(context, tabletWidth)
+      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(context, tabletWidth)!!
 
       // compute the partial page sets
       val partialPages =
