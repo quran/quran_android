@@ -1,15 +1,16 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.content.Context;
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 public class TabletView extends QuranPageWrapperLayout {
   public static final int QURAN_PAGE = 1;
@@ -67,6 +68,22 @@ public class TabletView extends QuranPageWrapperLayout {
     this.pageController = controller;
     this.leftPage.setPageController(controller, leftPage);
     this.rightPage.setPageController(controller, rightPage);
+  }
+
+  public void setPageController(
+    PageController controller,
+    int pageNumber,
+    boolean isQuranOnRight
+  ) {
+    this.pageController = controller;
+
+    if (isQuranOnRight) {
+      this.rightPage.setPageController(controller, pageNumber);
+      this.leftPage.setPageController(null, pageNumber);
+    } else {
+      this.rightPage.setPageController(null, pageNumber);
+      this.leftPage.setPageController(controller, pageNumber);
+    }
   }
 
   @Override

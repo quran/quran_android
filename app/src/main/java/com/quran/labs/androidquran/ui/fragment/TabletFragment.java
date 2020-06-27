@@ -173,7 +173,7 @@ public class TabletFragment extends Fragment
     PagerActivity pagerActivity = (PagerActivity) getActivity();
     splitTranslationView.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
     splitTranslationView.setOnTranslationActionListener(this);
-    mainView.setPageController(null, pageNumber, pageNumber);
+    mainView.setPageController(this, pageNumber, isQuranOnRight);
   }
 
   @Override
@@ -319,7 +319,7 @@ public class TabletFragment extends Fragment
     mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
     isSplitScreen = getArguments().getBoolean(IS_SPLIT_SCREEN, false);
 
-    final Integer[] pages = isSplitScreen ?
+    final Integer[] pages = (isSplitScreen && mode == Mode.TRANSLATION) ?
         new Integer[]{ pageNumber } : new Integer[]{ pageNumber - 1, pageNumber };
 
     ((PagerActivity) getActivity()).getPagerActivityComponent()
@@ -363,7 +363,7 @@ public class TabletFragment extends Fragment
 
   @Override
   public void setPageBitmap(int page, @NonNull Bitmap pageBitmap) {
-    if (isSplitScreen) {
+    if (isSplitScreen && mode == Mode.TRANSLATION) {
       splitImageView.setImageDrawable(new BitmapDrawable(getResources(), pageBitmap));
     } else {
       ImageView imageView = page == pageNumber - 1 ? rightImageView : leftImageView;
