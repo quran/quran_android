@@ -9,6 +9,7 @@ import com.quran.data.model.VerseRange
 import com.quran.data.source.QuranDataSource
 import java.util.ArrayList
 import javax.inject.Inject
+import kotlin.math.abs
 
 class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
   private val suraPageStart = quranDataSource.getPageForSuraArray()
@@ -59,7 +60,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
 
   fun getVerseRangeForPage(page: Int): VerseRange {
     val result = getPageBounds(page)
-    val versesInRange: Int = 1 + Math.abs(
+    val versesInRange: Int = 1 + abs(
         getAyahId(result[0], result[1]) - getAyahId(result[2], result[3])
     )
     return VerseRange(result[0], result[1], result[2], result[3], versesInRange)

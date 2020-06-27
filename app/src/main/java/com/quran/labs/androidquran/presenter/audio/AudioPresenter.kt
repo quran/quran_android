@@ -50,13 +50,8 @@ constructor(private val quranDisplayData: QuranDisplayData,
         audioPathInfo
       }
 
-      val (checkedStart, checkedEnd) = if (start < end) start to end else end to start
-      if (checkedStart != start) {
-        Crashlytics.logException(IllegalArgumentException("expected $start > $end, but wasn't."))
-      }
-
       val audioRequest = AudioRequest(
-          checkedStart, checkedEnd, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
+          start, end, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
       play(audioRequest)
     }
   }
