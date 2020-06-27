@@ -160,16 +160,16 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return if (sura < 1 || sura > NUMBER_OF_SURAS) -1 else suraNumAyahs[sura - 1]
   }
 
-  fun getPageFromPosition(position: Int, dual: Boolean): Int {
-    return if (dual) {
+  fun getPageFromPosition(position: Int, dual: Boolean, isSplitScreen: Boolean): Int {
+    return if (dual && !isSplitScreen) {
       (numberOfPagesDual - position) * 2
     } else {
       numberOfPages - position
     }
   }
 
-  fun getPositionFromPage(page: Int, dual: Boolean): Int {
-    return if (dual) {
+  fun getPositionFromPage(page: Int, dual: Boolean, isSplitScreen: Boolean): Int {
+    return if (dual && !isSplitScreen) {
       val pageToUse = if (page % 2 != 0) { page + 1 } else { page }
       numberOfPagesDual - pageToUse / 2
     } else {

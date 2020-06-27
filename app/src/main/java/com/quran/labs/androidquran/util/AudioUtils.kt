@@ -107,17 +107,21 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     return quranFileUtils.gaplessDatabaseRootUrl + "/" + dbName
   }
 
-  fun getLastAyahToPlay(startAyah: SuraAyah,
-                        currentPage: Int,
-                        mode: Int,
-                        isDualPages: Boolean): SuraAyah? {
-    val page = if (isDualPages && mode == LookAheadAmount.PAGE && currentPage % 2 == 1) {
-      // if we download page by page and we are currently in tablet mode
-      // and playing from the right page, get the left page as well.
-      currentPage + 1
-    } else {
-      currentPage
-    }
+  fun getLastAyahToPlay(
+    startAyah: SuraAyah,
+    currentPage: Int,
+    mode: Int,
+    isDualPages: Boolean,
+    isSplitScreen: Boolean
+  ): SuraAyah? {
+    val page =
+      if (isDualPages && isSplitScreen && mode == LookAheadAmount.PAGE && currentPage % 2 == 1) {
+        // if we download page by page and we are currently in tablet mode
+        // and playing from the right page, get the left page as well.
+        currentPage + 1
+      } else {
+        currentPage
+      }
 
     var pageLastSura = 114
     var pageLastAyah = 6
