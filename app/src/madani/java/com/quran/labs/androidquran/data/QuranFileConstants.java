@@ -6,6 +6,9 @@ import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.ui.util.TypefaceManager;
 
 public class QuranFileConstants {
+
+  private QuranFileConstants() {}
+
   // server urls
   public static final int FONT_TYPE = TypefaceManager.TYPE_UTHMANI_HAFS;
 
