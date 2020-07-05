@@ -41,7 +41,6 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
