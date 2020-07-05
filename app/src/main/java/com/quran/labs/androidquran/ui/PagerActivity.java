@@ -953,7 +953,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         bookmarked = bookmarksCache.get(page);
       }
 
-      if (!bookmarked && isDualPages && !isSplitScreen &&
+      if (!bookmarked && isDualPages && isNotSplitOrShowingTranslation() &&
           bookmarksCache.indexOfKey(page - 1) >= 0) {
         bookmarked = bookmarksCache.get(page - 1);
       }
@@ -1481,7 +1481,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     int position = viewPager.getCurrentItem();
     int page = numberOfPages - position;
-    if (isDualPages && !isSplitScreen) {
+    if (isDualPages && isNotSplitOrShowingTranslation()) {
       page = ((numberOfPagesDual - position) * 2) - 1;
     }
 
@@ -1509,7 +1509,8 @@ public class PagerActivity extends QuranActionBarActivity implements
                            boolean enforceRange) {
     final SuraAyah ending = end != null ? end :
         audioUtils.getLastAyahToPlay(start, page,
-            quranSettings.getPreferredDownloadAmount(), isDualPages, isSplitScreen);
+            quranSettings.getPreferredDownloadAmount(), isDualPages,
+            isNotSplitOrShowingTranslation());
 
     if (ending != null) {
       Timber.d("playFromAyah - " + start + ", ending: " +

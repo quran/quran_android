@@ -50,7 +50,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     for (i in shuyookh.indices) {
       if (hasGaplessEquivalent[i] == 0 || haveAnyFiles(context, paths[i])) {
         items += QariItem(
-            i, shuyookh[i], urls[i], paths[i], databases[i]
+          i, shuyookh[i], urls[i], paths[i], databases[i]
         )
       }
     }
@@ -81,10 +81,10 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     val rootDirectory = quranFileUtils.getQuranAudioDirectory(context)
     return if (rootDirectory == null) null else
       rootDirectory + item.path + File.separator + if (item.isGapless) {
-      "%03d" + AudioUtils.AUDIO_EXTENSION
-    } else {
-      "%d" + File.separator + "%d" + AudioUtils.AUDIO_EXTENSION
-    }
+        "%03d" + AudioUtils.AUDIO_EXTENSION
+      } else {
+        "%d" + File.separator + "%d" + AudioUtils.AUDIO_EXTENSION
+      }
   }
 
   fun getQariDatabasePathIfGapless(context: Context, item: QariItem): String? {
@@ -112,10 +112,14 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     currentPage: Int,
     mode: Int,
     isDualPages: Boolean,
-    isSplitScreen: Boolean
+    isNotSplitOrShowingTranslation: Boolean
   ): SuraAyah? {
     val page =
-      if (isDualPages && isSplitScreen && mode == LookAheadAmount.PAGE && currentPage % 2 == 1) {
+      if (isDualPages &&
+        isNotSplitOrShowingTranslation &&
+        mode == LookAheadAmount.PAGE &&
+        currentPage % 2 == 1
+      ) {
         // if we download page by page and we are currently in tablet mode
         // and playing from the right page, get the left page as well.
         currentPage + 1
@@ -164,10 +168,12 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     return SuraAyah(pageLastSura, pageLastAyah)
   }
 
-  fun shouldDownloadBasmallah(baseDirectory: String,
-                              start: SuraAyah,
-                              end: SuraAyah,
-                              isGapless: Boolean) : Boolean {
+  fun shouldDownloadBasmallah(
+    baseDirectory: String,
+    start: SuraAyah,
+    end: SuraAyah,
+    isGapless: Boolean
+  ): Boolean {
     if (isGapless) {
       return false
     }
@@ -194,7 +200,11 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     Timber.d("seeing if need basmalla...")
 
     for (i in minAyah.sura..maxAyah.sura) {
-      val firstAyah: Int = if (i == minAyah.sura) { minAyah.ayah } else { 1 }
+      val firstAyah: Int = if (i == minAyah.sura) {
+        minAyah.ayah
+      } else {
+        1
+      }
       if (firstAyah == 1 && i != 1 && i != 9) {
         return true
       }
@@ -209,11 +219,13 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     return file.isDirectory && file.list()?.isNotEmpty() ?: false
   }
 
-  fun haveAllFiles(baseUrl: String,
-                   path: String,
-                   start: SuraAyah,
-                   end: SuraAyah,
-                   isGapless: Boolean): Boolean {
+  fun haveAllFiles(
+    baseUrl: String,
+    path: String,
+    start: SuraAyah,
+    end: SuraAyah,
+    isGapless: Boolean
+  ): Boolean {
     if (path.isEmpty()) {
       return false
     }
@@ -232,12 +244,21 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
 
     if (endSura < startSura || endSura == startSura && endAyah < startAyah) {
       throw IllegalStateException(
-          "End isn't larger than the start: $startSura:$startAyah to $endSura:$endAyah")
+        "End isn't larger than the start: $startSura:$startAyah to $endSura:$endAyah"
+      )
     }
 
     for (i in startSura..endSura) {
-      val lastAyah = if (i == endSura) { endAyah } else { quranInfo.getNumberOfAyahs(i) }
-      val firstAyah = if (i == startSura) { startAyah } else { 1 }
+      val lastAyah = if (i == endSura) {
+        endAyah
+      } else {
+        quranInfo.getNumberOfAyahs(i)
+      }
+      val firstAyah = if (i == startSura) {
+        startAyah
+      } else {
+        1
+      }
 
       if (isGapless) {
         if (i == endSura && endAyah == 0) {
