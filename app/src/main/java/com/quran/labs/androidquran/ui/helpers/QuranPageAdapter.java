@@ -84,7 +84,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
   public Fragment getItem(int position) {
     int page = quranInfo
         .getPageFromPosition(position, isDualPages, isSplitScreen, isShowingTranslation);
-    Timber.d("Yusuf: getting page: %d, from position %d", page, position);
+    Timber.d("getting page: %d, from position %d", page, position);
     if (isDualPages) {
       return TabletFragment.newInstance(page,
           isShowingTranslation ? TabletFragment.Mode.TRANSLATION :
@@ -117,7 +117,8 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     if (page < Constants.PAGES_FIRST || totalPages < page) {
       return null;
     }
-    int position = quranInfo.getPositionFromPage(page, isDualPages, isSplitScreen);
+    int position = quranInfo
+        .getPositionFromPage(page, isDualPages, isSplitScreen, isShowingTranslation);
     Fragment fragment = getFragmentIfExists(position);
     return fragment instanceof QuranPage && fragment.isAdded() ? (QuranPage) fragment : null;
   }
