@@ -41,6 +41,7 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -321,6 +322,8 @@ public class TabletFragment extends Fragment
 
     final Integer[] pages = (isSplitScreen && mode == Mode.TRANSLATION) ?
         new Integer[]{ pageNumber } : new Integer[]{ pageNumber - 1, pageNumber };
+
+    Timber.d("Yusuf: pages: %s", Arrays.toString(pages));
 
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()

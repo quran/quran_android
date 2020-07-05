@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.view.ViewGroup;
 
 import com.quran.data.core.QuranInfo;
@@ -12,6 +8,9 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import timber.log.Timber;
 
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
@@ -32,7 +31,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     this.isShowingTranslation = isShowingTranslation;
     this.isSplitScreen = isSplitScreen;
     totalPages = quranInfo.getNumberOfPages();
-    totalPagesDual = isSplitScreen ? totalPages : totalPages / 2;
+    totalPagesDual = totalPages / 2;
   }
 
   public void setTranslationMode() {
@@ -74,13 +73,18 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   @Override
   public int getCount() {
-    return isDualPages ? totalPagesDual : totalPages;
+    if (isDualPages && (!isSplitScreen || !isShowingTranslation)) {
+      return totalPagesDual;
+    } else {
+      return totalPages;
+    }
   }
 
   @Override
   public Fragment getItem(int position) {
-    int page = quranInfo.getPageFromPosition(position, isDualPages, isSplitScreen);
-    Timber.d("getting page: %d", page);
+    int page = quranInfo
+        .getPageFromPosition(position, isDualPages, isSplitScreen, isShowingTranslation);
+    Timber.d("Yusuf: getting page: %d, from position %d", page, position);
     if (isDualPages) {
       return TabletFragment.newInstance(page,
           isShowingTranslation ? TabletFragment.Mode.TRANSLATION :
