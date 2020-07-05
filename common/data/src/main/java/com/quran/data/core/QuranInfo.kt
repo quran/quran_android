@@ -173,8 +173,13 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     }
   }
 
-  fun getPositionFromPage(page: Int, dual: Boolean, isSplitScreen: Boolean): Int {
-    return if (dual && !isSplitScreen) {
+  fun getPositionFromPage(
+    page: Int,
+    dual: Boolean,
+    isSplitScreen: Boolean,
+    isShowingTranslation: Boolean
+  ): Int {
+    return if (dual && (!isSplitScreen || !isShowingTranslation)) {
       val pageToUse = if (page % 2 != 0) { page + 1 } else { page }
       numberOfPagesDual - pageToUse / 2
     } else {

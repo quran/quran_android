@@ -323,8 +323,6 @@ public class TabletFragment extends Fragment
     final Integer[] pages = (isSplitScreen && mode == Mode.TRANSLATION) ?
         new Integer[]{ pageNumber } : new Integer[]{ pageNumber - 1, pageNumber };
 
-    Timber.d("Yusuf: pages: %s", Arrays.toString(pages));
-
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()
         .withQuranPageModule(new QuranPageModule(pages))
