@@ -628,6 +628,8 @@ public class AudioService extends Service implements OnCompletionListener,
           t = 10000;
         }
         serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t);
+      } else if (maxAyahs == updatedAyah) {
+        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150);
       }
       // if we're on the last ayah, don't do anything - let the file
       // complete on its own to avoid getCurrentPosition() bugs.
