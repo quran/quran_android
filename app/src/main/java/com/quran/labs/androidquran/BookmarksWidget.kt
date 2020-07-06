@@ -50,11 +50,6 @@ class BookmarksWidget : AppWidgetProvider() {
     super.onUpdate(context, appWidgetManager, appWidgetIds)
   }
 
-  override fun onReceive(context: Context, intent: Intent) {
-    super.onReceive(context, intent)
-    updateWidget(context)
-  }
-
   companion object {
     @JvmStatic fun updateWidget(context: Context) {
       val appWidgetManager = AppWidgetManager.getInstance(context)
