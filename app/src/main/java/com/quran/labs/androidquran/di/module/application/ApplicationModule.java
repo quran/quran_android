@@ -6,16 +6,20 @@ import android.graphics.Point;
 import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
+
 import com.quran.data.source.DisplaySize;
 import com.quran.data.source.PageProvider;
 import com.quran.data.source.PageSizeCalculator;
 import com.quran.labs.androidquran.util.QuranSettings;
+
+import java.io.File;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import java.io.File;
-import javax.inject.Singleton;
 
 @Module
 public class ApplicationModule {

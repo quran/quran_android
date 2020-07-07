@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
-import com.quran.labs.androidquran.BookmarksWidget;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
@@ -147,7 +146,6 @@ public class BookmarksDBAdapter {
   }
 
   public void addRecentPage(int page) {
-    BookmarksWidget.updateWidget(context);
     addRecentPage(page, true);
   }
 
@@ -236,7 +234,6 @@ public class BookmarksDBAdapter {
     } finally {
       db.endTransaction();
     }
-    BookmarksWidget.updateWidget(context);
   }
 
 
@@ -253,14 +250,12 @@ public class BookmarksDBAdapter {
     values.put(BookmarksTable.SURA, sura);
     values.put(BookmarksTable.AYAH, ayah);
     values.put(BookmarksTable.PAGE, page);
-    BookmarksWidget.updateWidget(context);
     return db.insert(BookmarksTable.TABLE_NAME, null, values);
   }
 
   public void removeBookmark(long bookmarkId) {
     db.delete(BookmarkTagTable.TABLE_NAME,
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId, null);
-    BookmarksWidget.updateWidget(context);
     db.delete(BookmarksTable.TABLE_NAME,
         BookmarksTable.ID + "=" + bookmarkId, null);
   }
@@ -436,7 +431,6 @@ public class BookmarksDBAdapter {
     } finally {
       db.endTransaction();
     }
-    BookmarksWidget.updateWidget(context);
     return result;
   }
 }

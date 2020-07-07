@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.quran.data.core.QuranInfo;
-import com.quran.data.page.provider.madani.MadaniPageProvider;
 import com.quran.data.pageinfo.common.MadaniDataSource;
+import com.quran.labs.androidquran.BookmarksWidgetUpdater;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;
@@ -97,6 +97,7 @@ public class BookmarkPresenterTest {
   @Mock private QuranSettings settings;
   @Mock private BookmarksDBAdapter bookmarksAdapter;
   @Mock private RecentPageModel recentPageModel;
+  @Mock private BookmarksWidgetUpdater bookmarksWidgetUpdater;
 
   @BeforeClass
   public static void setup() {
@@ -116,7 +117,7 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableAyahBookmarksByDate() {
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater) {
 
       @Override
       public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
@@ -138,7 +139,7 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksByDate() {
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater) {
 
       @Override
       public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
@@ -160,7 +161,7 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksByDateWithRecentPage() {
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater) {
 
       @Override
       public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
@@ -183,7 +184,7 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableAyahBookmarksGroupedByTag() {
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater) {
 
       @Override
       public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
@@ -207,7 +208,7 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksGroupedByTag() {
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater) {
 
       @Override
       public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
@@ -231,7 +232,7 @@ public class BookmarkPresenterTest {
 
   @Test
   public void testBookmarkObservableMixedBookmarksGroupedByTagWithRecentPage() {
-    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel) {
+    BookmarkModel model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater) {
 
       @Override
       public Single<BookmarkData> getBookmarkDataObservable(int sortOrder) {
