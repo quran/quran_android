@@ -116,6 +116,7 @@ public class BookmarkModel {
         }
       }
       bookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag);
+      bookmarksPublishSubject.onNext(true);
       return null;
     }).subscribeOn(Schedulers.io());
   }
