@@ -129,6 +129,7 @@ public class TranslationsDBAdapter {
             if (cursor != null && cursor.moveToNext()) {
               displayOrder = cursor.getInt(0) + 1;
             }
+            cursor.close();
           }
 
           ContentValues values = new ContentValues();

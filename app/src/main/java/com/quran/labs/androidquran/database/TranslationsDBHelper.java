@@ -95,7 +95,9 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
               TranslationsTable.ID + " = ?",
               new String[] { String.valueOf(translations.getInt(0)) }
           );
+          translations.moveToNext();
         }
+        translations.close();
         db.setTransactionSuccessful();
       } finally {
         db.endTransaction();

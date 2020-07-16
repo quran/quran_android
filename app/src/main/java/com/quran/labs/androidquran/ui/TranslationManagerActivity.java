@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.SparseIntArray;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
@@ -22,6 +23,8 @@ import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
+import com.quran.labs.androidquran.ui.adapter.DownloadedItemActionListener;
+import com.quran.labs.androidquran.ui.adapter.DownloadedMenuActionListener;
 import com.quran.labs.androidquran.ui.adapter.TranslationsAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -36,6 +39,7 @@ import javax.inject.Inject;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,7 +48,7 @@ import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
 public class TranslationManagerActivity extends QuranActionBarActivity
-    implements DefaultDownloadReceiver.SimpleDownloadListener {
+    implements DefaultDownloadReceiver.SimpleDownloadListener, DownloadedMenuActionListener {
 
   public static final String TRANSLATION_DOWNLOAD_KEY = "TRANSLATION_DOWNLOAD_KEY";
   private static final String UPGRADING_EXTENSION = ".old";
@@ -62,6 +66,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private Disposable onClickRemoveDisposable;
   private Disposable onClickRankUpDisposable;
   private Disposable onClickRankDownDisposable;
+
+  private ActionMode actionMode;
+  private TranslationSelectionListener selectionListener;
+  private DownloadedItemActionListener downloadedItemActionListener;
 
   @Inject TranslationManagerPresenter presenter;
   @Inject QuranFileUtils quranFileUtils;
@@ -82,6 +90,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
     adapter = new TranslationsAdapter(this);
     translationRecycler.setAdapter(adapter);
+    selectionListener = new TranslationSelectionListener(adapter);
 
     databaseDirectory = quranFileUtils.getQuranDatabaseDirectory(this);
 
@@ -361,10 +370,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     List<TranslationItem> sortedDownloads = sortedDownloadedItems();
     if (sortedDownloads.indexOf(targetItem) + 1 < sortedDownloads.size()) { // ignore last item in list
       TranslationItem updatedItem = targetItem.withDisplayOrder(targetItem.getDisplayOrder() + 1);
-      ArrayList<TranslationItem> toUpdate = new ArrayList<> ( );
+      ArrayList<TranslationItem> toUpdate = new ArrayList<>();
       toUpdate.add(updatedItem);
       TranslationItem swapItem = null;
-      for ( TranslationItem translationItem : sortedDownloads ) {
+      for(TranslationItem translationItem : sortedDownloads){
         if (translationItem.getDisplayOrder() == updatedItem.getDisplayOrder()) {
           swapItem = translationItem;
           break;
@@ -381,7 +390,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           }
         }
       }
-      for ( TranslationItem toUpdateItem : toUpdate ) {
+      for(TranslationItem toUpdateItem : toUpdate){
         updateTranslationItem(toUpdateItem);
       }
       generateListItems();
@@ -432,4 +441,85 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     return false;
   }
 
+  @Override
+  public void startMenuAction(TranslationItem item, DownloadedItemActionListener aDownloadedItemActionListener) {
+    downloadedItemActionListener = aDownloadedItemActionListener;
+    if (actionMode != null) {
+      actionMode.finish();
+      selectionListener.clearSelection();
+    } else {
+      selectionListener.handleSelection(item);
+      actionMode = startSupportActionMode(new ModeCallback());
+    }
+  }
+
+  @Override
+  public void finishMenuAction() {
+    if (actionMode != null) {
+      actionMode.finish();
+    }
+    selectionListener.clearSelection();
+    downloadedItemActionListener = null;
+  }
+
+  class TranslationSelectionListener {
+    private final TranslationsAdapter adapter;
+
+    TranslationSelectionListener(TranslationsAdapter anAdapter) {
+      adapter = anAdapter;
+    }
+
+    void handleSelection(TranslationItem item) {
+      adapter.setSelectedItem(item);
+    }
+
+    void clearSelection() {
+      adapter.setSelectedItem(null);
+    }
+  }
+
+  private class ModeCallback implements ActionMode.Callback  {
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.downloaded_translation_menu, menu);
+      return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+      return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+      switch(item.getItemId()) {
+        case R.id.dtm_delete:
+          if (downloadedItemActionListener != null) downloadedItemActionListener.handleDeleteItemAction();
+          endAction();
+          break;
+        case R.id.dtm_move_up:
+          if (downloadedItemActionListener != null) downloadedItemActionListener.handleRankUpItemAction();
+          endAction();
+          break;
+        case R.id.dtm_move_down:
+          if (downloadedItemActionListener != null) downloadedItemActionListener.handleRankDownItemAction();
+          endAction();
+          break;
+      }
+      return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+      if (mode == actionMode) actionMode = null;
+    }
+
+    private void endAction() {
+      if (actionMode != null) {
+        selectionListener.clearSelection();
+        actionMode.finish();
+      }
+    }
+  }
 }

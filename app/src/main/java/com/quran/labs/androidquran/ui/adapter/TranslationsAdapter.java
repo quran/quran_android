@@ -2,9 +2,6 @@ package com.quran.labs.androidquran.ui.adapter;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Observable;
 import io.reactivex.subjects.UnicastSubject;
@@ -33,20 +28,16 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
   private final UnicastSubject<TranslationRowData> onClickRankUpSubject = UnicastSubject.create();
   private final UnicastSubject<TranslationRowData> onClickRankDownSubject = UnicastSubject.create();
 
-  private final AppCompatActivity activity;
-  private final TranslationSelectionListener selectionListener;
+  private final DownloadedMenuActionListener downloadedMenuActionListener;
   private final DownloadedItemActionListener downloadedItemActionListener;
 
   private List<TranslationRowData> translations = new ArrayList<>();
 
-  private ActionMode actionMode;
-
   private TranslationItem selectedItem;
 
-  public TranslationsAdapter(AppCompatActivity anActivity) {
-    this.activity = anActivity;
-    this.selectionListener = new TranslationSelectionListener(this);
-    this.downloadedItemActionListener = new DownloadedItemActionListener();
+  public TranslationsAdapter(DownloadedMenuActionListener aDownloadedMenuActionListener) {
+    this.downloadedMenuActionListener = aDownloadedMenuActionListener;
+    this.downloadedItemActionListener = new DownloadedItemActionListenerImpl();
   }
 
   @NotNull
@@ -141,34 +132,18 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     notifyDataSetChanged();
   }
 
-  class TranslationSelectionListener {
-    private final TranslationsAdapter adapter;
-
-    TranslationSelectionListener(TranslationsAdapter anAdapter) {
-      adapter = anAdapter;
-    }
-
-    void handleSelection(TranslationItem item) {
-      adapter.setSelectedItem(item);
-    }
-
-    void clearSelection() {
-      adapter.setSelectedItem(null);
-    }
-  }
-
-  class DownloadedItemActionListener {
-    void handleDeleteItemAction() {
+  class DownloadedItemActionListenerImpl implements DownloadedItemActionListener {
+    public void handleDeleteItemAction() {
       onClickRemoveSubject.onNext(selectedItem);
       selectedItem = null;
     }
 
-    void handleRankUpItemAction() {
+    public void handleRankUpItemAction() {
       onClickRankUpSubject.onNext(selectedItem);
       selectedItem = null;
     }
 
-    void handleRankDownItemAction() {
+    public void handleRankDownItemAction() {
       onClickRankDownSubject.onNext(selectedItem);
       selectedItem = null;
     }
@@ -220,73 +195,15 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     }
 
     final View.OnLongClickListener actionMenuListener = v -> {
-      if (actionMode != null) {
-        actionMode.finish();
-        selectionListener.clearSelection();
-      } else if (activity != null) {
-        selectionListener.handleSelection(item);
-        actionMode = activity.startSupportActionMode(new ModeCallback());
-      }
+      downloadedMenuActionListener.startMenuAction(item, downloadedItemActionListener);
       return true;
     };
 
     @Override
     public void onClick(View v) {
-      if (actionMode != null) {
-        actionMode.finish();
-      }
-      selectionListener.clearSelection();
+      downloadedMenuActionListener.finishMenuAction();
       if (!item.exists() || item.needsUpgrade()) {
         onClickDownloadSubject.onNext(item);
-      }
-    }
-  }
-
-  private class ModeCallback implements ActionMode.Callback  {
-    @Override
-    public boolean onCreateActionMode ( ActionMode mode, Menu menu )
-    {
-      MenuInflater inflater = activity.getMenuInflater();
-      inflater.inflate(R.menu.downloaded_translation_menu, menu);
-      return true;
-    }
-
-    @Override
-    public boolean onPrepareActionMode ( ActionMode mode, Menu menu )
-    {
-      return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked ( ActionMode mode, MenuItem item )
-    {
-      switch(item.getItemId ()) {
-        case R.id.dtm_delete:
-          downloadedItemActionListener.handleDeleteItemAction();
-          endAction();
-          break;
-        case R.id.dtm_move_up:
-          downloadedItemActionListener.handleRankUpItemAction();
-          endAction();
-          break;
-        case R.id.dtm_move_down:
-          downloadedItemActionListener.handleRankDownItemAction();
-          endAction();
-          break;
-      }
-      return false;
-    }
-
-    @Override
-    public void onDestroyActionMode ( ActionMode mode )
-    {
-      if (mode == actionMode) actionMode = null;
-    }
-
-    private void endAction() {
-      if (actionMode != null) {
-        selectionListener.clearSelection();
-        actionMode.finish();
       }
     }
   }
