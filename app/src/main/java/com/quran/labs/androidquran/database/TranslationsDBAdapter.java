@@ -126,7 +126,7 @@ public class TranslationsDBAdapter {
                 TranslationsTable.DISPLAY_ORDER + " DESC",
                 "1"
             );
-            if (cursor != null && cursor.moveToNext()) {
+            if (cursor != null && cursor.moveToFirst()) {
               displayOrder = cursor.getInt(0) + 1;
             }
             cursor.close();
