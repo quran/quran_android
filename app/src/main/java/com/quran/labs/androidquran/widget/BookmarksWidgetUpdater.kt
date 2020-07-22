@@ -1,8 +1,9 @@
-package com.quran.labs.androidquran
+package com.quran.labs.androidquran.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import com.quran.labs.androidquran.R
 import javax.inject.Inject
 
 interface BookmarksWidgetUpdater {

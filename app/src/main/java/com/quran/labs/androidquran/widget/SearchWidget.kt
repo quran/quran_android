@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran
+package com.quran.labs.androidquran.widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -6,6 +6,10 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.SearchActivity
+import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 
 class SearchWidget : AppWidgetProvider() {

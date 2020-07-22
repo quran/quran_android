@@ -1,17 +1,11 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-
-import androidx.core.util.Pair;
-
-import com.quran.labs.androidquran.BookmarksWidget;
-import com.quran.labs.androidquran.BookmarksWidgetUpdater;
+import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
-import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
+import com.quran.labs.androidquran.widget.BookmarksWidgetUpdater;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +14,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.core.util.Pair;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;

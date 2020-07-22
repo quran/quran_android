@@ -1,18 +1,18 @@
 package com.quran.labs.androidquran.di.component.application;
 
+import com.quran.common.networking.NetworkModule;
 import com.quran.data.page.provider.QuranPageModule;
-import com.quran.labs.androidquran.BookmarksWidget;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.QuranForwarderActivity;
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
+import com.quran.labs.androidquran.core.worker.di.WorkerModule;
 import com.quran.labs.androidquran.data.QuranDataModule;
 import com.quran.labs.androidquran.data.QuranDataProvider;
+import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.di.module.application.ApplicationModule;
 import com.quran.labs.androidquran.di.module.application.DatabaseModule;
-import com.quran.common.networking.NetworkModule;
 import com.quran.labs.androidquran.di.module.widgets.BookmarksWidgetUpdaterModule;
 import com.quran.labs.androidquran.pageselect.PageSelectActivity;
 import com.quran.labs.androidquran.service.AudioService;
@@ -30,10 +30,8 @@ import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-
-import com.quran.labs.androidquran.core.worker.di.WorkerModule;
-import com.quran.labs.androidquran.widgets.WidgetListProvider;
-import com.quran.labs.androidquran.widgets.WidgetService;
+import com.quran.labs.androidquran.widget.BookmarksWidget;
+import com.quran.labs.androidquran.widget.WidgetListProvider;
 
 import javax.inject.Singleton;
 

@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.widgets
+package com.quran.labs.androidquran.widget
 
 import android.content.Context
 import android.content.Intent
@@ -8,7 +8,6 @@ import android.widget.RemoteViewsService.RemoteViewsFactory
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.dao.bookmark.Bookmark
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.QuranRow

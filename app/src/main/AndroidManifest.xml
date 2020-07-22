@@ -164,10 +164,10 @@
       </intent-filter>
     </service>
     <service
-        android:name=".widgets.WidgetService"
+        android:name=".widget.WidgetService"
         android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-    <receiver android:name=".BookmarksWidget">
+    <receiver android:name=".widget.BookmarksWidget">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
         <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
@@ -178,7 +178,7 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/bookmarks_widget_info" />
     </receiver>
-    <receiver android:name=".SearchWidget">
+    <receiver android:name=".widget.SearchWidget">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>

@@ -5,7 +5,7 @@ import android.content.res.Resources;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.data.pageinfo.common.MadaniDataSource;
-import com.quran.labs.androidquran.BookmarksWidgetUpdater;
+import com.quran.labs.androidquran.widget.BookmarksWidgetUpdater;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.RecentPage;

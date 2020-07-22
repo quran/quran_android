@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.widgets
+package com.quran.labs.androidquran.widget
 
 import android.content.Intent
 import android.widget.RemoteViewsService
