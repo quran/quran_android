@@ -8,19 +8,22 @@ import android.widget.RemoteViewsService.RemoteViewsFactory
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.dao.bookmark.Bookmark
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
+import com.quran.labs.androidquran.ui.PagerActivity
+import com.quran.labs.androidquran.ui.helpers.QuranRow
+import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import javax.inject.Inject
 
 class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
 
-  private var suraPageItemList: List<SuraPageItem> = listOf()
+  private var quranRowList: List<QuranRow> = listOf()
 
   @Inject
   lateinit var quranInfo: QuranInfo
 
   @Inject
-  lateinit var quranDisplayData: QuranDisplayData
+  lateinit var quranRowFactory: QuranRowFactory
 
   init {
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
@@ -30,10 +33,8 @@ class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
   private fun populateListItem() {
     val appContext = context.applicationContext
     val mBookmarksDBAdapter = BookmarksDBAdapter(appContext, quranInfo.numberOfPages)
-    val bookmarksList = mBookmarksDBAdapter.getBookmarks(BookmarksDBAdapter.SORT_DATE_ADDED)
-    suraPageItemList = bookmarksList.filter { it.isPageBookmark() }.map {
-      SuraPageItem(sura = quranDisplayData.getSuraNameString(appContext, it.page), page = it.page)
-    }
+    val bookmarksList = mBookmarksDBAdapter.getBookmarks(BookmarksDBAdapter.SORT_LOCATION)
+    quranRowList = bookmarksList.map { quranRowFactory.fromBookmark(appContext, it) }
   }
 
   override fun onCreate() = Unit
@@ -43,7 +44,7 @@ class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
     populateListItem()
   }
 
-  override fun getCount() = suraPageItemList.size
+  override fun getCount() = quranRowList.size
 
   override fun getItemId(position: Int) = position.toLong()
 
@@ -56,13 +57,18 @@ class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
   */
   override fun getViewAt(position: Int): RemoteViews {
     val remoteView = RemoteViews(context.packageName, R.layout.bookmarks_widget_list_row)
-    val item = suraPageItemList[position]
-    remoteView.setTextViewText(R.id.sura_title, item.sura)
-    remoteView.setTextViewText(R.id.sura_meta_data, context.resources.getText(R.string.quran_page).toString() + " " + item.page)
-    remoteView.setImageViewResource(R.id.widget_favorite_icon, R.drawable.ic_favorite)
+    val item = quranRowList[position]
+    remoteView.setTextViewText(R.id.sura_title, item.text)
+    remoteView.setTextViewText(R.id.sura_meta_data, item.metadata)
+    remoteView.setImageViewResource(R.id.widget_favorite_icon, item.imageResource)
+    if (item.imageFilterColor != null) {
+      remoteView.setInt(R.id.widget_favorite_icon, "setColorFilter", item.imageFilterColor)
+    }
     val fillInIntent = Intent().apply {
       putExtras(Bundle().apply {
-        putInt("page", item.page)
+        putInt("page", item.bookmark.page)
+        putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, item.bookmark.sura)
+        putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, item.bookmark.ayah)
       })
     }
     remoteView.setOnClickFillInIntent(R.id.widget_item, fillInIntent)
@@ -72,6 +78,4 @@ class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
   override fun getLoadingView() = null
 
   override fun getViewTypeCount() = 1
-
-  internal data class SuraPageItem(val sura: String, val page: Int)
 }
