@@ -15,7 +15,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationHeader;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
-import com.quran.labs.androidquran.dao.translation.TranslationItemDiplaySort;
+import com.quran.labs.androidquran.dao.translation.TranslationItemDisplaySort;
 import com.quran.labs.androidquran.dao.translation.TranslationRowData;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter;
@@ -251,7 +251,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       TranslationHeader hdr = new TranslationHeader(getString(R.string.downloaded_translations));
       result.add(hdr);
 
-      Collections.sort(downloaded, new TranslationItemDiplaySort());
+      Collections.sort(downloaded, new TranslationItemDisplaySort ());
 
       boolean needsUpgrade = false;
       for (TranslationItem item : downloaded) {
@@ -361,7 +361,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     for (TranslationItem item : allItems) {
       if (item.exists()) result.add(item);
     }
-    Collections.sort(result, new TranslationItemDiplaySort());
+    Collections.sort(result, new TranslationItemDisplaySort ());
     return result;
   }
 
@@ -390,10 +390,13 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           }
         }
       }
-      for(TranslationItem toUpdateItem : toUpdate){
-        updateTranslationItem(toUpdateItem);
+      if (!toUpdate.isEmpty()) {
+        if (selectionListener != null) selectionListener.handleSelection(updatedItem);
+        for(TranslationItem toUpdateItem : toUpdate){
+          updateTranslationItem(toUpdateItem);
+        }
+        generateListItems();
       }
-      generateListItems();
     }
   }
 
@@ -403,8 +406,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     if (sortedDownloads.indexOf(targetItem) > 0) { // ignore first item in list
       ArrayList<TranslationItem> toUpdate  = new ArrayList<>();
       int updatedDisplayOrder = targetItem.getDisplayOrder();
+      TranslationItem updatedItem = null;
       if (updatedDisplayOrder > 0) {
-        TranslationItem updatedItem = targetItem.withDisplayOrder(--updatedDisplayOrder);
+        updatedItem = targetItem.withDisplayOrder(--updatedDisplayOrder);
         toUpdate.add(updatedItem);
       }
       TranslationItem swapItem = null;
@@ -423,6 +427,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         }
       }
       if (!toUpdate.isEmpty()) {
+        if (selectionListener != null && updatedItem != null) selectionListener.handleSelection(updatedItem);
         for (TranslationItem toUpdateItem : toUpdate) {
           updateTranslationItem(toUpdateItem);
         }
@@ -500,11 +505,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
           break;
         case R.id.dtm_move_up:
           if (downloadedItemActionListener != null) downloadedItemActionListener.handleRankUpItemAction();
-          endAction();
           break;
         case R.id.dtm_move_down:
           if (downloadedItemActionListener != null) downloadedItemActionListener.handleRankDownItemAction();
-          endAction();
           break;
       }
       return false;
@@ -512,7 +515,10 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-      if (mode == actionMode) actionMode = null;
+      if (mode == actionMode) {
+        selectionListener.clearSelection();
+        actionMode = null;
+      }
     }
 
     private void endAction() {

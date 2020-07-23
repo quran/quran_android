@@ -54,7 +54,9 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       case R.layout.translation_row:
         TranslationItem item = (TranslationItem) rowItem;
         holder.setItem(item);
-        holder.itemView.setActivated(item.equals(selectedItem));
+        holder.itemView.setActivated(
+          (selectedItem != null) && (item.getTranslation().getId() == selectedItem.getTranslation().getId())
+        );
         holder.getTranslationTitle().setText(item.name());
         if (TextUtils.isEmpty(item.getTranslation().getTranslatorNameLocalized())) {
           holder.getTranslationInfo().setText(item.getTranslation().getTranslator());
@@ -135,17 +137,14 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
   class DownloadedItemActionListenerImpl implements DownloadedItemActionListener {
     public void handleDeleteItemAction() {
       onClickRemoveSubject.onNext(selectedItem);
-      selectedItem = null;
     }
 
     public void handleRankUpItemAction() {
       onClickRankUpSubject.onNext(selectedItem);
-      selectedItem = null;
     }
 
     public void handleRankDownItemAction() {
       onClickRankDownSubject.onNext(selectedItem);
-      selectedItem = null;
     }
   }
 

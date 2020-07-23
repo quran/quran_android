@@ -72,24 +72,27 @@ public class TranslationsDBAdapter {
         null, null, null, null, null,
         TranslationsTable.ID + " ASC");
     if (cursor != null) {
-      while (cursor.moveToNext()) {
-        int id = cursor.getInt(0);
-        String name = cursor.getString(1);
-        String translator = cursor.getString(2);
-        String translatorForeign = cursor.getString(3);
-        String filename = cursor.getString(4);
-        String url = cursor.getString(5);
-        String languageCode = cursor.getString(6);
-        int version = cursor.getInt(7);
-        int minimumVersion = cursor.getInt(8);
-        int displayOrder = cursor.getInt(9);
+      try {
+        while (cursor.moveToNext()) {
+          int id = cursor.getInt(0);
+          String name = cursor.getString(1);
+          String translator = cursor.getString(2);
+          String translatorForeign = cursor.getString(3);
+          String filename = cursor.getString(4);
+          String url = cursor.getString(5);
+          String languageCode = cursor.getString(6);
+          int version = cursor.getInt(7);
+          int minimumVersion = cursor.getInt(8);
+          int displayOrder = cursor.getInt(9);
 
-        if (quranFileUtils.hasTranslation(context, filename)) {
-          items.add(new LocalTranslation(id, filename, name, translator,
-              translatorForeign, url, languageCode, version, minimumVersion, displayOrder));
+          if (quranFileUtils.hasTranslation(context, filename)) {
+            items.add(new LocalTranslation(id, filename, name, translator,
+                translatorForeign, url, languageCode, version, minimumVersion, displayOrder));
+          }
         }
+      } finally {
+        cursor.close();
       }
-      cursor.close();
     }
     items = Collections.unmodifiableList(items);
     if (items.size() > 0) {
@@ -126,10 +129,13 @@ public class TranslationsDBAdapter {
                 TranslationsTable.DISPLAY_ORDER + " DESC",
                 "1"
             );
-            if (cursor != null && cursor.moveToFirst()) {
-              displayOrder = cursor.getInt(0) + 1;
+            try {
+              if (cursor != null && cursor.moveToFirst()) {
+                displayOrder = cursor.getInt(0) + 1;
+              }
+            } finally {
+              if (cursor !=null) cursor.close();
             }
-            cursor.close();
           }
 
           ContentValues values = new ContentValues();

@@ -86,20 +86,23 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
         Cursor translations = db.query(
             TranslationsTable.TABLE_NAME, new String[] { TranslationsTable.ID }, null, null, null, null, null
         );
-        if (translations != null && translations.moveToFirst()) {
-          for (int i = 0; i < translations.getCount(); i++) {
-            ContentValues values = new ContentValues();
-            values.put(TranslationsTable.DISPLAY_ORDER, i);
-            db.update(
-                TranslationsTable.TABLE_NAME,
-                values,
-                TranslationsTable.ID + " = ?",
-                new String[] { String.valueOf(translations.getInt(0)) }
-            );
-            translations.moveToNext();
+        try {
+          if (translations != null && translations.moveToFirst()) {
+            for (int i = 0; i < translations.getCount(); i++) {
+              ContentValues values = new ContentValues();
+              values.put(TranslationsTable.DISPLAY_ORDER, i);
+              db.update(
+                  TranslationsTable.TABLE_NAME,
+                  values,
+                  TranslationsTable.ID + " = ?",
+                  new String[] { String.valueOf(translations.getInt(0)) }
+              );
+              translations.moveToNext();
+            }
           }
+        } finally {
+          if (translations != null) translations.close();
         }
-        translations.close();
         db.setTransactionSuccessful();
       } finally {
         db.endTransaction();
