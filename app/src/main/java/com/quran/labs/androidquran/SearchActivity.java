@@ -69,6 +69,7 @@ public class SearchActivity extends QuranActionBarActivity
     searchView = findViewById(R.id.search_view);
     SearchManager searchManager = ((SearchManager) getSystemService(Context.SEARCH_SERVICE));
     searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setIconified(false);
     messageView = findViewById(R.id.search_area);
     warningView = findViewById(R.id.search_warning);
     buttonGetTranslations = findViewById(R.id.btnGetTranslations);
@@ -212,6 +213,9 @@ public class SearchActivity extends QuranActionBarActivity
     }
     if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
       String query = intent.getStringExtra(SearchManager.QUERY);
+      // Make sure the query is in the searchView, hide the keyboard that pops up by doing this
+      searchView.setQuery(query, false);
+      searchView.clearFocus();
       showResults(query);
     } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
       Uri intentData = intent.getData();
