@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.LocalTransationDiplaySort;
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
@@ -110,7 +110,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       }
 
       final LocalTranslation[] sortedTranslations = Arrays.copyOf(this.translations, this.translations.length);
-      Arrays.sort(sortedTranslations, new LocalTransationDiplaySort());
+      Arrays.sort(sortedTranslations, new LocalTranslationDisplaySort());
 
       for (int j = 0; j < sortedTranslations.length; j++) {
         final TranslationMetadata metadata = findText(verse.texts, sortedTranslations[j].getId());

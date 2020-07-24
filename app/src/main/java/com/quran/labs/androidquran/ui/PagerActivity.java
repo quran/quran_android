@@ -37,7 +37,7 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.common.LocalTransationDiplaySort;
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.audio.QariItem;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
@@ -1358,7 +1358,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             @Override
             public void onSuccess(List<LocalTranslation> translationList) {
               final List<LocalTranslation> sortedTranslations = new ArrayList<>(translationList);
-              Collections.sort(sortedTranslations, new LocalTransationDiplaySort());
+              Collections.sort(sortedTranslations, new LocalTranslationDisplaySort());
 
               int items = sortedTranslations.size();
               String[] titles = new String[items];
