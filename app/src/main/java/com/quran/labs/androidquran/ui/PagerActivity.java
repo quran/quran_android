@@ -446,7 +446,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       // when going from two page per screen to one or vice versa, we adjust the page number,
       // such that the first page is always selected.
       int curPage = numberOfPages - page;
-      if (isDualPages && isNotSplitOrShowingTranslation()) {
+      if (isDualPages && isNotSplitAndShowingTranslation()) {
         if (curPage % 2 != 0) {
           curPage++;
         }
@@ -459,7 +459,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
       page = curPage;
     } else if (isDualPages) {
-      if (isNotSplitOrShowingTranslation()) {
+      if (isNotSplitAndShowingTranslation()) {
         page = page / 2;
       }
     }
@@ -954,7 +954,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         bookmarked = bookmarksCache.get(page);
       }
 
-      if (!bookmarked && isDualPages && isNotSplitOrShowingTranslation() &&
+      if (!bookmarked && isDualPages && isNotSplitAndShowingTranslation() &&
           bookmarksCache.indexOfKey(page - 1) >= 0) {
         bookmarked = bookmarksCache.get(page - 1);
       }
@@ -1479,7 +1479,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     int position = viewPager.getCurrentItem();
     int page = numberOfPages - position;
-    if (isDualPages && isNotSplitOrShowingTranslation()) {
+    if (isDualPages && isNotSplitAndShowingTranslation()) {
       page = ((numberOfPagesDual - position) * 2) - 1;
     }
 
@@ -1508,7 +1508,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     final SuraAyah ending = end != null ? end :
         audioUtils.getLastAyahToPlay(start, page,
             quranSettings.getPreferredDownloadAmount(), isDualPages,
-            isNotSplitOrShowingTranslation());
+            isNotSplitAndShowingTranslation());
 
     if (ending != null) {
       Crashlytics.log("playFromAyah - " + start + ", ending: " +
@@ -2087,8 +2087,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     promptDialog.show();
   }
 
-  private boolean isNotSplitOrShowingTranslation() {
-    return !isSplitScreen || !showingTranslation;
+  private boolean isNotSplitAndShowingTranslation() {
+    return !(isSplitScreen && showingTranslation);
   }
 
   private class SlidingPanelListener implements SlidingUpPanelLayout.PanelSlideListener {

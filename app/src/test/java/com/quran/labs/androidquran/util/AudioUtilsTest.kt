@@ -24,7 +24,7 @@ class AudioUtilsTest {
       currentPage = 603,
       mode = 1,
       isDualPages = false,
-      isNotSplitOrShowingTranslation = false
+      isNotSplitAndShowingTranslation = false
     )
     Assert.assertNotNull(lastAyah)
     Assert.assertEquals(5, lastAyah!!.ayah.toLong())
@@ -64,7 +64,7 @@ class AudioUtilsTest {
       currentPage = 536,
       mode = 1,
       isDualPages = false,
-      isNotSplitOrShowingTranslation = false
+      isNotSplitAndShowingTranslation = false
     )
     assertThat(end).isEqualTo(SuraAyah(56, 76))
   }
