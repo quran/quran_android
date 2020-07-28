@@ -112,11 +112,11 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     currentPage: Int,
     mode: Int,
     isDualPages: Boolean,
-    isNotSplitOrShowingTranslation: Boolean
+    isNotSplitAndShowingTranslation: Boolean
   ): SuraAyah? {
     val page =
       if (isDualPages &&
-        isNotSplitOrShowingTranslation &&
+        isNotSplitAndShowingTranslation &&
         mode == LookAheadAmount.PAGE &&
         currentPage % 2 == 1
       ) {
