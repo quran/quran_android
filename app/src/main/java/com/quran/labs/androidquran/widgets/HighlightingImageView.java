@@ -219,7 +219,7 @@ public class HighlightingImageView extends AppCompatImageView {
 
         int size = start.size();
 
-        //TODO: instead of creating result every time, modify in-place
+        // return a new result object to avoid data race with onAnimationUpdate
         List<AyahBounds> result = new ArrayList<>(size);
 
         for(int i=0; i<size; ++i) {
