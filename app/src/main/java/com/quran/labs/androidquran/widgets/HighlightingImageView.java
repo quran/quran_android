@@ -193,16 +193,16 @@ public class HighlightingImageView extends AppCompatImageView {
         int diff = maxSize - minSize;
 
         RectF rectToBeDivided = minList.get(minSize-1).getBounds();
-        float oLeft = rectToBeDivided.left;
-        float oRight = rectToBeDivided.right;
-        float oTop = rectToBeDivided.top;
-        float oBottom = rectToBeDivided.bottom;
+        float originalLeft = rectToBeDivided.left;
+        float originalRight = rectToBeDivided.right;
+        float originalTop = rectToBeDivided.top;
+        float originalBottom = rectToBeDivided.bottom;
         minList.remove(minSize-1);
-        float part = (oRight-oLeft) /(diff+1);
+        float part = (originalRight-originalLeft) /(diff+1);
         for(int i=0; i<(diff+1); ++i) {
-          float left = oLeft + part*i;
+          float left = originalLeft + part*i;
           float right = left + part;
-          RectF rect = new RectF(left, oTop, right, oBottom);
+          RectF rect = new RectF(left, originalTop, right, originalBottom);
           AyahBounds ayahBounds = new AyahBounds(0, 0, rect);
           minList.add(ayahBounds);
         }
