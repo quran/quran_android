@@ -1,9 +1,6 @@
 package com.quran.labs.androidquran.widgets;
 
 import android.animation.Animator;
-import android.animation.RectEvaluator;
-import android.animation.TimeInterpolator;
-import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
@@ -17,19 +14,18 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.BounceInterpolator;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -152,7 +148,52 @@ public class HighlightingImageView extends AppCompatImageView {
     adjustNightMode();
   }
 
-  private void highlightFloatableAyah(Set<String> highlights, String currentSurahAyah) {
+
+
+  class AnimationUpdateListener implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
+    /*
+    This is an inner class because it needs access to floatableAyahCoordinates and invalidate()
+     */
+    Set<String> highlights;
+    AyahTransition ayahTransition;
+
+    public AnimationUpdateListener(Set<String> highlights, AyahTransition ayahTransition) {
+      this.highlights = highlights;
+      this.ayahTransition = ayahTransition;
+    }
+
+    @Override
+    public void onAnimationUpdate(ValueAnimator animation) {
+      List<AyahBounds> value = (List<AyahBounds>) animation.getAnimatedValue();
+      floatableAyahCoordinates.put(ayahTransition.get(), value);
+      invalidate();
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+      floatableAyahCoordinates.remove(ayahTransition.get());
+      highlights.remove(ayahTransition.get());
+      highlights.add(ayahTransition.getCurrentSurahAyah());
+    }
+
+    @Override
+    public void onAnimationCancel(Animator animation) {
+      floatableAyahCoordinates.remove(ayahTransition.get());
+      highlights.remove(ayahTransition.get());
+    }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
+
+    }
+  }
+
+  private void highlightFloatableAyah(Set<String> highlights, String currentSurahAyah, HighlightAnimationConfig config) {
     final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates.getAyahCoordinates();
 
     String previousSurahAyah = currentSurahAyah;
@@ -160,118 +201,32 @@ public class HighlightingImageView extends AppCompatImageView {
       previousSurahAyah = surahAyahs;
     }
     List<AyahBounds> startingBounds;
-    int arrowIndex = previousSurahAyah.indexOf("->");
-    if(arrowIndex != -1) {
+    if(AyahTransition.isAyahTransitionValid(previousSurahAyah)) {
       // The ayah changed during animating
       startingBounds = (List<AyahBounds>)animator.getAnimatedValue();
       animator.cancel();
-      previousSurahAyah = previousSurahAyah.substring(arrowIndex + 2);
+      previousSurahAyah = AyahTransition.extractPreviousSurahAyah(previousSurahAyah);
     } else {
       startingBounds = coordinatesData.get(previousSurahAyah);
     }
 
-    final String ayahTransition = previousSurahAyah+"->"+currentSurahAyah;
+    final AyahTransition ayahTransition = new AyahTransition(previousSurahAyah, currentSurahAyah);
 
     // yes we make copies, because normalizing the bounds will change them
     List<AyahBounds> previousAyahBoundsList = new ArrayList<>(startingBounds);
     List<AyahBounds> currentAyahBoundsList = new ArrayList<>(coordinatesData.get(currentSurahAyah));
 
     highlights.clear();
-    highlights.add(ayahTransition);
+    highlights.add(ayahTransition.get());
 
-    // TODO: reason whether this TypeEvaluator should be anonymous or not
-    animator = ValueAnimator.ofObject(new TypeEvaluator() {
+    animator = ValueAnimator.ofObject(config.getTypeEvaluator(), previousAyahBoundsList, currentAyahBoundsList);
 
-      private void normalizeAyahBoundsList(List<AyahBounds> start, List<AyahBounds> end) {
-        // this function takes two unequal length lists and normalizes them
+    animator.setDuration(config.getDuration());
 
-        int startSize = start.size();
-        int endSize = end.size();
-        int minSize = Math.min(startSize, endSize);
-        int maxSize = Math.max(startSize, endSize);
-        List<AyahBounds> minList = startSize < endSize? start : end;
-        int diff = maxSize - minSize;
-
-        RectF rectToBeDivided = minList.get(minSize-1).getBounds();
-        float originalLeft = rectToBeDivided.left;
-        float originalRight = rectToBeDivided.right;
-        float originalTop = rectToBeDivided.top;
-        float originalBottom = rectToBeDivided.bottom;
-        minList.remove(minSize-1);
-        float part = (originalRight-originalLeft) /(diff+1);
-        for(int i=0; i<(diff+1); ++i) {
-          float left = originalLeft + part*i;
-          float right = left + part;
-          RectF rect = new RectF(left, originalTop, right, originalBottom);
-          AyahBounds ayahBounds = new AyahBounds(0, 0, rect);
-          minList.add(ayahBounds);
-        }
-      }
-
-      @Override
-      public Object evaluate(float fraction, Object startObject, Object endObject) {
-        List<AyahBounds> start = (List<AyahBounds>)startObject;
-        List<AyahBounds> end = (List<AyahBounds>)endObject;
-
-        if(start.size() != end.size()) {
-          normalizeAyahBoundsList(start, end);
-        }
-
-        int size = start.size();
-
-        // return a new result object to avoid data race with onAnimationUpdate
-        List<AyahBounds> result = new ArrayList<>(size);
-
-        for(int i=0; i<size; ++i) {
-          RectF startValue = start.get(i).getBounds();
-          RectF endValue = end.get(i).getBounds();
-          float left = startValue.left + (endValue.left - startValue.left) * fraction;
-          float top = startValue.top + (endValue.top - startValue.top) * fraction;
-          float right = startValue.right + (endValue.right - startValue.right) * fraction;
-          float bottom = startValue.bottom + (endValue.bottom - startValue.bottom) * fraction;
-          AyahBounds intermediateBounds = new AyahBounds(0,0, new RectF(left, top, right, bottom));
-          result.add(intermediateBounds);
-        }
-        return result;
-      }
-    }, previousAyahBoundsList, currentAyahBoundsList);
-
-    // TODO: where should this constant live?
-    animator.setDuration(500);
-
-    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-      @Override
-      public void onAnimationUpdate(ValueAnimator animation) {
-        List<AyahBounds> value = (List<AyahBounds>) animation.getAnimatedValue();
-        floatableAyahCoordinates.put(ayahTransition, value);
-        invalidate();
-      }
-    });
-    animator.addListener(new Animator.AnimatorListener() {
-      @Override
-      public void onAnimationStart(Animator animation) {
-
-      }
-
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        floatableAyahCoordinates.remove(ayahTransition);
-        highlights.remove(ayahTransition);
-        highlights.add(currentSurahAyah);
-      }
-
-      @Override
-      public void onAnimationCancel(Animator animation) {
-        floatableAyahCoordinates.remove(ayahTransition);
-        highlights.remove(ayahTransition);
-      }
-
-      @Override
-      public void onAnimationRepeat(Animator animation) {
-
-      }
-    });
-    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+    AnimationUpdateListener listener = new AnimationUpdateListener(highlights, ayahTransition);
+    animator.addUpdateListener(listener);
+    animator.addListener(listener);
+    animator.setInterpolator(config.getInterpolator());
     animator.start();
   }
 
@@ -309,19 +264,20 @@ public class HighlightingImageView extends AppCompatImageView {
 
   public void highlightAyah(int surah, int ayah, HighlightType type) {
     Set<String> highlights = currentHighlights.get(type);
+    String surahAyah = surah + ":" + ayah;
     if (highlights == null) {
       highlights = new HashSet<>();
       currentHighlights.put(type, highlights);
-      highlights.add(surah + ":" + ayah);
+      highlights.add(surahAyah);
     } else if (!type.isMultipleHighlightsAllowed()) {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
       // only if highlight type is floatable
       if(shouldFloatHighlight(highlights, type, surah, ayah)) {
-        highlightFloatableAyah(highlights, surah + ":" + ayah);
+        highlightFloatableAyah(highlights, surahAyah, type.getAnimationConfig());
       } else {
         highlights.clear();
-        highlights.add(surah + ":" + ayah);
+        highlights.add(surahAyah);
       }
     }
   }
@@ -548,5 +504,41 @@ public class HighlightingImageView extends AppCompatImageView {
         imageDrawHelper.draw(pageCoordinates, canvas, this);
       }
     }
+  }
+}
+
+class AyahTransition {
+  final static String ARROW = "->";
+  private String previousSurahAyah, currentSurahAyah, transition;
+
+  public AyahTransition(String previousSurahAyah, String currentSurahAyah) {
+    this.previousSurahAyah = previousSurahAyah;
+    this.currentSurahAyah = currentSurahAyah;
+    this.transition = previousSurahAyah + ARROW + currentSurahAyah;
+  }
+
+  public String get() {
+    return transition;
+  }
+
+  public String getCurrentSurahAyah() {
+    return currentSurahAyah;
+  }
+
+  public static boolean isAyahTransitionValid(String ayahTransition) {
+    int arrowIndex = ayahTransition.indexOf(ARROW);
+    if(arrowIndex == -1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  public static String extractPreviousSurahAyah(String ayahTransition) {
+    int arrowIndex = ayahTransition.indexOf(ARROW);
+    if(arrowIndex == -1) {
+      throw new InvalidParameterException("Invalid ayahTransition");
+    }
+    return ayahTransition.substring(arrowIndex + 2);
   }
 }

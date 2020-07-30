@@ -8,30 +8,22 @@ import com.quran.labs.androidquran.R;
 
 public class HighlightType implements Comparable<HighlightType> {
 
-  public static final HighlightType SELECTION = new HighlightType(1, false, R.color.selection_highlight, false);
-  public static final HighlightType AUDIO =     new HighlightType(2, false, R.color.audio_highlight,     true);
-  public static final HighlightType NOTE =      new HighlightType(3, true,  R.color.note_highlight,      false);
-  public static final HighlightType BOOKMARK =  new HighlightType(4, true,  R.color.bookmark_highlight,  false);
+  public static final HighlightType SELECTION = new HighlightType(1, false, R.color.selection_highlight, HighlightAnimationConfig.NONE);
+  public static final HighlightType AUDIO =     new HighlightType(2, false, R.color.audio_highlight,     HighlightAnimationConfig.AUDIO);
+  public static final HighlightType NOTE =      new HighlightType(3, true,  R.color.note_highlight,      HighlightAnimationConfig.NONE);
+  public static final HighlightType BOOKMARK =  new HighlightType(4, true,  R.color.bookmark_highlight,  HighlightAnimationConfig.NONE);
 
   private Long id;
   private boolean multipleHighlightsAllowed;
   private int colorId;
   private Integer color = null;
-  private boolean floatable; 
-  // TODO: replace this with HighlightAnimationConfig
-  // which contains:
-  // 1. duration of animation
-  // 2. under what circumstances to animate, given ayahs
-  // 3. type of interpolator etc.
-  // 4. animation rule - The mapping of bounds (if ayah A has 3 bounds and B has 2 bounds, how to take care of the extra one?)
-  // I am not doing this right now because this seems
-  // over-engineering to me, given that animation takes place just for Audio and that too for consecutive ayahs
+  private HighlightAnimationConfig animationConfig;
 
-  private HighlightType(long id, boolean multipleHighlightsAllowed, int colorId, boolean floatable) {
+  private HighlightType(long id, boolean multipleHighlightsAllowed, int colorId, HighlightAnimationConfig config) {
     this.id = id;
     this.multipleHighlightsAllowed = multipleHighlightsAllowed;
     this.colorId = colorId;
-    this.floatable = floatable;
+    this.animationConfig = config;
   }
 
   public boolean isMultipleHighlightsAllowed() {
@@ -46,7 +38,11 @@ public class HighlightType implements Comparable<HighlightType> {
   }
 
   public boolean isFloatable() {
-    return this.floatable;
+    return animationConfig.isFloatable();
+  }
+
+  public HighlightAnimationConfig getAnimationConfig() {
+    return animationConfig;
   }
 
   @Override
