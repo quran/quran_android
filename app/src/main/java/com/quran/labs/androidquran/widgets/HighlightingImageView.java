@@ -196,10 +196,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private void highlightFloatableAyah(Set<String> highlights, String currentSurahAyah, HighlightAnimationConfig config) {
     final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates.getAyahCoordinates();
 
-    String previousSurahAyah = currentSurahAyah;
-    for(String surahAyahs: highlights) {
-      previousSurahAyah = surahAyahs;
-    }
+    String previousSurahAyah = highlights.iterator().next();
     List<AyahBounds> startingBounds;
     if(AyahTransition.isAyahTransitionValid(previousSurahAyah)) {
       // The ayah changed during animating
@@ -231,9 +228,6 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   private boolean shouldFloatHighlight(Set<String> highlights, HighlightType type, int surah, int ayah) {
-    // TODO: this should really be handled by HighlightType.HighlightAnimationConfig
-    // TODO: add more conditions, restricting float animation
-
     // only animating AUDIO highlights, for now
     if(!type.isFloatable()) {
       return false;
@@ -245,10 +239,8 @@ public class HighlightingImageView extends AppCompatImageView {
     }
 
     String currentSurahAyah = surah + ":" + ayah;
-    String previousSurahAyah = currentSurahAyah;
-    for(String surahAyahs: highlights) {
-      previousSurahAyah = surahAyahs;
-    }
+    String previousSurahAyah = highlights.iterator().next();
+
     if(currentSurahAyah.equals(previousSurahAyah)) {
       // can't animate to the same location
       return false;
