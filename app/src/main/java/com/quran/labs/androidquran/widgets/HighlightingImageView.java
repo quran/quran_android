@@ -445,9 +445,7 @@ public class HighlightingImageView extends AppCompatImageView {
     String startAyah = ayah.substring(0, arrowIndex);
     String endAyah = ayah.substring(arrowIndex + 2);
     if(alreadyHighlighted.contains(startAyah)
-        // TODO: to show or not to show is the question!
         || // if x -> y, either x or y is already highlighted, then we don't show the highlight
-//        && // if x -> y, if one of them is not highlighted, overlap highlights and show animation
         alreadyHighlighted.contains(endAyah)) {
       return true;
     }
