@@ -411,4 +411,7 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
+
+  <!-- Widgets -->
+  <string name="no_bookmarks">No bookmarks currently set</string>
 </resources>
