@@ -32,6 +32,10 @@ class SearchWidget : AppWidgetProvider() {
       pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
       widget.setOnClickPendingIntent(R.id.search_widget_btn_go_to_quran, pendingIntent)
 
+      intent = Intent(context, ShowJumpFragmentActivity::class.java)
+      pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+      widget.setOnClickPendingIntent(R.id.search_widget_btn_jump, pendingIntent)
+
       appWidgetManager.updateAppWidget(appWidgetId, widget)
     }
     super.onUpdate(context, appWidgetManager, appWidgetIds)

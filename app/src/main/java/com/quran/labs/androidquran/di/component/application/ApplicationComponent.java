@@ -31,6 +31,7 @@ import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.widget.BookmarksWidget;
+import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity;
 import com.quran.labs.androidquran.widget.WidgetListProvider;
 
 import javax.inject.Singleton;
@@ -70,6 +71,7 @@ public interface ApplicationComponent {
   void inject(QuranForwarderActivity quranForwarderActivity);
   void inject(SearchActivity searchActivity);
   void inject(PageSelectActivity pageSelectActivity);
+  void inject(ShowJumpFragmentActivity showJumpFragmentActivity);
 
   // fragments
   void inject(BookmarksFragment bookmarksFragment);

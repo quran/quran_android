@@ -171,7 +171,6 @@
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
         <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
-
       </intent-filter>
 
       <meta-data
@@ -187,6 +186,12 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/search_widget_info" />
     </receiver>
+
+    <activity
+        android:name=".widget.ShowJumpFragmentActivity"
+        android:launchMode="singleInstance"
+        android:excludeFromRecents="true"
+        android:theme="@style/Theme.AppCompat.Dialog" />
 
     <!-- override WorkManager initialization -->
     <provider
