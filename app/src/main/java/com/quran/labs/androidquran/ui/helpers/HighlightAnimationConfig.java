@@ -7,7 +7,10 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 public class HighlightAnimationConfig {
   public static final HighlightAnimationConfig AUDIO = new HighlightAnimationConfig(
       500,
-      new HighlightAnimationTypeEvaluator(new NormalizeToMaxAyahBoundsWithDivisionStrategy()),
+      new HighlightAnimationTypeEvaluator(
+//          new NormalizeToMaxAyahBoundsWithDivisionStrategy()
+          new NormalizeToMinAyahBoundsWithGrowingDivisionStrategy()
+      ),
       new AccelerateDecelerateInterpolator());
   public static final HighlightAnimationConfig NONE = new HighlightAnimationConfig();
 

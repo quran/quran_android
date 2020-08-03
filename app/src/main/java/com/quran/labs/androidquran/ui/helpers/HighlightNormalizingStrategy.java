@@ -63,3 +63,30 @@ class NormalizeToMaxAyahBoundsWithDivisionStrategy extends HighlightNormalizingS
   }
 
 }
+
+class NormalizeToMinAyahBoundsWithGrowingDivisionStrategy extends NormalizeToMaxAyahBoundsWithDivisionStrategy {
+
+  /*
+  Say we are going from a list of x AyahBounds to a list of y AyahBounds
+  Then normalizing algorithm is as follows:
+
+  1. diff = max(x, y).length - min(x,y).length
+  2. if x < y then, split x[-1] into (diff + 1) parts equally (Growing: use division strategy)
+  3. else delete x[0..diff-1] (Shrinking: use deletion strategy)
+  4. animate x[i] to y[i] for i in 0 to x.length-1
+   */
+
+  @Override
+  public void normalize(List<AyahBounds> start, List<AyahBounds> end) {
+    int startSize = start.size();
+    int endSize = end.size();
+
+    if(startSize >= endSize) {
+      int diff = Math.abs(startSize - endSize);
+      List toBeDeleted = start.subList(0, diff);
+      toBeDeleted.clear();
+    } else {
+      super.normalize(start, end);
+    }
+  }
+}
