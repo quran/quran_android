@@ -25,7 +25,6 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,7 +49,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private static int scrollableHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
-  private SortedMap<HighlightType, Set<String>> currentHighlights = new TreeMap<>();
+  private SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
 
   private boolean isNightMode;
   private boolean isColorFilterOn;
@@ -58,7 +57,7 @@ public class HighlightingImageView extends AppCompatImageView {
 
   // cached objects for onDraw
   private final RectF scaledRect = new RectF();
-  private final Set<String> alreadyHighlighted = new HashSet<>();
+  private final Set<AyahHighlight> alreadyHighlighted = new HashSet<>();
 
   // Params for drawing text
   private int fontSize;
@@ -66,9 +65,8 @@ public class HighlightingImageView extends AppCompatImageView {
   private RectF pageBounds = null;
   private boolean didDraw = false;
   private PageCoordinates pageCoordinates;
-  private AyahCoordinates ayahCoordinates;
+  private Map<AyahHighlight, List<AyahBounds>> highlightCoordinates;
   private Set<ImageDrawHelper> imageDrawHelpers;
-  private Map<String, List<AyahBounds>> floatableAyahCoordinates = new HashMap<>();
   private ValueAnimator animator;
 
   public HighlightingImageView(Context context) {
@@ -95,19 +93,19 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void unHighlight(int surah, int ayah, HighlightType type) {
-    Set<String> highlights = currentHighlights.get(type);
-    if (highlights != null && highlights.remove(surah + ":" + ayah)) {
+    Set<AyahHighlight> highlights = currentHighlights.get(type);
+    if (highlights != null && highlights.remove(new SingleAyahHighlight(surah, ayah))) {
       invalidate();
     }
   }
 
   public void highlightAyat(Set<String> ayahKeys, HighlightType type) {
-    Set<String> highlights = currentHighlights.get(type);
+    Set<AyahHighlight> highlights = currentHighlights.get(type);
     if (highlights == null) {
       highlights = new HashSet<>();
       currentHighlights.put(type, highlights);
     }
-    highlights.addAll(ayahKeys);
+    highlights.addAll(SingleAyahHighlight.createSet(ayahKeys));
   }
 
   public void unHighlight(HighlightType type) {
@@ -121,7 +119,6 @@ public class HighlightingImageView extends AppCompatImageView {
           // before animation is setup
           animator.cancel();
         }
-        floatableAyahCoordinates.clear();
       }
       invalidate();
     }
@@ -133,7 +130,10 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void setAyahData(AyahCoordinates ayahCoordinates) {
-    this.ayahCoordinates = ayahCoordinates;
+    highlightCoordinates = new HashMap<>();
+    for(Map.Entry<String, List<AyahBounds>> entry: ayahCoordinates.getAyahCoordinates().entrySet()) {
+      highlightCoordinates.put(new SingleAyahHighlight(entry.getKey()), entry.getValue());
+    }
   }
 
   public void setNightMode(boolean isNightMode, int textBrightness) {
@@ -152,20 +152,20 @@ public class HighlightingImageView extends AppCompatImageView {
 
   class AnimationUpdateListener implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
     /*
-    This is an inner class because it needs access to floatableAyahCoordinates and invalidate()
+    This is an inner class because it needs access to invalidate()
      */
-    Set<String> highlights;
-    AyahTransition ayahTransition;
+    Set<AyahHighlight> highlights;
+    TransitionAyahHighlight transitionHighlight;
 
-    public AnimationUpdateListener(Set<String> highlights, AyahTransition ayahTransition) {
+    public AnimationUpdateListener(Set<AyahHighlight> highlights, TransitionAyahHighlight transitionHighlight) {
       this.highlights = highlights;
-      this.ayahTransition = ayahTransition;
+      this.transitionHighlight = transitionHighlight;
     }
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
       List<AyahBounds> value = (List<AyahBounds>) animation.getAnimatedValue();
-      floatableAyahCoordinates.put(ayahTransition.get(), value);
+      highlightCoordinates.put(transitionHighlight, value);
       invalidate();
     }
 
@@ -176,15 +176,15 @@ public class HighlightingImageView extends AppCompatImageView {
 
     @Override
     public void onAnimationEnd(Animator animation) {
-      floatableAyahCoordinates.remove(ayahTransition.get());
-      highlights.remove(ayahTransition.get());
-      highlights.add(ayahTransition.getCurrentSurahAyah());
+      highlightCoordinates.remove(transitionHighlight);
+      highlights.remove(transitionHighlight);
+      highlights.add(transitionHighlight.getDestination());
     }
 
     @Override
     public void onAnimationCancel(Animator animation) {
-      floatableAyahCoordinates.remove(ayahTransition.get());
-      highlights.remove(ayahTransition.get());
+      highlightCoordinates.remove(transitionHighlight);
+      highlights.remove(transitionHighlight);
     }
 
     @Override
@@ -193,41 +193,42 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  private void highlightFloatableAyah(Set<String> highlights, String currentSurahAyah, HighlightAnimationConfig config) {
-    final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates.getAyahCoordinates();
+  private void highlightFloatableAyah(Set<AyahHighlight> highlights, AyahHighlight destinationHighlight, HighlightAnimationConfig config) {
+    AyahHighlight previousHighlight = highlights.iterator().next();
+    AyahHighlight sourceHighlight;
 
-    String previousSurahAyah = highlights.iterator().next();
     List<AyahBounds> startingBounds;
-    if(AyahTransition.isAyahTransitionValid(previousSurahAyah)) {
+    if(previousHighlight.isTransition()) {
       // The ayah changed during animating
       startingBounds = (List<AyahBounds>)animator.getAnimatedValue();
       animator.cancel();
-      previousSurahAyah = AyahTransition.extractPreviousSurahAyah(previousSurahAyah);
+      sourceHighlight = ((TransitionAyahHighlight)previousHighlight).getSource();
     } else {
-      startingBounds = coordinatesData.get(previousSurahAyah);
+      sourceHighlight = previousHighlight;
+      startingBounds = highlightCoordinates.get(sourceHighlight);
     }
 
-    final AyahTransition ayahTransition = new AyahTransition(previousSurahAyah, currentSurahAyah);
+    final TransitionAyahHighlight transitionHighlight = new TransitionAyahHighlight(sourceHighlight, destinationHighlight);
 
     // yes we make copies, because normalizing the bounds will change them
-    List<AyahBounds> previousAyahBoundsList = new ArrayList<>(startingBounds);
-    List<AyahBounds> currentAyahBoundsList = new ArrayList<>(coordinatesData.get(currentSurahAyah));
+    List<AyahBounds> sourceBounds = new ArrayList<>(startingBounds);
+    List<AyahBounds> destinationBounds = new ArrayList<>(highlightCoordinates.get(destinationHighlight));
 
     highlights.clear();
-    highlights.add(ayahTransition.get());
+    highlights.add(transitionHighlight);
 
-    animator = ValueAnimator.ofObject(config.getTypeEvaluator(), previousAyahBoundsList, currentAyahBoundsList);
+    animator = ValueAnimator.ofObject(config.getTypeEvaluator(), sourceBounds, destinationBounds);
 
     animator.setDuration(config.getDuration());
 
-    AnimationUpdateListener listener = new AnimationUpdateListener(highlights, ayahTransition);
+    AnimationUpdateListener listener = new AnimationUpdateListener(highlights, transitionHighlight);
     animator.addUpdateListener(listener);
     animator.addListener(listener);
     animator.setInterpolator(config.getInterpolator());
     animator.start();
   }
 
-  private boolean shouldFloatHighlight(Set<String> highlights, HighlightType type, int surah, int ayah) {
+  private boolean shouldFloatHighlight(Set<AyahHighlight> highlights, HighlightType type, int surah, int ayah) {
     // only animating AUDIO highlights, for now
     if(!type.isFloatable()) {
       return false;
@@ -238,16 +239,14 @@ public class HighlightingImageView extends AppCompatImageView {
       return false;
     }
 
-    String currentSurahAyah = surah + ":" + ayah;
-    String previousSurahAyah = highlights.iterator().next();
+    AyahHighlight currentAyahHighlight = new SingleAyahHighlight(surah, ayah);
+    AyahHighlight previousAyahHighlight = highlights.iterator().next();
 
-    if(currentSurahAyah.equals(previousSurahAyah)) {
+    if(currentAyahHighlight.equals(previousAyahHighlight)) {
       // can't animate to the same location
       return false;
     }
-    final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates == null ? null :
-        ayahCoordinates.getAyahCoordinates();
-    if(coordinatesData == null) {
+    if(highlightCoordinates == null) {
       // can't setup animation, if coordinates are not known beforehand
       return false;
     }
@@ -255,21 +254,21 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void highlightAyah(int surah, int ayah, HighlightType type) {
-    Set<String> highlights = currentHighlights.get(type);
-    String surahAyah = surah + ":" + ayah;
+    Set<AyahHighlight> highlights = currentHighlights.get(type);
+    SingleAyahHighlight singleAyahHighlight = new SingleAyahHighlight(surah, ayah);
     if (highlights == null) {
       highlights = new HashSet<>();
       currentHighlights.put(type, highlights);
-      highlights.add(surahAyah);
+      highlights.add(singleAyahHighlight);
     } else if (!type.isMultipleHighlightsAllowed()) {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
       // only if highlight type is floatable
       if(shouldFloatHighlight(highlights, type, surah, ayah)) {
-        highlightFloatableAyah(highlights, surahAyah, type.getAnimationConfig());
+        highlightFloatableAyah(highlights, singleAyahHighlight, type.getAnimationConfig());
       } else {
         highlights.clear();
-        highlights.add(surahAyah);
+        highlights.add(singleAyahHighlight);
       }
     }
   }
@@ -425,24 +424,21 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  private boolean alreadyHighlightedContains(String ayah) {
-    // ayah can either be like 89:7 or 89:7->89:8
-    if(alreadyHighlighted.contains(ayah)) {
+  private boolean alreadyHighlightedContains(AyahHighlight ayahHighlight) {
+    if(alreadyHighlighted.contains(ayahHighlight)) {
       return true;
     }
-    int arrowIndex = ayah.indexOf("->");
-    if (arrowIndex == -1) {
-      return false;
-    }
-    String startAyah = ayah.substring(0, arrowIndex);
-    String endAyah = ayah.substring(arrowIndex + 2);
-    if(alreadyHighlighted.contains(startAyah)
-        || // if x -> y, either x or y is already highlighted, then we don't show the highlight
-        alreadyHighlighted.contains(endAyah)) {
-      return true;
-    }
-    return false;
 
+    if(ayahHighlight.isTransition()) {
+      TransitionAyahHighlight transitionHighlight = (TransitionAyahHighlight)ayahHighlight;
+      if(alreadyHighlighted.contains(transitionHighlight.getSource())
+          || // if x -> y, either x or y is already highlighted, then we don't show the highlight
+          alreadyHighlighted.contains(transitionHighlight.getDestination())) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @Override
@@ -464,25 +460,20 @@ public class HighlightingImageView extends AppCompatImageView {
     }
 
     // Draw each ayah highlight
-    final Map<String, List<AyahBounds>> coordinatesData = ayahCoordinates == null ? null :
-        ayahCoordinates.getAyahCoordinates();
-    if (coordinatesData != null && !currentHighlights.isEmpty()) {
+    if (highlightCoordinates != null && !currentHighlights.isEmpty()) {
       alreadyHighlighted.clear();
-      for (Map.Entry<HighlightType, Set<String>> entry : currentHighlights.entrySet()) {
+      for (Map.Entry<HighlightType, Set<AyahHighlight>> entry : currentHighlights.entrySet()) {
         Paint paint = getPaintForHighlightType(entry.getKey());
-        for (String ayah : entry.getValue()) {
-           if (alreadyHighlightedContains(ayah)) continue;
-           List<AyahBounds> rangesToDraw = coordinatesData.get(ayah);
-           if(rangesToDraw == null || rangesToDraw.isEmpty()) {
-             rangesToDraw = floatableAyahCoordinates.get(ayah);
-           }
+        for (AyahHighlight ayahHighlight : entry.getValue()) {
+           if (alreadyHighlightedContains(ayahHighlight)) continue;
+           List<AyahBounds> rangesToDraw = highlightCoordinates.get(ayahHighlight);
            if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
              for (AyahBounds b : rangesToDraw) {
                matrix.mapRect(scaledRect, b.getBounds());
                scaledRect.offset(0, getPaddingTop());
                canvas.drawRect(scaledRect, paint);
              }
-             alreadyHighlighted.add(ayah);
+             alreadyHighlighted.add(ayahHighlight);
            }
         }
       }
@@ -497,38 +488,89 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 }
 
-class AyahTransition {
-  final static String ARROW = "->";
-  private String previousSurahAyah, currentSurahAyah, transition;
+class AyahHighlight {
+  private String key;
+  private boolean transition;
 
-  public AyahTransition(String previousSurahAyah, String currentSurahAyah) {
-    this.previousSurahAyah = previousSurahAyah;
-    this.currentSurahAyah = currentSurahAyah;
-    this.transition = previousSurahAyah + ARROW + currentSurahAyah;
+  public AyahHighlight(String key) {
+    this.key = key;
+    this.transition = false;
   }
 
-  public String get() {
+  public AyahHighlight(String key, boolean transition) {
+    this.key = key;
+    this.transition = transition;
+  }
+
+  public String getKey() {
+    return key;
+  }
+  
+  public boolean isTransition() {
     return transition;
   }
 
-  public String getCurrentSurahAyah() {
-    return currentSurahAyah;
-  }
-
-  public static boolean isAyahTransitionValid(String ayahTransition) {
-    int arrowIndex = ayahTransition.indexOf(ARROW);
-    if(arrowIndex == -1) {
-      return false;
-    } else {
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
       return true;
     }
+
+    if((obj == null) || (obj.getClass() != this.getClass())) {
+      return false;
+    }
+
+    AyahHighlight ayahHighlight = (AyahHighlight)obj;
+    return this.key.equals(ayahHighlight.key);
   }
 
-  public static String extractPreviousSurahAyah(String ayahTransition) {
-    int arrowIndex = ayahTransition.indexOf(ARROW);
-    if(arrowIndex == -1) {
-      throw new InvalidParameterException("Invalid ayahTransition");
-    }
-    return ayahTransition.substring(arrowIndex + 2);
+  @Override
+  public int hashCode() {
+    return key.hashCode();
+  }
+
+  @NonNull
+  @Override
+  public String toString() {
+    return key;
   }
 }
+
+class SingleAyahHighlight extends AyahHighlight {
+
+  public SingleAyahHighlight(String key) {
+    super(key);
+  }
+
+  public SingleAyahHighlight(int surah, int ayah) {
+    super(surah + ":" + ayah);
+  }
+
+  public static Set<AyahHighlight> createSet(Set<String> ayahKeys) {
+    Set<AyahHighlight> set = new HashSet<>();
+    for(String ayahKey: ayahKeys) {
+      set.add(new SingleAyahHighlight(ayahKey));
+    }
+    return set;
+  }
+}
+
+class TransitionAyahHighlight extends AyahHighlight {
+  final private static String ARROW = "->";
+  private AyahHighlight source, destination;
+
+  public TransitionAyahHighlight(AyahHighlight source, AyahHighlight destination) {
+    super(source.getKey() + ARROW + destination.getKey(), true);
+    this.source = source;
+    this.destination = destination;
+  }
+
+  public AyahHighlight getSource() {
+    return source;
+  }
+
+  public AyahHighlight getDestination() {
+    return destination;
+  }
+}
+
