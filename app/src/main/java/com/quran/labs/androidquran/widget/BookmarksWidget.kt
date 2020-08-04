@@ -61,6 +61,7 @@ class BookmarksWidget : AppWidgetProvider() {
   }
 
   override fun onDisabled(context: Context) {
+    (context.applicationContext as QuranApplication).applicationComponent.inject(this)
     bookmarkModel.onDisabledBookmarksWidget()
     super.onDisabled(context)
   }
