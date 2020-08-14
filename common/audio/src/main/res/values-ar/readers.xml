@@ -57,6 +57,6 @@
   <string name="qari_juhany_gapless">عبدالله الجهني (متصل)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">عبدالمحسن القاسم (متصل)</string>
   <string name="qari_fares_abbad_gapless">فارس عباد (متصل)</string>
-  <string name="qari_khalifa_taniji_gapless">شيخ خليفة الطنيجي (متصل)</string>
-  <string name="qari_abdullah_matroud_gapless">شيخ عبدالله المطرود (متصل)</string>
+  <string name="qari_khalifa_taniji_gapless">خليفة الطنيجي (متصل)</string>
+  <string name="qari_abdullah_matroud_gapless">عبدالله المطرود (متصل)</string>
 </resources>
