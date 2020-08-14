@@ -55,9 +55,9 @@
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
   <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project is the app\'s source of Arabic Tafaseer and translations for various languages. It is also the source for Dr. Ayman Suwaid\'s recitation.</string>
   <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
-  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
+  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (tafsir.app)</string>
   <string name="about_furqan_summary">Uthmani text and Arabic Tafaseer</string>
-  <string name="about_furqan_url" translatable="false">https://furqan.co</string>
+  <string name="about_furqan_url" translatable="false">https://tafsir.app</string>
   <string name="about_quran_enc" translatable="false">Noble Quran Encyclopedia (QuranEnc)</string>
   <string name="about_quran_enc_summary">Translations for many languages</string>
   <string name="about_quran_enc_url" translatable="false">https://quranenc.com</string>
